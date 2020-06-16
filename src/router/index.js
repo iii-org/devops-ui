@@ -56,6 +56,18 @@ export const constantRoutes = [
   },
 
   {
+    path: '/worklist',
+    component: Layout,
+    redirect: '/worklist',
+    children: [{
+      path: 'worklist',
+      name: 'Worklist',
+      component: () => import('@/views/worklist/index'),
+      meta: { title: '工作清單', icon: 'list' }
+    }]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
