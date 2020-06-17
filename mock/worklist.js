@@ -9,8 +9,7 @@ const data = Mock.mock({
     'status|1': ['Assigned', 'Active', 'Solved', 'Responsed', 'Finished'],
     project: '@word(3,5)',
     work_name: '@word(5, 10)',
-    work_start_at: '@date',
-    work_end_at: '@date',
+    last_update_at: '@datetime',
     'last_test_result|1': ['Successful', 'Failed'],
     pageviews: '@integer(300, 5000)'
   }]
