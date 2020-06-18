@@ -63,7 +63,7 @@ export const constantRoutes = [
       path: 'worklist',
       name: 'Worklist',
       component: () => import('@/views/worklist/index'),
-      meta: { title: '工作清單', icon: 'list' }
+      meta: { title: 'My Issues', icon: 'list' }
     }]
   },
 
