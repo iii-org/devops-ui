@@ -68,6 +68,28 @@ export const constantRoutes = [
   },
 
   {
+    path: '/projects',
+    component: Layout,
+    redirect: '/projects/list',
+    name: 'Projects',
+    meta: { title: 'Projects', icon: 'el-icon-s-cooperation' },
+    children: [
+      {
+        path: 'list',
+        name: 'List',
+        component: () => import('@/views/ProjectList/index'),
+        meta: { title: 'List', icon: 'list' }
+      },
+      {
+        path: 'branches',
+        name: 'Branches',
+        component: () => import('@/views/BranchList/index'),
+        meta: { title: 'Branches', icon: 'tree' }
+      }
+    ]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
