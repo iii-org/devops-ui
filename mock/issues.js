@@ -3,7 +3,7 @@ const Mock = require('mockjs')
 const mock_issue_list = Mock.mock({
   'data|10': [{
     id: '@id',
-    'work_num|2000-5000': 2000,
+    'issue_num|2000-5000': 2000,
     'work_type|1': ['Feature', 'Bug', 'Document'],
     'priority|1': ['Urgent', 'High', 'Normal', 'Low'],
     'status|1': ['Assigned', 'Active', 'Solved', 'Responsed', 'Finished'],
@@ -39,6 +39,7 @@ module.exports = [
     response: config => {
       const issue_list = mock_issue_list.data
       return {
+        code: 20000,
         message: 'success',
         total: issue_list.length,
         data: issue_list
