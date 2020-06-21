@@ -14,7 +14,6 @@
           <router-link :to="'/issues/'+scope.row.issue_num" style="color: #409EFF">
             <span>{{ scope.row.issue_num }}</span>
           </router-link>
-          
         </template>
       </el-table-column>
       <el-table-column label="Work Type">
@@ -57,7 +56,14 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="fetchData" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      :layout="'total, prev, pager, next'"
+      @pagination="fetchData"
+    />
   </div>
 </template>
 

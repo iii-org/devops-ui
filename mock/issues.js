@@ -26,6 +26,10 @@ const mock_issue = Mock.mock({
     name: '@word(5, 10)',
     start_time: '@date',
     end_time: '@date',
+    'custom_fields|1-10': [{
+      'name': '@sentence(10, 20)',
+      'create_time': '@datetime'
+    }],
     last_update_at: '@datetime',
     'last_test_result|1': ['Successful', 'Failed'],
     'process|0-100': 30
@@ -47,7 +51,7 @@ module.exports = [
     }
   },
   {
-    url: '/issues/[A-Za-z0-9]',
+    url: '/issues/rd/[A-Za-z0-9]',
     type: 'get',
     response: config => {
       const issue = mock_issue.data

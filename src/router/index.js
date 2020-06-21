@@ -74,6 +74,7 @@ export const constantRoutes = [
       {
         path: '',
         component: () => import('@/views/issue_detail/index'),
+        meta: { title: 'Issue Detail' }
       }
     ]
   },
