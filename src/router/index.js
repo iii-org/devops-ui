@@ -56,15 +56,27 @@ export const constantRoutes = [
   },
 
   {
-    path: '/worklist',
+    path: '/my_issues',
     component: Layout,
-    redirect: '/worklist',
     children: [{
-      path: 'worklist',
-      name: 'Worklist',
-      component: () => import('@/views/worklist/index'),
+      path: '',
+      name: 'MyIssues',
+      component: () => import('@/views/my_issues/index'),
       meta: { title: 'My Issues', icon: 'list' }
     }]
+  },
+
+  {
+    path: '/issues/:issue_num',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/issue_detail/index'),
+        meta: { title: 'Issue Detail' }
+      }
+    ]
   },
 
   {

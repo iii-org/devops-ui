@@ -1,15 +1,17 @@
 import request from '@/utils/request'
 
-export function getIssuesByUser(user_account) {
+export function getIssuesByUser(user_account, param) {
+  console.log('user_account', user_account)
   return request({
     url: `/issues_by_user/${user_account}`,
-    method: 'get'
+    method: 'get',
+    param
   })
 }
 
 export function getIssue(issue_id) {
   return request({
-    url: `/issues/${issue_id}`,
+    url: `/issues/rd/${issue_id}`,
     method: 'get'
   })
 }

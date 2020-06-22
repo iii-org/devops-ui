@@ -11,7 +11,9 @@
     >
       <el-table-column label="Work Num">
         <template slot-scope="scope">
-          {{ scope.row.work_num }}
+          <router-link :to="'/issues/'+scope.row.issue_num" style="color: #409EFF">
+            <span>{{ scope.row.issue_num }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column label="Work Type">
@@ -50,16 +52,23 @@
       <el-table-column label="Last Test Result" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.last_test_result }}</span>
-          <i v-show="scope.row.last_test_result === 'Failed'" style='color: red' class="el-icon-circle-close"></i>
+          <i v-show="scope.row.last_test_result === 'Failed'" style="color: red" class="el-icon-circle-close" />
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="fetchData" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      :layout="'total, prev, pager, next'"
+      @pagination="fetchData"
+    />
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/worklist'
+import { getIssuesByUser } from '@/api/issue'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -91,10 +100,9 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList(this.listQuery).then(response => {
-        console.log(response)
-        this.list = response.data.items
-        this.total = response.data.total
+      getIssuesByUser('user_account', this.listQuery).then(response => {
+        this.list = response.data
+        this.total = response.total
         this.listLoading = false
       })
     }
