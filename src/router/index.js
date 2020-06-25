@@ -56,12 +56,12 @@ export const constantRoutes = [
   },
 
   {
-    path: '/my_issues',
+    path: '/my-issues',
     component: Layout,
     children: [{
       path: '',
       name: 'MyIssues',
-      component: () => import('@/views/my_issues/index'),
+      component: () => import('@/views/MyIssues/index'),
       meta: { title: 'My Issues', icon: 'list' }
     }]
   },
@@ -73,7 +73,7 @@ export const constantRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/issue_detail/index'),
+        component: () => import('@/views/IssueDetail/index'),
         meta: { title: 'Issue Detail' }
       }
     ]
