@@ -13,7 +13,9 @@
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Profile
+              <router-link :to="'/profile/'" style="color: #409EFF">
+                <span>Profile</span>
+              </router-link>
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
