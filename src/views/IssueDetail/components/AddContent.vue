@@ -6,7 +6,7 @@
     @close="handleClose"
   >
     <el-form ref="form" label-width="80px">
-      <markdown-editor v-model="content1" height="300px" />
+      <markdown-editor height="300px" />
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">Cancel</el-button>
