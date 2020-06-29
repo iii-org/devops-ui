@@ -27,14 +27,31 @@ const mock_issue = Mock.mock({
     start_time: '@date',
     end_time: '@date',
     'custom_fields|1-10': [{
-      'name': '@sentence(10, 20)',
-      'create_time': '@datetime'
+      name: '@sentence(10, 20)',
+      create_time: '@datetime'
+    }],
+    'features|1-10': [{
+      name: '@word(5, 10)',
+      description: '@sentence(8, 14)',
+      url: '@word(5, 10)',
+      last_update_at: '@datetime'
     }],
     last_update_at: '@datetime',
     'last_test_result|1': ['Successful', 'Failed'],
     'process|0-100': 30
   }
 })
+
+
+const issue_status_list = []
+const issue_status_name = ['Assigned', 'Active', 'Solved', 'Responsed', 'Finished']
+for (let i = 0; i < issue_status_name.length; i++) {
+  issue_status_list.push(Mock.mock({
+    id: i+1,
+    name: issue_status_name[i],
+    is_closed: false
+  }))
+}
 
 module.exports = [
   {
@@ -59,6 +76,17 @@ module.exports = [
         code: 20000,
         message: 'success',
         data: issue
+      }
+    }
+  },
+  {
+    url: '/issues_status',
+    type: 'get',
+    response: config => {
+      return {
+        code: 20000,
+        message: 'success',
+        data: issue_status_list
       }
     }
   }

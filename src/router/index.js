@@ -56,12 +56,12 @@ export const constantRoutes = [
   },
 
   {
-    path: '/my_issues',
+    path: '/my-issues',
     component: Layout,
     children: [{
       path: '',
       name: 'MyIssues',
-      component: () => import('@/views/my_issues/index'),
+      component: () => import('@/views/MyIssues/index'),
       meta: { title: 'My Issues', icon: 'list' }
     }]
   },
@@ -73,8 +73,23 @@ export const constantRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/issue_detail/index'),
+        component: () => import('@/views/IssueDetail/index'),
         meta: { title: 'Issue Detail' }
+      }
+    ]
+  },
+
+  {
+    path: '/profile',
+    component: Layout,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/Profile/index'),
+        name: 'Profile',
+        meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
   },
@@ -106,6 +121,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/example/table',
     name: 'Example',
+    hidden: true,
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
       {
@@ -126,6 +142,7 @@ export const constantRoutes = [
   {
     path: '/form',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -141,6 +158,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/nested/menu1',
     name: 'Nested',
+    hidden: true,
     meta: {
       title: 'Nested',
       icon: 'nested'
@@ -197,6 +215,7 @@ export const constantRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',

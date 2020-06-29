@@ -15,3 +15,10 @@ export function getIssue(issue_id) {
     method: 'get'
   })
 }
+
+export function getIssueStatus() {
+  return request({
+    url: `/issues_status`,
+    method: 'get'
+  })
+}

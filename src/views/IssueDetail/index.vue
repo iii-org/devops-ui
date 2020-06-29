@@ -2,7 +2,8 @@
   <div class="app-container">
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
-        <div style="font-size: 25px;padding-bottom: 10px;">Issue #{{ $route.params.issue_num }}</div>
+        <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ $route.params.issue_num }}</span>
+        <el-button style="float: right; padding: 3px 0" type="text" @click="editIssueDialogVisible = true">Edit</el-button>
         <div>{{ issue_detail.description }}</div>
       </div>
       <div>
@@ -62,7 +63,7 @@
       @tab-click="handleClick"
     >
       <el-tab-pane label="Content" name="content">
-        <el-button type="primary">Add Content</el-button>
+        <el-button type="primary" @click="addContentDialogVisible = true">Add Content</el-button>
         <el-table
           v-loading="listLoading"
           :data="issue_detail.custom_fields"
@@ -78,24 +79,73 @@
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column label="Create Time" width="180">
+          <el-table-column label="Create Time" width="160">
             <template slot-scope="scope">
               {{ scope.row.create_time }}
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Feature" name="feature">Feature</el-tab-pane>
+      <el-tab-pane label="Feature" name="feature">
+        <el-button type="primary" >Add API</el-button>
+        <el-button type="primary" >API Test Plan</el-button>
+        <el-table
+          v-loading="listLoading"
+          :data="issue_detail.features"
+          element-loading-text="Loading"
+          border
+          fit
+          highlight-current-row
+          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          style="margin-top: 10px"
+        >
+          <el-table-column label="API Name" width="160">
+            <template slot-scope="scope">
+              <span style="color: #409EFF">{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="API URL" width="160">
+            <template slot-scope="scope">
+              {{ scope.row.url }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Description">
+            <template slot-scope="scope">
+              {{ scope.row.description }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Last Update Time" width="160">
+            <template slot-scope="scope">
+              {{ scope.row.last_update_at }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
     </el-tabs>
+    <add-content
+      :dialog-visible.sync="addContentDialogVisible"
+      @issue-dialog-visible="emitAddContentDialogVisible"
+    />
+    <edit-issue
+      :dialog-visible.sync="editIssueDialogVisible"
+      :issue-process="issue_detail.process"
+      :issue-status="issue_detail.status"
+      @issue-dialog-visible="emitEditIssueDialogVisible"
+    />
   </div>
 </template>
 
 <script>
 import { getIssue } from '@/api/issue'
+import EditIssue from './components/EditIssue'
+import AddContent from './components/AddContent'
 // import Pagination from '@/components/Pagination'
 
 export default {
-  // components: { Pagination },
+  components: {
+    EditIssue,
+    AddContent
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -115,7 +165,9 @@ export default {
       listQuery: {
         page: 1,
         limit: 10
-      }
+      },
+      editIssueDialogVisible: false,
+      addContentDialogVisible: false
     }
   },
   mounted() {
@@ -128,6 +180,14 @@ export default {
         this.issue_detail = response.data
         this.listLoading = false
       })
+    },
+    handleClick() {
+    },
+    emitEditIssueDialogVisible(visible) {
+      this.editIssueDialogVisible = visible
+    },
+    emitAddContentDialogVisible(visible) {
+      this.addContentDialogVisible = visible
     }
   }
 }
