@@ -60,7 +60,6 @@ module.exports = [
     response: config => {
       const issue_list = mock_issue_list.data
       return {
-        code: 20000,
         message: 'success',
         total: issue_list.length,
         data: issue_list
@@ -73,7 +72,6 @@ module.exports = [
     response: config => {
       const issue = mock_issue.data
       return {
-        code: 20000,
         message: 'success',
         data: issue
       }
@@ -84,7 +82,6 @@ module.exports = [
     type: 'get',
     response: config => {
       return {
-        code: 20000,
         message: 'success',
         data: issue_status_list
       }

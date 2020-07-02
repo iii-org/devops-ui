@@ -1,78 +1,54 @@
+const Mock = require('mockjs')
 
-const tokens = {
-  admin: {
-    token: 'admin-token'
-  },
-  editor: {
-    token: 'editor-token'
+const mock_user_login = Mock.mock({
+  'data': {
+    token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1OTM3MDE1NDgsIm5iZiI6MTU5MzcwMTU0OCwianRpIjoiZDdkZjljYjMtNjM0My00ZmU3LWI5ZTMtZjJmMjAzNTIxZjg0IiwiZXhwIjoxNTkzNzg3OTQ4LCJpZGVudGl0eSI6ImJlY2t5IiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIn0.g6NHCRdfsaoD_RjRi_B0jGVTLjEJgxQNFiGvHF98q6I'
   }
-}
+})
 
-const users = {
-  'admin-token': {
-    roles: ['admin'],
-    introduction: 'I am a super administrator',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
-  },
-  'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+const mock_user_info = Mock.mock({
+  'data': {
+    "name": "nathan",
+    "email": "nathan@iii.org.tw",
+    "phone": "0933333666",
+    "group": {
+      "name": "admin"
+    },
+    "role": {
+      "nname": "admin"
+    }
   }
-}
+})
 
 module.exports = [
   // user login
   {
-    url: '/vue-admin-template/user/login',
+    url: '/user/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
-
-      // mock error
-      if (!token) {
-        return {
-          code: 60204,
-          message: 'Account and password are incorrect.'
-        }
-      }
-
       return {
-        code: 20000,
-        data: token
+        message: 'success',
+        data: mock_user_login.data
       }
     }
   },
 
   // get user info
   {
-    url: '/vue-admin-template/user/info\.*',
+    url: '/user/info',
     type: 'get',
     response: config => {
-      const { token } = config.query
-      const info = users[token]
-
-      // mock error
-      if (!info) {
-        return {
-          code: 50008,
-          message: 'Login failed, unable to get user details.'
-        }
-      }
-
       return {
         code: 20000,
-        data: info
+        message: 'success',
+        data: mock_user_info.data
       }
     }
   },
 
   // user logout
   {
-    url: '/vue-admin-template/user/logout',
+    url: '/user/logout',
     type: 'post',
     response: _ => {
       return {
