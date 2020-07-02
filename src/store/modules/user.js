@@ -1,6 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setTokenContent } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import VueJwtDecode from 'vue-jwt-decode'
 
 const getDefaultState = () => {
   return {
@@ -31,11 +32,17 @@ const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
+
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
+
+        const jwtContent = VueJwtDecode.decode(data.token)
+        commit('jwtContent', jwtContent)
+        setTokenContent(jwtContent)
+
         resolve()
       }).catch(error => {
         reject(error)
