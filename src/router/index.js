@@ -117,6 +117,35 @@ export const constantRoutes = [
   },
 
   {
+    path: '/cicd',
+    component: Layout,
+    redirect: '/cicd/pipelines',
+    name: 'CICD',
+    meta: { title: 'Pipelines', icon: 'el-icon-s-cooperation' },
+    children: [
+      {
+        path: 'pipelines',
+        name: 'Pipelines',
+        component: () => import('@/views/CicdPipelines/index'),
+        meta: { title: 'Pipelines', icon: 'example' }
+      }
+    ]
+  },
+
+  {
+    path: '/cicd/pipelines/:pipeline_id/stages',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/CicdPipelinesStages/index'),
+        meta: { title: 'Pipeline Stages' }
+      }
+    ]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
