@@ -8,6 +8,7 @@ const issues = require('./issues')
 const branches = require('./branches')
 const fileList = require('./fileList')
 const commitList = require('./commitList')
+const cicd = require('./cicd')
 const mocks = [
   ...user,
   ...table,
@@ -15,7 +16,8 @@ const mocks = [
   ...projects,
   ...branches,
   ...fileList,
-  ...commitList
+  ...commitList,
+  ...cicd
 ]
 
 // for front mock
