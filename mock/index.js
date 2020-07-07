@@ -5,12 +5,18 @@ const user = require('./user')
 const table = require('./table')
 const projects = require('./projects')
 const issues = require('./issues')
+const branches = require('./branches')
+const fileList = require('./fileList')
+const commitList = require('./commitList')
 const cicd = require('./cicd')
 const mocks = [
   ...user,
   ...table,
   ...issues,
   ...projects,
+  ...branches,
+  ...fileList,
+  ...commitList,
   ...cicd
 ]
 

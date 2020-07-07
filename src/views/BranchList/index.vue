@@ -1,7 +1,9 @@
 <script>
-import { getList } from '@/api/table'
+import { mapGetters, mapActions } from 'vuex'
+import Pagination from '@/components/Pagination'
 
 export default {
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -14,58 +16,204 @@ export default {
   },
   data() {
     return {
-      list: null,
-      listLoading: true
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 20
+      },
+      search: '',
+      dialogVisible: false,
+      mergeDialogVisible: false,
+      deleteDialogVisible: false,
+      newBranchName: '',
+      newBranchFrom: 'master',
+      commitMsg: '',
+      selectedBranch: '',
+      deleteBrancheName: '',
+      tagDialogVisible: false,
+      tagVersion: '',
+      tagReleaseNote: ''
     }
   },
-  created() {
-    this.fetchData()
+  computed: {
+    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject']),
+    projectName() {
+      return this.$route.params.projectName
+    },
+    pagedData() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit - 1
+      return this.branchesByProject.slice(start, end)
+    }
+  },
+  async created() {
+    await this['branches/getBranchesByProject'](this.$route.params.pId)
+    this.listLoading = false
   },
   methods: {
-    fetchData() {
-      this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
-        this.listLoading = false
-      })
+    ...mapActions(['branches/getBranchesByProject']),
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    handlePull() {},
+    handleMerge(index, row) {
+      this.mergeDialogVisible = true
+      this.selectedBranch = row.branch_name
+    },
+    handleDelete() {
+      this.deleteDialogVisible = true
     }
   }
 }
 </script>
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" label="ID" width="95">
+    <div>
+      <h3>
+        {{ projectName }}
+        <span class="newBtn">
+          <el-button size="mini" type="primary" @click="dialogVisible = true">
+            <i class="el-icon-plus" />
+            New Branch
+          </el-button>
+        </span>
+        <span class="newBtn">
+          <el-button size="mini" type="success" @click="tagDialogVisible = true">
+            <i class="el-icon-price-tag" />
+            New Tag
+          </el-button>
+        </span>
+      </h3>
+    </div>
+    <el-divider />
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+      <el-table-column label="Branch Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          <router-link
+            :to="{
+              name: 'commitList',
+              params: {
+                bId: scope.row.id,
+                projectName: projectName,
+                branchName: scope.row.branch_name
+              }
+            }"
+            style="color: #409EFF"
+          >
+            <span>{{ scope.row.branch_name }}</span>
+          </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="Title">
+      <el-table-column label="Commit Message" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.title }}
+          {{ scope.row.commit_message }}
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
+      <el-table-column label="Commit Time" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          {{ scope.row.commit_time }}
         </template>
       </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
+      <el-table-column label="Commit ID" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.pageviews }}
+          {{ scope.row.commit_id }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+      <el-table-column align="center" width="250">
+        <template slot="header">
+          <el-input v-model="search" size="mini" placeholder="Type to search" />
         </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
         <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
+          <!-- <el-button size="mini" type="primary" @click="handlePull(scope.$index, scope.row)">Pull</el-button> -->
+          <el-button size="mini" type="warning" @click="handleMerge(scope.$index, scope.row)">Merge</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <pagination
+      :total="branchesTotalNumByProject"
+      :page="listQuery.page"
+      :limit="listQuery.limit"
+      :page-sizes="[20]"
+      :layout="'total, prev, pager, next'"
+      @pagination="onPagination"
+    />
+
+    <el-dialog title="New Branch" :visible.sync="dialogVisible" width="50%">
+      <h4>Branch Name</h4>
+      <el-input v-model="newBranchName" size="small" placeholder="" />
+      <h4>From</h4>
+      <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
+        <el-option
+          v-for="item in branchesByProject"
+          :key="item.branch_name"
+          :label="item.branch_name"
+          :value="item.branch_name"
+        />
+      </el-select>
+      <h4>Commit Message :</h4>
+      <el-input v-model="commitMsg" type="textarea" :rows="3" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="New Branch" :visible.sync="mergeDialogVisible" width="50%">
+      <h3>New Branch Name: {{ selectedBranch }}</h3>
+      <el-divider />
+      <h4>Merge into</h4>
+      <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
+        <el-option
+          v-for="item in branchesByProject"
+          :key="item.branch_name"
+          :label="item.branch_name"
+          :value="item.branch_name"
+        />
+      </el-select>
+      <h4>Commit Message :</h4>
+      <el-input v-model="commitMsg" type="textarea" :rows="3" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="mergeDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="mergeDialogVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="Delete Branch" :visible.sync="deleteDialogVisible" width="50%">
+      <h3><i class="el-icon-warning" style="color:#F56C6C" /> Please Input Full Branch Name to comfirm the deletion</h3>
+      <el-input v-model="deleteBrancheName" placeholder="" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="deleteDialogVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="New Tag" :visible.sync="tagDialogVisible" width="50%">
+      <h4>Tag Version</h4>
+      <el-input v-model="tagVersion" size="small" placeholder="" />
+      <h4>@ Branch</h4>
+      <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
+        <el-option
+          v-for="item in branchesByProject"
+          :key="item.branch_name"
+          :label="item.branch_name"
+          :value="item.branch_name"
+        />
+      </el-select>
+      <h4>Release Note :</h4>
+      <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="tagDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="tagDialogVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
+
+<style lang="css" scoped>
+.newBtn{
+  float:right;
+  padding-right: 6px;
+}
+</style>

@@ -3,6 +3,7 @@ const Mock = require('mockjs')
 const data = Mock.mock({
   'items|30': [{
     id: '@id',
+    'latest_tag': 'v1.0.1',
     'project_name': '@title(2)',
     'items|0-10': 10,
     'mockUnit|1': function() {
