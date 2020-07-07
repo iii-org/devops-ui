@@ -56,7 +56,19 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.project_name }}
+          <router-link
+            :to="{
+              name: 'fileList',
+              params: {
+                bId: scope.row.id,
+                projectName: scope.row.project_name,
+                branchName: scope.row.branch_name
+              }
+            }"
+            style="color: #409EFF"
+          >
+            <span>{{ scope.row.project_name }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Workload">
@@ -71,7 +83,12 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Branches">
         <template slot-scope="scope">
-          {{ scope.row.brancheNum }}
+          <router-link
+            :to="{ name: 'branches', params: { pId: scope.row.id, projectName: scope.row.project_name } }"
+            style="color: #409EFF"
+          >
+            <span>{{ scope.row.brancheNum }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last Test">
@@ -86,6 +103,23 @@ export default {
             <i v-else class="el-icon-error" />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Last Tag">
+        <template slot-scope="scope">
+          <router-link
+            :to="{
+              name: 'fileList',
+              params: {
+                bId: scope.row.id,
+                projectName: scope.row.project_name,
+                branchName: scope.row.branch_name
+              }
+            }"
+            style="color: #409EFF"
+          >
+            {{ scope.row.latest_tag }}
+          </router-link>
         </template>
       </el-table-column>
     </el-table>

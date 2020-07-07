@@ -103,15 +103,61 @@ export const constantRoutes = [
     children: [
       {
         path: 'list',
-        name: 'List',
+        name: 'Project List',
         component: () => import('@/views/ProjectList/index'),
-        meta: { title: 'List', icon: 'list' }
+        meta: { title: 'Project List', icon: 'list' }
       },
+
       {
-        path: 'branches',
-        name: 'Branches',
+        path: 'graph',
+        name: 'Project Graph',
+        component: () => import('@/views/ProjectGraph/index'),
+        meta: { title: 'Project Graph', icon: 'tree' }
+      }
+    ]
+  },
+
+  {
+    path: '/branches/:pId',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        name: 'branches',
+        props: true,
         component: () => import('@/views/BranchList/index'),
         meta: { title: 'Branches', icon: 'tree' }
+      }
+    ]
+  },
+
+  {
+    path: '/file_list/:bId',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        name: 'fileList',
+        props: true,
+        component: () => import('@/views/FileList/index'),
+        meta: { title: 'File List', icon: 'tree' }
+      }
+    ]
+  },
+
+  {
+    path: '/commit_list/:bId',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        name: 'commitList',
+        props: true,
+        component: () => import('@/views/CommitList/index'),
+        meta: { title: 'Commit List', icon: 'tree' }
       }
     ]
   },

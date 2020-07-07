@@ -5,6 +5,9 @@ import app from './modules/app'
 import settings from './modules/settings'
 import user from './modules/user'
 import projects from './modules/projects'
+import branches from './modules/branches'
+import fileList from './modules/fileList'
+import commitList from './modules/commitList'
 
 Vue.use(Vuex)
 
@@ -13,7 +16,10 @@ const store = new Vuex.Store({
     app,
     settings,
     user,
-    projects
+    projects,
+    branches,
+    fileList,
+    commitList
   },
   getters
 })
