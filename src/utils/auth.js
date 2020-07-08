@@ -1,25 +1,28 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'jwtToken'
-const TokenContentKey = 'jwtTokenContent'
+const JWT = 'jwtToken'
+const JWTContent = 'jwtTokenContent'
 
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return Cookies.get(JWT)
 }
 
-export function setToken(token) {
-  return Cookies.set(TokenKey, token)
+export function setToken({ token, jwtContent }) {
+  if (Cookies.set(JWT, token) && Cookies.set(JWTContent, jwtContent)) {
+    return true
+  } else {
+    return false
+  }
 }
 
-export function getTokenContent() {
-  return Cookies.get(TokenContentKey)
-}
-
-export function setTokenContent(data) {
-  return Cookies.set(TokenContentKey, data)
+export function getJWTContent() {
+  return Cookies.get(JWTContent)
 }
 
 export function removeToken() {
-  Cookies.remove(TokenContentKey)
-  return Cookies.remove(TokenKey)
+  if (Cookies.remove(JWT) && Cookies.remove(JWTContent)) {
+    return true
+  } else {
+    return false
+  }
 }

@@ -87,8 +87,8 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Feature" name="feature">
-        <el-button type="primary" >Add API</el-button>
-        <el-button type="primary" >API Test Plan</el-button>
+        <el-button type="primary">Add API</el-button>
+        <el-button type="primary">API Test Plan</el-button>
         <el-table
           v-loading="listLoading"
           :data="issue_detail.features"

@@ -100,19 +100,6 @@ export default {
       uploadCommitMsg: ''
     }
   },
-  watch: {
-    drawer(boo) {
-      if (this.drawerOpend) return
-      this.drawerOpend = true
-      this.$nextTick(() => {
-        monaco.editor.create(document.getElementById('editor-container'), {
-          value: 'console.log("Hello, world")',
-          language: 'javascript',
-          theme: 'vs-dark'
-        })
-      })
-    }
-  },
   computed: {
     ...mapGetters(['fileListByBranch', 'fileListTotalByBranch']),
     projectName() {
@@ -125,6 +112,19 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
       return this.fileListByBranch.slice(start, end)
+    }
+  },
+  watch: {
+    drawer(boo) {
+      if (this.drawerOpend) return
+      this.drawerOpend = true
+      this.$nextTick(() => {
+        monaco.editor.create(document.getElementById('editor-container'), {
+          value: 'console.log("Hello, world")',
+          language: 'javascript',
+          theme: 'vs-dark'
+        })
+      })
     }
   },
   async created() {

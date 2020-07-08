@@ -15,7 +15,7 @@ const mock_user_info = Mock.mock({
       "name": "admin"
     },
     "role": {
-      "nname": "admin"
+      "name": "admin"
     }
   }
 })
@@ -39,7 +39,6 @@ module.exports = [
     type: 'get',
     response: config => {
       return {
-        code: 20000,
         message: 'success',
         data: mock_user_info.data
       }
