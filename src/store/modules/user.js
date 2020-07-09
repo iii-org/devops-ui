@@ -1,13 +1,14 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken, setTokenContent } from '@/utils/auth'
+import { getToken, setToken, removeToken, getJWTContent } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import VueJwtDecode from 'vue-jwt-decode'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
+    jwtContent: getJWTContent(),
+    userId: 0,
+    userRole: ''
   }
 }
 
@@ -17,14 +18,15 @@ const mutations = {
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
   },
-  SET_TOKEN: (state, token) => {
-    state.token = token
+  SET_TOKEN: (state, tokenData) => {
+    state.token = tokenData.token
+    state.jwtContent = tokenData.jwtContent
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USER_ID: (state, userId) => {
+    state.userId = userId
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_USER_ROLE: (state, userRole) => {
+    state.userRole = userRole
   }
 }
 
@@ -35,14 +37,13 @@ const actions = {
 
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
+        console.log('response', response)
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        const { token } = data
+        const jwtContent = VueJwtDecode.decode(token)
 
-        const jwtContent = VueJwtDecode.decode(data.token)
-        commit('jwtContent', jwtContent)
-        setTokenContent(jwtContent)
-
+        commit('SET_TOKEN', { token, jwtContent })
+        setToken({ token, jwtContent })
         resolve()
       }).catch(error => {
         reject(error)
@@ -51,20 +52,21 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
+      getInfo().then(response => {
+        const { data, message } = response
+        console.log('getInfo', response)
+        if (message !== 'success') {
+          reject(message)
         }
 
-        const { name, avatar } = data
+        const { id, role } = data
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+        commit('SET_USER_ID', id)
+        commit('SET_USER_ROLE', role.name)
+
+        resolve()
       }).catch(error => {
         reject(error)
       })

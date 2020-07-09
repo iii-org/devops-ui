@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Login',
@@ -87,6 +88,7 @@ export default {
     }
   },
   methods: {
+    ...mapGetters(['userRole']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -105,7 +107,11 @@ export default {
             console.log('success login')
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
-          }).catch(() => {
+          }).then(() => {
+            return this.$store.dispatch('user/getInfo')
+          }).catch(e => {
+            console.log(e)
+          }).finally(() => {
             this.loading = false
           })
         } else {

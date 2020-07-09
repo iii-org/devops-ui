@@ -68,7 +68,6 @@
 </template>
 
 <script>
-import { getTokenContent } from '@/utils/auth'
 import { getIssuesByUser } from '@/api/issue'
 import Pagination from '@/components/Pagination'
 
@@ -94,9 +93,6 @@ export default {
         limit: 10
       }
     }
-  },
-  mounted() {
-    console.log(getTokenContent())
   },
   created() {
     this.fetchData()

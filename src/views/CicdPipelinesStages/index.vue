@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card" shadow="never" v-loading="pipelineLoading">
+    <el-card v-loading="pipelineLoading" class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 20px;font-weight: 500;">Pipeline #{{ pipeline.index }} Stages</span>
       </div>
@@ -10,15 +10,15 @@
             <el-row :gutter="20">
               <el-col :span="6">Status</el-col>
               <el-col :span="18">
-                 <el-tag v-if="pipeline.status === 'Failed'" type="danger" size="medium" effect="plain">
-                    <i class="el-icon-circle-close" /> {{ pipeline.status }}
-                  </el-tag>
-                  <el-tag v-else-if="pipeline.status === 'Running'" size="medium" effect="plain">
-                    <i class="el-icon-loading" /> {{ pipeline.status }}
-                  </el-tag>
-                  <el-tag v-else type="success" size="medium" effect="plain">
-                    <i class="el-icon-circle-check" /> {{ pipeline.status }}
-                  </el-tag>
+                <el-tag v-if="pipeline.status === 'Failed'" type="danger" size="medium" effect="plain">
+                  <i class="el-icon-circle-close" /> {{ pipeline.status }}
+                </el-tag>
+                <el-tag v-else-if="pipeline.status === 'Running'" size="medium" effect="plain">
+                  <i class="el-icon-loading" /> {{ pipeline.status }}
+                </el-tag>
+                <el-tag v-else type="success" size="medium" effect="plain">
+                  <i class="el-icon-circle-check" /> {{ pipeline.status }}
+                </el-tag>
               </el-col>
             </el-row>
           </el-col>
@@ -62,21 +62,22 @@
     <div class="block" style="margin-top:10px">
       <el-timeline>
         <el-timeline-item
+          v-for="(stg, index1) in stages"
+          :key="index1"
           v-loading="stagesListLoading"
-          v-for="stg in stages"
-          :key="stg.number"
           :timestamp="stg.run_at"
-          placement="top">
+          placement="top"
+        >
           <el-card>
             <el-tag style="font-weight: 700;margin-bottom:10px">
               {{ stg.name }}
             </el-tag>
-            <el-row :gutter="20" v-for="content in stg.content" :key="content">
+            <el-row v-for="(content,index2) in stg.content" :key="index2" :gutter="20">
               <el-col :span="4" style="font-weight: 500;">
-                <div>{{content.run_at}}</div>
+                <div>{{ content.run_at }}</div>
               </el-col>
               <el-col :span="20">
-                <div >{{content.run_message}}</div>
+                <div>{{ content.run_message }}</div>
               </el-col>
             </el-row>
           </el-card>
@@ -87,12 +88,9 @@
 </template>
 
 <script>
-import { getTokenContent } from '@/utils/auth'
 import { getStages, getPipeline } from '@/api/cicd'
-import Pagination from '@/components/Pagination'
 
 export default {
-  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -105,14 +103,11 @@ export default {
   },
   data() {
     return {
-      stages: null,
+      stages: [],
       stagesListLoading: true,
       pipeline: {},
       pipelineLoading: true
     }
-  },
-  mounted() {
-    console.log(getTokenContent())
   },
   created() {
     this.fetchData()
@@ -121,6 +116,7 @@ export default {
     fetchData() {
       // this.listLoading = true
       getStages(this.$route.params.pipeline_id).then(response => {
+        console.log(response)
         this.stages = response.data
         this.stagesListLoading = false
       })

@@ -50,7 +50,6 @@
           <div>{{ scope.row.commit_message }}</div>
         </template>
       </el-table-column>
-      
       <el-table-column label="Last Run At" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.last_run_at }}</span>
@@ -69,7 +68,6 @@
 </template>
 
 <script>
-import { getTokenContent } from '@/utils/auth'
 import { getPipelines } from '@/api/cicd'
 import Pagination from '@/components/Pagination'
 
@@ -95,9 +93,6 @@ export default {
         limit: 10
       }
     }
-  },
-  mounted() {
-    console.log(getTokenContent())
   },
   created() {
     this.fetchData()
