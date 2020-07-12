@@ -34,14 +34,17 @@ const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
-
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         console.log('response', response)
         const { data } = response
         const { token } = data
         const jwtContent = VueJwtDecode.decode(token)
+        if(!'identity' in jwtContent) {
+          Promise.reject('userId not exist')
+        }
 
+        commit('SET_USER_ID', jwtContent['identity'])
         commit('SET_TOKEN', { token, jwtContent })
         setToken({ token, jwtContent })
         resolve()
@@ -56,14 +59,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo().then(response => {
         const { data, message } = response
-        console.log('getInfo', response)
-        if (message !== 'success') {
-          reject(message)
+        const { role } = data
+        if(!role) {
+          reject('role is not exist in user info')
+        }
+        const { name } = role
+        if(!name) {
+          reject('name is not exist in role')
         }
 
-        const { id, role } = data
-
-        commit('SET_USER_ID', id)
         commit('SET_USER_ROLE', role.name)
 
         resolve()
