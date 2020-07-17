@@ -203,7 +203,7 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'PMProjects',
-    meta: { title: 'PMProjects', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    meta: { title: 'PM Project List', icon: 'el-icon-s-cooperation', roles: ['pm'] },
     children: [
       {
         path: 'list',
