@@ -44,7 +44,6 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
     if (response.status !== 200) {
       let message = 'Unknow Error'
       res.code === 401 && (message = 'Unauthorized')
@@ -58,6 +57,13 @@ service.interceptors.response.use(
       })
 
       return Promise.reject(new Error(message || 'Error'))
+    } else if(res.message !== 'success') {
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res
     }

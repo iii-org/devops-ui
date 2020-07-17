@@ -41,17 +41,21 @@ export const constantRoutes = [
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
-  },
+  }
 
+]
+
+export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
+    meta: { roles: ['developer'] },
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: 'Dashboard', icon: 'dashboard', roles: ['developer'] }
     }]
   },
 
@@ -62,7 +66,7 @@ export const constantRoutes = [
       path: '',
       name: 'MyIssues',
       component: () => import('@/views/MyIssues/index'),
-      meta: { title: 'My Issues', icon: 'list' }
+      meta: { title: 'My Issues', icon: 'list', roles: ['developer'] }
     }]
   },
 
@@ -70,11 +74,12 @@ export const constantRoutes = [
     path: '/issues/:issue_num',
     component: Layout,
     hidden: true,
+    meta: { roles: ['developer'] },
     children: [
       {
         path: '',
         component: () => import('@/views/IssueDetail/index'),
-        meta: { title: 'Issue Detail' }
+        meta: { title: 'Issue Detail', roles: ['developer'] }
       }
     ]
   },
@@ -84,12 +89,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/profile/index',
     hidden: true,
+    meta: { roles: ['developer'] },
     children: [
       {
         path: 'index',
         component: () => import('@/views/Profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
+        meta: { title: 'Profile', icon: 'user', noCache: true, roles: ['developer'] }
       }
     ]
   },
@@ -98,20 +104,20 @@ export const constantRoutes = [
     path: '/projects',
     component: Layout,
     name: 'Projects',
-    meta: { title: 'Projects', icon: 'el-icon-s-cooperation' },
+    meta: { title: 'Projects', icon: 'el-icon-s-cooperation', roles: ['developer'] },
     children: [
       {
         path: 'list',
         name: 'Project List',
         component: () => import('@/views/ProjectList/index'),
-        meta: { title: 'Project List', icon: 'list' }
+        meta: { title: 'Project List', icon: 'list', roles: ['developer'] }
       },
 
       {
         path: 'graph',
         name: 'Project Graph',
         component: () => import('@/views/ProjectGraph/index'),
-        meta: { title: 'Project Graph', icon: 'tree' }
+        meta: { title: 'Project Graph', icon: 'tree', roles: ['developer'] }
       }
     ]
   },
@@ -120,13 +126,14 @@ export const constantRoutes = [
     path: '/branches/:pId',
     component: Layout,
     hidden: true,
+    meta: { roles: ['developer'] },
     children: [
       {
         path: '',
         name: 'branches',
         props: true,
         component: () => import('@/views/BranchList/index'),
-        meta: { title: 'Branches', icon: 'tree' }
+        meta: { title: 'Branches', icon: 'tree', roles: ['developer'] }
       }
     ]
   },
@@ -135,13 +142,14 @@ export const constantRoutes = [
     path: '/file_list/:bId',
     component: Layout,
     hidden: true,
+    meta: { roles: ['developer'] },
     children: [
       {
         path: '',
         name: 'fileList',
         props: true,
         component: () => import('@/views/FileList/index'),
-        meta: { title: 'File List', icon: 'tree' }
+        meta: { title: 'File List', icon: 'tree', roles: ['developer'] }
       }
     ]
   },
@@ -150,13 +158,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/cicd/pipelines',
     name: 'CICD',
-    meta: { title: 'Pipelines', icon: 'el-icon-s-cooperation' },
+    meta: { title: 'Pipelines', icon: 'el-icon-s-cooperation', roles: ['developer'] },
     children: [
       {
         path: 'pipelines',
         name: 'Pipelines',
         component: () => import('@/views/CicdPipelines/index'),
-        meta: { title: 'Pipelines', icon: 'example' }
+        meta: { title: 'Pipelines', icon: 'example', roles: ['developer'] }
       }
     ]
   },
@@ -165,11 +173,12 @@ export const constantRoutes = [
     path: '/cicd/pipelines/:pipeline_id/stages',
     component: Layout,
     hidden: true,
+    meta: { roles: ['developer'] },
     children: [
       {
         path: '',
         component: () => import('@/views/CicdPipelinesStages/index'),
-        meta: { title: 'Pipeline Stages' }
+        meta: { title: 'Pipeline Stages', roles: ['developer'] }
       }
     ]
   },
@@ -178,121 +187,29 @@ export const constantRoutes = [
     path: '/commit_list/:bId',
     component: Layout,
     hidden: true,
+    meta: { roles: ['developer'] },
     children: [
       {
         path: '',
         name: 'commitList',
         props: true,
         component: () => import('@/views/CommitList/index'),
-        meta: { title: 'Commit List', icon: 'tree' }
+        meta: { title: 'Commit List', icon: 'tree', roles: ['developer'] }
       }
     ]
   },
 
   {
-    path: '/example',
+    path: '/',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    hidden: true,
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    name: 'PMProjects',
+    meta: { title: 'PMProjects', icon: 'el-icon-s-cooperation', roles: ['pm'] },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    hidden: true,
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'list',
+        name: 'PM Project List',
+        component: () => import('@/views/ProjectList/index'),
+        meta: { title: 'PM Project List', icon: 'list', roles: ['pm'] }
       }
     ]
   },
@@ -300,6 +217,7 @@ export const constantRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
+
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
