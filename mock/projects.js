@@ -30,6 +30,7 @@ module.exports = [
     response: config => {
       const items = data.items
       return {
+        message: 'success',
         code: 20000,
         data: {
           total: items.length,
