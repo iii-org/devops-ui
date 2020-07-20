@@ -203,13 +203,27 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'PMProjects',
-    meta: { title: 'PM Project List', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    meta: { title: 'Project Recap', icon: 'el-icon-s-cooperation', roles: ['pm'] },
     children: [
       {
         path: 'list',
         name: 'PM Project List',
         component: () => import('@/views/ProjectList/index'),
         meta: { title: 'PM Project List', icon: 'list', roles: ['pm'] }
+      },
+
+      {
+        path: 'current-activity',
+        name: 'Current Activity',
+        component: () => import('@/views/ProjectCurrentActivity/index'),
+        meta: { title: 'Current Activity', icon: 'list', roles: ['pm'] }
+      },
+
+      {
+        path: 'activity-log',
+        name: 'Activity Log',
+        component: () => import('@/views/ProjectActivityLog/index'),
+        meta: { title: 'Activity Log', icon: 'list', roles: ['pm'] }
       }
     ]
   },
