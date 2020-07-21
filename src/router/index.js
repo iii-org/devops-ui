@@ -42,7 +42,6 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   }
-
 ]
 
 export const asyncRoutes = [
@@ -51,23 +50,27 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/dashboard',
     meta: { roles: ['developer'] },
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard', roles: ['developer'] }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: 'Dashboard', icon: 'dashboard', roles: ['developer'] }
+      }
+    ]
   },
 
   {
     path: '/my-issues',
     component: Layout,
-    children: [{
-      path: '',
-      name: 'MyIssues',
-      component: () => import('@/views/MyIssues/index'),
-      meta: { title: 'My Issues', icon: 'list', roles: ['developer'] }
-    }]
+    children: [
+      {
+        path: '',
+        name: 'MyIssues',
+        component: () => import('@/views/MyIssues/index'),
+        meta: { title: 'My Issues', icon: 'list', roles: ['developer'] }
+      }
+    ]
   },
 
   {
@@ -214,16 +217,37 @@ export const asyncRoutes = [
     ]
   },
 
+  {
+    path: '/overview',
+    component: Layout,
+    name: 'overview',
+    meta: { title: 'Overview', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    children: [
+      {
+        path: 'index',
+        name: 'Overview',
+        component: () => import('@/views/OverviewProject/index'),
+        meta: { title: 'Overview', icon: 'dashboard', roles: ['pm'] }
+      },
+      {
+        path: 'roadmap',
+        name: 'Roadmap',
+        component: () => import('@/views/ProjectRoadmap/index'),
+        meta: { title: 'Roadmap', icon: 'el-icon-discover', roles: ['pm'] }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
 
 const router = createRouter()
 
