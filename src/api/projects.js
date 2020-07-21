@@ -7,3 +7,10 @@ export function getProjectList(params) {
     params
   })
 }
+
+export function getActivityLog(activity_id) {
+  return request({
+    url: `/devops-ui/projects/activity/log/${activity_id}`,
+    method: 'get'
+  })
+}
