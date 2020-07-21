@@ -23,6 +23,18 @@ const data = Mock.mock({
   }]
 })
 
+const activity_log_data = Mock.mock({
+  'items|3': [{
+    id: '@id',
+    'logs_date': '@datetime',
+    'logs|3-5': [{
+      'description': '@sentence(5, 8)',
+      'log_at': '@time',
+      'user|1': ['nathan', 'hubert', 'becky'],
+    }]
+  }]
+})
+
 module.exports = [
   {
     url: '/devops-ui/projects/list',
@@ -31,10 +43,24 @@ module.exports = [
       const items = data.items
       return {
         message: 'success',
-        code: 20000,
         data: {
           total: items.length,
           items: items
+        }
+      }
+    }
+  },
+
+  { 
+    url: '/devops-ui/projects/activity/log/[A-Za-z0-9]',
+    type: 'get',
+    response: config => {
+      const items = activity_log_data.items
+      return {
+        message: 'success',
+        data: {
+          total: items.length,
+          logs: items
         }
       }
     }
