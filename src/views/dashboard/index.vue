@@ -62,7 +62,7 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Done / Assign Issues this month</span>
+            <span>Assign Issues Type</span>
           </div>
           <typePie />
         </el-card>

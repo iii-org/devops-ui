@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { getRdDashboardIssuesType } from '@/api/dashboard'
+import { mapGetters } from 'vuex'
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
@@ -21,14 +23,26 @@ export default {
       default: '300px'
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   data() {
     return {
-      chart: null
+      chart: null,
+      types: null
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
+    getRdDashboardIssuesType(this.userId).then(res => {
+      this.types = res.data.map(item => {
+        item.value = item.number
+        return item
+      })
+      this.$nextTick(() => {
+        this.initChart()
+      })
     })
   },
   beforeDestroy() {
@@ -50,8 +64,7 @@ export default {
         color: ['#67c23a', '#f56c6c'],
         legend: {
           left: 'center',
-          bottom: '10',
-          data: ['Features', 'Bugs']
+          bottom: '10'
         },
         series: [
           {
@@ -59,11 +72,7 @@ export default {
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
-            center: ['50%', '38%'],
-            data: [
-              { value: 31, name: 'Features' },
-              { value: 25, name: 'Bugs' }
-            ],
+            data: this.types,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

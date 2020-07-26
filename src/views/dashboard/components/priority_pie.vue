@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { getRdDashboardIssuesPriority } from '@/api/dashboard'
+import { mapGetters } from 'vuex'
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
@@ -21,14 +23,26 @@ export default {
       default: '300px'
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   data() {
     return {
-      chart: null
+      chart: null,
+      prioritys: null
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
+    getRdDashboardIssuesPriority(this.userId).then(res => {
+      this.prioritys = res.data.map(item => {
+        item.value = item.number
+        return item
+      })
+      this.$nextTick(() => {
+        this.initChart()
+      })
     })
   },
   beforeDestroy() {
@@ -49,8 +63,7 @@ export default {
         color: ['#f56c6c', '#e6a23c'],
         legend: {
           left: 'center',
-          bottom: '10',
-          data: ['Urgent', 'High']
+          bottom: '10'
         },
         series: [
           {
@@ -58,11 +71,7 @@ export default {
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
-            center: ['50%', '38%'],
-            data: [
-              { value: 32, name: 'Urgent' },
-              { value: 24, name: 'High' }
-            ],
+            data: this.prioritys,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
