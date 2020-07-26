@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">III DevOps</h3>
       </div>
 
       <el-form-item prop="username">
@@ -43,11 +43,6 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
-
     </el-form>
   </div>
 </template>
@@ -67,8 +62,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'becky',
-        password: 'openstack'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur' }],
@@ -82,7 +77,6 @@ export default {
   watch: {
     $route: {
       handler: function(route) {
-        console.log('route.query', route.query)
         this.redirect = route.query && route.query.redirect
       },
       immediate: true

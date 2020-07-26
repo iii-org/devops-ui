@@ -49,13 +49,13 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard', roles: ['developer'] }
+        meta: { title: 'Dashboard', icon: 'dashboard', roles: ['Engineer'] }
       }
     ]
   },
@@ -68,7 +68,7 @@ export const asyncRoutes = [
         path: '',
         name: 'MyIssues',
         component: () => import('@/views/MyIssues/index'),
-        meta: { title: 'My Issues', icon: 'list', roles: ['developer'] }
+        meta: { title: 'My Issues', icon: 'list', roles: ['Engineer'] }
       }
     ]
   },
@@ -77,12 +77,12 @@ export const asyncRoutes = [
     path: '/issues/:issue_num',
     component: Layout,
     hidden: true,
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
         component: () => import('@/views/IssueDetail/index'),
-        meta: { title: 'Issue Detail', roles: ['developer'] }
+        meta: { title: 'Issue Detail', roles: ['Engineer'] }
       }
     ]
   },
@@ -92,13 +92,13 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/profile/index',
     hidden: true,
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: 'index',
         component: () => import('@/views/Profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true, roles: ['developer'] }
+        meta: { title: 'Profile', icon: 'user', noCache: true, roles: ['Engineer'] }
       }
     ]
   },
@@ -107,20 +107,20 @@ export const asyncRoutes = [
     path: '/projects',
     component: Layout,
     name: 'Projects',
-    meta: { title: 'Projects', icon: 'el-icon-s-cooperation', roles: ['developer'] },
+    meta: { title: 'Projects', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
     children: [
       {
         path: 'list',
         name: 'Project List',
         component: () => import('@/views/ProjectList/index'),
-        meta: { title: 'Project List', icon: 'list', roles: ['developer'] }
+        meta: { title: 'Project List', icon: 'list', roles: ['Engineer'] }
       },
 
       {
         path: 'graph',
         name: 'Project Graph',
         component: () => import('@/views/ProjectGraph/index'),
-        meta: { title: 'Project Graph', icon: 'tree', roles: ['developer'] }
+        meta: { title: 'Project Graph', icon: 'tree', roles: ['Engineer'] }
       }
     ]
   },
@@ -129,14 +129,14 @@ export const asyncRoutes = [
     path: '/branches/:pId',
     component: Layout,
     hidden: true,
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
         name: 'branches',
         props: true,
         component: () => import('@/views/BranchList/index'),
-        meta: { title: 'Branches', icon: 'tree', roles: ['developer'] }
+        meta: { title: 'Branches', icon: 'tree', roles: ['Engineer'] }
       }
     ]
   },
@@ -145,14 +145,14 @@ export const asyncRoutes = [
     path: '/file_list/:bId',
     component: Layout,
     hidden: true,
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
         name: 'fileList',
         props: true,
         component: () => import('@/views/FileList/index'),
-        meta: { title: 'File List', icon: 'tree', roles: ['developer'] }
+        meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
       }
     ]
   },
@@ -161,13 +161,13 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/cicd/pipelines',
     name: 'CICD',
-    meta: { title: 'Pipelines', icon: 'el-icon-s-cooperation', roles: ['developer'] },
+    meta: { title: 'Pipelines', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
     children: [
       {
         path: 'pipelines',
         name: 'Pipelines',
         component: () => import('@/views/CicdPipelines/index'),
-        meta: { title: 'Pipelines', icon: 'example', roles: ['developer'] }
+        meta: { title: 'Pipelines', icon: 'example', roles: ['Engineer'] }
       }
     ]
   },
@@ -176,12 +176,12 @@ export const asyncRoutes = [
     path: '/cicd/pipelines/:pipeline_id/stages',
     component: Layout,
     hidden: true,
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
         component: () => import('@/views/CicdPipelinesStages/index'),
-        meta: { title: 'Pipeline Stages', roles: ['developer'] }
+        meta: { title: 'Pipeline Stages', roles: ['Engineer'] }
       }
     ]
   },
@@ -190,14 +190,14 @@ export const asyncRoutes = [
     path: '/commit_list/:bId',
     component: Layout,
     hidden: true,
-    meta: { roles: ['developer'] },
+    meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
         name: 'commitList',
         props: true,
         component: () => import('@/views/CommitList/index'),
-        meta: { title: 'Commit List', icon: 'tree', roles: ['developer'] }
+        meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
       }
     ]
   },

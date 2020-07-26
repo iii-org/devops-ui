@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken, getJWTContent } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import VueJwtDecode from 'vue-jwt-decode'
@@ -55,10 +55,10 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit }) {
+  getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo().then(response => {
-        const { data, message } = response
+      getInfo(state.userId).then(response => {
+        const { data } = response
         const { role } = data
         if(!role) {
           reject('role is not exist in user info')
@@ -79,16 +79,9 @@ const actions = {
 
   // user logout
   logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    removeToken()
+    resetRouter()
+    commit('RESET_STATE')
   },
 
   // remove token
