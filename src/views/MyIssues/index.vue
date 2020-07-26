@@ -9,89 +9,64 @@
       highlight-current-row
       :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
     >
-      <el-table-column label="Work Num">
+      <el-table-column label="Num" width="70" align="center">
         <template slot-scope="scope">
-          <router-link :to="'/issues/'+scope.row.issue_num" style="color: #409EFF">
-            <span>{{ scope.row.issue_num }}</span>
+          <router-link :to="'/issues/'+scope.row.id" style="color: #409EFF">
+            <span>{{ scope.row.id }}</span>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="Work Type">
+      <el-table-column label="Name" align="center">
         <template slot-scope="scope">
-          {{ scope.row.work_type }}
+          <span>{{ scope.row.subject }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Tracker" width="110">
+        <template slot-scope="scope">
+          {{ scope.row.tracker.name }}
         </template>
       </el-table-column>
       <el-table-column label="Priority" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.priority === 'Urgent'" type="danger" size="medium">{{ scope.row.priority }}</el-tag>
-          <el-tag v-else-if="scope.row.priority === 'High'" type="warning" size="medium">{{ scope.row.priority }}</el-tag>
-          <el-tag v-else-if="scope.row.priority === 'Normal'" size="medium">{{ scope.row.priority }}</el-tag>
-          <el-tag v-else type="success" size="medium">{{ scope.row.priority }}</el-tag>
+          <el-tag v-if="scope.row.priority.name === '特急'" type="danger" size="medium">{{ scope.row.priority.name }}</el-tag>
+          <el-tag v-else-if="scope.row.priority.name === '急'" type="warning" size="medium">{{ scope.row.priority.name }}</el-tag>
+          <el-tag v-else-if="scope.row.priority.name === '一般'" size="medium">{{ scope.row.priority.name }}</el-tag>
+          <el-tag v-else type="success" size="medium">{{ scope.row.priority.name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Status" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.status }}</span>
+          <span>{{ scope.row.status.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Project" width="110" align="center">
+      <el-table-column label="Project" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.project }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Work Name" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.work_name }}</span>
+          <span>{{ scope.row.project.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="Last Update Time" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.last_update_at }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Last Test Result" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.last_test_result }}</span>
-          <i v-show="scope.row.last_test_result === 'Failed'" style="color: red" class="el-icon-circle-close" />
+          <span>{{ scope.row.updated_date | relativeTime }}</span>
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      :layout="'total, prev, pager, next'"
-      @pagination="fetchData"
-    />
   </div>
 </template>
 
 <script>
 import { getIssuesByUser } from '@/api/issue'
-import Pagination from '@/components/Pagination'
+import { mapGetters } from 'vuex'
 
 export default {
-  components: { Pagination },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
   },
   data() {
     return {
       list: null,
-      total: 0,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      }
+      listLoading: true
     }
   },
   created() {
@@ -100,9 +75,8 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getIssuesByUser('user_account', this.listQuery).then(response => {
+      getIssuesByUser(this.userId, this.listQuery).then(response => {
         this.list = response.data
-        this.total = response.total
         this.listLoading = false
       })
     }

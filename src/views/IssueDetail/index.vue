@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
-        <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ $route.params.issue_num }}</span>
+        <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="editIssueDialogVisible = true">Edit</el-button>
         <div>{{ issue_detail.description }}</div>
       </div>
@@ -12,24 +12,24 @@
             <el-row :gutter="20">
               <el-col :span="6">Priority</el-col>
               <el-col :span="18">
-                <el-tag v-if="issue_detail.priority === 'Urgent'" type="danger" size="medium">{{ issue_detail.priority }}</el-tag>
-                <el-tag v-else-if="issue_detail.priority === 'High'" type="warning" size="medium">{{ issue_detail.priority }}</el-tag>
-                <el-tag v-else-if="issue_detail.priority === 'Normal'" size="medium">{{ issue_detail.priority }}</el-tag>
-                <el-tag v-else type="success" size="medium">{{ issue_detail.priority }}</el-tag>
+                <el-tag v-if="issue_detail.priority.name === '特急'" type="danger" size="medium">{{ issue_detail.priority.name }}</el-tag>
+                <el-tag v-else-if="issue_detail.priority.name === '急'" type="warning" size="medium">{{ issue_detail.priority.name }}</el-tag>
+                <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium">{{ issue_detail.priority.name }}</el-tag>
+                <el-tag v-else type="success" size="medium">{{ issue_detail.priority.name }}</el-tag>
               </el-col>
             </el-row>
           </el-col>
           <el-col :span="8">
             <el-row :gutter="20">
-              <el-col :span="6">Start Time</el-col>
-              <el-col :span="18">{{ issue_detail.start_time }}</el-col>
+              <el-col :span="6">Start Date</el-col>
+              <el-col :span="18">{{ issue_detail.start_date }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="8">
             <el-row :gutter="20">
               <el-col :span="6">Process</el-col>
               <el-col :span="18">
-                <el-progress :text-inside="true" :stroke-width="26" :percentage="issue_detail.process" />
+                <el-progress :text-inside="true" :stroke-width="26" :percentage="issue_detail.done_ratio" />
               </el-col>
             </el-row>
           </el-col>
@@ -38,19 +38,19 @@
           <el-col :span="8">
             <el-row :gutter="20">
               <el-col :span="6">Status</el-col>
-              <el-col :span="18">{{ issue_detail.status }}</el-col>
+              <el-col :span="18">{{ issue_detail.status.name }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="8">
             <el-row :gutter="20">
-              <el-col :span="6">End Time</el-col>
-              <el-col :span="18">{{ issue_detail.end_time }}</el-col>
+              <el-col :span="6">Due Date</el-col>
+              <el-col :span="18">{{ issue_detail.due_date }}</el-col>
             </el-row>
           </el-col>
           <el-col :span="8">
             <el-row :gutter="20">
               <el-col :span="6">Type</el-col>
-              <el-col :span="18">{{ issue_detail.type }}</el-col>
+              <el-col :span="18">{{ issue_detail.tracker.name }}</el-col>
             </el-row>
           </el-col>
         </el-row>
@@ -128,15 +128,22 @@
     />
     <edit-issue
       :dialog-visible.sync="editIssueDialogVisible"
-      :issue-process="issue_detail.process"
-      :issue-status="issue_detail.status"
+      :issue-done-ratio-val="issue_detail.done_ratio"
+      :issue-status-val="issue_detail.status.id"
+      :issue-tracker-val="issue_detail.tracker.id"
+      :issue-priority-val="issue_detail.priority.id"
+      :issue-start-date-val="issue_detail.start_date"
+      :issue-due-date-val="issue_detail.due_date"
+      :issue-description-val="issue_detail.description"
+      :issue-id-val="issueId"
       @issue-dialog-visible="emitEditIssueDialogVisible"
+      @update-issue="emitUpdateIssue"
     />
   </div>
 </template>
 
 <script>
-import { getIssue } from '@/api/issue'
+import { getIssue, updateIssue } from '@/api/issue'
 import EditIssue from './components/EditIssue'
 import AddContent from './components/AddContent'
 // import Pagination from '@/components/Pagination'
@@ -159,7 +166,11 @@ export default {
   data() {
     return {
       activeName: 'content',
-      issue_detail: {},
+      issue_detail: {
+        'priority': {'name': ''},
+        'status': {'name': ''},
+        'tracker': {'name': ''}
+      },
       total: 0,
       listLoading: true,
       listQuery: {
@@ -167,16 +178,18 @@ export default {
         limit: 10
       },
       editIssueDialogVisible: false,
-      addContentDialogVisible: false
+      addContentDialogVisible: false,
+      issueId: 0
     }
   },
   mounted() {
+    this.issueId = parseInt(this.$route.params.issue_num)
     this.fetchData()
   },
   methods: {
     fetchData() {
       this.listLoading = true
-      getIssue(this.$route.params.issue_num).then(response => {
+      getIssue(this.issueId).then(response => {
         this.issue_detail = response.data
         this.listLoading = false
       })
@@ -188,6 +201,11 @@ export default {
     },
     emitAddContentDialogVisible(visible) {
       this.addContentDialogVisible = visible
+    },
+    async emitUpdateIssue(data) {
+      await updateIssue(this.issueId, data)
+      this.editIssueDialogVisible = false
+      this.fetchData()
     }
   }
 }
