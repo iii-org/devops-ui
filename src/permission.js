@@ -19,7 +19,6 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-  console.log('hasToken', hasToken)
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -32,14 +31,11 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
-
           // get user info
           await store.dispatch('user/getInfo')
           const userRole = store.getters.userRole
-          console.log('userRole', userRole)
           const accessRoutes = await store.dispatch('permission/generateRoutes', userRole)
           router.addRoutes(accessRoutes)
-          console.log('to', to)
           next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login
