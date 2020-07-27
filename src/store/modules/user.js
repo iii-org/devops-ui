@@ -6,9 +6,9 @@ import VueJwtDecode from 'vue-jwt-decode'
 const getDefaultState = () => {
   return {
     token: getToken(),
-    // jwtContent: getJWTContent(),
     userId: 0,
-    userRole: ''
+    userRole: '',
+    userName: ''
   }
 }
 
@@ -23,6 +23,9 @@ const mutations = {
   },
   SET_USER_ROLE: (state, userRole) => {
     state.userRole = userRole
+  },
+  SET_USER_NAME: (state, userName) => {
+    state.userName = userName
   },
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -66,17 +69,17 @@ const actions = {
 
       getInfo(state.userId).then(response => {
         const { data } = response
-        const { role } = data
+        let { role, name } = data
         if(!role) {
           reject('role is not exist in user info')
         }
-        const { name } = role
-        if(!name) {
+        commit('SET_USER_NAME', name)
+
+        if(!role.name) {
           reject('name is not exist in role')
         }
-
         commit('SET_USER_ROLE', role.name)
-
+        
         resolve()
       }).catch(error => {
         reject(error)
