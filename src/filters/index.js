@@ -6,5 +6,9 @@ import moment from 'moment'
  * @param {string} datetime
  */
 export function relativeTime(datetime) {
-  return moment(datetime).fromNow();
+  const relativeTime = moment(datetime).fromNow()
+  if (relativeTime === 'Invalid date') {
+    return '-'
+  }
+  return relativeTime
 }
