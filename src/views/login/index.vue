@@ -106,7 +106,7 @@ export default {
             this.$store.dispatch('user/getInfo')
             console.log('redirect:', this.redirect)
             this.$router.push({ path: this.redirect || '/' })
-            resolve()
+            // resolve()
           }).catch(e => {
             console.log(e)
           }).finally(() => {

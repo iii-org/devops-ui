@@ -38,12 +38,12 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList']),
     returnTagType(row) {
-      const { last_test_passed, last_test_total } = row
-      return last_test_passed === last_test_total ? 'success' : 'danger'
+      const { success, total } = row.last_test_result
+      return success === total ? 'success' : 'danger'
     },
     testResults(row) {
-      const { last_test_passed, last_test_total } = row
-      return last_test_passed + ' / ' + last_test_total
+      const { success, total } = row.last_test_result
+      return success + ' / ' + total
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -56,54 +56,58 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <router-link
+          <!-- <router-link
             :to="{
               name: 'fileList',
               params: {
                 bId: scope.row.id,
-                projectName: scope.row.project_name,
-                branchName: scope.row.branch_name
+                projectName: scope.row.name,
+                branchName: scope.row.branch
               }
             }"
             style="color: #409EFF"
           >
-            <span>{{ scope.row.project_name }}</span>
-          </router-link>
+            <span>{{ scope.row.name }}</span>
+          </router-link> -->
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Workload">
         <template slot-scope="scope">
-          {{ scope.row.items }}
+          {{ scope.row.issues }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Upcomming Deadline">
         <template slot-scope="scope">
-          {{ scope.row.deadline }}
+          {{ new Date(scope.row.next_d_time).toLocaleString() }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Branches">
         <template slot-scope="scope">
           <router-link
-            :to="{ name: 'branches', params: { pId: scope.row.id, projectName: scope.row.project_name } }"
+            :to="{
+              name: 'branches',
+              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids[0] }
+            }"
             style="color: #409EFF"
           >
-            <span>{{ scope.row.brancheNum }}</span>
+            <span>{{ scope.row.branch }}</span>
           </router-link>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last Test">
         <template slot-scope="scope">
-          {{ scope.row.last_test_at }}
+          {{ new Date(scope.row.last_test_time).toLocaleString() }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last Test Result">
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           <el-tag :type="returnTagType(scope.row)" size="large">
             <i v-if="scope.row.last_test_result" class="el-icon-success" />
             <i v-else class="el-icon-error" />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column align="center" label="Last Tag">
         <template slot-scope="scope">
@@ -112,8 +116,8 @@ export default {
               name: 'fileList',
               params: {
                 bId: scope.row.id,
-                projectName: scope.row.project_name,
-                branchName: scope.row.branch_name
+                projectName: scope.row.name,
+                branchName: scope.row.branch
               }
             }"
             style="color: #409EFF"

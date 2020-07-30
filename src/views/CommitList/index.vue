@@ -25,8 +25,8 @@ export default {
   },
   computed: {
     ...mapGetters(['commitListByBranch', 'commitListTotalByBranch']),
-    bId() {
-      return this.$route.params.bId
+    rId() {
+      return this.$route.params.rId
     },
     projectName() {
       return this.$route.params.projectName
@@ -41,7 +41,7 @@ export default {
     }
   },
   async created() {
-    await this['commitList/getCommitListByBranch'](this.bId)
+    await this['commitList/getCommitListByBranch']({ rId: this.rId, bName: this.branchName })
     this.listLoading = false
   },
   methods: {

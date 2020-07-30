@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getProjectList(params) {
+export function getProjectList(userId, params) {
   return request({
-    url: '/devops-ui/projects/list',
+    url: '/project/rd/'+userId,
     method: 'get',
     params
   })

@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
+import { getGitGraphByRepo } from '../../api/git-graph'
 
 export default {
   data() {
@@ -9,23 +10,28 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject'])
+    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'projectList'])
   },
   watch: {
-    branchesByProject(ary) {
+    projectList(ary) {
       if (this.selectedBranch !== '') return
-      this.selectedBranch = ary[0].branch_name
+      this.selectedBranch = ary[0].name
+      this.selectedRepoId = ary[0].project_id
+      console.log(this.selectedBranch)
+    },
+    async selectedBranch() {
+      await getGitGraphByRepo(this.selectedRepoId)
     }
   },
   async created() {
-    await this['branches/getBranchesByProject'](this.$route.params.pId)
+    await this['projects/getProjectList']()
     this.listLoading = false
   },
   mounted() {
     this.createGraph()
   },
   methods: {
-    ...mapActions(['branches/getBranchesByProject']),
+    ...mapActions(['branches/getBranchesByProject', 'projects/getProjectList']),
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
@@ -74,12 +80,7 @@ export default {
       </div>
       <div class="cardBody">
         <el-select v-model="selectedBranch" size="small" placeholder="Select" style="width: 100%">
-          <el-option
-            v-for="item in branchesByProject"
-            :key="item.branch_name"
-            :label="item.branch_name"
-            :value="item.branch_name"
-          />
+          <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.name" />
         </el-select>
         <el-divider />
         <div id="graph-container" />

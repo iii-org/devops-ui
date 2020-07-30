@@ -20,12 +20,12 @@ const mutations = {
 }
 
 const actions = {
-  async getCommitListByBranch({ commit }, bId) {
+  async getCommitListByBranch({ commit }, {rId, bName}) {
     try {
-      const response = await GCLBB(bId)
+      const response = await GCLBB(rId, bName)
       const { data } = response
-      commit('SET_LIST', data.items)
-      commit('SET_TOTAL', data.total)
+      // commit('SET_LIST', data.items)
+      // commit('SET_TOTAL', data.total)
     } catch (error) {
       console.error(error.toString())
     }
