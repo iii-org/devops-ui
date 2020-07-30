@@ -18,35 +18,45 @@
       </el-table-column>
       <el-table-column label="Name" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.subject }}</span>
+          <span>{{ scope.row.issue_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Tracker" width="110">
         <template slot-scope="scope">
-          {{ scope.row.tracker.name }}
+          {{ scope.row.issue_category }}
         </template>
       </el-table-column>
       <el-table-column label="Priority" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.priority.name === '特急'" type="danger" size="medium">{{ scope.row.priority.name }}</el-tag>
-          <el-tag v-else-if="scope.row.priority.name === '急'" type="warning" size="medium">{{ scope.row.priority.name }}</el-tag>
-          <el-tag v-else-if="scope.row.priority.name === '一般'" size="medium">{{ scope.row.priority.name }}</el-tag>
-          <el-tag v-else type="success" size="medium">{{ scope.row.priority.name }}</el-tag>
+          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '一般'" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Status" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.status.name }}</span>
+          <span>{{ scope.row.issue_status }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Project" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.project.name }}</span>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="Last Update Time" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.updated_date | relativeTime }}</span>
+          <span>{{ scope.row.last_test_time | relativeTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Last Test Result" width="110" align="center">
+        <template slot-scope="scope">
+          <div>
+            <span v-if="Object.entries(scope.row.last_test_result).length > 0" type="danger" size="medium">
+              {{ scope.row.last_test_result.success }} / {{ scope.row.last_test_result.total }}
+            </span>
+            <span v-else>-</span>
+          </div>
         </template>
       </el-table-column>
     </el-table>
