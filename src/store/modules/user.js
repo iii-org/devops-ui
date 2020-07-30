@@ -41,6 +41,7 @@ const actions = {
         const { data } = response
         const { token } = data
         const jwtContent = VueJwtDecode.decode(token)
+        console.log('jwtContent', jwtContent)
         if(!'identity' in jwtContent) {
           Promise.reject('userId not exist')
         }

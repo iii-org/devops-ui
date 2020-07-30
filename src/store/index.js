@@ -9,6 +9,7 @@ import branches from './modules/branches'
 import fileList from './modules/fileList'
 import commitList from './modules/commitList'
 import permission from './modules/permission'
+import tags from './modules/tags'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
     branches,
     fileList,
     commitList,
-    permission
+    permission,
+    tags
   },
   getters
 })

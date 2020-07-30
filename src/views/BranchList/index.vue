@@ -32,7 +32,11 @@ export default {
       deleteBrancheName: '',
       tagDialogVisible: false,
       tagVersion: '',
-      tagReleaseNote: ''
+      tagReleaseNote: '',
+      newBranchBtnLoading: false,
+      deleteBranchBtnLoading: false,
+      mergeBranchBtnLoading: false,
+      newTagBtnLoading: false
     }
   },
   computed: {
@@ -47,21 +51,101 @@ export default {
     }
   },
   async created() {
+    if (!this.$route.params.pId) return
     await this['branches/getBranchesByProject'](this.$route.params.pId)
     this.listLoading = false
   },
   methods: {
-    ...mapActions(['branches/getBranchesByProject']),
+    ...mapActions([
+      'branches/getBranchesByProject',
+      'branches/newBranch',
+      'branches/deleteBranch',
+      'branches/mergeBranch',
+      'tags/newTag'
+    ]),
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
     handlePull() {},
+    handleCommitClick(index, row) {
+      this.$router.push({
+        name: 'commitList',
+        params: {
+          rId: this.$route.params.pId,
+          bId: row.id,
+          projectName: this.projectName,
+          branchName: row.name
+        }
+      })
+    },
     handleMerge(index, row) {
       this.mergeDialogVisible = true
-      this.selectedBranch = row.branch_name
+      this.selectedBranch = row.name
     },
-    handleDelete() {
+    handleDelete(index, row) {
       this.deleteDialogVisible = true
+      this.selectedBranch = row.name
+    },
+    async handleNewBranch() {
+      if (!this.$route.params.pId) return
+      if (this.newBranchName === '') return
+      this.newBranchBtnLoading = true
+      await this['branches/newBranch']({
+        rId: this.$route.params.pId,
+        data: { branch: this.newBranchName, ref: this.newBranchFrom }
+      })
+      this.newBranchBtnLoading = false
+      this.dialogVisible = false
+    },
+    async handleDeleteModal() {
+      if (!this.$route.params.pId) return
+      if (this.selectedBranch !== this.deleteBrancheName)
+        return this.$message({
+          message: 'Please input branch name correctly.',
+          type: 'error'
+        })
+      this.deleteBranchBtnLoading = true
+      await this['branches/deleteBranch']({ rId: this.$route.params.pId, bName: this.deleteBrancheName })
+      this.deleteBranchBtnLoading = false
+      this.deleteDialogVisible = false
+    },
+    async handleMergeBranch() {
+      if (!this.$route.params.pId) return
+      this.mergeBranchBtnLoading = true
+      await this['branches/mergeBranch']({
+        rId: this.$route.params.pId,
+        data: {
+          schemas: {
+            source_branch: this.selectedBranch,
+            target_branch: this.newBranchFrom,
+            title: 'API',
+            merge_commit_message: this.commitMsg
+          }
+        }
+      })
+      this.mergeBranchBtnLoading = false
+      this.mergeDialogVisible = false
+    },
+    async handleNewTag() {
+      if (!this.$route.params.pId) return
+      if (this.tagVersion === '')
+        return this.$message({
+          message: 'Please input tag version correctly.',
+          type: 'error'
+        })
+      this.newTagBtnLoading = true
+      await this['tags/newTag']({
+        rId: this.$route.params.pId,
+        data: {
+          schemas: {
+            tag_name: this.tagVersion,
+            ref: this.newBranchFrom,
+            message: this.tagReleaseNote
+          }
+        }
+      })
+      this.newTagBtnLoading = false
+      this.tagDialogVisible = false
     }
   }
 }
@@ -91,40 +175,45 @@ export default {
         <template slot-scope="scope">
           <router-link
             :to="{
-              name: 'commitList',
+              name: 'fileList',
               params: {
                 bId: scope.row.id,
                 projectName: projectName,
-                branchName: scope.row.branch_name
+                branchName: scope.row.name
               }
             }"
             style="color: #409EFF"
           >
-            <span>{{ scope.row.branch_name }}</span>
+            <span>{{ scope.row.name }}</span
+            ><i class="el-icon-file" />
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="Commit Message" :show-overflow-tooltip="true">
+      <el-table-column label="Last Commit Message" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_message }}
+          <span>{{ scope.row.last_commit_message }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Commit Time" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_time }}
+          {{ new Date(scope.row.last_commit_time).toLocaleString() }}
         </template>
       </el-table-column>
       <el-table-column label="Commit ID" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_id }}
+          {{ scope.row.uuid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" width="250">
+      <el-table-column align="center" width="350">
         <template slot="header">
           <el-input v-model="search" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <!-- <el-button size="mini" type="primary" @click="handlePull(scope.$index, scope.row)">Pull</el-button> -->
+          <el-button size="mini" type="primary" @click="handleCommitClick(scope.$index, scope.row)">
+            <i class="el-icon-finished" />
+            Commits&nbsp;
+          </el-button>
           <el-button size="mini" type="warning" @click="handleMerge(scope.$index, scope.row)">Merge</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template>
@@ -145,38 +234,28 @@ export default {
       <el-input v-model="newBranchName" size="small" placeholder="" />
       <h4>From</h4>
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
-        <el-option
-          v-for="item in branchesByProject"
-          :key="item.branch_name"
-          :label="item.branch_name"
-          :value="item.branch_name"
-        />
+        <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
       <h4>Commit Message :</h4>
       <el-input v-model="commitMsg" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="handleNewBranch" :loading="newBranchBtnLoading">Confirm</el-button>
       </span>
     </el-dialog>
 
-    <el-dialog title="New Branch" :visible.sync="mergeDialogVisible" width="50%">
-      <h3>New Branch Name: {{ selectedBranch }}</h3>
+    <el-dialog :title="'Merge'" :visible.sync="mergeDialogVisible" width="50%">
+      <h3>From: {{ selectedBranch }}</h3>
       <el-divider />
       <h4>Merge into</h4>
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
-        <el-option
-          v-for="item in branchesByProject"
-          :key="item.branch_name"
-          :label="item.branch_name"
-          :value="item.branch_name"
-        />
+        <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
       <h4>Commit Message :</h4>
       <el-input v-model="commitMsg" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="mergeDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="mergeDialogVisible = false">Confirm</el-button>
+        <el-button type="warning" @click="handleMergeBranch">Merge</el-button>
       </span>
     </el-dialog>
 
@@ -185,7 +264,7 @@ export default {
       <el-input v-model="deleteBrancheName" placeholder="" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="deleteDialogVisible = false">Confirm</el-button>
+        <el-button type="danger" @click="handleDeleteModal" :loading="deleteBranchBtnLoading">Delete</el-button>
       </span>
     </el-dialog>
 
@@ -194,18 +273,13 @@ export default {
       <el-input v-model="tagVersion" size="small" placeholder="" />
       <h4>@ Branch</h4>
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
-        <el-option
-          v-for="item in branchesByProject"
-          :key="item.branch_name"
-          :label="item.branch_name"
-          :value="item.branch_name"
-        />
+        <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
       <h4>Release Note :</h4>
       <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="tagDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="tagDialogVisible = false">Confirm</el-button>
+        <el-button type="success" @click="handleNewTag" :loading="newTagBtnLoading">Confirm</el-button>
       </span>
     </el-dialog>
   </div>

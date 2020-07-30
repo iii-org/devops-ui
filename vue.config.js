@@ -1,5 +1,4 @@
 'use strict'
-const appConfig = require('./src/config/config.js')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
@@ -38,16 +37,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy: {
-      '/dev-api': {
-          target: appConfig.API_BASE_URL,
-          ws: true,
-          changOrigin: true,
-          pathRewrite: {
-            '^/dev-api': ''
-          }
-      }
-    }
+    proxy: process.env.VUE_APP_DEV_PROXY_URL + process.env.VUE_APP_BASE_API
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

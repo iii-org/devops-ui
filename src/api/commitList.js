@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getCommitListByBranch(bId) {
+export function getCommitListByBranch(rId, bName) {
   return request({
-    url: '/devops-ui/commitList/' + bId,
+    url: '/repositories/rd/'+rId+'/branch/'+ bName,
     method: 'get'
   })
 }
