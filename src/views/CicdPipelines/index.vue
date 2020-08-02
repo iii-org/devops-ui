@@ -11,9 +11,6 @@
     >
       <el-table-column label="Index" align="center" width="70">
         <template slot-scope="scope">
-          <!-- <router-link :to="'/cicd/pipelines/'+scope.row.id+'/stages'" style="color: #409EFF">
-            <span>{{ scope.row.id }}</span>
-          </router-link> -->
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
