@@ -157,34 +157,33 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/cicd',
-    component: Layout,
-    redirect: '/cicd/pipelines',
-    name: 'CICD',
-    meta: { title: 'Pipelines', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
-    children: [
-      {
-        path: 'pipelines',
-        name: 'Pipelines',
-        component: () => import('@/views/CicdPipelines/index'),
-        meta: { title: 'Pipelines', icon: 'example', roles: ['Engineer'] }
-      }
-    ]
-  },
-
-  {
-    path: '/cicd/pipelines/:pipeline_id/stages',
+    path: '/cicd/pipelines/:bId',
     component: Layout,
     hidden: true,
     meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/CicdPipelinesStages/index'),
-        meta: { title: 'Pipeline Stages', roles: ['Engineer'] }
+        name: 'cicdPipelines',
+        component: () => import('@/views/CicdPipelines/index'),
+        meta: { title: 'CICD Pipelines', icon: 'example', roles: ['Engineer'] }
       }
     ]
   },
+
+  // {
+  //   path: '/cicd/pipelines/:pipeline_id/stages',
+  //   component: Layout,
+  //   hidden: true,
+  //   meta: { roles: ['Engineer'] },
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/CicdPipelinesStages/index'),
+  //       meta: { title: 'Pipeline Stages', roles: ['Engineer'] }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/commit_list/:bId',
