@@ -1,16 +1,15 @@
 import request from '@/utils/request'
 
-export function getPipelines(param) {
+export function getPipelines(project_id) {
   return request({
-    url: '/cicd/pipelines',
-    method: 'get',
-    param
+    url: `/pipelines/rd/${project_id}/pipelines_exec`,
+    method: 'get'
   })
 }
 
 export function getPipeline(id) {
   return request({
-    url: `/cicd/pipelines/${id}`,
+    url: `/pipelines`,
     method: 'get'
   })
 }

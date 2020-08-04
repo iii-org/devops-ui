@@ -56,20 +56,16 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <!-- <router-link
+          <router-link
             :to="{
-              name: 'fileList',
-              params: {
-                bId: scope.row.id,
-                projectName: scope.row.name,
-                branchName: scope.row.branch
-              }
+              name: 'cicdPipelines',
+              params: { pId: scope.row.project_id }
             }"
             style="color: #409EFF"
           >
             <span>{{ scope.row.name }}</span>
-          </router-link> -->
-          <span>{{ scope.row.name }}</span>
+          </router-link>
+          <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
       <el-table-column align="center" label="Workload">

@@ -11,37 +11,34 @@
     >
       <el-table-column label="Index" align="center" width="70">
         <template slot-scope="scope">
-          <router-link :to="'/cicd/pipelines/'+scope.row.index+'/stages'" style="color: #409EFF">
-            <span>{{ scope.row.index }}</span>
-          </router-link>
+          <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" width="120">
+      <el-table-column label="Status" align="center" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'Failed'" type="danger" size="medium" effect="plain">
-            <i class="el-icon-circle-close" /> {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.status === 'Running'" size="medium" effect="plain">
-            <i class="el-icon-loading" /> {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else type="success" size="medium" effect="plain">
-            <i class="el-icon-circle-check" /> {{ scope.row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Stages" align="center" width="70">
-        <template slot-scope="scope">
-          <span>{{ scope.row.current_stages }}/{{ scope.row.total_stages }}</span>
+          <i 
+            v-if="scope.row.status.success === scope.row.status.total" 
+            class="el-icon-circle-check" 
+            style="color: #67c23a"
+          />
+          <span
+            v-if="scope.row.status.success === scope.row.status.total"
+            style="color: #67c23a"
+          >{{ scope.row.status.success }}/{{ scope.row.status.total }}</span>
+          <i 
+            v-if="scope.row.status.success !== scope.row.status.total" 
+            class="el-icon-circle-check"
+            style="color: #c8c8c8" 
+          />
+          <span 
+            v-if="scope.row.status.success !== scope.row.status.total" 
+            style="color: #c8c8c8"
+          >{{ scope.row.status.success }}/{{ scope.row.status.total }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Branch" width="150">
         <template slot-scope="scope">
-          {{ scope.row.branch }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Trigger" width="150">
-        <template slot-scope="scope">
-          {{ scope.row.trigger }}
+          {{ scope.row.commit_branch }}
         </template>
       </el-table-column>
       <el-table-column label="Commit">
@@ -50,59 +47,34 @@
           <div>{{ scope.row.commit_message }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="Last Run At" width="160" align="center">
+      <el-table-column label="Last Test Time" width="160" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.last_run_at }}</span>
+          <span>{{ scope.row.last_test_time | relativeTime }}</span>
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      :layout="'total, prev, pager, next'"
-      @pagination="fetchData"
-    />
   </div>
 </template>
 
 <script>
 import { getPipelines } from '@/api/cicd'
-import Pagination from '@/components/Pagination'
 
 export default {
-  components: { Pagination },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
       pipelines: null,
-      total: 0,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      }
+      listLoading: true
     }
   },
   created() {
+    if (!this.$route.params.pId) return
     this.fetchData()
   },
   methods: {
     fetchData() {
       this.listLoading = true
-      getPipelines(this.listQuery).then(response => {
+      getPipelines(this.$route.params.pId).then(response => {
         this.pipelines = response.data
-        this.total = response.total
         this.listLoading = false
       })
     }

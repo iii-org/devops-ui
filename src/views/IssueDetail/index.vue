@@ -66,7 +66,7 @@
         <el-button type="primary" @click="addContentDialogVisible = true">Add Content</el-button>
         <el-table
           v-loading="listLoading"
-          :data="issue_detail.custom_fields"
+          :data="issue_detail.journals"
           element-loading-text="Loading"
           border
           fit
@@ -76,17 +76,22 @@
         >
           <el-table-column label="Description">
             <template slot-scope="scope">
-              {{ scope.row.name }}
+              {{ scope.row.notes }}
             </template>
           </el-table-column>
-          <el-table-column label="Create Time" width="160">
+          <el-table-column label="Create User" width="180">
             <template slot-scope="scope">
-              {{ scope.row.create_time }}
+              {{ scope.row.user.name }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Create Time" width="180">
+            <template slot-scope="scope">
+              {{ scope.row.created_on }}
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Feature" name="feature">
+      <!-- <el-tab-pane label="Feature" name="feature">
         <el-button type="primary">Add API</el-button>
         <el-button type="primary">API Test Plan</el-button>
         <el-table
@@ -120,7 +125,7 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
     <add-content
       :dialog-visible.sync="addContentDialogVisible"
