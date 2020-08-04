@@ -41,7 +41,7 @@ export default {
     }
   },
   async created() {
-    await this['commitList/getCommitListByBranch']({ rId: this.rId, bName: this.branchName })
+    await this['commitList/getCommitListByBranch']({ rId: this.rId, params: { branch: this.branchName } })
     this.listLoading = false
   },
   methods: {
@@ -68,22 +68,22 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Author" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.author }}
+          {{ scope.row.author_name }}
         </template>
       </el-table-column>
       <el-table-column label="Commit Message" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_message }}
+          {{ scope.row.message }}
         </template>
       </el-table-column>
       <el-table-column label="Commit Time" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_time }}
+          {{ new Date(scope.row.committed_date).toLocaleString() }}
         </template>
       </el-table-column>
       <el-table-column label="Commit ID" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_id }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
       <el-table-column label="Action" :show-overflow-tooltip="true" align="center">

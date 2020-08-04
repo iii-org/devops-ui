@@ -41,6 +41,9 @@ export default {
   },
   computed: {
     ...mapGetters(['branchesByProject', 'branchesTotalNumByProject']),
+    rId() {
+      return this.$route.params.pId
+    },
     projectName() {
       return this.$route.params.projectName
     },
@@ -118,8 +121,8 @@ export default {
           schemas: {
             source_branch: this.selectedBranch,
             target_branch: this.newBranchFrom,
-            title: 'API',
-            merge_commit_message: this.commitMsg
+            title: 'merged_by_api'
+            // merge_commit_message: this.commitMsg
           }
         }
       })
@@ -128,11 +131,12 @@ export default {
     },
     async handleNewTag() {
       if (!this.$route.params.pId) return
-      if (this.tagVersion === '')
+      if (this.tagVersion === '') {
         return this.$message({
           message: 'Please input tag version correctly.',
           type: 'error'
         })
+      }
       this.newTagBtnLoading = true
       await this['tags/newTag']({
         rId: this.$route.params.pId,
@@ -177,15 +181,15 @@ export default {
             :to="{
               name: 'fileList',
               params: {
-                bId: scope.row.id,
+                rId: rId,
                 projectName: projectName,
                 branchName: scope.row.name
               }
             }"
             style="color: #409EFF"
           >
-            <span>{{ scope.row.name }}</span
-            ><i class="el-icon-file" />
+            <span>{{ scope.row.name }}</span>
+            <i class="el-icon-document" />
           </router-link>
         </template>
       </el-table-column>
@@ -236,8 +240,8 @@ export default {
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
         <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
-      <h4>Commit Message :</h4>
-      <el-input v-model="commitMsg" type="textarea" :rows="3" />
+      <!-- <h4>Commit Message :</h4>
+      <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleNewBranch" :loading="newBranchBtnLoading">Confirm</el-button>
@@ -251,8 +255,8 @@ export default {
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
         <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
-      <h4>Commit Message :</h4>
-      <el-input v-model="commitMsg" type="textarea" :rows="3" />
+      <!-- <h4>Commit Message :</h4>
+      <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="mergeDialogVisible = false">Cancel</el-button>
         <el-button type="warning" @click="handleMergeBranch">Merge</el-button>
@@ -282,6 +286,7 @@ export default {
         <el-button type="success" @click="handleNewTag" :loading="newTagBtnLoading">Confirm</el-button>
       </span>
     </el-dialog>
+    <router-view />
   </div>
 </template>
 

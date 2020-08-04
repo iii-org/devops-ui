@@ -97,7 +97,9 @@ export default {
       submitLoading: false,
       commitMsg: '',
       uploadFolder: '',
-      uploadCommitMsg: ''
+      uploadCommitMsg: '',
+      editor: undefined,
+      newFileBtnLoading: false
     }
   },
   computed: {
@@ -119,20 +121,23 @@ export default {
       if (this.drawerOpend) return
       this.drawerOpend = true
       this.$nextTick(() => {
-        monaco.editor.create(document.getElementById('editor-container'), {
+        this.editor = monaco.editor.create(document.getElementById('editor-container'), {
           value: 'console.log("Hello, world")',
-          language: 'javascript',
+          language: this.fileType,
           theme: 'vs-dark'
         })
       })
+    },
+    fileType(value) {
+      monaco.editor.setModelLanguage(this.editor.getModel(), value)
     }
   },
   async created() {
-    await this['fileList/getFileListByBranch'](this.$route.params.bId)
+    await this['fileList/getFileListByBranch']({ rId: this.$route.params.rId, bName: this.branchName })
     this.listLoading = false
   },
   methods: {
-    ...mapActions(['fileList/getFileListByBranch']),
+    ...mapActions(['fileList/getFileListByBranch', 'fileList/addFile']),
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
@@ -156,6 +161,22 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`Cancel the transfert of ${file.name} ?`)
+    },
+    async handleAddingFile() {
+      const data = {
+        branch: this.branchName,
+        file_path: this.fileName,
+        start_branch: this.branchName,
+        author_email: 'author@example.com',
+        author_name: 'John Doe',
+        'encoding"': 'base64',
+        'content"': btoa(this.editor.getValue()),
+        commit_message: this.commitMsg
+      }
+      this.newFileBtnLoading = true
+      await this['fileList/addFile']({ rId: this.$route.params.rId, data })
+      this.newFileBtnLoading = false
+      this.dialogVisible = false
     }
   }
 }
@@ -179,19 +200,19 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="File Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.file_name }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Commit Message" :show-overflow-tooltip="true">
+      <!-- <el-table-column label="Commit Message" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.commit_message }}
         </template>
-      </el-table-column>
-      <el-table-column label="Commit Time" :show-overflow-tooltip="true">
+      </el-table-column> -->
+      <!-- <el-table-column label="Commit Time" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.commit_time }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="Action" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleAdding(scope)">Edit</el-button>
@@ -235,6 +256,7 @@ export default {
         </div>
         <div class="file-drawer__footer">
           <el-button @click="drawer = false">Cancel</el-button>
+          <el-button type="primary" :loading="newFileBtnLoading" @click="handleAddingFile">Confirm</el-button>
         </div>
       </div>
     </el-drawer>
@@ -262,7 +284,6 @@ export default {
       <el-input v-model="uploadCommitMsg" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
       </span>
     </el-dialog>
   </div>

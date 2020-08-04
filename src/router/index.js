@@ -108,6 +108,7 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Projects',
     meta: { title: 'Projects', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
+    redirect: '/projects/list',
     children: [
       {
         path: 'list',
@@ -126,7 +127,7 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/branches/:pId',
+    path: '/branches/:pId/:projectName',
     component: Layout,
     hidden: true,
     meta: { roles: ['Engineer'] },
@@ -142,7 +143,7 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/file_list/:bId',
+    path: '/file_list/:rId/:branchName/:projectName',
     component: Layout,
     hidden: true,
     meta: { roles: ['Engineer'] },
@@ -186,7 +187,7 @@ export const asyncRoutes = [
   // },
 
   {
-    path: '/commit_list/:bId',
+    path: '/commit_list/:rId/:branchName/:projectName',
     component: Layout,
     hidden: true,
     meta: { roles: ['Engineer'] },
@@ -212,7 +213,7 @@ export const asyncRoutes = [
         name: 'PM Project List',
         component: () => import('@/views/ProjectList/index'),
         meta: { title: 'PM Project List', icon: 'list', roles: ['pm'] }
-      },
+      }
     ]
   },
 
