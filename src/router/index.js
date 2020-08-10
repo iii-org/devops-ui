@@ -206,13 +206,14 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'PMProjects',
-    meta: { title: 'Project List', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    redirect: '/list',
+    meta: { title: 'Project List', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
     children: [
       {
         path: 'list',
         name: 'PM Project List',
         component: () => import('@/views/ProjectList/index'),
-        meta: { title: 'PM Project List', icon: 'list', roles: ['pm'] }
+        meta: { title: 'PM Project List', icon: 'list', roles: ['Project Manager'] }
       }
     ]
   },
@@ -221,32 +222,66 @@ export const asyncRoutes = [
     path: '/overview',
     component: Layout,
     name: 'overview',
-    meta: { title: 'Overview', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    redirect: '/overview/index',
+    meta: { title: 'Overview', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
     children: [
       {
         path: 'index',
         name: 'Overview',
         component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'Overview', icon: 'dashboard', roles: ['pm'] }
+        meta: { title: 'Overview', icon: 'dashboard', roles: ['Project Manager'] }
       },
       {
         path: 'current-activity',
         name: 'Current Activity',
         component: () => import('@/views/ProjectCurrentActivity/index'),
-        meta: { title: 'Current Activity', icon: 'list', roles: ['pm'] }
+        meta: { title: 'Current Activity', icon: 'list', roles: ['Project Manager'] }
       },
 
       {
         path: 'activity-log',
         name: 'Activity Log',
         component: () => import('@/views/ProjectActivityLog/index'),
-        meta: { title: 'Activity Log', icon: 'list', roles: ['pm'] }
+        meta: { title: 'Activity Log', icon: 'list', roles: ['Project Manager'] }
       },
       {
         path: 'roadmap',
         name: 'Roadmap',
         component: () => import('@/views/ProjectRoadmap/index'),
-        meta: { title: 'Roadmap', icon: 'el-icon-discover', roles: ['pm'] }
+        meta: { title: 'Roadmap', icon: 'el-icon-discover', roles: ['Project Manager'] }
+      }
+    ]
+  },
+  {
+    path: '/progress',
+    component: Layout,
+    name: 'progress',
+    redirect: '/progress/project-gantt',
+    meta: { title: 'Progress', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
+    children: [
+      {
+        path: 'project-gantt',
+        name: 'ProjectGantt',
+        component: () => import('@/views/OverviewProject/index'),
+        meta: { title: 'GanProject Gantttt', icon: 'dashboard', roles: ['Project Manager'] }
+      },
+      {
+        path: 'dev-gantt',
+        name: 'DevGantt',
+        component: () => import('@/views/OverviewProject/index'),
+        meta: { title: 'Dev Gantt', icon: 'dashboard', roles: ['Project Manager'] }
+      },
+      {
+        path: 'dev-version',
+        name: 'DevVersion',
+        component: () => import('@/views/OverviewProject/index'),
+        meta: { title: 'Dev Version', icon: 'dashboard', roles: ['Project Manager'] }
+      },
+      {
+        path: 'dev-branch',
+        name: 'DevBranch',
+        component: () => import('@/views/OverviewProject/index'),
+        meta: { title: 'Dev Branch', icon: 'dashboard', roles: ['Project Manager'] }
       }
     ]
   },
@@ -254,13 +289,13 @@ export const asyncRoutes = [
     path: '/project_topic',
     component: Layout,
     name: 'ProjectTopic',
-    meta: { title: 'Project Topic', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    meta: { title: 'Project Topic', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
     children: [
       {
         path: 'document',
         name: 'Document',
         component: () => import('@/views/ProjectDocument/index'),
-        meta: { title: 'Document', icon: 'dashboard', roles: ['pm'] }
+        meta: { title: 'Document', icon: 'dashboard', roles: ['Project Manager'] }
       }
     ]
   },
