@@ -250,7 +250,20 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/project_topic',
+    component: Layout,
+    name: 'ProjectTopic',
+    meta: { title: 'Project Topic', icon: 'el-icon-s-cooperation', roles: ['pm'] },
+    children: [
+      {
+        path: 'document',
+        name: 'Document',
+        component: () => import('@/views/ProjectDocument/index'),
+        meta: { title: 'Document', icon: 'dashboard', roles: ['pm'] }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
