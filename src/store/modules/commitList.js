@@ -1,4 +1,3 @@
-
 import { getCommitListByBranch as GCLBB } from '@/api/commitList'
 
 const getDefaultState = () => {
@@ -20,12 +19,11 @@ const mutations = {
 }
 
 const actions = {
-  async getCommitListByBranch({ commit }, {rId, bName}) {
+  async getCommitListByBranch({ commit }, { rId, params }) {
     try {
-      const response = await GCLBB(rId, bName)
-      const { data } = response
-      // commit('SET_LIST', data.items)
-      // commit('SET_TOTAL', data.total)
+      const response = await GCLBB(rId, params)
+      commit('SET_LIST', response)
+      commit('SET_TOTAL', response.length)
     } catch (error) {
       console.error(error.toString())
     }
@@ -38,4 +36,3 @@ export default {
   mutations,
   actions
 }
-

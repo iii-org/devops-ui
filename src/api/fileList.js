@@ -1,8 +1,16 @@
 import request from '@/utils/request'
 
-export function getFileListByBranch(bId) {
+export function getFileListByBranch(rId, branchName) {
   return request({
-    url: '/devops-ui/fileList/' + bId,
+    url: '/repositories/rd/' + rId + '/branch/' + branchName + '/tree',
     method: 'get'
+  })
+}
+
+export function addFile(rId, data) {
+  return request({
+    url: '/repositories/rd/' + rId + '/branch/files',
+    method: 'POST',
+    data
   })
 }

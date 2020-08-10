@@ -39,14 +39,21 @@ export default {
     ...mapActions(['projects/getProjectList']),
     returnTagType(row) {
       const { success, total } = row.last_test_result
+      if (!success || !total) return 'info'
       return success === total ? 'success' : 'danger'
     },
     testResults(row) {
       const { success, total } = row.last_test_result
+      if (!success || !total) return 'No Test'
       return success + ' / ' + total
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    returnLatestTag(row) {
+      const { tags } = row
+      if (!tags || tags.length === 0) return 'No Tag'
+      return tags[0].name
     }
   }
 }
@@ -93,17 +100,19 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Last Test">
         <template slot-scope="scope">
-          {{ new Date(scope.row.last_test_time).toLocaleString() }}
+          <span v-if="scope.row.last_test_time === ''">No Test</span>
+          <span v-else>{{ new Date(scope.row.last_test_time).toLocaleString() }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last Test Result">
-        <!-- <template slot-scope="scope">
+        <template slot-scope="scope">
           <el-tag :type="returnTagType(scope.row)" size="large">
-            <i v-if="scope.row.last_test_result" class="el-icon-success" />
+            <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
+            <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
             <i v-else class="el-icon-error" />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
-        </template> -->
+        </template>
       </el-table-column>
       <el-table-column align="center" label="Last Tag">
         <template slot-scope="scope">
@@ -118,7 +127,7 @@ export default {
             }"
             style="color: #409EFF"
           >
-            {{ scope.row.latest_tag }}
+            {{ returnLatestTag(scope.row) }}
           </router-link>
         </template>
       </el-table-column>
@@ -131,5 +140,6 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <router-view />
   </div>
 </template>

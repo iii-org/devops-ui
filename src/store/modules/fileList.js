@@ -1,5 +1,4 @@
-
-import { getFileListByBranch as GFLBB } from '@/api/fileList'
+import { getFileListByBranch as GFLBB, addFile as AF } from '@/api/fileList'
 
 const getDefaultState = () => {
   return {
@@ -20,12 +19,19 @@ const mutations = {
 }
 
 const actions = {
-  async getFileListByBranch({ commit }, bId) {
+  async getFileListByBranch({ commit }, { rId, bName }) {
     try {
-      const response = await GFLBB(bId)
-      const { data } = response
-      commit('SET_LIST', data.items)
-      commit('SET_TOTAL', data.total)
+      const response = await GFLBB(rId, bName)
+      commit('SET_LIST', response)
+      commit('SET_TOTAL', response.length)
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async addFile({ commit }, { rId, data }) {
+    try {
+      const response = await AF(rId, data)
+      console.log(response)
     } catch (error) {
       console.error(error.toString())
     }
@@ -38,4 +44,3 @@ export default {
   mutations,
   actions
 }
-
