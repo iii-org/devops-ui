@@ -257,45 +257,65 @@ export const asyncRoutes = [
     component: Layout,
     name: 'progress',
     redirect: '/progress/project-gantt',
-    meta: { title: 'Progress', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
+    meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager'] },
     children: [
       {
         path: 'project-gantt',
         name: 'ProjectGantt',
         component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'GanProject Gantttt', icon: 'dashboard', roles: ['Project Manager'] }
+        meta: { title: 'GanProject Gantttt', roles: ['Project Manager'] }
       },
       {
         path: 'dev-gantt',
         name: 'DevGantt',
         component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'Dev Gantt', icon: 'dashboard', roles: ['Project Manager'] }
+        meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
       },
       {
         path: 'dev-version',
         name: 'DevVersion',
         component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'Dev Version', icon: 'dashboard', roles: ['Project Manager'] }
+        meta: { title: 'Dev Version', roles: ['Project Manager'] }
       },
       {
         path: 'dev-branch',
         name: 'DevBranch',
-        component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'Dev Branch', icon: 'dashboard', roles: ['Project Manager'] }
+        component: () => import('@/views/ProcessDevBranch/index'),
+        meta: { title: 'Dev Branch', roles: ['Project Manager'] }
+      },
+      {
+        path: 'dev-branch/:branchName/test',
+        name: 'DevBranch',
+        hidden: true, 
+        component: () => import('@/views/ProcessDevBranchTestResult/index'),
+        meta: { title: 'Dev Branch Test Result', roles: ['Project Manager'] }
       }
     ]
   },
+
   {
     path: '/project_topic',
     component: Layout,
-    name: 'ProjectTopic',
-    meta: { title: 'Project Topic', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
+    name: 'Topic',
+    meta: { title: 'Topic', icon: 'el-icon-data-analysis', roles: ['Project Manager'] },
     children: [
+      {
+        path: 'wiki',
+        name: 'Wiki',
+        component: () => import('@/views/ProjectWiki/index'),
+        meta: { title: 'Wiki', roles: ['Project Manager'] }
+      },
       {
         path: 'document',
         name: 'Document',
         component: () => import('@/views/ProjectDocument/index'),
-        meta: { title: 'Document', icon: 'dashboard', roles: ['Project Manager'] }
+        meta: { title: 'Document', roles: ['Project Manager'] }
+      },
+      {
+        path: 'topic',
+        name: 'Topic',
+        component: () => import('@/views/ProjectTopic/index'),
+        meta: { title: 'Topic', roles: ['Project Manager'] }
       }
     ]
   },
