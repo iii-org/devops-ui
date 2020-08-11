@@ -262,20 +262,26 @@ export const asyncRoutes = [
       {
         path: 'project-gantt',
         name: 'ProjectGantt',
-        component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'GanProject Gantttt', roles: ['Project Manager'] }
+        component: () => import('@/views/ProgressGantt/index'),
+        meta: { title: 'Project Gantt', roles: ['Project Manager'] }
       },
       {
         path: 'dev-gantt',
         name: 'DevGantt',
-        component: () => import('@/views/OverviewProject/index'),
+        component: () => import('@/views/ProgressDevGantt/index'),
         meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
       },
       {
         path: 'dev-version',
         name: 'DevVersion',
-        component: () => import('@/views/OverviewProject/index'),
+        component: () => import('@/views/ProgressDevVersion/index'),
         meta: { title: 'Dev Version', roles: ['Project Manager'] }
+      },
+      {
+        path: 'test-record',
+        name: 'TestRecord',
+        component: () => import('@/views/ProgressDevVersionTestRecord/index'),
+        meta: { title: 'Test Record', roles: ['Project Manager'] }
       },
       {
         path: 'dev-branch',
@@ -286,7 +292,7 @@ export const asyncRoutes = [
       {
         path: 'dev-branch/:branchName/test',
         name: 'DevBranch',
-        hidden: true, 
+        hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult/index'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager'] }
       }

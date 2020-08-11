@@ -19,6 +19,23 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    dataList: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
+  computed: {
+    convertList() {
+      return this.dataList.map(item => {
+        return {
+          ...item,
+          end_time: new Date(item.end_time).getTime(),
+          start_time: new Date(item.start_time).getTime()
+        }
+      })
     }
   },
   data() {
@@ -52,12 +69,12 @@ export default {
               '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' +
               v.color +
               '"></span>' +
-              v.seriesName +
+              v.data.yAxis +
               '<br/>' +
-              '    <span class="chainTextTitle">开始时间：' +
+              '    <span class="chainTextTitle">Start Time:' +
               v.data.tooltip.startTime +
               '</span><br>' +
-              '    <span class="chainTextTitle">结束时间：' +
+              '    <span class="chainTextTitle">End Time:' +
               v.data.tooltip.endTime +
               '</span><br>' +
               '</div>'
@@ -81,8 +98,8 @@ export default {
             }
           },
           splitLine: {},
-          max: 1508925966000,
-          min: 1508925636000
+          max: this.convertList[this.convertList.length - 1].end_time,
+          min: this.convertList[0].start_time
         },
         yAxis: [
           {
@@ -109,7 +126,7 @@ export default {
                 color: '#858585'
               }
             },
-            data: ['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4']
+            data: this.convertList.map(item => item.desc).reverse()
           },
           {
             type: 'category',
@@ -134,15 +151,14 @@ export default {
               lineStyle: {
                 color: '#858585'
               }
-            },
-            data: ['', '', '', '', '', '', '']
+            }
           }
         ],
-        series: [
-          {
+        series: this.dataList.map(item => {
+          return {
             type: 'bar',
             stack: 1,
-            name: 'Phase 4',
+            name: item.desc,
             markLine: {
               symbol: 'none',
               itemStyle: {
@@ -161,115 +177,21 @@ export default {
               data: [
                 [
                   {
-                    xAxis: 1508925789000,
-                    yAxis: 'Phase 4',
+                    xAxis: item.start_time,
+                    yAxis: item.desc,
                     tooltip: {
-                      endTime: '2017-10-25 18:03:42',
-                      eventName: 'Phase 4',
+                      endTime: item.end_time,
+                      eventName: item.desc,
                       sip: '53.53.53.2',
-                      startTime: '2017-10-25 18:03:09'
+                      startTime: item.start_time
                     }
                   },
-                  { xAxis: 1508925822000, yAxis: 'Phase 4' }
-                ]
-              ]
-            }
-          },
-          {
-            type: 'bar',
-            stack: 1,
-            name: 'Phase 3',
-            markLine: {
-              symbol: 'none',
-              itemStyle: {
-                normal: {
-                  lineStyle: {
-                    type: 'solid',
-                    width: 8
-                  }
-                },
-                emphasis: {
-                  lineStyle: {
-                    width: 15
-                  }
-                }
-              },
-              data: [
-                [
-                  {
-                    xAxis: 1508925720000,
-                    yAxis: 'Phase 3',
-                    tooltip: {
-                      endTime: '2017-10-25 18:03:19',
-                      eventName: 'Phase 3',
-                      sip: '53.53.53.2',
-                      startTime: '2017-10-25 18:02:00'
-                    }
-                  },
-                  { xAxis: 1508925799000, yAxis: 'Phase 3' }
-                ]
-              ]
-            }
-          },
-          {
-            type: 'bar',
-            stack: 1,
-            name: 'Phase 2',
-            markLine: {
-              symbol: 'none',
-              itemStyle: {
-                normal: {
-                  lineStyle: {
-                    type: 'solid',
-                    width: 8
-                  }
-                },
-                emphasis: {
-                  lineStyle: {
-                    width: 15
-                  }
-                }
-              },
-              data: []
-            }
-          },
-          {
-            type: 'bar',
-            stack: 1,
-            name: 'Phase 1',
-            markLine: {
-              symbol: 'none',
-              itemStyle: {
-                normal: {
-                  lineStyle: {
-                    type: 'solid',
-                    width: 8
-                  }
-                },
-                emphasis: {
-                  lineStyle: {
-                    width: 15
-                  }
-                }
-              },
-              data: [
-                [
-                  {
-                    xAxis: 1508925696000,
-                    yAxis: 'Phase 1',
-                    tooltip: {
-                      endTime: '2017-10-25 18:05:06',
-                      eventName: 'Phase 1',
-                      sip: '53.53.53.2',
-                      startTime: '2017-10-25 18:01:36'
-                    }
-                  },
-                  { xAxis: 1508925906000, yAxis: 'Phase 1' }
+                  { xAxis: item.end_time, yAxis: item.desc }
                 ]
               ]
             }
           }
-        ]
+        })
       })
     }
   }
