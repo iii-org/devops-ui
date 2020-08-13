@@ -1,10 +1,10 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import AddDocument from './components/AddDocument'
+import AddTopic from './components/AddTopic'
 export default {
   components: { 
-    AddDocument,
+    AddTopic,
     Pagination 
   },
   data() {
@@ -58,7 +58,7 @@ export default {
           }
         }
       ],
-      addDocumentDialogVisible: false,
+      addTopicDialogVisible: false,
       search: '',
       listLoading: true,
       listQuery: {
@@ -76,7 +76,7 @@ export default {
     }
   },
   async created() {
-    // TODO: get project document list
+    // TODO: get project topic list
     this.listLoading = false
   },
   methods: {
@@ -92,8 +92,8 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    emitAddDocumentDialogVisible(visible) {
-      this.addDocumentDialogVisible = visible
+    emitAddTopicDialogVisible(visible) {
+      this.addTopicDialogVisible = visible
     },
   }
 }
@@ -110,7 +110,7 @@ export default {
         icon="el-icon-plus" 
         circle 
         style="float: right"
-        @click="addDocumentDialogVisible = true"
+        @click="addTopicDialogVisible = true"
       ></el-button>
     </div>
     <el-table 
@@ -168,9 +168,9 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <add-document
-      :dialog-visible.sync="addDocumentDialogVisible"
-      @add-document-visible="emitAddDocumentDialogVisible"
+    <add-topic
+      :dialog-visible.sync="addTopicDialogVisible"
+      @add-topic-visible="emitAddTopicDialogVisible"
     />
   </div>
 </template>
