@@ -11,6 +11,7 @@ export default {
     return {
       topicList: [
         {
+          'id': 1,
           'type': '使用者案例', 
           'order': 1, 
           'desc': '使用者需求訪談', 
@@ -22,6 +23,7 @@ export default {
             'done': 10
           },
           'subTopic': [{
+            'id': 2,
             'type': '工作', 
             'order': 2, 
             'desc': '自行註冊', 
@@ -33,6 +35,7 @@ export default {
               'done': 10
             }},
             {
+            'id': 3,
             'type': '工作', 
             'order': 3, 
             'desc': '單一登入註冊', 
@@ -46,6 +49,7 @@ export default {
           ]
         },
         {
+          'id': 4,
           'type': 'Bug', 
           'order': 4, 
           'desc': '密碼重設信不能正確寄送', 
@@ -126,7 +130,9 @@ export default {
     >
       <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{ scope.row.type }}</span>
+          <router-link :to="'topic-detail/'+scope.row.id" style="color: #409EFF">
+            <span>{{ scope.row.type }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Index">

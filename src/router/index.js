@@ -322,6 +322,13 @@ export const asyncRoutes = [
         name: 'Topic',
         component: () => import('@/views/ProjectTopic/index'),
         meta: { title: 'Topic', roles: ['Project Manager'] }
+      },
+      {
+        path: 'topic-detail/:topicId',
+        name: 'topicDetail',
+        hidden: true,
+        component: () => import('@/views/ProjectTopicDetail/index'),
+        meta: { title: 'Topic detail', roles: ['Project Manager'] }
       }
     ]
   },
