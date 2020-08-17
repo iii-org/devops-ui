@@ -92,19 +92,19 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="Start" label-width="100px">
-            <el-date-picker type="date" placeholder="Select Date" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="Select Date" style="width: 100%;" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="End" label-width="100px">
-            <el-date-picker type="date" placeholder="Select Date" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="Select Date" style="width: 100%;" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="Desc." label-width="100px">
-            <el-input type="textarea"></el-input>
+            <el-input type="textarea" />
           </el-form-item>
         </el-col>
       </el-row>

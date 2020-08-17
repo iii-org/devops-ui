@@ -42,7 +42,7 @@ const actions = {
         const { token } = data
         const jwtContent = VueJwtDecode.decode(token)
         console.log('jwtContent', jwtContent)
-        if(!'identity' in jwtContent) {
+        if (!'identity' in jwtContent) {
           Promise.reject('userId not exist')
         }
 
@@ -62,25 +62,25 @@ const actions = {
     return new Promise((resolve, reject) => {
       const token = getToken()
       const jwtContent = VueJwtDecode.decode(token)
-      if(!'identity' in jwtContent) {
+      if (!'identity' in jwtContent) {
         Promise.reject('userId not exist')
       }
       commit('SET_USER_ID', jwtContent['identity'])
       commit('SET_TOKEN', token)
 
       getInfo(state.userId).then(response => {
+        console.log('res', response)
         const { data } = response
-        let { role, name } = data
-        if(!role) {
+        const { role, name } = data
+        if (!role) {
           reject('role is not exist in user info')
         }
         commit('SET_USER_NAME', name)
 
-        if(!role.name) {
+        if (!role.name) {
           reject('name is not exist in role')
         }
         commit('SET_USER_ROLE', role.name)
-        
         resolve()
       }).catch(error => {
         reject(error)
