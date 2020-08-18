@@ -291,7 +291,7 @@ export const asyncRoutes = [
       },
       {
         path: 'dev-branch/:branchName/test',
-        name: 'DevBranch',
+        name: 'DevBranchTest',
         hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult/index'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager'] }
@@ -319,7 +319,7 @@ export const asyncRoutes = [
       },
       {
         path: 'topic',
-        name: 'Topic',
+        name: 'Topics',
         component: () => import('@/views/ProjectTopic/index'),
         meta: { title: 'Topic', roles: ['Project Manager'] }
       },
@@ -329,6 +329,27 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProjectTopicDetail/index'),
         meta: { title: 'Topic detail', roles: ['Project Manager'] }
+      }
+    ]
+  },
+
+  {
+    path: '/project_setting',
+    component: Layout,
+    name: 'Setting',
+    meta: { title: 'Setting', icon: 'el-icon-s-tools', roles: ['Project Manager'] },
+    children: [
+      {
+        path: 'members',
+        name: 'Members',
+        component: () => import('@/views/ProjectMembers/index'),
+        meta: { title: 'Members', roles: ['Project Manager'] }
+      },
+      {
+        path: 'versions',
+        name: 'Versions',
+        component: () => import('@/views/ProjectVersions/index'),
+        meta: { title: 'Versions', roles: ['Project Manager'] }
       }
     ]
   },

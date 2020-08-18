@@ -15,7 +15,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const mutations = {
-  RESET_STATE: (state) => {
+  RESET_STATE: state => {
     Object.assign(state, getDefaultState())
   },
   SET_USER_ID: (state, userId) => {
@@ -37,54 +37,59 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        const { token } = data
-        const jwtContent = VueJwtDecode.decode(token)
-        console.log('jwtContent', jwtContent)
-        if (!'identity' in jwtContent) {
-          Promise.reject('userId not exist')
-        }
+      login({ username: username.trim(), password: password })
+        .then(response => {
+          const { data } = response
+          const { token } = data
+          const jwtContent = VueJwtDecode.decode(token)
+          console.log('jwtContent', jwtContent)
+          if (!'identity' in jwtContent) {
+            Promise.reject('userId not exist')
+          }
 
-        commit('SET_USER_ID', jwtContent['identity'])
-        commit('SET_TOKEN', token)
-        setToken(token)
+          commit('SET_USER_ID', jwtContent['identity'].user_id)
+          commit('SET_TOKEN', token)
+          setToken(token)
 
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+          resolve()
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
 
-  // get user info
+  // get e info
   getInfo({ commit, state }) {
+    console.log('getInfo')
     return new Promise((resolve, reject) => {
       const token = getToken()
       const jwtContent = VueJwtDecode.decode(token)
       if (!'identity' in jwtContent) {
         Promise.reject('userId not exist')
       }
-      commit('SET_USER_ID', jwtContent['identity'])
+      commit('SET_USER_ID', jwtContent['identity'].user_id)
       commit('SET_TOKEN', token)
 
-      getInfo(state.userId).then(response => {
-        console.log('res', response)
-        const { data } = response
-        const { role, name } = data
-        if (!role) {
-          reject('role is not exist in user info')
-        }
-        commit('SET_USER_NAME', name)
+      getInfo(state.userId)
+        .then(response => {
+          console.log('res', response)
+          const { data } = response
+          const { role, name } = data
+          if (!role) {
+            reject('role is not exist in user info')
+          }
+          commit('SET_USER_NAME', name)
 
-        if (!role.name) {
-          reject('name is not exist in role')
-        }
-        commit('SET_USER_ROLE', role.name)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+          if (!role.name) {
+            reject('name is not exist in role')
+          }
+          commit('SET_USER_ROLE', role.name)
+          resolve()
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
 
@@ -111,4 +116,3 @@ export default {
   mutations,
   actions
 }
-
