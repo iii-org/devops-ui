@@ -2,6 +2,15 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 
+const formTemplate = {
+  name: '',
+  code: '',
+  amount: 0,
+  ppm: 0,
+  status: false,
+  desc: ''
+}
+
 export default {
   components: { Pagination },
   filters: {
@@ -16,11 +25,15 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
+      dialogStatus: 1,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 20
-      }
+      },
+      form: formTemplate,
+      confirmLoading: false
     }
   },
   computed: {
@@ -29,6 +42,16 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
       return this.projectList.slice(start, end)
+    },
+    dialogStatusText() {
+      switch (this.dialogStatus) {
+        case 1:
+          return 'Add'
+        case 2:
+          return 'Edit'
+        default:
+          return 'Null'
+      }
     }
   },
   async created() {
@@ -37,6 +60,17 @@ export default {
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    handleEdit(idx, row) {
+      this.dialogVisible = true
+      this.dialogStatus = 2
+
+      this.form = Object.assign({}, this.form, row)
+    },
+    handleDelete() {},
+    handleAdding() {
+      this.dialogVisible = true
+      this.dialogStatus = 1
+    },
     returnTagType(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'info'
@@ -54,12 +88,31 @@ export default {
       const { tags } = row
       if (!tags || tags.length === 0) return 'No Tag'
       return tags[0].name
+    },
+    onDialogClosed() {
+      this.$nextTick(() => {
+        this.$refs['thisForm'].resetFields()
+        this.form = formTemplate
+      })
+    },
+    handleConfirm() {
+      //   this.dialogVisible = false
+      console.log(this.form)
     }
   }
 }
 </script>
 <template>
   <div class="app-container">
+    <div class="clearfix">
+      <span class="newBtn">
+        <el-button type="success" @click="handleAdding">
+          <i class="el-icon-plus" />
+          Add Project
+        </el-button>
+      </span>
+    </div>
+    <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
@@ -131,6 +184,17 @@ export default {
           </router-link>
         </template>
       </el-table-column>
+      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="scope">
+          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+            <i class="el-icon-edit" />
+            Edit
+          </el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
+            <i class="el-icon-delete" /> Delete
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <pagination
       :total="projectListTotal"
@@ -141,5 +205,53 @@ export default {
       @pagination="onPagination"
     />
     <router-view />
+    <el-dialog
+      :title="`${dialogStatusText} Project`"
+      :visible.sync="dialogVisible"
+      width="50%"
+      @closed="onDialogClosed"
+    >
+      <el-form ref="thisForm" :model="form" label-position="top">
+        <el-form-item label="Project Name" prop="name">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="Project Code" prop="code">
+          <el-input v-model="form.code"></el-input>
+        </el-form-item>
+        <el-form-item label="Project Owner" prop="owner">
+          <el-input v-model="form.owner"></el-input>
+        </el-form-item>
+        <el-col :span="11">
+          <el-form-item label="Project Amount" prop="amount">
+            <el-input type="number" v-model="form.amount"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2">&nbsp;</el-col>
+        <el-col :span="11">
+          <el-form-item label="Human Resource/Month" prop="ppm">
+            <el-input type="number" v-model="form.ppm"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-form-item label="Description" prop="desc">
+          <el-input type="textarea" v-model="form.desc"></el-input>
+        </el-form-item>
+        <el-form-item label="Status" prop="status">
+          <el-switch v-model="form.status"></el-switch>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">Confirm</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
+<style lang="scss" scoped>
+.clearfix {
+  clear: both;
+  .newBtn {
+    float: right;
+    padding-right: 6px;
+  }
+}
+</style>

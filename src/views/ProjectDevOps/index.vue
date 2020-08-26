@@ -1,18 +1,14 @@
 <script>
-import Pagination from '@/components/Pagination'
-
+import Sortable from 'sortablejs'
 const formTemplate = {
-  name: '',
-  role: '',
-  start_date: '',
-  end_date: '',
-  authorization: false,
+  phase: '',
+  tool: '',
   status: false,
   desc: ''
 }
 
 export default {
-  components: { Pagination },
+  components: {},
   data() {
     return {
       projectList: [
@@ -20,48 +16,69 @@ export default {
           project_name: '專科A'
         }
       ],
+      toolList: [
+        {
+          tool_name: 'Redmine'
+        },
+        {
+          tool_name: 'JIRA'
+        },
+        {
+          tool_name: 'OpenProject'
+        },
+        {
+          tool_name: 'Maninis'
+        }
+      ],
+      phaseList: [
+        {
+          phase_name: 'Plan'
+        },
+        {
+          phase_name: 'Code'
+        },
+        {
+          phase_name: 'Code Review'
+        },
+        {
+          phase_name: 'Build'
+        },
+        {
+          phase_name: 'Test'
+        },
+        {
+          phase_name: 'Release'
+        },
+        {
+          phase_name: 'Deploy'
+        },
+        {
+          phase_name: 'Monitor'
+        },
+        {
+          phase_name: 'Extra'
+        }
+      ],
       projectValue: '專科A',
       listLoading: true,
       pagedData: [
         {
           order: 1,
-          name: '王曉明',
-          role: '專案經理',
-          start_date: '2020-05-25T07:20:11Z',
-          end_date: '2020-07-25T07:20:11Z',
+          phase: 'Plan',
+          tool: 'Redmine',
           status: true
         },
         {
           order: 2,
-          name: '陳聰明',
-          role: '開發人員',
-          start_date: '2020-05-25T07:20:11Z',
-          end_date: '2020-07-25T07:20:11Z',
+          phase: 'Code',
+          tool: 'GitLab',
           status: true
         },
         {
           order: 3,
-          name: '張雅婷',
-          role: '開發人員',
-          start_date: '2020-05-25T07:20:11Z',
-          end_date: '2020-07-25T07:20:11Z',
-          status: true
-        },
-        {
-          order: 4,
-          name: '王耀祖',
-          role: '開發人員',
-          start_date: '2020-05-25T07:20:11Z',
-          end_date: '2020-07-25T07:20:11Z',
+          phase: 'sample text',
+          tool: 'GitLab',
           status: false
-        },
-        {
-          order: 5,
-          name: '吳耀祖',
-          role: '開發人員',
-          start_date: '2020-05-25T07:20:11Z',
-          end_date: '2020-07-25T07:20:11Z',
-          status: true
         }
       ],
       dialogVisible: false,
@@ -72,15 +89,7 @@ export default {
       },
       dialogStatus: 1,
       memberConfirmLoading: false,
-      form: {
-        name: '',
-        role: '',
-        start_date: '',
-        end_date: '',
-        authorization: false,
-        status: false,
-        desc: ''
-      }
+      form: formTemplate
     }
   },
   computed: {
@@ -95,12 +104,34 @@ export default {
       }
     }
   },
+  watch: {
+    form(value) {
+      console.log(value)
+    }
+  },
   mounted() {
     setTimeout(() => (this.listLoading = false), 1000)
+    this.drag()
   },
   methods: {
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+    drag() {
+      const el1 = document.querySelectorAll('.el-table__body-wrapper')[0].querySelectorAll('table > tbody')[0]
+      Sortable.create(el1, {
+        ghostClass: 'sortable-ghost',
+        animation: 150,
+        group: {
+          pull: false,
+          put: false
+        },
+        onEnd: e => {
+          // // 这里主要进行数据的处理，拖拽实际并不会改变绑定数据的顺序，这里需要自己做数据的顺序更改
+          // let arr = this.Data // 获取表数据
+          // arr.splice(e.newIndex, 0, arr.splice(e.oldIndex, 1)[0]) // 数据处理
+          // this.$nextTick(function() {
+          //   this.Data = arr
+          // })
+        }
+      })
     },
     handleAdding() {
       this.dialogVisible = true
@@ -142,7 +173,7 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Member
+          Add Flow
         </el-button>
       </span>
     </div>
@@ -150,17 +181,17 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope">
-          {{ scope.row.order }}
+          <i class="el-icon-sort"></i> {{ scope.row.order }}
         </template>
       </el-table-column>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column label="Phase" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.phase }}
         </template>
       </el-table-column>
-      <el-table-column label="Role" :show-overflow-tooltip="true">
+      <el-table-column label="Tools" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.role }}
+          {{ scope.row.tool }}
         </template>
       </el-table-column>
       <el-table-column label="Status" :show-overflow-tooltip="true">
@@ -181,41 +212,25 @@ export default {
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      :total="pagedData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[20]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
 
-    <el-dialog :title="`${dialogStatusText} Member`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
+    <el-dialog :title="`${dialogStatusText} Flow`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
       <el-form ref="thisForm" :model="form" label-position="top">
-        <el-form-item label="Name" prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="Role" prop="role">
-          <el-select v-model="form.role" placeholder="Select a role" style="width:100%">
-            <el-option label="Developer" value="developer"></el-option>
-            <el-option label="Manager" value="manager"></el-option>
+        <el-form-item label="Phase" prop="phase">
+          <el-select v-model="form.phase" placeholder="select a phase" style="width:100%;">
+            <el-option
+              v-for="item in phaseList"
+              :key="item.phase_name"
+              :label="item.phase_name"
+              :value="item.phase_name"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Duration">
-          <el-col :span="11">
-            <el-form-item prop="start_date">
-              <el-date-picker type="date" placeholder="Start Date" v-model="form.start_date" style="width: 100%;" />
-            </el-form-item>
-          </el-col>
-          <el-col class="line" :span="2"> - </el-col>
-          <el-col :span="11">
-            <el-form-item prop="end_date">
-              <el-date-picker type="date" placeholder="End Date" v-model="form.end_date" style="width: 100%;" />
-            </el-form-item>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Authorization">
-          <el-switch v-model="form.authorization"></el-switch>
+        <el-form-item label="Tools" prop="tools">
+          <el-select v-model="form.tool" placeholder="select a tool" style="width:100%;">
+            <el-option v-for="item in toolList" :key="item.tool_name" :label="item.tool_name" :value="item.tool_name">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="Status" prop="status">
           <el-switch v-model="form.status"></el-switch>
@@ -239,5 +254,12 @@ export default {
 }
 .line {
   text-align: center;
+}
+.sortable-ghost {
+  opacity: 0.4;
+  background-color: #f4e2c9;
+}
+table > tbody {
+  cursor: move;
 }
 </style>

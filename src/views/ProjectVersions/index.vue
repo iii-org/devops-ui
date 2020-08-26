@@ -203,7 +203,7 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="success" @click="handleConfirm" :loading="memberConfirmLoading">Confirm</el-button>
+        <el-button type="primary" @click="handleConfirm" :loading="memberConfirmLoading">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
