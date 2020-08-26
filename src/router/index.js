@@ -350,6 +350,12 @@ export const asyncRoutes = [
         name: 'Versions',
         component: () => import('@/views/ProjectVersions/index'),
         meta: { title: 'Versions', roles: ['Project Manager'] }
+      },
+      {
+        path: 'devops',
+        name: 'DevOps',
+        component: () => import('@/views/ProjectDevOps/index'),
+        meta: { title: 'DevOps', roles: ['Project Manager'] }
       }
     ]
   },
