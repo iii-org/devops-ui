@@ -29,3 +29,18 @@ export function updateUser(userId, data) {
     data
   })
 }
+
+export function addUser(data) {
+  return request({
+    url: `/user`,
+    method: 'post',
+    data
+  })
+}
+
+export function deleteUser(userId) {
+  return request({
+    url: `/user/${userId}`,
+    method: 'delete'
+  })
+}

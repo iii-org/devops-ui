@@ -88,6 +88,20 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/issues/:issue_num/setup',
+    component: Layout,
+    hidden: true,
+    meta: { roles: ['Engineer'] },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/IssueSetUp/index'),
+        meta: { title: 'Issue SetUp', roles: ['Engineer'] }
+      }
+    ]
+  },
+
+  {
     path: '/profile',
     component: Layout,
     redirect: '/profile/index',
@@ -356,6 +370,29 @@ export const asyncRoutes = [
         name: 'DevOps',
         component: () => import('@/views/ProjectDevOps/index'),
         meta: { title: 'DevOps', roles: ['Project Manager'] }
+      }
+    ]
+  },
+
+  {
+    path: '/',
+    component: Layout,
+    name: 'Admin',
+    redirect: '/user_manage',
+    meta: { title: 'Admin', icon: 'el-icon-s-tools', roles: ['Administrator'] },
+    children: [
+      {
+        path: 'user_manage',
+        name: '',
+        component: () => import('@/views/UserManage/index'),
+        meta: { title: 'User Manage', roles: ['Administrator'] }
+      },
+      {
+        path: 'validation',
+        name: 'validation',
+        hidden: true,
+        component: () => import('@/views/UserValidation/index'),
+        meta: { title: 'validation', roles: ['Administrator'] }
       }
     ]
   },
