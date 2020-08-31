@@ -1,7 +1,9 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { getInfo } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import UserDialog from './components/UserDialog'
+
 export default {
   components: { 
     UserDialog,
@@ -11,23 +13,23 @@ export default {
     return {
       userList: [
         {
-          'id': 1,
-          'account': 'david', 
-          'name': 'David Huang', 
-          'organization': '智慧系統研究所/物聯雲平台中心/交通分析組/工程師',
-          'email': 'david@iii.org.tw',
-          'create_at': '2020-07-25T07:20:11Z',
-          'phone': '02-8654936', 
+          'id': 2,
+          'name': 'becky',
+          'usernmae': 'beckywu',
+          'email': 'hubert@iii.org.tw',
+          'phone': '933333666',
+          'login': 'becky',
+          'create_at': '2020-06-18T02:59:12.408067',
           'status': '運行中'
         },
         {
-          'id': 1,
-          'account': 'cindywang', 
-          'name': 'Cindy Wang', 
-          'organization': '數位轉型研究所/數位平台中心/開源平台組/組長',
-          'email': 'david@iii.org.tw',
-          'create_at': '2020-02-20T07:20:11Z',
-          'phone': '02-8654936', 
+          'id': 4,
+          'name': 'hubert',
+          'usernmae': 'hubert',
+          'email': 'hubert@iii.org.tw',
+          'phone': '933333666',
+          'login': 'hubert',
+          'create_at': '2020-08-06T02:59:41.834495',
           'status': '運行中'
         }
       ],
@@ -35,6 +37,7 @@ export default {
       dialogTitle: '', 
       search: '',
       editUserId: 0,
+      editUserData: {},
       listLoading: true,
       listQuery: {
         page: 1,
@@ -70,8 +73,22 @@ export default {
     emitAddUserDialogVisible(visible) {
       this.userDialogVisible = visible
     },
-    showUserDialog(user, title) {
-      this.editUserId = user == '' ? 0 : user.id
+    async showUserDialog(user, title) {
+      if(user === '') {
+        this.editUserId = 0
+        this.editUserData = {
+          login: '',
+          name: '',
+          email: '',
+          phone: '',
+          role: {'id': '1'},
+          enable: true
+        }
+      } else {
+        this.editUserId = user.id
+        const userData = await getInfo(this.editUserId)
+        this.editUserData = userData['data']
+      }
       this.dialogTitle = title
       this.userDialogVisible = true
     }
@@ -100,22 +117,17 @@ export default {
       element-loading-text="Loading" 
       border 
     >
-      <el-table-column align="center" label="Account" width="120">
+      <el-table-column align="center" label="Account">
         <template slot-scope="scope">
-          {{ scope.row.account }}
+          {{ scope.row.login }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" width="120">
+      <el-table-column align="center" label="Name">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Organization">
-        <template slot-scope="scope">
-          {{ scope.row.organization }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Email" width="200">
+      <el-table-column align="center" label="Email">
         <template slot-scope="scope">
           {{ scope.row.email }}
         </template>
@@ -155,6 +167,7 @@ export default {
     <user-dialog
       :dialog-title="dialogTitle"
       :user-id="editUserId"
+      :user-data="editUserData"
       :dialog-visible="userDialogVisible"
       @add-user-visible="emitAddUserDialogVisible"
     />
