@@ -247,7 +247,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .newBtn {
   float: right;
   padding-right: 6px;

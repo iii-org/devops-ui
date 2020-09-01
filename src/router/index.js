@@ -175,13 +175,13 @@ export const asyncRoutes = [
     path: '/cicd/pipelines/:bId',
     component: Layout,
     hidden: true,
-    meta: { roles: ['Engineer'] },
+    meta: { roles: ['Engineer', 'Project Manager'] },
     children: [
       {
         path: '',
         name: 'cicdPipelines',
         component: () => import('@/views/CicdPipelines/index'),
-        meta: { title: 'CICD Pipelines', icon: 'example', roles: ['Engineer'] }
+        meta: { title: 'CICD Pipelines', icon: 'example', roles: ['Engineer', 'Project Manager'] }
       }
     ]
   },
@@ -226,7 +226,7 @@ export const asyncRoutes = [
       {
         path: 'list',
         name: 'PM Project List',
-        component: () => import('@/views/ProjectList/index'),
+        component: () => import('@/views/ProjectListPM/index'),
         meta: { title: 'PM Project List', icon: 'list', roles: ['Project Manager'] }
       }
     ]
