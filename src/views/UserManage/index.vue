@@ -1,13 +1,12 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { getInfo } from '@/api/user'
+import { getInfo, getAllUser } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import UserDialog from './components/UserDialog'
 
 export default {
-  components: { 
+  components: {
     UserDialog,
-    Pagination 
+    Pagination
   },
   data() {
     return {
@@ -34,15 +33,14 @@ export default {
         }
       ],
       userDialogVisible: false,
-      dialogTitle: '', 
+      dialogTitle: '',
       search: '',
       editUserId: 0,
       editUserData: {},
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        totalPage: 1
+        limit: 10
       }
     }
   },
@@ -53,19 +51,15 @@ export default {
       return this.userList.slice(start, end)
     }
   },
-  async created() {
-    // TODO: get project user list
-    this.listLoading = false
+  created() {
+    this.fetchData()
   },
   methods: {
-    ...mapActions(['projects/getProjectList']),
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      return success === total ? 'success' : 'danger'
-    },
-    testResults(row) {
-      const { success, total } = row.last_test_result
-      return success + ' / ' + total
+    async fetchData() {
+      this.listLoading = true
+      const allUser = await getAllUser()
+      this.userList = allUser.data.user_list
+      this.listLoading = false
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -74,14 +68,14 @@ export default {
       this.userDialogVisible = visible
     },
     async showUserDialog(user, title) {
-      if(user === '') {
+      if (user === '') {
         this.editUserId = 0
         this.editUserData = {
           login: '',
           name: '',
           email: '',
           phone: '',
-          role: {'id': '1'},
+          role: { 'id': '1' },
           enable: true
         }
       } else {
@@ -99,11 +93,11 @@ export default {
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" >
+      <el-button class="filter-item" type="primary" icon="el-icon-search">
         Search
       </el-button>
-      <el-button 
-        type="success" 
+      <el-button
+        type="success"
         style="float: right"
         @click="showUserDialog('', 'Add User')"
       >
@@ -111,11 +105,11 @@ export default {
         Add User
       </el-button>
     </div>
-    <el-table 
-      v-loading="listLoading" 
-      :data="pagedData" 
-      element-loading-text="Loading" 
-      border 
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      element-loading-text="Loading"
+      border
     >
       <el-table-column align="center" label="Account">
         <template slot-scope="scope">
@@ -142,14 +136,14 @@ export default {
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="100">
+      <el-table-column align="center" label="Disabled" width="100">
         <template slot-scope="scope">
-          {{ scope.row.status }}
+          {{ scope.row.disabled }}
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="100">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')" >
+          <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
             <i class="el-icon-edit" />
             Edit
           </el-button>
@@ -157,10 +151,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listQuery.totalPage"
+      :total="userList.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[10]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

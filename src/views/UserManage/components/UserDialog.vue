@@ -1,19 +1,19 @@
 <template>
   <el-dialog
-    :title=dialogTitle
+    :title="dialogTitle"
     :visible="dialogVisible"
     width="40%"
     @close="handleClose('userForm')"
   >
-    <el-form 
-      :model="userForm" 
+    <el-form
+      ref="userForm"
+      v-loading="dialogLoading"
+      :model="userForm"
       :rules="userFormRules"
-      ref="userForm" 
       label-width="30%"
       class="demo-ruleForm"
-      v-loading="dialogLoading"
     >
-      <el-form-item label="Account" prop="login" >
+      <el-form-item label="Account" prop="login">
         <el-input v-model="userForm.login" :disabled="disableAccount" />
       </el-form-item>
       <el-form-item label="Password" prop="password">
@@ -45,8 +45,8 @@
         <el-switch
           v-model="userForm.enable"
           active-color="#13ce66"
-          inactive-color="#ff4949">
-        </el-switch>
+          inactive-color="#ff4949"
+        />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -56,7 +56,7 @@
   </el-dialog>
 </template>
 <script>
-import { addUser, updateUser, getInfo } from '@/api/user'
+import { addUser, updateUser } from '@/api/user'
 import { Message } from 'element-ui'
 
 export default {
@@ -76,7 +76,7 @@ export default {
   },
   data() {
     return {
-      //TODO: roleList's data should from API 
+      // TODO: roleList's data should from API
       roleList: [{
         value: 1,
         label: 'Enginner'
@@ -115,10 +115,10 @@ export default {
           { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
         ],
         role: [
-          { required: true, message: 'Please select role', trigger: 'blur' },
+          { required: true, message: 'Please select role', trigger: 'blur' }
         ],
         enable: [
-          { required: true, message: 'Please set enable', trigger: 'blur' },
+          { required: true, message: 'Please set enable', trigger: 'blur' }
         ]
       },
       dialogLoading: false,
@@ -129,14 +129,14 @@ export default {
   },
   watch: {
     userData: function(data) {
-      //TODO: enable always is true, because API not return enable
+      // TODO: enable always is true, because API not return enable
       data.enable = true
-      if(isNaN(data.role)) {
-        //get role id from role object
-        data.role = data.role.id  
+      if (isNaN(data.role)) {
+        // get role id from role object
+        data.role = data.role.id
       }
-      //force transfer to int
-      if(data['phone']) {
+      // force transfer to int
+      if (data['phone']) {
         data['phone'] = parseInt(data['phone'])
       }
       this.userForm = data
@@ -146,12 +146,12 @@ export default {
     if (this.userId === 0) {
       this.dialogTitle = 'Add User'
       this.disableAccount = false
-      //new user's role default is enginner
+      // new user's role default is enginner
       this.userForm.role = 1
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' }
       ]
-      this.userFormRules.repeatPassword =  [
+      this.userFormRules.repeatPassword = [
         { required: true, message: 'Please input repeat password', trigger: 'blur' },
         { validator: this.checkRepeatPwd, trigger: 'blur' }
       ]
@@ -169,23 +169,23 @@ export default {
   methods: {
     checkRepeatPwd(rule, value, callback) {
       if (value !== this.userForm.password) {
-        callback(new Error('password not same'));
+        callback(new Error('password not same'))
       } else {
-        callback();
+        callback()
       }
     },
     handleClose() {
-      this.$refs[this.formName].resetFields();
+      this.$refs[this.formName].resetFields()
       this.$emit('add-user-visible', false)
     },
     submitForm() {
       // this.userFormRules.password = [
       //   { required: true, message: 'Please input password', trigger: 'blur' }
       // ]
-      this.$refs[this.formName].validate(async (valid) => {
+      this.$refs[this.formName].validate(async(valid) => {
         if (valid) {
           this.dialogLoading = true
-          let data = {
+          const data = {
             'login': this.userForm.login,
             'password': this.userForm.password,
             'username': this.userForm.name,
@@ -196,9 +196,9 @@ export default {
             'enable': this.userForm.enable
           }
 
-          //remove useless field
+          // remove useless field
           Object.keys(data).forEach(item => {
-            if(data[item] == '') {
+            if (data[item] === '') {
               delete data[item]
             }
           })
@@ -209,7 +209,7 @@ export default {
             await updateUser(this.userId, data)
           }
 
-          this.$refs[this.formName].resetFields();
+          this.$refs[this.formName].resetFields()
           this.dialogLoading = false
           this.$emit('add-user-visible', false)
           Message({
@@ -218,10 +218,10 @@ export default {
             duration: 1 * 1000
           })
         } else {
-            console.log('error!!');
-            return false;
+          console.log('error!!')
+          return false
         }
-      });
+      })
     }
   }
 }
