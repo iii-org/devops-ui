@@ -22,6 +22,13 @@ export function logout() {
   })
 }
 
+export function getAllUser() {
+  return request({
+    url: `/user/list`,
+    method: 'get'
+  })
+}
+
 export function updateUser(userId, data) {
   return request({
     url: `/user/${userId}`,
