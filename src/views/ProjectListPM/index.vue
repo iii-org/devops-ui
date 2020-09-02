@@ -2,6 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { formatTime } from '../../utils/index.js'
+import { Message } from 'element-ui'
 
 const formTemplate = {
   name: '',
@@ -38,7 +39,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal']),
+    ...mapGetters(['projectList', 'projectListTotal', 'userId']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
@@ -56,18 +57,46 @@ export default {
     }
   },
   async created() {
-    await this['projects/getProjectList']()
-    this.listLoading = false
+    this.loadList()
   },
   methods: {
-    ...mapActions(['projects/getProjectList']),
+    ...mapActions([
+      'projects/queryProjectList',
+      'projects/addNewProject',
+      'projects/editProject',
+      'projects/deleteProject'
+    ]),
+    async loadList() {
+      this.listLoading = true
+      await this['projects/queryProjectList']()
+      this.listLoading = false
+    },
     handleEdit(idx, row) {
       this.dialogVisible = true
       this.dialogStatus = 2
-
       this.form = Object.assign({}, this.form, row)
     },
-    handleDelete() {},
+    handleDelete() {
+      this.$confirm('Are you sure to Delete Project?', 'Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'error'
+      })
+        .then(async () => {
+          await this['projects/deleteProject']()
+          this.$message({
+            type: 'success',
+            message: 'Delete Successed'
+          })
+          this.loadList()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          })
+        })
+    },
     handleAdding() {
       this.dialogVisible = true
       this.dialogStatus = 1
@@ -96,9 +125,44 @@ export default {
         this.form = formTemplate
       })
     },
-    handleConfirm() {
+    async handleConfirm() {
       //   this.dialogVisible = false
+      if (this.dialogStatus === 2) return this.handleConfirmEdit()
+      this.confirmLoading = true
       console.log(this.form)
+      const dataBody = {
+        name: this.form.name,
+        identifier: this.form.name,
+        description: this.form.desc
+      }
+      const res = await this['projects/addNewProject'](dataBody)
+      this.confirmLoading = false
+      if (res.message !== 'successful') return
+      console.log(res)
+      Message({
+        message: 'Project added successfully',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.dialogVisible = false
+      this.loadList()
+    },
+    async handleConfirmEdit() {
+      this.confirmLoading = true
+      const dataBody = {
+        data: { name: this.form.name, description: this.form.desc, disabled: !this.form.status, user_id: this.userId }
+      }
+      const res = await this['projects/editProject'](dataBody)
+      this.confirmLoading = false
+      if (res.message !== 'successful') return
+      console.log(res)
+      Message({
+        message: 'Project update successfully',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.dialogVisible = false
+      this.loadList()
     },
     myFormatTime(time) {
       return formatTime(new Date(time))
@@ -108,7 +172,7 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <!-- <div class="clearfix">
+    <div class="clearfix">
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
@@ -116,14 +180,13 @@ export default {
         </el-button>
       </span>
     </div>
-    <el-divider /> -->
+    <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <router-link
             :to="{
-              name: 'cicdPipelines',
-              params: { pId: scope.row.project_id }
+              name: 'cicdPipelines'
             }"
             style="color: #409EFF"
           >
@@ -132,63 +195,27 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Workload">
+      <el-table-column align="center" label="Status">
         <template slot-scope="scope">
-          {{ scope.row.issues }}
+          {{ scope.row.project_status }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Upcomming Deadline">
+      <el-table-column align="center" label="Progress">
         <template slot-scope="scope">
-          {{ myFormatTime(scope.row.next_d_time) }}
+          {{ scope.row.closed_count + '/' + scope.row.total_count }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Branches">
+      <el-table-column align="center" label="Quality">
         <template slot-scope="scope">
-          <router-link
-            :to="{
-              name: 'branches',
-              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids[0] }
-            }"
-            style="color: #409EFF"
-          >
-            <span>{{ scope.row.branch }}</span>
-          </router-link>
+          {{ '87%' }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test">
+      <el-table-column align="center" label="Update Time">
         <template slot-scope="scope">
-          <span v-if="scope.row.last_test_time === ''">No Test</span>
-          <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
+          {{ myFormatTime(scope.row.updated_time) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test Result">
-        <template slot-scope="scope">
-          <el-tag :type="returnTagType(scope.row)" size="large">
-            <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
-            <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
-            <i v-else class="el-icon-error" />
-            <span>{{ testResults(scope.row) }}</span>
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Last Tag">
-        <template slot-scope="scope">
-          <router-link
-            :to="{
-              name: 'fileList',
-              params: {
-                bId: scope.row.id,
-                projectName: scope.row.name,
-                branchName: scope.row.branch
-              }
-            }"
-            style="color: #409EFF"
-          >
-            {{ returnLatestTag(scope.row) }}
-          </router-link>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="Actions" align="center" width="250px">
+      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -198,7 +225,7 @@ export default {
             <i class="el-icon-delete" /> Delete
           </el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <pagination
       :total="projectListTotal"
@@ -219,13 +246,13 @@ export default {
         <el-form-item label="Project Name" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="Project Code" prop="code">
+        <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
-        </el-form-item>
-        <el-form-item label="Project Owner" prop="owner">
+        </el-form-item> -->
+        <el-form-item v-if="dialogStatus === 2" label="Project Owner" prop="owner">
           <el-input v-model="form.owner"></el-input>
         </el-form-item>
-        <el-col :span="11">
+        <!-- <el-col :span="11">
           <el-form-item label="Project Amount" prop="amount">
             <el-input type="number" v-model="form.amount"></el-input>
           </el-form-item>
@@ -235,7 +262,7 @@ export default {
           <el-form-item label="Human Resource/Month" prop="ppm">
             <el-input type="number" v-model="form.ppm"></el-input>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-form-item label="Description" prop="desc">
           <el-input type="textarea" v-model="form.desc"></el-input>
         </el-form-item>
