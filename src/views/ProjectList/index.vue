@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
+import { formatTime } from '../../utils/index.js'
 
 const formTemplate = {
   name: '',
@@ -98,13 +99,16 @@ export default {
     handleConfirm() {
       //   this.dialogVisible = false
       console.log(this.form)
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
     }
   }
 }
 </script>
 <template>
   <div class="app-container">
-    <div class="clearfix">
+    <!-- <div class="clearfix">
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
@@ -112,7 +116,7 @@ export default {
         </el-button>
       </span>
     </div>
-    <el-divider />
+    <el-divider /> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
@@ -135,7 +139,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Upcomming Deadline">
         <template slot-scope="scope">
-          {{ new Date(scope.row.next_d_time).toLocaleString() }}
+          {{ myFormatTime(scope.row.next_d_time) }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Branches">
@@ -154,7 +158,7 @@ export default {
       <el-table-column align="center" label="Last Test">
         <template slot-scope="scope">
           <span v-if="scope.row.last_test_time === ''">No Test</span>
-          <span v-else>{{ new Date(scope.row.last_test_time).toLocaleString() }}</span>
+          <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last Test Result">
@@ -184,7 +188,7 @@ export default {
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <!-- <el-table-column label="Actions" align="center" width="250px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -194,7 +198,7 @@ export default {
             <i class="el-icon-delete" /> Delete
           </el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <pagination
       :total="projectListTotal"

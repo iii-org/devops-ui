@@ -136,20 +136,12 @@ export const asyncRoutes = [
         name: 'Project Graph',
         component: () => import('@/views/ProjectGraph/index'),
         meta: { title: 'Project Graph', icon: 'tree', roles: ['Engineer'] }
-      }
-    ]
-  },
-
-  {
-    path: '/branches/:pId/:projectName',
-    component: Layout,
-    hidden: true,
-    meta: { roles: ['Engineer'] },
-    children: [
+      },
       {
-        path: '',
+        path: 'branches/:pId/:projectName',
         name: 'branches',
         props: true,
+        hidden: true,
         component: () => import('@/views/BranchList/index'),
         meta: { title: 'Branches', icon: 'tree', roles: ['Engineer'] }
       }
