@@ -8,6 +8,7 @@ import TestItemDialog from './components/TestItemDialog'
 import TestValueDialog from './components/TestValueDialog'
 import WangEditor from "@/components/Wangeditor";
 import { getIssue } from '@/api/issue'
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 export default {
   components: { 
     DemandDialog,
@@ -20,69 +21,21 @@ export default {
   },
   data() {
     return {
-      issueAssigneeList: [{
-        value: '王曉明',
-        label: '王曉明'
-      }, {
-        value: '陳聰明',
-        label: '陳聰明'
-      }],
-      issueTypeList: [{
-        value: '任務',
-        label: '任務'
-      }, {
-        value: '問題',
-        label: '問題'
-      }],
-      issueVersionList: [{
-        value: '1.0',
-        label: '1.0'
-      }, {
-        value: '1.1',
-        label: '1.1'
-      }],
-      issueStatusList: [{
-        value: '新建立',
-        label: '新建立'
-      }, {
-        value: '已完結',
-        label: '已完結'
-      }, {
-        value: '測試中',
-        label: '測試中'
-      }, {
-        value: '已完成',
-        label: '已完成'
-      }, {
-        value: '開發中',
-        label: '開發中'
-      }],
-      issuePriorityList: [{
-        value: '高',
-        label: '高'
-      }, {
-        value: '中',
-        label: '中'
-      }],
-      issueBranchList: [{
-        value: 'master',
-        label: 'master'
-      }, {
-        value: 'develop',
-        label: 'develop'
-      }],
-      issueName: '登入頁面',
-      issueEstimate: '30H',
-      issuePriority: '高',
-      issueType: '任務',
-      issueVersion: '1.0',
-      issueAssignee: '王曉明',
-      issueStatus: '新建立',
-      issueProcess: '30%',
-      issueBranch: 'master',
-      issueStart: '2020-08-15',
-      issueEnd: '2020-08-20',
-      issueDesc: '使用者於登入頁面需輸入帳號密碼進行登入，並有忘記密碼的選項',
+      issueAssigneeList: [],
+      issueTypeList: [],
+      issueStatusList: [],
+      issuePriorityList: [],
+      issueDetail: {
+        issuePriority: '',
+        issueDoneRatio: 0,
+        issueAssignee: '',
+        issueStatus: '',
+        issueType: ''
+      },
+      issueName: '',
+      issueStartDate: '',
+      issueDueDate: '',
+      issueDescription: '',
       issueDevStatus: { 
         'commitMsg': 'V2.1 fix User Login Error',
         'commit': '1c715b2b',
@@ -243,10 +196,38 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getIssue(this.issueId).then(response => {
-        this.issue_detail = response.data
+      Promise.all([
+        getIssueStatus(), 
+        getIssueTracker(), 
+        getIssuePriority(),
+        getIssue(this.issueId)
+      ]).then(res => {
+        this.issueStatusList = res[0].data.map(item => {
+          return {'label': item.name, 'value': item.id}
+        })
+        this.issueTypeList = res[1].data.map(item => {
+          return {'label': item.name, 'value': item.id}
+        })
+        this.issuePriorityList = res[2].data.map(item => {
+          return {'label': item.name, 'value': item.id}
+        })
+        this.issueDetail = res[3].data
+        this.issueDetail.issueStatus = this.issueDetail.status.id
+        this.issueDetail.issueAssignee = this.issueDetail.tracker.id
+        this.issueDetail.issuePriority = this.issueDetail.priority.id
+        this.issueDetail.issueDoneRatio = this.issueDetail.done_ratio
+        this.issueDetail.issueType = this.issueDetail.tracker.id
+        this.issueStartDate = this.issueDetail.start_date
+        this.issueDueDate = this.issueDetail.due_date
+        
+        this.issueDescription = this.issueDetail.description
+        console.log(this.issueStartDate)
         this.listLoading = false
-      })
+      });
+      // getIssue(this.issueId).then(response => {
+      //   this.issue_detail = response.data
+      //   this.listLoading = false
+      // })
       // TODO: get issue setup
     },
     returnTagType(row) {
@@ -301,13 +282,16 @@ export default {
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
-        <div>{{ issue_detail.description }}</div>
+        <el-button class="filter-item" size="small" type="success" style="float: right">
+          Save
+        </el-button>
+        <div>{{ issueDescription }}</div>
       </div>
       <el-form ref="form" label-width="20%" :label-position="'right'">
         <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Priority" label-width="100px">
-              <el-select v-model="issuePriority" style="width:100%">
+              <el-select v-model="issueDetail.issuePriority" style="width:100%">
                 <el-option
                   v-for="item in issuePriorityList"
                   :key="item.value"
@@ -317,28 +301,9 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="Process" label-width="100px">
-              <el-input v-model="issueProcess" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="Assignee" label-width="100px">
-              <el-select v-model="issueAssignee" style="width:100%">
-                <el-option
-                  v-for="item in issueAssigneeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Status" label-width="100px">
-              <el-select v-model="issueStatus" style="width:100%">
+              <el-select v-model="issueDetail.issueStatus" style="width:100%">
                 <el-option
                   v-for="item in issueStatusList"
                   :key="item.value"
@@ -348,11 +313,11 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="Branch" label-width="100px">
-              <el-select v-model="issueBranch" style="width:100%">
+          <el-col :span="6">
+            <el-form-item label="Assignee" label-width="100px">
+              <el-select v-model="issueDetail.issueAssignee" style="width:100%">
                 <el-option
-                  v-for="item in issueBranchList"
+                  v-for="item in issueAssigneeList"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -360,9 +325,9 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="Type" label-width="100px">
-              <el-select v-model="issueType" style="width:100%">
+              <el-select v-model="issueDetail.issueType" style="width:100%">
                 <el-option
                   v-for="item in issueTypeList"
                   :key="item.value"
@@ -374,14 +339,24 @@ export default {
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
-            <el-form-item label="Start Date" label-width="100px">
-                {{ issueStart }}
+          <el-col :span="6">
+            <el-form-item label="Done Ratio" label-width="100px">
+              <el-input-number 
+                v-model="issueDetail.issueDoneRatio" 
+                :min="0" 
+                :max="10"
+                style="width:100%"
+              ></el-input-number>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="End Date" label-width="100px">
-                {{ issueEnd }}
+          <el-col :span="6">
+            <el-form-item label="Start Date" label-width="100px">
+                {{ issueStartDate }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="Due Date" label-width="100px">
+                {{ issueDueDate }}
             </el-form-item>
           </el-col>
         </el-row>

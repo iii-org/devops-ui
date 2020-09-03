@@ -10,7 +10,7 @@ export function getIssuesByUser(user_id, param) {
 
 export function getIssue(issue_id) {
   return request({
-    url: `/issues/rd/${issue_id}`,
+    url: `/issues/${issue_id}`,
     method: 'get'
   })
 }
