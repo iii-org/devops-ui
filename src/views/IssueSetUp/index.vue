@@ -1,17 +1,24 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import DemandDialog from './components/DemandDialog'
+import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
 import TestDialog from './components/TestDialog'
 import TestItemDialog from './components/TestItemDialog'
 import TestValueDialog from './components/TestValueDialog'
-import WangEditor from "@/components/Wangeditor";
+import WangEditor from '@/components/Wangeditor'
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
+import { getProjectAssignable } from '@/api/projects'
+import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
+import { getParameterByIssue, addParameterByIssue } from '@/api/issueParameter'
+import { getTestCaseByIssue, addTestCaseByIssue, deleteTestCase } from '@/api/issueTestCase'
+import { getTestItemByCase, addTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
+import { getTestValueByItem, getTestValueType, getTestValueLocation, deleteTestValue, addTestValueByItem } from '@/api/issueTestValue'
+import { Message } from 'element-ui'
 export default {
-  components: { 
-    DemandDialog,
+  components: {
+    FlowDialog,
     ParamDialog,
     Pagination,
     TestDialog,
@@ -36,148 +43,41 @@ export default {
       issueStartDate: '',
       issueDueDate: '',
       issueDescription: '',
-      issueDevStatus: { 
-        'commitMsg': 'V2.1 fix User Login Error',
-        'commit': '1c715b2b',
-        'commitData': '2020-07-25T07:20:11Z',
-        'last_test_result': {
-          'success': 10,
-          'total': 15
+      issueNote: '',
+      issueDevStatus: {
+        commitMsg: 'V2.1 fix User Login Error',
+        commit: '1c715b2b',
+        commitData: '2020-07-25T07:20:11Z',
+        last_test_result: {
+          success: 10,
+          total: 15
         }
       },
       issueNeedTest: true,
-      issueDemand:[{
-        id: 1,
-        order: 1,
-        step_name: '設定帳號',
-        step_type: 'GIVEN',
-        step_desc: '設定帳號參數'
-      }, {
-        id: 2,
-        order: 2,
-        step_name: '設定密碼',
-        step_type: 'GIVEN',
-        step_desc: '設定密碼參數'
-      }, {
-        id: 3,
-        order: 3,
-        step_name: '登入',
-        step_type: 'WHEN',
-        step_desc: '點擊登入按鈕，讓使用者登入平台'
-      }, {
-        id: 4,
-        order: 4,
-        step_name: '登入頁面',
-        step_type: 'THEN',
-        step_desc: '登入回傳成功, 導入平台首頁'
-      }],
-      issueParam:[{
-        id: 1,
-        order: 1,
-        param_name: '帳號',
-        param_type: '文字',
-        param_desc: '使用者帳號',
-        param_limit: '09[0-9]',
-        param_length: 10
-      }, {
-        id: 2,
-        order: 2,
-        param_name: '密碼',
-        param_type: '文字',
-        param_desc: '使用者登入密碼',
-        param_limit: '',
-        param_length: ''
-      }, {
-        id: 3,
-        order: 3,
-        param_name: '姓名',
-        param_type: '文字',
-        param_desc: '使用者姓名',
-        param_limit: '',
-        param_length: ''
-      }, {
-        id: 4,
-        order: 4,
-        param_name: '身份證字號',
-        param_type: '文字',
-        param_desc: '本國人身分證字號',
-        param_limit: '[A-Z]{1}[0-9]{9}',
-        param_length: 10
-      }],
-      issueTest:[{
-        id: 1,
-        api_name: '帳號登入',
-        api_method: '輸入帳號密碼取得Token',
-        api_url: '/user/login',
-        api_desc: 'GET'
-      }],
-      issueComment:[{
-        comment: 'Subject changed from iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊到 nova DB to iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊更新到 nova DB',
-        comment_author: '王聰明',
-        comment_at: '2020-07-03 11:11:09'
-      }, {
-        comment: '使用Git 觸發 Jenkins進行自動包版，自動安裝，自動測試。',
-        comment_author: '張婉婷',
-        comment_at: '2020-07-04 08:11:09'
-      }],
-      issueTestItem:[{
-        id: 1,
-        order: 1,
-        item_name: '成功登入',
-        item_is_success: true
-      },{
-        id: 2,
-        order: 2,
-        item_name: '成功登入',
-        item_is_success: true
-      },{
-        id: 3,
-        order: 3,
-        item_name: '登入失敗',
-        item_is_success: false
-      },{
-        id: 3,
-        order: 3,
-        item_name: '登入失敗',
-        item_is_success: false
-      }],
-      issueTestValue:[{
-        id: 1,
-        value_type: 'Request',
-        value_key: 'Content-Type',
-        value: 'application/json',
-        value_location: 'header'
-      },{
-        id: 2,
-        value_type: 'Response',
-        value_key: 'active',
-        value: 'true',
-        value_location: 'body'
-      }],
-      issueComment:[{
-        comment: 'Subject changed from iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊到 nova DB to iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊更新到 nova DB',
-        comment_author: '王聰明',
-        comment_at: '2020-07-03 11:11:09'
-      }, {
-        comment: '使用Git 觸發 Jenkins進行自動包版，自動安裝，自動測試。',
-        comment_author: '張婉婷',
-        comment_at: '2020-07-04 08:11:09'
-      }],
+      issueFlow: [],
+      issueParameter: [],
+      issueTestCase: [],
+      issueTestItem: [],
+      issueTestValue: [],
+      issueComment: [],
       activeName: 'comment',
       commentDialogVisible: false,
-      demandDialogVisible: false,
+      flowDialogVisible: false,
       paramDialogVisible: false,
       testDialogVisible: false,
       testItemDialogVisible: false,
       testValueDialogVisible: false,
-      editDemandId: 0,
+      editFlowId: 0,
       editParamId: 0,
       editTestId: 0,
       editTestItemId: 0,
       editTestValueId: 0,
       dialogTitle: '',
       issueId: 0,
-      issue_detail: {}
+      projectId: 0,
+      issue_detail: {},
+      choose_testCase: '',
+      choose_testItem: ''
     }
   },
   computed: {
@@ -188,9 +88,7 @@ export default {
     }
   },
   mounted() {
-    console.log('xxxxxx')
     this.issueId = parseInt(this.$route.params.issue_num)
-    console.log('issueId', this.issueId)
     this.fetchData()
   },
   methods: {
@@ -199,36 +97,62 @@ export default {
       Promise.all([
         getIssueStatus(), 
         getIssueTracker(), 
-        getIssuePriority(),
-        getIssue(this.issueId)
+        getIssuePriority(), 
+        getIssue(this.issueId), 
+        getFlowByIssue(this.issueId), 
+        getFlowType(),
+        getParameterByIssue(this.issueId),
+        getTestCaseByIssue(this.issueId)
       ]).then(res => {
         this.issueStatusList = res[0].data.map(item => {
-          return {'label': item.name, 'value': item.id}
+          return { label: item.name, value: item.id }
         })
         this.issueTypeList = res[1].data.map(item => {
-          return {'label': item.name, 'value': item.id}
+          return { label: item.name, value: item.id }
         })
         this.issuePriorityList = res[2].data.map(item => {
-          return {'label': item.name, 'value': item.id}
+          return { label: item.name, value: item.id }
         })
-        this.issueDetail = res[3].data
-        this.issueDetail.issueStatus = this.issueDetail.status.id
-        this.issueDetail.issueAssignee = this.issueDetail.tracker.id
-        this.issueDetail.issuePriority = this.issueDetail.priority.id
-        this.issueDetail.issueDoneRatio = this.issueDetail.done_ratio
-        this.issueDetail.issueType = this.issueDetail.tracker.id
-        this.issueStartDate = this.issueDetail.start_date
-        this.issueDueDate = this.issueDetail.due_date
-        
-        this.issueDescription = this.issueDetail.description
-        console.log(this.issueStartDate)
+        const issueDetail = res[3]
+        const projectId = issueDetail.project.id
+        getProjectAssignable(projectId).then((assignable) => {
+          this.issueAssigneeList = assignable.data.user_list.map(item => {
+            return { label: item.name, value: item.id }
+          })
+        })
+        const issueFlowType = res[5].data
+        this.issueFlow = res[4].data[0].flow_data.map(item => {
+          const issueType = issueFlowType.find(type => {
+            return type.flow_type_id == item.type_id
+          })
+          item['type_name'] = issueType ? issueType['name'] : ''
+          return item
+        })
+
+        this.issueParameter = res[6].data
+        this.issueTestCase = res[7].data
+
+        this.issueDetail.issueStatus = issueDetail.status.id
+        this.issueDetail.issueAssignee = issueDetail.tracker.id
+        this.issueDetail.issuePriority = issueDetail.priority.id
+        this.issueDetail.issueDoneRatio = issueDetail.done_ratio
+        this.issueDetail.issueType = issueDetail.tracker.id
+        this.issueStartDate = issueDetail.start_date
+        this.issueDueDate = issueDetail.due_date
+        this.issueDescription = issueDetail.description
+        this.projectId = issueDetail.project.id
+        this.issueComment = issueDetail.journals.map(item => {
+          return {
+            comment: item.notes,
+            comment_author: item.user.name,
+            comment_at: item.created_on
+          }
+        })
         this.listLoading = false
-      });
-      // getIssue(this.issueId).then(response => {
-      //   this.issue_detail = response.data
-      //   this.listLoading = false
-      // })
-      // TODO: get issue setup
+      })
+    },
+    handleChange(value) {
+      console.log(value)
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
@@ -241,10 +165,10 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    showDemandDialog(demand, title) {
-      this.editDemandId = demand == '' ? 0 : demand.id
+    showFlowDialog(flow, title) {
+      this.editFlowId = flow == '' ? 0 : flow.id
       this.dialogTitle = title
-      this.demandDialogVisible = true
+      this.flowDialogVisible = true
     },
     showParamDialog(param, title) {
       this.editParamId = param == '' ? 0 : param.id
@@ -271,8 +195,195 @@ export default {
       if (!success || !total) return 'info'
       return success === total ? 'success' : 'danger'
     },
-    handleUpdate() {
-      
+    async handleSaveDetail() {
+      const data = {
+        'tracker_id': this.issueDetail.issueAssignee,
+        'status_id': this.issueDetail.issueStatus,
+        'priority_id': this.issueDetail.issuePriority,
+        'category_id': this.issueDetail.issueType,
+        'done_ratio': this.issueDetail.issueDoneRatio
+      }
+      await updateIssue(this.issueId, data)
+      Message({
+        message: 'update successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+    },
+    emitGetEditorData(value){
+      this.issueNote = value
+    },
+    async handleAddComment() {
+      await updateIssue(this.issueId, {'notes': this.issueNote})
+      this.commentDialogVisible = false
+      Message({
+        message: 'update successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    showAddComment() {
+      this.issueNote = ''
+      this.commentDialogVisible = true
+    },
+    async saveFlow(data) {
+      if(this.projectId > 0) {
+        data['project_id'] = this.projectId
+      }
+      await addFlowByIssue(this.issueId, data)
+      this.flowDialogVisible = false
+      Message({
+        message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async deleteFlow(row) {
+      await deleteFlow(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async saveParameter(data) {
+      if(this.projectId > 0) {
+        data['project_id'] = this.projectId
+      }
+      await addParameterByIssue(this.issueId, data)
+      this.paramDialogVisible = false
+      Message({
+        message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async saveTestCase(data) {
+      if(this.projectId > 0) {
+        data['project_id'] = this.projectId
+      }
+      await addTestCaseByIssue(this.issueId, data)
+      this.testDialogVisible = false
+      Message({
+        message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async deleteTestCase(row) {
+      await deleteTestCase(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async getTestItem(case_id){
+      const testItemList = await getTestItemByCase(case_id)
+      if(testItemList.data.length > 0){
+        this.issueTestItem = testItemList.data
+      } else {
+        this.issueTestItem = []
+      }
+    },
+    async saveTestItem(data) {
+      if(this.choose_testCase == '') {
+        Message({
+          message: 'please select test case',
+          type: 'error',
+          duration: 1 * 1000
+        })
+        return
+      }
+      if(this.projectId > 0) {
+        data['project_id'] = this.projectId
+      }
+      if(this.issueId > 0) {
+        data['issue_id'] = this.issueId
+      }
+      await addTestItemByCase(this.choose_testCase, data)
+      this.testItemDialogVisible = false
+      Message({
+        message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.getTestItem(this.choose_testCase)
+    },
+    async deleteTestItem(row) {
+      await deleteTestItem(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.getTestItem(this.choose_testCase)
+    },
+    async getTestValue(item_id){
+      const testValueList = await getTestValueByItem(item_id)
+      const testValueTypeRes = await getTestValueType()
+      const testValueTypeList = testValueTypeRes.data
+      const testValueLocationRes = await getTestValueLocation()
+      const testValueLocationList = testValueLocationRes.data
+      console.log(testValueTypeList, testValueLocationList)
+      if(testValueList.data.length > 0){
+        this.issueTestValue = testValueList.data.map(item => {
+          const valueType = testValueTypeList.find(type => {
+            return item.type_id == type.type_id
+          })
+          item.type = valueType.type_name
+          const valueLocation = testValueLocationList.find(location => {
+            return item.location_id == location.location_id
+          })
+          item.location = valueLocation.type_name
+          return item
+        })
+        console.log(this.issueTestValue)
+      } else {
+        this.issueTestValue = []
+      }
+    },
+    async deleteTestValue(row) {
+      await deleteTestValue(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.getTestValue(this.choose_testItem)
+    },
+    async saveTestValue(data) {
+      console.log(this.choose_testCase, this.choose_testItem)
+      if(this.choose_testItem == '' || this.choose_testCase == '') {
+        Message({
+          message: 'please select test item',
+          type: 'error',
+          duration: 1 * 1000
+        })
+        return
+      }
+      if(this.projectId > 0) {
+        data['project_id'] = this.projectId
+      }
+      if(this.issueId > 0) {
+        data['issue_id'] = this.issueId
+      }
+      data['testCase_id'] = this.choose_testCase
+
+      await addTestValueByItem(this.choose_testItem, data)
+      this.testValueDialogVisible = false
+      Message({
+        message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.getTestValue(this.choose_testItem)
     }
   }
 }
@@ -282,7 +393,7 @@ export default {
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
-        <el-button class="filter-item" size="small" type="success" style="float: right">
+        <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           Save
         </el-button>
         <div>{{ issueDescription }}</div>
@@ -304,12 +415,7 @@ export default {
           <el-col :span="6">
             <el-form-item label="Status" label-width="100px">
               <el-select v-model="issueDetail.issueStatus" style="width:100%">
-                <el-option
-                  v-for="item in issueStatusList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+                <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -328,12 +434,7 @@ export default {
           <el-col :span="6">
             <el-form-item label="Type" label-width="100px">
               <el-select v-model="issueDetail.issueType" style="width:100%">
-                <el-option
-                  v-for="item in issueTypeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+                <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -341,47 +442,44 @@ export default {
         <el-row>
           <el-col :span="6">
             <el-form-item label="Done Ratio" label-width="100px">
-              <el-input-number 
-                v-model="issueDetail.issueDoneRatio" 
-                :min="0" 
-                :max="10"
+              <el-input-number
+                v-model="issueDetail.issueDoneRatio"
+                :min="0"
+                :max="100"
                 style="width:100%"
-              ></el-input-number>
+                @change="handleChange"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Start Date" label-width="100px">
-                {{ issueStartDate }}
+              {{ issueStartDate }}
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Due Date" label-width="100px">
-                {{ issueDueDate }}
+              {{ issueDueDate }}
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
-    
-    <el-tabs
-      v-model="activeName"
-      type="border-card"
-      style="margin-top: 10px"
-    >
+
+    <el-tabs v-model="activeName" type="border-card" style="margin-top: 10px">
       <el-tab-pane label="Comment" name="comment">
-        <el-button type="primary" @click="commentDialogVisible = true">Add Comment</el-button>
+        <el-button type="primary" @click="showAddComment">Add Comment</el-button>
         <el-table
           :data="issueComment"
           element-loading-text="Loading"
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
-              {{ scope.row.comment }}
+              <div v-html="scope.row.comment"></div>
             </template>
           </el-table-column>
           <el-table-column label="Author" width="180">
@@ -396,40 +494,43 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Demand" name="demand">
-        <el-button type="primary" @click="showDemandDialog('', 'Add Demand')">Add Demand</el-button>
+      <el-tab-pane label="Flow" name="Flow">
+        <el-button type="primary" @click="showFlowDialog('', 'Add Flow')">Add Flow</el-button>
         <el-table
-          :data="issueDemand"
+          :data="issueFlow"
           element-loading-text="Loading"
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
           <el-table-column label="Order">
             <template slot-scope="scope">
-              {{ scope.row.order }}
+              {{ scope.row.id }}
             </template>
           </el-table-column>
           <el-table-column label="Step Name">
             <template slot-scope="scope">
-              <span
-                @click="showDemandDialog(scope.row, 'Edit Demand')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.step_name }}
-              </span>
+              <!--<span style="color: #409EFF;cursor: pointer;" @click="showFlowDialog(scope.row, 'Edit Flow')">
+                {{ scope.row.name }}
+              </span>-->
+              {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column label="Step Type">
             <template slot-scope="scope">
-              {{ scope.row.step_type }}
+              {{ scope.row.type_name }}
             </template>
           </el-table-column>
           <el-table-column label="Desc.">
             <template slot-scope="scope">
-              {{ scope.row.step_desc }}
+              {{ scope.row.description }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -437,147 +538,153 @@ export default {
       <el-tab-pane label="Parameter" name="parameter">
         <el-button type="primary" @click="showParamDialog('', 'Add Parameter')">Add Parameter</el-button>
         <el-table
-          :data="issueParam"
+          :data="issueParameter"
           element-loading-text="Loading"
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
-          <el-table-column label="Order">
-            <template slot-scope="scope">
-              {{ scope.row.order }}
-            </template>
-          </el-table-column>
           <el-table-column label="Name">
             <template slot-scope="scope">
-              <span
-                @click="showParamDialog(scope.row, 'Edit Parameter')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.param_name }}
-              </span>
+            {{ scope.row.name }}
+              <!--<span style="color: #409EFF;cursor: pointer;" @click="showParamDialog(scope.row, 'Edit Parameter')">
+                {{ scope.row.name }}
+              </span>-->
             </template>
           </el-table-column>
           <el-table-column label="Type">
             <template slot-scope="scope">
-              {{ scope.row.param_type }}
+              {{ scope.row.parameter_type }}
             </template>
           </el-table-column>
           <el-table-column label="Desc.">
             <template slot-scope="scope">
-              {{ scope.row.param_desc }}
+              {{ scope.row.description }}
             </template>
           </el-table-column>
           <el-table-column label="Limit">
             <template slot-scope="scope">
-              {{ scope.row.param_limit }}
+              {{ scope.row.limitation }}
             </template>
           </el-table-column>
           <el-table-column label="Length">
             <template slot-scope="scope">
-              {{ scope.row.param_length }}
+              {{ scope.row.length }}
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Test" name="test">
-        <el-button type="primary" @click="showTestDialog('', 'Add Test')">Add Test</el-button>
+      <el-tab-pane label="Test Case" name="test">
+        <el-button type="primary" @click="showTestDialog('', 'Add Test')">Add Test Case</el-button>
         <el-table
-          :data="issueTest"
+          :data="issueTestCase"
           element-loading-text="Loading"
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
+          <el-table-column label="ID">
+            <template slot-scope="scope">
+              {{ scope.row.id }}
+            </template>
+          </el-table-column>
           <el-table-column label="API Name">
             <template slot-scope="scope">
-              <span
-                @click="showTestDialog(scope.row, 'Edit API')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.api_name }}
-              </span>
+              <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestDialog(scope.row, 'Edit API')">
+                {{ scope.row.name }}
+              </span>-->
+              {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column label="API Method">
             <template slot-scope="scope">
-              {{ scope.row.api_method }}
+              {{ scope.row.data.method }}
             </template>
           </el-table-column>
           <el-table-column label="API URL">
             <template slot-scope="scope">
-              {{ scope.row.api_url }}
+              {{ scope.row.data.url }}
             </template>
           </el-table-column>
           <el-table-column label="Desc.">
             <template slot-scope="scope">
-              {{ scope.row.api_desc }}
+              {{ scope.row.description }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteTestCase(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Test Item" name="testItem">
-        <el-button type="primary" @click="showTestItemDialog('', 'Add Test Item')">Add Test Item</el-button>
-        <el-table
-          :data="issueTestItem"
-          element-loading-text="Loading"
-          border
-          fit
-          style="margin-top: 10px"
-        >
-          <el-table-column label="Order">
+        <div class="demo-input-size">
+          Test Case:
+          <el-select v-model="choose_testCase" @change="getTestItem">
+            <el-option
+              v-for="item in issueTestCase"
+              :key="item.id"
+              :label="`${item.name}(${item.id})`"
+              :value="item.id"
+            />
+          </el-select>
+          <el-button type="primary" @click="showTestItemDialog('', 'Add Test Item')">Add Test Item</el-button>
+        </div>
+        <el-table :data="issueTestItem" element-loading-text="Loading" border fit style="margin-top: 10px">
+          <el-table-column label="ID">
             <template slot-scope="scope">
-              <span
-                @click="showTestItemDialog(scope.row, 'Edit Test Item')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.order }}
+              <span style="color: #409EFF;cursor: pointer;" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
+                {{ scope.row.id }}
               </span>
             </template>
           </el-table-column>
           <el-table-column label="Item">
             <template slot-scope="scope">
-              {{ scope.row.item_name }}
+              {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column label="Is Success?">
+          <el-table-column label="Is Pass?">
             <template slot-scope="scope">
-              {{ scope.row.item_is_success }}
+              {{ scope.row.is_passed }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteTestItem(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Test Value" name="testValue">
-        <el-button 
-          type="primary" 
-          @click="showTestValueDialog('', 'Add Test Value')"
-        >
-          Add Test Value
-        </el-button>
-        <el-table
-          :data="issueTestValue"
-          element-loading-text="Loading"
-          border
-          fit
-          style="margin-top: 10px"
-        >
+        <div class="demo-input-size">
+          Test Item:
+          <el-select v-model="choose_testItem" @change="getTestValue">
+            <el-option
+              v-for="item in issueTestItem"
+              :key="item.id"
+              :label="`${item.name}(${item.id})`"
+              :value="item.id"
+            />
+          </el-select>
+          <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button>
+        </div>
+        <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
           <el-table-column label="Type">
             <template slot-scope="scope">
-              <span
-                @click="showTestValueDialog(scope.row, 'Edit Test Value')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.value_type }}
-              </span>
+              {{ scope.row.type }}
+              <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestValueDialog(scope.row, 'Edit Test Value')">
+                {{ scope.row.type }}
+              </span>-->
             </template>
           </el-table-column>
           <el-table-column label="Key">
             <template slot-scope="scope">
-              {{ scope.row.value_key }}
+              {{ scope.row.key }}
             </template>
           </el-table-column>
           <el-table-column label="Value">
@@ -587,59 +694,63 @@ export default {
           </el-table-column>
           <el-table-column label="Location">
             <template slot-scope="scope">
-              {{ scope.row.value_location }}
+              {{ scope.row.location }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog
-      title="Add Comment"
-      :visible="commentDialogVisible"
-      width="70%"
-      @close="commentDialogVisible = false"
-    >
-      <WangEditor>
-      </WangEditor>
+    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
+      <WangEditor :content="'xxxx'" @get-editor-data="emitGetEditorData" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleUpdate">Confirm</el-button>
+        <el-button type="primary" @click="handleAddComment">Confirm</el-button>
       </span>
     </el-dialog>
-    <demand-dialog
+    <flow-dialog
       :dialog-title="dialogTitle"
-      :demand-id="editDemandId"
-      :dialog-visible="demandDialogVisible"
-      @demand-dialog-visible="demandDialogVisible = false"
+      :flow-id="editFlowId"
+      :dialog-visible="flowDialogVisible"
+      :save-data="saveFlow"
+      @flow-dialog-visible="flowDialogVisible = false"
     />
     <param-dialog
       :dialog-title="dialogTitle"
       :param-id="editParamId"
       :dialog-visible="paramDialogVisible"
+      :save-data="saveParameter"
       @param-dialog-visible="paramDialogVisible = false"
     />
     <test-dialog
       :dialog-title="dialogTitle"
       :test-id="editTestId"
       :dialog-visible="testDialogVisible"
+      :save-data="saveTestCase"
       @test-dialog-visible="testDialogVisible = false"
     />
     <test-item-dialog
       :dialog-title="dialogTitle"
       :test-item-id="editTestItemId"
       :dialog-visible="testItemDialogVisible"
+      :save-data="saveTestItem"
       @testItem-dialog-visible="testItemDialogVisible = false"
     />
     <test-value-dialog
       :dialog-title="dialogTitle"
       :test-value-id="editTestValueId"
       :dialog-visible="testValueDialogVisible"
+      :save-data="saveTestValue"
       @testValue-dialog-visible="testValueDialogVisible = false"
     />
   </div>
 </template>
 <style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
+.filter-container {
+  margin-bottom: 5px;
+}
 </style>

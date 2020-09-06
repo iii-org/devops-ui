@@ -16,16 +16,16 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="Name" label-width="100px">
-            <el-input v-model="paramName" />
+            <el-input v-model="parameterForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="Type" label-width="100px">
-            <el-select v-model="paramType" style="width:100%">
+            <el-select v-model="parameterForm.parameter_type_id" style="width:100%">
               <el-option
-                v-for="item in paramTypeList"
+                v-for="item in parameterTypeList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -37,33 +37,33 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="Length" label-width="100px">
-            <el-input v-model="paramLength" />
+            <el-input v-model="parameterForm.length" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="Limit" label-width="100px">
-            <el-input v-model="paramLimit" />
+            <el-input v-model="parameterForm.limitation" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="Desc." label-width="100px">
-            <el-input v-model="paramDesc" type="textarea" />
+            <el-input v-model="parameterForm.description" type="textarea" />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">Cancel</el-button>
-      <el-button type="primary" @click="handleClose">Confirm</el-button>
+      <el-button type="primary" @click="handleSave">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
 <script>
-
+import { getParameterType } from '@/api/issueParameter'
 export default {
   props: {
     dialogVisible: {
@@ -77,17 +77,25 @@ export default {
     paramId: {
       type: Number,
       default: 0
-    }
+    },
+    saveData: Function
   },
   data() {
     return {
-      paramTypeList: [{
+      parameterTypeList: [{
         value: '文字',
         label: '文字'
       }, {
         value: '數字',
         label: '數字'
       }],
+      parameterForm: {
+        name: '',
+        parameter_type_id: '',
+        description: '',
+        length: 0,
+        limitation: ''
+      },
       paramOrder: '',
       paramType: '',
       paramName: '',
@@ -96,28 +104,33 @@ export default {
       paramDesc: ''
     }
   },
-  updated() {
-    if (this.paramId === 0) {
-      this.paramType = ''
-      this.paramName = ''
-      this.paramDesc = ''
-      this.paramLength = ''
-      this.paramLimit = ''
-    } else {
-      this.fetchData()
-    }
+  // updated() {
+  //   if (this.paramId === 0) {
+  //     this.paramType = ''
+  //     this.paramName = ''
+  //     this.paramDesc = ''
+  //     this.paramLength = ''
+  //     this.paramLimit = ''
+  //   } else {
+  //     this.fetchData()
+  //   }
+  // },
+  created() {
+    this.fetchData()
   },
   methods: {
-    fetchData() {
-      this.paramOrder = 1
-      this.paramType = '文字'
-      this.stepName = '帳號'
-      this.paramDesc = ''
-      this.paramLength = 10
-      this.paramLimit = '09[0-9]'
+    async fetchData() {
+      const res = await getParameterType()
+      this.parameterTypeList = res.data.map(item => {
+        return { label: item.name, value: item.parameter_type_id }
+      })
     },
     handleClose() {
       this.$emit('param-dialog-visible', false)
+    },
+    handleSave() {
+      this.saveData(this.parameterForm)
+      console.log(this.parameterForm)
     }
   }
 }

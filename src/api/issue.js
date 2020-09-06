@@ -38,7 +38,7 @@ export function getIssuePriority() {
 
 export function updateIssue(issue_id, data) {
   return request({
-    url: `/issues/rd/${issue_id}`,
+    url: `/issues/${issue_id}`,
     method: 'put',
     data
   })
