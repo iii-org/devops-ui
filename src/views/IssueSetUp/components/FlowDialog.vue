@@ -6,7 +6,7 @@
     @close="handleClose"
   >
     <el-form ref="form" label-width="20%">
-      <el-row v-if="demandId != 0">
+      <el-row v-if="flowId != 0">
         <el-col :span="24">
           <el-form-item label="Step Order" label-width="100px">
             <el-input v-model="stepOrder" />
@@ -16,16 +16,16 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="Step Name" label-width="100px">
-            <el-input v-model="stepName" />
+            <el-input v-model="flowForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item label="Step Type" label-width="100px">
-            <el-select v-model="stepType" style="width:100%">
+            <el-select v-model="flowForm.type_id" style="width:100%">
               <el-option
-                v-for="item in stepTypeList"
+                v-for="item in flowTypeList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -37,19 +37,19 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="Step Desc." label-width="100px">
-            <el-input v-model="stepDesc" type="textarea" />
+            <el-input v-model="flowForm.description" type="textarea" />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">Cancel</el-button>
-      <el-button type="primary" @click="handleClose">Confirm</el-button>
+      <el-button type="primary" @click="handleSave">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
 <script>
-
+import { getFlowType } from '@/api/issueFlow'
 export default {
   props: {
     dialogVisible: {
@@ -58,55 +58,50 @@ export default {
     },
     dialogTitle: {
       type: String,
-      default: 'Add Demand'
+      default: 'Add Flow'
     },
-    demandId: {
+    flowId: {
       type: Number,
       default: 0
-    }
+    },
+    saveData: Function
   },
   data() {
     return {
-      stepTypeList: [{
-        value: 'Given',
-        label: 'Given'
-      }, {
-        value: 'When',
-        label: 'When'
-      }, {
-        value: 'Then',
-        label: 'Then'
-      }, {
-        value: 'And',
-        label: 'And'
-      }, {
-        value: 'But',
-        label: 'But'
-      }],
+      flowTypeList: [],
       stepOrder: 0,
-      stepType: '',
-      stepName: '',
-      stepDesc: ''
+      flowForm: {
+        name: '',
+        type_id: '',
+        description: ''
+      }
     }
   },
-  updated() {
-    if (this.demandId === 0) {
-      this.stepType = ''
-      this.stepName = ''
-      this.stepDesc = ''
-    } else {
-      this.fetchData()
-    }
+  // updated() {
+  //   if (this.flowId === 0) {
+  //     this.stepType = ''
+  //     this.stepName = ''
+  //     this.stepDesc = ''
+  //   } else {
+  //     this.fetchData()
+  //   }
+  // },
+  created() {
+    this.fetchData()
   },
   methods: {
-    fetchData() {
-      this.stepOrder = 1
-      this.stepType = '設定帳號'
-      this.stepName = 'GIVEN'
-      this.stepDesc = '設定帳號參數'
+    async fetchData() {
+      const res = await getFlowType()
+      this.flowTypeList = res.data.map(item => {
+        return { label: item.name, value: item.flow_type_id }
+      })
     },
     handleClose() {
-      this.$emit('demand-dialog-visible', false)
+      this.$emit('flow-dialog-visible', false)
+    },
+    handleSave() {
+      this.saveData(this.flowForm)
+      console.log(this.flowForm)
     }
   }
 }

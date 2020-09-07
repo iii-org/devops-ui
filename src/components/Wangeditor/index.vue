@@ -10,7 +10,7 @@ import E from 'wangeditor'
 export default {
   name: 'editor',
   props: {
-    wikiContent: {
+    content: {
       type: String,
       default: ''
     }
@@ -23,7 +23,8 @@ export default {
   mounted() {
     this.editor = new E(this.$refs.editor)
     this.editor.customConfig.onchange = html => {
-      this.$emit('get-editor-data', html)
+      const new_html = html.replace(/^<p>|<\/p>*/g, "") //remove before and after p tag
+      this.$emit('get-editor-data', new_html)
     };
     this.editor.customConfig.lang = {
         '设置标题': 'title',
@@ -40,7 +41,7 @@ export default {
         // 还可自定添加更多
     }
     this.editor.create()
-    this.editor.txt.html(this.wikiContent);
+    this.editor.txt.html(this.content);
   }
 }
 </script>
