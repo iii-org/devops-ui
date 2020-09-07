@@ -8,16 +8,12 @@
       border
       style="width: 100%"
     >
-      <el-table-column label="Num" align="center" width="80">
+      <el-table-column label="Number" align="center" width="80">
         <template slot-scope="scope">
-          <router-link :to="'/issues/'+scope.row.id" style="color: #409EFF">
+          {{ scope.row.id }}
+          <!-- <router-link :to="'/issues/'+scope.row.id" style="color: #409EFF">
             <span>{{ scope.row.id }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column label="Name" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.issue_name }}</span>
+          </router-link> -->
         </template>
       </el-table-column>
       <el-table-column label="Tracker" align="center" width="80">
@@ -41,6 +37,11 @@
       <el-table-column label="Project" align="center" width="210">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Name" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.issue_name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="Last Update Time" width="140">
@@ -75,16 +76,16 @@ import { getIssuesByUser } from '@/api/issue'
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: {
-    ...mapGetters([
-      'userId'
-    ])
-  },
   data() {
     return {
       list: null,
       listLoading: true
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
   },
   created() {
     this.fetchData()
@@ -96,10 +97,10 @@ export default {
         this.list = response.data
         this.listLoading = false
       })
-    }, 
+    },
     handleEdit(idx, row) {
       console.log(idx, row)
-      this.$router.push({path: `/issues/${row.id}/setup`})
+      this.$router.push({ path: `/issues/${row.id}/setup` })
     }
   }
 }

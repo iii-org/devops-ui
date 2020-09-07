@@ -44,3 +44,10 @@ export function deleteProject(pId = '80') {
     method: 'DELETE'
   })
 }
+
+export function getProjectAssignable(pId) {
+  return request({
+    url: `/project/${pId}/user/list?exclude=1`,
+    method: 'GET'
+  })
+}
