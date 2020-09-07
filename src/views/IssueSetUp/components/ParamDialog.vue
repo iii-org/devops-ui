@@ -5,7 +5,12 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form ref="form" label-width="20%">
+    <el-form 
+      ref="parameterForm" 
+      :model="parameterForm"
+      :rules="parameterFormRules"
+      label-width="20%"
+    >
       <el-row v-if="paramId != 0">
         <el-col :span="24">
           <el-form-item label="Order" label-width="100px">
@@ -15,14 +20,14 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Name" label-width="100px">
+          <el-form-item label="Name" label-width="100px" prop="name">
             <el-input v-model="parameterForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Type" label-width="100px">
+          <el-form-item label="Type" label-width="100px" prop="parameter_type_id">
             <el-select v-model="parameterForm.parameter_type_id" style="width:100%">
               <el-option
                 v-for="item in parameterTypeList"
@@ -36,21 +41,21 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Length" label-width="100px">
+          <el-form-item label="Length" label-width="100px" prop="length">
             <el-input v-model="parameterForm.length" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Limit" label-width="100px">
+          <el-form-item label="Limit" label-width="100px" prop="limitation">
             <el-input v-model="parameterForm.limitation" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Desc." label-width="100px">
+          <el-form-item label="Desc." label-width="100px" prop="description">
             <el-input v-model="parameterForm.description" type="textarea" />
           </el-form-item>
         </el-col>
@@ -82,19 +87,30 @@ export default {
   },
   data() {
     return {
-      parameterTypeList: [{
-        value: '文字',
-        label: '文字'
-      }, {
-        value: '數字',
-        label: '數字'
-      }],
+      parameterTypeList: [],
       parameterForm: {
         name: '',
         parameter_type_id: '',
         description: '',
         length: 0,
         limitation: ''
+      },
+      parameterFormRules: {
+        name: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
+        parameter_type_id: [
+          { required: true, message: 'Please select type', trigger: 'blur' }
+        ],
+        length: [
+          { required: true, message: 'Please input length', trigger: 'blur' }
+        ],
+        limitation: [
+          { required: true, message: 'Please input limitation', trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: 'Please input description', trigger: 'blur' }
+        ]
       },
       paramOrder: '',
       paramType: '',
@@ -126,11 +142,18 @@ export default {
       })
     },
     handleClose() {
+      this.$refs['parameterForm'].resetFields()
       this.$emit('param-dialog-visible', false)
     },
     handleSave() {
-      this.saveData(this.parameterForm)
-      console.log(this.parameterForm)
+      this.$refs['parameterForm'].validate(async(valid) => {
+        if (valid) {
+          await this.saveData(this.parameterForm)
+          this.$refs['parameterForm'].resetFields()
+        } else {
+          return false
+        }
+      })
     }
   }
 }

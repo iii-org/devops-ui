@@ -5,17 +5,22 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form ref="form" label-width="20%">
+    <el-form 
+      ref="testCaseForm"
+      :model="testCaseForm"
+      :rules="testCaseFormRules"
+      label-width="20%"
+    >
       <el-row>
         <el-col :span="24">
-          <el-form-item label="API Name" label-width="100px">
+          <el-form-item label="API Name" label-width="100px" prop="name">
             <el-input v-model="testCaseForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="API Method" label-width="100px">
+          <el-form-item label="API Method" label-width="100px" prop="method_id">
             <el-select v-model="testCaseForm.method_id" style="width:100%">
               <el-option
                 v-for="item in testMethodList"
@@ -29,7 +34,7 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="API Type" label-width="100px">
+          <el-form-item label="API Type" label-width="100px" prop="type_id">
             <el-select v-model="testCaseForm.type_id" style="width:100%">
               <el-option
                 v-for="item in testTypeList"
@@ -43,14 +48,14 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="API URL" label-width="100px">
+          <el-form-item label="API URL" label-width="100px" prop="url">
             <el-input v-model="testCaseForm.url" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Desc." label-width="100px">
+          <el-form-item label="Desc." label-width="100px" prop="description">
             <el-input v-model="testCaseForm.description" type="textarea" />
           </el-form-item>
         </el-col>
@@ -94,7 +99,24 @@ export default {
       testAPIName: '',
       testAPIMethod: '',
       testAPIURL: '',
-      testAPIDesc: ''
+      testAPIDesc: '',
+      testCaseFormRules: {
+        name: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
+        method_id: [
+          { required: true, message: 'Please select method', trigger: 'blur' }
+        ],
+        type_id: [
+          { required: true, message: 'Please select type', trigger: 'blur' }
+        ],
+        url: [
+          { required: true, message: 'Please input url', trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: 'Please input description', trigger: 'blur' }
+        ]
+      }
     }
   },
   // updated() {
@@ -125,20 +147,29 @@ export default {
       this.$emit('test-dialog-visible', false)
     },
     handleSave() {
-      const type = this.testTypeList.find(item => {
-        return item.value == this.testCaseForm.type_id
+      this.$refs['testCaseForm'].validate(async(valid) => {
+        if (valid) {
+          const type = this.testTypeList.find(item => {
+            return item.value == this.testCaseForm.type_id
+          })
+          const method = this.testMethodList.find(item => {
+            return item.value == this.testCaseForm.method_id
+          })
+          const data = {
+            'type': type.label,
+            'url': this.testCaseForm.url,
+            'method': method.label,
+            'method_id': this.testCaseForm.method_id
+          }
+          this.testCaseForm['data'] = data
+          await this.saveData(this.testCaseForm)
+          this.$refs['testCaseForm'].resetFields()
+        } else {
+          return false
+        }
       })
-      const method = this.testMethodList.find(item => {
-        return item.value == this.testCaseForm.method_id
-      })
-      const data = {
-        'type': type.label,
-        'url': this.testCaseForm.url,
-        'method': method.label,
-        'method_id': this.testCaseForm.method_id
-      }
-      this.testCaseForm['data'] = data
-      this.saveData(this.testCaseForm)
+
+      
     }
   }
 }
