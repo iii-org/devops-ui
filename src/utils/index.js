@@ -59,7 +59,6 @@ export function parseTime(time, cFormat) {
  * @returns {string}
  */
 export function formatTime(time, option) {
-  console.log(time)
   if (('' + time).length === 10) {
     time = parseInt(time) * 1000
   } else {

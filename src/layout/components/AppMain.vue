@@ -7,12 +7,27 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'AppMain',
   computed: {
     key() {
       return this.$route.path
     }
+  },
+  async created() {
+    // const loading = this.$loading({
+    //   lock: true,
+    //   text: 'Loading',
+    //   spinner: 'el-icon-loading',
+    //   background: 'rgba(0, 0, 0, 0.7)'
+    // })
+    // await this['projects/getProjectList']()
+    // loading.close()
+  },
+  methods: {
+    ...mapActions(['projects/getProjectList'])
   }
 }
 </script>
@@ -26,7 +41,7 @@ export default {
   overflow: hidden;
   background-color: #f5f5f5;
 }
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 </style>

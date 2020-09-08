@@ -20,3 +20,11 @@ export function getStages(id) {
     method: 'get'
   })
 }
+//CI/CD 詳細記錄 [測試詳細記錄]
+export function getPipelinesLogs(params) {
+  return request({
+    url: `/pipelines/rd/logs`,
+    method: 'get',
+    params
+  })
+}

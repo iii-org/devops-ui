@@ -1,18 +1,26 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import ProjectListSelector from '../../components/ProjectListSelector'
 import projectPie from './components/project_pie'
 import projectBar from './components/project_bar'
-import projectGantt from './components/project_gantt'
 
 export default {
   name: 'Dashboard',
   components: {
     projectPie,
     projectBar,
-    projectGantt
+    ProjectListSelector
   },
   data() {
     return {
+      isLoading: true,
+      projectVersion: '1.0',
+      projectVersionList: [{ id: 1, name: '1.0' }],
+      workLoad: '',
+      workLoadData: {},
+      workLoadTypes: [],
+      workLoadSelected: {},
+      issueprogress: { total_issue: 0, unfinish_number: 0 },
       tableData: [
         {
           title: 'Host',
@@ -28,59 +36,96 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapGetters(['userProjectList', 'projectSelectedId'])
+  },
+  watch: {
+    projectSelectedId(projectId) {
+      this.fetchAll()
+    }
+  },
+  async created() {
+    this.fetchAll()
+  },
+  methods: {
+    ...mapActions('projects', ['getProjectIssueProgress', 'getProjectIssueStatistics', 'getProjectUserList']),
+    onWorkLoadChange(value) {
+      this.workLoadSelected = this.workLoadData[value]
+    },
+    async fetchAll() {
+      this.isLoading = true
+      const res = await Promise.all([
+        this.getProjectIssueProgress(this.projectSelectedId),
+        this.getProjectIssueStatistics(this.projectSelectedId),
+        this.getProjectUserList(this.projectSelectedId)
+      ])
+      this.isLoading = false
+      this.issueprogress = res[0].data
+      const statistics = res[1].data
+      this.tableData = res[2].data.user_list || []
+      this.workLoadData = statistics
+      this.workLoadTypes = Object.keys(statistics).map(key => {
+        return { id: key, name: key }
+      })
+      this.workLoad = this.workLoadTypes[0].id
+      this.workLoadSelected = statistics[this.workLoad]
+    }
   }
 }
 </script>
 
 <template>
-  <div class="dashboard-container">
+  <div v-loading="isLoading" class="dashboard-container">
+    <div>
+      <project-list-selector />
+      <el-select v-model="projectVersion" placeholder="select a project">
+        <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+      </el-select>
+    </div>
+    <el-divider />
     <el-row :gutter="12">
       <el-col :span="12">
         <el-card shadow="hover" style="height:400px">
-          <div slot="header" class="clearfix" style="text-align: center">
+          <div slot="header" class="clearfix" style="line-height:40px">
             <span>Status</span>
           </div>
-          <projectPie />
+          <project-pie :the-data="issueprogress" />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover" style="height:400px">
-          <div slot="header" class="clearfix" style="text-align: center">
+          <div slot="header" class="clearfix" style="line-height:40px">
             <span>Workload</span>
+            <el-select v-model="workLoad" placeholder="select a project" style="float:right" @change="onWorkLoadChange">
+              <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+            </el-select>
           </div>
-          <project-bar />
+          <project-bar :the-data="workLoadSelected" />
         </el-card>
       </el-col>
     </el-row>
     <el-row :gutter="12">
-      <el-col :span="8">
+      <el-col :span="24">
         <el-card shadow="hover" style="min-height: 400px">
-          <div slot="header" class="clearfix" style="text-align: center">
-            <span>Members</span>
+          <div slot="header" class="clearfix">
+            <span>Project Members</span>
           </div>
           <el-table :data="tableData" stripe style="width: 100%">
-            <el-table-column prop="title" label="Title"> </el-table-column>
-            <el-table-column prop="name" label="Name">
-              <template slot-scope="scope">
-                <template v-if="Array.isArray(scope.row.name)">
-                  <p v-for="item in scope.row.name" :key="item">
-                    {{ item }}
-                  </p>
-                </template>
-                <span v-else>{{ scope.row.name }}</span>
-              </template>
-            </el-table-column>
+            <el-table-column prop="role_name" label="Title" />
+            <el-table-column prop="name" label="Name" />
+            <el-table-column prop="email" label="Email" />
           </el-table>
         </el-card>
       </el-col>
-      <el-col :span="16">
+      <!-- <el-col :span="16">
         <el-card shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix" style="text-align: center">
             <span>Weekly Progress</span>
           </div>
           <project-gantt />
         </el-card>
-      </el-col>
+      </el-col> -->
     </el-row>
   </div>
 </template>

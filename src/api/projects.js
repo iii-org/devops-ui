@@ -51,3 +51,27 @@ export function getProjectAssignable(pId) {
     method: 'GET'
   })
 }
+
+//取得專案議題狀態 [ 0_1 單一專案概述]
+export function getProjectIssueProgress(pId) {
+  return request({
+    url: `/project/${pId}/issues_progress`,
+    method: 'GET'
+  })
+}
+
+//取得專案議題篩選條件狀態 [0.1_單一專案概述]
+export function getProjectIssueStatistics(pId) {
+  return request({
+    url: `/project/${pId}/issues_statistics`,
+    method: 'GET'
+  })
+}
+
+//專案內已分配人員 [ 0_1 單一專案概述]
+export function getProjectUserList(pId) {
+  return request({
+    url: `/project/${pId}/user/list`,
+    method: 'GET'
+  })
+}
