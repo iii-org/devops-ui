@@ -265,35 +265,35 @@ export const asyncRoutes = [
     redirect: '/progress/project-gantt',
     meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager'] },
     children: [
-      {
-        path: 'project-gantt',
-        name: 'ProjectGantt',
-        component: () => import('@/views/ProgressGantt/index'),
-        meta: { title: 'Project Gantt', roles: ['Project Manager'] }
-      },
-      {
-        path: 'dev-gantt',
-        name: 'DevGantt',
-        component: () => import('@/views/ProgressDevGantt/index'),
-        meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
-      },
-      {
-        path: 'dev-version',
-        name: 'DevVersion',
-        component: () => import('@/views/ProgressDevVersion/index'),
-        meta: { title: 'Dev Version', roles: ['Project Manager'] }
-      },
-      {
-        path: 'test-record',
-        name: 'TestRecord',
-        component: () => import('@/views/ProgressDevVersionTestRecord/index'),
-        meta: { title: 'Test Record', roles: ['Project Manager'] }
-      },
+      // {
+      //   path: 'project-gantt',
+      //   name: 'ProjectGantt',
+      //   component: () => import('@/views/ProgressGantt/index'),
+      //   meta: { title: 'Project Gantt', roles: ['Project Manager'] }
+      // },
+      // {
+      //   path: 'dev-gantt',
+      //   name: 'DevGantt',
+      //   component: () => import('@/views/ProgressDevGantt/index'),
+      //   meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
+      // },
       {
         path: 'dev-branch',
         name: 'DevBranch',
         component: () => import('@/views/ProcessDevBranch/index'),
         meta: { title: 'Dev Branch', roles: ['Project Manager'] }
+      },
+      // {
+      //   path: 'dev-version',
+      //   name: 'DevVersion',
+      //   component: () => import('@/views/ProgressDevVersion/index'),
+      //   meta: { title: 'Dev Version', roles: ['Project Manager'] }
+      // },
+      {
+        path: 'test-record',
+        name: 'TestRecord',
+        component: () => import('@/views/ProgressDevVersionTestRecord/index'),
+        meta: { title: 'Test Record', roles: ['Project Manager'] }
       },
       {
         path: 'dev-branch/:branchName/test',

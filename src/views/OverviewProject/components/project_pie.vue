@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{ height: height, width: width }" />
 </template>
 
 <script>
@@ -19,6 +19,12 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    theData: {
+      type: Object,
+      default() {
+        return { total_issue: 0, unfinish_number: 0 }
+      }
     }
   },
   data() {
@@ -26,10 +32,16 @@ export default {
       chart: null
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+  watch: {
+    theData(value) {
+      this.$nextTick(() => {
+        const CONFIG_DATA = [
+          { value: value.unfinish_number, name: 'Ongoing' },
+          { value: value.total_issue - value.unfinish_number, name: 'Done' }
+        ]
+        this.initChart(CONFIG_DATA)
+      })
+    }
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -39,7 +51,7 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart() {
+    initChart(data) {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         tooltip: {
@@ -58,10 +70,7 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 27, name: 'Ongoing' },
-              { value: 35, name: 'Done' }
-            ],
+            data,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

@@ -13,6 +13,9 @@ const getters = {
   fileListByBranch: state => state.fileList.list,
   fileListTotalByBranch: state => state.fileList.total,
   commitListByBranch: state => state.commitList.list,
-  commitListTotalByBranch: state => state.commitList.total
+  commitListTotalByBranch: state => state.commitList.total,
+  userProjectList: state => state.user.projectList,
+  projectSelectedId: state => state.projects.projectSelectedId,
+  projectSelectedObject: state => state.projects.projectSelectedObject
 }
 export default getters

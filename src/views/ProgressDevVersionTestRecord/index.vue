@@ -1,10 +1,16 @@
 <script>
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
+import TestDetail from './components/TestDetail'
+import { getPipelines, getPipelinesLogs } from '@/api/cicd'
+import ProjectListSelector from '../../components/ProjectListSelector'
+import { formatTime } from '../../utils/index.js'
 
 export default {
-  components: { Pagination },
+  components: { Pagination, ProjectListSelector, TestDetail },
   data() {
     return {
+      isLoading: false,
       projectList: [
         {
           project_name: '專科A'
@@ -12,39 +18,47 @@ export default {
       ],
       projectValue: '專科A',
       listLoading: true,
-      pagedData: [
-        {
-          order: 1,
-          counts: 5,
-          version: 'V_1.2',
-          desc: '使用登入',
-          status: 'success',
-          commit_msg: 'feature',
-          last_update_time: '2020-08-10T07:20:11Z'
-        },
-        {
-          order: 2,
-          counts: 3,
-          version: 'V1.0',
-          desc: '建立登入頁面',
-          status: 'fail',
-          commit_msg: 'Added Jenkins File',
-          last_update_time: '2020-08-10T07:20:11Z'
-        }
-      ],
+      testList: [],
+      detailData: [],
+      testDetailVisible: false,
       addDocumentDialogVisible: false,
       search: '',
       listQuery: {
         page: 1,
-        limit: 20,
-        totalPage: 1
+        limit: 10
       }
     }
   },
-  mounted() {
-    setTimeout(() => (this.listLoading = false), 1000)
+  computed: {
+    ...mapGetters(['projectSelectedObject']),
+    pagedData() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit - 1
+      return this.testList.slice(start, end)
+    }
+  },
+  watch: {
+    projectSelectedObject(obj) {
+      this.fetchData()
+    }
+  },
+  async created() {
+    this.fetchData()
   },
   methods: {
+    async fetchData() {
+      this.listLoading = true
+      const { repository_id: rid } = this.projectSelectedObject
+      if (!rid) {
+        this.testList = []
+        this.listLoading = false
+        return
+      }
+      const res = await getPipelines(rid)
+      const { data } = res
+      this.testList = data
+      this.listLoading = false
+    },
     returnTagType(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'info'
@@ -57,60 +71,87 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    statusBoo(obj) {
+      if (obj.success === obj.total) return true
+      false
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
+    },
+    emitTestDetailVisible(visible) {
+      this.testDetailVisible = visible
+    },
+    async onDetailsClick(row) {
+      this.isLoading = true
+      const { repository_id } = this.projectSelectedObject
+      const params = {
+        repository_id,
+        pipelines_exec_run: row.id
+      }
+      const res = await getPipelinesLogs(params)
+      const { data } = res
+      this.detailData = data
+      this.isLoading = false
+      this.emitTestDetailVisible(true)
     }
   }
 }
 </script>
 
 <template>
-  <div class="app-container">
+  <div v-loading="isLoading" class="app-container">
     <div>
-      <el-select v-model="projectValue" placeholder="select a project">
-        <el-option
-          v-for="item in projectList"
-          :key="item.project_name"
-          :label="item.project_name"
-          :value="item.project_name"
-        >
-        </el-option>
-      </el-select>
+      <project-list-selector />
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column label="Counts" :show-overflow-tooltip="true" width="100">
+      <el-table-column label="Index" :show-overflow-tooltip="true" width="100" align="center">
         <template slot-scope="scope">
-          {{ scope.row.counts }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Version" :show-overflow-tooltip="true" width="100">
+      <el-table-column label="Branch" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.version }}
+          {{ scope.row.commit_branch }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Status" width="100">
         <template slot-scope="scope">
-          <i v-if="scope.row.status === 'success'" class="el-icon-success" style="color:#67C23A" />
+          <i v-if="statusBoo(scope.row.status)" class="el-icon-success" style="color:#67C23A" />
           <i v-else class="el-icon-success" style="color:#909399" />
         </template>
       </el-table-column>
       <el-table-column label="Commit Message" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.commit_msg }}
+          {{ scope.row.commit_message }}
         </template>
       </el-table-column>
-      <el-table-column label="Last Update Time" width="200">
+      <el-table-column label="Last Update Time">
         <template slot-scope="scope">
-          <span>{{ new Date(scope.row.last_update_time).toLocaleString() }}</span>
+          <span>{{ myFormatTime(scope.row.last_test_time) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Actions" width="200" align="center">
+        <template slot-scope="scope">
+          <span @click="onDetailsClick(scope.row)" style="color: #409EFF;cursor: pointer;text-decoration: underline">
+            Detail
+          </span>
         </template>
       </el-table-column>
     </el-table>
     <pagination
-      :total="pagedData.length"
+      :total="testList.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[20]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
+    />
+    <test-detail
+      :dialog-visible.sync="testDetailVisible"
+      :the-data="detailData"
+      @test-detail-visible="emitTestDetailVisible"
     />
   </div>
 </template>

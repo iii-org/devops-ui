@@ -3,14 +3,19 @@ import {
   queryProjectList as QPL,
   addNewProject as ANP,
   editProject as EP,
-  deleteProject as DP
+  deleteProject as DP,
+  getProjectIssueProgress as GPIP,
+  getProjectIssueStatistics as GPIS,
+  getProjectUserList as GPUL
 } from '@/api/projects'
 import { getTagsId as GTID } from '@/api/tags'
 
 const getDefaultState = () => {
   return {
     list: [],
-    total: 0
+    total: 0,
+    projectSelectedId: -1,
+    projectSelectedObject: {}
   }
 }
 
@@ -22,6 +27,12 @@ const mutations = {
   },
   SET_TOTAL: (state, total) => {
     state.total = total
+  },
+  SET_PROJET_SELECTED_ID: (state, id) => {
+    state.projectSelectedId = id
+  },
+  SET_PROJET_SELECTED: (state, obj) => {
+    state.projectSelectedObject = obj
   }
 }
 
@@ -80,6 +91,36 @@ const actions = {
     } catch (error) {
       console.error(error.toString())
     }
+  },
+  async getProjectIssueProgress({ commit }, pId) {
+    try {
+      const res = await GPIP(pId)
+      return res
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async getProjectIssueStatistics({ commit }, pId) {
+    try {
+      const res = await GPIS(pId)
+      return res
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async getProjectUserList({ commit }, pId) {
+    try {
+      const res = await GPUL(pId)
+      return res
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  changeSelectedProjectId({ commit }, id) {
+    commit('SET_PROJET_SELECTED_ID', id)
+  },
+  changeSelectedProjectObject({ commit }, obj) {
+    commit('SET_PROJET_SELECTED', obj)
   }
 }
 

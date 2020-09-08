@@ -1,36 +1,17 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
+import ProjectListSelector from '../../components/ProjectListSelector'
+import { formatTime } from '../../utils/index.js'
+
 export default {
-  components: { 
-    Pagination 
+  components: {
+    Pagination,
+    ProjectListSelector
   },
   data() {
     return {
-      branchList: [
-        {
-          'name': 'Branch2', 
-          'desc': '密碼重設信不能正確寄送', 
-          'status': '50 | 0',
-          'commit': '6a6d1c', 
-          'last_update_at': '2020-07-25T07:20:11Z',
-          'test_completion': {
-            'total': 5,
-            'done': 5
-          }
-        },
-        {
-          'name': 'Branch3', 
-          'desc': '第一版釋出', 
-          'status': '75 | 0',
-          'commit': '3a6d1f', 
-          'last_update_at': '2020-07-25T07:20:11Z',
-          'test_completion': {
-            'total': 5,
-            'done': 10
-          }
-        }
-      ],
+      branchList: [],
       search: '',
       listLoading: true,
       listQuery: {
@@ -41,18 +22,37 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['projectSelectedId', 'projectSelectedObject', 'branchesByProject']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
       return this.branchList.slice(start, end)
     }
   },
+  watch: {
+    branchesByProject(ary) {
+      this.branchList = ary
+    },
+    projectSelectedObject(obj) {
+      this.fetchBranchData()
+    }
+  },
   async created() {
-    // TODO: get project document list
-    this.listLoading = false
+    this.fetchBranchData()
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    ...mapActions('branches', ['getBranchesByProject']),
+    fetchBranchData() {
+      this.listLoading = true
+      if (!this.projectSelectedObject.repository_id) {
+        this.branchList = []
+        this.listLoading = false
+        return
+      }
+      this.getBranchesByProject(this.projectSelectedObject.repository_id)
+      this.listLoading = false
+    },
     returnTagType(row) {
       const { success, total } = row.last_test_result
       return success === total ? 'success' : 'danger'
@@ -63,58 +63,58 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
     }
   }
 }
 </script>
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div>
+      <project-list-selector />
+    </div>
+    <el-divider />
+    <!-- <div class="filter-container">
       <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" >
+      <el-button class="filter-item" type="primary" icon="el-icon-search">
         Search
       </el-button>
-    </div>
-    <el-table 
-      v-loading="listLoading" 
-      :data="pagedData" 
-      element-loading-text="Loading" 
-      border 
-      fit 
-      highlight-current-row
-    >
+    </div> -->
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column align="center" label="Name">
         <template slot-scope="scope">
-          <router-link :to="'dev-branch/'+scope.row.name+'/test'" style="color: #409EFF">
+          <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">
             <span>{{ scope.row.name }}</span>
           </router-link>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Description">
         <template slot-scope="scope">
-          {{ scope.row.desc }}
+          {{ scope.row.last_commit_message }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status">
+      <!-- <el-table-column align="center" label="Status">
         <template slot-scope="scope">
           {{ scope.row.status }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" label="Commit">
         <template slot-scope="scope">
-          {{ scope.row.commit }}
+          {{ scope.row.short_id }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last update time">
         <template slot-scope="scope">
-          {{ scope.row.last_update_at | relativeTime }}
+          {{ myFormatTime(scope.row.last_commit_time) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Test Completion">
+      <!-- <el-table-column align="center" label="Test Completion">
         <template slot-scope="scope">
           {{ scope.row.test_completion.done }} / {{ scope.row.test_completion.total }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <pagination
       :total="listQuery.totalPage"
@@ -127,7 +127,7 @@ export default {
   </div>
 </template>
 <style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
+.filter-container {
+  margin-bottom: 5px;
+}
 </style>
