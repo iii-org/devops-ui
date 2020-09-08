@@ -121,13 +121,16 @@ export default {
           })
         })
         const issueFlowType = res[5].data
-        this.issueFlow = res[4].data[0].flow_data.map(item => {
-          const issueType = issueFlowType.find(type => {
-            return type.flow_type_id == item.type_id
+        this.issueFlow = []
+        if(Array.isArray(res[4].data) && res[4].data.length > 0) {
+          this.issueFlow = res[4].data[0].flow_data.map(item => {
+            const issueType = issueFlowType.find(type => {
+              return type.flow_type_id == item.type_id
+            })
+            item['type_name'] = issueType ? issueType['name'] : ''
+            return item
           })
-          item['type_name'] = issueType ? issueType['name'] : ''
-          return item
-        })
+        }
 
         this.issueParameter = res[6].data
         this.issueTestCase = res[7].data
