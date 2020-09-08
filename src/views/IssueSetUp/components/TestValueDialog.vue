@@ -5,10 +5,15 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form ref="form" label-width="20%">
+    <el-form 
+      ref="valueForm" 
+      :model="valueForm"
+      :rules="valueFormRules"
+      label-width="20%"
+    >
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Type" label-width="100px">
+          <el-form-item label="Type" label-width="100px" prop="type_id">
             <el-select v-model="valueForm.type_id" style="width:100%">
               <el-option
                 v-for="item in testValueTypeList"
@@ -22,21 +27,21 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Key" label-width="100px">
+          <el-form-item label="Key" label-width="100px" prop="key">
             <el-input v-model="valueForm.key" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Value" label-width="100px">
+          <el-form-item label="Value" label-width="100px" prop="value">
             <el-input v-model="valueForm.value" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Location" label-width="100px">
+          <el-form-item label="Location" label-width="100px" prop="location_id">
             <el-select v-model="valueForm.location_id" style="width:100%">
               <el-option
                 v-for="item in testValueLocationList"
@@ -82,7 +87,21 @@ export default {
         type_id: ''
       },
       testValueTypeList: [],
-      testValueLocationList: []
+      testValueLocationList: [],
+      valueFormRules: {
+        key: [
+          { required: true, message: 'Please input key', trigger: 'blur' }
+        ],
+        value: [
+          { required: true, message: 'Please input value', trigger: 'blur' }
+        ],
+        type_id: [
+          { required: true, message: 'Please select type', trigger: 'blur' }
+        ],
+        location_id: [
+          { required: true, message: 'Please select location', trigger: 'blur' }
+        ]
+      }
     }
   },
   // updated() {
@@ -116,10 +135,17 @@ export default {
     },
     handleClose() {
       this.$emit('testValue-dialog-visible', false)
+      this.$refs['valueForm'].resetFields()
     },
     handleSave() {
-      this.saveData(this.valueForm)
-      console.log(this.valueForm)
+      this.$refs['valueForm'].validate(async(valid) => {
+        if (valid) {
+          await this.saveData(this.valueForm)
+          this.$refs['valueForm'].resetFields()
+        } else {
+          return false
+        }
+      })
     }
   }
 }

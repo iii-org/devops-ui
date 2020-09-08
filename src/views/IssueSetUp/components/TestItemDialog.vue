@@ -5,17 +5,22 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form ref="form" label-width="20%">
+    <el-form 
+      ref="testItemForm" 
+      :model="testItemForm"
+      :rules="testItemFormRules"
+      label-width="20%"
+    >
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Item Name" label-width="100px">
+          <el-form-item label="Item Name" label-width="100px" prop="name">
             <el-input v-model="testItemForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Is Success" label-width="100px">
+          <el-form-item label="Is Success" label-width="100px" prop="is_passed">
             <el-switch
               v-model="testItemForm.is_passed"
               active-color="#13ce66"
@@ -54,6 +59,14 @@ export default {
       testItemForm: {
         name: '',
         is_passed: true
+      },
+      testItemFormRules: {
+        name: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
+        is_passed: [
+          { required: true, message: 'Please select type', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -72,9 +85,17 @@ export default {
     },
     handleClose() {
       this.$emit('testItem-dialog-visible', false)
+      this.$refs['testItemForm'].resetFields()
     },
     handleSave() {
-      this.saveData(this.testItemForm)
+      this.$refs['testItemForm'].validate(async(valid) => {
+        if (valid) {
+          await this.saveData(this.testItemForm)
+          this.$refs['testItemForm'].resetFields()
+        } else {
+          return false
+        }
+      })
     }
   }
 }

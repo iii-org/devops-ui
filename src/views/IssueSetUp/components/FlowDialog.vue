@@ -5,7 +5,12 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form ref="form" label-width="20%">
+    <el-form 
+      ref="flowForm" 
+      :model="flowForm"
+      :rules="flowFormRules"
+      label-width="20%"
+    >
       <el-row v-if="flowId != 0">
         <el-col :span="24">
           <el-form-item label="Step Order" label-width="100px">
@@ -15,14 +20,14 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Name" label-width="100px">
+          <el-form-item label="Step Name" label-width="100px" prop="name">
             <el-input v-model="flowForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Type" label-width="100px">
+          <el-form-item label="Step Type" label-width="100px" prop="type_id">
             <el-select v-model="flowForm.type_id" style="width:100%">
               <el-option
                 v-for="item in flowTypeList"
@@ -36,7 +41,7 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Desc." label-width="100px">
+          <el-form-item label="Step Desc." label-width="100px" prop="description">
             <el-input v-model="flowForm.description" type="textarea" />
           </el-form-item>
         </el-col>
@@ -74,6 +79,17 @@ export default {
         name: '',
         type_id: '',
         description: ''
+      },
+      flowFormRules: {
+        name: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
+        type_id: [
+          { required: true, message: 'Please select type', trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: 'Please input description', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -97,11 +113,18 @@ export default {
       })
     },
     handleClose() {
+      this.$refs['flowForm'].resetFields()
       this.$emit('flow-dialog-visible', false)
     },
     handleSave() {
-      this.saveData(this.flowForm)
-      console.log(this.flowForm)
+      this.$refs['flowForm'].validate(async(valid) => {
+        if (valid) {
+          await this.saveData(this.flowForm)
+          this.$refs['flowForm'].resetFields()
+        } else {
+          return false
+        }
+      })
     }
   }
 }
