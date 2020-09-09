@@ -75,3 +75,18 @@ export function getProjectUserList(pId) {
     method: 'GET'
   })
 }
+
+//專案內可分配版本　[2.3.1 新增議題　2.3.3.1 編輯議題］
+export function getProjectVersion(pId) {
+  return request({
+    url: `/project/${pId}/version/list`,
+    method: 'GET'
+  })
+}
+
+export function getProjectIssueList(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_tree`,
+    method: 'GET'
+  })
+}

@@ -1,10 +1,15 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import AddTopic from './components/AddTopic'
+import ProjectListSelector from '../../components/ProjectListSelector'
+import AddIssue from './components/AddIssue'
+import { addIssue } from '@/api/issue'
+import { getProjectIssueList } from '@/api/projects'
+import { Message } from 'element-ui'
 export default {
   components: { 
-    AddTopic,
+    AddIssue,
+    ProjectListSelector,
     Pagination 
   },
   data() {
@@ -62,6 +67,7 @@ export default {
           }
         }
       ],
+      issueList: [],
       addTopicDialogVisible: false,
       search: '',
       listLoading: true,
@@ -73,18 +79,29 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['projectSelectedId']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
-      return this.topicList.slice(start, end)
+      return this.issueList.slice(start, end)
+    }
+  },
+  watch: {
+    projectSelectedId() {
+      this.fetchData()
     }
   },
   async created() {
-    // TODO: get project topic list
-    this.listLoading = false
+    this.fetchData()
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    async fetchData() {
+      this.listLoading = true
+      const res = await getProjectIssueList(this.projectSelectedId)
+      this.issueList = res.data
+      this.listLoading = false
+    },
     returnTagType(row) {
       const { success, total } = row.last_test_result
       return success === total ? 'success' : 'danger'
@@ -99,24 +116,34 @@ export default {
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
     },
+    async saveIssue(data) {
+      await addIssue(data)
+      this.addTopicDialogVisible = false
+      Message({
+        message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
   }
 }
 </script>
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" >
-        Search
-      </el-button>
-      <el-button 
-        type="primary" 
-        icon="el-icon-plus" 
-        circle 
-        style="float: right"
-        @click="addTopicDialogVisible = true"
-      ></el-button>
+    
+    <div class="clearfix">
+      <div>
+        <project-list-selector />
+        <span class="newBtn">
+          <el-button type="success" style="float:right" @click="addTopicDialogVisible = true">
+            <i class="el-icon-plus" />
+            Add Issue
+          </el-button>
+        </span>
+      </div>
     </div>
+    <el-divider />
     <el-table 
       v-loading="listLoading" 
       :data="pagedData" 
@@ -124,45 +151,51 @@ export default {
       border 
       fit 
       highlight-current-row
-      row-key="order"
+      row-key="id"
       default-expand-all
-      :tree-props="{children: 'subTopic'}"
+      :tree-props="{children: 'children'}"
     >
-      <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
+      <el-table-column align="center" label="Type" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <router-link :to="'topic-detail/'+scope.row.id" style="color: #409EFF">
-            <span>{{ scope.row.type }}</span>
+            <span>{{ scope.row.issue_category }}</span>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Index">
+      <el-table-column align="center" label="Id">
         <template slot-scope="scope">
-          {{ scope.row.order }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Description">
         <template slot-scope="scope">
-          {{ scope.row.desc }}
+          {{ scope.row.description }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Status">
         <template slot-scope="scope">
-          {{ scope.row.status }}
+          {{ scope.row.issue_status }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Assignee">
         <template slot-scope="scope">
-          {{ scope.row.assignee }}
+          {{ scope.row.assigned_to }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Priority">
         <template slot-scope="scope">
-          {{ scope.row.priority }}
+          {{ scope.row.issue_priority }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Test Completion">
+      <el-table-column label="Actions" align="center" width="250px">
         <template slot-scope="scope">
-          {{ scope.row.test_completion.done }} / {{ scope.row.test_completion.total }}
+          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+            <i class="el-icon-edit" />
+            Edit
+          </el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
+            <i class="el-icon-delete" /> Delete
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -174,8 +207,10 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <add-topic
+    <add-issue
+      :save-data="saveIssue"
       :dialog-visible.sync="addTopicDialogVisible"
+      :project-id="projectSelectedId"
       @add-topic-visible="emitAddTopicDialogVisible"
     />
   </div>
