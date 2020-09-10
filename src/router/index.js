@@ -306,10 +306,10 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/project_topic',
+    path: '/issue',
     component: Layout,
-    name: 'Topic',
-    meta: { title: 'Topic', icon: 'el-icon-data-analysis', roles: ['Project Manager'] },
+    name: 'Issues',
+    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager'] },
     children: [
       {
         path: 'wiki',
@@ -317,24 +317,24 @@ export const asyncRoutes = [
         component: () => import('@/views/ProjectWiki/index'),
         meta: { title: 'Wiki', roles: ['Project Manager'] }
       },
+      // {
+      //   path: 'document',
+      //   name: 'Document',
+      //   component: () => import('@/views/ProjectDocument/index'),
+      //   meta: { title: 'Document', roles: ['Project Manager'] }
+      // },
       {
-        path: 'document',
-        name: 'Document',
-        component: () => import('@/views/ProjectDocument/index'),
-        meta: { title: 'Document', roles: ['Project Manager'] }
+        path: 'list',
+        name: 'Issues',
+        component: () => import('@/views/ProjectIssues/index'),
+        meta: { title: 'Issue List', roles: ['Project Manager'] }
       },
       {
-        path: 'topic',
-        name: 'Topics',
-        component: () => import('@/views/ProjectTopic/index'),
-        meta: { title: 'Topic', roles: ['Project Manager'] }
-      },
-      {
-        path: 'topic-detail/:topicId',
-        name: 'topicDetail',
+        path: 'list/:issueId',
+        name: 'IssueDetail',
         hidden: true,
-        component: () => import('@/views/ProjectTopicDetail/index'),
-        meta: { title: 'Topic detail', roles: ['Project Manager'] }
+        component: () => import('@/views/ProjectIssueDetail/index'),
+        meta: { title: 'Issue Detail', roles: ['Project Manager'] }
       }
     ]
   },

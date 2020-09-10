@@ -4,6 +4,10 @@ import Pagination from '@/components/Pagination'
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
 import WangEditor from "@/components/Wangeditor";
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
+import { getProjectAssignable } from '@/api/projects'
+import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
+import { getParameterByIssue, addParameterByIssue } from '@/api/issueParameter'
 export default {
   components: { 
     FlowDialog,
@@ -169,8 +173,56 @@ export default {
     // TODO: get project topic list
     this.listLoading = false
   },
+  mounted() {
+    this.issueId = parseInt(this.$route.params.topicId)
+    console.log(this.$route.params.topicId)
+    this.fetchData()
+  },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    fetchData() {
+      Promise.all([
+        getIssueStatus(), 
+        getIssueTracker(), 
+        getIssuePriority(), 
+        getIssue(this.issueId)
+      ]).then(res => {
+        this.issueStatusList = res[0].data.map(item => {
+          return { label: item.name, value: item.id }
+        })
+        this.issueTypeList = res[1].data.map(item => {
+          return { label: item.name, value: item.id }
+        })
+        this.issuePriorityList = res[2].data.map(item => {
+          return { label: item.name, value: item.id }
+        })
+        const issueDetail = res[3]
+        const projectId = issueDetail.project.id
+        getProjectAssignable(projectId).then((assignable) => {
+          this.issueAssigneeList = assignable.data.user_list.map(item => {
+            return { label: item.name, value: item.id }
+          })
+        })
+
+        this.issueDetail.issueStatus = issueDetail.status.id
+        this.issueDetail.issueAssignee = issueDetail.tracker.id
+        this.issueDetail.issuePriority = issueDetail.priority.id
+        this.issueDetail.issueDoneRatio = issueDetail.done_ratio
+        this.issueDetail.issueType = issueDetail.tracker.id
+        this.issueStartDate = issueDetail.start_date
+        this.issueDueDate = issueDetail.due_date
+        this.issueDescription = issueDetail.description
+        this.projectId = issueDetail.project.id
+        this.issueComment = issueDetail.journals.map(item => {
+          return {
+            comment: item.notes,
+            comment_author: item.user.name,
+            comment_at: item.created_on
+          }
+        })
+        this.listLoading = false
+      })
+    },
     returnTagType(row) {
       const { success, total } = row.last_test_result
       return success === total ? 'success' : 'danger'

@@ -14,59 +14,6 @@ export default {
   },
   data() {
     return {
-      topicList: [
-        {
-          'id': 1,
-          'type': '使用者案例', 
-          'order': 1, 
-          'desc': '使用者需求訪談', 
-          'status': '已確定',
-          'assignee': '陳聰明', 
-          'priority': '正常',
-          'test_completion': {
-            'total': 25,
-            'done': 10
-          },
-          'subTopic': [{
-            'id': 2,
-            'type': '工作', 
-            'order': 2, 
-            'desc': '自行註冊', 
-            'status': '進行中',
-            'assignee': '陳聰明', 
-            'priority': '正常',
-            'test_completion': {
-              'total': 10,
-              'done': 10
-            }},
-            {
-            'id': 3,
-            'type': '工作', 
-            'order': 3, 
-            'desc': '單一登入註冊', 
-            'status': '進行中',
-            'assignee': '陳聰明', 
-            'priority': '正常',
-            'test_completion': {
-              'total': 15,
-              'done': 5
-            }}
-          ]
-        },
-        {
-          'id': 4,
-          'type': 'Bug', 
-          'order': 4, 
-          'desc': '密碼重設信不能正確寄送', 
-          'status': '已確定',
-          'assignee': '王耀祖', 
-          'priority': '正常',
-          'test_completion': {
-            'total': 5,
-            'done': 5
-          }
-        }
-      ],
       issueList: [],
       addTopicDialogVisible: false,
       search: '',
@@ -102,13 +49,8 @@ export default {
       this.issueList = res.data
       this.listLoading = false
     },
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      return success === total ? 'success' : 'danger'
-    },
-    testResults(row) {
-      const { success, total } = row.last_test_result
-      return success + ' / ' + total
+    handleEdit(idx, row) {
+      this.$router.push({ path: `list/${row.id}` })
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -157,9 +99,7 @@ export default {
     >
       <el-table-column align="center" label="Type" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <router-link :to="'topic-detail/'+scope.row.id" style="color: #409EFF">
-            <span>{{ scope.row.issue_category }}</span>
-          </router-link>
+          {{ scope.row.issue_category }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Id">
