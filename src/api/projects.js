@@ -98,9 +98,25 @@ export function getProjectIssueListByStatus(pId) {
   })
 }
 
-export function getProjectIssueListByDate(pId) {
+export function addProjectVersion(pId, data = { name: '', due_date: '', description: '', status: '' }) {
   return request({
-    url: `/project/${pId}/issues_by_date`,
-    method: 'GET'
+    url: `/project/${pId}/version`,
+    method: 'POST',
+    data
+  })
+}
+
+export function editProjectVersion(pId, vId, data = { name: '', due_date: '', description: '', status: '' }) {
+  return request({
+    url: `/project/${pId}/version/${vId}`,
+    method: 'PUT',
+    data
+  })
+}
+
+export function deleteProjectVersion(pId, vId) {
+  return request({
+    url: `/project/${pId}/version/${vId}`,
+    method: 'DELETE'
   })
 }
