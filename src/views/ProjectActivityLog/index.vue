@@ -1,38 +1,27 @@
 <template>
   <div class="app-container">
-    <div>
-      <h3>
-        Project:
-        <span>
-          <el-select v-model="value" filterable placeholder="select project">
-            <el-option
-              v-for="item in projectList"
-              :key="item.project_name"
-              :label="item.project_name"
-              :value="item.project_name">
-            </el-option>
-          </el-select>
-        </span>
-      </h3>
+    <div class="clearfix">
+      <div>
+        <project-list-selector />
+      </div>
     </div>
     <el-divider />
     <div class="block" style="margin-top:10px">
       <el-timeline>
         <el-timeline-item
-          v-for="(log, index1) in logs"
-          :key="index1"
-          v-loading="listLoading"
-          :timestamp="log.logs_date"
+          v-for="item in projectIssueList"
+          :key="item.index"
+          :timestamp="item.date"
           placement="top"
         >
           <el-card>
-            <el-row v-for="(content,index2) in log.logs" :key="index2" :gutter="20">
+            <el-row v-for="issue in item.issues" :key="issue.id" :gutter="20">
               <el-col :span="4">
-                <span style="margin-right: 5px;font-weight: 500;">{{ content.log_at }}</span>
-                <span>{{ content.user }}</span>
+                <div style="margin-right: 5px;font-weight: 500;">{{ issue.issue_name }}</div>
+                <div><i class="el-icon-s-custom" /> {{ issue.assigned_to }}</div>
               </el-col>
               <el-col :span="20">
-                <div>{{ content.description }}</div>
+                <div>{{ issue.description }}</div>
               </el-col>
             </el-row>
           </el-card>
@@ -43,9 +32,14 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import { getActivityLog, getProjectList } from '@/api/projects'
-
+import ProjectListSelector from '../../components/ProjectListSelector'
+import { getProjectIssueListByDate } from '@/api/projects'
 export default {
+  components: { 
+    ProjectListSelector
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -58,24 +52,30 @@ export default {
   },
   data() {
     return {
-      logs: [],
+      projectIssueList: [],
       listLoading: true,
       projectList: []
+    }
+  },
+  computed: {
+    ...mapGetters(['projectSelectedId'])
+  },
+  watch: {
+    projectSelectedId() {
+      this.fetchData()
     }
   },
   created() {
     this.fetchData()
   },
   methods: {
-    fetchData() {
-      this.listLoading = true
-      getActivityLog('aaa').then(res => {
-        this.logs = res.data.logs
-        this.listLoading = false
+    async fetchData() {
+      const projectIssueListRes = await getProjectIssueListByDate(this.projectSelectedId)
+      this.projectIssueList = Object.keys(projectIssueListRes.data).map((item, index) => {
+        const data = {'index': index, 'date': item, 'issues': projectIssueListRes.data[item]}
+        return data
       })
-      getProjectList().then(res => {
-        this.projectList = res.data.items
-      })
+      console.log(this.projectIssueList)
     }
   }
 }

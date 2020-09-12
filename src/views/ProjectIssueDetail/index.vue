@@ -3,27 +3,18 @@ import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
-import TestDialog from './components/TestDialog'
-import TestItemDialog from './components/TestItemDialog'
-import TestValueDialog from './components/TestValueDialog'
 import WangEditor from '@/components/Wangeditor'
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue } from '@/api/issueParameter'
-import { getTestCaseByIssue, addTestCaseByIssue, deleteTestCase } from '@/api/issueTestCase'
-import { getTestItemByCase, addTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
-import { getTestValueByItem, getTestValueType, getTestValueLocation, deleteTestValue, addTestValueByItem } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
 export default {
   components: {
     FlowDialog,
     ParamDialog,
     Pagination,
-    TestDialog,
-    TestItemDialog,
-    TestValueDialog,
     WangEditor
   },
   data() {
@@ -33,14 +24,23 @@ export default {
       issueStatusList: [],
       issuePriorityList: [],
       issueVersionList: [],
-      issueDetail: {
-        issueSubject: '',
-        issuePriority: '',
-        issueDoneRatio: 0,
-        issueAssignee: '',
-        issueStatus: '',
-        issueType: '',
-        issueVersion: ''
+      issueForm: {
+        subject: '',
+        fixed_version_id: '',
+        priority_id: '',
+        status_id: '',
+        assigned_to_id: '',
+        tracker_id: '',
+        done_ratio: 0,
+        estimated_hours: '',
+        start_date: '',
+        due_date: '',
+        description: ''
+      },
+      issueFormRules: {
+        subject: [
+          { required: true, message: 'Please input name', trigger: 'blur' }
+        ]
       },
       issueName: '',
       issueStartDate: '',
@@ -67,9 +67,6 @@ export default {
       commentDialogVisible: false,
       flowDialogVisible: false,
       paramDialogVisible: false,
-      testDialogVisible: false,
-      testItemDialogVisible: false,
-      testValueDialogVisible: false,
       editFlowId: 0,
       editParamId: 0,
       editTestId: 0,
@@ -104,8 +101,7 @@ export default {
         getIssue(this.issueId), 
         getFlowByIssue(this.issueId), 
         getFlowType(),
-        getParameterByIssue(this.issueId),
-        getTestCaseByIssue(this.issueId)
+        getParameterByIssue(this.issueId)
       ]).then(res => {
         this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
@@ -116,11 +112,8 @@ export default {
         this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        console.log('bbbbb')
         const issueDetail = res[3].data
-        console.log('issueDetail', issueDetail)
         const projectId = issueDetail.project.id
-        console.log('projectId', projectId)
         getProjectAssignable(projectId).then((assignable) => {
           this.issueAssigneeList = assignable.data.user_list.map(item => {
             return { label: item.name, value: item.id }
@@ -144,14 +137,17 @@ export default {
         }
 
         this.issueParameter = res[6].data
-        this.issueTestCase = res[7].data
-        this.issueDetail = issueDetail
-        this.issueDetail.issueStatus = issueDetail.status.id
-        this.issueDetail.issueAssignee = issueDetail.assigned_to.id
-        this.issueDetail.issuePriority = issueDetail.priority.id
-        this.issueDetail.issueDoneRatio = issueDetail.done_ratio
-        this.issueDetail.issueType = issueDetail.tracker.id
-        this.issueDescription = issueDetail.description
+        this.issueForm.subject = issueDetail.subject
+        this.issueForm.start_date = issueDetail.start_date
+        this.issueForm.due_date = issueDetail.due_date
+        this.issueForm.estimated_hours = issueDetail.estimated_hours
+        this.issueForm.fixed_version_id = issueDetail.fixed_version_id
+        this.issueForm.status_id = issueDetail.status.id
+        this.issueForm.assigned_to_id = issueDetail.assigned_to.id
+        this.issueForm.priority_id = issueDetail.priority.id
+        this.issueForm.done_ratio = issueDetail.done_ratio
+        this.issueForm.tracker_id = issueDetail.tracker.id
+        this.issueForm.description = issueDetail.description
         this.projectId = issueDetail.project.id
         this.issueComment = issueDetail.journals.map(item => {
           return {
@@ -187,40 +183,26 @@ export default {
       this.dialogTitle = title
       this.paramDialogVisible = true
     },
-    showTestDialog(test, title) {
-      this.editTestId = test == '' ? 0 : test.id
-      this.dialogTitle = title
-      this.testDialogVisible = true
-    },
-    showTestItemDialog(testItem, title) {
-      this.editTestItemId = testItem == '' ? 0 : testItem.id
-      this.dialogTitle = title
-      this.testItemDialogVisible = true
-    },
-    showTestValueDialog(testValue, title) {
-      this.editTestValueId = testValue == '' ? 0 : testValue.id
-      this.dialogTitle = title
-      this.testValueDialogVisible = true
-    },
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'info'
-      return success === total ? 'success' : 'danger'
-    },
     async handleSaveDetail() {
-      const data = {
-        'tracker_id': this.issueDetail.issueAssignee,
-        'status_id': this.issueDetail.issueStatus,
-        'priority_id': this.issueDetail.issuePriority,
-        'category_id': this.issueDetail.issueType,
-        'done_ratio': this.issueDetail.issueDoneRatio
-      }
-      await updateIssue(this.issueId, data)
-      Message({
-        message: 'update successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$refs['issueForm'].validate(async(valid) => {
+          console.log('bbb')
+          if (valid) {
+            console.log('xxx')
+            const data = this.issueForm
+            delete data.fixed_version_id
+            delete data.assigned_to_id
+
+            await updateIssue(this.issueId, data)
+            Message({
+              message: 'update successful',
+              type: 'success',
+              duration: 1 * 1000
+            })
+          } else {
+            return false
+          }
       })
+      
     },
     emitGetEditorData(value){
       this.issueNote = value
@@ -287,16 +269,22 @@ export default {
         </el-button>
         <div>{{ issueDescription }}</div>
       </div>
-      <el-form ref="form" label-width="20%" :label-position="'right'">
+      <el-form 
+        ref="issueForm" 
+        :model="issueForm"
+        :rules="issueFormRules"
+        label-width="20%" 
+        :label-position="'right'"
+      >
         <el-row>
           <el-col :span="6">
-            <el-form-item label="Name" label-width="100px">
-              <el-input v-model="issueDetail.subject" />
+            <el-form-item label="Name" label-width="100px" prop="subject">
+              <el-input v-model="issueForm.subject" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Version" label-width="100px">
-              <el-select v-model="issueDetail.issueVersion" style="width:100%">
+            <el-form-item label="Version" label-width="100px" prop="fixed_version_id">
+              <el-select v-model="issueForm.fixed_version_id" style="width:100%">
                 <el-option
                   v-for="item in issueVersionList"
                   :key="item.value"
@@ -307,8 +295,8 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Priority" label-width="100px">
-              <el-select v-model="issueDetail.issuePriority" style="width:100%">
+            <el-form-item label="Priority" label-width="100px" prop="priority_id">
+              <el-select v-model="issueForm.priority_id" style="width:100%">
                 <el-option
                   v-for="item in issuePriorityList"
                   :key="item.value"
@@ -319,8 +307,8 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Status" label-width="100px">
-              <el-select v-model="issueDetail.issueStatus" style="width:100%">
+            <el-form-item label="Status" label-width="100px" prop="status_id">
+              <el-select v-model="issueForm.status_id" style="width:100%">
                 <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -328,8 +316,8 @@ export default {
         </el-row>
         <el-row>
           <el-col :span="6">
-            <el-form-item label="Assignee" label-width="100px">
-              <el-select v-model="issueDetail.issueAssignee" style="width:100%">
+            <el-form-item label="Assignee" label-width="100px" prop="assigned_to_id">
+              <el-select v-model="issueForm.assigned_to_id" style="width:100%">
                 <el-option
                   v-for="item in issueAssigneeList"
                   :key="item.value"
@@ -340,16 +328,16 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Type" label-width="100px">
-              <el-select v-model="issueDetail.issueType" style="width:100%">
+            <el-form-item label="Type" label-width="100px" prop="tracker_id">
+              <el-select v-model="issueForm.tracker_id" style="width:100%">
                 <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Done Ratio" label-width="100px">
+            <el-form-item label="Done Ratio" label-width="100px" prop="done_ratio">
               <el-input-number
-                v-model="issueDetail.issueDoneRatio"
+                v-model="issueForm.done_ratio"
                 :min="0"
                 :max="100"
                 style="width:100%"
@@ -359,13 +347,13 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Estimate" label-width="100px" prop="estimated_hours">
-              <el-input v-model="issueDetail.estimated_hours" placeholder="please input hours"/>
+              <el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Start" label-width="100px" prop="start_date">
               <el-date-picker 
-                v-model="issueDetail.start_date" 
+                v-model="issueForm.start_date" 
                 type="date" 
                 placeholder="Select Date" 
                 style="width: 100%;" 
@@ -376,7 +364,7 @@ export default {
           <el-col :span="6">
             <el-form-item label="End" label-width="100px" prop="due_date">
               <el-date-picker 
-                v-model="issueDetail.due_date" 
+                v-model="issueForm.due_date" 
                 type="date" 
                 placeholder="Select Date" 
                 style="width: 100%;"
@@ -386,7 +374,7 @@ export default {
           </el-col>
           <el-col :span="12">
             <el-form-item label="Desc." label-width="100px" prop="description">
-              <el-input v-model="issueDetail.description" type="textarea" placeholder="please input description" />
+              <el-input v-model="issueForm.description" type="textarea" placeholder="please input description" />
             </el-form-item>
           </el-col>
         </el-row>

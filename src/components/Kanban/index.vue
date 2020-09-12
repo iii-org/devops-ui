@@ -4,7 +4,7 @@
       <div class="header-bar"></div>
       <div class="header-text">
         {{ headerText }}
-        <i class="el-icon-more header-icon" />
+        <!-- <i class="el-icon-more header-icon" /> -->
       </div>
     </div>
     <draggable

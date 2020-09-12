@@ -90,3 +90,17 @@ export function getProjectIssueList(pId) {
     method: 'GET'
   })
 }
+
+export function getProjectIssueListByStatus(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_status`,
+    method: 'GET'
+  })
+}
+
+export function getProjectIssueListByDate(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_date`,
+    method: 'GET'
+  })
+}
