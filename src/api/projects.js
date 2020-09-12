@@ -98,6 +98,13 @@ export function getProjectIssueListByStatus(pId) {
   })
 }
 
+export function getProjectIssueListByDate(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_date`,
+    method: 'GET'
+  })
+}
+
 export function addProjectVersion(pId, data = { name: '', due_date: '', description: '', status: '' }) {
   return request({
     url: `/project/${pId}/version`,

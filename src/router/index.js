@@ -225,36 +225,36 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/overview',
+    path: '/project',
     component: Layout,
-    name: 'overview',
-    redirect: '/overview/index',
-    meta: { title: 'Overview', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
+    name: 'project',
+    redirect: '/project/index',
+    meta: { title: 'Project', icon: 'el-icon-s-cooperation', roles: ['Project Manager'] },
     children: [
       {
         path: 'index',
         name: 'Overview',
         component: () => import('@/views/OverviewProject/index'),
-        meta: { title: 'Overview', icon: 'dashboard', roles: ['Project Manager'] }
+        meta: { title: 'Overview', roles: ['Project Manager'] }
       },
       {
         path: 'current-activity',
         name: 'Current Activity',
         component: () => import('@/views/ProjectCurrentActivity/index'),
-        meta: { title: 'Current Activity', icon: 'list', roles: ['Project Manager'] }
+        meta: { title: 'Current Activity', roles: ['Project Manager'] }
       },
 
       {
         path: 'activity-log',
         name: 'Activity Log',
         component: () => import('@/views/ProjectActivityLog/index'),
-        meta: { title: 'Activity Log', icon: 'list', roles: ['Project Manager'] }
+        meta: { title: 'Activity Log', roles: ['Project Manager'] }
       },
       {
         path: 'roadmap',
         name: 'Roadmap',
         component: () => import('@/views/ProjectRoadmap/index'),
-        meta: { title: 'Roadmap', icon: 'el-icon-discover', roles: ['Project Manager'] }
+        meta: { title: 'Roadmap', roles: ['Project Manager'] }
       }
     ]
   },
