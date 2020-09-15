@@ -43,3 +43,11 @@ export function updateIssue(issue_id, data) {
     data
   })
 }
+
+export function addIssue(data) {
+  return request({
+    url: `/issues`,
+    method: 'post',
+    data
+  })
+}

@@ -99,7 +99,6 @@ export default {
       })
     },
     handleEdit(idx, row) {
-      console.log(idx, row)
       this.$router.push({ path: `/issues/${row.id}/setup` })
     }
   }

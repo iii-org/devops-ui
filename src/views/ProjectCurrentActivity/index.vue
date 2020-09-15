@@ -2,38 +2,50 @@
 import { mapGetters, mapActions } from 'vuex'
 import Kanban from '@/components/Kanban'
 import { getProjectList } from '@/api/projects'
+import ProjectListSelector from '../../components/ProjectListSelector'
+import { getIssueStatus } from '@/api/issue'
+import { getProjectIssueListByStatus } from '@/api/projects'
+
 export default {
-  components: { Kanban },
+  components: { 
+    Kanban,
+    ProjectListSelector
+  },
   data() {
     return {
-      projectList: [],
-      group: 'mission',
-      list1: [
-        { name: 'Mission', id: 1, iat: '2011-09-22 20:12:33', iss: 'ninoaaa' },
-        { name: 'Mission', id: 2, iat: '2011-09-22 20:12:33', iss: 'ninobbb' },
-        { name: 'Mission', id: 3, iat: '2011-09-22 20:12:33', iss: 'ninocc' },
-        { name: 'Mission', id: 4, iat: '2011-09-22 20:12:33', iss: 'ninodd' }
-      ],
-      list2: [
-        { name: 'Mission', id: 5, iat: '2011-09-22 20:12:33', iss: 'ninoxxx' },
-        { name: 'Mission', id: 6, iat: '2011-09-22 20:12:33', iss: 'ninobbb' },
-        { name: 'Mission', id: 7, iat: '2011-09-22 20:12:33', iss: 'ninoccccc' }
-      ],
-      list3: [
-        { name: 'Mission', id: 8, iat: '2011-09-22 20:12:33', iss: 'ninobbb' },
-        { name: 'Mission', id: 9, iat: '2011-09-22 20:12:33', iss: 'ninoddd' },
-        { name: 'Mission', id: 10, iat: '2011-09-22 20:12:33', iss: 'ninoaaaa' }
-      ]
+      issueStatusList: [],
+      group: 'mission'
     }
   },
-  created() {
+  async created() {
+    const issueStatusRes = await getIssueStatus()
+    this.issueStatusList = issueStatusRes.data
     this.fetchData()
   },
+  computed: {
+    ...mapGetters(['projectSelectedId'])
+  },
+  watch: {
+    projectSelectedId() {
+      this.fetchData()
+    }
+  },
   methods: {
-    fetchData() {
-      // this.listLoading = true
-      getProjectList().then(res => {
-        this.projectList = res.data.items
+    async fetchData() {
+      const projectIssueListRes = await getProjectIssueListByStatus(this.projectSelectedId)
+      const projectIssueList = projectIssueListRes.data
+      this.issueStatusList = this.issueStatusList.map(item => {
+        if(projectIssueList[item['name']]){
+          item['issues'] = projectIssueList[item['name']].map(issue => {
+            issue['name'] = issue.issue_name
+            issue['iss'] = issue.assigned_to
+            issue['iat'] = issue.due_date
+            return issue
+          })
+        } else {
+          item['issues'] = []
+        }
+        return item
       })
     }
   }
@@ -41,33 +53,29 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <div>
-      <h3>
-        Project:
-        <span>
-          <el-select v-model="value" filterable placeholder="select project">
-            <el-option
-              v-for="item in projectList"
-              :key="item.project_name"
-              :label="item.project_name"
-              :value="item.project_name">
-            </el-option>
-          </el-select>
-        </span>
-      </h3>
+    <div class="clearfix">
+      <div>
+        <project-list-selector />
+      </div>
     </div>
     <el-divider />
-    <div class="components-container board">
-      <Kanban :key="1" :list="list1" :group="group" class="kanban todo" header-text="Todo" />
-      <Kanban :key="2" :list="list2" :group="group" class="kanban in-progress" header-text="In Progress" />
-      <Kanban :key="3" :list="list3" :group="group" class="kanban done" header-text="Done" />
-      <Kanban :key="3" :list="list3" :group="group" class="kanban close" header-text="Close" />
+    <div class="components-container board" style="overflow: auto;">
+      <div style="width: 100%; display: flex; overflow: auto">
+        <Kanban 
+          style="margin: 10px 10px"
+          v-for="item in issueStatusList"
+          :key="item.id"
+          :header-text="item.name" 
+          :list="item.issues"
+          :group="group"
+          class="kanban todo" 
+        />
+      </div>
     </div>
   </div>
 </template>
 <style lang="scss">
 .board {
-  // width: 1000px;
   margin-left: 20px;
   display: flex;
   justify-content: space-around;
