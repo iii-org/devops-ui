@@ -1,5 +1,10 @@
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import Pagination from '@/components/Pagination'
 import Sortable from 'sortablejs'
+import ProjectListSelector from '../../components/ProjectListSelector'
+import { getPipelinesPhase } from '@/api/cicd'
+
 const formTemplate = {
   phase: '',
   tool: '',
@@ -8,14 +13,12 @@ const formTemplate = {
 }
 
 export default {
-  components: {},
+  components: {
+    ProjectListSelector,
+    Pagination
+  },
   data() {
     return {
-      projectList: [
-        {
-          project_name: '專科A'
-        }
-      ],
       toolList: [
         {
           tool_name: 'Redmine'
@@ -61,30 +64,11 @@ export default {
       ],
       projectValue: '專科A',
       listLoading: true,
-      pagedData: [
-        {
-          order: 1,
-          phase: 'Plan',
-          tool: 'Redmine',
-          status: true
-        },
-        {
-          order: 2,
-          phase: 'Code',
-          tool: 'GitLab',
-          status: true
-        },
-        {
-          order: 3,
-          phase: 'sample text',
-          tool: 'GitLab',
-          status: false
-        }
-      ],
+      phaseList: [],
       dialogVisible: false,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         totalPage: 1
       },
       dialogStatus: 1,
@@ -93,6 +77,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
+    pagedData() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit
+      return this.phaseList.slice(start, end)
+    },
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -105,15 +95,35 @@ export default {
     }
   },
   watch: {
+    projectSelectedId() {
+      this.fetchData()
+    },
     form(value) {
       console.log(value)
     }
   },
   mounted() {
-    setTimeout(() => (this.listLoading = false), 1000)
-    this.drag()
+    this.fetchData()
+    // this.drag()
   },
   methods: {
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    async fetchData() {
+      this.listLoading = true
+      this.phaseList = []
+      const repository_id = this.projectSelectedObject.repository_id
+      if(repository_id) {
+        try {
+          const res = await getPipelinesPhase(repository_id, 'master')
+          this.phaseList = res.data
+        } catch(e) {
+          console.log(e.message)
+        }
+      }
+      this.listLoading = false
+    },
     drag() {
       const el1 = document.querySelectorAll('.el-table__body-wrapper')[0].querySelectorAll('table > tbody')[0]
       Sortable.create(el1, {
@@ -161,27 +171,20 @@ export default {
 <template>
   <div class="app-container">
     <div>
-      <el-select v-model="projectValue" placeholder="select a project">
-        <el-option
-          v-for="item in projectList"
-          :key="item.project_name"
-          :label="item.project_name"
-          :value="item.project_name"
-        >
-        </el-option>
-      </el-select>
-      <span class="newBtn">
+      <project-list-selector />
+      <!-- <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
           Add Flow
         </el-button>
-      </span>
+      </span> -->
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope">
-          <i class="el-icon-sort"></i> {{ scope.row.order }}
+          <!-- <i class="el-icon-sort"></i>  -->
+          {{ scope.row.id }}
         </template>
       </el-table-column>
       <el-table-column label="Phase" :show-overflow-tooltip="true">
@@ -191,10 +194,10 @@ export default {
       </el-table-column>
       <el-table-column label="Tools" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.tool }}
+          {{ scope.row.software }}
         </template>
       </el-table-column>
-      <el-table-column label="Status" :show-overflow-tooltip="true">
+      <!-- <el-table-column label="Status" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.status ? '啟用' : '停用' }}
         </template>
@@ -210,9 +213,16 @@ export default {
             Delete
           </el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
-
+    <pagination
+      :total="phaseList.length"
+      :page="listQuery.page"
+      :limit="listQuery.limit"
+      :page-sizes="[10]"
+      :layout="'total, prev, pager, next'"
+      @pagination="onPagination"
+    />
     <el-dialog :title="`${dialogStatusText} Flow`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
       <el-form ref="thisForm" :model="form" label-position="top">
         <el-form-item label="Phase" prop="phase">
