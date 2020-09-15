@@ -75,3 +75,55 @@ export function getProjectUserList(pId) {
     method: 'GET'
   })
 }
+
+//專案內可分配版本　[2.3.1 新增議題　2.3.3.1 編輯議題］
+export function getProjectVersion(pId) {
+  return request({
+    url: `/project/${pId}/version/list`,
+    method: 'GET'
+  })
+}
+
+export function getProjectIssueList(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_tree`,
+    method: 'GET'
+  })
+}
+
+export function getProjectIssueListByStatus(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_status`,
+    method: 'GET'
+  })
+}
+
+export function getProjectIssueListByDate(pId) {
+  return request({
+    url: `/project/${pId}/issues_by_date`,
+    method: 'GET'
+  })
+}
+
+export function addProjectVersion(pId, data = { name: '', due_date: '', description: '', status: '' }) {
+  return request({
+    url: `/project/${pId}/version`,
+    method: 'POST',
+    data
+  })
+}
+
+export function editProjectVersion(pId, vId, data = { name: '', due_date: '', description: '', status: '' }) {
+  return request({
+    url: `/project/${pId}/version/${vId}`,
+    method: 'PUT',
+    data
+  })
+}
+
+export function deleteProjectVersion(pId, vId) {
+  return request({
+    url: `/project/${pId}/version/${vId}`,
+    method: 'DELETE'
+  })
+}
