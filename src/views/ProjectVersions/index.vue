@@ -11,7 +11,7 @@ const formTemplate = {
 }
 
 export default {
-  components: { 
+  components: {
     Pagination,
     ProjectListSelector
   },
@@ -24,6 +24,12 @@ export default {
         page: 1,
         limit: 10,
         totalPage: 1
+      },
+      formRules: {
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
+        status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
       },
       versionList: [],
       dialogStatus: 1,
@@ -86,15 +92,21 @@ export default {
       this.fetchData()
     },
     async handleConfirm() {
-      this.dialogVisible = false
-      const data = this.form
-      data.status = data.status ? 'open' : 'closed'
-      if(this.dialogStatus == 1) {
-        await addProjectVersion(this.projectSelectedId, {'version': data})
-      } else {
-        await editProjectVersion(this.projectSelectedId, this.form.id, {'version': data})
-      }
-      this.fetchData()
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          this.dialogVisible = false
+          const data = this.form
+          data.status = data.status ? 'open' : 'closed'
+          if (this.dialogStatus == 1) {
+            await addProjectVersion(this.projectSelectedId, { version: data })
+          } else {
+            await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
+          }
+          this.fetchData()
+        } else {
+          return false
+        }
+      })
     },
     onDialogClosed() {
       this.$nextTick(() => {
@@ -167,25 +179,29 @@ export default {
       width="50%"
       @closed="onDialogClosed"
     >
-      <el-form ref="thisForm" :model="form" label-position="top">
+      <el-form ref="form" :model="form" :rules="formRules" label-position="top">
         <el-form-item label="Name" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="Duration">
-          <el-form-item prop="due_date">
-            <el-date-picker type="date" placeholder="End Date" value-format="yyyy-MM-dd" v-model="form.due_date" style="width: 100%;" />
-          </el-form-item>
+        <el-form-item label="Duration" prop="due_date">
+          <el-date-picker
+            v-model="form.due_date"
+            type="date"
+            placeholder="End Date"
+            value-format="yyyy-MM-dd"
+            style="width: 100%;"
+          />
         </el-form-item>
         <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status"></el-switch>
+          <el-switch v-model="form.status" />
         </el-form-item>
-        <el-form-item label="Description" prop="desc">
-          <el-input type="textarea" v-model="form.description"></el-input>
+        <el-form-item label="Description" prop="description">
+          <el-input v-model="form.description" type="textarea" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="memberConfirmLoading">Confirm</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>

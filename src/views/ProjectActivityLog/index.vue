@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div v-loading="isLoading" class="app-container">
     <div class="clearfix">
       <div>
         <project-list-selector />
@@ -8,12 +8,7 @@
     <el-divider />
     <div class="block" style="margin-top:10px">
       <el-timeline>
-        <el-timeline-item
-          v-for="item in projectIssueList"
-          :key="item.index"
-          :timestamp="item.date"
-          placement="top"
-        >
+        <el-timeline-item v-for="item in projectIssueList" :key="item.index" :timestamp="item.date" placement="top">
           <el-card>
             <el-row v-for="issue in item.issues" :key="issue.id" :gutter="20">
               <el-col :span="4">
@@ -37,7 +32,7 @@ import { getActivityLog, getProjectList } from '@/api/projects'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { getProjectIssueListByDate } from '@/api/projects'
 export default {
-  components: { 
+  components: {
     ProjectListSelector
   },
   filters: {
@@ -53,7 +48,7 @@ export default {
   data() {
     return {
       projectIssueList: [],
-      listLoading: true,
+      isLoading: true,
       projectList: []
     }
   },
@@ -70,12 +65,13 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.isLoading = true
       const projectIssueListRes = await getProjectIssueListByDate(this.projectSelectedId)
+      this.isLoading = false
       this.projectIssueList = Object.keys(projectIssueListRes.data).map((item, index) => {
-        const data = {'index': index, 'date': item, 'issues': projectIssueListRes.data[item]}
+        const data = { index: index, date: item, issues: projectIssueListRes.data[item] }
         return data
       })
-      console.log(this.projectIssueList)
     }
   }
 }
