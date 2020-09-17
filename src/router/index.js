@@ -106,13 +106,13 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/profile/index',
     hidden: true,
-    meta: { roles: ['Engineer'] },
+    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
     children: [
       {
         path: 'index',
         component: () => import('@/views/Profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true, roles: ['Engineer'] }
+        meta: { title: 'Profile', icon: 'user', noCache: true, roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },
