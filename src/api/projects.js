@@ -53,18 +53,20 @@ export function getProjectAssignable(pId) {
 }
 
 //取得專案議題狀態 [ 0_1 單一專案概述]
-export function getProjectIssueProgress(pId) {
+export function getProjectIssueProgress(pId, params = {}) {
   return request({
     url: `/project/${pId}/issues_progress`,
-    method: 'GET'
+    method: 'GET',
+    params
   })
 }
 
 //取得專案議題篩選條件狀態 [0.1_單一專案概述]
-export function getProjectIssueStatistics(pId) {
+export function getProjectIssueStatistics(pId, params) {
   return request({
     url: `/project/${pId}/issues_statistics`,
-    method: 'GET'
+    method: 'GET',
+    params
   })
 }
 
@@ -125,5 +127,14 @@ export function deleteProjectVersion(pId, vId) {
   return request({
     url: `/project/${pId}/version/${vId}`,
     method: 'DELETE'
+  })
+}
+
+// 取得project內所有issue清單 [0.5 RoadMap_Detail]
+export function getProjectIssueListByVersion(pId, params) {
+  return request({
+    url: `/project/${pId}/issues`,
+    method: 'GET',
+    params
   })
 }
