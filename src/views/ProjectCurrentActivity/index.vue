@@ -7,12 +7,13 @@ import { getIssueStatus } from '@/api/issue'
 import { getProjectIssueListByStatus } from '@/api/projects'
 
 export default {
-  components: { 
+  components: {
     Kanban,
     ProjectListSelector
   },
   data() {
     return {
+      isLoading: true,
       issueStatusList: [],
       group: 'mission'
     }
@@ -32,10 +33,12 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.isLoading = true
       const projectIssueListRes = await getProjectIssueListByStatus(this.projectSelectedId)
+      this.isLoading = false
       const projectIssueList = projectIssueListRes.data
       this.issueStatusList = this.issueStatusList.map(item => {
-        if(projectIssueList[item['name']]){
+        if (projectIssueList[item['name']]) {
           item['issues'] = projectIssueList[item['name']].map(issue => {
             issue['name'] = issue.issue_name
             issue['iss'] = issue.assigned_to
@@ -52,7 +55,7 @@ export default {
 }
 </script>
 <template>
-  <div class="app-container">
+  <div v-loading="isLoading" class="app-container">
     <div class="clearfix">
       <div>
         <project-list-selector />
@@ -61,14 +64,14 @@ export default {
     <el-divider />
     <div class="components-container board" style="overflow: auto;">
       <div style="width: 100%; display: flex; overflow: auto">
-        <Kanban 
-          style="margin: 10px 10px"
+        <Kanban
           v-for="item in issueStatusList"
           :key="item.id"
-          :header-text="item.name" 
+          style="margin: 10px 10px"
+          :header-text="item.name"
           :list="item.issues"
           :group="group"
-          class="kanban todo" 
+          class="kanban todo"
         />
       </div>
     </div>
@@ -86,28 +89,28 @@ export default {
   &.todo {
     .board-column-header {
       .header-bar {
-        background: #85C1E9;
+        background: #85c1e9;
       }
     }
   }
   &.in-progress {
     .board-column-header {
       .header-bar {
-        background: #FFC300;
+        background: #ffc300;
       }
     }
   }
   &.done {
     .board-column-header {
       .header-bar {
-        background: #82E0AA;
+        background: #82e0aa;
       }
     }
   }
   &.close {
     .board-column-header {
       .header-bar {
-        background: #AEB6BF;
+        background: #aeb6bf;
       }
     }
   }

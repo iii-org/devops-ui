@@ -102,8 +102,8 @@ export default {
             console.log('success login')
             
             this.loading = false
-          }).then(() => {
-            this.$store.dispatch('user/getInfo')
+          }).then(async () => {
+            await this.$store.dispatch('user/getInfo')
             console.log('redirect:', this.redirect)
             this.$router.push({ path: this.redirect || '/' })
             // resolve()

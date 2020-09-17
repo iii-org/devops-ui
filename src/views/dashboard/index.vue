@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <el-row :gutter="12">
+    <!-- <el-row :gutter="12">
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
@@ -41,7 +41,7 @@
           </div>
         </el-card>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-row :gutter="12" style="margin-top:10px">
       <el-col :span="8">
         <el-card shadow="hover">
@@ -85,9 +85,7 @@ export default {
     typePie
   },
   computed: {
-    ...mapGetters([
-      'name'
-    ])
+    ...mapGetters(['name'])
   }
 }
 </script>
@@ -102,5 +100,4 @@ export default {
     line-height: 46px;
   }
 }
-
 </style>
