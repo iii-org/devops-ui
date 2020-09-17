@@ -3,7 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import WangEditor from '@/components/Wangeditor'
-import { getWikiList } from '@/api/wiki'
+import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
 import { formatTime } from '../../utils/index.js'
 
 export default {
@@ -16,7 +16,10 @@ export default {
     return {
       isLoading: false,
       listLoading: true,
+      editBtnLoading: false,
+      direction: 'rtl',
       wikiList: [],
+      wikiData: {},
       wikiContent: 'Hello DevOps',
       newWikiContent: '',
       dialogVisible: false,
@@ -55,9 +58,16 @@ export default {
     handleClose() {
       this.dialogVisible = false
     },
-    handleUpdate() {
-      this.dialogVisible = false
-      this.wikiContent = this.newWikiContent
+    async handleUpdate() {
+      this.editBtnLoading = true
+      const text = this.$refs.editor.onUpdate()
+      try {
+        await putWikiDetail(this.projectSelectedId, this.wikiData.title, text)
+        this.dialogVisible = false
+      } catch (error) {
+        console.error(error)
+      }
+      this.editBtnLoading = false
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -65,8 +75,32 @@ export default {
     myFormatTime(time) {
       return formatTime(new Date(time))
     },
-    handleEdit(idx, row) {},
-    handleDelete() {}
+    async handleEdit(idx, row) {
+      this.listLoading = true
+      try {
+        const res = await getWikiDetail(this.projectSelectedId, row.title)
+        const { wiki_page } = res.data
+        this.wikiData = wiki_page
+        this.wikiContent = wiki_page.text
+        this.dialogVisible = true
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
+    async handleDelete(idx, row) {
+      console.log(row)
+      this.listLoading = true
+      try {
+        await deleteWiki(this.projectSelectedId, row.title)
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+
+      this.listLoading = false
+    }
   }
 }
 </script>
@@ -100,9 +134,16 @@ export default {
             <i class="el-icon-edit" />
             Edit
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" /> Delete
-          </el-button>
+          <el-popconfirm
+            confirmButtonText="Delete"
+            cancelButtonText="Cancel"
+            icon="el-icon-info"
+            iconColor="red"
+            title="Are you sure?"
+            @onConfirm="handleDelete(scope.$index, scope.row)"
+          >
+            <el-button size="mini" type="danger" slot="reference"> <i class="el-icon-delete" /> Delete</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -114,20 +155,45 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <el-dialog title="Edit Wiki" :visible="dialogVisible" width="70%" @close="handleClose">
-      <WangEditor @get-editor-data="emitGetEditorData" :wiki-content="wikiContent"> </WangEditor>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">Cancel</el-button>
-        <el-button type="primary" @click="handleUpdate">Confirm</el-button>
-      </span>
-    </el-dialog>
+
+    <el-drawer
+      :title="'Edit Wiki'"
+      :visible.sync="dialogVisible"
+      :direction="direction"
+      :before-close="handleClose"
+      :append-to-body="true"
+      :with-header="false"
+      size="60%"
+    >
+      <div class="container">
+        <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" />
+        <div class="file-drawer__footer">
+          <el-button @click="dialogVisible = false">Cancel</el-button>
+          <el-button type="primary" :loading="editBtnLoading" @click="handleUpdate">Confirm</el-button>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 <style lang="scss">
-.wiki-container {
-  margin-top: 10px;
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #c0c0c0;
+  justify-content: center;
+  #editor-container {
+    flex: 1;
+  }
+  .file-commit-message {
+    flex-basis: 160px;
+  }
+  .file-drawer__footer {
+    flex-basis: 60px;
+    padding-top: 20px;
+  }
+  >>> #w-e-text {
+    white-space: pre-line;
+  }
 }
 </style>

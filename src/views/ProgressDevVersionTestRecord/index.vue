@@ -54,9 +54,13 @@ export default {
         this.listLoading = false
         return
       }
-      const res = await getPipelines(rid)
-      const { data } = res
-      this.testList = data
+      try {
+        const res = await getPipelines(rid)
+        const { data } = res
+        this.testList = data
+      } catch (error) {
+        console.error(error)
+      }
       this.listLoading = false
     },
     returnTagType(row) {
@@ -89,11 +93,16 @@ export default {
         repository_id,
         pipelines_exec_run: row.id
       }
-      const res = await getPipelinesLogs(params)
-      const { data } = res
-      this.detailData = data
+      try {
+        const res = await getPipelinesLogs(params)
+        const { data } = res
+        this.detailData = data
+        this.emitTestDetailVisible(true)
+      } catch (error) {
+        console.error(error)
+      }
+
       this.isLoading = false
-      this.emitTestDetailVisible(true)
     }
   }
 }

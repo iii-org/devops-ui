@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="Test Detail" :visible="dialogVisible" width="50%" @close="handleClose">
+  <el-dialog title="Test Detail" :visible="dialogVisible" width="50%" @close="handleClose" :width="'80%'">
     <el-timeline>
       <el-timeline-item v-for="(activity, index) in activities" :key="index" placement="top">
         <el-card
@@ -10,8 +10,29 @@
           }"
         >
           <h4>
-            <b>{{ activity }}</b>
+            <b>
+              {{ activity.name }}
+            </b>
+            <el-tag :type="activity.state.toLowerCase()" effect="dark">
+              {{ activity.state.toLowerCase() }}
+            </el-tag>
           </h4>
+          <el-divider />
+          <el-card
+            v-for="step in activity.steps"
+            :key="step.message"
+            style="margin-bottom:8px;"
+            :body-style="{
+              color: '#fff',
+              background: '#333',
+              lineHeight: 1,
+              fontSize: 10,
+              height: '200px',
+              overflow: 'auto'
+            }"
+          >
+            <pre>{{ step.message }}</pre>
+          </el-card>
         </el-card>
       </el-timeline-item>
     </el-timeline>
