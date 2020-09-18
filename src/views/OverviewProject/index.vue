@@ -3,6 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import projectPie from './components/project_pie'
 import projectBar from './components/project_bar'
+import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics } from '@/api/projects'
 
 export default {
   name: 'Dashboard',
@@ -43,6 +44,10 @@ export default {
   watch: {
     projectSelectedId(projectId) {
       this.fetchAll()
+    },
+    projectVersion() {
+      this.isLoading = true
+      this.fetchByVersion()
     }
   },
   async created() {
@@ -55,9 +60,15 @@ export default {
     },
     async fetchAll() {
       this.isLoading = true
+      const versionsRes = await getProjectVersion(this.projectSelectedId)
+      this.projectVersionList = versionsRes.data.versions
+      this.projectVersion = this.projectVersionList[0].id
+      this.fetchByVersion()
+    },
+    async fetchByVersion() {
       const res = await Promise.all([
-        this.getProjectIssueProgress(this.projectSelectedId),
-        this.getProjectIssueStatistics(this.projectSelectedId),
+        getProjectIssueProgress(this.projectSelectedId, { fixed_version_id: this.projectVersion }),
+        getProjectIssueStatistics(this.projectSelectedId, { fixed_version_id: this.projectVersion }),
         this.getProjectUserList(this.projectSelectedId)
       ])
       this.isLoading = false

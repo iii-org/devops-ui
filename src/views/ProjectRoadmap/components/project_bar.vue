@@ -19,6 +19,12 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    theData: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -26,10 +32,17 @@ export default {
       chart: null
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+  watch: {
+    theData(value) {
+      this.$nextTick(() => {
+        const CONFIG_DATA = {
+          yAxis: Object.keys(value),
+          finished: Object.keys(value).map(key => value[key].finished),
+          unfinished: Object.keys(value).map(key => value[key].unfinish)
+        }
+        this.initChart(CONFIG_DATA)
+      })
+    }
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -39,7 +52,7 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart() {
+    initChart(CONFIG_DATA) {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         tooltip: {
@@ -58,11 +71,12 @@ export default {
           containLabel: true
         },
         xAxis: {
-          type: 'value'
+          type: 'value',
+          interval: 1
         },
         yAxis: {
           type: 'category',
-          data: ['User Case', 'Mission', 'BUG']
+          data: CONFIG_DATA.yAxis
         },
         series: [
           {
@@ -70,20 +84,20 @@ export default {
             type: 'bar',
             stack: 'Total',
             label: {
-              show: true,
+              show: false,
               position: 'insideRight'
             },
-            data: [10, 9, 3]
+            data: CONFIG_DATA.finished
           },
           {
             name: 'Unfinish',
             type: 'bar',
             stack: 'Total',
             label: {
-              show: true,
+              show: false,
               position: 'insideRight'
             },
-            data: [2, 6, 11]
+            data: CONFIG_DATA.unfinished
           }
         ]
       })
