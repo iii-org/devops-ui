@@ -5,6 +5,7 @@ import ProjectListSelector from '../../components/ProjectListSelector'
 import WangEditor from '@/components/Wangeditor'
 import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
 import { formatTime } from '../../utils/index.js'
+import { Message } from 'element-ui'
 
 export default {
   components: {
@@ -62,7 +63,12 @@ export default {
       this.editBtnLoading = true
       const text = this.$refs.editor.onUpdate()
       try {
-        await putWikiDetail(this.projectSelectedId, this.wikiData.title, text)
+        await putWikiDetail(this.projectSelectedId, this.wikiData.title, { wiki_text: text })
+        Message({
+          message: 'Wiki update successfully',
+          type: 'success',
+          duration: 1 * 3000
+        })
         this.dialogVisible = false
       } catch (error) {
         console.error(error)

@@ -10,7 +10,7 @@ const formTemplate = {
   amount: 0,
   ppm: 0,
   status: false,
-  desc: ''
+  description: ''
 }
 
 export default {
@@ -184,14 +184,14 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <router-link
+          <!-- <router-link
             :to="{
               name: 'cicdPipelines'
             }"
             style="color: #409EFF"
-          >
-            <span>{{ scope.row.name }}</span>
-          </router-link>
+          > -->
+          <span style="color: #409EFF">{{ scope.row.name }}</span>
+          <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
@@ -249,9 +249,9 @@ export default {
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
         </el-form-item> -->
-        <el-form-item v-if="dialogStatus === 2" label="Project Owner" prop="owner">
+        <!-- <el-form-item v-if="dialogStatus === 2" label="Project Owner" prop="owner">
           <el-input v-model="form.owner"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-col :span="11">
           <el-form-item label="Project Amount" prop="amount">
             <el-input type="number" v-model="form.amount"></el-input>
@@ -264,7 +264,7 @@ export default {
           </el-form-item>
         </el-col> -->
         <el-form-item label="Description" prop="desc">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+          <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
         <el-form-item label="Status" prop="status">
           <el-switch v-model="form.status"></el-switch>

@@ -138,3 +138,20 @@ export function getProjectIssueListByVersion(pId, params) {
     params
   })
 }
+
+// 建立專案內成員
+export function addProjectMember(pId, data = { user_id: '' }) {
+  return request({
+    url: `/project/${pId}/member`,
+    method: 'POST',
+    data
+  })
+}
+
+// 專案成員刪除
+export function deleteProjectMember(pId, user_id) {
+  return request({
+    url: `/project/${pId}/member/${user_id}`,
+    method: 'DELETE'
+  })
+}
