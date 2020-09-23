@@ -96,7 +96,6 @@ export default {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
-          data.status = data.status ? 'open' : 'closed'
           if (this.dialogStatus == 1) {
             await addProjectVersion(this.projectSelectedId, { version: data })
           } else {
@@ -110,7 +109,7 @@ export default {
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        this.$refs['thisForm'].resetFields()
+        this.$refs['form'].resetFields()
         this.form = formTemplate
       })
     }
@@ -193,7 +192,11 @@ export default {
           />
         </el-form-item>
         <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status" />
+          <el-radio-group v-model="form.status">
+            <el-radio :label="'open'">Open</el-radio>
+            <el-radio :label="'closed'">Closed</el-radio>
+            <el-radio :label="'locked'">Locked</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="Description" prop="description">
           <el-input v-model="form.description" type="textarea" />
