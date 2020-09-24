@@ -102,9 +102,14 @@ export default {
           {{ scope.row.issue_category }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Id">
+      <el-table-column align="center" label="Id" width="60px">
         <template slot-scope="scope">
           {{ scope.row.id }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Name">
+        <template slot-scope="scope">
+          {{ scope.row.issue_name }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Description">
@@ -112,7 +117,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status">
+      <el-table-column align="center" label="Status" width="100px">
         <template slot-scope="scope">
           {{ scope.row.issue_status }}
         </template>
@@ -122,12 +127,12 @@ export default {
           {{ scope.row.assigned_to }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Priority">
+      <el-table-column align="center" label="Priority" width="100px">
         <template slot-scope="scope">
           {{ scope.row.issue_priority }}
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="250px">
+      <el-table-column label="Actions" align="center" width="200px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />

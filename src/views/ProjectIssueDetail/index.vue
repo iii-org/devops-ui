@@ -116,7 +116,7 @@ export default {
         const projectId = issueDetail.project.id
         getProjectAssignable(projectId).then((assignable) => {
           this.issueAssigneeList = assignable.data.user_list.map(item => {
-            return { label: item.name, value: item.id }
+            return { label: item.login, value: item.id }
           })
         })
         getProjectVersion(projectId).then((versions) => {
@@ -159,9 +159,6 @@ export default {
         this.listLoading = false
       })
     },
-    handleChange(value) {
-      console.log(value)
-    },
     returnTagType(row) {
       const { success, total } = row.last_test_result
       return success === total ? 'success' : 'danger'
@@ -185,9 +182,7 @@ export default {
     },
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async(valid) => {
-          console.log('bbb')
           if (valid) {
-            console.log('xxx')
             const data = this.issueForm
             delete data.fixed_version_id
             delete data.assigned_to_id
@@ -341,13 +336,18 @@ export default {
                 :min="0"
                 :max="100"
                 style="width:100%"
-                @change="handleChange"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Estimate" label-width="100px" prop="estimated_hours">
-              <el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>
+              <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
+              <el-input-number
+                v-model="issueForm.estimated_hours"
+                :min="0"
+                :max="100"
+                style="width:100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">

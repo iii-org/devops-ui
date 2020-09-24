@@ -52,7 +52,7 @@
       <el-table-column label="Last Test Result" align="center" width="130">
         <template slot-scope="scope">
           <div>
-            <span v-if="Object.entries(scope.row.last_test_result).length > 0" type="danger" size="medium">
+            <span v-if="scope.row.last_test_result && Object.entries(scope.row.last_test_result).length > 0" type="danger" size="medium">
               {{ scope.row.last_test_result.success }} / {{ scope.row.last_test_result.total }}
             </span>
             <span v-else>-</span>
