@@ -150,6 +150,7 @@ export default {
     async handleConfirmEdit() {
       this.confirmLoading = true
       const dataBody = {
+        pId: this.form.id,
         data: {
           name: this.form.name,
           description: this.form.description,
@@ -159,7 +160,7 @@ export default {
       }
       const res = await this['projects/editProject'](dataBody)
       this.confirmLoading = false
-      if (res.message !== 'successful') return
+      if (res.message !== 'success') return
       console.log(res)
       Message({
         message: 'Project update successfully',
