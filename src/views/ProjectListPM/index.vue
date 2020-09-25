@@ -9,7 +9,7 @@ const formTemplate = {
   code: '',
   amount: 0,
   ppm: 0,
-  status: false,
+  disabled: false,
   description: ''
 }
 
@@ -76,14 +76,14 @@ export default {
       this.dialogStatus = 2
       this.form = Object.assign({}, this.form, row)
     },
-    handleDelete() {
+    handleDelete(index, row) {
       this.$confirm('Are you sure to Delete Project?', 'Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
       })
         .then(async () => {
-          await this['projects/deleteProject']()
+          await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
             message: 'Delete Successed'
@@ -132,9 +132,8 @@ export default {
       console.log(this.form)
       const dataBody = {
         name: this.form.name,
-        identifier: this.form.name,
         description: this.form.description,
-        disabled: this.form.status
+        disabled: this.form.disabled
       }
       console.log(dataBody)
       const res = await this['projects/addNewProject'](dataBody)
@@ -152,11 +151,17 @@ export default {
     async handleConfirmEdit() {
       this.confirmLoading = true
       const dataBody = {
-        data: { name: this.form.name, description: this.form.desc, disabled: !this.form.status, user_id: this.userId }
+        pId: this.form.id,
+        data: {
+          name: this.form.name,
+          description: this.form.description,
+          disabled: this.form.disabled,
+          user_id: this.userId
+        }
       }
       const res = await this['projects/editProject'](dataBody)
       this.confirmLoading = false
-      if (res.message !== 'successful') return
+      if (res.message !== 'success') return
       console.log(res)
       Message({
         message: 'Project update successfully',
@@ -265,11 +270,11 @@ export default {
             <el-input type="number" v-model="form.ppm"></el-input>
           </el-form-item>
         </el-col> -->
-        <el-form-item label="Description" prop="desc">
+        <el-form-item label="Description" prop="description">
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
-        <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status"></el-switch>
+        <el-form-item label="Disabled" prop="disabled">
+          <el-switch v-model="form.disabled"></el-switch>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
