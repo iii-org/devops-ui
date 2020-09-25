@@ -22,7 +22,7 @@ export function queryProjectList() {
   })
 }
 
-export function addNewProject(data = { name: '', identifier: '', description: '' }) {
+export function addNewProject(data = { name: '', disabled: false, description: '' }) {
   return request({
     url: `/project`,
     method: 'POST',
@@ -30,7 +30,7 @@ export function addNewProject(data = { name: '', identifier: '', description: ''
   })
 }
 
-export function editProject(pId = '80', data = { name: '', identifier: '', description: '' }) {
+export function editProject(pId = '80', data = { name: '', disabled: false, description: '' }) {
   return request({
     url: `/project/${pId}`,
     method: 'PUT',

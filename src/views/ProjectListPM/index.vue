@@ -9,7 +9,7 @@ const formTemplate = {
   code: '',
   amount: 0,
   ppm: 0,
-  status: false,
+  disabled: false,
   description: ''
 }
 
@@ -132,8 +132,8 @@ export default {
       console.log(this.form)
       const dataBody = {
         name: this.form.name,
-        identifier: this.form.name,
-        description: this.form.description
+        description: this.form.description,
+        disabled: this.form.disabled
       }
       const res = await this['projects/addNewProject'](dataBody)
       this.confirmLoading = false
@@ -154,7 +154,7 @@ export default {
         data: {
           name: this.form.name,
           description: this.form.description,
-          disabled: !this.form.status,
+          disabled: this.form.disabled,
           user_id: this.userId
         }
       }
@@ -272,8 +272,8 @@ export default {
         <el-form-item label="Description" prop="description">
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
-        <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status"></el-switch>
+        <el-form-item label="Disabled" prop="disabled">
+          <el-switch v-model="form.disabled"></el-switch>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
