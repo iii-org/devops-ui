@@ -89,8 +89,10 @@ const actions = {
           }
           commit('SET_USER_ROLE', role.name)
           commit('SET_USER_PROJECT', data.project)
-          commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
-          commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
+          if (data.project.length > 0) {
+            commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
+            commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
+          }
           resolve()
         })
         .catch(error => {
