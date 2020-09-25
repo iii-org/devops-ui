@@ -85,9 +85,10 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column align="center" label="Name">
         <template slot-scope="scope">
-          <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">
+          <span>{{ scope.row.name }}</span>
+          <!-- <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">
             <span>{{ scope.row.name }}</span>
-          </router-link>
+          </router-link> -->
         </template>
       </el-table-column>
       <el-table-column align="center" label="Description">
