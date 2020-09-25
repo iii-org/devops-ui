@@ -262,7 +262,7 @@ export const asyncRoutes = [
     path: '/progress',
     component: Layout,
     name: 'progress',
-    redirect: '/progress/project-gantt',
+    redirect: '/progress/dev-branch',
     meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager'] },
     children: [
       // {
