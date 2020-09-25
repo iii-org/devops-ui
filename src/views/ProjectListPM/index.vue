@@ -135,7 +135,6 @@ export default {
         description: this.form.description,
         disabled: this.form.disabled
       }
-      console.log(dataBody)
       const res = await this['projects/addNewProject'](dataBody)
       this.confirmLoading = false
       if (res.message !== 'successful') return
