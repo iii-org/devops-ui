@@ -14,7 +14,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="Name" label-width="100px" prop="subject">
-            <el-input v-model="issueForm.subject" placeholder="please input name"/>
+            <el-input v-model="issueForm.subject" placeholder="please input name" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -85,12 +85,18 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="Estimate" label-width="100px" prop="estimated_hours">
-            <el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>
+            <el-input-number v-model="issueForm.estimated_hours" label="please input hours" style="width:100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="Done Ratio" label-width="100px" prop="done_ratio">
-            <el-input v-model="issueForm.done_ratio" placeholder="please input numbers"/>
+            <el-input-number
+              v-model="issueForm.done_ratio"
+              label="please input numbers"
+              :min="0"
+              :max="100"
+              style="width:100%"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -134,7 +140,7 @@
 </template>
 <script>
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getProjectUserList, getProjectVersion } from '@/api/projects'
 export default {
   props: {
     dialogVisible: {
@@ -213,7 +219,7 @@ export default {
         getIssueStatus(),
         getIssueTracker(),
         getIssuePriority(),
-        getProjectAssignable(this.projectId),
+        getProjectUserList(this.projectId),
         getProjectVersion(this.projectId)
       ]).then(res => {
         this.issueStatusList = res[0].data.map(item => {
