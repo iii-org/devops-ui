@@ -5,9 +5,9 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form 
-      ref="issueForm" 
-      label-width="20%" 
+    <el-form
+      ref="issueForm"
+      label-width="20%"
       :model="issueForm"
       :rules="issueFormRules"
     >
@@ -89,29 +89,29 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Done Ratio" label-width="100px" prop="done_retio">
-            <el-input v-model="issueForm.done_retio" placeholder="please input numbers"/>
+          <el-form-item label="Done Ratio" label-width="100px" prop="done_ratio">
+            <el-input v-model="issueForm.done_ratio" placeholder="please input numbers"/>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12">
           <el-form-item label="Start" label-width="100px" prop="start_date">
-            <el-date-picker 
-              v-model="issueForm.start_date" 
-              type="date" 
-              placeholder="Select Date" 
-              style="width: 100%;" 
+            <el-date-picker
+              v-model="issueForm.start_date"
+              type="date"
+              placeholder="Select Date"
+              style="width: 100%;"
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="End" label-width="100px" prop="due_date">
-            <el-date-picker 
-              v-model="issueForm.due_date" 
-              type="date" 
-              placeholder="Select Date" 
+            <el-date-picker
+              v-model="issueForm.due_date"
+              type="date"
+              placeholder="Select Date"
               style="width: 100%;"
               value-format="yyyy-MM-dd"
             />
@@ -164,7 +164,7 @@ export default {
         assigned_to_id: '',
         start_date: '',
         due_date: '',
-        done_retio: '',
+        done_ratio: '',
         estimated_hours: ''
       },
       issueFormRules: {
@@ -186,7 +186,7 @@ export default {
         due_date: [
           { required: true, message: 'Please select due date', trigger: 'blur' }
         ],
-        done_retio: [
+        done_ratio: [
           { required: true, message: 'Please input done ratio', trigger: 'blur' }
         ],
         estimated_hours: [
@@ -196,10 +196,10 @@ export default {
           { required: true, message: 'Please select priority', trigger: 'blur' }
         ],
         version_id: [
-          { required: true, message: 'Please select version', trigger: 'blur' }
+          { required: false }
         ],
         description: [
-          { required: true, message: 'Please input description', trigger: 'blur' }
+          { required: false }
         ]
       }
     }
@@ -210,8 +210,8 @@ export default {
   methods: {
     fetchData() {
       Promise.all([
-        getIssueStatus(), 
-        getIssueTracker(), 
+        getIssueStatus(),
+        getIssueTracker(),
         getIssuePriority(),
         getProjectAssignable(this.projectId),
         getProjectVersion(this.projectId)
