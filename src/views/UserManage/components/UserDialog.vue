@@ -41,11 +41,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="Enable" prop="enable">
+      <el-form-item label="Statue" prop="status">
         <el-switch
-          v-model="userForm.enable"
+          v-model="userForm.status"
+          active-value="enable"
+          inactive-value="disable"
           active-color="#13ce66"
           inactive-color="#ff4949"
+          active-text="Enable"
+          inactive-text="Disable"
         />
       </el-form-item>
     </el-form>
@@ -95,7 +99,7 @@ export default {
         email: '',
         phone: '',
         role: '',
-        enable: true
+        status: 'enable'
       },
       userFormRules: {
         login: [
@@ -117,8 +121,8 @@ export default {
         role: [
           { required: true, message: 'Please select role', trigger: 'blur' }
         ],
-        enable: [
-          { required: true, message: 'Please set enable', trigger: 'blur' }
+        statue: [
+          { required: true, message: 'Please set statue', trigger: 'blur' }
         ]
       },
       dialogLoading: false,
@@ -129,8 +133,6 @@ export default {
   },
   watch: {
     userData: function(data) {
-      // TODO: enable always is true, because API not return enable
-      data.enable = true
       if (isNaN(data.role)) {
         // get role id from role object
         data.role = data.role.id
@@ -193,7 +195,7 @@ export default {
             'email': this.userForm.email,
             'phone': this.userForm.phone,
             'role_id': this.userForm.role,
-            'enable': this.userForm.enable
+            'status': this.userForm.status
           }
 
           // remove useless field

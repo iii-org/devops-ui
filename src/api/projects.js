@@ -46,8 +46,10 @@ export function deleteProject(pId = '80') {
 }
 
 export function getProjectAssignable(pId) {
+  // exclude=1 : 輸出無參與此project的使用者列表
+  // exclude=0 : 輸出參與此project的使用者列表
   return request({
-    url: `/project/${pId}/user/list?exclude=1`,
+    url: `/project/${pId}/user/list?exclude=0`,
     method: 'GET'
   })
 }

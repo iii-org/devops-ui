@@ -141,7 +141,7 @@ export default {
         this.issueForm.start_date = issueDetail.start_date
         this.issueForm.due_date = issueDetail.due_date
         this.issueForm.estimated_hours = issueDetail.estimated_hours
-        this.issueForm.fixed_version_id = issueDetail.fixed_version_id
+        this.issueForm.fixed_version_id = issueDetail.fixed_version.id
         this.issueForm.status_id = issueDetail.status.id
         this.issueForm.assigned_to_id = issueDetail.assigned_to.id
         this.issueForm.priority_id = issueDetail.priority.id
@@ -184,8 +184,6 @@ export default {
       this.$refs['issueForm'].validate(async(valid) => {
           if (valid) {
             const data = this.issueForm
-            delete data.fixed_version_id
-            delete data.assigned_to_id
 
             await updateIssue(this.issueId, data)
             Message({
