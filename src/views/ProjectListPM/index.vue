@@ -133,8 +133,10 @@ export default {
       const dataBody = {
         name: this.form.name,
         identifier: this.form.name,
-        description: this.form.desc
+        description: this.form.description,
+        disabled: this.form.status
       }
+      console.log(dataBody)
       const res = await this['projects/addNewProject'](dataBody)
       this.confirmLoading = false
       if (res.message !== 'successful') return
