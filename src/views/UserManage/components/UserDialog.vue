@@ -112,7 +112,6 @@ export default {
         ],
         phone: [
           { required: true, message: 'Please input phone', trigger: 'blur' },
-          { type: 'number', message: 'Please input number', trigger: 'blur' }
         ],
         email: [
           { required: true, message: 'Please input email', trigger: 'blur' },
