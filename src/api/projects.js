@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getProjectList(userId, params) {
   return request({
-    url: '/project/rd/' + userId,
+    url: '/projects_by_user/' + userId,
     method: 'get',
     params
   })
