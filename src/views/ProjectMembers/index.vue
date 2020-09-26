@@ -2,7 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import { getProjectUserList, getProjectAssignable, addProjectMember, deleteProjectMember } from '@/api/projects'
+import { getProjectUserList, getNotInProject, addProjectMember, deleteProjectMember } from '@/api/projects'
 import { Message } from 'element-ui'
 
 const formTemplate = {
@@ -60,7 +60,7 @@ export default {
       this.listLoading = true
       try {
         const res = await getProjectUserList(this.projectSelectedId)
-        const res_assignable = await getProjectAssignable(this.projectSelectedId)
+        const res_assignable = await getNotInProject(this.projectSelectedId)
         this.userList = res.data.user_list
         this.assignableUsers = res_assignable.data.user_list
       } catch (error) {

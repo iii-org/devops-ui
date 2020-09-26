@@ -54,6 +54,15 @@ export function getProjectAssignable(pId) {
   })
 }
 
+export function getNotInProject(pId) {
+  // exclude=1 : 輸出無參與此project的使用者列表
+  // exclude=0 : 輸出參與此project的使用者列表
+  return request({
+    url: `/project/${pId}/user/list?exclude=1`,
+    method: 'GET'
+  })
+}
+
 //取得專案議題狀態 [ 0_1 單一專案概述]
 export function getProjectIssueProgress(pId, params = {}) {
   return request({
