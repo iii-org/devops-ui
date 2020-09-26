@@ -29,7 +29,7 @@
         <el-input v-model="userForm.email" />
       </el-form-item>
       <el-form-item label="Phone" prop="phone">
-        <el-input v-model.number="userForm.phone" />
+        <el-input v-model="userForm.phone" />
       </el-form-item>
       <el-form-item label="Role" prop="role">
         <el-select v-model="userForm.role" style="width:100%">
