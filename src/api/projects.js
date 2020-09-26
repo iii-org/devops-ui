@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getProjectList(userId, params) {
   return request({
-    url: '/project/rd/' + userId,
+    url: '/projects_by_user/' + userId,
     method: 'get',
     params
   })
@@ -50,6 +50,15 @@ export function getProjectAssignable(pId) {
   // exclude=0 : 輸出參與此project的使用者列表
   return request({
     url: `/project/${pId}/user/list?exclude=0`,
+    method: 'GET'
+  })
+}
+
+export function getNotInProject(pId) {
+  // exclude=1 : 輸出無參與此project的使用者列表
+  // exclude=0 : 輸出參與此project的使用者列表
+  return request({
+    url: `/project/${pId}/user/list?exclude=1`,
     method: 'GET'
   })
 }
