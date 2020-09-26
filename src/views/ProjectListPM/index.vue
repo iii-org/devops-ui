@@ -137,7 +137,7 @@ export default {
       }
       const res = await this['projects/addNewProject'](dataBody)
       this.confirmLoading = false
-      if (res.message !== 'successful') return
+      if (res.message !== 'success') return
       console.log(res)
       Message({
         message: 'Project added successfully',
