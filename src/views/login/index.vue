@@ -49,6 +49,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { Message } from 'element-ui'
 
 export default {
   name: 'Login',
@@ -110,6 +111,13 @@ export default {
             // resolve()
           }).catch(e => {
             console.log(e)
+            if (e.message === 'Request failed with status code 401') {
+              Message({
+                message: 'Username or password is invalid.',
+                type: 'error',
+                duration: 5 * 1000
+              })
+            }
           }).finally(() => {
             this.loading = false
           })
