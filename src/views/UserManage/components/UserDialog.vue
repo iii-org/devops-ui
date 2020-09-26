@@ -41,7 +41,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="Statue" prop="status">
+      <el-form-item label="Status" prop="status">
         <el-switch
           v-model="userForm.status"
           active-value="enable"
@@ -121,8 +121,8 @@ export default {
         role: [
           { required: true, message: 'Please select role', trigger: 'blur' }
         ],
-        statue: [
-          { required: true, message: 'Please set statue', trigger: 'blur' }
+        status: [
+          { required: true, message: 'Please set status', trigger: 'blur' }
         ]
       },
       dialogLoading: false,
