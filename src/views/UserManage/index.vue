@@ -64,8 +64,9 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    emitAddUserDialogVisible(visible) {
+    emitAddUserDialogVisible(visible, refresh) {
       this.userDialogVisible = visible
+      if (refresh === 'refresh') { this.fetchData() }
     },
     async showUserDialog(user, title) {
       if (user === '') {
@@ -75,7 +76,7 @@ export default {
           name: '',
           email: '',
           phone: '',
-          role: { id: '1' },
+          role: { id: 1 },
           enable: true
         }
       } else {

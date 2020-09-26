@@ -111,7 +111,7 @@ export default {
           { required: true, message: 'Please input name', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: 'Please input phone', trigger: 'blur' },
+          { required: true, message: 'Please input phone', trigger: 'blur' }
         ],
         email: [
           { required: true, message: 'Please input email', trigger: 'blur' },
@@ -119,9 +119,6 @@ export default {
         ],
         role: [
           { required: true, message: 'Please select role', trigger: 'blur' }
-        ],
-        status: [
-          { required: true, message: 'Please set status', trigger: 'blur' }
         ]
       },
       dialogLoading: false,
@@ -147,8 +144,7 @@ export default {
     if (this.userId === 0) {
       this.dialogTitle = 'Add User'
       this.disableAccount = false
-      // new user's role default is enginner
-      this.userForm.role = 1
+      // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' }
       ]
@@ -204,20 +200,35 @@ export default {
             }
           })
           if (this.userId === 0) {
-            await addUser(data)
+            try {
+              await addUser(data)
+              this.$refs[this.formName].resetFields()
+              this.dialogLoading = false
+              this.$emit('add-user-visible', false, 'refresh')
+              Message({
+                message: 'add successful',
+                type: 'success',
+                duration: 1 * 1000
+              })
+            } catch (error) {
+              this.dialogLoading = false
+            }
           } else {
             delete data['login']
-            await updateUser(this.userId, data)
+            try {
+              await updateUser(this.userId, data)
+              this.$refs[this.formName].resetFields()
+              this.dialogLoading = false
+              this.$emit('add-user-visible', false, 'refresh')
+              Message({
+                message: 'update successful',
+                type: 'success',
+                duration: 1 * 1000
+              })
+            } catch (error) {
+              this.dialogLoading = false
+            }
           }
-
-          this.$refs[this.formName].resetFields()
-          this.dialogLoading = false
-          this.$emit('add-user-visible', false)
-          Message({
-            message: 'add successful',
-            type: 'success',
-            duration: 1 * 1000
-          })
         } else {
           console.log('error!!')
           return false
