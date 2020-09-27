@@ -10,19 +10,19 @@
     <draggable
       :list="list"
       v-bind="$attrs"
-      class="board-column-content"
-      :set-data="setData"
+      :class="[ 'board-column-content', cName ]"
+      @end="end"
     >
       <div v-for="element in list" :key="element.id" class="board-item">
         <div style="line-height: 40px;">{{ element.name }}</div>
         <div>
           <span style="font-size: 5px;">
             <i class="el-icon-date" />
-            <span style="margin-left:2px">{{ element.iat }}</span>
+            <span style="margin-left:2px">{{ element.user }}</span>
           </span>
           <span style="font-size: 5px;margin-left:5px;">
             <i class="el-icon-s-custom" />
-            <span style="margin-left:2px">{{ element.iss }}</span>
+            <span style="margin-left:2px">{{ element.date }}</span>
           </span>
         </div>
       </div>
@@ -43,24 +43,22 @@ export default {
       type: String,
       default: 'Header'
     },
-    options: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
     list: {
       type: Array,
       default() {
         return []
       }
+    },
+    cName: {
+      type: String
+    },
+    updateStatus: {
+      type: Function
     }
   },
   methods: {
-    setData(dataTransfer) {
-      // to avoid Firefox bug
-      // Detail see : https://github.com/RubaXa/Sortable/issues/1012
-      dataTransfer.setData('Text', '')
+    end: function(evt) {
+      this.updateStatus(evt.from, evt.to, evt.oldIndex, evt.newIndex)
     }
   }
 }
@@ -74,6 +72,7 @@ export default {
   background: #ffffff;
   border-radius: 3px;
   border: 1px solid #e7e7e7;
+  margin: 0px 5px;
 
   .board-column-header {
     height: 50px;
