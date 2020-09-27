@@ -10,28 +10,7 @@ export default {
   },
   data() {
     return {
-      userList: [
-        {
-          id: 2,
-          name: 'becky',
-          usernmae: 'beckywu',
-          email: 'hubert@iii.org.tw',
-          phone: '933333666',
-          login: 'becky',
-          create_at: '2020-06-18T02:59:12.408067',
-          status: '運行中'
-        },
-        {
-          id: 4,
-          name: 'hubert',
-          usernmae: 'hubert',
-          email: 'hubert@iii.org.tw',
-          phone: '933333666',
-          login: 'hubert',
-          create_at: '2020-08-06T02:59:41.834495',
-          status: '運行中'
-        }
-      ],
+      userList: [],
       userDialogVisible: false,
       dialogTitle: '',
       search: '',
@@ -128,11 +107,11 @@ export default {
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Disabled" width="100">
+      <el-table-column align="center" label="Status" width="100">
         <template slot-scope="scope">
-          {{ scope.row.disabled }}
+          {{ scope.row.status }}
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column label="Actions" align="center" width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
