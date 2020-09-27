@@ -1,47 +1,39 @@
 <template>
   <div class="dashboard-container">
-    <!-- <el-row :gutter="12">
+    <el-row :gutter="12">
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>TBD Issues</span>
+            <span>Not Finished Issues</span>
           </div>
-          <div class="text item" style="font-size: 40px;text-align: center">
-            12
-          </div>
-          <div
-            class="text item"
-            style="text-align: center;margin-top: 10px;margin-bottom: 13px;"
-          >
-            daily change
-            <span style="margin-left:10px;">8</span>
-            <i class="el-icon-caret-top" style="color: red;font-size:5px" />
+          <div class="text item" style="font-size: 40px;text-align: center; height: 86px">
+            {{this.issueNotFinishStatistics}}
           </div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Done / Assign Issues this week</span>
+            <span>Closed/Open Issues this week</span>
           </div>
           <div class="text item" style="font-size: 40px;text-align: center">
-            5/17
-            <el-progress :percentage="29.4" />
+            {{issueWeekStatistics.closed}}/{{issueWeekStatistics.closed+issueWeekStatistics.open}}
+            <el-progress :percentage="returnPercentage(issueWeekStatistics)" />
           </div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Done / Assign Issues this month</span>
+            <span>Closed/Open Issues this month</span>
           </div>
           <div class="text item" style="font-size: 40px;text-align: center">
-            57/69
-            <el-progress :percentage="82.6" />
+            {{issueMonthStatistics.closed}}/{{issueMonthStatistics.closed+issueMonthStatistics.open}}
+            <el-progress :percentage="returnPercentage(issueMonthStatistics)" />
           </div>
         </el-card>
       </el-col>
-    </el-row> -->
+    </el-row>
     <el-row :gutter="12" style="margin-top:10px">
       <el-col :span="8">
         <el-card shadow="hover">
@@ -73,6 +65,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { getIssueMonthStatistics, getIssueWeekStatistics, getIssueNotFinishStatistics } from '@/api/issue'
 import priorityPie from './components/priority_pie'
 import projectPie from './components/project_pie'
 import typePie from './components/type_pie'
@@ -84,8 +77,34 @@ export default {
     projectPie,
     typePie
   },
+  data() {
+    return {
+      issueMonthStatistics: {'open': '', 'closed': '-'},
+      issueWeekStatistics: {'open': '', 'closed': '-'},
+      issueNotFinishStatistics: '-'
+    }
+  },
   computed: {
     ...mapGetters(['name'])
+  },
+  mounted() {
+    Promise.all([
+        getIssueMonthStatistics(), 
+        getIssueWeekStatistics(), 
+        getIssueNotFinishStatistics()
+      ]).then(res => {
+        this.issueMonthStatistics = res[0].data
+        this.issueWeekStatistics = res[1].data
+        this.issueNotFinishStatistics = res[2].data.active_issue_number
+      });
+  },
+  methods: {
+    returnPercentage(statistics) {
+      const total = parseInt(statistics.closed) + parseInt(statistics.open)
+      const closed = parseInt(statistics.closed)
+      const p = Math.round((closed / total) * 100)
+      return isNaN(p) ? 0 : p
+    }
   }
 }
 </script>

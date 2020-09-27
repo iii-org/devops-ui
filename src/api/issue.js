@@ -51,3 +51,24 @@ export function addIssue(data) {
     data
   })
 }
+
+export function getIssueMonthStatistics() {
+  return request({
+    url: `/issues/month_statistics`,
+    method: 'get'
+  })
+}
+
+export function getIssueWeekStatistics() {
+  return request({
+    url: `/issues/week_statistics`,
+    method: 'get'
+  })
+}
+
+export function getIssueNotFinishStatistics() {
+  return request({
+    url: `/issues/not_finish_statistics`,
+    method: 'get'
+  })
+}
