@@ -141,7 +141,6 @@ export default {
         this.issueForm.start_date = issueDetail.start_date
         this.issueForm.due_date = issueDetail.due_date
         this.issueForm.estimated_hours = issueDetail.estimated_hours
-        this.issueForm.fixed_version_id = issueDetail.fixed_version.id
         this.issueForm.status_id = issueDetail.status.id
         this.issueForm.assigned_to_id = issueDetail.assigned_to.id
         this.issueForm.priority_id = issueDetail.priority.id
@@ -149,6 +148,7 @@ export default {
         this.issueForm.tracker_id = issueDetail.tracker.id
         this.issueForm.description = issueDetail.description
         this.projectId = issueDetail.project.id
+        if(issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
         this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
@@ -184,7 +184,9 @@ export default {
       this.$refs['issueForm'].validate(async(valid) => {
           if (valid) {
             const data = this.issueForm
-
+            if(data.fixed_version_id == "") {
+              delete data.fixed_version_id
+            }
             await updateIssue(this.issueId, data)
             Message({
               message: 'update successful',
