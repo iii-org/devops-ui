@@ -88,8 +88,20 @@ export default {
       console.log(this.form)
     },
     async handleDelete(idx, row) {
-      await deleteProjectVersion(this.projectSelectedId, row.id)
-      this.fetchData()
+
+      this.$confirm(`Are you sure to Delete Version ${row.name}?`, 'Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'error'
+      })  
+        .then(async () => {
+          await deleteProjectVersion(this.projectSelectedId, row.id)
+          this.$message({
+            type: 'success',
+            message: 'Delete Successed'
+          })
+          this.fetchData()
+        })
     },
     async handleConfirm() {
       this.$refs['form'].validate(async valid => {
