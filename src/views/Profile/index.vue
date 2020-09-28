@@ -68,6 +68,13 @@ import { Message } from 'element-ui'
 
 export default {
   data() {
+    const validatePassword = (rule, value, callback) => {
+      if (value.length > 0 && value.length < 8) {
+        callback(new Error('The password can not be less than 8 characters'))
+      } else {
+        callback()
+      }
+    }
     const checkRepeatPwd = (rule, value, callback) => {
       if (value !== this.userPwdForm.userNewPwd) {
         callback(new Error('password not same'))
@@ -102,7 +109,10 @@ export default {
         userRepeatNewPwd: ''
       },
       userPwdFormRules: {
-        userNewPwd: [{ required: true, message: 'Please input new password', trigger: 'blur' }],
+        userNewPwd: [
+          { validator: validatePassword, message: "Password can't be less than 8 characters." },
+          { required: true, message: 'Please input new password', trigger: 'blur' }
+        ],
         userRepeatNewPwd: [
           { required: true, message: 'Please input repeat password', trigger: 'blur' },
           { validator: checkRepeatPwd, trigger: 'blur' }
