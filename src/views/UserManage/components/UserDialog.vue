@@ -79,13 +79,6 @@ export default {
     }
   },
   data() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length > 0 && value.length < 8) {
-        callback(new Error('The password can not be less than 8 characters'))
-      } else {
-        callback()
-      }
-    }
     return {
       // TODO: roleList's data should from API
       roleList: [{
@@ -112,9 +105,7 @@ export default {
         login: [
           { required: true, message: 'Please input login', trigger: 'blur' }
         ],
-        password: [
-          { validator: validatePassword, message: "Password can't be less than 8 characters." }
-        ],
+        password: [],
         repeatPassword: [],
         name: [
           { required: true, message: 'Please input name', trigger: 'blur' }
@@ -150,20 +141,13 @@ export default {
     }
   },
   updated() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('The password can not be less than 8 characters'))
-      } else {
-        callback()
-      }
-    }
     if (this.userId === 0) {
       this.dialogTitle = 'Add User'
       this.disableAccount = false
       // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' },
-        { validator: validatePassword, message: "Password can't be less than 8 characters." }
+        { validator: this.validatePassword, message: "Password can't be less than 8 characters." }
       ]
       this.userFormRules.repeatPassword = [
         { required: true, message: 'Please input repeat password', trigger: 'blur' },
@@ -184,6 +168,13 @@ export default {
     checkRepeatPwd(rule, value, callback) {
       if (value !== this.userForm.password) {
         callback(new Error('password not same'))
+      } else {
+        callback()
+      }
+    },
+    validatePassword(rule, value, callback) {
+      if (value.length < 8) {
+        callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()
       }
