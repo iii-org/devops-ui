@@ -129,7 +129,6 @@ export default {
           >
             <span>{{ scope.row.name }}</span>
           </router-link>
-          <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
       <el-table-column align="center" label="Workload">
@@ -145,6 +144,7 @@ export default {
       <el-table-column align="center" label="Branches">
         <template slot-scope="scope">
           <router-link
+            v-if="scope.row.branch"
             :to="{
               name: 'branches',
               params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids[0] }
@@ -153,6 +153,7 @@ export default {
           >
             <span>{{ scope.row.branch }}</span>
           </router-link>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Last Test">

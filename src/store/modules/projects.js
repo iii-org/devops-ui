@@ -43,8 +43,8 @@ const actions = {
       const { data } = response
       const dataWithTag = await data.reduce(async (acc, cur) => {
         const res = await acc
-        const id = cur.repository_ids[0]
-        if (!id) {
+        // const id = cur.repository_ids[0]
+        if (!cur.repository_ids || !cur.repository_ids[0]) {
           res.push(cur)
           return Promise.resolve(res)
         }
