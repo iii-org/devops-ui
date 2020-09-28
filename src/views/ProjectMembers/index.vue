@@ -158,10 +158,12 @@ export default {
       </el-table-column> -->
       <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)" :disabled="true">
+          <span v-if="false">
+          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
             Edit
           </el-button>
+          </span>
           <el-popconfirm
             confirmButtonText="Delete"
             cancelButtonText="Cancel"
