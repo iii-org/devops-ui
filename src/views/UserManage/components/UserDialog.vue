@@ -32,7 +32,7 @@
         <el-input v-model="userForm.phone" />
       </el-form-item>
       <el-form-item label="Role" prop="role">
-        <el-select v-model="userForm.role" style="width:100%">
+        <el-select v-model="userForm.role" style="width:100%" :disabled="disableRole">
           <el-option
             v-for="item in roleList"
             :key="item.value"
@@ -124,7 +124,8 @@ export default {
       dialogLoading: false,
       dialogTitle: 'Add User',
       disableAccount: false,
-      formName: 'userForm'
+      formName: 'userForm',
+      disableRole: true
     }
   },
   watch: {
@@ -144,6 +145,7 @@ export default {
     if (this.userId === 0) {
       this.dialogTitle = 'Add User'
       this.disableAccount = false
+      this.disableRole = false
       // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' },
@@ -154,6 +156,7 @@ export default {
         { validator: this.checkRepeatPwd, trigger: 'blur' }
       ]
     } else {
+      this.disableRole = true
       this.dialogTitle = 'Update User'
       this.disableAccount = true
       this.listLoading = true
