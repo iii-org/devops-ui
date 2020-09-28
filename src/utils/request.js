@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   // timeout: 5000 // request timeout
 })
@@ -49,7 +49,6 @@ service.interceptors.response.use(
       res.code === 401 && (message = 'Unauthorized')
       res.code === 403 && (message = 'Forbidden')
       res.code === 500 && (message = 'Internal Server Error')
-
       Message({
         message: message,
         type: 'error',
@@ -57,8 +56,8 @@ service.interceptors.response.use(
       })
 
       return Promise.reject(new Error(message || 'Error'))
-    } 
-    // TODO(nino): because some api success will not return right format, so comment here temporarily   
+    }
+    // TODO(nino): because some api success will not return right format, so comment here temporarily
     // else if(res.message !== 'success') {
     //   Message({
     //     message: res.message,
@@ -66,21 +65,21 @@ service.interceptors.response.use(
     //     duration: 5 * 1000
     //   })
     //   return Promise.reject(new Error(res.message || 'Error'))
-    // } 
+    // }
     // else {
     //   return res
     // }
     else {
-      if(res) {
+      if (res) {
         return res
       }
       return 'test'
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('err' + error.response.data.message) // for debug
     Message({
-      message: error.message,
+      message: error.response.data.message,
       type: 'error',
       duration: 5 * 1000
     })
