@@ -8,7 +8,7 @@ import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
-import { getParameterByIssue, addParameterByIssue } from '@/api/issueParameter'
+import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { Message } from 'element-ui'
 export default {
   components: {
@@ -246,6 +246,15 @@ export default {
       this.paramDialogVisible = false
       Message({
         message: 'add successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async deleteParameter(row) {
+      await deleteParameter(row.id)
+      Message({
+        message: 'delete successful',
         type: 'success',
         duration: 1 * 1000
       })
@@ -488,6 +497,11 @@ export default {
           <el-table-column label="Length">
             <template slot-scope="scope">
               {{ scope.row.length }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
