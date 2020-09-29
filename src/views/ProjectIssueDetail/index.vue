@@ -95,11 +95,11 @@ export default {
     fetchData() {
       this.listLoading = true
       Promise.all([
-        getIssueStatus(), 
-        getIssueTracker(), 
-        getIssuePriority(), 
-        getIssue(this.issueId), 
-        getFlowByIssue(this.issueId), 
+        getIssueStatus(),
+        getIssueTracker(),
+        getIssuePriority(),
+        getIssue(this.issueId),
+        getFlowByIssue(this.issueId),
         getFlowType(),
         getParameterByIssue(this.issueId)
       ]).then(res => {
@@ -126,10 +126,10 @@ export default {
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
-        if(Array.isArray(res[4].data) && res[4].data.length > 0) {
+        if (Array.isArray(res[4].data) && res[4].data.length > 0) {
           this.issueFlow = res[4].data[0].flow_data.map(item => {
             const issueType = issueFlowType.find(type => {
-              return type.flow_type_id == item.type_id
+              return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
             return item
@@ -148,7 +148,7 @@ export default {
         this.issueForm.tracker_id = issueDetail.tracker.id
         this.issueForm.description = issueDetail.description
         this.projectId = issueDetail.project.id
-        if(issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
+        if (issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
         this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
@@ -171,39 +171,38 @@ export default {
       this.listQuery = listQuery
     },
     showFlowDialog(flow, title) {
-      this.editFlowId = flow == '' ? 0 : flow.id
+      this.editFlowId = flow === '' ? 0 : flow.id
       this.dialogTitle = title
       this.flowDialogVisible = true
     },
     showParamDialog(param, title) {
-      this.editParamId = param == '' ? 0 : param.id
+      this.editParamId = param === '' ? 0 : param.id
       this.dialogTitle = title
       this.paramDialogVisible = true
     },
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async(valid) => {
-          if (valid) {
-            const data = this.issueForm
-            if(data.fixed_version_id == "") {
-              delete data.fixed_version_id
-            }
-            await updateIssue(this.issueId, data)
-            Message({
-              message: 'update successful',
-              type: 'success',
-              duration: 1 * 1000
-            })
-          } else {
-            return false
+        if (valid) {
+          const data = this.issueForm
+          if (data.fixed_version_id === '') {
+            delete data.fixed_version_id
           }
+          await updateIssue(this.issueId, data)
+          Message({
+            message: 'update successful',
+            type: 'success',
+            duration: 1 * 1000
+          })
+        } else {
+          return false
+        }
       })
-      
     },
-    emitGetEditorData(value){
+    emitGetEditorData(value) {
       this.issueNote = value
     },
     async handleAddComment() {
-      await updateIssue(this.issueId, {'notes': this.issueNote})
+      await updateIssue(this.issueId, { 'notes': this.issueNote })
       this.commentDialogVisible = false
       Message({
         message: 'update successful',
@@ -217,7 +216,7 @@ export default {
       this.commentDialogVisible = true
     },
     async saveFlow(data) {
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
       await addFlowByIssue(this.issueId, data)
@@ -239,7 +238,7 @@ export default {
       this.fetchData()
     },
     async saveParameter(data) {
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
       await addParameterByIssue(this.issueId, data)
@@ -273,11 +272,11 @@ export default {
         </el-button>
         <div>{{ issueDescription }}</div>
       </div>
-      <el-form 
-        ref="issueForm" 
+      <el-form
+        ref="issueForm"
         :model="issueForm"
         :rules="issueFormRules"
-        label-width="20%" 
+        label-width="20%"
         :label-position="'right'"
       >
         <el-row>
@@ -361,21 +360,21 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Start" label-width="100px" prop="start_date">
-              <el-date-picker 
-                v-model="issueForm.start_date" 
-                type="date" 
-                placeholder="Select Date" 
-                style="width: 100%;" 
+              <el-date-picker
+                v-model="issueForm.start_date"
+                type="date"
+                placeholder="Select Date"
+                style="width: 100%;"
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="End" label-width="100px" prop="due_date">
-              <el-date-picker 
-                v-model="issueForm.due_date" 
-                type="date" 
-                placeholder="Select Date" 
+              <el-date-picker
+                v-model="issueForm.due_date"
+                type="date"
+                placeholder="Select Date"
                 style="width: 100%;"
                 value-format="yyyy-MM-dd"
               />
@@ -404,7 +403,7 @@ export default {
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
-              <div v-html="scope.row.comment"></div>
+              <div v-html="scope.row.comment" />
             </template>
           </el-table-column>
           <el-table-column label="Author" width="180">
@@ -473,7 +472,7 @@ export default {
         >
           <el-table-column label="Name">
             <template slot-scope="scope">
-            {{ scope.row.name }}
+              {{ scope.row.name }}
               <!--<span style="color: #409EFF;cursor: pointer;" @click="showParamDialog(scope.row, 'Edit Parameter')">
                 {{ scope.row.name }}
               </span>-->
@@ -508,7 +507,7 @@ export default {
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
-      <WangEditor :content="'xxxx'" @get-editor-data="emitGetEditorData" />
+      <WangEditor :content="issueNote" @get-editor-data="emitGetEditorData" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleAddComment">Confirm</el-button>

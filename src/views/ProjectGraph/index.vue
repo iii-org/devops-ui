@@ -6,7 +6,8 @@ import { getGitGraphByRepo } from '../../api/git-graph'
 export default {
   data() {
     return {
-      selectedBranch: ''
+      selectedBranch: '',
+      listLoading: true
     }
   },
   computed: {
@@ -17,63 +18,69 @@ export default {
       if (this.selectedBranch !== '') return
       this.selectedBranch = ary[0].name
       this.selectedRepoId = ary[0].project_id
-      console.log(this.selectedBranch)
     },
     async selectedBranch() {
-      await getGitGraphByRepo(this.selectedRepoId)
+      this.fetchData()
     }
   },
   async created() {
     await this['projects/getProjectList']()
-    this.listLoading = false
-  },
-  mounted() {
-    this.createGraph()
   },
   methods: {
-    ...mapActions(['branches/getBranchesByProject', 'projects/getProjectList']),
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+    ...mapActions(['projects/getProjectList']),
+    async fetchData() {
+      this.listLoading = true
+      try {
+        const res = await getGitGraphByRepo(this.selectedRepoId)
+        this.createGraph(res.data.branch_commit_list)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.listLoading = false
+      }
     },
-    handlePull() {},
-    handleMerge(index, row) {
-      this.mergeDialogVisible = true
-      this.selectedBranch = row.branch_name
-    },
-    handleDelete() {
-      this.deleteDialogVisible = true
-    },
-    createGraph() {
+    createGraph(data) {
+      console.log(data)
       // Get the graph container HTML element.
       const graphContainer = document.getElementById('graph-container')
 
       // Instantiate the graph.
       const gitgraph = createGitgraph(graphContainer)
 
+      data.forEach(branch => {
+        const _branch = gitgraph.branch(branch.branch)
+        branch.commit_list.forEach(commit => {
+          _branch.commit({
+            subject: commit.message,
+            author: commit.author_name + ' <' + commit.author_name + '>'
+          })
+        })
+      })
+
       // Simulate git commands with Gitgraph API.
-      const master = gitgraph.branch('master')
-      master.commit('Initial commit')
+      // const master = gitgraph.branch('master')
+      // master.commit('Initial commit')
 
-      const develop = gitgraph.branch('develop')
-      develop.commit('Add TypeScript')
+      // const develop = gitgraph.branch('develop')
+      // develop.commit('Add TypeScript')
 
-      const aFeature = gitgraph.branch('a-feature')
-      aFeature
-        .commit('Make it work')
-        .commit('Make it right')
-        .commit('Make it fast')
+      // const aFeature = gitgraph.branch('a-feature')
+      // aFeature
+      //   .commit('Make it work')
+      //   .commit('Make it right')
+      //   .commit('Make it fast')
 
-      develop.merge(aFeature)
-      develop.commit('Prepare v1')
+      // develop.merge(aFeature)
+      // develop.commit('Prepare v1')
 
-      master.merge(develop).tag('v1.0.0')
+      // master.merge(develop).tag('v1.0.0')
     }
   }
 }
 </script>
 
 <template>
-  <div class="app-container">
+  <div class="app-container" v-loading="listLoading">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>Git Graph</span>

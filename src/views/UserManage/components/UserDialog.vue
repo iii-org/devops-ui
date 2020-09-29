@@ -83,7 +83,7 @@ export default {
       // TODO: roleList's data should from API
       roleList: [{
         value: 1,
-        label: 'Enginner'
+        label: 'Engineer'
       }, {
         value: 3,
         label: 'Project Manager'
@@ -105,7 +105,9 @@ export default {
         login: [
           { required: true, message: 'Please input login', trigger: 'blur' }
         ],
-        password: [],
+        password: [
+          { validator: this.validatePassword, message: "Password can't be less than 8 characters." }
+        ],
         repeatPassword: [],
         name: [
           { required: true, message: 'Please input name', trigger: 'blur' }
@@ -149,7 +151,7 @@ export default {
       // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' },
-        { validator: this.validatePassword, message: "Password can't be less than 8 characters." }
+        { validator: this.validatePassword, trigger: 'blur' }
       ]
       this.userFormRules.repeatPassword = [
         { required: true, message: 'Please input repeat password', trigger: 'blur' },
@@ -160,7 +162,9 @@ export default {
       this.dialogTitle = 'Update User'
       this.disableAccount = true
       this.listLoading = true
-      this.userFormRules.password = []
+      this.userFormRules.password = [
+        { validator: this.validatePassword, trigger: 'blur' }
+      ]
       this.userFormRules.repeatPassword = [
         { required: false },
         { validator: this.checkRepeatPwd, trigger: 'blur' }
@@ -176,7 +180,9 @@ export default {
       }
     },
     validatePassword(rule, value, callback) {
-      if (value.length < 8) {
+      console.log('rule', rule)
+      console.log('value', value)
+      if (value.length > 0 && value.length < 8) {
         callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()

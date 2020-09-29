@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     onUpdate() {
-      return this.editor.txt.text()
+      return this.editor.txt.html()
     }
   }
 }
