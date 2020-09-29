@@ -40,6 +40,8 @@ export default {
         issueType: ''
       },
       issueName: '',
+      issueVersion: '',
+      issueEstimatedHours: '',
       issueStartDate: '',
       issueDueDate: '',
       issueDescription: '',
@@ -77,7 +79,8 @@ export default {
       projectId: 0,
       issue_detail: {},
       choose_testCase: '',
-      choose_testItem: ''
+      choose_testItem: '',
+      listLoading: true
     }
   },
   computed: {
@@ -122,10 +125,10 @@ export default {
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
-        if(Array.isArray(res[4].data) && res[4].data.length > 0) {
+        if (Array.isArray(res[4].data) && res[4].data.length > 0) {
           this.issueFlow = res[4].data[0].flow_data.map(item => {
             const issueType = issueFlowType.find(type => {
-              return type.flow_type_id == item.type_id
+              return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
             return item
@@ -134,9 +137,8 @@ export default {
 
         this.issueParameter = res[6].data
         this.issueTestCase = res[7].data
-
         this.issueDetail.issueStatus = issueDetail.status.id
-        this.issueDetail.issueAssignee = issueDetail.tracker.id
+        this.issueDetail.issueAssignee = issueDetail.assigned_to.id
         this.issueDetail.issuePriority = issueDetail.priority.id
         this.issueDetail.issueDoneRatio = issueDetail.done_ratio
         this.issueDetail.issueType = issueDetail.tracker.id
@@ -144,6 +146,11 @@ export default {
         this.issueDueDate = issueDetail.due_date
         this.issueDescription = issueDetail.description
         this.projectId = issueDetail.project.id
+        this.issueName = issueDetail.subject
+        if (issueDetail.hasOwnProperty('fixed_version') === true) {
+          this.issueVersion = issueDetail.fixed_version.name
+        }
+        this.issueEstimatedHours = issueDetail.estimated_hours
         this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
@@ -155,12 +162,12 @@ export default {
       })
     },
     handleChange(value) {
-      console.log(value)
+      // console.log(value)
     },
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      return success === total ? 'success' : 'danger'
-    },
+    // returnTagType(row) {
+    //   const { success, total } = row.last_test_result
+    //   return success === total ? 'success' : 'danger'
+    // },
     testResults(row) {
       const { success, total } = row.last_test_result
       return success + ' / ' + total
@@ -169,27 +176,27 @@ export default {
       this.listQuery = listQuery
     },
     showFlowDialog(flow, title) {
-      this.editFlowId = flow == '' ? 0 : flow.id
+      this.editFlowId = flow === '' ? 0 : flow.id
       this.dialogTitle = title
       this.flowDialogVisible = true
     },
     showParamDialog(param, title) {
-      this.editParamId = param == '' ? 0 : param.id
+      this.editParamId = param === '' ? 0 : param.id
       this.dialogTitle = title
       this.paramDialogVisible = true
     },
     showTestDialog(test, title) {
-      this.editTestId = test == '' ? 0 : test.id
+      this.editTestId = test === '' ? 0 : test.id
       this.dialogTitle = title
       this.testDialogVisible = true
     },
     showTestItemDialog(testItem, title) {
-      this.editTestItemId = testItem == '' ? 0 : testItem.id
+      this.editTestItemId = testItem === '' ? 0 : testItem.id
       this.dialogTitle = title
       this.testItemDialogVisible = true
     },
     showTestValueDialog(testValue, title) {
-      this.editTestValueId = testValue == '' ? 0 : testValue.id
+      this.editTestValueId = testValue === '' ? 0 : testValue.id
       this.dialogTitle = title
       this.testValueDialogVisible = true
     },
@@ -200,24 +207,25 @@ export default {
     },
     async handleSaveDetail() {
       const data = {
-        'tracker_id': this.issueDetail.issueAssignee,
+        'tracker_id': this.issueDetail.issueType,
         'status_id': this.issueDetail.issueStatus,
         'priority_id': this.issueDetail.issuePriority,
-        'category_id': this.issueDetail.issueType,
+        'assigned_to_id': this.issueDetail.issueAssignee,
         'done_ratio': this.issueDetail.issueDoneRatio
       }
       await updateIssue(this.issueId, data)
+      this.fetchData()
       Message({
         message: 'update successful',
         type: 'success',
         duration: 1 * 1000
       })
     },
-    emitGetEditorData(value){
+    emitGetEditorData(value) {
       this.issueNote = value
     },
     async handleAddComment() {
-      await updateIssue(this.issueId, {'notes': this.issueNote})
+      await updateIssue(this.issueId, { 'notes': this.issueNote })
       this.commentDialogVisible = false
       this.issueNote = ''
       Message({
@@ -232,7 +240,7 @@ export default {
       this.commentDialogVisible = true
     },
     async saveFlow(data) {
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
       await addFlowByIssue(this.issueId, data)
@@ -254,7 +262,7 @@ export default {
       this.fetchData()
     },
     async saveParameter(data) {
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
       await addParameterByIssue(this.issueId, data)
@@ -276,7 +284,7 @@ export default {
       this.fetchData()
     },
     async saveTestCase(data) {
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
       await addTestCaseByIssue(this.issueId, data)
@@ -297,16 +305,16 @@ export default {
       })
       this.fetchData()
     },
-    async getTestItem(case_id){
+    async getTestItem(case_id) {
       const testItemList = await getTestItemByCase(case_id)
-      if(testItemList.data.length > 0){
+      if (testItemList.data.length > 0) {
         this.issueTestItem = testItemList.data
       } else {
         this.issueTestItem = []
       }
     },
     async saveTestItem(data) {
-      if(this.choose_testCase == '') {
+      if (this.choose_testCase === '') {
         Message({
           message: 'please select test case',
           type: 'error',
@@ -314,10 +322,10 @@ export default {
         })
         return
       }
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
-      if(this.issueId > 0) {
+      if (this.issueId > 0) {
         data['issue_id'] = this.issueId
       }
       await addTestItemByCase(this.choose_testCase, data)
@@ -338,21 +346,21 @@ export default {
       })
       this.getTestItem(this.choose_testCase)
     },
-    async getTestValue(item_id){
+    async getTestValue(item_id) {
       const testValueList = await getTestValueByItem(item_id)
       const testValueTypeRes = await getTestValueType()
       const testValueTypeList = testValueTypeRes.data
       const testValueLocationRes = await getTestValueLocation()
       const testValueLocationList = testValueLocationRes.data
 
-      if(testValueList.data.length > 0){
+      if (testValueList.data.length > 0) {
         this.issueTestValue = testValueList.data.map(item => {
           const valueType = testValueTypeList.find(type => {
-            return item.type_id == type.type_id
+            return item.type_id === type.type_id
           })
           item.type = valueType.type_name
           const valueLocation = testValueLocationList.find(location => {
-            return item.location_id == location.location_id
+            return item.location_id === location.location_id
           })
           item.location = valueLocation.type_name
           return item
@@ -371,7 +379,7 @@ export default {
       this.getTestValue(this.choose_testItem)
     },
     async saveTestValue(data) {
-      if(this.choose_testItem == '' || this.choose_testCase == '') {
+      if (this.choose_testItem === '' || this.choose_testCase === '') {
         Message({
           message: 'please select test item',
           type: 'error',
@@ -379,10 +387,10 @@ export default {
         })
         return
       }
-      if(this.projectId > 0) {
+      if (this.projectId > 0) {
         data['project_id'] = this.projectId
       }
-      if(this.issueId > 0) {
+      if (this.issueId > 0) {
         data['issue_id'] = this.issueId
       }
       data['testCase_id'] = this.choose_testCase
@@ -400,17 +408,27 @@ export default {
 }
 </script>
 <template>
-  <div class="app-container" v-loading="listLoading">
-    <el-card class="box-card" shadow="never">
+  <div class="app-container">
+    <el-card v-loading="listLoading" class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           Save
         </el-button>
-        <div>{{ issueDescription }}</div>
+        <!-- <div>{{ issueDescription }}</div> -->
       </div>
       <el-form ref="form" label-width="20%" :label-position="'right'">
         <el-row>
+          <el-col :span="6">
+            <el-form-item label="Name" label-width="100px">
+              {{ issueName }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="Version" label-width="100px">
+              {{ issueVersion }}
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item label="Priority" label-width="100px">
               <el-select v-model="issueDetail.issuePriority" style="width:100%">
@@ -449,8 +467,6 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="6">
             <el-form-item label="Done Ratio" label-width="100px">
               <el-input-number
@@ -463,6 +479,24 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="6">
+            <el-form-item label="Estimate" label-width="100px">
+              {{ issueEstimatedHours }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- <el-col :span="6">
+            <el-form-item label="Done Ratio" label-width="100px">
+              <el-input-number
+                v-model="issueDetail.issueDoneRatio"
+                :min="0"
+                :max="100"
+                style="width:100%"
+                @change="handleChange"
+              />
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="6">
             <el-form-item label="Start Date" label-width="100px">
               {{ issueStartDate }}
             </el-form-item>
@@ -470,6 +504,12 @@ export default {
           <el-col :span="6">
             <el-form-item label="Due Date" label-width="100px">
               {{ issueDueDate }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Desc." label-width="100px" prop="description">
+              <el-input v-model="issueDescription" type="textarea" placeholder="please input description" disabled />
+              <!-- {{ issueDescription }} -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -490,7 +530,7 @@ export default {
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
-              <div v-html="scope.row.comment"></div>
+              <div v-html="scope.row.comment" />
             </template>
           </el-table-column>
           <el-table-column label="Author" width="180">
@@ -506,7 +546,7 @@ export default {
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Flow" name="Flow">
-        <el-button type="primary" @click="showFlowDialog('', 'Add Flow')">Add Flow</el-button>
+        <!-- <el-button type="primary" @click="showFlowDialog('', 'Add Flow')">Add Flow</el-button> -->
         <el-table
           :data="issueFlow"
           element-loading-text="Loading"
@@ -547,7 +587,7 @@ export default {
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Parameter" name="parameter">
-        <el-button type="primary" @click="showParamDialog('', 'Add Parameter')">Add Parameter</el-button>
+        <!-- <el-button type="primary" @click="showParamDialog('', 'Add Parameter')">Add Parameter</el-button> -->
         <el-table
           :data="issueParameter"
           element-loading-text="Loading"
@@ -559,7 +599,7 @@ export default {
         >
           <el-table-column label="Name">
             <template slot-scope="scope">
-            {{ scope.row.name }}
+              {{ scope.row.name }}
               <!--<span style="color: #409EFF;cursor: pointer;" @click="showParamDialog(scope.row, 'Edit Parameter')">
                 {{ scope.row.name }}
               </span>-->
