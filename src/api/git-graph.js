@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getGitGraphByRepo(rId) {
+export function getGitGraphByRepo(pId) {
   return request({
-    url: '/repositories/'+rId,
-    method: 'get'
+    url: '/repositories/' + pId + '/overview',
+    method: 'GET'
   })
 }
