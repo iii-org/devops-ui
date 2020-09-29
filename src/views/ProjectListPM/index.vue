@@ -82,7 +82,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       })
-        .then(async () => {
+        .then(async() => {
           await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
@@ -221,6 +221,16 @@ export default {
           {{ myFormatTime(scope.row.updated_time) }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="GitLab">
+        <template slot-scope="scope">
+          <el-link type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Redmin">
+        <template slot-scope="scope">
+          <el-link type="primary" :href="scope.row.redmine_url" target="_blank">Redmin</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
@@ -250,7 +260,7 @@ export default {
     >
       <el-form ref="thisForm" :model="form" label-position="top">
         <el-form-item label="Project Name" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" />
         </el-form-item>
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
@@ -270,15 +280,15 @@ export default {
           </el-form-item>
         </el-col> -->
         <el-form-item label="Description" prop="description">
-          <el-input type="textarea" v-model="form.description"></el-input>
+          <el-input v-model="form.description" type="textarea" />
         </el-form-item>
         <el-form-item label="Disabled" prop="disabled">
-          <el-switch v-model="form.disabled"></el-switch>
+          <el-switch v-model="form.disabled" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
