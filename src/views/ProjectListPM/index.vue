@@ -35,7 +35,8 @@ export default {
         limit: 20
       },
       form: formTemplate,
-      confirmLoading: false
+      confirmLoading: false,
+      statusW: "50%"
     }
   },
   computed: {
@@ -125,6 +126,9 @@ export default {
         this.form = formTemplate
       })
     },
+    returnProgress() {
+      return "20%"
+    },
     async handleConfirm() {
       //   this.dialogVisible = false
       if (this.dialogStatus === 2) return this.handleConfirmEdit()
@@ -203,12 +207,14 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Status">
         <template slot-scope="scope">
-          {{ scope.row.project_status }}
+          <span v-if="scope.row.project_status == '進行中'" class="status-btn status-pending">{{ scope.row.project_status }}</span>
+          <span v-else="scope.row.project_status == '未開始'" class="status-btn status-none">{{ scope.row.project_status }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Progress">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
+          <span class="status-bar-track"><span class="status-bar" :style="{ width: statusW }"></span></span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Quality">
