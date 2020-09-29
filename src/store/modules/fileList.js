@@ -22,8 +22,8 @@ const actions = {
   async getFileListByBranch({ commit }, { rId, bName }) {
     try {
       const response = await GFLBB(rId, bName)
-      commit('SET_LIST', response)
-      commit('SET_TOTAL', response.length)
+      commit('SET_LIST', response.data.file_list)
+      commit('SET_TOTAL', response.data.file_list.length)
     } catch (error) {
       console.error(error.toString())
     }

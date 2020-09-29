@@ -118,7 +118,7 @@ export default {
     </div>
     <el-divider /> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <router-link
             :to="{
@@ -131,7 +131,7 @@ export default {
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Workload">
+      <el-table-column align="center" label="Workload" width="120px">
         <template slot-scope="scope">
           {{ scope.row.issues }}
         </template>
@@ -141,13 +141,13 @@ export default {
           {{ myFormatTime(scope.row.next_d_time) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Branches">
+      <el-table-column align="center" label="Branches" width="120px">
         <template slot-scope="scope">
           <router-link
             v-if="scope.row.branch"
             :to="{
               name: 'branches',
-              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids[0] }
+              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids }
             }"
             style="color: #409EFF"
           >
@@ -156,13 +156,13 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test">
+      <el-table-column align="center" label="Last Test" width="150px">
         <template slot-scope="scope">
           <span v-if="scope.row.last_test_time === ''">No Test</span>
           <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test Result">
+      <el-table-column align="center" label="Last Test Result" width="150px">
         <template slot-scope="scope">
           <el-tag :type="returnTagType(scope.row)" size="large">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
@@ -172,7 +172,7 @@ export default {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Tag">
+      <!-- <el-table-column align="center" label="Last Tag">
         <template slot-scope="scope">
           <router-link
             :to="{
@@ -188,7 +188,7 @@ export default {
             {{ returnLatestTag(scope.row) }}
           </router-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <!-- <el-table-column label="Actions" align="center" width="250px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
