@@ -60,18 +60,18 @@ export const asyncRoutes = [
     ]
   },
 
-  {
-    path: '/my-issues',
-    component: Layout,
-    children: [
-      {
-        path: '',
-        name: 'MyIssues',
-        component: () => import('@/views/MyIssues/index'),
-        meta: { title: 'My Issues', icon: 'list', roles: ['Engineer'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/my-issues',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'MyIssues',
+  //       component: () => import('@/views/MyIssues/index'),
+  //       meta: { title: 'My Issues', icon: 'list', roles: ['Engineer'] }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/issues/:issue_num',
@@ -309,13 +309,13 @@ export const asyncRoutes = [
     path: '/issue',
     component: Layout,
     name: 'Issues',
-    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager'] },
+    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer'] },
     children: [
       {
         path: 'wiki',
         name: 'Wiki',
         component: () => import('@/views/ProjectWiki/index'),
-        meta: { title: 'Wiki', roles: ['Project Manager'] }
+        meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer'] }
       },
       // {
       //   path: 'document',
@@ -327,7 +327,7 @@ export const asyncRoutes = [
         path: 'list',
         name: 'Issues',
         component: () => import('@/views/ProjectIssues/index'),
-        meta: { title: 'Issue List', roles: ['Project Manager'] }
+        meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer'] }
       },
       {
         path: 'list/:issueId',
@@ -335,6 +335,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProjectIssueDetail/index'),
         meta: { title: 'Issue Detail', roles: ['Project Manager'] }
+      },
+      {
+        path: 'listrd/:issue_num/setup',
+        hidden: true,
+        component: () => import('@/views/IssueSetUp/index'),
+        meta: { title: 'Issue SetUp', roles: ['Engineer'] }
       }
     ]
   },

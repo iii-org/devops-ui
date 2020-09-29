@@ -22,9 +22,9 @@ export function addParameterByIssue(issue_id, data) {
   })
 }
 
-export function deleteFlow(flow_id) {
+export function deleteParameter(parameter_id) {
   return request({
-    url: `/flows/${flow_id}`,
+    url: `/parameters/${parameter_id}`,
     method: 'delete'
   })
 }

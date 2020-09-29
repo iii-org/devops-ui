@@ -7,10 +7,10 @@ import { addIssue } from '@/api/issue'
 import { getProjectIssueList } from '@/api/projects'
 import { Message } from 'element-ui'
 export default {
-  components: { 
+  components: {
     AddIssue,
     ProjectListSelector,
-    Pagination 
+    Pagination
   },
   data() {
     return {
@@ -26,7 +26,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectSelectedId']),
+    ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
@@ -50,7 +50,11 @@ export default {
       this.listLoading = false
     },
     handleEdit(idx, row) {
-      this.$router.push({ path: `list/${row.id}` })
+      if (this.userRole === 'Project Manager') {
+        this.$router.push({ path: `list/${row.id}` })
+      } else if (this.userRole === 'Engineer') {
+        this.$router.push({ path: `listrd/${row.id}/setup` })
+      }
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -67,13 +71,13 @@ export default {
         duration: 1 * 1000
       })
       this.fetchData()
-    },
+    }
   }
 }
 </script>
 <template>
   <div class="app-container">
-    
+
     <div class="clearfix">
       <div>
         <project-list-selector />
@@ -86,12 +90,12 @@ export default {
       </div>
     </div>
     <el-divider />
-    <el-table 
-      v-loading="listLoading" 
-      :data="pagedData" 
-      element-loading-text="Loading" 
-      border 
-      fit 
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      element-loading-text="Loading"
+      border
+      fit
       highlight-current-row
       row-key="id"
       default-expand-all

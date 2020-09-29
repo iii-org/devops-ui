@@ -11,7 +11,7 @@ import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
-import { getParameterByIssue, addParameterByIssue } from '@/api/issueParameter'
+import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { getTestCaseByIssue, addTestCaseByIssue, deleteTestCase } from '@/api/issueTestCase'
 import { getTestItemByCase, addTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation, deleteTestValue, addTestValueByItem } from '@/api/issueTestValue'
@@ -113,7 +113,7 @@ export default {
         this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        const issueDetail = res[3]
+        const issueDetail = res[3].data
         const projectId = issueDetail.project.id
         getProjectAssignable(projectId).then((assignable) => {
           this.issueAssigneeList = assignable.data.user_list.map(item => {
@@ -266,6 +266,15 @@ export default {
       })
       this.fetchData()
     },
+    async deleteParameter(row) {
+      await deleteParameter(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
     async saveTestCase(data) {
       if(this.projectId > 0) {
         data['project_id'] = this.projectId
@@ -335,7 +344,7 @@ export default {
       const testValueTypeList = testValueTypeRes.data
       const testValueLocationRes = await getTestValueLocation()
       const testValueLocationList = testValueLocationRes.data
-      console.log(testValueTypeList, testValueLocationList)
+
       if(testValueList.data.length > 0){
         this.issueTestValue = testValueList.data.map(item => {
           const valueType = testValueTypeList.find(type => {
@@ -348,7 +357,6 @@ export default {
           item.location = valueLocation.type_name
           return item
         })
-        console.log(this.issueTestValue)
       } else {
         this.issueTestValue = []
       }
@@ -363,7 +371,6 @@ export default {
       this.getTestValue(this.choose_testItem)
     },
     async saveTestValue(data) {
-      console.log(this.choose_testCase, this.choose_testItem)
       if(this.choose_testItem == '' || this.choose_testCase == '') {
         Message({
           message: 'please select test item',
@@ -393,7 +400,7 @@ export default {
 }
 </script>
 <template>
-  <div class="app-container">
+  <div class="app-container" v-loading="listLoading">
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
@@ -576,6 +583,11 @@ export default {
           <el-table-column label="Length">
             <template slot-scope="scope">
               {{ scope.row.length }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
