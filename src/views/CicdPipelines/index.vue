@@ -16,22 +16,22 @@
       </el-table-column>
       <el-table-column label="Status" align="center" width="100">
         <template slot-scope="scope">
-          <i 
-            v-if="scope.row.status.success === scope.row.status.total" 
-            class="el-icon-circle-check" 
+          <i
+            v-if="scope.row.status.success === scope.row.status.total"
+            class="el-icon-circle-check"
             style="color: #67c23a"
           />
           <span
             v-if="scope.row.status.success === scope.row.status.total"
             style="color: #67c23a"
           >{{ scope.row.status.success }}/{{ scope.row.status.total }}</span>
-          <i 
-            v-if="scope.row.status.success !== scope.row.status.total" 
+          <i
+            v-if="scope.row.status.success !== scope.row.status.total"
             class="el-icon-circle-check"
-            style="color: #c8c8c8" 
+            style="color: #c8c8c8"
           />
-          <span 
-            v-if="scope.row.status.success !== scope.row.status.total" 
+          <span
+            v-if="scope.row.status.success !== scope.row.status.total"
             style="color: #c8c8c8"
           >{{ scope.row.status.success }}/{{ scope.row.status.total }}</span>
         </template>

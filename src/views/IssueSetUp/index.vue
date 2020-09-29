@@ -95,11 +95,11 @@ export default {
     fetchData() {
       this.listLoading = true
       Promise.all([
-        getIssueStatus(), 
-        getIssueTracker(), 
-        getIssuePriority(), 
-        getIssue(this.issueId), 
-        getFlowByIssue(this.issueId), 
+        getIssueStatus(),
+        getIssueTracker(),
+        getIssuePriority(),
+        getIssue(this.issueId),
+        getFlowByIssue(this.issueId),
         getFlowType(),
         getParameterByIssue(this.issueId),
         getTestCaseByIssue(this.issueId)
@@ -219,6 +219,7 @@ export default {
     async handleAddComment() {
       await updateIssue(this.issueId, {'notes': this.issueNote})
       this.commentDialogVisible = false
+      this.issueNote = ''
       Message({
         message: 'update successful',
         type: 'success',
@@ -709,7 +710,7 @@ export default {
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
-      <WangEditor :content="'xxxx'" @get-editor-data="emitGetEditorData" />
+      <WangEditor :content="''" @get-editor-data="emitGetEditorData" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleAddComment">Confirm</el-button>

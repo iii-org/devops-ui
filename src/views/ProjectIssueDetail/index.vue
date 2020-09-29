@@ -95,11 +95,11 @@ export default {
     fetchData() {
       this.listLoading = true
       Promise.all([
-        getIssueStatus(), 
-        getIssueTracker(), 
-        getIssuePriority(), 
-        getIssue(this.issueId), 
-        getFlowByIssue(this.issueId), 
+        getIssueStatus(),
+        getIssueTracker(),
+        getIssuePriority(),
+        getIssue(this.issueId),
+        getFlowByIssue(this.issueId),
         getFlowType(),
         getParameterByIssue(this.issueId)
       ]).then(res => {
@@ -197,7 +197,7 @@ export default {
             return false
           }
       })
-      
+
     },
     emitGetEditorData(value){
       this.issueNote = value
@@ -264,11 +264,11 @@ export default {
         </el-button>
         <div>{{ issueDescription }}</div>
       </div>
-      <el-form 
-        ref="issueForm" 
+      <el-form
+        ref="issueForm"
         :model="issueForm"
         :rules="issueFormRules"
-        label-width="20%" 
+        label-width="20%"
         :label-position="'right'"
       >
         <el-row>
@@ -352,21 +352,21 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Start" label-width="100px" prop="start_date">
-              <el-date-picker 
-                v-model="issueForm.start_date" 
-                type="date" 
-                placeholder="Select Date" 
-                style="width: 100%;" 
+              <el-date-picker
+                v-model="issueForm.start_date"
+                type="date"
+                placeholder="Select Date"
+                style="width: 100%;"
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="End" label-width="100px" prop="due_date">
-              <el-date-picker 
-                v-model="issueForm.due_date" 
-                type="date" 
-                placeholder="Select Date" 
+              <el-date-picker
+                v-model="issueForm.due_date"
+                type="date"
+                placeholder="Select Date"
                 style="width: 100%;"
                 value-format="yyyy-MM-dd"
               />
