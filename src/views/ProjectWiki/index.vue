@@ -24,6 +24,9 @@ export default {
       wikiContent: 'Hello DevOps',
       newWikiContent: '',
       dialogVisible: false,
+      dialogVisibleEdit: false,
+      drawerTitle: '',
+      wikiTitle: '',
       listQuery: {
         page: 1,
         limit: 10
@@ -83,13 +86,14 @@ export default {
     },
     async handleEdit(idx, row) {
       this.listLoading = true
+      this.drawerTitle = 'Edit'
       try {
         const res = await getWikiDetail(this.projectSelectedId, row.title)
         const { wiki_page } = res.data
         this.wikiData = wiki_page
+        this.wikiTitle = wiki_page.title
         this.wikiContent = wiki_page.text
         this.dialogVisible = true
-        this.fetchData()
       } catch (error) {
         console.error(error)
       }
@@ -106,14 +110,59 @@ export default {
       }
 
       this.listLoading = false
+    },
+    async handleDetail(idx, row) {
+      try {
+        this.listLoading = false
+        const res = await getWikiDetail(this.projectSelectedId, row.title)
+        const { wiki_page } = res.data
+        this.wikiData = wiki_page
+        this.wikiContent = wiki_page.text
+        this.dialogVisible = true
+        this.dialogVisibleEdit = true
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.listLoading = false
+      }
+    },
+    async handleAdding() {
+      this.dialogVisible = true
+      this.drawerTitle = 'Add'
+      this.wikiContent = ''
+      this.wikiTitle = ''
+    },
+    async handleConfirmAdd() {
+      this.editBtnLoading = true
+      const text = this.$refs.editor.onUpdate()
+      try {
+        await putWikiDetail(this.projectSelectedId, this.wikiTitle, { wiki_text: text })
+        Message({
+          message: 'Wiki create successfully',
+          type: 'success',
+          duration: 1 * 3000
+        })
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.dialogVisible = false
+        this.editBtnLoading = false
+      }
     }
   }
 }
 </script>
 <template>
   <div v-loading="isLoading" class="app-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
+      <span class="newBtn">
+        <el-button type="success" @click="handleAdding">
+          <i class="el-icon-plus" />
+          Add Ｗiki
+        </el-button>
+      </span>
     </div>
     <el-divider />
     <!-- <div class="filter-container">
@@ -134,8 +183,12 @@ export default {
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="200" align="center">
+      <el-table-column label="Actions" width="300" align="center">
         <template slot-scope="scope">
+          <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
+            <i class="el-icon-search" />
+            Detail
+          </el-button>
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
             Edit
@@ -163,7 +216,7 @@ export default {
     />
 
     <el-drawer
-      :title="'Edit Wiki'"
+      :title="`${drawerTitle} Wiki`"
       :visible.sync="dialogVisible"
       :direction="direction"
       :before-close="handleClose"
@@ -172,22 +225,103 @@ export default {
       size="60%"
     >
       <div class="container">
-        <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" />
+        <el-input v-model="wikiTitle" placeholder="Please Input Title" />
+        <br />
+        <WangEditor
+          v-if="!dialogVisibleEdit"
+          @get-editor-data="emitGetEditorData"
+          :content="wikiContent"
+          ref="editor"
+        />
+        <div v-else>
+          <h3>{{ wikiData.title }}</h3>
+          <div v-html="wikiContent" />
+        </div>
         <div class="file-drawer__footer">
-          <el-button @click="dialogVisible = false">Cancel</el-button>
-          <el-button type="primary" :loading="editBtnLoading" @click="handleUpdate">Confirm</el-button>
+          <el-button
+            @click="
+              dialogVisible = false
+              dialogVisibleEdit = false
+            "
+          >
+            Cancel
+          </el-button>
+          <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading" @click="handleUpdate">
+            Confirm
+          </el-button>
+          <el-button
+            v-else-if="drawerTitle === 'Add'"
+            type="primary"
+            :loading="editBtnLoading"
+            @click="handleConfirmAdd"
+          >
+            Confirm
+          </el-button>
         </div>
       </div>
     </el-drawer>
   </div>
 </template>
 <style lang="scss">
+.clearfix {
+  clear: both;
+  .newBtn {
+    float: right;
+    padding-right: 6px;
+  }
+}
 .container {
   display: flex;
   height: 100%;
   flex-direction: column;
   padding: 20px;
   justify-content: center;
+  /* table 样式 */
+  table {
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+  }
+  table td,
+  table th {
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    padding: 3px 5px;
+  }
+  table th {
+    border-bottom: 2px solid #ccc;
+    text-align: center;
+  }
+
+  /* blockquote 样式 */
+  blockquote {
+    display: block;
+    border-left: 8px solid #d0e5f2;
+    padding: 5px 10px;
+    margin: 10px 0;
+    line-height: 1.4;
+    font-size: 100%;
+    background-color: #f1f1f1;
+  }
+
+  /* code 样式 */
+  code {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    padding: 3px 5px;
+    margin: 0 3px;
+  }
+  pre code {
+    display: block;
+  }
+
+  /* ul ol 样式 */
+  ul,
+  ol {
+    margin: 10px 0 10px 20px;
+  }
   #editor-container {
     flex: 1;
   }
