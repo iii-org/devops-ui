@@ -48,6 +48,9 @@
   box-sizing: content-box;
 }
 
+.clearfix .newBtn{
+  float: left !important;
+}
 
 .el-table{
   font-size: 16px;
@@ -85,6 +88,49 @@
   left: 0;
   top: 0;
   background: #3ECBBC;
-
   height: 4px;
+}
+
+.quality-text{
+  width: 20%;
+}
+
+.d-flex{
+  justify-content: space-between;
+  display: flex;
+}
+
+.loading-bar{
+  width: calc(16.6666666% - 2px);
+  height: 4px;
+  background: #F5F5F5;
+  margin-right: 2px;
+  display: inline-block;
+}
+
+.loading-box{
+  font-size: 0;
+  width: 80%;
+  .loading-bar:nth-child(1){
+    border-radius: 10px 0 0 10px;
+  }
+  .loading-bar:nth-child(6){
+    border-radius: 0 10px 10px 0;
+  }
+  &.status-danger{
+    .loading-bar:nth-child(1), .loading-bar:nth-child(2){
+      background: #E85656;
+    }
+  }
+  &.status-normal{
+    .loading-bar:nth-child(1), .loading-bar:nth-child(2), 
+    .loading-bar:nth-child(3), .loading-bar:nth-child(4){
+      background: #F9BE6E;
+    }
+  }
+  &.status-full{
+    .loading-bar{
+      background: #3ECBBC;
+    }
+  }
 }

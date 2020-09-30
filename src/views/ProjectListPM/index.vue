@@ -126,8 +126,21 @@ export default {
         this.form = formTemplate
       })
     },
-    returnProgress() {
-      return "20%"
+    returnProgress(current,total) {
+      const percent = Math.round((current / total) * 100);
+      return percent
+    },
+    getLoadingBarClass(quality){
+      var loadClass;
+      if(quality <= 33){
+        loadClass = "status-danger";
+      }else if(quality <= 66){
+        loadClass = "status-normal";
+      }else if(quality <= 100){
+        loadClass = "status-full";
+      }
+
+      return "loading-box " + loadClass
     },
     async handleConfirm() {
       //   this.dialogVisible = false
@@ -208,18 +221,28 @@ export default {
       <el-table-column align="center" label="Status">
         <template slot-scope="scope">
           <span v-if="scope.row.project_status == '進行中'" class="status-btn status-pending">{{ scope.row.project_status }}</span>
-          <span v-else="scope.row.project_status == '未開始'" class="status-btn status-none">{{ scope.row.project_status }}</span>
+          <span v-else="scope.row.project_status != '進行中'" class="status-btn status-none">{{ scope.row.project_status }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Progress">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
-          <span class="status-bar-track"><span class="status-bar" :style="{ width: statusW }"></span></span>
+          <span class="status-bar-track"><span class="status-bar" :style="'width:'+ returnProgress(scope.row.closed_count,scope.row.total_count) +'%'"></span></span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Quality">
         <template slot-scope="scope">
-          {{ '87%' }}
+          <div class="d-flex">
+            <span class="quality-text">{{ '87%' }}</span>
+            <span v-bind:class="getLoadingBarClass(87)">
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Update Time">
