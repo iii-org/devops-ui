@@ -59,8 +59,8 @@ export default {
           formatter: '{b} : {c} ({d}%)'
         },
         legend: {
-          left: 'center',
-          bottom: '10',
+          orient: 'vertical',
+          right: 10,
           data: ['Ongoing', 'Done']
         },
         series: [
@@ -68,8 +68,26 @@ export default {
             name: 'ASSIGN ISSUE PROJECT',
             type: 'pie',
             roseType: 'radius',
-            radius: [15, 95],
+            radius: [75, 95],
             center: ['50%', '38%'],
+            avoidLabelOverlap: false,
+            label: {
+                show: false,
+                position: 'center',
+                formatter: function(d) {
+                  return Math.round(d.percent) + "%";
+                }
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '36',
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
             data,
             animationEasing: 'cubicInOut',
             animationDuration: 2600

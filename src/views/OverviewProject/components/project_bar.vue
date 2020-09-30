@@ -6,6 +6,17 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
+var colorPalette = [
+    '#EBEBEB',
+    '#2EC6C8'
+]
+
+ var theme2 = {
+    color: colorPalette
+ }
+
+echarts.registerTheme('macarons', theme2);
+
 export default {
   props: {
     className: {
@@ -62,7 +73,8 @@ export default {
           }
         },
         legend: {
-          data: ['Finished', 'Unfinish']
+          data: ['Finished', 'Unfinish'],
+          height: 10
         },
         grid: {
           left: '3%',
@@ -76,7 +88,8 @@ export default {
         },
         yAxis: {
           type: 'category',
-          data: CONFIG_DATA.yAxis
+          // data: CONFIG_DATA.yAxis
+           data: ['特急', '緊急', '一般']
         },
         series: [
           {
@@ -84,10 +97,13 @@ export default {
             type: 'bar',
             stack: 'Total',
             label: {
+              color: "#FF0000",
               show: false,
               position: 'insideRight'
             },
-            data: CONFIG_DATA.finished
+            // data: CONFIG_DATA.finished
+            data: [16, 6, 3],
+            itemStyle: {normal: {color: '#3ECBBC'}}
           },
           {
             name: 'Unfinish',
@@ -97,7 +113,9 @@ export default {
               show: false,
               position: 'insideRight'
             },
-            data: CONFIG_DATA.unfinished
+            // data: CONFIG_DATA.unfinished
+            data: [12, 12, 11],
+            itemStyle: {normal: {color: '#EBEBEB'}}
           }
         ]
       })
