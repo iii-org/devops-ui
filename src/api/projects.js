@@ -30,6 +30,20 @@ export function addNewProject(data = { name: '', disabled: false, description: '
   })
 }
 
+export function getProjectTest(pId) {
+  return request({
+    url: `/project/${pId}/test_summary`,
+    method: 'get'
+  })
+}
+export function getTestReport(reportId) {
+  return request({
+    url: `/checkmarx/report/${reportId}`,
+    responseType: 'blob',
+    method: 'get'
+  })
+}
+
 export function editProject(pId = '80', data = { name: '', disabled: false, description: '' }) {
   return request({
     url: `/project/${pId}`,
