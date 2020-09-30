@@ -123,7 +123,7 @@ export default {
           <router-link
             :to="{
               name: 'cicdPipelines',
-              params: { pId: scope.row.project_id }
+              params: { pId: scope.row.repository_ids }
             }"
             style="color: #409EFF"
           >
