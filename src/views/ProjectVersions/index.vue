@@ -6,7 +6,7 @@ import { getProjectVersion, addProjectVersion, editProjectVersion, deleteProject
 const formTemplate = {
   name: '',
   due_date: '',
-  status: false,
+  status: 'open',
   description: ''
 }
 
@@ -88,13 +88,12 @@ export default {
       console.log(this.form)
     },
     async handleDelete(idx, row) {
-
       this.$confirm(`Are you sure to Delete Version ${row.name}?`, 'Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      })  
-        .then(async () => {
+      })
+        .then(async() => {
           await deleteProjectVersion(this.projectSelectedId, row.id)
           this.$message({
             type: 'success',
@@ -108,11 +107,15 @@ export default {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
-          if (this.dialogStatus == 1) {
+          if (this.dialogStatus === 1) {
             await addProjectVersion(this.projectSelectedId, { version: data })
           } else {
             await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
           }
+          this.$message({
+            type: 'success',
+            message: 'Successed'
+          })
           this.fetchData()
         } else {
           return false
