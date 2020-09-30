@@ -63,7 +63,9 @@ export default {
       this.isLoading = true
       const versionsRes = await getProjectVersion(this.projectSelectedId)
       this.projectVersionList = versionsRes.data.versions
-      this.projectVersion = this.projectVersionList[0].id
+      if (this.projectVersionList.length !== 0) {
+        this.projectVersion = this.projectVersionList[0].id
+      }
       this.fetchByVersion()
       this.fetchProjectTest()
     },
@@ -89,22 +91,16 @@ export default {
       let apiProjectdata = await getProjectTest(this.projectSelectedId)
       // console.log(apiProjectdata)
       apiProjectdata = apiProjectdata.data
-      console.log(apiProjectdata)
       for (const i in apiProjectdata.test_results) {
         const object = {}
         // console.log(apiProjectdata.test_result[i])
         let Informationtext = ''
         for (const j in apiProjectdata.test_results[i]) {
-          console.log(j, apiProjectdata.test_results[i][j])
+          // console.log(j, apiProjectdata.test_results[i][j])
           if (j !== 'message' & j !== 'statisticsCalculationDate' & j !== 'status' & j !== 'report_id' & j !== 'id') {
             Informationtext = Informationtext + '<div  style="flex: 1;padding-left: 5px;">' + j + ' ' + apiProjectdata.test_results[i][j] + ' </div>'
           }
         }
-        // if (Object.keys(apiProjectdata.test_results[i]).length < 4) {
-        //   console.log('<div  style="flex: 1;padding-left: 5px;"> <div>')
-        //   Informationtext = Informationtext + '<div  style="flex: 1;"> <div>'
-        // }
-        console.log(apiProjectdata.test_results[i].status)
         if (i === 'postman') {
           Informationtext = Informationtext + '<div  style="flex: 1;padding-left: 5px;"> <div>'
           if (Object.keys(apiProjectdata.test_results[i]).length === 0) {
@@ -112,6 +108,8 @@ export default {
           }
         } else if (i === 'checkmarx') {
           if (apiProjectdata.test_results[i].status === -1) {
+            Informationtext = apiProjectdata.test_results[i].message
+          } else if (apiProjectdata.test_results[i].status === 1) {
             Informationtext = apiProjectdata.test_results[i].message
           } else if (apiProjectdata.test_results[i].status === undefined) {
             Informationtext = 'No data.'
@@ -125,18 +123,14 @@ export default {
         object['Informationtext'] = Informationtext
         this.projectdata.push(object)
       }
-      console.log(this.projectdata)
     },
     fetchTestReport(Reportid) {
-      console.log(Reportid)
       getTestReport(Reportid)
         .then(res => {
-          console.log(res)
-          // var file = window.URL.createObjectURL(res)
           const url = window.URL.createObjectURL(new Blob([res]))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', 'file.pdf') // or any other extension
+          link.setAttribute('download', 'checkmarx_Report.pdf')
           document.body.appendChild(link)
           link.click()
         })
@@ -199,7 +193,6 @@ export default {
             <el-table-column label="Brief Information">
               <template slot-scope="scope">
                 <div style="width:100%; display: flex;" v-html="scope.row.Informationtext" />
-                <!-- {{ scope.row.Informationtext }} -->
               </template>
             </el-table-column>
             <el-table-column label="Report" width="100">
