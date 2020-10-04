@@ -3,7 +3,13 @@ import { mapGetters, mapActions } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import projectPie from './components/project_pie'
 import projectBar from './components/project_bar'
-import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest, getTestReport } from '@/api/projects'
+import {
+  getProjectVersion,
+  getProjectIssueProgress,
+  getProjectIssueStatistics,
+  getProjectTest,
+  getTestReport
+} from '@/api/projects'
 
 export default {
   name: 'Dashboard',
@@ -74,7 +80,7 @@ export default {
     async fetchByVersion() {
       //如果無版本列表，預設帶整體專案統計資訊，後面不用帶版本參數
       let param = {}
-      if(this.projectVersion != '') {
+      if (this.projectVersion != '') {
         param = { fixed_version_id: this.projectVersion }
       }
       const res = await Promise.all([
@@ -87,7 +93,7 @@ export default {
       const statistics = res[1].data
       this.tableData = res[2].data.user_list || []
       this.workLoadData = statistics
-      this.workLoadTypes = Object.keys(statistics).map(key => {
+      this.workLoadTypes = Object.keys(statistics).map((key) => {
         return { id: key, name: key }
       })
       this.workLoad = this.workLoadTypes[0].id
@@ -104,8 +110,20 @@ export default {
         let Informationtext = ''
         for (const j in apiProjectdata.test_results[i]) {
           // console.log(j, apiProjectdata.test_results[i][j])
-          if (j !== 'message' & j !== 'statisticsCalculationDate' & j !== 'status' & j !== 'report_id' & j !== 'id') {
-            Informationtext = Informationtext + '<div  style="flex: 1;padding-left: 5px;">' + j + ' ' + apiProjectdata.test_results[i][j] + ' </div>'
+          if (
+            (j !== 'message') &
+            (j !== 'statisticsCalculationDate') &
+            (j !== 'status') &
+            (j !== 'report_id') &
+            (j !== 'id')
+          ) {
+            Informationtext =
+              Informationtext +
+              '<div  style="flex: 1;padding-left: 5px;">' +
+              j +
+              ' ' +
+              apiProjectdata.test_results[i][j] +
+              ' </div>'
           }
         }
         if (i === 'postman') {
@@ -132,15 +150,14 @@ export default {
       }
     },
     fetchTestReport(Reportid) {
-      getTestReport(Reportid)
-        .then(res => {
-          const url = window.URL.createObjectURL(new Blob([res]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', 'checkmarx_Report.pdf')
-          document.body.appendChild(link)
-          link.click()
-        })
+      getTestReport(Reportid).then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'checkmarx_Report.pdf')
+        document.body.appendChild(link)
+        link.click()
+      })
     }
   }
 }
@@ -157,18 +174,23 @@ export default {
     <el-divider />
     <el-row :gutter="12">
       <el-col :span="12">
-        <el-card shadow="hover" style="height:400px">
-          <div slot="header" class="clearfix" style="line-height:40px">
+        <el-card shadow="hover" style="height: 400px">
+          <div slot="header" class="clearfix" style="line-height: 40px">
             <span>Status</span>
           </div>
           <project-pie :the-data="issueprogress" />
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card shadow="hover" style="height:400px">
-          <div slot="header" class="clearfix" style="line-height:40px">
+        <el-card shadow="hover" style="height: 400px">
+          <div slot="header" class="clearfix" style="line-height: 40px">
             <span>Workload</span>
-            <el-select v-model="workLoad" placeholder="select a project" style="float:right" @change="onWorkLoadChange">
+            <el-select
+              v-model="workLoad"
+              placeholder="select a project"
+              style="float: right"
+              @change="onWorkLoadChange"
+            >
               <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </div>
@@ -182,7 +204,7 @@ export default {
           <div slot="header" class="clearfix">
             <span>Project Members</span>
           </div>
-          <el-table :data="tableData" stripe style="width: 100%">
+          <el-table :data="tableData" height="250" stripe style="width: 100%">
             <el-table-column prop="role_name" label="Title" />
             <el-table-column prop="name" label="Name" />
             <el-table-column prop="email" label="Email" />
@@ -193,18 +215,27 @@ export default {
         <el-card shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix">
             <span>Test status</span>
-            <span><el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()" /></span>
+            <span
+              ><el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()"
+            /></span>
           </div>
-          <el-table :data="projectdata" stripe style="width: 100%">
+          <el-table :data="projectdata" height="250" stripe style="width: 100%">
             <el-table-column prop="Software" label="Software" width="100" />
             <el-table-column label="Brief Information">
               <template slot-scope="scope">
-                <div style="width:100%; display: flex;" v-html="scope.row.Informationtext" />
+                <div style="width: 100%; display: flex" v-html="scope.row.Informationtext" />
               </template>
             </el-table-column>
             <el-table-column label="Report" width="100">
               <template slot-scope="scope">
-                <el-link v-if="scope.row.status==3" target="_blank" type="primary" :underline="false" @click="fetchTestReport(scope.row.report_id)"><i class="el-icon-download" style="font-size: 20px;" /></el-link>
+                <el-link
+                  v-if="scope.row.status == 3"
+                  target="_blank"
+                  type="primary"
+                  :underline="false"
+                  @click="fetchTestReport(scope.row.report_id)"
+                  ><i class="el-icon-download" style="font-size: 20px"
+                /></el-link>
               </template>
             </el-table-column>
           </el-table>

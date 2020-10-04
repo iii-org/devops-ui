@@ -16,7 +16,7 @@ export default {
       isLoading: true,
       issueStatusList: [],
       projectIssueList: [],
-      activeList:[],
+      activeList: [],
       assignedList: [],
       solvedList: [],
       respondedList: [],
@@ -40,15 +40,16 @@ export default {
   },
   methods: {
     genKanbanCard(status) {
-      if(!this.projectIssueList[status]) //該status不存在issue回傳空array
+      if (!this.projectIssueList[status])
+        //該status不存在issue回傳空array
         return []
-      return this.projectIssueList[status].map(issue => {
+      return this.projectIssueList[status].map((issue) => {
         return {
-          'name': issue.issue_name, 
-          'id': issue.id,
-          'date': issue.due_date,
-          'user': issue.assigned_to
-         }
+          name: issue.issue_name,
+          id: issue.id,
+          date: issue.due_date,
+          user: issue.assigned_to
+        }
       })
     },
     async fetchData() {
@@ -56,31 +57,31 @@ export default {
       const projectIssueListRes = await getProjectIssueListByStatus(this.projectSelectedId)
       this.isLoading = false
       this.projectIssueList = projectIssueListRes.data //取得project全部issue by status
-      this.issueStatusList.forEach(item => {
-        if(item.name == 'Active') this.activeList = this.genKanbanCard('Active')
-        if(item.name == 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
-        if(item.name == 'Solved') this.solvedList = this.genKanbanCard('Solved')
-        if(item.name == 'Responded') this.respondedList = this.genKanbanCard('Responded')
-        if(item.name == 'Finished') this.finishedList = this.genKanbanCard('Finished')
-        if(item.name == 'Closed') this.closedList = this.genKanbanCard('Closed')
+      this.issueStatusList.forEach((item) => {
+        if (item.name == 'Active') this.activeList = this.genKanbanCard('Active')
+        if (item.name == 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
+        if (item.name == 'Solved') this.solvedList = this.genKanbanCard('Solved')
+        if (item.name == 'Responded') this.respondedList = this.genKanbanCard('Responded')
+        if (item.name == 'Finished') this.finishedList = this.genKanbanCard('Finished')
+        if (item.name == 'Closed') this.closedList = this.genKanbanCard('Closed')
       })
     },
     async updateIssueStatus(from, to, oldIndex, newIndex) {
       let issue = {}
       let newStatusId = 0
-      if(to.className.search('Active') != -1) issue = this.activeList[newIndex]
-      if(to.className.search('Assigned') != -1) issue = this.assignedList[newIndex]
-      if(to.className.search('Solved') != -1) issue = this.solvedList[newIndex]
-      if(to.className.search('Responded') != -1) issue = this.respondedList[newIndex]
-      if(to.className.search('Finished') != -1) issue = this.finishedList[newIndex]
-      if(to.className.search('Closed') != -1) issue = this.closedList[newIndex]
-      this.issueStatusList.forEach(item => {
-        if(to.className.search(item.name) != -1) {
+      if (to.className.search('Active') != -1) issue = this.activeList[newIndex]
+      if (to.className.search('Assigned') != -1) issue = this.assignedList[newIndex]
+      if (to.className.search('Solved') != -1) issue = this.solvedList[newIndex]
+      if (to.className.search('Responded') != -1) issue = this.respondedList[newIndex]
+      if (to.className.search('Finished') != -1) issue = this.finishedList[newIndex]
+      if (to.className.search('Closed') != -1) issue = this.closedList[newIndex]
+      this.issueStatusList.forEach((item) => {
+        if (to.className.search(item.name) != -1) {
           newStatusId = item.id
         }
       })
-      if(issue.id && newStatusId != 0) {
-        await updateIssue(issue.id, {'status_id': newStatusId})
+      if (issue.id && newStatusId != 0) {
+        await updateIssue(issue.id, { status_id: newStatusId })
       }
     }
   }
@@ -94,14 +95,62 @@ export default {
       </div>
     </div>
     <el-divider />
-    <div class="components-container board" style="overflow: auto;">
-      <div style="width: 100%; display: flex; overflow: auto">
-        <Kanban key="1" :updateStatus="updateIssueStatus" :list="activeList" :group="group" class="kanban active" header-text="Active" cName="Active" />
-        <Kanban key="2" :updateStatus="updateIssueStatus" :list="assignedList" :group="group" class="kanban assigned" header-text="Assigned" cName="Assigned" />
-        <Kanban key="3" :updateStatus="updateIssueStatus" :list="solvedList" :group="group" class="kanban solved" header-text="Solved" cName="Solved" />
-        <Kanban key="4" :updateStatus="updateIssueStatus" :list="respondedList" :group="group" class="kanban responsed" header-text="Responsed" cName="Responsed" />
-        <Kanban key="5" :updateStatus="updateIssueStatus" :list="finishedList" :group="group" class="kanban finished" header-text="Finished" cName="Finished" />
-        <Kanban key="6" :updateStatus="updateIssueStatus" :list="closedList" :group="group" class="kanban closed" header-text="Closed" cName="Closed" />
+    <div class="components-container board" style="overflow: auto">
+      <div style="width: 100%; display: flex; overflow: auto; padding-bottom: 10px">
+        <Kanban
+          key="1"
+          :updateStatus="updateIssueStatus"
+          :list="activeList"
+          :group="group"
+          class="kanban active"
+          header-text="Active"
+          cName="Active"
+        />
+        <Kanban
+          key="2"
+          :updateStatus="updateIssueStatus"
+          :list="assignedList"
+          :group="group"
+          class="kanban assigned"
+          header-text="Assigned"
+          cName="Assigned"
+        />
+        <Kanban
+          key="3"
+          :updateStatus="updateIssueStatus"
+          :list="solvedList"
+          :group="group"
+          class="kanban solved"
+          header-text="Solved"
+          cName="Solved"
+        />
+        <Kanban
+          key="4"
+          :updateStatus="updateIssueStatus"
+          :list="respondedList"
+          :group="group"
+          class="kanban responsed"
+          header-text="Responsed"
+          cName="Responsed"
+        />
+        <Kanban
+          key="5"
+          :updateStatus="updateIssueStatus"
+          :list="finishedList"
+          :group="group"
+          class="kanban finished"
+          header-text="Finished"
+          cName="Finished"
+        />
+        <Kanban
+          key="6"
+          :updateStatus="updateIssueStatus"
+          :list="closedList"
+          :group="group"
+          class="kanban closed"
+          header-text="Closed"
+          cName="Closed"
+        />
       </div>
     </div>
   </div>

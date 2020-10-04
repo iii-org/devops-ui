@@ -82,7 +82,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       })
-        .then(async() => {
+        .then(async () => {
           await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
@@ -196,42 +196,46 @@ export default {
             }"
             style="color: #409EFF"
           > -->
-          <span style="color: #409EFF">{{ scope.row.name }}</span>
+          <span style="color: #409eff">{{ scope.row.name }}</span>
           <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status">
+      <el-table-column align="center" label="Status" width="100px">
         <template slot-scope="scope">
           {{ scope.row.project_status }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Progress">
+      <el-table-column align="center" label="Progress" width="100px">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Quality">
+      <!-- <el-table-column align="center" label="Quality" width="100px">
         <template slot-scope="scope">
           {{ '87%' }}
         </template>
-      </el-table-column>
-      <el-table-column align="center" label="Update Time">
+      </el-table-column> -->
+      <el-table-column align="center" label="Update Time" width="170px">
         <template slot-scope="scope">
-          {{ myFormatTime(scope.row.updated_time) }}
+          {{ scope.row.updated_time | relativeTime }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="GitLab">
+      <el-table-column align="center" label="GitLab" width="100px">
         <template slot-scope="scope">
-          <el-link type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <el-link v-if="scope.row.git_url" type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmin">
+      <el-table-column align="center" label="Redmin" width="100px">
         <template slot-scope="scope">
-          <el-link type="primary" :href="scope.row.redmine_url" target="_blank">Redmin</el-link>
+          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
+            >Redmin</el-link
+          >
+          <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="Actions" align="center" width="200px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
