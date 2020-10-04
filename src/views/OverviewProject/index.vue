@@ -65,14 +65,21 @@ export default {
       this.projectVersionList = versionsRes.data.versions
       if (this.projectVersionList.length !== 0) {
         this.projectVersion = this.projectVersionList[0].id
+      } else {
+        this.projectVersion = ''
       }
       this.fetchByVersion()
       this.fetchProjectTest()
     },
     async fetchByVersion() {
+      //如果無版本列表，預設帶整體專案統計資訊，後面不用帶版本參數
+      let param = {}
+      if(this.projectVersion != '') {
+        param = { fixed_version_id: this.projectVersion }
+      }
       const res = await Promise.all([
-        getProjectIssueProgress(this.projectSelectedId, { fixed_version_id: this.projectVersion }),
-        getProjectIssueStatistics(this.projectSelectedId, { fixed_version_id: this.projectVersion }),
+        getProjectIssueProgress(this.projectSelectedId, param),
+        getProjectIssueStatistics(this.projectSelectedId, param),
         this.getProjectUserList(this.projectSelectedId)
       ])
       this.isLoading = false
