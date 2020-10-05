@@ -17,6 +17,9 @@ export default {
       handler(val, old) {
         this.$nextTick(() => {
           this.projectValue = val
+          if (this.projectValue === -1) {
+            this.projectValue = ''
+          }
         })
       }
     }

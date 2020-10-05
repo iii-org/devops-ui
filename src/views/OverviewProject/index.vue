@@ -21,27 +21,14 @@ export default {
   data() {
     return {
       isLoading: true,
-      projectVersion: '1.0',
-      projectVersionList: [{ id: 1, name: '1.0' }],
+      projectVersion: '',
+      projectVersionList: [],
       workLoad: '',
       workLoadData: {},
       workLoadTypes: [],
       workLoadSelected: {},
       issueprogress: { total_issue: 0, unfinish_number: 0 },
-      tableData: [
-        {
-          title: 'Host',
-          name: 'Zue Wang'
-        },
-        {
-          title: 'Manager',
-          name: 'Ting Chang'
-        },
-        {
-          title: 'Members',
-          name: ['Ally K Wang', 'Nino Lin']
-        }
-      ],
+      tableData: [],
       projectdata: []
     }
   },
@@ -67,18 +54,22 @@ export default {
     },
     async fetchAll() {
       this.isLoading = true
-      const versionsRes = await getProjectVersion(this.projectSelectedId)
-      this.projectVersionList = versionsRes.data.versions
-      if (this.projectVersionList.length !== 0) {
-        this.projectVersion = this.projectVersionList[0].id
+      if (this.projectSelectedId !== -1) {
+        const versionsRes = await getProjectVersion(this.projectSelectedId)
+        this.projectVersionList = versionsRes.data.versions
+        if (this.projectVersionList.length !== 0) {
+          this.projectVersion = this.projectVersionList[0].id
+        } else {
+          this.projectVersion = ''
+        }
+        this.fetchByVersion()
+        this.fetchProjectTest()
       } else {
-        this.projectVersion = ''
+        this.isLoading = false
       }
-      this.fetchByVersion()
-      this.fetchProjectTest()
     },
     async fetchByVersion() {
-      //如果無版本列表，預設帶整體專案統計資訊，後面不用帶版本參數
+      // 如果無版本列表，預設帶整體專案統計資訊，後面不用帶版本參數
       let param = {}
       if (this.projectVersion != '') {
         param = { fixed_version_id: this.projectVersion }
@@ -139,7 +130,7 @@ export default {
           } else if (apiProjectdata.test_results[i].status === undefined) {
             Informationtext = 'No data.'
           } else if (apiProjectdata.test_results[i].status === 3) {
-            console.log(apiProjectdata.test_results[i].report_id)
+            // console.log(apiProjectdata.test_results[i].report_id)
             object['report_id'] = apiProjectdata.test_results[i].report_id
           }
         }
@@ -167,7 +158,7 @@ export default {
   <div v-loading="isLoading" class="dashboard-container">
     <div>
       <project-list-selector />
-      <el-select v-model="projectVersion" placeholder="select a project">
+      <el-select v-model="projectVersion" placeholder="select a version">
         <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
     </div>
@@ -178,6 +169,7 @@ export default {
           <div slot="header" class="clearfix" style="line-height: 40px">
             <span>Status</span>
           </div>
+          <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
           <project-pie :the-data="issueprogress" />
         </el-card>
       </el-col>
@@ -194,6 +186,7 @@ export default {
               <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </div>
+          <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
           <project-bar :the-data="workLoadSelected" />
         </el-card>
       </el-col>
@@ -215,9 +208,15 @@ export default {
         <el-card shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix">
             <span>Test status</span>
-            <span
-              ><el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()"
-            /></span>
+            <span>
+              <el-button
+                type="primary"
+                icon="el-icon-refresh"
+                circle
+                size="mini"
+                @click="fetchProjectTest()"
+              />
+            </span>
           </div>
           <el-table :data="projectdata" height="250" stripe style="width: 100%">
             <el-table-column prop="Software" label="Software" width="100" />
@@ -234,8 +233,9 @@ export default {
                   type="primary"
                   :underline="false"
                   @click="fetchTestReport(scope.row.report_id)"
-                  ><i class="el-icon-download" style="font-size: 20px"
-                /></el-link>
+                >
+                  <i class="el-icon-download" style="font-size: 20px" />
+                </el-link>
               </template>
             </el-table-column>
           </el-table>
