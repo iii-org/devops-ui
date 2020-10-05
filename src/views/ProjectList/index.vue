@@ -125,7 +125,7 @@ export default {
               name: 'cicdPipelines',
               params: { pId: scope.row.repository_ids }
             }"
-            style="color: #409EFF"
+            style="color: #409eff"
           >
             <span>{{ scope.row.name }}</span>
           </router-link>
@@ -149,7 +149,7 @@ export default {
               name: 'branches',
               params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids }
             }"
-            style="color: #409EFF"
+            style="color: #409eff"
           >
             <span>{{ scope.row.branch }}</span>
           </router-link>
@@ -170,6 +170,20 @@ export default {
             <i v-else class="el-icon-error" />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="GitLab" width="100px">
+        <template slot-scope="scope">
+          <el-link v-if="scope.row.git_url" type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Redmin" width="100px">
+        <template slot-scope="scope">
+          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
+            >Redmin</el-link
+          >
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Last Tag">
