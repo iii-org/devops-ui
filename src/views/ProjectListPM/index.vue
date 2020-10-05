@@ -35,6 +35,9 @@ export default {
         limit: 20
       },
       form: formTemplate,
+      rules: {
+        name: [{ required: true, trigger: 'blur' }]
+      },
       confirmLoading: false
     }
   },
@@ -126,26 +129,31 @@ export default {
       })
     },
     async handleConfirm() {
-      //   this.dialogVisible = false
-      if (this.dialogStatus === 2) return this.handleConfirmEdit()
-      this.confirmLoading = true
-      console.log(this.form)
-      const dataBody = {
-        name: this.form.name,
-        description: this.form.description,
-        disabled: this.form.disabled
-      }
-      const res = await this['projects/addNewProject'](dataBody)
-      this.confirmLoading = false
-      if (res.message !== 'success') return
-      console.log(res)
-      Message({
-        message: 'Project added successfully',
-        type: 'success',
-        duration: 1 * 1000
+      const thiz = this
+      this.$refs.thisForm.validate(async function(valid) {
+        if (!valid) {
+          return
+        }
+        //   this.dialogVisible = false
+        if (thiz.dialogStatus === 2) return thiz.handleConfirmEdit()
+        thiz.confirmLoading = true
+        const dataBody = {
+          name: thiz.form.name,
+          description: thiz.form.description,
+          disabled: thiz.form.disabled
+        }
+        const res = await thiz['projects/addNewProject'](dataBody)
+        thiz.confirmLoading = false
+        if (res.message !== 'success') return
+        console.log(res)
+        Message({
+          message: 'Project added successfully',
+          type: 'success',
+          duration: 1 * 1000
+        })
+        thiz.dialogVisible = false
+        thiz.loadList()
       })
-      this.dialogVisible = false
-      this.loadList()
     },
     async handleConfirmEdit() {
       this.confirmLoading = true
@@ -262,7 +270,7 @@ export default {
       width="50%"
       @closed="onDialogClosed"
     >
-      <el-form ref="thisForm" :model="form" label-position="top">
+      <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
         <el-form-item label="Project Name" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
