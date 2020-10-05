@@ -180,3 +180,21 @@ export function deleteProjectMember(pId, user_id) {
     method: 'DELETE'
   })
 }
+
+// 取得檔案列表
+export function getProjectFileList(pId) {
+  return request({
+    url: `/project/${pId}/file`,
+    method: 'GET'
+  })
+}
+
+// 下載檔案
+export function downloadProjectFile(params = { 'id': '', 'filename': '' }) {
+  return request({
+    url: `/download`,
+    method: 'GET',
+    responseType: 'arraybuffer',
+    params
+  })
+}
