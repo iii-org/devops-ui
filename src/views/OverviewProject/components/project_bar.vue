@@ -29,7 +29,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '250px'
     },
     theData: {
       type: Object,
@@ -49,7 +49,8 @@ export default {
         const CONFIG_DATA = {
           yAxis: Object.keys(value),
           finished: Object.keys(value).map(key => value[key].finished),
-          unfinished: Object.keys(value).map(key => value[key].unfinish)
+          unfinished: Object.keys(value).map(key => value[key].unfinish),
+          color: ["#000000", "#ff0000", "#FF00FF"]
         }
         this.initChart(CONFIG_DATA)
       })
@@ -73,8 +74,7 @@ export default {
           }
         },
         legend: {
-          data: ['Finished', 'Unfinish'],
-          height: 10
+          data: ['Finished', 'Unfinish']
         },
         grid: {
           left: '3%',
@@ -84,30 +84,73 @@ export default {
         },
         xAxis: {
           type: 'value',
-          interval: 1
+          position:'top',
+          interval: 1,
+          axisTick: {
+            lineStyle: {
+              color: "#C8C8C8"
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+              textStyle: {
+                  color: '#C8C8C8'
+              }
+          }
         },
         yAxis: {
           type: 'category',
-          // data: CONFIG_DATA.yAxis
-           data: ['特急', '緊急', '一般']
+          data: CONFIG_DATA.yAxis,
+          //data: ['特急', '特急', '一般'],
+          axisTick: {
+            lineStyle: {
+              color: "#C8C8C8"
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+              textStyle: {
+                  color: '#3ECBBC'
+              },
+              padding: [0, 15, 0, 0]
+          }
         },
         series: [
           {
             name: 'Finished',
             type: 'bar',
+            barWidth: '10',
             stack: 'Total',
             label: {
-              color: "#FF0000",
               show: false,
               position: 'insideRight'
             },
-            // data: CONFIG_DATA.finished
-            data: [16, 6, 3],
-            itemStyle: {normal: {color: '#3ECBBC'}}
+            data: CONFIG_DATA.finished,
+            //data: [16, 6, 3],
+            itemStyle: {normal: {color: "#3ECBBC" }}
+            // data: [
+            //     {
+            //         value: 16,
+            //         itemStyle: {color: '#FF00FF'},
+            //     },
+            //     {
+            //         value: 6,
+            //         itemStyle: {color: '#F9BE6E'},
+            //     },
+            //     {
+            //         value: 4,
+            //         itemStyle: {color: '#3ECBBC'},
+            //     }
+            // ],
           },
           {
             name: 'Unfinish',
             type: 'bar',
+            barWidth: '10',
             stack: 'Total',
             label: {
               show: false,
