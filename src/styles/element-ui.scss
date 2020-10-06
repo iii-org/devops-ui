@@ -71,9 +71,40 @@
 }
 
 .status-none{
-  
+  color: #989898;
 }
 
+.el-table{
+  .el-button{
+    color: #989898 !important;
+    border: 1px solid #989898;
+    background: none !important;
+  }
+
+  .el-button--danger:hover{
+    color: #FFFFFF !important;
+    background: #F56C6C !important;
+  }
+}
+
+.el-table .cell, .el-table--border td:first-child .cell, 
+.el-table--border th:first-child .cell{
+  padding-left: 22px;
+}
+
+.el-dialog__header{
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.el-dialog__body{
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.el-form--label-top .el-form-item__label{
+  padding-bottom: 0;
+}
 
 .status-bar-track{
   background: #F5F5F5;
@@ -85,6 +116,10 @@
   margin-bottom: 3px;
   margin-left: 5px;
   display: inline-block;
+}
+
+.el-form-item__content{
+  line-height: 100%;
 }
 
 .status-bar{

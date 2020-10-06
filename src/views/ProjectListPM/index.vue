@@ -218,7 +218,7 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status">
+      <el-table-column align="center" label="Status" width="144">
         <template slot-scope="scope">
           <span v-if="scope.row.project_status == '進行中'" class="status-btn status-pending">{{ scope.row.project_status }}</span>
           <span v-else="scope.row.project_status != '進行中'" class="status-btn status-none">{{ scope.row.project_status }}</span>
@@ -279,7 +279,7 @@ export default {
     >
       <el-form ref="thisForm" :model="form" label-position="top">
         <el-form-item label="Project Name" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" placeholder="Name"></el-input>
         </el-form-item>
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
@@ -299,7 +299,7 @@ export default {
           </el-form-item>
         </el-col> -->
         <el-form-item label="Description" prop="description">
-          <el-input type="textarea" v-model="form.description"></el-input>
+          <el-input type="textarea" v-model="form.description" placeholder="Please input description"></el-input>
         </el-form-item>
         <el-form-item label="Disabled" prop="disabled">
           <el-switch v-model="form.disabled"></el-switch>
