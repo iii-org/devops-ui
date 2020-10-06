@@ -107,6 +107,10 @@ export default {
     handleAdding() {
       this.dialogVisible = true
       this.dialogStatus = 1
+      this.form.name = ''
+      this.form.display = ''
+      this.form.description = ''
+      this.form.disabled = false
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
@@ -201,7 +205,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Identifier / Name" :show-overflow-tooltip="true">
+      <el-table-column label="Name / Identifier" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -310,7 +314,16 @@ export default {
           <el-input v-model="form.description" type="textarea" />
         </el-form-item>
         <el-form-item label="Disabled" prop="disabled">
-          <el-switch v-model="form.disabled" />
+          <!-- <el-switch v-model="form.disabled" /> -->
+          <el-switch
+            v-model="form.disabled"
+            :active-value="true"
+            :inactive-value="false"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="True"
+            inactive-text="False"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
