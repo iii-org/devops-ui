@@ -114,12 +114,13 @@ export default {
     async handleDetail(idx, row) {
       try {
         this.listLoading = false
+        this.drawerTitle = 'Detail'
         const res = await getWikiDetail(this.projectSelectedId, row.title)
         const { wiki_page } = res.data
         this.wikiData = wiki_page
         this.wikiContent = wiki_page.text
         this.dialogVisible = true
-        this.dialogVisibleEdit = true
+        this.dialogVisibleEdit = false
       } catch (error) {
         console.error(error)
       } finally {
@@ -222,22 +223,23 @@ export default {
       :before-close="handleClose"
       :append-to-body="true"
       :with-header="false"
-      size="60%"
+      size="80%"
     >
       <div class="container">
-        <el-input v-model="wikiTitle" placeholder="Please Input Title" />
-        <br />
-        <WangEditor
-          v-if="!dialogVisibleEdit"
-          @get-editor-data="emitGetEditorData"
-          :content="wikiContent"
-          ref="editor"
-        />
-        <div v-else>
-          <h3>{{ wikiData.title }}</h3>
-          <div v-html="wikiContent" />
+        <div class="form__title">
+          <el-input v-if="drawerTitle === 'Add'" v-model="wikiTitle" placeholder="Please Input Title" />
+          <h3 v-else>{{ wikiData.title }}</h3>
         </div>
-        <div class="file-drawer__footer">
+        <div class="form__body">
+          <br />
+          <template v-if="drawerTitle !== 'Detail'">
+            <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" />
+          </template>
+          <template v-else>
+            <div v-html="wikiContent" />
+          </template>
+        </div>
+        <div class="form__footer">
           <el-button
             @click="
               dialogVisible = false
@@ -275,7 +277,18 @@ export default {
   height: 100%;
   flex-direction: column;
   padding: 20px;
-  justify-content: center;
+  .form__title {
+    flex-basis: 60px;
+  }
+  .form__body {
+    flex: 1;
+  }
+  .form__footer {
+    flex-basis: 60px;
+    padding-top: 20px;
+    text-align: right;
+  }
+
   /* table 样式 */
   table {
     border-top: 1px solid #ccc;
@@ -327,10 +340,6 @@ export default {
   }
   .file-commit-message {
     flex-basis: 160px;
-  }
-  .file-drawer__footer {
-    flex-basis: 60px;
-    padding-top: 20px;
   }
   >>> #w-e-text {
     white-space: pre-line;
