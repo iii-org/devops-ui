@@ -236,7 +236,9 @@ export default {
             <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" />
           </template>
           <template v-else>
+            <pre>
             <div v-html="wikiContent" />
+            </pre>
           </template>
         </div>
         <div class="form__footer">
