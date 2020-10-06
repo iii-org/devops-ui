@@ -242,14 +242,14 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmin" width="100px">
+      <el-table-column align="center" label="Redmine" width="100px">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
             type="primary"
             :href="scope.row.redmine_url"
             target="_blank"
-          >Redmin</el-link>
+          >Redmine</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
