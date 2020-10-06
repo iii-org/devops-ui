@@ -73,9 +73,14 @@ export default {
             type: 'shadow'
           }
         },
-        legend: {
-          data: ['Finished', 'Unfinish']
-        },
+        // color: ['#3ECBBC','#C8C8C8'],
+        // legend: {
+        //   data: ['Finished', 'Unfinish'],
+        //   textStyle:{
+        //     color:'#000000',
+        //     fontSize: 13
+        //   }
+        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -102,8 +107,8 @@ export default {
         },
         yAxis: {
           type: 'category',
-          data: CONFIG_DATA.yAxis,
-          //data: ['特急', '特急', '一般'],
+          //data: CONFIG_DATA.yAxis,
+          data: ['急', '特急', '一般'],
           axisTick: {
             lineStyle: {
               color: "#C8C8C8"
@@ -114,7 +119,15 @@ export default {
           },
           axisLabel: {
               textStyle: {
-                  color: '#3ECBBC'
+                  color: function (value, index) {
+                    if(value == "急"){
+                      return "#3ECBBC"
+                    }else if(value == "特急"){
+                      return "#F9BE6E"
+                    }else{
+                      return "#E85656"
+                    }
+                  }
               },
               padding: [0, 15, 0, 0]
           }
@@ -129,23 +142,22 @@ export default {
               show: false,
               position: 'insideRight'
             },
-            data: CONFIG_DATA.finished,
-            //data: [16, 6, 3],
-            itemStyle: {normal: {color: "#3ECBBC" }}
-            // data: [
-            //     {
-            //         value: 16,
-            //         itemStyle: {color: '#FF00FF'},
-            //     },
-            //     {
-            //         value: 6,
-            //         itemStyle: {color: '#F9BE6E'},
-            //     },
-            //     {
-            //         value: 4,
-            //         itemStyle: {color: '#3ECBBC'},
-            //     }
-            // ],
+            //data: CONFIG_DATA.finished,
+            // data: [16, 6, 3],
+            data: [
+                {
+                    value: 16,
+                    itemStyle: {color: '#3ECBBC'},
+                },
+                {
+                    value: 6,
+                    itemStyle: {color: '#F9BE6E'},
+                },
+                {
+                    value: 4,
+                    itemStyle: {color: '#E85656'},
+                }
+            ],
           },
           {
             name: 'Unfinish',

@@ -75,7 +75,20 @@ export default {
                 show: false,
                 position: 'center',
                 formatter: function(d) {
-                  return Math.round(d.percent) + "%";
+                  //return Math.round(d.percent) + "%\n" + d.name;
+                  return '{number|' + Math.round(d.percent) + '%}\n{title|' + d.name + '}'
+                },
+                rich: {
+                  number: {
+                    color: '#2EC6C8',
+                    fontSize: '36',
+                    fontWeight: 'bold'
+                  },
+                  title: {
+                    color: '#000000',
+                    fontSize: '11',
+                    padding: [0,0,5,0]
+                  }
                 }
             },
             emphasis: {
@@ -88,7 +101,10 @@ export default {
             labelLine: {
                 show: false
             },
-            data,
+            data: [
+              {value: 335, name: 'Ongoing'},
+              {value: 310, name: 'Done'}
+            ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

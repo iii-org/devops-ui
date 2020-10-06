@@ -106,11 +106,24 @@ export default {
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover" style="height:400px">
-          <div slot="header" class="clearfix" style="line-height:40px">
+          <div slot="header" class="clearfix" style="line-height:40px; position: relative">
             <span>Workload</span>
             <el-select v-model="workLoad" placeholder="select a project" style="float:right" @change="onWorkLoadChange">
               <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id"> </el-option>
             </el-select>
+
+            <div class="bar-header">
+              <div class="d-inline-block">
+                <span class="legend-box" style="background: #E85656"></span>
+                <span class="legend-box" style="background: #F9BE6E"></span>
+                <span class="legend-box" style="background: #2EC6C8"></span>
+                <span>Finshed</span>
+              </div>
+              <div class="d-inline-block">
+                <span class="legend-box"></span>
+                <span>Unfinshed</span>
+              </div>
+            </div> <!-- /bar-header -->
           </div>
           <project-bar :the-data="workLoadSelected" />
         </el-card>

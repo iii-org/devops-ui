@@ -52,6 +52,10 @@
   float: left !important;
 }
 
+.d-inline-block{
+  display: inline-block;
+}
+
 .el-table{
   font-size: 16px;
 }
@@ -133,4 +137,27 @@
       background: #3ECBBC;
     }
   }
+}
+
+.bar-header{
+  color: #000000;
+  font-size: 11px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -77px;
+  text-align: center;
+  .d-inline-block{
+    margin-right: 25px;
+  }
+}
+
+.legend-box{
+  font-size: 0;
+  border-radius: 3px;
+  background: #EBEBEB;
+  width: 20px;
+  height: 10px;
+  margin-right: 3px;
+  display: inline-block;
 }
