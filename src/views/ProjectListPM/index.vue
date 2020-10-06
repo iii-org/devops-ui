@@ -6,6 +6,7 @@ import { Message } from 'element-ui'
 
 const formTemplate = {
   name: '',
+  display: '',
   code: '',
   amount: 0,
   ppm: 0,
@@ -36,7 +37,10 @@ export default {
       },
       form: formTemplate,
       rules: {
-        name: [{ required: true, trigger: 'blur' }]
+        name: [{ required: true, message: 'Project Identifier is required', trigger: 'blur' },
+          { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9_-]{0,30}$/, message: 'Not allow', trigger: 'blur' }
+        ],
+        display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
       confirmLoading: false
     }
@@ -85,7 +89,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       })
-        .then(async () => {
+        .then(async() => {
           await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
@@ -139,6 +143,7 @@ export default {
         thiz.confirmLoading = true
         const dataBody = {
           name: thiz.form.name,
+          display: thiz.form.display,
           description: thiz.form.description,
           disabled: thiz.form.disabled
         }
@@ -160,7 +165,7 @@ export default {
       const dataBody = {
         pId: this.form.id,
         data: {
-          name: this.form.name,
+          display: this.form.display,
           description: this.form.description,
           disabled: this.form.disabled,
           user_id: this.userId
@@ -196,7 +201,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column label="Identifier / Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -204,6 +209,8 @@ export default {
             }"
             style="color: #409EFF"
           > -->
+          <span style="color: #67C23A">{{ scope.row.display }}</span>
+          <br>
           <span style="color: #409eff">{{ scope.row.name }}</span>
           <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
@@ -235,11 +242,14 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmin" width="100px">
+      <el-table-column align="center" label="Redmine" width="100px">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
-            >Redmin</el-link
-          >
+          <el-link
+            v-if="scope.row.redmine_url"
+            type="primary"
+            :href="scope.row.redmine_url"
+            target="_blank"
+          >Redmine</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -271,9 +281,14 @@ export default {
       @closed="onDialogClosed"
     >
       <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
-        <el-form-item label="Project Name" prop="name">
+        <el-form-item label="Project Name" prop="display">
+          <el-input v-model="form.display" />
+        </el-form-item>
+        <el-form-item v-if="dialogStatus===1" label="Project Identifier" prop="name" style="margin-bottom: 0px;">
           <el-input v-model="form.name" />
         </el-form-item>
+        <br v-if="dialogStatus===1">
+        <div v-if="dialogStatus===1">Length between 1 and 30 characters. Only lower case letters (a-z), numbers, dashes, underscores and word start are allowed.</div>
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
         </el-form-item> -->
