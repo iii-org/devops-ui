@@ -88,7 +88,7 @@ export default {
 
 <template>
   <div v-loading="isLoading" class="dashboard-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
       <el-select v-model="projectVersion" placeholder="select a project">
         <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id"> </el-option>

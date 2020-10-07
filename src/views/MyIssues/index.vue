@@ -1,5 +1,4 @@
 <template>
-
   <div class="app-container">
     <el-table
       v-loading="listLoading"

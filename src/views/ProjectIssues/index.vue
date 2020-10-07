@@ -101,14 +101,14 @@ export default {
       default-expand-all
       :tree-props="{children: 'children'}"
     >
-      <el-table-column align="center" label="Type" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          {{ scope.row.issue_category }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Id" width="60px">
+      <el-table-column align="center" label="Id" width="100px">
         <template slot-scope="scope">
           {{ scope.row.id }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Type" :show-overflow-tooltip="true"  width="140px">
+        <template slot-scope="scope">
+          {{ scope.row.issue_category }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Name">
@@ -121,9 +121,12 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="100px">
+      <el-table-column align="center" label="Status" width="120px">
         <template slot-scope="scope">
-          {{ scope.row.issue_status }}
+          <el-tag v-if="scope.row.issue_status === 'Active'" type="danger" size="medium">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="warning" size="medium">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Solved'" size="medium">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else type="success" size="medium">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Assignee">
@@ -133,10 +136,13 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Priority" width="100px">
         <template slot-scope="scope">
-          {{ scope.row.issue_priority }}
+          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '一般'" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="200px">
+      <el-table-column label="Actions" align="center" width="260px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />

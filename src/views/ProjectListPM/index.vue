@@ -223,10 +223,10 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="144">
+      <el-table-column align="center" label="Status" width="120">
         <template slot-scope="scope">
           <span v-if="scope.row.project_status == '進行中'" class="status-btn status-pending">{{ scope.row.project_status }}</span>
-          <span v-else="scope.row.project_status != '進行中'" class="status-btn status-none">{{ scope.row.project_status }}</span>
+          <span v-else class="status-btn status-none">{{ scope.row.project_status }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Progress">
@@ -250,12 +250,12 @@ export default {
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Update Time">
+      <el-table-column align="center" label="Update Time" width="240">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.updated_time) }}
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />

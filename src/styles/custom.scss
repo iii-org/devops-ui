@@ -7,8 +7,10 @@
 }
 
 .status-btn{
-    padding: 5px 7px;
+    font-size: 14px;
+    padding: 2px 11px;
     border-radius: 100px;
+    display: inline-block;
 }
 
 .status-pending{
@@ -33,7 +35,7 @@
 }
 }
 
-.el-table .cell, .el-table--border td:first-child .cell, 
+.el-table--border td:first-child .cell, 
 .el-table--border th:first-child .cell{
     padding-left: 22px;
 }
@@ -154,4 +156,14 @@ line-height: 100%;
     color: #E85656;
     font-size: 16px;
     margin-left: 4px;
+}
+
+
+.clearfix .newBtn{
+    float: left !important;
+}
+
+.el-select{
+    float: left;
+    margin-right: 25px;
 }
