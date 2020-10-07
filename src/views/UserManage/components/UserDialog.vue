@@ -108,7 +108,9 @@ export default {
         password: [
           { validator: this.validatePassword, message: "Password can't be less than 8 characters." }
         ],
-        repeatPassword: [],
+        repeatPassword: [
+          { required: true, message: 'Please input password', trigger: 'blur' }
+        ],
         name: [
           { required: true, message: 'Please input name', trigger: 'blur' }
         ],
@@ -163,11 +165,14 @@ export default {
       this.disableAccount = true
       this.listLoading = true
       this.userFormRules.password = [
+        { required: false },
+        { validator: this.checkRepeatPwd, trigger: 'blur' },
         { validator: this.validatePassword, trigger: 'blur' }
       ]
       this.userFormRules.repeatPassword = [
         { required: false },
-        { validator: this.checkRepeatPwd, trigger: 'blur' }
+        { validator: this.checkRepeatPwd, trigger: 'blur' },
+        { validator: this.validatePassword, trigger: 'blur' }
       ]
     }
   },
@@ -180,9 +185,11 @@ export default {
       }
     },
     validatePassword(rule, value, callback) {
-      console.log('rule', rule)
-      console.log('value', value)
-      if (value.length > 0 && value.length < 8) {
+      // console.log('rule', rule)
+      // console.log('value', value)
+      if (value === undefined) {
+        callback()
+      } else if (value.length > 0 && value.length < 8) {
         callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()

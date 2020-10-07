@@ -56,7 +56,8 @@ export default {
           email: '',
           phone: '',
           role: { id: 1 },
-          enable: true
+          enable: true,
+          status: 'enable'
         }
       } else {
         this.editUserId = user.id
