@@ -225,8 +225,8 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Status" width="120">
         <template slot-scope="scope">
-          <span v-if="scope.row.project_status == '進行中'" class="status-btn status-pending">{{ scope.row.project_status }}</span>
-          <span v-else class="status-btn status-none">{{ scope.row.project_status }}</span>
+          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{ scope.row.project_status }}</el-tag>
+          <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Progress">

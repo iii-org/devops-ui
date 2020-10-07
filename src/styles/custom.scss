@@ -6,22 +6,6 @@
     font-size: 16px;
 }
 
-.status-btn{
-    font-size: 14px;
-    padding: 2px 11px;
-    border-radius: 100px;
-    display: inline-block;
-}
-
-.status-pending{
-    color: #FFFFFF;
-    background: #3ECBBC;
-}
-
-.status-none{
-    color: #989898;
-}
-
 .el-table
 .el-button{
     color: #989898 !important;
@@ -190,4 +174,26 @@ line-height: 100%;
 .el-select{
     float: left;
     margin-right: 25px;
+}
+
+.el-tag{
+    color: #FFFFFF !important;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 100px;
+    display: inline-block;
+    &.el-tag--danger{
+        background: #E85656;
+    }
+    &.el-tag--warning{
+        background: #F9BE6E;
+    }
+    &.el-tag--success{
+        background: #3ECBBC;
+    }
+    &.el-tag--none{
+        color: #989898 !important;
+        border: none;
+        background: none;
+    }
 }

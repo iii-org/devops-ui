@@ -125,7 +125,7 @@ export default {
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="danger" size="medium">{{ scope.row.issue_status }}</el-tag>
           <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="warning" size="medium">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Solved'" size="medium">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === '一般'" size="medium">{{ scope.row.issue_status }}</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
@@ -138,7 +138,6 @@ export default {
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
           <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === '一般'" size="medium">{{ scope.row.issue_priority }}</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
