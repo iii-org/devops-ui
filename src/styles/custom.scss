@@ -182,6 +182,11 @@ line-height: 100%;
     font-weight: 400;
     border-radius: 100px;
     display: inline-block;
+    &.el-tag--big{
+        width: 90px;
+        padding-left: 0;
+        padding-right: 0;
+    }
     &.el-tag--danger{
         background: #E85656;
     }
@@ -195,5 +200,17 @@ line-height: 100%;
         color: #989898 !important;
         border: none;
         background: none;
+    }
+    &.el-tag--active{
+        background: #85C1E9;
+    }
+    &.el-tag--assigned{
+        background: #FF8321;
+    }
+    &.el-tag--solved{
+        background: #80E0A9;
+    }
+    &.el-tag--finish{
+        background: #A4BEBE;
     }
 }
