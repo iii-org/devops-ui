@@ -67,7 +67,6 @@ export default {
           {
             name: 'ASSIGN ISSUE PROJECT',
             type: 'pie',
-            roseType: 'radius',
             radius: [75, 95],
             center: ['50%', '38%'],
             avoidLabelOverlap: false,
@@ -92,18 +91,18 @@ export default {
                 }
             },
             emphasis: {
-                label: {
-                    show: true,
-                    fontSize: '36',
-                    fontWeight: 'bold'
-                }
+              label: {
+                show: true,
+                fontSize: '36',
+                fontWeight: 'bold'
+              }
             },
             labelLine: {
-                show: false
+              show: false
             },
             data: [
-              {value: 335, name: 'Ongoing'},
-              {value: 310, name: 'Done'}
+              {value: 560, name: 'Done'},
+              {value: 335, name: 'Ongoing'}
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600

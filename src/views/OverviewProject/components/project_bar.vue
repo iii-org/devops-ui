@@ -7,8 +7,8 @@ import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
 var colorPalette = [
-    '#EBEBEB',
-    '#2EC6C8'
+    '#2EC6C8',
+    '#EBEBEB'
 ]
 
  var theme2 = {
