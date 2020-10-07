@@ -12,6 +12,14 @@
     border: 1px solid #989898;
     background: none !important;
     transition: all .6s ease;
+    margin: 0 4px;
+    i{
+        transition: all .6s ease;
+    }
+}
+
+.el-button+.el-button{
+    margin-left: 0;
 }
 
 .el-table .el-button--primary{
@@ -75,7 +83,7 @@
 }
 
 .el-form-item__content{
-line-height: 100%;
+    line-height: 100%;
 }
 
 .status-bar{

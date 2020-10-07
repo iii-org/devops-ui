@@ -112,7 +112,7 @@ export default {
 </script>
 <template>
   <div v-loading="isLoading" class="app-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
     </div>
     <el-divider />
@@ -123,18 +123,18 @@ export default {
     </div> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column prop="title" label="Title" />
-      <el-table-column prop="version" label="Version" />
-      <el-table-column label="Created">
+      <el-table-column prop="version" label="Version" width="160" />
+      <el-table-column label="Created" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.created_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Updated">
+      <el-table-column label="Updated" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="200" align="center">
+      <el-table-column label="Actions" width="300" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
