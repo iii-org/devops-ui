@@ -36,7 +36,12 @@ export default {
       },
       form: formTemplate,
       confirmLoading: false,
-      statusW: "50%"
+      statusW: "50%",
+      rules: {
+        name: [
+          { required: true, message: '請輸入Project Name', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -277,7 +282,7 @@ export default {
       width="50%"
       @closed="onDialogClosed"
     >
-      <el-form ref="thisForm" :model="form" label-position="top">
+      <el-form ref="thisForm" :rules="rules" :model="form" label-position="top">
         <el-form-item label="Project Name" prop="name">
           <el-input v-model="form.name" placeholder="Name"></el-input>
         </el-form-item>
