@@ -3,7 +3,13 @@ import { mapGetters, mapActions } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import projectPie from './components/project_pie'
 import projectBar from './components/project_bar'
-import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics } from '@/api/projects'
+import {
+  getProjectVersion,
+  getProjectIssueProgress,
+  getProjectIssueStatistics,
+  getProjectTest,
+  getTestReport
+} from '@/api/projects'
 
 export default {
   name: 'Dashboard',
@@ -15,27 +21,15 @@ export default {
   data() {
     return {
       isLoading: true,
-      projectVersion: '1.0',
-      projectVersionList: [{ id: 1, name: '1.0' }],
+      projectVersion: '',
+      projectVersionList: [],
       workLoad: '',
       workLoadData: {},
       workLoadTypes: [],
       workLoadSelected: {},
       issueprogress: { total_issue: 0, unfinish_number: 0 },
-      tableData: [
-        {
-          title: 'Host',
-          name: 'Zue Wang'
-        },
-        {
-          title: 'Manager',
-          name: 'Ting Chang'
-        },
-        {
-          title: 'Members',
-          name: ['Ally K Wang', 'Nino Lin']
-        }
-      ]
+      tableData: [],
+      projectdata: []
     }
   },
   computed: {
@@ -60,15 +54,29 @@ export default {
     },
     async fetchAll() {
       this.isLoading = true
-      const versionsRes = await getProjectVersion(this.projectSelectedId)
-      this.projectVersionList = versionsRes.data.versions
-      this.projectVersion = this.projectVersionList[0].id
-      this.fetchByVersion()
+      if (this.projectSelectedId !== -1) {
+        const versionsRes = await getProjectVersion(this.projectSelectedId)
+        this.projectVersionList = versionsRes.data.versions
+        if (this.projectVersionList.length !== 0) {
+          this.projectVersion = this.projectVersionList[0].id
+        } else {
+          this.projectVersion = ''
+        }
+        this.fetchByVersion()
+        this.fetchProjectTest()
+      } else {
+        this.isLoading = false
+      }
     },
     async fetchByVersion() {
+      // 如果無版本列表，預設帶整體專案統計資訊，後面不用帶版本參數
+      let param = {}
+      if (this.projectVersion != '') {
+        param = { fixed_version_id: this.projectVersion }
+      }
       const res = await Promise.all([
-        getProjectIssueProgress(this.projectSelectedId, { fixed_version_id: this.projectVersion }),
-        getProjectIssueStatistics(this.projectSelectedId, { fixed_version_id: this.projectVersion }),
+        getProjectIssueProgress(this.projectSelectedId, param),
+        getProjectIssueStatistics(this.projectSelectedId, param),
         this.getProjectUserList(this.projectSelectedId)
       ])
       this.isLoading = false
@@ -76,11 +84,71 @@ export default {
       const statistics = res[1].data
       this.tableData = res[2].data.user_list || []
       this.workLoadData = statistics
-      this.workLoadTypes = Object.keys(statistics).map(key => {
+      this.workLoadTypes = Object.keys(statistics).map((key) => {
         return { id: key, name: key }
       })
       this.workLoad = this.workLoadTypes[0].id
       this.workLoadSelected = statistics[this.workLoad]
+    },
+    async fetchProjectTest() {
+      this.projectdata = []
+      let apiProjectdata = await getProjectTest(this.projectSelectedId)
+      // console.log(apiProjectdata)
+      apiProjectdata = apiProjectdata.data
+      for (const i in apiProjectdata.test_results) {
+        const object = {}
+        // console.log(apiProjectdata.test_result[i])
+        let Informationtext = ''
+        for (const j in apiProjectdata.test_results[i]) {
+          // console.log(j, apiProjectdata.test_results[i][j])
+          if (
+            (j !== 'message') &
+            (j !== 'statisticsCalculationDate') &
+            (j !== 'status') &
+            (j !== 'report_id') &
+            (j !== 'id')
+          ) {
+            Informationtext =
+              Informationtext +
+              '<div  style="flex: 1;padding-left: 5px;">' +
+              j +
+              ' ' +
+              apiProjectdata.test_results[i][j] +
+              ' </div>'
+          }
+        }
+        if (i === 'postman') {
+          Informationtext = Informationtext + '<div  style="flex: 1;padding-left: 5px;"> <div>'
+          if (Object.keys(apiProjectdata.test_results[i]).length === 0) {
+            Informationtext = 'No data.'
+          }
+        } else if (i === 'checkmarx') {
+          if (apiProjectdata.test_results[i].status === -1) {
+            Informationtext = apiProjectdata.test_results[i].message
+          } else if (apiProjectdata.test_results[i].status === 1) {
+            Informationtext = apiProjectdata.test_results[i].message
+          } else if (apiProjectdata.test_results[i].status === undefined) {
+            Informationtext = 'No data.'
+          } else if (apiProjectdata.test_results[i].status === 3) {
+            // console.log(apiProjectdata.test_results[i].report_id)
+            object['report_id'] = apiProjectdata.test_results[i].report_id
+          }
+        }
+        object['Software'] = i
+        object['status'] = apiProjectdata.test_results[i].status
+        object['Informationtext'] = Informationtext
+        this.projectdata.push(object)
+      }
+    },
+    fetchTestReport(Reportid) {
+      getTestReport(Reportid).then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'checkmarx_Report.pdf')
+        document.body.appendChild(link)
+        link.click()
+      })
     }
   }
 }
@@ -90,17 +158,18 @@ export default {
   <div v-loading="isLoading" class="dashboard-container">
     <div class="clearfix">
       <project-list-selector />
-      <el-select v-model="projectVersion" placeholder="select a project">
-        <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+      <el-select v-model="projectVersion" placeholder="select a version">
+        <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
     </div>
     <el-divider />
     <el-row :gutter="12">
       <el-col :span="12">
-        <el-card shadow="hover" style="height:400px">
-          <div slot="header" class="clearfix" style="line-height:40px">
+        <el-card shadow="hover" style="height: 400px">
+          <div slot="header" class="clearfix" style="line-height: 40px">
             <span>Status</span>
           </div>
+          <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
           <project-pie :the-data="issueprogress" />
         </el-card>
       </el-col>
@@ -108,8 +177,13 @@ export default {
         <el-card shadow="hover" style="height:400px">
           <div slot="header" class="clearfix" style="line-height:40px; position: relative">
             <span>Workload</span>
-            <el-select v-model="workLoad" placeholder="select a project" style="float:right" @change="onWorkLoadChange">
-              <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+            <el-select
+              v-model="workLoad"
+              placeholder="select a project"
+              style="float: right"
+              @change="onWorkLoadChange"
+            >
+              <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
 
             <div class="bar-header">
@@ -125,20 +199,58 @@ export default {
               </div>
             </div> <!-- /bar-header -->
           </div>
+          <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
           <project-bar :the-data="workLoadSelected" />
         </el-card>
       </el-col>
     </el-row>
     <el-row :gutter="12">
-      <el-col :span="24">
+      <el-col :span="12">
         <el-card shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix">
             <span>Project Members</span>
           </div>
-          <el-table :data="tableData" stripe style="width: 100%">
+          <el-table :data="tableData" height="250" stripe style="width: 100%">
             <el-table-column prop="role_name" label="Title" />
             <el-table-column prop="name" label="Name" />
             <el-table-column prop="email" label="Email" />
+          </el-table>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card shadow="hover" style="min-height: 400px">
+          <div slot="header" class="clearfix">
+            <span>Test status</span>
+            <span>
+              <el-button
+                type="primary"
+                icon="el-icon-refresh"
+                circle
+                size="mini"
+                @click="fetchProjectTest()"
+              />
+            </span>
+          </div>
+          <el-table :data="projectdata" height="250" stripe style="width: 100%">
+            <el-table-column prop="Software" label="Software" width="100" />
+            <el-table-column label="Brief Information">
+              <template slot-scope="scope">
+                <div style="width: 100%; display: flex" v-html="scope.row.Informationtext" />
+              </template>
+            </el-table-column>
+            <el-table-column label="Report" width="100">
+              <template slot-scope="scope">
+                <el-link
+                  v-if="scope.row.status == 3"
+                  target="_blank"
+                  type="primary"
+                  :underline="false"
+                  @click="fetchTestReport(scope.row.report_id)"
+                >
+                  <i class="el-icon-download" style="font-size: 20px" />
+                </el-link>
+              </template>
+            </el-table-column>
           </el-table>
         </el-card>
       </el-col>

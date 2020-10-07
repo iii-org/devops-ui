@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
-export function getPipelines(project_id) {
+// repositoryid
+export function getPipelines(repository_id) {
   return request({
-    url: `/pipelines/rd/${project_id}/pipelines_exec`,
+    url: `/pipelines/rd/${repository_id}/pipelines_exec`,
     method: 'get'
   })
 }

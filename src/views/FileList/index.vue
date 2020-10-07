@@ -133,7 +133,7 @@ export default {
     }
   },
   async created() {
-    await this['fileList/getFileListByBranch']({ rId: this.$route.params.rId, bName: this.branchName })
+    await this['fileList/getFileListByBranch']({ rId: this.$route.params.bId, bName: this.branchName })
     this.listLoading = false
   },
   methods: {

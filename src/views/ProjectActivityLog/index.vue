@@ -6,18 +6,20 @@
       </div>
     </div>
     <el-divider />
-    <div class="block" style="margin-top:10px">
+    <div class="block" style="margin-top: 10px">
       <el-timeline>
         <el-timeline-item v-for="item in projectIssueList" :key="item.index" :timestamp="item.date" placement="top">
           <el-card>
-            <el-row v-for="issue in item.issues" :key="issue.id" :gutter="20">
+            <el-row v-for="issue in item.issues" :key="issue.id" :gutter="20" class="issue-row">
               <el-col :span="4">
-                <div style="margin-right: 5px;font-weight: 500;">{{ issue.issue_name }}</div>
-                <div><i class="el-icon-s-custom" /> {{ issue.assigned_to }}</div>
+                <span class="issue-name">{{ issue.issue_name }}</span>
               </el-col>
-              <el-col :span="20">
-                <div>{{ issue.description }}</div>
+              <el-col :span="16">
+                {{ issue.description || '-' }}
               </el-col>
+              <el-col :span="4">
+                <el-tag><i class="el-icon-s-custom" /> {{ issue.assigned_to || '-' }} </el-tag></el-col
+              >
             </el-row>
           </el-card>
         </el-timeline-item>
@@ -76,3 +78,19 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.issue-row {
+  margin: 5px 0px;
+  background: #f7f7f7;
+  padding: 5px;
+  height: 42px;
+  line-height: 32px;
+}
+.issue-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #4f4f4f;
+  display: flex;
+  align-items: center;
+}
+</style>

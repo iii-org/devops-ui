@@ -32,8 +32,8 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Version" label-width="100px" prop="version_id">
-            <el-select v-model="issueForm.version_id" style="width:100%">
+          <el-form-item label="Version" label-width="100px" prop="fixed_version_id">
+            <el-select v-model="issueForm.fixed_version_id" style="width:100%">
               <el-option
                 v-for="item in issueVersionList"
                 :key="item.value"
@@ -166,7 +166,7 @@ export default {
         priority_id: '',
         tracker_id: '',
         status_id: '',
-        version_id: '',
+        fixed_version_id: '',
         assigned_to_id: '',
         start_date: '',
         due_date: '',
@@ -201,7 +201,7 @@ export default {
         priority_id: [
           { required: true, message: 'Please select priority', trigger: 'blur' }
         ],
-        version_id: [
+        fixed_version_id: [
           { required: false }
         ],
         description: [

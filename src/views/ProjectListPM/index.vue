@@ -6,6 +6,7 @@ import { Message } from 'element-ui'
 
 const formTemplate = {
   name: '',
+  display: '',
   code: '',
   amount: 0,
   ppm: 0,
@@ -35,13 +36,14 @@ export default {
         limit: 20
       },
       form: formTemplate,
-      confirmLoading: false,
-      statusW: "50%",
       rules: {
-        name: [
-          { required: true, message: '請輸入Project Name', trigger: 'blur' }
-        ]
-      }
+        name: [{ required: true, message: 'Project Identifier is required', trigger: 'blur' },
+          { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9_-]{0,30}$/, message: 'Not allow', trigger: 'blur' }
+        ],
+        display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
+      },
+      statusW: "50%",
+      confirmLoading: false
     }
   },
   computed: {
@@ -88,7 +90,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       })
-        .then(async () => {
+        .then(async() => {
           await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
@@ -106,6 +108,10 @@ export default {
     handleAdding() {
       this.dialogVisible = true
       this.dialogStatus = 1
+      this.form.name = ''
+      this.form.display = ''
+      this.form.description = ''
+      this.form.disabled = false
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
@@ -148,33 +154,39 @@ export default {
       return "loading-box " + loadClass
     },
     async handleConfirm() {
-      //   this.dialogVisible = false
-      if (this.dialogStatus === 2) return this.handleConfirmEdit()
-      this.confirmLoading = true
-      console.log(this.form)
-      const dataBody = {
-        name: this.form.name,
-        description: this.form.description,
-        disabled: this.form.disabled
-      }
-      const res = await this['projects/addNewProject'](dataBody)
-      this.confirmLoading = false
-      if (res.message !== 'success') return
-      console.log(res)
-      Message({
-        message: 'Project added successfully',
-        type: 'success',
-        duration: 1 * 1000
+      const thiz = this
+      this.$refs.thisForm.validate(async function(valid) {
+        if (!valid) {
+          return
+        }
+        //   this.dialogVisible = false
+        if (thiz.dialogStatus === 2) return thiz.handleConfirmEdit()
+        thiz.confirmLoading = true
+        const dataBody = {
+          name: thiz.form.name,
+          display: thiz.form.display,
+          description: thiz.form.description,
+          disabled: thiz.form.disabled
+        }
+        const res = await thiz['projects/addNewProject'](dataBody)
+        thiz.confirmLoading = false
+        if (res.message !== 'success') return
+        console.log(res)
+        Message({
+          message: 'Project added successfully',
+          type: 'success',
+          duration: 1 * 1000
+        })
+        thiz.dialogVisible = false
+        thiz.loadList()
       })
-      this.dialogVisible = false
-      this.loadList()
     },
     async handleConfirmEdit() {
       this.confirmLoading = true
       const dataBody = {
         pId: this.form.id,
         data: {
-          name: this.form.name,
+          display: this.form.display,
           description: this.form.description,
           disabled: this.form.disabled,
           user_id: this.userId
@@ -210,7 +222,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column label="Name / Identifier" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -218,7 +230,9 @@ export default {
             }"
             style="color: #409EFF"
           > -->
-          <span style="color: #409EFF">{{ scope.row.name }}</span>
+          <span style="color: #67C23A">{{ scope.row.display }}</span>
+          <br>
+          <span style="color: #409eff">{{ scope.row.name }}</span>
           <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
@@ -229,13 +243,13 @@ export default {
           <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Progress">
+      <el-table-column align="center" label="Progress" width="100px">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
           <span class="status-bar-track"><span class="status-bar" :style="'width:'+ returnProgress(scope.row.closed_count,scope.row.total_count) +'%'"></span></span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Quality">
+      <!-- <el-table-column align="center" label="Quality" width="100px">
         <template slot-scope="scope">
           <div class="d-flex">
             <span class="quality-text">{{ '87%' }}</span>
@@ -249,10 +263,27 @@ export default {
             </span>
           </div>
         </template>
-      </el-table-column>
-      <el-table-column align="center" label="Update Time" width="240">
+      </el-table-column> -->
+      <el-table-column align="center" label="Update Time" width="170px">
         <template slot-scope="scope">
-          {{ myFormatTime(scope.row.updated_time) }}
+          {{ scope.row.updated_time | relativeTime }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="GitLab" width="100px">
+        <template slot-scope="scope">
+          <el-link v-if="scope.row.git_url" type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Redmine" width="100px">
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.redmine_url"
+            type="primary"
+            :href="scope.row.redmine_url"
+            target="_blank"
+          >Redmine</el-link>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="260">
@@ -282,10 +313,15 @@ export default {
       width="50%"
       @closed="onDialogClosed"
     >
-      <el-form ref="thisForm" :rules="rules" :model="form" label-position="top">
-        <el-form-item label="Project Name" prop="name">
-          <el-input v-model="form.name" placeholder="Name"></el-input>
+      <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
+        <el-form-item label="Project Name" prop="display">
+          <el-input v-model="form.display" />
         </el-form-item>
+        <el-form-item v-if="dialogStatus===1" label="Project Identifier" prop="name" style="margin-bottom: 0px;">
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <br v-if="dialogStatus===1">
+        <div v-if="dialogStatus===1">Length between 1 and 30 characters. Only lower case letters (a-z), numbers, dashes, underscores and word start are allowed.</div>
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
         </el-form-item> -->
@@ -304,15 +340,24 @@ export default {
           </el-form-item>
         </el-col> -->
         <el-form-item label="Description" prop="description">
-          <el-input type="textarea" v-model="form.description" placeholder="Please input description"></el-input>
+          <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
         </el-form-item>
         <el-form-item label="Disabled" prop="disabled">
-          <el-switch v-model="form.disabled"></el-switch>
+          <!-- <el-switch v-model="form.disabled" /> -->
+          <el-switch
+            v-model="form.disabled"
+            :active-value="true"
+            :inactive-value="false"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="True"
+            inactive-text="False"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>

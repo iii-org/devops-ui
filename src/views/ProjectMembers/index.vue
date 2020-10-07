@@ -6,8 +6,8 @@ import { getProjectUserList, getNotInProject, addProjectMember, deleteProjectMem
 import { Message } from 'element-ui'
 
 const formTemplate = {
-  role_name: 'Engineer',
-  status: false,
+  // role_name: 'Engineer',
+  // status: false,
   id: ''
 }
 
@@ -26,12 +26,18 @@ export default {
       },
       dialogStatus: 1,
       memberConfirmLoading: false,
-      form: formTemplate
+      form: formTemplate,
+      rolename: '',
+      userinfo: {}
+
     }
   },
   watch: {
     projectSelectedId(projectId) {
       this.fetchData()
+    },
+    'form.id': function(value) {
+      this.rolename = this.userinfo[this.form.id]
     }
   },
   computed: {
@@ -63,6 +69,9 @@ export default {
         const res_assignable = await getNotInProject(this.projectSelectedId)
         this.userList = res.data.user_list
         this.assignableUsers = res_assignable.data.user_list
+        for (const i in this.assignableUsers) {
+          this.userinfo[this.assignableUsers[i].id] = this.assignableUsers[i].role_name
+        }
       } catch (error) {
         console.error(error)
       }
@@ -82,7 +91,7 @@ export default {
       this.form = Object.assign({}, this.form, row)
     },
     async handleConfirm() {
-      console.log(this.form)
+      // console.log(this.form)
       try {
         this.memberConfirmLoading = true
         await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
@@ -194,10 +203,13 @@ export default {
           </el-select>
         </el-form-item>
         <el-form-item label="Role" prop="role_name">
-          <el-select v-model="form.role_name" placeholder="Select a role" style="width:100%">
+          <!-- <el-select v-model="form.role_name" placeholder="Select a role" style="width:100%">
             <el-option label="Engineer" value="Engineer"></el-option>
             <el-option label="Project Manager" value="Project Manager"></el-option>
-          </el-select>
+          </el-select> -->
+          <div>
+            {{ rolename }}
+          </div>
         </el-form-item>
         <!-- <el-form-item label="Duration">
           <el-col :span="11">
@@ -215,9 +227,9 @@ export default {
         <!-- <el-form-item label="Authorization">
           <el-switch v-model="form.authorization"></el-switch>
         </el-form-item> -->
-        <el-form-item label="Status" prop="status">
+        <!-- <el-form-item label="Status" prop="status">
           <el-switch v-model="form.status"></el-switch>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="Description" prop="desc">
           <el-input type="textarea" v-model="form.desc"></el-input>
         </el-form-item> -->

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div ref="editor" style="text-align:left"></div>
+  <div style="height:100%;">
+    <div ref="editor" style="display:block;text-align:left;height:100%;"></div>
   </div>
 </template>
 
@@ -50,10 +50,14 @@ export default {
   },
   methods: {
     onUpdate() {
-      return this.editor.txt.text()
+      return this.editor.txt.html()
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+>>> .w-e-text-container {
+  min-height: 90% !important;
+}
+</style>

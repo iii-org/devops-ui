@@ -44,6 +44,9 @@ export default {
     rId() {
       return this.$route.params.pId
     },
+    bId() {
+      return this.$route.params.bId
+    },
     projectName() {
       return this.$route.params.projectName
     },
@@ -55,7 +58,7 @@ export default {
   },
   async created() {
     if (!this.$route.params.pId) return
-    await this['branches/getBranchesByProject'](this.$route.params.pId)
+    await this['branches/getBranchesByProject'](this.$route.params.bId)
     this.listLoading = false
   },
   methods: {
@@ -181,7 +184,7 @@ export default {
             :to="{
               name: 'fileList',
               params: {
-                rId: rId,
+                bId: bId,
                 projectName: projectName,
                 branchName: scope.row.name
               }

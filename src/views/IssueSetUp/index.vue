@@ -579,11 +579,11 @@ export default {
               {{ scope.row.description }}
             </template>
           </el-table-column>
-          <el-table-column label="Action">
+          <!-- <el-table-column label="Action">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Parameter" name="parameter">
@@ -625,11 +625,11 @@ export default {
               {{ scope.row.length }}
             </template>
           </el-table-column>
-          <el-table-column label="Action">
+          <!-- <el-table-column label="Action">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Test Case" name="test">

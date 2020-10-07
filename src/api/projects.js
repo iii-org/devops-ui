@@ -30,6 +30,20 @@ export function addNewProject(data = { name: '', disabled: false, description: '
   })
 }
 
+export function getProjectTest(pId) {
+  return request({
+    url: `/project/${pId}/test_summary`,
+    method: 'get'
+  })
+}
+export function getTestReport(reportId) {
+  return request({
+    url: `/checkmarx/report/${reportId}`,
+    responseType: 'blob',
+    method: 'get'
+  })
+}
+
 export function editProject(pId = '80', data = { name: '', disabled: false, description: '' }) {
   return request({
     url: `/project/${pId}`,
@@ -164,5 +178,23 @@ export function deleteProjectMember(pId, user_id) {
   return request({
     url: `/project/${pId}/member/${user_id}`,
     method: 'DELETE'
+  })
+}
+
+// 取得檔案列表
+export function getProjectFileList(pId) {
+  return request({
+    url: `/project/${pId}/file`,
+    method: 'GET'
+  })
+}
+
+// 下載檔案
+export function downloadProjectFile(params = { 'id': '', 'filename': '' }) {
+  return request({
+    url: `/download`,
+    method: 'GET',
+    responseType: 'arraybuffer',
+    params
   })
 }

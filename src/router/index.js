@@ -317,12 +317,6 @@ export const asyncRoutes = [
         component: () => import('@/views/ProjectWiki/index'),
         meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer'] }
       },
-      // {
-      //   path: 'document',
-      //   name: 'Document',
-      //   component: () => import('@/views/ProjectDocument/index'),
-      //   meta: { title: 'Document', roles: ['Project Manager'] }
-      // },
       {
         path: 'list',
         name: 'Issues',
@@ -341,6 +335,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/IssueSetUp/index'),
         meta: { title: 'Issue SetUp', roles: ['Engineer'] }
+      },
+      {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/ProjectFiles/index'),
+        meta: { title: 'File List', roles: ['Project Manager'] }
       }
     ]
   },

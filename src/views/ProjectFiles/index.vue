@@ -2,11 +2,10 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import { getProjectVersion, addProjectVersion, editProjectVersion, deleteProjectVersion } from '@/api/projects'
+import { getProjectFileList, downloadProjectFile, getProjectVersion } from '@/api/projects'
 const formTemplate = {
   name: '',
-  due_date: '',
-  status: 'open',
+  version: '',
   description: ''
 }
 
@@ -17,7 +16,6 @@ export default {
   },
   data() {
     return {
-      projectValue: '專科A',
       listLoading: true,
       dialogVisible: false,
       listQuery: {
@@ -27,10 +25,10 @@ export default {
       },
       formRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
-        status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        version: [{ required: true, message: 'Please select version', trigger: 'blur' }],
         description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
       },
+      fileList: [],
       versionList: [],
       dialogStatus: 1,
       memberConfirmLoading: false,
@@ -42,17 +40,7 @@ export default {
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
-      return this.versionList.slice(start, end)
-    },
-    dialogStatusText() {
-      switch (this.dialogStatus) {
-        case 1:
-          return 'Add'
-        case 2:
-          return 'Edit'
-        default:
-          return 'Null'
-      }
+      return this.fileList.slice(start, end)
     }
   },
   watch: {
@@ -70,40 +58,31 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    async fetchData() {
+    fetchData() {
       this.listLoading = true
-      const res = await getProjectVersion(this.projectSelectedId)
-      this.versionList = res.data.versions
+      Promise.all([getProjectFileList(this.projectSelectedId), getProjectVersion(this.projectSelectedId)]).then(
+        (res) => {
+          this.fileList = res[0].data.files
+          this.versionList = res[1].data.versions
+        }
+      )
       this.listLoading = false
     },
     handleAdding() {
       this.dialogVisible = true
       this.dialogStatus = 1
     },
-    handleEdit(idx, row) {
-      this.dialogVisible = true
-      this.dialogStatus = 2
-
-      this.form = Object.assign({}, this.form, row)
-      console.log(this.form)
-    },
-    async handleDelete(idx, row) {
-      this.$confirm(`Are you sure to Delete Version ${row.name}?`, 'Delete', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'error'
-      })
-        .then(async() => {
-          await deleteProjectVersion(this.projectSelectedId, row.id)
-          this.$message({
-            type: 'success',
-            message: 'Delete Successed'
-          })
-          this.fetchData()
-        })
+    async handleDownload(idx, row) {
+      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
+      const url = window.URL.createObjectURL(new Blob([res]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', row.filename) //or any other extension
+      document.body.appendChild(link)
+      link.click()
     },
     async handleConfirm() {
-      this.$refs['form'].validate(async valid => {
+      this.$refs['form'].validate(async (valid) => {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
@@ -139,7 +118,7 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Version
+          Add File
         </el-button>
       </span>
     </div>
@@ -152,34 +131,35 @@ export default {
       </el-table-column>
       <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.filename }}
         </template>
       </el-table-column>
-      <el-table-column label="Due Date" width="200">
+      <el-table-column label="Description" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.due_date }}</span>
+          <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" :show-overflow-tooltip="true">
+      <el-table-column label="Creator" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.status }}
+          {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="Create time" width="120px">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+          {{ scope.row.created_on | relativeTime }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Actions" align="center" width="150px">
+        <template slot-scope="scope">
+          <el-button size="mini" type="primary" @click="handleDownload(scope.$index, scope.row)">
             <i class="el-icon-edit" />
-            Edit
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" />
-            Delete
+            Download
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination
-      :total="versionList.length"
+      :total="fileList.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[10]"
@@ -193,28 +173,23 @@ export default {
       width="50%"
       @closed="onDialogClosed"
     >
-      <el-form ref="form" :model="form" :rules="formRules" label-position="top">
+      <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
         <el-form-item label="Name" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="Duration" prop="due_date">
-          <el-date-picker
-            v-model="form.due_date"
-            type="date"
-            placeholder="End Date"
-            value-format="yyyy-MM-dd"
-            style="width: 100%;"
-          />
-        </el-form-item>
-        <el-form-item label="Status" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio :label="'open'">Open</el-radio>
-            <el-radio :label="'closed'">Closed</el-radio>
-            <el-radio :label="'locked'">Locked</el-radio>
-          </el-radio-group>
-        </el-form-item>
         <el-form-item label="Description" prop="description">
           <el-input v-model="form.description" type="textarea" />
+        </el-form-item>
+        <el-form-item label="Versions" prop="version">
+          <el-select v-model="form.version" placeholder="select a version" style="width: 100%">
+            <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Upload" prop="upload">
+          <el-upload class="upload-file" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">drap file here or <em>click upload</em></div>
+          </el-upload>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -232,5 +207,11 @@ export default {
 }
 .line {
   text-align: center;
+}
+.el-upload-dragger {
+  height: 120px;
+  .el-icon-upload {
+    margin: 10px 0 16px;
+  }
 }
 </style>

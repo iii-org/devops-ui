@@ -9,6 +9,9 @@ import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
+import { getTestCaseByIssue } from '@/api/issueTestCase'
+import { getTestItemByCase } from '@/api/issueTestItem'
+import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
 export default {
   components: {
@@ -101,7 +104,8 @@ export default {
         getIssue(this.issueId),
         getFlowByIssue(this.issueId),
         getFlowType(),
-        getParameterByIssue(this.issueId)
+        getParameterByIssue(this.issueId),
+        getTestCaseByIssue(this.issueId)
       ]).then(res => {
         this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
@@ -157,6 +161,7 @@ export default {
           }
         })
         this.listLoading = false
+        this.issueTestCase = res[7].data
       })
     },
     returnTagType(row) {
@@ -237,6 +242,16 @@ export default {
       })
       this.fetchData()
     },
+    async getTestItem(case_id) {
+      this.choose_testItem = ''
+      this.issueTestValue = []
+      const testItemList = await getTestItemByCase(case_id)
+      if (testItemList.data.length > 0) {
+        this.issueTestItem = testItemList.data
+      } else {
+        this.issueTestItem = []
+      }
+    },
     async saveParameter(data) {
       if (this.projectId > 0) {
         data['project_id'] = this.projectId
@@ -249,6 +264,29 @@ export default {
         duration: 1 * 1000
       })
       this.fetchData()
+    },
+    async getTestValue(item_id) {
+      const testValueList = await getTestValueByItem(item_id)
+      const testValueTypeRes = await getTestValueType()
+      const testValueTypeList = testValueTypeRes.data
+      const testValueLocationRes = await getTestValueLocation()
+      const testValueLocationList = testValueLocationRes.data
+
+      if (testValueList.data.length > 0) {
+        this.issueTestValue = testValueList.data.map(item => {
+          const valueType = testValueTypeList.find(type => {
+            return item.type_id === type.type_id
+          })
+          item.type = valueType.type_name
+          const valueLocation = testValueLocationList.find(location => {
+            return item.location_id === location.location_id
+          })
+          item.location = valueLocation.type_name
+          return item
+        })
+      } else {
+        this.issueTestValue = []
+      }
     },
     async deleteParameter(row) {
       await deleteParameter(row.id)
@@ -503,6 +541,122 @@ export default {
               <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="Test Case" name="test">
+        <el-table
+          :data="issueTestCase"
+          element-loading-text="Loading"
+          border
+          fit
+          highlight-current-row
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
+          style="margin-top: 10px"
+        >
+          <el-table-column label="ID">
+            <template slot-scope="scope">
+              {{ scope.row.id }}
+            </template>
+          </el-table-column>
+          <el-table-column label="API Name">
+            <template slot-scope="scope">
+              <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestDialog(scope.row, 'Edit API')">
+                {{ scope.row.name }}
+              </span>-->
+              {{ scope.row.name }}
+            </template>
+          </el-table-column>
+          <el-table-column label="API Method">
+            <template slot-scope="scope">
+              {{ scope.row.data.method }}
+            </template>
+          </el-table-column>
+          <el-table-column label="API URL">
+            <template slot-scope="scope">
+              {{ scope.row.data.url }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Desc.">
+            <template slot-scope="scope">
+              {{ scope.row.description }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="Test Item" name="testItem">
+        <div class="demo-input-size">
+          Test Case:
+          <el-select v-model="choose_testCase" @change="getTestItem">
+            <el-option
+              v-for="item in issueTestCase"
+              :key="item.id"
+              :label="`${item.name}(${item.id})`"
+              :value="item.id"
+            />
+          </el-select>
+        </div>
+        <el-table :data="issueTestItem" element-loading-text="Loading" border fit style="margin-top: 10px">
+          <el-table-column label="ID">
+            <template slot-scope="scope">
+              <span style="color: #409EFF;cursor: pointer;" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
+                {{ scope.row.id }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Item">
+            <template slot-scope="scope">
+              {{ scope.row.name }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Is Pass?">
+            <template slot-scope="scope">
+              {{ scope.row.is_passed }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="Test Value" name="testValue">
+        <div class="demo-input-size">
+          Test Item:
+          <el-select v-model="choose_testItem" @change="getTestValue">
+            <el-option
+              v-for="item in issueTestItem"
+              :key="item.id"
+              :label="`${item.name}(${item.id})`"
+              :value="item.id"
+            />
+          </el-select>
+          <!-- <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button> -->
+        </div>
+        <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
+          <el-table-column label="Type">
+            <template slot-scope="scope">
+              {{ scope.row.type }}
+              <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestValueDialog(scope.row, 'Edit Test Value')">
+                {{ scope.row.type }}
+              </span>-->
+            </template>
+          </el-table-column>
+          <el-table-column label="Key">
+            <template slot-scope="scope">
+              {{ scope.row.key }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Value">
+            <template slot-scope="scope">
+              {{ scope.row.value }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Location">
+            <template slot-scope="scope">
+              {{ scope.row.location }}
+            </template>
+          </el-table-column>
+          <!-- <el-table-column label="Action">
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete</el-button>
+            </template>
+          </el-table-column> -->
         </el-table>
       </el-tab-pane>
     </el-tabs>
