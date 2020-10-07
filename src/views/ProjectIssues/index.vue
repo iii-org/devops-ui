@@ -123,10 +123,10 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Status" width="120px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_status === 'Active'" type="danger" size="medium">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="warning" size="medium">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === '一般'" size="medium">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else type="success" size="medium">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="big">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="big">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Assignee">
@@ -134,10 +134,10 @@ export default {
           {{ scope.row.assigned_to }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Priority" width="100px">
+      <el-table-column align="center" label="Priority" width="120px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">緊急</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
