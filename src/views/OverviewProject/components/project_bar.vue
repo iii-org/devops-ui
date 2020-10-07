@@ -49,8 +49,7 @@ export default {
         const CONFIG_DATA = {
           yAxis: Object.keys(value),
           finished: Object.keys(value).map(key => value[key].finished),
-          unfinished: Object.keys(value).map(key => value[key].unfinish),
-          color: ["#000000", "#ff0000", "#FF00FF"]
+          unfinished: Object.keys(value).map(key => value[key].unfinish)
         }
         this.initChart(CONFIG_DATA)
       })

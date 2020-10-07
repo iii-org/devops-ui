@@ -54,13 +54,10 @@ export default {
     initChart(data) {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
-        },
         legend: {
           orient: 'vertical',
           right: 10,
+          selectedMode: false,
           data: ['Ongoing', 'Done']
         },
         series: [
@@ -74,7 +71,6 @@ export default {
                 show: false,
                 position: 'center',
                 formatter: function(d) {
-                  //return Math.round(d.percent) + "%\n" + d.name;
                   return '{number|' + Math.round(d.percent) + '%}\n{title|' + d.name + '}'
                 },
                 rich: {
@@ -101,7 +97,7 @@ export default {
               show: false
             },
             data: [
-              {value: 560, name: 'Done'},
+              {value: 560, name: 'Done', label: {normal: {show: true}, emphasis: { show: true }}}, //預設中間顯示
               {value: 335, name: 'Ongoing'}
             ],
             animationEasing: 'cubicInOut',
@@ -109,7 +105,24 @@ export default {
           }
         ]
       })
-    }
+
+      let options = this.chart.getOption();
+      this.chart.on('mouseover', function(e) {
+        options.series[0].data[0].label = {
+          show: false
+        };
+
+        this.setOption(options, true);
+      });
+
+      this.chart.on('mouseout', function(e) {
+        options.series[0].data[0].label = {
+          show: true
+        };
+
+        this.setOption(options, true);
+      });
+    } // end initchart
   }
 }
 </script>
