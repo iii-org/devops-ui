@@ -42,6 +42,7 @@ export default {
         ],
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
+      statusW: "50%",
       confirmLoading: false
     }
   },
@@ -136,6 +137,22 @@ export default {
         this.form = formTemplate
       })
     },
+    returnProgress(current,total) {
+      const percent = Math.round((current / total) * 100);
+      return percent
+    },
+    getLoadingBarClass(quality){
+      var loadClass;
+      if(quality <= 33){
+        loadClass = "status-danger";
+      }else if(quality <= 66){
+        loadClass = "status-normal";
+      }else if(quality <= 100){
+        loadClass = "status-full";
+      }
+
+      return "loading-box " + loadClass
+    },
     async handleConfirm() {
       const thiz = this
       this.$refs.thisForm.validate(async function(valid) {
@@ -220,19 +237,31 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="100px">
+      <el-table-column align="center" label="Status" width="120">
         <template slot-scope="scope">
-          {{ scope.row.project_status }}
+          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{ scope.row.project_status }}</el-tag>
+          <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Progress" width="100px">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
+          <span class="status-bar-track"><span class="status-bar" :style="'width:'+ returnProgress(scope.row.closed_count,scope.row.total_count) +'%'"></span></span>
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Quality" width="100px">
         <template slot-scope="scope">
-          {{ '87%' }}
+          <div class="d-flex">
+            <span class="quality-text">{{ '87%' }}</span>
+            <span v-bind:class="getLoadingBarClass(87)">
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+              <span class="loading-bar"></span>
+            </span>
+          </div>
         </template>
       </el-table-column> -->
       <el-table-column align="center" label="Update Time" width="170px">
@@ -257,7 +286,7 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="200px">
+      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -311,7 +340,7 @@ export default {
           </el-form-item>
         </el-col> -->
         <el-form-item label="Description" prop="description">
-          <el-input v-model="form.description" type="textarea" />
+          <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
         </el-form-item>
         <el-form-item label="Disabled" prop="disabled">
           <!-- <el-switch v-model="form.disabled" /> -->

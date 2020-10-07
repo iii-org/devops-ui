@@ -173,13 +173,13 @@ export default {
     </div> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column prop="title" label="Title" />
-      <el-table-column prop="version" label="Version" />
-      <el-table-column label="Created">
+      <el-table-column prop="version" label="Version" width="160" />
+      <el-table-column label="Created" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.created_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Updated">
+      <el-table-column label="Updated" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>

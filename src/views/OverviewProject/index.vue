@@ -156,7 +156,7 @@ export default {
 
 <template>
   <div v-loading="isLoading" class="dashboard-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
       <el-select v-model="projectVersion" placeholder="select a version">
         <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
@@ -174,8 +174,8 @@ export default {
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card shadow="hover" style="height: 400px">
-          <div slot="header" class="clearfix" style="line-height: 40px">
+        <el-card shadow="hover" style="height:400px">
+          <div slot="header" class="clearfix" style="line-height:40px; position: relative">
             <span>Workload</span>
             <el-select
               v-model="workLoad"
@@ -185,6 +185,19 @@ export default {
             >
               <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
+
+            <div class="bar-header">
+              <div class="d-inline-block">
+                <span class="legend-box" style="background: #E85656"></span>
+                <span class="legend-box" style="background: #F9BE6E"></span>
+                <span class="legend-box" style="background: #2EC6C8"></span>
+                <span>Finshed</span>
+              </div>
+              <div class="d-inline-block">
+                <span class="legend-box"></span>
+                <span>Unfinshed</span>
+              </div>
+            </div> <!-- /bar-header -->
           </div>
           <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
           <project-bar :the-data="workLoadSelected" />

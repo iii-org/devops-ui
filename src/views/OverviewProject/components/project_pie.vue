@@ -54,29 +54,75 @@ export default {
     initChart(data) {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
-        },
         legend: {
-          left: 'center',
-          bottom: '10',
+          orient: 'vertical',
+          right: 10,
+          selectedMode: false,
           data: ['Ongoing', 'Done']
         },
         series: [
           {
             name: 'ASSIGN ISSUE PROJECT',
             type: 'pie',
-            roseType: 'radius',
-            radius: [15, 95],
+            radius: [75, 95],
             center: ['50%', '38%'],
-            data,
+            avoidLabelOverlap: false,
+            label: {
+                show: false,
+                position: 'center',
+                formatter: function(d) {
+                  return '{number|' + Math.round(d.percent) + '%}\n{title|' + d.name + '}'
+                },
+                rich: {
+                  number: {
+                    color: '#2EC6C8',
+                    fontSize: '36',
+                    fontWeight: 'bold'
+                  },
+                  title: {
+                    color: '#000000',
+                    fontSize: '11',
+                    padding: [0,0,5,0]
+                  }
+                }
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '36',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              {value: 560, name: 'Done', label: {normal: {show: true}, emphasis: { show: true }}}, //預設中間顯示
+              {value: 335, name: 'Ongoing'}
+            ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
         ]
       })
-    }
+
+      let options = this.chart.getOption();
+      this.chart.on('mouseover', function(e) {
+        options.series[0].data[0].label = {
+          show: false
+        };
+
+        this.setOption(options, true);
+      });
+
+      this.chart.on('mouseout', function(e) {
+        options.series[0].data[0].label = {
+          show: true
+        };
+
+        this.setOption(options, true);
+      });
+    } // end initchart
   }
 }
 </script>

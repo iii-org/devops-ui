@@ -6,6 +6,17 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
+var colorPalette = [
+    '#2EC6C8',
+    '#EBEBEB'
+]
+
+ var theme2 = {
+    color: colorPalette
+ }
+
+echarts.registerTheme('macarons', theme2);
+
 export default {
   props: {
     className: {
@@ -18,7 +29,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '250px'
     },
     theData: {
       type: Object,
@@ -61,9 +72,14 @@ export default {
             type: 'shadow'
           }
         },
-        legend: {
-          data: ['Finished', 'Unfinish']
-        },
+        // color: ['#3ECBBC','#C8C8C8'],
+        // legend: {
+        //   data: ['Finished', 'Unfinish'],
+        //   textStyle:{
+        //     color:'#000000',
+        //     fontSize: 13
+        //   }
+        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -72,32 +88,88 @@ export default {
         },
         xAxis: {
           type: 'value',
-          interval: 1
+          position:'top',
+          interval: 1,
+          axisTick: {
+            lineStyle: {
+              color: "#C8C8C8"
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+              textStyle: {
+                  color: '#C8C8C8'
+              }
+          }
         },
         yAxis: {
           type: 'category',
-          data: CONFIG_DATA.yAxis
+          //data: CONFIG_DATA.yAxis,
+          data: ['急', '特急', '一般'],
+          axisTick: {
+            lineStyle: {
+              color: "#C8C8C8"
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+              textStyle: {
+                  color: function (value, index) {
+                    if(value == "急"){
+                      return "#3ECBBC"
+                    }else if(value == "特急"){
+                      return "#F9BE6E"
+                    }else{
+                      return "#E85656"
+                    }
+                  }
+              },
+              padding: [0, 15, 0, 0]
+          }
         },
         series: [
           {
             name: 'Finished',
             type: 'bar',
+            barWidth: '10',
             stack: 'Total',
             label: {
               show: false,
               position: 'insideRight'
             },
-            data: CONFIG_DATA.finished
+            //data: CONFIG_DATA.finished,
+            // data: [16, 6, 3],
+            data: [
+                {
+                    value: 16,
+                    itemStyle: {color: '#3ECBBC'},
+                },
+                {
+                    value: 6,
+                    itemStyle: {color: '#F9BE6E'},
+                },
+                {
+                    value: 4,
+                    itemStyle: {color: '#E85656'},
+                }
+            ],
           },
           {
             name: 'Unfinish',
             type: 'bar',
+            barWidth: '10',
             stack: 'Total',
             label: {
               show: false,
               position: 'insideRight'
             },
-            data: CONFIG_DATA.unfinished
+            // data: CONFIG_DATA.unfinished
+            data: [12, 12, 11],
+            itemStyle: {normal: {color: '#EBEBEB'}}
           }
         ]
       })
