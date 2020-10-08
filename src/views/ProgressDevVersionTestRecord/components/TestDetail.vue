@@ -4,8 +4,8 @@
       <el-timeline-item v-for="(activity, index) in activities" :key="index" placement="top">
         <el-card
           :body-style="{
-            color: '#fff',
-            background: 'linear-gradient(to bottom right, #3a3985, #3499ff)',
+            color: '#000000',
+            background: '#FFFFFF',
             lineHeight: 2
           }"
         >
@@ -26,7 +26,7 @@
               color: '#fff',
               background: '#333',
               lineHeight: 1,
-              fontSize: 10,
+              fontSize: '14px',
               height: '200px',
               overflow: 'auto'
             }"
