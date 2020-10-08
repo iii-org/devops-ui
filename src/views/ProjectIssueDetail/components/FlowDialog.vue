@@ -9,25 +9,24 @@
       ref="flowForm" 
       :model="flowForm"
       :rules="flowFormRules"
-      label-width="20%"
     >
       <el-row v-if="flowId != 0">
         <el-col :span="24">
-          <el-form-item label="Step Order" label-width="100px">
+          <el-form-item label="Step Order">
             <el-input v-model="stepOrder" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Name" label-width="100px" prop="name">
+          <el-form-item label="Step Name" prop="name">
             <el-input v-model="flowForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Type" label-width="100px" prop="type_id">
+          <el-form-item label="Step Type" prop="type_id">
             <el-select v-model="flowForm.type_id" style="width:100%">
               <el-option
                 v-for="item in flowTypeList"
@@ -41,7 +40,7 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Desc." label-width="100px" prop="description">
+          <el-form-item label="Step Desc." prop="description">
             <el-input v-model="flowForm.description" type="textarea" />
           </el-form-item>
         </el-col>

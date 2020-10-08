@@ -7,18 +7,18 @@
   >
     <el-form
       ref="issueForm"
-      label-width="20%"
       :model="issueForm"
       :rules="issueFormRules"
+      class="custom-list"
     >
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Name" label-width="100px" prop="subject">
+          <el-form-item label="Name" prop="subject">
             <el-input v-model="issueForm.subject" placeholder="please input name" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Assignee" label-width="100px" prop="assigned_to_id">
+          <el-form-item label="Assignee" prop="assigned_to_id">
             <el-select v-model="issueForm.assigned_to_id" style="width:100%">
               <el-option
                 v-for="item in issueAssigneeList"
@@ -32,7 +32,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Version" label-width="100px" prop="fixed_version_id">
+          <el-form-item label="Version" prop="fixed_version_id">
             <el-select v-model="issueForm.fixed_version_id" style="width:100%">
               <el-option
                 v-for="item in issueVersionList"
@@ -44,7 +44,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Type" label-width="100px" prop="tracker_id">
+          <el-form-item label="Type" prop="tracker_id">
             <el-select v-model="issueForm.tracker_id" style="width:100%">
               <el-option
                 v-for="item in issueTypeList"
@@ -58,7 +58,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Status" label-width="100px" prop="status_id">
+          <el-form-item label="Status" prop="status_id">
             <el-select v-model="issueForm.status_id" style="width:100%">
               <el-option
                 v-for="item in issueStatusList"
@@ -70,7 +70,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Priority" label-width="100px" prop="priority_id">
+          <el-form-item label="Priority" prop="priority_id">
             <el-select v-model="issueForm.priority_id" style="width:100%">
               <el-option
                 v-for="item in issuePriorityList"
@@ -84,12 +84,12 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Estimate" label-width="100px" prop="estimated_hours">
+          <el-form-item label="Estimate" prop="estimated_hours">
             <el-input-number v-model="issueForm.estimated_hours" label="please input hours" style="width:100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Done Ratio" label-width="100px" prop="done_ratio">
+          <el-form-item label="Done Ratio" prop="done_ratio">
             <el-input-number
               v-model="issueForm.done_ratio"
               label="please input numbers"
@@ -102,7 +102,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Start" label-width="100px" prop="start_date">
+          <el-form-item label="Start" prop="start_date">
             <el-date-picker
               v-model="issueForm.start_date"
               type="date"
@@ -113,7 +113,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="End" label-width="100px" prop="due_date">
+          <el-form-item label="End" prop="due_date">
             <el-date-picker
               v-model="issueForm.due_date"
               type="date"
@@ -126,7 +126,7 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Desc." label-width="100px" prop="description">
+          <el-form-item label="Desc." prop="description">
             <el-input v-model="issueForm.description" type="textarea" placeholder="please input description" />
           </el-form-item>
         </el-col>

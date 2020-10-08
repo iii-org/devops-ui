@@ -43,6 +43,30 @@ export default {
       issueFormRules: {
         subject: [
           { required: true, message: 'Please input name', trigger: 'blur' }
+        ],
+        assigned_to_id: [
+          {  required: true }
+        ],
+        tracker_id: [
+          {  required: true }
+        ],
+        status_id: [
+          {  required: true }
+        ],
+        priority_id: [
+          {  required: true }
+        ],
+        estimated_hours: [
+          {  required: true }
+        ],
+        done_ratio: [
+          {  required: true }
+        ],
+        start_date: [
+          {  required: true }
+        ],
+        due_date: [
+          {  required: true }
         ]
       },
       issueName: '',
@@ -301,8 +325,8 @@ export default {
 }
 </script>
 <template>
-  <div class="app-container">
-    <el-card class="box-card" shadow="never">
+  <div class="app-container d-flex">
+    <el-card class="box-card el-col-10 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
@@ -314,50 +338,16 @@ export default {
         ref="issueForm"
         :model="issueForm"
         :rules="issueFormRules"
-        label-width="20%"
-        :label-position="'right'"
+        :label-position="'left'"
       >
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="Name" label-width="100px" prop="subject">
+          <el-col :span="12">
+            <el-form-item label="Name" prop="subject">
               <el-input v-model="issueForm.subject" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Version" label-width="100px" prop="fixed_version_id">
-              <el-select v-model="issueForm.fixed_version_id" style="width:100%">
-                <el-option
-                  v-for="item in issueVersionList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="Priority" label-width="100px" prop="priority_id">
-              <el-select v-model="issueForm.priority_id" style="width:100%">
-                <el-option
-                  v-for="item in issuePriorityList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="Status" label-width="100px" prop="status_id">
-              <el-select v-model="issueForm.status_id" style="width:100%">
-                <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="Assignee" label-width="100px" prop="assigned_to_id">
+          <el-col :span="12">
+            <el-form-item label="Assignee" prop="assigned_to_id">
               <el-select v-model="issueForm.assigned_to_id" style="width:100%">
                 <el-option
                   v-for="item in issueAssigneeList"
@@ -368,25 +358,46 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Type" label-width="100px" prop="tracker_id">
+          <el-col :span="12">
+            <el-form-item label="Version" prop="fixed_version_id">
+              <el-select v-model="issueForm.fixed_version_id" style="width:100%">
+                <el-option
+                  v-for="item in issueVersionList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Type" prop="tracker_id">
               <el-select v-model="issueForm.tracker_id" style="width:100%">
                 <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Done Ratio" label-width="100px" prop="done_ratio">
-              <el-input-number
-                v-model="issueForm.done_ratio"
-                :min="0"
-                :max="100"
-                style="width:100%"
-              />
+          <el-col :span="12">
+            <el-form-item label="Status" prop="status_id">
+              <el-select v-model="issueForm.status_id" style="width:100%">
+                <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Estimate" label-width="100px" prop="estimated_hours">
+          <el-col :span="12">
+            <el-form-item label="Priority" prop="priority_id">
+              <el-select v-model="issueForm.priority_id" style="width:100%">
+                <el-option
+                  v-for="item in issuePriorityList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Estimate" prop="estimated_hours">
               <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
               <el-input-number
                 v-model="issueForm.estimated_hours"
@@ -396,8 +407,18 @@ export default {
               />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="Start" label-width="100px" prop="start_date">
+          <el-col :span="12">
+            <el-form-item label="Done Ratio" prop="done_ratio">
+              <el-input-number
+                v-model="issueForm.done_ratio"
+                :min="0"
+                :max="100"
+                style="width:100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Start" prop="start_date">
               <el-date-picker
                 v-model="issueForm.start_date"
                 type="date"
@@ -407,8 +428,8 @@ export default {
               />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="End" label-width="100px" prop="due_date">
+          <el-col :span="12">
+            <el-form-item label="End" prop="due_date">
               <el-date-picker
                 v-model="issueForm.due_date"
                 type="date"
@@ -418,16 +439,16 @@ export default {
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="Desc." label-width="100px" prop="description">
-              <el-input v-model="issueForm.description" type="textarea" placeholder="please input description" />
+          <el-col :span="24">
+            <el-form-item label="Desc." prop="description">
+              <el-input v-model="issueForm.description" type="textarea" rows="4" placeholder="please input description" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
 
-    <el-tabs v-model="activeName" type="border-card" style="margin-top: 10px">
+    <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
       <el-tab-pane label="Comment" name="comment">
         <el-button type="primary" @click="showAddComment">Add Comment</el-button>
         <el-table
@@ -444,12 +465,12 @@ export default {
               <div v-html="scope.row.comment" />
             </template>
           </el-table-column>
-          <el-table-column label="Author" width="180">
+          <el-table-column label="Author" width="180" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_author }}
             </template>
           </el-table-column>
-          <el-table-column label="Comment Time" width="180">
+          <el-table-column label="Comment Time" width="200" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_at }}
             </template>
@@ -490,7 +511,7 @@ export default {
               {{ scope.row.description }}
             </template>
           </el-table-column>
-          <el-table-column label="Action">
+          <el-table-column label="Action" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
             </template>
@@ -536,7 +557,7 @@ export default {
               {{ scope.row.length }}
             </template>
           </el-table-column>
-          <el-table-column label="Action">
+          <el-table-column label="Action" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
             </template>
@@ -586,7 +607,7 @@ export default {
       <el-tab-pane label="Test Item" name="testItem">
         <div class="demo-input-size">
           Test Case:
-          <el-select v-model="choose_testCase" @change="getTestItem">
+          <el-select v-model="choose_testCase" @change="getTestItem" class="floatnone">
             <el-option
               v-for="item in issueTestCase"
               :key="item.id"
@@ -618,7 +639,7 @@ export default {
       <el-tab-pane label="Test Value" name="testValue">
         <div class="demo-input-size">
           Test Item:
-          <el-select v-model="choose_testItem" @change="getTestValue">
+          <el-select v-model="choose_testItem" @change="getTestValue" class="floatnone">
             <el-option
               v-for="item in issueTestItem"
               :key="item.id"
