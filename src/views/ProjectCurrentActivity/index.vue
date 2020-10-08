@@ -96,7 +96,7 @@ export default {
     </div>
     <el-divider />
     <div class="components-container board" style="overflow: auto">
-      <div style="width: 100%; display: flex; overflow: auto; padding-bottom: 10px">
+      <div style="width: 100%; overflow: auto; padding-bottom: 10px; font-size: 0">
         <Kanban
           key="1"
           :updateStatus="updateIssueStatus"
