@@ -134,7 +134,7 @@ export default {
 
 <template>
   <div class="app-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
