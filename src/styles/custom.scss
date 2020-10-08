@@ -222,3 +222,26 @@
         background: #A4BEBE;
     }
 }
+
+.el-card__body{
+    h4{
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+        justify-content: space-between;
+        display: flex;
+    }
+    .el-divider--horizontal{
+        width: calc(100% + 40px);
+        margin-top: 20px;
+        margin-left: -20px;
+        margin-right: -20px;
+    }
+    .el-tag{
+        border-radius: 2px;
+    }
+}
+
+.el-timeline-item__tail, .el-timeline-item__node--normal{
+    top: 40px;
+}
