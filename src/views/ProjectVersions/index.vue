@@ -134,7 +134,7 @@ export default {
 
 <template>
   <div class="app-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
@@ -160,12 +160,13 @@ export default {
           <span>{{ scope.row.due_date }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" :show-overflow-tooltip="true">
+      <el-table-column label="Status" :show-overflow-tooltip="true" width="160" align="center">
         <template slot-scope="scope">
-          {{ scope.row.status }}
+          <el-tag v-if="scope.row.status === 'closed'" type="danger" size="big">{{ scope.row.status }}</el-tag>
+          <el-tag v-else type="success" size="big">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
