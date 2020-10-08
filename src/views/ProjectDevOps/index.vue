@@ -187,9 +187,11 @@ export default {
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Phase" :show-overflow-tooltip="true">
+      <el-table-column label="Phase" :show-overflow-tooltip="true" width="160" align="center">
         <template slot-scope="scope">
-          {{ scope.row.phase }}
+          <el-tag v-if="scope.row.phase === 'deploy'" type="danger" size="big">{{ scope.row.phase }}</el-tag>
+          <el-tag v-else-if="scope.row.phase === 'Test'" type="warning" size="big">{{ scope.row.phase }}</el-tag>
+          <el-tag v-else type="success" size="big">{{ scope.row.phase }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Tools" :show-overflow-tooltip="true">

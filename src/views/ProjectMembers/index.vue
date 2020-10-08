@@ -150,7 +150,7 @@ export default {
           #{{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column label="Name" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -165,7 +165,7 @@ export default {
           {{ scope.row.status ? '啟用' : '停用' }}
         </template>
       </el-table-column> -->
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="140">
         <template slot-scope="scope">
           <span v-if="false">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
