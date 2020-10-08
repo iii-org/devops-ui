@@ -3,7 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import AddIssue from './components/AddIssue'
-import { addIssue } from '@/api/issue'
+import { addIssue, deleteIssue } from '@/api/issue'
 import { getProjectIssueList } from '@/api/projects'
 import { Message } from 'element-ui'
 export default {
@@ -56,6 +56,16 @@ export default {
         this.$router.push({ path: `listrd/${row.id}/setup` })
       }
     },
+    async handleDelete(idx, row) {
+      this.listLoading = true
+      await deleteIssue(row.id)
+      Message({
+        message: 'Delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
@@ -106,7 +116,7 @@ export default {
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Type" :show-overflow-tooltip="true"  width="140px">
+      <el-table-column align="center" label="Type" :show-overflow-tooltip="true" width="140px">
         <template slot-scope="scope">
           {{ scope.row.issue_category }}
         </template>
@@ -147,9 +157,22 @@ export default {
             <i class="el-icon-edit" />
             Edit
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" /> Delete
-          </el-button>
+          <el-popconfirm
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
+            icon="el-icon-info"
+            icon-color="red"
+            title="Are you sure?"
+            class="Issuedel"
+            @onConfirm="handleDelete(scope.$index, scope.row)"
+          >
+            <el-button slot="reference" size="mini" type="danger">
+              <i class="el-icon-delete" /> Delete
+            </el-button>
+          </el-popconfirm>
+          <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
+              <i class="el-icon-delete" /> Delete
+            </el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -173,4 +196,8 @@ export default {
   .filter-container {
     margin-bottom: 5px;
   }
+  .el-popconfirm__action .el-button--primary{
+    margin-left: 5px !important;
+   }
 </style>
+
