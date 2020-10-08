@@ -54,6 +54,7 @@ export default {
     initChart(data) {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
+        silent: false,
         legend: {
           orient: 'vertical',
           right: 10,
@@ -87,6 +88,7 @@ export default {
                 }
             },
             emphasis: {
+              show: true,
               label: {
                 show: true,
                 fontSize: '36',
@@ -97,8 +99,8 @@ export default {
               show: false
             },
             data: [
-              {value: 560, name: 'Done', label: {normal: {show: true}, emphasis: { show: true }}}, //預設中間顯示
-              {value: 335, name: 'Ongoing'}
+              {value: 560, name: 'Done', itemStyle: { emphasis: { color: '#2EC6C8' }}},
+              {value: 335, name: 'Ongoing', itemStyle: { emphasis: { color: '#EBEBEB' }}}
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
@@ -106,21 +108,30 @@ export default {
         ]
       })
 
-      let options = this.chart.getOption();
-      this.chart.on('mouseover', function(e) {
-        options.series[0].data[0].label = {
-          show: false
-        };
-
-        this.setOption(options, true);
+      this.chart.dispatchAction({
+        type: 'highlight',
+        name: 'Done'
       });
 
-      this.chart.on('mouseout', function(e) {
-        options.series[0].data[0].label = {
-          show: true
-        };
+      this.chart.on('mouseover', function(params) {
+          var name = params.name;
+          this.dispatchAction({
+              type: 'downplay'
+          });
+          this.dispatchAction({
+              type: 'highlight',
+              name: name
+          });
+      });
 
-        this.setOption(options, true);
+      this.chart.on('mouseout', function(params) {
+          this.dispatchAction({
+              type: 'downplay'
+          });
+          this.dispatchAction({
+              type: 'highlight',
+              name: 'Done'
+          });
       });
     } // end initchart
   }

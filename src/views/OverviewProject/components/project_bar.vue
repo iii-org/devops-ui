@@ -107,7 +107,7 @@ export default {
         yAxis: {
           type: 'category',
           //data: CONFIG_DATA.yAxis,
-          data: ['急', '特急', '一般'],
+          data: ['一般', '緊急', '特急'],
           axisTick: {
             lineStyle: {
               color: "#C8C8C8"
@@ -119,12 +119,12 @@ export default {
           axisLabel: {
               textStyle: {
                   color: function (value, index) {
-                    if(value == "急"){
-                      return "#3ECBBC"
-                    }else if(value == "特急"){
+                    if(value == "特急"){
+                      return "#E85656"
+                    }else if(value == "緊急"){
                       return "#F9BE6E"
                     }else{
-                      return "#E85656"
+                      return "#3ECBBC"
                     }
                   }
               },
