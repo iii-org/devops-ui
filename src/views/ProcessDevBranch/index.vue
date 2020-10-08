@@ -72,7 +72,7 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
     </div>
     <el-divider />
@@ -83,7 +83,7 @@ export default {
       </el-button>
     </div> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" label="Name">
+      <el-table-column align="center" label="Name" width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
           <!-- <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">
@@ -101,12 +101,12 @@ export default {
           {{ scope.row.status }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="Commit">
+      <el-table-column align="center" label="Commit" width="160">
         <template slot-scope="scope">
           {{ scope.row.short_id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last update time">
+      <el-table-column align="center" label="Last update time" width="240">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.last_commit_time) }}
         </template>

@@ -110,7 +110,7 @@ export default {
 
 <template>
   <div v-loading="isLoading" class="app-container">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
     </div>
     <el-divider />
@@ -120,15 +120,20 @@ export default {
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Branch" :show-overflow-tooltip="true">
+      <el-table-column label="Commit short Id" :show-overflow-tooltip="true" width="160">
+        <template slot-scope="scope">
+          c67a224
+        </template>
+      </el-table-column>
+      <el-table-column label="Branch" :show-overflow-tooltip="true" width="160">
         <template slot-scope="scope">
           {{ scope.row.commit_branch }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="100">
+      <el-table-column align="center" label="Status" width="120">
         <template slot-scope="scope">
-          <i v-if="statusBoo(scope.row.status)" class="el-icon-success" style="color:#67C23A" />
-          <i v-else class="el-icon-success" style="color:#909399" />
+          <el-tag v-if="statusBoo(scope.row.status)" type="success" size="big">Success</el-tag>
+          <el-tag v-else type="danger" size="big">Fail</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Commit Message" :show-overflow-tooltip="true">
@@ -136,16 +141,17 @@ export default {
           {{ scope.row.commit_message }}
         </template>
       </el-table-column>
-      <el-table-column label="Last Update Time">
+      <el-table-column label="Last Update Time" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="200" align="center">
+      <el-table-column label="Actions" width="160" align="center">
         <template slot-scope="scope">
-          <span @click="onDetailsClick(scope.row)" style="color: #409EFF;cursor: pointer;text-decoration: underline">
+          <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row)">
+            <i class="el-icon-document" />
             Detail
-          </span>
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
