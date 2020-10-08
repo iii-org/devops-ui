@@ -188,6 +188,11 @@
 .el-select{
     float: left;
     margin-right: 25px;
+    &.floatnone{
+        float: none;
+        margin-left: 10px;
+
+    }
 }
 
 .el-tag{

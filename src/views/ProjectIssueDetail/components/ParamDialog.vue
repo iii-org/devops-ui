@@ -9,25 +9,24 @@
       ref="parameterForm" 
       :model="parameterForm"
       :rules="parameterFormRules"
-      label-width="20%"
     >
       <el-row v-if="paramId != 0">
         <el-col :span="24">
-          <el-form-item label="Order" label-width="100px">
+          <el-form-item label="Order">
             <el-input v-model="paramOrder" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Name" label-width="100px" prop="name">
+          <el-form-item label="Name" prop="name">
             <el-input v-model="parameterForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Type" label-width="100px" prop="parameter_type_id">
+          <el-form-item label="Type" prop="parameter_type_id">
             <el-select v-model="parameterForm.parameter_type_id" style="width:100%">
               <el-option
                 v-for="item in parameterTypeList"
@@ -41,21 +40,21 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Length" label-width="100px" prop="length">
+          <el-form-item label="Length" prop="length">
             <el-input v-model="parameterForm.length" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Limit" label-width="100px" prop="limitation">
+          <el-form-item label="Limit" prop="limitation">
             <el-input v-model="parameterForm.limitation" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Desc." label-width="100px" prop="description">
+          <el-form-item label="Desc." prop="description">
             <el-input v-model="parameterForm.description" type="textarea" />
           </el-form-item>
         </el-col>

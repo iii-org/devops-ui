@@ -65,7 +65,7 @@ export default {
         start_date: [
           {  required: true }
         ],
-        end_date: [
+        due_date: [
           {  required: true }
         ]
       },
@@ -465,12 +465,12 @@ export default {
               <div v-html="scope.row.comment" />
             </template>
           </el-table-column>
-          <el-table-column label="Author" width="180">
+          <el-table-column label="Author" width="180" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_author }}
             </template>
           </el-table-column>
-          <el-table-column label="Comment Time" width="180">
+          <el-table-column label="Comment Time" width="180" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_at }}
             </template>
@@ -607,7 +607,7 @@ export default {
       <el-tab-pane label="Test Item" name="testItem">
         <div class="demo-input-size">
           Test Case:
-          <el-select v-model="choose_testCase" @change="getTestItem">
+          <el-select v-model="choose_testCase" @change="getTestItem" class="floatnone">
             <el-option
               v-for="item in issueTestCase"
               :key="item.id"
@@ -639,7 +639,7 @@ export default {
       <el-tab-pane label="Test Value" name="testValue">
         <div class="demo-input-size">
           Test Item:
-          <el-select v-model="choose_testItem" @change="getTestValue">
+          <el-select v-model="choose_testItem" @change="getTestValue" class="floatnone">
             <el-option
               v-for="item in issueTestItem"
               :key="item.id"
