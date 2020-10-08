@@ -187,7 +187,7 @@ export default {
       <el-table-column label="Actions" width="300" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
-            <i class="el-icon-search" />
+            <i class="el-icon-document" />
             Detail
           </el-button>
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
