@@ -470,7 +470,7 @@ export default {
               {{ scope.row.comment_author }}
             </template>
           </el-table-column>
-          <el-table-column label="Comment Time" width="180" align="center">
+          <el-table-column label="Comment Time" width="200" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_at }}
             </template>
@@ -511,7 +511,7 @@ export default {
               {{ scope.row.description }}
             </template>
           </el-table-column>
-          <el-table-column label="Action">
+          <el-table-column label="Action" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
             </template>
@@ -557,7 +557,7 @@ export default {
               {{ scope.row.length }}
             </template>
           </el-table-column>
-          <el-table-column label="Action">
+          <el-table-column label="Action" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
             </template>
