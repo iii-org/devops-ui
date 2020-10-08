@@ -258,6 +258,9 @@ export default {
       this.$refs['issueForm'].validate(async(valid) => {
         if (valid) {
           const data = this.issueForm
+          if (this.issueForm.fixed_version_id === '') {
+            delete this.issueForm.fixed_version_id
+          }
           data['project_id'] = this.projectId
           await this.saveData(data)
           this.$refs['issueForm'].resetFields()
