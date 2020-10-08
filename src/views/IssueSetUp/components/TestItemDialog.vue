@@ -5,8 +5,8 @@
     width="50%"
     @close="handleClose"
   >
-    <el-form 
-      ref="testItemForm" 
+    <el-form
+      ref="testItemForm"
       :model="testItemForm"
       :rules="testItemFormRules"
       label-width="20%"
@@ -24,8 +24,8 @@
             <el-switch
               v-model="testItemForm.is_passed"
               active-color="#13ce66"
-              inactive-color="#ff4949">
-            </el-switch>
+              inactive-color="#ff4949"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -52,13 +52,18 @@ export default {
       type: Number,
       default: 0
     },
+    testitem: {
+      type: Object,
+      default: null
+    },
     saveData: Function
   },
   data() {
     return {
       testItemForm: {
         name: '',
-        is_passed: true
+        is_passed: true,
+        id: ''
       },
       testItemFormRules: {
         name: [
@@ -67,6 +72,19 @@ export default {
         is_passed: [
           { required: true, message: 'Please select type', trigger: 'blur' }
         ]
+      }
+    }
+  },
+  watch: {
+    testitem() {
+      if (Object.keys(this.testitem).length !== 0) {
+        this.testItemForm.name = this.testitem.name
+        this.testItemForm.is_passed = this.testitem.is_passed
+        this.testItemForm.id = this.testitem.id
+      } else {
+        this.testItemForm.name = ''
+        this.testItemForm.is_passed = true
+        this.testItemForm.id = ''
       }
     }
   },

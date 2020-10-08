@@ -14,6 +14,13 @@ export function addTestItemByCase(case_id, data) {
     data
   })
 }
+export function updateTestItemByCase(case_id, data) {
+  return request({
+    url: `/testItems/${case_id}`,
+    method: 'put',
+    data
+  })
+}
 
 export function deleteTestItem(item_id) {
   return request({

@@ -13,7 +13,7 @@ import { getProjectAssignable } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { getTestCaseByIssue, addTestCaseByIssue, deleteTestCase } from '@/api/issueTestCase'
-import { getTestItemByCase, addTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
+import { getTestItemByCase, addTestItemByCase, updateTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation, deleteTestValue, addTestValueByItem } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
 export default {
@@ -73,6 +73,7 @@ export default {
       editParamId: 0,
       editTestId: 0,
       editTestItemId: 0,
+      editTestItem: {},
       editTestValueId: 0,
       dialogTitle: '',
       issueId: 0,
@@ -192,6 +193,11 @@ export default {
     },
     showTestItemDialog(testItem, title) {
       this.editTestItemId = testItem === '' ? 0 : testItem.id
+      if (testItem === '') {
+        this.editTestItem = {}
+      } else {
+        this.editTestItem = testItem
+      }
       this.dialogTitle = title
       this.testItemDialogVisible = true
     },
@@ -328,7 +334,12 @@ export default {
       if (this.issueId > 0) {
         data['issue_id'] = this.issueId
       }
-      await addTestItemByCase(this.choose_testCase, data)
+      if (data.id === '') {
+        await addTestItemByCase(this.choose_testCase, data)
+      } else {
+        await updateTestItemByCase(data.id, data)
+      }
+      // await addTestItemByCase(this.choose_testCase, data)
       this.testItemDialogVisible = false
       Message({
         message: 'add successful',
@@ -792,6 +803,7 @@ export default {
     <test-item-dialog
       :dialog-title="dialogTitle"
       :test-item-id="editTestItemId"
+      :testitem="editTestItem"
       :dialog-visible="testItemDialogVisible"
       :save-data="saveTestItem"
       @testItem-dialog-visible="testItemDialogVisible = false"

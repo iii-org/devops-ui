@@ -44,6 +44,13 @@ export function updateIssue(issue_id, data) {
   })
 }
 
+export function deleteIssue(issue_id) {
+  return request({
+    url: '/issues/' + issue_id,
+    method: 'DELETE'
+  })
+}
+
 export function addIssue(data) {
   return request({
     url: `/issues`,
