@@ -210,6 +210,18 @@ export default {
       }
     }
   },
+  watch: {
+    projectId() {
+      this.fetchData()
+    },
+    dialogVisible() {
+      if (this.dialogVisible === true) {
+        this.$nextTick(() => {
+          this.$refs['issueForm'].resetFields()
+        })
+      }
+    }
+  },
   mounted() {
     this.fetchData()
   },
