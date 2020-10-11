@@ -30,19 +30,27 @@ export default {
       dialogStatus: 1,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20
+        page: 1, //目前第幾頁
+        limit: 10 //一頁幾筆
       },
+      listTotal: 0, //總筆數
       form: formTemplate,
-      confirmLoading: false
+      confirmLoading: false,
+      searchData: ''
     }
   },
   computed: {
     ...mapGetters(['projectList', 'projectListTotal']),
     pagedData() {
+      const listData = this.projectList.filter((data) => {
+        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.projectList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     },
     dialogStatusText() {
       switch (this.dialogStatus) {
@@ -64,7 +72,6 @@ export default {
     handleEdit(idx, row) {
       this.dialogVisible = true
       this.dialogStatus = 2
-
       this.form = Object.assign({}, this.form, row)
     },
     handleDelete() {},
@@ -108,16 +115,30 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <!-- <div class="clearfix">
-      <span class="newBtn">
-        <el-button type="success" @click="handleAdding">
-          <i class="el-icon-plus" />
-          Add Project
-        </el-button>
-      </span>
-    </div>
-    <el-divider /> -->
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-row :gutter="20" style="margin-bottom: 10px">
+      <!-- <el-col :span="6"
+        ><div class="grid-content bg-purple">
+          <el-button type="success" @click="handleAdding">
+            <i class="el-icon-plus" />
+            Add Project
+          </el-button>
+        </div></el-col
+      > -->
+      <el-col :span="6" :offset="18"
+        ><div class="grid-content bg-purple">
+          <div class="input-group" slot="header" style="text-align: right">
+            <el-input
+              v-model="searchData"
+              class="ob-search-input ob-shadow search-input mr-3"
+              placeholder="Please input project name"
+              style="width: 250px"
+              ><i slot="prefix" class="el-input__icon el-icon-search"></i
+            ></el-input>
+          </div></div
+      ></el-col>
+    </el-row>
+
+    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <router-link
@@ -132,9 +153,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column align="center" label="Workload" width="120px">
-        <template slot-scope="scope">
-          {{ scope.row.issues }}
-        </template>
+        <template slot-scope="scope"> {{ scope.row.issues }} </template>
       </el-table-column>
       <el-table-column align="center" label="Upcomming Deadline">
         <template slot-scope="scope">
@@ -216,10 +235,10 @@ export default {
       </el-table-column> -->
     </el-table>
     <pagination
-      :total="projectListTotal"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
