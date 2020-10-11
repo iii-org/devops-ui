@@ -20,17 +20,24 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        totalPage: 1
-      }
+        limit: 10
+      },
+      listTotal: 0, //總筆數
+      searchData: ''
     }
   },
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
+      const listData = this.issueList.filter((data) => {
+        if (this.searchData == '' || data.issue_name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.issueList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     }
   },
   watch: {
@@ -87,16 +94,22 @@ export default {
 </script>
 <template>
   <div class="app-container">
-
     <div class="clearfix">
       <div>
         <project-list-selector />
         <span class="newBtn">
-          <el-button type="success" style="float:right" @click="addTopicDialogVisible = true">
+          <el-button type="success" style="float: right" @click="addTopicDialogVisible = true">
             <i class="el-icon-plus" />
             Add Issue
           </el-button>
         </span>
+        <el-input
+          v-model="searchData"
+          class="ob-search-input ob-shadow search-input mr-3"
+          placeholder="Please input issue name"
+          style="width: 250px; float: right"
+          ><i slot="prefix" class="el-input__icon el-icon-search"></i
+        ></el-input>
       </div>
     </div>
     <el-divider />
@@ -109,7 +122,7 @@ export default {
       highlight-current-row
       row-key="id"
       default-expand-all
-      :tree-props="{children: 'children'}"
+      :tree-props="{ children: 'children' }"
     >
       <el-table-column align="center" label="Id" width="100px">
         <template slot-scope="scope">
@@ -133,9 +146,15 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Status" width="120px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="big">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="big">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
           <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
@@ -146,7 +165,9 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Priority" width="120px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{
+            scope.row.issue_priority
+          }}</el-tag>
           <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">緊急</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
@@ -166,9 +187,7 @@ export default {
             class="Issuedel"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> Delete
-            </el-button>
+            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete </el-button>
           </el-popconfirm>
           <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
               <i class="el-icon-delete" /> Delete
@@ -177,10 +196,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listQuery.totalPage"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -193,11 +212,11 @@ export default {
   </div>
 </template>
 <style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
-  .el-popconfirm__action .el-button--primary{
-    margin-left: 5px !important;
-   }
+.filter-container {
+  margin-bottom: 5px;
+}
+.el-popconfirm__action .el-button--primary {
+  margin-left: 5px !important;
+}
 </style>
 

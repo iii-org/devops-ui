@@ -30,15 +30,23 @@ export default {
       listQuery: {
         page: 1,
         limit: 10
-      }
+      },
+      listTotal: 0, //總筆數
+      searchData: ''
     }
   },
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
+      const listData = this.wikiList.filter((data) => {
+        if (this.searchData == '' || data.title.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.wikiList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     }
   },
   watch: {
@@ -164,7 +172,15 @@ export default {
           Add Ｗiki
         </el-button>
       </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input wiki title"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
+
     <el-divider />
     <!-- <div class="filter-container">
       <el-button class="filter-item" type="primary" @click="dialogVisible = true">
@@ -208,10 +224,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="wikiList.length"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

@@ -33,25 +33,34 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20
+        limit: 10
       },
+      listTotal: 0, //總筆數
+      searchData: '',
       form: formTemplate,
       rules: {
-        name: [{ required: true, message: 'Project Identifier is required', trigger: 'blur' },
+        name: [
+          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
           { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9_-]{0,30}$/, message: 'Not allow', trigger: 'blur' }
         ],
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
-      statusW: "50%",
+      statusW: '50%',
       confirmLoading: false
     }
   },
   computed: {
     ...mapGetters(['projectList', 'projectListTotal', 'userId']),
     pagedData() {
+      const listData = this.projectList.filter((data) => {
+        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.projectList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     },
     dialogStatusText() {
       switch (this.dialogStatus) {
@@ -90,7 +99,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       })
-        .then(async() => {
+        .then(async () => {
           await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
@@ -137,25 +146,25 @@ export default {
         this.form = formTemplate
       })
     },
-    returnProgress(current,total) {
-      const percent = Math.round((current / total) * 100);
+    returnProgress(current, total) {
+      const percent = Math.round((current / total) * 100)
       return percent
     },
-    getLoadingBarClass(quality){
-      var loadClass;
-      if(quality <= 33){
-        loadClass = "status-danger";
-      }else if(quality <= 66){
-        loadClass = "status-normal";
-      }else if(quality <= 100){
-        loadClass = "status-full";
+    getLoadingBarClass(quality) {
+      var loadClass
+      if (quality <= 33) {
+        loadClass = 'status-danger'
+      } else if (quality <= 66) {
+        loadClass = 'status-normal'
+      } else if (quality <= 100) {
+        loadClass = 'status-full'
       }
 
-      return "loading-box " + loadClass
+      return 'loading-box ' + loadClass
     },
     async handleConfirm() {
       const thiz = this
-      this.$refs.thisForm.validate(async function(valid) {
+      this.$refs.thisForm.validate(async function (valid) {
         if (!valid) {
           return
         }
@@ -219,6 +228,13 @@ export default {
           Add Project
         </el-button>
       </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input project name"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
@@ -230,8 +246,8 @@ export default {
             }"
             style="color: #409EFF"
           > -->
-          <span style="color: #67C23A">{{ scope.row.display }}</span>
-          <br>
+          <span style="color: #67c23a">{{ scope.row.display }}</span>
+          <br />
           <span style="color: #409eff">{{ scope.row.name }}</span>
           <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
@@ -239,14 +255,21 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Status" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{ scope.row.project_status }}</el-tag>
+          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{
+            scope.row.project_status
+          }}</el-tag>
           <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Progress" width="250px">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
-          <span class="status-bar-track"><span class="status-bar" :style="'width:'+ returnProgress(scope.row.closed_count,scope.row.total_count) +'%'"></span></span>
+          <span class="status-bar-track"
+            ><span
+              class="status-bar"
+              :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
+            ></span
+          ></span>
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Quality" width="100px">
@@ -277,12 +300,9 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Redmine" width="100px">
         <template slot-scope="scope">
-          <el-link
-            v-if="scope.row.redmine_url"
-            type="primary"
-            :href="scope.row.redmine_url"
-            target="_blank"
-          >Redmine</el-link>
+          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
+            >Redmine</el-link
+          >
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -299,10 +319,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="projectListTotal"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -317,11 +337,14 @@ export default {
         <el-form-item label="Project Name" prop="display">
           <el-input v-model="form.display" />
         </el-form-item>
-        <el-form-item v-if="dialogStatus===1" label="Project Identifier" prop="name" style="margin-bottom: 0px;">
+        <el-form-item v-if="dialogStatus === 1" label="Project Identifier" prop="name" style="margin-bottom: 0px">
           <el-input v-model="form.name" />
         </el-form-item>
-        <br v-if="dialogStatus===1">
-        <div v-if="dialogStatus===1">Length between 1 and 30 characters. Only lower case letters (a-z), numbers, dashes, underscores and word start are allowed.</div>
+        <br v-if="dialogStatus === 1" />
+        <div v-if="dialogStatus === 1">
+          Length between 1 and 30 characters. Only lower case letters (a-z), numbers, dashes, underscores and word start
+          are allowed.
+        </div>
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
         </el-form-item> -->

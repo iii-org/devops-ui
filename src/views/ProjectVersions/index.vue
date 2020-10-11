@@ -22,9 +22,10 @@ export default {
       dialogVisible: false,
       listQuery: {
         page: 1,
-        limit: 10,
-        totalPage: 1
+        limit: 10
       },
+      listTotal: 0, //總筆數
+      searchData: '',
       formRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
@@ -40,9 +41,15 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
+      const listData = this.versionList.filter((data) => {
+        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
-      return this.versionList.slice(start, end)
+      return listData.slice(start, end)
     },
     dialogStatusText() {
       switch (this.dialogStatus) {
@@ -92,18 +99,17 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      })
-        .then(async() => {
-          await deleteProjectVersion(this.projectSelectedId, row.id)
-          this.$message({
-            type: 'success',
-            message: 'Delete Successed'
-          })
-          this.fetchData()
+      }).then(async () => {
+        await deleteProjectVersion(this.projectSelectedId, row.id)
+        this.$message({
+          type: 'success',
+          message: 'Delete Successed'
         })
+        this.fetchData()
+      })
     },
     async handleConfirm() {
-      this.$refs['form'].validate(async valid => {
+      this.$refs['form'].validate(async (valid) => {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
@@ -142,6 +148,13 @@ export default {
           Add Version
         </el-button>
       </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input version name"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -180,10 +193,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="versionList.length"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[10]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -204,7 +217,7 @@ export default {
             type="date"
             placeholder="End Date"
             value-format="yyyy-MM-dd"
-            style="width: 100%;"
+            style="width: 100%"
           />
         </el-form-item>
         <el-form-item label="Status" prop="status">

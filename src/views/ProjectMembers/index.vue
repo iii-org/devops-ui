@@ -21,31 +21,40 @@ export default {
       assignableUsers: [],
       listQuery: {
         page: 1,
-        limit: 10,
-        totalPage: 1
+        limit: 10
       },
+      listTotal: 0, //總筆數
+      searchData: '',
       dialogStatus: 1,
       memberConfirmLoading: false,
       form: formTemplate,
       rolename: '',
       userinfo: {}
-
     }
   },
   watch: {
     projectSelectedId(projectId) {
       this.fetchData()
     },
-    'form.id': function(value) {
+    'form.id': function (value) {
       this.rolename = this.userinfo[this.form.id]
     }
   },
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
+      // const start = (this.listQuery.page - 1) * this.listQuery.limit
+      // const end = start + this.listQuery.limit - 1
+      // return this.userList.slice(start, end)
+      const listData = this.userList.filter((data) => {
+        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.userList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     },
     dialogStatusText() {
       switch (this.dialogStatus) {
@@ -142,13 +151,18 @@ export default {
           Add Member
         </el-button>
       </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input member name"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
-        <template slot-scope="scope">
-          #{{ scope.row.id }}
-        </template>
+        <template slot-scope="scope"> #{{ scope.row.id }} </template>
       </el-table-column>
       <el-table-column label="Name" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
@@ -168,10 +182,10 @@ export default {
       <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="140">
         <template slot-scope="scope">
           <span v-if="false">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            Edit
-          </el-button>
+            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+              <i class="el-icon-edit" />
+              Edit
+            </el-button>
           </span>
           <el-popconfirm
             confirmButtonText="Delete"
@@ -187,10 +201,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="userList.length"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[10]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

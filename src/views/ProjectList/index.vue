@@ -115,29 +115,22 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <el-row :gutter="20" style="margin-bottom: 10px">
-      <!-- <el-col :span="6"
-        ><div class="grid-content bg-purple">
-          <el-button type="success" @click="handleAdding">
+    <div class="clearfix">
+      <!-- <span class="newBtn">
+        <el-button type="success" @click="handleAdding">
             <i class="el-icon-plus" />
             Add Project
-          </el-button>
-        </div></el-col
-      > -->
-      <el-col :span="6" :offset="18"
-        ><div class="grid-content bg-purple">
-          <div class="input-group" slot="header" style="text-align: right">
-            <el-input
-              v-model="searchData"
-              class="ob-search-input ob-shadow search-input mr-3"
-              placeholder="Please input project name"
-              style="width: 250px"
-              ><i slot="prefix" class="el-input__icon el-icon-search"></i
-            ></el-input>
-          </div></div
-      ></el-col>
-    </el-row>
-
+        </el-button>
+      </span> -->
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input project name"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
+    </div>
+    <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
