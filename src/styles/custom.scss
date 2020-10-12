@@ -255,7 +255,12 @@
 }
 
 .el-timeline-item__tail, .el-timeline-item__node--normal{
-    top: 40px;
+    top: 5px;
+}
+
+.el-timeline .el-timeline-item:last-child .el-timeline-item__tail{
+    height: calc(100% - 35px);
+    display: block;
 }
 
 .column{
@@ -312,4 +317,75 @@
 .header-text{
     font-size: 16px;
     font-weight: 500;
+}
+
+.el-timeline-item__timestamp{
+    color: #3ECBBC;
+    font-size: 16px;
+}
+
+.el-tag-account{
+    i{
+        color: #3ECBBC;
+        margin-right: 4px;
+    }
+    color: #000000 !important;
+    font-size: 11px;
+    background: none;
+    border: none;
+}
+
+.timeline-item {
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    .el-card__body{
+        padding: 0;
+    }
+    [class*=el-col-]{
+        float: none;
+        vertical-align: middle;
+        display: table-cell;
+    }
+}
+
+.issue-row{
+    align-items: center;
+    display: flex;
+}
+
+.el-col-title{
+    padding-right: 20px;
+}
+
+.el-col-account{
+    padding-left: 20px;
+}
+
+.el-col-content{
+    padding-left: 30px;
+    padding-right: 30px;
+    border-left: 1px solid #E9E9E9;
+    border-right: 1px solid #E9E9E9;
+    p{
+        color: #565656;
+        font-size: 16px;
+        line-height: 143%;
+        font-weight: 400;
+        margin: 0;
+    }
+}
+
+.issue-name {
+    font-size: 16px;
+    line-height: 143%;
+    font-weight: 500;
+    color: #000000;
+    display: block;
+}
+
+.issue-date{
+    color: #565656;
+    font-size: 15px;
+    padding-top: 5px;
+    display: block;
 }
