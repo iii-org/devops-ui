@@ -213,6 +213,9 @@
     &.el-tag--warning{
         background: #F9BE6E;
     }
+    &.el-tag--slow{
+        background: #56B1E8;
+    }
     &.el-tag--success{
         background: #3ECBBC;
     }
@@ -222,16 +225,22 @@
         background: none;
     }
     &.el-tag--active{
-        background: #85C1E9;
+        background: #56B1E8;
     }
     &.el-tag--assigned{
-        background: #FF8321;
+        background: #5375BF;
     }
     &.el-tag--solved{
-        background: #80E0A9;
+        background: #3ECBBC;
     }
     &.el-tag--finish{
-        background: #A4BEBE;
+        background: #53BF64;
+    }
+    &.el-tag--responded{
+        background: #EC8539;
+    }
+    &.el-tag--close{
+        background: #C4CFCF;
     }
 }
 
