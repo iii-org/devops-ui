@@ -20,9 +20,10 @@ export default {
       dialogVisible: false,
       listQuery: {
         page: 1,
-        limit: 10,
-        totalPage: 1
+        limit: 10
       },
+      listTotal: 0, //總筆數
+      searchData: '',
       formRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         version: [{ required: true, message: 'Please select version', trigger: 'blur' }],
@@ -38,9 +39,15 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
+      const listData = this.fileList.filter((data) => {
+        if (this.searchData == '' || data.filename.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
-      return this.fileList.slice(start, end)
+      return listData.slice(start, end)
     }
   },
   watch: {
@@ -121,6 +128,13 @@ export default {
           Add File
         </el-button>
       </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input file name"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -159,10 +173,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="fileList.length"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[10]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

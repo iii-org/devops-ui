@@ -20,14 +20,23 @@ export default {
       listQuery: {
         page: 1,
         limit: 10
-      }
+      },
+      listTotal: 0, //總筆數
+      searchData: ''
     }
   },
   computed: {
     pagedData() {
+      const listData = this.userList.filter((data) => {
+        console.log(data.name)
+        if (this.searchData == '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.userList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     }
   },
   created() {
@@ -45,7 +54,9 @@ export default {
     },
     emitAddUserDialogVisible(visible, refresh) {
       this.userDialogVisible = visible
-      if (refresh === 'refresh') { this.fetchData() }
+      if (refresh === 'refresh') {
+        this.fetchData()
+      }
     },
     async showUserDialog(user, title) {
       if (user === '') {
@@ -72,16 +83,23 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <!-- <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search">
-        Search
-      </el-button> -->
-      <el-button type="success" style="float: right;margin-bottom:5px" @click="showUserDialog('', 'Add User')">
-        <i class="el-icon-plus" />
-        Add User
-      </el-button>
+    <div class="clearfix">
+      <project-list-selector />
+      <span class="newBtn">
+        <el-button type="success" style="float: right; margin-bottom: 5px" @click="showUserDialog('', 'Add User')">
+          <i class="el-icon-plus" />
+          Add User
+        </el-button>
+      </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input user account"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
+    <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border>
       <el-table-column align="center" label="Account">
         <template slot-scope="scope">
@@ -123,10 +141,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="userList.length"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[10]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

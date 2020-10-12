@@ -22,19 +22,26 @@ export default {
       detailData: [],
       testDetailVisible: false,
       addDocumentDialogVisible: false,
-      search: '',
       listQuery: {
         page: 1,
         limit: 10
-      }
+      },
+      listTotal: 0, //總筆數
+      searchData: ''
     }
   },
   computed: {
     ...mapGetters(['projectSelectedObject']),
     pagedData() {
+      const listData = this.testList.filter((data) => {
+        if (this.searchData == '' || data.commit_message.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.testList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     }
   },
   watch: {
@@ -112,6 +119,13 @@ export default {
   <div v-loading="isLoading" class="app-container">
     <div class="clearfix">
       <project-list-selector />
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input commit message"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -121,9 +135,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column label="Commit short Id" :show-overflow-tooltip="true" width="160">
-        <template slot-scope="scope">
-          c67a224
-        </template>
+        <template slot-scope="scope"> c67a224 </template>
       </el-table-column>
       <el-table-column label="Branch" :show-overflow-tooltip="true" width="160">
         <template slot-scope="scope">
@@ -156,10 +168,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="testList.length"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

@@ -16,17 +16,24 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        totalPage: 1
-      }
+        limit: 10
+      },
+      listTotal: 0, //總筆數
+      searchData: ''
     }
   },
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject', 'branchesByProject']),
     pagedData() {
+      const listData = this.branchList.filter((data) => {
+        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.branchList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     }
   },
   watch: {
@@ -74,14 +81,15 @@ export default {
   <div class="app-container">
     <div class="clearfix">
       <project-list-selector />
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Please input branch name"
+        style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search"></i
+      ></el-input>
     </div>
     <el-divider />
-    <!-- <div class="filter-container">
-      <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search">
-        Search
-      </el-button>
-    </div> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column align="center" label="Name" width="160">
         <template slot-scope="scope">
@@ -118,10 +126,10 @@ export default {
       </el-table-column> -->
     </el-table>
     <pagination
-      :total="listQuery.totalPage"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />

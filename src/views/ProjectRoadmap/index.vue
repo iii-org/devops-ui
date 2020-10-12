@@ -87,7 +87,7 @@ export default {
 
       const statistics = await getProjectIssueStatistics(this.projectSelectedId, { fixed_version_id: vId })
       this.workLoadData = statistics.data
-      this.workLoadTypes = Object.keys(this.workLoadData).map(key => {
+      this.workLoadTypes = Object.keys(this.workLoadData).map((key) => {
         return { id: key, name: key }
       })
       this.workLoad = this.workLoadTypes[0].id
@@ -103,7 +103,7 @@ export default {
 
 <template>
   <div class="dashboard-container" v-loading="listLoading">
-    <div>
+    <div class="clearfix">
       <project-list-selector />
     </div>
     <el-divider />
@@ -128,7 +128,7 @@ export default {
                           <el-tag :type="scope.row.issue_priority === '急' ? 'warning' : 'danger'">{{
                             scope.row.issue_priority
                           }}</el-tag>
-                          <span style="color: #409EFF">
+                          <span style="color: #409eff">
                             [{{ scope.row.issue_category }}]
                             <b>#{{ scope.row.issue_name }}</b>
                           </span>
