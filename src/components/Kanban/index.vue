@@ -16,11 +16,11 @@
       <div v-for="element in list" :key="element.id" class="board-item">
         <div style="padding-bottom: 20px">{{ element.name }}</div>
         <div>
-          <span style="font-size: 5px;">
+          <span style="font-size: 15px;">
             <i class="el-icon-date" />
             <span style="margin-left:2px">{{ element.date }}</span>
           </span>
-          <span style="font-size: 5px;margin-left:5px;">
+          <span style="font-size: 15px;margin-left:5px;">
             <i class="el-icon-s-custom" />
             <span style="margin-left:2px">{{ element.user }}</span>
           </span>
