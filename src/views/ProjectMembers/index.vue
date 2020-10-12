@@ -212,7 +212,7 @@ export default {
     <el-dialog :title="`${dialogStatusText} Member`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
       <el-form ref="thisForm" :model="form" label-position="top">
         <el-form-item label="Name" prop="id">
-          <el-select v-model="form.id" placeholder="select a Member">
+          <el-select v-model="form.id" placeholder="select a Member" filterable>
             <el-option v-for="item in assignableUsers" :key="item.id" :label="item.login" :value="item.id"> </el-option>
           </el-select>
         </el-form-item>
