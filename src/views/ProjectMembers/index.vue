@@ -169,6 +169,11 @@ export default {
           {{ scope.row.name }}
         </template>
       </el-table-column>
+      <el-table-column label="Phone" :show-overflow-tooltip="true">
+        <template slot-scope="scope">
+          {{ scope.row.phone }}
+        </template>
+      </el-table-column>
       <el-table-column label="Role" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.role_name }}
