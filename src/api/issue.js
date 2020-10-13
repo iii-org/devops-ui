@@ -73,9 +73,9 @@ export function getIssueWeekStatistics() {
   })
 }
 
-export function getIssueNotFinishStatistics() {
+export function getIssueOpenStatistics() {
   return request({
-    url: `/issues/not_finish_statistics`,
+    url: `/issues/open_statistics`,
     method: 'get'
   })
 }

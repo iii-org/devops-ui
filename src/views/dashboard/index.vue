@@ -65,7 +65,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getIssueMonthStatistics, getIssueWeekStatistics, getIssueNotFinishStatistics } from '@/api/issue'
+import { getIssueMonthStatistics, getIssueWeekStatistics, getIssueOpenStatistics } from '@/api/issue'
 import priorityPie from './components/priority_pie'
 import projectPie from './components/project_pie'
 import typePie from './components/type_pie'
@@ -91,7 +91,7 @@ export default {
     Promise.all([
         getIssueMonthStatistics(), 
         getIssueWeekStatistics(), 
-        getIssueNotFinishStatistics()
+        getIssueOpenStatistics()
       ]).then(res => {
         this.issueMonthStatistics = res[0].data
         this.issueWeekStatistics = res[1].data
