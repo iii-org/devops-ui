@@ -23,7 +23,7 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: '',
       dialogStatus: 1,
       memberConfirmLoading: false,
@@ -35,8 +35,9 @@ export default {
   watch: {
     projectSelectedId(projectId) {
       this.fetchData()
+      this.listQuery.page = 1
     },
-    'form.id': function (value) {
+    'form.id': function(value) {
       this.rolename = this.userinfo[this.form.id]
     }
   },
@@ -47,7 +48,7 @@ export default {
       // const end = start + this.listQuery.limit - 1
       // return this.userList.slice(start, end)
       const listData = this.userList.filter((data) => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -156,13 +157,17 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input member name"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope"> #{{ scope.row.id }} </template>
+      </el-table-column>
+      <el-table-column label="Account" :show-overflow-tooltip="true" width="200">
+        <template slot-scope="scope">
+          {{ scope.row.login }}
+        </template>
       </el-table-column>
       <el-table-column label="Name" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
@@ -193,14 +198,14 @@ export default {
             </el-button>
           </span>
           <el-popconfirm
-            confirmButtonText="Delete"
-            cancelButtonText="Cancel"
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
             icon="el-icon-info"
-            iconColor="red"
+            icon-color="red"
             title="Are you sure?"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button size="mini" type="danger" slot="reference"> <i class="el-icon-delete" /> Delete</el-button>
+            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -214,11 +219,11 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="`${dialogStatusText} Member`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
+    <el-dialog :title="`${dialogStatusText} Member`" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" @closed="onDialogClosed">
       <el-form ref="thisForm" :model="form" label-position="top">
         <el-form-item label="Name" prop="id">
           <el-select v-model="form.id" placeholder="select a Member" filterable>
-            <el-option v-for="item in assignableUsers" :key="item.id" :label="item.login" :value="item.id"> </el-option>
+            <el-option v-for="item in assignableUsers" :key="item.id" :label="item.login" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="Role" prop="role_name">
@@ -255,7 +260,7 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="memberConfirmLoading">Confirm</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
