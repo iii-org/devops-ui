@@ -3,6 +3,8 @@
     title="Add Issue"
     :visible="dialogVisible"
     width="50%"
+    top="5px"
+    :close-on-click-modal="false"
     @close="handleClose"
   >
     <el-form
@@ -12,6 +14,13 @@
       class="custom-list"
     >
       <el-row>
+        <el-row v-if="parentid!=0">
+          <el-col :span="12">
+            <el-form-item>
+              <div style="font-weight:bold;">Parent issue : {{ parentname }}</div>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-col :span="12">
           <el-form-item label="Name" prop="subject">
             <el-input v-model="issueForm.subject" placeholder="please input name" />
@@ -19,7 +28,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="Assignee" prop="assigned_to_id">
-            <el-select v-model="issueForm.assigned_to_id" style="width:100%">
+            <el-select v-model="issueForm.assigned_to_id" style="width:100%" filterable>
               <el-option
                 v-for="item in issueAssigneeList"
                 :key="item.value"
@@ -33,7 +42,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="Version" prop="fixed_version_id">
-            <el-select v-model="issueForm.fixed_version_id" style="width:100%">
+            <el-select v-model="issueForm.fixed_version_id" style="width:100%" filterable>
               <el-option
                 v-for="item in issueVersionList"
                 :key="item.value"
@@ -151,6 +160,14 @@ export default {
       type: Number,
       default: false
     },
+    parentname: {
+      type: String,
+      default: ''
+    },
+    parentid: {
+      type: Number,
+      default: 0
+    },
     saveData: Function
   },
   data() {
@@ -171,7 +188,8 @@ export default {
         start_date: '',
         due_date: '',
         done_ratio: '',
-        estimated_hours: ''
+        estimated_hours: '',
+        parent_id: ''
       },
       issueFormRules: {
         subject: [
@@ -260,6 +278,11 @@ export default {
           const data = this.issueForm
           if (this.issueForm.fixed_version_id === '') {
             delete this.issueForm.fixed_version_id
+          }
+          if (this.parentid !== 0) {
+            data['parent_id'] = this.parentid
+          } else {
+            delete data['parent_id']
           }
           data['project_id'] = this.projectId
           await this.saveData(data)

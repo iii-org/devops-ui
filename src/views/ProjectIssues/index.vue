@@ -23,7 +23,10 @@ export default {
         limit: 10
       },
       listTotal: 0, // 總筆數
-      searchData: ''
+      searchData: '',
+      parentid: 0,
+      parentname: '',
+      parentList: []
     }
   },
   computed: {
@@ -55,6 +58,15 @@ export default {
       const res = await getProjectIssueList(this.projectSelectedId)
       this.issueList = res.data
       this.listLoading = false
+      this.parentList = []
+      this.issueList.forEach(item => {
+        this.parentList.push(item.id)
+        if (item.children.length !== 0) {
+          item.children.forEach(item2 => {
+            this.parentList.push(item2.id)
+          })
+        }
+      })
     },
     handleEdit(idx, row) {
       if (this.userRole === 'Project Manager') {
@@ -62,6 +74,11 @@ export default {
       } else if (this.userRole === 'Engineer') {
         this.$router.push({ path: `listrd/${row.id}/setup` })
       }
+    },
+    handleParent(idx, row, scope) {
+      this.parentid = row.id
+      this.parentname = row.issue_name
+      this.addTopicDialogVisible = true
     },
     async handleDelete(idx, row) {
       this.listLoading = true
@@ -99,7 +116,7 @@ export default {
       <div>
         <project-list-selector />
         <span class="newBtn">
-          <el-button type="success" style="float:right" @click="addTopicDialogVisible = true">
+          <el-button type="success" style="float:right" @click="addTopicDialogVisible = true,parentid=0">
             <i class="el-icon-plus" />
             Add Issue
           </el-button>
@@ -124,7 +141,7 @@ export default {
       default-expand-all
       :tree-props="{children: 'children'}"
     >
-      <el-table-column align="center" label="Id" width="100px">
+      <el-table-column align="center" label="Id" width="120px">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
@@ -186,6 +203,7 @@ export default {
               <i class="el-icon-delete" /> Delete
             </el-button>
           </el-popconfirm>
+          <el-button v-if="parentList.includes(scope.row.id)==true" type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="handleParent(scope.$index, scope.row,scope)" />
           <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
               <i class="el-icon-delete" /> Delete
             </el-button> -->
@@ -204,6 +222,8 @@ export default {
       :save-data="saveIssue"
       :dialog-visible.sync="addTopicDialogVisible"
       :project-id="projectSelectedId"
+      :parentid="parentid"
+      :parentname="parentname"
       @add-topic-visible="emitAddTopicDialogVisible"
     />
   </div>
