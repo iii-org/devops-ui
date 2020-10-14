@@ -2,14 +2,16 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import WangEditor from '@/components/Wangeditor'
+// import WangEditor from '@/components/Wangeditor'
+import EditorMD from '@/components/Editormd'
 import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
 import { formatTime } from '../../utils/index.js'
 import { Message } from 'element-ui'
 
 export default {
   components: {
-    WangEditor,
+    // WangEditor,
+    EditorMD,
     ProjectListSelector,
     Pagination
   },
@@ -72,7 +74,7 @@ export default {
     },
     async handleUpdate() {
       this.editBtnLoading = true
-      const text = this.$refs.editor.onUpdate()
+      const text = this.newWikiContent
       try {
         await putWikiDetail(this.projectSelectedId, this.wikiData.title, { wiki_text: text })
         Message({
@@ -138,12 +140,12 @@ export default {
     async handleAdding() {
       this.dialogVisible = true
       this.drawerTitle = 'Add'
-      this.wikiContent = ''
+      this.wikiContent = '# WIKI'
       this.wikiTitle = ''
     },
     async handleConfirmAdd() {
       this.editBtnLoading = true
-      const text = this.$refs.editor.onUpdate()
+      const text = this.newWikiContent
       try {
         await putWikiDetail(this.projectSelectedId, this.wikiTitle, { wiki_text: text })
         Message({
@@ -249,7 +251,8 @@ export default {
         <div class="form__body">
           <br />
           <template v-if="drawerTitle !== 'Detail'">
-            <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" />
+            <!-- <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" /> -->
+            <EditorMD id="editormd" @get-editor-data="emitGetEditorData" :content="wikiContent"></EditorMD>
           </template>
           <template v-else>
             <pre>
