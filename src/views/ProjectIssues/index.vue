@@ -20,17 +20,24 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        totalPage: 1
-      }
+        limit: 10
+      },
+      listTotal: 0, // 總筆數
+      searchData: ''
     }
   },
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
+      const listData = this.issueList.filter((data) => {
+        if (this.searchData == '' || data.issue_name.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      return this.issueList.slice(start, end)
+      const end = start + this.listQuery.limit
+      return listData.slice(start, end)
     }
   },
   watch: {
@@ -97,6 +104,12 @@ export default {
             Add Issue
           </el-button>
         </span>
+        <el-input
+          v-model="searchData"
+          class="ob-search-input ob-shadow search-input mr-3"
+          placeholder="Please input issue name"
+          style="width: 250px; float: right"
+        ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
       </div>
     </div>
     <el-divider />
@@ -150,7 +163,7 @@ export default {
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
           <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">緊急</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === '慢'" type="slow"" size="medium">慢</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '慢'" type="slow" size="medium">慢</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
@@ -180,10 +193,10 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listQuery.totalPage"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
