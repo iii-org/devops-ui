@@ -35,13 +35,13 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: '',
       form: formTemplate,
       rules: {
         name: [
           { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-          { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9_-]{0,30}$/, message: 'Not allow', trigger: 'blur' }
+          { required: true, pattern: /^[a-z][a-z0-9_-]{0,30}$/, message: 'Not allow', trigger: 'blur' }
         ],
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
@@ -99,7 +99,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       })
-        .then(async () => {
+        .then(async() => {
           await this['projects/deleteProject'](row.id)
           this.$message({
             type: 'success',
@@ -164,7 +164,7 @@ export default {
     },
     async handleConfirm() {
       const thiz = this
-      this.$refs.thisForm.validate(async function (valid) {
+      this.$refs.thisForm.validate(async function(valid) {
         if (!valid) {
           return
         }
@@ -233,8 +233,7 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input project name"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
@@ -247,7 +246,7 @@ export default {
             style="color: #409EFF"
           > -->
           <span style="color: #67c23a">{{ scope.row.display }}</span>
-          <br />
+          <br>
           <span style="color: #409eff">{{ scope.row.name }}</span>
           <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
@@ -264,12 +263,12 @@ export default {
       <el-table-column align="center" label="Progress" width="250px">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
-          <span class="status-bar-track"
-            ><span
-              class="status-bar"
-              :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
-            ></span
-          ></span>
+          <span
+            class="status-bar-track"
+          ><span
+            class="status-bar"
+            :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
+          /></span>
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Quality" width="100px">
@@ -300,9 +299,12 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Redmine" width="100px">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
-            >Redmine</el-link
-          >
+          <el-link
+            v-if="scope.row.redmine_url"
+            type="primary"
+            :href="scope.row.redmine_url"
+            target="_blank"
+          >Redmine</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -331,6 +333,7 @@ export default {
       :title="`${dialogStatusText} Project`"
       :visible.sync="dialogVisible"
       width="50%"
+      :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
       <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
@@ -340,7 +343,7 @@ export default {
         <el-form-item v-if="dialogStatus === 1" label="Project Identifier" prop="name" style="margin-bottom: 0px">
           <el-input v-model="form.name" />
         </el-form-item>
-        <br v-if="dialogStatus === 1" />
+        <br v-if="dialogStatus === 1">
         <div v-if="dialogStatus === 1">
           Length between 1 and 30 characters. Only lower case letters (a-z), numbers, dashes, underscores and word start
           are allowed.
@@ -365,16 +368,16 @@ export default {
         <el-form-item label="Description" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
         </el-form-item>
-        <el-form-item label="Disabled" prop="disabled">
+        <el-form-item label="Active" prop="disabled">
           <!-- <el-switch v-model="form.disabled" /> -->
           <el-switch
             v-model="form.disabled"
-            :active-value="true"
-            :inactive-value="false"
+            :active-value="false"
+            :inactive-value="true"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            active-text="True"
-            inactive-text="False"
+            active-text="Enable"
+            inactive-text="Disable"
           />
         </el-form-item>
       </el-form>

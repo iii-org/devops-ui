@@ -42,9 +42,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="Status" prop="status">
+      <el-form-item label="Active" prop="status">
         <el-switch
           v-model="userForm.status"
+          style="margin-top: 10px;"
           active-value="enable"
           inactive-value="disable"
           active-color="#13ce66"

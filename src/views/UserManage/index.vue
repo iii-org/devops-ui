@@ -28,7 +28,6 @@ export default {
   computed: {
     pagedData() {
       const listData = this.userList.filter((data) => {
-        console.log(data.name)
         if (this.searchData == '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
