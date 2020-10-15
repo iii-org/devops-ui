@@ -156,11 +156,11 @@ export default {
           {{ scope.row.issue_name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Description">
+      <!-- <el-table-column align="center" label="Description">
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" label="Status" width="120px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{ scope.row.issue_status }}</el-tag>
@@ -179,7 +179,7 @@ export default {
       <el-table-column align="center" label="Priority" width="120px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">緊急</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">急</el-tag>
           <el-tag v-else-if="scope.row.issue_priority === '慢'" type="slow" size="medium">慢</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
