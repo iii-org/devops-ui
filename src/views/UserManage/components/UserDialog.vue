@@ -3,6 +3,7 @@
     :title="dialogTitle"
     :visible="dialogVisible"
     width="40%"
+    :close-on-click-modal="false"
     @close="handleClose('userForm')"
   >
     <el-form
@@ -137,10 +138,6 @@ export default {
       if (isNaN(data.role)) {
         // get role id from role object
         data.role = data.role.id
-      }
-      // force transfer to int
-      if (data['phone']) {
-        data['phone'] = parseInt(data['phone'])
       }
       this.userForm = data
     }
