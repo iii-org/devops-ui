@@ -37,11 +37,12 @@ export default {
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
-      return this.commitListByBranch.slice(start, end)
+      this.listTotal = this.commitListByBranch.data.length
+      return this.commitListByBranch.data.slice(start, end)
     }
   },
   async created() {
-    await this['commitList/getCommitListByBranch']({ rId: this.rId, params: { branch: this.branchName } })
+    await this['commitList/getCommitListByBranch']({ rId: this.rId, params: { branch: this.branchName }})
     this.listLoading = false
   },
   methods: {
@@ -86,14 +87,14 @@ export default {
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Action" :show-overflow-tooltip="true" align="center">
+      <!-- <el-table-column label="Action" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handlePull(scope)">Pull</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <pagination
-      :total="commitListTotalByBranch"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[20]"
@@ -101,6 +102,7 @@ export default {
       @pagination="onPagination"
     />
   </div>
+
 </template>
 
 <style lang="css" scoped>

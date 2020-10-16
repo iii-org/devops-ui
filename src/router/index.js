@@ -138,7 +138,7 @@ export const asyncRoutes = [
         meta: { title: 'Project Graph', icon: 'tree', roles: ['Engineer'] }
       },
       {
-        path: 'branches/:pId/:projectName',
+        path: 'branches/:bId/:projectName',
         name: 'branches',
         props: true,
         hidden: true,

@@ -57,7 +57,7 @@ export default {
     }
   },
   async created() {
-    if (!this.$route.params.pId) return
+    if (!this.$route.params.bId) return
     await this['branches/getBranchesByProject'](this.$route.params.bId)
     this.listLoading = false
   },
@@ -77,7 +77,7 @@ export default {
       this.$router.push({
         name: 'commitList',
         params: {
-          rId: this.$route.params.pId,
+          rId: this.$route.params.bId,
           bId: row.id,
           projectName: this.projectName,
           branchName: row.name
@@ -104,14 +104,15 @@ export default {
       this.dialogVisible = false
     },
     async handleDeleteModal() {
-      if (!this.$route.params.pId) return
-      if (this.selectedBranch !== this.deleteBrancheName)
+      if (!this.$route.params.bId) return
+      if (this.selectedBranch !== this.deleteBrancheName) {
         return this.$message({
           message: 'Please input branch name correctly.',
           type: 'error'
         })
+      }
       this.deleteBranchBtnLoading = true
-      await this['branches/deleteBranch']({ rId: this.$route.params.pId, bName: this.deleteBrancheName })
+      await this['branches/deleteBranch']({ rId: this.$route.params.bId, bName: this.deleteBrancheName })
       this.deleteBranchBtnLoading = false
       this.deleteDialogVisible = false
     },
@@ -208,7 +209,7 @@ export default {
       </el-table-column>
       <el-table-column label="Commit ID" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.uuid }}
+          {{ scope.row.short_id }}
         </template>
       </el-table-column>
       <el-table-column align="center" width="350">
@@ -247,7 +248,7 @@ export default {
       <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleNewBranch" :loading="newBranchBtnLoading">Confirm</el-button>
+        <el-button type="primary" :loading="newBranchBtnLoading" @click="handleNewBranch">Confirm</el-button>
       </span>
     </el-dialog>
 
@@ -271,7 +272,7 @@ export default {
       <el-input v-model="deleteBrancheName" placeholder="" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialogVisible = false">Cancel</el-button>
-        <el-button type="danger" @click="handleDeleteModal" :loading="deleteBranchBtnLoading">Delete</el-button>
+        <el-button type="danger" :loading="deleteBranchBtnLoading" @click="handleDeleteModal">Delete</el-button>
       </span>
     </el-dialog>
 
@@ -286,7 +287,7 @@ export default {
       <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="tagDialogVisible = false">Cancel</el-button>
-        <el-button type="success" @click="handleNewTag" :loading="newTagBtnLoading">Confirm</el-button>
+        <el-button type="success" :loading="newTagBtnLoading" @click="handleNewTag">Confirm</el-button>
       </span>
     </el-dialog>
     <router-view />
