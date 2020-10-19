@@ -1,10 +1,11 @@
 # Deploy on staging environment
-1. <code> GIT_COMMIT_ID=`git rev-parse HEAD` </code>
-1. <code> echo “VUE_APP_VERSION='${GIT_COMMIT_ID}'" >> .env.staging </code>
+1. <code> GIT_COMMIT_ID=$(git rev-parse HEAD) </code>
+1. <code> echo "VUE_APP_VERSION='${GIT_COMMIT_ID}'" >> .env.staging </code>
 1. <code> npm install </code>
 1. <code> npm run build:stage </code>
 1. <code> docker build . --tag iiiorg/devops-ui:version </code>
 1. <code> docker push iiiorg/devops-ui:version </code>
+1. Edit <code> k8s-yaml/devopswebui-deployment.yaml </code>, Replace image version
 1. <code> kubectl apply -f k8s-yaml/devopswebui-deployment.yaml </code>
 
 # vue-admin-template
