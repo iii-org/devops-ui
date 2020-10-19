@@ -2,7 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import { getProjectFileList, downloadProjectFile, getProjectVersion } from '@/api/projects'
+import { getProjectFileList, downloadProjectFile, getProjectVersion, uploadProjectFile } from '@/api/projects'
 const formTemplate = {
   name: '',
   version: '',
@@ -24,16 +24,17 @@ export default {
       },
       listTotal: 0, //總筆數
       searchData: '',
-      formRules: {
-        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        version: [{ required: true, message: 'Please select version', trigger: 'blur' }],
-        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
+      fileFormRules: {
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
+        // version: [{ required: false, message: 'Please select version', trigger: 'blur' }],
+        // description: [{ required: false, message: 'Please input description', trigger: 'blur' }]
       },
       fileList: [],
       versionList: [],
       dialogStatus: 1,
       memberConfirmLoading: false,
-      form: formTemplate
+      fileForm: formTemplate,
+      uploadFileList: []
     }
   },
   computed: {
@@ -79,6 +80,9 @@ export default {
       this.dialogVisible = true
       this.dialogStatus = 1
     },
+    handleExceed(files, fileList) {
+      this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
+    },
     async handleDownload(idx, row) {
       const res = await downloadProjectFile({ id: row.id, filename: row.filename })
       const url = window.URL.createObjectURL(new Blob([res]))
@@ -88,21 +92,18 @@ export default {
       document.body.appendChild(link)
       link.click()
     },
+    async handleChange(file, fileList) {
+      this.uploadFileList = fileList
+    },
     async handleConfirm() {
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs['fileForm'].validate(async (valid) => {
         if (valid) {
-          this.dialogVisible = false
-          const data = this.form
-          if (this.dialogStatus === 1) {
-            await addProjectVersion(this.projectSelectedId, { version: data })
-          } else {
-            await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
-          }
-          this.$message({
-            type: 'success',
-            message: 'Successed'
-          })
-          this.fetchData()
+          const data = this.fileForm
+          const filetype = this.uploadFileList[0].raw.type.split('/')[1]
+          let form = new FormData()
+          form.append('file', this.uploadFileList[0].raw, `${data.name}.${filetype}`)
+          await uploadProjectFile(this.projectSelectedId, form)
+          this.$refs['fileForm'].resetFields()
         } else {
           return false
         }
@@ -148,11 +149,11 @@ export default {
           {{ scope.row.filename }}
         </template>
       </el-table-column>
-      <el-table-column label="Description" width="200">
+      <!-- <el-table-column label="Description" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="Creator" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.author.name }}
@@ -181,26 +182,30 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog
-      :title="`${dialogStatusText} Version`"
-      :visible.sync="dialogVisible"
-      width="50%"
-      @closed="onDialogClosed"
-    >
-      <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
+    <el-dialog :title="`Add file`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
+      <el-form ref="fileForm" :model="fileForm" :rules="fileFormRules" label-width="120px">
         <el-form-item label="Name" prop="name">
-          <el-input v-model="form.name" />
+          <el-input v-model="fileForm.name" />
         </el-form-item>
-        <el-form-item label="Description" prop="description">
-          <el-input v-model="form.description" type="textarea" />
+        <!-- <el-form-item label="Description" prop="description">
+          <el-input v-model="fileForm.description" type="textarea" />
         </el-form-item>
         <el-form-item label="Versions" prop="version">
-          <el-select v-model="form.version" placeholder="select a version" style="width: 100%">
+          <el-select v-model="fileForm.version" placeholder="select a version" style="width: 100%">
             <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="Upload" prop="upload">
-          <el-upload class="upload-file" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+          <el-upload
+            class="upload-file"
+            drag
+            ref="upload"
+            action=""
+            :auto-upload="false"
+            :limit="1"
+            :on-exceed="handleExceed"
+            :on-change="handleChange"
+          >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">drap file here or <em>click upload</em></div>
           </el-upload>
@@ -223,7 +228,7 @@ export default {
   text-align: center;
 }
 .el-upload-dragger {
-  height: 120px;
+  height: 140px;
   .el-icon-upload {
     margin: 10px 0 16px;
   }

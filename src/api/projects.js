@@ -198,3 +198,15 @@ export function downloadProjectFile(params = { 'id': '', 'filename': '' }) {
     params
   })
 }
+
+// 上傳檔案
+export function uploadProjectFile(pId, data) {
+  return request({
+    url: `/project/${pId}/file`,
+    method: 'POST',
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    data
+  })
+}
