@@ -398,7 +398,7 @@ export const asyncRoutes = [
     path: '/SystemVersion',
     component: Layout,
     redirect: '/SystemVersion/index',
-    // hidden: true,
+    hidden: true,
     meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
     children: [
       {
