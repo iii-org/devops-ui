@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import VueShowdown from 'vue-showdown'
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
@@ -31,6 +31,11 @@ import * as filters from './filters' // global filters
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
+Vue.use(VueShowdown, {
+  options: {
+    emoji: true
+  }
+})
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 

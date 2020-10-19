@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
 // import WangEditor from '@/components/Wangeditor'
@@ -25,6 +26,7 @@ export default {
       wikiData: {},
       wikiContent: 'Hello DevOps',
       newWikiContent: '',
+      detailVisible: false,
       dialogVisible: false,
       dialogVisibleEdit: false,
       drawerTitle: '',
@@ -70,7 +72,7 @@ export default {
       this.newWikiContent = value
     },
     handleClose() {
-      this.dialogVisible = false
+      this.detailVisible = false
     },
     async handleUpdate() {
       this.editBtnLoading = true
@@ -103,6 +105,7 @@ export default {
         this.wikiData = wiki_page
         this.wikiTitle = wiki_page.title
         this.wikiContent = wiki_page.text
+        console.log(wiki_page.text)
         this.dialogVisible = true
       } catch (error) {
         console.error(error)
@@ -129,7 +132,7 @@ export default {
         const { wiki_page } = res.data
         this.wikiData = wiki_page
         this.wikiContent = wiki_page.text
-        this.dialogVisible = true
+        this.detailVisible = true
         this.dialogVisibleEdit = false
       } catch (error) {
         console.error(error)
@@ -250,14 +253,9 @@ export default {
         </div>
         <div class="form__body">
           <br />
-          <template v-if="drawerTitle !== 'Detail'">
+          <template>
             <!-- <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" /> -->
             <EditorMD id="editormd" @get-editor-data="emitGetEditorData" :content="wikiContent"></EditorMD>
-          </template>
-          <template v-else>
-            <pre>
-            <div v-html="wikiContent" />
-            </pre>
           </template>
         </div>
         <div class="form__footer">
@@ -280,6 +278,27 @@ export default {
           >
             Confirm
           </el-button>
+        </div>
+      </div>
+    </el-drawer>
+    <el-drawer
+      :title="`${drawerTitle} Wiki`"
+      :visible.sync="detailVisible"
+      :direction="direction"
+      :before-close="handleClose"
+      :append-to-body="true"
+      :with-header="false"
+      size="80%"
+    >
+      <div class="container">
+        <div class="form__title">
+          <h3>{{ wikiData.title }}</h3>
+        </div>
+        <div class="form__body">
+          <VueShowdown :markdown="wikiContent" />
+        </div>
+        <div class="form__footer">
+          <el-button @click="detailVisible = false"> Close </el-button>
         </div>
       </div>
     </el-drawer>
