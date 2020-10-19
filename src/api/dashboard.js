@@ -20,3 +20,10 @@ export function getRdDashboardIssuesType(issue_id) {
     method: 'get'
   })
 }
+
+export function getVersion(issue_id) {
+  return request({
+    url: `/system_git_commit_id`,
+    method: 'get'
+  })
+}

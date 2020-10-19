@@ -18,6 +18,11 @@
                 <span>Profile</span>
               </router-link>
             </el-dropdown-item>
+            <el-dropdown-item>
+              <router-link :to="'/SystemVersion/'" style="color: #409EFF">
+                <span>Versions</span>
+              </router-link>
+            </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>

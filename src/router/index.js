@@ -394,6 +394,21 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/SystemVersion',
+    component: Layout,
+    redirect: '/SystemVersion/index',
+    // hidden: true,
+    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/SystemVersion/index'),
+        name: 'SystemVersion',
+        meta: { title: 'System Version', icon: 'user', noCache: true, roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
