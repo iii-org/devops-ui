@@ -71,8 +71,8 @@ export default {
       }
     },
     percentageMethod(item) {
-      if (item.total_issue > 0 && item.unfinish_number === 0) return 100
-      return item.total_issue > 0 ? ((item.total_issue - item.unfinish_number) / item.total_issue) * 100 : 0
+      if (item.total_issue > 0 && item.open === 0) return 100
+      return item.total_issue > 0 ? ((item.total_issue - item.open) / item.total_issue) * 100 : 0
     },
     onCollapseChange(value) {
       if (!value) return
@@ -102,7 +102,7 @@ export default {
 </script>
 
 <template>
-  <div class="dashboard-container" v-loading="listLoading">
+  <div v-loading="listLoading" class="dashboard-container">
     <div class="clearfix">
       <project-list-selector />
     </div>
@@ -110,16 +110,16 @@ export default {
     <el-row :gutter="12">
       <el-col :span="24">
         <el-card shadow="hover" body-style="padding-top:0px;padding-bottom:0px">
-          <el-collapse v-model="activeNames" @change="onCollapseChange" :accordion="true">
-            <el-collapse-item v-for="item in dataList" :name="item.vId" :key="item.vId">
+          <el-collapse v-model="activeNames" :accordion="true" @change="onCollapseChange">
+            <el-collapse-item v-for="item in dataList" :key="item.vId" :name="item.vId">
               <template slot="title">
                 <div class="titleProgress">
                   <el-tag effect="dark" :type="returnVersionType(item)">{{ item.name }}</el-tag>
-                  <el-progress :percentage="percentageMethod(item)" :status="item.type"></el-progress>
+                  <el-progress :percentage="percentageMethod(item)" :status="item.type" />
                 </div>
               </template>
               <el-divider />
-              <div class="contentBody" v-loading="contentLoading">
+              <div v-loading="contentLoading" class="contentBody">
                 <el-row :gutter="12">
                   <el-col :span="8">
                     <el-table :data="workList[item.vId]" style="width: 100%" border stripe>
@@ -138,10 +138,9 @@ export default {
                   </el-col>
                   <el-col :span="16">
                     <el-select v-model="workLoad" placeholder="select a project" @change="onWorkLoadChange">
-                      <el-option v-for="items in workLoadTypes" :key="items.id" :label="items.name" :value="items.id">
-                      </el-option>
+                      <el-option v-for="items in workLoadTypes" :key="items.id" :label="items.name" :value="items.id" />
                     </el-select>
-                    <el-divider />
+                    <el-divider id="detaildivider" />
                     <project-bar v-if="workList[item.vId]" :the-data="workLoadSelected" />
                   </el-col>
                 </el-row>
@@ -174,4 +173,9 @@ export default {
 .titleProgress {
   width: 100%;
 }
+#detaildivider{
+  margin-top: 50px;
+  margin-left: 0px;
+}
+
 </style>

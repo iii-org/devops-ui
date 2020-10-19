@@ -37,8 +37,8 @@ export default {
       this.$nextTick(() => {
         const CONFIG_DATA = {
           yAxis: Object.keys(value),
-          finished: Object.keys(value).map(key => value[key].finished),
-          unfinished: Object.keys(value).map(key => value[key].unfinish)
+          finished: Object.keys(value).map(key => value[key].closed),
+          unfinished: Object.keys(value).map(key => value[key].open)
         }
         this.initChart(CONFIG_DATA)
       })
