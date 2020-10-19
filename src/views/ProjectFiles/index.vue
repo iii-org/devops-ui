@@ -104,6 +104,7 @@ export default {
           form.append('file', this.uploadFileList[0].raw, `${data.name}.${filetype}`)
           await uploadProjectFile(this.projectSelectedId, form)
           this.$refs['fileForm'].resetFields()
+          this.dialogVisible = false
         } else {
           return false
         }

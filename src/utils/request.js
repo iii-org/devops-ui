@@ -44,7 +44,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (response.status / 100 !== 2) {
+    if (response.status < 200 || response.status >= 300) {
       let message = 'Unknown Error'
       res.code === 401 && (message = 'Unauthorized')
       res.code === 403 && (message = 'Forbidden')
