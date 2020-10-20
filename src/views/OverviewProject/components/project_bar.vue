@@ -7,15 +7,15 @@ import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
 var colorPalette = [
-    '#2EC6C8',
-    '#EBEBEB'
+  '#2EC6C8',
+  '#EBEBEB'
 ]
 
- var theme2 = {
-    color: colorPalette
- }
+var theme2 = {
+  color: colorPalette
+}
 
-echarts.registerTheme('macarons', theme2);
+echarts.registerTheme('macarons', theme2)
 
 export default {
   props: {
@@ -48,8 +48,26 @@ export default {
       this.$nextTick(() => {
         const CONFIG_DATA = {
           yAxis: Object.keys(value),
-          finished: Object.keys(value).map(key => value[key].finished),
-          unfinished: Object.keys(value).map(key => value[key].unfinish)
+          // finished: Object.keys(vals
+          // finished: Object.keys(value).map(key =>
+          //   value[key].closed),
+          finished: Object.keys(value).map(function(item, index, array) {
+            // console.log(value[item].closed)
+            let color = ''
+            if (item === '特急') {
+              color = '#E85656'
+            } else if (value === '急') {
+              color = '#F9BE6E'
+            } else if (value === '一般') {
+              color = '#3ECBBC'
+            } else {
+              color = '#56b1e8'
+            }
+            return ({ value: value[item].closed, itemStyle: { color: color }})
+            // itemStyle: { color: '#3ECBBC' }
+          }),
+          unfinished: Object.keys(value).map(key => value[key].open)
+
         }
         this.initChart(CONFIG_DATA)
       })
@@ -64,6 +82,7 @@ export default {
   },
   methods: {
     initChart(CONFIG_DATA) {
+      // console.log(CONFIG_DATA)
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         tooltip: {
@@ -88,47 +107,49 @@ export default {
         },
         xAxis: {
           type: 'value',
-          position:'top',
+          position: 'top',
           interval: 1,
           axisTick: {
             lineStyle: {
-              color: "#C8C8C8"
+              color: '#C8C8C8'
             }
           },
           axisLine: {
             show: false
           },
           axisLabel: {
-              textStyle: {
-                  color: '#C8C8C8'
-              }
+            textStyle: {
+              color: '#C8C8C8'
+            }
           }
         },
         yAxis: {
           type: 'category',
-          //data: CONFIG_DATA.yAxis,
-          data: ['一般', '緊急', '特急'],
+          data: CONFIG_DATA.yAxis,
+          // data: ['一般', '緊急', '特急'],
           axisTick: {
             lineStyle: {
-              color: "#C8C8C8"
+              color: '#C8C8C8'
             }
           },
           axisLine: {
             show: false
           },
           axisLabel: {
-              textStyle: {
-                  color: function (value, index) {
-                    if(value == "特急"){
-                      return "#E85656"
-                    }else if(value == "緊急"){
-                      return "#F9BE6E"
-                    }else{
-                      return "#3ECBBC"
-                    }
-                  }
-              },
-              padding: [0, 15, 0, 0]
+            textStyle: {
+              color: function(value, index) {
+                if (value === '特急') {
+                  return '#E85656'
+                } else if (value === '急') {
+                  return '#F9BE6E'
+                } else if (value === '一般') {
+                  return '#3ECBBC'
+                } else {
+                  return '#56b1e8'
+                }
+              }
+            },
+            padding: [0, 15, 0, 0]
           }
         },
         series: [
@@ -141,22 +162,22 @@ export default {
               show: false,
               position: 'insideRight'
             },
-            //data: CONFIG_DATA.finished,
+            data: CONFIG_DATA.finished
             // data: [16, 6, 3],
-            data: [
-                {
-                    value: 16,
-                    itemStyle: {color: '#3ECBBC'},
-                },
-                {
-                    value: 6,
-                    itemStyle: {color: '#F9BE6E'},
-                },
-                {
-                    value: 4,
-                    itemStyle: {color: '#E85656'},
-                }
-            ],
+            // data: [
+            //   {
+            //     value: 16,
+            //     itemStyle: { color: '#3ECBBC' }
+            //   },
+            //   {
+            //     value: 6,
+            //     itemStyle: { color: '#F9BE6E' }
+            //   },
+            //   {
+            //     value: 4,
+            //     itemStyle: { color: '#E85656' }
+            //   }
+            // ]
           },
           {
             name: 'Unfinish',
@@ -167,9 +188,9 @@ export default {
               show: false,
               position: 'insideRight'
             },
-            // data: CONFIG_DATA.unfinished
-            data: [12, 12, 11],
-            itemStyle: {normal: {color: '#EBEBEB'}}
+            data: CONFIG_DATA.unfinished,
+            // data: [12, 12, 11],
+            itemStyle: { normal: { color: '#EBEBEB' }}
           }
         ]
       })

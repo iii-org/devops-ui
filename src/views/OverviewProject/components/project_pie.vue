@@ -36,8 +36,10 @@ export default {
     theData(value) {
       this.$nextTick(() => {
         const CONFIG_DATA = [
-          { value: value.unfinish_number, name: 'Ongoing' },
-          { value: value.total_issue - value.unfinish_number, name: 'Done' }
+          { value: value.total_issue - value.open, name: 'Done', itemStyle: { emphasis: { color: '#2EC6C8' }}},
+          { value: value.open, name: 'Ongoing', itemStyle: { emphasis: { color: '#EBEBEB' }}}
+          // { value: value.unfinish_number, name: 'Ongoing' },
+          // { value: value.total_issue - value.unfinish_number, name: 'Done' }
         ]
         this.initChart(CONFIG_DATA)
       })
@@ -51,7 +53,7 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart(data) {
+    initChart(CONFIG_DATA) {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         silent: false,
@@ -69,23 +71,23 @@ export default {
             center: ['50%', '38%'],
             avoidLabelOverlap: false,
             label: {
-                show: false,
-                position: 'center',
-                formatter: function(d) {
-                  return '{number|' + Math.round(d.percent) + '%}\n{title|' + d.name + '}'
+              show: false,
+              position: 'center',
+              formatter: function(d) {
+                return '{number|' + Math.round(d.percent) + '%}\n{title|' + d.name + '}'
+              },
+              rich: {
+                number: {
+                  color: '#2EC6C8',
+                  fontSize: '36',
+                  fontWeight: 'bold'
                 },
-                rich: {
-                  number: {
-                    color: '#2EC6C8',
-                    fontSize: '36',
-                    fontWeight: 'bold'
-                  },
-                  title: {
-                    color: '#000000',
-                    fontSize: '11',
-                    padding: [0,0,5,0]
-                  }
+                title: {
+                  color: '#000000',
+                  fontSize: '11',
+                  padding: [0, 0, 5, 0]
                 }
+              }
             },
             emphasis: {
               show: true,
@@ -98,10 +100,13 @@ export default {
             labelLine: {
               show: false
             },
-            data: [
-              {value: 560, name: 'Done', itemStyle: { emphasis: { color: '#2EC6C8' }}},
-              {value: 335, name: 'Ongoing', itemStyle: { emphasis: { color: '#EBEBEB' }}}
-            ],
+            // data:
+            // [
+            //   { value: 0, name: 'Done', itemStyle: { emphasis: { color: '#2EC6C8' }}},
+            //   { value: 15, name: 'Ongoing', itemStyle: { emphasis: { color: '#EBEBEB' }}}
+            // ],
+            data: CONFIG_DATA,
+
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
@@ -111,28 +116,28 @@ export default {
       this.chart.dispatchAction({
         type: 'highlight',
         name: 'Done'
-      });
+      })
 
       this.chart.on('mouseover', function(params) {
-          var name = params.name;
-          this.dispatchAction({
-              type: 'downplay'
-          });
-          this.dispatchAction({
-              type: 'highlight',
-              name: name
-          });
-      });
+        var name = params.name
+        this.dispatchAction({
+          type: 'downplay'
+        })
+        this.dispatchAction({
+          type: 'highlight',
+          name: name
+        })
+      })
 
       this.chart.on('mouseout', function(params) {
-          this.dispatchAction({
-              type: 'downplay'
-          });
-          this.dispatchAction({
-              type: 'highlight',
-              name: 'Done'
-          });
-      });
+        this.dispatchAction({
+          type: 'downplay'
+        })
+        this.dispatchAction({
+          type: 'highlight',
+          name: 'Done'
+        })
+      })
     } // end initchart
   }
 }
