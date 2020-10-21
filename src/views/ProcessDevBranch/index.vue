@@ -18,7 +18,7 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: ''
     }
   },
@@ -26,7 +26,7 @@ export default {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject', 'branchesByProject']),
     pagedData() {
       const listData = this.branchList.filter((data) => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -50,14 +50,14 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList']),
     ...mapActions('branches', ['getBranchesByProject']),
-    fetchBranchData() {
+    async fetchBranchData() {
       this.listLoading = true
       if (!this.projectSelectedObject.repository_id) {
         this.branchList = []
         this.listLoading = false
         return
       }
-      this.getBranchesByProject(this.projectSelectedObject.repository_id)
+      await this.getBranchesByProject(this.projectSelectedObject.repository_id)
       this.listLoading = false
     },
     returnTagType(row) {
@@ -73,6 +73,18 @@ export default {
     },
     myFormatTime(time) {
       return formatTime(new Date(time))
+    },
+    EnvironmentFormat(env) {
+      const servicearray = Object.keys(env)
+      const Environmentarray = []
+      servicearray.forEach(function(item) {
+        const detailarray = env[item]
+        const servicename = Object.keys(env[item])
+        detailarray[servicename].forEach(function(item) {
+          Environmentarray.push({ service: servicename[0], port: item.port, url: item.url })
+        })
+      })
+      return Environmentarray
     }
   }
 }
@@ -86,8 +98,7 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input branch name"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
@@ -102,6 +113,13 @@ export default {
       <el-table-column align="center" label="Description">
         <template slot-scope="scope">
           {{ scope.row.last_commit_message }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Environment">
+        <template slot-scope="scope">
+          <div v-for="(item,index) in EnvironmentFormat(scope.row.env_url)" :key="index">
+            <el-link :href="item.url" target="_blank" type="primary">{{ item.service }} ({{ item.port }})</el-link>
+          </div>
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Status">
