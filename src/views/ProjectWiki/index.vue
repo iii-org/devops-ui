@@ -305,6 +305,13 @@ export default {
   </div>
 </template>
 <style lang="scss">
+/* Wiki detail scroll bar*/
+.el-drawer__body {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: 5px; 
+}
 .clearfix {
   clear: both;
   .newBtn {
