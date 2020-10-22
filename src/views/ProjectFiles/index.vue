@@ -1,4 +1,5 @@
 <script>
+import { fileextension } from '../../utils/extension.js'
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
@@ -22,10 +23,10 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: '',
       fileFormRules: {
-        name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
+        // name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
         // version: [{ required: false, message: 'Please select version', trigger: 'blur' }],
         // description: [{ required: false, message: 'Please input description', trigger: 'blur' }]
       },
@@ -34,14 +35,16 @@ export default {
       dialogStatus: 1,
       memberConfirmLoading: false,
       fileForm: formTemplate,
-      uploadFileList: []
+      uploadFileList: [],
+      loadinginstance: '',
+      extension: {}
     }
   },
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
       const listData = this.fileList.filter((data) => {
-        if (this.searchData == '' || data.filename.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.filename.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -53,6 +56,7 @@ export default {
   },
   watch: {
     projectSelectedId() {
+      this.listQuery.page = 1
       this.fetchData()
     },
     form(value) {
@@ -61,14 +65,15 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.extension = fileextension()
   },
   methods: {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    fetchData() {
+    async fetchData() {
       this.listLoading = true
-      Promise.all([getProjectFileList(this.projectSelectedId), getProjectVersion(this.projectSelectedId)]).then(
+      await Promise.all([getProjectFileList(this.projectSelectedId), getProjectVersion(this.projectSelectedId)]).then(
         (res) => {
           this.fileList = res[0].data.files
           this.versionList = res[1].data.versions
@@ -77,6 +82,7 @@ export default {
       this.listLoading = false
     },
     handleAdding() {
+      // this.$refs['upload'].clearFiles()
       this.dialogVisible = true
       this.dialogStatus = 1
     },
@@ -88,23 +94,54 @@ export default {
       const url = window.URL.createObjectURL(new Blob([res]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', row.filename) //or any other extension
+      link.setAttribute('download', row.filename) // or any other extension
       document.body.appendChild(link)
       link.click()
     },
     async handleChange(file, fileList) {
-      this.uploadFileList = fileList
+      if (this.extension[file.raw.type] === undefined) {
+        this.$message.warning(`Unable to upload a file: This file type is not supported`)
+        this.$refs['upload'].clearFiles()
+      } else if (file.size / 1024 / 1024 > 5) {
+        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (5 MB)`)
+        this.$refs['upload'].clearFiles()
+      } else {
+        this.uploadFileList = fileList
+      }
     },
     async handleConfirm() {
-      this.$refs['fileForm'].validate(async (valid) => {
+      this.$refs['fileForm'].validate(async(valid) => {
         if (valid) {
           const data = this.fileForm
-          const filetype = this.uploadFileList[0].raw.type.split('/')[1]
-          let form = new FormData()
-          form.append('file', this.uploadFileList[0].raw, `${data.name}.${filetype}`)
-          await uploadProjectFile(this.projectSelectedId, form)
-          this.$refs['fileForm'].resetFields()
-          this.dialogVisible = false
+          // const filetype = this.uploadFileList[0].raw.type.split('/')[1]
+          const filetype = this.extension[this.uploadFileList[0].raw.type]
+          const form = new FormData()
+          if (data.name !== '') {
+            form.append('file', this.uploadFileList[0].raw, `${data.name}${filetype}`)
+          } else {
+            form.append('file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
+          }
+          if (data.version !== '') {
+            form.append('version_id', data.version)
+          }
+          if (data.description !== '') {
+            form.append('description', data.description)
+          }
+          try {
+            this.loadinginstance = this.$loading({
+              target: '.el-dialog',
+              text: 'Loading'
+            })
+            await uploadProjectFile(this.projectSelectedId, form)
+            this.loadinginstance.close()
+            this.$message.success('Upload successful')
+            this.$refs['fileForm'].resetFields()
+            this.dialogVisible = false
+            this.fetchData()
+          } catch (err) {
+            this.loadinginstance.close()
+            console.error(err)
+          }
         } else {
           return false
         }
@@ -112,8 +149,10 @@ export default {
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        this.$refs['form'].resetFields()
+        this.uploadFileList = []
+        this.$refs['fileForm'].resetFields()
         this.form = formTemplate
+        this.$refs['upload'].clearFiles()
       })
     }
   }
@@ -135,8 +174,7 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input file name"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -183,33 +221,33 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="`Add file`" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
+    <el-dialog :title="`Add file`" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" @closed="onDialogClosed">
       <el-form ref="fileForm" :model="fileForm" :rules="fileFormRules" label-width="120px">
-        <el-form-item label="Name" prop="name">
-          <el-input v-model="fileForm.name" />
-        </el-form-item>
-        <!-- <el-form-item label="Description" prop="description">
-          <el-input v-model="fileForm.description" type="textarea" />
-        </el-form-item>
-        <el-form-item label="Versions" prop="version">
-          <el-select v-model="fileForm.version" placeholder="select a version" style="width: 100%">
-            <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item> -->
         <el-form-item label="Upload" prop="upload">
           <el-upload
+            ref="upload"
             class="upload-file"
             drag
-            ref="upload"
             action=""
             :auto-upload="false"
             :limit="1"
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
-            <i class="el-icon-upload"></i>
+            <i class="el-icon-upload" />
             <div class="el-upload__text">drap file here or <em>click upload</em></div>
           </el-upload>
+        </el-form-item>
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="fileForm.name" />
+        </el-form-item>
+        <el-form-item label="Description" prop="description">
+          <el-input v-model="fileForm.description" type="textarea" />
+        </el-form-item>
+        <el-form-item label="Versions" prop="version">
+          <el-select v-model="fileForm.version" placeholder="select a version" style="width: 100%">
+            <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -233,5 +271,10 @@ export default {
   .el-icon-upload {
     margin: 10px 0 16px;
   }
+}
+</style>
+<style lang="scss" scoped>
+.upload-file >>>.el-upload-dragger {
+  height: 100px ;
 }
 </style>
