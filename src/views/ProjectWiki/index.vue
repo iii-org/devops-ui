@@ -35,8 +35,13 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
-      searchData: ''
+      listTotal: 0, // 總筆數
+      searchData: '',
+      formRules: {
+        wikiTitle: [{ required: true, message: 'Please input name', trigger: 'change' },
+          { pattern: /^((?!,|\.|\/|\?|;|:|\|).)*$/, message: 'Not allowing special characters (, . / ? ; : |)', trigger: 'blur' }]
+      },
+      form: { wikiTitle: '' }
     }
   },
   computed: {
@@ -113,7 +118,6 @@ export default {
       this.listLoading = false
     },
     async handleDelete(idx, row) {
-      console.log(row)
       this.listLoading = true
       try {
         await deleteWiki(this.projectSelectedId, row.title)
@@ -144,25 +148,32 @@ export default {
       this.dialogVisible = true
       this.drawerTitle = 'Add'
       this.wikiContent = '# WIKI'
-      this.wikiTitle = ''
+      this.newWikiContent = '# WIKI'
+      this.form.wikiTitle = ''
+      this.$refs['form'].resetFields()
     },
     async handleConfirmAdd() {
-      this.editBtnLoading = true
-      const text = this.newWikiContent
-      try {
-        await putWikiDetail(this.projectSelectedId, this.wikiTitle, { wiki_text: text })
-        Message({
-          message: 'Wiki create successfully',
-          type: 'success',
-          duration: 1 * 3000
-        })
-        this.fetchData()
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.dialogVisible = false
-        this.editBtnLoading = false
-      }
+      this.$refs['form'].validate(async(valid) => {
+        if (!valid) {
+          return
+        }
+        this.editBtnLoading = true
+        const text = this.newWikiContent
+        try {
+          await putWikiDetail(this.projectSelectedId, this.form.wikiTitle, { wiki_text: text })
+          Message({
+            message: 'Wiki create successfully',
+            type: 'success',
+            duration: 1 * 3000
+          })
+          this.fetchData()
+        } catch (error) {
+          console.error(error)
+        } finally {
+          this.dialogVisible = false
+          this.editBtnLoading = false
+        }
+      })
     }
   }
 }
@@ -182,8 +193,7 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input wiki title"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
 
     <el-divider />
@@ -216,14 +226,14 @@ export default {
             Edit
           </el-button>
           <el-popconfirm
-            confirmButtonText="Delete"
-            cancelButtonText="Cancel"
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
             icon="el-icon-info"
-            iconColor="red"
+            icon-color="red"
             title="Are you sure?"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button size="mini" type="danger" slot="reference"> <i class="el-icon-delete" /> Delete</el-button>
+            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -247,15 +257,19 @@ export default {
       size="80%"
     >
       <div class="container">
-        <div class="form__title">
-          <el-input v-if="drawerTitle === 'Add'" v-model="wikiTitle" placeholder="Please Input Title" />
-          <h3 v-else>{{ wikiData.title }}</h3>
-        </div>
+        <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules" label-position="top">
+          <el-form-item label="Title" prop="wikiTitle">
+            <!-- <div class="form__title"> -->
+            <el-input v-model="form.wikiTitle" placeholder="Please Input Title" />
+            <!-- </div> -->
+          </el-form-item>
+        </el-form>
+        <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br />
+          <br>
           <template>
             <!-- <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" /> -->
-            <EditorMD id="editormd" @get-editor-data="emitGetEditorData" :content="wikiContent"></EditorMD>
+            <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
           </template>
         </div>
         <div class="form__footer">
@@ -310,7 +324,7 @@ export default {
   height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
-  padding: 5px; 
+  padding: 5px;
 }
 .clearfix {
   clear: both;
