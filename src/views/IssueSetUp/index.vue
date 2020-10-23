@@ -432,12 +432,12 @@ export default {
         <el-row>
           <el-col :span="6">
             <el-form-item label="Name" label-width="100px">
-              {{ issueName }}
+              <div class="setup">{{ issueName }}<div /></div>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Version" label-width="100px">
-              {{ issueVersion }}
+              <div class="setup">{{ issueVersion }}</div>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -491,7 +491,7 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Estimate" label-width="100px">
-              {{ issueEstimatedHours }}
+              <div class="setup">{{ issueEstimatedHours }}</div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -509,12 +509,12 @@ export default {
           </el-col> -->
           <el-col :span="6">
             <el-form-item label="Start Date" label-width="100px">
-              {{ issueStartDate }}
+              <div class="setup">{{ issueStartDate }}</div>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Due Date" label-width="100px">
-              {{ issueDueDate }}
+              <div class="setup">{{ issueDueDate }}</div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -820,5 +820,12 @@ export default {
 <style lang="scss">
 .filter-container {
   margin-bottom: 5px;
+}
+</style>
+
+<style lang="scss" scoped>
+.setup {
+ margin-top: 13px;
+ font-weight: 700;
 }
 </style>
