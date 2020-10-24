@@ -6,7 +6,6 @@ import ParamDialog from './components/ParamDialog'
 import TestDialog from './components/TestDialog'
 import TestItemDialog from './components/TestItemDialog'
 import TestValueDialog from './components/TestValueDialog'
-import WangEditor from '@/components/Wangeditor'
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable } from '@/api/projects'
@@ -14,7 +13,14 @@ import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/i
 import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { getTestCaseByIssue, addTestCaseByIssue, deleteTestCase } from '@/api/issueTestCase'
 import { getTestItemByCase, addTestItemByCase, updateTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
-import { getTestValueByItem, getTestValueType, getTestValueLocation, deleteTestValue, addTestValueByItem } from '@/api/issueTestValue'
+import {
+  getTestValueByItem,
+  getTestValueType,
+  getTestValueLocation,
+  deleteTestValue,
+  addTestValueByItem
+} from '@/api/issueTestValue'
+import EditorMD from '@/components/Editormd'
 import { Message } from 'element-ui'
 export default {
   components: {
@@ -24,7 +30,7 @@ export default {
     TestDialog,
     TestItemDialog,
     TestValueDialog,
-    WangEditor
+    EditorMD
   },
   data() {
     return {
@@ -107,28 +113,28 @@ export default {
         getFlowType(),
         getParameterByIssue(this.issueId),
         getTestCaseByIssue(this.issueId)
-      ]).then(res => {
-        this.issueStatusList = res[0].data.map(item => {
+      ]).then((res) => {
+        this.issueStatusList = res[0].data.map((item) => {
           return { label: item.name, value: item.id }
         })
-        this.issueTypeList = res[1].data.map(item => {
+        this.issueTypeList = res[1].data.map((item) => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map(item => {
+        this.issuePriorityList = res[2].data.map((item) => {
           return { label: item.name, value: item.id }
         })
         const issueDetail = res[3].data
         const projectId = issueDetail.project.id
         getProjectAssignable(projectId).then((assignable) => {
-          this.issueAssigneeList = assignable.data.user_list.map(item => {
+          this.issueAssigneeList = assignable.data.user_list.map((item) => {
             return { label: item.name, value: item.id }
           })
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
         if (Array.isArray(res[4].data) && res[4].data.length > 0) {
-          this.issueFlow = res[4].data[0].flow_data.map(item => {
-            const issueType = issueFlowType.find(type => {
+          this.issueFlow = res[4].data[0].flow_data.map((item) => {
+            const issueType = issueFlowType.find((type) => {
               return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
@@ -152,7 +158,7 @@ export default {
           this.issueVersion = issueDetail.fixed_version.name
         }
         this.issueEstimatedHours = issueDetail.estimated_hours
-        this.issueComment = issueDetail.journals.map(item => {
+        this.issueComment = issueDetail.journals.map((item) => {
           return {
             comment: item.notes,
             comment_author: item.user.name,
@@ -213,11 +219,11 @@ export default {
     },
     async handleSaveDetail() {
       const data = {
-        'tracker_id': this.issueDetail.issueType,
-        'status_id': this.issueDetail.issueStatus,
-        'priority_id': this.issueDetail.issuePriority,
-        'assigned_to_id': this.issueDetail.issueAssignee,
-        'done_ratio': this.issueDetail.issueDoneRatio
+        tracker_id: this.issueDetail.issueType,
+        status_id: this.issueDetail.issueStatus,
+        priority_id: this.issueDetail.issuePriority,
+        assigned_to_id: this.issueDetail.issueAssignee,
+        done_ratio: this.issueDetail.issueDoneRatio
       }
       await updateIssue(this.issueId, data)
       this.fetchData()
@@ -231,7 +237,7 @@ export default {
       this.issueNote = value
     },
     async handleAddComment() {
-      await updateIssue(this.issueId, { 'notes': this.issueNote })
+      await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
       this.issueNote = ''
       Message({
@@ -365,12 +371,12 @@ export default {
       const testValueLocationList = testValueLocationRes.data
 
       if (testValueList.data.length > 0) {
-        this.issueTestValue = testValueList.data.map(item => {
-          const valueType = testValueTypeList.find(type => {
+        this.issueTestValue = testValueList.data.map((item) => {
+          const valueType = testValueTypeList.find((type) => {
             return item.type_id === type.type_id
           })
           item.type = valueType.type_name
-          const valueLocation = testValueLocationList.find(location => {
+          const valueLocation = testValueLocationList.find((location) => {
             return item.location_id === location.location_id
           })
           item.location = valueLocation.type_name
@@ -422,7 +428,7 @@ export default {
   <div class="app-container">
     <el-card v-loading="listLoading" class="box-card" shadow="never">
       <div slot="header" class="clearfix">
-        <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
+        <span style="font-size: 25px; padding-bottom: 10px">Issue #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           Save
         </el-button>
@@ -432,7 +438,10 @@ export default {
         <el-row>
           <el-col :span="6">
             <el-form-item label="Name" label-width="100px">
-              <div class="setup">{{ issueName }}<div /></div>
+              <div class="setup">
+                {{ issueName }}
+                <div />
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -442,7 +451,7 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Priority" label-width="100px">
-              <el-select v-model="issueDetail.issuePriority" style="width:100%">
+              <el-select v-model="issueDetail.issuePriority" style="width: 100%">
                 <el-option
                   v-for="item in issuePriorityList"
                   :key="item.value"
@@ -454,14 +463,14 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Status" label-width="100px">
-              <el-select v-model="issueDetail.issueStatus" style="width:100%">
+              <el-select v-model="issueDetail.issueStatus" style="width: 100%">
                 <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="Assignee" label-width="100px">
-              <el-select v-model="issueDetail.issueAssignee" style="width:100%">
+              <el-select v-model="issueDetail.issueAssignee" style="width: 100%">
                 <el-option
                   v-for="item in issueAssigneeList"
                   :key="item.value"
@@ -473,7 +482,7 @@ export default {
           </el-col>
           <el-col :span="6">
             <el-form-item label="Type" label-width="100px">
-              <el-select v-model="issueDetail.issueType" style="width:100%">
+              <el-select v-model="issueDetail.issueType" style="width: 100%">
                 <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -484,7 +493,7 @@ export default {
                 v-model="issueDetail.issueDoneRatio"
                 :min="0"
                 :max="100"
-                style="width:100%"
+                style="width: 100%"
                 @change="handleChange"
               />
             </el-form-item>
@@ -541,7 +550,7 @@ export default {
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
-              <div v-html="scope.row.comment" />
+              <VueShowdown :markdown="scope.row.comment" />
             </template>
           </el-table-column>
           <el-table-column label="Author" width="180">
@@ -551,7 +560,7 @@ export default {
           </el-table-column>
           <el-table-column label="Comment Time" width="180">
             <template slot-scope="scope">
-              {{ scope.row.comment_at }}
+              {{ scope.row.comment_at | relativeTime }}
             </template>
           </el-table-column>
         </el-table>
@@ -705,7 +714,7 @@ export default {
         <el-table :data="issueTestItem" element-loading-text="Loading" border fit style="margin-top: 10px">
           <el-table-column label="ID">
             <template slot-scope="scope">
-              <span style="color: #409EFF;cursor: pointer;" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
+              <span style="color: #409eff; cursor: pointer" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
                 {{ scope.row.id }}
               </span>
             </template>
@@ -773,7 +782,7 @@ export default {
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
-      <WangEditor :content="''" @get-editor-data="emitGetEditorData" />
+      <EditorMD :content="''" @get-editor-data="emitGetEditorData" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleAddComment">Confirm</el-button>
@@ -825,7 +834,7 @@ export default {
 
 <style lang="scss" scoped>
 .setup {
- margin-top: 13px;
- font-weight: 700;
+  margin-top: 13px;
+  font-weight: 700;
 }
 </style>
