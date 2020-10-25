@@ -178,6 +178,29 @@ export const asyncRoutes = [
     ]
   },
 
+  {
+    path: '/test',
+    component: Layout,
+    name: 'Test',
+    meta: { title: 'Test', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
+    redirect: '/Test/test-ite',
+    children: [
+      {
+        path: 'test-item',
+        name: 'Test Item',
+        component: () => import('@/views/TestItem/index'),
+        meta: { title: 'Test Item', icon: 'list', roles: ['Engineer'] }
+      },
+      {
+        path: 'test-case/:testItemId',
+        name: 'Test Case',
+        hidden: true,
+        component: () => import('@/views/TestCase/index'),
+        meta: { title: 'Issue Detail', roles: ['Engineer'] }
+      }
+    ]
+  },
+
   // {
   //   path: '/cicd/pipelines/:pipeline_id/stages',
   //   component: Layout,
