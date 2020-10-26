@@ -105,9 +105,6 @@ export default {
           } else if (commit.parent_ids.length === 2) {
             // Merge
             for (const k in branches) {
-              if (branches[k].head != null) console.log(k, branches[k].head.id)
-            }
-            for (const k in branches) {
               if (k === this.name) continue
               const ob = branches[k]
               if (ob.head.id === commit.parent_ids[0] ||
