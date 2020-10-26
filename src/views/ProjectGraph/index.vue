@@ -17,7 +17,7 @@ export default {
     projectList(ary) {
       if (this.selectedBranch !== '') return
       this.selectedBranch = ary[0].name
-      this.selectedRepoId = ary[0].project_id
+      this.selectedRepoId = ary[0].repository_ids
     },
     async selectedBranch() {
       this.fetchData()
