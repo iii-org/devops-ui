@@ -90,7 +90,7 @@ export default {
                 subject: commit.message
               }
               this.graph.commit(commit_opts)
-              this.head = commit
+              this.headsTo(commit)
             } else {
               for (let i = 1; i < 9; i++) {
                 const newName = `${this.name}_${i}`
@@ -118,10 +118,18 @@ export default {
                   }
                 }
                 this.graph.merge(merge_opts)
-                this.head = commit
+                this.headsTo(commit)
+
                 break
               }
             }
+          }
+        }
+
+        this.headsTo = function(commit) {
+          this.head = commit
+          for (const i in commit.tags) {
+            this.graph.tag(commit.tags[i])
           }
         }
       }
