@@ -131,6 +131,9 @@ export default {
           return false
         }
       })
+    },
+    handleDetail(idx, row) {
+      this.$router.push({ path: `test-case/${row.order}` })
     }
   }
 }
