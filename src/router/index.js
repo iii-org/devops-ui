@@ -363,7 +363,7 @@ export const asyncRoutes = [
         path: 'file',
         name: 'File',
         component: () => import('@/views/ProjectFiles/index'),
-        meta: { title: 'File List', roles: ['Project Manager'] }
+        meta: { title: 'File List', roles: ['Project Manager', 'Engineer'] }
       }
     ]
   },
