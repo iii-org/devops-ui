@@ -16,8 +16,7 @@ export default {
   watch: {
     projectList(ary) {
       if (this.selectedBranch !== '') return
-      this.selectedBranch = ary[0].name
-      this.selectedRepoId = ary[0].repository_ids
+      this.selectedBranch = ary[0].repository_ids
     },
     async selectedBranch() {
       this.fetchData()
@@ -31,7 +30,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       try {
-        const res = await getGitGraphByRepo(this.selectedRepoId)
+        const res = await getGitGraphByRepo(this.selectedBranch)
         this.createGraph(res.data)
       } catch (err) {
         console.error(err)
@@ -107,8 +106,7 @@ export default {
             for (const k in branches) {
               if (k === this.name) continue
               const ob = branches[k]
-              if (ob.head.id === commit.parent_ids[0] ||
-                ob.head.id === commit.parent_ids[1]) {
+              if (ob.head.id === commit.parent_ids[0] || ob.head.id === commit.parent_ids[1]) {
                 const merge_opts = {
                   branch: ob.name,
                   commitOptions: {
@@ -196,7 +194,7 @@ export default {
       </div>
       <div class="cardBody">
         <el-select v-model="selectedBranch" size="small" placeholder="Select" style="width: 100%">
-          <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.name" />
+          <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.repository_ids" />
         </el-select>
         <el-divider />
         <div id="graph-container" />
