@@ -97,11 +97,15 @@ export default {
       if (this.newBranchName === '') return
       this.newBranchBtnLoading = true
       await this['branches/newBranch']({
-        rId: this.$route.params.pId,
+        rId: this.bId,
         data: { branch: this.newBranchName, ref: this.newBranchFrom }
       })
       this.newBranchBtnLoading = false
       this.dialogVisible = false
+      this.$message({
+        message: 'New Branch is created',
+        type: 'success'
+      })
     },
     async handleDeleteModal() {
       if (!this.$route.params.bId) return
@@ -134,7 +138,7 @@ export default {
       this.mergeDialogVisible = false
     },
     async handleNewTag() {
-      if (!this.$route.params.pId) return
+      if (!this.bId) return
       if (this.tagVersion === '') {
         return this.$message({
           message: 'Please input tag version correctly.',
@@ -143,17 +147,20 @@ export default {
       }
       this.newTagBtnLoading = true
       await this['tags/newTag']({
-        rId: this.$route.params.pId,
+        rId: this.bId,
         data: {
-          schemas: {
-            tag_name: this.tagVersion,
-            ref: this.newBranchFrom,
-            message: this.tagReleaseNote
-          }
+          tag_name: this.tagVersion,
+          ref: this.newBranchFrom,
+          message: this.tagReleaseNote,
+          release_description: this.tagReleaseNote
         }
       })
       this.newTagBtnLoading = false
       this.tagDialogVisible = false
+      this.$message({
+        message: 'New tag is created',
+        type: 'success'
+      })
     }
   }
 }
@@ -181,7 +188,7 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Branch Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <router-link
+          <!-- <router-link
             :to="{
               name: 'fileList',
               params: {
@@ -194,7 +201,9 @@ export default {
           >
             <span>{{ scope.row.name }}</span>
             <i class="el-icon-document" />
-          </router-link>
+          </router-link> -->
+          <span>{{ scope.row.name }}</span>
+          <i class="el-icon-document" />
         </template>
       </el-table-column>
       <el-table-column label="Last Commit Message" :show-overflow-tooltip="true">
@@ -222,7 +231,7 @@ export default {
             <i class="el-icon-finished" />
             Commits&nbsp;
           </el-button>
-          <el-button size="mini" type="warning" @click="handleMerge(scope.$index, scope.row)">Merge</el-button>
+          <!-- <el-button size="mini" type="warning" @click="handleMerge(scope.$index, scope.row)">Merge</el-button> -->
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template>
       </el-table-column>
@@ -283,6 +292,8 @@ export default {
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
         <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
+      <br />
+      <br />
       <h4>Release Note :</h4>
       <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
