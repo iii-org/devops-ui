@@ -93,7 +93,6 @@ export default {
       this.selectedBranch = row.name
     },
     async handleNewBranch() {
-      if (!this.$route.params.pId) return
       if (this.newBranchName === '') return
       this.newBranchBtnLoading = true
       await this['branches/newBranch']({
@@ -121,10 +120,9 @@ export default {
       this.deleteDialogVisible = false
     },
     async handleMergeBranch() {
-      if (!this.$route.params.pId) return
       this.mergeBranchBtnLoading = true
       await this['branches/mergeBranch']({
-        rId: this.$route.params.pId,
+        rId: this.bId,
         data: {
           schemas: {
             source_branch: this.selectedBranch,
@@ -231,7 +229,7 @@ export default {
             <i class="el-icon-finished" />
             Commits&nbsp;
           </el-button>
-          <!-- <el-button size="mini" type="warning" @click="handleMerge(scope.$index, scope.row)">Merge</el-button> -->
+          <el-button size="mini" type="warning" @click="handleMerge(scope.$index, scope.row)">Merge</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template>
       </el-table-column>
@@ -272,7 +270,7 @@ export default {
       <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="mergeDialogVisible = false">Cancel</el-button>
-        <el-button type="warning" @click="handleMergeBranch">Merge</el-button>
+        <el-button type="warning" @click="handleMergeBranch" :loading="mergeBranchBtnLoading">Merge</el-button>
       </span>
     </el-dialog>
 
