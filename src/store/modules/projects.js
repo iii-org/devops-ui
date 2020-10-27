@@ -68,15 +68,16 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async addNewProject({ commit }, data) {
+  async addNewProject({ commit, dispatch }, data) {
     try {
       const res = await ANP(data)
+      dispatch('user/getInfo', null, { root: true })
       return res
     } catch (error) {
       console.error(error.toString())
     }
   },
-  async editProject({ commit }, { pId, data }) {
+  async editProject({ commit, dispatch }, { pId, data }) {
     try {
       const res = await EP(pId, data)
       return res
@@ -84,9 +85,10 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async deleteProject({ commit }, pId) {
+  async deleteProject({ commit, dispatch }, pId) {
     try {
       const res = await DP(pId)
+      dispatch('user/getInfo', null, { root: true })
       return res
     } catch (error) {
       console.error(error.toString())
