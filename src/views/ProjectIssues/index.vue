@@ -30,10 +30,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole']),
+    ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
     pagedData() {
       const listData = this.issueList.filter((data) => {
-        if (this.searchData == '' || data.issue_name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (
+          this.searchData == '' ||
+          data.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+          data.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+        ) {
           return data
         }
       })
@@ -59,14 +63,17 @@ export default {
       this.issueList = res.data
       this.listLoading = false
       this.parentList = []
-      this.issueList.forEach(item => {
+      this.issueList.forEach((item) => {
         this.parentList.push(item.id)
         if (item.children.length !== 0) {
-          item.children.forEach(item2 => {
+          item.children.forEach((item2) => {
             this.parentList.push(item2.id)
           })
         }
       })
+      if (this.userRole === 'Engineer') {
+        this.searchData = this.userName
+      }
     },
     handleEdit(idx, row) {
       if (this.userRole === 'Project Manager') {
@@ -111,12 +118,11 @@ export default {
 </script>
 <template>
   <div class="app-container">
-
     <div class="clearfix">
       <div>
         <project-list-selector />
         <span class="newBtn">
-          <el-button type="success" style="float:right" @click="addTopicDialogVisible = true,parentid=0">
+          <el-button type="success" style="float: right" @click=";(addTopicDialogVisible = true), (parentid = 0)">
             <i class="el-icon-plus" />
             Add Issue
           </el-button>
@@ -124,9 +130,10 @@ export default {
         <el-input
           v-model="searchData"
           class="ob-search-input ob-shadow search-input mr-3"
-          placeholder="Please input issue name"
+          placeholder="Please input name/assignee"
           style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+          ><i slot="prefix" class="el-input__icon el-icon-search"
+        /></el-input>
       </div>
     </div>
     <el-divider />
@@ -139,7 +146,7 @@ export default {
       highlight-current-row
       row-key="id"
       default-expand-all
-      :tree-props="{children: 'children'}"
+      :tree-props="{ children: 'children' }"
     >
       <el-table-column align="center" label="Id" width="120px">
         <template slot-scope="scope">
@@ -163,11 +170,21 @@ export default {
       </el-table-column> -->
       <el-table-column align="center" label="Status" width="120px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="big">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="big">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="big">{{ scope.row.issue_status }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="big">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="big">{{
+            scope.row.issue_status
+          }}</el-tag>
           <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
@@ -178,7 +195,9 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Priority" width="120px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{
+            scope.row.issue_priority
+          }}</el-tag>
           <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">急</el-tag>
           <el-tag v-else-if="scope.row.issue_priority === '慢'" type="slow" size="medium">慢</el-tag>
           <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
@@ -199,11 +218,15 @@ export default {
             class="Issuedel"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> Delete
-            </el-button>
+            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete </el-button>
           </el-popconfirm>
-          <el-button v-if="parentList.includes(scope.row.id)==true" type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="handleParent(scope.$index, scope.row,scope)" />
+          <el-button
+            v-if="parentList.includes(scope.row.id) == true"
+            type="primary"
+            size="mini"
+            icon="el-icon-circle-plus-outline"
+            @click="handleParent(scope.$index, scope.row, scope)"
+          />
           <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
               <i class="el-icon-delete" /> Delete
             </el-button> -->
@@ -229,11 +252,11 @@ export default {
   </div>
 </template>
 <style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
-  .el-popconfirm__action .el-button--primary{
-    margin-left: 5px !important;
-   }
+.filter-container {
+  margin-bottom: 5px;
+}
+.el-popconfirm__action .el-button--primary {
+  margin-left: 5px !important;
+}
 </style>
 
