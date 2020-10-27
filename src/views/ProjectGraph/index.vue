@@ -30,6 +30,8 @@ export default {
     async fetchData() {
       this.listLoading = true
       try {
+        const svgs = document.querySelector('#graph-container').children
+        if (svgs && svgs.length > 0) [...svgs].forEach(_svg => _svg.remove())
         const res = await getGitGraphByRepo(this.selectedBranch)
         this.createGraph(res.data)
       } catch (err) {
@@ -154,33 +156,6 @@ export default {
         }
         branch.addCommit(commit)
       })
-      // data.forEach(branch => {
-      //   const _branch = gitgraph.branch(branch.branch)
-      //   branch.commit_list.forEach(commit => {
-      //     _branch.commit({
-      //       subject: commit.message,
-      //       author: commit.author_name + ' <' + commit.author_name + '>'
-      //     })
-      //   })
-      // })
-      //
-      // Simulate git commands with Gitgraph API.
-      // const master = gitgraph.branch('master')
-      // master.commit('Initial commit')
-
-      // const develop = gitgraph.branch('develop')
-      // develop.commit('Add TypeScript')
-
-      // const aFeature = gitgraph.branch('a-feature')
-      // aFeature
-      //   .commit('Make it work')
-      //   .commit('Make it right')
-      //   .commit('Make it fast')
-
-      // develop.merge(aFeature)
-      // develop.commit('Prepare v1')
-
-      // master.merge(develop).tag('v1.0.0')
     }
   }
 }
@@ -208,6 +183,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-x: auto;
 }
 #graph-container {
   flex: 1;
