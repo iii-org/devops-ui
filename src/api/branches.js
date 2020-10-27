@@ -9,7 +9,7 @@ export function getBranchesByProject(rId) {
 
 export function newBranch(rId, data) {
   return request({
-    url: '/repositories/rd/' + rId + '/branch',
+    url: '/repositories/' + rId + '/branches',
     method: 'POST',
     data
   })
