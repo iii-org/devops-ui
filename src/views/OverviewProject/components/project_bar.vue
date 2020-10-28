@@ -54,11 +54,12 @@ export default {
           finished: Object.keys(value).map(function(item, index, array) {
             // console.log(value[item].closed)
             let color = ''
-            if (item === '特急') {
+            console.log(item)
+            if (item === 'Immediate') {
               color = '#E85656'
-            } else if (value === '急') {
+            } else if (item === 'High') {
               color = '#F9BE6E'
-            } else if (value === '一般') {
+            } else if (item === 'Normal') {
               color = '#3ECBBC'
             } else {
               color = '#56b1e8'
@@ -138,11 +139,11 @@ export default {
           axisLabel: {
             textStyle: {
               color: function(value, index) {
-                if (value === '特急') {
+                if (value === 'Immediate') {
                   return '#E85656'
-                } else if (value === '急') {
+                } else if (value === 'High') {
                   return '#F9BE6E'
-                } else if (value === '一般') {
+                } else if (value === 'Normal') {
                   return '#3ECBBC'
                 } else {
                   return '#56b1e8'
