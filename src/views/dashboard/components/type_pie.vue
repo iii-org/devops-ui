@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{ height: height, width: width }" />
 </template>
 
 <script>
@@ -24,19 +24,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userId'
-    ])
+    ...mapGetters(['userId'])
   },
   data() {
     return {
       chart: null,
-      types: null
+      types: []
     }
   },
   mounted() {
-    getRdDashboardIssuesType(this.userId).then(res => {
-      this.types = res.data.map(item => {
+    getRdDashboardIssuesType(this.userId).then((res) => {
+      this.types = res.data.map((item) => {
         item.value = item.number
         return item
       })
@@ -57,6 +55,16 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
+        title: {
+          show: this.types.length === 0,
+          textStyle: {
+            color: 'grey',
+            fontSize: 20
+          },
+          text: 'No Issue',
+          left: 'center',
+          top: 'center'
+        },
         tooltip: {
           trigger: 'item',
           formatter: '{b} : {c} ({d}%)'
