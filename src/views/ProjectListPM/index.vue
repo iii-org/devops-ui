@@ -29,6 +29,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      dialogDelete: false,
       dialogStatus: 1,
       listLoading: true,
       listQuery: {
@@ -46,7 +47,11 @@ export default {
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
       statusW: '50%',
-      confirmLoading: false
+      confirmLoading: false,
+      Deleteproject: {},
+      deleteProjectName: '',
+      placeholdertext: '',
+      loadingdelete: ''
     }
   },
   computed: {
@@ -94,25 +99,36 @@ export default {
       this.form = Object.assign({}, this.form, row)
     },
     handleDelete(index, row) {
-      this.$confirm('Are you sure to Delete Project?', 'Delete', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'error'
-      })
-        .then(async() => {
-          await this['projects/deleteProject'](row.id)
+      this.dialogDelete = true
+      this.Deleteproject['id'] = row.id
+      this.Deleteproject['name'] = row.display
+      this.placeholdertext = 'Please Input ' + this.Deleteproject.name
+    },
+    async handleDeleteModal() {
+      if (this.Deleteproject.name !== this.deleteProjectName) {
+        return this.$message({
+          message: 'Please input project name correctly.',
+          type: 'error'
+        })
+      } else {
+        try {
+          this.loadingdelete = this.$loading({
+            target: '.el-dialog',
+            text: 'Loading'
+          })
+          await this['projects/deleteProject'](this.Deleteproject.id)
           this.$message({
             type: 'success',
             message: 'Delete Successed'
           })
+          this.loadingdelete.close()
+          this.dialogDelete = false
           this.loadList()
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete canceled'
-          })
-        })
+        } catch (err) {
+          this.loadingdelete.close()
+          console.error(err)
+        }
+      }
     },
     handleAdding() {
       this.dialogVisible = true
@@ -145,6 +161,9 @@ export default {
         this.$refs['thisForm'].resetFields()
         this.form = formTemplate
       })
+    },
+    onDialogClosedDelete() {
+      this.deleteProjectName = ''
     },
     returnProgress(current, total) {
       const percent = Math.round((current / total) * 100)
@@ -180,7 +199,7 @@ export default {
         const res = await thiz['projects/addNewProject'](dataBody)
         thiz.confirmLoading = false
         if (res.message !== 'success') return
-        console.log(res)
+        // console.log(res)
         Message({
           message: 'Project added successfully',
           type: 'success',
@@ -329,6 +348,21 @@ export default {
       @pagination="onPagination"
     />
     <router-view />
+    <el-dialog
+      title="Delete Project"
+      :visible.sync="dialogDelete"
+      width="40%"
+      :close-on-click-modal="false"
+      @closed="onDialogClosedDelete"
+    >
+      <p>This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.</p>
+      <p>Please type <span style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;">{{ Deleteproject.name }}</span> to proceed or close this modal to cancel.</p>
+      <el-input v-model="deleteProjectName" :placeholder="placeholdertext" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogDelete = false">Cancel</el-button>
+        <el-button type="danger" @click="handleDeleteModal">Delete</el-button>
+      </span>
+    </el-dialog>
     <el-dialog
       :title="`${dialogStatusText} Project`"
       :visible.sync="dialogVisible"
