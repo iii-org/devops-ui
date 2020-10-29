@@ -45,28 +45,28 @@ export default {
           { required: true, message: 'Please input name', trigger: 'blur' }
         ],
         assigned_to_id: [
-          {  required: true }
+          { required: true }
         ],
         tracker_id: [
-          {  required: true }
+          { required: true }
         ],
         status_id: [
-          {  required: true }
+          { required: true }
         ],
         priority_id: [
-          {  required: true }
+          { required: true }
         ],
         estimated_hours: [
-          {  required: true }
+          { required: true }
         ],
         done_ratio: [
-          {  required: true }
+          { required: true }
         ],
         start_date: [
-          {  required: true }
+          { required: true }
         ],
         due_date: [
-          {  required: true }
+          { required: true }
         ]
       },
       issueName: '',
@@ -564,7 +564,7 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Test Case" name="test">
+      <!-- <el-tab-pane label="Test Case" name="test">
         <el-table
           :data="issueTestCase"
           element-loading-text="Loading"
@@ -580,11 +580,11 @@ export default {
             </template>
           </el-table-column>
           <el-table-column label="API Name">
-            <template slot-scope="scope">
-              <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestDialog(scope.row, 'Edit API')">
+            <template slot-scope="scope"> -->
+      <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestDialog(scope.row, 'Edit API')">
                 {{ scope.row.name }}
               </span>-->
-              {{ scope.row.name }}
+      <!-- {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column label="API Method">
@@ -603,11 +603,11 @@ export default {
             </template>
           </el-table-column>
         </el-table>
-      </el-tab-pane>
-      <el-tab-pane label="Test Item" name="testItem">
+      </el-tab-pane>-->
+      <!-- <el-tab-pane label="Test Item" name="testItem">
         <div class="demo-input-size">
           Test Case:
-          <el-select v-model="choose_testCase" @change="getTestItem" class="floatnone">
+          <el-select v-model="choose_testCase" class="floatnone" @change="getTestItem">
             <el-option
               v-for="item in issueTestCase"
               :key="item.id"
@@ -635,28 +635,28 @@ export default {
             </template>
           </el-table-column>
         </el-table>
-      </el-tab-pane>
-      <el-tab-pane label="Test Value" name="testValue">
-        <div class="demo-input-size">
+      </el-tab-pane> -->
+      <!-- <el-tab-pane label="Test Value" name="testValue"> -->
+      <!-- <div class="demo-input-size">
           Test Item:
-          <el-select v-model="choose_testItem" @change="getTestValue" class="floatnone">
+          <el-select v-model="choose_testItem" class="floatnone" @change="getTestValue">
             <el-option
               v-for="item in issueTestItem"
               :key="item.id"
               :label="`${item.name}(${item.id})`"
               :value="item.id"
             />
-          </el-select>
-          <!-- <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button> -->
-        </div>
-        <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
+          </el-select> -->
+      <!-- <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button> -->
+      <!-- </div> -->
+      <!-- <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
           <el-table-column label="Type">
             <template slot-scope="scope">
-              {{ scope.row.type }}
-              <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestValueDialog(scope.row, 'Edit Test Value')">
+              {{ scope.row.type }} -->
+      <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestValueDialog(scope.row, 'Edit Test Value')">
                 {{ scope.row.type }}
               </span>-->
-            </template>
+      <!-- </template>
           </el-table-column>
           <el-table-column label="Key">
             <template slot-scope="scope">
@@ -672,14 +672,14 @@ export default {
             <template slot-scope="scope">
               {{ scope.row.location }}
             </template>
-          </el-table-column>
-          <!-- <el-table-column label="Action">
+          </el-table-column> -->
+      <!-- <el-table-column label="Action">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete</el-button>
             </template>
           </el-table-column> -->
-        </el-table>
-      </el-tab-pane>
+      <!-- </el-table> -->
+      <!-- </el-tab-pane> -->
     </el-tabs>
     <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
       <WangEditor :content="issueNote" @get-editor-data="emitGetEditorData" />

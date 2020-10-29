@@ -79,7 +79,7 @@ export default {
       if (this.userRole === 'Project Manager') {
         this.$router.push({ path: `list/${row.id}` })
       } else if (this.userRole === 'Engineer') {
-        this.$router.push({ path: `listrd/${row.id}/setup` })
+        this.$router.push({ path: `list/${row.id}` })
       }
     },
     handleParent(idx, row, scope) {
