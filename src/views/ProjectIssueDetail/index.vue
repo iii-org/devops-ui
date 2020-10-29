@@ -4,6 +4,7 @@ import Pagination from '@/components/Pagination'
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
 import WangEditor from '@/components/Wangeditor'
+import EditorMD from '@/components/Editormd'
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
@@ -18,7 +19,8 @@ export default {
     FlowDialog,
     ParamDialog,
     Pagination,
-    WangEditor
+    EditorMD
+    // WangEditor
   },
   data() {
     return {
@@ -74,6 +76,7 @@ export default {
       issueDueDate: '',
       issueDescription: '',
       issueNote: '',
+      issueNotenew: '',
       issueDevStatus: {
         commitMsg: 'V2.1 fix User Login Error',
         commit: '1c715b2b',
@@ -462,7 +465,8 @@ export default {
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
-              <div v-html="scope.row.comment" />
+              <!-- <div v-html="scope.row.comment" /> -->
+              <VueShowdown :markdown="scope.row.comment" />
             </template>
           </el-table-column>
           <!-- <el-table-column label="Author" width="180" align="center">
@@ -681,8 +685,11 @@ export default {
       <!-- </el-table> -->
       <!-- </el-tab-pane> -->
     </el-tabs>
-    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
-      <WangEditor :content="issueNote" @get-editor-data="emitGetEditorData" />
+    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" :close-on-click-modal="false" @close="commentDialogVisible = false">
+      <!-- <WangEditor :content="issueNote" @get-editor-data="emitGetEditorData" /> -->
+      <template>
+        <EditorMD v-if="commentDialogVisible" id="editormd" :content="issueNotenew" @get-editor-data="emitGetEditorData" />
+      </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleAddComment">Confirm</el-button>
