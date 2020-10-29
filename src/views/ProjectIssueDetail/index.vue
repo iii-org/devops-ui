@@ -465,11 +465,11 @@ export default {
               <div v-html="scope.row.comment" />
             </template>
           </el-table-column>
-          <el-table-column label="Author" width="180" align="center">
+          <!-- <el-table-column label="Author" width="180" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_author }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="Comment Time" width="200" align="center">
             <template slot-scope="scope">
               {{ scope.row.comment_at }}
