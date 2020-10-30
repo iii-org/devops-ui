@@ -42,7 +42,7 @@ export default {
       rules: {
         name: [
           { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-          { required: true, pattern: /^[a-z][a-z0-9_-]{0,30}$/, message: 'Not allow', trigger: 'blur' }
+          { required: true, pattern: /^[a-z][a-z0-9_-]{0,30}$/, message: 'Identifier is invalid.', trigger: 'blur' }
         ],
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
@@ -116,7 +116,10 @@ export default {
             target: '.el-dialog',
             text: 'Loading'
           })
-          await this['projects/deleteProject'](this.Deleteproject.id)
+          const res = await this['projects/deleteProject'](this.Deleteproject['id'])
+          if (res.message !== 'success') {
+            throw new Error()
+          }
           this.$message({
             type: 'success',
             message: 'Delete Successed'
@@ -379,8 +382,7 @@ export default {
         </el-form-item>
         <br v-if="dialogStatus === 1">
         <div v-if="dialogStatus === 1">
-          Length between 1 and 30 characters. Only lower case letters (a-z), numbers, dashes, underscores and word start
-          are allowed.
+          Length between 1 and 30 characters. Identifier can contain only lower case letters (a-z), digits, dash, underscores. It must start with letter.
         </div>
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
