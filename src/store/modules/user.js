@@ -8,7 +8,8 @@ const getDefaultState = () => {
     token: getToken(),
     userId: 0,
     userRole: '',
-    userName: ''
+    userName: '',
+    userProjectList: []
   }
 }
 
@@ -30,8 +31,8 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_USER_PROJECT: (state, list) => {
-    state.projectList = list
+  SET_USER_PROJECT: (state, userProjectList) => {
+    state.userProjectList = userProjectList
   }
 }
 
