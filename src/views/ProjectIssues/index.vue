@@ -34,11 +34,35 @@ export default {
     pagedData() {
       const listData = this.issueList.filter((data) => {
         if (
-          this.searchData == '' ||
+          this.searchData === '' ||
           data.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
           data.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
         ) {
           return data
+        }
+        // Sub issue Leval1
+        if (data.children.length > 0) {
+          const children1 = data.children.filter((datachildren1) => {
+            if (datachildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+            datachildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())) {
+              return datachildren1
+            }
+            // Sub issue Leval2
+            if (datachildren1.children.length > 0) {
+              const children2 = datachildren1.children.filter((datachildren2) => {
+                if (datachildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+            datachildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())) {
+                  return datachildren2
+                }
+              })
+              if (children2.length > 0) {
+                return data
+              }
+            }
+          })
+          if (children1.length > 0) {
+            return data
+          }
         }
       })
       this.listTotal = listData.length
@@ -132,7 +156,9 @@ export default {
           class="ob-search-input ob-shadow search-input mr-3"
           placeholder="Please input name/assignee"
           style="width: 250px; float: right"
-          ><i slot="prefix" class="el-input__icon el-icon-search"
+        ><i
+          slot="prefix"
+          class="el-input__icon el-icon-search"
         /></el-input>
       </div>
     </div>

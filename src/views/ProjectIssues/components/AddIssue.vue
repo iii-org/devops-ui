@@ -143,7 +143,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">Cancel</el-button>
-      <el-button type="primary" @click="handleSave">Confirm</el-button>
+      <el-button v-loading="LoadingConfirm" type="primary" @click="handleSave">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -225,7 +225,8 @@ export default {
         description: [
           { required: false }
         ]
-      }
+      },
+      LoadingConfirm: false
     }
   },
   watch: {
@@ -233,6 +234,7 @@ export default {
       this.fetchData()
     },
     dialogVisible() {
+      this.LoadingConfirm = false
       if (this.dialogVisible === true) {
         this.$nextTick(() => {
           this.$refs['issueForm'].resetFields()
@@ -285,7 +287,9 @@ export default {
             delete data['parent_id']
           }
           data['project_id'] = this.projectId
+          this.LoadingConfirm = true
           await this.saveData(data)
+          this.LoadingConfirm = false
           this.$refs['issueForm'].resetFields()
         } else {
           return false
