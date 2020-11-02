@@ -161,8 +161,10 @@ export default {
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        this.$refs['thisForm'].resetFields()
-        this.form = formTemplate
+        if (this.dialogStatus !== 2) {
+          this.$refs['thisForm'].resetFields()
+          this.form = formTemplate
+        }
       })
     },
     onDialogClosedDelete() {
@@ -374,6 +376,9 @@ export default {
       @closed="onDialogClosed"
     >
       <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
+        <el-form-item v-if="dialogStatus === 2" label="Project Identifier">
+          <el-input v-model="form.name" :disabled="true" />
+        </el-form-item>
         <el-form-item label="Project Name" prop="display">
           <el-input v-model="form.display" />
         </el-form-item>
