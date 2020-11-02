@@ -369,6 +369,29 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/test',
+    component: Layout,
+    name: 'Test',
+    meta: { title: 'Test', icon: 'el-icon-s-cooperation', roles: ['Engineer', 'Project Manager'] },
+    redirect: '/Test/test-case',
+    children: [
+      {
+        path: 'test-case',
+        name: 'Test Case',
+        component: () => import('@/views/TestCase/index'),
+        meta: { title: 'Test Case', icon: 'list', roles: ['Engineer', 'Project Manager'] }
+      },
+      {
+        path: 'test-case/:testCaseId',
+        name: 'Test Item',
+        hidden: true,
+        component: () => import('@/views/TestItem/index'),
+        meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager'] }
+      }
+    ]
+  },
+  
+  {
     path: '/project_setting',
     component: Layout,
     name: 'Setting',

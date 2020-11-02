@@ -1,11 +1,26 @@
 <script>
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
-import { getTestItem, addTestItem } from '@/api/testItem'
+import { getTestItemByCase, addTestItemByCase, updateTestItem, deleteTestItem } from '@/api/testItem'
+import {
+  getTestValueByItem,
+  addTestValueByItem,
+  deleteTestValue,
+  getTestValueType,
+  getTestValueLocation
+} from '@/api/testValue'
+import { getTestCaseById } from '@/api/testCase'
 
-const formTemplate = {
+const testItemFormTemplate = {
   name: '',
-  api_method: '',
-  api_path: ''
+  is_passed: false
+}
+
+const testValueFormTemplate = {
+  type: '',
+  location: '',
+  key: '',
+  value: ''
 }
 
 export default {
@@ -22,44 +37,46 @@ export default {
   },
   data() {
     return {
+      activeName: 'testItem',
+      testCaseId: 0,
+      testCase: { name: '', data: { method: '', url: '' } },
       testItemList: [],
-      dialogVisible: false,
-      dialogStatus: 1,
+      testItemDialogVisible: false,
+      selectTestItem: '',
+      testValueList: [],
+      testValueDialogVisible: false,
       listLoading: true,
       listQuery: {
         page: 1, //目前第幾頁
         limit: 10 //一頁幾筆
       },
       listTotal: 0, //總筆數
-      testItemForm: formTemplate,
+      testItemForm: testItemFormTemplate,
+      testValueForm: testValueFormTemplate,
       confirmLoading: false,
       searchData: '',
-      apiMethodList: [
-        {
-          value: 'GET',
-          label: 'GET'
-        },
-        {
-          value: 'POST',
-          label: 'POST'
-        },
-        {
-          value: 'PUT',
-          label: 'PUT'
-        },
-        {
-          value: 'DELETE',
-          label: 'DELETE'
-        }
-      ],
+      dialogStatus: 1,
+      testValueTypeList: [],
+      testValueLocationList: [],
       testItemFormRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        api_method: [{ required: true, message: 'Please select api method', trigger: 'blur' }],
-        api_path: [{ required: true, message: 'Please input api path', trigger: 'blur' }]
+        is_passed: [{ required: true, message: 'Please select is passed', trigger: 'blur' }]
+      },
+      testValueFormRules: {
+        type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        location_id: [{ required: true, message: 'Please select location', trigger: 'blur' }],
+        key: [{ required: true, message: 'Please select key', trigger: 'blur' }],
+        value: [{ required: true, message: 'Please select value', trigger: 'blur' }]
       }
     }
   },
+  watch: {
+    async selectTestItem(val) {
+      this.fetchTestValueData(val)
+    }
+  },
   computed: {
+    ...mapGetters(['userRole']),
     pagedData() {
       const listData = this.testItemList.filter((data) => {
         if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -83,25 +100,61 @@ export default {
     }
   },
   created() {
+    this.listLoading = true
+    Promise.all([getTestValueType(), getTestValueLocation()])
+      .then((res) => {
+        this.testValueTypeList = res[0].data.map((item) => {
+          return { label: item.type_name, value: item.type_id }
+        })
+        this.testValueLocationList = res[1].data.map((item) => {
+          return { label: item.type_name, value: item.location_id }
+        })
+      })
+      .finally(() => {
+        this.listLoading = false
+      })
+    this.testCaseId = parseInt(this.$route.params.testCaseId)
     this.fetchData()
   },
   methods: {
-    async fetchData() {
+    fetchData() {
       this.listLoading = true
-      const res = await getTestItem()
-      this.testItemList = res.data
-      this.listLoading = false
+      Promise.all([getTestCaseById(this.testCaseId), getTestItemByCase(this.testCaseId)]).then((res) => {
+        this.testCase = res[0].data
+        this.testItemList = res[1].data
+        this.listLoading = false
+      })
     },
-    handleEdit(idx, row) {
-      this.dialogVisible = true
+    async fetchTestValueData(val) {
+      const res = await getTestValueByItem(val)
+
+      this.testValueList = res.data.map((item) => {
+        item['type'] = this.testValueTypeList.find((type) => type.value == item.type_id)
+        item['location'] = this.testValueLocationList.find((location) => location.value == item.location_id)
+        return item
+      })
+      console.log('this.testValueList', this.testValueList)
+    },
+    handleTestItemAdding() {
+      this.testItemDialogVisible = true
+      this.dialogStatus = 1
+    },
+    handleTestItemEdit(idx, row) {
+      this.testItemDialogVisible = true
       this.dialogStatus = 2
       this.testItemForm = Object.assign({}, this.testItemForm, row)
     },
     handleDelete() {},
-    handleAdding() {
-      this.dialogVisible = true
+    handleTestValueAdding() {
+      this.testValueDialogVisible = true
       this.dialogStatus = 1
     },
+    handleTestValueEdit(idx, row) {
+      this.testValueDialogVisible = true
+      this.dialogStatus = 2
+      this.testValueForm = Object.assign({}, this.testValueForm, row)
+    },
+    handleDelete() {},
     returnTagType(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'info'
@@ -118,109 +171,211 @@ export default {
     onDialogClosed() {
       this.$nextTick(() => {
         this.$refs['testItemForm'].resetFields()
-        this.form = formTemplate
+        this.$refs['testValueForm'].resetFields()
+        this.testItemForm = testItemFormTemplate
+        this.testValueForm = testValueFormTemplate
       })
     },
-    handleConfirm() {
+    handleTestItemConfirm() {
       this.$refs['testItemForm'].validate(async (valid) => {
         if (valid) {
-          await addTestItem(this.testItemForm)
+          if (this.dialogStatus == 1) {
+            await addTestItemByCase(this.testCaseId, this.testItemForm)
+          } else {
+            await updateTestItem(this.testItemForm['id'], this.testItemForm)
+          }
           this.$refs['testItemForm'].resetFields()
-          this.dialogVisible = false
+          this.testItemDialogVisible = false
+          this.fetchData()
         } else {
           return false
         }
       })
     },
-    handleDetail(idx, row) {
-      this.$router.push({ path: `test-case/${row.order}` })
+    async handleTestItemDelete(idx, row) {
+      await deleteTestItem(row['id'])
+      this.fetchData()
+    },
+    handleTestValueConfirm() {
+      this.$refs['testValueForm'].validate(async (valid) => {
+        if (valid) {
+          if (this.dialogStatus == 1) {
+            await addTestValueByItem(this.selectTestItem, this.testValueForm)
+          } else {
+            await addTestValueByItem(this.selectTestItem, this.testValueForm)
+          }
+          this.$refs['testValueForm'].resetFields()
+          this.testValueDialogVisible = false
+          this.fetchTestValueData(this.selectTestItem)
+        } else {
+          return false
+        }
+      })
+    },
+    async handleTestValueDelete(idx, row) {
+      await deleteTestValue(row['id'])
+      this.fetchTestValueData(this.selectTestItem)
     }
   }
 }
 </script>
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <span class="newBtn">
-        <el-button type="success" @click="handleAdding">
-          <i class="el-icon-plus" />
-          Add Test Item
-        </el-button>
-      </span>
-      <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input test item name"
-        style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
-    </div>
-    <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" label="Order" width="120px">
-        <template slot-scope="scope"> {{ scope.row.order }} </template>
-      </el-table-column>
-      <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Method" width="120px">
-        <template slot-scope="scope"> {{ scope.row.api_method }} </template>
-      </el-table-column>
-      <el-table-column align="center" label="Path" width="120px">
-        <template slot-scope="scope"> {{ scope.row.api_path }} </template>
-      </el-table-column>
-      <el-table-column align="center" label="Last Test Time" width="150px">
-        <template slot-scope="scope">
-          {{ scope.row.last_test_at | relativeTime }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Last Test Result" width="150px">
-        <template slot-scope="scope">
-          <el-tag :type="returnTagType(scope.row)" size="large">
-            <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
-            <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
-            <i v-else class="el-icon-error" />
-            <span>{{ testResults(scope.row) }}</span>
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Actions" width="350" align="center">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
-            <i class="el-icon-document" />
-            Test Case
-          </el-button>
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            Edit
-          </el-button>
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @onConfirm="handleDelete(scope.$index, scope.row)"
-          >
-            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="listTotal"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <router-view />
+    <el-card class="box-card el-col-6 column custom-list" shadow="never">
+      <div slot="header" class="clearfix">
+        <span style="font-size: 25px; padding-bottom: 10px">Test Case</span>
+      </div>
+      <el-form :label-position="'left'">
+        <el-row>
+          <el-col>
+            <el-form-item label="Name">{{ testCase.name }} </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="Method">
+              {{ testCase.data.method }}
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="Path">
+              {{ testCase.data.url }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
+
+    <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
+      <el-tab-pane label="Test Item" name="testItem">
+        <div class="clearfix">
+          <span class="newBtn" v-if="userRole === 'Engineer'">
+            <el-button type="success" @click="handleTestItemAdding">
+              <i class="el-icon-plus" />
+              Add Test Item
+            </el-button>
+          </span>
+          <el-input
+            v-model="searchData"
+            class="ob-search-input ob-shadow search-input mr-3"
+            placeholder="Please input test case name"
+            style="width: 250px; float: right"
+            ><i slot="prefix" class="el-input__icon el-icon-search"></i
+          ></el-input>
+        </div>
+        <el-table
+          :data="testItemList"
+          element-loading-text="Loading"
+          border
+          fit
+          highlight-current-row
+          style="margin-top: 10px"
+        >
+          <el-table-column label="Id">
+            <template slot-scope="scope">
+              {{ scope.row.id }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Name">
+            <template slot-scope="scope">
+              {{ scope.row.name }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Is Pass?">
+            <template slot-scope="scope">
+              {{ scope.row.is_passed }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Actions" align="center" width="200" v-if="userRole === 'Engineer'">
+            <template slot-scope="scope">
+              <el-button size="mini" type="primary" @click="handleTestItemEdit(scope.$index, scope.row)">
+                <i class="el-icon-edit" />
+                Edit
+              </el-button>
+              <el-popconfirm
+                confirm-button-text="Delete"
+                cancel-button-text="Cancel"
+                icon="el-icon-info"
+                icon-color="red"
+                title="Are you sure?"
+                @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
+              >
+                <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="Test Value" name="testValue">
+        <div class="clearfix">
+          <el-select v-model="selectTestItem" placeholder="Select Test Item">
+            <el-option v-for="item in testItemList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+          <span class="newBtn" v-if="userRole === 'Engineer'">
+            <el-button type="success" @click="handleTestValueAdding">
+              <i class="el-icon-plus" />
+              Add Test Value
+            </el-button>
+          </span>
+          <el-input
+            v-model="searchData"
+            class="ob-search-input ob-shadow search-input mr-3"
+            placeholder="Please input test value name"
+            style="width: 250px; float: right"
+            ><i slot="prefix" class="el-input__icon el-icon-search"></i
+          ></el-input>
+        </div>
+        <el-table
+          :data="testValueList"
+          element-loading-text="Loading"
+          border
+          fit
+          highlight-current-row
+          style="margin-top: 10px"
+        >
+          <el-table-column label="Type">
+            <template slot-scope="scope">
+              {{ scope.row.type.label }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Location">
+            <template slot-scope="scope">
+              {{ scope.row.location.label }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Key">
+            <template slot-scope="scope">
+              {{ scope.row.key }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Value">
+            <template slot-scope="scope">
+              {{ scope.row.value }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Actions" align="center" width="200" v-if="userRole === 'Engineer'">
+            <template slot-scope="scope">
+              <el-button size="mini" type="primary" @click="handleTestValueEdit(scope.$index, scope.row)">
+                <i class="el-icon-edit" />
+                Edit
+              </el-button>
+              <el-popconfirm
+                confirm-button-text="Delete"
+                cancel-button-text="Cancel"
+                icon="el-icon-info"
+                icon-color="red"
+                title="Are you sure?"
+                @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
+              >
+                <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+
     <el-dialog
       :title="`${dialogStatusText} Test Item`"
-      :visible.sync="dialogVisible"
+      :visible.sync="testItemDialogVisible"
       width="50%"
       @closed="onDialogClosed"
     >
@@ -231,21 +386,57 @@ export default {
         :rules="testItemFormRules"
         label-width="20%"
       >
-        <el-form-item label="Test Item Name" prop="name">
+        <el-form-item label="Name" prop="name">
           <el-input v-model="testItemForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="API Method" prop="api_method">
-          <el-select v-model="testItemForm.api_method" style="width: 100%">
-            <el-option v-for="item in apiMethodList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="API Path" prop="api_path">
-          <el-input v-model="testItemForm.api_path"></el-input>
+        <el-form-item label="Is Passed?" prop="is_passed">
+          <el-switch v-model="testItemForm.is_passed" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button @click="testItemDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="handleTestItemConfirm" :loading="confirmLoading">Confirm</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      :title="`${dialogStatusText} Test Case`"
+      :visible.sync="testValueDialogVisible"
+      width="50%"
+      @closed="onDialogClosed"
+    >
+      <el-form
+        label-position="top"
+        ref="testItemForm"
+        :model="testValueForm"
+        :rules="testValueFormRules"
+        label-width="20%"
+      >
+        <el-form-item label="Type" prop="type_id">
+          <el-select v-model="testValueForm.type_id" style="width: 100%">
+            <el-option v-for="item in testValueTypeList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Location" prop="location_id">
+          <el-select v-model="testValueForm.location_id" style="width: 100%">
+            <el-option
+              v-for="item in testValueLocationList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Key" prop="key">
+          <el-input v-model="testValueForm.key"></el-input>
+        </el-form-item>
+        <el-form-item label="Value" prop="value">
+          <el-input v-model="testValueForm.value"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="testValueDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="handleTestValueConfirm" :loading="confirmLoading">Confirm</el-button>
       </span>
     </el-dialog>
   </div>

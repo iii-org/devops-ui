@@ -1,50 +1,30 @@
 import request from '@/utils/request'
 
-export function getTestItem() {
-  // return request({
-  //   url: `/testItems`,
-  //   method: 'get'
-  // })
-  return {
-    'message': 'success',
-    'data': [{
-      'order': 1,
-      'name': '取得伺服器資訊',
-      'api_method': 'GET',
-      'api_path': 'serverinfo',
-      'last_test_result': {
-        'success': 5,
-        'fail': 3
-      },
-      'last_test_at': "2020-09-29T10:10:25Z"
-    }]
-  }
+export function getTestItemByCase(case_id) {
+  return request({
+    url: `/testItems_by_testCase/${case_id}`,
+    method: 'get'
+  })
 }
 
-export function getTestItemById() {
-  return {
-    'message': 'success',
-    'data': {
-      'order': 1,
-      'name': '取得伺服器資訊',
-      'api_method': 'GET',
-      'api_path': 'serverinfo',
-      'last_test_result': {
-        'success': 5,
-        'fail': 3
-      },
-      'last_test_at': "2020-09-29T10:10:25Z"
-    }
-  }
+export function addTestItemByCase(case_id, data) {
+  return request({
+    url: `/testItems_by_testCase/${case_id}`,
+    method: 'post',
+    data
+  })
+}
+export function updateTestItem(item_id, data) {
+  return request({
+    url: `/testItems/${item_id}`,
+    method: 'put',
+    data
+  })
 }
 
-export function addTestItem(data) {
-  // return request({
-  //   url: `/testItems`,
-  //   method: 'post',
-  //   data
-  // })
-  return {
-    'message': 'success'
-  }
+export function deleteTestItem(item_id) {
+  return request({
+    url: `/testItems/${item_id}`,
+    method: 'delete'
+  })
 }

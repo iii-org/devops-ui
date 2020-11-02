@@ -1,65 +1,52 @@
 import request from '@/utils/request'
 
-export function getTestCase() {
-  // return request({
-  //   url: `/testItems`,
-  //   method: 'get'
-  // })
-  return {
-    'message': 'success',
-    'data': [{
-      'order': 1,
-      'name': '測試第一個工作',
-      'last_test_result': '[Passed] Test response'
-    },{
-      'order': 2,
-      'name': '測試第二個工作',
-      'last_test_result': '[Passed] Test response'
-    }]
-  }
+export function getTestCaseType() {
+  return request({
+    url: `/testCases/support_type`,
+    method: 'get'
+  })
 }
 
-export function addTestCase(data) {
-  // return request({
-  //   url: `/testItems`,
-  //   method: 'post',
-  //   data
-  // })
-  return {
-    'message': 'success'
-  }
+export function getTestCaseAPIMethod() {
+  return request({
+    url: `/testCases/support_RestfulAPI_Method`,
+    method: 'get'
+  })
 }
 
-export function getTestValue() {
-  // return request({
-  //   url: `/testItems`,
-  //   method: 'get'
-  // })
-  return {
-    'message': 'success',
-    'data': [{
-      'order': 1,
-      'type': 'Request',
-      'location': 'Body',
-      'key': 'id',
-      'value': '4'
-    },{
-      'order': 2,
-      'type': 'Response',
-      'location': 'Body',
-      'key': 'task',
-      'value': 'build an WEB'
-    }]
-  }
+export function getTestCaseById(test_case_id) {
+  return request({
+    url: `/testCases/${test_case_id}`,
+    method: 'get'
+  })
 }
 
-export function addTestValue(data) {
-  // return request({
-  //   url: `/testItems`,
-  //   method: 'post',
-  //   data
-  // })
-  return {
-    'message': 'success'
-  }
+export function getTestCaseByProject(project_id) {
+  return request({
+    url: `/testCases_by_project/${project_id}`,
+    method: 'get'
+  })
+}
+
+export function addTestCaseByProject(project_id, data) {
+  return request({
+    url: `/testCases_by_project/${project_id}`,
+    method: 'post',
+    data
+  })
+}
+
+export function updateTestCase(test_case_id, data) {
+  return request({
+    url: `/testCases/${test_case_id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteTestCase(test_case_id) {
+  return request({
+    url: `/testCases/${test_case_id}`,
+    method: 'delete'
+  })
 }
