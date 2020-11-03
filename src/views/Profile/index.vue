@@ -44,6 +44,7 @@
             >
               <el-form-item label="New Password" prop="userNewPwd">
                 <el-input v-model="userPwdForm.userNewPwd" type="password" style="width: 250px;" />
+                <div style="word-break: keep-all;margin-top: 5px;">Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.</div>
               </el-form-item>
               <el-form-item label="Repeat New Password" prop="userRepeatNewPwd">
                 <el-input v-model="userPwdForm.userRepeatNewPwd" type="password" style="width: 250px;" />
@@ -110,6 +111,7 @@ export default {
       },
       userPwdFormRules: {
         userNewPwd: [
+          { required: true, pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/, message: 'Password is invalid.', trigger: 'blur' },
           { validator: validatePassword, message: "Password can't be less than 8 characters." },
           { required: true, message: 'Please input new password', trigger: 'blur' }
         ],
