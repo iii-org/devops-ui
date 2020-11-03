@@ -16,9 +16,11 @@
     >
       <el-form-item label="Account" prop="login">
         <el-input v-model="userForm.login" :disabled="disableAccount" />
+        <div v-if="dialogTitle === 'Add User'" style="word-break: keep-all;margin-top: 5px;">	Account should be 2-60 characters long and "._-" can be accepted at the middle of string. </div>
       </el-form-item>
       <el-form-item label="Password" prop="password">
         <el-input v-model="userForm.password" type="password" />
+        <div style="word-break: keep-all;margin-top: 5px;">Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.</div>
       </el-form-item>
       <el-form-item label="Repeat Password" prop="repeatPassword">
         <el-input v-model="userForm.repeatPassword" type="password" />
@@ -105,6 +107,7 @@ export default {
       },
       userFormRules: {
         login: [
+          { required: true, pattern: /^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,58}[a-zA-Z0-9]$/, message: 'Account is invalid.', trigger: 'blur' },
           { required: true, message: 'Please input login', trigger: 'blur' }
         ],
         password: [
@@ -151,7 +154,7 @@ export default {
       // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' },
-        { validator: this.validatePassword, trigger: 'blur' }
+        { required: true, pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/, message: 'Password is invalid.', trigger: 'blur' }
       ]
       this.userFormRules.repeatPassword = [
         { required: true, message: 'Please input repeat password', trigger: 'blur' },
@@ -162,11 +165,32 @@ export default {
       this.dialogTitle = 'Update User'
       this.disableAccount = true
       this.listLoading = true
-      this.userFormRules.password = [
-        { required: false },
-        { validator: this.checkRepeatPwd, trigger: 'blur' },
-        { validator: this.validatePassword, trigger: 'blur' }
-      ]
+      if (this.userForm.password) {
+        if (this.userForm.password.length !== 0) {
+          this.userFormRules.password = [
+            { required: true, message: 'Please input password', trigger: 'blur' },
+            { validator: this.checkRepeatPwd, trigger: 'blur' },
+            { required: true, pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/, message: 'Password is invalid.', trigger: 'blur' }
+          ]
+        } else {
+          this.userFormRules.password = [
+            { required: false },
+            { validator: this.checkRepeatPwd, trigger: 'blur' },
+            { validator: this.validatePassword, trigger: 'blur' }
+          ]
+        }
+      } else {
+        this.userFormRules.password = [
+          { required: false },
+          { validator: this.checkRepeatPwd, trigger: 'blur' },
+          { validator: this.validatePassword, trigger: 'blur' }
+        ]
+      }
+      // this.userFormRules.password = [
+      //   { required: false },
+      //   { validator: this.checkRepeatPwd, trigger: 'blur' },
+      //   { validator: this.validatePassword, trigger: 'blur' }
+      // ]
       this.userFormRules.repeatPassword = [
         { required: false },
         { validator: this.checkRepeatPwd, trigger: 'blur' },
@@ -176,7 +200,7 @@ export default {
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {
-      if (value !== this.userForm.password) {
+      if (value !== this.userForm.password & this.userForm.password !== '' & this.userForm.repeatPassword !== '') {
         callback(new Error('password not same'))
       } else {
         callback()
@@ -187,7 +211,7 @@ export default {
       // console.log('value', value)
       if (value === undefined) {
         callback()
-      } else if (value.length > 0 && value.length < 8) {
+      } else if (value.length > 0 && value.length < 8 & this.userForm.password !== '') {
         callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()
