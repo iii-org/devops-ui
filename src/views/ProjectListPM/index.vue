@@ -42,7 +42,7 @@ export default {
       rules: {
         name: [
           { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-          { required: true, pattern: /^[a-z][a-z0-9_-]{0,30}$/, message: 'Identifier is invalid.', trigger: 'blur' }
+          { required: true, pattern: /^[a-z0-9][a-z0-9-]{0,253}[a-z0-9]$/, message: 'Identifier is invalid.', trigger: 'blur' }
         ],
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
@@ -382,13 +382,14 @@ export default {
         <el-form-item label="Project Name" prop="display">
           <el-input v-model="form.display" />
         </el-form-item>
-        <el-form-item v-if="dialogStatus === 1" label="Project Identifier" prop="name" style="margin-bottom: 0px">
+        <el-form-item v-if="dialogStatus === 1" label="Project Identifier" prop="name">
           <el-input v-model="form.name" />
+          <div v-if="dialogStatus === 1" style="word-break: keep-all;margin-top: 5px;">
+            Identifier should be 2-255 lowercase or number characters long and "-" can be accepted at the middle of string.
+          </div>
         </el-form-item>
-        <br v-if="dialogStatus === 1">
-        <div v-if="dialogStatus === 1">
-          Length between 1 and 30 characters. Identifier can contain only lower case letters (a-z), digits, dash, underscores. It must start with letter.
-        </div>
+        <!-- <br v-if="dialogStatus === 1"> -->
+
         <!-- <el-form-item label="Project Code" prop="code">
           <el-input v-model="form.code"></el-input>
         </el-form-item> -->
