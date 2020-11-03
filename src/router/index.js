@@ -30,6 +30,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+
 export const constantRoutes = [
   {
     path: '/login',
@@ -390,7 +391,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  
+
   {
     path: '/project_setting',
     component: Layout,
@@ -451,7 +452,12 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/SystemVersion/index'),
         name: 'SystemVersion',
-        meta: { title: 'System Version', icon: 'user', noCache: true, roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: {
+          title: 'System Version',
+          icon: 'user',
+          noCache: true,
+          roles: ['Engineer', 'Project Manager', 'Administrator']
+        }
       }
     ]
   },
