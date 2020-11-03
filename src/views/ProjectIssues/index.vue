@@ -33,6 +33,7 @@ export default {
     ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
     pagedData() {
       const listData = this.issueList.filter((data) => {
+        if (data.assigned_to === null) { data.assigned_to = '' }
         if (
           this.searchData == '' ||
           data.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
