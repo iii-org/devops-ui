@@ -70,7 +70,8 @@ export default {
     logOut: 'Log Out',
     profile: 'Profile',
     theme: 'Theme',
-    size: 'Global Size'
+    size: 'Global Size',
+    versions: 'Versions'
   },
   login: {
     title: 'Login Form',

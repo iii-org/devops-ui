@@ -18,7 +18,8 @@ export default {
   },
   navbar: {
     logOut: '登出',
-    profile: '個人資料'
+    profile: '個人資料',
+    versions: '版本資訊'
   },
   iii: {}
 }

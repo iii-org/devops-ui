@@ -19,11 +19,11 @@
                 <span>{{ $t('navbar.profile') }}</span>
               </router-link>
             </el-dropdown-item>
-            <!-- <el-dropdown-item>
+            <el-dropdown-item>
               <router-link :to="'/SystemVersion/'" style="color: #409EFF">
-                <span>Versions</span>
+                <span>{{ $t('navbar.versions') }}</span>
               </router-link>
-            </el-dropdown-item> -->
+            </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">{{ $t('navbar.logOut') }}</span>
