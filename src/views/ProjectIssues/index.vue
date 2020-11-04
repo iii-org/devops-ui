@@ -44,6 +44,7 @@ export default {
         // Sub issue Leval1
         if (data.children.length > 0) {
           const children1 = data.children.filter((datachildren1) => {
+            if (datachildren1.assigned_to === null) { datachildren1.assigned_to = '' }
             if (datachildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
             datachildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())) {
               return datachildren1
@@ -51,6 +52,7 @@ export default {
             // Sub issue Leval2
             if (datachildren1.children.length > 0) {
               const children2 = datachildren1.children.filter((datachildren2) => {
+                if (datachildren2.assigned_to === null) { datachildren2.assigned_to = '' }
                 if (datachildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
             datachildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())) {
                   return datachildren2
@@ -115,12 +117,18 @@ export default {
     async handleDelete(idx, row) {
       this.listLoading = true
       await deleteIssue(row.id)
-      Message({
-        message: 'Delete successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
+        .then(res => {
+          Message({
+            message: 'Delete successful',
+            type: 'success',
+            duration: 1 * 1000
+          })
+          this.fetchData()
+        })
+        .catch(error => {
+          this.listLoading = false
+          return error
+        })
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -129,14 +137,23 @@ export default {
       this.addTopicDialogVisible = visible
     },
     async saveIssue(data) {
-      await addIssue(data)
-      this.addTopicDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
+      const res = await addIssue(data)
+        .then(res => {
+          Message({
+            message: 'add successful',
+            type: 'success',
+            duration: 1 * 1000
+          })
+          this.fetchData()
+          this.addTopicDialogVisible = false
+          return res
+        })
+        .catch(error => {
+          // console.log(error.response)
+          return error
+        })
+      return res
+      // this.addTopicDialogVisible = false
     }
   }
 }
