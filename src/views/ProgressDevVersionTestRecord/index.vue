@@ -135,7 +135,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column label="Commit short Id" :show-overflow-tooltip="true" width="160">
-        <template slot-scope="scope"> c67a224 </template>
+        <template slot-scope="scope"> {{ scope.row.commit_id }} </template>
       </el-table-column>
       <el-table-column label="Branch" :show-overflow-tooltip="true" width="160">
         <template slot-scope="scope">
