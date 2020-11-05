@@ -72,7 +72,7 @@ export default {
     },
     percentageMethod(item) {
       if (item.total_issue > 0 && item.open === 0) return 100
-      return item.total_issue > 0 ? ((item.total_issue - item.open) / item.total_issue) * 100 : 0
+      return Number((item.total_issue > 0 ? ((item.total_issue - item.open) / item.total_issue) * 100 : 0).toFixed(1))
     },
     onCollapseChange(value) {
       if (!value) return
@@ -117,6 +117,7 @@ export default {
                   <el-tag effect="dark" :type="returnVersionType(item)">{{ item.name }}</el-tag>
                   <el-progress :percentage="percentageMethod(item)" :status="item.type" />
                 </div>
+                <div style="font-size: 14px;color: #606266;line-height: 1;">{{ item.total_issue-item.open }}/{{ item.total_issue }}</div>
               </template>
               <el-divider />
               <div v-loading="contentLoading" class="contentBody">
@@ -177,7 +178,7 @@ export default {
   height: 84px;
 }
 .titleProgress {
-  width: 100%;
+  width: 95%;
 }
 #detaildivider{
   margin-top: 50px;
