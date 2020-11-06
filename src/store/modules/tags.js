@@ -25,8 +25,10 @@ const actions = {
             }, 1000)
           })
         console.log(response)
+        return (response)
       } catch (error) {
         console.error(error.toString())
+        return (error)
       }
   }
 }

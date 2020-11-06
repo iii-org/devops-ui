@@ -19,9 +19,9 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20
+        limit: 10
       },
-      search: '',
+      searchData: '',
       dialogVisible: false,
       mergeDialogVisible: false,
       deleteDialogVisible: false,
@@ -36,7 +36,8 @@ export default {
       newBranchBtnLoading: false,
       deleteBranchBtnLoading: false,
       mergeBranchBtnLoading: false,
-      newTagBtnLoading: false
+      newTagBtnLoading: false,
+      listTotal: 0 // 總筆數
     }
   },
   computed: {
@@ -51,9 +52,15 @@ export default {
       return this.$route.params.projectName
     },
     pagedData() {
+      const listData = this.branchesByProject.filter((data) => {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase()) || data.last_commit_message.toLowerCase().includes(this.searchData.toLowerCase()) || data.short_id.toLowerCase().includes(this.searchData.toLowerCase())) {
+          return data
+        }
+      })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
-      return this.branchesByProject.slice(start, end)
+      return listData.slice(start, end)
     }
   },
   async created() {
@@ -95,16 +102,18 @@ export default {
     async handleNewBranch() {
       if (this.newBranchName === '') return
       this.newBranchBtnLoading = true
-      await this['branches/newBranch']({
+      const res = await this['branches/newBranch']({
         rId: this.bId,
         data: { branch: this.newBranchName, ref: this.newBranchFrom }
       })
       this.newBranchBtnLoading = false
-      this.dialogVisible = false
-      this.$message({
-        message: 'New Branch is created',
-        type: 'success'
-      })
+      if (res.message === 'success') {
+        this.dialogVisible = false
+        this.$message({
+          message: 'New Branch is created',
+          type: 'success'
+        })
+      }
     },
     async handleDeleteModal() {
       if (!this.$route.params.bId) return
@@ -144,7 +153,7 @@ export default {
         })
       }
       this.newTagBtnLoading = true
-      await this['tags/newTag']({
+      const res = await this['tags/newTag']({
         rId: this.bId,
         data: {
           tag_name: this.tagVersion,
@@ -154,35 +163,48 @@ export default {
         }
       })
       this.newTagBtnLoading = false
-      this.tagDialogVisible = false
-      this.$message({
-        message: 'New tag is created',
-        type: 'success'
-      })
+      if (res.message === 'success') {
+        this.newTagBtnLoading = false
+        this.tagDialogVisible = false
+        this.$message({
+          message: 'New tag is created',
+          type: 'success'
+        })
+      }
     }
   }
 }
 </script>
 <template>
   <div class="app-container">
-    <div>
+    <div class="clearfix">
       <h3>
-        {{ projectName }}
-        <span class="newBtn">
-          <el-button size="mini" type="primary" @click="dialogVisible = true">
-            <i class="el-icon-plus" />
-            New Branch
-          </el-button>
-        </span>
-        <span class="newBtn">
-          <el-button size="mini" type="success" @click="tagDialogVisible = true">
-            <i class="el-icon-price-tag" />
-            New Tag
-          </el-button>
-        </span>
+        Projects : {{ projectName }}
       </h3>
+      <span class="newBtn">
+        <el-button type="primary" @click="dialogVisible = true,newBranchName=''">
+          <i class="el-icon-plus" />
+          New Branch
+        </el-button>
+      </span>
+      <span class="newBtn">
+        <el-button type="success" @click="tagDialogVisible = true,newBranchFrom='', tagVersion='', tagReleaseNote=''">
+          <i class="el-icon-price-tag" />
+          New Tag
+        </el-button>
+      </span>
+      <el-input
+        v-model="searchData"
+        class="ob-search-input ob-shadow search-input mr-3"
+        placeholder="Filter by Name/Message/ID"
+        style="width: 250px; float: right"
+      ><i
+        slot="prefix"
+        class="el-input__icon el-icon-search"
+      /></el-input>
     </div>
     <el-divider />
+
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column label="Branch Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
@@ -219,10 +241,10 @@ export default {
           {{ scope.row.short_id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" width="350">
-        <template slot="header">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
-        </template>
+      <el-table-column label="Actions" align="center" width="350">
+        <!-- <template slot="header">
+          <el-input :v-model="search2" size="mini" placeholder="Type to search" />
+        </template> -->
         <template slot-scope="scope">
           <!-- <el-button size="mini" type="primary" @click="handlePull(scope.$index, scope.row)">Pull</el-button> -->
           <el-button size="mini" type="primary" @click="handleCommitClick(scope.$index, scope.row)">
@@ -236,15 +258,15 @@ export default {
     </el-table>
 
     <pagination
-      :total="branchesTotalNumByProject"
+      :total="listTotal"
       :page="listQuery.page"
       :limit="listQuery.limit"
-      :page-sizes="[20]"
+      :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
 
-    <el-dialog title="New Branch" :visible.sync="dialogVisible" width="50%">
+    <el-dialog title="New Branch" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
       <h4>Branch Name</h4>
       <el-input v-model="newBranchName" size="small" placeholder="" />
       <h4>From</h4>
@@ -270,7 +292,7 @@ export default {
       <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="mergeDialogVisible = false">Cancel</el-button>
-        <el-button type="warning" @click="handleMergeBranch" :loading="mergeBranchBtnLoading">Merge</el-button>
+        <el-button type="warning" :loading="mergeBranchBtnLoading" @click="handleMergeBranch">Merge</el-button>
       </span>
     </el-dialog>
 
@@ -283,15 +305,15 @@ export default {
       </span>
     </el-dialog>
 
-    <el-dialog title="New Tag" :visible.sync="tagDialogVisible" width="50%">
+    <el-dialog title="New Tag" :visible.sync="tagDialogVisible" width="50%" :close-on-click-modal="false">
       <h4>Tag Version</h4>
       <el-input v-model="tagVersion" size="small" placeholder="" />
       <h4>@ Branch</h4>
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
         <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
-      <br />
-      <br />
+      <br>
+      <br>
       <h4>Release Note :</h4>
       <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">

@@ -38,8 +38,10 @@ const actions = {
           resolve()
         }, 1000)
       })
+      return (response)
     } catch (error) {
       console.error(error.toString())
+      return (error)
     }
   },
   async deleteBranch({ dispatch }, { rId, bName }) {
