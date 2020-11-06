@@ -54,7 +54,6 @@ export default {
           finished: Object.keys(value).map(function(item, index, array) {
             // console.log(value[item].closed)
             let color = ''
-            console.log(item)
             if (item === 'Immediate') {
               color = '#E85656'
             } else if (item === 'High') {
@@ -83,9 +82,18 @@ export default {
   },
   methods: {
     initChart(CONFIG_DATA) {
-      // console.log(CONFIG_DATA)
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
+        title: {
+          show: CONFIG_DATA.yAxis.length === 0,
+          textStyle: {
+            color: 'grey',
+            fontSize: 20
+          },
+          text: 'No Issue',
+          left: 'center',
+          top: 'center'
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {

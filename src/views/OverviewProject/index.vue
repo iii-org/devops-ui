@@ -21,6 +21,7 @@ export default {
   data() {
     return {
       isLoading: true,
+      ProjectTestLoading: true,
       projectVersion: '',
       projectVersionList: [],
       workLoad: '',
@@ -91,9 +92,10 @@ export default {
       this.workLoadSelected = statistics[this.workLoad]
     },
     async fetchProjectTest() {
+      this.ProjectTestLoading = true
       this.projectdata = []
       let apiProjectdata = await getProjectTest(this.projectSelectedId)
-      // console.log(apiProjectdata)
+      this.ProjectTestLoading = false
       apiProjectdata = apiProjectdata.data
       for (const i in apiProjectdata.test_results) {
         const object = {}
@@ -112,7 +114,7 @@ export default {
               Informationtext +
               '<div  style="flex: 1;padding-left: 5px;">' +
               j +
-              ' ' +
+              ':' +
               apiProjectdata.test_results[i][j] +
               ' </div>'
           }
@@ -123,15 +125,17 @@ export default {
             Informationtext = 'No data.'
           }
         } else if (i === 'checkmarx') {
+          // checkmarx message https://github.com/iii-org/devops-system/wiki/Message-Strings
           if (apiProjectdata.test_results[i].status === -1) {
-            Informationtext = apiProjectdata.test_results[i].message
+            Informationtext = 'This project does not have any scan.'
           } else if (apiProjectdata.test_results[i].status === 1) {
-            Informationtext = apiProjectdata.test_results[i].message
+            Informationtext = 'The scan is not completed yet. It may take several hours to complete.'
+          } else if (apiProjectdata.test_results[i].status === 2) {
+            Informationtext = 'The scan is done, but the report is not ready yet. It may take several minutes to complete.'
+          } else if (apiProjectdata.test_results[i].status === 3) {
+            object['report_id'] = apiProjectdata.test_results[i].report_id
           } else if (apiProjectdata.test_results[i].status === undefined) {
             Informationtext = 'No data.'
-          } else if (apiProjectdata.test_results[i].status === 3) {
-            // console.log(apiProjectdata.test_results[i].report_id)
-            object['report_id'] = apiProjectdata.test_results[i].report_id
           }
         }
         object['Software'] = i
@@ -140,8 +144,9 @@ export default {
         this.projectdata.push(object)
       }
     },
-    fetchTestReport(Reportid) {
-      getTestReport(Reportid).then((res) => {
+    async fetchTestReport(Reportid) {
+      this.ProjectTestLoading = true
+      await getTestReport(Reportid).then((res) => {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement('a')
         link.href = url
@@ -149,6 +154,7 @@ export default {
         document.body.appendChild(link)
         link.click()
       })
+      this.ProjectTestLoading = false
     }
   }
 }
@@ -219,7 +225,7 @@ export default {
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card shadow="hover" style="min-height: 400px">
+        <el-card v-loading="ProjectTestLoading" shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix">
             <span>Test status</span>
             <span>
@@ -236,7 +242,7 @@ export default {
             <el-table-column prop="Software" label="Software" width="100" />
             <el-table-column label="Brief Information">
               <template slot-scope="scope">
-                <div style="width: 100%; display: flex" v-html="scope.row.Informationtext" />
+                <div style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;" v-html="scope.row.Informationtext" />
               </template>
             </el-table-column>
             <el-table-column label="Report" width="100">
