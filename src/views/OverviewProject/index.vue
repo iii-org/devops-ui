@@ -133,7 +133,6 @@ export default {
           } else if (apiProjectdata.test_results[i].status === 2) {
             Informationtext = 'The scan is done, but the report is not ready yet. It may take several minutes to complete.'
           } else if (apiProjectdata.test_results[i].status === 3) {
-            Informationtext = 'The report is ready.'
             object['report_id'] = apiProjectdata.test_results[i].report_id
           } else if (apiProjectdata.test_results[i].status === undefined) {
             Informationtext = 'No data.'
@@ -243,7 +242,7 @@ export default {
             <el-table-column prop="Software" label="Software" width="100" />
             <el-table-column label="Brief Information">
               <template slot-scope="scope">
-                <div style="width: 100%; display: flex ;word-break: keep-all;" v-html="scope.row.Informationtext" />
+                <div style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;" v-html="scope.row.Informationtext" />
               </template>
             </el-table-column>
             <el-table-column label="Report" width="100">
