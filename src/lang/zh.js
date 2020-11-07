@@ -1,6 +1,8 @@
 export default {
   route: {
-    'Project List': '專案',
+    Dashboard: '儀表板',
+    Projects: '專案',
+    'Project List': '專案列表',
     'PM Project List': '專案列表',
     Project: '專案概述',
     Overview: '單一專案概述',
