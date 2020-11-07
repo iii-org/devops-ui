@@ -74,27 +74,27 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('TestCaseExpertMode.SearchPlaceHolder')"
+        :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"></i
       ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('TestCaseExpertMode.Name')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCaseExpertMode.Method')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCaseExpertMode.Path')" width="120px">
+      <el-table-column align="center" :label="$t('TestCase.Path')" width="120px">
         <template slot-scope="scope"> {{ scope.row.path }} </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCaseExpertMode.TestResult')">
+      <el-table-column align="center" :label="$t('TestCase.TestResult')">
         <template slot-scope="scope">
           <span v-html="testResults(scope.row)"></span>
         </template>

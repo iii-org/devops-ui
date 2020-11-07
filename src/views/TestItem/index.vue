@@ -223,20 +223,20 @@ export default {
   <div class="app-container">
     <el-card class="box-card el-col-6 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
-        <span style="font-size: 25px; padding-bottom: 10px">Test Case</span>
+        <span style="font-size: 25px; padding-bottom: 10px">{{ $t('TestCase.TestCase') }}</span>
       </div>
       <el-form :label-position="'left'">
         <el-row>
           <el-col>
-            <el-form-item label="Name">{{ testCase.name }} </el-form-item>
+            <el-form-item :label="$t('TestCase.Name')">{{ testCase.name }} </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="Method">
+            <el-form-item :label="$t('TestCase.Method')">
               {{ testCase.data.method }}
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="Path">
+            <el-form-item :label="$t('TestCase.Path')">
               {{ testCase.data.url }}
             </el-form-item>
           </el-col>
@@ -245,18 +245,18 @@ export default {
     </el-card>
 
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
-      <el-tab-pane label="Test Item" name="testItem">
+      <el-tab-pane :label="$t('TestItem.TestItem')" name="testItem">
         <div class="clearfix">
           <span class="newBtn" v-if="userRole === 'Engineer'">
             <el-button type="success" @click="handleTestItemAdding">
               <i class="el-icon-plus" />
-              Add Test Item
+              {{ $t('TestItem.AddTestItem') }}
             </el-button>
           </span>
           <el-input
             v-model="searchData"
             class="ob-search-input ob-shadow search-input mr-3"
-            placeholder="Please input test case name"
+            :placeholder="$t('general.SearchName')"
             style="width: 250px; float: right"
             ><i slot="prefix" class="el-input__icon el-icon-search"></i
           ></el-input>
@@ -269,26 +269,26 @@ export default {
           highlight-current-row
           style="margin-top: 10px"
         >
-          <el-table-column label="Id">
+          <el-table-column :label="$t('TestItem.Id')">
             <template slot-scope="scope">
               {{ scope.row.id }}
             </template>
           </el-table-column>
-          <el-table-column label="Name">
+          <el-table-column :label="$t('general.Name')">
             <template slot-scope="scope">
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column label="Is Pass?">
+          <el-table-column :label="$t('TestItem.IsPass')">
             <template slot-scope="scope">
               {{ scope.row.is_passed }}
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="center" width="200" v-if="userRole === 'Engineer'">
+          <el-table-column :label="$t('general.Actions')" align="center" width="200" v-if="userRole === 'Engineer'">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="handleTestItemEdit(scope.$index, scope.row)">
                 <i class="el-icon-edit" />
-                Edit
+                {{ $t('general.Edit') }}
               </el-button>
               <el-popconfirm
                 confirm-button-text="Delete"
@@ -298,27 +298,29 @@ export default {
                 title="Are you sure?"
                 @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
               >
-                <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
+                <el-button slot="reference" size="mini" type="danger">
+                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
+                >
               </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Test Value" name="testValue">
+      <el-tab-pane :label="$t('TestValue.TestValue')" name="testValue">
         <div class="clearfix">
-          <el-select v-model="selectTestItem" placeholder="Select Test Item">
+          <el-select v-model="selectTestItem" :placeholder="$t('TestValue.SelectTestItem')">
             <el-option v-for="item in testItemList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
           <span class="newBtn" v-if="userRole === 'Engineer'">
             <el-button type="success" @click="handleTestValueAdding">
               <i class="el-icon-plus" />
-              Add Test Value
+              {{ $t('TestValue.AddTestValue') }}
             </el-button>
           </span>
           <el-input
             v-model="searchData"
             class="ob-search-input ob-shadow search-input mr-3"
-            placeholder="Please input test value name"
+            :placeholder="$t('general.SearchName')"
             style="width: 250px; float: right"
             ><i slot="prefix" class="el-input__icon el-icon-search"></i
           ></el-input>
@@ -331,12 +333,12 @@ export default {
           highlight-current-row
           style="margin-top: 10px"
         >
-          <el-table-column label="Type">
+          <el-table-column :label="$t('TestValue.Type')">
             <template slot-scope="scope">
               {{ scope.row.type.label }}
             </template>
           </el-table-column>
-          <el-table-column label="Location">
+          <el-table-column :label="$t('TestValue.Location')">
             <template slot-scope="scope">
               {{ scope.row.location.label }}
             </template>
@@ -351,11 +353,11 @@ export default {
               {{ scope.row.value }}
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="center" width="200" v-if="userRole === 'Engineer'">
+          <el-table-column :label="$t('general.Actions')" align="center" width="200" v-if="userRole === 'Engineer'">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="handleTestValueEdit(scope.$index, scope.row)">
                 <i class="el-icon-edit" />
-                Edit
+                {{ $t('general.Edit') }}
               </el-button>
               <el-popconfirm
                 confirm-button-text="Delete"
@@ -365,7 +367,9 @@ export default {
                 title="Are you sure?"
                 @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
               >
-                <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
+                <el-button slot="reference" size="mini" type="danger">
+                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
+                >
               </el-popconfirm>
             </template>
           </el-table-column>
@@ -374,7 +378,7 @@ export default {
     </el-tabs>
 
     <el-dialog
-      :title="`${dialogStatusText} Test Item`"
+      :title="$t(`TestItem.${dialogStatusText}TestItem`)"
       :visible.sync="testItemDialogVisible"
       width="50%"
       @closed="onDialogClosed"
@@ -386,21 +390,23 @@ export default {
         :rules="testItemFormRules"
         label-width="20%"
       >
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="$t('general.Name')" prop="name">
           <el-input v-model="testItemForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="Is Passed?" prop="is_passed">
+        <el-form-item :label="$t('TestItem.IsPass')" prop="is_passed">
           <el-switch v-model="testItemForm.is_passed" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="testItemDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleTestItemConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button @click="testItemDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="handleTestItemConfirm" :loading="confirmLoading">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
 
     <el-dialog
-      :title="`${dialogStatusText} Test Case`"
+      :title="$t(`TestValue.${dialogStatusText}TestValue`)"
       :visible.sync="testValueDialogVisible"
       width="50%"
       @closed="onDialogClosed"
@@ -412,12 +418,12 @@ export default {
         :rules="testValueFormRules"
         label-width="20%"
       >
-        <el-form-item label="Type" prop="type_id">
+        <el-form-item :label="$t('TestValue.Type')" prop="type_id">
           <el-select v-model="testValueForm.type_id" style="width: 100%">
             <el-option v-for="item in testValueTypeList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Location" prop="location_id">
+        <el-form-item :label="$t('TestValue.Location')" prop="location_id">
           <el-select v-model="testValueForm.location_id" style="width: 100%">
             <el-option
               v-for="item in testValueLocationList"
@@ -435,8 +441,10 @@ export default {
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="testValueDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleTestValueConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button @click="testValueDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="handleTestValueConfirm" :loading="confirmLoading">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>

@@ -182,58 +182,43 @@ export default {
       <span class="newBtn" v-if="userRole === 'Engineer'">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Test Case
+          {{ $t('TestCase.AddTestCase') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input test item name"
+        :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"></i
       ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" label="Id" width="120px">
+      <el-table-column align="center" :label="$t('TestCase.Id')" width="120px">
         <template slot-scope="scope"> {{ scope.row.id }} </template>
       </el-table-column>
-      <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Desc." :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('TestCase.Description')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Method" width="120px">
+      <el-table-column align="center" :label="$t('TestCase.Method')" width="120px">
         <template slot-scope="scope"> {{ scope.row.data.method }} </template>
       </el-table-column>
-      <el-table-column align="center" label="Path">
+      <el-table-column align="center" :label="$t('TestCase.Path')">
         <template slot-scope="scope"> {{ scope.row.data.url }} </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Last Test Time" width="150px">
-        <template slot-scope="scope">
-          {{ scope.row.update_at | relativeTime }}
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column align="center" label="Last Test Result" width="150px">
-        <template slot-scope="scope">
-          <el-tag :type="returnTagType(scope.row)" size="large">
-            <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
-            <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
-            <i v-else class="el-icon-error" />
-            <span>{{ testResults(scope.row) }}</span>
-          </el-tag>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="Actions" width="350" align="center">
+      <el-table-column :label="$t('general.Actions')" width="350" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
-            Test Item
+            {{ $t('TestItem.TestItem') }}
           </el-button>
           <el-button
             v-if="userRole === 'Engineer'"
@@ -242,7 +227,7 @@ export default {
             @click="handleEdit(scope.$index, scope.row)"
           >
             <i class="el-icon-edit" />
-            Edit
+            {{ $t('general.Edit') }}
           </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
@@ -253,7 +238,7 @@ export default {
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button v-if="userRole === 'Engineer'" slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> Delete</el-button
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
             >
           </el-popconfirm>
         </template>
@@ -269,7 +254,7 @@ export default {
     />
     <router-view />
     <el-dialog
-      :title="`${dialogStatusText} Test Case`"
+      :title="$t(`TestCase.${dialogStatusText}TestCase`)"
       :visible.sync="dialogVisible"
       width="50%"
       @closed="onDialogClosed"
@@ -281,10 +266,10 @@ export default {
         :rules="testCaseFormRules"
         label-width="20%"
       >
-        <el-form-item label="API Name" prop="name">
+        <el-form-item :label="$t('general.Name')" prop="name">
           <el-input v-model="testCaseForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="API Method" prop="method_id">
+        <el-form-item :label="$t('TestCase.Method')" prop="method_id">
           <el-select v-model="testCaseForm.method_id" style="width: 100%">
             <el-option
               v-for="item in testCaseAPIMethodList"
@@ -294,21 +279,23 @@ export default {
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="API Type" prop="type_id">
+        <el-form-item :label="$t('TestCase.Type')" prop="type_id">
           <el-select v-model="testCaseForm.type_id" style="width: 100%">
             <el-option v-for="item in testCaseTypeList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="API Url" prop="url">
+        <el-form-item :label="$t('TestCase.Path')" prop="url">
           <el-input v-model="testCaseForm.url"></el-input>
         </el-form-item>
-        <el-form-item label="Desc." prop="description">
+        <el-form-item :label="$t('TestCase.Description')" prop="description">
           <el-input v-model="testCaseForm.description"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>

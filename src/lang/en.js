@@ -183,11 +183,39 @@ export default {
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo'
   },
-  TestCaseExpertMode: {
+  general: {
     Name: 'Name',
+    Edit: 'Edit',
+    Delete: 'Delete',
+    Actions: 'Actions',
+    Confirm: 'Confirm',
+    Cancel: 'Cancel',
+    SearchName: 'Search Name'
+  },
+  TestCase: {
+    TestCase: 'Test Case',
+    AddTestCase: 'Add Test Case',
+    EditTestCase: 'Edit Test Case',
+    Id: 'Id',
+    Type: 'Type',
+    Description: 'Description',
     Method: 'Method',
     Path: 'Path',
     TestResult: 'Test Result',
-    SearchPlaceHolder: 'Filter Name'
+  },
+  TestItem: {
+    TestItem: 'Test Item',
+    AddTestItem: 'Add Test Item',
+    EditTestItem: 'Edit Test Item',
+    Id: 'Id',
+    IsPass: 'Is Pass?'
+  },
+  TestValue: {
+    TestValue: 'Test Value',
+    AddTestValue: 'Add Test Value',
+    EditTestValue: 'Edit Test Value',
+    Type: 'Type',
+    Location: 'Location',
+    SelectTestItem: 'Select Test Item'
   }
 }
