@@ -14,12 +14,19 @@ export default {
     'Issue List': '議題列表',
     'File List': '文件列表',
     Test: 'API測試',
-    'Test Case': 'API測試列表'
+    'Test Case': 'API測試列表',
+    'Test Case (Export)': 'API測試列表(專家模式)'
   },
   navbar: {
     logOut: '登出',
     profile: '個人資料',
     versions: '版本資訊'
   },
-  iii: {}
+  TestCaseExpertMode: {
+    Name: '名稱',
+    Method: '方法',
+    Path: '路逕',
+    TestResult: '測試結果',
+    SearchPlaceHolder: '搜尋名稱'
+  }
 }

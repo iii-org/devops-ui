@@ -182,5 +182,12 @@ export default {
     tagsView: 'Open Tags-View',
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo'
+  },
+  TestCaseExpertMode: {
+    Name: 'Name',
+    Method: 'Method',
+    Path: 'Path',
+    TestResult: 'Test Result',
+    SearchPlaceHolder: 'Filter Name'
   }
 }

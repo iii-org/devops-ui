@@ -380,7 +380,7 @@ export const asyncRoutes = [
         path: 'test-case',
         name: 'Test Case',
         component: () => import('@/views/TestCase/index'),
-        meta: { title: 'Test Case', icon: 'list', roles: ['Engineer', 'Project Manager'] }
+        meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager'] }
       },
       {
         path: 'test-case/:testCaseId',
@@ -388,6 +388,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/TestItem/index'),
         meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager'] }
+      },
+      {
+        path: 'test-case-export-mode',
+        name: 'Test Case Export Mode',
+        component: () => import('@/views/TestCaseExpertMode/index'),
+        meta: { title: 'Test Case (Export)', roles: ['Project Manager'] }
       }
     ]
   },
