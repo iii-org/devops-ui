@@ -228,7 +228,7 @@ export default {
       <el-form :label-position="'left'">
         <el-row>
           <el-col>
-            <el-form-item :label="$t('TestCase.Name')">{{ testCase.name }} </el-form-item>
+            <el-form-item :label="$t('general.Name')">{{ testCase.name }} </el-form-item>
           </el-col>
           <el-col>
             <el-form-item :label="$t('TestCase.Method')">
