@@ -29,6 +29,14 @@ export function addTestValueByItem(item_id, data) {
   })
 }
 
+export function updateTestValue(item_id, data) {
+  return request({
+    url: `/testValues/${item_id}`,
+    method: 'put',
+    data
+  })
+}
+
 export function deleteTestValue(value_id) {
   return request({
     url: `/testValues/${value_id}`,

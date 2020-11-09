@@ -5,6 +5,7 @@ import { getTestItemByCase, addTestItemByCase, updateTestItem, deleteTestItem } 
 import {
   getTestValueByItem,
   addTestValueByItem,
+  updateTestValue,
   deleteTestValue,
   getTestValueType,
   getTestValueLocation
@@ -202,7 +203,7 @@ export default {
           if (this.dialogStatus == 1) {
             await addTestValueByItem(this.selectTestItem, this.testValueForm)
           } else {
-            await addTestValueByItem(this.selectTestItem, this.testValueForm)
+            await updateTestValue(this.testValueForm['id'], this.testValueForm)
           }
           this.$refs['testValueForm'].resetFields()
           this.testValueDialogVisible = false
@@ -413,7 +414,7 @@ export default {
     >
       <el-form
         label-position="top"
-        ref="testItemForm"
+        ref="testValueForm"
         :model="testValueForm"
         :rules="testValueFormRules"
         label-width="20%"
