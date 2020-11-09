@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectSelectedId']),
+    ...mapGetters(['projectSelectedId', 'userId']),
     pagedData() {
       // const start = (this.listQuery.page - 1) * this.listQuery.limit
       // const end = start + this.listQuery.limit - 1
@@ -130,7 +130,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-      this.listLoading = false
     },
     onDialogClosed() {
       this.$nextTick(() => {
@@ -205,7 +204,7 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
+            <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.id==userId"> <i class="el-icon-delete" /> Delete</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
