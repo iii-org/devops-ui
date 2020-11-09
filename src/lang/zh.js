@@ -57,6 +57,7 @@ export default {
     EditTestValue: '編輯測試資料',
     Type: '類型',
     Location: '位置',
-    SelectTestItem: '選擇測試項目'
+    SelectTestItem: '選擇測試項目',
+    SearchValue: '搜尋Value'
   }
 }

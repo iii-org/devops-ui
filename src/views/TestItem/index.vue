@@ -47,15 +47,21 @@ export default {
       testValueList: [],
       testValueDialogVisible: false,
       listLoading: true,
-      listQuery: {
+      testItemlistQuery: {
         page: 1, //目前第幾頁
         limit: 10 //一頁幾筆
       },
-      listTotal: 0, //總筆數
+      testItemListTotal: 0, //總筆數
+      testValuelistQuery: {
+        page: 1, //目前第幾頁
+        limit: 10 //一頁幾筆
+      },
+      testValueListTotal: 0, //總筆數
       testItemForm: testItemFormTemplate,
       testValueForm: testValueFormTemplate,
       confirmLoading: false,
-      searchData: '',
+      testItemSearchData: '',
+      testValueSearchData: '',
       dialogStatus: 1,
       testValueTypeList: [],
       testValueLocationList: [],
@@ -78,15 +84,29 @@ export default {
   },
   computed: {
     ...mapGetters(['userRole']),
-    pagedData() {
+    testItemPagedData() {
       const listData = this.testItemList.filter((data) => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.testItemSearchData == '' || data.name.toLowerCase().includes(this.testItemSearchData.toLowerCase())) {
           return data
         }
       })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
+      this.testItemListTotal = listData.length
+      const start = (this.testItemlistQuery.page - 1) * this.testItemlistQuery.limit
+      const end = start + this.testItemlistQuery.limit
+      return listData.slice(start, end)
+    },
+    testValuePagedData() {
+      const listData = this.testValueList.filter((data) => {
+        if (
+          this.testValueSearchData == '' ||
+          data.value.toLowerCase().includes(this.testValueSearchData.toLowerCase())
+        ) {
+          return data
+        }
+      })
+      this.testValueListTotal = listData.length
+      const start = (this.testValuelistQuery.page - 1) * this.testValuelistQuery.limit
+      const end = start + this.testValuelistQuery.limit
       return listData.slice(start, end)
     },
     dialogStatusText() {
@@ -166,8 +186,8 @@ export default {
       if (!success || !total) return 'No Test'
       return success + ' / ' + total
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+    onPagination(testItemlistQuery) {
+      this.testItemlistQuery = testItemlistQuery
     },
     onDialogClosed() {
       this.$nextTick(() => {
@@ -255,7 +275,7 @@ export default {
             </el-button>
           </span>
           <el-input
-            v-model="searchData"
+            v-model="testItemSearchData"
             class="ob-search-input ob-shadow search-input mr-3"
             :placeholder="$t('general.SearchName')"
             style="width: 250px; float: right"
@@ -263,7 +283,7 @@ export default {
           ></el-input>
         </div>
         <el-table
-          :data="testItemList"
+          :data="testItemPagedData"
           element-loading-text="Loading"
           border
           fit
@@ -306,6 +326,14 @@ export default {
             </template>
           </el-table-column>
         </el-table>
+        <pagination
+          :total="testItemListTotal"
+          :page="testItemlistQuery.page"
+          :limit="testItemlistQuery.limit"
+          :page-sizes="[testItemlistQuery.limit]"
+          :layout="'total, prev, pager, next'"
+          @pagination="onPagination"
+        />
       </el-tab-pane>
       <el-tab-pane :label="$t('TestValue.TestValue')" name="testValue">
         <div class="clearfix">
@@ -319,15 +347,15 @@ export default {
             </el-button>
           </span>
           <el-input
-            v-model="searchData"
+            v-model="testValueSearchData"
             class="ob-search-input ob-shadow search-input mr-3"
-            :placeholder="$t('general.SearchName')"
+            :placeholder="$t('TestValue.SearchValue')"
             style="width: 250px; float: right"
             ><i slot="prefix" class="el-input__icon el-icon-search"></i
           ></el-input>
         </div>
         <el-table
-          :data="testValueList"
+          :data="testValuePagedData"
           element-loading-text="Loading"
           border
           fit
@@ -375,6 +403,14 @@ export default {
             </template>
           </el-table-column>
         </el-table>
+        <pagination
+          :total="testValueListTotal"
+          :page="testValuelistQuery.page"
+          :limit="testValuelistQuery.limit"
+          :page-sizes="[testValuelistQuery.limit]"
+          :layout="'total, prev, pager, next'"
+          @pagination="onPagination"
+        />
       </el-tab-pane>
     </el-tabs>
 

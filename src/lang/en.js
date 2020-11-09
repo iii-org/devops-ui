@@ -171,6 +171,7 @@ export default {
     EditTestValue: 'Edit Test Value',
     Type: 'Type',
     Location: 'Location',
-    SelectTestItem: 'Select Test Item'
+    SelectTestItem: 'Select Test Item',
+    SearchValue: 'Search Value'
   }
 }
