@@ -26,7 +26,7 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: ''
     }
   },
@@ -124,8 +124,7 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input commit message"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -144,8 +143,11 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Status" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="statusBoo(scope.row.status)" type="success" size="big">Success</el-tag>
-          <el-tag v-else type="danger" size="big">Fail</el-tag>
+          <el-tag v-if="scope.row.execution_state=='Failed'" type="danger" size="big"> {{ scope.row.execution_state }}</el-tag>
+          <el-tag v-else-if="scope.row.execution_state=='Success'" type="success" size="big">{{ scope.row.execution_state }}</el-tag>
+          <el-tag v-else-if="scope.row.execution_state=='Waiting'" type="responded" size="big">{{ scope.row.execution_state }}</el-tag>
+          <el-tag v-else-if="scope.row.execution_state=='Building'" type="warning" size="big">{{ scope.row.execution_state }}</el-tag>
+          <el-tag v-else type="close" size="big">{{ scope.row.execution_state }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Commit Message" :show-overflow-tooltip="true">
