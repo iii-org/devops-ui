@@ -33,7 +33,15 @@ import * as filters from './filters' // global filters
 Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
 Vue.use(VueShowdown, {
   options: {
-    emoji: true
+    emoji: true,
+    tables: true,
+    simplifiedAutoLink: true,
+    tasklists: true,
+    openLinksInNewWindow: true,
+    underline: true,
+    ghCodeBlocks: true,
+    encodeEmails: true,
+    simpleLineBreaks: true
   }
 })
 // 如果想要中文版 element-ui，按如下方式声明

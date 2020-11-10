@@ -296,6 +296,7 @@ export default {
       </div>
     </el-drawer>
     <el-drawer
+      class="wiki"
       :title="`${drawerTitle} Wiki`"
       :visible.sync="detailVisible"
       :direction="direction"
@@ -331,6 +332,11 @@ export default {
   .newBtn {
     float: right;
     padding-right: 6px;
+  }
+}
+.wiki{
+  a{
+    text-decoration:underline;
   }
 }
 .container {
