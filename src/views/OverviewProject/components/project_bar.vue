@@ -29,7 +29,7 @@ export default {
     },
     height: {
       type: String,
-      default: '250px'
+      default: '300px'
     },
     theData: {
       type: Object,
@@ -82,6 +82,11 @@ export default {
   },
   methods: {
     initChart(CONFIG_DATA) {
+      if (CONFIG_DATA.yAxis.length === 0) {
+        this.$emit('legendfun', false)
+      } else {
+        this.$emit('legendfun', true)
+      }
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         title: {
