@@ -201,11 +201,11 @@ export default {
                 <span v-if="workLoad=='priority'" class="legend-box" style="background: #F9BE6E" />
                 <span v-if="workLoad=='priority'" class="legend-box" style="background: #2EC6C8" />
                 <span class="legend-box" style="background: #56b1e8" />
-                <span>Finshed</span>
+                <span>Finished</span>
               </div>
               <div class="d-inline-block">
                 <span class="legend-box" />
-                <span>Unfinshed</span>
+                <span>Unfinished</span>
               </div>
             </div>
           </div>

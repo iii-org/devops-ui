@@ -4,7 +4,8 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Not Finished Issues</span>
+            <span>Unfinished Issues</span><br>
+            <span>&nbsp;</span>
           </div>
           <div class="text item" style="font-size: 40px;text-align: center; height: 86px">
             {{this.issueNotFinishStatistics}}
@@ -14,18 +15,20 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Closed/Open Issues this week</span>
-          </div>
+            <span>Issues should be closed within this week.</span><br>
+            <span>Finished / Total</span>
+          </div>          
           <div class="text item" style="font-size: 40px;text-align: center">
             {{issueWeekStatistics.closed}}/{{issueWeekStatistics.closed+issueWeekStatistics.open}}
             <el-progress :percentage="returnPercentage(issueWeekStatistics)" />
-          </div>
+          </div>         
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Closed/Open Issues this month</span>
+            <span>Issues should be closed within this month.</span><br>
+            <span>Finished / Total</span>
           </div>
           <div class="text item" style="font-size: 40px;text-align: center">
             {{issueMonthStatistics.closed}}/{{issueMonthStatistics.closed+issueMonthStatistics.open}}
