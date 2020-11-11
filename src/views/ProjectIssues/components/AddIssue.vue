@@ -246,7 +246,7 @@ export default {
       this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
           const data = this.issueForm
-          const filetype = this.extension[this.uploadFileList[0].raw.type]
+          // const filetype = this.extension[this.uploadFileList[0].raw.type]
           const form = new FormData()
           form.append('project_id', this.projectId)
           Object.keys(data).forEach((objKey) => {
