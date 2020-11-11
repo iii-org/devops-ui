@@ -30,7 +30,8 @@ export default {
       workLoadSelected: {},
       issueprogress: { total_issue: 0, unfinish_number: 0 },
       tableData: [],
-      projectdata: []
+      projectdata: [],
+      legend: false
     }
   },
   computed: {
@@ -52,6 +53,9 @@ export default {
     ...mapActions('projects', ['getProjectIssueProgress', 'getProjectIssueStatistics', 'getProjectUserList']),
     onWorkLoadChange(value) {
       this.workLoadSelected = this.workLoadData[value]
+    },
+    legendfun(value) {
+      this.legend = value.toString()
     },
     async fetchAll() {
       this.isLoading = true
@@ -191,8 +195,7 @@ export default {
             >
               <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-
-            <div class="bar-header">
+            <div v-if="legend=='true'" class="bar-header">
               <div class="d-inline-block">
                 <span v-if="workLoad=='priority'" class="legend-box" style="background: #E85656" />
                 <span v-if="workLoad=='priority'" class="legend-box" style="background: #F9BE6E" />
@@ -204,10 +207,10 @@ export default {
                 <span class="legend-box" />
                 <span>Unfinshed</span>
               </div>
-            </div> <!-- /bar-header -->
+            </div>
           </div>
           <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
-          <project-bar :the-data="workLoadSelected" />
+          <project-bar :the-data="workLoadSelected" @legendfun="legendfun" />
         </el-card>
       </el-col>
     </el-row>
