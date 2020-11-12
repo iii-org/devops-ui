@@ -203,7 +203,9 @@ export default {
     dialogVisible() {
       this.LoadingConfirm = false
       if (this.dialogVisible === true) {
+        this.uploadFileList = []
         this.$nextTick(() => {
+          this.$refs['upload'].clearFiles()
           this.$refs['issueForm'].resetFields()
         })
       }
@@ -243,12 +245,13 @@ export default {
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
-      this.$refs['issueForm'].validate(async (valid) => {
+      this.$refs['issueForm'].validate(async(valid) => {
         if (valid) {
           const data = this.issueForm
           // const filetype = this.extension[this.uploadFileList[0].raw.type]
           const form = new FormData()
           form.append('project_id', this.projectId)
+          data['parent_id'] = this.parentid
           Object.keys(data).forEach((objKey) => {
             if (objKey === 'fixed_version_id' && data['fixed_version_id'] === '') return false
             if (objKey === 'parent_id' && (data['parent_id'] === '' || data['parent_id'] === 0)) return false
