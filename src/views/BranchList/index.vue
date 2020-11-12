@@ -37,7 +37,8 @@ export default {
       deleteBranchBtnLoading: false,
       mergeBranchBtnLoading: false,
       newTagBtnLoading: false,
-      listTotal: 0 // 總筆數
+      listTotal: 0, // 總筆數,
+      Mergebranches: []
     }
   },
   computed: {
@@ -92,7 +93,15 @@ export default {
       })
     },
     handleMerge(index, row) {
+      this.Mergebranches = [...this.branchesByProject]
+      const listData = this.Mergebranches.filter((data) => {
+        if (data.name !== row.name) {
+          return data
+        }
+      })
+      this.Mergebranches = listData
       this.mergeDialogVisible = true
+      this.newBranchFrom = this.Mergebranches[0].name
       this.selectedBranch = row.name
     },
     handleDelete(index, row) {
@@ -286,7 +295,7 @@ export default {
       <el-divider />
       <h4>Merge into</h4>
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
-        <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
+        <el-option v-for="item in Mergebranches" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
       <!-- <h4>Commit Message :</h4>
       <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
