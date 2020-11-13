@@ -476,7 +476,7 @@ export default {
           </el-table-column> -->
           <el-table-column label="Comment Time" width="200" align="center">
             <template slot-scope="scope">
-              {{ scope.row.comment_at }}
+              {{ new Date(scope.row.comment_at).toLocaleString() }}
             </template>
           </el-table-column>
         </el-table>
