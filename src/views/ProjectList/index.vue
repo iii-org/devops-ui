@@ -30,10 +30,10 @@ export default {
       dialogStatus: 1,
       listLoading: true,
       listQuery: {
-        page: 1, //目前第幾頁
-        limit: 10 //一頁幾筆
+        page: 1, // 目前第幾頁
+        limit: 10 // 一頁幾筆
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       form: formTemplate,
       confirmLoading: false,
       searchData: ''
@@ -108,7 +108,11 @@ export default {
       console.log(this.form)
     },
     myFormatTime(time) {
-      return formatTime(new Date(time))
+      if (time == null) {
+        return '-'
+      } else {
+        return formatTime(new Date(time))
+      }
     }
   }
 }
@@ -125,14 +129,13 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input project name"
+        placeholder="Please input project identifier"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
+      <el-table-column align="center" label="Name / Identifier" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <router-link
             :to="{
@@ -141,6 +144,8 @@ export default {
             }"
             style="color: #409eff"
           >
+            <span style="color: #67c23a">{{ scope.row.display }}</span>
+            <br>
             <span>{{ scope.row.name }}</span>
           </router-link>
         </template>
@@ -192,9 +197,12 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Redmin" width="100px">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
-            >Redmin</el-link
-          >
+          <el-link
+            v-if="scope.row.redmine_url"
+            type="primary"
+            :href="scope.row.redmine_url"
+            target="_blank"
+          >Redmin</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -244,35 +252,35 @@ export default {
     >
       <el-form ref="thisForm" :model="form" label-position="top">
         <el-form-item label="Project Name" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="Project Code" prop="code">
-          <el-input v-model="form.code"></el-input>
+          <el-input v-model="form.code" />
         </el-form-item>
         <el-form-item label="Project Owner" prop="owner">
-          <el-input v-model="form.owner"></el-input>
+          <el-input v-model="form.owner" />
         </el-form-item>
         <el-col :span="11">
           <el-form-item label="Project Amount" prop="amount">
-            <el-input type="number" v-model="form.amount"></el-input>
+            <el-input v-model="form.amount" type="number" />
           </el-form-item>
         </el-col>
         <el-col :span="2">&nbsp;</el-col>
         <el-col :span="11">
           <el-form-item label="Human Resource/Month" prop="ppm">
-            <el-input type="number" v-model="form.ppm"></el-input>
+            <el-input v-model="form.ppm" type="number" />
           </el-form-item>
         </el-col>
         <el-form-item label="Description" prop="desc">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+          <el-input v-model="form.desc" type="textarea" />
         </el-form-item>
         <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status"></el-switch>
+          <el-switch v-model="form.status" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="confirmLoading">Confirm</el-button>
+        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
