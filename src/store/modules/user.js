@@ -47,7 +47,7 @@ const actions = {
           const { token } = data
           const jwtContent = VueJwtDecode.decode(token)
           console.log('jwtContent', jwtContent)
-          if (!'identity' in jwtContent) {
+          if (!('identity' in jwtContent)) {
             Promise.reject('userId not exist')
           }
 
@@ -69,7 +69,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       const token = getToken()
       const jwtContent = VueJwtDecode.decode(token)
-      if (!'identity' in jwtContent) {
+      if (!('identity' in jwtContent)) {
         Promise.reject('userId not exist')
       }
       commit('SET_USER_ID', jwtContent['identity'].user_id)
@@ -88,6 +88,9 @@ const actions = {
           if (!role.name) {
             reject('name is not exist in role')
           }
+          data.project = data.project.sort(function(a, b) {
+            return a['id'] < b['id'] ? 1 : -1
+          })
           commit('SET_USER_ROLE', role.name)
           commit('SET_USER_PROJECT', data.project)
           if (data.project.length > 0) {
