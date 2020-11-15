@@ -188,27 +188,27 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input tool"
+        :placeholder="$t('DevOps.SearchTool')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"></i
       ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
+      <el-table-column align="center" :label="$t('DevOps.Id')" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope">
           <!-- <i class="el-icon-sort"></i>  -->
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Phase" :show-overflow-tooltip="true" width="160" align="center">
+      <el-table-column :label="$t('DevOps.Phase')" :show-overflow-tooltip="true" width="160" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.phase === 'deploy'" type="danger" size="big">{{ scope.row.phase }}</el-tag>
           <el-tag v-else-if="scope.row.phase === 'Test'" type="warning" size="big">{{ scope.row.phase }}</el-tag>
           <el-tag v-else type="success" size="big">{{ scope.row.phase }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Tools" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('DevOps.Tools')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.software }}
         </template>

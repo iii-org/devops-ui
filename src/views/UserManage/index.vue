@@ -87,25 +87,25 @@ export default {
       <span class="newBtn">
         <el-button type="success" style="float: right; margin-bottom: 5px" @click="showUserDialog('', 'Add User')">
           <i class="el-icon-plus" />
-          Add User
+          {{ $t('User.AddUser') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input user account"
+        :placeholder="$t('User.SearchAccount')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"></i
       ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border>
-      <el-table-column align="center" label="Account">
+      <el-table-column align="center" :label="$t('User.Account')">
         <template slot-scope="scope">
           {{ scope.row.login }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name">
+      <el-table-column align="center" :label="$t('general.Name')">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -115,26 +115,26 @@ export default {
           {{ scope.row.email }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Create Time" width="150">
+      <el-table-column align="center" :label="$t('general.CreateTime')" width="150">
         <template slot-scope="scope">
           {{ scope.row.create_at.split('T')[0] }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Phone" width="150">
+      <el-table-column align="center" :label="$t('User.Phone')" width="150">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="100">
+      <el-table-column align="center" :label="$t('general.Status')" width="100">
         <template slot-scope="scope">
           {{ scope.row.status }}
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="100">
+      <el-table-column :label="$t('general.Actions')" align="center" width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
             <i class="el-icon-edit" />
-            Edit
+            {{ $t('general.Edit') }}
           </el-button>
         </template>
       </el-table-column>

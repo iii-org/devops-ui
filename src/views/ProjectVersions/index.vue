@@ -145,49 +145,49 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Version
+          {{ $t('Version.AddVersion') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input version name"
+        :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"></i
       ></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
+      <el-table-column align="center" :label="$t('Version.Id')" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Due Date" width="200">
+      <el-table-column :label="$t('Version.DueDate')" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.due_date }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" :show-overflow-tooltip="true" width="160" align="center">
+      <el-table-column :label="$t('general.Status')" :show-overflow-tooltip="true" width="160" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'closed'" type="danger" size="big">{{ scope.row.status }}</el-tag>
           <el-tag v-else type="success" size="big">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="260">
+      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
-            Edit
+            {{ $t('general.Edit') }}
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
             <i class="el-icon-delete" />
-            Delete
+            {{ $t('general.Delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -202,38 +202,40 @@ export default {
     />
 
     <el-dialog
-      :title="`${dialogStatusText} Version`"
+      :title="$t(`Version.${dialogStatusText}Version`)"
       :visible.sync="dialogVisible"
       width="50%"
       @closed="onDialogClosed"
     >
       <el-form ref="form" :model="form" :rules="formRules" label-position="top">
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="$t('general.Name')" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="Duration" prop="due_date">
+        <el-form-item :label="$t('Version.Duration')" prop="due_date">
           <el-date-picker
             v-model="form.due_date"
             type="date"
-            placeholder="End Date"
+            :placeholder="$t('Version.EndDate')"
             value-format="yyyy-MM-dd"
             style="width: 100%"
           />
         </el-form-item>
-        <el-form-item label="Status" prop="status">
+        <el-form-item :label="$t('general.Status')" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio :label="'open'">Open</el-radio>
-            <el-radio :label="'closed'">Closed</el-radio>
-            <el-radio :label="'locked'">Locked</el-radio>
+            <el-radio :label="'open'">{{ $t('Version.Open') }}</el-radio>
+            <el-radio :label="'closed'">{{ $t('Version.Closed') }}</el-radio>
+            <el-radio :label="'locked'">{{ $t('Version.Locked') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="Description" prop="description">
+        <el-form-item :label="$t('general.Description')" prop="description">
           <el-input v-model="form.description" type="textarea" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">Confirm</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>

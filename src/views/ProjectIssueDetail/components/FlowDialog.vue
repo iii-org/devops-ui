@@ -1,54 +1,40 @@
 <template>
-  <el-dialog
-    :title="dialogTitle"
-    :visible="dialogVisible"
-    width="50%"
-    @close="handleClose"
-  >
-    <el-form 
-      ref="flowForm" 
-      :model="flowForm"
-      :rules="flowFormRules"
-    >
+  <el-dialog :title="$t(`Issue.${dialogTitle}`)" :visible="dialogVisible" width="50%" @close="handleClose">
+    <el-form ref="flowForm" :model="flowForm" :rules="flowFormRules">
       <el-row v-if="flowId != 0">
         <el-col :span="24">
-          <el-form-item label="Step Order">
+          <el-form-item :label="$t('Issue.FlowId')">
             <el-input v-model="stepOrder" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Name" prop="name">
+          <el-form-item :label="$t('general.Name')" prop="name">
             <el-input v-model="flowForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Type" prop="type_id">
-            <el-select v-model="flowForm.type_id" style="width:100%">
-              <el-option
-                v-for="item in flowTypeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+          <el-form-item :label="$t('general.Type')" prop="type_id">
+            <el-select v-model="flowForm.type_id" style="width: 100%">
+              <el-option v-for="item in flowTypeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Step Desc." prop="description">
+          <el-form-item :label="$t('general.Description')" prop="description">
             <el-input v-model="flowForm.description" type="textarea" />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">Cancel</el-button>
-      <el-button type="primary" @click="handleSave">Confirm</el-button>
+      <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -62,7 +48,7 @@ export default {
     },
     dialogTitle: {
       type: String,
-      default: 'Add Flow'
+      default: 'AddFlow'
     },
     flowId: {
       type: Number,
@@ -80,15 +66,9 @@ export default {
         description: ''
       },
       flowFormRules: {
-        name: [
-          { required: true, message: 'Please input name', trigger: 'blur' }
-        ],
-        type_id: [
-          { required: true, message: 'Please select type', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: 'Please input description', trigger: 'blur' }
-        ]
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
       }
     }
   },
@@ -107,7 +87,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getFlowType()
-      this.flowTypeList = res.data.map(item => {
+      this.flowTypeList = res.data.map((item) => {
         return { label: item.name, value: item.flow_type_id }
       })
     },
@@ -116,7 +96,7 @@ export default {
       this.$emit('flow-dialog-visible', false)
     },
     handleSave() {
-      this.$refs['flowForm'].validate(async(valid) => {
+      this.$refs['flowForm'].validate(async (valid) => {
         if (valid) {
           await this.saveData(this.flowForm)
           this.$refs['flowForm'].resetFields()

@@ -110,7 +110,7 @@ export default {
       }
     },
     async handleConfirm() {
-      this.$refs['fileForm'].validate(async(valid) => {
+      this.$refs['fileForm'].validate(async (valid) => {
         if (valid) {
           const data = this.fileForm
           // const filetype = this.uploadFileList[0].raw.type.split('/')[1]
@@ -166,24 +166,25 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add File
+          {{ $t('File.AddFile') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input file name"
+        :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+        ><i slot="prefix" class="el-input__icon el-icon-search"
+      /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
+      <el-table-column align="center" :label="$t('File.Id')" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.filename }}
         </template>
@@ -193,21 +194,21 @@ export default {
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="Creator" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('general.Creator')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Create time" width="120px">
+      <el-table-column :label="$t('general.CreateTime')" width="120px">
         <template slot-scope="scope">
           {{ scope.row.created_on | relativeTime }}
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="150px">
+      <el-table-column :label="$t('general.Actions')" align="center" width="150px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleDownload(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            Download
+            <i class="el-icon-download" />
+            {{ $t('File.Download') }}
           </el-button>
         </template>
       </el-table-column>
@@ -221,9 +222,15 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="`Add file`" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" @closed="onDialogClosed">
+    <el-dialog
+      :title="$t('File.AddFile')"
+      :visible.sync="dialogVisible"
+      width="50%"
+      :close-on-click-modal="false"
+      @closed="onDialogClosed"
+    >
       <el-form ref="fileForm" :model="fileForm" :rules="fileFormRules" label-width="120px">
-        <el-form-item label="Upload" prop="upload">
+        <el-form-item :label="$t('File.Upload')" prop="upload">
           <el-upload
             ref="upload"
             class="upload-file"
@@ -235,24 +242,26 @@ export default {
             :on-change="handleChange"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">drap file here or <em>click upload</em></div>
+            <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</em></div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="$t('general.Name')" prop="name">
           <el-input v-model="fileForm.name" />
         </el-form-item>
-        <el-form-item label="Description" prop="description">
+        <!-- <el-form-item :label="$t('general.Description')" prop="description">
           <el-input v-model="fileForm.description" type="textarea" />
-        </el-form-item>
-        <el-form-item label="Versions" prop="version">
-          <el-select v-model="fileForm.version" placeholder="select a version" style="width: 100%">
+        </el-form-item> -->
+        <el-form-item :label="$t('Version.Version')" prop="version">
+          <el-select v-model="fileForm.version" :placeholder="$t('Version.SelectVersion')" style="width: 100%">
             <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">Confirm</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -274,7 +283,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.upload-file >>>.el-upload-dragger {
-  height: 100px ;
+.upload-file >>> .el-upload-dragger {
+  height: 100px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="Add Issue"
+    :title="$t('Issue.AddIssue')"
     :visible="dialogVisible"
     width="50%"
     top="5px"
@@ -17,12 +17,12 @@
           </el-col>
         </el-row>
         <el-col :span="12">
-          <el-form-item label="Name" prop="subject">
-            <el-input v-model="issueForm.subject" placeholder="please input name" />
+          <el-form-item :label="$t('general.Name')" prop="subject">
+            <el-input v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Assignee" prop="assigned_to_id">
+          <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
             <el-select v-model="issueForm.assigned_to_id" style="width: 100%" filterable>
               <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -31,14 +31,14 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Version" prop="fixed_version_id">
+          <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
             <el-select v-model="issueForm.fixed_version_id" style="width: 100%" filterable>
               <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Type" prop="tracker_id">
+          <el-form-item :label="$t('general.Type')" prop="tracker_id">
             <el-select v-model="issueForm.tracker_id" style="width: 100%">
               <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -47,14 +47,14 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Status" prop="status_id">
+          <el-form-item :label="$t('general.Status')" prop="status_id">
             <el-select v-model="issueForm.status_id" style="width: 100%">
               <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Priority" prop="priority_id">
+          <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
             <el-select v-model="issueForm.priority_id" style="width: 100%">
               <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -63,12 +63,12 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Estimate" prop="estimated_hours">
+          <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
             <el-input-number v-model="issueForm.estimated_hours" label="please input hours" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Done Ratio" prop="done_ratio">
+          <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
             <el-input-number
               v-model="issueForm.done_ratio"
               label="please input numbers"
@@ -81,22 +81,22 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Start" prop="start_date">
+          <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
             <el-date-picker
               v-model="issueForm.start_date"
               type="date"
-              placeholder="Select Date"
+              :placeholder="$t('Issue.SelectDate')"
               style="width: 100%"
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="End" prop="due_date">
+          <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
             <el-date-picker
               v-model="issueForm.due_date"
               type="date"
-              placeholder="Select Date"
+              :placeholder="$t('Issue.SelectDate')"
               style="width: 100%"
               value-format="yyyy-MM-dd"
             />
@@ -105,7 +105,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="Upload" prop="upload">
+          <el-form-item :label="$t('File.Upload')" prop="upload">
             <el-upload
               ref="upload"
               class="upload-file"
@@ -116,20 +116,20 @@
               :on-exceed="handleExceed"
               :on-change="handleChange"
             >
-              <div class="el-upload__text">drap file here or <em>click upload</em></div>
+              <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</div>
             </el-upload>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Desc." prop="description">
-            <el-input v-model="issueForm.description" type="textarea" placeholder="please input description" />
+          <el-form-item :label="$t('general.Description')" prop="description">
+            <el-input v-model="issueForm.description" type="textarea" :placeholder="$t('general.PleaseInput')" />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">Cancel</el-button>
-      <el-button :loading="LoadingConfirm" type="primary" @click="handleSave">Confirm</el-button>
+      <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button :loading="LoadingConfirm" type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -245,7 +245,7 @@ export default {
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
-      this.$refs['issueForm'].validate(async(valid) => {
+      this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
           const data = this.issueForm
           // const filetype = this.extension[this.uploadFileList[0].raw.type]

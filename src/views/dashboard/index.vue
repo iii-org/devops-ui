@@ -4,44 +4,47 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Unfinished Issues</span><br>
+            <span>{{ $t('Dashboard.UnfinishIssues') }}</span
+            ><br />
             <span>&nbsp;</span>
           </div>
-          <div class="text item" style="font-size: 40px;text-align: center; height: 86px">
-            {{this.issueNotFinishStatistics}}
+          <div class="text item" style="font-size: 40px; text-align: center; height: 86px">
+            {{ this.issueNotFinishStatistics }}
           </div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Issues should be closed within this week.</span><br>
-            <span>Finished / Total</span>
-          </div>          
-          <div class="text item" style="font-size: 40px;text-align: center">
-            {{issueWeekStatistics.closed}}/{{issueWeekStatistics.closed+issueWeekStatistics.open}}
+            <span>{{ $t('Dashboard.IssuesShouldBeClosedWithinThisWeek') }}</span
+            ><br />
+            <span>{{ $t('Dashboard.Finished') }} / {{ $t('Dashboard.Total') }}</span>
+          </div>
+          <div class="text item" style="font-size: 40px; text-align: center">
+            {{ issueWeekStatistics.closed }}/{{ issueWeekStatistics.closed + issueWeekStatistics.open }}
             <el-progress :percentage="returnPercentage(issueWeekStatistics)" />
-          </div>         
+          </div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Issues should be closed within this month.</span><br>
-            <span>Finished / Total</span>
+            <span>{{ $t('Dashboard.IssuesShouldBeClosedWithinThisMonth') }}</span
+            ><br />
+            <span>{{ $t('Dashboard.Finished') }} / {{ $t('Dashboard.Total') }}</span>
           </div>
-          <div class="text item" style="font-size: 40px;text-align: center">
-            {{issueMonthStatistics.closed}}/{{issueMonthStatistics.closed+issueMonthStatistics.open}}
+          <div class="text item" style="font-size: 40px; text-align: center">
+            {{ issueMonthStatistics.closed }}/{{ issueMonthStatistics.closed + issueMonthStatistics.open }}
             <el-progress :percentage="returnPercentage(issueMonthStatistics)" />
           </div>
         </el-card>
       </el-col>
     </el-row>
-    <el-row :gutter="12" style="margin-top:10px">
+    <el-row :gutter="12" style="margin-top: 10px">
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Assign Issues Priority</span>
+            <span>{{ $t('Dashboard.AssignIssuesPriority') }}</span>
           </div>
           <priorityPie />
         </el-card>
@@ -49,7 +52,7 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Assign Issues Project</span>
+            <span>{{ $t('Dashboard.AssignIssuesProject') }}</span>
           </div>
           <projectPie />
         </el-card>
@@ -57,7 +60,7 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>Assign Issues Type</span>
+            <span>{{ $t('Dashboard.AssignIssuesType') }}</span>
           </div>
           <typePie />
         </el-card>
@@ -82,8 +85,8 @@ export default {
   },
   data() {
     return {
-      issueMonthStatistics: {'open': '', 'closed': '-'},
-      issueWeekStatistics: {'open': '', 'closed': '-'},
+      issueMonthStatistics: { open: '', closed: '-' },
+      issueWeekStatistics: { open: '', closed: '-' },
       issueNotFinishStatistics: '-'
     }
   },
@@ -91,15 +94,11 @@ export default {
     ...mapGetters(['name'])
   },
   mounted() {
-    Promise.all([
-        getIssueMonthStatistics(), 
-        getIssueWeekStatistics(), 
-        getIssueOpenStatistics()
-      ]).then(res => {
-        this.issueMonthStatistics = res[0].data
-        this.issueWeekStatistics = res[1].data
-        this.issueNotFinishStatistics = res[2].data.active_issue_number
-      });
+    Promise.all([getIssueMonthStatistics(), getIssueWeekStatistics(), getIssueOpenStatistics()]).then((res) => {
+      this.issueMonthStatistics = res[0].data
+      this.issueWeekStatistics = res[1].data
+      this.issueNotFinishStatistics = res[2].data.active_issue_number
+    })
   },
   methods: {
     returnPercentage(statistics) {

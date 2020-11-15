@@ -33,7 +33,9 @@ export default {
     ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
     pagedData() {
       const listData = this.issueList.filter((data) => {
-        if (data.assigned_to === null) { data.assigned_to = '' }
+        if (data.assigned_to === null) {
+          data.assigned_to = ''
+        }
         if (
           this.searchData === '' ||
           data.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
@@ -44,17 +46,25 @@ export default {
         // Sub issue Leval1
         if (data.children.length > 0) {
           const children1 = data.children.filter((datachildren1) => {
-            if (datachildren1.assigned_to === null) { datachildren1.assigned_to = '' }
-            if (datachildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-            datachildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())) {
+            if (datachildren1.assigned_to === null) {
+              datachildren1.assigned_to = ''
+            }
+            if (
+              datachildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+              datachildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+            ) {
               return datachildren1
             }
             // Sub issue Leval2
             if (datachildren1.children.length > 0) {
               const children2 = datachildren1.children.filter((datachildren2) => {
-                if (datachildren2.assigned_to === null) { datachildren2.assigned_to = '' }
-                if (datachildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-            datachildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())) {
+                if (datachildren2.assigned_to === null) {
+                  datachildren2.assigned_to = ''
+                }
+                if (
+                  datachildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+                  datachildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+                ) {
                   return datachildren2
                 }
               })
@@ -117,7 +127,7 @@ export default {
     async handleDelete(idx, row) {
       this.listLoading = true
       await deleteIssue(row.id)
-        .then(res => {
+        .then((res) => {
           Message({
             message: 'Delete successful',
             type: 'success',
@@ -125,7 +135,7 @@ export default {
           })
           this.fetchData()
         })
-        .catch(error => {
+        .catch((error) => {
           this.listLoading = false
           return error
         })
@@ -138,7 +148,7 @@ export default {
     },
     async saveIssue(data) {
       const res = await addIssue(data)
-        .then(res => {
+        .then((res) => {
           Message({
             message: 'add successful',
             type: 'success',
@@ -148,7 +158,7 @@ export default {
           this.addTopicDialogVisible = false
           return res
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error.response)
           return error
         })
@@ -166,17 +176,15 @@ export default {
         <span class="newBtn">
           <el-button type="success" style="float: right" @click=";(addTopicDialogVisible = true), (parentid = 0)">
             <i class="el-icon-plus" />
-            Add Issue
+            {{ $t('Issue.AddIssue') }}
           </el-button>
         </span>
         <el-input
           v-model="searchData"
           class="ob-search-input ob-shadow search-input mr-3"
-          placeholder="Please input name/assignee"
+          :placeholder="$t('Issue.SearchNameOrAssignee')"
           style="width: 250px; float: right"
-        ><i
-          slot="prefix"
-          class="el-input__icon el-icon-search"
+          ><i slot="prefix" class="el-input__icon el-icon-search"
         /></el-input>
       </div>
     </div>
@@ -192,17 +200,17 @@ export default {
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column align="center" label="Id" width="120px">
+      <el-table-column align="center" :label="$t('Issue.Id')" width="120px">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Type" :show-overflow-tooltip="true" width="140px">
+      <el-table-column align="center" :label="$t('general.Type')" :show-overflow-tooltip="true" width="140px">
         <template slot-scope="scope">
           {{ scope.row.issue_category }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Name">
+      <el-table-column align="center" :label="$t('general.Name')">
         <template slot-scope="scope">
           {{ scope.row.issue_name }}
         </template>
@@ -212,7 +220,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="Status" width="120px">
+      <el-table-column align="center" :label="$t('general.Status')" width="120px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
             scope.row.issue_status
@@ -232,26 +240,30 @@ export default {
           <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Assignee">
+      <el-table-column align="center" :label="$t('Issue.Assignee')">
         <template slot-scope="scope">
           {{ scope.row.assigned_to }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Priority" width="120px">
+      <el-table-column align="center" :label="$t('Issue.Priority')" width="120px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">{{
             scope.row.issue_priority
           }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">{{
+            scope.row.issue_priority
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">{{
+            scope.row.issue_priority
+          }}</el-tag>
           <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="260px">
+      <el-table-column :label="$t('general.Actions')" align="center" width="260px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
-            Edit
+            {{ $t('general.Edit') }}
           </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
@@ -262,7 +274,9 @@ export default {
             class="Issuedel"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete </el-button>
+            <el-button slot="reference" size="mini" type="danger">
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+            </el-button>
           </el-popconfirm>
           <el-button
             v-if="parentList.includes(scope.row.id) == true"

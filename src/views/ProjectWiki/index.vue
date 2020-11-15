@@ -38,8 +38,14 @@ export default {
       listTotal: 0, // 總筆數
       searchData: '',
       formRules: {
-        wikiTitle: [{ required: true, message: 'Please input name', trigger: 'change' },
-          { pattern: /^((?!,|\.|\/|\?|;|:|\|).)*$/, message: 'Not allowing special characters (, . / ? ; : |)', trigger: 'blur' }]
+        wikiTitle: [
+          { required: true, message: 'Please input name', trigger: 'change' },
+          {
+            pattern: /^((?!,|\.|\/|\?|;|:|\|).)*$/,
+            message: 'Not allowing special characters (, . / ? ; : |)',
+            trigger: 'blur'
+          }
+        ]
       },
       form: { wikiTitle: '' }
     }
@@ -153,7 +159,7 @@ export default {
       this.$refs['form'].resetFields()
     },
     async handleConfirmAdd() {
-      this.$refs['form'].validate(async(valid) => {
+      this.$refs['form'].validate(async (valid) => {
         if (!valid) {
           return
         }
@@ -185,15 +191,16 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Ｗiki
+          {{ $t('Wiki.AddWiki') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input wiki title"
+        :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+        ><i slot="prefix" class="el-input__icon el-icon-search"
+      /></el-input>
     </div>
 
     <el-divider />
@@ -203,27 +210,27 @@ export default {
       </el-button>
     </div> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column prop="title" label="Title" />
-      <el-table-column prop="version" label="Version" width="160" />
-      <el-table-column label="Created" width="240">
+      <el-table-column prop="title" :label="$t('Wiki.Title')" />
+      <el-table-column prop="version" :label="$t('Version.Version')" width="160" />
+      <el-table-column :label="$t('general.CreateTime')" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.created_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Updated" width="240">
+      <el-table-column :label="$t('general.UpdateTime')" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="300" align="center">
+      <el-table-column :label="$t('general.Actions')" width="300" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
-            Detail
+            {{ $t('Wiki.Content') }}
           </el-button>
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
-            Edit
+            {{ $t('general.Edit') }}
           </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
@@ -233,7 +240,9 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger"> <i class="el-icon-delete" /> Delete</el-button>
+            <el-button slot="reference" size="mini" type="danger">
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
+            >
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -266,7 +275,7 @@ export default {
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br>
+          <br />
           <template>
             <!-- <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" /> -->
             <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
@@ -279,10 +288,10 @@ export default {
               dialogVisibleEdit = false
             "
           >
-            Cancel
+            {{ $t('general.Cancel') }}
           </el-button>
           <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading" @click="handleUpdate">
-            Confirm
+            {{ $t('general.Confirm') }}
           </el-button>
           <el-button
             v-else-if="drawerTitle === 'Add'"
@@ -290,7 +299,7 @@ export default {
             :loading="editBtnLoading"
             @click="handleConfirmAdd"
           >
-            Confirm
+            {{ $t('general.Confirm') }}
           </el-button>
         </div>
       </div>
@@ -313,7 +322,7 @@ export default {
           <VueShowdown :markdown="wikiContent" />
         </div>
         <div class="form__footer">
-          <el-button @click="detailVisible = false"> Close </el-button>
+          <el-button @click="detailVisible = false"> {{ $t('general.Close') }} </el-button>
         </div>
       </div>
     </el-drawer>
@@ -334,9 +343,9 @@ export default {
     padding-right: 6px;
   }
 }
-.wiki{
-  a{
-    text-decoration:underline;
+.wiki {
+  a {
+    text-decoration: underline;
   }
 }
 .container {

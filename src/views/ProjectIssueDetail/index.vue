@@ -43,33 +43,15 @@ export default {
         description: ''
       },
       issueFormRules: {
-        subject: [
-          { required: true, message: 'Please input name', trigger: 'blur' }
-        ],
-        assigned_to_id: [
-          { required: true }
-        ],
-        tracker_id: [
-          { required: true }
-        ],
-        status_id: [
-          { required: true }
-        ],
-        priority_id: [
-          { required: true }
-        ],
-        estimated_hours: [
-          { required: true }
-        ],
-        done_ratio: [
-          { required: true }
-        ],
-        start_date: [
-          { required: true }
-        ],
-        due_date: [
-          { required: true }
-        ]
+        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        assigned_to_id: [{ required: true }],
+        tracker_id: [{ required: true }],
+        status_id: [{ required: true }],
+        priority_id: [{ required: true }],
+        estimated_hours: [{ required: true }],
+        done_ratio: [{ required: true }],
+        start_date: [{ required: true }],
+        due_date: [{ required: true }]
       },
       issueName: '',
       issueStartDate: '',
@@ -133,33 +115,33 @@ export default {
         getFlowType(),
         getParameterByIssue(this.issueId),
         getTestCaseByIssue(this.issueId)
-      ]).then(res => {
-        this.issueStatusList = res[0].data.map(item => {
+      ]).then((res) => {
+        this.issueStatusList = res[0].data.map((item) => {
           return { label: item.name, value: item.id }
         })
-        this.issueTypeList = res[1].data.map(item => {
+        this.issueTypeList = res[1].data.map((item) => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map(item => {
+        this.issuePriorityList = res[2].data.map((item) => {
           return { label: item.name, value: item.id }
         })
         const issueDetail = res[3].data
         const projectId = issueDetail.project.id
         getProjectAssignable(projectId).then((assignable) => {
-          this.issueAssigneeList = assignable.data.user_list.map(item => {
+          this.issueAssigneeList = assignable.data.user_list.map((item) => {
             return { label: item.login, value: item.id }
           })
         })
         getProjectVersion(projectId).then((versions) => {
-          this.issueVersionList = versions.data.versions.map(item => {
+          this.issueVersionList = versions.data.versions.map((item) => {
             return { label: item.name, value: item.id }
           })
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
         if (Array.isArray(res[4].data) && res[4].data.length > 0) {
-          this.issueFlow = res[4].data[0].flow_data.map(item => {
-            const issueType = issueFlowType.find(type => {
+          this.issueFlow = res[4].data[0].flow_data.map((item) => {
+            const issueType = issueFlowType.find((type) => {
               return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
@@ -180,7 +162,7 @@ export default {
         this.issueForm.description = issueDetail.description
         this.projectId = issueDetail.project.id
         if (issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
-        this.issueComment = issueDetail.journals.map(item => {
+        this.issueComment = issueDetail.journals.map((item) => {
           return {
             comment: item.notes,
             comment_author: item.user.name,
@@ -213,7 +195,7 @@ export default {
       this.paramDialogVisible = true
     },
     async handleSaveDetail() {
-      this.$refs['issueForm'].validate(async(valid) => {
+      this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
           const data = this.issueForm
           if (data.fixed_version_id === '') {
@@ -234,7 +216,7 @@ export default {
       this.issueNote = value
     },
     async handleAddComment() {
-      await updateIssue(this.issueId, { 'notes': this.issueNote })
+      await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
       Message({
         message: 'update successful',
@@ -300,12 +282,12 @@ export default {
       const testValueLocationList = testValueLocationRes.data
 
       if (testValueList.data.length > 0) {
-        this.issueTestValue = testValueList.data.map(item => {
-          const valueType = testValueTypeList.find(type => {
+        this.issueTestValue = testValueList.data.map((item) => {
+          const valueType = testValueTypeList.find((type) => {
             return item.type_id === type.type_id
           })
           item.type = valueType.type_name
-          const valueLocation = testValueLocationList.find(location => {
+          const valueLocation = testValueLocationList.find((location) => {
             return item.location_id === location.location_id
           })
           item.location = valueLocation.type_name
@@ -331,27 +313,22 @@ export default {
   <div class="app-container d-flex">
     <el-card class="box-card el-col-10 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
-        <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
+        <span style="font-size: 25px; padding-bottom: 10px">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
-          Save
+          {{ $t('Issue.Save') }}
         </el-button>
         <div>{{ issueDescription }}</div>
       </div>
-      <el-form
-        ref="issueForm"
-        :model="issueForm"
-        :rules="issueFormRules"
-        :label-position="'left'"
-      >
+      <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="Name" prop="subject">
+            <el-form-item :label="$t('general.Name')" prop="subject">
               <el-input v-model="issueForm.subject" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Assignee" prop="assigned_to_id">
-              <el-select v-model="issueForm.assigned_to_id" style="width:100%">
+            <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+              <el-select v-model="issueForm.assigned_to_id" style="width: 100%">
                 <el-option
                   v-for="item in issueAssigneeList"
                   :key="item.value"
@@ -362,34 +339,29 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Version" prop="fixed_version_id">
-              <el-select v-model="issueForm.fixed_version_id" style="width:100%">
-                <el-option
-                  v-for="item in issueVersionList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+            <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
+              <el-select v-model="issueForm.fixed_version_id" style="width: 100%">
+                <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Type" prop="tracker_id">
-              <el-select v-model="issueForm.tracker_id" style="width:100%">
+            <el-form-item :label="$t('general.Type')" prop="tracker_id">
+              <el-select v-model="issueForm.tracker_id" style="width: 100%">
                 <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Status" prop="status_id">
-              <el-select v-model="issueForm.status_id" style="width:100%">
+            <el-form-item :label="$t('general.Status')" prop="status_id">
+              <el-select v-model="issueForm.status_id" style="width: 100%">
                 <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Priority" prop="priority_id">
-              <el-select v-model="issueForm.priority_id" style="width:100%">
+            <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
+              <el-select v-model="issueForm.priority_id" style="width: 100%">
                 <el-option
                   v-for="item in issuePriorityList"
                   :key="item.value"
@@ -400,51 +372,46 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Estimate" prop="estimated_hours">
+            <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
               <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
-              <el-input-number
-                v-model="issueForm.estimated_hours"
-                :min="0"
-                :max="100"
-                style="width:100%"
-              />
+              <el-input-number v-model="issueForm.estimated_hours" :min="0" :max="100" style="width: 100%" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Done Ratio" prop="done_ratio">
-              <el-input-number
-                v-model="issueForm.done_ratio"
-                :min="0"
-                :max="100"
-                style="width:100%"
-              />
+            <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
+              <el-input-number v-model="issueForm.done_ratio" :min="0" :max="100" style="width: 100%" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Start" prop="start_date">
+            <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
               <el-date-picker
                 v-model="issueForm.start_date"
                 type="date"
                 placeholder="Select Date"
-                style="width: 100%;"
+                style="width: 100%"
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="End" prop="due_date">
+            <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
               <el-date-picker
                 v-model="issueForm.due_date"
                 type="date"
                 placeholder="Select Date"
-                style="width: 100%;"
+                style="width: 100%"
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="Desc." prop="description">
-              <el-input v-model="issueForm.description" type="textarea" rows="4" placeholder="please input description" />
+            <el-form-item :label="$t('general.Description')" prop="description">
+              <el-input
+                v-model="issueForm.description"
+                type="textarea"
+                rows="4"
+                placeholder="please input description"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -452,8 +419,8 @@ export default {
     </el-card>
 
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
-      <el-tab-pane label="Comment" name="comment">
-        <el-button type="primary" @click="showAddComment">Add Comment</el-button>
+      <el-tab-pane :label="$t('Issue.Comment')" name="comment">
+        <el-button type="primary" @click="showAddComment">{{ $t('Issue.AddComment') }}</el-button>
         <el-table
           :data="issueComment"
           element-loading-text="Loading"
@@ -463,26 +430,26 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
-          <el-table-column label="Comment">
+          <el-table-column :label="$t('Issue.Comment')">
             <template slot-scope="scope">
               <!-- <div v-html="scope.row.comment" /> -->
               <VueShowdown :markdown="scope.row.comment" />
             </template>
           </el-table-column>
           <!-- <el-table-column label="Author" width="180" align="center">
-            <template slot-scope="scope">
+            <template slot-scope="scope">Flow
               {{ scope.row.comment_author }}
             </template>
           </el-table-column> -->
-          <el-table-column label="Comment Time" width="200" align="center">
+          <el-table-column :label="$t('general.CreateTime')" width="200" align="center">
             <template slot-scope="scope">
               {{ new Date(scope.row.comment_at).toLocaleString() }}
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Flow" name="Flow">
-        <el-button type="primary" @click="showFlowDialog('', 'Add Flow')">Add Flow</el-button>
+      <el-tab-pane :label="$t('Issue.Flow')" name="Flow">
+        <el-button type="primary" @click="showFlowDialog('', 'AddFlow')">{{ $t('Issue.AddFlow') }}</el-button>
         <el-table
           :data="issueFlow"
           element-loading-text="Loading"
@@ -492,12 +459,12 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
-          <el-table-column label="Order">
+          <el-table-column :label="$t('Issue.FlowId')">
             <template slot-scope="scope">
               {{ scope.row.id }}
             </template>
           </el-table-column>
-          <el-table-column label="Step Name">
+          <el-table-column :label="$t('general.Name')">
             <template slot-scope="scope">
               <!--<span style="color: #409EFF;cursor: pointer;" @click="showFlowDialog(scope.row, 'Edit Flow')">
                 {{ scope.row.name }}
@@ -505,25 +472,27 @@ export default {
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column label="Step Type">
+          <el-table-column :label="$t('general.Type')">
             <template slot-scope="scope">
               {{ scope.row.type_name }}
             </template>
           </el-table-column>
-          <el-table-column label="Desc.">
+          <el-table-column :label="$t('general.Description')">
             <template slot-scope="scope">
               {{ scope.row.description }}
             </template>
           </el-table-column>
-          <el-table-column label="Action" width="120" align="center">
+          <el-table-column :label="$t('general.Actions')" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="Parameter" name="parameter">
-        <el-button type="primary" @click="showParamDialog('', 'Add Parameter')">Add Parameter</el-button>
+      <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
+        <el-button type="primary" @click="showParamDialog('', 'AddParameter')">{{
+          $t('Issue.AddParameter')
+        }}</el-button>
         <el-table
           :data="issueParameter"
           element-loading-text="Loading"
@@ -533,7 +502,7 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
-          <el-table-column label="Name">
+          <el-table-column :label="$t('general.Name')">
             <template slot-scope="scope">
               {{ scope.row.name }}
               <!--<span style="color: #409EFF;cursor: pointer;" @click="showParamDialog(scope.row, 'Edit Parameter')">
@@ -541,29 +510,31 @@ export default {
               </span>-->
             </template>
           </el-table-column>
-          <el-table-column label="Type">
+          <el-table-column :label="$t('general.Type')">
             <template slot-scope="scope">
               {{ scope.row.parameter_type }}
             </template>
           </el-table-column>
-          <el-table-column label="Desc.">
+          <el-table-column :label="$t('general.Description')">
             <template slot-scope="scope">
               {{ scope.row.description }}
             </template>
           </el-table-column>
-          <el-table-column label="Limit">
+          <el-table-column :label="$t('Issue.Limit')">
             <template slot-scope="scope">
               {{ scope.row.limitation }}
             </template>
           </el-table-column>
-          <el-table-column label="Length">
+          <el-table-column :label="$t('Issue.Length')">
             <template slot-scope="scope">
               {{ scope.row.length }}
             </template>
           </el-table-column>
-          <el-table-column label="Action" width="120" align="center">
+          <el-table-column :label="$t('general.Actions')" width="120" align="center">
             <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">Delete</el-button>
+              <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">{{
+                $t('general.Delete')
+              }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -685,14 +656,25 @@ export default {
       <!-- </el-table> -->
       <!-- </el-tab-pane> -->
     </el-tabs>
-    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" :close-on-click-modal="false" @close="commentDialogVisible = false">
+    <el-dialog
+      :title="$t('Issue.AddComment')"
+      :visible="commentDialogVisible"
+      width="70%"
+      :close-on-click-modal="false"
+      @close="commentDialogVisible = false"
+    >
       <!-- <WangEditor :content="issueNote" @get-editor-data="emitGetEditorData" /> -->
       <template>
-        <EditorMD v-if="commentDialogVisible" id="editormd" :content="issueNotenew" @get-editor-data="emitGetEditorData" />
+        <EditorMD
+          v-if="commentDialogVisible"
+          id="editormd"
+          :content="issueNotenew"
+          @get-editor-data="emitGetEditorData"
+        />
       </template>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="commentDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleAddComment">Confirm</el-button>
+        <el-button @click="commentDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="handleAddComment">{{ $t('general.Confirm') }}</el-button>
       </span>
     </el-dialog>
     <flow-dialog

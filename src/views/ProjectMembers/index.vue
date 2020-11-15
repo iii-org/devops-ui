@@ -37,7 +37,7 @@ export default {
       this.fetchData()
       this.listQuery.page = 1
     },
-    'form.id': function(value) {
+    'form.id': function (value) {
       this.rolename = this.userinfo[this.form.id]
     }
   },
@@ -148,37 +148,38 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Member
+          {{ $t('Member.AddMember') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input member name"
+        :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+        ><i slot="prefix" class="el-input__icon el-icon-search"
+      /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" label="No" :show-overflow-tooltip="true" width="100">
+      <el-table-column align="center" :label="$t('Member.Id')" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope"> #{{ scope.row.id }} </template>
       </el-table-column>
-      <el-table-column label="Account" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('Member.Account')" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           {{ scope.row.login }}
         </template>
       </el-table-column>
-      <el-table-column label="Name" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Phone" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('Member.Phone')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <el-table-column label="Role" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('Member.Role')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.role_name }}
         </template>
@@ -188,12 +189,12 @@ export default {
           {{ scope.row.status ? '啟用' : '停用' }}
         </template>
       </el-table-column> -->
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="140">
+      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="140">
         <template slot-scope="scope">
           <span v-if="false">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
               <i class="el-icon-edit" />
-              Edit
+              {{ $t('general.Edit') }}
             </el-button>
           </span>
           <el-popconfirm
@@ -204,7 +205,9 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.id==userId"> <i class="el-icon-delete" /> Delete</el-button>
+            <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.id == userId">
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
+            >
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -218,14 +221,20 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="`${dialogStatusText} Member`" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false" @closed="onDialogClosed">
+    <el-dialog
+      :title="$t(`Member.${dialogStatusText}Member`)"
+      :visible.sync="dialogVisible"
+      width="50%"
+      :close-on-click-modal="false"
+      @closed="onDialogClosed"
+    >
       <el-form ref="thisForm" :model="form" label-position="top">
-        <el-form-item label="Name" prop="id">
-          <el-select v-model="form.id" placeholder="select a Member" filterable>
+        <el-form-item :label="$t('general.Name')" prop="id">
+          <el-select v-model="form.id" :placeholder="$t('Member.SelectMember')" filterable>
             <el-option v-for="item in assignableUsers" :key="item.id" :label="item.login" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Role" prop="role_name">
+        <el-form-item :label="$t('Member.Role')" prop="role_name">
           <!-- <el-select v-model="form.role_name" placeholder="Select a role" style="width:100%">
             <el-option label="Engineer" value="Engineer"></el-option>
             <el-option label="Project Manager" value="Project Manager"></el-option>
@@ -258,8 +267,10 @@ export default {
         </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">Confirm</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>

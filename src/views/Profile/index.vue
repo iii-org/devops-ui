@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <div style="background: white;padding: 15px 15px;">
+    <div style="background: white; padding: 15px 15px">
       <el-tabs :tab-position="tabPosition">
-        <el-tab-pane label="Basic">
-          <div style="padding: 0px 25px;">
-            <h3>Profile Basic Setting</h3>
+        <el-tab-pane :label="$t('Profile.Basic')">
+          <div style="padding: 0px 25px">
+            <h3>{{ $t('Profile.ProfileBasicSetting') }}</h3>
             <el-form
               ref="userProfileForm"
               :model="userProfileForm"
@@ -13,27 +13,29 @@
               class="demo-ruleForm"
               :label-position="labelPosition"
             >
-              <el-form-item label="Name" prop="userName">
-                <el-input v-model="userProfileForm.userName" style="width: 250px;" />
+              <el-form-item :label="$t('general.Name')" prop="userName">
+                <el-input v-model="userProfileForm.userName" style="width: 250px" />
               </el-form-item>
               <el-form-item label="Email" prop="userEmail">
-                <el-input v-model="userProfileForm.userEmail" style="width: 250px;" />
+                <el-input v-model="userProfileForm.userEmail" style="width: 250px" />
               </el-form-item>
-              <el-form-item label="Phone" prop="userPhone">
-                <el-input v-model="userProfileForm.userPhone" style="width: 250px;" />
+              <el-form-item :label="$t('Profile.Phone')" prop="userPhone">
+                <el-input v-model="userProfileForm.userPhone" style="width: 250px" />
               </el-form-item>
             </el-form>
 
-            <el-row style="margin-top: 15px;">
+            <el-row style="margin-top: 15px">
               <el-col :span="8">
-                <el-button type="primary" @click="submitUpdateUserProfile('userProfileForm')">Save</el-button>
+                <el-button type="primary" @click="submitUpdateUserProfile('userProfileForm')">{{
+                  $t('Profile.Save')
+                }}</el-button>
               </el-col>
             </el-row>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Security">
-          <div style="padding: 0px 25px;">
-            <h3>Profile Security Setting</h3>
+        <el-tab-pane :label="$t('Profile.Security')">
+          <div style="padding: 0px 25px">
+            <h3>{{ $t('Profile.ProfileSecuritySetting') }}</h3>
             <el-form
               ref="userPwdForm"
               :model="userPwdForm"
@@ -42,17 +44,21 @@
               class="demo-ruleForm"
               :label-position="labelPosition"
             >
-              <el-form-item label="New Password" prop="userNewPwd">
-                <el-input v-model="userPwdForm.userNewPwd" type="password" style="width: 250px;" />
-                <div style="word-break: keep-all;margin-top: 5px;">Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.</div>
+              <el-form-item :label="$t('Profile.NewPassword')" prop="userNewPwd">
+                <el-input v-model="userPwdForm.userNewPwd" type="password" style="width: 250px" />
+                <div style="word-break: keep-all; margin-top: 5px">
+                  {{ $t('Profile.PasswordRule') }}
+                </div>
               </el-form-item>
-              <el-form-item label="Repeat New Password" prop="userRepeatNewPwd">
-                <el-input v-model="userPwdForm.userRepeatNewPwd" type="password" style="width: 250px;" />
+              <el-form-item :label="$t('Profile.RepeatNewPassword')" prop="userRepeatNewPwd">
+                <el-input v-model="userPwdForm.userRepeatNewPwd" type="password" style="width: 250px" />
               </el-form-item>
             </el-form>
-            <el-row style="margin-top: 15px;">
+            <el-row style="margin-top: 15px">
               <el-col :span="8">
-                <el-button type="primary" @click="handleUpdateUserPwd('userPwdForm')">Save</el-button>
+                <el-button type="primary" @click="handleUpdateUserPwd('userPwdForm')">{{
+                  $t('Profile.Save')
+                }}</el-button>
               </el-col>
             </el-row>
           </div>
@@ -111,7 +117,12 @@ export default {
       },
       userPwdFormRules: {
         userNewPwd: [
-          { required: true, pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/, message: 'Password is invalid.', trigger: 'blur' },
+          {
+            required: true,
+            pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/,
+            message: 'Password is invalid.',
+            trigger: 'blur'
+          },
           { validator: validatePassword, message: "Password can't be less than 8 characters." },
           { required: true, message: 'Please input new password', trigger: 'blur' }
         ],
@@ -138,7 +149,7 @@ export default {
       }
     },
     submitUpdateUserProfile(formName) {
-      this.$refs[formName].validate(async valid => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const data = {
             name: this.userProfileForm.userName,
@@ -158,7 +169,7 @@ export default {
       })
     },
     async handleUpdateUserPwd(formName) {
-      this.$refs[formName].validate(async valid => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
           await updateUser(this.userId, { password: this.userPwdForm.userNewPwd })
           Message({

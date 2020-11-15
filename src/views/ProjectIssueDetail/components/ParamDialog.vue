@@ -1,15 +1,6 @@
 <template>
-  <el-dialog
-    :title="dialogTitle"
-    :visible="dialogVisible"
-    width="50%"
-    @close="handleClose"
-  >
-    <el-form 
-      ref="parameterForm" 
-      :model="parameterForm"
-      :rules="parameterFormRules"
-    >
+  <el-dialog :title="$t(`Issue.${dialogTitle}`)" :visible="dialogVisible" width="50%" @close="handleClose">
+    <el-form ref="parameterForm" :model="parameterForm" :rules="parameterFormRules">
       <el-row v-if="paramId != 0">
         <el-col :span="24">
           <el-form-item label="Order">
@@ -19,50 +10,45 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Name" prop="name">
+          <el-form-item :label="$t('general.Name')" prop="name">
             <el-input v-model="parameterForm.name" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Type" prop="parameter_type_id">
-            <el-select v-model="parameterForm.parameter_type_id" style="width:100%">
-              <el-option
-                v-for="item in parameterTypeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+          <el-form-item :label="$t('general.Type')" prop="parameter_type_id">
+            <el-select v-model="parameterForm.parameter_type_id" style="width: 100%">
+              <el-option v-for="item in parameterTypeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Length" prop="length">
+          <el-form-item :label="$t('Issue.Length')" prop="length">
             <el-input v-model="parameterForm.length" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Limit" prop="limitation">
+          <el-form-item :label="$t('Issue.Limit')" prop="limitation">
             <el-input v-model="parameterForm.limitation" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="Desc." prop="description">
+          <el-form-item :label="$t('general.Description')" prop="description">
             <el-input v-model="parameterForm.description" type="textarea" />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">Cancel</el-button>
-      <el-button type="primary" @click="handleSave">Confirm</el-button>
+      <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -95,21 +81,11 @@ export default {
         limitation: ''
       },
       parameterFormRules: {
-        name: [
-          { required: true, message: 'Please input name', trigger: 'blur' }
-        ],
-        parameter_type_id: [
-          { required: true, message: 'Please select type', trigger: 'blur' }
-        ],
-        length: [
-          { required: true, message: 'Please input length', trigger: 'blur' }
-        ],
-        limitation: [
-          { required: true, message: 'Please input limitation', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: 'Please input description', trigger: 'blur' }
-        ]
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        parameter_type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        length: [{ required: true, message: 'Please input length', trigger: 'blur' }],
+        limitation: [{ required: true, message: 'Please input limitation', trigger: 'blur' }],
+        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
       },
       paramOrder: '',
       paramType: '',
@@ -136,7 +112,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getParameterType()
-      this.parameterTypeList = res.data.map(item => {
+      this.parameterTypeList = res.data.map((item) => {
         return { label: item.name, value: item.parameter_type_id }
       })
     },
@@ -145,7 +121,7 @@ export default {
       this.$emit('param-dialog-visible', false)
     },
     handleSave() {
-      this.$refs['parameterForm'].validate(async(valid) => {
+      this.$refs['parameterForm'].validate(async (valid) => {
         if (valid) {
           await this.saveData(this.parameterForm)
           this.$refs['parameterForm'].resetFields()

@@ -430,14 +430,14 @@ export default {
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">Issue #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
-          Save
+          Saveaa
         </el-button>
         <!-- <div>{{ issueDescription }}</div> -->
       </div>
       <el-form ref="form" label-width="20%" :label-position="'right'">
         <el-row>
           <el-col :span="6">
-            <el-form-item label="Name" label-width="100px">
+            <el-form-item :label="$t('general.Name')" label-width="100px">
               <div class="setup">
                 {{ issueName }}
                 <div />
@@ -445,12 +445,12 @@ export default {
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Version" label-width="100px">
+            <el-form-item :label="$t('Version.Version')" label-width="100px">
               <div class="setup">{{ issueVersion }}</div>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Priority" label-width="100px">
+            <el-form-item :label="$t('Issue.Priority')" label-width="100px">
               <el-select v-model="issueDetail.issuePriority" style="width: 100%">
                 <el-option
                   v-for="item in issuePriorityList"
