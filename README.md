@@ -6,7 +6,18 @@
 1. <code> docker build . --tag iiiorg/devops-ui:version </code>
 1. <code> docker push iiiorg/devops-ui:version </code>
 1. Edit <code> k8s-yaml/devopswebui-deployment.yaml </code>, Replace image version
-1. <code> kubectl apply -f k8s-yaml/devopswebui-deployment.yaml </code>
+1. <code> kubectl apply -f k8s-yaml/devopswebui-deployment.yaml --kubeconfig ~/.kube/stage_config </code>
+
+# Deploy on production environment
+1. <code> GIT_COMMIT_ID=$(git rev-parse HEAD) </code>
+1. <code> echo "VUE_APP_VERSION='${GIT_COMMIT_ID}'" >> .env.production </code>
+1. <code> npm install </code>
+1. <code> npm run build:prod </code>
+1. <code> docker build . --tag iiiorg/devops-ui:prod-${GIT_COMMIT_ID} </code>
+1. <code> docker push iiiorg/devops-ui:prod-${GIT_COMMIT_ID} </code>
+1. Switch to deploy-devops projeact
+1. Edit <code> deploy-devops/devops-ui/k8s-yaml/devopsui-deployment.yaml </code>, Replace image version
+1. <code> kubectl apply -f k8s-yaml/devopsui-deployment.yaml --kubeconfig ~/.kube/prod_config  </code>
 
 # vue-admin-template
 
