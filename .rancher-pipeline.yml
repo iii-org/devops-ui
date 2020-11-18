@@ -1,0 +1,19 @@
+stages:
+- name: Build--NPM build dist
+  steps:
+  - runScriptConfig:
+      image: node
+      shellScript: echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = 'devops-system-develope-service:10009'" >> .env.staging; npm install; npm run build:stage
+- name: Publish--vuejs image
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: .
+      tag: iiidevops-ui:${CICD_GIT_BRANCH}-${CICD_GIT_COMMIT}
+- name: deploy--vuejs deployment and service on kubernetes
+  steps:
+  - applyYamlConfig:
+      path: ./k8s-yaml/devopswebui-deployment.yaml
+  - applyYamlConfig:
+      path: ./k8s-yaml/devopswebui-service.yaml
+
