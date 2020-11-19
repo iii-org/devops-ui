@@ -2,7 +2,7 @@ stages:
 - name: Build--NPM build dist
   steps:
   - runScriptConfig:
-      image: node:12.16.1
+      image: node:12.19.1
       shellScript: apt-get update; apt-get install -y git; npm install --registry=https://registry.npm.taobao.org; echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = 'devops-system-develope-service:10009'" >> .env.staging;pwd;cat .env.staging; npm install; npm run build:stage
     env:
       PLUGIN_MTU: 1440
