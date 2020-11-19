@@ -4,6 +4,9 @@ stages:
   - runScriptConfig:
       image: node
       shellScript: echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = 'devops-system-develope-service:10009'" >> .env.staging; npm install; npm run build:stage
+    env:
+      PLUGIN_MTU: 1450
+
 - name: Publish--vuejs image
   steps:
   - publishImageConfig:
