@@ -5,7 +5,7 @@ stages:
       image: node:12.16.1
       shellScript: npm install; echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = 'devops-system-develope-service:10009'" >> .env.staging;pwd;cat .env.staging; npm install; npm run build:stage
     env:
-      PLUGIN_MTU: 1450
+      PLUGIN_MTU: 1440
 
 - name: Publish--vuejs image
   steps:
@@ -16,7 +16,7 @@ stages:
       pushRemote: true
       registry: 10.50.1.63:5443
     env:
-      PLUGIN_MTU: 1450
+      PLUGIN_MTU: 1440
       PLUGIN_INSECURE: true
 - name: deploy--vuejs deployment and service on kubernetes
   steps:
