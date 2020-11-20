@@ -10,8 +10,8 @@ stages:
       - sourceName: iiidevops
         sourceKey: api-url
         targetKey: api_url
-    when:
-      branch: [develop]
+  when:
+    branch: [develop]
 
 - name: Publish-iiidevops-ui image
   steps:
@@ -24,8 +24,8 @@ stages:
     env:
       PLUGIN_MTU: 1440
       PLUGIN_INSECURE: true
-    when:
-      branch: [develop]
+  when:
+    branch: [develop]
 
 - name: deploy-vuejs deployment and service on kubernetes
   steps:
@@ -33,5 +33,5 @@ stages:
       path: ./k8s-yaml/devopswebui-dev-deployment.yaml
   - applyYamlConfig:
       path: ./k8s-yaml/devopswebui-dev-service.yaml
-    when:
-      branch: [develop]
+  when:
+    branch: [develop]
