@@ -2,7 +2,7 @@ stages:
 - name: Build--NPM build dist
   steps:
   - runScriptConfig:
-      image: 10.50.1.63:5443/iiidevops/aode
+      image: 10.50.1.63:5443/iiidevops/node
       shellScript: mv /iiidevops-ui/node_modules .;echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = 'devops-system-develope-service:10009'" >> .env.staging;pwd;cat .env.staging; npm run build:stage
     env:
       PLUGIN_MTU: 1440
