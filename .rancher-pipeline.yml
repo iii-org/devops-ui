@@ -21,7 +21,7 @@ stages:
 - name: deploy--vuejs deployment and service on kubernetes
   steps:
   - applyYamlConfig:
-      path: ./k8s-yaml/devopswebui-deployment.yaml
+      path: ./k8s-yaml/devopswebui-dev-deployment.yaml
   - applyYamlConfig:
-      path: ./k8s-yaml/devopswebui-service.yaml
+      path: ./k8s-yaml/devopswebui-dev-service.yaml
 
