@@ -27,7 +27,7 @@ stages:
   when:
     branch: [develop]
 
-- name: deploy-vuejs deployment and service on kubernetes
+- name: deploy iiidevops-ui deployment and service on kubernetes
   steps:
   - applyYamlConfig:
       path: ./k8s-yaml/devopswebui-dev-deployment.yaml
