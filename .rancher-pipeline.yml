@@ -3,11 +3,17 @@ stages:
   steps:
   - runScriptConfig:
       image: 10.50.1.63:5443/iiidevops/node
-      shellScript: mv /iiidevops-ui/node_modules .;echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = 'devops-system-develope-service:10009'" >> .env.staging;pwd;cat .env.staging; npm run build:stage
+      shellScript: mv /iiidevops-ui/node_modules .;echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo "VUE_APP_BASE_API = '${api_url}'" >> .env.staging;pwd;cat .env.staging; npm run build:stage
     env:
       PLUGIN_MTU: 1440
+    envFrom:
+      - sourceName: iiidevops
+        sourceKey: api-url
+        targetKey: api_url
+  when:
+    branch: [develop]
 
-- name: Publish--vuejs image
+- name: Publish-iiidevops-ui image
   steps:
   - publishImageConfig:
       dockerfilePath: ./Dockerfile
@@ -18,11 +24,14 @@ stages:
     env:
       PLUGIN_MTU: 1440
       PLUGIN_INSECURE: true
-- name: deploy--vuejs deployment and service on kubernetes
+  when:
+    branch: [develop]
+
+- name: deploy-vuejs deployment and service on kubernetes
   steps:
   - applyYamlConfig:
       path: ./k8s-yaml/devopswebui-dev-deployment.yaml
   - applyYamlConfig:
       path: ./k8s-yaml/devopswebui-dev-service.yaml
-when:
-  branch: [develope]
+  when:
+    branch: [develop]
