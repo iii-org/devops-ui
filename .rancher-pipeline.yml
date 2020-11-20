@@ -3,9 +3,13 @@ stages:
   steps:
   - runScriptConfig:
       image: 10.50.1.63:5443/iiidevops/node
-      shellScript: mv /iiidevops-ui/node_modules .;echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo -e $api_url;echo -e "VUE_APP_BASE_API = '10.50.1.56:31851'" >> .env.staging;pwd;cat .env.staging; npm run build:stage
+      shellScript: mv /iiidevops-ui/node_modules .;echo "VUE_APP_VERSION='${CICD_GIT_COMMIT}'" >> .env.staging; echo -e $api_url;echo "VUE_APP_BASE_API = '${api_url}'" >> .env.staging;pwd;cat .env.staging; npm run build:stage
     env:
       PLUGIN_MTU: 1440
+    envFrom:
+      - sourceName: iiidevops
+        sourceKey: api-url
+        targetKey: api_url
   when:
     branch: [develop]
 
