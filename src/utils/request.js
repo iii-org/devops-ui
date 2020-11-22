@@ -2,6 +2,8 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import errorCodes from '../error-codes'
+import { getLanguage } from '@/lang/index'
 
 // create an axios instance
 const service = axios.create({
@@ -77,9 +79,22 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error.response.data.message) // for debug
+    const res = error.response.data
+    let res_msg = res.message
+    if (
+      'error' in res &&
+      'code' in res['error'] &&
+      res['error']['code'] in errorCodes
+    ) {
+      const error_msg = errorCodes[res['error']['code']][getLanguage() || 'zh'] // language default is zh
+      const error_msg_details = res.error.details || {}
+      res_msg = error_msg
+      Object.keys(error_msg_details).forEach(key => {
+        res_msg = error_msg.replace(new RegExp(`\\$${key}`), error_msg_details[key].toString())
+      })
+    }
     Message({
-      message: error.response.data.message,
+      message: res_msg,
       type: 'error',
       duration: 5 * 1000
     })
