@@ -17,7 +17,7 @@ export default {
     'File List': 'File List',
     Test: 'API Test',
     'Test Case': 'API Test Case',
-    'Test Case (Export)': 'API Test Case(Export)'
+    'Test Case (Expert)': 'API Test Case(Expert)'
   },
   navbar: {
     dashboard: 'Dashboard',
@@ -156,7 +156,7 @@ export default {
     Description: 'Description',
     Method: 'Method',
     Path: 'Path',
-    TestResult: 'Test Result',
+    TestResult: 'Test Result'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -179,7 +179,7 @@ export default {
     Upload: 'Upload',
     Id: 'Id',
     Download: 'Download',
-    DrapFileHereOrClickUpload: 'Drap File Here Or Click Upload',
+    DrapFileHereOrClickUpload: 'Drap File Here Or Click Upload'
   },
   Version: {
     AddVersion: 'Add Version',
@@ -192,7 +192,7 @@ export default {
     Open: 'Open',
     Closed: 'Closed',
     Locked: 'Locked',
-    EndDate: 'EndDate',
+    EndDate: 'EndDate'
   },
   Issue: {
     Issue: 'Issue',
@@ -221,7 +221,7 @@ export default {
     AddWiki: 'Add Wiki',
     Title: 'Title',
     Content: 'Content',
-    SearchTitle: 'Search Title',
+    SearchTitle: 'Search Title'
   },
   Dashboard:　{
     UnfinishIssues: 'Unfinish Issues',

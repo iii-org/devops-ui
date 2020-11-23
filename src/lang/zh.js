@@ -17,11 +17,11 @@ export default {
     'File List': '文件列表',
     Test: 'API測試',
     'Test Case': 'API測試列表',
-    'Test Case (Export)': 'API測試列表(專家模式)',
+    'Test Case (Expert)': 'API測試列表(專家模式)',
     Setting: '設定',
     Members: '成員',
     Versions: '版本',
-    'User Manage': '成員管理',
+    'User Manage': '成員管理'
   },
   navbar: {
     logOut: '登出',
@@ -54,7 +54,7 @@ export default {
     Description: '描述',
     Method: '方法',
     Path: '路逕',
-    TestResult: '測試結果',
+    TestResult: '測試結果'
   },
   TestItem: {
     TestItem: '測試項目',
@@ -77,7 +77,7 @@ export default {
     Upload: '上傳',
     Id: '檔案編號',
     Download: '下載',
-    DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
+    DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳'
   },
   Version: {
     AddVersion: '新增版本',
@@ -90,7 +90,7 @@ export default {
     Open: '開啟',
     Closed: '關閉',
     Locked: '鎖定',
-    EndDate: '結束日期',
+    EndDate: '結束日期'
   },
   Issue: {
     Issue: '議題',
@@ -119,7 +119,7 @@ export default {
     AddWiki: '新增Wiki',
     Title: '標題',
     Content: '內容',
-    SearchTitle: '搜尋標題',
+    SearchTitle: '搜尋標題'
   },
   Dashboard:　{
     UnfinishIssues: '未完成議題',

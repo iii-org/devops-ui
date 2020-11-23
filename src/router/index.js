@@ -390,10 +390,10 @@ export const asyncRoutes = [
         meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
       {
-        path: 'test-case-export-mode',
-        name: 'Test Case Export Mode',
+        path: 'test-case-expert-mode',
+        name: 'Test Case Expert Mode',
         component: () => import('@/views/TestCaseExpertMode/index'),
-        meta: { title: 'Test Case (Export)', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Test Case (Expert)', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },
