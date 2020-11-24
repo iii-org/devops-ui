@@ -110,6 +110,7 @@ export default {
           if (
             (j !== 'message') &
             (j !== 'statisticsCalculationDate') &
+            (j !== 'run_at') &
             (j !== 'status') &
             (j !== 'report_id') &
             (j !== 'id')
@@ -130,14 +131,23 @@ export default {
           }
         } else if (i === 'checkmarx') {
           // checkmarx message https://github.com/iii-org/devops-system/wiki/Message-Strings
+          if (this.$router.history.current.path === '/project/index' && (apiProjectdata.test_results[i].status === 1 || apiProjectdata.test_results[i].status === 2)) {
+            this.timeout = setTimeout(() => {
+              this.fetchProjectTest()
+            }, 15000)
+          }
           if (apiProjectdata.test_results[i].status === -1) {
             Informationtext = 'This project does not have any scan.'
           } else if (apiProjectdata.test_results[i].status === 1) {
             Informationtext = 'The scan is not completed yet. It may take several hours to complete.'
           } else if (apiProjectdata.test_results[i].status === 2) {
-            Informationtext = 'The scan is done, but the report is not ready yet. It may take several minutes to complete.'
+            Informationtext = 'Scan done, the system is generating a report. It may take several minutes to complete.'
           } else if (apiProjectdata.test_results[i].status === 3) {
             object['report_id'] = apiProjectdata.test_results[i].report_id
+          } else if (apiProjectdata.test_results[i].status === 4) {
+            Informationtext = 'The scan is canceled.'
+          } else if (apiProjectdata.test_results[i].status === 5) {
+            Informationtext = 'The scan failed.'
           } else if (apiProjectdata.test_results[i].status === undefined) {
             Informationtext = 'No data.'
           }
