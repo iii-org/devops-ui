@@ -270,7 +270,8 @@ export default {
     ProfileSecuritySetting: 'Profile Security Setting',
     NewPassword: 'New Password',
     RepeatNewPassword: 'Repeat New Password',
-    PasswordRule: 'Password Rule',
-    Save: 'Save'
+    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.',
+    Save: 'Save',
+    Password: 'Password'
   }
 }

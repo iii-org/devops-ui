@@ -44,6 +44,9 @@
               class="demo-ruleForm"
               :label-position="labelPosition"
             >
+              <el-form-item :label="$t('Profile.Password')" prop="old_password">
+                <el-input v-model="userPwdForm.old_password" type="password" style="width: 250px" />
+              </el-form-item>
               <el-form-item :label="$t('Profile.NewPassword')" prop="userNewPwd">
                 <el-input v-model="userPwdForm.userNewPwd" type="password" style="width: 250px" />
                 <div style="word-break: keep-all; margin-top: 5px">
@@ -113,7 +116,8 @@ export default {
       },
       userPwdForm: {
         userNewPwd: '',
-        userRepeatNewPwd: ''
+        userRepeatNewPwd: '',
+        old_password: ''
       },
       userPwdFormRules: {
         userNewPwd: [
@@ -129,6 +133,9 @@ export default {
         userRepeatNewPwd: [
           { required: true, message: 'Please input repeat password', trigger: 'blur' },
           { validator: checkRepeatPwd, trigger: 'blur' }
+        ],
+        old_password: [
+          { required: true, message: 'Please input password', trigger: 'blur' }
         ]
       }
     }
@@ -149,7 +156,7 @@ export default {
       }
     },
     submitUpdateUserProfile(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
           const data = {
             name: this.userProfileForm.userName,
@@ -169,9 +176,9 @@ export default {
       })
     },
     async handleUpdateUserPwd(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          await updateUser(this.userId, { password: this.userPwdForm.userNewPwd })
+          await updateUser(this.userId, { password: this.userPwdForm.userNewPwd, old_password: this.userPwdForm.old_password })
           Message({
             message: 'update successful',
             type: 'success',
