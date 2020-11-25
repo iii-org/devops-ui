@@ -121,7 +121,8 @@ export default {
     AddWiki: '新增Wiki',
     Title: '標題',
     Content: '內容',
-    SearchTitle: '搜尋標題'
+    SearchTitle: '搜尋標題',
+    edited: '此頁面最後由 {user} 編輯'
   },
   Dashboard: {
     UnfinishIssues: '未完成議題',

@@ -223,7 +223,8 @@ export default {
     AddWiki: 'Add Wiki',
     Title: 'Title',
     Content: 'Content',
-    SearchTitle: 'Search Title'
+    SearchTitle: 'Search Title',
+    edited: '{user} edited this page'
   },
   Dashboard: {
     UnfinishIssues: 'Unfinish Issues',
