@@ -215,7 +215,9 @@ export default {
     Parameter: 'Parameter',
     AddParameter: 'Add Parameter',
     Length: 'Length',
-    Limit: 'Limit'
+    Limit: 'Limit',
+    Addby: 'Added by {user}',
+    Author: 'Author'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
@@ -223,7 +225,7 @@ export default {
     Content: 'Content',
     SearchTitle: 'Search Title'
   },
-  Dashboard:　{
+  Dashboard: {
     UnfinishIssues: 'Unfinish Issues',
     IssuesShouldBeClosedWithinThisWeek: 'Issues Should Be Closed Within This Week',
     IssuesShouldBeClosedWithinThisMonth: 'Issues Should Be Closed Within This Month',

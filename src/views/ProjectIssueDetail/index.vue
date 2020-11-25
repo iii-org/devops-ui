@@ -89,7 +89,8 @@ export default {
       projectId: 0,
       issue_detail: {},
       choose_testCase: '',
-      choose_testItem: ''
+      choose_testItem: '',
+      author: ''
     }
   },
   computed: {
@@ -126,6 +127,7 @@ export default {
           return { label: item.name, value: item.id }
         })
         const issueDetail = res[3].data
+        this.author = issueDetail.assigned_to.name
         const projectId = issueDetail.project.id
         getProjectAssignable(projectId).then((assignable) => {
           this.issueAssigneeList = assignable.data.user_list.map((item) => {
@@ -195,7 +197,7 @@ export default {
       this.paramDialogVisible = true
     },
     async handleSaveDetail() {
-      this.$refs['issueForm'].validate(async (valid) => {
+      this.$refs['issueForm'].validate(async(valid) => {
         if (valid) {
           const data = this.issueForm
           if (data.fixed_version_id === '') {
@@ -317,6 +319,7 @@ export default {
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           {{ $t('Issue.Save') }}
         </el-button>
+        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby',{user:author}) }}</div>
         <div>{{ issueDescription }}</div>
       </div>
       <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
@@ -436,11 +439,13 @@ export default {
               <VueShowdown :markdown="scope.row.comment" />
             </template>
           </el-table-column>
-          <!-- <el-table-column label="Author" width="180" align="center">
-            <template slot-scope="scope">Flow
-              {{ scope.row.comment_author }}
+          <el-table-column :label="$t('Issue.Author')" width="180" align="center">
+            <template slot-scope="scope">
+              <span v-if="scope.row.comment_author">
+                {{ scope.row.comment_author }}
+              </span>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column :label="$t('general.CreateTime')" width="200" align="center">
             <template slot-scope="scope">
               {{ new Date(scope.row.comment_at).toLocaleString() }}
