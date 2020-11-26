@@ -305,6 +305,20 @@ export default {
         duration: 1 * 1000
       })
       this.fetchData()
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
+    },
+    async handleChange(file, fileList) {
+      if (this.extension[file.raw.type] === undefined) {
+        this.$message.warning(`Unable to upload a file: This file type is not supported`)
+        this.$refs['upload'].clearFiles()
+      } else if (file.size / 1024 / 1024 > 5) {
+        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (5 MB)`)
+        this.$refs['upload'].clearFiles()
+      } else {
+        this.uploadFileList = fileList
+      }
     }
   }
 }
@@ -412,6 +426,23 @@ export default {
                 rows="4"
                 placeholder="please input description"
               />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item :label="$t('File.Upload')" prop="upload">
+              <el-upload
+                ref="upload"
+                class="upload-file2"
+                drag
+                action=""
+                :auto-upload="false"
+                :limit="1"
+                :on-exceed="handleExceed"
+                :on-change="handleChange"
+              >
+                <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
+                <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</div>
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row>
@@ -696,5 +727,9 @@ export default {
 <style lang="scss">
 .filter-container {
   margin-bottom: 5px;
+}
+
+.el-upload__text {
+  margin-top: 18px;
 }
 </style>

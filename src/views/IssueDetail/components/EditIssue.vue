@@ -139,7 +139,7 @@ export default {
         this.listLoading = false
       });
     },
-    handleClose() {
+    handleClolose() {
       this.$emit('issue-dialog-visible', false)
     },
     handleSubmit() {

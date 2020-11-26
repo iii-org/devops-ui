@@ -108,7 +108,7 @@
           <el-form-item :label="$t('File.Upload')" prop="upload">
             <el-upload
               ref="upload"
-              class="upload-file"
+              class="upload-file2"
               drag
               action=""
               :auto-upload="false"
@@ -116,6 +116,7 @@
               :on-exceed="handleExceed"
               :on-change="handleChange"
             >
+              <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
               <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</div>
             </el-upload>
           </el-form-item>
