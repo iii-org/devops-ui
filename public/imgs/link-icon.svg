@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="8px" height="8px" viewBox="0 0 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>url copy 10</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="PM-Project-List" transform="translate(-1070.000000, -544.000000)" stroke="#3ECBBC" stroke-width="0.5">
+            <g id="Group-3-Copy-24" transform="translate(1071.000000, 543.000000)">
+                <g id="url-copy-10" transform="translate(0.000000, 2.000000)">
+                    <path d="M4.71428571,3.42857143 L5.56071429,2.56071429 C6.14657143,1.97485714 6.14657143,1.02514286 5.56071429,0.439285714 L5.56071429,0.439285714 C4.97485714,-0.146571429 4.02514286,-0.146571429 3.43928571,0.439285714 L2.57142857,1.28571429" id="Path"></path>
+                    <path d="M3.42857143,4.71428571 L2.56071429,5.56071429 C1.97485714,6.14657143 1.02514286,6.14657143 0.439285714,5.56071429 L0.439285714,5.56071429 C-0.146571429,4.97485714 -0.146571429,4.02514286 0.439285714,3.43928571 L1.28571429,2.57142857" id="Path"></path>
+                    <line x1="1.71428571" y1="4.28571429" x2="4.28571429" y2="1.71428571" id="Path"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

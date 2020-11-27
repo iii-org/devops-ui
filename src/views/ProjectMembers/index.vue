@@ -162,24 +162,24 @@ export default {
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column align="center" :label="$t('Member.Id')" :show-overflow-tooltip="true" width="100">
-        <template slot-scope="scope"> #{{ scope.row.id }} </template>
+        <template slot-scope="scope"> {{ scope.row.id }} </template>
       </el-table-column>
       <el-table-column :label="$t('Member.Account')" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           {{ scope.row.login }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Member.Phone')" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('Member.Phone')" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Member.Role')" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('Member.Role')" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           {{ scope.row.role_name }}
         </template>

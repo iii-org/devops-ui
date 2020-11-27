@@ -320,7 +320,8 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="GitLab" width="120px">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.git_url" type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <el-link v-if="scope.row.git_url" type="text" :href="scope.row.git_url" target="_blank">
+            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -328,10 +329,10 @@ export default {
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
-            type="primary"
+            type="text"
             :href="scope.row.redmine_url"
             target="_blank"
-          >Redmine</el-link>
+          ><el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>

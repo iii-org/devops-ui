@@ -488,12 +488,8 @@
     display: block;
 }
 
-// .el-link--inner{
-//     &:before{
-//         content: "";
-//         width: 8px;
-//         height: 8px;
-//         background: url("/assets/link-icon.svg") no-repeat center center;
-//         display: inline-block;
-//     }
-// }
+.link-icon{
+    width: 16px;
+    vertical-align: -4px;
+    line-height: 100%;
+}
