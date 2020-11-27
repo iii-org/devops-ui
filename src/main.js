@@ -41,7 +41,8 @@ Vue.use(VueShowdown, {
     underline: true,
     ghCodeBlocks: true,
     encodeEmails: true,
-    simpleLineBreaks: true
+    simpleLineBreaks: true,
+    strikethrough: true
   }
 })
 // 如果想要中文版 element-ui，按如下方式声明

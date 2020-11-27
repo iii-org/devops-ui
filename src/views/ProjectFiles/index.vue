@@ -286,4 +286,7 @@ export default {
 .upload-file >>> .el-upload-dragger {
   height: 100px;
 }
+.el-upload__text {
+  margin-top: 0px;
+}
 </style>

@@ -114,15 +114,18 @@ export default {
     Parameter: '參數',
     AddParameter: '新增參數',
     Length: '長度',
-    Limit: '限制'
+    Limit: '限制',
+    Addby: '由{user}新增',
+    Author: '作者'
   },
   Wiki: {
     AddWiki: '新增Wiki',
     Title: '標題',
     Content: '內容',
-    SearchTitle: '搜尋標題'
+    SearchTitle: '搜尋標題',
+    edited: '此頁面最後由 {user} 編輯'
   },
-  Dashboard:　{
+  Dashboard: {
     UnfinishIssues: '未完成議題',
     IssuesShouldBeClosedWithinThisWeek: '本週該完成議題',
     IssuesShouldBeClosedWithinThisMonth: '本月該完成議題',

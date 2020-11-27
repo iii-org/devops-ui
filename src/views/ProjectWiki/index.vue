@@ -156,10 +156,10 @@ export default {
       this.wikiContent = '# WIKI'
       this.newWikiContent = '# WIKI'
       this.form.wikiTitle = ''
-      this.$refs['form'].resetFields()
+      // this.$refs['form'].resetFields()
     },
     async handleConfirmAdd() {
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs['form'].validate(async(valid) => {
         if (!valid) {
           return
         }
@@ -199,7 +199,9 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
+      ><i
+        slot="prefix"
+        class="el-input__icon el-icon-search"
       /></el-input>
     </div>
 
@@ -241,8 +243,7 @@ export default {
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
-            >
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -275,7 +276,7 @@ export default {
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br />
+          <br>
           <template>
             <!-- <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" /> -->
             <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
@@ -317,6 +318,8 @@ export default {
       <div class="container">
         <div class="form__title">
           <h3>{{ wikiData.title }}</h3>
+          <div v-if="detailVisible" style="text-align: right;">{{ $t('Wiki.edited',{user:wikiData.author.name}) }}</div>
+          <el-divider />
         </div>
         <div class="form__body">
           <VueShowdown :markdown="wikiContent" />

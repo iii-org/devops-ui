@@ -40,8 +40,11 @@ const actions = {
   async getProjectList({ commit, rootState }, params) {
     try {
       const response = await getProjectList(rootState.user.userId, params)
-      const { data } = response
-      const dataWithTag = await data.reduce(async (acc, cur) => {
+      let { data } = response
+      data = data.sort(function(a, b) {
+        return a['repository_ids'] < b['repository_ids'] ? 1 : -1
+      })
+      const dataWithTag = await data.reduce(async(acc, cur) => {
         const res = await acc
         // const id = cur.repository_ids[0]
         if (!cur.repository_ids || !cur.repository_ids[0]) {

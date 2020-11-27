@@ -90,7 +90,7 @@ service.interceptors.response.use(
       const error_msg_details = res.error.details || {}
       res_msg = error_msg
       Object.keys(error_msg_details).forEach(key => {
-        res_msg = error_msg.replace(new RegExp(`\\$${key}`), error_msg_details[key].toString())
+        res_msg = res_msg.replace(new RegExp(`\\$${key}`), error_msg_details[key].toString())
       })
     }
     Message({
