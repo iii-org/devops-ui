@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getRdDashboardIssuesPriority(user_id) {
   return request({
-    url: `/dashboard_issues_priority/rd/${user_id}`,
+    url: `/dashboard_issues_priority/${user_id}`,
     method: 'get'
   })
 }
