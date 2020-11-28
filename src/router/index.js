@@ -283,6 +283,32 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/project-resource',
+    component: Layout,
+    name: 'Project Resource',
+    meta: { title: 'Project Resource', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+    children: [
+      {
+        path: 'usage',
+        name: 'Usage',
+        component: () => import('@/views/ProjectUsage/index'),
+        meta: { title: 'Usage', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'resource',
+        name: 'Resource',
+        component: () => import('@/views/ProjectResource/index'),
+        meta: { title: 'Resource', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'artifacts',
+        name: 'Artifacts',
+        component: () => import('@/views/ProjectArtifacts/index'),
+        meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'] }
+      }
+    ]
+  },
+  {
     path: '/progress',
     component: Layout,
     name: 'progress',
