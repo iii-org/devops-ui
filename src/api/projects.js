@@ -234,9 +234,9 @@ export function getProjectResource(pId) {
     message: 'success',
     data: {
       resource: [
-        { name: 'test-project/conarqube', artifacts: 7, pull: 15, lastModifiedTime: '2020/03/31' },
-        { name: 'test-project/mongo', artifacts: 10, pull: 30, lastModifiedTime: '2020/05/31' },
-        { name: 'test-project/checkmarx', artifacts: 3, pull: 9, lastModifiedTime: '2020/07/31' }
+        { name: 'test-project/conarqube', artifact_count: 7, pull_count: 15, update_time: '2020/03/31' },
+        { name: 'test-project/mongo', artifact_count: 10, pull_count: 30, update_time: '2020/05/31' },
+        { name: 'test-project/checkmarx', artifact_count: 3, pull_count: 9, update_time: '2020/07/31' }
       ],
       storage: {
         name: 'test-project',

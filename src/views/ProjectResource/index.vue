@@ -179,17 +179,17 @@ export default {
       </el-table-column>
       <el-table-column label="Artifacts" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.artifacts }}
+          {{ scope.row.artifact_count }}
         </template>
       </el-table-column>
       <el-table-column label="pull">
         <template slot-scope="scope">
-          <span>{{ scope.row.pull }}</span>
+          <span>{{ scope.row.pull_count }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Last Modified Time" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.lastModifiedTime }}</span>
+          <span>{{ scope.row.update_time }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
