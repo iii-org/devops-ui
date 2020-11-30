@@ -43,7 +43,11 @@ export default {
     CreateTime: '建立時間',
     UpdateTime: '修改時間',
     PleaseInput: '請輸入',
-    Close: '關閉'
+    Close: '關閉',
+    Active: '啟用',
+    NoData: '暫無資料',
+    NoIssue: '暫無資料',
+    Email: '信箱'
   },
   TestCase: {
     TestCase: '測試案例',
@@ -129,6 +133,7 @@ export default {
     IssuesShouldBeClosedWithinThisWeek: '本週該完成議題',
     IssuesShouldBeClosedWithinThisMonth: '本月該完成議題',
     Finished: '已完成',
+    Unfinished: '未完成',
     Total: '全部',
     AssignIssuesPriority: '受分配議題優先權',
     AssignIssuesProject: '受分配議題優先權',
@@ -174,5 +179,35 @@ export default {
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
     Save: '儲存',
     Password: '舊密碼'
+  },
+  Project: {
+    AddProject: '新增專案',
+    NameIdentifier: '專案名稱/ID',
+    Name: '專案名稱',
+    Identifier: 'ID',
+    Status: '專案狀態',
+    Progress: '專案工作進度',
+    UpdateTime: '最近更新時間',
+    deleteProjectComfirmText: '確認刪除？',
+    PleaseType: '請輸入',
+    AndThen: '進行刪除或取消操作',
+    IdRule: '請輸入2-255個英文小寫字元，可接受“-”符號，不可接受數字',
+    Workload: '工作包狀態',
+    ProjectMembers: '專案成員',
+    TestStatus: '測試狀態',
+    Title: '職稱'
+  },
+  ProjectActive: {
+    Active: '進行中',
+    Assigned: '已指派',
+    Solved: '已解決',
+    Responsed: '已回覆',
+    Finished: '已完成',
+    Closed: '已關閉'
+  },
+  ProcessDevBranch: {
+    Commit: 'Commit',
+    LastUpdateTime: '最後更新時間',
+    Environment: '測試環境'
   }
 }

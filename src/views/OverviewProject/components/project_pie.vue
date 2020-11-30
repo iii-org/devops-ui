@@ -36,8 +36,8 @@ export default {
     theData(value) {
       this.$nextTick(() => {
         const CONFIG_DATA = [
-          { value: value.total_issue - value.open, name: 'Done', itemStyle: { emphasis: { color: '#2EC6C8' }}},
-          { value: value.open, name: 'Ongoing', itemStyle: { emphasis: { color: '#EBEBEB' }}}
+          { value: value.total_issue - value.open, name: 'Done', itemStyle: { emphasis: { color: '#2EC6C8' } } },
+          { value: value.open, name: 'Ongoing', itemStyle: { emphasis: { color: '#EBEBEB' } } }
           // { value: value.unfinish_number, name: 'Ongoing' },
           // { value: value.total_issue - value.unfinish_number, name: 'Done' }
         ]
@@ -155,7 +155,7 @@ export default {
               color: 'grey',
               fontSize: 20
             },
-            text: 'No Issue',
+            text: this.$t('general.NoIssue'),
             left: 'center',
             top: 'center'
           }

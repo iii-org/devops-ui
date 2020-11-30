@@ -6,10 +6,7 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 
-var colorPalette = [
-  '#2EC6C8',
-  '#EBEBEB'
-]
+var colorPalette = ['#2EC6C8', '#EBEBEB']
 
 var theme2 = {
   color: colorPalette
@@ -63,11 +60,10 @@ export default {
             } else {
               color = '#56b1e8'
             }
-            return ({ value: value[item].closed, itemStyle: { color: color }})
+            return { value: value[item].closed, itemStyle: { color: color } }
             // itemStyle: { color: '#3ECBBC' }
           }),
           unfinished: Object.keys(value).map(key => value[key].open)
-
         }
         this.initChart(CONFIG_DATA)
       })
@@ -95,7 +91,7 @@ export default {
             color: 'grey',
             fontSize: 20
           },
-          text: 'No Issue',
+          text: this.$t('general.NoIssue'),
           left: 'center',
           top: 'center'
         },
@@ -204,7 +200,7 @@ export default {
             },
             data: CONFIG_DATA.unfinished,
             // data: [12, 12, 11],
-            itemStyle: { normal: { color: '#EBEBEB' }}
+            itemStyle: { normal: { color: '#EBEBEB' } }
           }
         ]
       })

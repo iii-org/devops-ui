@@ -25,7 +25,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject', 'branchesByProject']),
     pagedData() {
-      const listData = this.branchList.filter((data) => {
+      const listData = this.branchList.filter(data => {
         if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -98,11 +98,13 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Please input branch name"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" label="Name" width="160">
+      <el-table-column align="center" :label="$t('general.Name')" width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
           <!-- <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">
@@ -110,14 +112,14 @@ export default {
           </router-link> -->
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Description">
+      <el-table-column align="center" :label="$t('general.Description')">
         <template slot-scope="scope">
           {{ scope.row.last_commit_message }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Environment">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')">
         <template slot-scope="scope">
-          <div v-for="(item,index) in EnvironmentFormat(scope.row.env_url)" :key="index">
+          <div v-for="(item, index) in EnvironmentFormat(scope.row.env_url)" :key="index">
             <el-link :href="item.url" target="_blank" type="primary">{{ item.service }} ({{ item.port }})</el-link>
           </div>
         </template>
@@ -127,12 +129,12 @@ export default {
           {{ scope.row.status }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="Commit" width="160">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" width="160">
         <template slot-scope="scope">
           {{ scope.row.short_id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last update time" width="240">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.LastUpdateTime')" width="240">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.last_commit_time) }}
         </template>

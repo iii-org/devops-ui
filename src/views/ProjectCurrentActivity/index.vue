@@ -43,7 +43,7 @@ export default {
       if (!this.projectIssueList[status])
         //該status不存在issue回傳空array
         return []
-      return this.projectIssueList[status].map((issue) => {
+      return this.projectIssueList[status].map(issue => {
         return {
           name: issue.issue_name,
           id: issue.id,
@@ -57,7 +57,7 @@ export default {
       const projectIssueListRes = await getProjectIssueListByStatus(this.projectSelectedId)
       this.isLoading = false
       this.projectIssueList = projectIssueListRes.data //取得project全部issue by status
-      this.issueStatusList.forEach((item) => {
+      this.issueStatusList.forEach(item => {
         if (item.name == 'Active') this.activeList = this.genKanbanCard('Active')
         if (item.name == 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
         if (item.name == 'Solved') this.solvedList = this.genKanbanCard('Solved')
@@ -75,7 +75,7 @@ export default {
       if (to.className.search('Responded') != -1) issue = this.respondedList[newIndex]
       if (to.className.search('Finished') != -1) issue = this.finishedList[newIndex]
       if (to.className.search('Closed') != -1) issue = this.closedList[newIndex]
-      this.issueStatusList.forEach((item) => {
+      this.issueStatusList.forEach(item => {
         if (to.className.search(item.name) != -1) {
           newStatusId = item.id
         }
@@ -103,7 +103,7 @@ export default {
           :list="activeList"
           :group="group"
           class="kanban active"
-          header-text="Active"
+          :header-text="$t('ProjectActive.Active')"
           cName="Active"
         />
         <Kanban
@@ -112,7 +112,7 @@ export default {
           :list="assignedList"
           :group="group"
           class="kanban assigned"
-          header-text="Assigned"
+          :header-text="$t('ProjectActive.Assigned')"
           cName="Assigned"
         />
         <Kanban
@@ -121,7 +121,7 @@ export default {
           :list="solvedList"
           :group="group"
           class="kanban solved"
-          header-text="Solved"
+          :header-text="$t('ProjectActive.Solved')"
           cName="Solved"
         />
         <Kanban
@@ -130,7 +130,7 @@ export default {
           :list="respondedList"
           :group="group"
           class="kanban responsed"
-          header-text="Responsed"
+          :header-text="$t('ProjectActive.Responsed')"
           cName="Responsed"
         />
         <Kanban
@@ -139,7 +139,7 @@ export default {
           :list="finishedList"
           :group="group"
           class="kanban finished"
-          header-text="Finished"
+          :header-text="$t('ProjectActive.Finished')"
           cName="Finished"
         />
         <Kanban
@@ -148,7 +148,7 @@ export default {
           :list="closedList"
           :group="group"
           class="kanban closed"
-          header-text="Closed"
+          :header-text="$t('ProjectActive.Closed')"
           cName="Closed"
         />
       </div>
