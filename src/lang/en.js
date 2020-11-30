@@ -305,9 +305,15 @@ export default {
     IdRule:
       'Identifier should be 2-255 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
     Workload: 'Workload',
+    WorkloadValue: 'Workload',
+    UpcommingDeadline: 'Upcomming Deadline',
     ProjectMembers: 'Project Members',
     TestStatus: 'Test Status',
-    Title: 'Title'
+    Title: 'Title',
+    Branches: 'Branches',
+    LastTest: 'Last Test',
+    LastTestResult: 'Last Test Result',
+    Searchidentifier: 'Please input project identifier'
   },
   ProjectActive: {
     Active: 'Active',

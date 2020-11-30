@@ -193,9 +193,15 @@ export default {
     AndThen: '進行刪除或取消操作',
     IdRule: '請輸入2-255個英文小寫字元，可接受“-”符號，不可接受數字',
     Workload: '工作包狀態',
+    WorkloadValue: '工作量',
+    UpcommingDeadline: '最近逾期日',
     ProjectMembers: '專案成員',
     TestStatus: '測試狀態',
-    Title: '職稱'
+    Title: '職稱',
+    Branches: '原始碼分支',
+    LastTest: '最後測試',
+    LastTestResult: '最後測試結果',
+    Searchidentifier: '搜尋ID'
   },
   ProjectActive: {
     Active: '進行中',
