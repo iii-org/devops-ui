@@ -96,7 +96,7 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input branch name"
+        :placeholder="$t('ProcessDevBranch.SearchBranch')"
         style="width: 250px; float: right"
       >
         <i slot="prefix" class="el-input__icon el-icon-search" />
@@ -104,7 +104,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" :label="$t('general.Name')" width="160">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
           <!-- <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">

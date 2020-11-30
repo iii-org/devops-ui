@@ -181,7 +181,7 @@ export default {
   <div v-loading="isLoading" class="dashboard-container">
     <div class="clearfix">
       <project-list-selector />
-      <el-select v-model="projectVersion" placeholder="select a version">
+      <el-select v-model="projectVersion" :placeholder="$t('Version.SelectVersion')">
         <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
     </div>
@@ -249,8 +249,8 @@ export default {
             </span>
           </div>
           <el-table :data="projectdata" height="250" stripe style="width: 100%">
-            <el-table-column prop="Software" label="Software" width="100" />
-            <el-table-column label="Brief Information">
+            <el-table-column :label="$t('Project.Software')" prop="Software" width="100" />
+            <el-table-column :label="$t('Project.Brief')">
               <template slot-scope="scope">
                 <div
                   style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;"
@@ -258,7 +258,7 @@ export default {
                 />
               </template>
             </el-table-column>
-            <el-table-column label="Report" width="100">
+            <el-table-column :label="$t('Project.Report')" width="100">
               <template slot-scope="scope">
                 <el-link
                   v-if="scope.row.status == 3"

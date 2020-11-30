@@ -21,7 +21,10 @@ export default {
     Setting: '設定',
     Members: '成員',
     Versions: '版本',
-    'User Manage': '成員管理'
+    'User Manage': '成員管理',
+    'Activity Log': '活動紀錄',
+    Roadmap: '專案藍圖',
+    'Project Graph': '版本線圖'
   },
   navbar: {
     logOut: '登出',
@@ -39,15 +42,17 @@ export default {
     Cancel: '取消',
     SearchName: '搜尋名稱',
     Description: '描述',
+    Active: '啟用',
+    NoData: '暫無資料',
+    NoIssue: '暫無資料',
+    Email: '信箱',
     Creator: '建立者',
     CreateTime: '建立時間',
     UpdateTime: '修改時間',
     PleaseInput: '請輸入',
     Close: '關閉',
-    Active: '啟用',
-    NoData: '暫無資料',
-    NoIssue: '暫無資料',
-    Email: '信箱'
+    Disable: '停用',
+    Enable: '啟用'
   },
   TestCase: {
     TestCase: '測試案例',
@@ -182,6 +187,7 @@ export default {
   },
   Project: {
     AddProject: '新增專案',
+    EditProject: '修改專案',
     NameIdentifier: '專案名稱/ID',
     Name: '專案名稱',
     Identifier: 'ID',
@@ -201,7 +207,11 @@ export default {
     Branches: '原始碼分支',
     LastTest: '最後測試',
     LastTestResult: '最後測試結果',
-    Searchidentifier: '搜尋ID'
+    Searchidentifier: '搜尋ID',
+    Report: '報表',
+    Brief: '摘要',
+    Software: '軟體',
+    SearchProjectName: '搜尋專案名稱'
   },
   ProjectActive: {
     Active: '進行中',
@@ -214,6 +224,17 @@ export default {
   ProcessDevBranch: {
     Commit: 'Commit',
     LastUpdateTime: '最後更新時間',
-    Environment: '測試環境'
+    Environment: '測試環境',
+    SearchBranch: '搜尋分支',
+    Branch: '分支'
+  },
+  ProcessDevBranchTest: {
+    Id: '編號',
+    CommitShortId: 'Commit Short Id',
+    Branch: '分支',
+    Status: '狀態',
+    CommitMessage: 'Commit訊息',
+    LastUpdateTime: '最後更新時間',
+    SearchCommitMessage: '搜尋Commit訊息'
   }
 }

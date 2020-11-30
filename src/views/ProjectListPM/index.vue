@@ -261,6 +261,7 @@ export default {
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
         style="width: 250px; float: right"
+        :placeholder="$t('Project.SearchProjectName')"
         ><i slot="prefix" class="el-input__icon el-icon-search"
       /></el-input>
     </div>
@@ -377,7 +378,7 @@ export default {
       </span>
     </el-dialog>
     <el-dialog
-      :title="`${dialogStatusText} Project`"
+      :title="$t(`Project.${dialogStatusText}Project`)"
       :visible.sync="dialogVisible"
       width="50%"
       :close-on-click-modal="false"
@@ -426,8 +427,8 @@ export default {
             :inactive-value="true"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            active-text="Enable"
-            inactive-text="Disable"
+            :active-text="$t('general.Enable')"
+            :inactive-text="$t('general.Disable')"
           />
         </el-form-item>
       </el-form>
