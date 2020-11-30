@@ -145,7 +145,12 @@ export default {
     Actions: 'Actions',
     Confirm: 'Confirm',
     Cancel: 'Cancel',
-    SearchName: 'Search Name'
+    SearchName: 'Search Name',
+    Description: 'Description',
+    Active: 'Active',
+    NoData: 'No Data',
+    NoIssue: 'No Issue',
+    Email: 'Email'
   },
   TestCase: {
     TestCase: 'Test Case',
@@ -231,6 +236,7 @@ export default {
     IssuesShouldBeClosedWithinThisWeek: 'Issues Should Be Closed Within This Week',
     IssuesShouldBeClosedWithinThisMonth: 'Issues Should Be Closed Within This Month',
     Finished: 'Finished',
+    Unfinished: 'Unfinished',
     Total: 'Total',
     AssignIssuesPriority: 'Assign Issues Priority',
     AssignIssuesProject: 'Assign Issues Project',
@@ -276,5 +282,37 @@ export default {
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.',
     Save: 'Save',
     Password: 'Password'
+  },
+  Project: {
+    AddProject: 'Add Project',
+    NameIdentifier: 'Name / Identifier',
+    Name: 'Name',
+    Identifier: 'Identifier',
+    Status: 'Status',
+    Progress: 'Progress',
+    UpdateTime: 'Update Time',
+    deleteProjectComfirmText:
+      'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
+    PleaseType: 'Please type',
+    AndThen: 'to proceed or close this modal to cancel.',
+    IdRule:
+      'Identifier should be 2-255 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
+    Workload: 'Workload',
+    ProjectMembers: 'Project Members',
+    TestStatus: 'Test Status',
+    Title: 'Title'
+  },
+  ProjectActive: {
+    Active: 'Active',
+    Assigned: 'Assigned',
+    Solved: 'Solved',
+    Responsed: 'Responsed',
+    Finished: 'Finished',
+    Closed: 'Closed'
+  },
+  ProcessDevBranch: {
+    Commit: 'Commit',
+    LastUpdateTime: 'LastUpdateTime',
+    Environment: 'Environment'
   }
 }

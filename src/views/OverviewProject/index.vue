@@ -89,7 +89,7 @@ export default {
       const statistics = res[1].data
       this.tableData = res[2].data.user_list || []
       this.workLoadData = statistics
-      this.workLoadTypes = Object.keys(statistics).map((key) => {
+      this.workLoadTypes = Object.keys(statistics).map(key => {
         return { id: key, name: key }
       })
       this.workLoad = this.workLoadTypes[0].id
@@ -131,7 +131,10 @@ export default {
           }
         } else if (i === 'checkmarx') {
           // checkmarx message https://github.com/iii-org/devops-system/wiki/Message-Strings
-          if (this.$router.history.current.path === '/project/index' && (apiProjectdata.test_results[i].status === 1 || apiProjectdata.test_results[i].status === 2)) {
+          if (
+            this.$router.history.current.path === '/project/index' &&
+            (apiProjectdata.test_results[i].status === 1 || apiProjectdata.test_results[i].status === 2)
+          ) {
             this.timeout = setTimeout(() => {
               this.fetchProjectTest()
             }, 15000)
@@ -160,7 +163,7 @@ export default {
     },
     async fetchTestReport(Reportid) {
       this.ProjectTestLoading = true
-      await getTestReport(Reportid).then((res) => {
+      await getTestReport(Reportid).then(res => {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement('a')
         link.href = url
@@ -187,16 +190,16 @@ export default {
       <el-col :span="12">
         <el-card shadow="hover" style="height: 400px">
           <div slot="header" class="clearfix" style="line-height: 40px">
-            <span>Status</span>
+            <span>{{ $t('general.Status') }}</span>
           </div>
-          <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
+          <div v-if="projectSelectedId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <project-pie :the-data="issueprogress" />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover" style="height:400px">
           <div slot="header" class="clearfix" style="line-height:40px; position: relative">
-            <span>Workload</span>
+            <span>{{ $t('Project.Workload') }}</span>
             <el-select
               v-model="workLoad"
               placeholder="select a project"
@@ -205,21 +208,21 @@ export default {
             >
               <el-option v-for="item in workLoadTypes" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <div v-if="legend=='true'" class="bar-header">
+            <div v-if="legend == 'true'" class="bar-header">
               <div class="d-inline-block">
-                <span v-if="workLoad=='priority'" class="legend-box" style="background: #E85656" />
-                <span v-if="workLoad=='priority'" class="legend-box" style="background: #F9BE6E" />
-                <span v-if="workLoad=='priority'" class="legend-box" style="background: #2EC6C8" />
+                <span v-if="workLoad == 'priority'" class="legend-box" style="background: #E85656" />
+                <span v-if="workLoad == 'priority'" class="legend-box" style="background: #F9BE6E" />
+                <span v-if="workLoad == 'priority'" class="legend-box" style="background: #2EC6C8" />
                 <span class="legend-box" style="background: #56b1e8" />
-                <span>Finished</span>
+                <span>{{ $t('Dashboard.Finished') }}</span>
               </div>
               <div class="d-inline-block">
                 <span class="legend-box" />
-                <span>Unfinished</span>
+                <span>{{ $t('Dashboard.Unfinished') }}</span>
               </div>
             </div>
           </div>
-          <div v-if="projectSelectedId==-1" style="text-align: center;">No Data</div>
+          <div v-if="projectSelectedId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <project-bar :the-data="workLoadSelected" @legendfun="legendfun" />
         </el-card>
       </el-col>
@@ -228,34 +231,31 @@ export default {
       <el-col :span="12">
         <el-card shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix">
-            <span>Project Members</span>
+            <span>{{ $t('Project.ProjectMembers') }}</span>
           </div>
           <el-table :data="tableData" height="250" stripe style="width: 100%">
-            <el-table-column prop="role_name" label="Title" />
-            <el-table-column prop="name" label="Name" />
-            <el-table-column prop="email" label="Email" />
+            <el-table-column prop="role_name" :label="$t('Project.Title')" />
+            <el-table-column prop="name" :label="$t('general.Name')" />
+            <el-table-column prop="email" :label="$t('general.Email')" />
           </el-table>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card v-loading="ProjectTestLoading" shadow="hover" style="min-height: 400px">
           <div slot="header" class="clearfix">
-            <span>Test status</span>
+            <span>{{ $t('Project.TestStatus') }}</span>
             <span>
-              <el-button
-                type="primary"
-                icon="el-icon-refresh"
-                circle
-                size="mini"
-                @click="fetchProjectTest()"
-              />
+              <el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()" />
             </span>
           </div>
           <el-table :data="projectdata" height="250" stripe style="width: 100%">
             <el-table-column prop="Software" label="Software" width="100" />
             <el-table-column label="Brief Information">
               <template slot-scope="scope">
-                <div style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;" v-html="scope.row.Informationtext" />
+                <div
+                  style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;"
+                  v-html="scope.row.Informationtext"
+                />
               </template>
             </el-table-column>
             <el-table-column label="Report" width="100">
