@@ -143,9 +143,17 @@ export default {
     Edit: 'Edit',
     Delete: 'Delete',
     Actions: 'Actions',
+    Type: 'Type',
+    Status: 'Status',
     Confirm: 'Confirm',
     Cancel: 'Cancel',
-    SearchName: 'Search Name'
+    SearchName: 'Search Name',
+    Description: 'Description',
+    Creator: 'Creator',
+    CreateTime: 'Create Time',
+    UpdateTime: 'Update Time',
+    PleaseInput: 'Please Input',
+    Close: 'Close'
   },
   TestCase: {
     TestCase: 'Test Case',
