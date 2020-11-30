@@ -143,6 +143,8 @@ export default {
     Edit: 'Edit',
     Delete: 'Delete',
     Actions: 'Actions',
+    Type: 'Type',
+    Status: 'Status',
     Confirm: 'Confirm',
     Cancel: 'Cancel',
     SearchName: 'Search Name',
@@ -150,7 +152,12 @@ export default {
     Active: 'Active',
     NoData: 'No Data',
     NoIssue: 'No Issue',
-    Email: 'Email'
+    Email: 'Email',
+    Creator: 'Creator',
+    CreateTime: 'Create Time',
+    UpdateTime: 'Update Time',
+    PleaseInput: 'Please Input',
+    Close: 'Close'
   },
   TestCase: {
     TestCase: 'Test Case',
