@@ -179,7 +179,7 @@ export default {
           <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test Result" width="150px">
+      <el-table-column align="center" label="Last Test Result" width="170px">
         <template slot-scope="scope">
           <el-tag :type="returnTagType(scope.row)" size="large">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />

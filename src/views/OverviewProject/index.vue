@@ -230,7 +230,7 @@ export default {
           <div slot="header" class="clearfix">
             <span>Project Members</span>
           </div>
-          <el-table :data="tableData" height="250" stripe style="width: 100%">
+          <el-table :data="tableData" stripe style="width: 100%">
             <el-table-column prop="role_name" label="Title" />
             <el-table-column prop="name" label="Name" />
             <el-table-column prop="email" label="Email" />
@@ -238,36 +238,50 @@ export default {
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card v-loading="ProjectTestLoading" shadow="hover" style="min-height: 400px">
+        <el-card v-loading="ProjectTestLoading" shadow="hover" style="min-height: 400px" class="status-wrap">
           <div slot="header" class="clearfix">
             <span>Test status</span>
-            <span>
+            <span class="reload-btn">
               <el-button
                 type="primary"
                 icon="el-icon-refresh"
                 circle
                 size="mini"
-                @click="fetchProjectTest()"
-              />
+                @click="fetchProjectTest()">
+              Reload
+              </el-button>
             </span>
           </div>
-          <el-table :data="projectdata" height="250" stripe style="width: 100%">
-            <el-table-column prop="Software" label="Software" width="100" />
+          <el-table :data="projectdata" stripe style="width: 100%" border="1">
+            <el-table-column prop="Software" label="Software" width="130" />
             <el-table-column label="Brief Information">
               <template slot-scope="scope">
                 <div style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;" v-html="scope.row.Informationtext" />
               </template>
             </el-table-column>
-            <el-table-column label="Report" width="100">
+            <el-table-column label="Report" width="160">
               <template slot-scope="scope">
-                <el-link
+                <!-- <el-link
                   v-if="scope.row.status == 3"
                   target="_blank"
                   type="primary"
                   :underline="false"
+                  class="download-btn"
                   @click="fetchTestReport(scope.row.report_id)"
                 >
-                  <i class="el-icon-download" style="font-size: 20px" />
+                  Download
+                  <i class="el-icon-download" style="font-size: 16px" />
+                </el-link> -->
+
+                <el-link
+                  target="_blank"
+                  type="primary"
+                  :underline="false"
+                  class="download-btn"
+                  @click="fetchTestReport(scope.row.report_id)"
+                >
+                  Download
+                  <i class="el-icon-download" style="font-size: 16px" />
                 </el-link>
               </template>
             </el-table-column>
@@ -322,4 +336,44 @@ export default {
   padding: 10px 0;
   background-color: #f9fafc;
 }
+
+.el-button--mini.is-circle{
+  color: #3ecbbc;
+  padding: 0;
+  background: none;
+  border: none;
+}
+</style>
+<style lang="scss">
+.el-table_2_column_4{
+  text-align: center !important;
+}
+
+.status-wrap th{
+  text-align: center;
+  font-weight: 500;
+  background-color: #f4f7fa;
+}
+
+.reload-btn{
+  .el-button{
+    font-size: 16px;
+    float: right;
+    color: #3ecbbc;
+  }
+  i{
+    font-size: 13px;
+  }
+}
+
+.download-btn{
+  color: #FFFFFF !important;
+  padding: 6px 22px 7px 20px;
+  border-radius: 2px;
+  background-color: #68c239;
+  i{
+    vertical-align: -1px;
+  }
+}
+
 </style>
