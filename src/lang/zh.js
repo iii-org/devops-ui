@@ -86,7 +86,8 @@ export default {
     Upload: '上傳',
     Id: '檔案編號',
     Download: '下載',
-    DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳'
+    DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
+    uploadBtn: '選擇檔案'
   },
   Version: {
     AddVersion: '新增版本',

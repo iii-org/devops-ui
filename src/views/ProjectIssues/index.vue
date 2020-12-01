@@ -200,19 +200,25 @@ export default {
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column align="center" :label="$t('Issue.Id')" width="120px">
+      <el-table-column label="Id / Name">
         <template slot-scope="scope">
-          {{ scope.row.id }}
+          <span class="text-success">{{ scope.row.id }}</span> {{scope.row.issue_name}}
+          
+          <el-button
+            v-if="parentList.includes(scope.row.id) == true"
+            size="mini"
+            class="btn-sub"
+            icon="el-icon-plus"
+            @click="handleParent(scope.$index, scope.row, scope)">Add subissue</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Type')" :show-overflow-tooltip="true" width="140px">
+      <el-table-column :label="$t('Type')" :show-overflow-tooltip="true" width="160px">
         <template slot-scope="scope">
-          {{ scope.row.issue_category }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')">
-        <template slot-scope="scope">
-          {{ scope.row.issue_name }}
+          <span v-if="scope.row.issue_category === 'Feature'" class="point feature"></span>
+          <span v-else-if="scope.row.issue_category === 'Document'" class="point document"></span>
+          <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug"></span>
+          <span v-else-if="scope.row.issue_category === 'Research'" class="point research"></span>
+          <span v-else class="point feature"></span>{{ scope.row.issue_category }}
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Description">
@@ -220,7 +226,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('general.Status')" width="120px">
+      <el-table-column align="center" :label="$t('Status')" width="135px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
             scope.row.issue_status
@@ -240,7 +246,7 @@ export default {
           <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Assignee')">
+      <el-table-column align="center" :label="$t('Issue.Assignee')" width="200px">
         <template slot-scope="scope">
           {{ scope.row.assigned_to }}
         </template>
@@ -278,13 +284,6 @@ export default {
               <i class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
-          <el-button
-            v-if="parentList.includes(scope.row.id) == true"
-            type="primary"
-            size="mini"
-            icon="el-icon-circle-plus-outline"
-            @click="handleParent(scope.$index, scope.row, scope)"
-          />
           <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
               <i class="el-icon-delete" /> Delete
             </el-button> -->
@@ -315,6 +314,15 @@ export default {
 }
 .el-popconfirm__action .el-button--primary {
   margin-left: 5px !important;
+}
+
+.el-table_1_column_1{
+  position: relative;
+  font-weight: 500;
+  .text-success{
+    font-weight: 600;
+    margin-right: 5px;
+  }
 }
 </style>
 
