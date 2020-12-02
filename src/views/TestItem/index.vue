@@ -40,7 +40,7 @@ export default {
     return {
       activeName: 'testItem',
       testCaseId: 0,
-      testCase: { name: '', data: { method: '', url: '' } },
+      testCase: { name: '', data: { method: '', url: '' }},
       testItemList: [],
       testItemDialogVisible: false,
       selectTestItem: '',
@@ -48,15 +48,15 @@ export default {
       testValueDialogVisible: false,
       listLoading: true,
       testItemlistQuery: {
-        page: 1, //目前第幾頁
-        limit: 10 //一頁幾筆
+        page: 1, // 目前第幾頁
+        limit: 10 // 一頁幾筆
       },
-      testItemListTotal: 0, //總筆數
+      testItemListTotal: 0, // 總筆數
       testValuelistQuery: {
-        page: 1, //目前第幾頁
-        limit: 10 //一頁幾筆
+        page: 1, // 目前第幾頁
+        limit: 10 // 一頁幾筆
       },
-      testValueListTotal: 0, //總筆數
+      testValueListTotal: 0, // 總筆數
       testItemForm: testItemFormTemplate,
       testValueForm: testValueFormTemplate,
       confirmLoading: false,
@@ -158,6 +158,9 @@ export default {
     },
     handleTestItemAdding() {
       this.testItemDialogVisible = true
+      this.$nextTick(() => {
+        this.$refs['testItemForm'].resetFields()
+      })
       this.dialogStatus = 1
     },
     handleTestItemEdit(idx, row) {
@@ -167,8 +170,15 @@ export default {
     },
     handleDelete() {},
     handleTestValueAdding() {
-      this.testValueDialogVisible = true
-      this.dialogStatus = 1
+      if (this.selectTestItem === '') {
+        this.$message.warning(this.$t('TestValue.PleaseSelectTestItem'))
+      } else {
+        this.testValueDialogVisible = true
+        this.$nextTick(() => {
+          this.$refs['testValueForm'].resetFields()
+        })
+        this.dialogStatus = 1
+      }
     },
     handleTestValueEdit(idx, row) {
       this.testValueDialogVisible = true
@@ -191,14 +201,14 @@ export default {
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        this.$refs['testItemForm'].resetFields()
-        this.$refs['testValueForm'].resetFields()
+        // this.$refs['testItemForm'].resetFields()
+        // this.$refs['testValueForm'].resetFields()
         this.testItemForm = testItemFormTemplate
         this.testValueForm = testValueFormTemplate
       })
     },
     handleTestItemConfirm() {
-      this.$refs['testItemForm'].validate(async (valid) => {
+      this.$refs['testItemForm'].validate(async(valid) => {
         if (valid) {
           if (this.dialogStatus == 1) {
             await addTestItemByCase(this.testCaseId, this.testItemForm)
@@ -218,7 +228,7 @@ export default {
       this.fetchData()
     },
     handleTestValueConfirm() {
-      this.$refs['testValueForm'].validate(async (valid) => {
+      this.$refs['testValueForm'].validate(async(valid) => {
         if (valid) {
           if (this.dialogStatus == 1) {
             await addTestValueByItem(this.selectTestItem, this.testValueForm)
@@ -268,7 +278,7 @@ export default {
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
       <el-tab-pane :label="$t('TestItem.TestItem')" name="testItem">
         <div class="clearfix">
-          <span class="newBtn" v-if="userRole === 'Engineer'">
+          <span v-if="userRole === 'Engineer'" class="newBtn">
             <el-button type="success" @click="handleTestItemAdding">
               <i class="el-icon-plus" />
               {{ $t('TestItem.AddTestItem') }}
@@ -279,8 +289,7 @@ export default {
             class="ob-search-input ob-shadow search-input mr-3"
             :placeholder="$t('general.SearchName')"
             style="width: 250px; float: right"
-            ><i slot="prefix" class="el-input__icon el-icon-search"></i
-          ></el-input>
+          ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
         </div>
         <el-table
           :data="testItemPagedData"
@@ -305,7 +314,7 @@ export default {
               {{ scope.row.is_passed }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('general.Actions')" align="center" width="200" v-if="userRole === 'Engineer'">
+          <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="handleTestItemEdit(scope.$index, scope.row)">
                 <i class="el-icon-edit" />
@@ -320,8 +329,7 @@ export default {
                 @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
               >
                 <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
-                >
+                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
@@ -340,7 +348,7 @@ export default {
           <el-select v-model="selectTestItem" :placeholder="$t('TestValue.SelectTestItem')">
             <el-option v-for="item in testItemList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
-          <span class="newBtn" v-if="userRole === 'Engineer'">
+          <span v-if="userRole === 'Engineer'" class="newBtn">
             <el-button type="success" @click="handleTestValueAdding">
               <i class="el-icon-plus" />
               {{ $t('TestValue.AddTestValue') }}
@@ -351,8 +359,7 @@ export default {
             class="ob-search-input ob-shadow search-input mr-3"
             :placeholder="$t('TestValue.SearchValue')"
             style="width: 250px; float: right"
-            ><i slot="prefix" class="el-input__icon el-icon-search"></i
-          ></el-input>
+          ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
         </div>
         <el-table
           :data="testValuePagedData"
@@ -382,7 +389,7 @@ export default {
               {{ scope.row.value }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('general.Actions')" align="center" width="200" v-if="userRole === 'Engineer'">
+          <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="handleTestValueEdit(scope.$index, scope.row)">
                 <i class="el-icon-edit" />
@@ -397,8 +404,7 @@ export default {
                 @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
               >
                 <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
-                >
+                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
@@ -421,22 +427,22 @@ export default {
       @closed="onDialogClosed"
     >
       <el-form
-        label-position="top"
         ref="testItemForm"
+        label-position="top"
         :model="testItemForm"
         :rules="testItemFormRules"
         label-width="20%"
       >
         <el-form-item :label="$t('general.Name')" prop="name">
-          <el-input v-model="testItemForm.name"></el-input>
+          <el-input v-model="testItemForm.name" />
         </el-form-item>
         <el-form-item :label="$t('TestItem.IsPass')" prop="is_passed">
-          <el-switch v-model="testItemForm.is_passed" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
+          <el-switch v-model="testItemForm.is_passed" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="testItemDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" @click="handleTestItemConfirm" :loading="confirmLoading">{{
+        <el-button type="primary" :loading="confirmLoading" @click="handleTestItemConfirm">{{
           $t('general.Confirm')
         }}</el-button>
       </span>
@@ -449,8 +455,8 @@ export default {
       @closed="onDialogClosed"
     >
       <el-form
-        label-position="top"
         ref="testValueForm"
+        label-position="top"
         :model="testValueForm"
         :rules="testValueFormRules"
         label-width="20%"
@@ -471,15 +477,15 @@ export default {
           </el-select>
         </el-form-item>
         <el-form-item label="Key" prop="key">
-          <el-input v-model="testValueForm.key"></el-input>
+          <el-input v-model="testValueForm.key" />
         </el-form-item>
         <el-form-item label="Value" prop="value">
-          <el-input v-model="testValueForm.value"></el-input>
+          <el-input v-model="testValueForm.value" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="testValueDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" @click="handleTestValueConfirm" :loading="confirmLoading">{{
+        <el-button type="primary" :loading="confirmLoading" @click="handleTestValueConfirm">{{
           $t('general.Confirm')
         }}</el-button>
       </span>
