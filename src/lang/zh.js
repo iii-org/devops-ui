@@ -79,7 +79,8 @@ export default {
     Type: '類型',
     Location: '位置',
     SelectTestItem: '選擇測試項目',
-    SearchValue: '搜尋Value'
+    SearchValue: '搜尋Value',
+    PleaseSelectTestItem: '請選擇測試項目!'
   },
   File: {
     AddFile: '新增檔案',

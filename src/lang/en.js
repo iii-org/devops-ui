@@ -79,7 +79,8 @@ export default {
     Type: 'Type',
     Location: 'Location',
     SelectTestItem: 'Select Test Item',
-    SearchValue: 'Search Value'
+    SearchValue: 'Search Value',
+    PleaseSelectTestItem: 'Please Select Test Item'
   },
   File: {
     AddFile: 'Add File',
