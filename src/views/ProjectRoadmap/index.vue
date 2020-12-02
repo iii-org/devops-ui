@@ -135,20 +135,24 @@ export default {
                           <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
                           <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
                           <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
-                          <span style="color: #409eff">
+                          <span>
                             [{{ scope.row.issue_category }}]
-                            <b>#{{ scope.row.issue_name }}</b>
+                            #{{ scope.row.issue_name }}
                           </span>
                         </template>
                       </el-table-column>
                     </el-table>
                   </el-col>
                   <el-col :span="16">
-                    <el-select v-model="workLoad" placeholder="select a project" @change="onWorkLoadChange">
-                      <el-option v-for="items in workLoadTypes" :key="items.id" :label="items.name" :value="items.id" />
-                    </el-select>
-                    <el-divider id="detaildivider" />
-                    <project-bar v-if="workList[item.vId]" :the-data="workLoadSelected" />
+                    <el-card shadow="hover">
+                      <div slot="header" class="clearfix" style="line-height:40px; position: relative">
+                        <span style="font-size: 16px">Workload</span>
+                        <el-select v-model="workLoad" placeholder="select a project" @change="onWorkLoadChange" style="float: right">
+                          <el-option v-for="items in workLoadTypes" :key="items.id" :label="items.name" :value="items.id" />
+                        </el-select>
+                      </div>
+                      <project-bar v-if="workList[item.vId]" :the-data="workLoadSelected" />
+                    </el-card>
                   </el-col>
                 </el-row>
               </div>
@@ -185,4 +189,10 @@ export default {
   margin-left: 0px;
 }
 
+.el-tag{
+  width: 90px;
+  text-align: center;
+  border-radius: 8px;
+  margin-right: 15px;
+}
 </style>
