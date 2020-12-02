@@ -61,9 +61,9 @@ export default {
             type: 'shadow'
           }
         },
-        legend: {
-          data: ['Finished', 'Unfinish']
-        },
+        // legend: {
+        //   data: ['Finished', 'Unfinish']
+        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -72,22 +72,77 @@ export default {
         },
         xAxis: {
           type: 'value',
-          interval: 1
+          position: 'top',
+          interval: 1,
+          axisTick: {
+            lineStyle: {
+              color: '#C8C8C8'
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#C8C8C8'
+            }
+          }
         },
         yAxis: {
           type: 'category',
-          data: CONFIG_DATA.yAxis
+          data: CONFIG_DATA.yAxis,
+          //data: ['一般', '緊急', '特急'],
+          axisTick: {
+            lineStyle: {
+              color: '#C8C8C8'
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            textStyle: {
+              color: function(value, index) {
+                if (value === 'Immediate') {
+                  return '#E85656'
+                } else if (value === 'High') {
+                  return '#F9BE6E'
+                } else if (value === 'Normal') {
+                  return '#3ECBBC'
+                } else {
+                  return '#56b1e8'
+                }
+              }
+            },
+            padding: [0, 15, 0, 0]
+          }
         },
         series: [
           {
             name: 'Finished',
             type: 'bar',
+            barWidth: '10',
             stack: 'Total',
             label: {
               show: false,
               position: 'insideRight'
             },
             data: CONFIG_DATA.finished
+            // data: [16, 6, 3],
+            // data: [
+            //   {
+            //     value: 16,
+            //     itemStyle: { color: '#3ECBBC' }
+            //   },
+            //   {
+            //     value: 6,
+            //     itemStyle: { color: '#F9BE6E' }
+            //   },
+            //   {
+            //     value: 4,
+            //     itemStyle: { color: '#E85656' }
+            //   }
+            // ]
           },
           {
             name: 'Unfinish',
@@ -97,7 +152,8 @@ export default {
               show: false,
               position: 'insideRight'
             },
-            data: CONFIG_DATA.unfinished
+            data: CONFIG_DATA.unfinished,
+            itemStyle: { normal: { color: '#EBEBEB' }}
           }
         ]
       })
