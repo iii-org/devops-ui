@@ -248,7 +248,7 @@ export default {
               <el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()">Reload</el-button>
             </span>
           </div>
-          <el-table :data="projectdata" stripe style="width: 100%" border="1">
+          <el-table :data="projectdata" stripe style="width: 100%" border>
             <el-table-column :label="$t('Project.Software')" prop="Software" width="130" />
             <el-table-column :label="$t('Project.Brief')">
               <template slot-scope="scope">
@@ -273,6 +273,7 @@ export default {
                 </el-link> -->
 
                 <el-link
+                  v-if="scope.row.status == 3"
                   target="_blank"
                   type="primary"
                   :underline="false"
