@@ -77,11 +77,6 @@ export default {
       }
     }
   },
-  watch: {
-    async selectTestItem(val) {
-      this.fetchTestValueData(val)
-    }
-  },
   computed: {
     ...mapGetters(['userRole']),
     testItemPagedData() {
@@ -118,6 +113,12 @@ export default {
         default:
           return 'Null'
       }
+    }
+  },
+  watch: {
+    async selectTestItem(val) {
+      console.log(val)
+      this.fetchTestValueData(val)
     }
   },
   created() {
@@ -174,9 +175,6 @@ export default {
         this.$message.warning(this.$t('TestValue.PleaseSelectTestItem'))
       } else {
         this.testValueDialogVisible = true
-        this.$nextTick(() => {
-          this.$refs['testValueForm'].resetFields()
-        })
         this.dialogStatus = 1
       }
     },
@@ -201,7 +199,11 @@ export default {
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        // this.$refs['testItemForm'].resetFields()
+        if (this.activeName === 'testValue') {
+          this.$refs['testValueForm'].resetFields()
+        } else if (this.activeName === 'testItem') {
+          this.$refs['testItemForm'].resetFields()
+        }
         // this.$refs['testValueForm'].resetFields()
         this.testItemForm = testItemFormTemplate
         this.testValueForm = testValueFormTemplate
@@ -215,7 +217,6 @@ export default {
           } else {
             await updateTestItem(this.testItemForm['id'], this.testItemForm)
           }
-          this.$refs['testItemForm'].resetFields()
           this.testItemDialogVisible = false
           this.fetchData()
         } else {
