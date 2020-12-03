@@ -106,7 +106,7 @@ export default {
   Issue: {
     Issue: '議題',
     AddIssue: '新增議題',
-    Id: '議題編號',
+    Id: '議題編號 / 議題名稱',
     Assignee: '受分配者',
     Priority: '優先權',
     Estimate: '預估工時',

@@ -184,7 +184,9 @@ export default {
           class="ob-search-input ob-shadow search-input mr-3"
           :placeholder="$t('Issue.SearchNameOrAssignee')"
           style="width: 250px; float: right"
-          ><i slot="prefix" class="el-input__icon el-icon-search"
+        ><i
+          slot="prefix"
+          class="el-input__icon el-icon-search"
         /></el-input>
       </div>
     </div>
@@ -200,25 +202,26 @@ export default {
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column label="Id / Name">
+      <el-table-column :label="$t('Issue.Id')">
         <template slot-scope="scope">
-          <span class="text-success">{{ scope.row.id }}</span> {{scope.row.issue_name}}
-          
+          <span class="text-success">{{ scope.row.id }}</span> {{ scope.row.issue_name }}
+
           <el-button
             v-if="parentList.includes(scope.row.id) == true"
             size="mini"
             class="btn-sub"
             icon="el-icon-plus"
-            @click="handleParent(scope.$index, scope.row, scope)">Add subissue</el-button>
+            @click="handleParent(scope.$index, scope.row, scope)"
+          >Add subissue</el-button>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Type')" :show-overflow-tooltip="true" width="160px">
+      <el-table-column :label="$t('general.Type')" :show-overflow-tooltip="true" width="160px">
         <template slot-scope="scope">
-          <span v-if="scope.row.issue_category === 'Feature'" class="point feature"></span>
-          <span v-else-if="scope.row.issue_category === 'Document'" class="point document"></span>
-          <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug"></span>
-          <span v-else-if="scope.row.issue_category === 'Research'" class="point research"></span>
-          <span v-else class="point feature"></span>{{ scope.row.issue_category }}
+          <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
+          <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
+          <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug" />
+          <span v-else-if="scope.row.issue_category === 'Research'" class="point research" />
+          <span v-else class="point feature" />{{ scope.row.issue_category }}
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Description">
@@ -226,7 +229,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('Status')" width="135px">
+      <el-table-column align="center" :label="$t('general.Status')" width="135px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
             scope.row.issue_status
