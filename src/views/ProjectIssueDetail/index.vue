@@ -44,14 +44,9 @@ export default {
       },
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        assigned_to_id: [{ required: true }],
-        tracker_id: [{ required: true }],
-        status_id: [{ required: true }],
-        priority_id: [{ required: true }],
-        estimated_hours: [{ required: true }],
-        done_ratio: [{ required: true }],
-        start_date: [{ required: true }],
-        due_date: [{ required: true }]
+        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
       issueName: '',
       issueStartDate: '',
@@ -116,34 +111,33 @@ export default {
         getFlowType(),
         getParameterByIssue(this.issueId),
         getTestCaseByIssue(this.issueId)
-      ]).then((res) => {
-        this.issueStatusList = res[0].data.map((item) => {
+      ]).then(res => {
+        this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueTypeList = res[1].data.map((item) => {
+        this.issueTypeList = res[1].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map((item) => {
+        this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
         const issueDetail = res[3].data
-        this.author = issueDetail.assigned_to.name
-        const projectId = issueDetail.project.id
-        getProjectAssignable(projectId).then((assignable) => {
-          this.issueAssigneeList = assignable.data.user_list.map((item) => {
+        this.projectId = issueDetail.project.id
+        getProjectAssignable(this.projectId).then(assignable => {
+          this.issueAssigneeList = assignable.data.user_list.map(item => {
             return { label: item.login, value: item.id }
           })
         })
-        getProjectVersion(projectId).then((versions) => {
-          this.issueVersionList = versions.data.versions.map((item) => {
+        getProjectVersion(this.projectId).then(versions => {
+          this.issueVersionList = versions.data.versions.map(item => {
             return { label: item.name, value: item.id }
           })
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
         if (Array.isArray(res[4].data) && res[4].data.length > 0) {
-          this.issueFlow = res[4].data[0].flow_data.map((item) => {
-            const issueType = issueFlowType.find((type) => {
+          this.issueFlow = res[4].data[0].flow_data.map(item => {
+            const issueType = issueFlowType.find(type => {
               return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
@@ -152,19 +146,20 @@ export default {
         }
 
         this.issueParameter = res[6].data
+        this.author = issueDetail.author.name
         this.issueForm.subject = issueDetail.subject
-        this.issueForm.start_date = issueDetail.start_date
-        this.issueForm.due_date = issueDetail.due_date
-        this.issueForm.estimated_hours = issueDetail.estimated_hours
-        this.issueForm.status_id = issueDetail.status.id
-        this.issueForm.assigned_to_id = issueDetail.assigned_to.id
-        this.issueForm.priority_id = issueDetail.priority.id
-        this.issueForm.done_ratio = issueDetail.done_ratio
-        this.issueForm.tracker_id = issueDetail.tracker.id
-        this.issueForm.description = issueDetail.description
+        this.issueForm.start_date = issueDetail.start_date && issueDetail.start_date
+        this.issueForm.due_date = issueDetail.due_date && issueDetail.due_date
+        this.issueForm.estimated_hours = issueDetail.estimated_hours && issueDetail.estimated_hours
+        this.issueForm.status_id = issueDetail.status && issueDetail.status.id
+        this.issueForm.assigned_to_id = issueDetail.assigned_to && issueDetail.assigned_to.id
+        this.issueForm.priority_id = issueDetail.priority && issueDetail.priority.id
+        this.issueForm.done_ratio = issueDetail.done_ratio && issueDetail.done_ratio
+        this.issueForm.tracker_id = issueDetail.tracker && issueDetail.tracker.id
+        this.issueForm.description = issueDetail.description && issueDetail.description
         this.projectId = issueDetail.project.id
         if (issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
-        this.issueComment = issueDetail.journals.map((item) => {
+        this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
             comment_author: item.user.name,
@@ -197,7 +192,7 @@ export default {
       this.paramDialogVisible = true
     },
     async handleSaveDetail() {
-      this.$refs['issueForm'].validate(async(valid) => {
+      this.$refs['issueForm'].validate(async valid => {
         if (valid) {
           const data = this.issueForm
           if (data.fixed_version_id === '') {
@@ -284,12 +279,12 @@ export default {
       const testValueLocationList = testValueLocationRes.data
 
       if (testValueList.data.length > 0) {
-        this.issueTestValue = testValueList.data.map((item) => {
-          const valueType = testValueTypeList.find((type) => {
+        this.issueTestValue = testValueList.data.map(item => {
+          const valueType = testValueTypeList.find(type => {
             return item.type_id === type.type_id
           })
           item.type = valueType.type_name
-          const valueLocation = testValueLocationList.find((location) => {
+          const valueLocation = testValueLocationList.find(location => {
             return item.location_id === location.location_id
           })
           item.location = valueLocation.type_name
@@ -333,7 +328,7 @@ export default {
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           {{ $t('Issue.Save') }}
         </el-button>
-        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby',{user:author}) }}</div>
+        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby', { user: author }) }}</div>
         <div>{{ issueDescription }}</div>
       </div>
       <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">

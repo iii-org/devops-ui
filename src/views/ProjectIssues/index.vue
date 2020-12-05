@@ -32,7 +32,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
     pagedData() {
-      const listData = this.issueList.filter((data) => {
+      const listData = this.issueList.filter(data => {
         if (data.assigned_to === null) {
           data.assigned_to = ''
         }
@@ -45,7 +45,7 @@ export default {
         }
         // Sub issue Leval1
         if (data.children.length > 0) {
-          const children1 = data.children.filter((datachildren1) => {
+          const children1 = data.children.filter(datachildren1 => {
             if (datachildren1.assigned_to === null) {
               datachildren1.assigned_to = ''
             }
@@ -57,7 +57,7 @@ export default {
             }
             // Sub issue Leval2
             if (datachildren1.children.length > 0) {
-              const children2 = datachildren1.children.filter((datachildren2) => {
+              const children2 = datachildren1.children.filter(datachildren2 => {
                 if (datachildren2.assigned_to === null) {
                   datachildren2.assigned_to = ''
                 }
@@ -100,10 +100,10 @@ export default {
       this.issueList = res.data
       this.listLoading = false
       this.parentList = []
-      this.issueList.forEach((item) => {
+      this.issueList.forEach(item => {
         this.parentList.push(item.id)
         if (item.children.length !== 0) {
-          item.children.forEach((item2) => {
+          item.children.forEach(item2 => {
             this.parentList.push(item2.id)
           })
         }
@@ -113,11 +113,7 @@ export default {
       }
     },
     handleEdit(idx, row) {
-      if (this.userRole === 'Project Manager') {
-        this.$router.push({ path: `list/${row.id}` })
-      } else if (this.userRole === 'Engineer') {
-        this.$router.push({ path: `list/${row.id}` })
-      }
+      this.$router.push({ path: `list/${row.id}` })
     },
     handleParent(idx, row, scope) {
       this.parentid = row.id
@@ -127,7 +123,7 @@ export default {
     async handleDelete(idx, row) {
       this.listLoading = true
       await deleteIssue(row.id)
-        .then((res) => {
+        .then(res => {
           Message({
             message: 'Delete successful',
             type: 'success',
@@ -135,7 +131,7 @@ export default {
           })
           this.fetchData()
         })
-        .catch((error) => {
+        .catch(error => {
           this.listLoading = false
           return error
         })
@@ -148,7 +144,7 @@ export default {
     },
     async saveIssue(data) {
       const res = await addIssue(data)
-        .then((res) => {
+        .then(res => {
           Message({
             message: 'add successful',
             type: 'success',
@@ -158,7 +154,7 @@ export default {
           this.addTopicDialogVisible = false
           return res
         })
-        .catch((error) => {
+        .catch(error => {
           // console.log(error.response)
           return error
         })
@@ -184,9 +180,7 @@ export default {
           class="ob-search-input ob-shadow search-input mr-3"
           :placeholder="$t('Issue.SearchNameOrAssignee')"
           style="width: 250px; float: right"
-        ><i
-          slot="prefix"
-          class="el-input__icon el-icon-search"
+          ><i slot="prefix" class="el-input__icon el-icon-search"
         /></el-input>
       </div>
     </div>
@@ -212,7 +206,8 @@ export default {
             class="btn-sub"
             icon="el-icon-plus"
             @click="handleParent(scope.$index, scope.row, scope)"
-          >Add subissue</el-button>
+            >Add subissue</el-button
+          >
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Type')" :show-overflow-tooltip="true" width="160px">
@@ -319,13 +314,12 @@ export default {
   margin-left: 5px !important;
 }
 
-.el-table_1_column_1{
+.el-table_1_column_1 {
   position: relative;
   font-weight: 500;
-  .text-success{
+  .text-success {
     font-weight: 600;
     margin-right: 5px;
   }
 }
 </style>
-
