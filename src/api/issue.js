@@ -79,3 +79,10 @@ export function getIssueOpenStatistics() {
     method: 'get'
   })
 }
+
+export function deleteIssueFile(file_id) {
+  return request({
+    url: '/file/' + file_id,
+    method: 'DELETE'
+  })
+}

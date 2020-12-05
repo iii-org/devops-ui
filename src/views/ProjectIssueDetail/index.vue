@@ -6,14 +6,15 @@ import ParamDialog from './components/ParamDialog'
 import WangEditor from '@/components/Wangeditor'
 import EditorMD from '@/components/Editormd'
 import { getIssue } from '@/api/issue'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
+import { getProjectAssignable, getProjectVersion, downloadProjectFile } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { getTestCaseByIssue } from '@/api/issueTestCase'
 import { getTestItemByCase } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
+import { fileextension } from '../../utils/extension.js'
 export default {
   components: {
     FlowDialog,
@@ -70,6 +71,7 @@ export default {
       issueTestItem: [],
       issueTestValue: [],
       issueComment: [],
+      issueFile: [],
       activeName: 'comment',
       commentDialogVisible: false,
       flowDialogVisible: false,
@@ -85,7 +87,8 @@ export default {
       issue_detail: {},
       choose_testCase: '',
       choose_testItem: '',
-      author: ''
+      author: '',
+      issueLoading: false
     }
   },
   computed: {
@@ -96,12 +99,13 @@ export default {
     }
   },
   mounted() {
+    this.extension = fileextension()
     this.issueId = parseInt(this.$route.params.issueId)
     this.fetchData()
   },
   methods: {
     fetchData() {
-      this.listLoading = true
+      this.issueLoading = true
       Promise.all([
         getIssueStatus(),
         getIssueTracker(),
@@ -145,6 +149,7 @@ export default {
           })
         }
 
+        this.issueFile = issueDetail.attachments
         this.issueParameter = res[6].data
         this.author = issueDetail.author.name
         this.issueForm.subject = issueDetail.subject
@@ -166,7 +171,7 @@ export default {
             comment_at: item.created_on
           }
         })
-        this.listLoading = false
+        this.issueLoading = false
         this.issueTestCase = res[7].data
       })
     },
@@ -194,16 +199,46 @@ export default {
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
-          const data = this.issueForm
-          if (data.fixed_version_id === '') {
-            delete data.fixed_version_id
-          }
-          await updateIssue(this.issueId, data)
-          Message({
-            message: 'update successful',
-            type: 'success',
-            duration: 1 * 1000
+          // deepcopy & remove field with empty value
+          const data = JSON.parse(JSON.stringify(this.issueForm))
+          Object.keys(data).map(item => {
+            if (data[item] === '' || !data[item]) delete data[item]
           })
+
+          const form = new FormData()
+          Object.keys(data).forEach(objKey => {
+            form.append(objKey, data[objKey])
+          })
+          this.issueLoading = true
+          const issueId = this.issueId
+          if (this.uploadFileList && this.uploadFileList.length > 0) {
+            // use one by one edit issue to upload file
+            this.uploadFileList
+              .reduce(function(prev, curr) {
+                return prev.then(() => {
+                  form.delete('upload_file')
+                  form.append('upload_file', curr.raw, curr.raw.name)
+                  return updateIssue(issueId, form)
+                })
+              }, Promise.resolve([]))
+              .then(() => {
+                this.$refs['upload'].clearFiles()
+                this.issueLoading = false
+                Message({
+                  message: 'update successful',
+                  type: 'success',
+                  duration: 1 * 1000
+                })
+              })
+          } else {
+            await updateIssue(this.issueId, form)
+            this.issueLoading = false
+            Message({
+              message: 'update successful',
+              type: 'success',
+              duration: 1 * 1000
+            })
+          }
         } else {
           return false
         }
@@ -303,6 +338,24 @@ export default {
       })
       this.fetchData()
     },
+    async deleteIssueFile(row) {
+      await deleteIssueFile(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async handleDownload(row) {
+      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
+      const url = window.URL.createObjectURL(new Blob([res]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', row.filename) // or any other extension
+      document.body.appendChild(link)
+      link.click()
+    },
     handleExceed(files, fileList) {
       this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
     },
@@ -322,7 +375,7 @@ export default {
 </script>
 <template>
   <div class="app-container d-flex">
-    <el-card class="box-card el-col-10 column custom-list" shadow="never">
+    <el-card v-loading="issueLoading" class="box-card el-col-10 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
@@ -434,8 +487,6 @@ export default {
                 drag
                 action=""
                 :auto-upload="false"
-                :limit="1"
-                :on-exceed="handleExceed"
                 :on-change="handleChange"
               >
                 <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
@@ -570,9 +621,9 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <!-- <el-tab-pane label="Test Case" name="test">
+      <el-tab-pane :label="$t('File.File')" name="file">
         <el-table
-          :data="issueTestCase"
+          :data="issueFile"
           element-loading-text="Loading"
           border
           fit
@@ -580,112 +631,31 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
-          <el-table-column label="ID">
+          <el-table-column :label="$t('general.Name')" align="center">
             <template slot-scope="scope">
-              {{ scope.row.id }}
-            </template>
-          </el-table-column>
-          <el-table-column label="API Name">
-            <template slot-scope="scope"> -->
-      <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestDialog(scope.row, 'Edit API')">
-                {{ scope.row.name }}
-              </span>-->
-      <!-- {{ scope.row.name }}
-            </template>
-          </el-table-column>
-          <el-table-column label="API Method">
-            <template slot-scope="scope">
-              {{ scope.row.data.method }}
-            </template>
-          </el-table-column>
-          <el-table-column label="API URL">
-            <template slot-scope="scope">
-              {{ scope.row.data.url }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Desc.">
-            <template slot-scope="scope">
-              {{ scope.row.description }}
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>-->
-      <!-- <el-tab-pane label="Test Item" name="testItem">
-        <div class="demo-input-size">
-          Test Case:
-          <el-select v-model="choose_testCase" class="floatnone" @change="getTestItem">
-            <el-option
-              v-for="item in issueTestCase"
-              :key="item.id"
-              :label="`${item.name}(${item.id})`"
-              :value="item.id"
-            />
-          </el-select>
-        </div>
-        <el-table :data="issueTestItem" element-loading-text="Loading" border fit style="margin-top: 10px">
-          <el-table-column label="ID">
-            <template slot-scope="scope">
-              <span style="color: #409EFF;cursor: pointer;" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
-                {{ scope.row.id }}
+              <span v-if="scope.row.filename">
+                {{ scope.row.filename }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="Item">
+          <el-table-column :label="$t('general.CreateTime')" align="center">
             <template slot-scope="scope">
-              {{ scope.row.name }}
+              {{ new Date(scope.row.created_on).toLocaleString() }}
             </template>
           </el-table-column>
-          <el-table-column label="Is Pass?">
+          <el-table-column :label="$t('general.Actions')" align="center">
             <template slot-scope="scope">
-              {{ scope.row.is_passed }}
+              <el-button size="mini" type="primary" @click="handleDownload(scope.row)">
+                <i class="el-icon-download" />
+                {{ $t('File.Download') }}
+              </el-button>
+              <el-button type="danger" size="mini" @click="deleteIssueFile(scope.row)">{{
+                $t('general.Delete')
+              }}</el-button>
             </template>
           </el-table-column>
         </el-table>
-      </el-tab-pane> -->
-      <!-- <el-tab-pane label="Test Value" name="testValue"> -->
-      <!-- <div class="demo-input-size">
-          Test Item:
-          <el-select v-model="choose_testItem" class="floatnone" @change="getTestValue">
-            <el-option
-              v-for="item in issueTestItem"
-              :key="item.id"
-              :label="`${item.name}(${item.id})`"
-              :value="item.id"
-            />
-          </el-select> -->
-      <!-- <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button> -->
-      <!-- </div> -->
-      <!-- <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
-          <el-table-column label="Type">
-            <template slot-scope="scope">
-              {{ scope.row.type }} -->
-      <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestValueDialog(scope.row, 'Edit Test Value')">
-                {{ scope.row.type }}
-              </span>-->
-      <!-- </template>
-          </el-table-column>
-          <el-table-column label="Key">
-            <template slot-scope="scope">
-              {{ scope.row.key }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Value">
-            <template slot-scope="scope">
-              {{ scope.row.value }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Location">
-            <template slot-scope="scope">
-              {{ scope.row.location }}
-            </template>
-          </el-table-column> -->
-      <!-- <el-table-column label="Action">
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete</el-button>
-            </template>
-          </el-table-column> -->
-      <!-- </el-table> -->
-      <!-- </el-tab-pane> -->
+      </el-tab-pane>
     </el-tabs>
     <el-dialog
       :title="$t('Issue.AddComment')"

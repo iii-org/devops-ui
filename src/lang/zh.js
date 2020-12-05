@@ -24,7 +24,8 @@ export default {
     'User Manage': '成員管理',
     'Activity Log': '活動紀錄',
     Roadmap: '專案藍圖',
-    'Project Graph': '版本線圖'
+    'Project Graph': '版本線圖',
+    'Issue Detail': '議題內容'
   },
   navbar: {
     logOut: '登出',
@@ -88,7 +89,8 @@ export default {
     Id: '檔案編號',
     Download: '下載',
     DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
-    uploadBtn: '選擇檔案'
+    uploadBtn: '選擇檔案',
+    File: '檔案'
   },
   Version: {
     AddVersion: '新增版本',
