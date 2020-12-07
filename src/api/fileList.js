@@ -14,3 +14,10 @@ export function addFile(rId, data) {
     data
   })
 }
+
+export function deleteFile(fId) {
+  return request({
+    url: '/file/rd/' + fId,
+    method: 'DELETE'
+  })
+}
