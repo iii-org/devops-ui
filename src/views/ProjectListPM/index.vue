@@ -267,7 +267,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" :show-overflow-tooltip="true">
+      <el-table-column label="Name" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -280,7 +280,7 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column label="Identifier">
+      <el-table-column label="Identifier" width="200" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span style="color: #949494; font-weight: 400">#{{ scope.row.name }}</span>
         </template>
@@ -326,18 +326,16 @@ export default {
       <el-table-column align="center" label="GitLab" width="120px">
         <template slot-scope="scope">
           <el-link v-if="scope.row.git_url" type="text" :href="scope.row.git_url" target="_blank">
-            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab</el-link>
+            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab</el-link
+          >
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Redmine" width="120px">
         <template slot-scope="scope">
-          <el-link
-            v-if="scope.row.redmine_url"
-            type="text"
-            :href="scope.row.redmine_url"
-            target="_blank"
-          ><el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine</el-link>
+          <el-link v-if="scope.row.redmine_url" type="text" :href="scope.row.redmine_url" target="_blank"
+            ><el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine</el-link
+          >
           <span v-else>-</span>
         </template>
       </el-table-column>

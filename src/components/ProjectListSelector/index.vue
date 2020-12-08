@@ -35,7 +35,10 @@ export default {
 </script>
 
 <template>
-  <el-select v-model="projectValue" placeholder="select a project" @change="onProjectChange">
-    <el-option v-for="item in userProjectList" :key="item.id" :label="item.display" :value="item.id" />
-  </el-select>
+  <div>
+    <el-select v-model="projectValue" placeholder="select a project" @change="onProjectChange">
+      <el-option v-for="item in userProjectList" :key="item.id" :label="item.display" :value="item.id" />
+    </el-select>
+    <slot></slot>
+  </div>
 </template>

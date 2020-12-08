@@ -113,7 +113,12 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/Profile/index'),
         name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true, roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: {
+          title: 'Profile',
+          icon: 'user',
+          noCache: true,
+          roles: ['Engineer', 'Project Manager', 'Administrator']
+        }
       }
     ]
   },
@@ -174,7 +179,11 @@ export const asyncRoutes = [
         path: '',
         name: 'cicdPipelines',
         component: () => import('@/views/CicdPipelines/index'),
-        meta: { title: 'CICD Pipelines', icon: 'example', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: {
+          title: 'CICD Pipelines',
+          icon: 'example',
+          roles: ['Engineer', 'Project Manager', 'Administrator']
+        }
       }
     ]
   },
@@ -237,7 +246,11 @@ export const asyncRoutes = [
     component: Layout,
     name: 'PMProjects',
     redirect: '/list',
-    meta: { title: 'Project List', icon: 'el-icon-s-cooperation', roles: ['Project Manager', 'Administrator'] },
+    meta: {
+      title: 'Project List',
+      icon: 'el-icon-s-cooperation',
+      roles: ['Project Manager', 'Administrator']
+    },
     children: [
       {
         path: 'list',
@@ -253,7 +266,11 @@ export const asyncRoutes = [
     component: Layout,
     name: 'project',
     redirect: '/project/index',
-    meta: { title: 'Project', icon: 'el-icon-s-cooperation', roles: ['Project Manager', 'Administrator'] },
+    meta: {
+      title: 'Project',
+      icon: 'el-icon-s-cooperation',
+      roles: ['Project Manager', 'Administrator']
+    },
     children: [
       {
         path: 'index',
@@ -279,6 +296,13 @@ export const asyncRoutes = [
         name: 'Roadmap',
         component: () => import('@/views/ProjectRoadmap/index'),
         meta: { title: 'Roadmap', roles: ['Project Manager', 'Administrator'] }
+      },
+
+      {
+        path: 'graph',
+        name: 'Project Graph',
+        component: () => import('@/views/ProjectGraph/index'),
+        meta: { title: 'Project Graph', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },
@@ -333,7 +357,11 @@ export const asyncRoutes = [
     path: '/issue',
     component: Layout,
     name: 'Issues',
-    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
+    meta: {
+      title: 'Issues',
+      icon: 'el-icon-data-analysis',
+      roles: ['Project Manager', 'Engineer', 'Administrator']
+    },
     children: [
       {
         path: 'wiki',
@@ -373,7 +401,11 @@ export const asyncRoutes = [
     path: '/test',
     component: Layout,
     name: 'Test',
-    meta: { title: 'Test', icon: 'el-icon-s-cooperation', roles: ['Engineer', 'Project Manager', 'Administrator'] },
+    meta: {
+      title: 'Test',
+      icon: 'el-icon-s-cooperation',
+      roles: ['Engineer', 'Project Manager', 'Administrator']
+    },
     redirect: '/Test/test-case',
     children: [
       {

@@ -15,6 +15,7 @@ export default {
   },
   watch: {
     projectList(ary) {
+      if (ary.length === 0) return
       if (this.selectedBranch !== '') return
       this.selectedBranch = ary[0].repository_ids
     },
@@ -86,9 +87,9 @@ export default {
             if (this.head == null || this.head.id === commit.parent_ids[0]) {
               // Check if new branch begins
               const commit_opts = {
-                author: commit.author_name,
-                hash: commit.id,
-                subject: commit.message
+                subject: commit.message,
+                author: commit.author_name + ' <' + commit.committed_date + '>',
+                hash: commit.id
               }
               this.graph.commit(commit_opts)
               this.headsTo(commit)

@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Kanban from '@/components/Kanban'
-import { getProjectList } from '@/api/projects'
+import { getProjectList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { getIssueStatus, updateIssue } from '@/api/issue'
 import { getProjectIssueListByStatus } from '@/api/projects'
@@ -22,7 +22,11 @@ export default {
       respondedList: [],
       finishedList: [],
       closedList: [],
-      group: 'mission'
+      group: 'mission',
+      versionValue: '',
+      memberValue: '',
+      projectVersionList: [],
+      projectUserList: ''
     }
   },
   async created() {
@@ -39,6 +43,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('projects', ['getProjectUserList']),
     genKanbanCard(status) {
       if (!this.projectIssueList[status])
         //該status不存在issue回傳空array
@@ -55,6 +60,18 @@ export default {
     async fetchData() {
       this.isLoading = true
       const projectIssueListRes = await getProjectIssueListByStatus(this.projectSelectedId)
+
+      const versionsRes = await getProjectVersion(this.projectSelectedId)
+      this.projectVersionList = versionsRes.data.versions
+      if (this.projectVersionList.length !== 0) {
+        this.versionValue = this.projectVersionList[0].id
+      } else {
+        this.versionValue = ''
+      }
+
+      const userRes = await this.getProjectUserList(this.projectSelectedId)
+      this.projectUserList = userRes.data.user_list
+
       this.isLoading = false
       this.projectIssueList = projectIssueListRes.data //取得project全部issue by status
       this.issueStatusList.forEach(item => {
@@ -83,7 +100,9 @@ export default {
       if (issue.id && newStatusId != 0) {
         await updateIssue(issue.id, { status_id: newStatusId })
       }
-    }
+    },
+    onVersionChange() {},
+    onMemberChange() {}
   }
 }
 </script>
@@ -92,6 +111,12 @@ export default {
     <div class="clearfix">
       <div>
         <project-list-selector />
+        <el-select v-model="versionValue" :placeholder="$t('Version.SelectVersion')" @change="onVersionChange">
+          <el-option v-for="item in projectVersionList" :key="item.id" :label="item.display" :value="item.id" />
+        </el-select>
+        <el-select v-model="memberValue" placeholder="select a member" @change="onMemberChange">
+          <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
       </div>
     </div>
     <el-divider />
