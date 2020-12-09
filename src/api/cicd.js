@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // repositoryid
 export function getPipelines(repository_id) {
   return request({
-    url: `/pipelines/rd/${repository_id}/pipelines_exec`,
+    url: `/pipelines/${repository_id}/pipelines_exec`,
     method: 'get'
   })
 }
@@ -24,7 +24,7 @@ export function getStages(id) {
 //CI/CD 詳細記錄 [測試詳細記錄]
 export function getPipelinesLogs(params) {
   return request({
-    url: `/pipelines/rd/logs`,
+    url: `/pipelines/logs`,
     method: 'get',
     params
   })
