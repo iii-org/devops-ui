@@ -394,6 +394,12 @@ export const asyncRoutes = [
         name: 'Test Case Expert Mode',
         component: () => import('@/views/TestCaseExpertMode/index'),
         meta: { title: 'Test Case (Expert)', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'check-marx',
+        name: 'check-marx',
+        component: () => import('@/views/CheckMarx/index'),
+        meta: { title: 'Check Marx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },
