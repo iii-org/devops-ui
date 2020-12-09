@@ -72,6 +72,19 @@ export default {
     Id: 'Id',
     IsPass: 'Is Pass?'
   },
+  CheckMarx: {
+    ScanId: 'Scan ID',
+    Branch: 'Branch',
+    Commit: 'Commit',
+    Status: 'status',
+    HighSeverity: 'High Severity',
+    MediumSeverity: 'Medium Severity',
+    LowSeverity: 'Low Severity',
+    InfoSeverity: 'Info Severity',
+    RunAt: 'Start Time',
+    Report: 'Report',
+    SearchScanId: 'Search Scan ID'
+  },
   TestValue: {
     TestValue: 'Test Value',
     AddTestValue: 'Add Test Value',

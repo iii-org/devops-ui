@@ -73,6 +73,19 @@ export default {
     Id: '編號',
     IsPass: '是否通過?'
   },
+  CheckMarx: {
+    ScanId: '測試編號',
+    Branch: '分支',
+    Commit: 'Commit',
+    Status: '狀態',
+    HighSeverity: '高風險',
+    MediumSeverity: '中風險',
+    LowSeverity: '低風險',
+    InfoSeverity: '資訊',
+    RunAt: '開始時間',
+    Report: '報告',
+    SearchScanId: '搜尋 測試編號'
+  },
   TestValue: {
     TestValue: '測試資料',
     AddTestValue: '新增測試資料',

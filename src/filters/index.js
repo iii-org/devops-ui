@@ -14,7 +14,7 @@ export function relativeTime(datetime) {
 }
 
 export function YMDhmA(time) {
-  const YMDhmA = moment(time).format('YYYY-MM-DD h:mm A')
+  const YMDhmA = moment(time).format('YYYY-MM-DD hh:mm A')
   if (time === 'Invalid date') {
     return '-'
   }
