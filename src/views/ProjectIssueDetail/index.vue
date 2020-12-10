@@ -490,7 +490,7 @@ export default {
                 :on-change="handleChange"
               >
                 <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
-                <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</div>
+                <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
               </el-upload>
             </el-form-item>
           </el-col>

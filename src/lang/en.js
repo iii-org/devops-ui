@@ -100,7 +100,9 @@ export default {
     Upload: 'Upload',
     Id: 'Id',
     Download: 'Download',
-    DrapFileHereOrClickUpload: 'Drap File Here Or Click Upload'
+    DropFileHereOrClickUpload: 'Drop File Here Or Click Upload',
+    uploadBtn: 'Select File',
+    File: 'File'
   },
   Version: {
     AddVersion: 'Add Version',
