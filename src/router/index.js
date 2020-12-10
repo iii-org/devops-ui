@@ -334,16 +334,17 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Issues',
     meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
+    redirect: '/issue/wiki',
     children: [
       {
         path: 'wiki',
-        name: 'Wiki',
+        name: 'IssueWiki',
         component: () => import('@/views/ProjectWiki/index'),
         meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
         path: 'list',
-        name: 'Issues',
+        name: 'IssueList',
         component: () => import('@/views/ProjectIssues/index'),
         meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
@@ -409,6 +410,7 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Setting',
     meta: { title: 'Setting', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+    redirect: '/project_setting/members',
     children: [
       {
         path: 'members',
