@@ -373,7 +373,7 @@ export default {
       <p>{{ $t('Project.deleteProjectComfirmText') }}</p>
       <p>
         {{ $t('Project.PleaseType') }}
-        <span style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;">{{
+        <span style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;white-space:pre-wrap;">{{
           Deleteproject.name
         }}</span>
         {{ $t('Project.AndThen') }}
