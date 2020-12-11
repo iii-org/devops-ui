@@ -279,12 +279,6 @@ export const asyncRoutes = [
         name: 'Roadmap',
         component: () => import('@/views/ProjectRoadmap/index'),
         meta: { title: 'Roadmap', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'graph',
-        name: 'Project Graph',
-        component: () => import('@/views/ProjectGraph/index'),
-        meta: { title: 'Project Graph', roles: ['Project Manager'] }
       }
     ]
   },
@@ -331,6 +325,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult/index'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'graph',
+        name: 'Project Graph',
+        component: () => import('@/views/ProjectGraph/index'),
+        meta: { title: 'Project Graph', roles: ['Project Manager'] }
       }
     ]
   },
