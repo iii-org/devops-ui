@@ -200,19 +200,23 @@ export default {
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column label="Id / Name">
+      <el-table-column label="Id / Name" >
         <template slot-scope="scope">
-          <span class="text-success">{{ scope.row.id }}</span> {{scope.row.issue_name}}
-          
-          <el-button
-            v-if="parentList.includes(scope.row.id) == true"
-            size="mini"
-            class="btn-sub"
-            icon="el-icon-plus"
-            @click="handleParent(scope.$index, scope.row, scope)">Add subissue</el-button>
+          <div class="d-flex">
+            <div class="column-title">
+              <span class="text-success">{{ scope.row.id }}</span> {{scope.row.issue_name}}
+            </div>
+            
+            <el-button
+              v-if="parentList.includes(scope.row.id) == true"
+              size="mini"
+              class="btn-sub"
+              icon="el-icon-plus"
+              @click="handleParent(scope.$index, scope.row, scope)">Add subissue</el-button>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Type')" :show-overflow-tooltip="true" width="160px">
+      <el-table-column :label="$t('Type')" :show-overflow-tooltip="true" width="120">
         <template slot-scope="scope">
           <span v-if="scope.row.issue_category === 'Feature'" class="point feature"></span>
           <span v-else-if="scope.row.issue_category === 'Document'" class="point document"></span>
@@ -226,7 +230,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('Status')" width="135px">
+      <el-table-column align="center" :label="$t('Status')" width="160px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
             scope.row.issue_status
@@ -316,13 +320,43 @@ export default {
   margin-left: 5px !important;
 }
 
+col[name="el-table_1_column_1"], .el-table_1_column_1{
+  @media (max-width: 1024px){
+    width: 500px;
+  }
+}
+
 .el-table_1_column_1{
   position: relative;
   font-weight: 500;
+  .d-flex{
+
+  }
   .text-success{
     font-weight: 600;
     margin-right: 5px;
   }
+}
+
+.column-title{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+.btn-sub{
+  color: #989898;
+  font-size: 15px;
+  font-weight: 400;
+  border: none !important;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 16px;
+  @media (max-width: 1366px){
+    padding-right: 8px;
+  }
+
 }
 </style>
 
