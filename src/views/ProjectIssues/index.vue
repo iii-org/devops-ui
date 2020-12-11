@@ -89,11 +89,21 @@ export default {
       this.fetchData()
     }
   },
-  async created() {
-    this.fetchData()
+  created() {
+    this.checkProjectSelected()
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    checkProjectSelected() {
+      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
+    },
+    showNoProjectWarning() {
+      this.$message({
+        type: 'warning',
+        message: '目前無專案, 請先新增專案。'
+      })
+      this.listLoading = false
+    },
     async fetchData() {
       this.listLoading = true
       const res = await getProjectIssueList(this.projectSelectedId)
@@ -170,7 +180,12 @@ export default {
       <div>
         <project-list-selector />
         <span class="newBtn">
-          <el-button type="success" style="float: right" @click=";(addTopicDialogVisible = true), (parentid = 0)">
+          <el-button
+            type="success"
+            style="float: right"
+            :disabled="projectSelectedId === -1"
+            @click=";(addTopicDialogVisible = true), (parentid = 0)"
+          >
             <i class="el-icon-plus" />
             {{ $t('Issue.AddIssue') }}
           </el-button>
@@ -180,8 +195,9 @@ export default {
           class="ob-search-input ob-shadow search-input mr-3"
           :placeholder="$t('Issue.SearchNameOrAssignee')"
           style="width: 250px; float: right"
-          ><i slot="prefix" class="el-input__icon el-icon-search"
-        /></el-input>
+        >
+          <i slot="prefix" class="el-input__icon el-icon-search" />
+        </el-input>
       </div>
     </div>
     <el-divider />
@@ -206,8 +222,9 @@ export default {
             class="btn-sub"
             icon="el-icon-plus"
             @click="handleParent(scope.$index, scope.row, scope)"
-            >Add subissue</el-button
           >
+            Add subissue
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Type')" :show-overflow-tooltip="true" width="160px">
