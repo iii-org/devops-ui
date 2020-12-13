@@ -25,7 +25,11 @@ export default {
     'Activity Log': '活動紀錄',
     Roadmap: '專案藍圖',
     'Project Graph': '版本線圖',
-    'Issue Detail': '議題內容'
+    'Issue Detail': '議題內容',
+    'Project Resource': '專案資源',
+    Usage: '資源使用量',
+    Resource: '資源清單',
+    Artifacts: '資源成品'
   },
   navbar: {
     logOut: '登出',
@@ -53,7 +57,8 @@ export default {
     PleaseInput: '請輸入',
     Close: '關閉',
     Disable: '停用',
-    Enable: '啟用'
+    Enable: '啟用',
+    LastUpdateTime: '最後更新時間'
   },
   TestCase: {
     TestCase: '測試案例',
@@ -253,5 +258,11 @@ export default {
     CommitMessage: 'Commit訊息',
     LastUpdateTime: '最後更新時間',
     SearchCommitMessage: '搜尋Commit訊息'
+  },
+  ProjectResource: {
+    Usage: '使用量',
+    Quota: '額度',
+    Artifacts: '成品',
+    EditResource: '修改資源'
   }
 }

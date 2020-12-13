@@ -66,11 +66,11 @@ export default {
           </div>
           <div style="display: flex;">
             <div class="cardItem">
-              <div>Usage</div>
+              <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.cpu }}
             </div>
             <div class="cardItem">
-              <div>Quota</div>
+              <div>{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.cpu }}
             </div>
           </div>
@@ -83,11 +83,11 @@ export default {
           </div>
           <div style="display: flex;">
             <div class="cardItem">
-              <div>Usage</div>
+              <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.memory }}
             </div>
             <div class="cardItem">
-              <div>Quota</div>
+              <div>{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.memory }}
             </div>
           </div>
@@ -100,11 +100,11 @@ export default {
           </div>
           <div style="display: flex;">
             <div class="cardItem">
-              <div>Usage</div>
+              <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.pods }}
             </div>
             <div class="cardItem">
-              <div>Quota</div>
+              <div>{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.pods }}
             </div>
           </div>
@@ -119,11 +119,11 @@ export default {
           </div>
           <div style="display: flex;">
             <div class="cardItem">
-              <div>Usage</div>
+              <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used['services.nodeports'] }}
             </div>
             <div class="cardItem">
-              <div>Quota</div>
+              <div>{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota['services.nodeports'] }}
             </div>
           </div>
@@ -136,11 +136,11 @@ export default {
           </div>
           <div style="display: flex;">
             <div class="cardItem">
-              <div>Usage</div>
+              <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.secrets }}
             </div>
             <div class="cardItem">
-              <div>Quota</div>
+              <div>{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.secrets }}
             </div>
           </div>
@@ -153,11 +153,11 @@ export default {
           </div>
           <div style="display: flex;">
             <div class="cardItem">
-              <div>Usage</div>
+              <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.configmaps }}
             </div>
             <div class="cardItem">
-              <div>Quota</div>
+              <div>{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.configmaps }}
             </div>
           </div>

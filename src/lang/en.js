@@ -24,7 +24,12 @@ export default {
     'User Manage': 'User Manage',
     'Activity Log': 'Activity Log',
     Roadmap: 'Project Roadmap',
-    'Project Graph': 'Git Graph'
+    'Project Graph': 'Git Graph',
+    'Issue Detail': 'Issue Detail',
+    'Project Resource': 'Project Resource',
+    Usage: 'Project Usage',
+    Resource: 'Project Resource',
+    Artifacts: 'Project Artifacts'
   },
   navbar: {
     logOut: 'Log Out',
@@ -52,7 +57,8 @@ export default {
     PleaseInput: 'Please Input',
     Close: 'Close',
     Disable: 'Disable',
-    Enable: 'Enable'
+    Enable: 'Enable',
+    LastUpdateTime: 'LastUpdateTime'
   },
   TestCase: {
     TestCase: 'Test Case',
@@ -254,5 +260,11 @@ export default {
     CommitMessage: 'Commit Message',
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message'
+  },
+  ProjectResource: {
+    Usage: 'Usage',
+    Quota: 'Quota',
+    Artifacts: 'Artifacts',
+    EditResource: 'Edit Resource'
   }
 }

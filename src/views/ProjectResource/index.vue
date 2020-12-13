@@ -160,7 +160,7 @@ export default {
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Artifacts" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.artifact_count }}
         </template>
@@ -170,14 +170,14 @@ export default {
           <span>{{ scope.row.pull_count }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Description">
+      <el-table-column :label="$t('general.Description')">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Last Modified Time" :show-overflow-tooltip="true" align="center">
+      <el-table-column :label="$t('general.LastUpdateTime')" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.update_time }}</span>
+          <span>{{ scope.row.update_time | YMDhmA }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
@@ -203,7 +203,7 @@ export default {
     />
 
     <el-dialog
-      :title="$t(`Version.${dialogStatusText}Version`)"
+      :title="$t(`ProjectResource.EditResource`)"
       :visible.sync="dialogVisible"
       width="50%"
       @closed="onDialogClosed"
