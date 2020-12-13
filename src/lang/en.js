@@ -70,7 +70,7 @@ export default {
     Method: 'Method',
     Path: 'Path',
     TestResult: 'Test Result',
-    SearchNameOrTestResult: 'Search Name Or TestResult'
+    SearchNameOrPathOrTestResult: 'Search Name, Path Or TestResult'
   },
   TestItem: {
     TestItem: 'Test Item',

@@ -70,7 +70,7 @@ export default {
     Method: '方法',
     Path: '路逕',
     TestResult: '測試結果',
-    SearchNameOrTestResult: '搜尋名稱或測試結果'
+    SearchNameOrPathOrTestResult: '搜尋名稱,路徑或測試結果'
   },
   TestItem: {
     TestItem: '測試項目',
