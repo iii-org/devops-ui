@@ -23,7 +23,14 @@ export default {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
       const listData = this.reportList.filter(data => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        console.log(data.assertions.toString())
+        if (
+          this.searchData == '' ||
+          data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+          JSON.stringify(data.assertions)
+            .toLowerCase()
+            .includes(this.searchData.toLowerCase())
+        ) {
           return data
         }
       })
@@ -79,7 +86,7 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('general.SearchName')"
+        :placeholder="$t('TestCase.SearchNameOrTestResult')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"
       /></el-input>

@@ -69,7 +69,8 @@ export default {
     Description: 'Description',
     Method: 'Method',
     Path: 'Path',
-    TestResult: 'Test Result'
+    TestResult: 'Test Result',
+    SearchNameOrTestResult: 'Search Name Or TestResult'
   },
   TestItem: {
     TestItem: 'Test Item',

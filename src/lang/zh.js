@@ -69,7 +69,8 @@ export default {
     Description: '描述',
     Method: '方法',
     Path: '路逕',
-    TestResult: '測試結果'
+    TestResult: '測試結果',
+    SearchNameOrTestResult: '搜尋名稱或測試結果'
   },
   TestItem: {
     TestItem: '測試項目',
