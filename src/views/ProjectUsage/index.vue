@@ -21,12 +21,8 @@ export default {
       listLoading: true,
       dialogVisible: false,
       usageList: {
-        cpu: {},
-        memory: {},
-        pods: {},
-        service: {},
-        secrets: {},
-        images: {}
+        used: {},
+        quota: {}
       },
       dialogStatus: 1,
       memberConfirmLoading: false,
@@ -71,11 +67,11 @@ export default {
           <div style="display: flex;">
             <div class="cardItem">
               <div>Usage</div>
-              {{ usageList.cpu.usage }}
+              {{ usageList.used.cpu }}
             </div>
             <div class="cardItem">
-              <div>Limit</div>
-              {{ usageList.cpu.limit }}
+              <div>Quota</div>
+              {{ usageList.quota.cpu }}
             </div>
           </div>
         </el-card>
@@ -88,11 +84,11 @@ export default {
           <div style="display: flex;">
             <div class="cardItem">
               <div>Usage</div>
-              {{ usageList.memory.usage }}
+              {{ usageList.used.memory }}
             </div>
             <div class="cardItem">
-              <div>Limit</div>
-              {{ usageList.memory.limit }}
+              <div>Quota</div>
+              {{ usageList.quota.memory }}
             </div>
           </div>
         </el-card>
@@ -105,11 +101,11 @@ export default {
           <div style="display: flex;">
             <div class="cardItem">
               <div>Usage</div>
-              {{ usageList.pods.usage }}
+              {{ usageList.used.pods }}
             </div>
             <div class="cardItem">
-              <div>Limit</div>
-              {{ usageList.pods.limit }}
+              <div>Quota</div>
+              {{ usageList.quota.pods }}
             </div>
           </div>
         </el-card>
@@ -124,11 +120,11 @@ export default {
           <div style="display: flex;">
             <div class="cardItem">
               <div>Usage</div>
-              {{ usageList.service.usage }}
+              {{ usageList.used['services.nodeports'] }}
             </div>
             <div class="cardItem">
-              <div>Limit</div>
-              {{ usageList.service.limit }}
+              <div>Quota</div>
+              {{ usageList.quota['services.nodeports'] }}
             </div>
           </div>
         </el-card>
@@ -141,11 +137,11 @@ export default {
           <div style="display: flex;">
             <div class="cardItem">
               <div>Usage</div>
-              {{ usageList.secrets.usage }}
+              {{ usageList.used.secrets }}
             </div>
             <div class="cardItem">
-              <div>Limit</div>
-              {{ usageList.secrets.limit }}
+              <div>Quota</div>
+              {{ usageList.quota.secrets }}
             </div>
           </div>
         </el-card>
@@ -153,16 +149,16 @@ export default {
       <el-col :span="8">
         <el-card shadow="never">
           <div slot="header" class="clearfix">
-            <span>Images</span>
+            <span>ConfigMaps</span>
           </div>
           <div style="display: flex;">
             <div class="cardItem">
               <div>Usage</div>
-              {{ usageList.images.usage }}
+              {{ usageList.used.configmaps }}
             </div>
             <div class="cardItem">
-              <div>Limit</div>
-              {{ usageList.images.limit }}
+              <div>Quota</div>
+              {{ usageList.quota.configmaps }}
             </div>
           </div>
         </el-card>

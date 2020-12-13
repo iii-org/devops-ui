@@ -212,58 +212,19 @@ export function uploadProjectFile(pId, data) {
 }
 
 export function getProjectUsage(pId) {
-  return {
-    message: 'success',
-    data: {
-      cpu: { usage: 1.58, limit: 8 },
-      memory: { usage: '8.34GiB', limit: '15.6GiB' },
-      pods: { usage: 5, limit: 20 },
-      service: { usage: 5, limit: 10 },
-      secrets: { usage: 5, limit: 20 },
-      images: { usage: '4.3 GiB', limit: '25 GiB' }
-    }
-  }
-  // return request({
-  //   url: `/project/${pId}`,
-  //   method: 'GET'
-  // })
-}
-
-export function getProjectResource(pId) {
-  return {
-    message: 'success',
-    data: {
-      resource: [
-        { name: 'test-project/conarqube', artifact_count: 7, pull_count: 15, update_time: '2020/03/31' },
-        { name: 'test-project/mongo', artifact_count: 10, pull_count: 30, update_time: '2020/05/31' },
-        { name: 'test-project/checkmarx', artifact_count: 3, pull_count: 9, update_time: '2020/07/31' }
-      ],
-      storage: {
-        name: 'test-project',
-        consumption: {
-          use: 1.48,
-          total: 2
-        }
-      }
-    }
-
-  }
-  // return request({
-  //   url: `/project/${pId}`,
-  //   method: 'GET'
-  // })
-}
-
-export function getProjectArtifacts(pId) {
-  return {
-    message: 'success',
-    data: [
-      { tags: '4.6.0-jdk8-alpine', size: '139.95MB', vulnerabilities: 'Unknown (42)', digest: '7418f477', labels: ['release'], pushTime: '2020/03/31' },
-      { tags: '4.7.0-jdk8-alpine', size: '141.05MB', vulnerabilities: 'Unknown (42)', digest: '6093ee35', pushTime: '2020/03/31' }
-    ]
-  }
-  // return request({
-  //   url: `/project/${pId}`,
-  //   method: 'GET'
-  // })
+  // return {
+  //   message: 'success',
+  //   data: {
+  //     cpu: { usage: 1.58, limit: 8 },
+  //     memory: { usage: '8.34GiB', limit: '15.6GiB' },
+  //     pods: { usage: 5, limit: 20 },
+  //     service: { usage: 5, limit: 10 },
+  //     secrets: { usage: 5, limit: 20 },
+  //     images: { usage: '4.3 GiB', limit: '25 GiB' }
+  //   }
+  // }
+  return request({
+    url: `/project/${pId}/resource`,
+    method: 'GET'
+  })
 }
