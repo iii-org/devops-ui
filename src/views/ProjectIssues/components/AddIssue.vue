@@ -108,7 +108,7 @@
           <el-form-item :label="$t('File.Upload')" prop="upload">
             <el-upload
               ref="upload"
-              class="upload-file"
+              class="upload-file2"
               drag
               action=""
               :auto-upload="false"
@@ -116,7 +116,8 @@
               :on-exceed="handleExceed"
               :on-change="handleChange"
             >
-              <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</div>
+              <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
+              <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
             </el-upload>
           </el-form-item>
         </el-col>
@@ -182,14 +183,7 @@ export default {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
-        assigned_to_id: [{ required: true, message: 'Please select assigned', trigger: 'blur' }],
-        start_date: [{ required: true, message: 'Please select start date', trigger: 'blur' }],
-        due_date: [{ required: true, message: 'Please select due date', trigger: 'blur' }],
-        done_ratio: [{ required: true, message: 'Please input done ratio', trigger: 'blur' }],
-        estimated_hours: [{ required: true, message: 'Please input estimated hours', trigger: 'blur' }],
-        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }],
-        fixed_version_id: [{ required: false }],
-        description: [{ required: false }]
+        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
       LoadingConfirm: false,
       uploadFileList: [],
@@ -223,20 +217,20 @@ export default {
         getIssuePriority(),
         getProjectUserList(this.projectId),
         getProjectVersion(this.projectId)
-      ]).then((res) => {
-        this.issueStatusList = res[0].data.map((item) => {
+      ]).then(res => {
+        this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueTypeList = res[1].data.map((item) => {
+        this.issueTypeList = res[1].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map((item) => {
+        this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueAssigneeList = res[3].data.user_list.map((item) => {
+        this.issueAssigneeList = res[3].data.user_list.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueVersionList = res[4].data.versions.map((item) => {
+        this.issueVersionList = res[4].data.versions.map(item => {
           return { label: item.name, value: item.id }
         })
       })
@@ -245,16 +239,19 @@ export default {
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
-      this.$refs['issueForm'].validate(async (valid) => {
+      this.$refs['issueForm'].validate(async valid => {
         if (valid) {
-          const data = this.issueForm
-          // const filetype = this.extension[this.uploadFileList[0].raw.type]
+          // deepcopy & remove field with empty value
+          const data = JSON.parse(JSON.stringify(this.issueForm))
+          Object.keys(data).map(item => {
+            if (data[item] === '') delete data[item]
+          })
+
+          // because have file need upload so use formData object
           const form = new FormData()
           form.append('project_id', this.projectId)
-          data['parent_id'] = this.parentid
-          Object.keys(data).forEach((objKey) => {
-            if (objKey === 'fixed_version_id' && data['fixed_version_id'] === '') return false
-            if (objKey === 'parent_id' && (data['parent_id'] === '' || data['parent_id'] === 0)) return false
+          if (this.parentid) form.append('parent_id', this.parentid)
+          Object.keys(data).forEach(objKey => {
             form.append(objKey, data[objKey])
           })
           if (this.uploadFileList.length > 0) {

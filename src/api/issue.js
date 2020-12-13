@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getIssuesByUser(user_id, param) {
   return request({
-    url: `/issues_by_user/rd/${user_id}`,
+    url: `/issues_by_user/${user_id}`,
     method: 'get',
     param
   })
@@ -77,5 +77,12 @@ export function getIssueOpenStatistics() {
   return request({
     url: `/issues/open_statistics`,
     method: 'get'
+  })
+}
+
+export function deleteIssueFile(file_id) {
+  return request({
+    url: '/file/' + file_id,
+    method: 'DELETE'
   })
 }

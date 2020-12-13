@@ -32,7 +32,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
     pagedData() {
-      const listData = this.issueList.filter((data) => {
+      const listData = this.issueList.filter(data => {
         if (data.assigned_to === null) {
           data.assigned_to = ''
         }
@@ -45,7 +45,7 @@ export default {
         }
         // Sub issue Leval1
         if (data.children.length > 0) {
-          const children1 = data.children.filter((datachildren1) => {
+          const children1 = data.children.filter(datachildren1 => {
             if (datachildren1.assigned_to === null) {
               datachildren1.assigned_to = ''
             }
@@ -57,7 +57,7 @@ export default {
             }
             // Sub issue Leval2
             if (datachildren1.children.length > 0) {
-              const children2 = datachildren1.children.filter((datachildren2) => {
+              const children2 = datachildren1.children.filter(datachildren2 => {
                 if (datachildren2.assigned_to === null) {
                   datachildren2.assigned_to = ''
                 }
@@ -89,21 +89,31 @@ export default {
       this.fetchData()
     }
   },
-  async created() {
-    this.fetchData()
+  created() {
+    this.checkProjectSelected()
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    checkProjectSelected() {
+      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
+    },
+    showNoProjectWarning() {
+      this.$message({
+        type: 'warning',
+        message: '目前無專案, 請先新增專案。'
+      })
+      this.listLoading = false
+    },
     async fetchData() {
       this.listLoading = true
       const res = await getProjectIssueList(this.projectSelectedId)
       this.issueList = res.data
       this.listLoading = false
       this.parentList = []
-      this.issueList.forEach((item) => {
+      this.issueList.forEach(item => {
         this.parentList.push(item.id)
         if (item.children.length !== 0) {
-          item.children.forEach((item2) => {
+          item.children.forEach(item2 => {
             this.parentList.push(item2.id)
           })
         }
@@ -113,11 +123,7 @@ export default {
       }
     },
     handleEdit(idx, row) {
-      if (this.userRole === 'Project Manager') {
-        this.$router.push({ path: `list/${row.id}` })
-      } else if (this.userRole === 'Engineer') {
-        this.$router.push({ path: `list/${row.id}` })
-      }
+      this.$router.push({ path: `list/${row.id}` })
     },
     handleParent(idx, row, scope) {
       this.parentid = row.id
@@ -127,7 +133,7 @@ export default {
     async handleDelete(idx, row) {
       this.listLoading = true
       await deleteIssue(row.id)
-        .then((res) => {
+        .then(res => {
           Message({
             message: 'Delete successful',
             type: 'success',
@@ -135,7 +141,7 @@ export default {
           })
           this.fetchData()
         })
-        .catch((error) => {
+        .catch(error => {
           this.listLoading = false
           return error
         })
@@ -148,7 +154,7 @@ export default {
     },
     async saveIssue(data) {
       const res = await addIssue(data)
-        .then((res) => {
+        .then(res => {
           Message({
             message: 'add successful',
             type: 'success',
@@ -158,7 +164,7 @@ export default {
           this.addTopicDialogVisible = false
           return res
         })
-        .catch((error) => {
+        .catch(error => {
           // console.log(error.response)
           return error
         })
@@ -174,7 +180,12 @@ export default {
       <div>
         <project-list-selector />
         <span class="newBtn">
-          <el-button type="success" style="float: right" @click=";(addTopicDialogVisible = true), (parentid = 0)">
+          <el-button
+            type="success"
+            style="float: right"
+            :disabled="projectSelectedId === -1"
+            @click=";(addTopicDialogVisible = true), (parentid = 0)"
+          >
             <i class="el-icon-plus" />
             {{ $t('Issue.AddIssue') }}
           </el-button>
@@ -184,8 +195,9 @@ export default {
           class="ob-search-input ob-shadow search-input mr-3"
           :placeholder="$t('Issue.SearchNameOrAssignee')"
           style="width: 250px; float: right"
-          ><i slot="prefix" class="el-input__icon el-icon-search"
-        /></el-input>
+        >
+          <i slot="prefix" class="el-input__icon el-icon-search" />
+        </el-input>
       </div>
     </div>
     <el-divider />
@@ -200,19 +212,28 @@ export default {
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column align="center" :label="$t('Issue.Id')" width="120px">
+      <el-table-column :label="$t('Issue.Id')">
         <template slot-scope="scope">
-          {{ scope.row.id }}
+          <span class="text-success">{{ scope.row.id }}</span> {{ scope.row.issue_name }}
+
+          <el-button
+            v-if="parentList.includes(scope.row.id) == true"
+            size="mini"
+            class="btn-sub"
+            icon="el-icon-plus"
+            @click="handleParent(scope.$index, scope.row, scope)"
+          >
+            Add subissue
+          </el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Type')" :show-overflow-tooltip="true" width="140px">
+      <el-table-column :label="$t('general.Type')" :show-overflow-tooltip="true" width="160px">
         <template slot-scope="scope">
-          {{ scope.row.issue_category }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')">
-        <template slot-scope="scope">
-          {{ scope.row.issue_name }}
+          <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
+          <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
+          <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug" />
+          <span v-else-if="scope.row.issue_category === 'Research'" class="point research" />
+          <span v-else class="point feature" />{{ scope.row.issue_category }}
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Description">
@@ -220,7 +241,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('general.Status')" width="120px">
+      <el-table-column align="center" :label="$t('general.Status')" width="135px">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
             scope.row.issue_status
@@ -240,7 +261,7 @@ export default {
           <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Assignee')">
+      <el-table-column align="center" :label="$t('Issue.Assignee')" width="200px">
         <template slot-scope="scope">
           {{ scope.row.assigned_to }}
         </template>
@@ -278,13 +299,6 @@ export default {
               <i class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
-          <el-button
-            v-if="parentList.includes(scope.row.id) == true"
-            type="primary"
-            size="mini"
-            icon="el-icon-circle-plus-outline"
-            @click="handleParent(scope.$index, scope.row, scope)"
-          />
           <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
               <i class="el-icon-delete" /> Delete
             </el-button> -->
@@ -316,5 +330,13 @@ export default {
 .el-popconfirm__action .el-button--primary {
   margin-left: 5px !important;
 }
-</style>
 
+.el-table_1_column_1 {
+  position: relative;
+  font-weight: 500;
+  .text-success {
+    font-weight: 600;
+    margin-right: 5px;
+  }
+}
+</style>

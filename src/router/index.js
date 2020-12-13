@@ -351,6 +351,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult/index'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'graph',
+        name: 'Project Graph',
+        component: () => import('@/views/ProjectGraph/index'),
+        meta: { title: 'Project Graph', roles: ['Project Manager'] }
       }
     ]
   },
@@ -360,16 +366,17 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Issues',
     meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
+    redirect: '/issue/wiki',
     children: [
       {
         path: 'wiki',
-        name: 'Wiki',
+        name: 'IssueWiki',
         component: () => import('@/views/ProjectWiki/index'),
         meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
         path: 'list',
-        name: 'Issues',
+        name: 'IssueList',
         component: () => import('@/views/ProjectIssues/index'),
         meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
@@ -419,7 +426,13 @@ export const asyncRoutes = [
         path: 'test-case-expert-mode',
         name: 'Test Case Expert Mode',
         component: () => import('@/views/TestCaseExpertMode/index'),
-        meta: { title: 'Test Case (Expert)', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Test Case (Expert)', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'check-marx',
+        name: 'check-marx',
+        component: () => import('@/views/CheckMarx/index'),
+        meta: { title: 'Check Marx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },
@@ -429,6 +442,7 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Setting',
     meta: { title: 'Setting', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+    redirect: '/project_setting/members',
     children: [
       {
         path: 'members',

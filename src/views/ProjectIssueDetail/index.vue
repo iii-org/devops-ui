@@ -6,14 +6,15 @@ import ParamDialog from './components/ParamDialog'
 import WangEditor from '@/components/Wangeditor'
 import EditorMD from '@/components/Editormd'
 import { getIssue } from '@/api/issue'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
+import { getProjectAssignable, getProjectVersion, downloadProjectFile } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { getTestCaseByIssue } from '@/api/issueTestCase'
 import { getTestItemByCase } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
+import { fileextension } from '../../utils/extension.js'
 export default {
   components: {
     FlowDialog,
@@ -44,14 +45,9 @@ export default {
       },
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        assigned_to_id: [{ required: true }],
-        tracker_id: [{ required: true }],
-        status_id: [{ required: true }],
-        priority_id: [{ required: true }],
-        estimated_hours: [{ required: true }],
-        done_ratio: [{ required: true }],
-        start_date: [{ required: true }],
-        due_date: [{ required: true }]
+        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
       issueName: '',
       issueStartDate: '',
@@ -75,6 +71,7 @@ export default {
       issueTestItem: [],
       issueTestValue: [],
       issueComment: [],
+      issueFile: [],
       activeName: 'comment',
       commentDialogVisible: false,
       flowDialogVisible: false,
@@ -90,7 +87,8 @@ export default {
       issue_detail: {},
       choose_testCase: '',
       choose_testItem: '',
-      author: ''
+      author: '',
+      issueLoading: false
     }
   },
   computed: {
@@ -101,12 +99,13 @@ export default {
     }
   },
   mounted() {
+    this.extension = fileextension()
     this.issueId = parseInt(this.$route.params.issueId)
     this.fetchData()
   },
   methods: {
     fetchData() {
-      this.listLoading = true
+      this.issueLoading = true
       Promise.all([
         getIssueStatus(),
         getIssueTracker(),
@@ -116,34 +115,33 @@ export default {
         getFlowType(),
         getParameterByIssue(this.issueId),
         getTestCaseByIssue(this.issueId)
-      ]).then((res) => {
-        this.issueStatusList = res[0].data.map((item) => {
+      ]).then(res => {
+        this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueTypeList = res[1].data.map((item) => {
+        this.issueTypeList = res[1].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map((item) => {
+        this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
         const issueDetail = res[3].data
-        this.author = issueDetail.assigned_to.name
-        const projectId = issueDetail.project.id
-        getProjectAssignable(projectId).then((assignable) => {
-          this.issueAssigneeList = assignable.data.user_list.map((item) => {
+        this.projectId = issueDetail.project.id
+        getProjectAssignable(this.projectId).then(assignable => {
+          this.issueAssigneeList = assignable.data.user_list.map(item => {
             return { label: item.login, value: item.id }
           })
         })
-        getProjectVersion(projectId).then((versions) => {
-          this.issueVersionList = versions.data.versions.map((item) => {
+        getProjectVersion(this.projectId).then(versions => {
+          this.issueVersionList = versions.data.versions.map(item => {
             return { label: item.name, value: item.id }
           })
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
         if (Array.isArray(res[4].data) && res[4].data.length > 0) {
-          this.issueFlow = res[4].data[0].flow_data.map((item) => {
-            const issueType = issueFlowType.find((type) => {
+          this.issueFlow = res[4].data[0].flow_data.map(item => {
+            const issueType = issueFlowType.find(type => {
               return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
@@ -151,27 +149,29 @@ export default {
           })
         }
 
+        this.issueFile = issueDetail.attachments
         this.issueParameter = res[6].data
+        this.author = issueDetail.author.name
         this.issueForm.subject = issueDetail.subject
-        this.issueForm.start_date = issueDetail.start_date
-        this.issueForm.due_date = issueDetail.due_date
-        this.issueForm.estimated_hours = issueDetail.estimated_hours
-        this.issueForm.status_id = issueDetail.status.id
-        this.issueForm.assigned_to_id = issueDetail.assigned_to.id
-        this.issueForm.priority_id = issueDetail.priority.id
-        this.issueForm.done_ratio = issueDetail.done_ratio
-        this.issueForm.tracker_id = issueDetail.tracker.id
-        this.issueForm.description = issueDetail.description
+        this.issueForm.start_date = issueDetail.start_date && issueDetail.start_date
+        this.issueForm.due_date = issueDetail.due_date && issueDetail.due_date
+        this.issueForm.estimated_hours = issueDetail.estimated_hours && issueDetail.estimated_hours
+        this.issueForm.status_id = issueDetail.status && issueDetail.status.id
+        this.issueForm.assigned_to_id = issueDetail.assigned_to && issueDetail.assigned_to.id
+        this.issueForm.priority_id = issueDetail.priority && issueDetail.priority.id
+        this.issueForm.done_ratio = issueDetail.done_ratio && issueDetail.done_ratio
+        this.issueForm.tracker_id = issueDetail.tracker && issueDetail.tracker.id
+        this.issueForm.description = issueDetail.description && issueDetail.description
         this.projectId = issueDetail.project.id
         if (issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
-        this.issueComment = issueDetail.journals.map((item) => {
+        this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
             comment_author: item.user.name,
             comment_at: item.created_on
           }
         })
-        this.listLoading = false
+        this.issueLoading = false
         this.issueTestCase = res[7].data
       })
     },
@@ -197,18 +197,48 @@ export default {
       this.paramDialogVisible = true
     },
     async handleSaveDetail() {
-      this.$refs['issueForm'].validate(async(valid) => {
+      this.$refs['issueForm'].validate(async valid => {
         if (valid) {
-          const data = this.issueForm
-          if (data.fixed_version_id === '') {
-            delete data.fixed_version_id
-          }
-          await updateIssue(this.issueId, data)
-          Message({
-            message: 'update successful',
-            type: 'success',
-            duration: 1 * 1000
+          // deepcopy & remove field with empty value
+          const data = JSON.parse(JSON.stringify(this.issueForm))
+          Object.keys(data).map(item => {
+            if (data[item] === '' || !data[item]) delete data[item]
           })
+
+          const form = new FormData()
+          Object.keys(data).forEach(objKey => {
+            form.append(objKey, data[objKey])
+          })
+          this.issueLoading = true
+          const issueId = this.issueId
+          if (this.uploadFileList && this.uploadFileList.length > 0) {
+            // use one by one edit issue to upload file
+            this.uploadFileList
+              .reduce(function(prev, curr) {
+                return prev.then(() => {
+                  form.delete('upload_file')
+                  form.append('upload_file', curr.raw, curr.raw.name)
+                  return updateIssue(issueId, form)
+                })
+              }, Promise.resolve([]))
+              .then(() => {
+                this.$refs['upload'].clearFiles()
+                this.issueLoading = false
+                Message({
+                  message: 'update successful',
+                  type: 'success',
+                  duration: 1 * 1000
+                })
+              })
+          } else {
+            await updateIssue(this.issueId, form)
+            this.issueLoading = false
+            Message({
+              message: 'update successful',
+              type: 'success',
+              duration: 1 * 1000
+            })
+          }
         } else {
           return false
         }
@@ -284,12 +314,12 @@ export default {
       const testValueLocationList = testValueLocationRes.data
 
       if (testValueList.data.length > 0) {
-        this.issueTestValue = testValueList.data.map((item) => {
-          const valueType = testValueTypeList.find((type) => {
+        this.issueTestValue = testValueList.data.map(item => {
+          const valueType = testValueTypeList.find(type => {
             return item.type_id === type.type_id
           })
           item.type = valueType.type_name
-          const valueLocation = testValueLocationList.find((location) => {
+          const valueLocation = testValueLocationList.find(location => {
             return item.location_id === location.location_id
           })
           item.location = valueLocation.type_name
@@ -307,19 +337,51 @@ export default {
         duration: 1 * 1000
       })
       this.fetchData()
+    },
+    async deleteIssueFile(row) {
+      await deleteIssueFile(row.id)
+      Message({
+        message: 'delete successful',
+        type: 'success',
+        duration: 1 * 1000
+      })
+      this.fetchData()
+    },
+    async handleDownload(row) {
+      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
+      const url = window.URL.createObjectURL(new Blob([res]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', row.filename) // or any other extension
+      document.body.appendChild(link)
+      link.click()
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
+    },
+    async handleChange(file, fileList) {
+      if (this.extension[file.raw.type] === undefined) {
+        this.$message.warning(`Unable to upload a file: This file type is not supported`)
+        this.$refs['upload'].clearFiles()
+      } else if (file.size / 1024 / 1024 > 5) {
+        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (5 MB)`)
+        this.$refs['upload'].clearFiles()
+      } else {
+        this.uploadFileList = fileList
+      }
     }
   }
 }
 </script>
 <template>
   <div class="app-container d-flex">
-    <el-card class="box-card el-col-10 column custom-list" shadow="never">
+    <el-card v-loading="issueLoading" class="box-card el-col-10 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           {{ $t('Issue.Save') }}
         </el-button>
-        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby',{user:author}) }}</div>
+        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby', { user: author }) }}</div>
         <div>{{ issueDescription }}</div>
       </div>
       <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
@@ -415,6 +477,21 @@ export default {
                 rows="4"
                 placeholder="please input description"
               />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item :label="$t('File.Upload')" prop="upload">
+              <el-upload
+                ref="upload"
+                class="upload-file2"
+                drag
+                action=""
+                :auto-upload="false"
+                :on-change="handleChange"
+              >
+                <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
+                <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row>
@@ -544,9 +621,9 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <!-- <el-tab-pane label="Test Case" name="test">
+      <el-tab-pane :label="$t('File.File')" name="file">
         <el-table
-          :data="issueTestCase"
+          :data="issueFile"
           element-loading-text="Loading"
           border
           fit
@@ -554,112 +631,31 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
-          <el-table-column label="ID">
+          <el-table-column :label="$t('general.Name')" align="center">
             <template slot-scope="scope">
-              {{ scope.row.id }}
-            </template>
-          </el-table-column>
-          <el-table-column label="API Name">
-            <template slot-scope="scope"> -->
-      <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestDialog(scope.row, 'Edit API')">
-                {{ scope.row.name }}
-              </span>-->
-      <!-- {{ scope.row.name }}
-            </template>
-          </el-table-column>
-          <el-table-column label="API Method">
-            <template slot-scope="scope">
-              {{ scope.row.data.method }}
-            </template>
-          </el-table-column>
-          <el-table-column label="API URL">
-            <template slot-scope="scope">
-              {{ scope.row.data.url }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Desc.">
-            <template slot-scope="scope">
-              {{ scope.row.description }}
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>-->
-      <!-- <el-tab-pane label="Test Item" name="testItem">
-        <div class="demo-input-size">
-          Test Case:
-          <el-select v-model="choose_testCase" class="floatnone" @change="getTestItem">
-            <el-option
-              v-for="item in issueTestCase"
-              :key="item.id"
-              :label="`${item.name}(${item.id})`"
-              :value="item.id"
-            />
-          </el-select>
-        </div>
-        <el-table :data="issueTestItem" element-loading-text="Loading" border fit style="margin-top: 10px">
-          <el-table-column label="ID">
-            <template slot-scope="scope">
-              <span style="color: #409EFF;cursor: pointer;" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
-                {{ scope.row.id }}
+              <span v-if="scope.row.filename">
+                {{ scope.row.filename }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="Item">
+          <el-table-column :label="$t('general.CreateTime')" align="center">
             <template slot-scope="scope">
-              {{ scope.row.name }}
+              {{ new Date(scope.row.created_on).toLocaleString() }}
             </template>
           </el-table-column>
-          <el-table-column label="Is Pass?">
+          <el-table-column :label="$t('general.Actions')" align="center">
             <template slot-scope="scope">
-              {{ scope.row.is_passed }}
+              <el-button size="mini" type="primary" @click="handleDownload(scope.row)">
+                <i class="el-icon-download" />
+                {{ $t('File.Download') }}
+              </el-button>
+              <el-button type="danger" size="mini" @click="deleteIssueFile(scope.row)">{{
+                $t('general.Delete')
+              }}</el-button>
             </template>
           </el-table-column>
         </el-table>
-      </el-tab-pane> -->
-      <!-- <el-tab-pane label="Test Value" name="testValue"> -->
-      <!-- <div class="demo-input-size">
-          Test Item:
-          <el-select v-model="choose_testItem" class="floatnone" @change="getTestValue">
-            <el-option
-              v-for="item in issueTestItem"
-              :key="item.id"
-              :label="`${item.name}(${item.id})`"
-              :value="item.id"
-            />
-          </el-select> -->
-      <!-- <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button> -->
-      <!-- </div> -->
-      <!-- <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
-          <el-table-column label="Type">
-            <template slot-scope="scope">
-              {{ scope.row.type }} -->
-      <!--<span style="color: #409EFF;cursor: pointer;" @click="showTestValueDialog(scope.row, 'Edit Test Value')">
-                {{ scope.row.type }}
-              </span>-->
-      <!-- </template>
-          </el-table-column>
-          <el-table-column label="Key">
-            <template slot-scope="scope">
-              {{ scope.row.key }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Value">
-            <template slot-scope="scope">
-              {{ scope.row.value }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Location">
-            <template slot-scope="scope">
-              {{ scope.row.location }}
-            </template>
-          </el-table-column> -->
-      <!-- <el-table-column label="Action">
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete</el-button>
-            </template>
-          </el-table-column> -->
-      <!-- </el-table> -->
-      <!-- </el-tab-pane> -->
+      </el-tab-pane>
     </el-tabs>
     <el-dialog
       :title="$t('Issue.AddComment')"
@@ -701,5 +697,9 @@ export default {
 <style lang="scss">
 .filter-container {
   margin-bottom: 5px;
+}
+
+.el-upload__text {
+  margin-top: 18px;
 }
 </style>

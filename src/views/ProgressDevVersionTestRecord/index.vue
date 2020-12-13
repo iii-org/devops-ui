@@ -33,7 +33,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedObject']),
     pagedData() {
-      const listData = this.testList.filter((data) => {
+      const listData = this.testList.filter(data => {
         if (this.searchData == '' || data.commit_message.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -122,45 +122,57 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input commit message"
+        :placeholder="$t('ProcessDevBranchTest.SearchCommitMessage')"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column label="Index" :show-overflow-tooltip="true" width="100" align="center">
+      <el-table-column :label="$t('ProcessDevBranchTest.Id')" :show-overflow-tooltip="true" width="100" align="center">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Commit short Id" :show-overflow-tooltip="true" width="160">
-        <template slot-scope="scope"> {{ scope.row.commit_id }} </template>
+      <el-table-column :label="$t('ProcessDevBranchTest.CommitShortId')" :show-overflow-tooltip="true" width="160">
+        <template slot-scope="scope">
+          {{ scope.row.commit_id }}
+        </template>
       </el-table-column>
-      <el-table-column label="Branch" :show-overflow-tooltip="true" width="160">
+      <el-table-column :label="$t('ProcessDevBranchTest.Branch')" :show-overflow-tooltip="true" width="160">
         <template slot-scope="scope">
           {{ scope.row.commit_branch }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="120">
+      <el-table-column align="center" :label="$t('ProcessDevBranchTest.Status')" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.execution_state=='Failed'" type="danger" size="big"> {{ scope.row.execution_state }}</el-tag>
-          <el-tag v-else-if="scope.row.execution_state=='Success'" type="success" size="big">{{ scope.row.execution_state }}</el-tag>
-          <el-tag v-else-if="scope.row.execution_state=='Waiting'" type="responded" size="big">{{ scope.row.execution_state }}</el-tag>
-          <el-tag v-else-if="scope.row.execution_state=='Building'" type="warning" size="big">{{ scope.row.execution_state }}</el-tag>
+          <el-tag v-if="scope.row.execution_state == 'Failed'" type="danger" size="big">
+            {{ scope.row.execution_state }}</el-tag
+          >
+          <el-tag v-else-if="scope.row.execution_state == 'Success'" type="success" size="big">{{
+            scope.row.execution_state
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.execution_state == 'Waiting'" type="responded" size="big">{{
+            scope.row.execution_state
+          }}</el-tag>
+          <el-tag v-else-if="scope.row.execution_state == 'Building'" type="warning" size="big">{{
+            scope.row.execution_state
+          }}</el-tag>
           <el-tag v-else type="close" size="big">{{ scope.row.execution_state }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Commit Message" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('ProcessDevBranchTest.CommitMessage')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.commit_message }}
         </template>
       </el-table-column>
-      <el-table-column label="Last Update Time" width="240">
+      <el-table-column :label="$t('ProcessDevBranchTest.LastUpdateTime')" width="240">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" width="160" align="center">
+      <el-table-column :label="$t('general.Actions')" width="160" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row)">
             <i class="el-icon-document" />

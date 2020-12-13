@@ -60,8 +60,8 @@ export default {
     zh: '該議題不存在。'
   },
   8001: {
-    en: 'Redmine error: $response',
-    zh: 'Redmine 回報錯誤：$response'
+    en: '$service_name error: $response',
+    zh: '$service_name 回報錯誤：$response'
   },
   9001: {
     en: 'Internal exception: $type: $exception',

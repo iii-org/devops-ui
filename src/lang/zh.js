@@ -21,7 +21,11 @@ export default {
     Setting: '設定',
     Members: '成員',
     Versions: '版本',
-    'User Manage': '成員管理'
+    'User Manage': '成員管理',
+    'Activity Log': '活動紀錄',
+    Roadmap: '專案藍圖',
+    'Project Graph': '版本線圖',
+    'Issue Detail': '議題內容'
   },
   navbar: {
     logOut: '登出',
@@ -39,11 +43,17 @@ export default {
     Cancel: '取消',
     SearchName: '搜尋名稱',
     Description: '描述',
+    Active: '啟用',
+    NoData: '暫無資料',
+    NoIssue: '暫無資料',
+    Email: '信箱',
     Creator: '建立者',
     CreateTime: '建立時間',
     UpdateTime: '修改時間',
     PleaseInput: '請輸入',
-    Close: '關閉'
+    Close: '關閉',
+    Disable: '停用',
+    Enable: '啟用'
   },
   TestCase: {
     TestCase: '測試案例',
@@ -63,6 +73,19 @@ export default {
     Id: '編號',
     IsPass: '是否通過?'
   },
+  CheckMarx: {
+    ScanId: '測試編號',
+    Branch: '分支',
+    Commit: 'Commit',
+    Status: '狀態',
+    HighSeverity: '高風險',
+    MediumSeverity: '中風險',
+    LowSeverity: '低風險',
+    InfoSeverity: '資訊',
+    RunAt: '開始時間',
+    Report: '報告',
+    SearchScanId: '搜尋 測試編號'
+  },
   TestValue: {
     TestValue: '測試資料',
     AddTestValue: '新增測試資料',
@@ -70,14 +93,17 @@ export default {
     Type: '類型',
     Location: '位置',
     SelectTestItem: '選擇測試項目',
-    SearchValue: '搜尋Value'
+    SearchValue: '搜尋Value',
+    PleaseSelectTestItem: '請選擇測試項目!'
   },
   File: {
     AddFile: '新增檔案',
     Upload: '上傳',
     Id: '檔案編號',
     Download: '下載',
-    DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳'
+    DropFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
+    uploadBtn: '選擇檔案',
+    File: '檔案'
   },
   Version: {
     AddVersion: '新增版本',
@@ -95,7 +121,7 @@ export default {
   Issue: {
     Issue: '議題',
     AddIssue: '新增議題',
-    Id: '議題編號',
+    Id: '議題編號 / 議題名稱',
     Assignee: '受分配者',
     Priority: '優先權',
     Estimate: '預估工時',
@@ -129,6 +155,7 @@ export default {
     IssuesShouldBeClosedWithinThisWeek: '本週該完成議題',
     IssuesShouldBeClosedWithinThisMonth: '本月該完成議題',
     Finished: '已完成',
+    Unfinished: '未完成',
     Total: '全部',
     AssignIssuesPriority: '受分配議題優先權',
     AssignIssuesProject: '受分配議題優先權',
@@ -174,5 +201,57 @@ export default {
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
     Save: '儲存',
     Password: '舊密碼'
+  },
+  Project: {
+    AddProject: '新增專案',
+    EditProject: '修改專案',
+    NameIdentifier: '專案名稱/ID',
+    Name: '專案名稱',
+    Identifier: 'ID',
+    Status: '專案狀態',
+    Progress: '專案工作進度',
+    UpdateTime: '最近更新時間',
+    deleteProjectComfirmText: '確認刪除？',
+    PleaseType: '請輸入',
+    AndThen: '進行刪除或取消操作',
+    IdRule: '請輸入2-255個英文小寫字元，可接受“-”符號，不可接受數字',
+    Workload: '工作包狀態',
+    WorkloadValue: '工作量',
+    UpcommingDeadline: '最近逾期日',
+    ProjectMembers: '專案成員',
+    TestStatus: '測試狀態',
+    Title: '職稱',
+    Branches: '原始碼分支',
+    LastTest: '最後測試',
+    LastTestResult: '最後測試結果',
+    Searchidentifier: '搜尋ID',
+    Report: '報表',
+    Brief: '摘要',
+    Software: '軟體',
+    SearchProjectName: '搜尋專案名稱'
+  },
+  ProjectActive: {
+    Active: '進行中',
+    Assigned: '已指派',
+    Solved: '已解決',
+    Responsed: '已回覆',
+    Finished: '已完成',
+    Closed: '已關閉'
+  },
+  ProcessDevBranch: {
+    Commit: 'Commit',
+    LastUpdateTime: '最後更新時間',
+    Environment: '測試環境',
+    SearchBranch: '搜尋分支',
+    Branch: '分支'
+  },
+  ProcessDevBranchTest: {
+    Id: '編號',
+    CommitShortId: 'Commit Short Id',
+    Branch: '分支',
+    Status: '狀態',
+    CommitMessage: 'Commit訊息',
+    LastUpdateTime: '最後更新時間',
+    SearchCommitMessage: '搜尋Commit訊息'
   }
 }

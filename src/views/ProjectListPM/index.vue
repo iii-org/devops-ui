@@ -42,7 +42,12 @@ export default {
       rules: {
         name: [
           { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-          { required: true, pattern: /^[a-z0-9][a-z0-9-]{0,253}[a-z0-9]$/, message: 'Identifier is invalid.', trigger: 'blur' }
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9-]{0,253}[a-z0-9]$/,
+            message: 'Identifier is invalid.',
+            trigger: 'blur'
+          }
         ],
         display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
       },
@@ -57,7 +62,7 @@ export default {
   computed: {
     ...mapGetters(['projectList', 'projectListTotal', 'userId']),
     pagedData() {
-      const listData = this.projectList.filter((data) => {
+      const listData = this.projectList.filter(data => {
         if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -249,19 +254,20 @@ export default {
       <span class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
-          Add Project
+          {{ $t('Project.AddProject') }}
         </el-button>
       </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input project name"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+        :placeholder="$t('Project.SearchProjectName')"
+        ><i slot="prefix" class="el-input__icon el-icon-search"
+      /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name / Identifier" :show-overflow-tooltip="true">
+      <el-table-column label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -269,11 +275,14 @@ export default {
             }"
             style="color: #409EFF"
           > -->
-          <span style="color: #67c23a">{{ scope.row.display }}</span>
-          <br>
-          <span style="color: #409eff">{{ scope.row.name }}</span>
+          {{ scope.row.display }}
           <!-- </router-link> -->
           <!-- <span>{{ scope.row.name }}</span> -->
+        </template>
+      </el-table-column>
+      <el-table-column label="Identifier">
+        <template slot-scope="scope">
+          <span style="color: #949494; font-weight: 400">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="Status" width="120">
@@ -284,14 +293,13 @@ export default {
           <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Progress" width="250px">
+      <el-table-column align="center" :label="$t('Project.Progress')" width="250px">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
-          <span
-            class="status-bar-track"
-          ><span
-            class="status-bar"
-            :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
+          <span class="status-bar-track"
+            ><span
+              class="status-bar"
+              :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
           /></span>
         </template>
       </el-table-column>
@@ -310,36 +318,38 @@ export default {
           </div>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="Update Time" width="170px">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" width="170px">
         <template slot-scope="scope">
           {{ scope.row.updated_time | relativeTime }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="GitLab" width="100px">
+      <el-table-column align="center" label="GitLab" width="120px">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.git_url" type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <el-link v-if="scope.row.git_url" type="text" :href="scope.row.git_url" target="_blank">
+            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="100px">
+      <el-table-column align="center" label="Redmine" width="120px">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
-            type="primary"
+            type="text"
             :href="scope.row.redmine_url"
             target="_blank"
-          >Redmine</el-link>
+          ><el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine</el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true" width="260">
+      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
-            Edit
+            {{ $t('general.Edit') }}
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" /> Delete
+            <i class="el-icon-delete" />
+            {{ $t('general.Delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -354,38 +364,44 @@ export default {
     />
     <router-view />
     <el-dialog
-      title="Delete Project"
+      :title="$t('general.Delete') + $t('route.Projects')"
       :visible.sync="dialogDelete"
       width="40%"
       :close-on-click-modal="false"
       @closed="onDialogClosedDelete"
     >
-      <p>This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.</p>
-      <p>Please type <span style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;">{{ Deleteproject.name }}</span> to proceed or close this modal to cancel.</p>
+      <p>{{ $t('Project.deleteProjectComfirmText') }}</p>
+      <p>
+        {{ $t('Project.PleaseType') }}
+        <span style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;white-space:pre-wrap;">{{
+          Deleteproject.name
+        }}</span>
+        {{ $t('Project.AndThen') }}
+      </p>
       <el-input v-model="deleteProjectName" :placeholder="placeholdertext" />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogDelete = false">Cancel</el-button>
-        <el-button type="danger" @click="handleDeleteModal">Delete</el-button>
+        <el-button @click="dialogDelete = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="danger" @click="handleDeleteModal">{{ $t('general.Delete') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      :title="`${dialogStatusText} Project`"
+      :title="$t(`Project.${dialogStatusText}Project`)"
       :visible.sync="dialogVisible"
       width="50%"
       :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
       <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
-        <el-form-item v-if="dialogStatus === 2" label="Project Identifier">
+        <el-form-item v-if="dialogStatus === 2" :label="$t('Project.Identifier')">
           <el-input v-model="form.name" :disabled="true" />
         </el-form-item>
-        <el-form-item label="Project Name" prop="display">
+        <el-form-item :label="$t('Project.Name')" prop="display">
           <el-input v-model="form.display" />
         </el-form-item>
-        <el-form-item v-if="dialogStatus === 1" label="Project Identifier" prop="name">
+        <el-form-item v-if="dialogStatus === 1" :label="$t('Project.Identifier')" prop="name">
           <el-input v-model="form.name" />
           <div v-if="dialogStatus === 1" style="word-break: keep-all;margin-top: 5px;">
-            Identifier should be 2-255 lowercase or number characters long and "-" can be accepted at the middle of string.
+            {{ $t('Project.IdRule') }}
           </div>
         </el-form-item>
         <!-- <br v-if="dialogStatus === 1"> -->
@@ -407,10 +423,10 @@ export default {
             <el-input type="number" v-model="form.ppm"></el-input>
           </el-form-item>
         </el-col> -->
-        <el-form-item label="Description" prop="description">
+        <el-form-item :label="$t('general.Description')" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
         </el-form-item>
-        <el-form-item label="Active" prop="disabled">
+        <el-form-item :label="$t('general.Active')" prop="disabled">
           <!-- <el-switch v-model="form.disabled" /> -->
           <el-switch
             v-model="form.disabled"
@@ -418,14 +434,16 @@ export default {
             :inactive-value="true"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            active-text="Enable"
-            inactive-text="Disable"
+            :active-text="$t('general.Enable')"
+            :inactive-text="$t('general.Disable')"
           />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">{{
+          $t('general.Confirm')
+        }}</el-button>
       </span>
     </el-dialog>
   </div>

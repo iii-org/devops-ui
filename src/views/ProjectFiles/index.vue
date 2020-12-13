@@ -1,6 +1,6 @@
 <script>
 import { fileextension } from '../../utils/extension.js'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { getProjectFileList, downloadProjectFile, getProjectVersion, uploadProjectFile } from '@/api/projects'
@@ -64,12 +64,22 @@ export default {
     }
   },
   mounted() {
-    this.fetchData()
+    this.checkProjectSelected()
     this.extension = fileextension()
   },
   methods: {
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    checkProjectSelected() {
+      (this.projectSelectedId === -1) ? this.showNoProjectWarning() : this.fetchData()
+    },
+    showNoProjectWarning() {
+      this.$message({
+        type: 'warning',
+        message: '目前無專案, 請先新增專案。'
+      })
+      this.listLoading = false
     },
     async fetchData() {
       this.listLoading = true
@@ -164,7 +174,7 @@ export default {
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
-        <el-button type="success" @click="handleAdding">
+        <el-button type="success" :disabled="projectSelectedId === -1" @click="handleAdding">
           <i class="el-icon-plus" />
           {{ $t('File.AddFile') }}
         </el-button>
@@ -174,8 +184,9 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -242,7 +253,7 @@ export default {
             :on-change="handleChange"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</em></div>
+            <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</em></div>
           </el-upload>
         </el-form-item>
         <el-form-item :label="$t('general.Name')" prop="name">

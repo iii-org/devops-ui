@@ -6,6 +6,10 @@
     font-size: 16px;
 }
 
+.text-success{
+    color: $success;
+}
+
 .el-table
 .el-button{
     color: #989898 !important;
@@ -49,6 +53,15 @@
             color: #FFF;
         }
     }
+}
+
+.el-table th>.cell{
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.el-table .cell{
+    padding-left: 16px;
 }
 
 .el-table--border td:first-child .cell, 
@@ -208,16 +221,16 @@
         padding-right: 0;
     }
     &.el-tag--danger{
-        background: #E85656;
+        background: $danger;
     }
     &.el-tag--warning{
-        background: #F9BE6E;
+        background: $warning;
     }
     &.el-tag--slow{
-        background: #56B1E8;
+        background: $slow;
     }
     &.el-tag--success{
-        background: #3ECBBC;
+        background: $success;
     }
     &.el-tag--none{
         color: #989898 !important;
@@ -397,4 +410,86 @@
     font-size: 15px;
     padding-top: 5px;
     display: block;
+}
+
+.point{
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: 4px;
+    display: inline-block;
+    &.feature{
+        background: #66d7ff;
+    }
+    &.document{
+        background: #5388ff;
+    }
+    &.bug{
+        background: #fea859;
+    }
+    &.research{
+        background: #a0da2c;
+    }
+}
+
+.btn-sub{
+    color: #989898;
+    font-size: 15px;
+    font-weight: 40;
+    position: absolute;
+    right: 16px;
+    border: none !important;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.el-upload, .el-upload-dragger{
+    width: 100%;
+}
+
+.upload-file2 .el-upload-dragger{
+    height: auto;
+    padding: 13px 0;
+}
+
+.upload-file2 .el-icon-close:before{
+    content: "\E6D7";
+    padding-right: 5px;
+}
+
+.upload-file2 .el-icon-close:after{
+    content: "刪除"
+}
+
+
+.uploadBtn{
+    font-size: 13px;
+    padding: 5px 11px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.el-upload-list__item{
+    margin: 2px 0 3px;
+    padding: 10px 7px;
+    border-radius: 2px;
+    border: solid 1px #e9e9e9;
+}
+
+.el-upload-list__item .el-icon-close{
+    color: #e85656;
+    font-size: 14px;
+    top: 15px;
+    right: 7px;
+    display: block;
+}
+
+.link-icon{
+    width: 16px;
+    vertical-align: -4px;
+    line-height: 100%;
 }

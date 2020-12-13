@@ -42,7 +42,7 @@ export default {
   computed: {
     ...mapGetters(['projectList', 'projectListTotal']),
     pagedData() {
-      const listData = this.projectList.filter((data) => {
+      const listData = this.projectList.filter(data => {
         if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -129,13 +129,14 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        placeholder="Please input project identifier"
+        :placeholder="$t('Project.Searchidentifier')"
         style="width: 250px; float: right"
-      ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+        ><i slot="prefix" class="el-input__icon el-icon-search"
+      /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" label="Name / Identifier" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('Project.NameIdentifier')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <router-link
             :to="{
@@ -145,20 +146,22 @@ export default {
             style="color: #409eff"
           >
             <span style="color: #67c23a">{{ scope.row.display }}</span>
-            <br>
+            <br />
             <span>{{ scope.row.name }}</span>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Workload" width="120px">
-        <template slot-scope="scope"> {{ scope.row.issues }} </template>
+      <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120px">
+        <template slot-scope="scope">
+          {{ scope.row.issues }}
+        </template>
       </el-table-column>
-      <el-table-column align="center" label="Upcomming Deadline">
+      <el-table-column align="center" :label="$t('Project.UpcommingDeadline')">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.next_d_time) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Branches" width="120px">
+      <el-table-column align="center" :label="$t('Project.Branches')" width="120px">
         <template slot-scope="scope">
           <router-link
             v-if="scope.row.branch"
@@ -173,13 +176,13 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test" width="150px">
+      <el-table-column align="center" :label="$t('Project.LastTest')" width="150px">
         <template slot-scope="scope">
           <span v-if="scope.row.last_test_time === ''">No Test</span>
           <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Last Test Result" width="150px">
+      <el-table-column align="center" :label="$t('Project.LastTestResult')" width="170px">
         <template slot-scope="scope">
           <el-tag :type="returnTagType(scope.row)" size="large">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
@@ -195,14 +198,11 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmin" width="100px">
+      <el-table-column align="center" label="Redmine" width="100px">
         <template slot-scope="scope">
-          <el-link
-            v-if="scope.row.redmine_url"
-            type="primary"
-            :href="scope.row.redmine_url"
-            target="_blank"
-          >Redmin</el-link>
+          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
+            >Redmine</el-link
+          >
           <span v-else>-</span>
         </template>
       </el-table-column>
