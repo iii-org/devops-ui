@@ -217,7 +217,7 @@ export default {
           <span class="text-success">{{ scope.row.id }}</span> {{ scope.row.issue_name }}
 
           <el-button
-            v-if="parentList.includes(scope.row.id) == true"
+            v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
             size="mini"
             class="btn-sub"
             icon="el-icon-plus"
