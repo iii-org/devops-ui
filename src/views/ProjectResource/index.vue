@@ -2,7 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import { getProjectResource } from '@/api/projects'
+import { getHarborRepoList, editHarborRepo, deleteHarborRepo } from '@/api/harbor'
 const formTemplate = {
   name: '',
   due_date: '',
@@ -27,12 +27,16 @@ export default {
       listTotal: 0, // 總筆數
       searchData: '',
       formRules: {
-        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
       },
       resourceList: [],
-      storage: {},
-      dialogStatus: 1,
+      storage: {
+        name: 'test-project',
+        consumption: {
+          use: 1.48,
+          total: 2
+        }
+      },
       memberConfirmLoading: false,
       form: formTemplate
     }
@@ -49,16 +53,6 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return listData.slice(start, end)
-    },
-    dialogStatusText() {
-      switch (this.dialogStatus) {
-        case 1:
-          return 'Add'
-        case 2:
-          return 'Edit'
-        default:
-          return 'Null'
-      }
     }
   },
   watch: {
@@ -78,9 +72,9 @@ export default {
     },
     async fetchData() {
       this.listLoading = true
-      const res = await getProjectResource(this.projectSelectedId)
-      this.resourceList = res.data.resource
-      this.storage = res.data.storage
+      const res = await getHarborRepoList(this.projectSelectedId)
+      this.resourceList = res.data
+      // this.storage = res.data.storage
       this.listLoading = false
     },
     returnPercentage(consumption) {
@@ -89,41 +83,30 @@ export default {
       const p = Math.round((use / total) * 100)
       return isNaN(p) ? 0 : p
     },
-    handleAdding() {
-      this.dialogVisible = true
-      this.dialogStatus = 1
-    },
     handleEdit(idx, row) {
       this.dialogVisible = true
-      this.dialogStatus = 2
-
       this.form = Object.assign({}, this.form, row)
-      console.log(this.form)
     },
     async handleDelete(idx, row) {
-      this.$confirm(`Are you sure to Delete Version ${row.name}?`, 'Delete', {
+      this.$confirm(`Are you sure to Delete ${row.name}?`, 'Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
       }).then(async () => {
-        // await deleteProjectVersion(this.projectSelectedId, row.id)
-        // this.$message({
-        //   type: 'success',
-        //   message: 'Delete Successed'
-        // })
+        await deleteHarborRepo(row.name)
+        this.$message({
+          type: 'success',
+          message: 'Delete Successed'
+        })
         this.fetchData()
       })
     },
-    async handleConfirm() {
+    async handleConfirm(index, row) {
       this.$refs['form'].validate(async valid => {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
-          if (this.dialogStatus === 1) {
-            // await addProjectVersion(this.projectSelectedId, { version: data })
-          } else {
-            // await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
-          }
+          await editHarborRepo(data.name, { description: data.description })
           this.$message({
             type: 'success',
             message: 'Successed'
@@ -187,6 +170,11 @@ export default {
           <span>{{ scope.row.pull_count }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Description">
+        <template slot-scope="scope">
+          <span>{{ scope.row.description }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Last Modified Time" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.update_time }}</span>
@@ -221,8 +209,8 @@ export default {
       @closed="onDialogClosed"
     >
       <el-form ref="form" :model="form" :rules="formRules" label-position="top">
-        <el-form-item :label="$t('general.Name')" prop="name">
-          <el-input v-model="form.name" />
+        <el-form-item :label="$t('general.Name')">
+          {{ form.name }}
         </el-form-item>
         <el-form-item :label="$t('general.Description')" prop="description">
           <el-input v-model="form.description" type="textarea" />
