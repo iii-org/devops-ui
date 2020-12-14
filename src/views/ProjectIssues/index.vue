@@ -331,12 +331,19 @@ export default {
 .filter-container {
   margin-bottom: 5px;
 }
+
+.el-table__body-wrapper {
+  @media (max-width: 1366px){
+    overflow-x: auto;
+  }
+}
+
 .el-popconfirm__action .el-button--primary {
   margin-left: 5px !important;
 }
 
-col[name="el-table_1_column_1"], .el-table_1_column_1{
-  @media (max-width: 1024px){
+col:first-child, .el-table__row td:first-child{
+  @media (max-width: 1366px){
     width: 500px;
   }
 }
@@ -344,9 +351,6 @@ col[name="el-table_1_column_1"], .el-table_1_column_1{
 .el-table_1_column_1{
   position: relative;
   font-weight: 500;
-  .d-flex{
-
-  }
   .text-success{
     font-weight: 600;
     margin-right: 5px;
