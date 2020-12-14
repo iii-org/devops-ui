@@ -54,7 +54,7 @@ export default {
       statusW: '50%',
       confirmLoading: false,
       Deleteproject: {},
-      deleteProjectName: '',
+      deleteProjectID: '',
       placeholdertext: '',
       loadingdelete: ''
     }
@@ -106,11 +106,11 @@ export default {
     handleDelete(index, row) {
       this.dialogDelete = true
       this.Deleteproject['id'] = row.id
-      this.Deleteproject['name'] = row.display
+      this.Deleteproject['name'] = row.name
       this.placeholdertext = 'Please Input ' + this.Deleteproject.name
     },
     async handleDeleteModal() {
-      if (this.Deleteproject.name !== this.deleteProjectName) {
+      if (this.Deleteproject.name !== this.deleteProjectID) {
         return this.$message({
           message: 'Please input project name correctly.',
           type: 'error'
@@ -173,7 +173,7 @@ export default {
       })
     },
     onDialogClosedDelete() {
-      this.deleteProjectName = ''
+      this.deleteProjectID = ''
     },
     returnProgress(current, total) {
       const percent = Math.round((current / total) * 100)
@@ -378,7 +378,7 @@ export default {
         }}</span>
         {{ $t('Project.AndThen') }}
       </p>
-      <el-input v-model="deleteProjectName" :placeholder="placeholdertext" />
+      <el-input v-model="deleteProjectID" :placeholder="placeholdertext" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDelete = false">{{ $t('general.Cancel') }}</el-button>
         <el-button type="danger" @click="handleDeleteModal">{{ $t('general.Delete') }}</el-button>
