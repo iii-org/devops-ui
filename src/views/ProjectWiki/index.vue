@@ -233,7 +233,7 @@ export default {
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" width="300" align="center">
+      <el-table-column :label="$t('general.Actions')" width="340" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
