@@ -466,10 +466,10 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/',
+    path: '/admin',
     component: Layout,
     name: 'Admin',
-    redirect: '/user_manage',
+    redirect: '/admin/user_manage',
     meta: { title: 'Admin', icon: 'el-icon-s-tools', roles: ['Administrator'] },
     children: [
       {
