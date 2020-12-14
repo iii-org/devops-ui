@@ -20,3 +20,11 @@ export function YMDhmA(time) {
   }
   return YMDhmA
 }
+
+export function hmA(datetime) {
+  const hmA = moment(datetime).format('hh:mm A')
+  if (datetime === 'Invalid date') {
+    return '-'
+  }
+  return hmA
+}

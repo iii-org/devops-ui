@@ -13,14 +13,17 @@
             <el-row class="issue-row">
               <el-col :span="5" class="el-col-title">
                 <span class="issue-name">{{ issue.issue_name }}</span>
-                <span class="issue-date">21:00, 2hr ago</span>
+                <span class="issue-date">{{ issue.updated_on | hmA }}, {{ issue.updated_on | relativeTime }}</span>
               </el-col>
               <el-col :span="17" class="el-col-content">
                 <p>{{ issue.description || '-' }}</p>
               </el-col>
               <el-col :span="2" class="el-col-account">
-                <el-tag class="el-tag-account"><i class="el-icon-s-custom" /> {{ issue.assigned_to || '-' }} </el-tag></el-col
-              >
+                <el-tag class="el-tag-account">
+                  <i class="el-icon-s-custom" />
+                  {{ issue.assigned_to || '-' }}
+                </el-tag>
+              </el-col>
             </el-row>
           </el-card>
         </el-timeline-item>
