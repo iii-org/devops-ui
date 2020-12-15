@@ -29,7 +29,7 @@ const mutations = {
     state.total = total
   },
   SET_PROJET_SELECTED_ID: (state, id) => {
-    state.projectSelectedId = '116'
+    state.projectSelectedId = id
   },
   SET_PROJET_SELECTED: (state, obj) => {
     state.projectSelectedObject = obj
