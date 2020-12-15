@@ -24,8 +24,8 @@ export default {
       finishedList: [],
       closedList: [],
       group: 'mission',
-      versionValue: '',
-      memberValue: '',
+      versionValue: '-1',
+      memberValue: '-1',
       projectVersionList: [],
       projectUserList: ''
     }
@@ -43,9 +43,9 @@ export default {
       this.fetchData()
     },
     versionValue(value) {
-      if (value === -1 && this.memberValue === -1) return this.resetKanbanCard()
-      if (this.memberValue === -1) this.resetKanbanCard()
-      if (value === -1) {
+      if (value === '-1' && this.memberValue === '-1') return this.resetKanbanCard()
+      if (this.memberValue === '-1') this.resetKanbanCard()
+      if (value === '-1') {
         this.resetKanbanCard()
         const tmp = this.memberValue
         this.memberValue = ''
@@ -61,9 +61,9 @@ export default {
       this.searchKanbanCard(value, opt)
     },
     memberValue(value) {
-      if (value === -1 && this.versionValue === -1) return this.resetKanbanCard()
-      if (this.versionValue === -1) this.resetKanbanCard()
-      if (value === -1) {
+      if (value === '-1' && this.versionValue === '-1') return this.resetKanbanCard()
+      if (this.versionValue === '-1') this.resetKanbanCard()
+      if (value === '-1') {
         this.resetKanbanCard()
         const tmp = this.versionValue
         this.versionValue = ''
@@ -139,7 +139,7 @@ export default {
       if (this.projectVersionList.length !== 0) {
         this.versionValue = this.projectVersionList[0].id
       } else {
-        this.versionValue = ''
+        this.versionValue = '-1'
       }
 
       const userRes = await this.getProjectUserList(this.projectSelectedId)
@@ -183,11 +183,11 @@ export default {
       <div>
         <project-list-selector />
         <el-select v-model="versionValue" :placeholder="$t('Version.SelectVersion')">
-          <el-option :key="-1" :label="$t('Dashboard.Total')" :value="-1" />
+          <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
           <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-select v-model="memberValue" :placeholder="$t('Member.SelectMember')">
-          <el-option :key="-1" :label="$t('Dashboard.Total')" :value="-1" />
+          <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
           <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
         </el-select>
       </div>
