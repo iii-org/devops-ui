@@ -24,7 +24,12 @@ export default {
     'User Manage': 'User Manage',
     'Activity Log': 'Activity Log',
     Roadmap: 'Project Roadmap',
-    'Project Graph': 'Git Graph'
+    'Project Graph': 'Git Graph',
+    'Issue Detail': 'Issue Detail',
+    'Project Resource': 'Project Resource',
+    Usage: 'Project Usage',
+    Resource: 'Project Resource',
+    Artifacts: 'Project Artifacts'
   },
   navbar: {
     logOut: 'Log Out',
@@ -52,7 +57,8 @@ export default {
     PleaseInput: 'Please Input',
     Close: 'Close',
     Disable: 'Disable',
-    Enable: 'Enable'
+    Enable: 'Enable',
+    LastUpdateTime: 'LastUpdateTime'
   },
   TestCase: {
     TestCase: 'Test Case',
@@ -63,7 +69,8 @@ export default {
     Description: 'Description',
     Method: 'Method',
     Path: 'Path',
-    TestResult: 'Test Result'
+    TestResult: 'Test Result',
+    SearchNameOrPathOrTestResult: 'Search Name, Path Or TestResult'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -71,6 +78,19 @@ export default {
     EditTestItem: 'Edit Test Item',
     Id: 'Id',
     IsPass: 'Is Pass?'
+  },
+  CheckMarx: {
+    ScanId: 'Scan ID',
+    Branch: 'Branch',
+    Commit: 'Commit',
+    Status: 'status',
+    HighSeverity: 'High Severity',
+    MediumSeverity: 'Medium Severity',
+    LowSeverity: 'Low Severity',
+    InfoSeverity: 'Info Severity',
+    RunAt: 'Start Time',
+    Report: 'Report',
+    SearchScanId: 'Search Scan ID'
   },
   TestValue: {
     TestValue: 'Test Value',
@@ -87,7 +107,9 @@ export default {
     Upload: 'Upload',
     Id: 'Id',
     Download: 'Download',
-    DrapFileHereOrClickUpload: 'Drap File Here Or Click Upload'
+    DropFileHereOrClickUpload: 'Drop File Here Or Click Upload',
+    uploadBtn: 'Select File',
+    File: 'File'
   },
   Version: {
     AddVersion: 'Add Version',
@@ -239,5 +261,11 @@ export default {
     CommitMessage: 'Commit Message',
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message'
+  },
+  ProjectResource: {
+    Usage: 'Usage',
+    Quota: 'Quota',
+    Artifacts: 'Artifacts',
+    EditResource: 'Edit Resource'
   }
 }

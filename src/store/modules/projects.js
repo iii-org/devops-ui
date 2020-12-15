@@ -29,7 +29,7 @@ const mutations = {
     state.total = total
   },
   SET_PROJET_SELECTED_ID: (state, id) => {
-    state.projectSelectedId = id
+    state.projectSelectedId = '116'
   },
   SET_PROJET_SELECTED: (state, obj) => {
     state.projectSelectedObject = obj
@@ -44,7 +44,7 @@ const actions = {
       data = data.sort(function(a, b) {
         return a['repository_ids'] < b['repository_ids'] ? 1 : -1
       })
-      const dataWithTag = await data.reduce(async(acc, cur) => {
+      const dataWithTag = await data.reduce(async (acc, cur) => {
         const res = await acc
         // const id = cur.repository_ids[0]
         if (!cur.repository_ids || !cur.repository_ids[0]) {

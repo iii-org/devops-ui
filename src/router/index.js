@@ -307,6 +307,32 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/project-resource',
+    component: Layout,
+    name: 'Project Resource',
+    meta: { title: 'Project Resource', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+    children: [
+      {
+        path: 'usage',
+        name: 'Usage',
+        component: () => import('@/views/ProjectUsage/index'),
+        meta: { title: 'Usage', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'resource',
+        name: 'Resource',
+        component: () => import('@/views/ProjectResource/index'),
+        meta: { title: 'Resource', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'artifacts',
+        name: 'Artifacts',
+        component: () => import('@/views/ProjectArtifacts/index'),
+        meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'] }
+      }
+    ]
+  },
+  {
     path: '/progress',
     component: Layout,
     name: 'progress',
@@ -349,6 +375,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult/index'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'graph',
+        name: 'Project Graph',
+        component: () => import('@/views/ProjectGraph/index'),
+        meta: { title: 'Project Graph', roles: ['Project Manager'] }
       }
     ]
   },
@@ -357,21 +389,18 @@ export const asyncRoutes = [
     path: '/issue',
     component: Layout,
     name: 'Issues',
-    meta: {
-      title: 'Issues',
-      icon: 'el-icon-data-analysis',
-      roles: ['Project Manager', 'Engineer', 'Administrator']
-    },
+    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
+    redirect: '/issue/wiki',
     children: [
       {
         path: 'wiki',
-        name: 'Wiki',
+        name: 'IssueWiki',
         component: () => import('@/views/ProjectWiki/index'),
         meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
         path: 'list',
-        name: 'Issues',
+        name: 'IssueList',
         component: () => import('@/views/ProjectIssues/index'),
         meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
@@ -426,6 +455,18 @@ export const asyncRoutes = [
         name: 'Test Case Expert Mode',
         component: () => import('@/views/TestCaseExpertMode/index'),
         meta: { title: 'Test Case (Expert)', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'check-marx',
+        name: 'check-marx',
+        component: () => import('@/views/CheckMarx/index'),
+        meta: { title: 'Check Marx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'web-inspect',
+        name: 'web-inspect',
+        component: () => import('@/views/WebInspect/index'),
+        meta: { title: 'Web Inspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },
@@ -435,6 +476,7 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Setting',
     meta: { title: 'Setting', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+    redirect: '/project_setting/members',
     children: [
       {
         path: 'members',
@@ -458,10 +500,10 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/',
+    path: '/admin',
     component: Layout,
     name: 'Admin',
-    redirect: '/user_manage',
+    redirect: '/admin/user_manage',
     meta: { title: 'Admin', icon: 'el-icon-s-tools', roles: ['Administrator'] },
     children: [
       {

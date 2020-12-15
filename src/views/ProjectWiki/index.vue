@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
@@ -53,7 +53,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
-      const listData = this.wikiList.filter((data) => {
+      const listData = this.wikiList.filter(data => {
         if (this.searchData == '' || data.title.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -69,14 +69,24 @@ export default {
       this.fetchData()
     }
   },
-  async created() {
-    this.fetchData()
+  created() {
+    this.checkProjectSelected()
   },
   methods: {
     async fetchData() {
       this.listLoading = true
       const res = await getWikiList(this.projectSelectedId)
       this.wikiList = res.data.wiki_pages
+      this.listLoading = false
+    },
+    checkProjectSelected() {
+      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
+    },
+    showNoProjectWarning() {
+      this.$message({
+        type: 'warning',
+        message: 'There are no projects currently, please create a new projec.'
+      })
       this.listLoading = false
     },
     emitGetEditorData(value) {
@@ -159,7 +169,7 @@ export default {
       // this.$refs['form'].resetFields()
     },
     async handleConfirmAdd() {
-      this.$refs['form'].validate(async(valid) => {
+      this.$refs['form'].validate(async valid => {
         if (!valid) {
           return
         }
@@ -189,7 +199,7 @@ export default {
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
-        <el-button type="success" @click="handleAdding">
+        <el-button type="success" :disabled="projectSelectedId === -1" @click="handleAdding">
           <i class="el-icon-plus" />
           {{ $t('Wiki.AddWiki') }}
         </el-button>
@@ -199,10 +209,9 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
-      ><i
-        slot="prefix"
-        class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
 
     <el-divider />
@@ -224,7 +233,7 @@ export default {
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" width="300" align="center">
+      <el-table-column :label="$t('general.Actions')" width="340" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
@@ -243,7 +252,8 @@ export default {
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button>
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+            </el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -318,7 +328,9 @@ export default {
       <div class="container">
         <div class="form__title">
           <h3>{{ wikiData.title }}</h3>
-          <div v-if="detailVisible" style="text-align: right;">{{ $t('Wiki.edited',{user:wikiData.author.name}) }}</div>
+          <div v-if="detailVisible" style="text-align: right;">
+            {{ $t('Wiki.edited', { user: wikiData.author.name }) }}
+          </div>
           <el-divider />
         </div>
         <div class="form__body">

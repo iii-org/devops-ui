@@ -77,7 +77,7 @@ export function getNotInProject(pId) {
   })
 }
 
-//取得專案議題狀態 [ 0_1 單一專案概述]
+// 取得專案議題狀態 [ 0_1 單一專案概述]
 export function getProjectIssueProgress(pId, params = {}) {
   return request({
     url: `/project/${pId}/issues_progress`,
@@ -86,7 +86,7 @@ export function getProjectIssueProgress(pId, params = {}) {
   })
 }
 
-//取得專案議題篩選條件狀態 [0.1_單一專案概述]
+// 取得專案議題篩選條件狀態 [0.1_單一專案概述]
 export function getProjectIssueStatistics(pId, params) {
   return request({
     url: `/project/${pId}/issues_statistics`,
@@ -95,7 +95,7 @@ export function getProjectIssueStatistics(pId, params) {
   })
 }
 
-//專案內已分配人員 [ 0_1 單一專案概述]
+// 專案內已分配人員 [ 0_1 單一專案概述]
 export function getProjectUserList(pId) {
   return request({
     url: `/project/${pId}/user/list`,
@@ -103,7 +103,7 @@ export function getProjectUserList(pId) {
   })
 }
 
-//專案內可分配版本　[2.3.1 新增議題　2.3.3.1 編輯議題］
+// 專案內可分配版本　[2.3.1 新增議題　2.3.3.1 編輯議題］
 export function getProjectVersion(pId) {
   return request({
     url: `/project/${pId}/version/list`,
@@ -205,8 +205,26 @@ export function uploadProjectFile(pId, data) {
     url: `/project/${pId}/file`,
     method: 'POST',
     headers: {
-      "Content-Type": "multipart/form-data"
+      'Content-Type': 'multipart/form-data'
     },
     data
+  })
+}
+
+export function getProjectUsage(pId) {
+  // return {
+  //   message: 'success',
+  //   data: {
+  //     cpu: { usage: 1.58, limit: 8 },
+  //     memory: { usage: '8.34GiB', limit: '15.6GiB' },
+  //     pods: { usage: 5, limit: 20 },
+  //     service: { usage: 5, limit: 10 },
+  //     secrets: { usage: 5, limit: 20 },
+  //     images: { usage: '4.3 GiB', limit: '25 GiB' }
+  //   }
+  // }
+  return request({
+    url: `/project/${pId}/resource`,
+    method: 'GET'
   })
 }

@@ -17,14 +17,14 @@ export function newBranch(rId, data) {
 
 export function deleteBranch(rId, bName) {
   return request({
-    url: '/repositories/rd/' + rId + '/branch/' + bName,
+    url: '/repositories/' + rId + '/branch/' + bName,
     method: 'DELETE'
   })
 }
 
 export function mergeBranch(rId, data) {
   return request({
-    url: '/repositories/rd/' + rId + '/merge_branches',
+    url: '/repositories/' + rId + '/merge_branches',
     method: 'POST',
     data
   })

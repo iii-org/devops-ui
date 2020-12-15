@@ -12,3 +12,19 @@ export function relativeTime(datetime) {
   }
   return relativeTime
 }
+
+export function YMDhmA(time) {
+  const YMDhmA = moment(time).format('YYYY-MM-DD hh:mm A')
+  if (time === 'Invalid date') {
+    return '-'
+  }
+  return YMDhmA
+}
+
+export function hmA(datetime) {
+  const hmA = moment(datetime).format('hh:mm A')
+  if (datetime === 'Invalid date') {
+    return '-'
+  }
+  return hmA
+}

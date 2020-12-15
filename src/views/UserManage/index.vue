@@ -1,7 +1,9 @@
 <script>
-import { getInfo, getAllUser } from '@/api/user'
+import { mapGetters } from 'vuex'
+import { getInfo, getAllUser, deleteUser } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import UserDialog from './components/UserDialog'
+import { Message } from 'element-ui'
 
 export default {
   components: {
@@ -21,11 +23,12 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: ''
     }
   },
   computed: {
+    ...mapGetters(['userId']),
     pagedData() {
       const listData = this.userList.filter((data) => {
         if (this.searchData == '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -76,6 +79,19 @@ export default {
       }
       this.dialogTitle = title
       this.userDialogVisible = true
+    },
+    async handleDelete(userId) {
+      try {
+        await deleteUser(userId)
+        Message({
+          message: 'Member deleted',
+          type: 'success',
+          duration: 1 * 3000
+        })
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }
@@ -95,8 +111,9 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('User.SearchAccount')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border>
@@ -136,6 +153,18 @@ export default {
             <i class="el-icon-edit" />
             {{ $t('general.Edit') }}
           </el-button>
+          <el-popconfirm
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
+            icon="el-icon-info"
+            icon-color="red"
+            title="Are you sure?"
+            @onConfirm="handleDelete(scope.row.id)"
+          >
+            <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.id == userId">
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>

@@ -117,7 +117,7 @@
               :on-change="handleChange"
             >
               <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
-              <div class="el-upload__text">{{ $t('File.DrapFileHereOrClickUpload') }}</div>
+              <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
             </el-upload>
           </el-form-item>
         </el-col>
@@ -272,8 +272,8 @@ export default {
       if (this.extension[file.raw.type] === undefined) {
         this.$message.warning(`Unable to upload a file: This file type is not supported`)
         this.$refs['upload'].clearFiles()
-      } else if (file.size / 1024 / 1024 > 5) {
-        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (5 MB)`)
+      } else if (file.size / 1024 > 20480) {
+        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`)
         this.$refs['upload'].clearFiles()
       } else {
         this.uploadFileList = fileList

@@ -25,7 +25,11 @@ export default {
     'Activity Log': '活動紀錄',
     Roadmap: '專案藍圖',
     'Project Graph': '版本線圖',
-    'Issue Detail': '議題內容'
+    'Issue Detail': '議題內容',
+    'Project Resource': '專案資源',
+    Usage: '資源使用量',
+    Resource: '資源清單',
+    Artifacts: '資源成品'
   },
   navbar: {
     logOut: '登出',
@@ -53,7 +57,8 @@ export default {
     PleaseInput: '請輸入',
     Close: '關閉',
     Disable: '停用',
-    Enable: '啟用'
+    Enable: '啟用',
+    LastUpdateTime: '最後更新時間'
   },
   TestCase: {
     TestCase: '測試案例',
@@ -64,7 +69,8 @@ export default {
     Description: '描述',
     Method: '方法',
     Path: '路逕',
-    TestResult: '測試結果'
+    TestResult: '測試結果',
+    SearchNameOrPathOrTestResult: '搜尋名稱,路徑或測試結果'
   },
   TestItem: {
     TestItem: '測試項目',
@@ -72,6 +78,19 @@ export default {
     EditTestItem: '編輯測試項目',
     Id: '編號',
     IsPass: '是否通過?'
+  },
+  CheckMarx: {
+    ScanId: '測試編號',
+    Branch: '分支',
+    Commit: 'Commit',
+    Status: '狀態',
+    HighSeverity: '高風險',
+    MediumSeverity: '中風險',
+    LowSeverity: '低風險',
+    InfoSeverity: '資訊',
+    RunAt: '開始時間',
+    Report: '報告',
+    SearchScanId: '搜尋 測試編號'
   },
   TestValue: {
     TestValue: '測試資料',
@@ -88,7 +107,7 @@ export default {
     Upload: '上傳',
     Id: '檔案編號',
     Download: '下載',
-    DrapFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
+    DropFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
     uploadBtn: '選擇檔案',
     File: '檔案'
   },
@@ -201,7 +220,7 @@ export default {
     deleteProjectComfirmText: '確認刪除？',
     PleaseType: '請輸入',
     AndThen: '進行刪除或取消操作',
-    IdRule: '請輸入2-255個英文小寫字元，可接受“-”符號，不可接受數字',
+    IdRule: '請輸入2-255個字元的小寫英文或數字組合，中間可包含符號"-"，且不可全為數字',
     Workload: '工作包狀態',
     WorkloadValue: '工作量',
     UpcommingDeadline: '最近逾期日',
@@ -240,5 +259,11 @@ export default {
     CommitMessage: 'Commit訊息',
     LastUpdateTime: '最後更新時間',
     SearchCommitMessage: '搜尋Commit訊息'
+  },
+  ProjectResource: {
+    Usage: '使用量',
+    Quota: '額度',
+    Artifacts: '成品',
+    EditResource: '修改資源'
   }
 }

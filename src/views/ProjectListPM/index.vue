@@ -54,7 +54,7 @@ export default {
       statusW: '50%',
       confirmLoading: false,
       Deleteproject: {},
-      deleteProjectName: '',
+      deleteProjectID: '',
       placeholdertext: '',
       loadingdelete: ''
     }
@@ -106,11 +106,11 @@ export default {
     handleDelete(index, row) {
       this.dialogDelete = true
       this.Deleteproject['id'] = row.id
-      this.Deleteproject['name'] = row.display
+      this.Deleteproject['name'] = row.name
       this.placeholdertext = 'Please Input ' + this.Deleteproject.name
     },
     async handleDeleteModal() {
-      if (this.Deleteproject.name !== this.deleteProjectName) {
+      if (this.Deleteproject.name !== this.deleteProjectID) {
         return this.$message({
           message: 'Please input project name correctly.',
           type: 'error'
@@ -173,7 +173,7 @@ export default {
       })
     },
     onDialogClosedDelete() {
-      this.deleteProjectName = ''
+      this.deleteProjectID = ''
     },
     returnProgress(current, total) {
       const percent = Math.round((current / total) * 100)
@@ -267,7 +267,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" width="200">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -280,12 +280,12 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column label="Identifier" width="200" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('Project.Identifier')" width="200" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span style="color: #949494; font-weight: 400">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Status" width="120">
+      <el-table-column align="center" :label="$t('Project.Status')" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{
             scope.row.project_status
@@ -371,12 +371,13 @@ export default {
       <p>{{ $t('Project.deleteProjectComfirmText') }}</p>
       <p>
         {{ $t('Project.PleaseType') }}
-        <span style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;">{{
-          Deleteproject.name
-        }}</span>
+        <span
+          style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;white-space:pre-wrap;"
+          >{{ Deleteproject.name }}</span
+        >
         {{ $t('Project.AndThen') }}
       </p>
-      <el-input v-model="deleteProjectName" :placeholder="placeholdertext" />
+      <el-input v-model="deleteProjectID" :placeholder="placeholdertext" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDelete = false">{{ $t('general.Cancel') }}</el-button>
         <el-button type="danger" @click="handleDeleteModal">{{ $t('general.Delete') }}</el-button>
