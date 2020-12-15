@@ -7,14 +7,14 @@ export function getCheckMarxScans(project_id) {
   })
 }
 
-export function getCheckMarxReportStatus(scan_id) {
+export function getCheckMarxScanStatus(scan_id) {
   return request({
     url: `/checkmarx/scan_status/${scan_id}`,
     method: 'get'
   })
 }
 
-export function getCheckMarxReportStats(scan_id) {
+export function getCheckMarxScanStats(scan_id) {
   return request({
     url: `/checkmarx/scan_stats/${scan_id}`,
     method: 'get'
@@ -25,6 +25,13 @@ export function registerCheckMarxReport(scan_id) {
   return request({
     url: `/checkmarx/report/${scan_id}`,
     method: 'post'
+  })
+}
+
+export function getCheckMarxReportStatus(report_id) {
+  return request({
+    url: `/checkmarx/report_status/${report_id}`,
+    method: 'get'
   })
 }
 

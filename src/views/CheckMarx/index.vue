@@ -3,9 +3,10 @@ import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import {
   getCheckMarxScans,
-  getCheckMarxReportStatus,
-  getCheckMarxReportStats,
+  getCheckMarxScanStatus,
+  getCheckMarxScanStats,
   registerCheckMarxReport,
+  getCheckMarxReportStatus,
   getCheckMarxReport
 } from '@/api/checkMarx'
 import ProjectListSelector from '../../components/ProjectListSelector'
@@ -67,11 +68,13 @@ export default {
     updateMarxScansStatus() {
       this.checkMarxScans.forEach(item => {
         if (item.status === null) this.fetchStatus(item.scan_id)
+        if (item.report_id === -1) this.rigisterReport(item.scan_id)
+        if (item.report_id !== -1 && !item.report_ready) this.fetchReportStatus(item.report_id)
       })
     },
 
     fetchStatus(scanId) {
-      getCheckMarxReportStatus(scanId).then(res => {
+      getCheckMarxScanStatus(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].status = res.data.name
         if (res.data.id === 7) this.fetchStats(scanId)
@@ -79,7 +82,7 @@ export default {
     },
 
     fetchStats(scanId) {
-      getCheckMarxReportStats(scanId).then(res => {
+      getCheckMarxScanStats(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].stats = res.data
       })
@@ -89,7 +92,13 @@ export default {
       registerCheckMarxReport(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].reportId = res.data.reportId
-        this.checkMarxScans[idx].scanId = res.data.scanId
+      })
+    },
+
+    fetchReportStatus(reportId) {
+      getCheckMarxReportStatus(reportId).then(res => {
+        const idx = this.checkMarxScans.findIndex(item => item.report_id === reportId)
+        if (res.data.id === 2) this.checkMarxScans[idx].report_ready = true
       })
     },
 
