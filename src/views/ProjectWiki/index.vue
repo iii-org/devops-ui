@@ -85,7 +85,7 @@ export default {
     showNoProjectWarning() {
       this.$message({
         type: 'warning',
-        message: '目前無專案, 請先新增專案。'
+        message: 'There are no projects currently, please create a new projec.'
       })
       this.listLoading = false
     },
