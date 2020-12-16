@@ -92,6 +92,15 @@ export default {
     Report: 'Report',
     SearchScanId: 'Search Scan ID'
   },
+  WebInspect: {
+    Branch: 'Branch',
+    CommitId: 'Commit',
+    ProjectName: 'Project Name',
+    RunAt: 'Start Time',
+    ScanId: 'Scan ID',
+    Report: 'Report',
+    SearchCommitId: 'Search Commit ID'
+  },
   TestValue: {
     TestValue: 'Test Value',
     AddTestValue: 'Add Test Value',

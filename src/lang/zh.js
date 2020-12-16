@@ -92,6 +92,15 @@ export default {
     Report: '報告',
     SearchScanId: '搜尋 測試編號'
   },
+  WebInspect: {
+    Branch: '分支',
+    CommitId: 'Commit ID',
+    ProjectName: '專案名稱',
+    RunAt: '開始時間',
+    ScanId: '測試編號',
+    Report: '報告',
+    SearchCommitId: '搜尋 Commit ID'
+  },
   TestValue: {
     TestValue: '測試資料',
     AddTestValue: '新增測試資料',
