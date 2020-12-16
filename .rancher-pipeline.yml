@@ -3,7 +3,7 @@ stages:
   steps:
   - runScriptConfig:
       image: 10.50.1.63:5443/iiidevops/node
-      shellScript: mv /iiidevops-ui/node_modules .;echo "VUE_APP_VERSION='$(git rev-parse HEAD)'" >> .env.staging; echo -e $api_url;echo "VUE_APP_BASE_API = '${api_url}'" >> .env.staging;pwd;cat .env.staging; npm run build:stage;echo "server {\n\tlisten   80;\n\tserver_name   localhost;\n\n\tlocation / {\n\t\troot   /usr/share/nginx/html;\n\t\tindex  index.html index.htm;\n\t}\n\n\tlocation ^~ /prod-api/ {\n\t\tproxy_pass http://devops-system-develope-service:10009/;\n\t}\n\n\terror_page   500 502 503 504  /50x.html;\n\tlocation = /50x.html {\n\t\troot  /usr/share/nginx/html;\n\t}\n}" > default.conf
+      shellScript: ln -s /iiidevops-ui/node_modules node_modules; npm install; echo "VUE_APP_VERSION='$(git rev-parse HEAD)'" >> .env.staging; echo "VUE_APP_BASE_API = '/prod-api'" >> .env.staging; npm run build:stage; echo "server {\n\tlisten   80;\n\tserver_name   localhost;\n\n\tlocation / {\n\t\troot   /usr/share/nginx/html;\n\t\tindex  index.html index.htm;\n\t}\n\n\tlocation ^~ /prod-api/ {\n\t\tproxy_pass http://devops-system-develope-service:10009/;\n\t}\n\n\terror_page   500 502 503 504  /50x.html;\n\tlocation = /50x.html {\n\t\troot  /usr/share/nginx/html;\n\t}\n}" > default.conf
     env:
       PLUGIN_MTU: 1440
     envFrom:
