@@ -23,8 +23,6 @@ export default {
         page: 1, // 目前第幾頁
         limit: 10 // 一頁幾筆
       },
-      listTotal: 0, // 總筆數
-      confirmLoading: false,
       searchData: ''
     }
   },
@@ -34,14 +32,16 @@ export default {
 
     pagedData() {
       const listData = this.checkMarxScans.filter(data => {
-        if (this.searchData === '' || data.scan_id.toString().includes(this.searchData.toString())) {
-          return data
-        }
+        const isScanId = data.scan_id.toString().includes(this.searchData.toString())
+        if (!this.searchData || isScanId) return data
       })
-      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return listData.slice(start, end)
+    },
+
+    listTotal() {
+      return this.pagedData.length // 總筆數
     }
   },
 
@@ -103,7 +103,6 @@ export default {
     },
 
     async fetchTestReport(reportId) {
-      this.ProjectTestLoading = true
       await getCheckMarxReport(reportId).then(res => {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement('a')
@@ -112,7 +111,6 @@ export default {
         document.body.appendChild(link)
         link.click()
       })
-      this.ProjectTestLoading = false
     },
 
     onPagination(listQuery) {
@@ -156,7 +154,7 @@ export default {
 
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
 
-      <el-table-column align="center" :label="$t('CheckMarx.Status')" width="200">
+      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" width="200">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.run_at | YMDhmA }}</span>
         </template>
