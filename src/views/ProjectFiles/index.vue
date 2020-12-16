@@ -77,7 +77,7 @@ export default {
     showNoProjectWarning() {
       this.$message({
         type: 'warning',
-        message: 'There are no projects currently, please create a new projec.'
+        message: 'There are no projects currently, please create a new project.'
       })
       this.listLoading = false
     },
@@ -85,11 +85,16 @@ export default {
       this.listLoading = true
       await Promise.all([getProjectFileList(this.projectSelectedId), getProjectVersion(this.projectSelectedId)]).then(
         (res) => {
-          this.fileList = res[0].data.files
+          this.fileList = this.sortFiles(res[0].data.files)
           this.versionList = res[1].data.versions
         }
       )
       this.listLoading = false
+    },
+    sortFiles(files) {
+      const sortedFiles = files.map(file => file)
+      sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
+      return sortedFiles
     },
     handleAdding() {
       // this.$refs['upload'].clearFiles()

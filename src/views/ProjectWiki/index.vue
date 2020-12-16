@@ -85,7 +85,7 @@ export default {
     showNoProjectWarning() {
       this.$message({
         type: 'warning',
-        message: 'There are no projects currently, please create a new projec.'
+        message: 'There are no projects currently, please create a new project.'
       })
       this.listLoading = false
     },
