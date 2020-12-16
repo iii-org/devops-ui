@@ -44,7 +44,7 @@ export default {
           { required: true, message: 'Project Identifier is required', trigger: 'blur' },
           {
             required: true,
-            pattern: /^[a-z][a-z0-9-]{0,253}[a-z0-9]$/,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
             message: 'Identifier is invalid.',
             trigger: 'blur'
           }

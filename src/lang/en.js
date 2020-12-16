@@ -222,7 +222,7 @@ export default {
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     IdRule:
-      'Identifier should be 2-255 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
+      'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
     Workload: 'Workload',
     WorkloadValue: 'Workload',
     UpcommingDeadline: 'Upcomming Deadline',
