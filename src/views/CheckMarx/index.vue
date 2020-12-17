@@ -12,8 +12,8 @@ import {
 import ProjectListSelector from '../../components/ProjectListSelector'
 
 export default {
+  name: 'CheckMarx',
   components: { ProjectListSelector, Pagination },
-
   data() {
     return {
       checkMarxScans: [],
@@ -23,38 +23,31 @@ export default {
         page: 1, // 目前第幾頁
         limit: 10 // 一頁幾筆
       },
+      listTotal: 0, // 總筆數
       searchData: ''
     }
   },
-
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
-
     pagedData() {
       const listData = this.checkMarxScans.filter(data => {
         const isScanId = data.scan_id.toString().includes(this.searchData.toString())
         if (!this.searchData || isScanId) return data
       })
+      this.listTotal = listData.length
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return listData.slice(start, end)
-    },
-
-    listTotal() {
-      return this.pagedData.length // 總筆數
     }
   },
-
   watch: {
     projectSelectedId() {
       this.fetchCheckMarxScans(this.projectSelectedId)
     }
   },
-
   created() {
     this.fetchCheckMarxScans(this.projectSelectedId)
   },
-
   methods: {
     async fetchCheckMarxScans(projectId) {
       this.listLoading = true
@@ -64,7 +57,6 @@ export default {
       this.updateMarxScansStatus()
       this.listLoading = false
     },
-
     updateMarxScansStatus() {
       this.checkMarxScans.forEach(item => {
         if (item.status === null) this.fetchStatus(item.scan_id)
@@ -72,7 +64,6 @@ export default {
         if (item.report_id !== -1 && !item.report_ready) this.fetchReportStatus(item.report_id)
       })
     },
-
     fetchStatus(scanId) {
       getCheckMarxScanStatus(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
@@ -80,30 +71,26 @@ export default {
         if (res.data.id === 7) this.fetchStats(scanId)
       })
     },
-
     fetchStats(scanId) {
       getCheckMarxScanStats(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].stats = res.data
       })
     },
-
     rigisterReport(scanId) {
       registerCheckMarxReport(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].reportId = res.data.reportId
       })
     },
-
     fetchReportStatus(reportId) {
       getCheckMarxReportStatus(reportId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.report_id === reportId)
         if (res.data.id === 2) this.checkMarxScans[idx].report_ready = true
       })
     },
-
-    async fetchTestReport(reportId) {
-      await getCheckMarxReport(reportId).then(res => {
+    fetchTestReport(reportId) {
+      getCheckMarxReport(reportId).then(res => {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement('a')
         link.href = url
@@ -124,7 +111,6 @@ export default {
   <div class="app-container">
     <div class="clearfix">
       <project-list-selector />
-
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -134,32 +120,21 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
-
     <el-divider />
-
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" />
-
       <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" />
-
       <el-table-column align="center" :label="$t('CheckMarx.Commit')" prop="commit_id" />
-
       <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" />
-
       <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-
       <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-
       <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-
       <el-table-column align="center" :label="$t('CheckMarx.RunAt')" width="200">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.run_at | YMDhmA }}</span>
         </template>
       </el-table-column>
-
       <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready">
         <template slot-scope="scope">
           <el-link
@@ -175,7 +150,6 @@ export default {
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       :total="listTotal"
       :page="listQuery.page"
