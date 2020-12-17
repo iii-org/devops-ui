@@ -93,15 +93,18 @@ export default {
     SearchScanId: '搜尋 測試編號'
   },
   WebInspect: {
-    Branch: '分支',
-    CommitId: 'Commit ID',
-    ProjectName: '專案名稱',
-    RunAt: '開始時間',
     ScanId: '測試編號',
-    Report: '報告',
+    Branch: '分支',
+    Commit: 'Commit',
     Status: '狀態',
-    Stats: '統計資料',
-    SearchCommitId: '搜尋 Commit ID'
+    Critical: '嚴重',
+    HighSeverity: '高風險',
+    MediumSeverity: '中風險',
+    LowSeverity: '低風險',
+    InfoSeverity: '資訊',
+    RunAt: '開始時間',
+    Report: '報告',
+    SearchCommitId: '搜尋 Commit'
   },
   TestValue: {
     TestValue: '測試資料',

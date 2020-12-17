@@ -93,14 +93,17 @@ export default {
     SearchScanId: 'Search Scan ID'
   },
   WebInspect: {
-    Branch: 'Branch',
-    CommitId: 'Commit',
-    ProjectName: 'Project Name',
-    RunAt: 'Start Time',
     ScanId: 'Scan ID',
+    Branch: 'Branch',
+    Commit: 'Commit',
+    Status: 'Status',
+    Critical: 'Critical',
+    HighSeverity: 'High Severity',
+    MediumSeverity: 'Medium Severity',
+    LowSeverity: 'Low Severity',
+    InfoSeverity: 'Info Severity',
+    RunAt: 'Start Time',
     Report: 'Report',
-    Status: 'status',
-    Stats: 'Stats',
     SearchCommitId: 'Search Commit ID'
   },
   TestValue: {

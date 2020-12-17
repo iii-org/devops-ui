@@ -56,7 +56,7 @@ export default {
     updateWebInspectStatus() {
       this.webInspectScans.forEach(item => {
         if (!item.finished) this.fetchStatus(item.scan_id)
-        // if (item.stats === null) this.fetchStats(item.scan_id)
+        if (item.stats === null) this.fetchStats(item.scan_id)
       })
     },
     fetchStatus(wiScanId) {
@@ -68,8 +68,7 @@ export default {
     fetchStats(wiScanId) {
       getWebInspectStats(wiScanId).then(res => {
         const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        // this.webInspectScans[idx].stats = res.data.severity_count
-        this.webInspectScans[idx].stats = res.data
+        this.webInspectScans[idx].stats = res.data.severity_count
       })
     },
     fetchTestReport(wiScanId) {
@@ -105,16 +104,21 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('WebInspect.CommitId')" prop="commit_id" />
-      <el-table-column align="center" :label="$t('WebInspect.ProjectName')" prop="project_name" />
-      <el-table-column align="center" :label="$t('WebInspect.Stats')" prop="stats" />
+      <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" width="200" />
+      <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" width="100" />
+      <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" width="100" />
+      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="status" width="120" />
+      <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.4" width="100" />
+      <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.3" width="150" />
+      <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.2" width="170" />
+      <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.1" width="150" />
+      <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.0" width="150" />
       <el-table-column align="center" :label="$t('WebInspect.RunAt')" width="200">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.run_at | YMDhmA }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Report')">
+      <el-table-column align="center" :label="$t('WebInspect.Report')" width="100">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.scan_id"
