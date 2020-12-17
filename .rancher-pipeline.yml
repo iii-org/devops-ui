@@ -40,7 +40,7 @@ stages:
   steps:
   - runScriptConfig:
       image: iiiorg/webinspect-runner
-      shellScript: ln -s "$(pwd)" /usr/src/app/repo; cd /usr/src/app; node /usr/src/app/app.js
+      shellScript: ln -s "$(pwd)" /usr/src/app/repo; cd /usr/src/app; node /usr/src/app/app.js; echo $project_name; echo $git_branch; echo $git_commit_id; echo $api_origin; echo $api_username; echo $api_password; echo $wi_base_url; echo $inspect_url
     env:
       project_name: ${CICD_GIT_REPO_NAME}
       git_branch: ${CICD_GIT_BRANCH}
