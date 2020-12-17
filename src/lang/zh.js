@@ -99,6 +99,8 @@ export default {
     RunAt: '開始時間',
     ScanId: '測試編號',
     Report: '報告',
+    Status: '狀態',
+    Stats: '統計資料',
     SearchCommitId: '搜尋 Commit ID'
   },
   TestValue: {

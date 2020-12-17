@@ -9,7 +9,7 @@ export function getWebInspectScans(project_name) {
 
 export function getWebInspectStatus(wi_scan_id) {
   return request({
-    url: `/webinspect/status/${wi_scan_id}}`,
+    url: `/webinspect/status/${wi_scan_id}`,
     method: 'get'
   })
 }

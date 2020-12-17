@@ -99,6 +99,8 @@ export default {
     RunAt: 'Start Time',
     ScanId: 'Scan ID',
     Report: 'Report',
+    Status: 'status',
+    Stats: 'Stats',
     SearchCommitId: 'Search Commit ID'
   },
   TestValue: {
