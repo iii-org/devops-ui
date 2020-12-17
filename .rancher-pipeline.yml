@@ -39,7 +39,7 @@ stages:
 - name: Code Checkmarx test
   steps:
   - runScriptConfig:
-      image: 10.50.1.63:5443/iii-org/checkmarx-runner:devops-system
+      image: 10.50.1.63:5443/iii-org/checkmarx-runner:devops-ui
       shellScript: ln -s "$(pwd)" /usr/src/app/repo; cd /usr/src/app; ls; echo ${api_orign};node app.js;
     env:
       git_url: ${CICD_GIT_URL}
