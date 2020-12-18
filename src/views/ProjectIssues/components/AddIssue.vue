@@ -23,7 +23,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-            <el-select v-model="issueForm.assigned_to_id" style="width: 100%" filterable>
+            <el-select v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
               <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -32,7 +32,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-            <el-select v-model="issueForm.fixed_version_id" style="width: 100%" filterable>
+            <el-select v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
               <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
