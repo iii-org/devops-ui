@@ -12,7 +12,7 @@ import {
 } from '@/api/projects'
 
 export default {
-  name: 'Dashboard',
+  name: 'OverviewProject',
   components: {
     projectPie,
     projectBar,
@@ -181,11 +181,13 @@ export default {
   <div v-loading="isLoading" class="dashboard-container">
     <div class="clearfix">
       <project-list-selector />
-      <el-select v-model="projectVersion" :placeholder="$t('Version.SelectVersion')">
+      <el-select v-model="projectVersion" :placeholder="$t('Version.SelectVersion')" clearable>
         <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
     </div>
+
     <el-divider />
+
     <el-row :gutter="12">
       <el-col :span="12">
         <el-card shadow="hover" style="height: 400px">
@@ -196,6 +198,7 @@ export default {
           <project-pie :the-data="issueprogress" />
         </el-card>
       </el-col>
+
       <el-col :span="12">
         <el-card shadow="hover" style="height:400px">
           <div slot="header" class="clearfix" style="line-height:40px; position: relative">
@@ -227,6 +230,7 @@ export default {
         </el-card>
       </el-col>
     </el-row>
+
     <el-row :gutter="12">
       <el-col :span="12">
         <el-card shadow="hover" style="min-height: 400px">
@@ -240,12 +244,15 @@ export default {
           </el-table>
         </el-card>
       </el-col>
+
       <el-col :span="12">
         <el-card v-loading="ProjectTestLoading" shadow="hover" style="min-height: 400px" class="status-wrap">
           <div slot="header" class="clearfix">
             <span>{{ $t('Project.TestStatus') }}</span>
             <span class="reload-btn">
-              <el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()">Reload</el-button>
+              <el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()">
+                Reload
+              </el-button>
             </span>
           </div>
           <el-table :data="projectdata" stripe style="width: 100%" border>
@@ -337,7 +344,7 @@ export default {
   background-color: #f9fafc;
 }
 
-.el-button--mini.is-circle{
+.el-button--mini.is-circle {
   color: #3ecbbc;
   padding: 0;
   background: none;
@@ -345,35 +352,34 @@ export default {
 }
 </style>
 <style lang="scss">
-.el-table_2_column_4{
+.el-table_2_column_4 {
   text-align: center !important;
 }
 
-.status-wrap th{
+.status-wrap th {
   text-align: center;
   font-weight: 500;
   background-color: #f4f7fa;
 }
 
-.reload-btn{
-  .el-button{
+.reload-btn {
+  .el-button {
     font-size: 16px;
     float: right;
     color: #3ecbbc;
   }
-  i{
+  i {
     font-size: 13px;
   }
 }
 
-.download-btn{
-  color: #FFFFFF !important;
+.download-btn {
+  color: #ffffff !important;
   padding: 6px 22px 7px 20px;
   border-radius: 2px;
   background-color: #68c239;
-  i{
+  i {
     vertical-align: -1px;
   }
 }
-
 </style>
