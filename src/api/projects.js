@@ -211,6 +211,13 @@ export function uploadProjectFile(pId, data) {
   })
 }
 
+export function deleteProjectFile(file_id) {
+  return request({
+    url: '/file/' + file_id,
+    method: 'DELETE'
+  })
+}
+
 export function getProjectUsage(pId) {
   // return {
   //   message: 'success',

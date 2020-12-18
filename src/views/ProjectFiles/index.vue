@@ -3,7 +3,13 @@ import { fileextension } from '../../utils/extension.js'
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import { getProjectFileList, downloadProjectFile, getProjectVersion, uploadProjectFile } from '@/api/projects'
+import {
+  getProjectFileList,
+  downloadProjectFile,
+  getProjectVersion,
+  uploadProjectFile,
+  deleteProjectFile
+} from '@/api/projects'
 const formTemplate = {
   name: '',
   version: '',
@@ -11,6 +17,7 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectFiles',
   components: {
     Pagination,
     ProjectListSelector
@@ -43,7 +50,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
-      const listData = this.fileList.filter((data) => {
+      const listData = this.fileList.filter(data => {
         if (this.searchData === '' || data.filename.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -72,7 +79,7 @@ export default {
       this.listQuery = listQuery
     },
     checkProjectSelected() {
-      (this.projectSelectedId === -1) ? this.showNoProjectWarning() : this.fetchData()
+      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
       this.$message({
@@ -84,7 +91,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       await Promise.all([getProjectFileList(this.projectSelectedId), getProjectVersion(this.projectSelectedId)]).then(
-        (res) => {
+        res => {
           this.fileList = this.sortFiles(res[0].data.files)
           this.versionList = res[1].data.versions
         }
@@ -113,6 +120,16 @@ export default {
       document.body.appendChild(link)
       link.click()
     },
+    async handleDelete(idx, row) {
+      this.listLoading = true
+      try {
+        await deleteProjectFile(row.id)
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
         this.$message.warning(`Unable to upload a file: This file type is not supported`)
@@ -125,7 +142,7 @@ export default {
       }
     },
     async handleConfirm() {
-      this.$refs['fileForm'].validate(async(valid) => {
+      this.$refs['fileForm'].validate(async valid => {
         if (valid) {
           const data = this.fileForm
           // const filetype = this.uploadFileList[0].raw.type.split('/')[1]
@@ -184,6 +201,7 @@ export default {
           {{ $t('File.AddFile') }}
         </el-button>
       </span>
+
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -193,42 +211,63 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
+
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" :label="$t('File.Id')" :show-overflow-tooltip="true" width="100">
+
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+      <el-table-column align="center" :label="$t('File.Id')" :show-overflow-tooltip="true" min-width="40">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
+
+      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
         <template slot-scope="scope">
           {{ scope.row.filename }}
         </template>
       </el-table-column>
+
       <!-- <el-table-column label="Description" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
-      </el-table-column> -->
-      <el-table-column :label="$t('general.Creator')" :show-overflow-tooltip="true">
+      </el-table-column>
+      -->
+      <el-table-column :label="$t('general.Creator')" :show-overflow-tooltip="true" min-width="100">
         <template slot-scope="scope">
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.CreateTime')" width="120px">
+
+      <el-table-column :label="$t('general.CreateTime')" min-width="100">
         <template slot-scope="scope">
           {{ scope.row.created_on | relativeTime }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="150px">
+
+      <el-table-column :label="$t('general.Actions')" align="center" min-width="110">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleDownload(scope.$index, scope.row)">
             <i class="el-icon-download" />
             {{ $t('File.Download') }}
           </el-button>
+
+          <el-popconfirm
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
+            icon="el-icon-info"
+            icon-color="red"
+            title="Are you sure?"
+            @onConfirm="handleDelete(scope.$index, scope.row)"
+          >
+            <el-button slot="reference" size="mini" type="danger">
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
+
     <pagination
       :total="listTotal"
       :page="listQuery.page"
@@ -258,21 +297,25 @@ export default {
             :on-change="handleChange"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</em></div>
+            <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
           </el-upload>
         </el-form-item>
+
         <el-form-item :label="$t('general.Name')" prop="name">
           <el-input v-model="fileForm.name" />
         </el-form-item>
+
         <!-- <el-form-item :label="$t('general.Description')" prop="description">
           <el-input v-model="fileForm.description" type="textarea" />
         </el-form-item> -->
+
         <el-form-item :label="$t('Version.Version')" prop="version">
           <el-select v-model="fileForm.version" :placeholder="$t('Version.SelectVersion')" style="width: 100%">
             <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">{{
@@ -298,6 +341,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss" scoped>
 .upload-file >>> .el-upload-dragger {
   height: 100px;
