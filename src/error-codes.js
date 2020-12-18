@@ -19,6 +19,10 @@ export default {
     en: 'Project id $project_id does not exist in redmine.',
     zh: 'ID 為 $project_id 的專案不存在於 redmine 中。'
   },
+  1006: {
+    en: 'Unable to delete the version.',
+    zh: '無法刪除此版本。'
+  },
   2001: {
     en: 'User id $user_id not found.',
     zh: '找不到 ID 為 $user_id 的使用者。'
