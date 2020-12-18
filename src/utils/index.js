@@ -67,7 +67,7 @@ export function formatTime(time, option) {
   const d = new Date(time)
   const now = Date.now()
 
-  const diff = (now - d) / 1000
+  const diff = Math.abs((now - d) / 1000)
 
   if (diff < 30) {
     return 'Just Now'
