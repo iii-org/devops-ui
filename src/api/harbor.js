@@ -22,16 +22,23 @@ export function deleteHarborRepo(name) {
   })
 }
 
-export function getProjectArtifacts(pId) {
-  return {
-    message: 'success',
-    data: [
-      { tags: '4.6.0-jdk8-alpine', size: '139.95MB', vulnerabilities: 'Unknown (42)', digest: '7418f477', labels: ['release'], pushTime: '2020/03/31' },
-      { tags: '4.7.0-jdk8-alpine', size: '141.05MB', vulnerabilities: 'Unknown (42)', digest: '6093ee35', pushTime: '2020/03/31' }
-    ]
-  }
-  // return request({
-  //   url: `/project/${pId}`,
-  //   method: 'GET'
-  // })
+export function getProjectArtifacts(name) {
+  return request({
+    url: `/harbor/artifacts/${name}`,
+    method: 'GET'
+  })
+}
+
+export function deleteProjectArtifact(name, digest, tag) {
+  return request({
+    url: `/harbor/artifacts/${name}?digest=${digest}&tag=${tag}`,
+    method: 'delete'
+  })
+}
+
+export function getHarborRepoStorageSummary(pId) {
+  return request({
+    url: `/harbor/projects/${pId}/summary`,
+    method: 'get'
+  })
 }

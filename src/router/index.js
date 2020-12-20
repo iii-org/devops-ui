@@ -326,6 +326,7 @@ export const asyncRoutes = [
       {
         path: 'artifacts',
         name: 'Artifacts',
+        hidden: true,
         component: () => import('@/views/ProjectArtifacts/index'),
         meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'] }
       }

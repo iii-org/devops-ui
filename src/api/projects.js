@@ -219,17 +219,6 @@ export function deleteProjectFile(file_id) {
 }
 
 export function getProjectUsage(pId) {
-  // return {
-  //   message: 'success',
-  //   data: {
-  //     cpu: { usage: 1.58, limit: 8 },
-  //     memory: { usage: '8.34GiB', limit: '15.6GiB' },
-  //     pods: { usage: 5, limit: 20 },
-  //     service: { usage: 5, limit: 10 },
-  //     secrets: { usage: 5, limit: 20 },
-  //     images: { usage: '4.3 GiB', limit: '25 GiB' }
-  //   }
-  // }
   return request({
     url: `/project/${pId}/resource`,
     method: 'GET'

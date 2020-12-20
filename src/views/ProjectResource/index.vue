@@ -2,7 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import { getHarborRepoList, editHarborRepo, deleteHarborRepo } from '@/api/harbor'
+import { getHarborRepoList, editHarborRepo, deleteHarborRepo, getHarborRepoStorageSummary } from '@/api/harbor'
 const formTemplate = {
   name: '',
   due_date: '',
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      projectValue: '專科A',
+      projectName: '',
       listLoading: true,
       dialogVisible: false,
       listQuery: {
@@ -31,18 +31,19 @@ export default {
       },
       resourceList: [],
       storage: {
-        name: 'test-project',
-        consumption: {
-          use: 1.48,
-          total: 2
-        }
+        project_admin_count: 0,
+        quota: {
+          hard: { storage: 0 },
+          used: { storage: 0 }
+        },
+        repo_count: 0
       },
       memberConfirmLoading: false,
       form: formTemplate
     }
   },
   computed: {
-    ...mapGetters(['projectSelectedId']),
+    ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
     pagedData() {
       const listData = this.resourceList.filter(data => {
         if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -74,12 +75,15 @@ export default {
       this.listLoading = true
       const res = await getHarborRepoList(this.projectSelectedId)
       this.resourceList = res.data
-      // this.storage = res.data.storage
+      this.projectName = this.projectSelectedObject['name']
+      const storageRes = await getHarborRepoStorageSummary(this.projectSelectedId)
+      this.storage = storageRes.data
+      console.log('this.storage', this.storage)
       this.listLoading = false
     },
-    returnPercentage(consumption) {
-      const total = parseInt(consumption.total)
-      const use = parseInt(consumption.use)
+    returnPercentage(quota) {
+      const total = parseInt(quota.hard.storage)
+      const use = parseInt(quota.used.storage)
       const p = Math.round((use / total) * 100)
       return isNaN(p) ? 0 : p
     },
@@ -143,13 +147,13 @@ export default {
     <el-card shadow="never" style="margin-bottom: 5px">
       <el-row :gutter="24">
         <el-col :span="12" style="font-size: 20px;">
-          {{ storage.name }}
+          {{ projectName }}
         </el-col>
         <el-col :span="4" style="font-size: 20px; text-align: center">
-          {{ storage.consumption.use }} / {{ storage.consumption.total }} GB
+          {{ Math.round(storage.quota.used.storage/1024/1024) }} / {{ Math.round(storage.quota.hard.storage/1024/1024) }} MB
         </el-col>
         <el-col :span="8" style="text-align:right">
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.consumption)" />
+          <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.quota)" />
         </el-col>
       </el-row>
     </el-card>
@@ -162,7 +166,15 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.artifact_count }}
+          <router-link
+            :to="{
+              name: 'Artifacts',
+              params: { rName: scope.row.name }
+            }"
+            style="color: #409eff"
+          >
+            <span>{{ scope.row.artifact_count }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column label="pull">

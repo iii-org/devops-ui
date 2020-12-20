@@ -278,6 +278,7 @@ export default {
     Usage: '使用量',
     Quota: '額度',
     Artifacts: '成品',
-    EditResource: '修改資源'
+    EditResource: '修改資源',
+    Vulnerabilities: '漏洞'
   }
 }

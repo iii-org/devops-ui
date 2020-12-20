@@ -280,6 +280,7 @@ export default {
     Usage: 'Usage',
     Quota: 'Quota',
     Artifacts: 'Artifacts',
-    EditResource: 'Edit Resource'
+    EditResource: 'Edit Resource',
+    Vulnerabilities: 'Vulnerabilities'
   }
 }
