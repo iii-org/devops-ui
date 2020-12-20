@@ -29,7 +29,8 @@ export default {
     'Project Resource': '專案資源',
     Usage: '資源使用量',
     Resource: '資源清單',
-    Artifacts: '資源成品'
+    Artifacts: '資源成品',
+    'Postman result': 'Postman結果'
   },
   navbar: {
     logOut: '登出',
@@ -280,5 +281,12 @@ export default {
     Artifacts: '成品',
     EditResource: '修改資源',
     Vulnerabilities: '漏洞'
+  },
+  Postman: {
+    Id: '編號',
+    Branch: '分支',
+    Success: '成功',
+    Fail: '失敗',
+    StartTime: '開始時間'
   }
 }

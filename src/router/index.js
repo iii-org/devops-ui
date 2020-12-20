@@ -432,6 +432,12 @@ export const asyncRoutes = [
     redirect: '/Test/test-case',
     children: [
       {
+        path: 'postman-result',
+        name: 'Postman result',
+        component: () => import('@/views/PostmanResult/index'),
+        meta: { title: 'Postman result', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
         path: 'test-case',
         name: 'Test Case',
         component: () => import('@/views/TestCase/index'),

@@ -6,3 +6,10 @@ export function getPostmanReport(project_id) {
     method: 'get'
   })
 }
+
+export function getPostmanResult(project_id) {
+  return request({
+    url: `/postman_results/${project_id}`,
+    method: 'get'
+  })
+}

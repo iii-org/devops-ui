@@ -1,14 +1,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import { getPostmanReport } from '@/api/postman'
+import { getPostmanResult } from '@/api/postman'
 import ProjectListSelector from '../../components/ProjectListSelector'
 
 export default {
   components: { ProjectListSelector, Pagination },
   data() {
     return {
-      reportList: [],
+      resultList: [],
       dialogVisible: false,
       listLoading: true,
       listQuery: {
@@ -22,15 +22,10 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
-      const listData = this.reportList.filter(data => {
-        console.log(data.assertions.toString())
+      const listData = this.resultList.filter(data => {
         if (
           this.searchData == '' ||
-          data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-          data.path.toLowerCase().includes(this.searchData.toLowerCase()) ||
-          JSON.stringify(data.assertions)
-            .toLowerCase()
-            .includes(this.searchData.toLowerCase())
+          data.branch.toLowerCase().includes(this.searchData.toLowerCase())
         ) {
           return data
         }
@@ -53,26 +48,13 @@ export default {
     async fetchData() {
       try {
         this.listLoading = true
-        const response = await getPostmanReport(this.projectSelectedId)
-        const { data } = response
-        this.reportList = data.json_file.executions
+        const response = await getPostmanResult(this.projectSelectedId)
+        this.resultList = response.data
       } catch (e) {
         console.log(e)
       } finally {
         this.listLoading = false
       }
-    },
-    testResults(row) {
-      const { assertions } = row
-      let msg = ''
-      assertions.forEach(item => {
-        if ('error_message' in item) {
-          msg = `${msg} <div> ['Failed'] ${item.assertion}, ${item.error_message} </div>`
-        } else {
-          msg = `${msg} <div> ['Passed'] ${item.assertion} </div>`
-        }
-      })
-      return msg
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -87,31 +69,41 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('TestCase.SearchNameOrPathOrTestResult')"
+        :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
         ><i slot="prefix" class="el-input__icon el-icon-search"
       /></el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('Postman.Id')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('Postman.Branch')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{ scope.row.method }}</span>
+          <span>{{ scope.row.branch }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Path')" width="120px">
+      <el-table-column align="center" label="Commit" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.path }}
+          <span>{{ scope.row.commit_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.TestResult')">
+      <el-table-column align="center" :label="$t('Postman.Success')">
         <template slot-scope="scope">
-          <span v-html="testResults(scope.row)" />
+          {{ scope.row.success }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('Postman.Fail')">
+        <template slot-scope="scope">
+          {{ scope.row.failure }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('Postman.StartTime')">
+        <template slot-scope="scope">
+          {{ scope.row.run_at }}
         </template>
       </el-table-column>
     </el-table>

@@ -29,7 +29,8 @@ export default {
     'Project Resource': 'Project Resource',
     Usage: 'Project Usage',
     Resource: 'Project Resource',
-    Artifacts: 'Project Artifacts'
+    Artifacts: 'Project Artifacts',
+    'Postman result': 'Postman Result'
   },
   navbar: {
     logOut: 'Log Out',
@@ -282,5 +283,12 @@ export default {
     Artifacts: 'Artifacts',
     EditResource: 'Edit Resource',
     Vulnerabilities: 'Vulnerabilities'
+  },
+  Postman: {
+    Id: 'Id',
+    Branch: 'Branch',
+    Success: 'Success',
+    Fail: 'Fail',
+    StartTime: 'Start Time'
   }
 }
