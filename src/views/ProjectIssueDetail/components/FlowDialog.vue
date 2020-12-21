@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="$t(`Issue.${dialogTitle}`)" :visible="dialogVisible" width="50%" @close="handleClose">
+  <el-dialog :title="$t('Issue.AddFlow')" :visible="dialogVisible" width="50%" @close="handleClose">
     <el-form ref="flowForm" :model="flowForm" :rules="flowFormRules">
       <el-row v-if="flowId != 0">
         <el-col :span="24">
@@ -8,6 +8,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('general.Name')" prop="name">
@@ -15,6 +16,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('general.Type')" prop="type_id">
@@ -24,6 +26,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('general.Description')" prop="description">
@@ -32,15 +35,18 @@
         </el-col>
       </el-row>
     </el-form>
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
       <el-button type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
+
 <script>
 import { getFlowType } from '@/api/issueFlow'
 export default {
+  name: 'FlowDialog',
   props: {
     dialogVisible: {
       type: Boolean,
@@ -56,6 +62,7 @@ export default {
     },
     saveData: Function
   },
+
   data() {
     return {
       flowTypeList: [],
@@ -81,13 +88,15 @@ export default {
   //     this.fetchData()
   //   }
   // },
+
   created() {
     this.fetchData()
   },
+
   methods: {
     async fetchData() {
       const res = await getFlowType()
-      this.flowTypeList = res.data.map((item) => {
+      this.flowTypeList = res.data.map(item => {
         return { label: item.name, value: item.flow_type_id }
       })
     },
@@ -96,7 +105,7 @@ export default {
       this.$emit('flow-dialog-visible', false)
     },
     handleSave() {
-      this.$refs['flowForm'].validate(async (valid) => {
+      this.$refs['flowForm'].validate(async valid => {
         if (valid) {
           await this.saveData(this.flowForm)
           this.$refs['flowForm'].resetFields()

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="$t(`Issue.${dialogTitle}`)" :visible="dialogVisible" width="50%" @close="handleClose">
+  <el-dialog :title="$t('Issue.AddParameter')" :visible="dialogVisible" width="50%" @close="handleClose">
     <el-form ref="parameterForm" :model="parameterForm" :rules="parameterFormRules">
       <el-row v-if="paramId != 0">
         <el-col :span="24">
@@ -8,6 +8,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('general.Name')" prop="name">
@@ -15,6 +16,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('general.Type')" prop="parameter_type_id">
@@ -24,6 +26,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('Issue.Length')" prop="length">
@@ -31,6 +34,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('Issue.Limit')" prop="limitation">
@@ -38,6 +42,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24">
           <el-form-item :label="$t('general.Description')" prop="description">
@@ -46,15 +51,18 @@
         </el-col>
       </el-row>
     </el-form>
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
       <el-button type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
+
 <script>
 import { getParameterType } from '@/api/issueParameter'
 export default {
+  name: 'ParamDialog',
   props: {
     dialogVisible: {
       type: Boolean,
@@ -70,6 +78,7 @@ export default {
     },
     saveData: Function
   },
+
   data() {
     return {
       parameterTypeList: [],
@@ -95,6 +104,7 @@ export default {
       paramDesc: ''
     }
   },
+
   // updated() {
   //   if (this.paramId === 0) {
   //     this.paramType = ''
@@ -109,10 +119,11 @@ export default {
   created() {
     this.fetchData()
   },
+
   methods: {
     async fetchData() {
       const res = await getParameterType()
-      this.parameterTypeList = res.data.map((item) => {
+      this.parameterTypeList = res.data.map(item => {
         return { label: item.name, value: item.parameter_type_id }
       })
     },
@@ -121,7 +132,7 @@ export default {
       this.$emit('param-dialog-visible', false)
     },
     handleSave() {
-      this.$refs['parameterForm'].validate(async (valid) => {
+      this.$refs['parameterForm'].validate(async valid => {
         if (valid) {
           await this.saveData(this.parameterForm)
           this.$refs['parameterForm'].resetFields()

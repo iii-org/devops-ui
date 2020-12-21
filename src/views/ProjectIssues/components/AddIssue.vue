@@ -9,18 +9,20 @@
   >
     <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
       <el-row>
-        <el-row v-if="parentid != 0">
+        <el-row v-if="parentId != 0">
           <el-col :span="12">
             <el-form-item>
-              <div style="font-weight: bold">Parent issue : {{ parentname }}</div>
+              <div style="font-weight: bold">Parent issue : {{ parentName }}</div>
             </el-form-item>
           </el-col>
         </el-row>
+
         <el-col :span="12">
           <el-form-item :label="$t('general.Name')" prop="subject">
             <el-input v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
             <el-select v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
@@ -29,6 +31,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
@@ -37,6 +40,7 @@
             </el-select>
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item :label="$t('general.Type')" prop="tracker_id">
             <el-select v-model="issueForm.tracker_id" style="width: 100%">
@@ -53,6 +57,7 @@
             </el-select>
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
             <el-select v-model="issueForm.priority_id" style="width: 100%">
@@ -61,12 +66,14 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
             <el-input-number v-model="issueForm.estimated_hours" label="please input hours" style="width: 100%" />
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
             <el-input-number
@@ -79,6 +86,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
@@ -91,6 +99,7 @@
             />
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
             <el-date-picker
@@ -103,6 +112,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('File.Upload')" prop="upload">
@@ -121,6 +131,7 @@
             </el-upload>
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item :label="$t('general.Description')" prop="description">
             <el-input v-model="issueForm.description" type="textarea" :placeholder="$t('general.PleaseInput')" />
@@ -128,17 +139,20 @@
         </el-col>
       </el-row>
     </el-form>
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
       <el-button :loading="LoadingConfirm" type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
+
 <script>
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '../../../utils/extension.js'
 export default {
+  name: 'Addissue',
   props: {
     dialogVisible: {
       type: Boolean,
@@ -148,16 +162,17 @@ export default {
       type: Number,
       default: false
     },
-    parentname: {
+    parentName: {
       type: String,
       default: ''
     },
-    parentid: {
+    parentId: {
       type: Number,
       default: 0
     },
     saveData: Function
   },
+
   data() {
     return {
       issueStatusList: [],
@@ -190,6 +205,7 @@ export default {
       extension: {}
     }
   },
+
   watch: {
     projectId() {
       this.fetchData()
@@ -205,10 +221,12 @@ export default {
       }
     }
   },
+
   mounted() {
     this.fetchData()
     this.extension = fileExtension()
   },
+
   methods: {
     fetchData() {
       Promise.all([
@@ -282,6 +300,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 .el-upload-dragger {
   height: 50px;

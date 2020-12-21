@@ -31,9 +31,11 @@ export default {
       projectUserList: ''
     }
   },
+
   computed: {
     ...mapGetters(['projectSelectedId'])
   },
+
   watch: {
     projectSelectedId() {
       this.fetchData()
@@ -75,11 +77,13 @@ export default {
       this.searchKanbanCard(value, opt)
     }
   },
+
   async created() {
     const issueStatusRes = await getIssueStatus()
     this.issueStatusList = issueStatusRes.data
     this.fetchData()
   },
+
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
     searchKanbanCard(value, opt) {
@@ -109,18 +113,16 @@ export default {
     },
     resetKanbanCard() {
       this.issueStatusList.forEach(item => {
-        if (item.name == 'Active') this.activeList = this.genKanbanCard('Active')
-        if (item.name == 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
-        if (item.name == 'Solved') this.solvedList = this.genKanbanCard('Solved')
-        if (item.name == 'Responded') this.respondedList = this.genKanbanCard('Responded')
-        if (item.name == 'Finished') this.finishedList = this.genKanbanCard('Finished')
-        if (item.name == 'Closed') this.closedList = this.genKanbanCard('Closed')
+        if (item.name === 'Active') this.activeList = this.genKanbanCard('Active')
+        if (item.name === 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
+        if (item.name === 'Solved') this.solvedList = this.genKanbanCard('Solved')
+        if (item.name === 'Responded') this.respondedList = this.genKanbanCard('Responded')
+        if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
+        if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
       })
     },
     genKanbanCard(status) {
-      if (!this.projectIssueList[status])
-        // 該status不存在issue回傳空array
-        return []
+      if (!this.projectIssueList[status]) return [] // 該status不存在issue回傳空array
       return this.projectIssueList[status].map(issue => {
         return {
           name: issue.issue_name,
@@ -149,12 +151,12 @@ export default {
       this.isLoading = false
       this.projectIssueList = projectIssueListRes.data // 取得project全部issue by status
       this.issueStatusList.forEach(item => {
-        if (item.name == 'Active') this.activeList = this.genKanbanCard('Active')
-        if (item.name == 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
-        if (item.name == 'Solved') this.solvedList = this.genKanbanCard('Solved')
-        if (item.name == 'Responded') this.respondedList = this.genKanbanCard('Responded')
-        if (item.name == 'Finished') this.finishedList = this.genKanbanCard('Finished')
-        if (item.name == 'Closed') this.closedList = this.genKanbanCard('Closed')
+        if (item.name === 'Active') this.activeList = this.genKanbanCard('Active')
+        if (item.name === 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
+        if (item.name === 'Solved') this.solvedList = this.genKanbanCard('Solved')
+        if (item.name === 'Responded') this.respondedList = this.genKanbanCard('Responded')
+        if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
+        if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
       })
     },
     async updateIssueStatus(from, to, oldIndex, newIndex) {
@@ -178,22 +180,27 @@ export default {
   }
 }
 </script>
+
 <template>
   <div v-loading="isLoading" class="app-container">
     <div class="clearfix">
       <div>
         <project-list-selector />
+
         <el-select v-model="versionValue" :placeholder="$t('Version.SelectVersion')">
           <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
           <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
+
         <el-select v-model="memberValue" :placeholder="$t('Member.SelectMember')">
           <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
           <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
         </el-select>
       </div>
     </div>
+
     <el-divider />
+
     <div class="components-container board" style="overflow: auto">
       <div style="width: 100%; overflow: auto; padding-bottom: 10px; font-size: 0">
         <Kanban
@@ -254,6 +261,7 @@ export default {
     </div>
   </div>
 </template>
+
 <style lang="scss">
 .board {
   margin-left: 20px;

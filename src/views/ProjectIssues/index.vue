@@ -6,7 +6,9 @@ import AddIssue from './components/AddIssue'
 import { addIssue, deleteIssue } from '@/api/issue'
 import { getProjectIssueList } from '@/api/projects'
 import { Message } from 'element-ui'
+
 export default {
+  name: 'ProjectIssues',
   components: {
     AddIssue,
     ProjectListSelector,
@@ -24,8 +26,8 @@ export default {
       },
       listTotal: 0, // 總筆數
       searchData: '',
-      parentid: 0,
-      parentname: '',
+      parentId: 0,
+      parentName: '',
       parentList: []
     }
   },
@@ -126,8 +128,8 @@ export default {
       this.$router.push({ path: `list/${row.id}` })
     },
     handleParent(idx, row, scope) {
-      this.parentid = row.id
-      this.parentname = row.issue_name
+      this.parentId = row.id
+      this.parentName = row.issue_name
       this.addTopicDialogVisible = true
     },
     async handleDelete(idx, row) {
@@ -174,6 +176,7 @@ export default {
   }
 }
 </script>
+
 <template>
   <div class="app-container">
     <div class="clearfix">
@@ -184,7 +187,7 @@ export default {
             type="success"
             style="float: right"
             :disabled="projectSelectedId === -1"
-            @click=";(addTopicDialogVisible = true), (parentid = 0)"
+            @click=";(addTopicDialogVisible = true), (parentId = 0)"
           >
             <i class="el-icon-plus" />
             {{ $t('Issue.AddIssue') }}
@@ -321,12 +324,13 @@ export default {
       :save-data="saveIssue"
       :dialog-visible.sync="addTopicDialogVisible"
       :project-id="projectSelectedId"
-      :parentid="parentid"
-      :parentname="parentname"
+      :parent-id="parentId"
+      :parent-name="parentName"
       @add-topic-visible="emitAddTopicDialogVisible"
     />
   </div>
 </template>
+
 <style lang="scss">
 .filter-container {
   margin-bottom: 5px;
