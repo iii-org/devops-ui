@@ -137,7 +137,7 @@
 <script>
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
-import { fileextension } from '../../../utils/extension.js'
+import { fileExtension } from '../../../utils/extension.js'
 export default {
   props: {
     dialogVisible: {
@@ -207,7 +207,7 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.extension = fileextension()
+    this.extension = fileExtension()
   },
   methods: {
     fetchData() {

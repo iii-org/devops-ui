@@ -1,5 +1,5 @@
 <script>
-import { fileextension } from '../../utils/extension.js'
+import { fileExtension } from '../../utils/extension.js'
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
@@ -72,7 +72,7 @@ export default {
   },
   mounted() {
     this.checkProjectSelected()
-    this.extension = fileextension()
+    this.extension = fileExtension()
   },
   methods: {
     onPagination(listQuery) {

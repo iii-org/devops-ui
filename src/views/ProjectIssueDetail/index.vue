@@ -11,7 +11,7 @@ import { getTestCaseByIssue } from '@/api/issueTestCase'
 import { getTestItemByCase } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
-import { fileextension } from '../../utils/extension.js'
+import { fileExtension } from '../../utils/extension.js'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -99,7 +99,7 @@ export default {
   },
 
   mounted() {
-    this.extension = fileextension()
+    this.extension = fileExtension()
     this.issueId = parseInt(this.$route.params.issueId)
     this.fetchData()
   },
@@ -202,7 +202,7 @@ export default {
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
-          // deepcopy & remove field with empty value
+          // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
           Object.keys(data).map(item => {
             if (data[item] === '' || !data[item]) delete data[item]
@@ -398,7 +398,7 @@ export default {
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
           {{ $t('Issue.Save') }}
         </el-button>
-        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby', { user: author }) }}</div>
+        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.AddBy', { user: author }) }}</div>
         <div>{{ issueDescription }}</div>
       </div>
 

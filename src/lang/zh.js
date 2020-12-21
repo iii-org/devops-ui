@@ -161,7 +161,7 @@ export default {
     AddParameter: '新增參數',
     Length: '長度',
     Limit: '限制',
-    Addby: '由{user}新增',
+    AddBy: '由{user}新增',
     Author: '作者'
   },
   Wiki: {
@@ -255,7 +255,7 @@ export default {
     Active: '進行中',
     Assigned: '已指派',
     Solved: '已解決',
-    Responsed: '已回覆',
+    Responded: '已回覆',
     Finished: '已完成',
     Closed: '已關閉'
   },

@@ -161,7 +161,7 @@ export default {
     AddParameter: 'Add Parameter',
     Length: 'Length',
     Limit: 'Limit',
-    Addby: 'Added by {user}',
+    AddBy: 'Added by {user}',
     Author: 'Author'
   },
   Wiki: {
@@ -257,7 +257,7 @@ export default {
     Active: 'Active',
     Assigned: 'Assigned',
     Solved: 'Solved',
-    Responsed: 'Responsed',
+    Responded: 'Responded',
     Finished: 'Finished',
     Closed: 'Closed'
   },

@@ -1,18 +1,13 @@
 <template>
   <div class="board-column">
     <div class="board-column-header">
-      <div class="header-bar"></div>
+      <div class="header-bar" />
       <div class="header-text">
         {{ headerText }}
         <!-- <i class="el-icon-more header-icon" /> -->
       </div>
     </div>
-    <draggable
-      :list="list"
-      v-bind="$attrs"
-      :class="[ 'board-column-content', cName ]"
-      @end="end"
-    >
+    <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
         <div style="padding-bottom: 20px">{{ element.name }}</div>
         <div>
@@ -34,7 +29,7 @@
 import draggable from 'vuedraggable'
 
 export default {
-  name: 'DragKanbanDemo',
+  name: 'Kanban',
   components: {
     draggable
   },
@@ -119,7 +114,4 @@ export default {
     }
   }
 }
-
-
 </style>
-

@@ -1,4 +1,4 @@
-export function fileextension() {
+export function fileExtension() {
   const extension = {
     'audio/aac': '.aac',
     'application/x-abiword': '.abw',
@@ -67,10 +67,10 @@ export function fileextension() {
     'application/vnd.mozilla.xul+xml': '.xul',
     'application/zip': '.zip',
     'video/3gpp': '.3gp',
-    'audio/3gpp ': '.3gp',
+    'audio/3gpp': '.3gp',
     'video/3gpp2': '.3g2',
-    'audio/3gpp2 ': '.3g2',
+    'audio/3gpp2': '.3g2',
     'application/x-7z-compressed': '.7z'
   }
-  return (extension)
+  return extension
 }
