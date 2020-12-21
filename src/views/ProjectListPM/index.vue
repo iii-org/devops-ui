@@ -15,6 +15,7 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectListPM',
   components: { Pagination },
   filters: {
     statusFilter(status) {
@@ -53,10 +54,10 @@ export default {
       },
       statusW: '50%',
       confirmLoading: false,
-      Deleteproject: {},
+      deleteProject: {},
       deleteProjectID: '',
-      placeholdertext: '',
-      loadingdelete: ''
+      placeholderText: '',
+      loadingDelete: ''
     }
   },
   computed: {
@@ -105,23 +106,23 @@ export default {
     },
     handleDelete(index, row) {
       this.dialogDelete = true
-      this.Deleteproject['id'] = row.id
-      this.Deleteproject['name'] = row.name
-      this.placeholdertext = 'Please Input ' + this.Deleteproject.name
+      this.deleteProject['id'] = row.id
+      this.deleteProject['name'] = row.name
+      this.placeholderText = 'Please Input ' + this.deleteProject.name
     },
     async handleDeleteModal() {
-      if (this.Deleteproject.name !== this.deleteProjectID) {
+      if (this.deleteProject.name !== this.deleteProjectID) {
         return this.$message({
           message: 'Please input project name correctly.',
           type: 'error'
         })
       } else {
         try {
-          this.loadingdelete = this.$loading({
+          this.loadingDelete = this.$loading({
             target: '.el-dialog',
             text: 'Loading'
           })
-          const res = await this['projects/deleteProject'](this.Deleteproject['id'])
+          const res = await this['projects/deleteProject'](this.deleteProject['id'])
           if (res.message !== 'success') {
             throw new Error()
           }
@@ -129,11 +130,11 @@ export default {
             type: 'success',
             message: 'Delete Successed'
           })
-          this.loadingdelete.close()
+          this.loadingDelete.close()
           this.dialogDelete = false
           this.loadList()
         } catch (err) {
-          this.loadingdelete.close()
+          this.loadingDelete.close()
           console.error(err)
         }
       }
@@ -262,12 +263,13 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         style="width: 250px; float: right"
         :placeholder="$t('Project.SearchProjectName')"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" min-width="200">
         <template slot-scope="scope">
           <!-- <router-link
             :to="{
@@ -280,12 +282,12 @@ export default {
           <!-- <span>{{ scope.row.name }}</span> -->
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Project.Identifier')" width="200" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('Project.Identifier')" min-width="200" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span style="color: #949494; font-weight: 400">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Status')" width="120">
+      <el-table-column align="center" :label="$t('Project.Status')" min-width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{
             scope.row.project_status
@@ -293,17 +295,18 @@ export default {
           <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Progress')" width="250px">
+      <el-table-column align="center" :label="$t('Project.Progress')" min-width="240">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
-          <span class="status-bar-track"
-            ><span
+          <span class="status-bar-track">
+            <span
               class="status-bar"
               :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
-          /></span>
+            />
+          </span>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Quality" width="100px">
+      <!-- <el-table-column align="center" label="Quality" min-width="100px">
         <template slot-scope="scope">
           <div class="d-flex">
             <span class="quality-text">{{ '87%' }}</span>
@@ -318,28 +321,28 @@ export default {
           </div>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" width="170px">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="140">
         <template slot-scope="scope">
           {{ scope.row.updated_time | relativeTime }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="GitLab" width="120px">
+      <el-table-column align="center" label="GitLab" min-width="100">
         <template slot-scope="scope">
           <el-link v-if="scope.row.git_url" type="text" :href="scope.row.git_url" target="_blank">
-            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab</el-link
-          >
+            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab
+          </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="120px">
+      <el-table-column align="center" label="Redmine" min-width="110">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.redmine_url" type="text" :href="scope.row.redmine_url" target="_blank"
-            ><el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine</el-link
-          >
+          <el-link v-if="scope.row.redmine_url" type="text" :href="scope.row.redmine_url" target="_blank">
+            <el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine
+          </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
+      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" min-width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -368,16 +371,17 @@ export default {
       :close-on-click-modal="false"
       @closed="onDialogClosedDelete"
     >
-      <p>{{ $t('Project.deleteProjectComfirmText') }}</p>
+      <p>{{ $t('Project.deleteProjectConfirmText') }}</p>
       <p>
         {{ $t('Project.PleaseType') }}
         <span
           style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;white-space:pre-wrap;"
-          >{{ Deleteproject.name }}</span
         >
+          {{ deleteProject.name }}
+        </span>
         {{ $t('Project.AndThen') }}
       </p>
-      <el-input v-model="deleteProjectID" :placeholder="placeholdertext" />
+      <el-input v-model="deleteProjectID" :placeholder="placeholderText" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDelete = false">{{ $t('general.Cancel') }}</el-button>
         <el-button type="danger" @click="handleDeleteModal">{{ $t('general.Delete') }}</el-button>
@@ -447,6 +451,7 @@ export default {
     </el-dialog>
   </div>
 </template>
+
 <style lang="scss" scoped>
 .clearfix {
   clear: both;

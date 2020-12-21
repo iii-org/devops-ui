@@ -232,7 +232,7 @@ export default {
     Status: '專案狀態',
     Progress: '專案工作進度',
     UpdateTime: '最近更新時間',
-    deleteProjectComfirmText: '確認刪除？',
+    deleteProjectConfirmText: '確認刪除？',
     PleaseType: '請輸入',
     AndThen: '進行刪除或取消操作',
     IdRule: '請輸入2-30個字元的小寫英文或數字組合，中間可包含符號"-"，且不可全為數字',

@@ -232,7 +232,7 @@ export default {
     Status: 'Status',
     Progress: 'Progress',
     UpdateTime: 'Update Time',
-    deleteProjectComfirmText:
+    deleteProjectConfirmText:
       'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
