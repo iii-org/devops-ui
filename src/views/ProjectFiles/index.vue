@@ -310,7 +310,12 @@ export default {
         </el-form-item> -->
 
         <el-form-item :label="$t('Version.Version')" prop="version">
-          <el-select v-model="fileForm.version" :placeholder="$t('Version.SelectVersion')" style="width: 100%">
+          <el-select
+            v-model="fileForm.version"
+            :placeholder="$t('Version.SelectVersion')"
+            style="width: 100%"
+            clearable
+          >
             <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
