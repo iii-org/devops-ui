@@ -267,13 +267,14 @@ export default {
     Branch: '分支'
   },
   ProcessDevBranchTest: {
-    Id: '編號',
-    CommitShortId: 'Commit Short Id',
-    Branch: '分支',
+    Id: '項次',
+    TestItems: '測試項目',
     Status: '狀態',
-    CommitMessage: 'Commit訊息',
-    LastUpdateTime: '最後更新時間',
-    SearchCommitMessage: '搜尋Commit訊息'
+    Commit: 'Commit',
+    Branch: '分支',
+    CommitMessage: '上傳訊息',
+    LastUpdateTime: '最後更新',
+    SearchCommitMessage: '搜尋 Commit 訊息'
   },
   ProjectResource: {
     Usage: '使用量',

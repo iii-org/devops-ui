@@ -270,9 +270,10 @@ export default {
   },
   ProcessDevBranchTest: {
     Id: 'Id',
-    CommitShortId: 'Commit Short Id',
-    Branch: 'Branch',
+    TestItems: 'Test Items',
     Status: 'Status',
+    Commit: 'Commit',
+    Branch: 'Branch',
     CommitMessage: 'Commit Message',
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message'
