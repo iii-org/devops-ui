@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import Sortable from 'sortablejs'
 import ProjectListSelector from '../../components/ProjectListSelector'
@@ -13,10 +13,12 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectDevOps',
   components: {
     ProjectListSelector,
     Pagination
   },
+
   data() {
     return {
       toolList: [
@@ -33,36 +35,36 @@ export default {
           tool_name: 'Maninis'
         }
       ],
-      phaseList: [
-        {
-          phase_name: 'Plan'
-        },
-        {
-          phase_name: 'Code'
-        },
-        {
-          phase_name: 'Code Review'
-        },
-        {
-          phase_name: 'Build'
-        },
-        {
-          phase_name: 'Test'
-        },
-        {
-          phase_name: 'Release'
-        },
-        {
-          phase_name: 'Deploy'
-        },
-        {
-          phase_name: 'Monitor'
-        },
-        {
-          phase_name: 'Extra'
-        }
-      ],
-      projectValue: '專科A',
+      // phaseList: [
+      //   {
+      //     phase_name: 'Plan'
+      //   },
+      //   {
+      //     phase_name: 'Code'
+      //   },
+      //   {
+      //     phase_name: 'Code Review'
+      //   },
+      //   {
+      //     phase_name: 'Build'
+      //   },
+      //   {
+      //     phase_name: 'Test'
+      //   },
+      //   {
+      //     phase_name: 'Release'
+      //   },
+      //   {
+      //     phase_name: 'Deploy'
+      //   },
+      //   {
+      //     phase_name: 'Monitor'
+      //   },
+      //   {
+      //     phase_name: 'Extra'
+      //   }
+      // ],
+      // projectValue: '專科A',
       listLoading: true,
       phaseList: [],
       dialogVisible: false,
@@ -70,18 +72,19 @@ export default {
         page: 1,
         limit: 10
       },
-      listTotal: 0, //總筆數
+      listTotal: 0, // 總筆數
       searchData: '',
       dialogStatus: 1,
       memberConfirmLoading: false,
       form: formTemplate
     }
   },
+
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
     pagedData() {
-      const listData = this.phaseList.filter((data) => {
-        if (this.searchData == '' || data.software.toLowerCase().includes(this.searchData.toLowerCase())) {
+      const listData = this.phaseList.filter(data => {
+        if (this.searchData === '' || data.software.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -101,6 +104,7 @@ export default {
       }
     }
   },
+
   watch: {
     projectSelectedId() {
       this.fetchData()
@@ -109,10 +113,12 @@ export default {
       console.log(value)
     }
   },
+
   mounted() {
     this.fetchData()
     // this.drag()
   },
+
   methods: {
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -124,7 +130,7 @@ export default {
       if (repository_id) {
         try {
           const res = await getPipelinesPhase(repository_id, 'master')
-          this.phaseList = res.data
+          this.phaseList = res.data || []
         } catch (e) {
           console.log(e.message)
         }
@@ -140,7 +146,7 @@ export default {
           pull: false,
           put: false
         },
-        onEnd: (e) => {
+        onEnd: e => {
           // // 这里主要进行数据的处理，拖拽实际并不会改变绑定数据的顺序，这里需要自己做数据的顺序更改
           // let arr = this.Data // 获取表数据
           // arr.splice(e.newIndex, 0, arr.splice(e.oldIndex, 1)[0]) // 数据处理
@@ -190,10 +196,13 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('DevOps.SearchTool')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
+
     <el-divider />
+
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column align="center" :label="$t('DevOps.Id')" :show-overflow-tooltip="true" width="100">
         <template slot-scope="scope">
@@ -201,6 +210,7 @@ export default {
           {{ scope.row.id }}
         </template>
       </el-table-column>
+
       <el-table-column :label="$t('DevOps.Phase')" :show-overflow-tooltip="true" width="160" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.phase === 'deploy'" type="danger" size="big">{{ scope.row.phase }}</el-tag>
@@ -208,16 +218,19 @@ export default {
           <el-tag v-else type="success" size="big">{{ scope.row.phase }}</el-tag>
         </template>
       </el-table-column>
+
       <el-table-column :label="$t('DevOps.Tools')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.software }}
         </template>
       </el-table-column>
+
       <!-- <el-table-column label="Status" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.status ? '啟用' : '停用' }}
         </template>
       </el-table-column>
+
       <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
@@ -248,26 +261,28 @@ export default {
               :key="item.phase_name"
               :label="item.phase_name"
               :value="item.phase_name"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
+
         <el-form-item label="Tools" prop="tools">
           <el-select v-model="form.tool" placeholder="select a tool" style="width: 100%">
-            <el-option v-for="item in toolList" :key="item.tool_name" :label="item.tool_name" :value="item.tool_name">
-            </el-option>
+            <el-option v-for="item in toolList" :key="item.tool_name" :label="item.tool_name" :value="item.tool_name" />
           </el-select>
         </el-form-item>
+
         <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status"></el-switch>
+          <el-switch v-model="form.status" />
         </el-form-item>
+
         <el-form-item label="Description" prop="desc">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+          <el-input v-model="form.desc" type="textarea" />
         </el-form-item>
       </el-form>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleConfirm" :loading="memberConfirmLoading">Confirm</el-button>
+        <el-button :loading="memberConfirmLoading" type="primary" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
