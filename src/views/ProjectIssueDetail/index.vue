@@ -1,9 +1,6 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
-import WangEditor from '@/components/Wangeditor'
 import EditorMD from '@/components/Editormd'
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
@@ -15,14 +12,15 @@ import { getTestItemByCase } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 import { Message } from 'element-ui'
 import { fileextension } from '../../utils/extension.js'
+
 export default {
+  name: 'ProjectIssueDetail',
   components: {
     FlowDialog,
     ParamDialog,
-    Pagination,
     EditorMD
-    // WangEditor
   },
+
   data() {
     return {
       issueAssigneeList: [],
@@ -54,7 +52,7 @@ export default {
       issueDueDate: '',
       issueDescription: '',
       issueNote: '',
-      issueNotenew: '',
+      issueNoteNew: '',
       issueDevStatus: {
         commitMsg: 'V2.1 fix User Login Error',
         commit: '1c715b2b',
@@ -91,6 +89,7 @@ export default {
       issueLoading: false
     }
   },
+
   computed: {
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
@@ -98,11 +97,13 @@ export default {
       return this.issueList.slice(start, end)
     }
   },
+
   mounted() {
     this.extension = fileextension()
     this.issueId = parseInt(this.$route.params.issueId)
     this.fetchData()
   },
+
   methods: {
     fetchData() {
       this.issueLoading = true
@@ -175,27 +176,29 @@ export default {
         this.issueTestCase = res[7].data
       })
     },
+
     returnTagType(row) {
       const { success, total } = row.last_test_result
       return success === total ? 'success' : 'danger'
     },
+
     testResults(row) {
       const { success, total } = row.last_test_result
       return success + ' / ' + total
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
+
     showFlowDialog(flow, title) {
       this.editFlowId = flow === '' ? 0 : flow.id
       this.dialogTitle = title
       this.flowDialogVisible = true
     },
+
     showParamDialog(param, title) {
       this.editParamId = param === '' ? 0 : param.id
       this.dialogTitle = title
       this.paramDialogVisible = true
     },
+
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
@@ -244,9 +247,11 @@ export default {
         }
       })
     },
+
     emitGetEditorData(value) {
       this.issueNote = value
     },
+
     async handleAddComment() {
       await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
@@ -257,10 +262,12 @@ export default {
       })
       this.fetchData()
     },
+
     showAddComment() {
       this.issueNote = ''
       this.commentDialogVisible = true
     },
+
     async saveFlow(data) {
       if (this.projectId > 0) {
         data['project_id'] = this.projectId
@@ -274,6 +281,7 @@ export default {
       })
       this.fetchData()
     },
+
     async deleteFlow(row) {
       await deleteFlow(row.id)
       Message({
@@ -283,6 +291,7 @@ export default {
       })
       this.fetchData()
     },
+
     async getTestItem(case_id) {
       this.choose_testItem = ''
       this.issueTestValue = []
@@ -293,6 +302,7 @@ export default {
         this.issueTestItem = []
       }
     },
+
     async saveParameter(data) {
       if (this.projectId > 0) {
         data['project_id'] = this.projectId
@@ -306,6 +316,7 @@ export default {
       })
       this.fetchData()
     },
+
     async getTestValue(item_id) {
       const testValueList = await getTestValueByItem(item_id)
       const testValueTypeRes = await getTestValueType()
@@ -329,6 +340,7 @@ export default {
         this.issueTestValue = []
       }
     },
+
     async deleteParameter(row) {
       await deleteParameter(row.id)
       Message({
@@ -338,6 +350,7 @@ export default {
       })
       this.fetchData()
     },
+
     async deleteIssueFile(row) {
       await deleteIssueFile(row.id)
       Message({
@@ -347,6 +360,7 @@ export default {
       })
       this.fetchData()
     },
+
     async handleDownload(row) {
       const res = await downloadProjectFile({ id: row.id, filename: row.filename })
       const url = window.URL.createObjectURL(new Blob([res]))
@@ -356,9 +370,11 @@ export default {
       document.body.appendChild(link)
       link.click()
     },
+
     handleExceed(files, fileList) {
       this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
     },
+
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
         this.$message.warning(`Unable to upload a file: This file type is not supported`)
@@ -373,6 +389,7 @@ export default {
   }
 }
 </script>
+
 <template>
   <div class="app-container d-flex">
     <el-card v-loading="issueLoading" class="box-card el-col-10 column custom-list" shadow="never">
@@ -384,6 +401,7 @@ export default {
         <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.Addby', { user: author }) }}</div>
         <div>{{ issueDescription }}</div>
       </div>
+
       <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
         <el-row>
           <el-col :span="12">
@@ -391,9 +409,10 @@ export default {
               <el-input v-model="issueForm.subject" />
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-              <el-select v-model="issueForm.assigned_to_id" style="width: 100%">
+              <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
                 <el-option
                   v-for="item in issueAssigneeList"
                   :key="item.value"
@@ -403,13 +422,15 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-              <el-select v-model="issueForm.fixed_version_id" style="width: 100%">
+              <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
                 <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('general.Type')" prop="tracker_id">
               <el-select v-model="issueForm.tracker_id" style="width: 100%">
@@ -417,6 +438,7 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('general.Status')" prop="status_id">
               <el-select v-model="issueForm.status_id" style="width: 100%">
@@ -424,6 +446,7 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
               <el-select v-model="issueForm.priority_id" style="width: 100%">
@@ -436,17 +459,20 @@ export default {
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
               <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
               <el-input-number v-model="issueForm.estimated_hours" :min="0" :max="100" style="width: 100%" />
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
               <el-input-number v-model="issueForm.done_ratio" :min="0" :max="100" style="width: 100%" />
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
               <el-date-picker
@@ -458,6 +484,7 @@ export default {
               />
             </el-form-item>
           </el-col>
+
           <el-col :span="12">
             <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
               <el-date-picker
@@ -469,6 +496,7 @@ export default {
               />
             </el-form-item>
           </el-col>
+
           <el-col :span="24">
             <el-form-item :label="$t('general.Description')" prop="description">
               <el-input
@@ -479,6 +507,7 @@ export default {
               />
             </el-form-item>
           </el-col>
+
           <el-col :span="24">
             <el-form-item :label="$t('File.Upload')" prop="upload">
               <el-upload
@@ -501,6 +530,7 @@ export default {
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
       <el-tab-pane :label="$t('Issue.Comment')" name="comment">
         <el-button type="primary" @click="showAddComment">{{ $t('Issue.AddComment') }}</el-button>
+
         <el-table
           :data="issueComment"
           element-loading-text="Loading"
@@ -516,6 +546,7 @@ export default {
               <VueShowdown :markdown="scope.row.comment" />
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('Issue.Author')" width="180" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.comment_author">
@@ -523,6 +554,7 @@ export default {
               </span>
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.CreateTime')" width="200" align="center">
             <template slot-scope="scope">
               {{ new Date(scope.row.comment_at).toLocaleString() }}
@@ -530,8 +562,10 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
+
       <el-tab-pane :label="$t('Issue.Flow')" name="Flow">
         <el-button type="primary" @click="showFlowDialog('', 'AddFlow')">{{ $t('Issue.AddFlow') }}</el-button>
+
         <el-table
           :data="issueFlow"
           element-loading-text="Loading"
@@ -546,6 +580,7 @@ export default {
               {{ scope.row.id }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Name')">
             <template slot-scope="scope">
               <!--<span style="color: #409EFF;cursor: pointer;" @click="showFlowDialog(scope.row, 'Edit Flow')">
@@ -554,16 +589,19 @@ export default {
               {{ scope.row.name }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Type')">
             <template slot-scope="scope">
               {{ scope.row.type_name }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Description')">
             <template slot-scope="scope">
               {{ scope.row.description }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Actions')" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
@@ -571,10 +609,12 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
+
       <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
         <el-button type="primary" @click="showParamDialog('', 'AddParameter')">{{
           $t('Issue.AddParameter')
         }}</el-button>
+
         <el-table
           :data="issueParameter"
           element-loading-text="Loading"
@@ -592,26 +632,31 @@ export default {
               </span>-->
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Type')">
             <template slot-scope="scope">
               {{ scope.row.parameter_type }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Description')">
             <template slot-scope="scope">
               {{ scope.row.description }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('Issue.Limit')">
             <template slot-scope="scope">
               {{ scope.row.limitation }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('Issue.Length')">
             <template slot-scope="scope">
               {{ scope.row.length }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Actions')" width="120" align="center">
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">{{
@@ -621,6 +666,7 @@ export default {
           </el-table-column>
         </el-table>
       </el-tab-pane>
+
       <el-tab-pane :label="$t('File.File')" name="file">
         <el-table
           :data="issueFile"
@@ -638,11 +684,13 @@ export default {
               </span>
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.CreateTime')" align="center">
             <template slot-scope="scope">
               {{ new Date(scope.row.created_on).toLocaleString() }}
             </template>
           </el-table-column>
+
           <el-table-column :label="$t('general.Actions')" align="center">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="handleDownload(scope.row)">
@@ -657,6 +705,7 @@ export default {
         </el-table>
       </el-tab-pane>
     </el-tabs>
+
     <el-dialog
       :title="$t('Issue.AddComment')"
       :visible="commentDialogVisible"
@@ -664,20 +713,22 @@ export default {
       :close-on-click-modal="false"
       @close="commentDialogVisible = false"
     >
-      <!-- <WangEditor :content="issueNote" @get-editor-data="emitGetEditorData" /> -->
       <template>
         <EditorMD
           v-if="commentDialogVisible"
           id="editormd"
-          :content="issueNotenew"
+          :content="issueNoteNew"
           @get-editor-data="emitGetEditorData"
         />
       </template>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+
         <el-button type="primary" @click="handleAddComment">{{ $t('general.Confirm') }}</el-button>
       </span>
     </el-dialog>
+
     <flow-dialog
       :dialog-title="dialogTitle"
       :flow-id="editFlowId"
@@ -685,6 +736,7 @@ export default {
       :save-data="saveFlow"
       @flow-dialog-visible="flowDialogVisible = false"
     />
+
     <param-dialog
       :dialog-title="dialogTitle"
       :param-id="editParamId"
@@ -694,6 +746,7 @@ export default {
     />
   </div>
 </template>
+
 <style lang="scss">
 .filter-container {
   margin-bottom: 5px;
