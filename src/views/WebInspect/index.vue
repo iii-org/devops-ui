@@ -48,16 +48,26 @@ export default {
     async fetchWebInspectScans(projectName) {
       this.listLoading = true
       await getWebInspectScans(projectName).then(res => {
-        this.webInspectScans = res.data.map(item => item)
+        this.webInspectScans = this.sortScans(res.data)
       })
-      this.updateWebInspectStatus()
+      await this.updateWebInspectStatus()
       this.listLoading = false
     },
+    sortScans(webInspectScans) {
+      const sortedScans = webInspectScans.map(scan => scan)
+      sortedScans.forEach(i => {
+        i.status = ''
+      })
+      sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
+      return sortedScans
+    },
     updateWebInspectStatus() {
+      this.listLoading = true
       this.webInspectScans.forEach(item => {
-        if (!item.finished) this.fetchStatus(item.scan_id)
+        if (!item.status) this.fetchStatus(item.scan_id)
         if (item.stats === null) this.fetchStats(item.scan_id)
       })
+      this.listLoading = false
     },
     fetchStatus(wiScanId) {
       getWebInspectStatus(wiScanId).then(res => {
