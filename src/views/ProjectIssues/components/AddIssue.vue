@@ -268,7 +268,7 @@ export default {
           // because have file need upload so use formData object
           const form = new FormData()
           form.append('project_id', this.projectId)
-          if (this.parentid) form.append('parent_id', this.parentid)
+          if (this.parentId) form.append('parent_id', this.parentId)
           Object.keys(data).forEach(objKey => {
             form.append(objKey, data[objKey])
           })
