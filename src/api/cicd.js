@@ -8,6 +8,14 @@ export function getPipelines(repository_id) {
   })
 }
 
+export function changePipelineByAction(repository_id, data) {
+  return request({
+    url: `/pipelines/${repository_id}/pipelines_exec/action`,
+    method: 'post',
+    data
+  })
+}
+
 export function getPipeline(id) {
   return request({
     url: `/pipelines`,
@@ -21,7 +29,8 @@ export function getStages(id) {
     method: 'get'
   })
 }
-//CI/CD 詳細記錄 [測試詳細記錄]
+
+// CI/CD 詳細記錄 [測試詳細記錄]
 export function getPipelinesLogs(params) {
   return request({
     url: `/pipelines/logs`,

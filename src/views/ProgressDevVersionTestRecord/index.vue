@@ -2,7 +2,7 @@
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import TestDetail from './components/TestDetail'
-import { getPipelines, getPipelinesLogs } from '@/api/cicd'
+import { getPipelines, getPipelinesLogs, changePipelineByAction } from '@/api/cicd'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { formatTime } from '../../utils/index.js'
 
@@ -120,16 +120,21 @@ export default {
       this.isLoading = false
     },
 
-    onStopClick(row) {
-      this.isLoading = true
-
-      this.isLoading = false
-    },
-
-    onRerunClick(row) {
-      this.isLoading = true
-
-      this.isLoading = false
+    async onActionClick(id, action) {
+      const { repository_id } = this.projectSelectedObject
+      const data = {
+        pipelines_exec_run: id,
+        action
+      }
+      this.listLoading = true
+      await changePipelineByAction(repository_id, data)
+        .then(res => {
+          this.fetchData()
+        })
+        .catch(err => {
+          this.listLoading = false
+          return err
+        })
     }
   }
 }
@@ -205,7 +210,7 @@ export default {
         :label="$t('ProcessDevBranchTest.Commit')"
         :show-overflow-tooltip="true"
         align="center"
-        min-width="220"
+        min-width="180"
       >
         <template slot-scope="scope">
           {{ scope.row.commit_id }}
@@ -240,7 +245,7 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="180">
+      <el-table-column :label="$t('general.Actions')" align="center" min-width="230">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row)">
             <i class="el-icon-document" />
@@ -252,12 +257,14 @@ export default {
             size="mini"
             type="danger"
             plain
-            @click="onStopClick(scope.row)"
+            @click="onActionClick(scope.row.id, 'stop')"
           >
+            <i class="el-icon-circle-close" />
             stop
           </el-button>
 
-          <el-button v-else size="mini" type="primary" plain @click="onRerunClick(scope.row)">
+          <el-button v-else size="mini" type="primary" plain @click="onActionClick(scope.row.id, 'rerun')">
+            <i class="el-icon-refresh-left" />
             rerun
           </el-button>
         </template>
