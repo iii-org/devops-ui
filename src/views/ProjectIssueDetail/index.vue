@@ -1,7 +1,8 @@
 <script>
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
-import EditorMD from '@/components/Editormd'
+import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './components'
+
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion, downloadProjectFile } from '@/api/projects'
@@ -16,9 +17,13 @@ import { fileExtension } from '../../utils/extension.js'
 export default {
   name: 'ProjectIssueDetail',
   components: {
-    FlowDialog,
+    IssueForm,
+    CommentTab,
+    FlowTab,
+    ParameterTab,
+    FileTab,
     ParamDialog,
-    EditorMD
+    FlowDialog
   },
 
   data() {
@@ -51,8 +56,7 @@ export default {
       issueStartDate: '',
       issueDueDate: '',
       issueDescription: '',
-      issueNote: '',
-      issueNoteNew: '',
+
       issueDevStatus: {
         commitMsg: 'V2.1 fix User Login Error',
         commit: '1c715b2b',
@@ -68,7 +72,6 @@ export default {
       issueTestCase: [],
       issueTestItem: [],
       issueTestValue: [],
-      issueComment: [],
       issueFile: [],
       activeName: 'comment',
       commentDialogVisible: false,
@@ -86,7 +89,10 @@ export default {
       choose_testCase: '',
       choose_testItem: '',
       author: '',
-      issueLoading: false
+      issueLoading: false,
+
+      // CommentTab
+      issueComment: []
     }
   },
 
@@ -247,27 +253,6 @@ export default {
         }
       })
     },
-
-    emitGetEditorData(value) {
-      this.issueNote = value
-    },
-
-    async handleAddComment() {
-      await updateIssue(this.issueId, { notes: this.issueNote })
-      this.commentDialogVisible = false
-      Message({
-        message: 'update successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
-    },
-
-    showAddComment() {
-      this.issueNote = ''
-      this.commentDialogVisible = true
-    },
-
     async saveFlow(data) {
       if (this.projectId > 0) {
         data['project_id'] = this.projectId
@@ -529,38 +514,7 @@ export default {
 
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
       <el-tab-pane :label="$t('Issue.Comment')" name="comment">
-        <el-button type="primary" @click="showAddComment">{{ $t('Issue.AddComment') }}</el-button>
-
-        <el-table
-          :data="issueComment"
-          element-loading-text="Loading"
-          border
-          fit
-          highlight-current-row
-          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
-        >
-          <el-table-column :label="$t('Issue.Comment')">
-            <template slot-scope="scope">
-              <!-- <div v-html="scope.row.comment" /> -->
-              <VueShowdown :markdown="scope.row.comment" />
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('Issue.Author')" width="180" align="center">
-            <template slot-scope="scope">
-              <span v-if="scope.row.comment_author">
-                {{ scope.row.comment_author }}
-              </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.CreateTime')" width="200" align="center">
-            <template slot-scope="scope">
-              {{ new Date(scope.row.comment_at).toLocaleString() }}
-            </template>
-          </el-table-column>
-        </el-table>
+        <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="fetchData" />
       </el-tab-pane>
 
       <el-tab-pane :label="$t('Issue.Flow')" name="Flow">
@@ -705,29 +659,6 @@ export default {
         </el-table>
       </el-tab-pane>
     </el-tabs>
-
-    <el-dialog
-      :title="$t('Issue.AddComment')"
-      :visible="commentDialogVisible"
-      width="70%"
-      :close-on-click-modal="false"
-      @close="commentDialogVisible = false"
-    >
-      <template>
-        <EditorMD
-          v-if="commentDialogVisible"
-          id="editormd"
-          :content="issueNoteNew"
-          @get-editor-data="emitGetEditorData"
-        />
-      </template>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="commentDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-
-        <el-button type="primary" @click="handleAddComment">{{ $t('general.Confirm') }}</el-button>
-      </span>
-    </el-dialog>
 
     <flow-dialog
       :dialog-title="dialogTitle"
