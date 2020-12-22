@@ -1,16 +1,11 @@
 <script>
 import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './components'
-
 import { getIssue } from '@/api/issue'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { getFlowByIssue, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue } from '@/api/issueParameter'
-import { getTestCaseByIssue } from '@/api/issueTestCase'
-import { getTestItemByCase } from '@/api/issueTestItem'
-import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
-import { Message } from 'element-ui'
-import { fileExtension } from '../../utils/extension.js'
+// import { getTestCaseByIssue } from '@/api/issueTestCase'
+// import { getTestItemByCase } from '@/api/issueTestItem'
+// import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -24,61 +19,13 @@ export default {
 
   data() {
     return {
-      issueAssigneeList: [],
-      issueTypeList: [],
-      issueStatusList: [],
-      issuePriorityList: [],
-      issueVersionList: [],
-      issueForm: {
-        subject: '',
-        fixed_version_id: '',
-        priority_id: '',
-        status_id: '',
-        assigned_to_id: '',
-        tracker_id: '',
-        done_ratio: 0,
-        estimated_hours: '',
-        start_date: '',
-        due_date: '',
-        description: ''
-      },
-      issueFormRules: {
-        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
-        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
-        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
-      },
-      issueName: '',
-      issueStartDate: '',
-      issueDueDate: '',
+      // issueName: '',
+      // issueStartDate: '',
+      // issueDueDate: '',
       issueDescription: '',
-
-      issueDevStatus: {
-        commitMsg: 'V2.1 fix User Login Error',
-        commit: '1c715b2b',
-        commitData: '2020-07-25T07:20:11Z',
-        last_test_result: {
-          success: 10,
-          total: 15
-        }
-      },
-      issueNeedTest: true,
-
-      issueTestCase: [],
-      issueTestItem: [],
-      issueTestValue: [],
       activeName: 'comment',
-      commentDialogVisible: false,
-
-      editTestId: 0,
-      editTestItemId: 0,
-      editTestValueId: 0,
-
       issueId: 0,
       projectId: 0,
-      issue_detail: {},
-      choose_testCase: '',
-      choose_testItem: '',
       author: '',
       issueLoading: false,
 
@@ -89,7 +36,29 @@ export default {
       // ParameterTab
       issueParameter: [],
       // FileTab
-      issueFile: []
+      issueFile: [],
+
+      formData: {}
+
+      // issueDevStatus: {
+      //   commitMsg: 'V2.1 fix User Login Error',
+      //   commit: '1c715b2b',
+      //   commitData: '2020-07-25T07:20:11Z',
+      //   last_test_result: {
+      //     success: 10,
+      //     total: 15
+      //   }
+      // },
+      // issueNeedTest: true,
+      // issueTestCase: [],
+      // issueTestItem: [],
+      // issueTestValue: [],
+      // editTestId: 0,
+      // editTestItemId: 0,
+      // editTestValueId: 0,
+      // issue_detail: {},
+      // choose_testCase: '',
+      // choose_testItem: '',
     }
   },
 
@@ -102,7 +71,6 @@ export default {
   },
 
   mounted() {
-    this.extension = fileExtension()
     this.issueId = parseInt(this.$route.params.issueId)
     this.fetchData()
   },
@@ -111,40 +79,30 @@ export default {
     fetchData() {
       this.issueLoading = true
       Promise.all([
-        getIssueStatus(),
-        getIssueTracker(),
-        getIssuePriority(),
         getIssue(this.issueId),
         getFlowByIssue(this.issueId),
         getFlowType(),
-        getParameterByIssue(this.issueId),
-        getTestCaseByIssue(this.issueId)
+        getParameterByIssue(this.issueId)
+        // getTestCaseByIssue(this.issueId)
       ]).then(res => {
-        this.issueStatusList = res[0].data.map(item => {
-          return { label: item.name, value: item.id }
-        })
-        this.issueTypeList = res[1].data.map(item => {
-          return { label: item.name, value: item.id }
-        })
-        this.issuePriorityList = res[2].data.map(item => {
-          return { label: item.name, value: item.id }
-        })
-        const issueDetail = res[3].data
+        const issueDetail = res[0].data
         this.projectId = issueDetail.project.id
-        getProjectAssignable(this.projectId).then(assignable => {
-          this.issueAssigneeList = assignable.data.user_list.map(item => {
-            return { label: item.login, value: item.id }
-          })
+        this.author = issueDetail.author.name
+        // fetch issue flow type
+        const issueFlowType = res[2].data
+        // fetch comment
+        this.issueComment = issueDetail.journals.map(item => {
+          return {
+            comment: item.notes,
+            comment_author: item.user.name,
+            comment_at: item.created_on
+          }
         })
-        getProjectVersion(this.projectId).then(versions => {
-          this.issueVersionList = versions.data.versions.map(item => {
-            return { label: item.name, value: item.id }
-          })
-        })
-        const issueFlowType = res[5].data
+
+        // fetch flow
         this.issueFlow = []
-        if (Array.isArray(res[4].data) && res[4].data.length > 0) {
-          this.issueFlow = res[4].data[0].flow_data.map(item => {
+        if (Array.isArray(res[1].data) && res[1].data.length > 0) {
+          this.issueFlow = res[1].data[0].flow_data.map(item => {
             const issueType = issueFlowType.find(type => {
               return type.flow_type_id === item.type_id
             })
@@ -153,142 +111,77 @@ export default {
           })
         }
 
+        // fetch parameter
+        this.issueParameter = res[3].data
+
+        // fetch file
         this.issueFile = issueDetail.attachments
-        this.issueParameter = res[6].data
-        this.author = issueDetail.author.name
-        this.issueForm.subject = issueDetail.subject
-        this.issueForm.start_date = issueDetail.start_date && issueDetail.start_date
-        this.issueForm.due_date = issueDetail.due_date && issueDetail.due_date
-        this.issueForm.estimated_hours = issueDetail.estimated_hours && issueDetail.estimated_hours
-        this.issueForm.status_id = issueDetail.status && issueDetail.status.id
-        this.issueForm.assigned_to_id = issueDetail.assigned_to && issueDetail.assigned_to.id
-        this.issueForm.priority_id = issueDetail.priority && issueDetail.priority.id
-        this.issueForm.done_ratio = issueDetail.done_ratio && issueDetail.done_ratio
-        this.issueForm.tracker_id = issueDetail.tracker && issueDetail.tracker.id
-        this.issueForm.description = issueDetail.description && issueDetail.description
-        this.projectId = issueDetail.project.id
-        if (issueDetail.fixed_version) this.issueForm.fixed_version_id = issueDetail.fixed_version.id
-        this.issueComment = issueDetail.journals.map(item => {
-          return {
-            comment: item.notes,
-            comment_author: item.user.name,
-            comment_at: item.created_on
-          }
-        })
+
+        this.formData.subject = issueDetail.subject
+        if (issueDetail.assigned_to) this.formData.assigned_to_id = issueDetail.assigned_to.id
+        if (issueDetail.fixed_version) this.formData.fixed_version_id = issueDetail.fixed_version.id
+        this.formData.tracker_id = issueDetail.tracker && issueDetail.tracker.id
+        this.formData.status_id = issueDetail.status && issueDetail.status.id
+        this.formData.priority_id = issueDetail.priority && issueDetail.priority.id
+        this.formData.estimated_hours = issueDetail.estimated_hours && issueDetail.estimated_hours
+        this.formData.done_ratio = issueDetail.done_ratio && issueDetail.done_ratio
+        this.formData.start_date = issueDetail.start_date && issueDetail.start_date
+        this.formData.due_date = issueDetail.due_date && issueDetail.due_date
+        this.formData.description = issueDetail.description && issueDetail.description
+
         this.issueLoading = false
-        this.issueTestCase = res[7].data
+        // this.issueTestCase = res[4].data
       })
-    },
-
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      return success === total ? 'success' : 'danger'
-    },
-
-    testResults(row) {
-      const { success, total } = row.last_test_result
-      return success + ' / ' + total
-    },
-
-    async handleSaveDetail() {
-      this.$refs['issueForm'].validate(async valid => {
-        if (valid) {
-          // deep copy & remove field with empty value
-          const data = JSON.parse(JSON.stringify(this.issueForm))
-          Object.keys(data).map(item => {
-            if (data[item] === '' || !data[item]) delete data[item]
-          })
-
-          const form = new FormData()
-          Object.keys(data).forEach(objKey => {
-            form.append(objKey, data[objKey])
-          })
-          this.issueLoading = true
-          const issueId = this.issueId
-          if (this.uploadFileList && this.uploadFileList.length > 0) {
-            // use one by one edit issue to upload file
-            this.uploadFileList
-              .reduce(function(prev, curr) {
-                return prev.then(() => {
-                  form.delete('upload_file')
-                  form.append('upload_file', curr.raw, curr.raw.name)
-                  return updateIssue(issueId, form)
-                })
-              }, Promise.resolve([]))
-              .then(() => {
-                this.$refs['upload'].clearFiles()
-                this.issueLoading = false
-                Message({
-                  message: 'update successful',
-                  type: 'success',
-                  duration: 1 * 1000
-                })
-              })
-          } else {
-            await updateIssue(this.issueId, form)
-            this.issueLoading = false
-            Message({
-              message: 'update successful',
-              type: 'success',
-              duration: 1 * 1000
-            })
-          }
-        } else {
-          return false
-        }
-      })
-    },
-
-    async getTestItem(case_id) {
-      this.choose_testItem = ''
-      this.issueTestValue = []
-      const testItemList = await getTestItemByCase(case_id)
-      if (testItemList.data.length > 0) {
-        this.issueTestItem = testItemList.data
-      } else {
-        this.issueTestItem = []
-      }
-    },
-
-    async getTestValue(item_id) {
-      const testValueList = await getTestValueByItem(item_id)
-      const testValueTypeRes = await getTestValueType()
-      const testValueTypeList = testValueTypeRes.data
-      const testValueLocationRes = await getTestValueLocation()
-      const testValueLocationList = testValueLocationRes.data
-
-      if (testValueList.data.length > 0) {
-        this.issueTestValue = testValueList.data.map(item => {
-          const valueType = testValueTypeList.find(type => {
-            return item.type_id === type.type_id
-          })
-          item.type = valueType.type_name
-          const valueLocation = testValueLocationList.find(location => {
-            return item.location_id === location.location_id
-          })
-          item.location = valueLocation.type_name
-          return item
-        })
-      } else {
-        this.issueTestValue = []
-      }
-    },
-
-    handleExceed(files, fileList) {
-      this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
-    },
-
-    async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
-        this.$message.warning(`Unable to upload a file: This file type is not supported`)
-        this.$refs['upload'].clearFiles()
-      } else if (file.size / 1024 > 20480) {
-        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`)
-        this.$refs['upload'].clearFiles()
-      } else {
-        this.uploadFileList = fileList
-      }
     }
+
+    // returnTagType(row) {
+    //   const { success, total } = row.last_test_result
+    //   return success === total ? 'success' : 'danger'
+    // },
+
+    // testResults(row) {
+    //   const { success, total } = row.last_test_result
+    //   return success + ' / ' + total
+    // },
+
+    // async getTestItem(case_id) {
+    //   this.choose_testItem = ''
+    //   this.issueTestValue = []
+    //   const testItemList = await getTestItemByCase(case_id)
+    //   if (testItemList.data.length > 0) {
+    //     this.issueTestItem = testItemList.data
+    //   } else {
+    //     this.issueTestItem = []
+    //   }
+    // },
+
+    // async getTestValue(item_id) {
+    //   const testValueList = await getTestValueByItem(item_id)
+    //   const testValueTypeRes = await getTestValueType()
+    //   const testValueTypeList = testValueTypeRes.data
+    //   const testValueLocationRes = await getTestValueLocation()
+    //   const testValueLocationList = testValueLocationRes.data
+
+    //   if (testValueList.data.length > 0) {
+    //     this.issueTestValue = testValueList.data.map(item => {
+    //       const valueType = testValueTypeList.find(type => {
+    //         return item.type_id === type.type_id
+    //       })
+    //       item.type = valueType.type_name
+    //       const valueLocation = testValueLocationList.find(location => {
+    //         return item.location_id === location.location_id
+    //       })
+    //       item.location = valueLocation.type_name
+    //       return item
+    //     })
+    //   } else {
+    //     this.issueTestValue = []
+    //   }
+    // }
+
+    // handleExceed(files, fileList) {
+    //   this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
+    // }
   }
 }
 </script>
@@ -296,138 +189,7 @@ export default {
 <template>
   <div class="app-container d-flex">
     <el-card v-loading="issueLoading" class="box-card el-col-10 column custom-list" shadow="never">
-      <div slot="header" class="clearfix">
-        <span style="font-size: 25px; padding-bottom: 10px">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
-        <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
-          {{ $t('Issue.Save') }}
-        </el-button>
-        <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.AddBy', { user: author }) }}</div>
-        <div>{{ issueDescription }}</div>
-      </div>
-
-      <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="$t('general.Name')" prop="subject">
-              <el-input v-model="issueForm.subject" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-              <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
-                <el-option
-                  v-for="item in issueAssigneeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-              <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
-                <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('general.Type')" prop="tracker_id">
-              <el-select v-model="issueForm.tracker_id" style="width: 100%">
-                <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('general.Status')" prop="status_id">
-              <el-select v-model="issueForm.status_id" style="width: 100%">
-                <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-              <el-select v-model="issueForm.priority_id" style="width: 100%">
-                <el-option
-                  v-for="item in issuePriorityList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
-              <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
-              <el-input-number v-model="issueForm.estimated_hours" :min="0" :max="100" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
-              <el-input-number v-model="issueForm.done_ratio" :min="0" :max="100" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
-              <el-date-picker
-                v-model="issueForm.start_date"
-                type="date"
-                placeholder="Select Date"
-                style="width: 100%"
-                value-format="yyyy-MM-dd"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
-              <el-date-picker
-                v-model="issueForm.due_date"
-                type="date"
-                placeholder="Select Date"
-                style="width: 100%"
-                value-format="yyyy-MM-dd"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24">
-            <el-form-item :label="$t('general.Description')" prop="description">
-              <el-input
-                v-model="issueForm.description"
-                type="textarea"
-                rows="4"
-                placeholder="please input description"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24">
-            <el-form-item :label="$t('File.Upload')" prop="upload">
-              <el-upload
-                ref="upload"
-                class="upload-file2"
-                drag
-                action=""
-                :auto-upload="false"
-                :on-change="handleChange"
-              >
-                <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
-                <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+      <IssueForm v-if="projectId !== 0" :issue-id="issueId" :project-id="projectId" :author="author" :issue-form-ref="formData" @updated="fetchData" />
     </el-card>
 
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
