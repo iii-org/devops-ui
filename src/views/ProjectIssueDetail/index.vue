@@ -1,12 +1,11 @@
 <script>
-import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
 import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './components'
 
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion, downloadProjectFile } from '@/api/projects'
-import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
+import { getFlowByIssue, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { getTestCaseByIssue } from '@/api/issueTestCase'
 import { getTestItemByCase } from '@/api/issueTestItem'
@@ -22,8 +21,7 @@ export default {
     FlowTab,
     ParameterTab,
     FileTab,
-    ParamDialog,
-    FlowDialog
+    ParamDialog
   },
 
   data() {
@@ -67,7 +65,7 @@ export default {
         }
       },
       issueNeedTest: true,
-      issueFlow: [],
+
       issueParameter: [],
       issueTestCase: [],
       issueTestItem: [],
@@ -75,9 +73,7 @@ export default {
       issueFile: [],
       activeName: 'comment',
       commentDialogVisible: false,
-      flowDialogVisible: false,
       paramDialogVisible: false,
-      editFlowId: 0,
       editParamId: 0,
       editTestId: 0,
       editTestItemId: 0,
@@ -92,7 +88,9 @@ export default {
       issueLoading: false,
 
       // CommentTab
-      issueComment: []
+      issueComment: [],
+      // FlowTab
+      issueFlow: []
     }
   },
 
@@ -193,12 +191,6 @@ export default {
       return success + ' / ' + total
     },
 
-    showFlowDialog(flow, title) {
-      this.editFlowId = flow === '' ? 0 : flow.id
-      this.dialogTitle = title
-      this.flowDialogVisible = true
-    },
-
     showParamDialog(param, title) {
       this.editParamId = param === '' ? 0 : param.id
       this.dialogTitle = title
@@ -252,29 +244,6 @@ export default {
           return false
         }
       })
-    },
-    async saveFlow(data) {
-      if (this.projectId > 0) {
-        data['project_id'] = this.projectId
-      }
-      await addFlowByIssue(this.issueId, data)
-      this.flowDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
-    },
-
-    async deleteFlow(row) {
-      await deleteFlow(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
     },
 
     async getTestItem(case_id) {
@@ -517,51 +486,8 @@ export default {
         <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="fetchData" />
       </el-tab-pane>
 
-      <el-tab-pane :label="$t('Issue.Flow')" name="Flow">
-        <el-button type="primary" @click="showFlowDialog('', 'AddFlow')">{{ $t('Issue.AddFlow') }}</el-button>
-
-        <el-table
-          :data="issueFlow"
-          element-loading-text="Loading"
-          border
-          fit
-          highlight-current-row
-          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
-        >
-          <el-table-column :label="$t('Issue.FlowId')">
-            <template slot-scope="scope">
-              {{ scope.row.id }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Name')">
-            <template slot-scope="scope">
-              <!--<span style="color: #409EFF;cursor: pointer;" @click="showFlowDialog(scope.row, 'Edit Flow')">
-                {{ scope.row.name }}
-              </span>-->
-              {{ scope.row.name }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Type')">
-            <template slot-scope="scope">
-              {{ scope.row.type_name }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Description')">
-            <template slot-scope="scope">
-              {{ scope.row.description }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Actions')" width="120" align="center">
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-tab-pane :label="$t('Issue.Flow')" name="flow">
+        <FlowTab :issue-id="issueId" :issue-flow="issueFlow" @updated="fetchData" />
       </el-tab-pane>
 
       <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
@@ -659,14 +585,6 @@ export default {
         </el-table>
       </el-tab-pane>
     </el-tabs>
-
-    <flow-dialog
-      :dialog-title="dialogTitle"
-      :flow-id="editFlowId"
-      :dialog-visible="flowDialogVisible"
-      :save-data="saveFlow"
-      @flow-dialog-visible="flowDialogVisible = false"
-    />
 
     <param-dialog
       :dialog-title="dialogTitle"
