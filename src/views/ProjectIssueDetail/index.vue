@@ -1,12 +1,11 @@
 <script>
-import ParamDialog from './components/ParamDialog'
 import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './components'
 
 import { getIssue } from '@/api/issue'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion, downloadProjectFile } from '@/api/projects'
 import { getFlowByIssue, getFlowType } from '@/api/issueFlow'
-import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
+import { getParameterByIssue } from '@/api/issueParameter'
 import { getTestCaseByIssue } from '@/api/issueTestCase'
 import { getTestItemByCase } from '@/api/issueTestItem'
 import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
@@ -20,8 +19,7 @@ export default {
     CommentTab,
     FlowTab,
     ParameterTab,
-    FileTab,
-    ParamDialog
+    FileTab
   },
 
   data() {
@@ -66,19 +64,17 @@ export default {
       },
       issueNeedTest: true,
 
-      issueParameter: [],
       issueTestCase: [],
       issueTestItem: [],
       issueTestValue: [],
       issueFile: [],
       activeName: 'comment',
       commentDialogVisible: false,
-      paramDialogVisible: false,
-      editParamId: 0,
+
       editTestId: 0,
       editTestItemId: 0,
       editTestValueId: 0,
-      dialogTitle: '',
+
       issueId: 0,
       projectId: 0,
       issue_detail: {},
@@ -90,7 +86,9 @@ export default {
       // CommentTab
       issueComment: [],
       // FlowTab
-      issueFlow: []
+      issueFlow: [],
+      // ParameterTab
+      issueParameter: []
     }
   },
 
@@ -191,12 +189,6 @@ export default {
       return success + ' / ' + total
     },
 
-    showParamDialog(param, title) {
-      this.editParamId = param === '' ? 0 : param.id
-      this.dialogTitle = title
-      this.paramDialogVisible = true
-    },
-
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
@@ -257,20 +249,6 @@ export default {
       }
     },
 
-    async saveParameter(data) {
-      if (this.projectId > 0) {
-        data['project_id'] = this.projectId
-      }
-      await addParameterByIssue(this.issueId, data)
-      this.paramDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
-    },
-
     async getTestValue(item_id) {
       const testValueList = await getTestValueByItem(item_id)
       const testValueTypeRes = await getTestValueType()
@@ -293,16 +271,6 @@ export default {
       } else {
         this.issueTestValue = []
       }
-    },
-
-    async deleteParameter(row) {
-      await deleteParameter(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
     },
 
     async deleteIssueFile(row) {
@@ -491,60 +459,7 @@ export default {
       </el-tab-pane>
 
       <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
-        <el-button type="primary" @click="showParamDialog('', 'AddParameter')">{{
-          $t('Issue.AddParameter')
-        }}</el-button>
-
-        <el-table
-          :data="issueParameter"
-          element-loading-text="Loading"
-          border
-          fit
-          highlight-current-row
-          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
-        >
-          <el-table-column :label="$t('general.Name')">
-            <template slot-scope="scope">
-              {{ scope.row.name }}
-              <!--<span style="color: #409EFF;cursor: pointer;" @click="showParamDialog(scope.row, 'Edit Parameter')">
-                {{ scope.row.name }}
-              </span>-->
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Type')">
-            <template slot-scope="scope">
-              {{ scope.row.parameter_type }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Description')">
-            <template slot-scope="scope">
-              {{ scope.row.description }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('Issue.Limit')">
-            <template slot-scope="scope">
-              {{ scope.row.limitation }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('Issue.Length')">
-            <template slot-scope="scope">
-              {{ scope.row.length }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Actions')" width="120" align="center">
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteParameter(scope.row)">{{
-                $t('general.Delete')
-              }}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <ParameterTab :issue-id="issueId" :issue-parameter="issueParameter" @updated="fetchData" />
       </el-tab-pane>
 
       <el-tab-pane :label="$t('File.File')" name="file">
@@ -585,14 +500,6 @@ export default {
         </el-table>
       </el-tab-pane>
     </el-tabs>
-
-    <param-dialog
-      :dialog-title="dialogTitle"
-      :param-id="editParamId"
-      :dialog-visible="paramDialogVisible"
-      :save-data="saveParameter"
-      @param-dialog-visible="paramDialogVisible = false"
-    />
   </div>
 </template>
 
