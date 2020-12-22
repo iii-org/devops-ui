@@ -2,8 +2,8 @@
 import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './components'
 
 import { getIssue } from '@/api/issue'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssueFile } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion, downloadProjectFile } from '@/api/projects'
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
+import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { getFlowByIssue, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue } from '@/api/issueParameter'
 import { getTestCaseByIssue } from '@/api/issueTestCase'
@@ -67,7 +67,6 @@ export default {
       issueTestCase: [],
       issueTestItem: [],
       issueTestValue: [],
-      issueFile: [],
       activeName: 'comment',
       commentDialogVisible: false,
 
@@ -88,7 +87,9 @@ export default {
       // FlowTab
       issueFlow: [],
       // ParameterTab
-      issueParameter: []
+      issueParameter: [],
+      // FileTab
+      issueFile: []
     }
   },
 
@@ -273,26 +274,6 @@ export default {
       }
     },
 
-    async deleteIssueFile(row) {
-      await deleteIssueFile(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.fetchData()
-    },
-
-    async handleDownload(row) {
-      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
-      const url = window.URL.createObjectURL(new Blob([res]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', row.filename) // or any other extension
-      document.body.appendChild(link)
-      link.click()
-    },
-
     handleExceed(files, fileList) {
       this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
     },
@@ -463,41 +444,7 @@ export default {
       </el-tab-pane>
 
       <el-tab-pane :label="$t('File.File')" name="file">
-        <el-table
-          :data="issueFile"
-          element-loading-text="Loading"
-          border
-          fit
-          highlight-current-row
-          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
-        >
-          <el-table-column :label="$t('general.Name')" align="center">
-            <template slot-scope="scope">
-              <span v-if="scope.row.filename">
-                {{ scope.row.filename }}
-              </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.CreateTime')" align="center">
-            <template slot-scope="scope">
-              {{ new Date(scope.row.created_on).toLocaleString() }}
-            </template>
-          </el-table-column>
-
-          <el-table-column :label="$t('general.Actions')" align="center">
-            <template slot-scope="scope">
-              <el-button size="mini" type="primary" @click="handleDownload(scope.row)">
-                <i class="el-icon-download" />
-                {{ $t('File.Download') }}
-              </el-button>
-              <el-button type="danger" size="mini" @click="deleteIssueFile(scope.row)">{{
-                $t('general.Delete')
-              }}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <FileTab :issue-id="issueId" :issue-file="issueFile" @updated="fetchData" />
       </el-tab-pane>
     </el-tabs>
   </div>
