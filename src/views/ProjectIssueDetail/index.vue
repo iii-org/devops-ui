@@ -3,9 +3,6 @@ import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './compone
 import { getIssue } from '@/api/issue'
 import { getFlowByIssue, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue } from '@/api/issueParameter'
-// import { getTestCaseByIssue } from '@/api/issueTestCase'
-// import { getTestItemByCase } from '@/api/issueTestItem'
-// import { getTestValueByItem, getTestValueType, getTestValueLocation } from '@/api/issueTestValue'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -19,9 +16,6 @@ export default {
 
   data() {
     return {
-      // issueName: '',
-      // issueStartDate: '',
-      // issueDueDate: '',
       issueDescription: '',
       activeName: 'comment',
       issueId: 0,
@@ -29,36 +23,11 @@ export default {
       author: '',
       issueLoading: false,
 
-      // CommentTab
       issueComment: [],
-      // FlowTab
       issueFlow: [],
-      // ParameterTab
       issueParameter: [],
-      // FileTab
       issueFile: [],
-
       formData: {}
-
-      // issueDevStatus: {
-      //   commitMsg: 'V2.1 fix User Login Error',
-      //   commit: '1c715b2b',
-      //   commitData: '2020-07-25T07:20:11Z',
-      //   last_test_result: {
-      //     success: 10,
-      //     total: 15
-      //   }
-      // },
-      // issueNeedTest: true,
-      // issueTestCase: [],
-      // issueTestItem: [],
-      // issueTestValue: [],
-      // editTestId: 0,
-      // editTestItemId: 0,
-      // editTestValueId: 0,
-      // issue_detail: {},
-      // choose_testCase: '',
-      // choose_testItem: '',
     }
   },
 
@@ -80,17 +49,16 @@ export default {
       this.issueLoading = true
       Promise.all([
         getIssue(this.issueId),
-        getFlowByIssue(this.issueId),
         getFlowType(),
+        getFlowByIssue(this.issueId),
         getParameterByIssue(this.issueId)
-        // getTestCaseByIssue(this.issueId)
       ]).then(res => {
-        const issueDetail = res[0].data
+        console.log('res', res)
+        const [issueDetail, flowTypeList, flowList, parameterList] = res.map(item => item.data)
+
         this.projectId = issueDetail.project.id
         this.author = issueDetail.author.name
-        // fetch issue flow type
-        const issueFlowType = res[2].data
-        // fetch comment
+
         this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
@@ -99,11 +67,10 @@ export default {
           }
         })
 
-        // fetch flow
         this.issueFlow = []
-        if (Array.isArray(res[1].data) && res[1].data.length > 0) {
-          this.issueFlow = res[1].data[0].flow_data.map(item => {
-            const issueType = issueFlowType.find(type => {
+        if (Array.isArray(flowList) && flowList.length > 0) {
+          this.issueFlow = flowList[0].flow_data.map(item => {
+            const issueType = flowTypeList.find(type => {
               return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
@@ -111,10 +78,7 @@ export default {
           })
         }
 
-        // fetch parameter
-        this.issueParameter = res[3].data
-
-        // fetch file
+        this.issueParameter = parameterList
         this.issueFile = issueDetail.attachments
 
         this.formData.subject = issueDetail.subject
@@ -130,58 +94,8 @@ export default {
         this.formData.description = issueDetail.description && issueDetail.description
 
         this.issueLoading = false
-        // this.issueTestCase = res[4].data
       })
     }
-
-    // returnTagType(row) {
-    //   const { success, total } = row.last_test_result
-    //   return success === total ? 'success' : 'danger'
-    // },
-
-    // testResults(row) {
-    //   const { success, total } = row.last_test_result
-    //   return success + ' / ' + total
-    // },
-
-    // async getTestItem(case_id) {
-    //   this.choose_testItem = ''
-    //   this.issueTestValue = []
-    //   const testItemList = await getTestItemByCase(case_id)
-    //   if (testItemList.data.length > 0) {
-    //     this.issueTestItem = testItemList.data
-    //   } else {
-    //     this.issueTestItem = []
-    //   }
-    // },
-
-    // async getTestValue(item_id) {
-    //   const testValueList = await getTestValueByItem(item_id)
-    //   const testValueTypeRes = await getTestValueType()
-    //   const testValueTypeList = testValueTypeRes.data
-    //   const testValueLocationRes = await getTestValueLocation()
-    //   const testValueLocationList = testValueLocationRes.data
-
-    //   if (testValueList.data.length > 0) {
-    //     this.issueTestValue = testValueList.data.map(item => {
-    //       const valueType = testValueTypeList.find(type => {
-    //         return item.type_id === type.type_id
-    //       })
-    //       item.type = valueType.type_name
-    //       const valueLocation = testValueLocationList.find(location => {
-    //         return item.location_id === location.location_id
-    //       })
-    //       item.location = valueLocation.type_name
-    //       return item
-    //     })
-    //   } else {
-    //     this.issueTestValue = []
-    //   }
-    // }
-
-    // handleExceed(files, fileList) {
-    //   this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
-    // }
   }
 }
 </script>
@@ -189,7 +103,14 @@ export default {
 <template>
   <div class="app-container d-flex">
     <el-card v-loading="issueLoading" class="box-card el-col-10 column custom-list" shadow="never">
-      <IssueForm v-if="projectId !== 0" :issue-id="issueId" :project-id="projectId" :author="author" :issue-form-ref="formData" @updated="fetchData" />
+      <IssueForm
+        v-if="projectId !== 0"
+        :issue-id="issueId"
+        :project-id="projectId"
+        :author="author"
+        :issue-form-ref="formData"
+        @updated="fetchData"
+      />
     </el-card>
 
     <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
