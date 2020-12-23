@@ -230,6 +230,7 @@ export default {
               placeholder="Select Date"
               style="width: 100%"
               value-format="yyyy-MM-dd"
+              :clearable="false"
             />
           </el-form-item>
         </el-col>

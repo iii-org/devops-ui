@@ -27,7 +27,20 @@ export default {
       issueFlow: [],
       issueParameter: [],
       issueFile: [],
-      formData: {}
+
+      formData: {
+        subject: '',
+        assigned_to_id: '',
+        fixed_version_id: '',
+        tracker_id: null,
+        status_id: null,
+        priority_id: null,
+        estimated_hours: 0,
+        done_ratio: 0,
+        start_date: '',
+        due_date: '',
+        description: ''
+      }
     }
   },
 
@@ -81,16 +94,20 @@ export default {
         this.issueFile = issueDetail.attachments
 
         this.formData.subject = issueDetail.subject
-        if (issueDetail.assigned_to) this.formData.assigned_to_id = issueDetail.assigned_to.id
-        if (issueDetail.fixed_version) this.formData.fixed_version_id = issueDetail.fixed_version.id
-        this.formData.tracker_id = issueDetail.tracker && issueDetail.tracker.id
-        this.formData.status_id = issueDetail.status && issueDetail.status.id
-        this.formData.priority_id = issueDetail.priority && issueDetail.priority.id
-        this.formData.estimated_hours = issueDetail.estimated_hours && issueDetail.estimated_hours
-        this.formData.done_ratio = issueDetail.done_ratio && issueDetail.done_ratio
-        this.formData.start_date = issueDetail.start_date && issueDetail.start_date
-        this.formData.due_date = issueDetail.due_date && issueDetail.due_date
-        this.formData.description = issueDetail.description && issueDetail.description
+        issueDetail.assigned_to
+          ? (this.formData.assigned_to_id = issueDetail.assigned_to.id)
+          : (this.formData.assigned_to_id = '')
+        issueDetail.fixed_version
+          ? (this.formData.fixed_version_id = issueDetail.fixed_version.id)
+          : (this.formData.fixed_version_id = '')
+        this.formData.tracker_id = issueDetail.tracker.id
+        this.formData.status_id = issueDetail.status.id
+        this.formData.priority_id = issueDetail.priority.id
+        this.formData.estimated_hours = issueDetail.estimated_hours
+        this.formData.done_ratio = issueDetail.done_ratio
+        this.formData.start_date = issueDetail.start_date
+        issueDetail.due_date === null ? (this.formData.due_date = '') : (this.formData.due_date = issueDetail.due_date)
+        this.formData.description = issueDetail.description
 
         this.issueLoading = false
       })
