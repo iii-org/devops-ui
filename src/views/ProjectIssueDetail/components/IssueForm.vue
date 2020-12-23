@@ -58,30 +58,33 @@ export default {
 
   mounted() {
     this.extension = fileExtension()
-    this.fetchLists()
+    this.fetchData()
     this.issueForm = Object.assign({}, this.issueFormRef)
   },
 
   methods: {
-    fetchLists() {
-      getProjectVersion(this.projectId).then(versions => {
-        this.issueVersionList = versions.data.versions.map(item => {
-          return { label: item.name, value: item.id }
-        })
-      })
-      getProjectAssignable(this.projectId).then(assignable => {
-        this.issueAssigneeList = assignable.data.user_list.map(item => {
+    fetchData() {
+      Promise.all([
+        getProjectAssignable(this.projectId),
+        getProjectVersion(this.projectId),
+        getIssueTracker(),
+        getIssueStatus(),
+        getIssuePriority()
+      ]).then(res => {
+        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(item => item.data)
+        this.issueAssigneeList = assigneeList.user_list.map(item => {
           return { label: item.login, value: item.id }
         })
-      })
-      Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()]).then(res => {
-        this.issueTypeList = res[0].data.map(item => {
+        this.issueVersionList = versionList.versions.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueStatusList = res[1].data.map(item => {
+        this.issueTypeList = typeList.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map(item => {
+        this.issueStatusList = statusList.map(item => {
+          return { label: item.name, value: item.id }
+        })
+        this.issuePriorityList = priorityList.map(item => {
           return { label: item.name, value: item.id }
         })
       })
