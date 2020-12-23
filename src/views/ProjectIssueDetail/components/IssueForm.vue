@@ -102,12 +102,10 @@ export default {
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
-          // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
-          Object.keys(data).map(item => {
-            if (data[item] === '' || !data[item]) delete data[item]
-          })
-
+          // Object.keys(data).map(item => {
+          //   if (data[item] === '' || !data[item]) delete data[item]
+          // })
           const form = new FormData()
           Object.keys(data).forEach(objKey => {
             form.append(objKey, data[objKey])
@@ -147,14 +145,6 @@ export default {
           return false
         }
       })
-    },
-
-    clearAssignee() {
-      this.issueForm.assigned_to_id = null
-    },
-
-    clearVersion() {
-      this.issueForm.fixed_version_id = null
     }
   }
 }
@@ -181,7 +171,7 @@ export default {
 
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-            <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable @clear="clearAssignee">
+            <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
               <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -189,7 +179,7 @@ export default {
 
         <el-col :span="12">
           <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-            <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable @clear="clearVersion">
+            <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
               <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>

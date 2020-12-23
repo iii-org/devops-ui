@@ -53,7 +53,6 @@ export default {
         getFlowByIssue(this.issueId),
         getParameterByIssue(this.issueId)
       ]).then(res => {
-        console.log('res', res)
         const [issueDetail, flowTypeList, flowList, parameterList] = res.map(item => item.data)
 
         this.projectId = issueDetail.project.id
