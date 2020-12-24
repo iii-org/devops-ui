@@ -103,7 +103,7 @@ export function getProjectUserList(pId) {
   })
 }
 
-// 專案內可分配版本　[2.3.1 新增議題　2.3.3.1 編輯議題］
+// 專案內可分配版本 [2.3.1 新增議題 2.3.3.1 編輯議題］
 export function getProjectVersion(pId) {
   return request({
     url: `/project/${pId}/version/list`,
@@ -111,7 +111,7 @@ export function getProjectVersion(pId) {
   })
 }
 
-export function getProjectIssueList(pId) {
+export function getProjectIssueListByTree(pId) {
   return request({
     url: `/project/${pId}/issues_by_tree`,
     method: 'GET'
@@ -155,6 +155,13 @@ export function deleteProjectVersion(pId, vId) {
   })
 }
 
+export function getProjectIssueList(pId) {
+  return request({
+    url: `/project/${pId}/issues`,
+    method: 'GET'
+  })
+}
+
 // 取得project內所有issue清單 [0.5 RoadMap_Detail]
 export function getProjectIssueListByVersion(pId, params) {
   return request({
@@ -190,7 +197,7 @@ export function getProjectFileList(pId) {
 }
 
 // 下載檔案
-export function downloadProjectFile(params = { 'id': '', 'filename': '' }) {
+export function downloadProjectFile(params = { id: '', filename: '' }) {
   return request({
     url: `/download`,
     method: 'GET',

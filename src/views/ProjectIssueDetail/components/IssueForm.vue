@@ -1,5 +1,5 @@
 <script>
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { fileExtension } from '@/utils/extension'
 import { Message } from 'element-ui'
@@ -15,6 +15,10 @@ export default {
       type: Number,
       default: 0
     },
+    parentId: {
+      type: Number,
+      default: null
+    },
     author: {
       type: String,
       default: ''
@@ -27,6 +31,7 @@ export default {
 
   data: () => ({
     issueDescription: '',
+    isLoading: true,
 
     issueForm: {
       subject: '',
@@ -53,8 +58,23 @@ export default {
     issueTypeList: [],
     issueStatusList: [],
     issuePriorityList: [],
-    issueVersionList: []
+    issueVersionList: [],
+
+    parentIssue: {},
+    relativeIssueList: [],
+    childrenIssueList: []
   }),
+
+  computed: {
+    dynamicIssueStatusList() {
+      const listWithoutClosedOption = this.issueStatusList.filter(item => item.label !== 'Closed')
+      return this.isChildrenAllClosed() ? this.issueStatusList : listWithoutClosedOption
+    },
+
+    isParentIssueClosed() {
+      return this.parentIssue !== {} && this.parentIssue.issue_status === 'Closed'
+    }
+  },
 
   mounted() {
     this.extension = fileExtension()
@@ -64,14 +84,19 @@ export default {
 
   methods: {
     fetchData() {
+      this.isLoading = true
       Promise.all([
         getProjectAssignable(this.projectId),
         getProjectVersion(this.projectId),
         getIssueTracker(),
         getIssueStatus(),
-        getIssuePriority()
+        getIssuePriority(),
+        getProjectIssueList(this.projectId),
+        getProjectIssueListByTree(this.projectId)
       ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(item => item.data)
+        const [assigneeList, versionList, typeList, statusList, priorityList, issueList, issueListByTree] = res.map(
+          item => item.data
+        )
         this.issueAssigneeList = assigneeList.user_list.map(item => {
           return { label: item.login, value: item.id }
         })
@@ -87,6 +112,10 @@ export default {
         this.issuePriorityList = priorityList.map(item => {
           return { label: item.name, value: item.id }
         })
+        this.parentIssue = issueList.find(item => item.id === this.parentId) || {}
+        this.relativeIssueList = this.createRelativeList(issueListByTree)
+        this.updateChildrenList()
+        this.isLoading = false
       })
     },
 
@@ -148,6 +177,28 @@ export default {
           return false
         }
       })
+    },
+
+    isChildrenAllClosed() {
+      return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.issue_status === 'Closed')
+    },
+
+    createRelativeList(list) {
+      const result = []
+      function flatList(parent) {
+        for (let i = 0; i < parent.length; i++) {
+          result.push(parent[i])
+          const children = parent[i].children
+          if (parent[i].children.length) flatList(children)
+        }
+      }
+      flatList(list)
+      return result
+    },
+
+    updateChildrenList() {
+      const idx = this.relativeIssueList.findIndex(item => item.id === this.issueId)
+      this.childrenIssueList = this.relativeIssueList[idx].children
     }
   }
 }
@@ -157,14 +208,21 @@ export default {
   <div>
     <div slot="header" class="clearfix">
       <span style="font-size: 25px; padding-bottom: 10px">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
-      <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
+      <el-button
+        class="filter-item"
+        size="small"
+        type="success"
+        style="float: right"
+        :disabled="isLoading"
+        @click="handleSaveDetail"
+      >
         {{ $t('Issue.Save') }}
       </el-button>
       <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.AddBy', { user: author }) }}</div>
       <div>{{ issueDescription }}</div>
     </div>
 
-    <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
+    <el-form ref="issueForm" v-loading="isLoading" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('general.Name')" prop="subject">
@@ -198,15 +256,20 @@ export default {
 
         <el-col :span="12">
           <el-form-item :label="$t('general.Status')" prop="status_id">
-            <el-select v-model="issueForm.status_id" style="width: 100%">
-              <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
+            <el-select v-model="issueForm.status_id" style="width: 100%" :disabled="isParentIssueClosed">
+              <el-option
+                v-for="item in dynamicIssueStatusList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-            <el-select v-model="issueForm.priority_id" style="width: 100%">
+            <el-select v-model="issueForm.priority_id" style="width: 100%" :disabled="childrenIssueList.length > 0">
               <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>

@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import AddIssue from './components/AddIssue'
 import { addIssue, deleteIssue } from '@/api/issue'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueListByTree } from '@/api/projects'
 import { Message } from 'element-ui'
 
 export default {
@@ -108,7 +108,7 @@ export default {
     },
     async fetchData() {
       this.listLoading = true
-      const res = await getProjectIssueList(this.projectSelectedId)
+      const res = await getProjectIssueListByTree(this.projectSelectedId)
       this.issueList = res.data
       this.listLoading = false
       this.parentList = []

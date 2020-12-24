@@ -21,7 +21,6 @@ export default {
       issueId: 0,
       projectId: 0,
       author: '',
-      issueLoading: false,
 
       issueComment: [],
       issueFlow: [],
@@ -40,7 +39,9 @@ export default {
         start_date: '',
         due_date: '',
         description: ''
-      }
+      },
+
+      parentId: null
     }
   },
 
@@ -59,7 +60,6 @@ export default {
 
   methods: {
     fetchData() {
-      this.issueLoading = true
       Promise.all([
         getIssue(this.issueId),
         getFlowType(),
@@ -70,6 +70,7 @@ export default {
 
         this.projectId = issueDetail.project.id
         this.author = issueDetail.author.name
+        this.parentId = issueDetail.parent_id
 
         this.issueComment = issueDetail.journals.map(item => {
           return {
@@ -107,9 +108,9 @@ export default {
         this.formData.done_ratio = issueDetail.done_ratio
         this.formData.start_date = issueDetail.start_date
         issueDetail.due_date === null ? (this.formData.due_date = '') : (this.formData.due_date = issueDetail.due_date)
-        this.formData.description = issueDetail.description
-
-        this.issueLoading = false
+        issueDetail.description === null
+          ? (this.formData.description = '')
+          : (this.formData.description = issueDetail.description)
       })
     }
   }
@@ -118,11 +119,12 @@ export default {
 
 <template>
   <div class="app-container d-flex">
-    <el-card v-loading="issueLoading" class="box-card el-col-10 column custom-list" shadow="never">
+    <el-card class="box-card el-col-10 column custom-list" shadow="never">
       <IssueForm
         v-if="projectId !== 0"
         :issue-id="issueId"
         :project-id="projectId"
+        :parent-id="parentId"
         :author="author"
         :issue-form-ref="formData"
         @updated="fetchData"
