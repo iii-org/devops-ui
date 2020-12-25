@@ -152,7 +152,7 @@ import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '../../../utils/extension.js'
 export default {
-  name: 'Addissue',
+  name: 'AddIssue',
   props: {
     dialogVisible: {
       type: Boolean,
@@ -160,7 +160,7 @@ export default {
     },
     projectId: {
       type: Number,
-      default: false
+      default: 0
     },
     parentName: {
       type: String,
@@ -248,9 +248,11 @@ export default {
         this.issueAssigneeList = res[3].data.user_list.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueVersionList = res[4].data.versions.map(item => {
-          return { label: item.name, value: item.id }
-        })
+        this.issueVersionList = res[4].data.versions
+          .map(item => {
+            return { label: item.name, value: item.id, status: item.status }
+          })
+          .filter(item => item.status === 'open')
       })
     },
     handleClose() {
@@ -259,7 +261,7 @@ export default {
     handleSave() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
-          // deepcopy & remove field with empty value
+          // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
           Object.keys(data).map(item => {
             if (data[item] === '') delete data[item]
