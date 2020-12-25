@@ -365,7 +365,7 @@ export default {
     />
     <router-view />
     <el-dialog
-      :title="$t('general.Delete') + $t('route.Projects')"
+      :title="`${$t('general.Delete')} ${$t('route.Projects')}`"
       :visible.sync="dialogDelete"
       width="40%"
       :close-on-click-modal="false"
@@ -374,11 +374,7 @@ export default {
       <p>{{ $t('Project.deleteProjectConfirmText') }}</p>
       <p>
         {{ $t('Project.PleaseType') }}
-        <span
-          style="padding: 2px 4px;color: #1f1f1f;background-color: #f2f2f2;border-radius: 4px;white-space:pre-wrap;"
-        >
-          {{ deleteProject.name }}
-        </span>
+        <strong>{{ deleteProject.name }}</strong>
         {{ $t('Project.AndThen') }}
       </p>
       <el-input v-model="deleteProjectID" :placeholder="placeholderText" />
