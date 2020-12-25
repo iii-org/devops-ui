@@ -100,9 +100,11 @@ export default {
         this.issueAssigneeList = assigneeList.user_list.map(item => {
           return { label: item.login, value: item.id }
         })
-        this.issueVersionList = versionList.versions.map(item => {
-          return { label: item.name, value: item.id }
-        })
+        this.issueVersionList = versionList.versions
+          .map(item => {
+            return { label: item.name, value: item.id, status: item.status }
+          })
+          .filter(item => item.status === 'open')
         this.issueTypeList = typeList.map(item => {
           return { label: item.name, value: item.id }
         })
