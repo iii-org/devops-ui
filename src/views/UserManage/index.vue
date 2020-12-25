@@ -30,7 +30,7 @@ export default {
   computed: {
     ...mapGetters(['userId']),
     pagedData() {
-      const listData = this.userList.filter((data) => {
+      const listData = this.userList.filter(data => {
         if (this.searchData == '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -99,7 +99,7 @@ export default {
 <template>
   <div class="app-container">
     <div class="clearfix">
-      <project-list-selector />
+      <!-- <project-list-selector /> -->
       <span class="newBtn">
         <el-button type="success" style="float: right; margin-bottom: 5px" @click="showUserDialog('', 'Add User')">
           <i class="el-icon-plus" />
@@ -116,38 +116,38 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border>
-      <el-table-column align="center" :label="$t('User.Account')">
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+      <el-table-column align="center" :label="$t('User.Account')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.login }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')">
+      <el-table-column align="center" :label="$t('general.Name')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Email">
+      <el-table-column align="center" label="Email" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.email }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.CreateTime')" width="150">
+      <el-table-column align="center" :label="$t('general.CreateTime')" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.create_at.split('T')[0] }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('User.Phone')" width="150">
+      <el-table-column align="center" :label="$t('User.Phone')" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Status')" width="100">
+      <el-table-column align="center" :label="$t('general.Status')" min-width="80">
         <template slot-scope="scope">
           {{ scope.row.status }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="100">
+      <el-table-column :label="$t('general.Actions')" align="center" min-width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
             <i class="el-icon-edit" />
