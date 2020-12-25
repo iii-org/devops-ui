@@ -72,7 +72,7 @@ stages:
       sourceKey: cm-url
       targetKey: cm_url
   when: 
-    branch: [develop] 
+    branch: [checkmarx] 
 
 - name: Code webinspect test
   steps:
@@ -101,4 +101,4 @@ stages:
       sourceKey: inspect-url
       targetKey: inspect_url
   when: 
-    branch: [develop] 
+    branch: [webinspect] 
