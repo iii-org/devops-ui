@@ -1,8 +1,7 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
+import { mapGetters } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
-import { getProjectUsage } from '@/api/projects'
+import { getProjectUsage } from '@/api/projectResource'
 const formTemplate = {
   name: '',
   due_date: '',
@@ -12,12 +11,10 @@ const formTemplate = {
 
 export default {
   components: {
-    Pagination,
     ProjectListSelector
   },
   data() {
     return {
-      projectValue: '專科A',
       listLoading: true,
       dialogVisible: false,
       usageList: {
@@ -168,13 +165,6 @@ export default {
 </template>
 
 <style lang="scss">
-.newBtn {
-  float: right;
-  padding-right: 6px;
-}
-.line {
-  text-align: center;
-}
 .cardItem {
   width: 50%;
   margin: 5px;
