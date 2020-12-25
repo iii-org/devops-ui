@@ -30,7 +30,9 @@ export default {
     Usage: 'Project Usage',
     Resource: 'Project Resource',
     Artifacts: 'Project Artifacts',
-    'Postman result': 'Postman Result'
+    'Postman result': 'Postman Result',
+    'Project Activities': 'Project Activities',
+    'System Activities': 'System Activities'
   },
   navbar: {
     logOut: 'Log Out',
@@ -291,5 +293,12 @@ export default {
     Success: 'Success',
     Fail: 'Fail',
     StartTime: 'Start Time'
+  },
+  Activities: {
+    User: 'User',
+    ActionType: 'Action Type',
+    ActionParts: 'Action Parts',
+    ActAt: 'Act At',
+    SearchActAt: 'Search Act At'
   }
 }

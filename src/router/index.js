@@ -495,6 +495,18 @@ export const asyncRoutes = [
         name: 'DevOps',
         component: () => import('@/views/ProjectDevOps/index'),
         meta: { title: 'DevOps', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'project-activities',
+        name: 'ProjectActivities',
+        component: () => import('@/views/ProjectActivities/index'),
+        meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'system-activities',
+        name: 'SystemActivities',
+        component: () => import('@/views/SystemActivities/index'),
+        meta: { title: 'System Activities', roles: ['Administrator'] }
       }
     ]
   },

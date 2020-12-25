@@ -30,7 +30,9 @@ export default {
     Usage: '資源使用量',
     Resource: '資源清單',
     Artifacts: '資源成品',
-    'Postman result': 'Postman結果'
+    'Postman result': 'Postman結果',
+    'Project Activities': '操作紀錄',
+    'System Activities': '系統紀錄'
   },
   navbar: {
     logOut: '登出',
@@ -289,5 +291,12 @@ export default {
     Success: '成功',
     Fail: '失敗',
     StartTime: '開始時間'
+  },
+  Activities: {
+    User: '使用者',
+    ActionType: '動作',
+    ActionParts: '內容',
+    ActAt: '發生時間',
+    SearchActAt: '搜尋 發生時間'
   }
 }
