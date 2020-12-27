@@ -51,3 +51,10 @@ export function deleteUser(userId) {
     method: 'delete'
   })
 }
+
+export function getK8SConfig(userId) {
+  return request({
+    url: `/user/${userId}/config`,
+    method: 'get'
+  })
+}

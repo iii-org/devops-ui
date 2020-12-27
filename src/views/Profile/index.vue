@@ -23,7 +23,11 @@
                 <el-input v-model="userProfileForm.userPhone" style="width: 250px" />
               </el-form-item>
             </el-form>
-
+            <el-row style="margin-top: 15px">
+              <el-col :span="8">
+                <el-button type="primary" @click="downloadK8SConfig()">{{ $t('Profile.K8SConfigDownload') }}</el-button>
+              </el-col>
+            </el-row>
             <el-row style="margin-top: 15px">
               <el-col :span="8">
                 <el-button type="primary" @click="submitUpdateUserProfile('userProfileForm')">{{
@@ -73,7 +77,7 @@
 
 <script>
 import store from '@/store'
-import { updateUser, getInfo } from '@/api/user'
+import { updateUser, getInfo, getK8SConfig } from '@/api/user'
 import { Message } from 'element-ui'
 
 export default {
@@ -134,9 +138,7 @@ export default {
           { required: true, message: 'Please input repeat password', trigger: 'blur' },
           { validator: checkRepeatPwd, trigger: 'blur' }
         ],
-        old_password: [
-          { required: true, message: 'Please input password', trigger: 'blur' }
-        ]
+        old_password: [{ required: true, message: 'Please input password', trigger: 'blur' }]
       }
     }
   },
@@ -155,8 +157,18 @@ export default {
         callback()
       }
     },
+    async downloadK8SConfig() {
+      const res = await getK8SConfig(this.userId)
+      const config = res.data.config
+      var fileURL = window.URL.createObjectURL(new Blob([config]))
+      var fileLink = document.createElement('a')
+      fileLink.href = fileURL
+      fileLink.setAttribute('download', 'config')
+      document.body.appendChild(fileLink)
+      fileLink.click()
+    },
     submitUpdateUserProfile(formName) {
-      this.$refs[formName].validate(async(valid) => {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
           const data = {
             name: this.userProfileForm.userName,
@@ -176,9 +188,12 @@ export default {
       })
     },
     async handleUpdateUserPwd(formName) {
-      this.$refs[formName].validate(async(valid) => {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
-          await updateUser(this.userId, { password: this.userPwdForm.userNewPwd, old_password: this.userPwdForm.old_password })
+          await updateUser(this.userId, {
+            password: this.userPwdForm.userNewPwd,
+            old_password: this.userPwdForm.old_password
+          })
           Message({
             message: 'update successful',
             type: 'success',

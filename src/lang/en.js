@@ -223,7 +223,8 @@ export default {
     RepeatNewPassword: 'Repeat New Password',
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number.',
     Save: 'Save',
-    Password: 'Password'
+    Password: 'Password',
+    K8SConfigDownload: 'Download K8S Config'
   },
   Project: {
     AddProject: 'Add Project',

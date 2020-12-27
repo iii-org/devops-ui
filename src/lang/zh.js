@@ -223,7 +223,8 @@ export default {
     RepeatNewPassword: '重新輸入新密碼',
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
     Save: '儲存',
-    Password: '舊密碼'
+    Password: '舊密碼',
+    K8SConfigDownload: '下載K8S設定檔'
   },
   Project: {
     AddProject: '新增專案',
