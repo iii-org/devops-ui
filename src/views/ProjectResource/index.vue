@@ -17,6 +17,7 @@ export default {
   },
   data() {
     return {
+      harborUrl: process.env.VUE_APP_HARBOR_URL,
       projectName: '',
       listLoading: true,
       dialogVisible: false,
@@ -74,7 +75,11 @@ export default {
     async fetchData() {
       this.listLoading = true
       const res = await getHarborRepoList(this.projectSelectedId)
-      this.resourceList = res.data
+      this.resourceList = res.data.map(item => {
+        const name_ary = item.name.split('/')
+        item['name_in_harbor'] = name_ary[name_ary.length - 1]
+        return item
+      })
       this.projectName = this.projectSelectedObject['name']
       const storageRes = await getHarborRepoStorageSummary(this.projectSelectedId)
       this.storage = storageRes.data
@@ -150,7 +155,8 @@ export default {
           {{ projectName }}
         </el-col>
         <el-col :span="4" style="font-size: 20px; text-align: center">
-          {{ Math.round(storage.quota.used.storage/1024/1024) }} / {{ Math.round(storage.quota.hard.storage/1024/1024) }} MB
+          {{ Math.round(storage.quota.used.storage / 1024 / 1024) }} /
+          {{ Math.round(storage.quota.hard.storage / 1024 / 1024) }} MB
         </el-col>
         <el-col :span="8" style="text-align:right">
           <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.quota)" />
@@ -161,7 +167,12 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
       <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          <el-link
+            type="primary"
+            :href="`${harborUrl}/projects/${projectSelectedId}/repositories/${scope.row.name_in_harbor}`"
+            target="_blank"
+            >{{ scope.row.name }}</el-link
+          >
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">

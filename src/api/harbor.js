@@ -24,14 +24,14 @@ export function deleteHarborRepo(name) {
 
 export function getProjectArtifacts(name) {
   return request({
-    url: `/harbor/artifacts/${name}`,
+    url: `/harbor/artifacts?repository_fullname=${name}`,
     method: 'GET'
   })
 }
 
 export function deleteProjectArtifact(name, digest, tag) {
   return request({
-    url: `/harbor/artifacts/${name}?digest=${digest}&tag=${tag}`,
+    url: `/harbor/artifacts?repository_fullname=${name}&digest=${digest}&tag_name=${tag}`,
     method: 'delete'
   })
 }
