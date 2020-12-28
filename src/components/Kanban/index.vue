@@ -7,6 +7,7 @@
         <!-- <i class="el-icon-more header-icon" /> -->
       </div>
     </div>
+    <!-- <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkMove" @end="end"> -->
     <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
         <div style="padding-bottom: 20px">{{ element.name }}</div>
@@ -40,20 +41,23 @@ export default {
     },
     list: {
       type: Array,
-      default() {
-        return []
-      }
+      default: () => []
     },
     cName: {
-      type: String
-    },
-    updateStatus: {
-      type: Function
+      type: String,
+      default: ''
     }
   },
   methods: {
-    end: function(evt) {
-      this.updateStatus(evt.from, evt.to, evt.oldIndex, evt.newIndex)
+    // checkMove(evt) {
+    //   console.log('checkMove ==>', evt)
+    //   if (evt.to.className.includes('Active')) {
+    //     this.$message({ type: 'success', message: 'Move denied' })
+    //     return false
+    //   } else return true
+    // },
+    end(evt) {
+      this.$emit('update', evt)
     }
   }
 }
