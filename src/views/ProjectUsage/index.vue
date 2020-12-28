@@ -2,28 +2,19 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { getProjectUsage } from '@/api/projectResource'
-const formTemplate = {
-  name: '',
-  due_date: '',
-  status: 'open',
-  description: ''
-}
 
 export default {
+  name: 'ProjectUsage',
   components: {
     ProjectListSelector
   },
   data() {
     return {
       listLoading: true,
-      dialogVisible: false,
       usageList: {
         used: {},
         quota: {}
-      },
-      dialogStatus: 1,
-      memberConfirmLoading: false,
-      form: formTemplate
+      }
     }
   },
   computed: {
@@ -42,8 +33,10 @@ export default {
       this.listLoading = true
       const res = await getProjectUsage(this.projectSelectedId)
       this.usageList = res.data
-      console.log(this.usageList)
       this.listLoading = false
+    },
+    handleEdit(target, pId) {
+      this.$router.push({ path: `/project-resource/${target}/${pId}` })
     }
   }
 }
@@ -55,11 +48,12 @@ export default {
       <project-list-selector />
     </div>
     <el-divider />
-    <el-row :gutter="12">
+    <el-row :gutter="12" shadow="never">
       <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
+        <el-card v-loading="listLoading" shadow="never">
+          <div slot="header" class="d-flex">
             <span>CPU</span>
+            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('deployment-list', projectSelectedId)" />
           </div>
           <div style="display: flex;">
             <div class="cardItem">
@@ -73,9 +67,10 @@ export default {
           </div>
         </el-card>
       </el-col>
+
       <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
+        <el-card v-loading="listLoading" shadow="never">
+          <div slot="header" class="d-flex">
             <span>Memory</span>
           </div>
           <div style="display: flex;">
@@ -90,10 +85,12 @@ export default {
           </div>
         </el-card>
       </el-col>
+
       <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
+        <el-card v-loading="listLoading" shadow="never">
+          <div slot="header" class="d-flex">
             <span>Pods</span>
+            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('pod-list', projectSelectedId)" />
           </div>
           <div style="display: flex;">
             <div class="cardItem">
@@ -108,11 +105,13 @@ export default {
         </el-card>
       </el-col>
     </el-row>
+
     <el-row :gutter="12" style="margin-top: 10px;">
       <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
+        <el-card v-loading="listLoading" shadow="never">
+          <div slot="header" class="d-flex">
             <span>Service</span>
+            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('service-list', projectSelectedId)" />
           </div>
           <div style="display: flex;">
             <div class="cardItem">
@@ -126,10 +125,12 @@ export default {
           </div>
         </el-card>
       </el-col>
+
       <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
+        <el-card v-loading="listLoading" shadow="never">
+          <div slot="header" class="d-flex">
             <span>Secrets</span>
+            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('secret-list', projectSelectedId)" />
           </div>
           <div style="display: flex;">
             <div class="cardItem">
@@ -143,10 +144,12 @@ export default {
           </div>
         </el-card>
       </el-col>
+
       <el-col :span="8">
-        <el-card shadow="never">
-          <div slot="header" class="clearfix">
+        <el-card v-loading="listLoading" shadow="never">
+          <div slot="header" class="d-flex">
             <span>ConfigMaps</span>
+            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('config-map-list', projectSelectedId)" />
           </div>
           <div style="display: flex;">
             <div class="cardItem">

@@ -309,6 +309,7 @@ export const asyncRoutes = [
     path: '/project-resource',
     component: Layout,
     name: 'Project Resource',
+    redirect: '/project-resource/usage',
     meta: { title: 'Project Resource', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
     children: [
       {
@@ -329,6 +330,41 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProjectArtifacts/index'),
         meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'deployment-list/:pId',
+        name: 'Deployment List',
+        hidden: true,
+        component: () => import('@/views/ProjectUsage/components/DeploymentList'),
+        meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'pod-list/:pId',
+        name: 'Pod List',
+        hidden: true,
+        component: () => import('@/views/ProjectUsage/components/PodList'),
+        meta: { title: 'Pod List', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'service-list/:pId',
+        name: 'Service List',
+        hidden: true,
+        component: () => import('@/views/ProjectUsage/components/ServiceList'),
+        meta: { title: 'Service List', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'secret-list/:pId',
+        name: 'Secret List',
+        hidden: true,
+        component: () => import('@/views/ProjectUsage/components/SecretList'),
+        meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'config-map-list/:pId',
+        name: 'Config Map List',
+        hidden: true,
+        component: () => import('@/views/ProjectUsage/components/ConfigMapList'),
+        meta: { title: 'Config Map List', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },
