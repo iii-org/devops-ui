@@ -4,7 +4,7 @@ import Kanban from '@/components/Kanban'
 import { getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { getIssueStatus, updateIssue } from '@/api/issue'
-import { getProjectIssueListByStatus } from '@/api/projects'
+import { getProjectIssueListByStatus, getProjectIssueListByTree } from '@/api/projects'
 import Fuse from 'fuse.js'
 
 export default {
@@ -28,7 +28,9 @@ export default {
       versionValue: '-1',
       memberValue: '-1',
       projectVersionList: [],
-      projectUserList: ''
+      projectUserList: '',
+      
+      relativeIssueList: []
     }
   },
 
@@ -95,7 +97,8 @@ export default {
           id: issue.id,
           date: issue.due_date,
           user: issue.assigned_to,
-          version: issue.fixed_version_id
+          version: issue.fixed_version_id,
+          parent_id: issue.parent_id
         }
       })
     },
@@ -119,6 +122,12 @@ export default {
         if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
         if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
       })
+      this.updateRelativeList()
+    },
+    updateRelativeList() {
+      getProjectIssueListByTree(this.projectSelectedId).then(res => {
+        this.relativeIssueList = this.createRelativeList(res.data)
+      })
     },
     async updateIssueStatus(evt) {
       const { to, newIndex } = evt
@@ -138,6 +147,7 @@ export default {
       if (issue.id && newStatusId !== 0) {
         await updateIssue(issue.id, { status_id: newStatusId })
       }
+      this.updateRelativeList()
     },
     updateData() {
       this.resetKanbanCard()
@@ -159,6 +169,18 @@ export default {
         this.searchKanbanCard(this.versionValue, versionOpt)
         this.searchKanbanCard(this.memberValue, userOpt)
       }
+    },
+    createRelativeList(list) {
+      const result = []
+      function flatList(parent) {
+        for (let i = 0; i < parent.length; i++) {
+          result.push(parent[i])
+          const children = parent[i].children
+          if (parent[i].children.length) flatList(children)
+        }
+      }
+      flatList(list)
+      return result
     }
   }
 }
@@ -189,6 +211,7 @@ export default {
         <Kanban
           key="1"
           :list="activeList"
+          :relative-list="relativeIssueList"
           :group="group"
           class="kanban active"
           :header-text="$t('ProjectActive.Active')"
@@ -198,6 +221,7 @@ export default {
         <Kanban
           key="2"
           :list="assignedList"
+          :relative-list="relativeIssueList"
           :group="group"
           class="kanban assigned"
           :header-text="$t('ProjectActive.Assigned')"
@@ -207,6 +231,7 @@ export default {
         <Kanban
           key="3"
           :list="solvedList"
+          :relative-list="relativeIssueList"
           :group="group"
           class="kanban solved"
           :header-text="$t('ProjectActive.Solved')"
@@ -216,6 +241,7 @@ export default {
         <Kanban
           key="4"
           :list="respondedList"
+          :relative-list="relativeIssueList"
           :group="group"
           class="kanban responded"
           :header-text="$t('ProjectActive.Responded')"
@@ -225,6 +251,7 @@ export default {
         <Kanban
           key="5"
           :list="finishedList"
+          :relative-list="relativeIssueList"
           :group="group"
           class="kanban finished"
           :header-text="$t('ProjectActive.Finished')"
@@ -234,6 +261,7 @@ export default {
         <Kanban
           key="6"
           :list="closedList"
+          :relative-list="relativeIssueList"
           :group="group"
           class="kanban closed"
           :header-text="$t('ProjectActive.Closed')"

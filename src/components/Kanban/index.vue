@@ -7,8 +7,7 @@
         <!-- <i class="el-icon-more header-icon" /> -->
       </div>
     </div>
-    <!-- <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkMove" @end="end"> -->
-    <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" @end="end">
+    <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
         <div style="padding-bottom: 20px">{{ element.name }}</div>
         <div>
@@ -43,19 +42,36 @@ export default {
       type: Array,
       default: () => []
     },
+    relativeList: {
+      type: Array,
+      default: () => []
+    },
     cName: {
       type: String,
       default: ''
     }
   },
   methods: {
-    // checkMove(evt) {
-    //   console.log('checkMove ==>', evt)
-    //   if (evt.to.className.includes('Active')) {
-    //     this.$message({ type: 'success', message: 'Move denied' })
-    //     return false
-    //   } else return true
-    // },
+    checkRelatives(evt) {
+      let result = true
+      const { id, parent_id } = evt.draggedContext.element
+      const toName = evt.to.classList[1]
+      const cIdx = this.relativeList.findIndex(item => item.id === id)
+      const childrenIssueList = this.relativeList[cIdx].children
+      const pIdx = this.relativeList.findIndex(item => item.id === parent_id)
+      const parentIssue = this.relativeList[pIdx] || {}
+      if (
+        toName === 'Closed' &&
+        childrenIssueList.length &&
+        !childrenIssueList.every(item => item.issue_status === 'Closed')
+      ) {
+        result = false
+      }
+      if (parentIssue !== {} && parentIssue.issue_status === 'Closed') {
+        result = false
+      }
+      return result
+    },
     end(evt) {
       this.$emit('update', evt)
     }
