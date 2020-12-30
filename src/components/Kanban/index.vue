@@ -80,14 +80,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .board-column {
-  min-width: 280px;
-  min-height: 100px;
-  height: auto;
+  width: 280px;
+  // min-height: 100px;
+  // height: auto;
   overflow: hidden;
   background: #ffffff;
   border-radius: 3px;
   border: 1px solid #e7e7e7;
-  margin: 0px 5px;
+  margin: 0px 5px 20px 5px;
 
   .board-column-header {
     height: 50px;
@@ -110,20 +110,15 @@ export default {
   }
 
   .board-column-content {
-    height: auto;
     overflow: hidden;
     border: 10px solid transparent;
-    min-height: 60px;
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: center;
+    height: 100%;
 
     .board-item {
       cursor: pointer;
       width: 95%;
       height: 70px;
-      margin: 5px 0;
+      margin: 5px auto;
       background-color: #fff;
       text-align: left;
       line-height: 20px;

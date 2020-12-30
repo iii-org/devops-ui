@@ -29,7 +29,7 @@ export default {
       memberValue: '-1',
       projectVersionList: [],
       projectUserList: '',
-      
+
       relativeIssueList: []
     }
   },
@@ -124,12 +124,15 @@ export default {
       })
       this.updateRelativeList()
     },
-    updateRelativeList() {
-      getProjectIssueListByTree(this.projectSelectedId).then(res => {
+    async updateRelativeList() {
+      this.isLoading = true
+      await getProjectIssueListByTree(this.projectSelectedId).then(res => {
         this.relativeIssueList = this.createRelativeList(res.data)
       })
+      this.isLoading = false
     },
     async updateIssueStatus(evt) {
+      this.isLoading = true
       const { to, newIndex } = evt
       let issue = {}
       let newStatusId = 0
@@ -148,6 +151,7 @@ export default {
         await updateIssue(issue.id, { status_id: newStatusId })
       }
       this.updateRelativeList()
+      this.isLoading = false
     },
     updateData() {
       this.resetKanbanCard()
@@ -206,80 +210,76 @@ export default {
 
     <el-divider />
 
-    <div class="components-container board" style="overflow: auto">
-      <div style="width: 100%; overflow: auto; padding-bottom: 10px; font-size: 0">
-        <Kanban
-          key="1"
-          :list="activeList"
-          :relative-list="relativeIssueList"
-          :group="group"
-          class="kanban active"
-          :header-text="$t('ProjectActive.Active')"
-          c-name="Active"
-          @update="updateIssueStatus"
-        />
-        <Kanban
-          key="2"
-          :list="assignedList"
-          :relative-list="relativeIssueList"
-          :group="group"
-          class="kanban assigned"
-          :header-text="$t('ProjectActive.Assigned')"
-          c-name="Assigned"
-          @update="updateIssueStatus"
-        />
-        <Kanban
-          key="3"
-          :list="solvedList"
-          :relative-list="relativeIssueList"
-          :group="group"
-          class="kanban solved"
-          :header-text="$t('ProjectActive.Solved')"
-          c-name="Solved"
-          @update="updateIssueStatus"
-        />
-        <Kanban
-          key="4"
-          :list="respondedList"
-          :relative-list="relativeIssueList"
-          :group="group"
-          class="kanban responded"
-          :header-text="$t('ProjectActive.Responded')"
-          c-name="Responded"
-          @update="updateIssueStatus"
-        />
-        <Kanban
-          key="5"
-          :list="finishedList"
-          :relative-list="relativeIssueList"
-          :group="group"
-          class="kanban finished"
-          :header-text="$t('ProjectActive.Finished')"
-          c-name="Finished"
-          @update="updateIssueStatus"
-        />
-        <Kanban
-          key="6"
-          :list="closedList"
-          :relative-list="relativeIssueList"
-          :group="group"
-          class="kanban closed"
-          :header-text="$t('ProjectActive.Closed')"
-          c-name="Closed"
-          @update="updateIssueStatus"
-        />
-      </div>
+    <div class="board">
+      <Kanban
+        key="1"
+        :list="activeList"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban active"
+        :header-text="$t('ProjectActive.Active')"
+        c-name="Active"
+        @update="updateIssueStatus"
+      />
+      <Kanban
+        key="2"
+        :list="assignedList"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban assigned"
+        :header-text="$t('ProjectActive.Assigned')"
+        c-name="Assigned"
+        @update="updateIssueStatus"
+      />
+      <Kanban
+        key="3"
+        :list="solvedList"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban solved"
+        :header-text="$t('ProjectActive.Solved')"
+        c-name="Solved"
+        @update="updateIssueStatus"
+      />
+      <Kanban
+        key="4"
+        :list="respondedList"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban responded"
+        :header-text="$t('ProjectActive.Responded')"
+        c-name="Responded"
+        @update="updateIssueStatus"
+      />
+      <Kanban
+        key="5"
+        :list="finishedList"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban finished"
+        :header-text="$t('ProjectActive.Finished')"
+        c-name="Finished"
+        @update="updateIssueStatus"
+      />
+      <Kanban
+        key="6"
+        :list="closedList"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban closed"
+        :header-text="$t('ProjectActive.Closed')"
+        c-name="Closed"
+        @update="updateIssueStatus"
+      />
     </div>
   </div>
 </template>
 
 <style lang="scss">
 .board {
-  margin-left: 20px;
   display: flex;
-  justify-content: space-around;
-  flex-direction: row;
-  align-items: flex-start;
+  justify-content: start;
+  flex-wrap: wrap;
 }
 .kanban {
   &.active {
