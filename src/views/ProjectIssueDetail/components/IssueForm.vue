@@ -104,7 +104,6 @@ export default {
           .map(item => {
             return { label: item.name, value: item.id, status: item.status }
           })
-          .filter(item => item.status === 'open')
         this.issueTypeList = typeList.map(item => {
           return { label: item.name, value: item.id }
         })
@@ -243,7 +242,7 @@ export default {
         <el-col :span="12">
           <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
             <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
-              <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" :disabled="item.status !== 'open'" />
             </el-select>
           </el-form-item>
         </el-col>
