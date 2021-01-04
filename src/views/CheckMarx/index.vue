@@ -1,6 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getCheckMarxScans,
   getCheckMarxScanStatus,
@@ -9,24 +10,20 @@ import {
   getCheckMarxReportStatus,
   getCheckMarxReport
 } from '@/api/checkMarx'
-import ProjectListSelector from '../../components/ProjectListSelector'
 
 export default {
   name: 'CheckMarx',
   components: { ProjectListSelector, Pagination },
-  data() {
-    return {
-      checkMarxScans: [],
-
-      listLoading: false,
-      listQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
-      },
-      listTotal: 0, // 總筆數
-      searchData: ''
-    }
-  },
+  data: () => ({
+    checkMarxScans: [],
+    listLoading: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
@@ -43,6 +40,11 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchCheckMarxScans(this.projectSelectedId)
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   created() {
@@ -60,7 +62,7 @@ export default {
     updateMarxScansStatus() {
       this.checkMarxScans.forEach(item => {
         if (item.status === null) this.fetchStatus(item.scan_id)
-        if (item.report_id === -1) this.rigisterReport(item.scan_id)
+        if (item.report_id === -1) this.registerReport(item.scan_id)
         if (item.report_id !== -1 && !item.report_ready) this.fetchReportStatus(item.report_id)
       })
     },
@@ -77,7 +79,7 @@ export default {
         this.checkMarxScans[idx].stats = res.data
       })
     },
-    rigisterReport(scanId) {
+    registerReport(scanId) {
       registerCheckMarxReport(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].reportId = res.data.reportId
@@ -122,20 +124,25 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" />
-      <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('CheckMarx.Commit')" prop="commit_id" />
-      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" />
-      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" width="200">
+      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" min-width="110" />
+      <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" min-width="90" />
+      <el-table-column align="center" :label="$t('CheckMarx.Commit')" prop="commit_id" min-width="95" />
+      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" min-width="100" />
+      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" min-width="135" />
+      <el-table-column
+        align="center"
+        :label="$t('CheckMarx.MediumSeverity')"
+        prop="stats.mediumSeverity"
+        min-width="165"
+      />
+      <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" min-width="135" />
+      <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" min-width="130" />
+      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" min-width="195">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.run_at | YMDhmA }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready">
+      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" min-width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.report_ready"

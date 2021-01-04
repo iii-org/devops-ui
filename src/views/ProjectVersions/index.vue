@@ -1,7 +1,7 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import { getProjectVersion, addProjectVersion, editProjectVersion, deleteProjectVersion } from '@/api/projects'
 const formTemplate = {
   name: '',
@@ -11,38 +11,36 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectVersions',
   components: {
     Pagination,
     ProjectListSelector
   },
-  data() {
-    return {
-      projectValue: '專科A',
-      listLoading: true,
-      dialogVisible: false,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, //總筆數
-      searchData: '',
-      formRules: {
-        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
-        status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
-        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
-      },
-      versionList: [],
-      dialogStatus: 1,
-      memberConfirmLoading: false,
-      form: formTemplate
-    }
-  },
+  data: () => ({
+    listLoading: true,
+    dialogVisible: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    formRules: {
+      name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+      due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
+      status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+      description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
+    },
+    versionList: [],
+    dialogStatus: 1,
+    memberConfirmLoading: false,
+    form: formTemplate
+  }),
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
-      const listData = this.versionList.filter((data) => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+      const listData = this.versionList.filter(data => {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -65,9 +63,14 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
     },
-    form(value) {
-      console.log(value)
+    // form(value) {
+    //   console.log(value)
+    // },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   mounted() {
@@ -99,17 +102,17 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      }).then(async () => {
+      }).then(async() => {
         await deleteProjectVersion(this.projectSelectedId, row.id)
         this.$message({
           type: 'success',
-          message: 'Delete Successed'
+          message: 'Delete Succeed'
         })
         this.fetchData()
       })
     },
     async handleConfirm() {
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs['form'].validate(async valid => {
         if (valid) {
           this.dialogVisible = false
           const data = this.form
@@ -120,7 +123,7 @@ export default {
           }
           this.$message({
             type: 'success',
-            message: 'Successed'
+            message: 'Succeed'
           })
           this.fetchData()
         } else {
@@ -140,9 +143,9 @@ export default {
 
 <template>
   <div class="app-container">
-    <div class="clearfix">
+    <div>
       <project-list-selector />
-      <span class="newBtn">
+      <span>
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
           {{ $t('Version.AddVersion') }}
@@ -150,36 +153,24 @@ export default {
       </span>
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"></i
-      ></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" :label="$t('Version.Id')" :show-overflow-tooltip="true" width="100">
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+      <el-table-column align="center" :label="$t('Version.Id')" min-width="70" prop="id" />
+      <el-table-column align="center" :label="$t('general.Name')" min-width="220" prop="name" />
+      <el-table-column align="center" :label="$t('Version.DueDate')" min-width="60" prop="due_date" />
+      <el-table-column align="center" :label="$t('general.Status')" min-width="60">
         <template slot-scope="scope">
-          {{ scope.row.id }}
+          <el-tag v-if="scope.row.status === 'open'" type="success" size="medium">{{ scope.row.status }}</el-tag>
+          <el-tag v-else type="danger" size="medium">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('Version.DueDate')" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.due_date }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Status')" :show-overflow-tooltip="true" width="160" align="center">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'closed'" type="danger" size="big">{{ scope.row.status }}</el-tag>
-          <el-tag v-else type="success" size="big">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
+      <el-table-column align="center" :label="$t('general.Actions')" min-width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -200,7 +191,6 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-
     <el-dialog
       :title="$t(`Version.${dialogStatusText}Version`)"
       :visible.sync="dialogVisible"
@@ -240,13 +230,3 @@ export default {
     </el-dialog>
   </div>
 </template>
-
-<style lang="scss">
-.newBtn {
-  float: right;
-  padding-right: 6px;
-}
-.line {
-  text-align: center;
-}
-</style>

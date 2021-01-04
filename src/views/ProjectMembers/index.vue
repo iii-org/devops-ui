@@ -1,9 +1,9 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import { mapGetters } from 'vuex'
+import { Message } from 'element-ui'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import { getProjectUserList, getNotInProject, addProjectMember, deleteProjectMember } from '@/api/projects'
-import { Message } from 'element-ui'
 
 const formTemplate = {
   // role_name: 'Engineer',
@@ -12,42 +12,32 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectMembers',
   components: { Pagination, ProjectListSelector },
-  data() {
-    return {
-      listLoading: true,
-      dialogVisible: false,
-      userList: [],
-      assignableUsers: [],
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      dialogStatus: 1,
-      memberConfirmLoading: false,
-      form: formTemplate,
-      rolename: '',
-      userinfo: {}
-    }
-  },
-  watch: {
-    projectSelectedId(projectId) {
-      this.fetchData()
-      this.listQuery.page = 1
+  data: () => ({
+    listLoading: true,
+    dialogVisible: false,
+    userList: [],
+    assignableUsers: [],
+    listQuery: {
+      page: 1,
+      limit: 10
     },
-    'form.id': function (value) {
-      this.rolename = this.userinfo[this.form.id]
-    }
-  },
+    listTotal: 0,
+    searchData: '',
+    dialogStatus: 1,
+    memberConfirmLoading: false,
+    form: formTemplate,
+    roleName: '',
+    userInfo: {}
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userId']),
     pagedData() {
       // const start = (this.listQuery.page - 1) * this.listQuery.limit
       // const end = start + this.listQuery.limit - 1
       // return this.userList.slice(start, end)
-      const listData = this.userList.filter((data) => {
+      const listData = this.userList.filter(data => {
         if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -68,6 +58,19 @@ export default {
       }
     }
   },
+  watch: {
+    projectSelectedId(projectId) {
+      this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    'form.id'(value) {
+      this.roleName = this.userInfo[this.form.id]
+    },
+    searchData() {
+      this.listQuery.page = 1
+    }
+  },
   created() {
     this.fetchData()
   },
@@ -80,7 +83,7 @@ export default {
         this.userList = res.data.user_list
         this.assignableUsers = res_assignable.data.user_list
         for (const i in this.assignableUsers) {
-          this.userinfo[this.assignableUsers[i].id] = this.assignableUsers[i].role_name
+          this.userInfo[this.assignableUsers[i].id] = this.assignableUsers[i].role_name
         }
       } catch (error) {
         console.error(error)
@@ -97,7 +100,6 @@ export default {
     handleEdit(idx, row) {
       this.dialogVisible = true
       this.dialogStatus = 2
-
       this.form = Object.assign({}, this.form, row)
     },
     async handleConfirm() {
@@ -156,40 +158,43 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" :label="$t('Member.Id')" :show-overflow-tooltip="true" width="100">
-        <template slot-scope="scope"> {{ scope.row.id }} </template>
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+      <el-table-column align="center" :label="$t('Member.Id')" min-width="40">
+        <template slot-scope="scope">
+          {{ scope.row.id }}
+        </template>
       </el-table-column>
-      <el-table-column :label="$t('Member.Account')" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('Member.Account')" min-width="70">
         <template slot-scope="scope">
           {{ scope.row.login }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('general.Name')" min-width="70">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Member.Phone')" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('Member.Phone')" min-width="80">
         <template slot-scope="scope">
           {{ scope.row.phone }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Member.Role')" :show-overflow-tooltip="true" width="200">
+      <el-table-column :label="$t('Member.Role')" min-width="80">
         <template slot-scope="scope">
           {{ scope.row.role_name }}
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Status" :show-overflow-tooltip="true">
+      <!-- <el-table-column label="Status" >
         <template slot-scope="scope">
           {{ scope.row.status ? '啟用' : '停用' }}
         </template>
       </el-table-column> -->
-      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="140">
+      <el-table-column :label="$t('general.Actions')" align="center" min-width="50">
         <template slot-scope="scope">
           <span v-if="false">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
@@ -206,8 +211,8 @@ export default {
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.id == userId">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button
-            >
+              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+            </el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -240,7 +245,7 @@ export default {
             <el-option label="Project Manager" value="Project Manager"></el-option>
           </el-select> -->
           <div>
-            {{ rolename }}
+            {{ roleName }}
           </div>
         </el-form-item>
         <!-- <el-form-item label="Duration">

@@ -1,26 +1,23 @@
 <script>
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import { getWebInspectScans, getWebInspectStatus, getWebInspectStats, getWebInspectReport } from '@/api/webInspect'
-import ProjectListSelector from '../../components/ProjectListSelector'
 
 export default {
   name: 'WebInspect',
   components: { ProjectListSelector, Pagination },
-  data() {
-    return {
-      webInspectScans: [],
-      listLoading: false,
-      listQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
-      },
-      listTotal: 0, // 總筆數
-      confirmLoading: false,
-      searchData: ''
-    }
-  },
-
+  data: () => ({
+    webInspectScans: [],
+    listLoading: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    confirmLoading: false,
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['projectSelectedObject', 'userRole']),
     pagedData() {
@@ -34,16 +31,19 @@ export default {
       return listData.slice(start, end)
     }
   },
-
   watch: {
     projectSelectedObject() {
       this.fetchWebInspectScans(this.projectSelectedObject.name)
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   created() {
     this.fetchWebInspectScans(this.projectSelectedObject.name)
   },
-
   methods: {
     async fetchWebInspectScans(projectName) {
       this.listLoading = true

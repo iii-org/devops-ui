@@ -1,37 +1,36 @@
 <script>
 import { mapGetters } from 'vuex'
+import { Message } from 'element-ui'
 import { getInfo, getAllUser, deleteUser } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import UserDialog from './components/UserDialog'
-import { Message } from 'element-ui'
 
 export default {
+  name: 'UserManage',
   components: {
     UserDialog,
     Pagination
   },
-  data() {
-    return {
-      userList: [],
-      userDialogVisible: false,
-      dialogTitle: '',
-      search: '',
-      editUserId: 0,
-      editUserData: {},
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: ''
-    }
-  },
+  data: () => ({
+    userList: [],
+    userDialogVisible: false,
+    dialogTitle: '',
+    search: '',
+    editUserId: 0,
+    editUserData: {},
+    listLoading: true,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['userId']),
     pagedData() {
       const listData = this.userList.filter(data => {
-        if (this.searchData == '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -39,6 +38,11 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return listData.slice(start, end)
+    }
+  },
+  watch: {
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   created() {
@@ -117,37 +121,22 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
-      <el-table-column align="center" :label="$t('User.Account')" min-width="150">
-        <template slot-scope="scope">
-          {{ scope.row.login }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')" min-width="150">
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Email" min-width="150">
-        <template slot-scope="scope">
-          {{ scope.row.email }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.CreateTime')" min-width="120">
+      <el-table-column align="center" :label="$t('User.Account')" min-width="70" prop="login" />
+      <el-table-column align="center" :label="$t('general.Name')" min-width="70" prop="name" />
+      <el-table-column align="center" label="Email" min-width="90" prop="email" />
+      <el-table-column align="center" :label="$t('general.CreateTime')" min-width="55">
         <template slot-scope="scope">
           {{ scope.row.create_at.split('T')[0] }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('User.Phone')" min-width="120">
+      <el-table-column align="center" :label="$t('User.Phone')" min-width="60" prop="phone" />
+      <el-table-column align="center" :label="$t('general.Status')" min-width="50">
         <template slot-scope="scope">
-          {{ scope.row.phone }}
+          <el-tag v-if="scope.row.status === 'enable'" type="finish" size="small">{{ scope.row.status }}</el-tag>
+          <el-tag v-else-if="scope.row.status === 'disable'" type="danger" size="small">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Status')" min-width="80">
-        <template slot-scope="scope">
-          {{ scope.row.status }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="200">
+      <el-table-column align="center" :label="$t('general.Actions')" min-width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
             <i class="el-icon-edit" />

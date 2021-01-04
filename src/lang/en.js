@@ -293,7 +293,8 @@ export default {
     Branch: 'Branch',
     Success: 'Success',
     Fail: 'Fail',
-    StartTime: 'Start Time'
+    StartTime: 'Start Time',
+    SearchBranch: 'Search Branch'
   },
   Activities: {
     User: 'User',

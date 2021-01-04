@@ -1,32 +1,28 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { getPostmanResult } from '@/api/postman'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
+  name: 'PostmanResult',
   components: { ProjectListSelector, Pagination },
-  data() {
-    return {
-      resultList: [],
-      dialogVisible: false,
-      listLoading: true,
-      listQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
-      },
-      listTotal: 0, // 總筆數
-      searchData: ''
-    }
-  },
+  data: () => ({
+    resultList: [],
+    dialogVisible: false,
+    listLoading: true,
+    listQuery: {
+      page: 1, // 目前第幾頁
+      limit: 10 // 一頁幾筆
+    },
+    listTotal: 0, // 總筆數
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
       const listData = this.resultList.filter(data => {
-        if (
-          this.searchData == '' ||
-          data.branch.toLowerCase().includes(this.searchData.toLowerCase())
-        ) {
+        if (this.searchData === '' || data.branch.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -39,6 +35,11 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   created() {
@@ -69,43 +70,20 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('general.SearchName')"
+        :placeholder="$t('Postman.SearchBranch')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('Postman.Id')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Postman.Branch')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <span>{{ scope.row.branch }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Commit" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <span>{{ scope.row.commit_id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Postman.Success')">
-        <template slot-scope="scope">
-          {{ scope.row.success }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Postman.Fail')">
-        <template slot-scope="scope">
-          {{ scope.row.failure }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Postman.StartTime')">
-        <template slot-scope="scope">
-          {{ scope.row.run_at }}
-        </template>
-      </el-table-column>
+    <el-table v-loading="listLoading" element-loading-text="Loading" :data="pagedData" border fit highlight-current-row>
+      <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="80" />
+      <el-table-column align="center" :label="$t('Postman.Branch')" min-width="60" prop="branch" />
+      <el-table-column align="center" label="Commit" prop="commit_id" show-overflow-tooltip min-width="130" />
+      <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="40" />
+      <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="30" />
+      <el-table-column align="center" :label="$t('Postman.StartTime')" prop="run_at" width="240" />
     </el-table>
     <pagination
       :total="listTotal"

@@ -1,31 +1,28 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { getPostmanReport } from '@/api/postman'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
   components: { ProjectListSelector, Pagination },
-  data() {
-    return {
-      reportList: [],
-      dialogVisible: false,
-      listLoading: true,
-      listQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
-      },
-      listTotal: 0, // 總筆數
-      searchData: ''
-    }
-  },
+  data: () => ({
+    reportList: [],
+    dialogVisible: false,
+    listLoading: true,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
       const listData = this.reportList.filter(data => {
-        console.log(data.assertions.toString())
         if (
-          this.searchData == '' ||
+          this.searchData === '' ||
           data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
           data.path.toLowerCase().includes(this.searchData.toLowerCase()) ||
           JSON.stringify(data.assertions)
@@ -44,6 +41,11 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   created() {
@@ -55,7 +57,7 @@ export default {
         this.listLoading = true
         const response = await getPostmanReport(this.projectSelectedId)
         const { data } = response
-        this.reportList = data.json_file.executions
+        data ? (this.reportList = data.json_file.executions) : (this.reportList = [])
       } catch (e) {
         console.log(e)
       } finally {
@@ -89,27 +91,28 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('TestCase.SearchNameOrPathOrTestResult')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true" min-width="40">
         <template slot-scope="scope">
           <span>{{ scope.row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Path')" width="120px">
+      <el-table-column align="center" :label="$t('TestCase.Path')" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.path }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.TestResult')">
+      <el-table-column align="center" :label="$t('TestCase.TestResult')" min-width="150">
         <template slot-scope="scope">
           <span v-html="testResults(scope.row)" />
         </template>

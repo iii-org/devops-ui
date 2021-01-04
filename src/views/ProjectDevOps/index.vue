@@ -1,8 +1,8 @@
 <script>
 import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
 import Sortable from 'sortablejs'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import Pagination from '@/components/Pagination'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import { getPipelinesPhase } from '@/api/cicd'
 
 const formTemplate = {
@@ -18,68 +18,34 @@ export default {
     ProjectListSelector,
     Pagination
   },
-
-  data() {
-    return {
-      toolList: [
-        {
-          tool_name: 'Redmine'
-        },
-        {
-          tool_name: 'JIRA'
-        },
-        {
-          tool_name: 'OpenProject'
-        },
-        {
-          tool_name: 'Maninis'
-        }
-      ],
-      // phaseList: [
-      //   {
-      //     phase_name: 'Plan'
-      //   },
-      //   {
-      //     phase_name: 'Code'
-      //   },
-      //   {
-      //     phase_name: 'Code Review'
-      //   },
-      //   {
-      //     phase_name: 'Build'
-      //   },
-      //   {
-      //     phase_name: 'Test'
-      //   },
-      //   {
-      //     phase_name: 'Release'
-      //   },
-      //   {
-      //     phase_name: 'Deploy'
-      //   },
-      //   {
-      //     phase_name: 'Monitor'
-      //   },
-      //   {
-      //     phase_name: 'Extra'
-      //   }
-      // ],
-      // projectValue: '專科A',
-      listLoading: true,
-      phaseList: [],
-      dialogVisible: false,
-      listQuery: {
-        page: 1,
-        limit: 10
+  data: () => ({
+    toolList: [
+      {
+        tool_name: 'Redmine'
       },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      dialogStatus: 1,
-      memberConfirmLoading: false,
-      form: formTemplate
-    }
-  },
-
+      {
+        tool_name: 'JIRA'
+      },
+      {
+        tool_name: 'OpenProject'
+      },
+      {
+        tool_name: 'Maninis'
+      }
+    ],
+    listLoading: true,
+    phaseList: [],
+    dialogVisible: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    dialogStatus: 1,
+    memberConfirmLoading: false,
+    form: formTemplate
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
     pagedData() {
@@ -104,21 +70,23 @@ export default {
       }
     }
   },
-
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
     },
     form(value) {
       console.log(value)
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
-
   mounted() {
     this.fetchData()
     // this.drag()
   },
-
   methods: {
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -200,38 +168,32 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
-
     <el-divider />
-
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column align="center" :label="$t('DevOps.Id')" :show-overflow-tooltip="true" width="100">
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+      <el-table-column align="center" :label="$t('DevOps.Id')" min-width="30">
         <template slot-scope="scope">
           <!-- <i class="el-icon-sort"></i>  -->
           {{ scope.row.id }}
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('DevOps.Phase')" :show-overflow-tooltip="true" width="160" align="center">
+      <el-table-column align="center" :label="$t('DevOps.Phase')" min-width="40">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.phase === 'deploy'" type="danger" size="big">{{ scope.row.phase }}</el-tag>
           <el-tag v-else-if="scope.row.phase === 'Test'" type="warning" size="big">{{ scope.row.phase }}</el-tag>
           <el-tag v-else type="success" size="big">{{ scope.row.phase }}</el-tag>
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('DevOps.Tools')" :show-overflow-tooltip="true">
+      <el-table-column align="center" :label="$t('DevOps.Tools')" min-width="180">
         <template slot-scope="scope">
           {{ scope.row.software }}
         </template>
       </el-table-column>
-
-      <!-- <el-table-column label="Status" :show-overflow-tooltip="true">
+      <!-- <el-table-column label="Status">
         <template slot-scope="scope">
           {{ scope.row.status ? '啟用' : '停用' }}
         </template>
       </el-table-column>
-
-      <el-table-column label="Actions" align="center" :show-overflow-tooltip="true">
+      <el-table-column align="center" label="Actions">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -279,7 +241,6 @@ export default {
           <el-input v-model="form.desc" type="textarea" />
         </el-form-item>
       </el-form>
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
         <el-button :loading="memberConfirmLoading" type="primary" @click="handleConfirm">Confirm</el-button>

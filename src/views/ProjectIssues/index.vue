@@ -1,11 +1,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Message } from 'element-ui'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '../../components/ProjectListSelector'
-import AddIssue from './components/AddIssue'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import { addIssue, deleteIssue } from '@/api/issue'
 import { getProjectIssueListByTree } from '@/api/projects'
-import { Message } from 'element-ui'
+import AddIssue from './components/AddIssue'
 
 export default {
   name: 'ProjectIssues',
@@ -14,23 +14,21 @@ export default {
     ProjectListSelector,
     Pagination
   },
-  data() {
-    return {
-      issueList: [],
-      addTopicDialogVisible: false,
-      search: '',
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      parentId: 0,
-      parentName: '',
-      parentList: []
-    }
-  },
+  data: () => ({
+    issueList: [],
+    addTopicDialogVisible: false,
+    search: '',
+    listLoading: true,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    parentId: 0,
+    parentName: '',
+    parentList: []
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
     pagedData() {
@@ -45,29 +43,29 @@ export default {
         ) {
           return data
         }
-        // Sub issue Leval1
+        // Sub issue level 1
         if (data.children.length > 0) {
-          const children1 = data.children.filter(datachildren1 => {
-            if (datachildren1.assigned_to === null) {
-              datachildren1.assigned_to = ''
+          const children1 = data.children.filter(dataChildren1 => {
+            if (dataChildren1.assigned_to === null) {
+              dataChildren1.assigned_to = ''
             }
             if (
-              datachildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-              datachildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+              dataChildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+              dataChildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
             ) {
-              return datachildren1
+              return dataChildren1
             }
-            // Sub issue Leval2
-            if (datachildren1.children.length > 0) {
-              const children2 = datachildren1.children.filter(datachildren2 => {
-                if (datachildren2.assigned_to === null) {
-                  datachildren2.assigned_to = ''
+            // Sub issue level 2
+            if (dataChildren1.children.length > 0) {
+              const children2 = dataChildren1.children.filter(dataChildren2 => {
+                if (dataChildren2.assigned_to === null) {
+                  dataChildren2.assigned_to = ''
                 }
                 if (
-                  datachildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-                  datachildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+                  dataChildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+                  dataChildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
                 ) {
-                  return datachildren2
+                  return dataChildren2
                 }
               })
               if (children2.length > 0) {
@@ -89,6 +87,11 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.search = ''
+    },
+    search() {
+      this.listQuery.page = 1
     }
   },
   created() {
@@ -215,7 +218,7 @@ export default {
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column :label="$t('Issue.Id')">
+      <el-table-column :label="$t('Issue.Id')" min-width="200">
         <template slot-scope="scope">
           <div class="d-flex">
             <div class="column-title">
@@ -229,12 +232,12 @@ export default {
               icon="el-icon-plus"
               @click="handleParent(scope.$index, scope.row, scope)"
             >
-              Add subissue
+              Add sub issue
             </el-button>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Type')" :show-overflow-tooltip="true" width="120px">
+      <el-table-column :label="$t('general.Type')" width="120">
         <template slot-scope="scope">
           <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
           <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
@@ -248,46 +251,42 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('general.Status')" width="160px">
+      <el-table-column align="center" :label="$t('general.Status')" width="125">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="big">{{
-            scope.row.issue_status
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="big">{{
-            scope.row.issue_status
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="big">{{
-            scope.row.issue_status
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="big">{{
-            scope.row.issue_status
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="big">{{
-            scope.row.issue_status
-          }}</el-tag>
-          <el-tag v-else type="finish" size="big">{{ scope.row.issue_status }}</el-tag>
+          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium">
+            {{ scope.row.issue_status }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium">
+            {{ scope.row.issue_status }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium">
+            {{ scope.row.issue_status }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="medium">
+            {{ scope.row.issue_status }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium">
+            {{ scope.row.issue_status }}
+          </el-tag>
+          <el-tag v-else type="finish" size="medium"> {{ scope.row.issue_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Assignee')" width="200px">
+      <el-table-column align="center" :label="$t('Issue.Assignee')" width="200" prop="assigned_to" />
+      <el-table-column align="center" :label="$t('Issue.Priority')" width="115">
         <template slot-scope="scope">
-          {{ scope.row.assigned_to }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Priority')" width="120px">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">{{
-            scope.row.issue_priority
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">{{
-            scope.row.issue_priority
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">{{
-            scope.row.issue_priority
-          }}</el-tag>
+          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
+            {{ scope.row.issue_priority }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">
+            {{ scope.row.issue_priority }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">
+            {{ scope.row.issue_priority }}
+          </el-tag>
           <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="260px">
+      <el-table-column align="center" :label="$t('general.Actions')" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
@@ -299,7 +298,6 @@ export default {
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            class="Issuedel"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
@@ -337,7 +335,7 @@ export default {
 }
 
 .el-table__body-wrapper {
-  @media (max-width: 1366px){
+  @media (max-width: 1366px) {
     overflow-x: auto;
   }
 }
@@ -346,28 +344,29 @@ export default {
   margin-left: 5px !important;
 }
 
-col:first-child, .el-table__row td:first-child{
-  @media (max-width: 1366px){
+col:first-child,
+.el-table__row td:first-child {
+  @media (max-width: 1366px) {
     width: 500px;
   }
 }
 
-.el-table_1_column_1{
+.el-table_1_column_1 {
   position: relative;
   font-weight: 500;
-  .text-success{
+  .text-success {
     font-weight: 600;
     margin-right: 5px;
   }
 }
 
-.column-title{
+.column-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.btn-sub{
+.btn-sub {
   color: #989898;
   font-size: 15px;
   font-weight: 400;
@@ -375,9 +374,8 @@ col:first-child, .el-table__row td:first-child{
   margin: 0;
   padding-left: 0;
   padding-right: 16px;
-  @media (max-width: 1366px){
+  @media (max-width: 1366px) {
     padding-right: 8px;
   }
-
 }
 </style>

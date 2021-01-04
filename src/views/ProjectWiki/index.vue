@@ -1,60 +1,55 @@
 <script>
 import { mapGetters } from 'vuex'
-
+import { Message } from 'element-ui'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '../../components/ProjectListSelector'
-// import WangEditor from '@/components/Wangeditor'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import EditorMD from '@/components/Editormd'
 import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
-import { formatTime } from '../../utils/index.js'
-import { Message } from 'element-ui'
+import { formatTime } from '@/utils/index.js'
 
 export default {
   components: {
-    // WangEditor,
     EditorMD,
     ProjectListSelector,
     Pagination
   },
-  data() {
-    return {
-      isLoading: false,
-      listLoading: true,
-      editBtnLoading: false,
-      direction: 'rtl',
-      wikiList: [],
-      wikiData: {},
-      wikiContent: 'Hello DevOps',
-      newWikiContent: '',
-      detailVisible: false,
-      dialogVisible: false,
-      dialogVisibleEdit: false,
-      drawerTitle: '',
-      wikiTitle: '',
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      formRules: {
-        wikiTitle: [
-          { required: true, message: 'Please input name', trigger: 'change' },
-          {
-            pattern: /^((?!,|\.|\/|\?|;|:|\|).)*$/,
-            message: 'Not allowing special characters (, . / ? ; : |)',
-            trigger: 'blur'
-          }
-        ]
-      },
-      form: { wikiTitle: '' }
-    }
-  },
+  data: () => ({
+    isLoading: false,
+    listLoading: true,
+    editBtnLoading: false,
+    direction: 'rtl',
+    wikiList: [],
+    wikiData: {},
+    wikiContent: 'Hello DevOps',
+    newWikiContent: '',
+    detailVisible: false,
+    dialogVisible: false,
+    dialogVisibleEdit: false,
+    drawerTitle: '',
+    wikiTitle: '',
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    formRules: {
+      wikiTitle: [
+        { required: true, message: 'Please input name', trigger: 'change' },
+        {
+          pattern: /^((?!,|\.|\/|\?|;|:|\|).)*$/,
+          message: 'Not allowing special characters (, . / ? ; : |)',
+          trigger: 'blur'
+        }
+      ]
+    },
+    form: { wikiTitle: '' }
+  }),
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
       const listData = this.wikiList.filter(data => {
-        if (this.searchData == '' || data.title.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.title.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -67,6 +62,11 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   created() {
@@ -221,19 +221,19 @@ export default {
       </el-button>
     </div> -->
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column prop="title" :label="$t('Wiki.Title')" />
-      <el-table-column prop="version" :label="$t('Version.Version')" width="160" />
-      <el-table-column :label="$t('general.CreateTime')" width="240">
+      <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
+      <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
+      <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.created_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.UpdateTime')" width="240">
+      <el-table-column align="center" :label="$t('general.UpdateTime')" width="190">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" width="340" align="center">
+      <el-table-column align="center" :label="$t('general.Actions')" width="270">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
@@ -288,7 +288,6 @@ export default {
         <div class="form__body">
           <br>
           <template>
-            <!-- <WangEditor @get-editor-data="emitGetEditorData" :content="wikiContent" ref="editor" /> -->
             <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
           </template>
         </div>
@@ -344,7 +343,6 @@ export default {
   </div>
 </template>
 <style lang="scss">
-/* Wiki detail scroll bar*/
 .el-drawer__body {
   height: 100%;
   box-sizing: border-box;
@@ -380,7 +378,6 @@ export default {
     text-align: right;
   }
 
-  /* table 样式 */
   table {
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
@@ -396,7 +393,6 @@ export default {
     text-align: center;
   }
 
-  /* blockquote 样式 */
   blockquote {
     display: block;
     border-left: 8px solid #d0e5f2;
@@ -407,7 +403,6 @@ export default {
     background-color: #f1f1f1;
   }
 
-  /* code 样式 */
   code {
     display: inline-block;
     *display: inline;
@@ -421,7 +416,6 @@ export default {
     display: block;
   }
 
-  /* ul ol 样式 */
   ul,
   ol {
     margin: 10px 0 10px 20px;

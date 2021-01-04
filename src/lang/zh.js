@@ -71,7 +71,7 @@ export default {
     Type: '類型',
     Description: '描述',
     Method: '方法',
-    Path: '路逕',
+    Path: '路徑',
     TestResult: '測試結果',
     SearchNameOrPathOrTestResult: '搜尋名稱,路徑或測試結果'
   },
@@ -291,7 +291,8 @@ export default {
     Branch: '分支',
     Success: '成功',
     Fail: '失敗',
-    StartTime: '開始時間'
+    StartTime: '開始時間',
+    SearchBranch: '搜尋 分支'
   },
   Activities: {
     User: '使用者',

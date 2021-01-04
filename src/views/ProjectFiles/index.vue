@@ -1,8 +1,8 @@
 <script>
-import { fileExtension } from '../../utils/extension.js'
 import { mapGetters } from 'vuex'
+import { fileExtension } from '@/utils/extension.js'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getProjectFileList,
   downloadProjectFile,
@@ -10,6 +10,7 @@ import {
   uploadProjectFile,
   deleteProjectFile
 } from '@/api/projects'
+
 const formTemplate = {
   name: '',
   version: '',
@@ -22,31 +23,29 @@ export default {
     Pagination,
     ProjectListSelector
   },
-  data() {
-    return {
-      listLoading: true,
-      dialogVisible: false,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      fileFormRules: {
-        // name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
-        // version: [{ required: false, message: 'Please select version', trigger: 'blur' }],
-        // description: [{ required: false, message: 'Please input description', trigger: 'blur' }]
-      },
-      fileList: [],
-      versionList: [],
-      dialogStatus: 1,
-      memberConfirmLoading: false,
-      fileForm: formTemplate,
-      uploadFileList: [],
-      loadinginstance: '',
-      extension: {}
-    }
-  },
+  data: () => ({
+    listLoading: true,
+    dialogVisible: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    fileFormRules: {
+      // name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
+      // version: [{ required: false, message: 'Please select version', trigger: 'blur' }],
+      // description: [{ required: false, message: 'Please input description', trigger: 'blur' }]
+    },
+    fileList: [],
+    versionList: [],
+    dialogStatus: 1,
+    memberConfirmLoading: false,
+    fileForm: formTemplate,
+    uploadFileList: [],
+    loadingInstance: '',
+    extension: {}
+  }),
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
@@ -63,11 +62,15 @@ export default {
   },
   watch: {
     projectSelectedId() {
-      this.listQuery.page = 1
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
     },
-    form(value) {
-      console.log(value)
+    // form(value) {
+    //   console.log(value)
+    // },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   mounted() {
@@ -160,18 +163,18 @@ export default {
             form.append('description', data.description)
           }
           try {
-            this.loadinginstance = this.$loading({
+            this.loadingInstance = this.$loading({
               target: '.el-dialog',
               text: 'Loading'
             })
             await uploadProjectFile(this.projectSelectedId, form)
-            this.loadinginstance.close()
+            this.loadingInstance.close()
             this.$message.success('Upload successful')
             this.$refs['fileForm'].resetFields()
             this.dialogVisible = false
             this.fetchData()
           } catch (err) {
-            this.loadinginstance.close()
+            this.loadingInstance.close()
             console.error(err)
           }
         } else {
@@ -201,7 +204,6 @@ export default {
           {{ $t('File.AddFile') }}
         </el-button>
       </span>
-
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -211,41 +213,35 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
-
     <el-divider />
-
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" :label="$t('File.Id')" :show-overflow-tooltip="true" min-width="40">
+      <el-table-column align="center" :label="$t('File.Id')" width="100">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
+      <el-table-column align="center" :label="$t('general.Name')" min-width="100">
         <template slot-scope="scope">
           {{ scope.row.filename }}
         </template>
       </el-table-column>
-
       <!-- <el-table-column label="Description" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
       -->
-      <el-table-column :label="$t('general.Creator')" :show-overflow-tooltip="true" min-width="100">
+      <el-table-column align="center" :label="$t('general.Creator')" min-width="100">
         <template slot-scope="scope">
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('general.CreateTime')" min-width="100">
+      <el-table-column align="center" :label="$t('general.CreateTime')" min-width="80">
         <template slot-scope="scope">
           {{ scope.row.created_on | relativeTime }}
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="110">
+      <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleDownload(scope.$index, scope.row)">
             <i class="el-icon-download" />
@@ -267,7 +263,6 @@ export default {
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       :total="listTotal"
       :page="listQuery.page"
@@ -276,7 +271,6 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-
     <el-dialog
       :title="$t('File.AddFile')"
       :visible.sync="dialogVisible"
