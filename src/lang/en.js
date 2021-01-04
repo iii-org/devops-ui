@@ -61,7 +61,7 @@ export default {
     Close: 'Close',
     Disable: 'Disable',
     Enable: 'Enable',
-    LastUpdateTime: 'LastUpdateTime'
+    LastUpdateTime: 'Last Update Time'
   },
   TestCase: {
     TestCase: 'Test Case',
@@ -266,7 +266,7 @@ export default {
   },
   ProcessDevBranch: {
     Commit: 'Commit',
-    LastUpdateTime: 'LastUpdateTime',
+    LastUpdateTime: 'Last Update Time',
     Environment: 'Environment',
     SearchBranch: 'Search Branch',
     Branch: 'Branch'

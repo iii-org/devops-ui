@@ -277,7 +277,7 @@ export default {
     Branch: '分支',
     CommitMessage: '上傳訊息',
     LastUpdateTime: '最後更新',
-    SearchCommitMessage: '搜尋 Commit 訊息'
+    SearchCommitMessage: '搜尋 上傳訊息'
   },
   ProjectResource: {
     Usage: '使用量',

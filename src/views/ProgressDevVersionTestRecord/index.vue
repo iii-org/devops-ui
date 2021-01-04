@@ -1,33 +1,28 @@
 <script>
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
-import TestDetail from './components/TestDetail'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import { formatTime } from '@/utils/index.js'
 import { getPipelines, getPipelinesLogs, changePipelineByAction } from '@/api/cicd'
-import ProjectListSelector from '../../components/ProjectListSelector'
-import { formatTime } from '../../utils/index.js'
+import TestDetail from './components/TestDetail'
 
 export default {
   name: 'ProgressDevVersionTestRecord',
   components: { Pagination, ProjectListSelector, TestDetail },
-
-  data() {
-    return {
-      isLoading: false,
-
-      listLoading: true,
-      testList: [],
-      detailData: [],
-      testDetailVisible: false,
-      addDocumentDialogVisible: false,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: ''
-    }
-  },
-
+  data: () => ({
+    isLoading: false,
+    listLoading: true,
+    testList: [],
+    detailData: [],
+    testDetailVisible: false,
+    addDocumentDialogVisible: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['projectSelectedObject']),
     pagedData() {
@@ -42,17 +37,19 @@ export default {
       return listData.slice(start, end)
     }
   },
-
   watch: {
     projectSelectedObject(obj) {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
-
   async created() {
     this.fetchData()
   },
-
   methods: {
     async fetchData() {
       this.listLoading = true
@@ -71,36 +68,29 @@ export default {
       }
       this.listLoading = false
     },
-
     returnTagType(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'info'
       return success === total ? 'success' : 'danger'
     },
-
     testResults(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'No Test'
       return success + ' / ' + total
     },
-
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-
     statusBoo(obj) {
       if (obj.success === obj.total) return true
       false
     },
-
     myFormatTime(time) {
       return formatTime(new Date(time))
     },
-
     emitTestDetailVisible(visible) {
       this.testDetailVisible = visible
     },
-
     async onDetailsClick(row) {
       this.isLoading = true
       const { repository_id } = this.projectSelectedObject
@@ -119,7 +109,6 @@ export default {
 
       this.isLoading = false
     },
-
     async onActionClick(id, action) {
       const { repository_id } = this.projectSelectedObject
       const data = {
@@ -144,7 +133,6 @@ export default {
   <div v-loading="isLoading" class="app-container">
     <div class="clearfix">
       <project-list-selector />
-
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -154,27 +142,10 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
-
     <el-divider />
-
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fixed>
-      <el-table-column
-        :label="$t('ProcessDevBranchTest.Id')"
-        :show-overflow-tooltip="true"
-        align="center"
-        min-width="80"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        :label="$t('ProcessDevBranchTest.TestItems')"
-        :show-overflow-tooltip="true"
-        align="center"
-        min-width="120"
-      >
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+      <el-table-column :label="$t('ProcessDevBranchTest.Id')" align="center" width="80" prop="id" />
+      <el-table-column :label="$t('ProcessDevBranchTest.TestItems')" align="center" width="120">
         <template slot-scope="scope">
           {{ `(${scope.row.status.success}/${scope.row.status.total})` }}
           <i
@@ -183,69 +154,32 @@ export default {
           />
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('ProcessDevBranchTest.Status')" align="center" min-width="120">
+      <el-table-column :label="$t('ProcessDevBranchTest.Status')" align="center" width="110">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.execution_state == 'Failed'" type="danger" size="big">
+          <el-tag v-if="scope.row.execution_state == 'Failed'" type="danger" size="medium">
             {{ scope.row.execution_state }}
           </el-tag>
-
-          <el-tag v-else-if="scope.row.execution_state == 'Success'" type="success" size="big">
+          <el-tag v-else-if="scope.row.execution_state == 'Success'" type="success" size="medium">
             {{ scope.row.execution_state }}
           </el-tag>
-
-          <el-tag v-else-if="scope.row.execution_state == 'Waiting'" type="responded" size="big">
+          <el-tag v-else-if="scope.row.execution_state == 'Waiting'" type="responded" size="medium">
             {{ scope.row.execution_state }}
           </el-tag>
-
-          <el-tag v-else-if="scope.row.execution_state == 'Building'" type="warning" size="big">
+          <el-tag v-else-if="scope.row.execution_state == 'Building'" type="warning" size="medium">
             {{ scope.row.execution_state }}
           </el-tag>
-
-          <el-tag v-else type="close" size="big">{{ scope.row.execution_state }}</el-tag>
+          <el-tag v-else type="close" size="medium">{{ scope.row.execution_state }}</el-tag>
         </template>
       </el-table-column>
-
-      <el-table-column
-        :label="$t('ProcessDevBranchTest.Commit')"
-        :show-overflow-tooltip="true"
-        align="center"
-        min-width="180"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.commit_id }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        :label="$t('ProcessDevBranchTest.Branch')"
-        :show-overflow-tooltip="true"
-        align="center"
-        min-width="90"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.commit_branch }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        :label="$t('ProcessDevBranchTest.CommitMessage')"
-        :show-overflow-tooltip="true"
-        align="center"
-        min-width="170"
-      >
-        <template slot-scope="scope">
-          {{ scope.row.commit_message }}
-        </template>
-      </el-table-column>
-
-      <el-table-column :label="$t('ProcessDevBranchTest.LastUpdateTime')" align="center" min-width="180">
+      <el-table-column :label="$t('ProcessDevBranchTest.Commit')" align="center" min-width="180" prop="commit_id" />
+      <el-table-column :label="$t('ProcessDevBranchTest.Branch')" align="center" min-width="90" prop="commit_branch" />
+      <el-table-column :label="$t('ProcessDevBranchTest.CommitMessage')" align="center" min-width="170" prop="commit_message" />
+      <el-table-column :label="$t('ProcessDevBranchTest.LastUpdateTime')" align="center" width="180">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="230">
+      <el-table-column :label="$t('general.Actions')" align="center" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row)">
             <i class="el-icon-document" />
@@ -270,7 +204,6 @@ export default {
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       :total="listTotal"
       :page="listQuery.page"
@@ -279,7 +212,6 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-
     <test-detail
       :dialog-visible.sync="testDetailVisible"
       :the-data="detailData"

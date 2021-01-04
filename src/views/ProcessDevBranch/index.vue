@@ -1,27 +1,25 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '../../components/ProjectListSelector'
-import { formatTime } from '../../utils/index.js'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import { formatTime } from '@/utils/index.js'
 
 export default {
+  name: 'ProcessDevBranch',
   components: {
     Pagination,
     ProjectListSelector
   },
-  data() {
-    return {
-      branchList: [],
-      search: '',
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: ''
-    }
-  },
+  data: () => ({
+    branchList: [],
+    listLoading: true,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: ''
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject', 'branchesByProject']),
     pagedData() {
@@ -42,6 +40,11 @@ export default {
     },
     projectSelectedObject(obj) {
       this.fetchBranchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   async created() {
@@ -75,16 +78,16 @@ export default {
       return formatTime(new Date(time))
     },
     EnvironmentFormat(env) {
-      const servicearray = Object.keys(env)
-      const Environmentarray = []
-      servicearray.forEach(function(item) {
-        const detailarray = env[item]
-        const servicename = Object.keys(env[item])
-        detailarray[servicename].forEach(function(item) {
-          Environmentarray.push({ service: servicename[0], port: item.port, url: item.url })
+      const serviceArray = Object.keys(env)
+      const environmentArray = []
+      serviceArray.forEach(function(item) {
+        const detailArray = env[item]
+        const serviceName = Object.keys(env[item])
+        detailArray[serviceName].forEach(function(item) {
+          environmentArray.push({ service: serviceName[0], port: item.port, url: item.url })
         })
       })
-      return Environmentarray
+      return environmentArray
     }
   }
 }
@@ -104,19 +107,8 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="160">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
-          <!-- <router-link :to="'dev-branch/' + scope.row.name + '/test'" style="color: #409EFF">
-            <span>{{ scope.row.name }}</span>
-          </router-link> -->
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Description')">
-        <template slot-scope="scope">
-          {{ scope.row.last_commit_message }}
-        </template>
-      </el-table-column>
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="160" prop="name" />
+      <el-table-column align="center" :label="$t('general.Description')" prop="last_commit_message" />
       <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')">
         <template slot-scope="scope">
           <div v-for="(item, index) in EnvironmentFormat(scope.row.env_url)" :key="index">
@@ -129,11 +121,7 @@ export default {
           {{ scope.row.status }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" width="160">
-        <template slot-scope="scope">
-          {{ scope.row.short_id }}
-        </template>
-      </el-table-column>
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" width="160" prop="short_id" />
       <el-table-column align="center" :label="$t('ProcessDevBranch.LastUpdateTime')" width="240">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.last_commit_time) }}
@@ -155,8 +143,3 @@ export default {
     />
   </div>
 </template>
-<style lang="scss">
-.filter-container {
-  margin-bottom: 5px;
-}
-</style>

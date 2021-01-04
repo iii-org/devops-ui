@@ -27,44 +27,42 @@ export default {
       return statusMap[status]
     }
   },
-  data() {
-    return {
-      dialogVisible: false,
-      dialogDelete: false,
-      dialogStatus: 1,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      form: formTemplate,
-      rules: {
-        name: [
-          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-          {
-            required: true,
-            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-            message: 'Identifier is invalid.',
-            trigger: 'blur'
-          }
-        ],
-        display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
-      },
-      statusW: '50%',
-      confirmLoading: false,
-      deleteProject: {},
-      deleteProjectID: '',
-      placeholderText: '',
-      loadingDelete: ''
-    }
-  },
+  data: () => ({
+    dialogVisible: false,
+    dialogDelete: false,
+    dialogStatus: 1,
+    listLoading: true,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    form: formTemplate,
+    rules: {
+      name: [
+        { required: true, message: 'Project Identifier is required', trigger: 'blur' },
+        {
+          required: true,
+          pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
+          message: 'Identifier is invalid.',
+          trigger: 'blur'
+        }
+      ],
+      display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
+    },
+    statusW: '50%',
+    confirmLoading: false,
+    deleteProject: {},
+    deleteProjectID: '',
+    placeholderText: '',
+    loadingDelete: ''
+  }),
   computed: {
     ...mapGetters(['projectList', 'projectListTotal', 'userId']),
     pagedData() {
       const listData = this.projectList.filter(data => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -82,6 +80,11 @@ export default {
         default:
           return 'Null'
       }
+    }
+  },
+  watch: {
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   async created() {
@@ -128,7 +131,7 @@ export default {
           }
           this.$message({
             type: 'success',
-            message: 'Delete Successed'
+            message: 'Delete Succeed'
           })
           this.loadingDelete.close()
           this.dialogDelete = false
@@ -193,22 +196,22 @@ export default {
       return 'loading-box ' + loadClass
     },
     async handleConfirm() {
-      const thiz = this
+      const vm = this
       this.$refs.thisForm.validate(async function(valid) {
         if (!valid) {
           return
         }
         //   this.dialogVisible = false
-        if (thiz.dialogStatus === 2) return thiz.handleConfirmEdit()
-        thiz.confirmLoading = true
+        if (vm.dialogStatus === 2) return vm.handleConfirmEdit()
+        vm.confirmLoading = true
         const dataBody = {
-          name: thiz.form.name,
-          display: thiz.form.display,
-          description: thiz.form.description,
-          disabled: thiz.form.disabled
+          name: vm.form.name,
+          display: vm.form.display,
+          description: vm.form.description,
+          disabled: vm.form.disabled
         }
-        const res = await thiz['projects/addNewProject'](dataBody)
-        thiz.confirmLoading = false
+        const res = await vm['projects/addNewProject'](dataBody)
+        vm.confirmLoading = false
         if (res.message !== 'success') return
         // console.log(res)
         Message({
@@ -216,8 +219,8 @@ export default {
           type: 'success',
           duration: 1 * 1000
         })
-        thiz.dialogVisible = false
-        thiz.loadList()
+        vm.dialogVisible = false
+        vm.loadList()
       })
     },
     async handleConfirmEdit() {
@@ -287,7 +290,7 @@ export default {
           <span style="color: #949494; font-weight: 400">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Status')" min-width="100">
+      <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{
             scope.row.project_status
@@ -295,7 +298,7 @@ export default {
           <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Progress')" min-width="240">
+      <el-table-column align="center" :label="$t('Project.Progress')" width="220">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
           <span class="status-bar-track">
@@ -321,12 +324,12 @@ export default {
           </div>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="140">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" width="140">
         <template slot-scope="scope">
           {{ scope.row.updated_time | relativeTime }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="GitLab" min-width="100">
+      <el-table-column align="center" label="GitLab" width="110">
         <template slot-scope="scope">
           <el-link v-if="scope.row.git_url" type="text" :href="scope.row.git_url" target="_blank">
             <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab
@@ -334,7 +337,7 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" min-width="110">
+      <el-table-column align="center" label="Redmine" width="110">
         <template slot-scope="scope">
           <el-link v-if="scope.row.redmine_url" type="text" :href="scope.row.redmine_url" target="_blank">
             <el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine
@@ -342,7 +345,7 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" min-width="200">
+      <el-table-column :label="$t('general.Actions')" align="center" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />
