@@ -4,18 +4,20 @@ import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '../../api/git-graph'
 
 export default {
-  data() {
-    return {
-      selectedBranch: '',
-      listLoading: true
-    }
-  },
+  name: 'ProjectGraph',
+  data: () => ({
+    selectedBranch: '',
+    listLoading: true
+  }),
   computed: {
     ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'projectList'])
   },
   watch: {
     projectList(ary) {
-      if (ary.length === 0) return
+      if (ary.length === 0) {
+        this.listLoading = false
+        return
+      }
       if (this.selectedBranch !== '') return
       this.selectedBranch = ary[0].repository_ids
     },
@@ -163,7 +165,7 @@ export default {
 </script>
 
 <template>
-  <div class="app-container" v-loading="listLoading">
+  <div v-loading="listLoading" class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>Git Graph</span>

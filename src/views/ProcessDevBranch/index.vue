@@ -51,7 +51,6 @@ export default {
     this.fetchBranchData()
   },
   methods: {
-    ...mapActions(['projects/getProjectList']),
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchBranchData() {
       this.listLoading = true

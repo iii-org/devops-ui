@@ -1,11 +1,10 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Kanban from '@/components/Kanban'
-import { getProjectVersion } from '@/api/projects'
-import ProjectListSelector from '../../components/ProjectListSelector'
-import { getIssueStatus, updateIssue } from '@/api/issue'
-import { getProjectIssueListByStatus, getProjectIssueListByTree } from '@/api/projects'
 import Fuse from 'fuse.js'
+import Kanban from '@/components/Kanban'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import { getIssueStatus, updateIssue } from '@/api/issue'
+import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 
 export default {
   name: 'ProjectCurrentActivity',
@@ -13,31 +12,26 @@ export default {
     Kanban,
     ProjectListSelector
   },
-  data() {
-    return {
-      isLoading: true,
-      issueStatusList: [],
-      projectIssueList: [],
-      activeList: [],
-      assignedList: [],
-      solvedList: [],
-      respondedList: [],
-      finishedList: [],
-      closedList: [],
-      group: 'mission',
-      versionValue: '-1',
-      memberValue: '-1',
-      projectVersionList: [],
-      projectUserList: '',
-
-      relativeIssueList: []
-    }
-  },
-
+  data: () => ({
+    isLoading: true,
+    issueStatusList: [],
+    projectIssueList: [],
+    activeList: [],
+    assignedList: [],
+    solvedList: [],
+    respondedList: [],
+    finishedList: [],
+    closedList: [],
+    group: 'mission',
+    versionValue: '-1',
+    memberValue: '-1',
+    projectVersionList: [],
+    projectUserList: '',
+    relativeIssueList: []
+  }),
   computed: {
     ...mapGetters(['projectSelectedId'])
   },
-
   watch: {
     projectSelectedId() {
       this.fetchData()
@@ -45,13 +39,11 @@ export default {
       this.memberValue = '-1'
     }
   },
-
   async created() {
     const issueStatusRes = await getIssueStatus()
     this.issueStatusList = issueStatusRes.data
     this.fetchData()
   },
-
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
     searchKanbanCard(value, opt) {
@@ -196,12 +188,22 @@ export default {
       <div>
         <project-list-selector />
 
-        <el-select v-model="versionValue" :placeholder="$t('Version.SelectVersion')" @change="updateData">
+        <el-select
+          v-model="versionValue"
+          :placeholder="$t('Version.SelectVersion')"
+          :disabled="projectSelectedId === -1"
+          @change="updateData"
+        >
           <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
           <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
 
-        <el-select v-model="memberValue" :placeholder="$t('Member.SelectMember')" @change="updateData">
+        <el-select
+          v-model="memberValue"
+          :placeholder="$t('Member.SelectMember')"
+          :disabled="projectSelectedId === -1"
+          @change="updateData"
+        >
           <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
           <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
         </el-select>
