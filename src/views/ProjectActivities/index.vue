@@ -1,7 +1,7 @@
 <script>
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { mapGetters } from 'vuex'
 import { getProjectActivities } from '@/api/activities'
 
 export default {
@@ -10,19 +10,17 @@ export default {
     Pagination,
     ProjectListSelector
   },
-  data() {
-    return {
-      listLoading: true,
-      dialogVisible: false,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      activitiesList: []
-    }
-  },
+  data: () => ({
+    listLoading: true,
+    dialogVisible: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    activitiesList: []
+  }),
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
@@ -39,8 +37,12 @@ export default {
   },
   watch: {
     projectSelectedId() {
-      this.listQuery.page = 1
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   mounted() {

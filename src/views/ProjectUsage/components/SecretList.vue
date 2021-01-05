@@ -36,6 +36,7 @@ export default {
     projectSelectedId(projectId) {
       this.fetchData()
       this.listQuery.page = 1
+      this.searchData = ''
     },
     searchData() {
       this.listQuery.page = 1

@@ -215,7 +215,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" :label="$t('File.Id')" width="110">
+      <el-table-column align="center" :label="$t('File.Id')" min-width="110">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
