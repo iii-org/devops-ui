@@ -1,7 +1,7 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import { getHarborRepoList, editHarborRepo, deleteHarborRepo, getHarborRepoStorageSummary } from '@/api/harbor'
 const formTemplate = {
   name: '',
@@ -11,43 +11,42 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectResource',
   components: {
     Pagination,
     ProjectListSelector
   },
-  data() {
-    return {
-      harborUrl: process.env.VUE_APP_HARBOR_URL,
-      projectName: '',
-      listLoading: true,
-      dialogVisible: false,
-      listQuery: {
-        page: 1,
-        limit: 10
+  data: () => ({
+    harborUrl: process.env.VUE_APP_HARBOR_URL,
+    projectName: '',
+    listLoading: true,
+    dialogVisible: false,
+    listQuery: {
+      page: 1,
+      limit: 10
+    },
+    listTotal: 0,
+    searchData: '',
+    formRules: {
+      description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
+    },
+    resourceList: [],
+    storage: {
+      project_admin_count: 0,
+      quota: {
+        hard: { storage: 0 },
+        used: { storage: 0 }
       },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      formRules: {
-        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
-      },
-      resourceList: [],
-      storage: {
-        project_admin_count: 0,
-        quota: {
-          hard: { storage: 0 },
-          used: { storage: 0 }
-        },
-        repo_count: 0
-      },
-      memberConfirmLoading: false,
-      form: formTemplate
-    }
-  },
+      repo_count: 0
+    },
+    memberConfirmLoading: false,
+    form: formTemplate
+  }),
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
     pagedData() {
       const listData = this.resourceList.filter(data => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -60,9 +59,14 @@ export default {
   watch: {
     projectSelectedId() {
       this.fetchData()
+      this.listQuery.page = 1
+      this.searchData = ''
     },
-    form(value) {
-      console.log(value)
+    // form(value) {
+    //   console.log(value)
+    // },
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   mounted() {
@@ -74,16 +78,17 @@ export default {
     },
     async fetchData() {
       this.listLoading = true
-      const res = await getHarborRepoList(this.projectSelectedId)
-      this.resourceList = res.data.map(item => {
-        const name_ary = item.name.split('/')
-        item['name_in_harbor'] = name_ary[name_ary.length - 1]
-        return item
-      })
-      this.projectName = this.projectSelectedObject['name']
-      const storageRes = await getHarborRepoStorageSummary(this.projectSelectedId)
-      this.storage = storageRes.data
-      console.log('this.storage', this.storage)
+      if (this.projectSelectedId !== -1) {
+        const res = await getHarborRepoList(this.projectSelectedId)
+        this.resourceList = res.data.map(item => {
+          const name_ary = item.name.split('/')
+          item['name_in_harbor'] = name_ary[name_ary.length - 1]
+          return item
+        })
+        this.projectName = this.projectSelectedObject['name']
+        const storageRes = await getHarborRepoStorageSummary(this.projectSelectedId)
+        this.storage = storageRes.data
+      }
       this.listLoading = false
     },
     returnPercentage(quota) {
@@ -105,7 +110,7 @@ export default {
         await deleteHarborRepo(row.name)
         this.$message({
           type: 'success',
-          message: 'Delete Successed'
+          message: 'Delete Succeed'
         })
         this.fetchData()
       })
@@ -118,7 +123,7 @@ export default {
           await editHarborRepo(data.name, { description: data.description })
           this.$message({
             type: 'success',
-            message: 'Successed'
+            message: 'Succeed'
           })
           this.fetchData()
         } else {
@@ -145,8 +150,9 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-card shadow="never" style="margin-bottom: 5px">
@@ -171,8 +177,9 @@ export default {
             type="primary"
             :href="`${harborUrl}/projects/${projectSelectedId}/repositories/${scope.row.name_in_harbor}`"
             target="_blank"
-            >{{ scope.row.name }}</el-link
           >
+            {{ scope.row.name }}
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">
@@ -241,20 +248,10 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">{{
-          $t('general.Confirm')
-        }}</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
+          {{ $t('general.Confirm') }}
+        </el-button>
       </span>
     </el-dialog>
   </div>
 </template>
-
-<style lang="scss">
-.newBtn {
-  float: right;
-  padding-right: 6px;
-}
-.line {
-  text-align: center;
-}
-</style>

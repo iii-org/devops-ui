@@ -39,7 +39,7 @@ export default {
   },
   watch: {
     projectSelectedId() {
-      this.fetchCheckMarxScans(this.projectSelectedId)
+      this.fetchCheckMarxScans()
       this.listQuery.page = 1
       this.searchData = ''
     },
@@ -47,16 +47,18 @@ export default {
       this.listQuery.page = 1
     }
   },
-  created() {
-    this.fetchCheckMarxScans(this.projectSelectedId)
+  mounted() {
+    this.fetchCheckMarxScans()
   },
   methods: {
-    async fetchCheckMarxScans(projectId) {
+    async fetchCheckMarxScans() {
       this.listLoading = true
-      await getCheckMarxScans(projectId).then(res => {
-        this.checkMarxScans = res.data.map(item => item)
-      })
-      this.updateMarxScansStatus()
+      if (this.projectSelectedId !== -1) {
+        await getCheckMarxScans(this.projectSelectedId).then(res => {
+          this.checkMarxScans = res.data.map(item => item)
+        })
+        this.updateMarxScansStatus()
+      }
       this.listLoading = false
     },
     updateMarxScansStatus() {

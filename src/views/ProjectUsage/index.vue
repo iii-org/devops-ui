@@ -8,15 +8,13 @@ export default {
   components: {
     ProjectListSelector
   },
-  data() {
-    return {
-      listLoading: true,
-      usageList: {
-        used: {},
-        quota: {}
-      }
+  data: () => ({
+    listLoading: true,
+    usageList: {
+      used: {},
+      quota: {}
     }
-  },
+  }),
   computed: {
     ...mapGetters(['projectSelectedId'])
   },
@@ -31,8 +29,10 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      const res = await getProjectUsage(this.projectSelectedId)
-      this.usageList = res.data
+      if (this.projectSelectedId !== -1) {
+        const res = await getProjectUsage(this.projectSelectedId)
+        this.usageList = res.data
+      }
       this.listLoading = false
     },
     handleEdit(target, pId) {
@@ -53,9 +53,17 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>CPU</span>
-            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('deployment-list', projectSelectedId)" />
+            <el-button
+              icon="el-icon-edit"
+              size="mini"
+              type="primary"
+              plain
+              circle
+              @click="handleEdit('deployment-list', projectSelectedId)"
+            />
           </div>
-          <div style="display: flex;">
+          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else style="display: flex;">
             <div class="cardItem">
               <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.cpu }}
@@ -73,7 +81,8 @@ export default {
           <div slot="header" class="d-flex">
             <span>Memory</span>
           </div>
-          <div style="display: flex;">
+          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else style="display: flex;">
             <div class="cardItem">
               <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.memory }}
@@ -90,9 +99,17 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>Pods</span>
-            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('pod-list', projectSelectedId)" />
+            <el-button
+              icon="el-icon-edit"
+              size="mini"
+              type="primary"
+              plain
+              circle
+              @click="handleEdit('pod-list', projectSelectedId)"
+            />
           </div>
-          <div style="display: flex;">
+          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else style="display: flex;">
             <div class="cardItem">
               <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.pods }}
@@ -111,9 +128,17 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>Service</span>
-            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('service-list', projectSelectedId)" />
+            <el-button
+              icon="el-icon-edit"
+              size="mini"
+              type="primary"
+              plain
+              circle
+              @click="handleEdit('service-list', projectSelectedId)"
+            />
           </div>
-          <div style="display: flex;">
+          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else style="display: flex;">
             <div class="cardItem">
               <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used['services.nodeports'] }}
@@ -130,9 +155,17 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>Secrets</span>
-            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('secret-list', projectSelectedId)" />
+            <el-button
+              icon="el-icon-edit"
+              size="mini"
+              type="primary"
+              plain
+              circle
+              @click="handleEdit('secret-list', projectSelectedId)"
+            />
           </div>
-          <div style="display: flex;">
+          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else style="display: flex;">
             <div class="cardItem">
               <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.secrets }}
@@ -149,9 +182,17 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>ConfigMaps</span>
-            <el-button icon="el-icon-edit" size="mini" type="primary" plain circle @click="handleEdit('config-map-list', projectSelectedId)" />
+            <el-button
+              icon="el-icon-edit"
+              size="mini"
+              type="primary"
+              plain
+              circle
+              @click="handleEdit('config-map-list', projectSelectedId)"
+            />
           </div>
-          <div style="display: flex;">
+          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else style="display: flex;">
             <div class="cardItem">
               <div>{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.configmaps }}

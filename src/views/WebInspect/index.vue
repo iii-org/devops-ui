@@ -33,7 +33,7 @@ export default {
   },
   watch: {
     projectSelectedObject() {
-      this.fetchWebInspectScans(this.projectSelectedObject.name)
+      this.fetchWebInspectScans()
       this.listQuery.page = 1
       this.searchData = ''
     },
@@ -42,15 +42,17 @@ export default {
     }
   },
   created() {
-    this.fetchWebInspectScans(this.projectSelectedObject.name)
+    this.fetchWebInspectScans()
   },
   methods: {
-    async fetchWebInspectScans(projectName) {
+    async fetchWebInspectScans() {
       this.listLoading = true
-      await getWebInspectScans(projectName).then(res => {
-        this.webInspectScans = this.sortScans(res.data)
-      })
-      await this.updateWebInspectStatus()
+      if (this.projectSelectedObject.name !== undefined) {
+        await getWebInspectScans(this.projectSelectedObject.name).then(res => {
+          this.webInspectScans = this.sortScans(res.data)
+        })
+        await this.updateWebInspectStatus()
+      }
       this.listLoading = false
     },
     sortScans(webInspectScans) {
