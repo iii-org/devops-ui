@@ -35,11 +35,9 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      chart: null
-    }
-  },
+  data: () => ({
+    chart: null
+  }),
   watch: {
     theData(value) {
       this.$nextTick(() => {
@@ -79,9 +77,9 @@ export default {
   methods: {
     initChart(CONFIG_DATA) {
       if (CONFIG_DATA.yAxis.length === 0) {
-        this.$emit('legendfun', false)
+        this.$emit('legendFun', false)
       } else {
-        this.$emit('legendfun', true)
+        this.$emit('legendFun', true)
       }
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
@@ -103,7 +101,7 @@ export default {
         },
         // color: ['#3ECBBC','#C8C8C8'],
         // legend: {
-        //   data: ['Finished', 'Unfinish'],
+        //   data: ['Finished', 'Unfinished'],
         //   textStyle:{
         //     color:'#000000',
         //     fontSize: 13
@@ -190,7 +188,7 @@ export default {
             // ]
           },
           {
-            name: 'Unfinish',
+            name: 'Unfinished',
             type: 'bar',
             barWidth: '10',
             stack: 'Total',

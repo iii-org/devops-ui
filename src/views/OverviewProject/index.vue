@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import projectPie from './components/project_pie'
 import projectBar from './components/project_bar'
 import {
@@ -18,22 +18,20 @@ export default {
     projectBar,
     ProjectListSelector
   },
-  data() {
-    return {
-      isLoading: true,
-      ProjectTestLoading: true,
-      projectVersion: '',
-      projectVersionList: [],
-      workLoad: '',
-      workLoadData: {},
-      workLoadTypes: [],
-      workLoadSelected: {},
-      issueprogress: { total_issue: 0, unfinish_number: 0 },
-      tableData: [],
-      projectdata: [],
-      legend: false
-    }
-  },
+  data: () => ({
+    isLoading: true,
+    projectTestLoading: true,
+    projectVersion: '',
+    projectVersionList: [],
+    workLoad: '',
+    workLoadData: {},
+    workLoadTypes: [],
+    workLoadSelected: {},
+    issueProgress: { total_issue: 0, unfinished_number: 0 },
+    tableData: [],
+    projectData: [],
+    legend: false
+  }),
   computed: {
     ...mapGetters(['userProjectList', 'projectSelectedId'])
   },
@@ -54,7 +52,7 @@ export default {
     onWorkLoadChange(value) {
       this.workLoadSelected = this.workLoadData[value]
     },
-    legendfun(value) {
+    legendFun(value) {
       this.legend = value.toString()
     },
     async fetchAll() {
@@ -71,12 +69,13 @@ export default {
         this.fetchProjectTest()
       } else {
         this.isLoading = false
+        this.projectTestLoading = false
       }
     },
     async fetchByVersion() {
       // 如果無版本列表，預設帶整體專案統計資訊，後面不用帶版本參數
       let param = {}
-      if (this.projectVersion != '') {
+      if (this.projectVersion !== '') {
         param = { fixed_version_id: this.projectVersion }
       }
       const res = await Promise.all([
@@ -85,7 +84,7 @@ export default {
         this.getProjectUserList(this.projectSelectedId)
       ])
       this.isLoading = false
-      this.issueprogress = res[0].data
+      this.issueProgress = res[0].data
       const statistics = res[1].data
       this.tableData = res[2].data.user_list || []
       this.workLoadData = statistics
@@ -96,17 +95,17 @@ export default {
       this.workLoadSelected = statistics[this.workLoad]
     },
     async fetchProjectTest() {
-      this.ProjectTestLoading = true
-      this.projectdata = []
-      let apiProjectdata = await getProjectTest(this.projectSelectedId)
-      this.ProjectTestLoading = false
-      apiProjectdata = apiProjectdata.data
-      for (const i in apiProjectdata.test_results) {
+      this.projectTestLoading = true
+      this.projectData = []
+      console.log('fetchProjectTest')
+      let apiProjectData = await getProjectTest(this.projectSelectedId)
+      apiProjectData = apiProjectData.data
+      for (const i in apiProjectData.test_results) {
         const object = {}
-        // console.log(apiProjectdata.test_result[i])
-        let Informationtext = ''
-        for (const j in apiProjectdata.test_results[i]) {
-          // console.log(j, apiProjectdata.test_results[i][j])
+        // console.log(apiProjectData.test_result[i])
+        let informationText = ''
+        for (const j in apiProjectData.test_results[i]) {
+          // console.log(j, apiProjectData.test_results[i][j])
           if (
             (j !== 'message') &
             (j !== 'statisticsCalculationDate') &
@@ -115,55 +114,56 @@ export default {
             (j !== 'report_id') &
             (j !== 'id')
           ) {
-            Informationtext =
-              Informationtext +
+            informationText =
+              informationText +
               '<div  style="flex: 1;padding-left: 5px;">' +
               j +
               ':' +
-              apiProjectdata.test_results[i][j] +
+              apiProjectData.test_results[i][j] +
               ' </div>'
           }
         }
         if (i === 'postman') {
-          Informationtext = Informationtext + '<div  style="flex: 1;padding-left: 5px;"> <div>'
-          if (Object.keys(apiProjectdata.test_results[i]).length === 0) {
-            Informationtext = 'No data.'
+          informationText = informationText + '<div  style="flex: 1;padding-left: 5px;"> <div>'
+          if (Object.keys(apiProjectData.test_results[i]).length === 0) {
+            informationText = 'No data.'
           }
         } else if (i === 'checkmarx') {
           // checkmarx message https://github.com/iii-org/devops-system/wiki/Message-Strings
           if (
             this.$router.history.current.path === '/project/index' &&
-            (apiProjectdata.test_results[i].status === 1 || apiProjectdata.test_results[i].status === 2)
+            (apiProjectData.test_results[i].status === 1 || apiProjectData.test_results[i].status === 2)
           ) {
             this.timeout = setTimeout(() => {
               this.fetchProjectTest()
             }, 15000)
           }
-          if (apiProjectdata.test_results[i].status === -1) {
-            Informationtext = 'This project does not have any scan.'
-          } else if (apiProjectdata.test_results[i].status === 1) {
-            Informationtext = 'The scan is not completed yet. It may take several hours to complete.'
-          } else if (apiProjectdata.test_results[i].status === 2) {
-            Informationtext = 'Scan done, the system is generating a report. It may take several minutes to complete.'
-          } else if (apiProjectdata.test_results[i].status === 3) {
-            object['report_id'] = apiProjectdata.test_results[i].report_id
-          } else if (apiProjectdata.test_results[i].status === 4) {
-            Informationtext = 'The scan is canceled.'
-          } else if (apiProjectdata.test_results[i].status === 5) {
-            Informationtext = 'The scan failed.'
-          } else if (apiProjectdata.test_results[i].status === undefined) {
-            Informationtext = 'No data.'
+          if (apiProjectData.test_results[i].status === -1) {
+            informationText = 'This project does not have any scan.'
+          } else if (apiProjectData.test_results[i].status === 1) {
+            informationText = 'The scan is not completed yet. It may take several hours to complete.'
+          } else if (apiProjectData.test_results[i].status === 2) {
+            informationText = 'Scan done, the system is generating a report. It may take several minutes to complete.'
+          } else if (apiProjectData.test_results[i].status === 3) {
+            object['report_id'] = apiProjectData.test_results[i].report_id
+          } else if (apiProjectData.test_results[i].status === 4) {
+            informationText = 'The scan is canceled.'
+          } else if (apiProjectData.test_results[i].status === 5) {
+            informationText = 'The scan failed.'
+          } else if (apiProjectData.test_results[i].status === undefined) {
+            informationText = 'No data.'
           }
         }
         object['Software'] = i
-        object['status'] = apiProjectdata.test_results[i].status
-        object['Informationtext'] = Informationtext
-        this.projectdata.push(object)
+        object['status'] = apiProjectData.test_results[i].status
+        object['informationText'] = informationText
+        this.projectData.push(object)
       }
+      this.projectTestLoading = false
     },
-    async fetchTestReport(Reportid) {
-      this.ProjectTestLoading = true
-      await getTestReport(Reportid).then(res => {
+    async fetchTestReport(reportId) {
+      this.projectTestLoading = true
+      await getTestReport(reportId).then(res => {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement('a')
         link.href = url
@@ -171,7 +171,7 @@ export default {
         document.body.appendChild(link)
         link.click()
       })
-      this.ProjectTestLoading = false
+      this.projectTestLoading = false
     }
   }
 }
@@ -195,7 +195,7 @@ export default {
             <span>{{ $t('general.Status') }}</span>
           </div>
           <div v-if="projectSelectedId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
-          <project-pie :the-data="issueprogress" />
+          <project-pie :the-data="issueProgress" />
         </el-card>
       </el-col>
 
@@ -226,7 +226,7 @@ export default {
             </div>
           </div>
           <div v-if="projectSelectedId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
-          <project-bar :the-data="workLoadSelected" @legendfun="legendfun" />
+          <project-bar :the-data="workLoadSelected" @legend-fun="legendFun" />
         </el-card>
       </el-col>
     </el-row>
@@ -246,22 +246,29 @@ export default {
       </el-col>
 
       <el-col :span="12">
-        <el-card v-loading="ProjectTestLoading" shadow="hover" style="min-height: 400px" class="status-wrap">
+        <el-card v-loading="projectTestLoading" shadow="hover" style="min-height: 400px" class="status-wrap">
           <div slot="header" class="clearfix">
             <span>{{ $t('Project.TestStatus') }}</span>
             <span class="reload-btn">
-              <el-button type="primary" icon="el-icon-refresh" circle size="mini" @click="fetchProjectTest()">
+              <el-button
+                v-if="projectSelectedId !== -1"
+                type="primary"
+                icon="el-icon-refresh"
+                circle
+                size="mini"
+                @click="fetchProjectTest()"
+              >
                 Reload
               </el-button>
             </span>
           </div>
-          <el-table :data="projectdata" stripe style="width: 100%" border>
+          <el-table :data="projectData" stripe style="width: 100%" border>
             <el-table-column :label="$t('Project.Software')" prop="Software" width="130" />
             <el-table-column :label="$t('Project.Brief')">
               <template slot-scope="scope">
                 <div
                   style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;"
-                  v-html="scope.row.Informationtext"
+                  v-html="scope.row.informationText"
                 />
               </template>
             </el-table-column>
