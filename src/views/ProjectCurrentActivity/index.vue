@@ -209,9 +209,7 @@ export default {
         </el-select>
       </div>
     </div>
-
     <el-divider />
-
     <div class="board">
       <Kanban
         key="1"
@@ -282,6 +280,7 @@ export default {
   display: flex;
   justify-content: start;
   flex-wrap: wrap;
+  align-items: start;
 }
 .kanban {
   &.active {
