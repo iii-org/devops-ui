@@ -37,7 +37,7 @@ service.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
-  */
+   */
 
   /**
    * Determine the request status by custom code
@@ -54,7 +54,7 @@ service.interceptors.response.use(
       Message({
         message: message,
         type: 'error',
-        duration: 5 * 1000
+        duration: 10 * 1000
       })
 
       return Promise.reject(new Error(message || 'Error'))
@@ -64,7 +64,7 @@ service.interceptors.response.use(
     //   Message({
     //     message: res.message,
     //     type: 'error',
-    //     duration: 5 * 1000
+    //     duration: 10 * 1000
     //   })
     //   return Promise.reject(new Error(res.message || 'Error'))
     // }
@@ -81,11 +81,7 @@ service.interceptors.response.use(
   error => {
     const res = error.response.data
     let res_msg = res.message
-    if (
-      'error' in res &&
-      'code' in res['error'] &&
-      res['error']['code'] in errorCodes
-    ) {
+    if ('error' in res && 'code' in res['error'] && res['error']['code'] in errorCodes) {
       const error_msg = errorCodes[res['error']['code']][getLanguage() || 'zh'] // language default is zh
       const error_msg_details = res.error.details || {}
       res_msg = error_msg
@@ -96,7 +92,7 @@ service.interceptors.response.use(
     Message({
       message: res_msg,
       type: 'error',
-      duration: 5 * 1000
+      duration: 10 * 1000
     })
     return Promise.reject(error)
   }

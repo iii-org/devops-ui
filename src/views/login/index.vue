@@ -115,7 +115,7 @@ export default {
               Message({
                 message: 'Username or password is invalid.',
                 type: 'error',
-                duration: 5 * 1000
+                duration: 10 * 1000
               })
             }
           }).finally(() => {
