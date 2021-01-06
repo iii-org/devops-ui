@@ -1,8 +1,14 @@
 <script>
-import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
-import { fileExtension } from '@/utils/extension'
 import { Message } from 'element-ui'
+import { fileExtension } from '@/utils/extension'
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
+import {
+  getProjectAssignable,
+  getProjectVersion,
+  getProjectIssueList,
+  getProjectIssueListByTree,
+  getNotInProject
+} from '@/api/projects'
 
 export default {
   name: 'IssueForm',
@@ -59,6 +65,7 @@ export default {
     issueStatusList: [],
     issuePriorityList: [],
     issueVersionList: [],
+    userList: [],
 
     parentIssue: {},
     relativeIssueList: [],
@@ -70,9 +77,23 @@ export default {
       const listWithoutClosedOption = this.issueStatusList.filter(item => item.label !== 'Closed')
       return this.isChildrenAllClosed() ? this.issueStatusList : listWithoutClosedOption
     },
-
     isParentIssueClosed() {
       return this.parentIssue !== {} && this.parentIssue.issue_status === 'Closed'
+    },
+    dynamicAssigneeList() {
+      const hasAssignee = this.issueAssigneeList.findIndex(item => item.value === this.issueForm.assigned_to_id) !== -1
+      if (hasAssignee) {
+        return this.issueAssigneeList
+      } else {
+        const inactiveAssignee = Object.assign(
+          {},
+          this.userList.find(item => item.value === this.issueForm.assigned_to_id)
+        )
+        const result = Object.assign([], this.issueAssigneeList)
+        inactiveAssignee['label'] = `${inactiveAssignee['label']} (${this.$t('general.Disable')})`
+        result.push(inactiveAssignee)
+        return result
+      }
     }
   },
 
@@ -92,18 +113,25 @@ export default {
         getIssueStatus(),
         getIssuePriority(),
         getProjectIssueList(this.projectId),
-        getProjectIssueListByTree(this.projectId)
+        getProjectIssueListByTree(this.projectId),
+        getNotInProject(this.projectId)
       ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList, issueList, issueListByTree] = res.map(
-          item => item.data
-        )
+        const [
+          assigneeList,
+          versionList,
+          typeList,
+          statusList,
+          priorityList,
+          issueList,
+          issueListByTree,
+          allUserList
+        ] = res.map(item => item.data)
         this.issueAssigneeList = assigneeList.user_list.map(item => {
           return { label: item.login, value: item.id }
         })
-        this.issueVersionList = versionList.versions
-          .map(item => {
-            return { label: item.name, value: item.id, status: item.status }
-          })
+        this.issueVersionList = versionList.versions.map(item => {
+          return { label: item.name, value: item.id, status: item.status }
+        })
         this.issueTypeList = typeList.map(item => {
           return { label: item.name, value: item.id }
         })
@@ -113,13 +141,15 @@ export default {
         this.issuePriorityList = priorityList.map(item => {
           return { label: item.name, value: item.id }
         })
+        this.userList = allUserList.user_list.map(item => {
+          return { label: item.name, value: item.id }
+        })
         this.parentIssue = issueList.find(item => item.id === this.parentId) || {}
         this.relativeIssueList = this.createRelativeList(issueListByTree)
         this.updateChildrenList()
         this.isLoading = false
       })
     },
-
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
         this.$message.warning(`Unable to upload a file: This file type is not supported`)
@@ -131,7 +161,6 @@ export default {
         this.uploadFileList = fileList
       }
     },
-
     async handleSaveDetail() {
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
@@ -179,11 +208,9 @@ export default {
         }
       })
     },
-
     isChildrenAllClosed() {
       return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.issue_status === 'Closed')
     },
-
     createRelativeList(list) {
       const result = []
       function flatList(parent) {
@@ -196,7 +223,6 @@ export default {
       flatList(list)
       return result
     },
-
     updateChildrenList() {
       const idx = this.relativeIssueList.findIndex(item => item.id === this.issueId)
       this.childrenIssueList = this.relativeIssueList[idx].children
@@ -234,7 +260,12 @@ export default {
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
             <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
-              <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option
+                v-for="item in dynamicAssigneeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -242,7 +273,13 @@ export default {
         <el-col :span="12">
           <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
             <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
-              <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" :disabled="item.status !== 'open'" />
+              <el-option
+                v-for="item in issueVersionList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                :disabled="item.status !== 'open'"
+              />
             </el-select>
           </el-form-item>
         </el-col>
