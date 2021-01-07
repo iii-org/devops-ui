@@ -31,8 +31,9 @@ export default {
     Resource: '資源清單',
     Artifacts: '資源成品',
     'Postman result': 'Postman結果',
-    'Project Activities': '操作紀錄',
-    'System Activities': '系統紀錄'
+    Activities: '操作記錄',
+    'Project Activities': '專案紀錄列表',
+    'System Activities': '系統紀錄列表'
   },
   navbar: {
     logOut: '登出',

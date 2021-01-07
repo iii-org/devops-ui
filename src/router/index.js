@@ -169,6 +169,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/cicd/pipelines/:bId',
     component: Layout,
@@ -305,6 +306,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/project-resource',
     component: Layout,
@@ -380,6 +382,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/progress',
     component: Layout,
@@ -520,6 +523,29 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/activities',
+    component: Layout,
+    name: 'Activities',
+    alwaysShow: true,
+    redirect: '/activities/project-activities',
+    meta: { title: 'Activities', icon: 'el-icon-s-order', roles: ['Project Manager', 'Administrator'] },
+    children: [
+      {
+        path: 'project-activities',
+        name: 'ProjectActivities',
+        component: () => import('@/views/ProjectActivities/index'),
+        meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'system-activities',
+        name: 'SystemActivities',
+        component: () => import('@/views/SystemActivities/index'),
+        meta: { title: 'System Activities', roles: ['Administrator'] }
+      }
+    ]
+  },
+
+  {
     path: '/project_setting',
     component: Layout,
     name: 'Setting',
@@ -543,18 +569,6 @@ export const asyncRoutes = [
         name: 'DevOps',
         component: () => import('@/views/ProjectDevOps/index'),
         meta: { title: 'DevOps', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'project-activities',
-        name: 'ProjectActivities',
-        component: () => import('@/views/ProjectActivities/index'),
-        meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'system-activities',
-        name: 'SystemActivities',
-        component: () => import('@/views/SystemActivities/index'),
-        meta: { title: 'System Activities', roles: ['Administrator'] }
       }
     ]
   },
@@ -581,6 +595,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/SystemVersion',
     component: Layout,
@@ -601,6 +616,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
