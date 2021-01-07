@@ -302,5 +302,10 @@ export default {
     ActionParts: 'Action Parts',
     ActAt: 'Act At',
     SearchActAt: 'Search Act At'
+  },
+  Maintenance: {
+    AddSecret: 'Add Secret',
+    SecretName: 'Secret Name',
+    SearchSecretName: 'Search Secret Name'
   }
 }

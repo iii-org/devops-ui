@@ -300,5 +300,10 @@ export default {
     ActionParts: '內容',
     ActAt: '發生時間',
     SearchActAt: '搜尋 發生時間'
+  },
+  Maintenance: {
+    AddSecret: '新增 Secret',
+    SecretName: 'Secret 名稱',
+    SearchSecretName: '搜尋 Secret Name'
   }
 }
