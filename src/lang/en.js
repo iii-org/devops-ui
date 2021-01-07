@@ -306,6 +306,11 @@ export default {
   Maintenance: {
     AddSecret: 'Add Secret',
     SecretName: 'Secret Name',
-    SearchSecretName: 'Search Secret Name'
+    SearchSecretName: 'Search Secret Name',
+    AddRegistry: 'Add Registry',
+    RegistryName: 'Registry Name',
+    SearchRegistryName: 'Search Registry Name',
+    UserName: 'User Name',
+    Password: 'Password'
   }
 }

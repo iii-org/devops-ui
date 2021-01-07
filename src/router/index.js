@@ -365,6 +365,18 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProjectUsage/components/ConfigMapList'),
         meta: { title: 'Config Map List', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'system-secrets',
+        name: 'System Secrets',
+        component: () => import('@/views/SystemSecrets/index'),
+        meta: { title: 'System Secrets', roles: ['Administrator'] }
+      },
+      {
+        path: 'system-registry',
+        name: 'System Registry',
+        component: () => import('@/views/SystemRegistry/index'),
+        meta: { title: 'System Registry', roles: ['Administrator'] }
       }
     ]
   },

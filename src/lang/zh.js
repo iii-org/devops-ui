@@ -304,6 +304,11 @@ export default {
   Maintenance: {
     AddSecret: '新增 Secret',
     SecretName: 'Secret 名稱',
-    SearchSecretName: '搜尋 Secret Name'
+    SearchSecretName: '搜尋 Secret 名稱',
+    AddRegistry: '新增 Registry',
+    RegistryName: 'Registry 名稱',
+    SearchRegistryName: '搜尋 Registry 名稱',
+    UserName: '使用者名稱',
+    Password: '密碼'
   }
 }
