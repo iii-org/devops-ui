@@ -34,9 +34,6 @@ export default {
         this.usageList = res.data
       }
       this.listLoading = false
-    },
-    handleEdit(target, pId) {
-      this.$router.push({ path: `/project-resource/${target}/${pId}` })
     }
   }
 }
@@ -53,14 +50,6 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>CPU</span>
-            <el-button
-              icon="el-icon-edit"
-              size="mini"
-              type="primary"
-              plain
-              circle
-              @click="handleEdit('deployment-list', projectSelectedId)"
-            />
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
@@ -99,14 +88,6 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>Pods</span>
-            <el-button
-              icon="el-icon-edit"
-              size="mini"
-              type="primary"
-              plain
-              circle
-              @click="handleEdit('pod-list', projectSelectedId)"
-            />
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
@@ -128,14 +109,6 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>Service</span>
-            <el-button
-              icon="el-icon-edit"
-              size="mini"
-              type="primary"
-              plain
-              circle
-              @click="handleEdit('service-list', projectSelectedId)"
-            />
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
@@ -155,14 +128,6 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>Secrets</span>
-            <el-button
-              icon="el-icon-edit"
-              size="mini"
-              type="primary"
-              plain
-              circle
-              @click="handleEdit('secret-list', projectSelectedId)"
-            />
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
@@ -182,14 +147,6 @@ export default {
         <el-card v-loading="listLoading" shadow="never">
           <div slot="header" class="d-flex">
             <span>ConfigMaps</span>
-            <el-button
-              icon="el-icon-edit"
-              size="mini"
-              type="primary"
-              plain
-              circle
-              @click="handleEdit('config-map-list', projectSelectedId)"
-            />
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">

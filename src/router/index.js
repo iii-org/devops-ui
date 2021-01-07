@@ -334,38 +334,33 @@ export const asyncRoutes = [
         meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'deployment-list/:pId',
+        path: 'deployment-list',
         name: 'Deployment List',
-        hidden: true,
-        component: () => import('@/views/ProjectUsage/components/DeploymentList'),
+        component: () => import('@/views/DeploymentList/index'),
         meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'pod-list/:pId',
+        path: 'pod-list',
         name: 'Pod List',
-        hidden: true,
-        component: () => import('@/views/ProjectUsage/components/PodList'),
+        component: () => import('@/views/PodList/index'),
         meta: { title: 'Pod List', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'service-list/:pId',
+        path: 'service-list',
         name: 'Service List',
-        hidden: true,
-        component: () => import('@/views/ProjectUsage/components/ServiceList'),
+        component: () => import('@/views/ServiceList/index'),
         meta: { title: 'Service List', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'secret-list/:pId',
+        path: 'secret-list',
         name: 'Secret List',
-        hidden: true,
-        component: () => import('@/views/ProjectUsage/components/SecretList'),
+        component: () => import('@/views/SecretList/index'),
         meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'config-map-list/:pId',
+        path: 'config-map-list',
         name: 'Config Map List',
-        hidden: true,
-        component: () => import('@/views/ProjectUsage/components/ConfigMapList'),
+        component: () => import('@/views/ConfigMapList/index'),
         meta: { title: 'Config Map List', roles: ['Project Manager', 'Administrator'] }
       },
       {
