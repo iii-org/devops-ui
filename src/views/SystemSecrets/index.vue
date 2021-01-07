@@ -167,7 +167,7 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="'Add Secret'" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
+    <el-dialog :title="$t('Maintenance.AddSecret')" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
       <el-form ref="form" label-position="top" :model="formData" :rules="formRules" label-width="20%">
         <el-form-item :label="$t('Maintenance.SecretName')" prop="name">
           <el-input v-model="formData.name" />
