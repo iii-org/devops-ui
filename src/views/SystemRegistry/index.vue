@@ -110,10 +110,10 @@ export default {
 <template>
   <div class="app-container">
     <div class="d-flex">
-      <el-button type="success" @click="dialogVisible = true">
+      <el-button id="btn-add-registry" type="success" @click="dialogVisible = true">
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>
-      <el-input v-model="searchData" :placeholder="$t('Maintenance.SearchRegistryName')" style="width: 250px">
+      <el-input id="input-search" v-model="searchData" :placeholder="$t('Maintenance.SearchRegistryName')" style="width: 250px">
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
@@ -162,21 +162,21 @@ export default {
     >
       <el-form ref="form" label-position="top" :model="formData" :rules="formRules" label-width="20%">
         <el-form-item :label="$t('Maintenance.RegistryName')" prop="name">
-          <el-input v-model="formData.name" />
+          <el-input id="input-registry-name" v-model="formData.name" />
         </el-form-item>
         <el-form-item label="url" prop="url">
-          <el-input v-model="formData.url" />
+          <el-input id="input-url" v-model="formData.url" />
         </el-form-item>
         <el-form-item :label="$t('Maintenance.UserName')" prop="username">
-          <el-input v-model="formData.username" />
+          <el-input id="input-username" v-model="formData.username" />
         </el-form-item>
         <el-form-item :label="$t('Maintenance.Password')" prop="password">
-          <el-input v-model="formData.password" />
+          <el-input id="input-password" v-model="formData.password" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">
+        <el-button id="dialog-btn-cancel" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button id="dialog-btn-confirm" type="primary" :loading="confirmLoading" @click="handleConfirm">
           {{ $t('general.Confirm') }}
         </el-button>
       </span>

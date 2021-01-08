@@ -123,10 +123,10 @@ export default {
 <template>
   <div class="app-container">
     <div class="d-flex">
-      <el-button type="success" @click="dialogVisible = true">
+      <el-button id="btn-add-secret" type="success" @click="dialogVisible = true">
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
       </el-button>
-      <el-input v-model="searchData" :placeholder="$t('Maintenance.SearchSecretName')" style="width: 250px">
+      <el-input id="input-search" v-model="searchData" :placeholder="$t('Maintenance.SearchSecretName')" style="width: 250px">
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
@@ -170,7 +170,7 @@ export default {
     <el-dialog :title="$t('Maintenance.AddSecret')" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
       <el-form ref="form" label-position="top" :model="formData" :rules="formRules" label-width="20%">
         <el-form-item :label="$t('Maintenance.SecretName')" prop="name">
-          <el-input v-model="formData.name" />
+          <el-input id="input-secret-name" v-model="formData.name" />
         </el-form-item>
         <el-row v-for="(item, index) in formData.data" :key="item + index" :gutter="20" type="flex" align="middle">
           <el-col :span="9">
@@ -179,7 +179,7 @@ export default {
               :prop="'data.' + index + '.key'"
               :rules="[{ required: true, message: '不能為空', trigger: 'blur' }]"
             >
-              <el-input v-model="formData.data[index].key" placeholder="key" />
+              <el-input :id="`input-key${index + 1}`" v-model="formData.data[index].key" placeholder="key" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -188,22 +188,22 @@ export default {
               :prop="'data.' + index + '.value'"
               :rules="[{ required: true, message: '不能為空', trigger: 'blur' }]"
             >
-              <el-input v-model="formData.data[index].value" placeholder="value" />
+              <el-input :id="`input-value${index + 1}`" v-model="formData.data[index].value" placeholder="value" />
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-button type="danger" size="small" @click.prevent="removeItem(item)">
+            <el-button :id="`btn-delete${index + 1}`" type="danger" size="small" @click.prevent="removeItem(item)">
               {{ $t('general.Delete') }}
             </el-button>
           </el-col>
         </el-row>
-        <el-button type="success" size="small" @click="addItem">
+        <el-button id="btn-add-secret-item" type="success" size="small" @click="addItem">
           <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
         </el-button>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">
+        <el-button id="dialog-btn-cancel" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button id="dialog-btn-confirm" type="primary" :loading="confirmLoading" @click="handleConfirm">
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
