@@ -52,7 +52,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       const allUser = await getAllUser()
-      this.userList = allUser.data.user_list
+      this.userList = allUser.data.user_list.filter(item => item.id !== this.userId)
       this.listLoading = false
     },
     onPagination(listQuery) {
@@ -150,7 +150,7 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(scope.row.id)"
           >
-            <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.id == userId">
+            <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
