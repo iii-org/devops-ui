@@ -312,7 +312,7 @@ export const asyncRoutes = [
     component: Layout,
     name: 'Project Resource',
     redirect: '/project-resource/usage',
-    meta: { title: 'Project Resource', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+    meta: { title: 'Project Resource', icon: 'el-icon-pie-chart', roles: ['Project Manager', 'Administrator'] },
     children: [
       {
         path: 'usage',
@@ -360,6 +360,7 @@ export const asyncRoutes = [
       {
         path: 'config-map-list',
         name: 'Config Map List',
+        hidden: true,
         component: () => import('@/views/ConfigMapList/index'),
         meta: { title: 'Config Map List', roles: ['Project Manager', 'Administrator'] }
       },
