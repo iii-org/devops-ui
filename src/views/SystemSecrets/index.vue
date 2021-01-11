@@ -23,7 +23,7 @@ export default {
 
     formData: defaultFormData(),
     formRules: {
-      name: [{ required: true, message: 'Please input secret name', trigger: 'blur' }]
+      name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
     },
     dialogVisible: false,
     confirmLoading: false
@@ -182,7 +182,7 @@ export default {
             <el-form-item
               :label="`key ${index + 1} `"
               :prop="'data.' + index + '.key'"
-              :rules="[{ required: true, message: '不能為空', trigger: 'blur' }]"
+              :rules="[{ required: true, message: 'Please input key', trigger: 'blur' }]"
             >
               <el-input :id="`input-key${index + 1}`" v-model="formData.data[index].key" placeholder="key" />
             </el-form-item>
@@ -191,7 +191,7 @@ export default {
             <el-form-item
               :label="`value ${index + 1}`"
               :prop="'data.' + index + '.value'"
-              :rules="[{ required: true, message: '不能為空', trigger: 'blur' }]"
+              :rules="[{ required: true, message: 'Please input value', trigger: 'blur' }]"
             >
               <el-input :id="`input-value${index + 1}`" v-model="formData.data[index].value" placeholder="value" />
             </el-form-item>
