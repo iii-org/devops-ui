@@ -3,34 +3,34 @@ import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ValidateDialog from './components/ValidateDialog'
 export default {
-  components: { 
+  components: {
     ValidateDialog,
-    Pagination 
+    Pagination
   },
   data() {
     return {
       userList: [
         {
-          'id': 1,
-          'account': 'david', 
-          'name': 'David Huang', 
-          'organization': '智慧系統研究所/物聯雲平台中心/交通分析組/工程師',
-          'email': 'david@iii.org.tw',
-          'apply_at': '2020-07-25T07:20:11Z',
-          'phone': '02-8654936'
+          id: 1,
+          account: 'david',
+          name: 'David Huang',
+          organization: '智慧系統研究所/物聯雲平台中心/交通分析組/工程師',
+          email: 'david@iii.org.tw',
+          apply_at: '2020-07-25T07:20:11Z',
+          phone: '02-8654936'
         },
         {
-          'id': 1,
-          'account': 'cindywang', 
-          'name': 'Cindy Wang', 
-          'organization': '數位轉型研究所/數位平台中心/開源平台組/組長',
-          'email': 'david@iii.org.tw',
-          'apply_at': '2020-02-20T07:20:11Z',
-          'phone': '02-8654936'
+          id: 1,
+          account: 'cindywang',
+          name: 'Cindy Wang',
+          organization: '數位轉型研究所/數位平台中心/開源平台組/組長',
+          email: 'david@iii.org.tw',
+          apply_at: '2020-02-20T07:20:11Z',
+          phone: '02-8654936'
         }
       ],
       validateDialogVisible: false,
-      dialogTitle: '', 
+      dialogTitle: '',
       search: '',
       editUserId: 0,
       listLoading: true,
@@ -66,15 +66,15 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    emitAddvalidateDialogVisible(visible) {
+    emitAddValidateDialogVisible(visible) {
       this.validateDialogVisible = visible
     },
     showValidateDialog() {
       this.validateDialogVisible = true
     },
-     handleSelectionChange(val) {
-        this.multipleSelection = val;
-      }
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    }
   }
 }
 </script>
@@ -82,39 +82,28 @@ export default {
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" >
+      <el-button class="filter-item" type="primary" icon="el-icon-search">
         Search
       </el-button>
-      <el-button 
-        type="danger" 
-        style="float: right"
-        @click="showValidateDialog()"
-      >
+      <el-button type="danger" style="float: right" @click="showValidateDialog()">
         <i class="el-icon-close" />
         Reject
       </el-button>
-      <el-button 
-        type="success" 
-        style="float: right"
-      >
+      <el-button type="success" style="float: right">
         <i class="el-icon-check" />
         Approve
       </el-button>
     </div>
-    <el-table 
-      v-loading="listLoading" 
-      :data="pagedData" 
-      element-loading-text="Loading" 
-      border 
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      element-loading-text="Loading"
+      border
       ref="multipleTable"
       tooltip-effect="dark"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column 
-        type="selection"
-        width="55"
-      > 
-      </el-table-column>
+      <el-table-column type="selection" width="55" />
       <el-table-column align="center" label="Account" width="120">
         <template slot-scope="scope">
           {{ scope.row.account }}
@@ -158,12 +147,13 @@ export default {
       :dialog-title="dialogTitle"
       :user-id="editUserId"
       :dialog-visible="validateDialogVisible"
-      @validation-dialog-visible="emitAddvalidateDialogVisible"
+      @validation-dialog-visible="emitAddValidateDialogVisible"
     />
   </div>
 </template>
-<style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
+
+<style lang="scss" scoped>
+.filter-container {
+  margin-bottom: 5px;
+}
 </style>

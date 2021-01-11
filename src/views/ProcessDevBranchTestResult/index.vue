@@ -1,9 +1,9 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import TestDetail from './components/TestDetail'
 export default {
-  components: { 
+  components: {
     Pagination,
     TestDetail
   },
@@ -11,32 +11,32 @@ export default {
     return {
       testList: [
         {
-          'order': 1, 
-          'branch': 'Dev', 
-          'status': 'success',
-          'message': 'Use Alpine Python', 
-          'last_update_at': '2020-07-25T07:20:11Z'
+          order: 1,
+          branch: 'Dev',
+          status: 'success',
+          message: 'Use Alpine Python',
+          last_update_at: '2020-07-25T07:20:11Z'
         },
         {
-          'order': 2, 
-          'branch': 'Dev', 
-          'status': 'fail',
-          'message': 'Merge branch \'master\'', 
-          'last_update_at': '2020-07-25T07:20:11Z'
+          order: 2,
+          branch: 'Dev',
+          status: 'fail',
+          message: "Merge branch 'master'",
+          last_update_at: '2020-07-25T07:20:11Z'
         },
         {
-          'order': 3, 
-          'branch': 'master', 
-          'status': 'success',
-          'message': 'Added Jenkins File', 
-          'last_update_at': '2020-07-25T07:20:11Z'
+          order: 3,
+          branch: 'master',
+          status: 'success',
+          message: 'Added Jenkins File',
+          last_update_at: '2020-07-25T07:20:11Z'
         },
         {
-          'order': 4, 
-          'branch': 'feature', 
-          'status': 'fail',
-          'message': 'feature', 
-          'last_update_at': '2020-07-25T07:20:11Z'
+          order: 4,
+          branch: 'feature',
+          status: 'fail',
+          message: 'feature',
+          last_update_at: '2020-07-25T07:20:11Z'
         }
       ],
       search: '',
@@ -81,21 +81,11 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <el-table 
-      v-loading="listLoading" 
-      :data="pagedData" 
-      element-loading-text="Loading" 
-      border 
-      fit 
-      highlight-current-row
-    >
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column align="center" label="Index">
         <template slot-scope="scope">
-          <span
-            @click="testDetailVisible = true"
-            style="color: #409EFF;cursor: pointer;"
-          >
-          {{ scope.row.order }}
+          <span style="color: #409EFF;cursor: pointer;" @click="testDetailVisible = true">
+            {{ scope.row.order }}
           </span>
         </template>
       </el-table-column>
@@ -128,14 +118,6 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <test-detail
-      :dialog-visible.sync="testDetailVisible"
-      @test-detail-visible="emitTestDetailVisible"
-    />
+    <test-detail :dialog-visible.sync="testDetailVisible" @test-detail-visible="emitTestDetailVisible" />
   </div>
 </template>
-<style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
-</style>

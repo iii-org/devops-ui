@@ -333,16 +333,6 @@ export default {
 </template>
 
 <style lang="scss">
-.filter-container {
-  margin-bottom: 5px;
-}
-
-.el-table__body-wrapper {
-  @media (max-width: 1366px) {
-    overflow-x: auto;
-  }
-}
-
 .el-popconfirm__action .el-button--primary {
   margin-left: 5px !important;
 }

@@ -113,28 +113,28 @@ export default {
         getFlowType(),
         getParameterByIssue(this.issueId),
         getTestCaseByIssue(this.issueId)
-      ]).then((res) => {
-        this.issueStatusList = res[0].data.map((item) => {
+      ]).then(res => {
+        this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueTypeList = res[1].data.map((item) => {
+        this.issueTypeList = res[1].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issuePriorityList = res[2].data.map((item) => {
+        this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
         const issueDetail = res[3].data
         const projectId = issueDetail.project.id
-        getProjectAssignable(projectId).then((assignable) => {
-          this.issueAssigneeList = assignable.data.user_list.map((item) => {
+        getProjectAssignable(projectId).then(assignable => {
+          this.issueAssigneeList = assignable.data.user_list.map(item => {
             return { label: item.name, value: item.id }
           })
         })
         const issueFlowType = res[5].data
         this.issueFlow = []
         if (Array.isArray(res[4].data) && res[4].data.length > 0) {
-          this.issueFlow = res[4].data[0].flow_data.map((item) => {
-            const issueType = issueFlowType.find((type) => {
+          this.issueFlow = res[4].data[0].flow_data.map(item => {
+            const issueType = issueFlowType.find(type => {
               return type.flow_type_id === item.type_id
             })
             item['type_name'] = issueType ? issueType['name'] : ''
@@ -158,7 +158,7 @@ export default {
           this.issueVersion = issueDetail.fixed_version.name
         }
         this.issueEstimatedHours = issueDetail.estimated_hours
-        this.issueComment = issueDetail.journals.map((item) => {
+        this.issueComment = issueDetail.journals.map(item => {
           return {
             comment: item.notes,
             comment_author: item.user.name,
@@ -371,12 +371,12 @@ export default {
       const testValueLocationList = testValueLocationRes.data
 
       if (testValueList.data.length > 0) {
-        this.issueTestValue = testValueList.data.map((item) => {
-          const valueType = testValueTypeList.find((type) => {
+        this.issueTestValue = testValueList.data.map(item => {
+          const valueType = testValueTypeList.find(type => {
             return item.type_id === type.type_id
           })
           item.type = valueType.type_name
-          const valueLocation = testValueLocationList.find((location) => {
+          const valueLocation = testValueLocationList.find(location => {
             return item.location_id === location.location_id
           })
           item.location = valueLocation.type_name
@@ -826,11 +826,6 @@ export default {
     />
   </div>
 </template>
-<style lang="scss">
-.filter-container {
-  margin-bottom: 5px;
-}
-</style>
 
 <style lang="scss" scoped>
 .setup {

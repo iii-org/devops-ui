@@ -3,13 +3,13 @@ import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
-import WangEditor from "@/components/Wangeditor";
+import WangEditor from '@/components/Wangeditor'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable } from '@/api/projects'
 import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
 import { getParameterByIssue, addParameterByIssue } from '@/api/issueParameter'
 export default {
-  components: { 
+  components: {
     FlowDialog,
     ParamDialog,
     Pagination,
@@ -17,57 +17,78 @@ export default {
   },
   data() {
     return {
-      topicAssigneeList: [{
-        value: '王曉明',
-        label: '王曉明'
-      }, {
-        value: '陳聰明',
-        label: '陳聰明'
-      }],
-      topicTypeList: [{
-        value: '任務',
-        label: '任務'
-      }, {
-        value: '問題',
-        label: '問題'
-      }],
-      topicVersionList: [{
-        value: '1.0',
-        label: '1.0'
-      }, {
-        value: '1.1',
-        label: '1.1'
-      }],
-      topicStatusList: [{
-        value: '新建立',
-        label: '新建立'
-      }, {
-        value: '已完結',
-        label: '已完結'
-      }, {
-        value: '測試中',
-        label: '測試中'
-      }, {
-        value: '已完成',
-        label: '已完成'
-      }, {
-        value: '開發中',
-        label: '開發中'
-      }],
-      topicPriorityList: [{
-        value: '高',
-        label: '高'
-      }, {
-        value: '中',
-        label: '中'
-      }],
-      topicBranchList: [{
-        value: 'master',
-        label: 'master'
-      }, {
-        value: 'develop',
-        label: 'develop'
-      }],
+      topicAssigneeList: [
+        {
+          value: '王曉明',
+          label: '王曉明'
+        },
+        {
+          value: '陳聰明',
+          label: '陳聰明'
+        }
+      ],
+      topicTypeList: [
+        {
+          value: '任務',
+          label: '任務'
+        },
+        {
+          value: '問題',
+          label: '問題'
+        }
+      ],
+      topicVersionList: [
+        {
+          value: '1.0',
+          label: '1.0'
+        },
+        {
+          value: '1.1',
+          label: '1.1'
+        }
+      ],
+      topicStatusList: [
+        {
+          value: '新建立',
+          label: '新建立'
+        },
+        {
+          value: '已完結',
+          label: '已完結'
+        },
+        {
+          value: '測試中',
+          label: '測試中'
+        },
+        {
+          value: '已完成',
+          label: '已完成'
+        },
+        {
+          value: '開發中',
+          label: '開發中'
+        }
+      ],
+      topicPriorityList: [
+        {
+          value: '高',
+          label: '高'
+        },
+        {
+          value: '中',
+          label: '中'
+        }
+      ],
+      topicBranchList: [
+        {
+          value: 'master',
+          label: 'master'
+        },
+        {
+          value: 'develop',
+          label: 'develop'
+        }
+      ],
       topicName: '登入頁面',
       topicEstimate: '30H',
       topicPriority: '高',
@@ -80,79 +101,93 @@ export default {
       topicStart: '2020-08-15',
       topicEnd: '2020-08-20',
       topicDesc: '使用者於登入頁面需輸入帳號密碼進行登入，並有忘記密碼的選項',
-      topicDevStatus: { 
-        'commitMsg': 'V2.1 fix User Login Error',
-        'commit': '1c715b2b',
-        'commitData': '2020-07-25T07:20:11Z',
-        'last_test_result': {
-          'success': 10,
-          'total': 15
+      topicDevStatus: {
+        commitMsg: 'V2.1 fix User Login Error',
+        commit: '1c715b2b',
+        commitData: '2020-07-25T07:20:11Z',
+        last_test_result: {
+          success: 10,
+          total: 15
         }
       },
       topicNeedTest: true,
-      detailFlow:[{
-        id: 1,
-        order: 1,
-        step_name: '設定帳號',
-        step_type: 'GIVEN',
-        step_desc: '設定帳號參數'
-      }, {
-        id: 2,
-        order: 2,
-        step_name: '設定密碼',
-        step_type: 'GIVEN',
-        step_desc: '設定密碼參數'
-      }, {
-        id: 3,
-        order: 3,
-        step_name: '登入',
-        step_type: 'WHEN',
-        step_desc: '點擊登入按鈕，讓使用者登入平台'
-      }, {
-        id: 4,
-        order: 4,
-        step_name: '登入頁面',
-        step_type: 'THEN',
-        step_desc: '登入回傳成功, 導入平台首頁'
-      }],
-      detailParam:[{
-        id: 1,
-        param_name: '帳號',
-        param_type: '文字',
-        param_desc: '',
-        param_limit: '09[0-9]',
-        param_length: 10
-      }, {
-        id: 2,
-        param_name: '密碼',
-        param_type: '文字',
-        param_desc: '',
-        param_limit: '',
-        param_length: ''
-      }, {
-        id: 3,
-        param_name: '姓名',
-        param_type: '文字',
-        param_desc: '',
-        param_limit: '',
-        param_length: ''
-      }, {
-        id: 4,
-        param_name: '身份證字號',
-        param_type: '文字',
-        param_desc: '',
-        param_limit: '[A-Z]{1}[0-9]{9}',
-        param_length: 10
-      }],
-      detailComment:[{
-        comment: 'Subject changed from iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊到 nova DB to iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊更新到 nova DB',
-        comment_author: '王聰明',
-        comment_at: '2020-07-03 11:11:09'
-      }, {
-        comment: '使用Git 觸發 Jenkins進行自動包版，自動安裝，自動測試。',
-        comment_author: '張婉婷',
-        comment_at: '2020-07-04 08:11:09'
-      }],
+      detailFlow: [
+        {
+          id: 1,
+          order: 1,
+          step_name: '設定帳號',
+          step_type: 'GIVEN',
+          step_desc: '設定帳號參數'
+        },
+        {
+          id: 2,
+          order: 2,
+          step_name: '設定密碼',
+          step_type: 'GIVEN',
+          step_desc: '設定密碼參數'
+        },
+        {
+          id: 3,
+          order: 3,
+          step_name: '登入',
+          step_type: 'WHEN',
+          step_desc: '點擊登入按鈕，讓使用者登入平台'
+        },
+        {
+          id: 4,
+          order: 4,
+          step_name: '登入頁面',
+          step_type: 'THEN',
+          step_desc: '登入回傳成功, 導入平台首頁'
+        }
+      ],
+      detailParam: [
+        {
+          id: 1,
+          param_name: '帳號',
+          param_type: '文字',
+          param_desc: '',
+          param_limit: '09[0-9]',
+          param_length: 10
+        },
+        {
+          id: 2,
+          param_name: '密碼',
+          param_type: '文字',
+          param_desc: '',
+          param_limit: '',
+          param_length: ''
+        },
+        {
+          id: 3,
+          param_name: '姓名',
+          param_type: '文字',
+          param_desc: '',
+          param_limit: '',
+          param_length: ''
+        },
+        {
+          id: 4,
+          param_name: '身份證字號',
+          param_type: '文字',
+          param_desc: '',
+          param_limit: '[A-Z]{1}[0-9]{9}',
+          param_length: 10
+        }
+      ],
+      detailComment: [
+        {
+          comment:
+            'Subject changed from iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊到 nova DB to iServCloud 修改backend scheduler, 定期去檢查FT VM 到何運算節點，並把資訊更新到 nova DB',
+          comment_author: '王聰明',
+          comment_at: '2020-07-03 11:11:09'
+        },
+        {
+          comment: '使用Git 觸發 Jenkins進行自動包版，自動安裝，自動測試。',
+          comment_author: '張婉婷',
+          comment_at: '2020-07-04 08:11:09'
+        }
+      ],
       activeName: 'comment',
       commentDialogVisible: false,
       flowDialogVisible: false,
@@ -181,12 +216,7 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList']),
     fetchData() {
-      Promise.all([
-        getIssueStatus(), 
-        getIssueTracker(), 
-        getIssuePriority(), 
-        getIssue(this.issueId)
-      ]).then(res => {
+      Promise.all([getIssueStatus(), getIssueTracker(), getIssuePriority(), getIssue(this.issueId)]).then(res => {
         this.issueStatusList = res[0].data.map(item => {
           return { label: item.name, value: item.id }
         })
@@ -198,7 +228,7 @@ export default {
         })
         const issueDetail = res[3]
         const projectId = issueDetail.project.id
-        getProjectAssignable(projectId).then((assignable) => {
+        getProjectAssignable(projectId).then(assignable => {
           this.issueAssigneeList = assignable.data.user_list.map(item => {
             return { label: item.name, value: item.id }
           })
@@ -269,12 +299,7 @@ export default {
         <el-col :span="8">
           <el-form-item label="Priority" label-width="100px">
             <el-select v-model="topicPriority" style="width:100%">
-              <el-option
-                v-for="item in topicPriorityList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option v-for="item in topicPriorityList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -283,36 +308,21 @@ export default {
         <el-col :span="8">
           <el-form-item label="Assignee" label-width="100px">
             <el-select v-model="topicAssignee" style="width:100%">
-              <el-option
-                v-for="item in topicAssigneeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option v-for="item in topicAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="Version" label-width="100px">
             <el-select v-model="topicVersion" style="width:100%">
-              <el-option
-                v-for="item in topicVersionList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option v-for="item in topicVersionList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="Type" label-width="100px">
             <el-select v-model="topicType" style="width:100%">
-              <el-option
-                v-for="item in topicTypeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option v-for="item in topicTypeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -321,12 +331,7 @@ export default {
         <el-col :span="8">
           <el-form-item label="Status" label-width="100px">
             <el-select v-model="topicStatus" style="width:100%">
-              <el-option
-                v-for="item in topicStatusList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option v-for="item in topicStatusList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -338,12 +343,7 @@ export default {
         <el-col :span="8">
           <el-form-item label="Branch" label-width="100px">
             <el-select v-model="topicBranch" style="width:100%">
-              <el-option
-                v-for="item in topicBranchList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option v-for="item in topicBranchList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -390,12 +390,7 @@ export default {
         </el-col>
       </el-row>
     </el-form>
-    <el-tabs
-      v-model="activeName"
-      type="border-card"
-      style="margin-top: 10px"
-      @tab-click="handleClick"
-    >
+    <el-tabs v-model="activeName" type="border-card" style="margin-top: 10px" @tab-click="handleClick">
       <el-tab-pane label="Comment" name="comment">
         <el-button type="primary" @click="commentDialogVisible = true">Add Comment</el-button>
         <el-table
@@ -404,7 +399,7 @@ export default {
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
           <el-table-column label="Comment">
@@ -432,7 +427,7 @@ export default {
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
           <el-table-column label="Order">
@@ -442,11 +437,8 @@ export default {
           </el-table-column>
           <el-table-column label="Step Name">
             <template slot-scope="scope">
-              <span
-                @click="showFlowDialog(scope.row, 'Edit Flow')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.step_name }}
+              <span @click="showFlowDialog(scope.row, 'Edit Flow')" style="color: #409EFF;cursor: pointer;">
+                {{ scope.row.step_name }}
               </span>
             </template>
           </el-table-column>
@@ -470,16 +462,13 @@ export default {
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           style="margin-top: 10px"
         >
           <el-table-column label="Name">
             <template slot-scope="scope">
-              <span
-                @click="showParamDialog(scope.row, 'Edit Parameter')"
-                style="color: #409EFF;cursor: pointer;"
-              >
-              {{ scope.row.param_name }}
+              <span @click="showParamDialog(scope.row, 'Edit Parameter')" style="color: #409EFF;cursor: pointer;">
+                {{ scope.row.param_name }}
               </span>
             </template>
           </el-table-column>
@@ -506,16 +495,8 @@ export default {
         </el-table>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog
-      title="Add Comment"
-      :visible="commentDialogVisible"
-      width="70%"
-      @close="commentDialogVisible = false"
-    >
-      <WangEditor 
-        @get-editor-data="emitGetEditorData" 
-        :wiki-content="wikiContent">
-      </WangEditor>
+    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
+      <WangEditor :wiki-content="wikiContent" @get-editor-data="emitGetEditorData" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleUpdate">Confirm</el-button>
@@ -535,8 +516,3 @@ export default {
     />
   </div>
 </template>
-<style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
-</style>

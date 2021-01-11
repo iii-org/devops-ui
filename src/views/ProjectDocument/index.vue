@@ -1,30 +1,30 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import AddDocument from './components/AddDocument'
 export default {
-  components: { 
+  components: {
     AddDocument,
-    Pagination 
+    Pagination
   },
   data() {
     return {
       documentList: [
         {
-          'type': '需求訪談', 
-          'order': 1, 
-          'desc': '使用者需求訪談', 
-          'status': '已確定', 
-          'last_update_user': '陳聰明',
-          'last_update_at': '2020-07-25T07:20:11Z'
+          type: '需求訪談',
+          order: 1,
+          desc: '使用者需求訪談',
+          status: '已確定',
+          last_update_user: '陳聰明',
+          last_update_at: '2020-07-25T07:20:11Z'
         },
         {
-          'type': '手冊', 
-          'order': 2, 
-          'desc': '安裝手冊', 
-          'status': '進行中', 
-          'last_update_user': '陳聰明',
-          'last_update_at': '2020-07-25T07:20:11Z'
+          type: '手冊',
+          order: 2,
+          desc: '安裝手冊',
+          status: '進行中',
+          last_update_user: '陳聰明',
+          last_update_at: '2020-07-25T07:20:11Z'
         }
       ],
       addDocumentDialogVisible: false,
@@ -63,7 +63,7 @@ export default {
     },
     emitAddDocumentDialogVisible(visible) {
       this.addDocumentDialogVisible = visible
-    },
+    }
   }
 }
 </script>
@@ -71,25 +71,18 @@ export default {
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" >
+      <el-button class="filter-item" type="primary" icon="el-icon-search">
         Search
       </el-button>
-      <el-button 
-        type="primary" 
-        icon="el-icon-plus" 
-        circle 
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        circle
         style="float: right"
         @click="addDocumentDialogVisible = true"
-      ></el-button>
+      />
     </div>
-    <el-table 
-      v-loading="listLoading" 
-      :data="pagedData" 
-      element-loading-text="Loading" 
-      border 
-      fit 
-      highlight-current-row
-    >
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column align="center" label="Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.type }}</span>
@@ -135,8 +128,9 @@ export default {
     />
   </div>
 </template>
-<style lang="scss">
-  .filter-container {
-    margin-bottom: 5px;
-  }
+
+<style lang="scss" scoped>
+.filter-container {
+  margin-bottom: 5px;
+}
 </style>

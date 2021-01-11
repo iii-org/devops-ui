@@ -174,8 +174,3 @@ export default {
     />
   </div>
 </template>
-<style lang="scss">
-.filter-container {
-  margin-bottom: 5px;
-}
-</style>

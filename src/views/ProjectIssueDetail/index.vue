@@ -150,13 +150,3 @@ export default {
     </el-tabs>
   </div>
 </template>
-
-<style lang="scss">
-.filter-container {
-  margin-bottom: 5px;
-}
-
-.el-upload__text {
-  margin-top: 18px;
-}
-</style>
