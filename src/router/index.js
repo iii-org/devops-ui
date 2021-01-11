@@ -324,14 +324,16 @@ export const asyncRoutes = [
         path: 'resource',
         name: 'Resource',
         component: () => import('@/views/ProjectResource/index'),
-        meta: { title: 'Resource', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'artifacts',
-        name: 'Artifacts',
-        hidden: true,
-        component: () => import('@/views/ProjectArtifacts/index'),
-        meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Resource', roles: ['Project Manager', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: 'artifacts',
+            name: 'Artifacts',
+            hidden: true,
+            component: () => import('@/views/ProjectArtifacts/index'),
+            meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          }
+        ]
       },
       {
         path: 'deployment-list',

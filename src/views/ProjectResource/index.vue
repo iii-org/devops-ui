@@ -143,115 +143,118 @@ export default {
 
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <project-list-selector />
-      <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
-    </div>
-    <el-divider />
-    <el-card shadow="never" style="margin-bottom: 5px">
-      <el-row :gutter="24">
-        <el-col :span="12" style="font-size: 20px;">
-          {{ projectName }}
-        </el-col>
-        <el-col :span="4" style="font-size: 20px; text-align: center">
-          {{ Math.round(storage.quota.used.storage / 1024 / 1024) }} /
-          {{ Math.round(storage.quota.hard.storage / 1024 / 1024) }} MB
-        </el-col>
-        <el-col :span="8" style="text-align:right">
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.quota)" />
-        </el-col>
-      </el-row>
-    </el-card>
-    <div />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-      <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            :href="`${harborUrl}/projects/${projectSelectedId}/repositories/${scope.row.name_in_harbor}`"
-            target="_blank"
-          >
-            {{ scope.row.name }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <router-link
-            :to="{
-              name: 'Artifacts',
-              params: { rName: scope.row.name }
-            }"
-            style="color: #409eff"
-          >
-            <span>{{ scope.row.artifact_count }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column label="pull">
-        <template slot-scope="scope">
-          <span>{{ scope.row.pull_count }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Description')">
-        <template slot-scope="scope">
-          <span>{{ scope.row.description }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.LastUpdateTime')" :show-overflow-tooltip="true" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.update_time | YMDhmA }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" />
-            {{ $t('general.Delete') }}
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="listTotal"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
+    <router-view />
+    <div v-show="this.$route.meta.rolePage" class="role-page">
+      <div class="clearfix">
+        <project-list-selector />
+        <el-input
+          v-model="searchData"
+          class="ob-search-input ob-shadow search-input mr-3"
+          :placeholder="$t('general.SearchName')"
+          style="width: 250px; float: right"
+        >
+          <i slot="prefix" class="el-input__icon el-icon-search" />
+        </el-input>
+      </div>
+      <el-divider />
+      <el-card shadow="never" style="margin-bottom: 5px">
+        <el-row :gutter="24">
+          <el-col :span="12" style="font-size: 20px;">
+            {{ projectName }}
+          </el-col>
+          <el-col :span="4" style="font-size: 20px; text-align: center">
+            {{ Math.round(storage.quota.used.storage / 1024 / 1024) }} /
+            {{ Math.round(storage.quota.hard.storage / 1024 / 1024) }} MB
+          </el-col>
+          <el-col :span="8" style="text-align:right">
+            <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.quota)" />
+          </el-col>
+        </el-row>
+      </el-card>
+      <div />
+      <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
+        <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              :href="`${harborUrl}/projects/${projectSelectedId}/repositories/${scope.row.name_in_harbor}`"
+              target="_blank"
+            >
+              {{ scope.row.name }}
+            </el-link>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <router-link
+              :to="{
+                name: 'Artifacts',
+                params: { rName: scope.row.name }
+              }"
+              style="color: #409eff"
+            >
+              <span>{{ scope.row.artifact_count }}</span>
+            </router-link>
+          </template>
+        </el-table-column>
+        <el-table-column label="pull">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pull_count }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.Description')">
+          <template slot-scope="scope">
+            <span>{{ scope.row.description }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.LastUpdateTime')" :show-overflow-tooltip="true" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.update_time | YMDhmA }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+              <i class="el-icon-edit" />
+              {{ $t('general.Edit') }}
+            </el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
+              <i class="el-icon-delete" />
+              {{ $t('general.Delete') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="listTotal"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
 
-    <el-dialog
-      :title="$t(`ProjectResource.EditResource`)"
-      :visible.sync="dialogVisible"
-      width="50%"
-      @closed="onDialogClosed"
-    >
-      <el-form ref="form" :model="form" :rules="formRules" label-position="top">
-        <el-form-item :label="$t('general.Name')">
-          {{ form.name }}
-        </el-form-item>
-        <el-form-item :label="$t('general.Description')" prop="description">
-          <el-input v-model="form.description" type="textarea" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
-          {{ $t('general.Confirm') }}
-        </el-button>
-      </span>
-    </el-dialog>
+      <el-dialog
+        :title="$t(`ProjectResource.EditResource`)"
+        :visible.sync="dialogVisible"
+        width="50%"
+        @closed="onDialogClosed"
+      >
+        <el-form ref="form" :model="form" :rules="formRules" label-position="top">
+          <el-form-item :label="$t('general.Name')">
+            {{ form.name }}
+          </el-form-item>
+          <el-form-item :label="$t('general.Description')" prop="description">
+            <el-input v-model="form.description" type="textarea" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+          <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
+            {{ $t('general.Confirm') }}
+          </el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>

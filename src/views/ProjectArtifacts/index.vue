@@ -21,7 +21,7 @@ export default {
   computed: {
     pagedData() {
       const listData = this.artifactsList.filter(data => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -53,11 +53,11 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      }).then(async () => {
+      }).then(async() => {
         await deleteProjectArtifact(this.$route.params.rName, row.digest, row.name)
         this.$message({
           type: 'success',
-          message: 'Delete Successed'
+          message: 'Delete Succeed'
         })
         this.fetchData()
       })
@@ -67,15 +67,16 @@ export default {
 </script>
 
 <template>
-  <div class="app-container">
+  <div>
     <div class="clearfix">
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
@@ -86,7 +87,7 @@ export default {
       </el-table-column>
       <el-table-column label="Size" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ Math.round(scope.row.size/1024/1024) }} MB
+          {{ Math.round(scope.row.size / 1024 / 1024) }} MB
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProjectResource.Vulnerabilities')">
