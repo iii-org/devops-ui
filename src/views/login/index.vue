@@ -110,13 +110,9 @@ export default {
             this.$router.go(0)
             // resolve()
           }).catch(e => {
-            console.log(e)
+            // console.log(e)
             if (e.message === 'Request failed with status code 401') {
-              Message({
-                message: 'Username or password is invalid.',
-                type: 'error',
-                duration: 10 * 1000
-              })
+              console.log(e)
             }
           }).finally(() => {
             this.loading = false
