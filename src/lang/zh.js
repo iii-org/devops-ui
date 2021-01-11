@@ -273,7 +273,8 @@ export default {
     LastUpdateTime: '最後更新時間',
     Environment: '測試環境',
     SearchBranch: '搜尋分支',
-    Branch: '分支'
+    Branch: '分支',
+    Status: '狀態'
   },
   ProcessDevBranchTest: {
     Id: '項次',

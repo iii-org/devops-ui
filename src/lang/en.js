@@ -275,7 +275,8 @@ export default {
     LastUpdateTime: 'Last Update Time',
     Environment: 'Environment',
     SearchBranch: 'Search Branch',
-    Branch: 'Branch'
+    Branch: 'Branch',
+    Status: 'Status'
   },
   ProcessDevBranchTest: {
     Id: 'Id',

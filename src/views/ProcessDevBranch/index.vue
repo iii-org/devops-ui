@@ -106,22 +106,22 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="160" prop="name" />
-      <el-table-column align="center" :label="$t('general.Description')" prop="last_commit_message" />
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" min-width="160" prop="name" />
+      <el-table-column align="center" :label="$t('general.Description')" min-width="160" prop="last_commit_message" />
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')" min-width="200">
         <template slot-scope="scope">
           <div v-for="(item, index) in EnvironmentFormat(scope.row.env_url)" :key="index">
             <el-link :href="item.url" target="_blank" type="primary">{{ item.service }} ({{ item.port }})</el-link>
           </div>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Status">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Status')" width="120">
         <template slot-scope="scope">
           {{ scope.row.status }}
         </template>
-      </el-table-column> -->
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" width="160" prop="short_id" />
-      <el-table-column align="center" :label="$t('ProcessDevBranch.LastUpdateTime')" width="240">
+      </el-table-column>
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id" />
+      <el-table-column align="center" :label="$t('ProcessDevBranch.LastUpdateTime')" width="180">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.last_commit_time) }}
         </template>
