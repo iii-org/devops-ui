@@ -224,7 +224,7 @@ export default {
           <template slot-scope="scope">
             <div class="d-flex">
               <div class="column-title">
-                <span class="text-success">{{ scope.row.id }}</span> {{ scope.row.issue_name }}
+                <span class="text-success">{{ scope.row.id }}</span> <el-link :href="scope.row.issue_link" target="_blank">{{ scope.row.issue_name }}</el-link>
               </div>
 
               <el-button
