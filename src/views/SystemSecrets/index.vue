@@ -126,7 +126,12 @@ export default {
       <el-button id="btn-add-secret" type="success" @click="dialogVisible = true">
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
       </el-button>
-      <el-input id="input-search" v-model="searchData" :placeholder="$t('Maintenance.SearchSecretName')" style="width: 250px">
+      <el-input
+        id="input-search"
+        v-model="searchData"
+        :placeholder="$t('Maintenance.SearchSecretName')"
+        style="width: 250px"
+      >
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
@@ -167,12 +172,12 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="$t('Maintenance.AddSecret')" :visible.sync="dialogVisible" width="50%" @closed="onDialogClosed">
+    <el-dialog :title="$t('Maintenance.AddSecret')" :visible.sync="dialogVisible" @closed="onDialogClosed">
       <el-form ref="form" label-position="top" :model="formData" :rules="formRules" label-width="20%">
         <el-form-item :label="$t('Maintenance.SecretName')" prop="name">
           <el-input id="input-secret-name" v-model="formData.name" />
         </el-form-item>
-        <el-row v-for="(item, index) in formData.data" :key="item + index" :gutter="20" type="flex" align="middle">
+        <el-row v-for="(item, index) in formData.data" :key="item + index" :gutter="12" type="flex">
           <el-col :span="9">
             <el-form-item
               :label="`key ${index + 1} `"
@@ -191,8 +196,14 @@ export default {
               <el-input :id="`input-value${index + 1}`" v-model="formData.data[index].value" placeholder="value" />
             </el-form-item>
           </el-col>
-          <el-col :span="2">
-            <el-button :id="`btn-delete${index + 1}`" type="danger" size="small" @click.prevent="removeItem(item)">
+          <el-col :span="3" style="padding-top: 45px">
+            <el-button
+              :id="`btn-delete${index + 1}`"
+              type="danger"
+              size="small"
+              :disabled="formData.data.length <= 1"
+              @click.prevent="removeItem(item)"
+            >
               {{ $t('general.Delete') }}
             </el-button>
           </el-col>
