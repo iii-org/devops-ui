@@ -29,7 +29,9 @@ export default {
       username: [{ required: true, message: 'Please input username', trigger: 'blur' }]
     },
     dialogVisible: false,
-    confirmLoading: false
+    confirmLoading: false,
+
+    showPassword: false
   }),
   computed: {
     pagedData() {
@@ -113,7 +115,12 @@ export default {
       <el-button id="btn-add-registry" type="success" @click="dialogVisible = true">
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>
-      <el-input id="input-search" v-model="searchData" :placeholder="$t('Maintenance.SearchRegistryName')" style="width: 250px">
+      <el-input
+        id="input-search"
+        v-model="searchData"
+        :placeholder="$t('Maintenance.SearchRegistryName')"
+        style="width: 250px"
+      >
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
@@ -171,7 +178,9 @@ export default {
           <el-input id="input-username" v-model="formData.username" />
         </el-form-item>
         <el-form-item :label="$t('Maintenance.Password')" prop="password">
-          <el-input id="input-password" v-model="formData.password" />
+          <el-input id="input-password" v-model="formData.password" :type="showPassword ? 'text' : 'password'">
+            <i slot="suffix" class="el-input__icon el-icon-view" @click="showPassword = !showPassword" />
+          </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
