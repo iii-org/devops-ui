@@ -17,7 +17,6 @@ export default {
     ProjectListSelector
   },
   data: () => ({
-    harborUrl: process.env.VUE_APP_HARBOR_URL,
     projectName: '',
     listLoading: true,
     dialogVisible: false,
@@ -106,7 +105,7 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      }).then(async () => {
+      }).then(async() => {
         await deleteHarborRepo(row.name)
         this.$message({
           type: 'success',
@@ -177,7 +176,7 @@ export default {
           <template slot-scope="scope">
             <el-link
               type="primary"
-              :href="`${harborUrl}/projects/${projectSelectedId}/repositories/${scope.row.name_in_harbor}`"
+              :href="scope.row.harbor_link"
               target="_blank"
             >
               {{ scope.row.name }}
