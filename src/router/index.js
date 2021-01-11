@@ -445,15 +445,18 @@ export const asyncRoutes = [
         path: 'list',
         name: 'IssueList',
         component: () => import('@/views/ProjectIssues/index'),
-        meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
+        meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: ':issueId',
+            name: 'IssueDetail',
+            hidden: true,
+            component: () => import('@/views/ProjectIssueDetail/index'),
+            meta: { title: 'Issue Detail', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: false }
+          }
+        ]
       },
-      {
-        path: 'list/:issueId',
-        name: 'IssueDetail',
-        hidden: true,
-        component: () => import('@/views/ProjectIssueDetail/index'),
-        meta: { title: 'Issue Detail', roles: ['Project Manager', 'Engineer', 'Administrator'] }
-      },
+
       {
         path: 'listrd/:issue_num/setup',
         hidden: true,

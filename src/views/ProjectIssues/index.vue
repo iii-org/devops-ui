@@ -182,150 +182,153 @@ export default {
 
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <div>
-        <project-list-selector />
-        <span class="newBtn">
-          <el-button
-            type="success"
-            style="float: right"
-            :disabled="projectSelectedId === -1"
-            @click=";(addTopicDialogVisible = true), (parentId = 0)"
-          >
-            <i class="el-icon-plus" />
-            {{ $t('Issue.AddIssue') }}
-          </el-button>
-        </span>
-        <el-input
-          v-model="searchData"
-          class="ob-search-input ob-shadow search-input mr-3"
-          :placeholder="$t('Issue.SearchNameOrAssignee')"
-          style="width: 250px; float: right"
-        >
-          <i slot="prefix" class="el-input__icon el-icon-search" />
-        </el-input>
-      </div>
-    </div>
-    <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      element-loading-text="Loading"
-      border
-      fit
-      highlight-current-row
-      row-key="id"
-      default-expand-all
-      :tree-props="{ children: 'children' }"
-    >
-      <el-table-column :label="$t('Issue.Id')" min-width="200">
-        <template slot-scope="scope">
-          <div class="d-flex">
-            <div class="column-title">
-              <span class="text-success">{{ scope.row.id }}</span> {{ scope.row.issue_name }}
-            </div>
-
+    <router-view />
+    <div v-show="this.$route.meta.rolePage" class="role-Page">
+      <div class="clearfix">
+        <div>
+          <project-list-selector />
+          <span class="newBtn">
             <el-button
-              v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
-              size="mini"
-              class="btn-sub"
-              icon="el-icon-plus"
-              @click="handleParent(scope.$index, scope.row, scope)"
+              type="success"
+              style="float: right"
+              :disabled="projectSelectedId === -1"
+              @click=";(addTopicDialogVisible = true), (parentId = 0)"
             >
-              Add sub issue
+              <i class="el-icon-plus" />
+              {{ $t('Issue.AddIssue') }}
             </el-button>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Type')" width="120">
-        <template slot-scope="scope">
-          <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
-          <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
-          <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug" />
-          <span v-else-if="scope.row.issue_category === 'Research'" class="point research" />
-          <span v-else class="point feature" />{{ scope.row.issue_category }}
-        </template>
-      </el-table-column>
-      <!-- <el-table-column align="center" label="Description">
+          </span>
+          <el-input
+            v-model="searchData"
+            class="ob-search-input ob-shadow search-input mr-3"
+            :placeholder="$t('Issue.SearchNameOrAssignee')"
+            style="width: 250px; float: right"
+          >
+            <i slot="prefix" class="el-input__icon el-icon-search" />
+          </el-input>
+        </div>
+      </div>
+      <el-divider />
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        element-loading-text="Loading"
+        border
+        fit
+        highlight-current-row
+        row-key="id"
+        default-expand-all
+        :tree-props="{ children: 'children' }"
+      >
+        <el-table-column :label="$t('Issue.Id')" min-width="200">
+          <template slot-scope="scope">
+            <div class="d-flex">
+              <div class="column-title">
+                <span class="text-success">{{ scope.row.id }}</span> {{ scope.row.issue_name }}
+              </div>
+
+              <el-button
+                v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
+                size="mini"
+                class="btn-sub"
+                icon="el-icon-plus"
+                @click="handleParent(scope.$index, scope.row, scope)"
+              >
+                Add sub issue
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.Type')" width="120">
+          <template slot-scope="scope">
+            <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
+            <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
+            <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug" />
+            <span v-else-if="scope.row.issue_category === 'Research'" class="point research" />
+            <span v-else class="point feature" />{{ scope.row.issue_category }}
+          </template>
+        </el-table-column>
+        <!-- <el-table-column align="center" label="Description">
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('general.Status')" width="125">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium">
-            {{ scope.row.issue_status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium">
-            {{ scope.row.issue_status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium">
-            {{ scope.row.issue_status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="medium">
-            {{ scope.row.issue_status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium">
-            {{ scope.row.issue_status }}
-          </el-tag>
-          <el-tag v-else type="finish" size="medium"> {{ scope.row.issue_status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Assignee')" width="200" prop="assigned_to" />
-      <el-table-column align="center" :label="$t('Issue.Priority')" width="115">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
-            {{ scope.row.issue_priority }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">
-            {{ scope.row.issue_priority }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">
-            {{ scope.row.issue_priority }}
-          </el-tag>
-          <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="200">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @onConfirm="handleDelete(scope.$index, scope.row)"
-          >
-            <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+        <el-table-column align="center" :label="$t('general.Status')" width="125">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium">
+              {{ scope.row.issue_status }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium">
+              {{ scope.row.issue_status }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium">
+              {{ scope.row.issue_status }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="medium">
+              {{ scope.row.issue_status }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium">
+              {{ scope.row.issue_status }}
+            </el-tag>
+            <el-tag v-else type="finish" size="medium"> {{ scope.row.issue_status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('Issue.Assignee')" width="200" prop="assigned_to" />
+        <el-table-column align="center" :label="$t('Issue.Priority')" width="115">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
+              {{ scope.row.issue_priority }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">
+              {{ scope.row.issue_priority }}
+            </el-tag>
+            <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">
+              {{ scope.row.issue_priority }}
+            </el-tag>
+            <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Actions')" width="200">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+              <i class="el-icon-edit" />
+              {{ $t('general.Edit') }}
             </el-button>
-          </el-popconfirm>
-          <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
+            <el-popconfirm
+              confirm-button-text="Delete"
+              cancel-button-text="Cancel"
+              icon="el-icon-info"
+              icon-color="red"
+              title="Are you sure?"
+              @onConfirm="handleDelete(scope.$index, scope.row)"
+            >
+              <el-button slot="reference" size="mini" type="danger">
+                <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+              </el-button>
+            </el-popconfirm>
+            <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
               <i class="el-icon-delete" /> Delete
             </el-button> -->
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="listTotal"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <add-issue
-      :save-data="saveIssue"
-      :dialog-visible.sync="addTopicDialogVisible"
-      :project-id="projectSelectedId"
-      :parent-id="parentId"
-      :parent-name="parentName"
-      @add-topic-visible="emitAddTopicDialogVisible"
-    />
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="listTotal"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+      <add-issue
+        :save-data="saveIssue"
+        :dialog-visible.sync="addTopicDialogVisible"
+        :project-id="projectSelectedId"
+        :parent-id="parentId"
+        :parent-name="parentName"
+        @add-topic-visible="emitAddTopicDialogVisible"
+      />
+    </div>
   </div>
 </template>
 
