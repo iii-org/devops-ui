@@ -152,10 +152,18 @@ export default {
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$message.warning(`Unable to upload a file: This file type is not supported`)
+        this.$message({
+          message: `Unable to upload a file: This file type is not supported`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`)
+        this.$message({
+          message: `This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
         this.$refs['upload'].clearFiles()
       } else {
         this.uploadFileList = fileList
@@ -172,7 +180,7 @@ export default {
           Object.keys(data).forEach(objKey => {
             form.append(objKey, data[objKey])
           })
-          this.issueLoading = true
+          this.isLoading = true
           const issueId = this.issueId
           if (this.uploadFileList && this.uploadFileList.length > 0) {
             // use one by one edit issue to upload file
@@ -186,7 +194,7 @@ export default {
               }, Promise.resolve([]))
               .then(() => {
                 this.$refs['upload'].clearFiles()
-                this.issueLoading = false
+                this.isLoading = false
                 Message({
                   message: 'update successful',
                   type: 'success',
@@ -195,7 +203,7 @@ export default {
               })
           } else {
             await updateIssue(this.issueId, form)
-            this.issueLoading = false
+            this.isLoading = false
             Message({
               message: 'update successful',
               type: 'success',
@@ -359,7 +367,7 @@ export default {
 
         <el-col :span="24">
           <el-form-item :label="$t('File.Upload')" prop="upload">
-            <el-upload ref="upload" class="upload-file2" drag action="" :auto-upload="false" :on-change="handleChange">
+            <el-upload ref="upload" class="upload-file2" drag action="" :auto-upload="false" :on-change="handleChange" multiple>
               <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
               <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
             </el-upload>
