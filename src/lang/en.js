@@ -313,6 +313,7 @@ export default {
   Maintenance: {
     AddSecret: 'Add Secret',
     SecretName: 'Secret Name',
+    Status: 'Status',
     SearchSecretName: 'Search Secret Name',
     AddRegistry: 'Add Registry',
     RegistryName: 'Registry Name',

@@ -311,6 +311,7 @@ export default {
   Maintenance: {
     AddSecret: '新增 Secret',
     SecretName: 'Secret 名稱',
+    Status: '狀態',
     SearchSecretName: '搜尋 Secret 名稱',
     AddRegistry: '新增 Registry',
     RegistryName: 'Registry 名稱',

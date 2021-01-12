@@ -61,7 +61,8 @@ export default {
         this.resultList = res.data.map(item => ({
           name: item.name,
           registries: item.registries ? Object.keys(item.registries).join(', ') : '',
-          created: item.created
+          created: item.created,
+          status: item.removed ? 'Removing' : 'Active'
         }))
       })
       this.listLoading = false
@@ -125,7 +126,20 @@ export default {
       </el-input>
     </div>
     <el-divider />
+    <div align="right" style="margin-bottom: 20px">
+      <el-button id="btn-reload" type="primary" icon="el-icon-refresh" size="mini" plain @click="fetchData()">
+        Reload
+      </el-button>
+    </div>
     <el-table v-loading="listLoading" element-loading-text="Loading" :data="pagedData" border fit>
+      <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 'Active'" type="success" size="medium">{{ scope.row.status }}</el-tag>
+          <el-tag v-else-if="scope.row.status === 'Removing'" type="warning" size="medium">{{
+            scope.row.status
+          }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('Maintenance.RegistryName')" prop="name" min-width="150" />
       <el-table-column label="Registries" prop="registries" min-width="250" />
       <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="200">
@@ -133,7 +147,7 @@ export default {
           <span>{{ scope.row.created | YMDhmA }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="120">
+      <el-table-column align="center" :label="$t('general.Actions')" width="140">
         <template slot-scope="scope">
           <el-popconfirm
             confirm-button-text="Delete"
@@ -143,7 +157,13 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(scope.row.name)"
           >
-            <el-button slot="reference" size="mini" type="danger">
+            <el-button
+              :id="`btn-delete-${scope.$index}`"
+              slot="reference"
+              size="mini"
+              type="danger"
+              :disabled="scope.row.status === 'Removing'"
+            >
               <i class="el-icon-delete" />
               {{ $t('general.Delete') }}
             </el-button>
