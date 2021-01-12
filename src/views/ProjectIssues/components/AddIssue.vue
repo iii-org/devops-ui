@@ -162,7 +162,9 @@
 
     <span slot="footer" class="dialog-footer">
       <el-button id="dialog-btn-cancel" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-      <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
+      <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleSave">
+        {{ $t('general.Confirm') }}
+      </el-button>
     </span>
   </el-dialog>
 </template>
@@ -304,14 +306,26 @@ export default {
       })
     },
     handleExceed(files, fileList) {
-      this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
+      this.$message({
+        message: `Only one file can be added at a time, please delete the existing file first`,
+        type: 'warning',
+        duration: 10 * 1000
+      })
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$message.warning(`Unable to upload a file: This file type is not supported`)
+        this.$message({
+          message: `Unable to upload a file: This file type is not supported`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`)
+        this.$message({
+          message: `This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
         this.$refs['upload'].clearFiles()
       } else {
         this.uploadFileList = fileList

@@ -89,8 +89,7 @@ export default {
         await deleteUser(userId)
         Message({
           message: 'Member deleted',
-          type: 'success',
-          duration: 1 * 3000
+          type: 'success'
         })
         this.fetchData()
       } catch (error) {

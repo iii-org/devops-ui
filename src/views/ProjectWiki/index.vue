@@ -102,8 +102,7 @@ export default {
         await putWikiDetail(this.projectSelectedId, this.wikiData.title, { wiki_text: text })
         Message({
           message: 'Wiki update successfully',
-          type: 'success',
-          duration: 1 * 3000
+          type: 'success'
         })
         this.dialogVisible = false
       } catch (error) {
@@ -179,8 +178,7 @@ export default {
           await putWikiDetail(this.projectSelectedId, this.form.wikiTitle, { wiki_text: text })
           Message({
             message: 'Wiki create successfully',
-            type: 'success',
-            duration: 1 * 3000
+            type: 'success'
           })
           this.fetchData()
         } catch (error) {

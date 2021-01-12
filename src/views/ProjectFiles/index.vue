@@ -112,7 +112,11 @@ export default {
       this.dialogStatus = 1
     },
     handleExceed(files, fileList) {
-      this.$message.warning(`Only one file can be added at a time, please delete the existing file first`)
+      this.$message({
+        message: 'Only one file can be added at a time, please delete the existing file first',
+        type: 'warning',
+        duration: 10 * 1000
+      })
     },
     async handleDownload(idx, row) {
       const res = await downloadProjectFile({ id: row.id, filename: row.filename })
@@ -135,10 +139,18 @@ export default {
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$message.warning(`Unable to upload a file: This file type is not supported`)
+        this.$message({
+          message: `Unable to upload a file: This file type is not supported`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$message.warning(`This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`)
+        this.$message({
+          message: `This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
         this.$refs['upload'].clearFiles()
       } else {
         this.uploadFileList = fileList
@@ -169,7 +181,10 @@ export default {
             })
             await uploadProjectFile(this.projectSelectedId, form)
             this.loadingInstance.close()
-            this.$message.success('Upload successful')
+            this.$message({
+              message: 'Upload successful',
+              type: 'success'
+            })
             this.$refs['fileForm'].resetFields()
             this.dialogVisible = false
             this.fetchData()

@@ -80,8 +80,8 @@ export default {
   computed: {
     ...mapGetters(['userRole']),
     testItemPagedData() {
-      const listData = this.testItemList.filter((data) => {
-        if (this.testItemSearchData == '' || data.name.toLowerCase().includes(this.testItemSearchData.toLowerCase())) {
+      const listData = this.testItemList.filter(data => {
+        if (this.testItemSearchData === '' || data.name.toLowerCase().includes(this.testItemSearchData.toLowerCase())) {
           return data
         }
       })
@@ -91,9 +91,9 @@ export default {
       return listData.slice(start, end)
     },
     testValuePagedData() {
-      const listData = this.testValueList.filter((data) => {
+      const listData = this.testValueList.filter(data => {
         if (
-          this.testValueSearchData == '' ||
+          this.testValueSearchData === '' ||
           data.value.toLowerCase().includes(this.testValueSearchData.toLowerCase())
         ) {
           return data
@@ -124,11 +124,11 @@ export default {
   created() {
     this.listLoading = true
     Promise.all([getTestValueType(), getTestValueLocation()])
-      .then((res) => {
-        this.testValueTypeList = res[0].data.map((item) => {
+      .then(res => {
+        this.testValueTypeList = res[0].data.map(item => {
           return { label: item.type_name, value: item.type_id }
         })
-        this.testValueLocationList = res[1].data.map((item) => {
+        this.testValueLocationList = res[1].data.map(item => {
           return { label: item.type_name, value: item.location_id }
         })
       })
@@ -141,7 +141,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      Promise.all([getTestCaseById(this.testCaseId), getTestItemByCase(this.testCaseId)]).then((res) => {
+      Promise.all([getTestCaseById(this.testCaseId), getTestItemByCase(this.testCaseId)]).then(res => {
         this.testCase = res[0].data
         this.testItemList = res[1].data
         this.listLoading = false
@@ -150,9 +150,9 @@ export default {
     async fetchTestValueData(val) {
       const res = await getTestValueByItem(val)
 
-      this.testValueList = res.data.map((item) => {
-        item['type'] = this.testValueTypeList.find((type) => type.value == item.type_id)
-        item['location'] = this.testValueLocationList.find((location) => location.value == item.location_id)
+      this.testValueList = res.data.map(item => {
+        item['type'] = this.testValueTypeList.find(type => type.value === item.type_id)
+        item['location'] = this.testValueLocationList.find(location => location.value === item.location_id)
         return item
       })
       console.log('this.testValueList', this.testValueList)
@@ -172,7 +172,11 @@ export default {
     handleDelete() {},
     handleTestValueAdding() {
       if (this.selectTestItem === '') {
-        this.$message.warning(this.$t('TestValue.PleaseSelectTestItem'))
+        this.$message({
+          message: this.$t('TestValue.PleaseSelectTestItem'),
+          type: 'warning',
+          duration: 10 * 1000
+        })
       } else {
         this.testValueDialogVisible = true
         this.dialogStatus = 1
@@ -183,7 +187,6 @@ export default {
       this.dialogStatus = 2
       this.testValueForm = Object.assign({}, this.testValueForm, row)
     },
-    handleDelete() {},
     returnTagType(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'info'
@@ -210,9 +213,9 @@ export default {
       })
     },
     handleTestItemConfirm() {
-      this.$refs['testItemForm'].validate(async(valid) => {
+      this.$refs['testItemForm'].validate(async valid => {
         if (valid) {
-          if (this.dialogStatus == 1) {
+          if (this.dialogStatus === 1) {
             await addTestItemByCase(this.testCaseId, this.testItemForm)
           } else {
             await updateTestItem(this.testItemForm['id'], this.testItemForm)
@@ -229,9 +232,9 @@ export default {
       this.fetchData()
     },
     handleTestValueConfirm() {
-      this.$refs['testValueForm'].validate(async(valid) => {
+      this.$refs['testValueForm'].validate(async valid => {
         if (valid) {
-          if (this.dialogStatus == 1) {
+          if (this.dialogStatus === 1) {
             await addTestValueByItem(this.selectTestItem, this.testValueForm)
           } else {
             await updateTestValue(this.testValueForm['id'], this.testValueForm)
@@ -290,7 +293,9 @@ export default {
             class="ob-search-input ob-shadow search-input mr-3"
             :placeholder="$t('general.SearchName')"
             style="width: 250px; float: right"
-          ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+          >
+            <i slot="prefix" class="el-input__icon el-icon-search" />
+          </el-input>
         </div>
         <el-table
           :data="testItemPagedData"
@@ -330,7 +335,8 @@ export default {
                 @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
               >
                 <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button>
+                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                </el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
@@ -360,7 +366,9 @@ export default {
             class="ob-search-input ob-shadow search-input mr-3"
             :placeholder="$t('TestValue.SearchValue')"
             style="width: 250px; float: right"
-          ><i slot="prefix" class="el-input__icon el-icon-search" /></el-input>
+          >
+            <i slot="prefix" class="el-input__icon el-icon-search" />
+          </el-input>
         </div>
         <el-table
           :data="testValuePagedData"
@@ -405,7 +413,8 @@ export default {
                 @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
               >
                 <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}</el-button>
+                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                </el-button>
               </el-popconfirm>
             </template>
           </el-table-column>

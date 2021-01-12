@@ -154,10 +154,12 @@ export default {
       console.log(file)
     },
     handleExceed(files, fileList) {
-      this.$message.warning(
-        `The limit is 3, you selected ${files.length} files this time, add up to ${files.length +
-          fileList.length} totally`
-      )
+      this.$message({
+        message: `The limit is 3, you selected ${files.length} files this time, add up to ${files.length +
+          fileList.length} totally`,
+        type: 'warning',
+        duration: 10 * 1000
+      })
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`Cancel the transfert of ${file.name} ?`)

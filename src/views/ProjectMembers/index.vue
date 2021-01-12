@@ -109,8 +109,7 @@ export default {
         await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
         Message({
           message: 'Member added successfully',
-          type: 'success',
-          duration: 1 * 3000
+          type: 'success'
         })
         this.fetchData()
         this.dialogVisible = false
@@ -125,8 +124,7 @@ export default {
         await deleteProjectMember(this.projectSelectedId, row.id)
         Message({
           message: 'Member deleted',
-          type: 'success',
-          duration: 1 * 3000
+          type: 'success'
         })
         this.fetchData()
       } catch (error) {
