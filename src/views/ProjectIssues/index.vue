@@ -189,6 +189,7 @@ export default {
           <project-list-selector />
           <span class="newBtn">
             <el-button
+              id="btn-add-issue"
               type="success"
               style="float: right"
               :disabled="projectSelectedId === -1"
@@ -199,6 +200,7 @@ export default {
             </el-button>
           </span>
           <el-input
+            id="input-search"
             v-model="searchData"
             class="ob-search-input ob-shadow search-input mr-3"
             :placeholder="$t('Issue.SearchNameOrAssignee')"
@@ -224,11 +226,13 @@ export default {
           <template slot-scope="scope">
             <div class="d-flex">
               <div class="column-title">
-                <span class="text-success">{{ scope.row.id }}</span> <el-link :href="scope.row.issue_link" target="_blank">{{ scope.row.issue_name }}</el-link>
+                <span class="text-success">{{ scope.row.id }}</span>
+                <el-link :id="`link-issue-name-${scope.$index}`" :href="scope.row.issue_link" target="_blank">{{ scope.row.issue_name }}</el-link>
               </div>
 
               <el-button
                 v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
+                :id="`btn-add-sub-issue-${scope.$index}`"
                 size="mini"
                 class="btn-sub"
                 icon="el-icon-plus"
@@ -290,7 +294,12 @@ export default {
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="200">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+            <el-button
+              :id="`btn-edit-issue-${scope.$index}`"
+              size="mini"
+              type="primary"
+              @click="handleEdit(scope.$index, scope.row)"
+            >
               <i class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button>
@@ -302,7 +311,7 @@ export default {
               title="Are you sure?"
               @onConfirm="handleDelete(scope.$index, scope.row)"
             >
-              <el-button slot="reference" size="mini" type="danger">
+              <el-button :id="`btn-delete-${scope.$index}`" slot="reference" size="mini" type="danger">
                 <i class="el-icon-delete" /> {{ $t('general.Delete') }}
               </el-button>
             </el-popconfirm>
@@ -341,6 +350,12 @@ col:first-child,
 .el-table__row td:first-child {
   @media (max-width: 1366px) {
     width: 500px;
+  }
+}
+
+.el-table__body-wrapper {
+  @media (max-width: 1366px) {
+    overflow-x: auto;
   }
 }
 

@@ -19,13 +19,13 @@
 
         <el-col :span="12">
           <el-form-item :label="$t('general.Name')" prop="subject">
-            <el-input v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
+            <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-            <el-select v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
+            <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
               <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -35,15 +35,21 @@
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-            <el-select v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
-              <el-option v-for="item in issueVersionList" :key="item.value" :label="item.label" :value="item.value" :disabled="item.status !== 'open'" />
+            <el-select id="input-version" v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
+              <el-option
+                v-for="item in issueVersionList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                :disabled="item.status !== 'open'"
+              />
             </el-select>
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item :label="$t('general.Type')" prop="tracker_id">
-            <el-select v-model="issueForm.tracker_id" style="width: 100%">
+            <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
               <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -52,7 +58,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('general.Status')" prop="status_id">
-            <el-select v-model="issueForm.status_id" style="width: 100%">
+            <el-select id="input-status" v-model="issueForm.status_id" style="width: 100%">
               <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -60,7 +66,7 @@
 
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-            <el-select v-model="issueForm.priority_id" style="width: 100%">
+            <el-select id="input-priority" v-model="issueForm.priority_id" style="width: 100%">
               <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -70,13 +76,19 @@
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
-            <el-input-number v-model="issueForm.estimated_hours" label="please input hours" style="width: 100%" />
+            <el-input-number
+              id="input-estimate"
+              v-model="issueForm.estimated_hours"
+              label="please input hours"
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
             <el-input-number
+              id="input-done-ratio"
               v-model="issueForm.done_ratio"
               label="please input numbers"
               :min="0"
@@ -91,6 +103,7 @@
         <el-col :span="12">
           <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
             <el-date-picker
+              id="input-start-date"
               v-model="issueForm.start_date"
               type="date"
               :placeholder="$t('Issue.SelectDate')"
@@ -103,6 +116,7 @@
         <el-col :span="12">
           <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
             <el-date-picker
+              id="input-end-date"
               v-model="issueForm.due_date"
               type="date"
               :placeholder="$t('Issue.SelectDate')"
@@ -117,6 +131,7 @@
         <el-col :span="12">
           <el-form-item :label="$t('File.Upload')" prop="upload">
             <el-upload
+              id="input-upload"
               ref="upload"
               class="upload-file2"
               drag
@@ -134,15 +149,20 @@
 
         <el-col :span="12">
           <el-form-item :label="$t('general.Description')" prop="description">
-            <el-input v-model="issueForm.description" type="textarea" :placeholder="$t('general.PleaseInput')" />
+            <el-input
+              id="input-description"
+              v-model="issueForm.description"
+              type="textarea"
+              :placeholder="$t('general.PleaseInput')"
+            />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
 
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-      <el-button :loading="LoadingConfirm" type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
+      <el-button id="dialog-btn-cancel" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleSave">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -248,10 +268,9 @@ export default {
         this.issueAssigneeList = res[3].data.user_list.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueVersionList = res[4].data.versions
-          .map(item => {
-            return { label: item.name, value: item.id, status: item.status }
-          })
+        this.issueVersionList = res[4].data.versions.map(item => {
+          return { label: item.name, value: item.id, status: item.status }
+        })
       })
     },
     handleClose() {
