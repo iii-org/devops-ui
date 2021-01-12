@@ -53,12 +53,18 @@ export default {
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Usage') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.cpu }}
+              <!-- <div class="d-flex align-center">
+                <div class="card-item-subtext text-warning">專案</div>
+                <div class="text-warning">{{ usageList.used.cpu }}</div>
+                <div class="card-item-subtext text-slow">系統</div>
+                <div class="text-slow">{{ usageList.used.cpu }}</div>
+              </div> -->
             </div>
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Quota') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.cpu }}
             </div>
           </div>
@@ -72,12 +78,12 @@ export default {
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Usage') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.memory }}
             </div>
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Quota') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.memory }}
             </div>
           </div>
@@ -91,12 +97,12 @@ export default {
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Usage') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.pods }}
             </div>
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Quota') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.pods }}
             </div>
           </div>
@@ -112,12 +118,12 @@ export default {
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Usage') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used['services.nodeports'] }}
             </div>
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Quota') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota['services.nodeports'] }}
             </div>
           </div>
@@ -131,12 +137,12 @@ export default {
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Usage') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.secrets }}
             </div>
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Quota') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.secrets }}
             </div>
           </div>
@@ -150,12 +156,12 @@ export default {
           </div>
           <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else style="display: flex;">
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Usage') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Usage') }}</div>
               {{ usageList.used.configmaps }}
             </div>
-            <div class="cardItem">
-              <div>{{ $t('ProjectResource.Quota') }}</div>
+            <div class="card-item">
+              <div class="card-item-text">{{ $t('ProjectResource.Quota') }}</div>
               {{ usageList.quota.configmaps }}
             </div>
           </div>
@@ -165,17 +171,20 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
-.cardItem {
+<style lang="scss" scoped>
+.card-item {
   width: 50%;
   margin: 5px;
   justify-content: center;
   text-align: center;
   font-size: 2rem;
   padding: 10px;
-  div {
+  .card-item-text {
     color: #929292;
     font-size: 20px;
+  }
+  .card-item-subtext {
+    font-size: 16px;
   }
 }
 </style>
