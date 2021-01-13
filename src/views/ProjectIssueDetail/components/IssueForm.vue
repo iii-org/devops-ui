@@ -2,13 +2,8 @@
 import { Message } from 'element-ui'
 import { fileExtension } from '@/utils/extension'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
-import {
-  getProjectAssignable,
-  getProjectVersion,
-  getProjectIssueList,
-  getProjectIssueListByTree,
-  getNotInProject
-} from '@/api/projects'
+import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
+import { getAllUser } from '@/api/user'
 
 export default {
   name: 'IssueForm',
@@ -81,10 +76,10 @@ export default {
       return this.parentIssue !== {} && this.parentIssue.issue_status === 'Closed'
     },
     dynamicAssigneeList() {
-      const hasAssignee = this.issueAssigneeList.findIndex(item => item.value === this.issueForm.assigned_to_id) !== -1
-      if (hasAssignee) {
-        return this.issueAssigneeList
-      } else {
+      const hasInactiveAssignee =
+        this.issueForm.assigned_to_id !== '' &&
+        this.issueAssigneeList.findIndex(item => item.value === this.issueForm.assigned_to_id) === -1
+      if (hasInactiveAssignee) {
         const inactiveAssignee = Object.assign(
           {},
           this.userList.find(item => item.value === this.issueForm.assigned_to_id)
@@ -93,6 +88,8 @@ export default {
         inactiveAssignee['label'] = `${inactiveAssignee['label']} (${this.$t('general.Disable')})`
         result.push(inactiveAssignee)
         return result
+      } else {
+        return this.issueAssigneeList
       }
     }
   },
@@ -114,7 +111,7 @@ export default {
         getIssuePriority(),
         getProjectIssueList(this.projectId),
         getProjectIssueListByTree(this.projectId),
-        getNotInProject(this.projectId)
+        getAllUser()
       ]).then(res => {
         const [
           assigneeList,
@@ -142,7 +139,7 @@ export default {
           return { label: item.name, value: item.id }
         })
         this.userList = allUserList.user_list.map(item => {
-          return { label: item.name, value: item.id }
+          return { label: item.login, value: item.id }
         })
         this.parentIssue = issueList.find(item => item.id === this.parentId) || {}
         this.relativeIssueList = this.createRelativeList(issueListByTree)
