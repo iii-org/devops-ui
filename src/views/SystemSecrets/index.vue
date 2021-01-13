@@ -5,7 +5,7 @@ import { getSystemSecrets, addSystemSecret, deleteSystemSecret } from '@/api/mai
 const defaultFormData = () => ({
   name: '',
   type: 'secret',
-  data: [{ key: '', value: '' }]
+  data: [{ key: '', value: '', showValue: false }]
 })
 
 export default {
@@ -99,7 +99,8 @@ export default {
     addItem() {
       this.formData.data.push({
         key: '',
-        value: ''
+        value: '',
+        showValue: false
       })
     },
     removeItem(item) {
@@ -213,7 +214,18 @@ export default {
               :prop="'data.' + index + '.value'"
               :rules="[{ required: true, message: 'Please input value', trigger: 'blur' }]"
             >
-              <el-input :id="`input-value${index + 1}`" v-model="formData.data[index].value" placeholder="value" />
+              <el-input
+                :id="`input-value${index + 1}`"
+                v-model="formData.data[index].value"
+                placeholder="value"
+                :type="formData.data[index].showValue ? 'text' : 'password'"
+              >
+                <i
+                  slot="suffix"
+                  class="el-input__icon el-icon-view"
+                  @click="formData.data[index].showValue = !formData.data[index].showValue"
+                />
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3" style="padding-top: 45px">
