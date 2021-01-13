@@ -39,7 +39,13 @@ export default {
       repo_count: 0
     },
     memberConfirmLoading: false,
-    form: formTemplate
+    form: formTemplate,
+
+    showDeleteDialog: false,
+    loadingDelete: '',
+    deleteResourceName: '',
+    inputDelResourceName: '',
+    placeholderText: ''
   }),
   computed: {
     ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
@@ -100,20 +106,6 @@ export default {
       this.dialogVisible = true
       this.form = Object.assign({}, this.form, row)
     },
-    async handleDelete(idx, row) {
-      this.$confirm(`Are you sure to Delete ${row.name}?`, 'Delete', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'error'
-      }).then(async() => {
-        await deleteHarborRepo(row.name)
-        this.$message({
-          type: 'success',
-          message: 'Delete Succeed'
-        })
-        this.fetchData()
-      })
-    },
     async handleConfirm(index, row) {
       this.$refs['form'].validate(async valid => {
         if (valid) {
@@ -128,6 +120,53 @@ export default {
         } else {
           return false
         }
+      })
+    },
+    handleDelete(index, row) {
+      this.showDeleteDialog = true
+      this.deleteResourceName = row.name
+      this.placeholderText = 'Please Input ' + this.deleteResourceName
+    },
+    // async handleDelete(idx, row) {
+    //   this.$confirm(`Are you sure to Delete ${row.name}?`, 'Delete', {
+    //     confirmButtonText: 'Delete',
+    //     cancelButtonText: 'Cancel',
+    //     type: 'error'
+    //   }).then(async () => {
+    //     await deleteHarborRepo(row.name)
+    //     this.$message({
+    //       type: 'success',
+    //       message: 'Delete Succeed'
+    //     })
+    //     this.fetchData()
+    //   })
+    // },
+    async handleDeleteModal() {
+      if (this.deleteResourceName !== this.inputDelResourceName) {
+        return this.$message({
+          message: 'Please input resource name correctly.',
+          type: 'error'
+        })
+      } else {
+        this.loadingDelete = this.$loading({
+          target: '.el-dialog',
+          text: 'Loading'
+        })
+        await deleteHarborRepo(this.deleteResourceName)
+        this.$message({
+          type: 'success',
+          message: 'Delete Succeed'
+        })
+        this.loadingDelete.close()
+        this.showDeleteDialog = false
+        this.fetchData()
+      }
+    },
+    onDialogClosedDelete() {
+      this.$nextTick(() => {
+        this.deleteResourceName = ''
+        this.placeholderText = ''
+        this.inputDelResourceName = ''
       })
     },
     onDialogClosed() {
@@ -174,11 +213,7 @@ export default {
       <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-link
-              type="primary"
-              :href="scope.row.harbor_link"
-              target="_blank"
-            >
+            <el-link type="primary" :href="scope.row.harbor_link" target="_blank">
               {{ scope.row.name }}
             </el-link>
           </template>
@@ -232,6 +267,26 @@ export default {
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
+
+      <el-dialog
+        :title="`${$t('general.Delete')} ${$t('route.Project Resource')}`"
+        :visible.sync="showDeleteDialog"
+        width="40%"
+        :close-on-click-modal="false"
+        @closed="onDialogClosedDelete"
+      >
+        <p>{{ $t('ProjectResource.DeleteResourceConfirmText') }}</p>
+        <p>
+          {{ $t('ProjectResource.PleaseType') }}
+          <strong>{{ deleteResourceName }}</strong>
+          {{ $t('ProjectResource.AndThen') }}
+        </p>
+        <el-input v-model="inputDelResourceName" :placeholder="placeholderText" />
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showDeleteDialog = false">{{ $t('general.Cancel') }}</el-button>
+          <el-button type="danger" @click="handleDeleteModal()">{{ $t('general.Delete') }}</el-button>
+        </span>
+      </el-dialog>
 
       <el-dialog
         :title="$t(`ProjectResource.EditResource`)"

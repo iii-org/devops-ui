@@ -291,7 +291,10 @@ export default {
     Quota: '額度',
     Artifacts: '成品',
     EditResource: '修改資源',
-    Vulnerabilities: '漏洞'
+    Vulnerabilities: '漏洞',
+    DeleteResourceConfirmText: '確認刪除？',
+    PleaseType: '請輸入',
+    AndThen: '進行刪除或取消操作'
   },
   Postman: {
     Id: '編號',
