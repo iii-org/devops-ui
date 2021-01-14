@@ -49,11 +49,10 @@ export default {
     async fetchData() {
       this.listLoading = true
       await getPodList(this.projectSelectedId).then(res => {
-        this.podList = res.data.map(item => {
-          return {
-            name: item
-          }
-        })
+        this.podList = res.data.map(item => ({
+          name: item.name,
+          status: item.status
+        }))
       })
       this.listLoading = false
     },
@@ -94,8 +93,22 @@ export default {
     <el-divider />
 
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" align="center" prop="name" />
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="100">
+      <el-table-column :label="$t('general.Status')" align="center" width="130">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 'Succeeded'" type="success" size="medium">
+            {{ scope.row.status }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.status === 'Running'" type="warning" size="medium">
+            {{ scope.row.status }}
+          </el-tag>
+          <el-tag v-else-if="scope.row.status === 'Pending'" type="active" size="medium">
+            {{ scope.row.status }}
+          </el-tag>
+          <el-tag v-else type="finish" size="medium"> {{ scope.row.status }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('general.Name')" align="center" prop="name" />
+      <el-table-column :label="$t('general.Actions')" align="center" width="200">
         <template slot-scope="scope">
           <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
               <i class="el-icon-edit" />
