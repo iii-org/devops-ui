@@ -3,7 +3,6 @@ import { Message } from 'element-ui'
 import { fileExtension } from '@/utils/extension'
 import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
-import { getAllUser } from '@/api/user'
 
 export default {
   name: 'IssueForm',
@@ -60,7 +59,6 @@ export default {
     issueStatusList: [],
     issuePriorityList: [],
     issueVersionList: [],
-    userList: [],
 
     parentIssue: {},
     relativeIssueList: [],
@@ -80,12 +78,11 @@ export default {
         this.issueForm.assigned_to_id !== '' &&
         this.issueAssigneeList.findIndex(item => item.value === this.issueForm.assigned_to_id) === -1
       if (hasInactiveAssignee) {
-        const inactiveAssignee = Object.assign(
-          {},
-          this.userList.find(item => item.value === this.issueForm.assigned_to_id)
-        )
+        const inactiveAssignee = {
+          label: `Disabled User (${this.issueForm.assigned_to_id})`,
+          value: this.issueForm.assigned_to_id
+        }
         const result = Object.assign([], this.issueAssigneeList)
-        inactiveAssignee['label'] = `${inactiveAssignee['label']} (${this.$t('general.Disable')})`
         result.push(inactiveAssignee)
         return result
       } else {
@@ -110,19 +107,11 @@ export default {
         getIssueStatus(),
         getIssuePriority(),
         getProjectIssueList(this.projectId),
-        getProjectIssueListByTree(this.projectId),
-        getAllUser()
+        getProjectIssueListByTree(this.projectId)
       ]).then(res => {
-        const [
-          assigneeList,
-          versionList,
-          typeList,
-          statusList,
-          priorityList,
-          issueList,
-          issueListByTree,
-          allUserList
-        ] = res.map(item => item.data)
+        const [assigneeList, versionList, typeList, statusList, priorityList, issueList, issueListByTree] = res.map(
+          item => item.data
+        )
         this.issueAssigneeList = assigneeList.user_list.map(item => {
           return { label: item.login, value: item.id }
         })
@@ -137,9 +126,6 @@ export default {
         })
         this.issuePriorityList = priorityList.map(item => {
           return { label: item.name, value: item.id }
-        })
-        this.userList = allUserList.user_list.map(item => {
-          return { label: item.login, value: item.id }
         })
         this.parentIssue = issueList.find(item => item.id === this.parentId) || {}
         this.relativeIssueList = this.createRelativeList(issueListByTree)
@@ -364,7 +350,15 @@ export default {
 
         <el-col :span="24">
           <el-form-item :label="$t('File.Upload')" prop="upload">
-            <el-upload ref="upload" class="upload-file2" drag action="" :auto-upload="false" :on-change="handleChange" multiple>
+            <el-upload
+              ref="upload"
+              class="upload-file2"
+              drag
+              action=""
+              :auto-upload="false"
+              :on-change="handleChange"
+              multiple
+            >
               <div class="uploadBtn el-button--primary">{{ $t('File.uploadBtn') }}</div>
               <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
             </el-upload>
