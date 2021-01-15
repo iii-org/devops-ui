@@ -308,6 +308,97 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/issue',
+    component: Layout,
+    name: 'Issues',
+    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
+    redirect: '/issue/list',
+    children: [
+      {
+        path: 'list',
+        name: 'IssueList',
+        component: () => import('@/views/ProjectIssues/index'),
+        meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: ':issueId',
+            name: 'IssueDetail',
+            hidden: true,
+            component: () => import('@/views/ProjectIssueDetail/index'),
+            meta: { title: 'Issue Detail', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: false }
+          }
+        ]
+      },
+      {
+        path: 'wiki',
+        name: 'IssueWiki',
+        component: () => import('@/views/ProjectWiki/index'),
+        meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
+      },
+
+      {
+        path: 'listrd/:issue_num/setup',
+        hidden: true,
+        component: () => import('@/views/IssueSetUp/index'),
+        meta: { title: 'Issue SetUp', roles: ['Engineer'] }
+      },
+      {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/ProjectFiles/index'),
+        meta: { title: 'File List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
+      }
+    ]
+  },
+
+  {
+    path: '/progress',
+    component: Layout,
+    name: 'progress',
+    redirect: '/progress/dev-branch',
+    meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager', 'Administrator'] },
+    children: [
+      // {
+      //   path: 'project-gantt',
+      //   name: 'ProjectGantt',
+      //   component: () => import('@/views/ProgressGantt/index'),
+      //   meta: { title: 'Project Gantt', roles: ['Project Manager'] }
+      // },
+      // {
+      //   path: 'dev-gantt',
+      //   name: 'DevGantt',
+      //   component: () => import('@/views/ProgressDevGantt/index'),
+      //   meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
+      // },
+      {
+        path: 'dev-branch',
+        name: 'DevBranch',
+        component: () => import('@/views/ProcessDevBranch/index'),
+        meta: { title: 'Dev Branch', roles: ['Project Manager', 'Administrator'] }
+      },
+      // {
+      //   path: 'dev-version',
+      //   name: 'DevVersion',
+      //   component: () => import('@/views/ProgressDevVersion/index'),
+      //   meta: { title: 'Dev Version', roles: ['Project Manager'] }
+      // },
+      {
+        path: 'test-record',
+        name: 'TestRecord',
+        component: () => import('@/views/ProgressDevVersionTestRecord/index'),
+        meta: { title: 'Test Record', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'dev-branch/:branchName/test',
+        name: 'DevBranchTest',
+        hidden: true,
+        component: () => import('@/views/ProcessDevBranchTestResult/index'),
+        meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
+      }
+    ]
+  },
+
+  {
     path: '/project-resource',
     component: Layout,
     name: 'Project Resource',
@@ -377,97 +468,6 @@ export const asyncRoutes = [
         name: 'System Registry',
         component: () => import('@/views/SystemRegistry/index'),
         meta: { title: 'System Registry', roles: ['Administrator'] }
-      }
-    ]
-  },
-
-  {
-    path: '/progress',
-    component: Layout,
-    name: 'progress',
-    redirect: '/progress/dev-branch',
-    meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager', 'Administrator'] },
-    children: [
-      // {
-      //   path: 'project-gantt',
-      //   name: 'ProjectGantt',
-      //   component: () => import('@/views/ProgressGantt/index'),
-      //   meta: { title: 'Project Gantt', roles: ['Project Manager'] }
-      // },
-      // {
-      //   path: 'dev-gantt',
-      //   name: 'DevGantt',
-      //   component: () => import('@/views/ProgressDevGantt/index'),
-      //   meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
-      // },
-      {
-        path: 'dev-branch',
-        name: 'DevBranch',
-        component: () => import('@/views/ProcessDevBranch/index'),
-        meta: { title: 'Dev Branch', roles: ['Project Manager', 'Administrator'] }
-      },
-      // {
-      //   path: 'dev-version',
-      //   name: 'DevVersion',
-      //   component: () => import('@/views/ProgressDevVersion/index'),
-      //   meta: { title: 'Dev Version', roles: ['Project Manager'] }
-      // },
-      {
-        path: 'test-record',
-        name: 'TestRecord',
-        component: () => import('@/views/ProgressDevVersionTestRecord/index'),
-        meta: { title: 'Test Record', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'dev-branch/:branchName/test',
-        name: 'DevBranchTest',
-        hidden: true,
-        component: () => import('@/views/ProcessDevBranchTestResult/index'),
-        meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
-      }
-    ]
-  },
-
-  {
-    path: '/issue',
-    component: Layout,
-    name: 'Issues',
-    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
-    redirect: '/issue/wiki',
-    children: [
-      {
-        path: 'wiki',
-        name: 'IssueWiki',
-        component: () => import('@/views/ProjectWiki/index'),
-        meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
-      },
-      {
-        path: 'list',
-        name: 'IssueList',
-        component: () => import('@/views/ProjectIssues/index'),
-        meta: { title: 'Issue List', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: true },
-        children: [
-          {
-            path: ':issueId',
-            name: 'IssueDetail',
-            hidden: true,
-            component: () => import('@/views/ProjectIssueDetail/index'),
-            meta: { title: 'Issue Detail', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: false }
-          }
-        ]
-      },
-
-      {
-        path: 'listrd/:issue_num/setup',
-        hidden: true,
-        component: () => import('@/views/IssueSetUp/index'),
-        meta: { title: 'Issue SetUp', roles: ['Engineer'] }
-      },
-      {
-        path: 'file',
-        name: 'File',
-        component: () => import('@/views/ProjectFiles/index'),
-        meta: { title: 'File List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       }
     ]
   },
