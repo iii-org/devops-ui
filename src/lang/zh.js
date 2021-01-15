@@ -15,9 +15,9 @@ export default {
     Wiki: 'Wiki列表',
     'Issue List': '議題列表',
     'File List': '文件列表',
-    Test: 'API測試',
-    'Test Case': 'API測試列表',
-    'Test Case (Expert)': 'API測試列表(專家模式)',
+    Test: 'CI 結果',
+    'Test Case': 'API 測試列表 (UI)',
+    'Test Case (Expert)': 'API 測試列表 (Collection)',
     Setting: '設定',
     Members: '成員',
     Versions: '版本',
@@ -35,10 +35,12 @@ export default {
     'Secret List': 'Secret 列表',
     'Config Map List': 'Config Map 列表',
     Artifacts: '資源成品',
-    'Postman result': 'Postman結果',
+    'Postman result': 'API 測試列表 (POSTMAN)',
     Activities: '操作記錄',
     'Project Activities': '專案紀錄列表',
-    'System Activities': '系統紀錄列表'
+    'System Activities': '系統紀錄列表',
+    CheckMarx: '白箱檢測 (CheckMarx)',
+    WebInspect: '黑箱檢測 (WebInspect)'
   },
   navbar: {
     logOut: '登出',

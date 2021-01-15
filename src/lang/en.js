@@ -38,7 +38,9 @@ export default {
     'Postman result': 'Postman Result',
     Activities: 'Activities',
     'Project Activities': 'Project Activities',
-    'System Activities': 'System Activities'
+    'System Activities': 'System Activities',
+    CheckMarx: 'CheckMarx',
+    WebInspect: 'WebInspect'
   },
   navbar: {
     logOut: 'Log Out',

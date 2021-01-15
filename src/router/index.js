@@ -512,13 +512,13 @@ export const asyncRoutes = [
         path: 'check-marx',
         name: 'check-marx',
         component: () => import('@/views/CheckMarx/index'),
-        meta: { title: 'Check Marx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
       {
         path: 'web-inspect',
         name: 'web-inspect',
         component: () => import('@/views/WebInspect/index'),
-        meta: { title: 'Web Inspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'WebInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },
