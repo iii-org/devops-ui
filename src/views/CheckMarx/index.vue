@@ -128,7 +128,13 @@ export default {
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" min-width="110" />
       <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" min-width="90" />
-      <el-table-column align="center" :label="$t('CheckMarx.Commit')" prop="commit_id" min-width="95" />
+      <el-table-column align="center" :label="$t('CheckMarx.Commit')" min-width="95">
+        <template slot-scope="scope">
+          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+            {{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" min-width="100" />
       <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" min-width="135" />
       <el-table-column

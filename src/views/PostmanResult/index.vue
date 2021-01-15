@@ -80,7 +80,13 @@ export default {
     <el-table v-loading="listLoading" element-loading-text="Loading" :data="pagedData" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="80" />
       <el-table-column align="center" :label="$t('Postman.Branch')" min-width="60" prop="branch" />
-      <el-table-column align="center" label="Commit" prop="commit_id" show-overflow-tooltip min-width="130" />
+      <el-table-column align="center" label="Commit" show-overflow-tooltip min-width="130">
+        <template slot-scope="scope">
+          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+            {{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="40" />
       <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="30" />
       <el-table-column align="center" :label="$t('Postman.StartTime')" prop="run_at" width="240" />

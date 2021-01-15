@@ -171,9 +171,20 @@ export default {
           <el-tag v-else type="close" size="medium">{{ scope.row.execution_state }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevBranchTest.Commit')" align="center" min-width="180" prop="commit_id" />
+      <el-table-column :label="$t('ProcessDevBranchTest.Commit')" align="center" min-width="180">
+        <template slot-scope="scope">
+          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+            {{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('ProcessDevBranchTest.Branch')" align="center" min-width="90" prop="commit_branch" />
-      <el-table-column :label="$t('ProcessDevBranchTest.CommitMessage')" align="center" min-width="170" prop="commit_message" />
+      <el-table-column
+        :label="$t('ProcessDevBranchTest.CommitMessage')"
+        align="center"
+        min-width="170"
+        prop="commit_message"
+      />
       <el-table-column :label="$t('ProcessDevBranchTest.LastUpdateTime')" align="center" width="180">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.last_test_time) }}</span>

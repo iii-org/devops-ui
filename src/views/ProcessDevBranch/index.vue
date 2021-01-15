@@ -111,7 +111,9 @@ export default {
       <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')" min-width="200">
         <template slot-scope="scope">
           <div v-for="(item, index) in EnvironmentFormat(scope.row.env_url)" :key="index">
-            <el-link :href="item.url" target="_blank" type="primary">{{ item.service }} ({{ item.port }})</el-link>
+            <el-link :href="item.url" target="_blank" type="primary" :underline="false">
+              {{ item.service }} ({{ item.port }})
+            </el-link>
           </div>
         </template>
       </el-table-column>
@@ -132,7 +134,13 @@ export default {
           <el-tag v-else type="close" size="medium">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id" />
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id">
+        <template slot-scope="scope">
+          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+            {{ scope.row.short_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('ProcessDevBranch.LastUpdateTime')" width="180">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.last_commit_time) }}
