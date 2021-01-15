@@ -58,7 +58,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item :label="$t('general.Status')" prop="status_id">
-            <el-select v-model="issueForm.status_id" style="width: 100%">
+            <el-select id="input-status" v-model="issueForm.status_id" style="width: 100%">
               <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
