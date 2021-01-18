@@ -15,7 +15,7 @@
                 <span class="issue-name">{{ issue.issue_name }}</span>
                 <span class="issue-date">{{ issue.updated_on | hmA }}, {{ issue.updated_on | relativeTime }}</span>
               </el-col>
-              <el-col :span="17" class="el-col-content">
+              <el-col :span="15" class="el-col-content">
                 <p>{{ issue.description || '-' }}</p>
               </el-col>
               <el-col :span="2" class="el-col-account">
@@ -33,11 +33,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { getActivityLog, getProjectList } from '@/api/projects'
+import { mapGetters } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import { getProjectIssueListByDate } from '@/api/projects'
+
 export default {
+  name: 'ProjectActivityLog',
   components: {
     ProjectListSelector
   },
@@ -51,13 +52,11 @@ export default {
       return statusMap[status]
     }
   },
-  data() {
-    return {
-      projectIssueList: [],
-      isLoading: true,
-      projectList: []
-    }
-  },
+  data: () => ({
+    projectIssueList: [],
+    isLoading: true,
+    projectList: []
+  }),
   computed: {
     ...mapGetters(['projectSelectedId'])
   },
@@ -75,7 +74,11 @@ export default {
       const projectIssueListRes = await getProjectIssueListByDate(this.projectSelectedId)
       this.isLoading = false
       this.projectIssueList = Object.keys(projectIssueListRes.data).map((item, index) => {
-        const data = { index: index, date: item, issues: projectIssueListRes.data[item] }
+        const data = {
+          index: index,
+          date: item,
+          issues: projectIssueListRes.data[item].sort((a, b) => new Date(b.updated_on) - new Date(a.updated_on))
+        }
         return data
       })
     }
