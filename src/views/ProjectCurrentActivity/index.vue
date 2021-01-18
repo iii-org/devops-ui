@@ -90,7 +90,8 @@ export default {
           date: issue.due_date,
           user: issue.assigned_to,
           version: issue.fixed_version_id,
-          parent_id: issue.parent_id
+          parent_id: issue.parent_id,
+          link: issue.issue_link
         }
       })
     },
