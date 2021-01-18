@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import ProjectListSelector from '../../components/ProjectListSelector'
 import projectBar from './components/project_bar'
 import {
@@ -26,7 +26,7 @@ export default {
       activeNames: '',
       dataList: [],
       workList: {},
-      activedIndex: []
+      activeIndex: []
     }
   },
   computed: {
@@ -76,8 +76,8 @@ export default {
     },
     onCollapseChange(value) {
       if (!value) return
-      if (this.activedIndex.includes(value)) return
-      this.activedIndex.push(value)
+      if (this.activeIndex.includes(value)) return
+      this.activeIndex.push(value)
       this.fetchDetails(value)
     },
     async fetchDetails(vId) {
@@ -87,7 +87,7 @@ export default {
 
       const statistics = await getProjectIssueStatistics(this.projectSelectedId, { fixed_version_id: vId })
       this.workLoadData = statistics.data
-      this.workLoadTypes = Object.keys(this.workLoadData).map((key) => {
+      this.workLoadTypes = Object.keys(this.workLoadData).map(key => {
         return { id: key, name: key }
       })
       this.workLoad = this.workLoadTypes[0].id
@@ -117,27 +117,33 @@ export default {
                   <el-tag effect="dark" :type="returnVersionType(item)">{{ item.name }}</el-tag>
                   <el-progress :percentage="percentageMethod(item)" :status="item.type" />
                 </div>
-                <div style="font-size: 14px;color: #606266;line-height: 1;">{{ item.total_issue-item.open }}/{{ item.total_issue }}</div>
+                <div style="font-size: 14px;color: #606266;line-height: 1;">
+                  {{ item.total_issue - item.open }}/{{ item.total_issue }}
+                </div>
               </template>
               <el-divider />
               <div v-loading="contentLoading" class="contentBody">
                 <el-row :gutter="12">
                   <el-col :span="8">
                     <el-table :data="workList[item.vId]" style="width: 100%" border stripe>
-                      <el-table-column prop="lsit" label="Work List">
+                      <el-table-column label="Work List">
                         <template slot-scope="scope">
                           <!-- <el-tag :type="scope.row.issue_priority === '急' ? 'warning' : 'danger'">{{
                             scope.row.issue_priority
                           }}</el-tag> -->
-                          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">{{
-                            scope.row.issue_priority
-                          }}</el-tag>
-                          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
-                          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
+                          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
+                            {{ scope.row.issue_priority }}
+                          </el-tag>
+                          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">
+                            {{ scope.row.issue_priority }}
+                          </el-tag>
+                          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">
+                            {{ scope.row.issue_priority }}
+                          </el-tag>
                           <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
                           <span>
                             [{{ scope.row.issue_category }}]
-                            #{{ scope.row.issue_name }}
+                            {{ scope.row.issue_name }}
                           </span>
                         </template>
                       </el-table-column>
@@ -147,8 +153,18 @@ export default {
                     <el-card shadow="hover">
                       <div slot="header" class="clearfix" style="line-height:40px; position: relative">
                         <span style="font-size: 16px">Workload</span>
-                        <el-select v-model="workLoad" placeholder="select a project" @change="onWorkLoadChange" style="float: right">
-                          <el-option v-for="items in workLoadTypes" :key="items.id" :label="items.name" :value="items.id" />
+                        <el-select
+                          v-model="workLoad"
+                          placeholder="select a project"
+                          style="float: right"
+                          @change="onWorkLoadChange"
+                        >
+                          <el-option
+                            v-for="items in workLoadTypes"
+                            :key="items.id"
+                            :label="items.name"
+                            :value="items.id"
+                          />
                         </el-select>
                       </div>
                       <project-bar v-if="workList[item.vId]" :the-data="workLoadSelected" />
@@ -183,16 +199,5 @@ export default {
 }
 .titleProgress {
   width: 95%;
-}
-#detaildivider{
-  margin-top: 50px;
-  margin-left: 0px;
-}
-
-.el-tag{
-  width: 90px;
-  text-align: center;
-  border-radius: 8px;
-  margin-right: 15px;
 }
 </style>
