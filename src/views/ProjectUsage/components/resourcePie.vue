@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     initChart() {
+      const chartData = this.chartData
       this.chart = echarts.init(this.$el)
       const hasChartData = this.chartData.length > 0
       if (hasChartData) {
@@ -83,7 +84,7 @@ export default {
             }
           ]
         })
-        this.chart.dispatchAction({ type: 'highlight', name: 'Left Quota' })
+        this.chart.dispatchAction({ type: 'highlight', name: chartData[1].name })
         this.chart.on('mouseover', function(params) {
           var name = params.name
           this.dispatchAction({ type: 'downplay' })
@@ -91,7 +92,7 @@ export default {
         })
         this.chart.on('mouseout', function(params) {
           this.dispatchAction({ type: 'downplay' })
-          this.dispatchAction({ type: 'highlight', name: 'Left Quota' })
+          this.dispatchAction({ type: 'highlight', name: chartData[1].name })
         })
       } else {
         this.chart.clear()
