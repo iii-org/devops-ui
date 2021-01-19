@@ -260,7 +260,7 @@ export default {
     PleaseType: '請輸入',
     AndThen: '進行刪除或取消操作',
     IdRule: '請輸入2-30個字元的小寫英文或數字組合，中間可包含符號"-"，且不可全為數字',
-    Workload: '工作包狀態',
+    Workload: '議題狀態',
     WorkloadValue: '工作量',
     UpcommingDeadline: '最近逾期日',
     ProjectMembers: '專案成員',
