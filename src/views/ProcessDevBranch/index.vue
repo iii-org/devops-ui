@@ -111,7 +111,7 @@ export default {
       <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')" min-width="200">
         <template slot-scope="scope">
           <div v-for="(item, index) in EnvironmentFormat(scope.row.env_url)" :key="index">
-            <el-link :href="item.url" target="_blank" type="primary" :underline="false">
+            <el-link type="primary" target="_blank" style="font-size: 16px" :underline="false" :href="item.url">
               {{ item.service }} ({{ item.port }})
             </el-link>
           </div>
@@ -136,7 +136,13 @@ export default {
       </el-table-column> -->
       <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id">
         <template slot-scope="scope">
-          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.commit_url"
+          >
             {{ scope.row.short_id }}
           </el-link>
         </template>

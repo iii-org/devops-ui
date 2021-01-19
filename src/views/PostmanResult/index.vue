@@ -82,7 +82,13 @@ export default {
       <el-table-column align="center" :label="$t('Postman.Branch')" min-width="60" prop="branch" />
       <el-table-column align="center" label="Commit" show-overflow-tooltip min-width="130">
         <template slot-scope="scope">
-          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.commit_url"
+          >
             {{ scope.row.commit_id }}
           </el-link>
         </template>

@@ -200,9 +200,16 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Redmine" width="100px">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.redmine_url" type="primary" :href="scope.row.redmine_url" target="_blank"
-            >Redmine</el-link
+          <el-link
+            v-if="scope.row.redmine_url"
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.redmine_url"
           >
+            Redmine
+          </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>

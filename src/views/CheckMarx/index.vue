@@ -130,7 +130,13 @@ export default {
       <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" min-width="90" />
       <el-table-column align="center" :label="$t('CheckMarx.Commit')" min-width="95">
         <template slot-scope="scope">
-          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.commit_url"
+          >
             {{ scope.row.commit_id }}
           </el-link>
         </template>
@@ -154,10 +160,11 @@ export default {
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.report_ready"
-            target="_blank"
             type="primary"
-            :underline="false"
+            target="_blank"
+            style="font-size: 16px"
             class="download-btn"
+            :underline="false"
             @click="fetchTestReport(scope.row.report_id)"
           >
             <i class="el-icon-download" style="font-size: 16px" />

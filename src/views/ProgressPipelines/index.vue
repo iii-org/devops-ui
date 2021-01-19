@@ -173,7 +173,13 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('ProcessDevBranchTest.Commit')" align="center" min-width="180">
         <template slot-scope="scope">
-          <el-link type="primary" :href="scope.row.commit_url" target="_blank" :underline="false">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.commit_url"
+          >
             {{ scope.row.commit_id }}
           </el-link>
         </template>

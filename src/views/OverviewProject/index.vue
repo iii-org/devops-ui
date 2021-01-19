@@ -287,8 +287,8 @@ export default {
 
                 <el-link
                   v-if="scope.row.status == 3"
-                  target="_blank"
                   type="primary"
+                  target="_blank"
                   :underline="false"
                   class="download-btn"
                   @click="fetchTestReport(scope.row.report_id)"
@@ -384,6 +384,7 @@ export default {
   padding: 6px 22px 7px 20px;
   border-radius: 2px;
   background-color: #68c239;
+  font-size: 16px
   i {
     vertical-align: -1px;
   }

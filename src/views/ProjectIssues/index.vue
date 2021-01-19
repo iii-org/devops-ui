@@ -175,6 +175,9 @@ export default {
         })
       return res
       // this.addTopicDialogVisible = false
+    },
+    handleCLick(id) {
+      this.$router.push({ path: `/issue/list/${id}` })
     }
   }
 }
@@ -227,7 +230,16 @@ export default {
             <div class="d-flex">
               <div class="column-title">
                 <span class="text-success">{{ scope.row.id }}</span>
-                <el-link :id="`link-issue-name-${scope.$index}`" :href="scope.row.issue_link" target="_blank">{{ scope.row.issue_name }}</el-link>
+                <el-link
+                  :id="`link-issue-name-${scope.$index}`"
+                  type="primary"
+                  target="_blank"
+                  style="font-size: 16px"
+                  :underline="false"
+                  @click="handleCLick(scope.row.id)"
+                >
+                  {{ scope.row.issue_name }}
+                </el-link>
               </div>
 
               <el-button

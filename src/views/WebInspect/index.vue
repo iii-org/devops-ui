@@ -134,10 +134,9 @@ export default {
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.scan_id"
-            target="_blank"
             type="primary"
+            style="font-size: 16px"
             :underline="false"
-            class="download-btn"
             @click="fetchTestReport(scope.row.scan_id)"
           >
             <i class="el-icon-download" style="font-size: 16px" />

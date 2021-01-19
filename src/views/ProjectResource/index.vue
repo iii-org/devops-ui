@@ -213,7 +213,13 @@ export default {
       <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-link type="primary" :href="scope.row.harbor_link" target="_blank">
+            <el-link
+              type="primary"
+              target="_blank"
+              style="font-size: 16px"
+              :underline="false"
+              :href="scope.row.harbor_link"
+            >
               {{ scope.row.name }}
             </el-link>
           </template>

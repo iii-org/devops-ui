@@ -331,16 +331,30 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="GitLab" width="110">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.git_url" type="text" :href="scope.row.git_url" target="_blank">
-            <el-image src="/imgs/link-icon.svg" class="link-icon" /> GitLab
+          <el-link
+            v-if="scope.row.git_url"
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.git_url"
+          >
+            <i class="el-icon-link" /> GitLab
           </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="110">
+      <el-table-column align="center" label="Redmine" width="120">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.redmine_url" type="text" :href="scope.row.redmine_url" target="_blank">
-            <el-image src="/imgs/link-icon.svg" class="link-icon" /> Redmine
+          <el-link
+            v-if="scope.row.redmine_url"
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.redmine_url"
+          >
+            <i class="el-icon-link" /> Redmine
           </el-link>
           <span v-else>-</span>
         </template>

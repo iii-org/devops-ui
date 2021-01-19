@@ -10,7 +10,9 @@
     <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
         <div style="padding-bottom: 16px">
-          <el-link type="primary" :href="element.link" target="_blank" :underline="false" style="font-size: 16px">{{ element.name }}</el-link>
+          <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleCLick(element.id)">
+            {{ element.name }}
+          </el-link>
         </div>
         <div>
           <span style="font-size: 15px;">
@@ -76,6 +78,9 @@ export default {
     },
     end(evt) {
       this.$emit('update', evt)
+    },
+    handleCLick(id) {
+      this.$router.push({ path: `/issue/list/${id}` })
     }
   }
 }
