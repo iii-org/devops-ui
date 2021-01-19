@@ -49,16 +49,18 @@ export default {
       this.listLoading = true
       if (this.projectSelectedObject.name !== undefined) {
         await getWebInspectScans(this.projectSelectedObject.name).then(res => {
-          this.webInspectScans = this.sortScans(res.data)
+          this.webInspectScans = this.handleScans(res.data)
         })
         await this.updateWebInspectStatus()
       }
       this.listLoading = false
     },
-    sortScans(webInspectScans) {
-      const sortedScans = webInspectScans.map(scan => scan)
-      sortedScans.forEach(i => {
-        i.status = ''
+    handleScans(scans) {
+      const sortedScans = scans.map(scan => {
+        const result = Object.assign({}, scan)
+        if (result.stats === 'None') result.stats = {}
+        result['status'] = ''
+        return result
       })
       sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
       return sortedScans
@@ -80,7 +82,12 @@ export default {
     fetchStats(wiScanId) {
       getWebInspectStats(wiScanId).then(res => {
         const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        this.webInspectScans[idx].stats = res.data.severity_count
+        // this.webInspectScans[idx].stats = res.data.severity_count
+        if (res.data.severity_count === 'None') {
+          this.webInspectScans[idx].stats = {}
+        } else {
+          this.webInspectScans[idx].stats = res.data.severity_count
+        }
       })
     },
     fetchTestReport(wiScanId) {
