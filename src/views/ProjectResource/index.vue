@@ -269,7 +269,7 @@ export default {
       />
 
       <el-dialog
-        :title="`${$t('general.Delete')} ${$t('route.Project Resource')}`"
+        :title="`${$t('general.Delete')} ${$t('route.Harbor')}`"
         :visible.sync="showDeleteDialog"
         width="40%"
         :close-on-click-modal="false"

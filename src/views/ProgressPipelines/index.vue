@@ -7,7 +7,7 @@ import { getPipelines, getPipelinesLogs, changePipelineByAction } from '@/api/ci
 import TestDetail from './components/TestDetail'
 
 export default {
-  name: 'ProgressDevVersionTestRecord',
+  name: 'ProgressPipelines',
   components: { Pagination, ProjectListSelector, TestDetail },
   data: () => ({
     isLoading: false,

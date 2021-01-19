@@ -1,46 +1,59 @@
 export default {
   route: {
     Dashboard: 'Dashboard',
-    Projects: 'Projects',
+
     'Project List': 'Project List',
     'PM Project List': 'PM Project List',
+
+    Projects: 'Projects',
     Project: 'Project',
     Overview: 'Overview',
-    'Current Activity': 'Current Activity',
+    'Issue Boards': 'Issue Boards',
+    'Activity Log': 'Activity Log',
+    'Project Roadmap': 'Project Roadmap',
+
+    Issues: 'Issues',
+    'Issue List': 'Issue List',
+    'Issue Detail': 'Issue Detail',
+    Wiki: 'Wiki',
+    'File List': 'File List',
+
     Progress: 'Progress',
     'Dev Branch': 'Dev Branch',
-    'Test Record': 'Test Record',
-    'Dev Branch Test Result': 'Dev Branch Test Result',
-    Issues: 'Issues',
-    Wiki: 'Wiki',
-    'Issue List': 'Issue List',
-    'File List': 'File List',
-    Test: 'API Test',
+    'Git Graph': 'Git Graph',
+    Pipelines: 'Pipelines',
+
+    'Auto Testing': 'Auto Testing',
+    Postman: 'Postman',
+    CheckMarx: 'CheckMarx',
+    WebInspect: 'WebInspect',
     'Test Case': 'API Test Case',
     'Test Case (Expert)': 'API Test Case(Expert)',
+
+    'System Resource': 'System Resource',
+    Kubernetes: 'Kubernetes',
+    Harbor: 'Harbor',
+
+    Activities: 'Activities',
+    'Project Activities': 'Project Activities',
+
     Setting: 'Setting',
     Members: 'Members',
     Versions: 'Versions',
-    'User Manage': 'User Manage',
-    'Activity Log': 'Activity Log',
-    Roadmap: 'Project Roadmap',
-    'Project Graph': 'Git Graph',
-    'Issue Detail': 'Issue Detail',
-    'Project Resource': 'Project Resource',
-    Usage: 'Project Usage',
-    Resource: 'Project Resource',
+
+    Admin: 'System Settings',
+    'Account Manage': 'Account Manage',
+    'System Activities': 'System Activities',
+
+    'Dev Branch Test Result': 'Dev Branch Test Result',
+
     'Deployment List': 'Deployment List',
     'Pod List': 'Pod List',
     'Service List': 'Service List',
     'Secret List': 'Secret List',
     'Config Map List': 'Config Map List',
-    Artifacts: 'Project Artifacts',
-    'Postman result': 'Postman Result',
-    Activities: 'Activities',
-    'Project Activities': 'Project Activities',
-    'System Activities': 'System Activities',
-    CheckMarx: 'CheckMarx',
-    WebInspect: 'WebInspect'
+
+    Artifacts: 'Project Artifacts'
   },
   navbar: {
     logOut: 'Log Out',

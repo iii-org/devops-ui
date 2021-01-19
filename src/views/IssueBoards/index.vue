@@ -7,7 +7,7 @@ import { getIssueStatus, updateIssue } from '@/api/issue'
 import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 
 export default {
-  name: 'ProjectCurrentActivity',
+  name: 'IssueBoards',
   components: {
     Kanban,
     ProjectListSelector

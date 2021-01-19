@@ -97,7 +97,6 @@ export default {
     async fetchProjectTest() {
       this.projectTestLoading = true
       this.projectData = []
-      console.log('fetchProjectTest')
       let apiProjectData = await getProjectTest(this.projectSelectedId)
       apiProjectData = apiProjectData.data
       for (const i in apiProjectData.test_results) {

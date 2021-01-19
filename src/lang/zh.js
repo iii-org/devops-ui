@@ -1,46 +1,59 @@
 export default {
   route: {
     Dashboard: '儀表板',
-    Projects: '專案',
+
     'Project List': '專案列表',
     'PM Project List': '專案列表',
-    Project: '專案概述',
+
+    Projects: '專案概述', // RD
+    Project: '專案概述', // PM, AM
     Overview: '單一專案概述',
-    'Current Activity': '目前活動',
-    Progress: '專案進度',
-    'Dev Branch': '開發分支',
-    'Test Record': '測試紀錄',
-    'Dev Branch Test Result': '開發分支測試紀錄',
+    'Issue Boards': '議題看板',
+    'Activity Log': '活動紀錄',
+    'Project Roadmap': '專案藍圖',
+
     Issues: '專案議題',
-    Wiki: 'Wiki列表',
     'Issue List': '議題列表',
-    'File List': '文件列表',
-    Test: 'CI 結果',
+    'Issue Detail': '議題內容',
+    Wiki: 'Wiki列表',
+    'File List': '檔案列表',
+
+    Progress: '開發進度',
+    'Dev Branch': '開發分支',
+    'Git Graph': '開發線圖',
+    Pipelines: 'Pipeline 紀錄',
+
+    'Auto Testing': '自動測試結果',
+    Postman: 'API 測試(Postman)',
+    CheckMarx: '白箱測試(CheckMarx)',
+    WebInspect: '黑箱測試(WebInspect)',
     'Test Case': 'API 測試列表 (UI)',
     'Test Case (Expert)': 'API 測試列表 (Collection)',
-    Setting: '設定',
-    Members: '成員',
-    Versions: '版本',
-    'User Manage': '成員管理',
-    'Activity Log': '活動紀錄',
-    Roadmap: '專案藍圖',
-    'Project Graph': '版本線圖',
-    'Issue Detail': '議題內容',
-    'Project Resource': '專案資源',
-    Usage: '資源使用量',
-    Resource: '資源清單',
+
+    'System Resource': '系統資源',
+    Kubernetes: 'Kubernetes 資源',
+    Harbor: 'Harbor 資源',
+
+    Activities: '操作記錄',
+    'Project Activities': '操作紀錄',
+
+    Settings: '設定',
+    Members: '專案成員',
+    Versions: '版本設定',
+
+    Admin: '系統設定',
+    'Account Manage': '帳號管理',
+    'System Activities': '系統紀錄',
+
+    'Dev Branch Test Result': '開發分支測試紀錄',
+
     'Deployment List': 'Deployment 列表',
     'Pod List': 'Pod 列表',
     'Service List': 'Service 列表',
     'Secret List': 'Secret 列表',
     'Config Map List': 'Config Map 列表',
-    Artifacts: '資源成品',
-    'Postman result': 'API 測試列表 (POSTMAN)',
-    Activities: '操作記錄',
-    'Project Activities': '專案紀錄列表',
-    'System Activities': '系統紀錄列表',
-    CheckMarx: '白箱檢測 (CheckMarx)',
-    WebInspect: '黑箱檢測 (WebInspect)'
+
+    Artifacts: '資源成品'
   },
   navbar: {
     logOut: '登出',
