@@ -197,12 +197,15 @@ export default {
       <el-divider />
       <el-card shadow="never" style="margin-bottom: 5px">
         <el-row :gutter="24">
-          <el-col :span="12" style="font-size: 20px;">
+          <el-col :span="10" style="font-size: 20px;">
             {{ projectName }}
           </el-col>
-          <el-col :span="4" style="font-size: 20px; text-align: center">
-            {{ Math.round(storage.quota.used.storage / 1024 / 1024) }} /
-            {{ Math.round(storage.quota.hard.storage / 1024 / 1024) }} MB
+          <el-col :span="6" style="font-size: 20px; text-align: center">
+            <span>{{ $t('ProjectResource.Storage') }}</span>
+            <span>
+              {{ (storage.quota.used.storage / 1024 / 1024 / 1024).toFixed(2) }} /
+              {{ Math.round(storage.quota.hard.storage / 1024 / 1024 / 1024) }} GB
+            </span>
           </el-col>
           <el-col :span="8" style="text-align:right">
             <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.quota)" />
