@@ -1,7 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
+// import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getTestCaseByProject,
   addTestCaseByProject,
@@ -21,7 +21,8 @@ const formTemplate = {
 
 export default {
   name: 'TestCase',
-  components: { ProjectListSelector, Pagination },
+  // components: { ProjectListSelector, Pagination },
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -94,7 +95,8 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.projectSelectedId)])
+      // Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.projectSelectedId)])
+      Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.$route.params.id)])
         .then(res => {
           this.testCaseTypeList = res[0].data.map(item => {
             return { label: item.name, value: item.test_case_type_id }
@@ -174,15 +176,15 @@ export default {
       })
     },
     handleDetail(idx, row) {
-      this.$router.push({ path: `test-case/${row.id}` })
+      this.$router.push({ path: `/test/postman-result/test-item/${row.id}` })
     }
   }
 }
 </script>
 <template>
-  <div class="app-container">
+  <div>
     <div class="clearfix">
-      <project-list-selector />
+      <!-- <project-list-selector /> -->
       <span v-if="userRole === 'Engineer'" class="newBtn">
         <el-button type="success" @click="handleAdding">
           <i class="el-icon-plus" />
@@ -200,32 +202,32 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('TestCase.Id')" min-width="60">
+      <el-table-column align="center" :label="$t('TestCase.Id')" width="110">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="120">
+      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Description')" :show-overflow-tooltip="true" min-width="120">
+      <el-table-column align="center" :label="$t('TestCase.Description')" :show-overflow-tooltip="true" min-width="170">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Method')" min-width="50">
+      <el-table-column align="center" :label="$t('TestCase.Method')" width="95">
         <template slot-scope="scope">
           {{ scope.row.data.method }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Path')" min-width="120">
+      <el-table-column align="center" :label="$t('TestCase.Path')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.data.url }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" min-width="70">
+      <el-table-column align="center" :label="$t('general.Actions')" min-width="250">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />

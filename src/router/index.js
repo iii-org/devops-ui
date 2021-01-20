@@ -354,21 +354,21 @@ export const asyncRoutes = [
               roles: ['Engineer', 'Project Manager', 'Administrator'],
               rolePage: false
             }
+          },
+          {
+            path: 'test-case/:id',
+            name: 'Test Case',
+            hidden: true,
+            component: () => import('@/views/TestCase/index'),
+            meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
+          },
+          {
+            path: 'test-item/:testCaseId',
+            name: 'Test Item',
+            hidden: true,
+            component: () => import('@/views/TestItem/index'),
+            meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
           }
-          // {
-          //   path: 'test-case/:id',
-          //   name: 'Test Case',
-          //   hidden: true,
-          //   component: () => import('@/views/TestCase/index'),
-          //   meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
-          // },
-          // {
-          //   path: 'test-item/:testCaseId',
-          //   name: 'Test Item',
-          //   hidden: true,
-          //   component: () => import('@/views/TestItem/index'),
-          //   meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
-          // }
         ]
       },
       {
@@ -382,20 +382,20 @@ export const asyncRoutes = [
         name: 'web-inspect',
         component: () => import('@/views/WebInspect/index'),
         meta: { title: 'WebInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'test-case',
-        name: 'Test Case',
-        component: () => import('@/views/TestCase/index'),
-        meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'test-case/:testCaseId',
-        name: 'Test Item',
-        hidden: true,
-        component: () => import('@/views/TestItem/index'),
-        meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
+      // {
+      //   path: 'test-case',
+      //   name: 'Test Case',
+      //   component: () => import('@/views/TestCase/index'),
+      //   meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      // },
+      // {
+      //   path: 'test-case/:testCaseId',
+      //   name: 'Test Item',
+      //   hidden: true,
+      //   component: () => import('@/views/TestItem/index'),
+      //   meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      // }
     ]
   },
 

@@ -47,16 +47,16 @@ export default {
       testValueList: [],
       testValueDialogVisible: false,
       listLoading: true,
-      testItemlistQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
+      testItemListQuery: {
+        page: 1,
+        limit: 10
       },
-      testItemListTotal: 0, // 總筆數
-      testValuelistQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
+      testItemListTotal: 0,
+      testValueListQuery: {
+        page: 1,
+        limit: 10
       },
-      testValueListTotal: 0, // 總筆數
+      testValueListTotal: 0,
       testItemForm: testItemFormTemplate,
       testValueForm: testValueFormTemplate,
       confirmLoading: false,
@@ -86,8 +86,8 @@ export default {
         }
       })
       this.testItemListTotal = listData.length
-      const start = (this.testItemlistQuery.page - 1) * this.testItemlistQuery.limit
-      const end = start + this.testItemlistQuery.limit
+      const start = (this.testItemListQuery.page - 1) * this.testItemListQuery.limit
+      const end = start + this.testItemListQuery.limit
       return listData.slice(start, end)
     },
     testValuePagedData() {
@@ -100,8 +100,8 @@ export default {
         }
       })
       this.testValueListTotal = listData.length
-      const start = (this.testValuelistQuery.page - 1) * this.testValuelistQuery.limit
-      const end = start + this.testValuelistQuery.limit
+      const start = (this.testValueListQuery.page - 1) * this.testValueListQuery.limit
+      const end = start + this.testValueListQuery.limit
       return listData.slice(start, end)
     },
     dialogStatusText() {
@@ -117,7 +117,6 @@ export default {
   },
   watch: {
     async selectTestItem(val) {
-      console.log(val)
       this.fetchTestValueData(val)
     }
   },
@@ -135,6 +134,7 @@ export default {
       .finally(() => {
         this.listLoading = false
       })
+    // this.testCaseId = parseInt(this.$route.params.testCaseId)
     this.testCaseId = parseInt(this.$route.params.testCaseId)
     this.fetchData()
   },
@@ -155,7 +155,6 @@ export default {
         item['location'] = this.testValueLocationList.find(location => location.value === item.location_id)
         return item
       })
-      console.log('this.testValueList', this.testValueList)
     },
     handleTestItemAdding() {
       this.testItemDialogVisible = true
@@ -197,8 +196,8 @@ export default {
       if (!success || !total) return 'No Test'
       return success + ' / ' + total
     },
-    onPagination(testItemlistQuery) {
-      this.testItemlistQuery = testItemlistQuery
+    onPagination(testItemListQuery) {
+      this.testItemListQuery = testItemListQuery
     },
     onDialogClosed() {
       this.$nextTick(() => {
@@ -255,7 +254,7 @@ export default {
 }
 </script>
 <template>
-  <div class="app-container">
+  <div>
     <el-card class="box-card el-col-6 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">{{ $t('TestCase.TestCase') }}</span>
@@ -343,9 +342,9 @@ export default {
         </el-table>
         <pagination
           :total="testItemListTotal"
-          :page="testItemlistQuery.page"
-          :limit="testItemlistQuery.limit"
-          :page-sizes="[testItemlistQuery.limit]"
+          :page="testItemListQuery.page"
+          :limit="testItemListQuery.limit"
+          :page-sizes="[testItemListQuery.limit]"
           :layout="'total, prev, pager, next'"
           @pagination="onPagination"
         />
@@ -421,9 +420,9 @@ export default {
         </el-table>
         <pagination
           :total="testValueListTotal"
-          :page="testValuelistQuery.page"
-          :limit="testValuelistQuery.limit"
-          :page-sizes="[testValuelistQuery.limit]"
+          :page="testValueListQuery.page"
+          :limit="testValueListQuery.limit"
+          :page-sizes="[testValueListQuery.limit]"
           :layout="'total, prev, pager, next'"
           @pagination="onPagination"
         />
