@@ -5,8 +5,8 @@ export default {
     'Project List': '專案列表',
     'PM Project List': '專案列表',
 
-    Projects: '專案概述', // RD
-    Project: '專案概述', // PM, AM
+    Projects: '專案概述',
+    Project: '專案概述',
     Overview: '單一專案概述',
     'Issue Boards': '議題看板',
     'Activity Log': '活動紀錄',
@@ -27,8 +27,8 @@ export default {
     Postman: 'API 測試(Postman)',
     CheckMarx: '白箱測試(CheckMarx)',
     WebInspect: '黑箱測試(WebInspect)',
-    'Test Case': 'API 測試列表 (UI)',
-    'Test Case (Expert)': 'API 測試列表 (Collection)',
+    'Test Case': 'UI 列表',
+    'Collection': 'Collection 列表',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
@@ -318,7 +318,9 @@ export default {
     Success: '成功',
     Fail: '失敗',
     StartTime: '開始時間',
-    SearchBranch: '搜尋 分支'
+    SearchBranch: '搜尋 分支',
+    Ui: 'UI',
+    Collection: 'Collection'
   },
   Activities: {
     User: '使用者',

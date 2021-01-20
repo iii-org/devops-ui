@@ -28,7 +28,7 @@ export default {
     CheckMarx: 'CheckMarx',
     WebInspect: 'WebInspect',
     'Test Case': 'API Test Case',
-    'Test Case (Expert)': 'API Test Case(Expert)',
+    'Collection': 'Collection',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -321,7 +321,9 @@ export default {
     Success: 'Success',
     Fail: 'Fail',
     StartTime: 'Start Time',
-    SearchBranch: 'Search Branch'
+    SearchBranch: 'Search Branch',
+    Ui: 'UI',
+    Collection: 'Collection'
   },
   Activities: {
     User: 'User',

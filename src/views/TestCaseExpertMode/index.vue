@@ -1,11 +1,10 @@
 <script>
-import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { getPostmanReport } from '@/api/postman'
-import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
-  components: { ProjectListSelector, Pagination },
+  name: 'Collection',
+  components: { Pagination },
   data: () => ({
     reportList: [],
     dialogVisible: false,
@@ -18,7 +17,6 @@ export default {
     searchData: ''
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole']),
     pagedData() {
       const listData = this.reportList.filter(data => {
         if (
@@ -39,11 +37,6 @@ export default {
     }
   },
   watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
     searchData() {
       this.listQuery.page = 1
     }
@@ -55,7 +48,7 @@ export default {
     async fetchData() {
       try {
         this.listLoading = true
-        const response = await getPostmanReport(this.projectSelectedId)
+        const response = await getPostmanReport(this.$route.params.id)
         const { data } = response
         data ? (this.reportList = data.json_file.executions) : (this.reportList = [])
       } catch (e) {
@@ -83,9 +76,8 @@ export default {
 }
 </script>
 <template>
-  <div class="app-container">
+  <div>
     <div class="clearfix">
-      <project-list-selector />
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -131,9 +123,5 @@ export default {
 <style lang="scss" scoped>
 .clearfix {
   clear: both;
-  .newBtn {
-    float: right;
-    padding-right: 6px;
-  }
 }
 </style>

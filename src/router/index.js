@@ -342,7 +342,34 @@ export const asyncRoutes = [
         path: 'postman-result',
         name: 'Postman result',
         component: () => import('@/views/PostmanResult/index'),
-        meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: 'collection/:id',
+            name: 'Collection',
+            hidden: true,
+            component: () => import('@/views/TestCaseExpertMode/index'),
+            meta: {
+              title: 'Collection',
+              roles: ['Engineer', 'Project Manager', 'Administrator'],
+              rolePage: false
+            }
+          }
+          // {
+          //   path: 'test-case/:id',
+          //   name: 'Test Case',
+          //   hidden: true,
+          //   component: () => import('@/views/TestCase/index'),
+          //   meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
+          // },
+          // {
+          //   path: 'test-item/:testCaseId',
+          //   name: 'Test Item',
+          //   hidden: true,
+          //   component: () => import('@/views/TestItem/index'),
+          //   meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
+          // }
+        ]
       },
       {
         path: 'check-marx',
@@ -368,12 +395,6 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/TestItem/index'),
         meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'test-case-expert-mode',
-        name: 'Test Case Expert Mode',
-        component: () => import('@/views/TestCaseExpertMode/index'),
-        meta: { title: 'Test Case (Expert)', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },

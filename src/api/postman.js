@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getPostmanReport(project_id) {
+export function getPostmanReport(result_id) {
   return request({
-    url: `/postman_report/${project_id}`,
+    url: `/postman_report/${result_id}`,
     method: 'get'
   })
 }
