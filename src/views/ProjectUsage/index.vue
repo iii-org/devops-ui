@@ -133,7 +133,7 @@ export default {
       <el-row :gutter="12">
         <el-col v-for="item in usageList" :key="item.title" :span="8">
           <el-card v-loading="listLoading" style="margin-bottom: 15px">
-            <div slot="header" class="d-flex align-center">
+            <div slot="header" class="d-flex align-center" style="height: 24px">
               <strong>{{ item.title }}</strong>
               <el-button
                 v-if="allowEditUsage(item.title)"
