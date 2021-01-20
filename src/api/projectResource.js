@@ -42,6 +42,13 @@ export function deleteDeployment(pId, deployment_name) {
   })
 }
 
+export function updateDeployment(pId, deployment_name) {
+  return request({
+    url: `/project/${pId}/resource/list/deployment/${deployment_name}`,
+    method: 'put'
+  })
+}
+
 export function getServiceList(pId) {
   return request({
     url: `/project/${pId}/resource/list/service`,

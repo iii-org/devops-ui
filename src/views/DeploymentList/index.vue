@@ -2,7 +2,7 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import { getDeploymentList, deleteDeployment } from '@/api/projectResource'
+import { getDeploymentList, deleteDeployment, updateDeployment } from '@/api/projectResource'
 
 export default {
   name: 'DeploymentList',
@@ -10,6 +10,7 @@ export default {
   data: () => ({
     deploymentList: [],
     listLoading: true,
+    btnLoading: false,
     // dialogVisible: false,
     listQuery: {
       page: 1,
@@ -49,11 +50,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       await getDeploymentList(this.projectSelectedId).then(res => {
-        this.deploymentList = res.data.map(item => {
-          return {
-            name: item
-          }
-        })
+        this.deploymentList = res.data
       })
       this.listLoading = false
     },
@@ -72,6 +69,22 @@ export default {
         console.error(error)
       }
       this.listLoading = false
+    },
+    async redeploy(pId, deploymentName) {
+      this.btnLoading = true
+      try {
+        await updateDeployment(pId, deploymentName)
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.btnLoading = false
+    },
+    format(a, b) {
+      return a / b === 1 ? 'success' : 'warning'
+    },
+    calcPercentage(a, b) {
+      return (a / b) * 100
     }
   }
 }
@@ -92,20 +105,39 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column :label="$t('general.Name')" align="center" prop="name" />
-      <el-table-column :label="$t('general.Actions')" align="center" width="180">
+      <el-table-column :label="$t('general.Name')" align="center" prop="deployment_name" min-width="200" />
+      <el-table-column :label="$t('general.Status')" align="center" min-width="200">
+        <template slot-scope="scope">
+          <el-progress
+            :percentage="calcPercentage(scope.row.available_pod_number, scope.row.total_pod_number)"
+            :status="format(scope.row.available_pod_number, scope.row.total_pod_number)"
+          />
+          <span>{{ `${scope.row.available_pod_number} / ${scope.row.total_pod_number}` }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('general.Actions')" align="center" width="240">
         <template slot-scope="scope">
           <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
               <i class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button> -->
+          <el-button
+            :loading="btnLoading"
+            type="primary"
+            size="mini"
+            icon="el-icon-refresh"
+            @click="redeploy(projectSelectedId, scope.row.deployment_name)"
+          >
+            Redeploy
+          </el-button>
+
           <el-popconfirm
             confirm-button-text="Delete"
             cancel-button-text="Cancel"
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.name)"
+            @onConfirm="handleDelete(projectSelectedId, scope.row.deployment_name)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" />

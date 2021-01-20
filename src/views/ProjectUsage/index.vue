@@ -135,15 +135,26 @@ export default {
           <el-card v-loading="listLoading" style="margin-bottom: 15px">
             <div slot="header" class="d-flex align-center" style="height: 24px">
               <strong>{{ item.title }}</strong>
-              <el-button
-                v-if="allowEditUsage(item.title)"
-                type="primary"
-                icon="el-icon-edit"
-                size="mini"
-                circle
-                plain
-                @click="handleClick(item.title)"
-              />
+              <div>
+                <el-button
+                  v-if="item.title === 'Pods'"
+                  type="success"
+                  icon="el-icon-refresh-right"
+                  size="mini"
+                  circle
+                  plain
+                  @click="handleClick('Deployment')"
+                />
+                <el-button
+                  v-if="allowEditUsage(item.title)"
+                  type="primary"
+                  icon="el-icon-edit"
+                  size="mini"
+                  circle
+                  plain
+                  @click="handleClick(item.title)"
+                />
+              </div>
             </div>
             <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
             <div v-else>
