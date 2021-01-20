@@ -78,9 +78,9 @@ export default {
 </script>
 
 <template>
-  <div class="app-container">
+  <div>
     <div class="clearfix">
-      <project-list-selector />
+      <!-- <project-list-selector /> -->
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -90,12 +90,10 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
-
     <el-divider />
-
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column label="Name" align="center" prop="name" />
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="100">
+      <el-table-column :label="$t('general.Name')" align="center" prop="name" />
+      <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">
           <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
               <i class="el-icon-edit" />

@@ -5,7 +5,7 @@ import Pagination from '@/components/Pagination'
 import { getPodList, deletePod } from '@/api/projectResource'
 
 export default {
-  name: 'DeploymentList',
+  name: 'PodsList',
   components: { ProjectListSelector, Pagination },
   data: () => ({
     podList: [],
@@ -77,9 +77,9 @@ export default {
 </script>
 
 <template>
-  <div class="app-container">
+  <div>
     <div class="clearfix">
-      <project-list-selector />
+      <!-- <project-list-selector /> -->
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
@@ -89,9 +89,7 @@ export default {
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
-
     <el-divider />
-
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column :label="$t('general.Status')" align="center" width="130">
         <template slot-scope="scope">
@@ -108,7 +106,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Name')" align="center" prop="name" />
-      <el-table-column :label="$t('general.Actions')" align="center" width="200">
+      <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">
           <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
               <i class="el-icon-edit" />

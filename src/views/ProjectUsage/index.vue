@@ -110,6 +110,13 @@ export default {
         }
       })
       return result
+    },
+    handleClick(target) {
+      this.$router.push({ name: `${target} List` })
+    },
+    allowEditUsage(target) {
+      const allowList = ['Deployment', 'Pods', 'Service', 'Secret']
+      return allowList.findIndex(i => i === target) > -1
     }
   }
 }
@@ -117,22 +124,34 @@ export default {
 
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <project-list-selector />
+    <router-view />
+    <div v-if="this.$route.meta.rolePage" class="role-page">
+      <div class="clearfix">
+        <project-list-selector />
+      </div>
+      <el-divider />
+      <el-row :gutter="12">
+        <el-col v-for="item in usageList" :key="item.title" :span="8">
+          <el-card v-loading="listLoading" style="margin-bottom: 15px">
+            <div slot="header" class="d-flex align-center">
+              <strong>{{ item.title }}</strong>
+              <el-button
+                v-if="allowEditUsage(item.title)"
+                type="primary"
+                icon="el-icon-edit"
+                size="mini"
+                circle
+                plain
+                @click="handleClick(item.title)"
+              />
+            </div>
+            <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+            <div v-else>
+              <resource-pie :chart-data="item.data" />
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </div>
-    <el-divider />
-    <el-row :gutter="12">
-      <el-col v-for="item in usageList" :key="item.title" :span="8">
-        <el-card v-loading="listLoading" style="margin-bottom: 15px">
-          <div slot="header">
-            <strong>{{ item.title }}</strong>
-          </div>
-          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
-          <div v-else>
-            <resource-pie :chart-data="item.data" />
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
   </div>
 </template>

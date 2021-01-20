@@ -48,10 +48,10 @@ export default {
     'Dev Branch Test Result': 'Dev Branch Test Result',
 
     'Deployment List': 'Deployment List',
-    'Pod List': 'Pod List',
+    'Pods List': 'Pods List',
     'Service List': 'Service List',
     'Secret List': 'Secret List',
-    'Config Map List': 'Config Map List',
+    'ConfigMaps List': 'ConfigMaps List',
 
     Artifacts: 'Project Artifacts'
   },

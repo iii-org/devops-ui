@@ -48,10 +48,10 @@ export default {
     'Dev Branch Test Result': '開發分支測試紀錄',
 
     'Deployment List': 'Deployment 列表',
-    'Pod List': 'Pod 列表',
+    'Pods List': 'Pods 列表',
     'Service List': 'Service 列表',
     'Secret List': 'Secret 列表',
-    'Config Map List': 'Config Map 列表',
+    'ConfigMaps List': 'ConfigMaps 列表',
 
     Artifacts: '資源成品'
   },

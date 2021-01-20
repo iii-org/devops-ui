@@ -410,7 +410,44 @@ export const asyncRoutes = [
         path: 'kubernetes',
         name: 'Kubernetes',
         component: () => import('@/views/ProjectUsage/index'),
-        meta: { title: 'Kubernetes', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Kubernetes', roles: ['Project Manager', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: 'deployment-list',
+            name: 'Deployment List',
+            hidden: true,
+            component: () => import('@/views/DeploymentList/index'),
+            meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          },
+          {
+            path: 'pods-list',
+            name: 'Pods List',
+            hidden: true,
+            component: () => import('@/views/PodsList/index'),
+            meta: { title: 'Pods List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          },
+          {
+            path: 'service-list',
+            name: 'Service List',
+            hidden: true,
+            component: () => import('@/views/ServiceList/index'),
+            meta: { title: 'Service List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          },
+          {
+            path: 'secret-list',
+            name: 'Secret List',
+            hidden: true,
+            component: () => import('@/views/SecretList/index'),
+            meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          },
+          {
+            path: 'configmaps-list',
+            name: 'ConfigMaps List',
+            hidden: true,
+            component: () => import('@/views/ConfigMapsList/index'),
+            meta: { title: 'ConfigMaps List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          }
+        ]
       },
       {
         path: 'harbor',
@@ -426,37 +463,6 @@ export const asyncRoutes = [
             meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'], rolePage: false }
           }
         ]
-      },
-      {
-        path: 'deployment-list',
-        name: 'Deployment List',
-        component: () => import('@/views/DeploymentList/index'),
-        meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'pod-list',
-        name: 'Pod List',
-        component: () => import('@/views/PodList/index'),
-        meta: { title: 'Pod List', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'service-list',
-        name: 'Service List',
-        component: () => import('@/views/ServiceList/index'),
-        meta: { title: 'Service List', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'secret-list',
-        name: 'Secret List',
-        component: () => import('@/views/SecretList/index'),
-        meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'config-map-list',
-        name: 'Config Map List',
-        hidden: true,
-        component: () => import('@/views/ConfigMapList/index'),
-        meta: { title: 'Config Map List', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },
