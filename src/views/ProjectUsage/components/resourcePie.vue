@@ -13,7 +13,7 @@ export default {
     },
     height: {
       type: String,
-      default: '280px'
+      default: '270px'
     },
     chartData: {
       type: Array,
