@@ -1,0 +1,102 @@
+// Spacing property is one of: 
+// {property}{direction}-{size}
+
+// property applies: 
+// m (margin) 
+// p (padding)
+
+// direction applies:
+// t (top)
+// b (bottom)
+// l (left)
+// r (right)
+// x (left and right)
+// y (top and bottom
+// a (all directions)
+
+// size applies: 
+// 0 ~ 5 (* 4px)
+
+@for $i from 0 through 5 {
+  .mt-#{$i} {
+    margin-top: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .mb-#{$i} {
+    margin-bottom: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .ml-#{$i} {
+    margin-left: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .mr-#{$i} {
+    margin-right: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .mx-#{$i} {
+    margin: 0, $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .my-#{$i} {
+    margin: $i * 4px, 0;
+  }
+}
+
+@for $i from 0 through 5 {
+  .ma-#{$i} {
+    margin: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .pt-#{$i} {
+    padding-top: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .pb-#{$i} {
+    padding-bottom: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .pl-#{$i} {
+    padding-left: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .pr-#{$i} {
+    padding-right: $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .px-#{$i} {
+    padding: 0, $i * 4px;
+  }
+}
+
+@for $i from 0 through 5 {
+  .py-#{$i} {
+    padding: $i * 4px, 0;
+  }
+}
+
+@for $i from 0 through 5 {
+  .pa-#{$i} {
+    padding: $i * 4px;
+  }
+}
