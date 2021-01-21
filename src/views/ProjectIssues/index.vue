@@ -175,9 +175,6 @@ export default {
         })
       return res
       // this.addTopicDialogVisible = false
-    },
-    handleCLick(id) {
-      this.$router.push({ path: `/issue/list/${id}` })
     }
   }
 }
@@ -186,7 +183,7 @@ export default {
 <template>
   <div class="app-container">
     <router-view />
-    <div v-show="this.$route.meta.rolePage" class="role-Page">
+    <div v-if="this.$route.meta.rolePage" class="role-Page">
       <div class="clearfix">
         <div>
           <project-list-selector />
@@ -236,7 +233,7 @@ export default {
                   target="_blank"
                   style="font-size: 16px"
                   :underline="false"
-                  @click="handleCLick(scope.row.id)"
+                  @click="handleEdit(scope.$index, scope.row)"
                 >
                   {{ scope.row.issue_name }}
                 </el-link>
@@ -304,15 +301,15 @@ export default {
             <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Actions')" width="200">
+        <!-- <el-table-column align="center" :label="$t('general.Actions')" width="200">
           <template slot-scope="scope">
             <el-button
               :id="`btn-edit-issue-${scope.$index}`"
               size="mini"
               type="primary"
+              icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
             >
-              <i class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button>
             <el-popconfirm
@@ -323,15 +320,12 @@ export default {
               title="Are you sure?"
               @onConfirm="handleDelete(scope.$index, scope.row)"
             >
-              <el-button :id="`btn-delete-${scope.$index}`" slot="reference" size="mini" type="danger">
-                <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+              <el-button :id="`btn-delete-${scope.$index}`" slot="reference" size="mini" type="danger" icon="el-icon-delete">
+                {{ $t('general.Delete') }}
               </el-button>
             </el-popconfirm>
-            <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-              <i class="el-icon-delete" /> Delete
-            </el-button> -->
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <pagination
         :total="listTotal"
@@ -361,7 +355,7 @@ export default {
 col:first-child,
 .el-table__row td:first-child {
   @media (max-width: 1366px) {
-    width: 500px;
+    width: 610px;
   }
 }
 

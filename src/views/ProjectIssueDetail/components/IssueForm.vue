@@ -1,7 +1,7 @@
 <script>
 import { Message } from 'element-ui'
 import { fileExtension } from '@/utils/extension'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
+import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue, deleteIssue } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
 
 export default {
@@ -32,6 +32,7 @@ export default {
   data: () => ({
     issueDescription: '',
     isLoading: true,
+    isDeleting: false,
 
     issueForm: {
       subject: '',
@@ -217,6 +218,22 @@ export default {
     updateChildrenList() {
       const idx = this.relativeIssueList.findIndex(item => item.id === this.issueId)
       this.childrenIssueList = this.relativeIssueList[idx].children
+    },
+    async handleDelete() {
+      this.isDeleting = true
+      await deleteIssue(this.issueId)
+        .then(res => {
+          Message({
+            message: 'Delete successful',
+            type: 'success',
+            duration: 1 * 1000
+          })
+          this.$router.push({ path: '/issue/list' })
+        })
+        .catch(error => {
+          this.isDeleting = false
+          return error
+        })
     }
   }
 }
@@ -224,20 +241,38 @@ export default {
 
 <template>
   <div>
-    <div slot="header" class="clearfix">
-      <span style="font-size: 25px; padding-bottom: 10px">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
-      <el-button
-        class="filter-item"
-        size="small"
-        type="success"
-        style="float: right"
-        :disabled="isLoading"
-        @click="handleSaveDetail"
-      >
-        {{ $t('Issue.Save') }}
-      </el-button>
-      <div style="font-size: 16px;padding-top: 10px;">{{ $t('Issue.AddBy', { user: author }) }}</div>
-      <div>{{ issueDescription }}</div>
+    <div slot="header">
+      <el-row type="flex">
+        <el-col class="text-h5"> {{ $t('Issue.Issue') }} #{{ issueId }} </el-col>
+        <el-button class="mr-2" size="mini" type="success" :disabled="isLoading" @click="handleSaveDetail">
+          {{ $t('Issue.Save') }}
+        </el-button>
+        <el-popconfirm
+          confirm-button-text="Delete"
+          cancel-button-text="Cancel"
+          icon="el-icon-info"
+          icon-color="red"
+          title="Are you sure?"
+          @onConfirm="handleDelete()"
+        >
+          <el-button
+            :id="`btn-delete`"
+            slot="reference"
+            size="small"
+            type="danger"
+            :loading="isDeleting"
+            icon="el-icon-delete"
+          >
+            {{ $t('general.Delete') }}
+          </el-button>
+        </el-popconfirm>
+      </el-row>
+      <el-row class="pt-2">
+        <el-col class="text-body-1">
+          {{ $t('Issue.AddBy', { user: author }) }}
+        </el-col>
+        <el-col>{{ issueDescription }}</el-col>
+      </el-row>
     </div>
 
     <el-form ref="issueForm" v-loading="isLoading" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
