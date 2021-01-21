@@ -126,7 +126,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <div align="right" style="margin-bottom: 20px">
+    <div align="right" class="mb-5">
       <el-button id="btn-reload" type="primary" icon="el-icon-refresh" size="mini" plain @click="fetchData()">
         Reload
       </el-button>

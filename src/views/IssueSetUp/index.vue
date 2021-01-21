@@ -536,7 +536,7 @@ export default {
       </el-form>
     </el-card>
 
-    <el-tabs v-model="activeName" type="border-card" style="margin-top: 10px">
+    <el-tabs v-model="activeName" type="border-card" class="mt-2">
       <el-tab-pane label="Comment" name="comment">
         <el-button type="primary" @click="showAddComment">Add Comment</el-button>
         <el-table
@@ -546,7 +546,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
@@ -574,7 +574,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="Order">
             <template slot-scope="scope">
@@ -615,7 +615,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="Name">
             <template slot-scope="scope">
@@ -661,7 +661,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="ID">
             <template slot-scope="scope">
@@ -711,7 +711,7 @@ export default {
           </el-select>
           <el-button type="primary" @click="showTestItemDialog('', 'Add Test Item')">Add Test Item</el-button>
         </div>
-        <el-table :data="issueTestItem" element-loading-text="Loading" border fit style="margin-top: 10px">
+        <el-table :data="issueTestItem" element-loading-text="Loading" border fit class="mt-2">
           <el-table-column label="ID">
             <template slot-scope="scope">
               <span style="color: #409eff; cursor: pointer" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
@@ -749,7 +749,7 @@ export default {
           </el-select>
           <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button>
         </div>
-        <el-table :data="issueTestValue" element-loading-text="Loading" border fit style="margin-top: 10px">
+        <el-table :data="issueTestValue" element-loading-text="Loading" border fit class="mt-2">
           <el-table-column label="Type">
             <template slot-scope="scope">
               {{ scope.row.type }}

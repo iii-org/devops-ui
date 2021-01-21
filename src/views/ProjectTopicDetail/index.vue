@@ -390,7 +390,7 @@ export default {
         </el-col>
       </el-row>
     </el-form>
-    <el-tabs v-model="activeName" type="border-card" style="margin-top: 10px" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="border-card" class="mt-2" @tab-click="handleClick">
       <el-tab-pane label="Comment" name="comment">
         <el-button type="primary" @click="commentDialogVisible = true">Add Comment</el-button>
         <el-table
@@ -400,7 +400,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">
@@ -428,7 +428,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="Order">
             <template slot-scope="scope">
@@ -463,7 +463,7 @@ export default {
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="Name">
             <template slot-scope="scope">

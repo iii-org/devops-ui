@@ -46,7 +46,7 @@
       <el-form-item :label="$t('User.IsEnable')" prop="status">
         <el-switch
           v-model="userForm.status"
-          style="margin-top: 10px"
+          class="mt-2"
           active-value="enable"
           inactive-value="disable"
           active-color="#13ce66"
@@ -136,7 +136,7 @@ export default {
     }
   },
   watch: {
-    userData: function (data) {
+    userData: function(data) {
       if (isNaN(data.role)) {
         // get role id from role object
         data.role = data.role.id
@@ -237,7 +237,7 @@ export default {
       // this.userFormRules.password = [
       //   { required: true, message: 'Please input password', trigger: 'blur' }
       // ]
-      this.$refs[this.formName].validate(async (valid) => {
+      this.$refs[this.formName].validate(async valid => {
         if (valid) {
           this.dialogLoading = true
           const data = {
@@ -252,7 +252,7 @@ export default {
           }
 
           // remove useless field
-          Object.keys(data).forEach((item) => {
+          Object.keys(data).forEach(item => {
             if (data[item] === '') {
               delete data[item]
             }

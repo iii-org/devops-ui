@@ -40,7 +40,7 @@ export default {
     return {
       activeName: 'testItem',
       testCaseId: 0,
-      testCase: { name: '', data: { method: '', url: '' }},
+      testCase: { name: '', data: { method: '', url: '' } },
       testItemList: [],
       testItemDialogVisible: false,
       selectTestItem: '',
@@ -302,7 +302,7 @@ export default {
           border
           fit
           highlight-current-row
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column :label="$t('TestItem.Id')">
             <template slot-scope="scope">
@@ -375,7 +375,7 @@ export default {
           border
           fit
           highlight-current-row
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column :label="$t('TestValue.Type')">
             <template slot-scope="scope">

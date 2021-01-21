@@ -5,7 +5,7 @@
         <span style="font-size: 20px;font-weight: 500;">Pipeline #{{ pipeline.index }} Stages</span>
       </div>
       <div>
-        <el-row :gutter="20" style="margin-bottom: 20px;">
+        <el-row :gutter="20" class="mb-5">
           <el-col :span="6">
             <el-row :gutter="20">
               <el-col :span="6">Status</el-col>
@@ -25,41 +25,53 @@
           <el-col :span="6">
             <el-row :gutter="20">
               <el-col :span="6">Stages</el-col>
-              <el-col :span="18"><span>{{ pipeline.current_stages }}/{{ pipeline.total_stages }}</span></el-col>
+              <el-col :span="18">
+                <span> {{ pipeline.current_stages }}/{{ pipeline.total_stages }} </span>
+              </el-col>
             </el-row>
           </el-col>
           <el-col :span="6">
             <el-row :gutter="20">
               <el-col :span="6">Branch</el-col>
               <el-col :span="18">
-                <el-col :span="18"><span>{{ pipeline.branch }}</span></el-col>
+                <el-col :span="18">
+                  <span>{{ pipeline.branch }}</span>
+                </el-col>
               </el-col>
             </el-row>
           </el-col>
           <el-col :span="6">
             <el-row :gutter="20">
               <el-col :span="6">Trigger</el-col>
-              <el-col :span="18"><span>{{ pipeline.trigger }}</span></el-col>
+              <el-col :span="18">
+                <span>{{ pipeline.trigger }}</span>
+              </el-col>
             </el-row>
           </el-col>
         </el-row>
-        <el-row :gutter="20" style="margin-bottom: 20px;">
+        <el-row :gutter="20" class="mb-5">
           <el-col :span="6">
             <el-row :gutter="20">
               <el-col :span="6">Commit</el-col>
-              <el-col :span="18"><span>{{ pipeline.commit }}</span></el-col>
+              <el-col :span="18">
+                <span>
+                  {{ pipeline.commit }}
+                </span>
+              </el-col>
             </el-row>
           </el-col>
           <el-col :span="18">
             <el-row :gutter="20">
               <el-col :span="2">Message</el-col>
-              <el-col :span="22"><span>{{ pipeline.commit_message }}</span></el-col>
+              <el-col :span="22">
+                <span>{{ pipeline.commit_message }}</span>
+              </el-col>
             </el-row>
           </el-col>
         </el-row>
       </div>
     </el-card>
-    <div class="block" style="margin-top:10px">
+    <div class="mt-2">
       <el-timeline>
         <el-timeline-item
           v-for="(stg, index1) in stages"
@@ -72,7 +84,7 @@
             <el-tag style="font-weight: 700;margin-bottom:10px">
               {{ stg.name }}
             </el-tag>
-            <el-row v-for="(content,index2) in stg.content" :key="index2" :gutter="20">
+            <el-row v-for="(content, index2) in stg.content" :key="index2" :gutter="20">
               <el-col :span="4" style="font-weight: 500;">
                 <div>{{ content.run_at }}</div>
               </el-col>

@@ -3,18 +3,26 @@
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px;padding-bottom: 10px;">Issue #{{ issueId }}</span>
-        <el-button style="float: right; padding: 3px 0" type="text" @click="editIssueDialogVisible = true">Edit</el-button>
+        <el-button style="float: right; padding: 3px 0" type="text" @click="editIssueDialogVisible = true">
+          Edit
+        </el-button>
         <div>{{ issue_detail.description }}</div>
       </div>
       <div>
-        <el-row :gutter="20" style="margin-bottom: 20px;">
+        <el-row :gutter="20" class="mb-5">
           <el-col :span="8">
             <el-row :gutter="20">
               <el-col :span="6">Priority</el-col>
               <el-col :span="18">
-                <el-tag v-if="issue_detail.priority.name === '特急'" type="danger" size="medium">{{ issue_detail.priority.name }}</el-tag>
-                <el-tag v-else-if="issue_detail.priority.name === '急'" type="warning" size="medium">{{ issue_detail.priority.name }}</el-tag>
-                <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium">{{ issue_detail.priority.name }}</el-tag>
+                <el-tag v-if="issue_detail.priority.name === '特急'" type="danger" size="medium">{{
+                  issue_detail.priority.name
+                }}</el-tag>
+                <el-tag v-else-if="issue_detail.priority.name === '急'" type="warning" size="medium">{{
+                  issue_detail.priority.name
+                }}</el-tag>
+                <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium">{{
+                  issue_detail.priority.name
+                }}</el-tag>
                 <el-tag v-else type="success" size="medium">{{ issue_detail.priority.name }}</el-tag>
               </el-col>
             </el-row>
@@ -56,12 +64,7 @@
         </el-row>
       </div>
     </el-card>
-    <el-tabs
-      v-model="activeName"
-      type="border-card"
-      style="margin-top: 10px"
-      @tab-click="handleClick"
-    >
+    <el-tabs v-model="activeName" type="border-card" class="mt-2" @tab-click="handleClick">
       <el-tab-pane label="Content" name="content">
         <el-button type="primary" @click="addContentDialogVisible = true">Add Content</el-button>
         <el-table
@@ -71,8 +74,8 @@
           border
           fit
           highlight-current-row
-          :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
-          style="margin-top: 10px"
+          :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
+          class="mt-2"
         >
           <el-table-column label="Description">
             <template slot-scope="scope">
@@ -102,7 +105,7 @@
           fit
           highlight-current-row
           :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
-          style="margin-top: 10px"
+          class="mt-2"
         >
           <el-table-column label="API Name" width="160">
             <template slot-scope="scope">
@@ -127,10 +130,7 @@
         </el-table>
       </el-tab-pane> -->
     </el-tabs>
-    <add-content
-      :dialog-visible.sync="addContentDialogVisible"
-      @issue-dialog-visible="emitAddContentDialogVisible"
-    />
+    <add-content :dialog-visible.sync="addContentDialogVisible" @issue-dialog-visible="emitAddContentDialogVisible" />
     <edit-issue
       :dialog-visible.sync="editIssueDialogVisible"
       :issue-done-ratio-val="issue_detail.done_ratio"
@@ -172,9 +172,9 @@ export default {
     return {
       activeName: 'content',
       issue_detail: {
-        'priority': {'name': ''},
-        'status': {'name': ''},
-        'tracker': {'name': ''}
+        priority: { name: '' },
+        status: { name: '' },
+        tracker: { name: '' }
       },
       total: 0,
       listLoading: true,
@@ -199,8 +199,7 @@ export default {
         this.listLoading = false
       })
     },
-    handleClick() {
-    },
+    handleClick() {},
     emitEditIssueDialogVisible(visible) {
       this.editIssueDialogVisible = visible
     },

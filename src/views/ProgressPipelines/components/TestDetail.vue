@@ -21,7 +21,7 @@
           <el-card
             v-for="step in activity.steps"
             :key="step.message"
-            style="margin-bottom:8px;"
+            class="mb-2"
             :body-style="{
               color: '#fff',
               background: '#333',

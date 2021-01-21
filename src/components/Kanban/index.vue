@@ -9,7 +9,7 @@
     </div>
     <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
-        <div style="padding-bottom: 16px">
+        <div class="pb-4">
           <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleCLick(element.id)">
             {{ element.name }}
           </el-link>
@@ -17,11 +17,11 @@
         <div>
           <span style="font-size: 15px;">
             <i class="el-icon-date" />
-            <span style="margin-left:2px">{{ element.date }}</span>
+            <span class="ml-1">{{ element.date }}</span>
           </span>
-          <span style="font-size: 15px;margin-left:5px;">
+          <span class="ml-1" style="font-size: 15px">
             <i class="el-icon-s-custom" />
-            <span style="margin-left:2px">{{ element.user }}</span>
+            <span class="ml-1">{{ element.user }}</span>
           </span>
         </div>
       </div>

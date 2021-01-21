@@ -153,7 +153,7 @@ export default {
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" min-width="130" />
       <el-table-column align="center" :label="$t('CheckMarx.RunAt')" min-width="195">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.run_at | YMDhmA }}</span>
+          <span class="ml-2">{{ scope.row.run_at | YMDhmA }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" min-width="110">

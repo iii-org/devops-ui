@@ -195,7 +195,7 @@ export default {
         </el-input>
       </div>
       <el-divider />
-      <el-card shadow="never" style="margin-bottom: 5px">
+      <el-card shadow="never" class="mb-1">
         <el-row :gutter="24">
           <el-col :span="10" style="font-size: 20px;">
             {{ projectName }}

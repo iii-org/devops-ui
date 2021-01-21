@@ -40,7 +40,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row :gutter="12" style="margin-top: 10px">
+    <el-row :gutter="12" class="mt-2">
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
@@ -94,7 +94,7 @@ export default {
     ...mapGetters(['name'])
   },
   mounted() {
-    Promise.all([getIssueMonthStatistics(), getIssueWeekStatistics(), getIssueOpenStatistics()]).then((res) => {
+    Promise.all([getIssueMonthStatistics(), getIssueWeekStatistics(), getIssueOpenStatistics()]).then(res => {
       this.issueMonthStatistics = res[0].data
       this.issueWeekStatistics = res[1].data
       this.issueNotFinishStatistics = res[2].data.active_issue_number

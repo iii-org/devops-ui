@@ -23,12 +23,12 @@
                 <el-input v-model="userProfileForm.userPhone" style="width: 250px" />
               </el-form-item>
             </el-form>
-            <el-row style="margin-top: 15px">
+            <el-row class="mt-4">
               <el-col :span="8">
                 <el-button type="primary" @click="downloadK8SConfig()">{{ $t('Profile.K8SConfigDownload') }}</el-button>
               </el-col>
             </el-row>
-            <el-row style="margin-top: 15px">
+            <el-row class="mt-4">
               <el-col :span="8">
                 <el-button type="primary" @click="submitUpdateUserProfile('userProfileForm')">{{
                   $t('Profile.Save')
@@ -61,7 +61,7 @@
                 <el-input v-model="userPwdForm.userRepeatNewPwd" type="password" style="width: 250px" />
               </el-form-item>
             </el-form>
-            <el-row style="margin-top: 15px">
+            <el-row class="mt-4">
               <el-col :span="8">
                 <el-button type="primary" @click="handleUpdateUserPwd('userPwdForm')">{{
                   $t('Profile.Save')

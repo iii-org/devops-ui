@@ -61,7 +61,7 @@ export default {
       fit
       highlight-current-row
       :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-      style="margin-top: 10px"
+      class="mt-2"
     >
       <el-table-column :label="$t('Issue.Comment')">
         <template slot-scope="scope">

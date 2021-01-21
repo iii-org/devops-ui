@@ -55,7 +55,7 @@ export default {
       fit
       highlight-current-row
       :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-      style="margin-top: 10px"
+      class="mt-2"
     >
       <el-table-column :label="$t('general.Name')" align="center" min-width="240">
         <template slot-scope="scope">

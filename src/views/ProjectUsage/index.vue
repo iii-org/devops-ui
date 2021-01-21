@@ -132,7 +132,7 @@ export default {
       <el-divider />
       <el-row :gutter="12">
         <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
-          <el-card v-loading="listLoading" style="margin-bottom: 15px">
+          <el-card v-loading="listLoading" class="mb-4">
             <div slot="header" class="d-flex align-center" style="height: 24px">
               <strong>{{ item.title }}</strong>
               <div>

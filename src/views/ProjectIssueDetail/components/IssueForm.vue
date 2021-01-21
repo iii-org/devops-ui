@@ -33,6 +33,7 @@ export default {
     issueDescription: '',
     isLoading: true,
     isDeleting: false,
+    issueLink: '',
 
     issueForm: {
       subject: '',
@@ -243,7 +244,11 @@ export default {
   <div>
     <div slot="header">
       <el-row type="flex">
-        <el-col class="text-h5"> {{ $t('Issue.Issue') }} #{{ issueId }} </el-col>
+        <el-col>
+          <el-link class="text-h5" :href="issueLink" target="_blank" type="primary" :underline="false">
+            {{ $t('Issue.Issue') }} #{{ issueId }}
+          </el-link>
+        </el-col>
         <el-button class="mr-2" size="mini" type="success" :disabled="isLoading" @click="handleSaveDetail">
           {{ $t('Issue.Save') }}
         </el-button>
