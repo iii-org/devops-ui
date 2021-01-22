@@ -111,7 +111,7 @@ export default {
       })
       return result
     },
-    handleClick(target) {
+    handleEdit(target) {
       this.$router.push({ name: `${target} List` })
     },
     allowEditUsage(target) {
@@ -136,24 +136,17 @@ export default {
             <div slot="header" class="d-flex align-center" style="height: 24px">
               <strong>{{ item.title }}</strong>
               <div>
-                <el-button
-                  v-if="item.title === 'Pods'"
-                  type="success"
-                  icon="el-icon-refresh-right"
-                  size="mini"
-                  circle
-                  plain
-                  @click="handleClick('Deployment')"
-                />
-                <el-button
-                  v-if="allowEditUsage(item.title)"
-                  type="primary"
-                  icon="el-icon-edit"
-                  size="mini"
-                  circle
-                  plain
-                  @click="handleClick(item.title)"
-                />
+                <el-tooltip effect="dark" :content="`${item.title} List`" placement="top-start">
+                  <el-button
+                    v-if="allowEditUsage(item.title)"
+                    type="primary"
+                    icon="el-icon-edit"
+                    size="mini"
+                    circle
+                    plain
+                    @click="handleEdit(item.title)"
+                  />
+                </el-tooltip>
               </div>
             </div>
             <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
