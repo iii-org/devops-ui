@@ -129,10 +129,11 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('Project.Searchidentifier')"
+        :placeholder="$t('Project.SearchIdentifier')"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
-      /></el-input>
+      >
+        <i slot="prefix" class="el-input__icon el-icon-search" />
+      </el-input>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
@@ -156,7 +157,7 @@ export default {
           {{ scope.row.issues }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpcommingDeadline')">
+      <el-table-column align="center" :label="$t('Project.UpcomingDeadline')">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.next_d_time) }}
         </template>

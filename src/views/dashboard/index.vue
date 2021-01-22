@@ -4,8 +4,10 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>{{ $t('Dashboard.UnfinishIssues') }}</span
-            ><br />
+            <span>
+              {{ $t('Dashboard.UnfinishedIssues') }}
+            </span>
+            <br />
             <span>&nbsp;</span>
           </div>
           <div class="text item" style="font-size: 40px; text-align: center; height: 86px">
@@ -16,8 +18,8 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>{{ $t('Dashboard.IssuesShouldBeClosedWithinThisWeek') }}</span
-            ><br />
+            <span> {{ $t('Dashboard.IssuesShouldBeClosedWithinThisWeek') }} </span>
+            <br />
             <span>{{ $t('Dashboard.Finished') }} / {{ $t('Dashboard.Total') }}</span>
           </div>
           <div class="text item" style="font-size: 40px; text-align: center">
@@ -29,8 +31,10 @@
       <el-col :span="8">
         <el-card shadow="hover">
           <div slot="header" class="clearfix" style="text-align: center">
-            <span>{{ $t('Dashboard.IssuesShouldBeClosedWithinThisMonth') }}</span
-            ><br />
+            <span>
+              {{ $t('Dashboard.IssuesShouldBeClosedWithinThisMonth') }}
+            </span>
+            <br />
             <span>{{ $t('Dashboard.Finished') }} / {{ $t('Dashboard.Total') }}</span>
           </div>
           <div class="text item" style="font-size: 40px; text-align: center">
