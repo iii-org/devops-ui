@@ -1,20 +1,19 @@
 <template>
   <div class="app-container">
-    <el-table
-      :data="list"
-      element-loading-text="Loading"
-      border
-      fit
-      highlight-current-row
-    >
-      <el-table-column align="center" label="source">
+    <el-table :data="list" element-loading-text="Loading" border fit highlight-current-row>
+      <el-table-column align="center" label="Source" width="180">
         <template slot-scope="scope">
           {{ scope.row.source }}
         </template>
       </el-table-column>
-      <el-table-column label="commit id">
+      <el-table-column align="center" label="Version" width="180">
+        <template>
+          <span>V1.0.0</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Commit ID">
         <template slot-scope="scope">
-          {{ scope.row.commitid }}
+          {{ scope.row.commitId }}
         </template>
       </el-table-column>
     </el-table>
@@ -25,6 +24,7 @@
 import { getVersion } from '@/api/dashboard'
 
 export default {
+  name: 'SystemVersion',
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -35,23 +35,20 @@ export default {
       return statusMap[status]
     }
   },
-  data() {
-    return {
-      list: []
-    }
-  },
+  data: () => ({
+    list: []
+  }),
   created() {
-    const uidata = { source: 'UI', commitid: process.env.VUE_APP_VERSION }
-    this.list.push(uidata)
+    const uiData = { source: 'UI', commitId: process.env.VUE_APP_VERSION }
+    this.list.push(uiData)
     this.fetchData()
   },
   methods: {
     fetchData() {
       this.listLoading = true
       getVersion().then(response => {
-        // console.log(response.data)
-        const apidata = { source: 'API', commitid: response.data.git_commit_id }
-        this.list.push(apidata)
+        const apiData = { source: 'API', commitId: response.data.git_commit_id }
+        this.list.push(apiData)
       })
     }
   }
