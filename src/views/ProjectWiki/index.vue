@@ -8,6 +8,7 @@ import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wik
 import { formatTime } from '@/utils/index.js'
 
 export default {
+  name: 'ProjectWiki',
   components: {
     EditorMD,
     ProjectListSelector,
@@ -125,7 +126,6 @@ export default {
         this.wikiData = wiki_page
         this.wikiTitle = wiki_page.title
         this.wikiContent = wiki_page.text
-        console.log(wiki_page.text)
         this.dialogVisible = true
       } catch (error) {
         console.error(error)
@@ -231,7 +231,7 @@ export default {
           <span>{{ myFormatTime(scope.row.updated_on) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="270">
+      <el-table-column align="center" :label="$t('general.Actions')" width="300">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
@@ -276,7 +276,7 @@ export default {
     >
       <div class="container">
         <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules" label-position="top">
-          <el-form-item label="Title" prop="wikiTitle">
+          <el-form-item ref="wikiTitle" label="Title" prop="wikiTitle">
             <!-- <div class="form__title"> -->
             <el-input v-model="form.wikiTitle" placeholder="Please Input Title" />
             <!-- </div> -->
@@ -284,7 +284,7 @@ export default {
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br>
+          <br />
           <template>
             <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
           </template>

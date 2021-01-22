@@ -1,17 +1,30 @@
 <template>
-  <div :id="id"></div>
+  <div :id="id" />
 </template>
 <script>
 import $ from 'jquery'
 
 export default {
   name: 'MarkdownEditor',
-  data: function () {
+  props: {
+    id: {
+      type: String,
+      default: 'editormd'
+    },
+    content: {
+      type: String,
+      default: ''
+    },
+    options: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  data: function() {
     return {
       editor: null,
-      //defaul option
       defaultOptions: {
-        //width: "90%",
+        // width: "90%",
         height: 500,
         path: '/lib/editor.md/lib/',
         theme: 'default',
@@ -19,7 +32,7 @@ export default {
         editorTheme: 'default',
         codeFold: true,
         watch: true,
-        //syncScrolling : false,
+        // syncScrolling : false,
         saveHTMLToTextarea: true,
         searchReplace: true,
         htmlDecode: 'style,script,iframe|on*',
@@ -27,7 +40,8 @@ export default {
         taskList: true,
         tocm: true, // Using [TOCM]
         imageUpload: false,
-        toolbarIcons: function () {
+        autoFocus: false,
+        toolbarIcons: function() {
           return [
             'undo',
             'redo',
@@ -64,30 +78,17 @@ export default {
       }
     }
   },
-  props: {
-    id: {
-      type: String,
-      default: 'editormd'
-    },
-    content: {
-      type: String,
-      default: ''
-    },
-    options: {
-      type: Object
-    }
-  },
+
   watch: {
     content(val) {
-      console.log('val', val)
       this.editor.setMarkdown(val)
     }
   },
   mounted() {
     const content = this.content
-    let vm = this
-    //load editormd
-    this.requireEditor(function () {
+    const vm = this
+    // load editormd
+    this.requireEditor(function() {
       const options = vm.getOptions()
       options.markdown = content
       vm.editor = editormd(vm.id, options)
@@ -95,9 +96,9 @@ export default {
   },
   methods: {
     requireEditor(callback) {
-      let vm = this
+      // const vm = this
       window.$ = window.jQuery = $
-      $.getScript('/lib/editor.md/editormd.min.js', function (script) {
+      $.getScript('/lib/editor.md/editormd.min.js', function(script) {
         callback()
       })
       $('head').append(
@@ -110,5 +111,4 @@ export default {
   }
 }
 </script>
-<style>
-</style>
+<style></style>
