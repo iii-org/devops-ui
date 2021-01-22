@@ -41,7 +41,8 @@ export default {
         description: ''
       },
 
-      parentId: null
+      parentId: null,
+      issueLink: ''
     }
   },
 
@@ -71,6 +72,7 @@ export default {
         this.projectId = issueDetail.project.id
         this.author = issueDetail.author.name
         this.parentId = issueDetail.parent_id
+        this.issueLink = issueDetail.issue_link
 
         this.issueComment = issueDetail.journals.map(item => {
           return {
@@ -127,6 +129,7 @@ export default {
         :parent-id="parentId"
         :author="author"
         :issue-form-ref="formData"
+        :issue-link="issueLink"
         @updated="fetchData"
       />
     </el-card>

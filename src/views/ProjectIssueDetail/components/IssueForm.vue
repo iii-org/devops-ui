@@ -23,6 +23,10 @@ export default {
       type: String,
       default: ''
     },
+    issueLink: {
+      type: String,
+      default: ''
+    },
     issueFormRef: {
       type: Object,
       default: () => {}
@@ -33,7 +37,6 @@ export default {
     issueDescription: '',
     isLoading: true,
     isDeleting: false,
-    issueLink: '',
 
     issueForm: {
       subject: '',
@@ -245,8 +248,9 @@ export default {
     <div slot="header">
       <el-row type="flex">
         <el-col>
-          <el-link class="text-h5" :href="issueLink" target="_blank" type="primary" :underline="false">
-            {{ $t('Issue.Issue') }} #{{ issueId }}
+          <el-link :href="issueLink" target="_blank" type="primary" :underline="false">
+            <span class="text-h5 mr-1"> {{ $t('Issue.Issue') }} #{{ issueId }}</span>
+            <i class="el-icon-link" /> Redmine
           </el-link>
         </el-col>
         <el-button class="mr-2" size="mini" type="success" :disabled="isLoading" @click="handleSaveDetail">
