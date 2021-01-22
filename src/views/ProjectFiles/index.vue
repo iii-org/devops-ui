@@ -44,7 +44,8 @@ export default {
     fileForm: formTemplate,
     uploadFileList: [],
     loadingInstance: '',
-    extension: {}
+    extension: {},
+    isDownloading: false
   }),
   computed: {
     ...mapGetters(['projectSelectedId']),
@@ -119,6 +120,7 @@ export default {
       })
     },
     async handleDownload(idx, row) {
+      this.isDownloading = true
       const res = await downloadProjectFile({ id: row.id, filename: row.filename })
       const url = window.URL.createObjectURL(new Blob([res]))
       const link = document.createElement('a')
@@ -126,6 +128,7 @@ export default {
       link.setAttribute('download', row.filename) // or any other extension
       document.body.appendChild(link)
       link.click()
+      this.isDownloading = false
     },
     async handleDelete(idx, row) {
       this.listLoading = true
@@ -258,8 +261,13 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleDownload(scope.$index, scope.row)">
-            <i class="el-icon-download" />
+          <el-button
+            :loading="isDownloading"
+            size="mini"
+            type="primary"
+            icon="el-icon-download"
+            @click="handleDownload(scope.$index, scope.row)"
+          >
             {{ $t('File.Download') }}
           </el-button>
 
@@ -311,7 +319,7 @@ export default {
         </el-form-item>
 
         <el-form-item :label="$t('general.Name')" prop="name">
-          <el-input v-model="fileForm.name" />
+          <el-input v-model="fileForm.name" :placeholder="$t('File.InputName')" />
         </el-form-item>
 
         <!-- <el-form-item :label="$t('general.Description')" prop="description">

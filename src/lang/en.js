@@ -146,7 +146,8 @@ export default {
     Id: 'Id',
     Download: 'Download',
     DropFileHereOrClickUpload: 'Drop File Here Or Click Upload',
-    uploadBtn: 'Select File',
+    UploadBtn: 'Select File',
+    InputName: 'Enter Name or Use Upload File Name',
     File: 'File'
   },
   Version: {

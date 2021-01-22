@@ -146,7 +146,8 @@ export default {
     Id: '檔案編號',
     Download: '下載',
     DropFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
-    uploadBtn: '選擇檔案',
+    UploadBtn: '選擇檔案',
+    InputName: '請輸入，若未輸入預設為上傳檔案名稱',
     File: '檔案'
   },
   Version: {
