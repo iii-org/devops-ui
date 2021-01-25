@@ -120,36 +120,40 @@ export default {
 </script>
 
 <template>
-  <div class="app-container d-flex">
-    <el-card class="box-card el-col-10 column custom-list" shadow="never">
-      <IssueForm
-        v-if="projectId !== 0"
-        :issue-id="issueId"
-        :project-id="projectId"
-        :parent-id="parentId"
-        :author="author"
-        :issue-form-ref="formData"
-        :issue-link="issueLink"
-        @updated="fetchData"
-      />
-    </el-card>
+  <el-row :gutter="10">
+    <el-col :span="10">
+      <el-card shadow="never">
+        <IssueForm
+          v-if="projectId !== 0"
+          :issue-id="issueId"
+          :project-id="projectId"
+          :parent-id="parentId"
+          :author="author"
+          :issue-form-ref="formData"
+          :issue-link="issueLink"
+          @updated="fetchData"
+        />
+      </el-card>
+    </el-col>
 
-    <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
-      <el-tab-pane :label="$t('Issue.Comment')" name="comment">
-        <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="fetchData" />
-      </el-tab-pane>
+    <el-col :span="14">
+      <el-tabs v-model="activeName" type="border-card">
+        <el-tab-pane :label="$t('Issue.Comment')" name="comment">
+          <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="fetchData" />
+        </el-tab-pane>
 
-      <el-tab-pane :label="$t('Issue.Flow')" name="flow">
-        <FlowTab :issue-id="issueId" :issue-flow="issueFlow" @updated="fetchData" />
-      </el-tab-pane>
+        <el-tab-pane :label="$t('Issue.Flow')" name="flow">
+          <FlowTab :issue-id="issueId" :issue-flow="issueFlow" @updated="fetchData" />
+        </el-tab-pane>
 
-      <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
-        <ParameterTab :issue-id="issueId" :issue-parameter="issueParameter" @updated="fetchData" />
-      </el-tab-pane>
+        <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
+          <ParameterTab :issue-id="issueId" :issue-parameter="issueParameter" @updated="fetchData" />
+        </el-tab-pane>
 
-      <el-tab-pane :label="$t('File.File')" name="file">
-        <FileTab :issue-id="issueId" :issue-file="issueFile" @updated="fetchData" />
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+        <el-tab-pane :label="$t('File.File')" name="file">
+          <FileTab :issue-id="issueId" :issue-file="issueFile" @updated="fetchData" />
+        </el-tab-pane>
+      </el-tabs>
+    </el-col>
+  </el-row>
 </template>
