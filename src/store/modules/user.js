@@ -94,8 +94,22 @@ const actions = {
           commit('SET_USER_ROLE', role.name)
           commit('SET_USER_PROJECT', data.project)
           if (data.project.length > 0) {
-            commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
-            commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
+            const projectstorage = data.project.filter(elm => {
+              // console.log(elm.id)
+              if (String(elm.id) === localStorage.getItem('project')) {
+                return true
+              }
+            }
+            )
+            if (projectstorage.length === 1) {
+              commit('projects/SET_PROJET_SELECTED_ID', parseInt(localStorage.getItem('project')), { root: true })
+              commit('projects/SET_PROJET_SELECTED', projectstorage, { root: true })
+            } else {
+              commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
+              commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
+            }
+            // commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
+            // commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
           }
           resolve()
         })
@@ -107,6 +121,7 @@ const actions = {
 
   // user logout
   logout({ commit, state }) {
+    localStorage.removeItem('project')
     removeToken()
     resetRouter()
     commit('RESET_STATE')

@@ -27,6 +27,7 @@ export default {
   methods: {
     ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject']),
     onProjectChange(value) {
+      localStorage.setItem('project', value)
       this.changeSelectedProjectId(value)
       this.changeSelectedProjectObject(this.userProjectList.filter(elm => elm.id === value)[0])
     }
@@ -39,6 +40,6 @@ export default {
     <el-select v-model="projectValue" placeholder="select a project" @change="onProjectChange">
       <el-option v-for="item in userProjectList" :key="item.id" :label="item.display" :value="item.id" />
     </el-select>
-    <slot></slot>
+    <slot />
   </div>
 </template>
