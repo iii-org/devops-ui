@@ -84,15 +84,15 @@ export default {
             }
           ]
         })
-        this.chart.dispatchAction({ type: 'highlight', name: chartData[1].name })
+        this.chart.dispatchAction({ type: 'highlight', name: chartData[0].name })
         this.chart.on('mouseover', function(params) {
-          var name = params.name
+          const name = params.name
           this.dispatchAction({ type: 'downplay' })
           this.dispatchAction({ type: 'highlight', name: name })
         })
         this.chart.on('mouseout', function(params) {
           this.dispatchAction({ type: 'downplay' })
-          this.dispatchAction({ type: 'highlight', name: chartData[1].name })
+          this.dispatchAction({ type: 'highlight', name: chartData[0].name })
         })
       } else {
         this.chart.clear()
