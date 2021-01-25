@@ -246,37 +246,50 @@ export default {
 <template>
   <div>
     <div slot="header">
-      <el-row type="flex">
+      <el-row>
         <el-col>
           <el-link :href="issueLink" target="_blank" type="primary" :underline="false">
-            <span class="text-h5 mr-1"> {{ $t('Issue.Issue') }} #{{ issueId }}</span>
             <i class="el-icon-link" /> Redmine
           </el-link>
         </el-col>
-        <el-button class="mr-2" size="mini" type="success" :disabled="isLoading" @click="handleSaveDetail">
-          {{ $t('Issue.Save') }}
-        </el-button>
-        <el-popconfirm
-          confirm-button-text="Delete"
-          cancel-button-text="Cancel"
-          icon="el-icon-info"
-          icon-color="red"
-          title="Are you sure?"
-          @onConfirm="handleDelete()"
-        >
-          <el-button
-            :id="`btn-delete`"
-            slot="reference"
-            size="small"
-            type="danger"
-            :loading="isDeleting"
-            icon="el-icon-delete"
-          >
-            {{ $t('general.Delete') }}
-          </el-button>
-        </el-popconfirm>
       </el-row>
-      <el-row class="pt-2">
+      <el-row type="flex" justify="space-between">
+        <el-col>
+          <div class="text-h5">{{ $t('Issue.Issue') }} #{{ issueId }}</div>
+        </el-col>
+        <el-col>
+          <el-button
+            class="mr-1"
+            size="small"
+            icon="el-icon-edit"
+            type="success"
+            :loading="isLoading || isDeleting"
+            @click="handleSaveDetail"
+          >
+            {{ $t('Issue.Save') }}
+          </el-button>
+          <el-popconfirm
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
+            icon="el-icon-info"
+            icon-color="red"
+            title="Are you sure?"
+            @onConfirm="handleDelete()"
+          >
+            <el-button
+              :id="`btn-delete`"
+              slot="reference"
+              size="small"
+              type="danger"
+              :loading="isLoading || isDeleting"
+              icon="el-icon-delete"
+            >
+              {{ $t('general.Delete') }}
+            </el-button>
+          </el-popconfirm>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col class="text-body-1">
           {{ $t('Issue.AddBy', { user: author }) }}
         </el-col>
@@ -285,15 +298,9 @@ export default {
     </div>
 
     <el-form ref="issueForm" v-loading="isLoading" :model="issueForm" :rules="issueFormRules" :label-position="'left'">
-      <el-row>
+      <el-row :gutter="10">
         <el-col :span="12">
-          <el-form-item :label="$t('general.Name')" prop="subject">
-            <el-input v-model="issueForm.subject" />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="12">
-          <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+          <el-form-item style="margin-bottom:10px" :label="$t('Issue.Assignee')" prop="assigned_to_id">
             <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
               <el-option
                 v-for="item in dynamicAssigneeList"
@@ -306,7 +313,13 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
+          <el-form-item style="margin-bottom:10px" :label="$t('general.Name')" prop="subject">
+            <el-input v-model="issueForm.subject" style="width: 100%" />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item style="margin-bottom:10px" :label="$t('Version.Version')" prop="fixed_version_id">
             <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
               <el-option
                 v-for="item in issueVersionList"
@@ -320,7 +333,7 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('general.Type')" prop="tracker_id">
+          <el-form-item style="margin-bottom:10px" :label="$t('general.Type')" prop="tracker_id">
             <el-select v-model="issueForm.tracker_id" style="width: 100%">
               <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -328,7 +341,7 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('general.Status')" prop="status_id">
+          <el-form-item style="margin-bottom:10px" :label="$t('general.Status')" prop="status_id">
             <el-select v-model="issueForm.status_id" style="width: 100%" :disabled="isParentIssueClosed">
               <el-option
                 v-for="item in dynamicIssueStatusList"
@@ -341,7 +354,7 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
+          <el-form-item style="margin-bottom:10px" :label="$t('Issue.Priority')" prop="priority_id">
             <el-select v-model="issueForm.priority_id" style="width: 100%" :disabled="childrenIssueList.length > 0">
               <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -349,20 +362,20 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
+          <el-form-item style="margin-bottom:10px" :label="$t('Issue.Estimate')" prop="estimated_hours">
             <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
             <el-input-number v-model="issueForm.estimated_hours" :min="0" :max="100" style="width: 100%" />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
+          <el-form-item style="margin-bottom:10px" :label="$t('Issue.DoneRatio')" prop="done_ratio">
             <el-input-number v-model="issueForm.done_ratio" :min="0" :max="100" style="width: 100%" />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
+          <el-form-item style="margin-bottom:10px" :label="$t('Issue.StartDate')" prop="start_date">
             <el-date-picker
               v-model="issueForm.start_date"
               type="date"
@@ -375,7 +388,7 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
+          <el-form-item style="margin-bottom:10px" :label="$t('Issue.EndDate')" prop="due_date">
             <el-date-picker
               v-model="issueForm.due_date"
               type="date"
@@ -387,13 +400,13 @@ export default {
         </el-col>
 
         <el-col :span="24">
-          <el-form-item :label="$t('general.Description')" prop="description">
+          <el-form-item style="margin-bottom:10px" :label="$t('general.Description')" prop="description">
             <el-input v-model="issueForm.description" type="textarea" rows="4" placeholder="please input description" />
           </el-form-item>
         </el-col>
 
         <el-col :span="24">
-          <el-form-item :label="$t('File.Upload')" prop="upload">
+          <el-form-item style="margin-bottom:10px" :label="$t('File.Upload')" prop="upload">
             <el-upload
               ref="upload"
               class="upload-file2"
