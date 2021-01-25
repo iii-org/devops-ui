@@ -125,7 +125,19 @@ export default {
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" min-width="200" />
       <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="100" />
-      <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="100" />
+      <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="100">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.issue_link"
+          >
+            {{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.Status')" prop="status" min-width="120" />
       <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.4" min-width="100" />
       <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.3" min-width="150" />
