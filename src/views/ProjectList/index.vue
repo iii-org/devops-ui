@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import { formatTime } from '../../utils/index.js'
+import { formatTime } from '@/utils/index.js'
 
 const formTemplate = {
   name: '',
@@ -13,6 +13,7 @@ const formTemplate = {
 }
 
 export default {
+  name: 'ProjectList',
   components: { Pagination },
   filters: {
     statusFilter(status) {
@@ -30,10 +31,10 @@ export default {
       dialogStatus: 1,
       listLoading: true,
       listQuery: {
-        page: 1, // 目前第幾頁
-        limit: 10 // 一頁幾筆
+        page: 1,
+        limit: 10
       },
-      listTotal: 0, // 總筆數
+      listTotal: 0,
       form: formTemplate,
       confirmLoading: false,
       searchData: ''
@@ -43,7 +44,7 @@ export default {
     ...mapGetters(['projectList', 'projectListTotal']),
     pagedData() {
       const listData = this.projectList.filter(data => {
-        if (this.searchData == '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -61,6 +62,11 @@ export default {
         default:
           return 'Null'
       }
+    }
+  },
+  watch: {
+    searchData() {
+      this.listQuery.page = 1
     }
   },
   async created() {
@@ -137,7 +143,12 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('Project.NameIdentifier')" :show-overflow-tooltip="true">
+      <el-table-column
+        align="center"
+        :label="$t('Project.NameIdentifier')"
+        :show-overflow-tooltip="true"
+        min-width="200"
+      >
         <template slot-scope="scope">
           <router-link
             :to="{
@@ -152,17 +163,17 @@ export default {
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120px">
+      <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120">
         <template slot-scope="scope">
           {{ scope.row.issues }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpcomingDeadline')">
+      <el-table-column align="center" :label="$t('Project.UpcomingDeadline')" min-width="200">
         <template slot-scope="scope">
           {{ myFormatTime(scope.row.next_d_time) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Branches')" width="120px">
+      <el-table-column align="center" :label="$t('Project.Branches')" width="120">
         <template slot-scope="scope">
           <router-link
             v-if="scope.row.branch"
@@ -177,13 +188,13 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.LastTest')" width="150px">
+      <el-table-column align="center" :label="$t('Project.LastTest')" width="190">
         <template slot-scope="scope">
           <span v-if="scope.row.last_test_time === ''">No Test</span>
           <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.LastTestResult')" width="170px">
+      <el-table-column align="center" :label="$t('Project.LastTestResult')" width="170">
         <template slot-scope="scope">
           <el-tag :type="returnTagType(scope.row)" size="large">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
@@ -193,23 +204,50 @@ export default {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="GitLab" width="100px">
+      <el-table-column align="center" label="GitLab" width="110">
         <template slot-scope="scope">
-          <el-link v-if="scope.row.git_url" type="primary" :href="scope.row.git_url" target="_blank">GitLab</el-link>
+          <el-link
+            v-if="scope.row.git_url"
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            icon="el-icon-link"
+            :underline="false"
+            :href="scope.row.git_url"
+          >
+            GitLab
+          </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="100px">
+      <el-table-column align="center" label="Redmine" width="120">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
             type="primary"
             target="_blank"
             style="font-size: 16px"
+            icon="el-icon-link"
             :underline="false"
             :href="scope.row.redmine_url"
           >
             Redmine
+          </el-link>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="Harbor" width="120">
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.harbor_url"
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            icon="el-icon-link"
+            :underline="false"
+            :href="scope.row.harbor_url"
+          >
+            Harbor
           </el-link>
           <span v-else>-</span>
         </template>
