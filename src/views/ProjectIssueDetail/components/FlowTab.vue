@@ -73,13 +73,13 @@ export default {
       :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
       class="mt-2"
     >
-      <el-table-column :label="$t('Issue.FlowId')">
+      <el-table-column :label="$t('Issue.FlowId')" width="110">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Name')">
+      <el-table-column :label="$t('general.Name')" min-width="100">
         <template slot-scope="scope">
           <!--<span style="color: #409EFF;cursor: pointer;" @click="showFlowDialog(scope.row, 'Edit Flow')">
                 {{ scope.row.name }}
@@ -88,19 +88,19 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Type')">
+      <el-table-column :label="$t('general.Type')" width="100">
         <template slot-scope="scope">
           {{ scope.row.type_name }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Description')">
+      <el-table-column :label="$t('general.Description')" min-width="120">
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Actions')" width="120" align="center">
+      <el-table-column :label="$t('general.Actions')" width="110" align="center">
         <template slot-scope="scope">
           <el-button type="danger" size="mini" @click="deleteFlow(scope.row)">Delete</el-button>
         </template>

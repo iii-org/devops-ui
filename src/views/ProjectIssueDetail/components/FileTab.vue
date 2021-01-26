@@ -57,7 +57,7 @@ export default {
       :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
       class="mt-2"
     >
-      <el-table-column :label="$t('general.Name')" align="center" min-width="240">
+      <el-table-column :label="$t('general.Name')" align="center" min-width="120">
         <template slot-scope="scope">
           <span v-if="scope.row.filename">
             {{ scope.row.filename }}
@@ -71,7 +71,7 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Actions')" align="center" min-width="240">
+      <el-table-column :label="$t('general.Actions')" align="center" width="230">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleDownload(scope.row)">
             <i class="el-icon-download" />

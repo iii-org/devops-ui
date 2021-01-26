@@ -63,14 +63,14 @@ export default {
       :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
       class="mt-2"
     >
-      <el-table-column :label="$t('Issue.Comment')">
+      <el-table-column :label="$t('Issue.Comment')" min-width="200">
         <template slot-scope="scope">
           <!-- <div v-html="scope.row.comment" /> -->
           <VueShowdown :markdown="scope.row.comment" />
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('Issue.Author')" width="180" align="center">
+      <el-table-column :label="$t('Issue.Author')" width="130" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.comment_author">
             {{ scope.row.comment_author }}
@@ -78,7 +78,7 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.CreateTime')" width="200" align="center">
+      <el-table-column :label="$t('general.CreateTime')" width="180" align="center">
         <template slot-scope="scope">
           {{ new Date(scope.row.comment_at).toLocaleString() }}
         </template>
