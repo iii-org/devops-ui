@@ -1,41 +1,42 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
-import { getGitGraphByRepo } from '../../api/git-graph'
+import { getGitGraphByRepo } from '@/api/git-graph'
+import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
-  name: 'ProjectGraph',
+  name: 'ProjectGraph', // ready to refactor
+  components: {
+    ProjectListSelector
+  },
   data: () => ({
-    selectedBranch: '',
-    listLoading: true
+    listLoading: true,
+    isNoData: false
   }),
   computed: {
-    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'projectList'])
+    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'projectSelectedObject'])
   },
   watch: {
-    projectList(ary) {
-      if (ary.length === 0) {
-        this.listLoading = false
-        return
-      }
-      if (this.selectedBranch !== '') return
-      this.selectedBranch = ary[0].repository_ids
-    },
-    async selectedBranch() {
+    projectSelectedObject() {
       this.fetchData()
     }
   },
-  async created() {
-    await this['projects/getProjectList']()
+  mounted() {
+    this.fetchData()
   },
   methods: {
-    ...mapActions(['projects/getProjectList']),
     async fetchData() {
       this.listLoading = true
       try {
         const svgs = document.querySelector('#graph-container').children
         if (svgs && svgs.length > 0) [...svgs].forEach(_svg => _svg.remove())
-        const res = await getGitGraphByRepo(this.selectedBranch)
+        const repository_id = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
+        const res = await getGitGraphByRepo(repository_id)
+        if (!res.data.length) {
+          this.isNoData = true
+        } else {
+          this.isNoData = false
+        }
         this.createGraph(res.data)
       } catch (err) {
         console.error(err)
@@ -46,14 +47,11 @@ export default {
     createGraph(data) {
       // Get the graph container HTML element.
       const graphContainer = document.getElementById('graph-container')
-
       // Instantiate the graph.
       const gitgraph = createGitgraph(graphContainer)
-
       const branches = {}
       const commits = {}
       const commit_order = []
-
       function Commit(json) {
         this.children = []
         for (const key in json) {
@@ -165,17 +163,15 @@ export default {
 </script>
 
 <template>
-  <div v-loading="listLoading" class="app-container">
-    <el-card class="box-card">
-      <div slot="header" class="clearfix">
-        <span>Git Graph</span>
-      </div>
+  <div class="app-container">
+    <div class="clearfix">
+      <project-list-selector />
+    </div>
+    <el-divider />
+    <el-card v-loading="listLoading" class="box-card">
       <div class="cardBody">
-        <el-select v-model="selectedBranch" size="small" placeholder="Select" style="width: 100%">
-          <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.repository_ids" />
-        </el-select>
-        <el-divider />
-        <div id="graph-container" />
+        <div v-show="isNoData" style="text-align: center;">{{ $t('general.NoData') }}</div>
+        <div v-show="!isNoData" id="graph-container" />
       </div>
     </el-card>
   </div>
