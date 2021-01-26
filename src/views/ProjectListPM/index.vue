@@ -359,6 +359,21 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="Harbor" width="120">
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.harbor_url"
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.harbor_url"
+          >
+            <i class="el-icon-link" /> Harbor
+          </el-link>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('general.Actions')" align="center" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
