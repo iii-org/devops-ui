@@ -166,6 +166,8 @@ export default {
   Issue: {
     Issue: '議題',
     AddIssue: '新增議題',
+    EditIssue: '編輯議題',
+    AddSubIssue: '新增子議題',
     Id: '議題編號 / 議題名稱',
     Assignee: '受分配者',
     Priority: '優先權',

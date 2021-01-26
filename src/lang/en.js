@@ -166,6 +166,8 @@ export default {
   Issue: {
     Issue: 'Issue',
     AddIssue: 'Add Issue',
+    EditIssue: 'Edit Issue',
+    AddSubIssue: 'Add Sub Issue',
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',

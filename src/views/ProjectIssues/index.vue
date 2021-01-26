@@ -3,7 +3,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { Message } from 'element-ui'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { addIssue, deleteIssue } from '@/api/issue'
+import { addIssue } from '@/api/issue'
 import { getProjectIssueListByTree } from '@/api/projects'
 import AddIssue from './components/AddIssue'
 
@@ -135,22 +135,6 @@ export default {
       this.parentName = row.issue_name
       this.addTopicDialogVisible = true
     },
-    async handleDelete(idx, row) {
-      this.listLoading = true
-      await deleteIssue(row.id)
-        .then(res => {
-          Message({
-            message: 'Delete successful',
-            type: 'success',
-            duration: 1 * 1000
-          })
-          this.fetchData()
-        })
-        .catch(error => {
-          this.listLoading = false
-          return error
-        })
-    },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
@@ -170,7 +154,6 @@ export default {
           return res
         })
         .catch(error => {
-          // console.log(error.response)
           return error
         })
       return res
@@ -230,30 +213,30 @@ export default {
           <template slot-scope="scope">
             <span class="column-title" :class="isParentIssue(scope.row) ? 'ml-6' : ''">
               <span class="text-success">{{ scope.row.id }}</span>
-              <el-link
-                :id="`link-issue-name-${scope.$index}`"
-                class="ml-2"
-                type="primary"
-                target="_blank"
-                style="font-size: 16px"
-                :underline="false"
-                @click="handleEdit(scope.$index, scope.row)"
-              >
-                {{ scope.row.issue_name }}
-              </el-link>
+              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="top-start">
+                <el-link
+                  :id="`link-issue-name-${scope.$index}`"
+                  class="ml-2 mr-2"
+                  type="primary"
+                  target="_blank"
+                  style="font-size: 16px"
+                  :underline="false"
+                  @click="handleEdit(scope.$index, scope.row)"
+                >
+                  {{ scope.row.issue_name }}
+                </el-link>
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="top-start">
+                <el-button
+                  v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
+                  :id="`btn-add-sub-issue-${scope.$index}`"
+                  class="btn-sub"
+                  type="text"
+                  icon="el-icon-circle-plus-outline"
+                  @click="handleParent(scope.$index, scope.row, scope)"
+                />
+              </el-tooltip>
             </span>
-            <div>
-              <el-button
-                v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
-                :id="`btn-add-sub-issue-${scope.$index}`"
-                class="btn-sub"
-                size="mini"
-                icon="el-icon-plus"
-                @click="handleParent(scope.$index, scope.row, scope)"
-              >
-                Add sub issue
-              </el-button>
-            </div>
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="150">
@@ -266,10 +249,10 @@ export default {
           </template>
         </el-table-column>
         <!-- <el-table-column align="center" label="Description">
-        <template slot-scope="scope">
-          {{ scope.row.description }}
-        </template>
-      </el-table-column> -->
+          <template slot-scope="scope">
+            {{ scope.row.description }}
+          </template>
+        </el-table-column> -->
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium">
@@ -305,31 +288,6 @@ export default {
             <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
           </template>
         </el-table-column>
-        <!-- <el-table-column align="center" :label="$t('general.Actions')" width="200">
-          <template slot-scope="scope">
-            <el-button
-              :id="`btn-edit-issue-${scope.$index}`"
-              size="mini"
-              type="primary"
-              icon="el-icon-edit"
-              @click="handleEdit(scope.$index, scope.row)"
-            >
-              {{ $t('general.Edit') }}
-            </el-button>
-            <el-popconfirm
-              confirm-button-text="Delete"
-              cancel-button-text="Cancel"
-              icon="el-icon-info"
-              icon-color="red"
-              title="Are you sure?"
-              @onConfirm="handleDelete(scope.$index, scope.row)"
-            >
-              <el-button :id="`btn-delete-${scope.$index}`" slot="reference" size="mini" type="danger" icon="el-icon-delete">
-                {{ $t('general.Delete') }}
-              </el-button>
-            </el-popconfirm>
-          </template>
-        </el-table-column> -->
       </el-table>
       <pagination
         :total="listTotal"
@@ -358,11 +316,8 @@ export default {
   overflow: hidden;
 }
 .btn-sub {
-  color: #989898;
-  font-size: 15px;
-  font-weight: 400;
-  margin-left: 35px;
-  padding: 5px;
-  border: none !important;
+  border: none;
+  font-size: 18px;
+  padding: 0px;
 }
 </style>
