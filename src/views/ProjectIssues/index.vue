@@ -175,6 +175,10 @@ export default {
         })
       return res
       // this.addTopicDialogVisible = false
+    },
+    isParentIssue(row) {
+      if (row.parent_id === null && row.children.length === 0) return true
+      else return false
     }
   }
 }
@@ -222,28 +226,28 @@ export default {
         default-expand-all
         :tree-props="{ children: 'children' }"
       >
-        <el-table-column :label="$t('Issue.Id')" min-width="200">
+        <el-table-column :label="$t('Issue.Id')" min-width="250">
           <template slot-scope="scope">
-            <div class="d-flex">
-              <div class="column-title">
-                <span class="text-success">{{ scope.row.id }}</span>
-                <el-link
-                  :id="`link-issue-name-${scope.$index}`"
-                  type="primary"
-                  target="_blank"
-                  style="font-size: 16px"
-                  :underline="false"
-                  @click="handleEdit(scope.$index, scope.row)"
-                >
-                  {{ scope.row.issue_name }}
-                </el-link>
-              </div>
-
+            <span class="column-title" :class="isParentIssue(scope.row) ? 'ml-6' : ''">
+              <span class="text-success">{{ scope.row.id }}</span>
+              <el-link
+                :id="`link-issue-name-${scope.$index}`"
+                class="ml-2"
+                type="primary"
+                target="_blank"
+                style="font-size: 16px"
+                :underline="false"
+                @click="handleEdit(scope.$index, scope.row)"
+              >
+                {{ scope.row.issue_name }}
+              </el-link>
+            </span>
+            <div>
               <el-button
                 v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
                 :id="`btn-add-sub-issue-${scope.$index}`"
-                size="mini"
                 class="btn-sub"
+                size="mini"
                 icon="el-icon-plus"
                 @click="handleParent(scope.$index, scope.row, scope)"
               >
@@ -252,7 +256,7 @@ export default {
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Type')" width="120">
+        <el-table-column :label="$t('general.Type')" width="150">
           <template slot-scope="scope">
             <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
             <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
@@ -266,7 +270,7 @@ export default {
           {{ scope.row.description }}
         </template>
       </el-table-column> -->
-        <el-table-column align="center" :label="$t('general.Status')" width="125">
+        <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium">
               {{ scope.row.issue_status }}
@@ -286,8 +290,8 @@ export default {
             <el-tag v-else type="finish" size="medium"> {{ scope.row.issue_status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" width="200" prop="assigned_to" />
-        <el-table-column align="center" :label="$t('Issue.Priority')" width="115">
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
+        <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
               {{ scope.row.issue_priority }}
@@ -347,49 +351,18 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
-.el-popconfirm__action .el-button--primary {
-  margin-left: 5px !important;
-}
-
-col:first-child,
-.el-table__row td:first-child {
-  @media (max-width: 1366px) {
-    width: 610px;
-  }
-}
-
-.el-table__body-wrapper {
-  @media (max-width: 1366px) {
-    overflow-x: auto;
-  }
-}
-
-.el-table_1_column_1 {
-  position: relative;
-  font-weight: 500;
-  .text-success {
-    font-weight: 600;
-    margin-right: 5px;
-  }
-}
-
+<style lang="scss" scoped>
 .column-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
-
 .btn-sub {
   color: #989898;
   font-size: 15px;
   font-weight: 400;
+  margin-left: 35px;
+  padding: 5px;
   border: none !important;
-  margin: 0;
-  padding-left: 0;
-  padding-right: 16px;
-  @media (max-width: 1366px) {
-    padding-right: 8px;
-  }
 }
 </style>
