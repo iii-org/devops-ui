@@ -298,7 +298,7 @@ export default {
           <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Progress')" width="220">
+      <el-table-column align="center" :label="$t('Project.Progress')" width="240">
         <template slot-scope="scope">
           {{ scope.row.closed_count + '/' + scope.row.total_count }}
           <span class="status-bar-track">
