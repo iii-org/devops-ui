@@ -95,7 +95,7 @@ export default {
       this.dialogStatus = 2
 
       this.form = Object.assign({}, this.form, row)
-      console.log(this.form)
+      // console.log(this.form)
     },
     async handleDelete(idx, row) {
       this.$confirm(`Are you sure to Delete Version ${row.name}?`, 'Delete', {

@@ -210,7 +210,7 @@ export default {
   },
   mounted() {
     this.issueId = parseInt(this.$route.params.topicId)
-    console.log(this.$route.params.topicId)
+    // console.log(this.$route.params.topicId)
     this.fetchData()
   },
   methods: {

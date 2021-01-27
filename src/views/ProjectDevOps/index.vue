@@ -77,7 +77,7 @@ export default {
       this.searchData = ''
     },
     form(value) {
-      console.log(value)
+      // console.log(value)
     },
     searchData() {
       this.listQuery.page = 1
@@ -137,7 +137,7 @@ export default {
     handleDelete() {},
     handleConfirm() {
       //   this.dialogVisible = false
-      console.log(this.form)
+      // console.log(this.form)
     },
     onDialogClosed() {
       this.$nextTick(() => {

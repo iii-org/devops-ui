@@ -115,7 +115,7 @@ export default {
       this.dialogStatus = 2
       row['method_id'] = row['data']['method_id']
       row['url'] = row['data']['url']
-      console.log('row', row)
+      // console.log('row', row)
       this.testCaseForm = Object.assign({}, this.testCaseForm, row)
     },
     async handleDelete(idx, row) {

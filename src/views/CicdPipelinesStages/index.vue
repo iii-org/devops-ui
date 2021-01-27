@@ -128,7 +128,7 @@ export default {
     fetchData() {
       // this.listLoading = true
       getStages(this.$route.params.pipeline_id).then(response => {
-        console.log(response)
+        // console.log(response)
         this.stages = response.data
         this.stagesListLoading = false
       })

@@ -148,10 +148,10 @@ export default {
       done()
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      // console.log(file, fileList)
     },
     handlePreview(file) {
-      console.log(file)
+      // console.log(file)
     },
     handleExceed(files, fileList) {
       this.$message({

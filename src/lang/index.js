@@ -7,7 +7,7 @@ import enLocale from './en'
 import zhLocale from './zh'
 
 Vue.use(VueI18n)
-console.log(elementZhLocale)
+// console.log(elementZhLocale)
 const messages = {
   en: {
     ...enLocale,

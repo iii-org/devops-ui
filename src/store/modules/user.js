@@ -46,7 +46,7 @@ const actions = {
           const { data } = response
           const { token } = data
           const jwtContent = VueJwtDecode.decode(token)
-          console.log('jwtContent', jwtContent)
+          // console.log('jwtContent', jwtContent)
           if (!('identity' in jwtContent)) {
             Promise.reject('userId not exist')
           }
@@ -65,7 +65,6 @@ const actions = {
 
   // get e info
   getInfo({ commit, state }) {
-    console.log('getInfo')
     return new Promise((resolve, reject) => {
       const token = getToken()
       const jwtContent = VueJwtDecode.decode(token)
@@ -77,7 +76,7 @@ const actions = {
 
       getInfo(state.userId)
         .then(response => {
-          console.log('res', response)
+          // console.log('getInfo', response)
           const { data } = response
           const { role, name } = data
           if (!role) {

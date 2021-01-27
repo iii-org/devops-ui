@@ -100,12 +100,12 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            console.log('success login')
+            // console.log('success login')
 
             this.loading = false
           }).then(async() => {
             await this.$store.dispatch('user/getInfo')
-            console.log('redirect:', this.redirect)
+            // console.log('redirect:', this.redirect)
             this.$router.push({ path: this.redirect || '/' })
             this.$router.go(0)
             // resolve()
