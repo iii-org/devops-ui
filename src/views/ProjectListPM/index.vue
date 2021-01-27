@@ -62,7 +62,7 @@ export default {
     ...mapGetters(['projectList', 'projectListTotal', 'userId']),
     pagedData() {
       const listData = this.projectList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.display.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
