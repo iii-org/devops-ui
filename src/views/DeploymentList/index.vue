@@ -93,7 +93,7 @@ export default {
 <template>
   <div>
     <div class="clearfix">
-      <!-- <project-list-selector /> -->
+      <project-list-selector />
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
