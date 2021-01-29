@@ -178,7 +178,7 @@ export default {
             target="_blank"
             style="font-size: 16px"
             :underline="false"
-            :href="scope.row.commit_url"
+            :href="scope.row.commit_url[0]"
           >
             {{ scope.row.commit_id }}
           </el-link>
