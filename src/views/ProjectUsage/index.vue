@@ -83,7 +83,7 @@ export default {
       <el-row :gutter="12">
         <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
           <el-card v-loading="listLoading" class="mb-4">
-            <div slot="header" class="d-flex align-center" style="height: 24px">
+            <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
               <strong>{{ item.title }}</strong>
               <div>
                 <el-tooltip effect="dark" :content="`${item.title} List`" placement="top-start">

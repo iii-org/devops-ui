@@ -43,13 +43,13 @@
 
 @for $i from 0 through 15 {
   .mx-#{$i} {
-    margin: 0, $i * 4px;
+    margin: 0 $i * 4px;
   }
 }
 
 @for $i from 0 through 15 {
   .my-#{$i} {
-    margin: $i * 4px, 0;
+    margin: $i * 4px 0;
   }
 }
 
@@ -85,13 +85,13 @@
 
 @for $i from 0 through 15 {
   .px-#{$i} {
-    padding: 0, $i * 4px;
+    padding: 0 $i * 4px;
   }
 }
 
 @for $i from 0 through 15 {
   .py-#{$i} {
-    padding: $i * 4px, 0;
+    padding: $i * 4px 0;
   }
 }
 
