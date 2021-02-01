@@ -446,6 +446,13 @@ export const asyncRoutes = [
             hidden: true,
             component: () => import('@/views/ConfigMapsList/index'),
             meta: { title: 'ConfigMaps List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+          },
+          {
+            path: 'ingress-list',
+            name: 'Ingress List',
+            hidden: true,
+            component: () => import('@/views/IngressList/index'),
+            meta: { title: 'Ingress List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           }
         ]
       },

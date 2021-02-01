@@ -90,3 +90,10 @@ export function deleteConfigmap(pId, config_map_name) {
     method: 'delete'
   })
 }
+
+export function getIngressList(pId) {
+  return request({
+    url: `/project/${pId}/resource/list/ingress`,
+    method: 'get'
+  })
+}
