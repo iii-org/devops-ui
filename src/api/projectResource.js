@@ -21,6 +21,14 @@ export function getPodList(pId) {
   })
 }
 
+export function getPodLog(pId, pod_name, params) {
+  return request({
+    url: `/project/${pId}/resource/list/pod/${pod_name}/log`,
+    method: 'get',
+    params
+  })
+}
+
 export function deletePod(pId, pod_name) {
   return request({
     url: `/project/${pId}/resource/list/pod/${pod_name}`,

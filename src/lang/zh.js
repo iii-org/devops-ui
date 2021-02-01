@@ -28,8 +28,8 @@ export default {
     Postman: 'API 測試(Postman)',
     CheckMarx: '白箱測試(CheckMarx)',
     WebInspect: '黑箱測試(WebInspect)',
-    'UI': 'UI 列表',
-    'Collection': 'Collection 列表',
+    UI: 'UI 列表',
+    Collection: 'Collection 列表',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
@@ -315,6 +315,9 @@ export default {
     PleaseType: '請輸入',
     AndThen: '進行刪除或取消操作',
     Storage: '硬碟空間'
+  },
+  ProjectUsage: {
+    SearchPods: '搜尋 Pods'
   },
   Postman: {
     Id: '編號',

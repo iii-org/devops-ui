@@ -2,11 +2,12 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import { getPodList, deletePod } from '@/api/projectResource'
+import { getPodList, deletePod, getPodLog } from '@/api/projectResource'
+import PodLog from './components/PodLog'
 
 export default {
   name: 'PodsList',
-  components: { ProjectListSelector, Pagination },
+  components: { ProjectListSelector, Pagination, PodLog },
   data: () => ({
     podList: [],
     listLoading: true,
@@ -16,7 +17,12 @@ export default {
       limit: 10
     },
     listTotal: 0,
-    searchData: ''
+    searchData: '',
+
+    podLogDialogVisible: false,
+    logData: '',
+    focusPodName: '',
+    focusContainerName: ''
   }),
   computed: {
     ...mapGetters(['projectSelectedId']),
@@ -49,10 +55,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       await getPodList(this.projectSelectedId).then(res => {
-        this.podList = res.data.map(item => ({
-          name: item.name,
-          status: item.status
-        }))
+        this.podList = res.data
       })
       this.listLoading = false
     },
@@ -71,6 +74,27 @@ export default {
         console.error(error)
       }
       this.listLoading = false
+    },
+    handleLogClick(pName, cName) {
+      this.listLoading = true
+      this.focusPodName = pName
+      this.focusContainerName = cName
+      getPodLog(this.projectSelectedId, pName, {
+        container_name: cName
+      })
+        .then(res => {
+          this.logData = res.data
+          this.showPodLogDialog(true)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+        .then(() => {
+          this.listLoading = false
+        })
+    },
+    showPodLogDialog(visible) {
+      this.podLogDialogVisible = visible
     }
   }
 }
@@ -83,7 +107,7 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('general.SearchName')"
+        :placeholder="$t('ProjectUsage.SearchPods')"
         style="width: 250px; float: right"
       >
         <i slot="prefix" class="el-input__icon el-icon-search" />
@@ -91,40 +115,78 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column :label="$t('general.Status')" align="center" width="130">
+      <el-table-column label="Pods" align="center" prop="name" min-width="200" show-overflow-tooltip />
+      <el-table-column label="Created time" align="center" width="180">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'Succeeded'" type="success" size="medium">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.status === 'Running'" type="warning" size="medium">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.status === 'Pending'" type="active" size="medium">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else type="finish" size="medium"> {{ scope.row.status }}</el-tag>
+          {{ scope.row.created_time | YMDHms }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Name')" align="center" prop="name" />
+      <el-table-column label="Container" align="center" min-width="200" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <div v-for="item in scope.row.containers" :key="item.name" class="my-3">
+            {{ item.name }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Image" align="center" min-width="300" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <div v-for="item in scope.row.containers" :key="item.image" class="my-3">
+            {{ item.image }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Restart" align="center" width="100">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.containers" :key="item.name + idx" class="my-3">
+            {{ item.restart }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="State" align="center" width="100">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.containers" :key="item + idx" class="my-3">
+            {{ item.state }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="time" align="center" width="220">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.containers" :key="item.time + idx" class="my-3">
+            {{ item.time | YMDHms }}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">
-          <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
+          <div class="d-flex align-center">
+            <div>
+              <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
+                <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">
+                  log
+                </el-button>
+              </div>
+            </div>
+
+            <div>
+              <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
               <i class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button> -->
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.name)"
-          >
-            <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+              <el-popconfirm
+                confirm-button-text="Delete"
+                cancel-button-text="Cancel"
+                icon="el-icon-info"
+                icon-color="red"
+                title="Are you sure?"
+                @onConfirm="handleDelete(projectSelectedId, scope.row.name)"
+              >
+                <el-button slot="reference" size="mini" type="danger">
+                  <i class="el-icon-delete" />
+                  {{ $t('general.Delete') }}
+                </el-button>
+              </el-popconfirm>
+            </div>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -135,6 +197,14 @@ export default {
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
+    />
+    <pod-log
+      :is-loading="listLoading"
+      :dialog-visible.sync="podLogDialogVisible"
+      :log-message="logData"
+      :container-name="focusContainerName"
+      @hideDialog="showPodLogDialog(false)"
+      @refresh="handleLogClick(focusPodName, focusContainerName)"
     />
   </div>
 </template>

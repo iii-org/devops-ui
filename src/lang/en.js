@@ -28,8 +28,8 @@ export default {
     Postman: 'Postman',
     CheckMarx: 'CheckMarx',
     WebInspect: 'WebInspect',
-    'UI': 'UI',
-    'Collection': 'Collection',
+    UI: 'UI',
+    Collection: 'Collection',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -318,6 +318,9 @@ export default {
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     Storage: 'Storage'
+  },
+  ProjectUsage: {
+    SearchPods: 'Search Pods'
   },
   Postman: {
     Id: 'Id',
