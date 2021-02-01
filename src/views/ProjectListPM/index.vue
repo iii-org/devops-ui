@@ -59,7 +59,7 @@ export default {
     loadingDelete: ''
   }),
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal', 'userId']),
+    ...mapGetters(['projectList', 'projectListTotal', 'userId', 'userProjectList']),
     pagedData() {
       const listData = this.projectList.filter(data => {
         if (this.searchData === '' || data.display.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -97,6 +97,7 @@ export default {
       'projects/editProject',
       'projects/deleteProject'
     ]),
+    ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject']),
     async loadList() {
       this.listLoading = true
       await this['projects/queryProjectList']()
@@ -248,6 +249,12 @@ export default {
     },
     myFormatTime(time) {
       return formatTime(new Date(time))
+    },
+    handleClick(id) {
+      localStorage.setItem('project', id)
+      this.changeSelectedProjectId(id)
+      this.changeSelectedProjectObject(this.userProjectList.filter(elm => elm.id === id)[0])
+      this.$router.push({ name: 'Overview' })
     }
   }
 }
@@ -272,17 +279,11 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" min-width="200">
+      <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" min-width="250">
         <template slot-scope="scope">
-          <!-- <router-link
-            :to="{
-              name: 'cicdPipelines'
-            }"
-            style="color: #409EFF"
-          > -->
-          {{ scope.row.display }}
-          <!-- </router-link> -->
-          <!-- <span>{{ scope.row.name }}</span> -->
+          <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
+            {{ scope.row.display }}
+          </el-link>
         </template>
       </el-table-column>
       <el-table-column :label="$t('Project.Identifier')" min-width="200" :show-overflow-tooltip="true">

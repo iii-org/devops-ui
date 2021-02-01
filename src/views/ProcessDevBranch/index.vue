@@ -54,12 +54,8 @@ export default {
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchBranchData() {
       this.listLoading = true
-      if (!this.projectSelectedObject.repository_id) {
-        this.branchList = []
-        this.listLoading = false
-        return
-      }
-      await this.getBranchesByProject(this.projectSelectedObject.repository_id)
+      const repository_id = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
+      await this.getBranchesByProject(repository_id)
       this.listLoading = false
     },
     returnTagType(row) {
