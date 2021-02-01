@@ -2,20 +2,24 @@
 //   quota: {
 //     configmaps: '60',
 //     cpu: '10',
-//     deployments: null,
 //     memory: '10G',
+//     persistentvolumeclaims: '0',
 //     pods: '20',
 //     secrets: '60',
-//     'services.nodeports': '10'
+//     'services.nodeports': '10',
+//     deployments: null,
+//     ingresss: null
 //   },
 //   used: {
 //     configmaps: '0',
 //     cpu: '0',
-//     deployments: '0',
 //     memory: '0',
+//     persistentvolumeclaims: '0',
 //     pods: '0',
 //     secrets: '12',
-//     'services.nodeports': '0'
+//     'services.nodeports': '0',
+//     deployments: '0',
+//     ingresss: '0'
 //   }
 // }
 
