@@ -110,7 +110,7 @@ export default {
         <el-table-column align="center" :label="$t('Postman.StartTime')" prop="run_at" width="260" />
         <el-table-column align="center" :label="$t('general.Actions')" width="190">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" plain @click="handleClick('test-case', scope.row.id)">
+            <el-button size="mini" type="primary" plain @click="handleClick('ui', scope.row.id)">
               {{ $t('Postman.Ui') }}
             </el-button>
             <el-button size="mini" type="primary" @click="handleClick('collection', scope.row.id)">

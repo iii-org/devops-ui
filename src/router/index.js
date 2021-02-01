@@ -359,6 +359,17 @@ export const asyncRoutes = [
         meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
         children: [
           {
+            path: 'ui/:id',
+            name: 'Test Case UI',
+            hidden: true,
+            component: () => import('@/views/TestCaseUI/index'),
+            meta: {
+              title: 'Test Case UI',
+              roles: ['Engineer', 'Project Manager', 'Administrator'],
+              rolePage: false
+            }
+          },
+          {
             path: 'collection/:id',
             name: 'Collection',
             hidden: true,
