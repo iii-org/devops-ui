@@ -1,7 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
-// import ProjectListSelector from '@/components/ProjectListSelector'
+import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getTestCaseByProject,
   addTestCaseByProject,
@@ -20,9 +20,8 @@ const formTemplate = {
 }
 
 export default {
-  name: 'TestCase',
-  // components: { ProjectListSelector, Pagination },
-  components: { Pagination },
+  name: 'APITestList',
+  components: { ProjectListSelector, Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -95,8 +94,7 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      // Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.projectSelectedId)])
-      Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.$route.params.id)])
+      Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.projectSelectedId)])
         .then(res => {
           this.testCaseTypeList = res[0].data.map(item => {
             return { label: item.name, value: item.test_case_type_id }
@@ -176,141 +174,156 @@ export default {
       })
     },
     handleDetail(idx, row) {
-      this.$router.push({ path: `/test/postman-result/test-item/${row.id}` })
+      this.$router.push({ path: `/issue/test-case/test-item/${row.id}` })
     }
   }
 }
 </script>
 <template>
-  <div>
-    <div class="clearfix">
-      <!-- <project-list-selector /> -->
-      <span v-if="userRole === 'Engineer'" class="newBtn">
-        <el-button type="success" @click="handleAdding">
-          <i class="el-icon-plus" />
-          {{ $t('TestCase.AddTestCase') }}
-        </el-button>
-      </span>
-      <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
-    </div>
-    <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('TestCase.Id')" width="110">
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="140">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Description')" :show-overflow-tooltip="true" min-width="170">
-        <template slot-scope="scope">
-          <span>{{ scope.row.description }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Method')" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.data.method }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Path')" min-width="150">
-        <template slot-scope="scope">
-          {{ scope.row.data.url }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" min-width="250">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
-            <i class="el-icon-document" />
-            {{ $t('TestItem.TestItem') }}
-          </el-button>
-          <el-button
-            v-if="userRole === 'Engineer'"
-            size="mini"
-            type="primary"
-            @click="handleEdit(scope.$index, scope.row)"
-          >
-            <i class="el-icon-edit" />
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @onConfirm="handleDelete(scope.$index, scope.row)"
-          >
-            <el-button v-if="userRole === 'Engineer'" slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="listTotal"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
+  <div class="app-container">
     <router-view />
-    <el-dialog
-      :title="$t(`TestCase.${dialogStatusText}TestCase`)"
-      :visible.sync="dialogVisible"
-      width="50%"
-      @closed="onDialogClosed"
-    >
-      <el-form
-        ref="testCaseForm"
-        label-position="top"
-        :model="testCaseForm"
-        :rules="testCaseFormRules"
-        label-width="20%"
+    <div v-if="this.$route.meta.rolePage" class="role-Page">
+      <div class="clearfix">
+        <project-list-selector />
+        <span v-if="userRole === 'Engineer'" class="newBtn">
+          <el-button type="success" @click="handleAdding">
+            <i class="el-icon-plus" />
+            {{ $t('TestCase.AddTestCase') }}
+          </el-button>
+        </span>
+        <el-input
+          v-model="searchData"
+          class="ob-search-input ob-shadow search-input mr-3"
+          :placeholder="$t('general.SearchName')"
+          style="width: 250px; float: right"
+        >
+          <i slot="prefix" class="el-input__icon el-icon-search" />
+        </el-input>
+      </div>
+      <el-divider />
+      <el-table
+        v-loading="listLoading"
+        element-loading-text="Loading"
+        border
+        fit
+        highlight-current-row
+        :data="pagedData"
       >
-        <el-form-item :label="$t('general.Name')" prop="name">
-          <el-input v-model="testCaseForm.name" />
-        </el-form-item>
-        <el-form-item :label="$t('TestCase.Method')" prop="method_id">
-          <el-select v-model="testCaseForm.method_id" style="width: 100%">
-            <el-option
-              v-for="item in testCaseAPIMethodList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('TestCase.Type')" prop="type_id">
-          <el-select v-model="testCaseForm.type_id" style="width: 100%">
-            <el-option v-for="item in testCaseTypeList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('TestCase.Path')" prop="url">
-          <el-input v-model="testCaseForm.url" />
-        </el-form-item>
-        <el-form-item :label="$t('TestCase.Description')" prop="description">
-          <el-input v-model="testCaseForm.description" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">
-          {{ $t('general.Confirm') }}
-        </el-button>
-      </span>
-    </el-dialog>
+        <el-table-column align="center" :label="$t('TestCase.Id')" width="110">
+          <template slot-scope="scope">
+            {{ scope.row.id }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="140">
+          <template slot-scope="scope">
+            <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          :label="$t('TestCase.Description')"
+          :show-overflow-tooltip="true"
+          min-width="170"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.description }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('TestCase.Method')" width="95">
+          <template slot-scope="scope">
+            {{ scope.row.data.method }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('TestCase.Path')" min-width="150">
+          <template slot-scope="scope">
+            {{ scope.row.data.url }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Actions')" min-width="270">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
+              <i class="el-icon-document" />
+              {{ $t('TestItem.TestItem') }}
+            </el-button>
+            <el-button
+              v-if="userRole === 'Engineer'"
+              size="mini"
+              type="primary"
+              @click="handleEdit(scope.$index, scope.row)"
+            >
+              <i class="el-icon-edit" />
+              {{ $t('general.Edit') }}
+            </el-button>
+            <el-popconfirm
+              confirm-button-text="Delete"
+              cancel-button-text="Cancel"
+              icon="el-icon-info"
+              icon-color="red"
+              title="Are you sure?"
+              @onConfirm="handleDelete(scope.$index, scope.row)"
+            >
+              <el-button v-if="userRole === 'Engineer'" slot="reference" size="mini" type="danger">
+                <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+              </el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="listTotal"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+      <router-view />
+      <el-dialog
+        :title="$t(`TestCase.${dialogStatusText}TestCase`)"
+        :visible.sync="dialogVisible"
+        width="50%"
+        @closed="onDialogClosed"
+      >
+        <el-form
+          ref="testCaseForm"
+          label-position="top"
+          :model="testCaseForm"
+          :rules="testCaseFormRules"
+          label-width="20%"
+        >
+          <el-form-item :label="$t('general.Name')" prop="name">
+            <el-input v-model="testCaseForm.name" />
+          </el-form-item>
+          <el-form-item :label="$t('TestCase.Method')" prop="method_id">
+            <el-select v-model="testCaseForm.method_id" style="width: 100%">
+              <el-option
+                v-for="item in testCaseAPIMethodList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('TestCase.Type')" prop="type_id">
+            <el-select v-model="testCaseForm.type_id" style="width: 100%">
+              <el-option v-for="item in testCaseTypeList" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('TestCase.Path')" prop="url">
+            <el-input v-model="testCaseForm.url" />
+          </el-form-item>
+          <el-form-item :label="$t('TestCase.Description')" prop="description">
+            <el-input v-model="testCaseForm.description" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+          <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">
+            {{ $t('general.Confirm') }}
+          </el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>

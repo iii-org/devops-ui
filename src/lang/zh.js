@@ -17,6 +17,7 @@ export default {
     'Issue Detail': '議題內容',
     Wiki: 'Wiki列表',
     'File List': '檔案列表',
+    'Test Case': '測試案例列表',
 
     Progress: '開發進度',
     'Dev Branch': '開發分支',
@@ -27,7 +28,7 @@ export default {
     Postman: 'API 測試(Postman)',
     CheckMarx: '白箱測試(CheckMarx)',
     WebInspect: '黑箱測試(WebInspect)',
-    'Test Case': 'UI 列表',
+    'UI': 'UI 列表',
     'Collection': 'Collection 列表',
 
     'System Resource': '系統資源',

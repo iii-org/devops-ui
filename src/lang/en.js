@@ -17,6 +17,7 @@ export default {
     'Issue Detail': 'Issue Detail',
     Wiki: 'Wiki',
     'File List': 'File List',
+    'Test Case': 'API Test Case',
 
     Progress: 'Progress',
     'Dev Branch': 'Dev Branch',
@@ -27,7 +28,7 @@ export default {
     Postman: 'Postman',
     CheckMarx: 'CheckMarx',
     WebInspect: 'WebInspect',
-    'Test Case': 'API Test Case',
+    'UI': 'UI',
     'Collection': 'Collection',
 
     'System Resource': 'System Resource',

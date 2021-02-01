@@ -254,7 +254,7 @@ export default {
 }
 </script>
 <template>
-  <div>
+  <div class="app-container">
     <el-card class="box-card el-col-6 column custom-list" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">{{ $t('TestCase.TestCase') }}</span>

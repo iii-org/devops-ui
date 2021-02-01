@@ -179,7 +179,6 @@ export const asyncRoutes = [
         component: () => import('@/views/ProjectWiki/index'),
         meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
-
       {
         path: 'listrd/:issue_num/setup',
         hidden: true,
@@ -191,6 +190,21 @@ export const asyncRoutes = [
         name: 'File',
         component: () => import('@/views/ProjectFiles/index'),
         meta: { title: 'File List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
+      },
+      {
+        path: 'test-case',
+        name: 'Test Case',
+        component: () => import('@/views/TestCase/index'),
+        meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: 'test-item/:testCaseId',
+            name: 'Test Item',
+            hidden: true,
+            component: () => import('@/views/TestItem/index'),
+            meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
+          }
+        ]
       }
     ]
   },
@@ -354,20 +368,6 @@ export const asyncRoutes = [
               roles: ['Engineer', 'Project Manager', 'Administrator'],
               rolePage: false
             }
-          },
-          {
-            path: 'test-case/:id',
-            name: 'Test Case',
-            hidden: true,
-            component: () => import('@/views/TestCase/index'),
-            meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
-          },
-          {
-            path: 'test-item/:testCaseId',
-            name: 'Test Item',
-            hidden: true,
-            component: () => import('@/views/TestItem/index'),
-            meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
           }
         ]
       },
