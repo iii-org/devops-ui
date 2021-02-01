@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: devopswebui-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
+spec:
+  tls:
+  - secretName: devopswebui-secret
+  rules:
+  #- host: 10.50.1.56
+  - http:
+      paths:
+      - backend:
+          serviceName: devopswebui-service
+          servicePort: 80
