@@ -4,7 +4,9 @@ metadata:
   name: devopswebui-ingress
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 100m
-    nginx.ingress.kubernetes.io/ssl-ciphers: "ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
+    nginx.ingress.kubernetes.io/proxy-ssl-protocols: "TLSv1.3"
+    nginx.ingress.kubernetes.io/ssl-prefer-server-ciphers: "true"
+    nginx.ingress.kubernetes.io/ssl-ciphers: "EECDH+AESGCM:EDH+AESGCM"
 spec:
   tls:
   - secretName: devopswebui-secret
