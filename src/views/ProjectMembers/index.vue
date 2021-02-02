@@ -29,7 +29,8 @@ export default {
     memberConfirmLoading: false,
     form: formTemplate,
     roleName: '',
-    userInfo: {}
+    userInfo: {},
+    rules: { id: [{ required: true, message: 'Please select a member', trigger: 'change' }] }
   }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userId']),
@@ -103,20 +104,23 @@ export default {
       this.form = Object.assign({}, this.form, row)
     },
     async handleConfirm() {
-      // console.log(this.form)
-      try {
-        this.memberConfirmLoading = true
-        await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
-        Message({
-          message: 'Member added successfully',
-          type: 'success'
-        })
-        this.fetchData()
-        this.dialogVisible = false
-      } catch (error) {
-        console.error(error)
-      }
-      this.memberConfirmLoading = false
+      this.$refs.thisForm.validate(async valid => {
+        if (valid) {
+          try {
+            this.memberConfirmLoading = true
+            await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
+            Message({
+              message: 'Member added successfully',
+              type: 'success'
+            })
+            this.fetchData()
+            this.dialogVisible = false
+          } catch (error) {
+            console.error(error)
+          }
+          this.memberConfirmLoading = false
+        }
+      })
     },
     async handleDelete(id, row) {
       this.listLoading = true
@@ -231,7 +235,7 @@ export default {
       :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
-      <el-form ref="thisForm" :model="form" label-position="top">
+      <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
         <el-form-item :label="$t('general.Name')" prop="id">
           <el-select v-model="form.id" :placeholder="$t('Member.SelectMember')" filterable>
             <el-option v-for="item in assignableUsers" :key="item.id" :label="item.login" :value="item.id" />
