@@ -52,7 +52,7 @@ export default {
       type: Number,
       default: 0
     },
-    testitem: {
+    testItem: {
       type: Object,
       default: null
     },

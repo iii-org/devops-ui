@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import FlowDialog from './FlowDialog'
 import { addFlowByIssue, deleteFlow } from '@/api/issueFlow'
 import { Message } from 'element-ui'
@@ -26,6 +27,10 @@ export default {
     flowDialogVisible: false
   }),
 
+  computed: {
+    ...mapGetters(['projectSelectedId'])
+  },
+
   methods: {
     showFlowDialog(flow, title) {
       this.editFlowId = flow === '' ? 0 : flow.id
@@ -34,9 +39,7 @@ export default {
     },
 
     async saveFlow(data) {
-      if (this.projectId > 0) {
-        data['project_id'] = this.projectId
-      }
+      data['project_id'] = this.projectSelectedId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
       Message({

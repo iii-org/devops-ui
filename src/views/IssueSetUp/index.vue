@@ -91,6 +91,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['projectSelectedId']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
@@ -252,9 +253,7 @@ export default {
       this.commentDialogVisible = true
     },
     async saveFlow(data) {
-      if (this.projectId > 0) {
-        data['project_id'] = this.projectId
-      }
+      data['project_id'] = this.projectSelectedId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
       Message({
@@ -274,9 +273,7 @@ export default {
       this.fetchData()
     },
     async saveParameter(data) {
-      if (this.projectId > 0) {
-        data['project_id'] = this.projectId
-      }
+      data['project_id'] = this.projectSelectedId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
       Message({
@@ -430,7 +427,7 @@ export default {
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">Issue #{{ issueId }}</span>
         <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
-          Saveaa
+          Save
         </el-button>
         <!-- <div>{{ issueDescription }}</div> -->
       </div>
@@ -812,7 +809,7 @@ export default {
     <test-item-dialog
       :dialog-title="dialogTitle"
       :test-item-id="editTestItemId"
-      :testitem="editTestItem"
+      :test-item="editTestItem"
       :dialog-visible="testItemDialogVisible"
       :save-data="saveTestItem"
       @testItem-dialog-visible="testItemDialogVisible = false"

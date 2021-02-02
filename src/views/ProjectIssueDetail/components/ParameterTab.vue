@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import ParamDialog from './ParamDialog'
 import { addParameterByIssue, deleteParameter } from '@/api/issueParameter'
 import { Message } from 'element-ui'
@@ -26,6 +27,10 @@ export default {
     paramDialogVisible: false
   }),
 
+  computed: {
+    ...mapGetters(['projectSelectedId'])
+  },
+
   methods: {
     showParamDialog(param, title) {
       this.editParamId = param === '' ? 0 : param.id
@@ -33,9 +38,7 @@ export default {
       this.paramDialogVisible = true
     },
     async saveParameter(data) {
-      if (this.projectId > 0) {
-        data['project_id'] = this.projectId
-      }
+      data['project_id'] = this.projectSelectedId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
       Message({
