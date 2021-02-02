@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
-import Kanban from '@/components/Kanban'
+import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssueStatus, updateIssue } from '@/api/issue'
 import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
@@ -220,6 +220,7 @@ export default {
         :header-text="$t('ProjectActive.Active')"
         c-name="Active"
         @update="updateIssueStatus"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="2"
@@ -230,6 +231,7 @@ export default {
         :header-text="$t('ProjectActive.Assigned')"
         c-name="Assigned"
         @update="updateIssueStatus"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="3"
@@ -240,6 +242,7 @@ export default {
         :header-text="$t('ProjectActive.Solved')"
         c-name="Solved"
         @update="updateIssueStatus"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="4"
@@ -250,6 +253,7 @@ export default {
         :header-text="$t('ProjectActive.Responded')"
         c-name="Responded"
         @update="updateIssueStatus"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="5"
@@ -260,6 +264,7 @@ export default {
         :header-text="$t('ProjectActive.Finished')"
         c-name="Finished"
         @update="updateIssueStatus"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="6"
@@ -270,6 +275,7 @@ export default {
         :header-text="$t('ProjectActive.Closed')"
         c-name="Closed"
         @update="updateIssueStatus"
+        @updateBoard="fetchData"
       />
     </div>
   </div>

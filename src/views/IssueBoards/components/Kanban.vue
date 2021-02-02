@@ -2,15 +2,18 @@
   <div class="board-column">
     <div class="board-column-header">
       <div class="header-bar" />
-      <div class="header-text">
-        {{ headerText }}
+      <div class="d-flex">
+        <div>
+          <i class="el-icon-plus ml-4 mr-5 add-button" @click="showDialog = true" />
+        </div>
+        <div class="ml-15">{{ headerText }}</div>
         <!-- <i class="el-icon-more header-icon" /> -->
       </div>
     </div>
     <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
         <div class="pb-4">
-          <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleCLick(element.id)">
+          <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
             {{ element.name }}
           </el-link>
         </div>
@@ -26,16 +29,19 @@
         </div>
       </div>
     </draggable>
+    <AddIssueDialog :dialog-visible="showDialog" :focus-status="cName" @close="showDialog = false" @update="updateBoard" />
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+import AddIssueDialog from './AddIssueDialog.vue'
 
 export default {
   name: 'Kanban',
   components: {
-    draggable
+    draggable,
+    AddIssueDialog
   },
   props: {
     headerText: {
@@ -55,6 +61,9 @@ export default {
       default: ''
     }
   },
+  data: () => ({
+    showDialog: false
+  }),
   methods: {
     checkRelatives(evt) {
       let result = true
@@ -79,7 +88,10 @@ export default {
     end(evt) {
       this.$emit('update', evt)
     },
-    handleCLick(id) {
+    updateBoard() {
+      this.$emit('updateBoard')
+    },
+    handleClick(id) {
       this.$router.push({ path: `/issue/list/${id}` })
     }
   }
@@ -106,9 +118,6 @@ export default {
       background: red;
       height: 3px;
     }
-    .header-text {
-      margin-left: 10px;
-    }
     .header-icon {
       float: right;
       margin-right: 10px;
@@ -134,6 +143,9 @@ export default {
       border: 1px solid #e9e9e9;
       box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.2);
     }
+  }
+  .add-button {
+    cursor: pointer;
   }
 }
 </style>
