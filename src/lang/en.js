@@ -63,6 +63,7 @@ export default {
   },
   general: {
     Name: 'Name',
+    Title: 'Title',
     Edit: 'Edit',
     Delete: 'Delete',
     Actions: 'Actions',

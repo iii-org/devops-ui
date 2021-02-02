@@ -18,7 +18,7 @@
         </el-row>
 
         <el-col :span="12">
-          <el-form-item :label="$t('general.Name')" prop="subject">
+          <el-form-item :label="$t('general.Title')" prop="subject">
             <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
           </el-form-item>
         </el-col>

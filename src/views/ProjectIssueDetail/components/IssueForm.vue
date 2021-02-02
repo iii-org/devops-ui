@@ -313,7 +313,7 @@ export default {
         </el-col>
 
         <el-col :span="12">
-          <el-form-item style="margin-bottom:10px" :label="$t('general.Name')" prop="subject">
+          <el-form-item style="margin-bottom:10px" :label="$t('general.Title')" prop="subject">
             <el-input v-model="issueForm.subject" style="width: 100%" />
           </el-form-item>
         </el-col>

@@ -63,6 +63,7 @@ export default {
   },
   general: {
     Name: '名稱',
+    Title: '標題',
     Edit: '編輯',
     Delete: '刪除',
     Actions: '操作',
