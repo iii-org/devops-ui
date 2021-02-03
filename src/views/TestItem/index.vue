@@ -255,179 +255,179 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <el-card class="box-card el-col-6 column custom-list" shadow="never">
-      <div slot="header" class="clearfix">
-        <span style="font-size: 25px; padding-bottom: 10px">{{ $t('TestCase.TestCase') }}</span>
-      </div>
-      <el-form :label-position="'left'">
-        <el-row>
-          <el-col>
-            <el-form-item :label="$t('general.Name')">{{ testCase.name }} </el-form-item>
-          </el-col>
-          <el-col>
-            <el-form-item :label="$t('TestCase.Method')">
-              {{ testCase.data.method }}
-            </el-form-item>
-          </el-col>
-          <el-col>
-            <el-form-item :label="$t('TestCase.Path')">
-              {{ testCase.data.url }}
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </el-card>
+    <el-row :gutter="12">
+      <el-col :span="7">
+        <el-card shadow="never">
+          <div slot="header">
+            <span style="font-size: 25px; padding-bottom: 10px">{{ $t('TestCase.TestCase') }}</span>
+          </div>
+          <div class="text-subtitle-1 font-weight-bold mb-1">{{ $t('general.Name') }}</div>
+          <div class="mb-4">{{ testCase.name }}</div>
 
-    <el-tabs v-model="activeName" type="border-card" class="el-col-14 column">
-      <el-tab-pane :label="$t('TestItem.TestItem')" name="testItem">
-        <div class="clearfix">
-          <span v-if="userRole === 'Engineer'" class="newBtn">
-            <el-button type="success" @click="handleTestItemAdding">
-              <i class="el-icon-plus" />
-              {{ $t('TestItem.AddTestItem') }}
-            </el-button>
-          </span>
-          <el-input
-            v-model="testItemSearchData"
-            class="ob-search-input ob-shadow search-input mr-3"
-            :placeholder="$t('general.SearchName')"
-            style="width: 250px; float: right"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </div>
-        <el-table
-          :data="testItemPagedData"
-          element-loading-text="Loading"
-          border
-          fit
-          highlight-current-row
-          class="mt-2"
-        >
-          <el-table-column :label="$t('TestItem.Id')">
-            <template slot-scope="scope">
-              {{ scope.row.id }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('general.Name')">
-            <template slot-scope="scope">
-              {{ scope.row.name }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('TestItem.IsPass')">
-            <template slot-scope="scope">
-              {{ scope.row.is_passed }}
-            </template>
-          </el-table-column>
-          <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200">
-            <template slot-scope="scope">
-              <el-button size="mini" type="primary" @click="handleTestItemEdit(scope.$index, scope.row)">
-                <i class="el-icon-edit" />
-                {{ $t('general.Edit') }}
-              </el-button>
-              <el-popconfirm
-                confirm-button-text="Delete"
-                cancel-button-text="Cancel"
-                icon="el-icon-info"
-                icon-color="red"
-                title="Are you sure?"
-                @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
-              >
-                <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+          <div class="text-subtitle-1 font-weight-bold mb-1">{{ $t('TestCase.Method') }}</div>
+          <div class="mb-4">{{ testCase.data.method }}</div>
+
+          <div class="text-subtitle-1 font-weight-bold mb-1">{{ $t('TestCase.Path') }}</div>
+          <div class="mb-4">{{ testCase.data.url }}</div>
+        </el-card>
+      </el-col>
+      <el-col :span="17">
+        <el-tabs v-model="activeName" type="border-card">
+          <el-tab-pane :label="$t('TestItem.TestItem')" name="testItem">
+            <div>
+              <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
+              <span class="newBtn">
+                <el-button type="success" @click="handleTestItemAdding">
+                  <i class="el-icon-plus" />
+                  {{ $t('TestItem.AddTestItem') }}
                 </el-button>
-              </el-popconfirm>
-            </template>
-          </el-table-column>
-        </el-table>
-        <pagination
-          :total="testItemListTotal"
-          :page="testItemListQuery.page"
-          :limit="testItemListQuery.limit"
-          :page-sizes="[testItemListQuery.limit]"
-          :layout="'total, prev, pager, next'"
-          @pagination="onPagination"
-        />
-      </el-tab-pane>
-      <el-tab-pane :label="$t('TestValue.TestValue')" name="testValue">
-        <div class="clearfix">
-          <el-select v-model="selectTestItem" :placeholder="$t('TestValue.SelectTestItem')">
-            <el-option v-for="item in testItemList" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-          <span v-if="userRole === 'Engineer'" class="newBtn">
-            <el-button type="success" @click="handleTestValueAdding">
-              <i class="el-icon-plus" />
-              {{ $t('TestValue.AddTestValue') }}
-            </el-button>
-          </span>
-          <el-input
-            v-model="testValueSearchData"
-            class="ob-search-input ob-shadow search-input mr-3"
-            :placeholder="$t('TestValue.SearchValue')"
-            style="width: 250px; float: right"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </div>
-        <el-table
-          :data="testValuePagedData"
-          element-loading-text="Loading"
-          border
-          fit
-          highlight-current-row
-          class="mt-2"
-        >
-          <el-table-column :label="$t('TestValue.Type')">
-            <template slot-scope="scope">
-              {{ scope.row.type.label }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('TestValue.Location')">
-            <template slot-scope="scope">
-              {{ scope.row.location.label }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Key">
-            <template slot-scope="scope">
-              {{ scope.row.key }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Value">
-            <template slot-scope="scope">
-              {{ scope.row.value }}
-            </template>
-          </el-table-column>
-          <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200">
-            <template slot-scope="scope">
-              <el-button size="mini" type="primary" @click="handleTestValueEdit(scope.$index, scope.row)">
-                <i class="el-icon-edit" />
-                {{ $t('general.Edit') }}
-              </el-button>
-              <el-popconfirm
-                confirm-button-text="Delete"
-                cancel-button-text="Cancel"
-                icon="el-icon-info"
-                icon-color="red"
-                title="Are you sure?"
-                @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
+              </span>
+              <el-input
+                v-model="testItemSearchData"
+                class="ob-search-input ob-shadow search-input mr-3"
+                :placeholder="$t('general.SearchName')"
+                style="width: 250px; float: right"
               >
-                <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                <i slot="prefix" class="el-input__icon el-icon-search" />
+              </el-input>
+            </div>
+            <el-table
+              :data="testItemPagedData"
+              element-loading-text="Loading"
+              border
+              fit
+              highlight-current-row
+              class="mt-2"
+            >
+              <el-table-column :label="$t('TestItem.Id')">
+                <template slot-scope="scope">
+                  {{ scope.row.id }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('general.Name')">
+                <template slot-scope="scope">
+                  {{ scope.row.name }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('TestItem.IsPass')">
+                <template slot-scope="scope">
+                  {{ scope.row.is_passed }}
+                </template>
+              </el-table-column>
+              <!-- <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200"> -->
+              <el-table-column :label="$t('general.Actions')" align="center" width="200">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="primary" @click="handleTestItemEdit(scope.$index, scope.row)">
+                    <i class="el-icon-edit" />
+                    {{ $t('general.Edit') }}
+                  </el-button>
+                  <el-popconfirm
+                    confirm-button-text="Delete"
+                    cancel-button-text="Cancel"
+                    icon="el-icon-info"
+                    icon-color="red"
+                    title="Are you sure?"
+                    @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
+                  >
+                    <el-button slot="reference" size="mini" type="danger">
+                      <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                    </el-button>
+                  </el-popconfirm>
+                </template>
+              </el-table-column>
+            </el-table>
+            <pagination
+              :total="testItemListTotal"
+              :page="testItemListQuery.page"
+              :limit="testItemListQuery.limit"
+              :page-sizes="[testItemListQuery.limit]"
+              :layout="'total, prev, pager, next'"
+              @pagination="onPagination"
+            />
+          </el-tab-pane>
+          <el-tab-pane :label="$t('TestValue.TestValue')" name="testValue">
+            <div>
+              <el-select v-model="selectTestItem" :placeholder="$t('TestValue.SelectTestItem')">
+                <el-option v-for="item in testItemList" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+              <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
+              <span class="newBtn">
+                <el-button type="success" @click="handleTestValueAdding">
+                  <i class="el-icon-plus" />
+                  {{ $t('TestValue.AddTestValue') }}
                 </el-button>
-              </el-popconfirm>
-            </template>
-          </el-table-column>
-        </el-table>
-        <pagination
-          :total="testValueListTotal"
-          :page="testValueListQuery.page"
-          :limit="testValueListQuery.limit"
-          :page-sizes="[testValueListQuery.limit]"
-          :layout="'total, prev, pager, next'"
-          @pagination="onPagination"
-        />
-      </el-tab-pane>
-    </el-tabs>
+              </span>
+              <el-input
+                v-model="testValueSearchData"
+                class="ob-search-input ob-shadow search-input mr-3"
+                :placeholder="$t('TestValue.SearchValue')"
+                style="width: 250px; float: right"
+              >
+                <i slot="prefix" class="el-input__icon el-icon-search" />
+              </el-input>
+            </div>
+            <el-table
+              :data="testValuePagedData"
+              element-loading-text="Loading"
+              border
+              fit
+              highlight-current-row
+              class="mt-2"
+            >
+              <el-table-column :label="$t('TestValue.Type')">
+                <template slot-scope="scope">
+                  {{ scope.row.type.label }}
+                </template>
+              </el-table-column>
+              <el-table-column :label="$t('TestValue.Location')">
+                <template slot-scope="scope">
+                  {{ scope.row.location.label }}
+                </template>
+              </el-table-column>
+              <el-table-column label="Key">
+                <template slot-scope="scope">
+                  {{ scope.row.key }}
+                </template>
+              </el-table-column>
+              <el-table-column label="Value">
+                <template slot-scope="scope">
+                  {{ scope.row.value }}
+                </template>
+              </el-table-column>
+              <!-- <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200"> -->
+              <el-table-column :label="$t('general.Actions')" align="center" width="200">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="primary" @click="handleTestValueEdit(scope.$index, scope.row)">
+                    <i class="el-icon-edit" />
+                    {{ $t('general.Edit') }}
+                  </el-button>
+                  <el-popconfirm
+                    confirm-button-text="Delete"
+                    cancel-button-text="Cancel"
+                    icon="el-icon-info"
+                    icon-color="red"
+                    title="Are you sure?"
+                    @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
+                  >
+                    <el-button slot="reference" size="mini" type="danger">
+                      <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                    </el-button>
+                  </el-popconfirm>
+                </template>
+              </el-table-column>
+            </el-table>
+            <pagination
+              :total="testValueListTotal"
+              :page="testValueListQuery.page"
+              :limit="testValueListQuery.limit"
+              :page-sizes="[testValueListQuery.limit]"
+              :layout="'total, prev, pager, next'"
+              @pagination="onPagination"
+            />
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
+    </el-row>
 
     <el-dialog
       :title="$t(`TestItem.${dialogStatusText}TestItem`)"
@@ -501,12 +501,3 @@ export default {
     </el-dialog>
   </div>
 </template>
-<style lang="scss" scoped>
-.clearfix {
-  clear: both;
-  .newBtn {
-    float: right;
-    padding-right: 6px;
-  }
-}
-</style>

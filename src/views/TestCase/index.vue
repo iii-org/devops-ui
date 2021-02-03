@@ -20,7 +20,7 @@ const formTemplate = {
 }
 
 export default {
-  name: 'APITestList',
+  name: 'APITestCase',
   components: { ProjectListSelector, Pagination },
   filters: {
     statusFilter(status) {
@@ -140,7 +140,7 @@ export default {
     onDialogClosed() {
       this.$nextTick(() => {
         this.$refs['testCaseForm'].resetFields()
-        this.form = formTemplate
+        this.testCaseForm = Object.assign({}, formTemplate)
       })
     },
     handleConfirm() {
@@ -185,7 +185,8 @@ export default {
     <div v-if="this.$route.meta.rolePage" class="role-Page">
       <div class="clearfix">
         <project-list-selector />
-        <span v-if="userRole === 'Engineer'" class="newBtn">
+        <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
+        <span class="newBtn">
           <el-button type="success" @click="handleAdding">
             <i class="el-icon-plus" />
             {{ $t('TestCase.AddTestCase') }}
@@ -214,7 +215,7 @@ export default {
             {{ scope.row.id }}
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="140">
+        <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="150">
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
@@ -229,7 +230,7 @@ export default {
             <span>{{ scope.row.description }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('TestCase.Method')" width="95">
+        <el-table-column align="center" :label="$t('TestCase.Method')" width="120">
           <template slot-scope="scope">
             {{ scope.row.data.method }}
           </template>
@@ -239,18 +240,19 @@ export default {
             {{ scope.row.data.url }}
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Actions')" min-width="270">
+        <el-table-column align="center" :label="$t('general.Actions')" width="350">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
               <i class="el-icon-document" />
               {{ $t('TestItem.TestItem') }}
             </el-button>
-            <el-button
+            <!-- <el-button
               v-if="userRole === 'Engineer'"
               size="mini"
               type="primary"
               @click="handleEdit(scope.$index, scope.row)"
-            >
+            > -->
+            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
               <i class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button>
@@ -262,7 +264,8 @@ export default {
               title="Are you sure?"
               @onConfirm="handleDelete(scope.$index, scope.row)"
             >
-              <el-button v-if="userRole === 'Engineer'" slot="reference" size="mini" type="danger">
+              <!-- <el-button v-if="userRole === 'Engineer'" slot="reference" size="mini" type="danger"> -->
+              <el-button slot="reference" size="mini" type="danger">
                 <i class="el-icon-delete" /> {{ $t('general.Delete') }}
               </el-button>
             </el-popconfirm>
