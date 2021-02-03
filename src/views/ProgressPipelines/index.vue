@@ -53,12 +53,7 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      const { repository_id: rid } = this.projectSelectedObject
-      if (!rid) {
-        this.testList = []
-        this.listLoading = false
-        return
-      }
+      const rid = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
       try {
         const res = await getPipelines(rid)
         const { data } = res
