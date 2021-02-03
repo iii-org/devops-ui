@@ -209,33 +209,35 @@ export default {
         default-expand-all
         :tree-props="{ children: 'children' }"
       >
-        <el-table-column :label="$t('Issue.Id')" min-width="250">
+        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span class="column-title" :class="isParentIssue(scope.row) ? 'ml-6' : ''">
-              <span class="text-success">{{ scope.row.id }}</span>
-              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="top-start">
-                <el-link
-                  :id="`link-issue-name-${scope.$index}`"
-                  class="ml-2 mr-2"
-                  type="primary"
-                  target="_blank"
-                  style="font-size: 16px"
-                  :underline="false"
-                  @click="handleEdit(scope.$index, scope.row)"
-                >
-                  {{ scope.row.issue_name }}
-                </el-link>
-              </el-tooltip>
-              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="top-start">
+            <span :class="isParentIssue(scope.row) ? 'ml-6' : ''">
+              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="bottom-start">
                 <el-button
                   v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
                   :id="`btn-add-sub-issue-${scope.$index}`"
-                  class="btn-sub"
+                  icon="el-icon-plus"
                   type="text"
-                  icon="el-icon-circle-plus-outline"
+                  circle
+                  plain
+                  size="mini"
                   @click="handleParent(scope.$index, scope.row, scope)"
                 />
               </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start">
+                <el-button
+                  :id="`link-issue-name-${scope.$index}`"
+                  class="mr-1"
+                  type="primary"
+                  circle
+                  plain
+                  size="mini"
+                  icon="el-icon-edit"
+                  @click="handleEdit(scope.$index, scope.row)"
+                />
+              </el-tooltip>
+              <span class="text-success mr-2">{{ scope.row.id }}</span>
+              <span class="font-weight-regular">{{ scope.row.issue_name }}</span>
             </span>
           </template>
         </el-table-column>
@@ -308,16 +310,3 @@ export default {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.column-title {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.btn-sub {
-  border: none;
-  font-size: 18px;
-  padding: 0px;
-}
-</style>
