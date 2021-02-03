@@ -85,6 +85,8 @@ export default {
     const validatePassword = (rule, value, callback) => {
       if (value.length > 0 && value.length < 8) {
         callback(new Error('The password can not be less than 8 characters'))
+      } else if (this.userPwdForm.old_password === value) {
+        callback(new Error('Your new password must be different from your old password.'))
       } else {
         callback()
       }
@@ -131,7 +133,7 @@ export default {
             message: 'Password is invalid.',
             trigger: 'blur'
           },
-          { validator: validatePassword, message: "Password can't be less than 8 characters." },
+          { validator: validatePassword, trigger: 'blur' },
           { required: true, message: 'Please input new password', trigger: 'blur' }
         ],
         userRepeatNewPwd: [
