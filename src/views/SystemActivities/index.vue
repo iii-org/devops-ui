@@ -1,6 +1,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getAllActivities } from '@/api/activities'
+import { formatTime } from '@/utils/index.js'
 
 export default {
   name: 'SystemActivities',
@@ -54,6 +55,9 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
     }
   }
 }
@@ -75,12 +79,12 @@ export default {
     <el-divider />
 
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" :label="$t('Activities.User')" min-width="30" prop="operator_name" />
-      <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="40" prop="action_type" />
-      <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="80" prop="action_parts" />
-      <el-table-column align="center" :label="$t('Activities.ActAt')" min-width="40">
+      <el-table-column align="center" :label="$t('Activities.User')" min-width="100" prop="operator_name" />
+      <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="150" prop="action_type" />
+      <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="250" prop="action_parts" />
+      <el-table-column align="center" :label="$t('Activities.ActAt')" width="190">
         <template slot-scope="scope">
-          {{ scope.row.act_at | YMDhmA }}
+          {{ myFormatTime(scope.row.act_at) }}
         </template>
       </el-table-column>
     </el-table>

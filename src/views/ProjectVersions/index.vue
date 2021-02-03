@@ -102,7 +102,7 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      }).then(async() => {
+      }).then(async () => {
         await deleteProjectVersion(this.projectSelectedId, row.id)
         this.$message({
           type: 'success',
@@ -151,11 +151,7 @@ export default {
           {{ $t('Version.AddVersion') }}
         </el-button>
       </span>
-      <el-input
-        v-model="searchData"
-        :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
+      <el-input v-model="searchData" :placeholder="$t('general.SearchName')" style="width: 250px; float: right">
         <i slot="prefix" class="el-input__icon el-icon-search" />
       </el-input>
     </div>
@@ -163,14 +159,23 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
       <el-table-column align="center" :label="$t('Version.Id')" min-width="70" prop="id" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="220" prop="name" />
-      <el-table-column align="center" :label="$t('Version.DueDate')" min-width="60" prop="due_date" />
+      <el-table-column align="center" :label="$t('Version.DueDate')" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.due_date }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('general.LastUpdateTime')" width="190">
+        <template slot-scope="scope">
+          {{ scope.row.updated_on | formatTime }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" min-width="60">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'open'" type="success" size="medium">{{ scope.row.status }}</el-tag>
           <el-tag v-else type="danger" size="medium">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" min-width="100">
+      <el-table-column align="center" :label="$t('general.Actions')" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />

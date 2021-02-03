@@ -151,9 +151,9 @@ export default {
       />
       <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" min-width="135" />
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" min-width="130" />
-      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" min-width="195">
+      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" width="190">
         <template slot-scope="scope">
-          <span class="ml-2">{{ scope.row.run_at | YMDhmA }}</span>
+          <span class="ml-2">{{ scope.row.run_at | UTCtoLocalTime }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" min-width="110">

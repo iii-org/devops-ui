@@ -119,23 +119,23 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
-      <el-table-column align="center" :label="$t('User.Account')" min-width="70" prop="login" />
-      <el-table-column align="center" :label="$t('general.Name')" min-width="70" prop="name" />
-      <el-table-column align="center" label="Email" min-width="90" prop="email" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" min-width="55">
+    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+      <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
+      <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
+      <el-table-column align="center" label="Email" prop="email" min-width="250" />
+      <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
         <template slot-scope="scope">
-          {{ scope.row.create_at.split('T')[0] }}
+          {{ scope.row.create_at | formatTime }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('User.Phone')" min-width="60" prop="phone" />
-      <el-table-column align="center" :label="$t('general.Status')" min-width="50">
+      <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
+      <el-table-column align="center" :label="$t('general.Status')" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'enable'" type="finish" size="small">{{ scope.row.status }}</el-tag>
           <el-tag v-else-if="scope.row.status === 'disable'" type="danger" size="small">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" min-width="100">
+      <el-table-column align="center" :label="$t('general.Actions')" width="210">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
             <i class="el-icon-edit" />

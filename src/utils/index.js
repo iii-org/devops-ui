@@ -1,3 +1,4 @@
+import moment from 'moment'
 /**
  * Created by PanJiaChen on 16/11/18.
  */
@@ -73,16 +74,17 @@ export function formatTime(time, option) {
     return 'Just Now'
   } else if (diff < 3600) {
     // less 1 hour
-    return Math.ceil(diff / 60) + 'mins ago'
+    return Math.ceil(diff / 60) + ' mins ago'
   } else if (diff < 3600 * 24) {
-    return Math.ceil(diff / 3600) + 'hrs ago'
+    return Math.ceil(diff / 3600) + ' hrs ago'
   } else if (diff < 3600 * 24 * 2) {
     return '1 day ago'
   }
   if (option) {
     return parseTime(time, option)
   } else {
-    return d.toLocaleString()
+    // return d.toLocaleString()
+    return moment(d).format('YYYY-MM-DD HH:mm:ss')
   }
 }
 

@@ -107,7 +107,13 @@ export default {
         </el-table-column>
         <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="100" />
         <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="100" />
-        <el-table-column align="center" :label="$t('Postman.StartTime')" prop="run_at" width="260" />
+        <el-table-column align="center" :label="$t('Postman.StartTime')" width="190">
+          <template slot-scope="scope">
+            <span>
+              {{ scope.row.run_at | UTCtoLocalTime }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="190">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" plain @click="handleClick('ui', scope.row.id)">

@@ -3,6 +3,8 @@ import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getHarborRepoList, editHarborRepo, deleteHarborRepo, getHarborRepoStorageSummary } from '@/api/harbor'
+import { formatTime } from '@/utils/index.js'
+
 const formTemplate = {
   name: '',
   due_date: '',
@@ -174,6 +176,9 @@ export default {
         this.$refs['form'].resetFields()
         this.form = formTemplate
       })
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
     }
   }
 }
@@ -212,9 +217,8 @@ export default {
           </el-col>
         </el-row>
       </el-card>
-      <div />
       <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
-        <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
+        <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="150">
           <template slot-scope="scope">
             <el-link
               type="primary"
@@ -227,7 +231,12 @@ export default {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('ProjectResource.Artifacts')" :show-overflow-tooltip="true">
+        <el-table-column
+          :label="$t('ProjectResource.Artifacts')"
+          :show-overflow-tooltip="true"
+          align="center"
+          width="140"
+        >
           <template slot-scope="scope">
             <router-link
               :to="{
@@ -240,22 +249,22 @@ export default {
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column label="pull">
+        <el-table-column label="pull" align="center" width="140">
           <template slot-scope="scope">
             <span>{{ scope.row.pull_count }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Description')">
+        <el-table-column :label="$t('general.Description')" min-width="200">
           <template slot-scope="scope">
             <span>{{ scope.row.description }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.LastUpdateTime')" :show-overflow-tooltip="true" align="center">
+        <el-table-column :label="$t('general.LastUpdateTime')" align="center" width="190">
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time | YMDhmA }}</span>
+            <span>{{ myFormatTime(scope.row.update_time) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
+        <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="200">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
               <i class="el-icon-edit" />

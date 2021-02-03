@@ -254,9 +254,9 @@ export default {
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.CreateTime')" min-width="80">
+      <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
         <template slot-scope="scope">
-          {{ scope.row.created_on | relativeTime }}
+          {{ scope.row.created_on | formatTime }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="240">

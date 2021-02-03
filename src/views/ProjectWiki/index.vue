@@ -5,7 +5,6 @@ import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import EditorMD from '@/components/Editormd'
 import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
-import { formatTime } from '@/utils/index.js'
 
 export default {
   name: 'ProjectWiki',
@@ -114,9 +113,6 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
-    },
     async handleEdit(idx, row) {
       this.listLoading = true
       this.drawerTitle = 'Edit'
@@ -223,12 +219,12 @@ export default {
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
       <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
         <template slot-scope="scope">
-          <span>{{ myFormatTime(scope.row.created_on) }}</span>
+          <span>{{ scope.row.created_on | formatTime }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.UpdateTime')" width="190">
         <template slot-scope="scope">
-          <span>{{ myFormatTime(scope.row.updated_on) }}</span>
+          <span>{{ scope.row.updated_on | formatTime }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="300">

@@ -86,7 +86,7 @@ export default {
       <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="80" prop="action_parts" />
       <el-table-column align="center" :label="$t('Activities.ActAt')" min-width="40">
         <template slot-scope="scope">
-          {{ scope.row.act_at | YMDhmA }}
+          {{ scope.row.act_at | UTCtoLocalTime }}
         </template>
       </el-table-column>
     </el-table>

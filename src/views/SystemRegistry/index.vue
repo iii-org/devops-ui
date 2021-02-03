@@ -1,6 +1,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getSystemRegistries, addSystemRegistry, deleteSystemRegistry } from '@/api/maintenance'
+import { formatTime } from '@/utils/index.js'
 
 const defaultFormData = () => ({
   name: '',
@@ -105,6 +106,9 @@ export default {
         this.$refs['form'].resetFields()
         this.formData = defaultFormData()
       })
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
     }
   }
 }
@@ -142,12 +146,12 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Maintenance.RegistryName')" prop="name" min-width="150" />
       <el-table-column label="Registries" prop="registries" min-width="250" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="200">
+      <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="190">
         <template slot-scope="scope">
-          <span>{{ scope.row.created | YMDhmA }}</span>
+          <span>{{ myFormatTime(scope.row.created) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="140">
+      <el-table-column align="center" :label="$t('general.Actions')" width="120">
         <template slot-scope="scope">
           <el-popconfirm
             confirm-button-text="Delete"

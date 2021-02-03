@@ -1,6 +1,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getSystemSecrets, addSystemSecret, deleteSystemSecret } from '@/api/maintenance'
+import { formatTime } from '@/utils/index.js'
 
 const defaultFormData = () => ({
   name: '',
@@ -117,6 +118,9 @@ export default {
         this.$refs['form'].resetFields()
         this.formData = defaultFormData()
       })
+    },
+    myFormatTime(time) {
+      return formatTime(new Date(time))
     }
   }
 }
@@ -154,9 +158,9 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Maintenance.SecretName')" prop="name" min-width="150" />
       <el-table-column label="Keys" prop="keys" min-width="250" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="200">
+      <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="190">
         <template slot-scope="scope">
-          <span>{{ scope.row.created | YMDhmA }}</span>
+          <span>{{ myFormatTime(scope.row.created) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="120">
