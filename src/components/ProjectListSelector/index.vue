@@ -36,10 +36,15 @@ export default {
 </script>
 
 <template>
-  <div>
-    <el-select v-model="projectValue" placeholder="select a project" @change="onProjectChange">
+  <el-col class="mr-4" :xs="10" :sm="8" :md="7" :lg="6" :xl="4">
+    <el-select
+      v-model="projectValue"
+      placeholder="select a project"
+      style="width: 100%"
+      @change="onProjectChange"
+    >
       <el-option v-for="item in userProjectList" :key="item.id" :label="item.display" :value="item.id" />
     </el-select>
     <slot />
-  </div>
+  </el-col>
 </template>
