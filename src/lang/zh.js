@@ -147,10 +147,11 @@ export default {
     Upload: '上傳',
     Id: '檔案編號',
     Download: '下載',
-    DropFileHereOrClickUpload: '請將檔案拖拉至此或點擊上傳',
+    SelectFileOrDragHere: '請點擊選擇檔案或將檔案拖曳至此',
     UploadBtn: '選擇檔案',
     InputName: '請輸入，若未輸入預設為上傳檔案名稱',
-    File: '檔案'
+    File: '檔案',
+    UploadAndSave: '上傳檔案並儲存'
   },
   Version: {
     AddVersion: '新增版本',
@@ -179,7 +180,7 @@ export default {
     EndDate: '結束日期',
     SelectDate: '選擇日期',
     SearchNameOrAssignee: '搜尋名稱或受分配者',
-    Save: '修改議題',
+    Save: '儲存',
     Comment: '備註',
     AddComment: '新增備註',
     Flow: '流程',

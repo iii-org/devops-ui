@@ -314,7 +314,7 @@ export default {
             :on-change="handleChange"
           >
             <i class="el-icon-upload" />
-            <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
+            <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
           </el-upload>
         </el-form-item>
 

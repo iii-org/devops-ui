@@ -147,10 +147,11 @@ export default {
     Upload: 'Upload',
     Id: 'Id',
     Download: 'Download',
-    DropFileHereOrClickUpload: 'Drop File Here Or Click Upload',
+    SelectFileOrDragHere: 'Select File or drag it here',
     UploadBtn: 'Select File',
     InputName: 'Enter Name or Use Upload File Name',
-    File: 'File'
+    File: 'File',
+    UploadAndSave: 'Upload File and Save'
   },
   Version: {
     AddVersion: 'Add Version',

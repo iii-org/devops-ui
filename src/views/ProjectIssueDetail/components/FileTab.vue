@@ -1,7 +1,8 @@
 <script>
-import { deleteIssueFile } from '@/api/issue'
+import { updateIssue, deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
 import { Message } from 'element-ui'
+import { fileExtension } from '@/utils/extension'
 
 export default {
   name: 'FileTab',
@@ -17,8 +18,14 @@ export default {
   },
 
   data: () => ({
-    isLoading: false
+    isLoading: false,
+    isUploading: false,
+    uploadFileList: []
   }),
+
+  mounted() {
+    this.extension = fileExtension()
+  },
 
   methods: {
     async handleDownload(row) {
@@ -40,6 +47,49 @@ export default {
       })
       this.isLoading = false
       this.$emit('updated')
+    },
+    async handleChange(file, fileList) {
+      if (this.extension[file.raw.type] === undefined) {
+        this.$message({
+          message: `Unable to upload a file: This file type is not supported`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
+        this.$refs.uploadFile.clearFiles()
+      } else if (file.size / 1024 > 20480) {
+        this.$message({
+          message: `This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`,
+          type: 'warning',
+          duration: 10 * 1000
+        })
+        this.$refs.uploadFile.clearFiles()
+      } else {
+        this.uploadFileList = fileList
+      }
+    },
+    async uploadFile() {
+      const vm = this
+      this.isUploading = true
+      const form = new FormData()
+      this.uploadFileList
+        .reduce(function(prev, curr) {
+          return prev.then(() => {
+            form.delete('upload_file')
+            form.append('upload_file', curr.raw, curr.raw.name)
+            return updateIssue(vm.issueId, form)
+          })
+        }, Promise.resolve([]))
+        .then(() => {
+          this.$refs.uploadFile.clearFiles()
+          Message({
+            message: 'update successful',
+            type: 'success',
+            duration: 1 * 1000
+          })
+          this.isUploading = false
+          this.uploadFileList = []
+          vm.$emit('updated')
+        })
     }
   }
 }
@@ -48,16 +98,15 @@ export default {
 <template>
   <div>
     <el-table
-      v-loading="isLoading"
       :data="issueFile"
       element-loading-text="Loading"
       border
       fit
       highlight-current-row
       :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-      class="mt-2"
+      class="my-3"
     >
-      <el-table-column :label="$t('general.Name')" align="center" min-width="120">
+      <el-table-column :label="$t('general.Name')" align="center" show-overflow-tooltip min-width="150">
         <template slot-scope="scope">
           <span v-if="scope.row.filename">
             {{ scope.row.filename }}
@@ -65,24 +114,59 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.CreateTime')" align="center" width="180">
+      <el-table-column :label="$t('general.CreateTime')" align="center" width="190">
         <template slot-scope="scope">
-          {{ new Date(scope.row.created_on).toLocaleString() }}
+          {{ scope.row.created_on | formatTime }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.Actions')" align="center" width="230">
+      <el-table-column :label="$t('general.Actions')" align="center" width="250">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleDownload(scope.row)">
-            <i class="el-icon-download" />
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-download"
+            :loading="isLoading"
+            @click="handleDownload(scope.row)"
+          >
             {{ $t('File.Download') }}
           </el-button>
-          <el-button type="danger" size="mini" @click="deleteIssueFile(scope.row)">
-            <i class="el-icon-delete" />
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            :loading="isLoading"
+            @click="deleteIssueFile(scope.row)"
+          >
             {{ $t('general.Delete') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-upload
+      ref="uploadFile"
+      v-loading="isUploading"
+      class="upload-file2 mb-2"
+      :auto-upload="false"
+      :on-change="handleChange"
+      action
+      multiple
+      drag
+    >
+      <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
+      <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
+    </el-upload>
+    <div class="text-right">
+      <el-button
+        v-show="uploadFileList.length > 0"
+        size="mini"
+        :loading="isUploading"
+        type="success"
+        @click="uploadFile"
+      >
+        {{ $t('File.UploadAndSave') }}
+      </el-button>
+    </div>
   </div>
 </template>

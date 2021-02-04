@@ -27,6 +27,10 @@ export default {
       type: String,
       default: ''
     },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
     issueFormRef: {
       type: Object,
       default: () => {}
@@ -35,7 +39,6 @@ export default {
 
   data: () => ({
     issueDescription: '',
-    isLoading: true,
     isDeleting: false,
 
     issueForm: {
@@ -104,7 +107,6 @@ export default {
 
   methods: {
     fetchData() {
-      this.isLoading = true
       Promise.all([
         getProjectAssignable(this.projectId),
         getProjectVersion(this.projectId),
@@ -135,7 +137,6 @@ export default {
         this.parentIssue = issueList.find(item => item.id === this.parentId) || {}
         this.relativeIssueList = this.createRelativeList(issueListByTree)
         this.updateChildrenList()
-        this.isLoading = false
       })
     },
     async handleChange(file, fileList) {
@@ -168,7 +169,6 @@ export default {
           Object.keys(data).forEach(objKey => {
             form.append(objKey, data[objKey])
           })
-          this.isLoading = true
           const issueId = this.issueId
           if (this.uploadFileList && this.uploadFileList.length > 0) {
             // use one by one edit issue to upload file
@@ -182,23 +182,23 @@ export default {
               }, Promise.resolve([]))
               .then(() => {
                 this.$refs['upload'].clearFiles()
-                this.isLoading = false
                 Message({
                   message: 'update successful',
                   type: 'success',
                   duration: 1 * 1000
                 })
+                this.$emit('updated')
               })
           } else {
-            await updateIssue(this.issueId, form)
-            this.isLoading = false
-            Message({
-              message: 'update successful',
-              type: 'success',
-              duration: 1 * 1000
+            updateIssue(this.issueId, form).then(() => {
+              this.$emit('updated')
+              Message({
+                message: 'update successful',
+                type: 'success',
+                duration: 1 * 1000
+              })
             })
           }
-          this.$emit('updated')
         } else {
           return false
         }
@@ -246,22 +246,19 @@ export default {
 <template>
   <div>
     <div slot="header">
-      <el-row>
-        <el-col>
+      <el-row :gutter="10">
+        <el-col :span="24">
           <el-link :href="issueLink" target="_blank" type="primary" :underline="false">
             <i class="el-icon-link" /> Redmine
           </el-link>
         </el-col>
-      </el-row>
-      <el-row type="flex" justify="space-between">
-        <el-col>
+        <el-col :span="12">
           <div class="text-h5">{{ $t('Issue.Issue') }} #{{ issueId }}</div>
         </el-col>
-        <el-col>
+        <el-col :span="12">
           <el-button
             class="mr-1"
             size="small"
-            icon="el-icon-edit"
             type="success"
             :loading="isLoading || isDeleting"
             @click="handleSaveDetail"
@@ -283,17 +280,16 @@ export default {
               type="danger"
               :loading="isLoading || isDeleting"
               icon="el-icon-delete"
+              plain
             >
               {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
         </el-col>
-      </el-row>
-      <el-row>
-        <el-col class="text-body-1">
+        <el-col :span="24" class="text-body-1">
           {{ $t('Issue.AddBy', { user: author }) }}
         </el-col>
-        <el-col>{{ issueDescription }}</el-col>
+        <el-col :span="24">{{ issueDescription }}</el-col>
       </el-row>
     </div>
 
@@ -311,13 +307,11 @@ export default {
             </el-select>
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('general.Title')" prop="subject">
             <el-input v-model="issueForm.subject" style="width: 100%" />
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('Version.Version')" prop="fixed_version_id">
             <el-select v-model="issueForm.fixed_version_id" style="width: 100%" clearable>
@@ -331,7 +325,6 @@ export default {
             </el-select>
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('general.Type')" prop="tracker_id">
             <el-select v-model="issueForm.tracker_id" style="width: 100%">
@@ -339,7 +332,6 @@ export default {
             </el-select>
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('general.Status')" prop="status_id">
             <el-select v-model="issueForm.status_id" style="width: 100%" :disabled="isParentIssueClosed">
@@ -352,7 +344,6 @@ export default {
             </el-select>
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('Issue.Priority')" prop="priority_id">
             <el-select v-model="issueForm.priority_id" style="width: 100%" :disabled="childrenIssueList.length > 0">
@@ -360,20 +351,17 @@ export default {
             </el-select>
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('Issue.Estimate')" prop="estimated_hours">
             <!--<el-input v-model="issueForm.estimated_hours" placeholder="please input hours"/>-->
             <el-input-number v-model="issueForm.estimated_hours" :min="0" :max="100" style="width: 100%" />
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('Issue.DoneRatio')" prop="done_ratio">
             <el-input-number v-model="issueForm.done_ratio" :min="0" :max="100" style="width: 100%" />
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('Issue.StartDate')" prop="start_date">
             <el-date-picker
@@ -386,7 +374,6 @@ export default {
             />
           </el-form-item>
         </el-col>
-
         <el-col :span="12">
           <el-form-item style="margin-bottom:10px" :label="$t('Issue.EndDate')" prop="due_date">
             <el-date-picker
@@ -398,14 +385,12 @@ export default {
             />
           </el-form-item>
         </el-col>
-
         <el-col :span="24">
           <el-form-item style="margin-bottom:10px" :label="$t('general.Description')" prop="description">
             <el-input v-model="issueForm.description" type="textarea" rows="4" placeholder="please input description" />
           </el-form-item>
         </el-col>
-
-        <el-col :span="24">
+        <!-- <el-col :span="24">
           <el-form-item style="margin-bottom:10px" :label="$t('File.Upload')" prop="upload">
             <el-upload
               ref="upload"
@@ -417,10 +402,10 @@ export default {
               multiple
             >
               <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
-              <div class="el-upload__text">{{ $t('File.DropFileHereOrClickUpload') }}</div>
+              <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
             </el-upload>
           </el-form-item>
-        </el-col>
+        </el-col> -->
       </el-row>
     </el-form>
   </div>

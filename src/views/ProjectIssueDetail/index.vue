@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       issueDescription: '',
-      activeName: 'comment',
+      activeName: 'file',
       issueId: 0,
       projectId: 0,
       author: '',
@@ -42,7 +42,8 @@ export default {
       },
 
       parentId: null,
-      issueLink: ''
+      issueLink: '',
+      isLoading: false
     }
   },
 
@@ -61,6 +62,7 @@ export default {
 
   methods: {
     fetchData() {
+      this.isLoading = true
       Promise.all([
         getIssue(this.issueId),
         getFlowType(),
@@ -113,6 +115,7 @@ export default {
         issueDetail.description === null
           ? (this.formData.description = '')
           : (this.formData.description = issueDetail.description)
+        this.isLoading = false
       })
     }
   }
@@ -125,6 +128,7 @@ export default {
       <el-card shadow="never">
         <IssueForm
           v-if="projectId !== 0"
+          :is-loading="isLoading"
           :issue-id="issueId"
           :project-id="projectId"
           :parent-id="parentId"
@@ -137,7 +141,7 @@ export default {
     </el-col>
 
     <el-col :span="14">
-      <el-tabs v-model="activeName" type="border-card">
+      <el-tabs v-model="activeName" v-loading="isLoading" type="border-card">
         <el-tab-pane :label="$t('Issue.Comment')" name="comment">
           <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="fetchData" />
         </el-tab-pane>
