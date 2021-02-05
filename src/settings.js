@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'DevOps',
+  title: 'III DevOps',
 
   /**
    * @type {boolean} true | false
