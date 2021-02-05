@@ -231,14 +231,14 @@ export default {
         data: {
           display: this.form.display,
           description: this.form.description,
-          disabled: this.form.disabled,
-          user_id: this.userId
+          disabled: this.form.disabled
+          // user_id: this.userId
         }
       }
       const res = await this['projects/editProject'](dataBody)
       this.confirmLoading = false
       if (res.message !== 'success') return
-      console.log(res)
+      // console.log(res)
       Message({
         message: 'Project update successfully',
         type: 'success',
