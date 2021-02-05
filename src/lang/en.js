@@ -23,6 +23,7 @@ export default {
     'Dev Branch': 'Dev Branch',
     'Git Graph': 'Git Graph',
     Pipelines: 'Pipelines',
+    'Dev Environment': 'Dev Environment',
 
     'Auto Testing': 'Auto Testing',
     Postman: 'Postman',
@@ -79,6 +80,7 @@ export default {
     Email: 'Email',
     Creator: 'Creator',
     CreateTime: 'Create Time',
+    StartTime: 'Start Time',
     UpdateTime: 'Update Time',
     PleaseInput: 'Please Input',
     Close: 'Close',
@@ -308,6 +310,13 @@ export default {
     CommitMessage: 'Commit Message',
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message'
+  },
+  ProcessDevEnvironment: {
+    Branch: 'Branch',
+    Deployment: 'Deployment',
+    Container: 'Container',
+    Image: 'Image',
+    'Service(Url)': 'Service(Url)'
   },
   ProjectResource: {
     Usage: 'Usage',

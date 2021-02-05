@@ -23,6 +23,7 @@ export default {
     'Dev Branch': '開發分支',
     'Git Graph': '開發線圖',
     Pipelines: 'Pipeline 紀錄',
+    'Dev Environment': '測試環境',
 
     'Auto Testing': '自動測試結果',
     Postman: 'API 測試(Postman)',
@@ -79,6 +80,7 @@ export default {
     Email: '信箱',
     Creator: '建立者',
     CreateTime: '建立時間',
+    StartTime: '開始時間',
     UpdateTime: '修改時間',
     PleaseInput: '請輸入',
     Close: '關閉',
@@ -306,6 +308,13 @@ export default {
     CommitMessage: '上傳訊息',
     LastUpdateTime: '最後更新',
     SearchCommitMessage: '搜尋 上傳訊息'
+  },
+  ProcessDevEnvironment: {
+    Branch: '分支',
+    Deployment: 'Deployment',
+    Container: 'Container',
+    Image: 'Image',
+    'Service(Url)': 'Service(Url)'
   },
   ProjectResource: {
     Usage: '使用量',

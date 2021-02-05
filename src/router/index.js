@@ -268,6 +268,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult/index'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'dev-environment',
+        name: 'DevEnvironment',
+        component: () => import('@/views/ProgressDevEnvironment/index'),
+        meta: { title: 'Dev Environment', roles: ['Project Manager', 'Administrator'] }
       }
       // {
       //   path: 'project-gantt',
