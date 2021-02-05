@@ -330,6 +330,11 @@ export default {
   ProjectUsage: {
     SearchPods: '搜尋 Pods'
   },
+  DeploymentList: {
+    DeployName: 'Deploy 名稱',
+    Container: 'Container',
+    Image: 'Image'
+  },
   Postman: {
     Id: '編號',
     Branch: '分支',

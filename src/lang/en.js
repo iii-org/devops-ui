@@ -333,6 +333,11 @@ export default {
   ProjectUsage: {
     SearchPods: 'Search Pods'
   },
+  DeploymentList: {
+    DeployName: 'Deploy name',
+    Container: 'Container',
+    Image: 'Image'
+  },
   Postman: {
     Id: 'Id',
     Branch: 'Branch',
