@@ -261,6 +261,8 @@ export default {
     NameIdentifier: 'Name / Identifier',
     Name: 'Name',
     Identifier: 'Identifier',
+    Template: 'Template',
+    Version: 'Version',
     Status: 'Status',
     Progress: 'Progress',
     UpdateTime: 'Update Time',

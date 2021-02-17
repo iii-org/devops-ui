@@ -261,6 +261,8 @@ export default {
     NameIdentifier: '專案名稱/ID',
     Name: '專案名稱',
     Identifier: 'ID',
+    Template: '開發範本',
+    Version: '版本',
     Status: '專案狀態',
     Progress: '專案工作進度',
     UpdateTime: '最近更新時間',

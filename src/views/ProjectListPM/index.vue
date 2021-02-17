@@ -1,22 +1,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import { formatTime } from '../../utils/index.js'
-import { Message } from 'element-ui'
-
-const formTemplate = {
-  name: '',
-  display: '',
-  code: '',
-  amount: 0,
-  ppm: 0,
-  disabled: false,
-  description: ''
-}
+import { CreateProjectDialog, DeleteProjectDialog } from './components'
 
 export default {
   name: 'ProjectListPM',
-  components: { Pagination },
+  components: { Pagination, CreateProjectDialog, DeleteProjectDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -28,9 +17,6 @@ export default {
     }
   },
   data: () => ({
-    dialogVisible: false,
-    dialogDelete: false,
-    dialogStatus: 1,
     listLoading: true,
     listQuery: {
       page: 1,
@@ -38,28 +24,12 @@ export default {
     },
     listTotal: 0,
     searchData: '',
-    form: formTemplate,
-    rules: {
-      name: [
-        { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-        {
-          required: true,
-          pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-          message: 'Identifier is invalid.',
-          trigger: 'blur'
-        }
-      ],
-      display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
-    },
-    statusW: '50%',
-    confirmLoading: false,
-    deleteProject: {},
-    deleteProjectID: '',
-    placeholderText: '',
-    loadingDelete: ''
+    dialogStatus: 1,
+    editProject: {},
+    deleteProject: { id: '', name: '' }
   }),
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal', 'userId', 'userProjectList']),
+    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList']),
     pagedData() {
       const listData = this.projectList.filter(data => {
         if (this.searchData === '' || data.display.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -70,16 +40,6 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return listData.slice(start, end)
-    },
-    dialogStatusText() {
-      switch (this.dialogStatus) {
-        case 1:
-          return 'Add'
-        case 2:
-          return 'Edit'
-        default:
-          return 'Null'
-      }
     }
   },
   watch: {
@@ -91,164 +51,41 @@ export default {
     this.loadList()
   },
   methods: {
-    ...mapActions([
-      'projects/queryProjectList',
-      'projects/addNewProject',
-      'projects/editProject',
-      'projects/deleteProject'
-    ]),
-    ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject']),
+    ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject', 'queryProjectList']),
     async loadList() {
       this.listLoading = true
-      await this['projects/queryProjectList']()
+      await this.queryProjectList()
       this.listLoading = false
     },
-    handleEdit(idx, row) {
-      this.dialogVisible = true
-      this.dialogStatus = 2
-      this.form = Object.assign({}, this.form, row)
-    },
-    handleDelete(index, row) {
-      this.dialogDelete = true
-      this.deleteProject['id'] = row.id
-      this.deleteProject['name'] = row.name
-      this.placeholderText = 'Please Input ' + this.deleteProject.name
-    },
-    async handleDeleteModal() {
-      if (this.deleteProject.name !== this.deleteProjectID) {
-        return this.$message({
-          message: 'Please input project name correctly.',
-          type: 'error'
-        })
-      } else {
-        try {
-          this.loadingDelete = this.$loading({
-            target: '.el-dialog',
-            text: 'Loading'
-          })
-          const res = await this['projects/deleteProject'](this.deleteProject['id'])
-          if (res.message !== 'success') {
-            throw new Error()
-          }
-          this.$message({
-            type: 'success',
-            message: 'Delete Succeed'
-          })
-          this.loadingDelete.close()
-          this.dialogDelete = false
-          this.loadList()
-        } catch (err) {
-          this.loadingDelete.close()
-          console.error(err)
-        }
-      }
-    },
     handleAdding() {
-      this.dialogVisible = true
+      this.$refs.createProjectDialog.showDialog = true
       this.dialogStatus = 1
-      this.form.name = ''
-      this.form.display = ''
-      this.form.description = ''
-      this.form.disabled = false
     },
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'info'
-      return success === total ? 'success' : 'danger'
+    handleEdit(row) {
+      this.$refs.createProjectDialog.showDialog = true
+      this.dialogStatus = 2
+      this.editProject = Object.assign(
+        {},
+        {
+          id: row.id,
+          name: row.name,
+          display: row.display,
+          description: row.description,
+          disabled: row.disabled
+        }
+      )
     },
-    testResults(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'No Test'
-      return success + ' / ' + total
+    handleDelete(row) {
+      this.$refs.deleteProjectDialog.showDialog = true
+      this.deleteProject.id = row.id
+      this.deleteProject.name = row.name
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    returnLatestTag(row) {
-      const { tags } = row
-      if (!tags || tags.length === 0) return 'No Tag'
-      return tags[0].name
-    },
-    onDialogClosed() {
-      this.$nextTick(() => {
-        if (this.dialogStatus !== 2) {
-          this.$refs['thisForm'].resetFields()
-          this.form = formTemplate
-        }
-      })
-    },
-    onDialogClosedDelete() {
-      this.deleteProjectID = ''
-    },
     returnProgress(current, total) {
       const percent = Math.round((current / total) * 100)
       return percent
-    },
-    getLoadingBarClass(quality) {
-      var loadClass
-      if (quality <= 33) {
-        loadClass = 'status-danger'
-      } else if (quality <= 66) {
-        loadClass = 'status-normal'
-      } else if (quality <= 100) {
-        loadClass = 'status-full'
-      }
-
-      return 'loading-box ' + loadClass
-    },
-    async handleConfirm() {
-      const vm = this
-      this.$refs.thisForm.validate(async function(valid) {
-        if (!valid) {
-          return
-        }
-        //   this.dialogVisible = false
-        if (vm.dialogStatus === 2) return vm.handleConfirmEdit()
-        vm.confirmLoading = true
-        const dataBody = {
-          name: vm.form.name,
-          display: vm.form.display,
-          description: vm.form.description,
-          disabled: vm.form.disabled
-        }
-        const res = await vm['projects/addNewProject'](dataBody)
-        vm.confirmLoading = false
-        if (res.message !== 'success') return
-        // console.log(res)
-        Message({
-          message: 'Project added successfully',
-          type: 'success',
-          duration: 1 * 1000
-        })
-        vm.dialogVisible = false
-        vm.loadList()
-      })
-    },
-    async handleConfirmEdit() {
-      this.confirmLoading = true
-      const dataBody = {
-        pId: this.form.id,
-        data: {
-          display: this.form.display,
-          description: this.form.description,
-          disabled: this.form.disabled
-          // user_id: this.userId
-        }
-      }
-      const res = await this['projects/editProject'](dataBody)
-      this.confirmLoading = false
-      if (res.message !== 'success') return
-      // console.log(res)
-      Message({
-        message: 'Project update successfully',
-        type: 'success',
-        duration: 1 * 1000
-      })
-      this.dialogVisible = false
-      this.loadList()
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     },
     handleClick(id) {
       localStorage.setItem('project', id)
@@ -261,17 +98,14 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <span class="newBtn">
-        <el-button type="success" @click="handleAdding">
-          <i class="el-icon-plus" />
-          {{ $t('Project.AddProject') }}
-        </el-button>
-      </span>
+    <div class="d-flex justify-space-between">
+      <el-button type="success" icon="el-icon-plus" @click="handleAdding">
+        {{ $t('Project.AddProject') }}
+      </el-button>
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
-        style="width: 250px; float: right"
+        class="ob-search-input ob-shadow search-input"
+        style="width: 250px"
         :placeholder="$t('Project.SearchProjectName')"
       >
         <i slot="prefix" class="el-input__icon el-icon-search" />
@@ -301,31 +135,16 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Progress')" width="240">
         <template slot-scope="scope">
-          {{ scope.row.closed_count + '/' + scope.row.total_count }}
+          {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
           <span class="status-bar-track">
             <span
               class="status-bar"
-              :style="'width:' + returnProgress(scope.row.closed_count, scope.row.total_count) + '%'"
+              :style="`width: ${returnProgress(scope.row.closed_count, scope.row.total_count)}%`"
             />
           </span>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Quality" min-width="100px">
-        <template slot-scope="scope">
-          <div class="d-flex">
-            <span class="quality-text">{{ '87%' }}</span>
-            <span v-bind:class="getLoadingBarClass(87)">
-              <span class="loading-bar"></span>
-              <span class="loading-bar"></span>
-              <span class="loading-bar"></span>
-              <span class="loading-bar"></span>
-              <span class="loading-bar"></span>
-              <span class="loading-bar"></span>
-            </span>
-          </div>
-        </template>
-      </el-table-column> -->
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" width="140">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" width="170">
         <template slot-scope="scope">
           {{ scope.row.updated_time | relativeTime }}
         </template>
@@ -375,14 +194,12 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="200">
+      <el-table-column :label="$t('general.Actions')" align="center" width="210">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
+          <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
             {{ $t('general.Edit') }}
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" />
+          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">
             {{ $t('general.Delete') }}
           </el-button>
         </template>
@@ -396,97 +213,13 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <router-view />
-    <el-dialog
-      :title="`${$t('general.Delete')} ${$t('route.Projects')}`"
-      :visible.sync="dialogDelete"
-      width="40%"
-      :close-on-click-modal="false"
-      @closed="onDialogClosedDelete"
-    >
-      <p>{{ $t('Project.deleteProjectConfirmText') }}</p>
-      <p>
-        {{ $t('Project.PleaseType') }}
-        <strong>{{ deleteProject.name }}</strong>
-        {{ $t('Project.AndThen') }}
-      </p>
-      <el-input v-model="deleteProjectID" :placeholder="placeholderText" />
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogDelete = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="danger" @click="handleDeleteModal">{{ $t('general.Delete') }}</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      :title="$t(`Project.${dialogStatusText}Project`)"
-      :visible.sync="dialogVisible"
-      width="50%"
-      :close-on-click-modal="false"
-      @closed="onDialogClosed"
-    >
-      <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
-        <el-form-item v-if="dialogStatus === 2" :label="$t('Project.Identifier')">
-          <el-input v-model="form.name" :disabled="true" />
-        </el-form-item>
-        <el-form-item :label="$t('Project.Name')" prop="display">
-          <el-input v-model="form.display" />
-        </el-form-item>
-        <el-form-item v-if="dialogStatus === 1" :label="$t('Project.Identifier')" prop="name">
-          <el-input v-model="form.name" />
-          <div v-if="dialogStatus === 1" style="word-break: keep-all;margin-top: 5px;">
-            {{ $t('Project.IdRule') }}
-          </div>
-        </el-form-item>
-        <!-- <br v-if="dialogStatus === 1"> -->
 
-        <!-- <el-form-item label="Project Code" prop="code">
-          <el-input v-model="form.code"></el-input>
-        </el-form-item> -->
-        <!-- <el-form-item v-if="dialogStatus === 2" label="Project Owner" prop="owner">
-          <el-input v-model="form.owner"></el-input>
-        </el-form-item> -->
-        <!-- <el-col :span="11">
-          <el-form-item label="Project Amount" prop="amount">
-            <el-input type="number" v-model="form.amount"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="2">&nbsp;</el-col>
-        <el-col :span="11">
-          <el-form-item label="Human Resource/Month" prop="ppm">
-            <el-input type="number" v-model="form.ppm"></el-input>
-          </el-form-item>
-        </el-col> -->
-        <el-form-item :label="$t('general.Description')" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
-        </el-form-item>
-        <el-form-item :label="$t('general.Active')" prop="disabled">
-          <!-- <el-switch v-model="form.disabled" /> -->
-          <el-switch
-            v-model="form.disabled"
-            :active-value="false"
-            :inactive-value="true"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-text="$t('general.Enable')"
-            :inactive-text="$t('general.Disable')"
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">{{
-          $t('general.Confirm')
-        }}</el-button>
-      </span>
-    </el-dialog>
+    <CreateProjectDialog
+      ref="createProjectDialog"
+      :dialog-status="dialogStatus"
+      :edit-project-obj="editProject"
+      @update="loadList"
+    />
+    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadList" />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.clearfix {
-  clear: both;
-  .newBtn {
-    float: right;
-    padding-right: 6px;
-  }
-}
-</style>
