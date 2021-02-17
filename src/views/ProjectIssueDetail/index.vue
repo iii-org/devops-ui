@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       issueDescription: '',
-      activeName: 'file',
+      activeName: 'comment',
       issueId: 0,
       projectId: 0,
       author: '',
