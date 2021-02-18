@@ -19,7 +19,7 @@ export default {
     searchData: ''
   }),
   computed: {
-    ...mapGetters(['projectSelectedObject', 'userRole']),
+    ...mapGetters(['projectSelectedObject']),
     pagedData() {
       const listData = this.webInspectScans.filter(data => {
         const isCommitId = data.commit_id.toString().includes(this.searchData.toString())
@@ -52,7 +52,6 @@ export default {
         this.webInspectScans = this.handleScans(res.data)
       })
       await this.updateWebInspectStatus()
-
       this.listLoading = false
     },
     handleScans(scans) {
@@ -69,7 +68,7 @@ export default {
       this.listLoading = true
       this.webInspectScans.forEach(item => {
         if (!item.status) this.fetchStatus(item.scan_id)
-        if (item.stats === null) this.fetchStats(item.scan_id)
+        if (Object.keys(item.stats).length === 0) this.fetchStats(item.scan_id)
       })
       this.listLoading = false
     },
@@ -77,12 +76,12 @@ export default {
       getWebInspectStatus(wiScanId).then(res => {
         const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
         this.webInspectScans[idx].status = res.data.status
+        if (res.data.status === 'NotRunning') this.webInspectScans[idx].finished = true
       })
     },
     fetchStats(wiScanId) {
       getWebInspectStats(wiScanId).then(res => {
         const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        // this.webInspectScans[idx].stats = res.data.severity_count
         if (res.data.severity_count === 'None') {
           this.webInspectScans[idx].stats = {}
         } else {
@@ -100,7 +99,6 @@ export default {
         link.click()
       })
     },
-
     onPagination(listQuery) {
       this.listQuery = listQuery
     }
@@ -110,16 +108,15 @@ export default {
 
 <template>
   <div class="app-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        class="mr-3"
         :placeholder="$t('WebInspect.SearchCommitId')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        style="width: 250px"
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
     <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
@@ -173,9 +170,3 @@ export default {
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.clearfix {
-  clear: both;
-}
-</style>
