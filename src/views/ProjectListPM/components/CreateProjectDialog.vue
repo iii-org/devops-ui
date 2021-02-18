@@ -34,7 +34,7 @@
         <el-col :span="24">
           <el-form-item v-if="dialogStatus === 1" :label="$t('Project.Template')">
             <el-select v-model="form.template" placeholder="Please select template" style="width:100%" clearable>
-              <el-option v-for="item in templateList" :key="item.name" :label="item.name" :value="item.name">
+              <el-option v-for="item in templateList" :key="item.id" :label="item.name" :value="item.id">
                 <span>{{ item.name }}</span>
               </el-option>
             </el-select>
@@ -71,7 +71,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { getTemplate } from '@/api/template'
+import { getTemplateList } from '@/api/template'
 import { Message } from 'element-ui'
 
 const formTemplate = () => ({
@@ -153,7 +153,7 @@ export default {
   methods: {
     ...mapActions('projects', ['addNewProject', 'editProject']),
     async init() {
-      await getTemplate().then(res => {
+      await getTemplateList().then(res => {
         this.templateList = res
       })
     },

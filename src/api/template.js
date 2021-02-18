@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getTemplate() {
+export function getTemplateList() {
   return request({
-    url: '/template',
+    url: '/template_list',
     method: 'get'
   })
 }
