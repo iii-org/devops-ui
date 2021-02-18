@@ -95,6 +95,22 @@ export default {
     },
     showPodLogDialog(visible) {
       this.podLogDialogVisible = visible
+    },
+    getPodStateType(podState) {
+      switch (podState) {
+        case 'pending':
+          return 'slow'
+        case 'running':
+          return 'success'
+        case 'succeeded':
+          return 'success'
+        case 'failed':
+          return 'danger'
+        case 'unknown':
+          return 'warning'
+        default:
+          return 'slow'
+      }
     }
   }
 }
@@ -142,10 +158,10 @@ export default {
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="State" align="center" width="100">
+      <el-table-column label="State" align="center" width="140">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.containers" :key="item + idx" class="my-3">
-            {{ item.state }}
+            <el-tag :type="getPodStateType(item.state)" size="medium">{{ item.state }}</el-tag>
           </div>
         </template>
       </el-table-column>
