@@ -171,8 +171,8 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" min-width="60">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'open'" type="success" size="medium">{{ scope.row.status }}</el-tag>
-          <el-tag v-else type="danger" size="medium">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === 'open'" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
+          <el-tag v-else type="danger" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="200">

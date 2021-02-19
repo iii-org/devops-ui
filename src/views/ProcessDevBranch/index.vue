@@ -115,19 +115,19 @@ export default {
       </el-table-column>
       <!-- <el-table-column align="center" :label="$t('ProcessDevBranch.Status')" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status == 'Failed'" type="danger" size="medium">
+          <el-tag v-if="scope.row.status == 'Failed'" type="danger" size="medium" effect="dark">
             {{ scope.row.status }}
           </el-tag>
-          <el-tag v-else-if="scope.row.status == 'Success'" type="success" size="medium">
+          <el-tag v-else-if="scope.row.status == 'Success'" type="success" size="medium" effect="dark">
             {{ scope.row.status }}
           </el-tag>
-          <el-tag v-else-if="scope.row.status == 'Waiting'" type="responded" size="medium">
+          <el-tag v-else-if="scope.row.status == 'Waiting'" type="responded" size="medium" effect="dark">
             {{ scope.row.status }}
           </el-tag>
-          <el-tag v-else-if="scope.row.status == 'Building'" type="warning" size="medium">
+          <el-tag v-else-if="scope.row.status == 'Building'" type="warning" size="medium" effect="dark">
             {{ scope.row.status }}
           </el-tag>
-          <el-tag v-else type="close" size="medium">{{ scope.row.status }}</el-tag>
+          <el-tag v-else type="close" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column> -->
       <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id">

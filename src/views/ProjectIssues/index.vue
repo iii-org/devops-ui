@@ -257,37 +257,37 @@ export default {
         </el-table-column> -->
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium">
+            <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium" effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium">
+            <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium" effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium">
+            <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium" effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="medium">
+            <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="medium" effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium">
+            <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium" effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else type="finish" size="medium"> {{ scope.row.issue_status }}</el-tag>
+            <el-tag v-else type="finish" size="medium" effect="dark"> {{ scope.row.issue_status }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
+            <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium" effect="dark">
               {{ scope.row.issue_priority }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">
+            <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium" effect="dark">
               {{ scope.row.issue_priority }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">
+            <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium" effect="dark">
               {{ scope.row.issue_priority }}
             </el-tag>
-            <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
+            <el-tag v-else type="slow" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
           </template>
         </el-table-column>
       </el-table>

@@ -127,10 +127,10 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium">{{
+          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium" effect="dark">{{
             scope.row.project_status
           }}</el-tag>
-          <el-tag v-else type="none" size="medium">{{ scope.row.project_status }}</el-tag>
+          <el-tag v-else type="none" size="medium" effect="dark">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Progress')" width="240">

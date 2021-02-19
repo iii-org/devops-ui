@@ -14,15 +14,15 @@
             <el-row :gutter="20">
               <el-col :span="6">Priority</el-col>
               <el-col :span="18">
-                <el-tag v-if="issue_detail.priority.name === '特急'" type="danger" size="medium">{{
-                  issue_detail.priority.name
-                }}</el-tag>
-                <el-tag v-else-if="issue_detail.priority.name === '急'" type="warning" size="medium">{{
-                  issue_detail.priority.name
-                }}</el-tag>
-                <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium">{{
-                  issue_detail.priority.name
-                }}</el-tag>
+                <el-tag v-if="issue_detail.priority.name === '特急'" type="danger" size="medium" effect="dark">
+                  {{ issue_detail.priority.name }}
+                </el-tag>
+                <el-tag v-else-if="issue_detail.priority.name === '急'" type="warning" size="medium" effect="dark">
+                  {{ issue_detail.priority.name }}
+                </el-tag>
+                <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium" effect="dark">
+                  {{ issue_detail.priority.name }}
+                </el-tag>
                 <el-tag v-else type="success" size="medium">{{ issue_detail.priority.name }}</el-tag>
               </el-col>
             </el-row>

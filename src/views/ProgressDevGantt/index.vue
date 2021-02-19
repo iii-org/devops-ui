@@ -156,7 +156,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="Test Result" :show-overflow-tooltip="true" width="150">
         <template slot-scope="scope">
-          <el-tag :type="returnTagType(scope.row)" size="large">
+          <el-tag :type="returnTagType(scope.row)" size="large" effect="dark">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
             <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
             <i v-else class="el-icon-error" />

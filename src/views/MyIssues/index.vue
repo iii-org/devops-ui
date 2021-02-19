@@ -22,10 +22,10 @@
       </el-table-column>
       <el-table-column label="Priority" align="center" width="80">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else-if="scope.row.issue_priority === '一般'" size="medium">{{ scope.row.issue_priority }}</el-tag>
-          <el-tag v-else type="success" size="medium">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-if="scope.row.issue_priority === '特急'" type="danger" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '急'" type="warning" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else-if="scope.row.issue_priority === '一般'" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
+          <el-tag v-else type="success" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Status" align="center" width="80">

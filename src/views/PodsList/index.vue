@@ -161,7 +161,7 @@ export default {
       <el-table-column label="State" align="center" width="140">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.containers" :key="item + idx" class="my-3">
-            <el-tag :type="getPodStateType(item.state)" size="medium">{{ item.state }}</el-tag>
+            <el-tag :type="getPodStateType(item.state)" size="medium" effect="dark">{{ item.state }}</el-tag>
           </div>
         </template>
       </el-table-column>

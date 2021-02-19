@@ -128,19 +128,19 @@ export default {
                     <el-table :data="workList[item.vId]" style="width: 100%" border stripe>
                       <el-table-column label="Work List">
                         <template slot-scope="scope">
-                          <!-- <el-tag :type="scope.row.issue_priority === '急' ? 'warning' : 'danger'">{{
+                          <!-- <el-tag :type="scope.row.issue_priority === '急' ? 'warning' : 'danger'" effect="dark">{{
                             scope.row.issue_priority
                           }}</el-tag> -->
-                          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium">
+                          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium" effect="dark">
                             {{ scope.row.issue_priority }}
                           </el-tag>
-                          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium">
+                          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium" effect="dark">
                             {{ scope.row.issue_priority }}
                           </el-tag>
-                          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium">
+                          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium" effect="dark">
                             {{ scope.row.issue_priority }}
                           </el-tag>
-                          <el-tag v-else type="slow" size="medium">{{ scope.row.issue_priority }}</el-tag>
+                          <el-tag v-else type="slow" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
                           <span>
                             [{{ scope.row.issue_category }}]
                             {{ scope.row.issue_name }}

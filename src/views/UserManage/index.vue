@@ -131,8 +131,8 @@ export default {
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
       <el-table-column align="center" :label="$t('general.Status')" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'enable'" type="finish" size="small">{{ scope.row.status }}</el-tag>
-          <el-tag v-else-if="scope.row.status === 'disable'" type="danger" size="small">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === 'enable'" type="finish" size="small" effect="dark">{{ scope.row.status }}</el-tag>
+          <el-tag v-else-if="scope.row.status === 'disable'" type="danger" size="small" effect="dark">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="210">

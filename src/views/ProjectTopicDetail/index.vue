@@ -373,8 +373,8 @@ export default {
             </div>
             <div>
               {{ topicDevStatus.commitData | relativeTime }}
-              <el-tag>{{ topicDevStatus.commit }}</el-tag>
-              <el-tag :type="returnTagType(topicDevStatus)" size="large">
+              <el-tag effect="dark">{{ topicDevStatus.commit }}</el-tag>
+              <el-tag :type="returnTagType(topicDevStatus)" size="large" effect="dark">
                 <i v-if="returnTagType(topicDevStatus) === 'success'" class="el-icon-success" />
                 <i v-else-if="returnTagType(topicDevStatus) === 'danger'" class="el-icon-error" />
                 <i v-else class="el-icon-error" />
