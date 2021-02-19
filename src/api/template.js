@@ -6,3 +6,10 @@ export function getTemplateList() {
     method: 'get'
   })
 }
+
+export function getTemplateParams(git_project_id, version) {
+  return request({
+    url: `/template/${git_project_id}?tag_name=${version}`,
+    method: 'get'
+  })
+}
