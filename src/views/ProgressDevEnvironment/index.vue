@@ -13,13 +13,40 @@
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('ProcessDevEnvironment.Image')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('general.StartTime')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('general.Actions')" align="center" width="240">
+      <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150" />
+      <el-table-column
+        :label="$t('ProcessDevEnvironment.Deployment')"
+        align="center"
+        prop="deployment"
+        width="200"
+      />
+      <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" min-width="200">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.container" :key="item.name + idx">
+            {{ item.name }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('ProcessDevEnvironment.Image')" align="center" min-width="280">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.container" :key="item.image + idx">
+            {{ item.image }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="300">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.service" :key="item.name + idx">
+            <el-link :href="item.url" target="_blank" type="primary" :underline="false">{{ item.name }}</el-link>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('general.StartTime')" align="center" width="150">
+        <template slot-scope="scope">
+          {{ scope.row.start_time | formatTime }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('general.Actions')" align="center" width="120">
         <template slot-scope="scope">
           <el-button
             :loading="btnLoading"
@@ -30,20 +57,6 @@
           >
             Redeploy
           </el-button>
-
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.deployment_name)"
-          >
-            <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -62,7 +75,7 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import { getDeploymentList, deleteDeployment, updateDeployment } from '@/api/projectResource'
+import { getProjectDeploymentList } from '@/api/projects'
 
 export default {
   name: 'ProgressDevEnvironment',
@@ -108,32 +121,28 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      await getDeploymentList(this.projectSelectedId).then(res => {
-        this.deploymentList = []
+      await getProjectDeploymentList(this.projectSelectedId).then(res => {
+        this.deploymentList = Object.values(res.data).map(item => ({
+          branch: item.branch,
+          deployment: item.workload[0].name,
+          container: item.workload[0].container,
+          service: item.workload[0].pulicEnpoints,
+          start_time: item.workload[0].create_time
+        }))
       })
       this.listLoading = false
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    async handleDelete(pId, deploymentName) {
-      this.listLoading = true
-      try {
-        await deleteDeployment(pId, deploymentName)
-        this.fetchData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
     async redeploy(pId, deploymentName) {
       this.btnLoading = true
-      try {
-        await updateDeployment(pId, deploymentName)
-        this.fetchData()
-      } catch (error) {
-        console.error(error)
-      }
+      // try {
+      //   await updateDeployment(pId, deploymentName)
+      //   this.fetchData()
+      // } catch (error) {
+      //   console.error(error)
+      // }
       this.btnLoading = false
     }
   }

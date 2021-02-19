@@ -224,3 +224,10 @@ export function deleteProjectFile(file_id) {
     method: 'DELETE'
   })
 }
+
+export function getProjectDeploymentList(pId) {
+  return request({
+    url: `/project/${pId}/deployment/list`,
+    method: 'get'
+  })
+}
