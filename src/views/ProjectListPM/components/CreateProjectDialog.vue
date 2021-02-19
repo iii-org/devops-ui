@@ -67,7 +67,7 @@
             <div v-for="(item, idx) in focusTemplate" :key="item.name">
               <span class="text-subtitle-1 font-weight-bold">{{ item.name }}</span>
               <div v-for="(value, key, index) in item" :key="key + index">
-                <el-form-item v-if="key !== 'name'" :label="key">
+                <el-form-item v-if="key !== 'name' && value !== null" :label="key">
                   <el-select
                     v-if="key === 'branchs'"
                     v-model="form.template_param[idx].branchs"
