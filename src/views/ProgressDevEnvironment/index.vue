@@ -14,12 +14,7 @@
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150" />
-      <el-table-column
-        :label="$t('ProcessDevEnvironment.Deployment')"
-        align="center"
-        prop="deployment"
-        width="200"
-      />
+      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="200" />
       <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" min-width="200">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.container" :key="item.name + idx">
@@ -53,7 +48,7 @@
             type="primary"
             size="mini"
             icon="el-icon-refresh"
-            @click="redeploy(projectSelectedId, scope.row.deployment_name)"
+            @click="redeploy(projectSelectedId, scope.row.deployment)"
           >
             Redeploy
           </el-button>
@@ -76,6 +71,7 @@ import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import { getProjectDeploymentList } from '@/api/projects'
+import { updateDeployment } from '@/api/projectResource'
 
 export default {
   name: 'ProgressDevEnvironment',
@@ -124,7 +120,7 @@ export default {
       await getProjectDeploymentList(this.projectSelectedId).then(res => {
         this.deploymentList = Object.values(res.data).map(item => ({
           branch: item.branch,
-          deployment: item.workload[0].name,
+          deployment: item.workload[0].deployment_name,
           container: item.workload[0].container,
           service: item.workload[0].pulicEnpoints,
           start_time: item.workload[0].create_time
@@ -137,12 +133,12 @@ export default {
     },
     async redeploy(pId, deploymentName) {
       this.btnLoading = true
-      // try {
-      //   await updateDeployment(pId, deploymentName)
-      //   this.fetchData()
-      // } catch (error) {
-      //   console.error(error)
-      // }
+      try {
+        await updateDeployment(pId, deploymentName)
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
       this.btnLoading = false
     }
   }
