@@ -74,6 +74,7 @@
                     class="my-1"
                     style="width:100%"
                     placeholder="Please select branch"
+                    multiple
                   >
                     <el-option v-for="branch in item.branchs" :key="branch" :label="branch" :value="branch">
                       <span>{{ branch }}</span>
@@ -122,8 +123,10 @@
                   <el-input
                     v-if="key === 'db.password'"
                     v-model="form.template_param[idx]['db.password']"
+                    :label="'DB Password'"
                     class="my-1"
                     placeholder="Please input DB Password"
+                    show-password
                   />
                 </el-form-item>
               </div>
