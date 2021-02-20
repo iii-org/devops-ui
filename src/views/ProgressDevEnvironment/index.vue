@@ -14,38 +14,42 @@
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150" />
-      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="200" />
+      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="350" />
       <el-table-column label="State" align="center" min-width="120">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item.state + idx">
-            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">{{ item.state }}</el-tag>
+          <div v-for="(item, idx) in scope.row.container" :key="item.state + idx" class="my-2">
+            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">{{
+              item.state
+            }}</el-tag>
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" min-width="200">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item.name + idx">
+          <div v-for="(item, idx) in scope.row.container" :key="item.name + idx" class="my-2">
             {{ item.name }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Image')" align="center" min-width="280">
+      <el-table-column :label="$t('ProcessDevEnvironment.Image')" align="center" min-width="550">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item.image + idx">
+          <div v-for="(item, idx) in scope.row.container" :key="item.image + idx" class="my-2">
             {{ item.image }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="300">
+      <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.service" :key="item.name + idx">
+          <div v-for="(item, idx) in scope.row.service" :key="item.name + idx" class="my-2">
             <el-link :href="item.url" target="_blank" type="primary" :underline="false">{{ item.name }}</el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.StartTime')" align="center" width="150">
         <template slot-scope="scope">
-          {{ scope.row.start_time | formatTime }}
+          <div v-for="(item, idx) in scope.row.start_time" :key="new Date().getTime() + idx" class="my-2">
+            {{ item | formatTime }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" align="center" width="120">
@@ -127,10 +131,10 @@ export default {
       await getProjectDeploymentList(this.projectSelectedId).then(res => {
         this.deploymentList = Object.values(res.data).map(item => ({
           branch: item.branch,
-          deployment: item.workload[0].deployment_name,
-          container: item.workload[0].container,
-          service: item.workload[0].pulicEnpoints,
-          start_time: item.workload[0].create_time
+          deployment: item.workload.map(item => item.deployment_name),
+          container: item.workload.map(item => item.container).flat(),
+          service: item.workload.map(item => item.pulicEnpoints).flat(),
+          start_time: item.workload.map(item => item.createion_timestamp)
         }))
       })
       this.listLoading = false
