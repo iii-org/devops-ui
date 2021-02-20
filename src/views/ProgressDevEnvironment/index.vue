@@ -15,6 +15,13 @@
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150" />
       <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="200" />
+      <el-table-column label="State" align="center" min-width="120">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.container" :key="item.state + idx">
+            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">{{ item.state }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" min-width="200">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.container" :key="item.name + idx">
@@ -140,6 +147,22 @@ export default {
         console.error(error)
       }
       this.btnLoading = false
+    },
+    getStateType(state) {
+      switch (state) {
+        case 'pending':
+          return 'slow'
+        case 'running':
+          return 'success'
+        case 'succeeded':
+          return 'success'
+        case 'failed':
+          return 'danger'
+        case 'unknown':
+          return 'warning'
+        default:
+          return 'slow'
+      }
     }
   }
 }
