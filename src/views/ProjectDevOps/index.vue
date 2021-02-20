@@ -33,7 +33,7 @@ export default {
         tool_name: 'Maninis'
       }
     ],
-    listLoading: true,
+    listLoading: false,
     phaseList: [],
     dialogVisible: false,
     listQuery: {

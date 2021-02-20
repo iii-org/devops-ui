@@ -11,7 +11,7 @@ export default {
   components: { Pagination, ProjectListSelector, TestDetail },
   data: () => ({
     isLoading: false,
-    listLoading: true,
+    listLoading: false,
     testList: [],
     detailData: [],
     testDetailVisible: false,

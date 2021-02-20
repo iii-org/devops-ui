@@ -41,7 +41,7 @@ export default {
       this.listQuery.page = 1
     }
   },
-  created() {
+  mounted() {
     this.fetchWebInspectScans()
   },
   methods: {
@@ -51,7 +51,7 @@ export default {
       await getWebInspectScans(rName).then(res => {
         this.webInspectScans = this.handleScans(res.data)
       })
-      await this.updateWebInspectStatus()
+      this.updateWebInspectStatus()
       this.listLoading = false
     },
     handleScans(scans) {
@@ -65,12 +65,10 @@ export default {
       return sortedScans
     },
     updateWebInspectStatus() {
-      this.listLoading = true
       this.webInspectScans.forEach(item => {
         if (!item.status) this.fetchStatus(item.scan_id)
         if (Object.keys(item.stats).length === 0) this.fetchStats(item.scan_id)
       })
-      this.listLoading = false
     },
     fetchStatus(wiScanId) {
       getWebInspectStatus(wiScanId).then(res => {
