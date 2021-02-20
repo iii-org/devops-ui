@@ -1,11 +1,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import { CreateProjectDialog, DeleteProjectDialog } from './components'
+import { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog } from './components'
 
 export default {
   name: 'ProjectListPM',
-  components: { Pagination, CreateProjectDialog, DeleteProjectDialog },
+  components: { Pagination, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -24,7 +24,6 @@ export default {
     },
     listTotal: 0,
     searchData: '',
-    dialogStatus: 1,
     editProject: {},
     deleteProject: { id: '', name: '' }
   }),
@@ -59,11 +58,8 @@ export default {
     },
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true
-      this.dialogStatus = 1
     },
     handleEdit(row) {
-      this.$refs.createProjectDialog.showDialog = true
-      this.dialogStatus = 2
       this.editProject = Object.assign(
         {},
         {
@@ -74,11 +70,12 @@ export default {
           disabled: row.disabled
         }
       )
+      this.$refs.editProjectDialog.showDialog = true
     },
     handleDelete(row) {
-      this.$refs.deleteProjectDialog.showDialog = true
       this.deleteProject.id = row.id
       this.deleteProject.name = row.name
+      this.$refs.deleteProjectDialog.showDialog = true
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -214,12 +211,8 @@ export default {
       @pagination="onPagination"
     />
 
-    <CreateProjectDialog
-      ref="createProjectDialog"
-      :dialog-status="dialogStatus"
-      :edit-project-obj="editProject"
-      @update="loadList"
-    />
+    <CreateProjectDialog ref="createProjectDialog" @update="loadList" />
+    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="loadList" />
     <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadList" />
   </div>
 </template>
