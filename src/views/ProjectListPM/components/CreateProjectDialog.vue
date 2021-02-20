@@ -229,13 +229,7 @@ export default {
         this.form.tag_name = this.versionList[0].name || ''
         this.fetchTemplateParams()
       } else {
-        this.form.tag_name = ''
-        this.form.db_username = ''
-        this.form.db_password = ''
-        this.form.db_name = ''
-        this.templateParamForm = []
-        this.focusTemplate = []
-        this.versionList = []
+        this.clearFocusTemplate()
       }
     },
     hasDbInfos(val) {
@@ -283,14 +277,30 @@ export default {
         this.$emit('update')
       })
     },
-    async fetchTemplateParams() {
+    clearFocusTemplate() {
+      this.form.tag_name = ''
+      this.form.db_username = ''
+      this.form.db_password = ''
+      this.form.db_name = ''
+      this.templateParamForm = []
+      this.focusTemplate = []
+      this.versionList = []
+    },
+    fetchTemplateParams() {
       this.templateParamForm = []
       this.isLoadingTemplate = true
-      await getTemplateParams(this.form.template_id, this.form.tag_name).then(res => {
-        this.focusTemplate = res.template_param
-        this.templateParamForm = JSON.parse(JSON.stringify(res.template_param))
-      })
-      this.isLoadingTemplate = false
+      getTemplateParams(this.form.template_id, this.form.tag_name)
+        .then(res => {
+          this.focusTemplate = res.template_param
+          this.templateParamForm = JSON.parse(JSON.stringify(res.template_param))
+        })
+        .catch(err => {
+          this.form.template_id = ''
+          console.error(err)
+        })
+        .then(() => {
+          this.isLoadingTemplate = false
+        })
     }
   }
 }
