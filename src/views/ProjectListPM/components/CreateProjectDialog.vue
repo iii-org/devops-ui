@@ -27,6 +27,8 @@
       <el-row v-loading="isLoadingTemplate" :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('Project.Template') }}</el-divider>
+        </el-col>
+        <el-col :span="20">
           <el-form-item :label="$t('Project.TemplateName')">
             <el-select v-model="form.template_id" placeholder="Please select template" style="width:100%" clearable>
               <el-option v-for="item in templateList" :key="item.id" :label="item.name" :value="item.id">
@@ -35,7 +37,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="4">
+        <el-col :span="4">
           <el-form-item :label="$t('Project.Version')">
             <el-select
               v-model="form.tag_name"
@@ -48,7 +50,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </el-col> -->
+        </el-col>
         <!-- <el-col :span="24">
           <div v-if="templateParamForm.length !== 0">
             <div v-for="(item, idx) in focusTemplate" :key="item.name">
