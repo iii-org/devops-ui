@@ -263,7 +263,9 @@ export default {
           name: this.form.name,
           display: this.form.display,
           description: this.form.description,
-          disabled: this.form.disabled
+          disabled: this.form.disabled,
+          template_id: this.form.template_id,
+          template_param: this.form.template_param
         }
         const res = await this.addNewProject(sendData)
         this.isLoading = false
