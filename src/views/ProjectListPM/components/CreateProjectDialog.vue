@@ -148,7 +148,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="10">
+      <!-- <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
           <el-form-item prop="disabled">
@@ -163,7 +163,7 @@
             />
           </el-form-item>
         </el-col>
-      </el-row>
+      </el-row> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
