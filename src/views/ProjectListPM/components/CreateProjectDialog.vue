@@ -49,27 +49,6 @@
             </el-select>
           </el-form-item>
         </el-col> -->
-        <el-col :span="8">
-          <el-form-item label="DB Username">
-            <el-input v-model="form.db_username" placeholder="Please input" :disabled="form.template_id === ''" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="DB Password">
-            <el-input
-              v-model="form.db_password"
-              :label="'DB Password'"
-              placeholder="Please input"
-              show-password
-              :disabled="form.template_id === ''"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="DB Name">
-            <el-input v-model="form.db_name" placeholder="Please input" :disabled="form.template_id === ''" />
-          </el-form-item>
-        </el-col>
         <!-- <el-col :span="24">
           <div v-if="templateParamForm.length !== 0">
             <div v-for="(item, idx) in focusTemplate" :key="item.name">
@@ -150,6 +129,23 @@
           </div>
         </el-col> -->
       </el-row>
+      <el-row v-if="hasDbInfos" :gutter="10">
+        <el-col :span="8">
+          <el-form-item label="DB Username">
+            <el-input v-model="form.db_username" placeholder="Please input" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="DB Password">
+            <el-input v-model="form.db_password" :label="'DB Password'" placeholder="Please input" show-password />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="DB Name">
+            <el-input v-model="form.db_name" placeholder="Please input" />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
@@ -211,10 +207,18 @@ export default {
     },
     templateList: [],
     versionList: [],
-    focusTemplate: '',
+    focusTemplate: [],
     templateParamForm: [],
     isLoadingTemplate: false
   }),
+  computed: {
+    hasDbInfos() {
+      const refTemplate = this.focusTemplate
+      const infos = refTemplate.map(item => Object.keys(item)).flat()
+      const result = infos.includes('db.name')
+      return result
+    }
+  },
   watch: {
     'form.template_id'(id) {
       if (id !== '') {
@@ -228,7 +232,19 @@ export default {
         this.form.db_password = ''
         this.form.db_name = ''
         this.templateParamForm = []
+        this.focusTemplate = []
         this.versionList = []
+      }
+    },
+    hasDbInfos(val) {
+      if (val) {
+        this.form.db_username = ''
+        this.form.db_password = ''
+        this.form.db_name = ''
+      } else {
+        this.form.db_username = ''
+        this.form.db_password = ''
+        this.form.db_name = ''
       }
     }
   },
