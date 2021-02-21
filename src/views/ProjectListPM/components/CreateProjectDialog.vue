@@ -30,7 +30,13 @@
         </el-col>
         <el-col :span="20">
           <el-form-item :label="$t('Project.TemplateName')">
-            <el-select v-model="form.template_id" placeholder="Please select template" style="width:100%" clearable>
+            <el-select
+              v-model="form.template_id"
+              placeholder="Please select template"
+              style="width:100%"
+              clearable
+              @change="handleTemplateSelect"
+            >
               <el-option v-for="item in templateList" :key="item.id" :label="item.name" :value="item.id">
                 <span>{{ item.name }}</span>
               </el-option>
@@ -43,7 +49,7 @@
               v-model="form.tag_name"
               style="width:100%"
               :disabled="!form.template_id"
-              @change="fetchTemplateParams"
+              @change="handleVersionSelect"
             >
               <el-option v-for="item in versionList" :key="item.name" :label="item.name" :value="item.name">
                 <span>{{ item.name }}</span>
@@ -174,7 +180,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { getTemplateList, getTemplateParams } from '@/api/template'
+import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { Message } from 'element-ui'
 
 const formTemplate = () => ({
@@ -222,16 +228,6 @@ export default {
     }
   },
   watch: {
-    'form.template_id'(id) {
-      if (id !== '') {
-        const idx = this.templateList.findIndex(item => item.id === id)
-        this.versionList = this.templateList[idx].version
-        this.form.tag_name = this.versionList[0].name || ''
-        this.fetchTemplateParams()
-      } else {
-        this.clearFocusTemplate()
-      }
-    },
     hasDbInfos(val) {
       if (val) {
         this.form.db_username = ''
@@ -286,16 +282,49 @@ export default {
       this.focusTemplate = []
       this.versionList = []
     },
+    handleTemplateSelect() {
+      if (this.form.template_id !== '') {
+        const idx = this.templateList.findIndex(item => item.id === this.form.template_id)
+        this.versionList = this.templateList[idx].version
+        this.form.tag_name = this.versionList[0] ? this.versionList[0].name : ''
+        this.handleVersionSelect()
+      } else {
+        this.clearFocusTemplate()
+      }
+    },
+    handleVersionSelect() {
+      if (this.form.tag_name !== '') {
+        this.fetchTemplateParamsByVersion()
+      } else {
+        this.fetchTemplateParams()
+      }
+    },
     fetchTemplateParams() {
-      this.templateParamForm = []
       this.isLoadingTemplate = true
-      getTemplateParams(this.form.template_id, this.form.tag_name)
+      getTemplateParams(this.form.template_id)
         .then(res => {
           this.focusTemplate = res.template_param
           this.templateParamForm = JSON.parse(JSON.stringify(res.template_param))
         })
         .catch(err => {
           this.form.template_id = ''
+          this.clearFocusTemplate()
+          console.error('fetchTemplateParams error', err)
+        })
+        .then(() => {
+          this.isLoadingTemplate = false
+        })
+    },
+    fetchTemplateParamsByVersion() {
+      this.isLoadingTemplate = true
+      getTemplateParamsByVersion(this.form.template_id, this.form.tag_name)
+        .then(res => {
+          this.focusTemplate = res.template_param
+          this.templateParamForm = JSON.parse(JSON.stringify(res.template_param))
+        })
+        .catch(err => {
+          this.form.template_id = ''
+          this.clearFocusTemplate()
           console.error(err)
         })
         .then(() => {
