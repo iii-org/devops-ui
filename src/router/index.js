@@ -78,6 +78,12 @@ export const asyncRoutes = [
         component: () => import('@/views/ProjectListPM/index'),
         meta: { title: 'PM Project List', icon: 'list', roles: ['Project Manager', 'Administrator'] }
       }
+      // {
+      //   path: 'project-settings',
+      //   name: 'Project Settings',
+      //   component: () => import('@/views/ProjectSettings/index'),
+      //   meta: { title: 'Project Settings', icon: 'el-icon-s-operation', roles: ['Project Manager', 'Administrator'] }
+      // }
     ]
   },
 
