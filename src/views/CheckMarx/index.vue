@@ -57,41 +57,53 @@ export default {
         await getCheckMarxScans(this.projectSelectedId).then(res => {
           this.checkMarxScans = res.data.map(item => item)
         })
-        this.updateMarxScansStatus()
+        this.updateCheckMarxScansStatus()
       }
       this.listLoading = false
     },
-    updateMarxScansStatus() {
+    async updateCheckMarxScansStatus() {
       this.checkMarxScans.forEach(item => {
-        if (item.status === null) this.fetchStatus(item.scan_id)
-        if (item.report_id === -1) this.registerReport(item.scan_id)
-        if (item.report_id !== -1 && !item.report_ready) this.fetchReportStatus(item.report_id)
+        if (item.status === null) this.fetchScanStatus(item.scan_id)
       })
     },
-    fetchStatus(scanId) {
+    fetchScanStatus(scanId) {
+      this.listLoading = true
       getCheckMarxScanStatus(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].status = res.data.name
-        if (res.data.id === 7) this.fetchStats(scanId)
+        if (res.data.id === 7) {
+          this.fetchScanStats(scanId)
+          this.registerReport(scanId)
+        }
       })
+      this.listLoading = false
     },
-    fetchStats(scanId) {
+    fetchScanStats(scanId) {
       getCheckMarxScanStats(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].stats = res.data
       })
     },
     registerReport(scanId) {
+      this.listLoading = true
       registerCheckMarxReport(scanId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
         this.checkMarxScans[idx].reportId = res.data.reportId
+        if (res.data.reportId > 0) {
+          this.fetchReportStatus(res.data.reportId)
+        }
       })
+      this.listLoading = false
     },
     fetchReportStatus(reportId) {
+      this.listLoading = true
       getCheckMarxReportStatus(reportId).then(res => {
         const idx = this.checkMarxScans.findIndex(item => item.report_id === reportId)
-        if (res.data.id === 2) this.checkMarxScans[idx].report_ready = true
+        if (res.data.id === 2) {
+          this.checkMarxScans[idx].report_ready = true
+        }
       })
+      this.listLoading = false
     },
     fetchTestReport(reportId) {
       getCheckMarxReport(reportId).then(res => {
