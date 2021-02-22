@@ -136,24 +136,25 @@
             </div>
           </div>
         </el-col> -->
+        <div v-if="hasDbInfos" :gutter="10">
+          <el-col :span="8">
+            <el-form-item label="DB Username">
+              <el-input v-model="form.db_username" placeholder="Please input" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="DB Password">
+              <el-input v-model="form.db_password" :label="'DB Password'" placeholder="Please input" show-password />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="DB Name">
+              <el-input v-model="form.db_name" placeholder="Please input" />
+            </el-form-item>
+          </el-col>
+        </div>
       </el-row>
-      <el-row v-if="hasDbInfos" :gutter="10">
-        <el-col :span="8">
-          <el-form-item label="DB Username">
-            <el-input v-model="form.db_username" placeholder="Please input" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="DB Password">
-            <el-input v-model="form.db_password" :label="'DB Password'" placeholder="Please input" show-password />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="DB Name">
-            <el-input v-model="form.db_name" placeholder="Please input" />
-          </el-form-item>
-        </el-col>
-      </el-row>
+
       <!-- <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
