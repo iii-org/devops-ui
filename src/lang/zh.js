@@ -86,7 +86,9 @@ export default {
     Close: '關閉',
     Disable: '停用',
     Enable: '啟用',
-    LastUpdateTime: '最後更新時間'
+    LastUpdateTime: '最後更新時間',
+    Copied: '已複製',
+    SwitchLanguageSuccess: '更換語言成功'
   },
   TestCase: {
     TestCase: '測試案例',

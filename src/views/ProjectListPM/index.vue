@@ -96,7 +96,7 @@ export default {
       document.execCommand('Copy')
       this.$message({
         type: 'success',
-        message: 'Copied!'
+        message: this.$t('general.Copied')
       })
     }
   }

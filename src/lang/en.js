@@ -86,7 +86,9 @@ export default {
     Close: 'Close',
     Disable: 'Disable',
     Enable: 'Enable',
-    LastUpdateTime: 'Last Update Time'
+    LastUpdateTime: 'Last Update Time',
+    Copied: 'Copied',
+    SwitchLanguageSuccess: 'Switch Language Success'
   },
   TestCase: {
     TestCase: 'Test Case',
