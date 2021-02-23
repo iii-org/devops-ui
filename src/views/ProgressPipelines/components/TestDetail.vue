@@ -11,16 +11,16 @@
         >
           <div class="d-flex justify-space-between">
             <span class="text-h6"> {{ activity.name }} </span>
-            <el-tag v-if="activity.state == 'Failed'" type="danger" size="medium">
+            <el-tag v-if="activity.state == 'Failed'" type="danger" size="medium" effect="dark">
               {{ activity.state }}
             </el-tag>
-            <el-tag v-else-if="activity.state == 'Success'" type="success" size="medium">
+            <el-tag v-else-if="activity.state == 'Success'" type="success" size="medium" effect="dark">
               {{ activity.state }}
             </el-tag>
-            <el-tag v-else-if="activity.state == 'Waiting'" type="responded" size="medium">
+            <el-tag v-else-if="activity.state == 'Waiting'" type="responded" size="medium" effect="dark">
               {{ activity.state }}
             </el-tag>
-            <el-tag v-else-if="activity.state == 'Building'" type="warning" size="medium">
+            <el-tag v-else-if="activity.state == 'Building'" type="warning" size="medium" effect="dark">
               {{ activity.state }}
             </el-tag>
           </div>

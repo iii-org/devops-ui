@@ -18,7 +18,7 @@
               <p>{{ issue.description || '-' }}</p>
             </el-col>
             <el-col :span="2" class="el-col-account">
-              <el-tag class="el-tag-account">
+              <el-tag class="el-tag-account" effect="dark">
                 <i class="el-icon-s-custom" />
                 {{ issue.assigned_to || '-' }}
               </el-tag>

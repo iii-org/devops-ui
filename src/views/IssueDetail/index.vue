@@ -23,7 +23,7 @@
                 <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium" effect="dark">
                   {{ issue_detail.priority.name }}
                 </el-tag>
-                <el-tag v-else type="success" size="medium">{{ issue_detail.priority.name }}</el-tag>
+                <el-tag v-else type="success" size="medium" effect="dark">{{ issue_detail.priority.name }}</el-tag>
               </el-col>
             </el-row>
           </el-col>

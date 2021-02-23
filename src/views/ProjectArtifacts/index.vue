@@ -102,7 +102,7 @@ export default {
       </el-table-column>
       <el-table-column label="Labels">
         <template slot-scope="scope">
-          <el-tag v-for="label in scope.row.labels" :key="label" type="success">{{ label }} </el-tag>
+          <el-tag v-for="label in scope.row.labels" :key="label" type="success" effect="dark">{{ label }} </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Push Time" :show-overflow-tooltip="true" align="center">

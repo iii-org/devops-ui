@@ -178,9 +178,9 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('DevOps.Phase')" min-width="40">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.phase === 'deploy'" type="danger" size="big">{{ scope.row.phase }}</el-tag>
-          <el-tag v-else-if="scope.row.phase === 'Test'" type="warning" size="big">{{ scope.row.phase }}</el-tag>
-          <el-tag v-else type="success" size="big">{{ scope.row.phase }}</el-tag>
+          <el-tag v-if="scope.row.phase === 'deploy'" type="danger" size="big" effect="dark">{{ scope.row.phase }}</el-tag>
+          <el-tag v-else-if="scope.row.phase === 'Test'" type="warning" size="big" effect="dark">{{ scope.row.phase }}</el-tag>
+          <el-tag v-else type="success" size="big" effect="dark">{{ scope.row.phase }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('DevOps.Tools')" min-width="180">
