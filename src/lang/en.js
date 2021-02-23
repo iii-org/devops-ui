@@ -318,6 +318,7 @@ export default {
   ProcessDevEnvironment: {
     Branch: 'Branch',
     Deployment: 'Deployment',
+    State: 'State',
     Container: 'Container',
     Image: 'Image',
     'Service(Url)': 'Service(Url)'

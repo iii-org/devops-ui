@@ -315,10 +315,11 @@ export default {
   },
   ProcessDevEnvironment: {
     Branch: '分支',
-    Deployment: 'Deployment',
-    Container: 'Container',
-    Image: 'Image',
-    'Service(Url)': 'Service(Url)'
+    Deployment: '環境',
+    State: '狀態',
+    Container: '容器',
+    Image: '映像檔',
+    'Service(Url)': '連結'
   },
   ProjectResource: {
     Usage: '使用量',

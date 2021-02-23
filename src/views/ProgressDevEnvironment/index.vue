@@ -14,13 +14,19 @@
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150" />
-      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="350" />
-      <el-table-column label="State" align="center" min-width="120">
+      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="370">
+        <template slot-scope="scope">
+          <div v-for="(item, idx) in scope.row.deployment" :key="item + idx" class="my-2">
+            {{ item }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('ProcessDevEnvironment.State')" align="center" min-width="120">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.container" :key="item.state + idx" class="my-2">
-            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">{{
-              item.state
-            }}</el-tag>
+            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">
+              {{ item.state }}
+            </el-tag>
           </div>
         </template>
       </el-table-column>
@@ -45,7 +51,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.StartTime')" align="center" width="150">
+      <el-table-column :label="$t('general.StartTime')" align="center" width="190">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.start_time" :key="new Date().getTime() + idx" class="my-2">
             {{ item | formatTime }}
