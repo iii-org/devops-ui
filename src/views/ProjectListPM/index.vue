@@ -89,6 +89,15 @@ export default {
       this.changeSelectedProjectId(id)
       this.changeSelectedProjectObject(this.userProjectList.filter(elm => elm.id === id)[0])
       this.$router.push({ name: 'Overview' })
+    },
+    copyUrl(id) {
+      const target = document.getElementById(id)
+      window.getSelection().selectAllChildren(target)
+      document.execCommand('Copy')
+      this.$message({
+        type: 'success',
+        message: 'Copied!'
+      })
     }
   }
 }
@@ -148,15 +157,35 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="GitLab" width="110">
         <template slot-scope="scope">
-          <el-link
+          <el-popover
             v-if="scope.row.git_url"
-            target="_blank"
-            style="font-size: 22px"
-            :underline="false"
-            :href="scope.row.git_url"
+            placement="top"
+            width="400"
+            trigger="hover"
+            :open-delay="300"
+            :close-delay="50"
           >
-            <svg-icon icon-class="gitlab" />
-          </el-link>
+            <p :id="`copy-${scope.$index}`" class="text-center">
+              <span class="text-subtitle-1 font-weight-bold">{{ scope.row.git_url }}</span>
+            </p>
+            <div class="d-flex justify-center">
+              <el-button
+                class="mr-2"
+                icon="el-icon-copy-document"
+                circle
+                size="mini"
+                @click="copyUrl(`copy-${scope.$index}`)"
+              />
+              <a :href="scope.row.git_url" target="_blank">
+                <el-button circle size="mini">
+                  <svg-icon icon-class="foreign" />
+                </el-button>
+              </a>
+            </div>
+            <el-link slot="reference" :underline="false" style="font-size: 22px">
+              <svg-icon icon-class="gitlab" />
+            </el-link>
+          </el-popover>
           <span v-else>-</span>
         </template>
       </el-table-column>
