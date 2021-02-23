@@ -312,6 +312,7 @@ export default {
     Commit: 'Commit',
     Branch: '分支',
     CommitMessage: '上傳訊息',
+    TransitioningMessage: '處理訊息',
     LastUpdateTime: '最後更新',
     SearchCommitMessage: '搜尋 上傳訊息'
   },

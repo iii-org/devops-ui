@@ -179,12 +179,18 @@ export default {
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevBranchTest.Branch')" align="center" min-width="90" prop="commit_branch" />
+      <el-table-column :label="$t('ProcessDevBranchTest.Branch')" align="center" min-width="130" prop="commit_branch" />
       <el-table-column
         :label="$t('ProcessDevBranchTest.CommitMessage')"
         align="center"
-        min-width="170"
+        min-width="200"
         prop="commit_message"
+      />
+      <el-table-column
+        :label="$t('ProcessDevBranchTest.TransitioningMessage')"
+        align="center"
+        min-width="220"
+        prop="transitioning_message"
       />
       <el-table-column :label="$t('ProcessDevBranchTest.LastUpdateTime')" align="center" width="180">
         <template slot-scope="scope">

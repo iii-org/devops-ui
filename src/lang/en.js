@@ -314,6 +314,7 @@ export default {
     Commit: 'Commit',
     Branch: 'Branch',
     CommitMessage: 'Commit Message',
+    TransitioningMessage: 'Transitioning Message',
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message'
   },
