@@ -58,6 +58,7 @@ export default {
     },
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true
+      this.$refs.createProjectDialog.refreshTemplate()
     },
     handleEdit(row) {
       this.editProject = Object.assign(

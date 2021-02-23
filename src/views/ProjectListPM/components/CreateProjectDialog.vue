@@ -26,9 +26,12 @@
       </el-row>
       <el-row v-loading="isLoadingTemplate" :gutter="10">
         <el-col :span="24">
-          <el-divider content-position="left">{{ $t('Project.Template') }}</el-divider>
+          <el-divider content-position="left">
+            {{ $t('Project.Template') }}
+            <el-button class="ml-2" icon="el-icon-refresh" size="mini" circle />
+          </el-divider>
         </el-col>
-        <el-col :span="20">
+        <el-col :xs="24" :sm="18" :md="20">
           <el-form-item :label="$t('Project.TemplateName')">
             <el-select
               v-model="form.template_id"
@@ -43,7 +46,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :xs="24" :sm="6" :md="4">
           <el-form-item :label="$t('Project.Version')">
             <el-select
               v-model="form.tag_name"
@@ -182,6 +185,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
+import { refreshRancherCatalogs } from '@/api/rancher'
 import { Message } from 'element-ui'
 
 const formTemplate = () => ({
@@ -326,6 +330,19 @@ export default {
         .catch(err => {
           this.form.template_id = ''
           this.clearFocusTemplate()
+          console.error(err)
+        })
+        .then(() => {
+          this.isLoadingTemplate = false
+        })
+    },
+    async refreshTemplate() {
+      this.isLoadingTemplate = true
+      await refreshRancherCatalogs()
+        .then(res => {
+          // console.log(res)
+        })
+        .catch(err => {
           console.error(err)
         })
         .then(() => {
