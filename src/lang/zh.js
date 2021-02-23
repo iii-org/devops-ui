@@ -29,8 +29,8 @@ export default {
     Postman: 'API 測試(Postman)',
     CheckMarx: '白箱測試(CheckMarx)',
     WebInspect: '黑箱測試(WebInspect)',
-    UI: 'UI 列表',
-    Collection: 'Collection 列表',
+    'DevOps Test Case': 'DevOps Test Case',
+    'Postman Test Case': 'Postman Test Case',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
@@ -346,8 +346,8 @@ export default {
     Fail: '失敗',
     StartTime: '開始時間',
     SearchBranch: '搜尋 分支',
-    Ui: 'UI',
-    Collection: 'Collection'
+    DevOps: 'DevOps',
+    Postman: 'Postman'
   },
   Activities: {
     User: '使用者',

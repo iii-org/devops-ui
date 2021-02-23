@@ -3,7 +3,7 @@ import Pagination from '@/components/Pagination'
 import { getPostmanReport } from '@/api/postman'
 
 export default {
-  name: 'Collection',
+  name: 'DevOpsTestCase',
   components: { Pagination },
   data: () => ({
     reportList: [],
@@ -50,7 +50,7 @@ export default {
         this.listLoading = true
         const response = await getPostmanReport(this.$route.params.id)
         const { data } = response
-        data ? (this.reportList = data.json_file.executions) : (this.reportList = [])
+        data ? (this.reportList = data.in_db.executions) : (this.reportList = [])
       } catch (e) {
         console.log(e)
       } finally {

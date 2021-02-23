@@ -114,13 +114,13 @@ export default {
             </span>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Actions')" width="190">
+        <el-table-column align="center" :label="$t('general.Actions')" width="220">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" plain @click="handleClick('ui', scope.row.id)">
-              {{ $t('Postman.Ui') }}
+            <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain @click="handleClick('devops', scope.row.id)">
+              {{ $t('Postman.DevOps') }}
             </el-button>
-            <el-button size="mini" type="primary" @click="handleClick('collection', scope.row.id)">
-              {{ $t('Postman.Collection') }}
+            <el-button :id="`btn-postman-${scope.$index}`" size="mini" type="primary" @click="handleClick('postman', scope.row.id)">
+              {{ $t('Postman.Postman') }}
             </el-button>
           </template>
         </el-table-column>

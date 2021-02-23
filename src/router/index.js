@@ -371,23 +371,23 @@ export const asyncRoutes = [
         meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
         children: [
           {
-            path: 'ui/:id',
-            name: 'Test Case UI',
+            path: 'devops/:id',
+            name: 'DevOps Test Case',
             hidden: true,
-            component: () => import('@/views/TestCaseUI/index'),
+            component: () => import('@/views/DevOpsTestCase/index'),
             meta: {
-              title: 'Test Case UI',
+              title: 'DevOps Test Case',
               roles: ['Engineer', 'Project Manager', 'Administrator'],
               rolePage: false
             }
           },
           {
-            path: 'collection/:id',
-            name: 'Collection',
+            path: 'postman/:id',
+            name: 'Postman Test Case',
             hidden: true,
-            component: () => import('@/views/TestCaseExpertMode/index'),
+            component: () => import('@/views/PostmanTestCase/index'),
             meta: {
-              title: 'Collection',
+              title: 'Postman Test Case',
               roles: ['Engineer', 'Project Manager', 'Administrator'],
               rolePage: false
             }

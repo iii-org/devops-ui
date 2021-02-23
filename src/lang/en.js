@@ -29,8 +29,8 @@ export default {
     Postman: 'Postman',
     CheckMarx: 'CheckMarx',
     WebInspect: 'WebInspect',
-    UI: 'UI',
-    Collection: 'Collection',
+    'DevOps Test Case': 'DevOps Test Case',
+    'Postman Test Case': 'Postman Test Case',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -349,8 +349,8 @@ export default {
     Fail: 'Fail',
     StartTime: 'Start Time',
     SearchBranch: 'Search Branch',
-    Ui: 'UI',
-    Collection: 'Collection'
+    DevOps: 'DevOps',
+    Postman: 'Postman'
   },
   Activities: {
     User: 'User',
