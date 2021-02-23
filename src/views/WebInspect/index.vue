@@ -51,14 +51,16 @@ export default {
       await getWebInspectScans(rName).then(res => {
         this.webInspectScans = this.handleScans(res.data)
       })
-      this.updateWebInspectStatus()
+      await this.updateWebInspectStatus()
       this.listLoading = false
     },
     handleScans(scans) {
       const sortedScans = scans.map(scan => {
         const result = Object.assign({}, scan)
         if (result.stats === 'None') result.stats = {}
-        result['status'] = ''
+        result.finished && Object.keys(result.stats).length !== 0
+          ? (result['status'] = 'Complete')
+          : (result['status'] = '')
         return result
       })
       sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
@@ -66,7 +68,7 @@ export default {
     },
     updateWebInspectStatus() {
       this.webInspectScans.forEach(item => {
-        if (!item.status) this.fetchStatus(item.scan_id)
+        if (item.status === '') this.fetchStatus(item.scan_id)
         if (Object.keys(item.stats).length === 0) this.fetchStats(item.scan_id)
       })
     },
@@ -99,6 +101,20 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    getStatusTagColor(status) {
+      switch (status) {
+        case 'Running':
+          return 'success'
+        case 'NotRunning':
+          return 'warning'
+        case 'Complete':
+          return 'success'
+        case 'Interrupted':
+          return 'danger'
+        default:
+          return 'slow'
+      }
     }
   }
 }
@@ -133,7 +149,13 @@ export default {
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="status" min-width="120" />
+      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="status" min-width="120">
+        <template slot-scope="scope">
+          <el-tag :type="getStatusTagColor(scope.row.status)" effect="dark">
+            {{ scope.row.status }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.4" min-width="100" />
       <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.3" min-width="140" />
       <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.2" min-width="165" />
