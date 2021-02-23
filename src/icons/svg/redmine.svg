@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <clipPath id="clip-redmine">
+      <rect width="128" height="128"/>
+    </clipPath>
+  </defs>
+  <g id="redmine" clip-path="url(#clip-redmine)">
+    <g id="Group_3" data-name="Group 3" transform="translate(49 -1)">
+      <path id="Path_7" data-name="Path 7" d="M0,84.6H26.918l1.923-23.074-25-5.767ZM4.807,51.914l24.034,5.768,5.768-20.189L14.42,26.919ZM16.342,23.073,35.569,33.648,50.952,23.073,36.532,6.73ZM124.014,84.6H97.1L95.173,61.527l25-5.767Zm-4.807-32.688L95.173,57.682,89.407,37.493l20.187-10.574ZM107.671,23.073,88.444,33.648,73.063,23.073,87.484,6.73ZM41.339,3.845l14.42,17.3H69.217l12.5-17.3L69.217,0h-13.8Z" transform="translate(-47 23)" fill="#4c4c4c"/>
+      <path id="Path_11" data-name="Path 11" d="M103.09,72.342H76.173L74.249,49.268l25-5.767Z" transform="translate(-26.076 35.259)" fill="#9c0000"/>
+      <path id="Path_12" data-name="Path 12" d="M99.551,46,75.517,51.763,69.75,31.575,89.937,21Z" transform="translate(-27.343 28.918)" fill="#b50808"/>
+      <path id="Path_13" data-name="Path 13" d="M91.608,21.593,72.381,32.168,57,21.593,71.42,5.25Z" transform="translate(-30.937 24.48)" fill="#c61818"/>
+      <path id="Path_14" data-name="Path 14" d="M32.25,3.845l14.42,17.3H60.128l12.5-17.3L60.128,0h-13.8Z" transform="translate(-37.911 23)" fill="#ce3129"/>
+      <path id="Path_8" data-name="Path 8" d="M0,72.342H26.918l1.923-23.074-25-5.767Z" transform="translate(-47 35.259)" fill="#9c0000"/>
+      <path id="Path_9" data-name="Path 9" d="M3.75,46l24.034,5.768,5.768-20.189L13.364,21Z" transform="translate(-45.943 28.918)" fill="#b50808"/>
+      <path id="Path_10" data-name="Path 10" d="M12.749,21.593,31.976,32.168,47.359,21.593,32.939,5.25Z" transform="translate(-43.407 24.48)" fill="#c61818"/>
+    </g>
+  </g>
+</svg>

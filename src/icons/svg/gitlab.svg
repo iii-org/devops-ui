@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <clipPath id="clip-gitlab">
+      <rect width="128" height="128"/>
+    </clipPath>
+  </defs>
+  <g id="gitlab" clip-path="url(#clip-gitlab)">
+    <g id="Group_2" data-name="Group 2" transform="translate(168 55)">
+      <g id="Group_1" data-name="Group 1" transform="translate(-166 -49)">
+        <g id="gitlab-2" data-name="gitlab" transform="translate(0 0)">
+          <path id="Path_1" data-name="Path 1" d="M59.7,403.917l55.039,71.533,55.039-71.526Z" transform="translate(-52.441 -359.759)" fill="#fc6d25"/>
+          <path id="Path_2" data-name="Path 2" d="M78.043,42.568a2.44,2.44,0,0,0-4.6,0L59.7,85.112H91.815c-.025,0-13.766-42.531-13.766-42.531Z" transform="translate(-52.441 -40.947)" fill="#e24329"/>
+          <path id="Path_3" data-name="Path 3" d="M.262,425.37a4.859,4.859,0,0,0,1.725,5.357l60.321,44.767L7.269,403.968Z" transform="translate(-0.035 -359.803)" fill="#fca327"/>
+          <path id="Path_4" data-name="Path 4" d="M323.482,403.917l22.947,71.533,22.941-71.526Z" transform="translate(-284.132 -359.759)" fill="#e24329"/>
+          <path id="Path_5" data-name="Path 5" d="M574.173,425.37l-7.008-21.4L512.1,475.5l60.314-44.767a4.868,4.868,0,0,0,1.757-5.357Z" transform="translate(-449.805 -359.803)" fill="#fca327"/>
+          <path id="Path_6" data-name="Path 6" d="M718.881,42.568a2.44,2.44,0,0,0-4.6,0L700.518,85.105h32.116Z" transform="translate(-615.299 -40.947)" fill="#e24329"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

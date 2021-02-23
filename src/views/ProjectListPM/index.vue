@@ -150,43 +150,40 @@ export default {
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.git_url"
-            type="primary"
             target="_blank"
-            style="font-size: 16px"
+            style="font-size: 22px"
             :underline="false"
             :href="scope.row.git_url"
           >
-            <i class="el-icon-link" /> GitLab
+            <svg-icon icon-class="gitlab" />
           </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="120">
+      <el-table-column align="center" label="Redmine" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
-            type="primary"
             target="_blank"
-            style="font-size: 16px"
+            style="font-size: 22px"
             :underline="false"
             :href="scope.row.redmine_url"
           >
-            <i class="el-icon-link" /> Redmine
+            <svg-icon icon-class="redmine" />
           </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Harbor" width="120">
+      <el-table-column align="center" label="Harbor" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.harbor_url"
-            type="primary"
             target="_blank"
-            style="font-size: 16px"
+            style="font-size: 22px"
             :underline="false"
             :href="scope.row.harbor_url"
           >
-            <i class="el-icon-link" /> Harbor
+            <svg-icon icon-class="harbor" />
           </el-link>
           <span v-else>-</span>
         </template>
