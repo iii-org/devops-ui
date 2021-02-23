@@ -119,6 +119,15 @@ export default {
       } else {
         return formatTime(new Date(time))
       }
+    },
+    copyUrl(id) {
+      const target = document.getElementById(id)
+      window.getSelection().selectAllChildren(target)
+      document.execCommand('Copy')
+      this.$message({
+        type: 'success',
+        message: 'Copied!'
+      })
     }
   }
 }
@@ -206,48 +215,62 @@ export default {
       </el-table-column>
       <el-table-column align="center" label="GitLab" width="110">
         <template slot-scope="scope">
-          <el-link
+          <el-popover
             v-if="scope.row.git_url"
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            icon="el-icon-link"
-            :underline="false"
-            :href="scope.row.git_url"
+            placement="top"
+            width="400"
+            trigger="hover"
+            :open-delay="300"
+            :close-delay="50"
           >
-            GitLab
-          </el-link>
+            <p :id="`copy-${scope.$index}`" class="text-center">
+              <span class="text-subtitle-1 font-weight-bold">{{ scope.row.git_url }}</span>
+            </p>
+            <div class="d-flex justify-center">
+              <el-button
+                class="mr-2"
+                icon="el-icon-copy-document"
+                circle
+                size="mini"
+                @click="copyUrl(`copy-${scope.$index}`)"
+              />
+              <a :href="scope.row.git_url" target="_blank">
+                <el-button circle size="mini">
+                  <svg-icon icon-class="foreign" />
+                </el-button>
+              </a>
+            </div>
+            <el-link slot="reference" :underline="false" style="font-size: 22px">
+              <svg-icon icon-class="gitlab" />
+            </el-link>
+          </el-popover>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="120">
+      <el-table-column align="center" label="Redmine" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
-            type="primary"
             target="_blank"
-            style="font-size: 16px"
-            icon="el-icon-link"
+            style="font-size: 22px"
             :underline="false"
             :href="scope.row.redmine_url"
           >
-            Redmine
+            <svg-icon icon-class="redmine" />
           </el-link>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Harbor" width="120">
+      <el-table-column align="center" label="Harbor" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.harbor_url"
-            type="primary"
             target="_blank"
-            style="font-size: 16px"
-            icon="el-icon-link"
+            style="font-size: 22px"
             :underline="false"
             :href="scope.row.harbor_url"
           >
-            Harbor
+            <svg-icon icon-class="harbor" />
           </el-link>
           <span v-else>-</span>
         </template>
