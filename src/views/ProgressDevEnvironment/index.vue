@@ -139,8 +139,8 @@ export default {
           branch: item.branch,
           deployment: item.workload.map(item => item.deployment_name),
           container: item.workload.map(item => item.container).flat(),
-          service: item.workload.map(item => item.pulicEnpoints).flat(),
-          start_time: item.workload.map(item => item.createion_timestamp)
+          service: item.workload.map(item => item.pulic_enpoints).flat(),
+          start_time: item.workload.map(item => item.creation_timestamp)
         }))
       })
       this.listLoading = false
