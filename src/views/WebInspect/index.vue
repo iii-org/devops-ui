@@ -163,7 +163,7 @@ export default {
       <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.0" min-width="140" />
       <el-table-column align="center" :label="$t('WebInspect.RunAt')" min-width="190">
         <template slot-scope="scope">
-          <span class="ml-2">{{ scope.row.run_at | formatTime }}</span>
+          <span class="ml-2">{{ scope.row.run_at | formatToLocaleTime }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.Report')" min-width="100">
