@@ -480,8 +480,15 @@ export const asyncRoutes = [
         ]
       },
       {
+        path: 'plugin-resource',
+        name: 'Plugin Resource',
+        component: () => import('@/views/PluginResource/index'),
+        meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
         path: 'harbor',
         name: 'Harbor',
+        hidden: true,
         component: () => import('@/views/ProjectResource/index'),
         meta: { title: 'Harbor', roles: ['Project Manager', 'Administrator'], rolePage: true },
         children: [

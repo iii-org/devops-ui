@@ -42,3 +42,10 @@ export function getHarborRepoStorageSummary(pId) {
     method: 'get'
   })
 }
+
+export function getPluginResource(pId) {
+  return request({
+    url: `/project/${pId}/plugin/resource`,
+    method: 'get'
+  })
+}

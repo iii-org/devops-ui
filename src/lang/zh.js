@@ -34,6 +34,7 @@ export default {
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
+    'Plugin Resource': 'Plugin 資源',
     Harbor: 'Harbor 資源',
 
     Activities: '操作記錄',

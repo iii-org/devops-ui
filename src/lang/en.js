@@ -34,6 +34,7 @@ export default {
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
+    'Plugin Resource': 'Plugin Resource',
     Harbor: 'Harbor',
 
     Activities: 'Activities',
