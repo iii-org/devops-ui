@@ -119,6 +119,22 @@ export default {
           this.listLoading = false
           return err
         })
+    },
+    getStatusTagType(status) {
+      switch (status) {
+        case 'Failed':
+          return 'danger'
+        case 'Success':
+          return 'success'
+        case 'Aborted':
+          return 'warning'
+        case 'Waiting':
+          return 'slow'
+        case 'Building':
+          return 'warning'
+        default:
+          return 'slow'
+      }
     }
   }
 }
@@ -151,19 +167,9 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('ProcessDevBranchTest.Status')" align="center" width="110">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.execution_state == 'Failed'" type="danger" size="medium" effect="dark">
+          <el-tag :type="getStatusTagType(scope.row.execution_state)" size="medium" effect="dark">
             {{ scope.row.execution_state }}
           </el-tag>
-          <el-tag v-else-if="scope.row.execution_state == 'Success'" type="success" size="medium" effect="dark">
-            {{ scope.row.execution_state }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.execution_state == 'Waiting'" type="responded" size="medium" effect="dark">
-            {{ scope.row.execution_state }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.execution_state == 'Building'" type="warning" size="medium" effect="dark">
-            {{ scope.row.execution_state }}
-          </el-tag>
-          <el-tag v-else type="close" size="medium" effect="dark">{{ scope.row.execution_state }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProcessDevBranchTest.Commit')" align="center" min-width="180">
