@@ -28,7 +28,7 @@
         <el-col :span="24">
           <el-divider content-position="left">
             {{ $t('Project.Template') }}
-            <el-button class="ml-2" icon="el-icon-refresh" size="mini" circle />
+            <el-button class="ml-2" icon="el-icon-refresh" size="mini" circle @click="init" />
           </el-divider>
         </el-col>
         <el-col :xs="24" :sm="18" :md="20">
@@ -251,9 +251,11 @@ export default {
   methods: {
     ...mapActions('projects', ['addNewProject']),
     async init() {
+      this.isLoadingTemplate = true
       await getTemplateList().then(res => {
         this.templateList = res
       })
+      this.isLoadingTemplate = false
     },
     onDialogClosed() {
       this.showDialog = false
