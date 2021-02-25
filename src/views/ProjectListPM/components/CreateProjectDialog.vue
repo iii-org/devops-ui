@@ -60,104 +60,35 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="24">
-          <div v-if="templateParamForm.length !== 0">
-            <div v-for="(item, idx) in focusTemplate" :key="item.name">
-              <span class="text-subtitle-1 font-weight-bold">{{ item.name }}</span>
-              <div v-for="(value, key, index) in item" :key="key + index">
-                <el-form-item v-if="key !== 'name' && value !== null" :label="key">
-                  <el-select
-                    v-if="key === 'branchs'"
-                    v-model="templateParamForm[idx].branchs"
-                    class="my-1"
-                    style="width:100%"
-                    placeholder="Please select branch"
-                    multiple
-                  >
-                    <el-option v-for="branch in item.branchs" :key="branch" :label="branch" :value="branch">
-                      <span>{{ branch }}</span>
-                    </el-option>
-                  </el-select>
-                  <el-switch
-                    v-if="key === 'checkmarx.enabled'"
-                    v-model="templateParamForm[idx]['checkmarx.enabled']"
-                    class="my-1"
-                    :active-text="$t('general.Enable')"
-                    :inactive-text="$t('general.Disable')"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                  />
-                  <el-switch
-                    v-if="key === 'newman.enabled'"
-                    v-model="templateParamForm[idx]['newman.enabled']"
-                    class="my-1"
-                    :active-text="$t('general.Enable')"
-                    :inactive-text="$t('general.Disable')"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                  />
-                  <el-switch
-                    v-if="key === 'webinspect.enabled'"
-                    v-model="templateParamForm[idx]['webinspect.enabled']"
-                    class="my-1"
-                    :active-text="$t('general.Enable')"
-                    :inactive-text="$t('general.Disable')"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                  />
-                  <el-switch
-                    v-if="key === 'sonarqube.enabled'"
-                    v-model="templateParamForm[idx]['sonarqube.enabled']"
-                    class="my-1"
-                    :active-text="$t('general.Enable')"
-                    :inactive-text="$t('general.Disable')"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                  />
-                  <el-input
-                    v-if="key === 'db.name'"
-                    v-model="templateParamForm[idx]['db.name']"
-                    class="my-1"
-                    placeholder="Please input DB Name"
-                  />
-                  <el-input
-                    v-if="key === 'db.username'"
-                    v-model="templateParamForm[idx]['db.username']"
-                    class="my-1"
-                    placeholder="Please input DB Username"
-                  />
-                  <el-input
-                    v-if="key === 'db.password'"
-                    v-model="templateParamForm[idx]['db.password']"
-                    :label="'DB Password'"
-                    class="my-1"
-                    placeholder="Please input DB Password"
-                    show-password
-                  />
-                </el-form-item>
-              </div>
-            </div>
-          </div>
-        </el-col> -->
-        <div v-if="hasDbInfos" :gutter="10">
-          <el-col :span="8">
-            <el-form-item label="DB Name">
-              <el-input v-model="form.db_name" placeholder="Please input" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="DB Username">
-              <el-input v-model="form.db_username" placeholder="Please input" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="DB Password">
-              <el-input v-model="form.db_password" :label="'DB Password'" placeholder="Please input" show-password />
+
+        <el-col v-if="focusTemplate.description" :span="24">
+          <el-form-item label="Template Description">
+            <p v-html="focusTemplate.description" />
+          </el-form-item>
+        </el-col>
+
+        <div>
+          <el-col v-for="(argument, idx) in form.argumentsForm" :key="argument.key" :span="8">
+            <el-form-item
+              :label="argument.display"
+              :prop="'argumentsForm.' + idx + '.value'"
+              :rules="{
+                required: true,
+                message: `${argument.display} is required`,
+                trigger: 'blur'
+              }"
+            >
+              <el-input v-if="argument.input_type === 'text'" v-model="argument.value" placeholder="Please input" />
+              <el-input
+                v-else-if="argument.input_type === 'password'"
+                v-model="argument.value"
+                placeholder="Please input"
+                show-password
+              />
             </el-form-item>
           </el-col>
         </div>
       </el-row>
-
       <!-- <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
@@ -190,14 +121,12 @@ import { Message } from 'element-ui'
 
 const formTemplate = () => ({
   name: '',
+  description: '',
   display: '',
   disabled: false,
-  description: '',
   template_id: '',
   tag_name: '',
-  db_username: '',
-  db_password: '',
-  db_name: ''
+  argumentsForm: []
 })
 
 export default {
@@ -219,30 +148,12 @@ export default {
       display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
     },
     templateList: [],
-    versionList: [],
-    focusTemplate: [],
-    templateParamForm: [],
+    focusTemplate: {},
     isLoadingTemplate: false
   }),
   computed: {
-    hasDbInfos() {
-      const refTemplate = this.focusTemplate
-      const infos = refTemplate.map(item => Object.keys(item)).flat()
-      const result = infos.includes('db.name')
-      return result
-    }
-  },
-  watch: {
-    hasDbInfos(val) {
-      if (val) {
-        this.form.db_username = ''
-        this.form.db_password = ''
-        this.form.db_name = ''
-      } else {
-        this.form.db_username = ''
-        this.form.db_password = ''
-        this.form.db_name = ''
-      }
+    versionList() {
+      return this.focusTemplate.version || []
     }
   },
   mounted() {
@@ -262,13 +173,15 @@ export default {
       this.$nextTick(() => {
         this.$refs.createProjectForm.resetFields()
         this.form = formTemplate()
+        this.clearFocusTemplate()
       })
     },
     async handleConfirm() {
       this.$refs.createProjectForm.validate(async valid => {
         if (!valid) return
         this.isLoading = true
-        const res = await this.addNewProject(this.form)
+        const sendData = this.handleSendData()
+        const res = await this.addNewProject(sendData)
         this.isLoading = false
         if (res.message !== 'success') return
         Message({
@@ -280,19 +193,29 @@ export default {
         this.$emit('update')
       })
     },
+    handleSendData() {
+      const result = Object.assign({}, this.form)
+      if (result.argumentsForm.length > 0) {
+        result.arguments = result.argumentsForm.reduce(
+          (result, cur) => Object.assign(result, { [cur.key]: cur.value }),
+          {}
+        )
+      }
+      if (result.description === '') delete result.description
+      if (result.template_id === '') delete result.template_id
+      if (result.tag_name === '') delete result.tag_name
+      delete result.argumentsForm
+      return result
+    },
     clearFocusTemplate() {
       this.form.tag_name = ''
-      this.form.db_username = ''
-      this.form.db_password = ''
-      this.form.db_name = ''
-      this.templateParamForm = []
-      this.focusTemplate = []
-      this.versionList = []
+      this.focusTemplate = {}
+      this.form.argumentsForm = []
     },
     handleTemplateSelect() {
       if (this.form.template_id !== '') {
         const idx = this.templateList.findIndex(item => item.id === this.form.template_id)
-        this.versionList = this.templateList[idx].version
+        this.focusTemplate = this.templateList[idx]
         this.form.tag_name = this.versionList[0] ? this.versionList[0].name : ''
         this.handleVersionSelect()
       } else {
@@ -310,8 +233,11 @@ export default {
       this.isLoadingTemplate = true
       getTemplateParams(this.form.template_id)
         .then(res => {
-          this.focusTemplate = res.template_param
-          this.templateParamForm = JSON.parse(JSON.stringify(res.template_param))
+          if (res.arguments) {
+            this.handleArguments(res.arguments)
+          } else {
+            this.form.argumentsForm = []
+          }
         })
         .catch(err => {
           this.form.template_id = ''
@@ -326,8 +252,11 @@ export default {
       this.isLoadingTemplate = true
       getTemplateParamsByVersion(this.form.template_id, this.form.tag_name)
         .then(res => {
-          this.focusTemplate = res.template_param
-          this.templateParamForm = JSON.parse(JSON.stringify(res.template_param))
+          if (res.arguments) {
+            this.handleArguments(res.arguments)
+          } else {
+            this.form.argumentsForm = []
+          }
         })
         .catch(err => {
           this.form.template_id = ''
@@ -338,17 +267,20 @@ export default {
           this.isLoadingTemplate = false
         })
     },
+    handleArguments(data) {
+      this.form.argumentsForm = data.map(item => {
+        const result = item
+        result.value = item.default_value
+        return result
+      })
+    },
     async refreshTemplate() {
-      this.isLoadingTemplate = true
       await refreshRancherCatalogs()
         .then(res => {
           // console.log(res)
         })
         .catch(err => {
           console.error(err)
-        })
-        .then(() => {
-          this.isLoadingTemplate = false
         })
     }
   }
