@@ -227,7 +227,7 @@ export function deleteProjectFile(file_id) {
 
 export function getProjectDeploymentList(pId) {
   return request({
-    url: `/project/${pId}/deployment/list`,
+    url: `/project/${pId}/environment`,
     method: 'get'
   })
 }
