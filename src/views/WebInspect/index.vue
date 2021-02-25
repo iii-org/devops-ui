@@ -51,43 +51,40 @@ export default {
       await getWebInspectScans(rName).then(res => {
         this.webInspectScans = this.handleScans(res.data)
       })
-      await this.updateWebInspectStatus()
+      await this.updateWebInspectScans()
       this.listLoading = false
     },
     handleScans(scans) {
       const sortedScans = scans.map(scan => {
-        const result = Object.assign({}, scan)
+        const result = scan
         if (result.stats === 'None') result.stats = {}
-        result.finished && Object.keys(result.stats).length !== 0
-          ? (result['status'] = 'Complete')
-          : (result['status'] = '')
         return result
       })
       sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
       return sortedScans
     },
-    updateWebInspectStatus() {
+    updateWebInspectScans() {
       this.webInspectScans.forEach(item => {
-        if (item.status === '') this.fetchStatus(item.scan_id)
-        if (Object.keys(item.stats).length === 0) this.fetchStats(item.scan_id)
+        if (!item.finished) this.fetchStatus(item.scan_id)
       })
     },
-    fetchStatus(wiScanId) {
+    async fetchStatus(wiScanId) {
+      this.listLoading = true
       getWebInspectStatus(wiScanId).then(res => {
         const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        this.webInspectScans[idx].status = res.data.status
-        if (res.data.status === 'NotRunning') this.webInspectScans[idx].finished = true
+        this.webInspectScans[idx].stats.status = res.data.status
+        if (res.data.status === 'Complete') this.fetchStats(wiScanId)
       })
+      this.listLoading = false
     },
-    fetchStats(wiScanId) {
-      getWebInspectStats(wiScanId).then(res => {
+    async fetchStats(wiScanId) {
+      this.listLoading = true
+      await getWebInspectStats(wiScanId).then(res => {
         const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        if (res.data.severity_count === 'None') {
-          this.webInspectScans[idx].stats = {}
-        } else {
-          this.webInspectScans[idx].stats = res.data.severity_count
-        }
+        this.webInspectScans[idx].stats = res.data.severity_count
+        this.webInspectScans[idx].stats.status = 'Complete'
       })
+      this.listLoading = false
     },
     fetchTestReport(wiScanId) {
       getWebInspectReport(wiScanId).then(res => {
@@ -102,7 +99,7 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    getStatusTagColor(status) {
+    getStatusTagType(status) {
       switch (status) {
         case 'Running':
           return 'success'
@@ -149,10 +146,10 @@ export default {
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="status" min-width="120">
+      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="stats.status" min-width="130">
         <template slot-scope="scope">
-          <el-tag :type="getStatusTagColor(scope.row.status)" effect="dark">
-            {{ scope.row.status }}
+          <el-tag :type="getStatusTagType(scope.row.stats.status)" effect="dark">
+            {{ scope.row.stats.status }}
           </el-tag>
         </template>
       </el-table-column>
