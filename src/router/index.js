@@ -395,11 +395,17 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: 'check-marx',
-        name: 'check-marx',
-        component: () => import('@/views/CheckMarx/index'),
+        path: 'checkmarx',
+        name: 'checkmarx',
+        component: () => import('@/views/test/checkmarx'),
         meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
+      // {
+      //   path: 'check-marx',
+      //   name: 'check-marx',
+      //   component: () => import('@/views/CheckMarx/index'),
+      //   meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      // },
       {
         path: 'web-inspect',
         name: 'web-inspect',
@@ -676,7 +682,7 @@ export const asyncRoutes = [
   //     {
   //       path: '',
   //       component: () => import('@/views/CicdPipelinesStages/index'),
-  //       meta: { title: 'Pipeline Stages', roles: ['Engineer'] }
+  //       meta: { title: 'Pipelines Stages', roles: ['Engineer'] }
   //     }
   //   ]
   // },
