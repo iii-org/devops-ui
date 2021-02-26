@@ -32,6 +32,17 @@
         <template slot-scope="scope">
           <div v-for="(name, idx) in scope.row.deployments" :key="name + idx" class="my-1">
             {{ name }}
+            <el-link
+              :id="`link-service-${scope.$index}`"
+              class="ml-2"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              target="_blank"
+              :href="scope.row.services[idx].url"
+            >
+              <svg-icon icon-class="foreign" />
+            </el-link>
           </div>
         </template>
       </el-table-column>
@@ -56,7 +67,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
+      <!-- <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
         <template slot-scope="scope">
           <div v-for="(service, idx) in scope.row.services" :key="service + idx" class="my-1">
             <el-link
@@ -71,7 +82,7 @@
             </el-link>
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column :label="$t('general.StartTime')" align="center" width="190" class="my-1">
         <template slot-scope="scope">
           <div v-for="(time, idx) in scope.row.startTime" :key="time + idx">
@@ -79,7 +90,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="240">
+      <el-table-column :label="$t('general.Actions')" align="center" width="250">
         <template slot-scope="scope">
           <el-button
             :id="`btn-redeploy-${scope.$index}`"
