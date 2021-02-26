@@ -59,7 +59,16 @@
       <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
         <template slot-scope="scope">
           <div v-for="(service, idx) in scope.row.services" :key="service + idx" class="my-1">
-            {{ service.service_name }}
+            <el-link
+              :id="`link-service-${scope.$index}`"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              target="_blank"
+              :href="service.url"
+            >
+              {{ service.service_name }}
+            </el-link>
           </div>
         </template>
       </el-table-column>
