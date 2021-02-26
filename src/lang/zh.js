@@ -74,6 +74,7 @@ export default {
     Confirm: '確認',
     Cancel: '取消',
     SearchName: '搜尋名稱',
+    SearchBranch: '搜尋分支',
     Description: '描述',
     Active: '專案狀態',
     NoData: '暫無資料',

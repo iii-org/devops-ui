@@ -47,6 +47,7 @@ export function hmA(dateTime) {
 }
 
 export function formatTime(time) {
+  if (time === null) return '-'
   time = moment(time)
   if (('' + time).length === 10) {
     time = parseInt(time) * 1000
@@ -73,6 +74,7 @@ export function formatTime(time) {
 }
 
 export function formatToLocaleTime(time) {
+  if (time === null) return '-'
   time = moment(time).utc(moment(time))
   if (('' + time).length === 10) {
     time = parseInt(time) * 1000
