@@ -22,6 +22,7 @@ import {
 } from '@/api/issueTestValue'
 import EditorMD from '@/components/Editormd'
 import { Message } from 'element-ui'
+import MixinElTable from '@/components/MixinElTable'
 export default {
   components: {
     FlowDialog,
@@ -32,6 +33,7 @@ export default {
     TestValueDialog,
     EditorMD
   },
+  mixins: [MixinElTable],
   data() {
     return {
       issueAssigneeList: [],
@@ -544,6 +546,8 @@ export default {
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           class="mt-2"
+          height="100%"
+          row-class-name="el-table-row"
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">

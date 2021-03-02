@@ -5,6 +5,7 @@ import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import EditorMD from '@/components/Editormd'
 import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'ProjectWiki',
@@ -13,6 +14,7 @@ export default {
     ProjectListSelector,
     Pagination
   },
+  mixins: [MixinElTable],
   data: () => ({
     isLoading: false,
     listLoading: true,
@@ -214,7 +216,7 @@ export default {
         Edit
       </el-button>
     </div> -->
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
       <el-table-column align="center" :label="$t('general.CreateTime')" width="190">

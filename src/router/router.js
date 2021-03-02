@@ -182,19 +182,19 @@ export const asyncRoutes = [
       {
         path: 'wiki',
         name: 'IssueWiki',
-        component: () => import('@/views/ProjectWiki/index'),
+        component: () => import('@/views/ProjectWiki'),
         meta: { title: 'Wiki', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
         path: 'listrd/:issue_num/setup',
         hidden: true,
-        component: () => import('@/views/IssueSetUp/index'),
+        component: () => import('@/views/IssueSetUp'),
         meta: { title: 'Issue SetUp', roles: ['Engineer'] }
       },
       {
         path: 'file',
         name: 'File',
-        component: () => import('@/views/ProjectFiles/index'),
+        component: () => import('@/views/ProjectFiles'),
         meta: { title: 'File List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
