@@ -5,7 +5,7 @@
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('general.SearchName')"
+        :placeholder="$t('general.SearchBranch')"
         style="width: 250px; float: right"
       >
         <i slot="prefix" class="el-input__icon el-icon-search" />
@@ -13,62 +13,114 @@
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150" />
+      <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150">
+        <template slot-scope="scope">
+          <div>{{ scope.row.branch }}</div>
+          <el-link
+            :id="`link-commit-${scope.$index}`"
+            type="primary"
+            :underline="false"
+            style="font-size: 14px"
+            target="_blank"
+            :href="scope.row.commit_url"
+          >
+            {{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="370">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.deployment" :key="item + idx" class="my-2">
-            {{ item }}
+          <div v-for="(name, idx) in scope.row.deployments" :key="name + idx" class="my-1">
+            {{ name }}
+            <el-link
+              :id="`link-service-${scope.$index}`"
+              class="ml-2"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              target="_blank"
+              :href="scope.row.services[idx].url"
+            >
+              <svg-icon icon-class="foreign" />
+            </el-link>
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProcessDevEnvironment.State')" align="center" min-width="120">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item.state + idx" class="my-2">
-            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">
-              {{ item.state }}
-            </el-tag>
+          <div v-for="(state, idx) in scope.row.states" :key="state + idx" class="my-1">
+            <el-tag v-if="scope.row.states" :type="getStateType(state)" size="small" effect="dark">{{ state }}</el-tag>
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" min-width="200">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item.name + idx" class="my-2">
-            {{ item.name }}
+          <div v-for="(container, idx) in scope.row.containers" :key="container + idx" class="my-1">
+            {{ container }}
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('ProcessDevEnvironment.Image')" align="center" min-width="550">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item.image + idx" class="my-2">
-            {{ item.image }}
+          <div v-for="(image, idx) in scope.row.images" :key="image + idx" class="my-1">
+            {{ image }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
+      <!-- <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.service" :key="item.name + idx" class="my-2">
-            <el-link :href="item.url" target="_blank" type="primary" :underline="false">{{ item.name }}</el-link>
+          <div v-for="(service, idx) in scope.row.services" :key="service + idx" class="my-1">
+            <el-link
+              :id="`link-service-${scope.$index}`"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              target="_blank"
+              :href="service.url"
+            >
+              {{ service.service_name }}
+            </el-link>
           </div>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.StartTime')" align="center" width="190">
+      </el-table-column> -->
+      <el-table-column :label="$t('general.StartTime')" align="center" width="190" class="my-1">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.start_time" :key="new Date().getTime() + idx" class="my-2">
-            {{ item | formatTime }}
+          <div v-for="(time, idx) in scope.row.startTime" :key="time + idx">
+            {{ time | formatTime }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="120">
+      <el-table-column :label="$t('general.Actions')" align="center" width="250">
         <template slot-scope="scope">
           <el-button
+            :id="`btn-redeploy-${scope.$index}`"
             :loading="btnLoading"
             type="primary"
             size="mini"
             icon="el-icon-refresh"
-            @click="redeploy(projectSelectedId, scope.row.deployment)"
+            @click="redeploy(projectSelectedId, scope.row.branch)"
           >
             Redeploy
           </el-button>
+          <el-popconfirm
+            confirm-button-text="Delete"
+            cancel-button-text="Cancel"
+            icon="el-icon-info"
+            icon-color="red"
+            title="Are you sure?"
+            @onConfirm="handleDelete(projectSelectedId, scope.row.branch)"
+          >
+            <el-button
+              :id="`btn-delete-${scope.$index}`"
+              slot="reference"
+              :loading="btnLoading"
+              size="mini"
+              type="danger"
+            >
+              <i class="el-icon-delete" />
+              {{ $t('general.Delete') }}
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -87,8 +139,11 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import { getProjectDeploymentList } from '@/api/projects'
-import { updateDeployment } from '@/api/projectResource'
+import {
+  getDevEnvironmentList,
+  redeployDevEnvironmentByBranchName,
+  deleteDevEnvironmentByBranchName
+} from '@/api/projects'
 
 export default {
   name: 'ProgressDevEnvironment',
@@ -108,7 +163,7 @@ export default {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
       const listData = this.deploymentList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
+        if (this.searchData === '' || data.branch.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
       })
@@ -119,7 +174,7 @@ export default {
     }
   },
   watch: {
-    projectSelectedId(projectId) {
+    projectSelectedId() {
       this.fetchData()
       this.listQuery.page = 1
       this.searchData = ''
@@ -134,24 +189,32 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      await getProjectDeploymentList(this.projectSelectedId).then(res => {
-        this.deploymentList = Object.values(res.data).map(item => ({
-          branch: item.branch,
-          deployment: item.workload.map(item => item.deployment_name),
-          container: item.workload.map(item => item.container).flat(),
-          service: item.workload.map(item => item.pulic_endpoints).flat(),
-          start_time: item.workload.map(item => item.creation_timestamp)
-        }))
+      await getDevEnvironmentList(this.projectSelectedId).then(res => {
+        this.deploymentList = this.handledDeploymentList(res.data)
       })
       this.listLoading = false
+    },
+    handledDeploymentList(data) {
+      return data.map(item => ({
+        branch: item.branch,
+        commit_id: item.commit_id,
+        commit_url: item.commit_url,
+        deployments: item.deployment.map(i => i.deployment_name),
+        states: item.deployment.map(i => i.container.map(i => i.state)).flat(),
+        containers: item.deployment.map(i => i.container.map(i => i.name)).flat(),
+        images: item.deployment.map(i => i.container.map(i => i.image)).flat(),
+        services: item.deployment.flatMap(i => i.services),
+        services_type: item.deployment.map(i => i.services_type),
+        startTime: item.deployment.map(i => i.container.map(i => i.time)).flat()
+      }))
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    async redeploy(pId, deploymentName) {
+    async redeploy(pId, branchName) {
       this.btnLoading = true
       try {
-        await updateDeployment(pId, deploymentName)
+        await redeployDevEnvironmentByBranchName(pId, branchName)
         this.fetchData()
       } catch (error) {
         console.error(error)
@@ -173,6 +236,16 @@ export default {
         default:
           return 'slow'
       }
+    },
+    async handleDelete(pId, branchName) {
+      this.btnLoading = true
+      try {
+        await deleteDevEnvironmentByBranchName(pId, branchName)
+        this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.btnLoading = false
     }
   }
 }

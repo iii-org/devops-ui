@@ -74,6 +74,7 @@ export default {
     Confirm: 'Confirm',
     Cancel: 'Cancel',
     SearchName: 'Search Name',
+    SearchBranch: 'Search Branch',
     Description: 'Description',
     Active: 'Project Status',
     NoData: 'No Data',
