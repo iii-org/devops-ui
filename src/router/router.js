@@ -200,14 +200,14 @@ export const asyncRoutes = [
       {
         path: 'test-case',
         name: 'Test Case',
-        component: () => import('@/views/TestCase/index'),
+        component: () => import('@/views/TestCase'),
         meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
         children: [
           {
             path: 'test-item/:testCaseId',
             name: 'Test Item',
             hidden: true,
-            component: () => import('@/views/TestItem/index'),
+            component: () => import('@/views/TestItem'),
             meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
           }
         ]
@@ -397,7 +397,7 @@ export const asyncRoutes = [
       {
         path: 'checkmarx',
         name: 'checkmarx',
-        component: () => import('@/views/Test/Checkmarx'),
+        component: () => import('@/views/ScanCheckmarx'),
         meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
       // {

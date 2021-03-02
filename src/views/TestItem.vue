@@ -11,6 +11,7 @@ import {
   getTestValueLocation
 } from '@/api/testValue'
 import { getTestCaseById } from '@/api/testCase'
+import MixinElTable from '@/components/MixinElTable'
 
 const testItemFormTemplate = {
   name: '',
@@ -36,6 +37,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [MixinElTable],
   data() {
     return {
       activeName: 'testItem',
@@ -298,6 +300,8 @@ export default {
               fit
               highlight-current-row
               class="mt-2"
+              height="100%"
+              row-class-name="el-table-row"
             >
               <el-table-column :label="$t('TestItem.Id')">
                 <template slot-scope="scope">
