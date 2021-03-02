@@ -157,7 +157,6 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
-      <el-table-column align="center" :label="$t('Version.Id')" min-width="70" prop="id" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="220" prop="name" />
       <el-table-column align="center" :label="$t('Version.DueDate')" width="120">
         <template slot-scope="scope">
