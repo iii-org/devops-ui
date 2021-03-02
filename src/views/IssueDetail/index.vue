@@ -76,6 +76,8 @@
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           class="mt-2"
+          height="100%"
+          row-class-name="el-table-row"
         >
           <el-table-column label="Description">
             <template slot-scope="scope">
@@ -151,6 +153,7 @@
 import { getIssue, updateIssue } from '@/api/issue'
 import EditIssue from './components/EditIssue'
 import AddContent from './components/AddContent'
+import MixinElTable from '@/components/MixinElTable'
 // import Pagination from '@/components/Pagination'
 
 export default {
@@ -168,6 +171,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [MixinElTable],
   data() {
     return {
       activeName: 'content',

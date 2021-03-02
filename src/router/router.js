@@ -223,7 +223,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/IssueDetail/index'),
+        component: () => import('@/views/IssueDetail'),
         meta: { title: 'Issue Detail', roles: ['Engineer'] }
       }
     ]
@@ -237,7 +237,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/IssueSetUp/index'),
+        component: () => import('@/views/IssueSetUp'),
         meta: { title: 'Issue SetUp', roles: ['Engineer'] }
       }
     ]
