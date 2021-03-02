@@ -32,7 +32,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 6
       },
       listTotal: 0,
       form: formTemplate,
@@ -151,7 +151,12 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
+    <el-table
+      v-loading="listLoading"
+      element-loading-text="Loading"
+      border fit highlight-current-row
+      :data="pagedData"
+    >
       <el-table-column
         align="center"
         :label="$t('Project.NameIdentifier')"

@@ -66,6 +66,8 @@ export default {
     },
     pageSize: {
       get() {
+        console.log(this)
+        console.log(this.limit)
         return this.limit
       },
       set(val) {
@@ -98,4 +100,5 @@ export default {
 .pagination-container.hidden {
   display: none;
 }
+
 </style>
