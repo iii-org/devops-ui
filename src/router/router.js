@@ -132,13 +132,13 @@ export const asyncRoutes = [
       {
         path: 'index',
         name: 'Overview',
-        component: () => import('@/views/ProjectOverview/ProjectOverview'),
+        component: () => import('@/views/ProjectOverview'),
         meta: { title: 'Overview', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'issue-boards',
         name: 'Issue Boards',
-        component: () => import('@/views/IssueBoards/index'),
+        component: () => import('@/views/IssueBoards'),
         meta: { title: 'Issue Boards', roles: ['Project Manager', 'Administrator'] }
       },
 
