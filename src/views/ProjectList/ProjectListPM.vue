@@ -26,7 +26,10 @@ export default {
     listTotal: 0,
     searchData: '',
     editProject: {},
-    deleteProject: { id: '', name: '' }
+    deleteProject: { id: '', name: '' },
+    rowStyle: {
+      height: 70
+    }
   }),
   computed: {
     ...mapGetters(['projectList', 'projectListTotal', 'userProjectList']),
@@ -121,17 +124,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
-      <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" min-width="250">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit
+              highlight-current-row height="100%" :row-style="rowStyle">
+      <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true" min-width="250">
         <template slot-scope="scope">
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
             {{ scope.row.display }}
           </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('Project.Identifier')" min-width="200" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <span style="color: #949494; font-weight: 400">#{{ scope.row.name }}</span>
+          <br>
+          <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Status')" width="100">
@@ -143,9 +144,10 @@ export default {
           <el-tag v-else type="none" size="medium" effect="dark">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Progress')" width="240">
+      <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
+          <br>
           <span class="status-bar-track">
             <span
               class="status-bar"
@@ -154,7 +156,7 @@ export default {
           </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" width="170">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.updated_time | relativeTime }}
         </template>

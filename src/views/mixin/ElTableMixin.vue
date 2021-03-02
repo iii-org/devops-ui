@@ -12,11 +12,13 @@ export default {
       const styles = window.getComputedStyle(child)
       siblingsHeight += parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom'])
     }
-    const tableHeight = parentHeight - siblingsHeight - 40 // parent paddings 40 px
     const eleTable = this.$el.getElementsByClassName('el-table')[0]
-    const rowHeight = parseInt(variables['tableRowHeight'])
-    this.listQuery.limit = tableHeight / rowHeight - 1
-    eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${tableHeight % rowHeight}px + 13px)`
+    const tableHeight = parentHeight - siblingsHeight - 40 // parent paddings 40 px
+    const defaultRowHeight = parseInt(variables['tableRowHeight'])
+    const rowHeight = this.rowStyle ? this.rowStyle.height : defaultRowHeight
+    this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / rowHeight)
+    console.log(this.listQuery.limit)
+    eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) % rowHeight}px + 20px)`
   }
 }
 </script>
