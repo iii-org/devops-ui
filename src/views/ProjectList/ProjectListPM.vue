@@ -27,9 +27,7 @@ export default {
     searchData: '',
     editProject: {},
     deleteProject: { id: '', name: '' },
-    rowStyle: {
-      height: 70
-    }
+    rowHeight: 70
   }),
   computed: {
     ...mapGetters(['projectList', 'projectListTotal', 'userProjectList']),
@@ -125,7 +123,7 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row height="100%" :row-style="rowStyle">
+              highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}">
       <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true" min-width="250">
         <template slot-scope="scope">
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">

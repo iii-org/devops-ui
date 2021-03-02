@@ -1,6 +1,4 @@
 <script>
-import variables from '@/styles/variables.scss'
-
 export default {
   mounted() {
     console.log('mixin called.')
@@ -15,8 +13,8 @@ export default {
     }
     const eleTable = this.$el.getElementsByClassName('el-table')[0]
     const tableHeight = parentHeight - siblingsHeight - 40 // parent paddings 40 px
-    const defaultRowHeight = parseInt(variables['tableRowHeight'])
-    const rowHeight = this.rowStyle ? this.rowStyle.height : defaultRowHeight
+    const defaultRowHeight = 53 // FIXME: Detect real cell height
+    const rowHeight = this.rowHeight ? this.rowHeight : defaultRowHeight
     this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / rowHeight)
     eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) % rowHeight}px + 20px)`
   }

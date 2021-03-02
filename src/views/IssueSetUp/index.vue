@@ -547,7 +547,7 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           class="mt-2"
           height="100%"
-          row-class-name="el-table-row"
+
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">

@@ -23,7 +23,8 @@ export default {
       limit: 10
     },
     listTotal: 0,
-    searchData: ''
+    searchData: '',
+    rowHeight: 90
   }),
   computed: {
     ...mapGetters(['projectSelectedObject']),
@@ -156,7 +157,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" :cell-style="{height: rowHeight + 'px'}">
       <el-table-column :label="$t('ProcessDevBranchTest.Id')" align="center" width="80" prop="id" />
       <el-table-column :label="$t('ProcessDevBranchTest.TestItems')" align="center" width="120">
         <template slot-scope="scope">

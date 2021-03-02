@@ -301,7 +301,7 @@ export default {
               highlight-current-row
               class="mt-2"
               height="100%"
-              row-class-name="el-table-row"
+
             >
               <el-table-column :label="$t('TestItem.Id')">
                 <template slot-scope="scope">

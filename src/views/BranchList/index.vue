@@ -216,7 +216,7 @@ export default {
     </div>
     <el-divider />
 
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
       <el-table-column label="Branch Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link

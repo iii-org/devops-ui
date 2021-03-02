@@ -211,7 +211,7 @@ export default {
         default-expand-all
         :tree-props="{ children: 'children' }"
         height="100%"
-        row-class-name="el-table-row"
+
       >
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
           <template slot-scope="scope">

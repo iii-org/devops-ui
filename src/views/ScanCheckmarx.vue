@@ -139,7 +139,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%">
       <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
       <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" />
       <el-table-column align="center" :label="$t('CheckMarx.Commit')" width="100">

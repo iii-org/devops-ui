@@ -12,7 +12,7 @@
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}">
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150">
         <template slot-scope="scope">
           <div>{{ scope.row.branch }}</div>
@@ -159,7 +159,8 @@ export default {
       limit: 10
     },
     listTotal: 0,
-    searchData: ''
+    searchData: '',
+    rowHeight: 120
   }),
   computed: {
     ...mapGetters(['projectSelectedId']),

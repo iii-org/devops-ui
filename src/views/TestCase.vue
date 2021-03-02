@@ -212,7 +212,7 @@ export default {
         highlight-current-row
         :data="pagedData"
         height="100%"
-        row-class-name="el-table-row"
+
       >
         <el-table-column align="center" :label="$t('TestCase.Id')" width="110">
           <template slot-scope="scope">
