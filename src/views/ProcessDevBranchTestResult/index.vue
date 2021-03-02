@@ -2,11 +2,13 @@
 import { mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import TestDetail from './components/TestDetail'
+import MixinElTable from '@/components/MixinElTable'
 export default {
   components: {
     Pagination,
     TestDetail
   },
+  mixins: [MixinElTable],
   data() {
     return {
       testList: [
@@ -81,7 +83,7 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column align="center" label="Index">
         <template slot-scope="scope">
           <span style="color: #409EFF;cursor: pointer;" @click="testDetailVisible = true">

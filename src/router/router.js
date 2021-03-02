@@ -104,7 +104,7 @@ export const asyncRoutes = [
       {
         path: 'graph',
         name: 'Project Graph',
-        component: () => import('@/views/ProjectGraph/index'),
+        component: () => import('@/views/ProjectGraph'),
         meta: { title: 'Project Graph', roles: ['Engineer'] }
       },
       {
@@ -253,52 +253,34 @@ export const asyncRoutes = [
       {
         path: 'dev-branch',
         name: 'DevBranch',
-        component: () => import('@/views/ProcessDevBranch/index'),
+        component: () => import('@/views/ProcessDevBranch'),
         meta: { title: 'Dev Branch', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'git-graph',
         name: 'Git Graph',
-        component: () => import('@/views/ProjectGraph/index'),
+        component: () => import('@/views/ProjectGraph'),
         meta: { title: 'Git Graph', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'pipelines',
         name: 'Pipelines',
-        component: () => import('@/views/ProgressPipelines/index'),
+        component: () => import('@/views/ProgressPipelines'),
         meta: { title: 'Pipelines', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'dev-branch/:branchName/test',
         name: 'DevBranchTest',
         hidden: true,
-        component: () => import('@/views/ProcessDevBranchTestResult/index'),
+        component: () => import('@/views/ProcessDevBranchTestResult'),
         meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'dev-environment',
         name: 'DevEnvironment',
-        component: () => import('@/views/ProgressDevEnvironment/index'),
+        component: () => import('@/views/ProgressDevEnvironment'),
         meta: { title: 'Dev Environment', roles: ['Project Manager', 'Administrator'] }
       }
-      // {
-      //   path: 'project-gantt',
-      //   name: 'ProjectGantt',
-      //   component: () => import('@/views/ProgressGantt/index'),
-      //   meta: { title: 'Project Gantt', roles: ['Project Manager'] }
-      // },
-      // {
-      //   path: 'dev-gantt',
-      //   name: 'DevGantt',
-      //   component: () => import('@/views/ProgressDevGantt/index'),
-      //   meta: { title: 'Dev Gantt', roles: ['Project Manager'] }
-      // },
-      // {
-      //   path: 'dev-version',
-      //   name: 'DevVersion',
-      //   component: () => import('@/views/ProgressDevVersion/index'),
-      //   meta: { title: 'Dev Version', roles: ['Project Manager'] }
-      // },
     ]
   },
 

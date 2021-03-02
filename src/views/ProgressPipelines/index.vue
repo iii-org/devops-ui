@@ -5,10 +5,12 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { formatTime } from '@/utils/index.js'
 import { getPipelines, getPipelinesLogs, changePipelineByAction } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'ProgressPipelines',
   components: { Pagination, ProjectListSelector, TestDetail },
+  mixins: [MixinElTable],
   data: () => ({
     isLoading: false,
     listLoading: false,
@@ -154,7 +156,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" row-class-name="el-table-row">
       <el-table-column :label="$t('ProcessDevBranchTest.Id')" align="center" width="80" prop="id" />
       <el-table-column :label="$t('ProcessDevBranchTest.TestItems')" align="center" width="120">
         <template slot-scope="scope">
