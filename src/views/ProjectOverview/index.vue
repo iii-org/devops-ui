@@ -106,11 +106,11 @@ export default {
         for (const j in apiProjectData.test_results[i]) {
           // console.log(j, apiProjectData.test_results[i][j])
           if (
-            (j !== 'message') &
-            (j !== 'statisticsCalculationDate') &
-            (j !== 'run_at') &
-            (j !== 'status') &
-            (j !== 'report_id') &
+            (j !== 'message') &&
+            (j !== 'statisticsCalculationDate') &&
+            (j !== 'run_at') &&
+            (j !== 'status') &&
+            (j !== 'report_id') &&
             (j !== 'id')
           ) {
             informationText =
@@ -384,7 +384,7 @@ export default {
   padding: 6px 22px 7px 20px;
   border-radius: 2px;
   background-color: #68c239;
-  font-size: 16px
+  font-size: 16px;
   i {
     vertical-align: -1px;
   }
