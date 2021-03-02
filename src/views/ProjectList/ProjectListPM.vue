@@ -2,7 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog } from './components'
-import ElTableMixin from '@/views/mixin/ElTableMixin'
+import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   name: 'ProjectListPM',

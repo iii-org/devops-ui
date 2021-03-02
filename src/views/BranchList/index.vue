@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import ElTableMixin from '@/views/mixin/ElTableMixin'
+import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   components: { Pagination },

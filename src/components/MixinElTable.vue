@@ -6,7 +6,8 @@ export default {
     console.log('mixin called.')
     const parentHeight = this.$el.clientHeight
     let siblingsHeight = 0
-    for (const child of this.$el.children) {
+    const parentNode = this.$el.getElementsByClassName('el-table')[0].parentNode
+    for (const child of parentNode.children) {
       if (child.className.match(/\bel-table\b/)) continue
       siblingsHeight += child.clientHeight
       const styles = window.getComputedStyle(child)
@@ -17,7 +18,6 @@ export default {
     const defaultRowHeight = parseInt(variables['tableRowHeight'])
     const rowHeight = this.rowStyle ? this.rowStyle.height : defaultRowHeight
     this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / rowHeight)
-    console.log(this.listQuery.limit)
     eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) % rowHeight}px + 20px)`
   }
 }

@@ -6,6 +6,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { addIssue } from '@/api/issue'
 import { getProjectIssueListByTree } from '@/api/projects'
 import AddIssue from './components/AddIssue'
+import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   name: 'ProjectIssues',
@@ -14,6 +15,7 @@ export default {
     ProjectListSelector,
     Pagination
   },
+  mixins: [ElTableMixin],
   data: () => ({
     issueList: [],
     addTopicDialogVisible: false,
@@ -208,6 +210,8 @@ export default {
         row-key="id"
         default-expand-all
         :tree-props="{ children: 'children' }"
+        height="100%"
+        row-class-name="el-table-row"
       >
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
           <template slot-scope="scope">

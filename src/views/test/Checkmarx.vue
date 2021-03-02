@@ -10,7 +10,7 @@ import {
   getCheckMarxReportStatus,
   getCheckMarxReport
 } from '@/api/checkMarx'
-import ElTableMixin from '@/views/mixin/ElTableMixin'
+import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   name: 'CheckMarx',
