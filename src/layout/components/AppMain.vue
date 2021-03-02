@@ -34,7 +34,7 @@ export default {
 
 <style scoped>
 .app-main {
-  height: 100%;
+  height: calc(100% - 50px); /* 50px is the nav bar */
   width: 100%;
   position: relative;
   overflow: hidden;
