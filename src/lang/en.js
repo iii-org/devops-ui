@@ -115,7 +115,7 @@ export default {
     ScanId: 'Scan ID',
     Branch: 'Branch',
     Commit: 'Commit',
-    Status: 'status',
+    Status: 'Status',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
     LowSeverity: 'Low Severity',
@@ -375,5 +375,6 @@ export default {
     SearchRegistryName: 'Search Registry Name',
     UserName: 'User Name',
     Password: 'Password'
-  }
+  },
+  Loading: 'Loading...'
 }

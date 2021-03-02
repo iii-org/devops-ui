@@ -12,7 +12,7 @@
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150">
         <template slot-scope="scope">
           <div>{{ scope.row.branch }}</div>

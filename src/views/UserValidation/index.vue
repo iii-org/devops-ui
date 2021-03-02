@@ -97,7 +97,7 @@ export default {
     <el-table
       v-loading="listLoading"
       :data="pagedData"
-      element-loading-text="Loading"
+      :element-loading-text="$t('Loading')"
       border
       ref="multipleTable"
       tooltip-effect="dark"

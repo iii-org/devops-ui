@@ -2,6 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog } from './components'
+import ElTableMixin from '@/views/mixin/ElTableMixin'
 
 export default {
   name: 'ProjectListPM',
@@ -49,6 +50,7 @@ export default {
   async created() {
     this.loadList()
   },
+  mixins: [ElTableMixin],
   methods: {
     ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject', 'queryProjectList']),
     async loadList() {
@@ -119,7 +121,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column :label="$t('Project.Name')" :show-overflow-tooltip="true" min-width="250">
         <template slot-scope="scope">
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
@@ -135,8 +137,9 @@ export default {
       <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium" effect="dark">{{
-            scope.row.project_status
-          }}</el-tag>
+              scope.row.project_status
+            }}
+          </el-tag>
           <el-tag v-else type="none" size="medium" effect="dark">{{ scope.row.project_status }}</el-tag>
         </template>
       </el-table-column>

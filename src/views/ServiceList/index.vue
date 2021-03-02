@@ -91,7 +91,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column :label="$t('general.Name')" align="center" prop="name" min-width="200" />
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">

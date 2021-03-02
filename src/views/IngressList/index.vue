@@ -77,7 +77,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column :label="$t('general.Name')" align="center" prop="name" width="200" show-overflow-tooltip />
       <el-table-column label="hostname" align="center" prop="hostname" min-width="120" show-overflow-tooltip />
       <el-table-column label="IP" align="center" prop="ip" min-width="120" show-overflow-tooltip />

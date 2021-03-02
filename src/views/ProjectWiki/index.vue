@@ -214,7 +214,7 @@ export default {
         Edit
       </el-button>
     </div> -->
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
       <el-table-column align="center" :label="$t('general.CreateTime')" width="190">

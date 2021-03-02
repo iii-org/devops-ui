@@ -199,7 +199,7 @@ export default {
       </h3>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column label="File Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}

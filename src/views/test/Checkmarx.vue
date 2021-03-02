@@ -10,10 +10,12 @@ import {
   getCheckMarxReportStatus,
   getCheckMarxReport
 } from '@/api/checkMarx'
+import ElTableMixin from '@/views/mixin/ElTableMixin'
 
 export default {
   name: 'CheckMarx',
   components: { ProjectListSelector, Pagination },
+  mixins: [ElTableMixin],
   data: () => ({
     checkMarxScans: [],
     listLoading: false,
@@ -137,10 +139,10 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" />
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
+      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
       <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('CheckMarx.Commit')">
+      <el-table-column align="center" :label="$t('CheckMarx.Commit')" width="100">
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -153,8 +155,8 @@ export default {
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status"/>
-      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity"/>
+      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" width="100" />
+      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
       <el-table-column
         align="center"
         :label="$t('CheckMarx.MediumSeverity')"
@@ -162,12 +164,12 @@ export default {
       />
       <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.RunAt')">
+      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" min-width="170">
         <template slot-scope="scope">
           <span class="ml-2">{{ scope.row.run_at | UTCtoLocalTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready">
+      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.report_ready"

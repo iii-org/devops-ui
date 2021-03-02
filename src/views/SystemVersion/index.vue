@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-table :data="list" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table :data="list" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" label="Source" width="180">
         <template slot-scope="scope">
           {{ scope.row.source }}

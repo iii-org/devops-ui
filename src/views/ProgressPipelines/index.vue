@@ -154,7 +154,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column :label="$t('ProcessDevBranchTest.Id')" align="center" width="80" prop="id" />
       <el-table-column :label="$t('ProcessDevBranchTest.TestItems')" align="center" width="120">
         <template slot-scope="scope">

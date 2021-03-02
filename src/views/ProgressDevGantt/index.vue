@@ -128,7 +128,7 @@ export default {
       row-key="order"
       :data="pagedData"
       :span-method="objectSpanMethod"
-      element-loading-text="Loading"
+      :element-loading-text="$t('Loading')"
       border
       style="width: 100%"
       default-expand-all

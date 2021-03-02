@@ -12,7 +12,7 @@
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column :label="'功能'" align="center" prop="function" min-width="100" />
       <el-table-column :label="'軟體名稱'" align="center" prop="softwareName" min-width="100" />
       <el-table-column :label="'狀態'" align="center" prop="state" width="100" />

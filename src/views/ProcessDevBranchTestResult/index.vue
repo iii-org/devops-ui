@@ -81,7 +81,7 @@ export default {
 </script>
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" label="Index">
         <template slot-scope="scope">
           <span style="color: #409EFF;cursor: pointer;" @click="testDetailVisible = true">

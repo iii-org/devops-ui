@@ -101,7 +101,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" min-width="160" prop="name" />
       <el-table-column align="center" :label="$t('general.Description')" min-width="160" prop="last_commit_message" />
       <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')" min-width="200">

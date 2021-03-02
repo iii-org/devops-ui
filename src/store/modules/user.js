@@ -1,6 +1,6 @@
 import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
 
 const getDefaultState = () => {

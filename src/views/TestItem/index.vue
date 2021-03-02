@@ -293,7 +293,7 @@ export default {
             </div>
             <el-table
               :data="testItemPagedData"
-              element-loading-text="Loading"
+              :element-loading-text="$t('Loading')"
               border
               fit
               highlight-current-row
@@ -368,7 +368,7 @@ export default {
             </div>
             <el-table
               :data="testValuePagedData"
-              element-loading-text="Loading"
+              :element-loading-text="$t('Loading')"
               border
               fit
               highlight-current-row

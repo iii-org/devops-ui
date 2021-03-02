@@ -169,7 +169,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column align="center" :label="$t('DevOps.Id')" min-width="30">
         <template slot-scope="scope">
           <!-- <i class="el-icon-sort"></i>  -->

@@ -153,7 +153,7 @@ export default {
     <el-divider />
     <el-table
       v-loading="listLoading"
-      element-loading-text="Loading"
+      :element-loading-text="$t('Loading')"
       border fit highlight-current-row
       :data="pagedData"
     >

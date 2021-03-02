@@ -88,7 +88,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>

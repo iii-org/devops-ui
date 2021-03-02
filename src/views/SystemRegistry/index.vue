@@ -135,7 +135,7 @@ export default {
         Reload
       </el-button>
     </div>
-    <el-table v-loading="listLoading" element-loading-text="Loading" :data="pagedData" border fit>
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
       <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'Active'" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>

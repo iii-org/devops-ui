@@ -78,7 +78,7 @@ export default {
 
     <el-divider />
 
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('Activities.User')" min-width="100" prop="operator_name" />
       <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="150" prop="action_type" />
       <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="250" prop="action_parts" />

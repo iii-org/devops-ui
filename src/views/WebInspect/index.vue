@@ -130,7 +130,7 @@ export default {
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" element-loading-text="Loading" border fit highlight-current-row :data="pagedData">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData">
       <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" min-width="200" />
       <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="180" />
       <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="100">

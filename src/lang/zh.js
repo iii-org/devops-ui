@@ -372,5 +372,6 @@ export default {
     SearchRegistryName: '搜尋 Registry 名稱',
     UserName: '使用者名稱',
     Password: '密碼'
-  }
+  },
+  Loading: '讀取中……'
 }

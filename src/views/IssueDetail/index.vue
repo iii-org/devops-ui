@@ -70,7 +70,7 @@
         <el-table
           v-loading="listLoading"
           :data="issue_detail.journals"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -100,7 +100,7 @@
         <el-table
           v-loading="listLoading"
           :data="issue_detail.features"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row

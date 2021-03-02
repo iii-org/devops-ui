@@ -79,7 +79,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%">
       <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}

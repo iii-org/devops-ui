@@ -118,7 +118,7 @@ export default {
       </el-select>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border style="width: 100%">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%">
       <el-table-column label="Version" :show-overflow-tooltip="true" width="150">
         <template slot-scope="scope">
           {{ scope.row.version }}

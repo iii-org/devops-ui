@@ -538,7 +538,7 @@ export default {
         <el-button type="primary" @click="showAddComment">Add Comment</el-button>
         <el-table
           :data="issueComment"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -566,7 +566,7 @@ export default {
         <!-- <el-button type="primary" @click="showFlowDialog('', 'Add Flow')">Add Flow</el-button> -->
         <el-table
           :data="issueFlow"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -607,7 +607,7 @@ export default {
         <!-- <el-button type="primary" @click="showParamDialog('', 'Add Parameter')">Add Parameter</el-button> -->
         <el-table
           :data="issueParameter"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -653,7 +653,7 @@ export default {
         <el-button type="primary" @click="showTestDialog('', 'Add Test')">Add Test Case</el-button>
         <el-table
           :data="issueTestCase"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -708,7 +708,7 @@ export default {
           </el-select>
           <el-button type="primary" @click="showTestItemDialog('', 'Add Test Item')">Add Test Item</el-button>
         </div>
-        <el-table :data="issueTestItem" element-loading-text="Loading" border fit class="mt-2">
+        <el-table :data="issueTestItem" :element-loading-text="$t('Loading')" border fit class="mt-2">
           <el-table-column label="ID">
             <template slot-scope="scope">
               <span style="color: #409eff; cursor: pointer" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
@@ -746,7 +746,7 @@ export default {
           </el-select>
           <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button>
         </div>
-        <el-table :data="issueTestValue" element-loading-text="Loading" border fit class="mt-2">
+        <el-table :data="issueTestValue" :element-loading-text="$t('Loading')" border fit class="mt-2">
           <el-table-column label="Type">
             <template slot-scope="scope">
               {{ scope.row.type }}

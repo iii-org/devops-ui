@@ -66,7 +66,7 @@ export default {
     <h3>
       {{ projectName }}
     </h3>
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column label="Author" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.author_name }}

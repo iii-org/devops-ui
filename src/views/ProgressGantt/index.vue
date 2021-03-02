@@ -86,7 +86,7 @@ export default {
       v-loading="listLoading"
       :data="pagedData"
       :span-method="objectSpanMethod"
-      element-loading-text="Loading"
+      :element-loading-text="$t('Loading')"
       border
       style="width: 100%"
     >
