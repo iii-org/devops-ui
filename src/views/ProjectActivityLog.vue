@@ -32,7 +32,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import ProjectListSelector from '../../components/ProjectListSelector'
+import ProjectListSelector from '../components/ProjectListSelector'
 import { getProjectIssueListByDate } from '@/api/projects'
 
 export default {
