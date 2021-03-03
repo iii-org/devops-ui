@@ -2,11 +2,13 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ValidateDialog from './components/ValidateDialog'
+import MixinElTable from '@/components/MixinElTable'
 export default {
   components: {
     ValidateDialog,
     Pagination
   },
+  mixins: [MixinElTable],
   data() {
     return {
       userList: [
@@ -102,6 +104,8 @@ export default {
       ref="multipleTable"
       tooltip-effect="dark"
       @selection-change="handleSelectionChange"
+      height="100%"
+      row-class-name="el-table-row"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column align="center" label="Account" width="120">

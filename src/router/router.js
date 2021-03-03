@@ -546,7 +546,7 @@ export const asyncRoutes = [
         path: 'validation',
         name: 'validation',
         hidden: true,
-        component: () => import('@/views/UserValidation/index'),
+        component: () => import('@/views/UserValidation'),
         meta: { title: 'validation', roles: ['Administrator'] }
       }
     ]
@@ -561,7 +561,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/Profile/index'),
+        component: () => import('@/views/Profile'),
         name: 'Profile',
         meta: {
           title: 'Profile',
@@ -582,7 +582,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/SystemVersion/index'),
+        component: () => import('@/views/SystemVersion'),
         name: 'SystemVersion',
         meta: {
           title: 'System Version',
@@ -593,57 +593,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
-  // {
-  //   path: '/my-issues',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'MyIssues',
-  //       component: () => import('@/views/MyIssues/index'),
-  //       meta: { title: 'My Issues', icon: 'list', roles: ['Engineer'] }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/test',
-  //   component: Layout,
-  //   name: 'Test',
-  //   meta: { title: 'Test', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
-  //   redirect: '/Test/test-ite',
-  //   children: [
-  //     {
-  //       path: 'test-item',
-  //       name: 'Test Item',
-  //       component: () => import('@/views/TestItem/index'),
-  //       meta: { title: 'Test Item', icon: 'list', roles: ['Engineer'] }
-  //     },
-  //     {
-  //       path: 'test-case/:testItemId',
-  //       name: 'Test Case',
-  //       hidden: true,
-  //       component: () => import('@/views/TestCase/index'),
-  //       meta: { title: 'Issue Detail', roles: ['Engineer'] }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/cicd/pipelines/:pipeline_id/stages',
-  //   component: Layout,
-  //   hidden: true,
-  //   meta: { roles: ['Engineer'] },
-  //   children: [
-  //     {
-  //       path: '',
-  //       component: () => import('@/views/CicdPipelinesStages/index'),
-  //       meta: { title: 'Pipelines Stages', roles: ['Engineer'] }
-  //     }
-  //   ]
-  // },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
