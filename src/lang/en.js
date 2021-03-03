@@ -90,7 +90,8 @@ export default {
     Enable: 'Enable',
     LastUpdateTime: 'Last Update Time',
     Copied: 'Copied',
-    SwitchLanguageSuccess: 'Switch Language Success'
+    SwitchLanguageSuccess: 'Switch Language Success',
+    Redeploy: 'Redeploy'
   },
   TestCase: {
     TestCase: 'Test Case',
@@ -326,7 +327,7 @@ export default {
     State: 'State',
     Container: 'Container',
     Image: 'Image',
-    'Service(Url)': 'Service(Url)'
+    Services: 'Services'
   },
   ProjectResource: {
     Usage: 'Usage',
