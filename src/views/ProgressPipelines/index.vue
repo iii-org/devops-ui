@@ -27,7 +27,7 @@ export default {
     rowHeight: 90
   }),
   computed: {
-    ...mapGetters(['projectSelectedObject']),
+    ...mapGetters(['selectedProject']),
     pagedData() {
       const listData = this.testList.filter(data => {
         if (this.searchData === '' || data.commit_message.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -41,7 +41,7 @@ export default {
     }
   },
   watch: {
-    projectSelectedObject(obj) {
+    selectedProject(obj) {
       this.fetchData()
       this.listQuery.page = 1
       this.searchData = ''
@@ -56,7 +56,7 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      const rid = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
+      const rid = this.selectedProject.repository_id || this.selectedProject[0].repository_id
       try {
         const res = await getPipelines(rid)
         const { data } = res
@@ -91,7 +91,7 @@ export default {
     },
     async onDetailsClick(row) {
       this.isLoading = true
-      const { repository_id } = this.projectSelectedObject
+      const { repository_id } = this.selectedProject
       const params = {
         repository_id,
         pipelines_exec_run: row.id
@@ -108,7 +108,7 @@ export default {
       this.isLoading = false
     },
     async onActionClick(id, action) {
-      const { repository_id } = this.projectSelectedObject
+      const { repository_id } = this.selectedProject
       const data = {
         pipelines_exec_run: id,
         action

@@ -14,10 +14,10 @@ export default {
     isNoData: false
   }),
   computed: {
-    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'projectSelectedObject'])
+    ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'selectedProject'])
   },
   watch: {
-    projectSelectedObject() {
+    selectedProject() {
       this.fetchData()
     }
   },
@@ -30,7 +30,7 @@ export default {
       try {
         const svgs = document.querySelector('#graph-container').children
         if (svgs && svgs.length > 0) [...svgs].forEach(_svg => _svg.remove())
-        const repository_id = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
+        const repository_id = this.selectedProject.repository_id || this.selectedProject[0].repository_id
         const res = await getGitGraphByRepo(repository_id)
         if (!res.data.length) {
           this.isNoData = true

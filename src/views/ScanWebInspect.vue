@@ -21,7 +21,7 @@ export default {
     searchData: ''
   }),
   computed: {
-    ...mapGetters(['projectSelectedObject']),
+    ...mapGetters(['selectedProject']),
     pagedData() {
       const listData = this.webInspectScans.filter(data => {
         const isCommitId = data.commit_id.toString().includes(this.searchData.toString())
@@ -34,7 +34,7 @@ export default {
     }
   },
   watch: {
-    projectSelectedObject() {
+    selectedProject() {
       this.fetchWebInspectScans()
       this.listQuery.page = 1
       this.searchData = ''
@@ -49,7 +49,7 @@ export default {
   methods: {
     async fetchWebInspectScans() {
       this.listLoading = true
-      const rName = this.projectSelectedObject.name || this.projectSelectedObject[0].name
+      const rName = this.selectedProject.name || this.selectedProject[0].name
       await getWebInspectScans(rName).then(res => {
         this.webInspectScans = this.handleScans(res.data)
       })

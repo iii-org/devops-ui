@@ -53,7 +53,7 @@ export default {
   },
   mixins: [ElTableMixin],
   methods: {
-    ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject', 'queryProjectList']),
+    ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
     async loadList() {
       this.listLoading = true
       await this.queryProjectList()
@@ -90,8 +90,7 @@ export default {
     },
     handleClick(id) {
       localStorage.setItem('project', id)
-      this.changeSelectedProjectId(id)
-      this.changeSelectedProjectObject(this.userProjectList.filter(elm => elm.id === id)[0])
+      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === id)[0])
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {

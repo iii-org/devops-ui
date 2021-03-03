@@ -47,7 +47,7 @@ export default {
     form: formTemplate
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
+    ...mapGetters(['projectSelectedId', 'selectedProject']),
     pagedData() {
       const listData = this.phaseList.filter(data => {
         if (this.searchData === '' || data.software.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -94,7 +94,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       this.phaseList = []
-      const repository_id = this.projectSelectedObject.repository_id
+      const repository_id = this.selectedProject.repository_id
       if (repository_id) {
         try {
           const res = await getPipelinesPhase(repository_id, 'master')

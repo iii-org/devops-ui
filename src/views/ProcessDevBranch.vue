@@ -23,7 +23,7 @@ export default {
     searchData: ''
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'projectSelectedObject', 'branchesByProject']),
+    ...mapGetters(['projectSelectedId', 'selectedProject', 'branchesByProject']),
     pagedData() {
       const listData = this.branchList.filter(data => {
         if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -40,7 +40,7 @@ export default {
     branchesByProject(ary) {
       this.branchList = ary
     },
-    projectSelectedObject(obj) {
+    selectedProject(obj) {
       this.fetchBranchData()
       this.listQuery.page = 1
       this.searchData = ''
@@ -56,7 +56,7 @@ export default {
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchBranchData() {
       this.listLoading = true
-      const repository_id = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
+      const repository_id = this.selectedProject.repository_id || this.selectedProject[0].repository_id
       await this.getBranchesByProject(repository_id)
       this.listLoading = false
     },

@@ -14,8 +14,7 @@ const getDefaultState = () => {
   return {
     list: [],
     total: 0,
-    projectSelectedId: -1,
-    projectSelectedObject: {}
+    selectedProject: { id: -1 }
   }
 }
 
@@ -28,11 +27,8 @@ const mutations = {
   SET_TOTAL: (state, total) => {
     state.total = total
   },
-  SET_PROJET_SELECTED_ID: (state, id) => {
-    state.projectSelectedId = id
-  },
-  SET_PROJET_SELECTED: (state, obj) => {
-    state.projectSelectedObject = obj
+  SET_SELECTED_PROJECT: (state, project) => {
+    state.selectedProject = project
   }
 }
 
@@ -121,11 +117,8 @@ const actions = {
       console.error(error.toString())
     }
   },
-  changeSelectedProjectId({ commit }, id) {
-    commit('SET_PROJET_SELECTED_ID', id)
-  },
-  changeSelectedProjectObject({ commit }, obj) {
-    commit('SET_PROJET_SELECTED', obj)
+  setSelectedProject({ commit }, project) {
+    commit('SET_SELECTED_PROJECT', project)
   }
 }
 

@@ -52,7 +52,7 @@ export default {
     placeholderText: ''
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'projectSelectedObject']),
+    ...mapGetters(['projectSelectedId', 'selectedProject']),
     pagedData() {
       const listData = this.resourceList.filter(data => {
         if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -94,7 +94,7 @@ export default {
           item['name_in_harbor'] = name_ary[name_ary.length - 1]
           return item
         })
-        this.projectName = this.projectSelectedObject['name']
+        this.projectName = this.selectedProject['name']
         const storageRes = await getHarborRepoStorageSummary(this.projectSelectedId)
         this.storage = storageRes.data
       }
