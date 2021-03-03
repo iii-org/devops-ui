@@ -3,10 +3,12 @@ import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getWebInspectScans, getWebInspectStatus, getWebInspectStats, getWebInspectReport } from '@/api/webInspect'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'WebInspect',
   components: { ProjectListSelector, Pagination },
+  mixins: [MixinElTable],
   data: () => ({
     webInspectScans: [],
     listLoading: false,
@@ -130,9 +132,9 @@ export default {
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData">
-      <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" min-width="200" />
-      <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="180" />
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
+      <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" min-width="120" :show-overflow-tooltip="true" />
+      <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="120" />
       <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="100">
         <template slot-scope="scope">
           <el-link
@@ -153,11 +155,11 @@ export default {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.4" min-width="100" />
-      <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.3" min-width="140" />
-      <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.2" min-width="165" />
-      <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.1" min-width="140" />
-      <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.0" min-width="140" />
+      <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.4" />
+      <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.3" />
+      <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.2" />
+      <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.1" />
+      <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.0" />
       <el-table-column align="center" :label="$t('WebInspect.RunAt')" min-width="190">
         <template slot-scope="scope">
           <span class="ml-2">{{ scope.row.run_at | formatToLocaleTime }}</span>
