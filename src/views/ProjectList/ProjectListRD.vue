@@ -2,6 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { formatTime } from '@/utils/index.js'
+import MixinElTable from '@/components/MixinElTable'
 
 const formTemplate = {
   name: '',
@@ -25,6 +26,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [MixinElTable],
   data() {
     return {
       dialogVisible: false,
@@ -37,7 +39,8 @@ export default {
       listTotal: 0,
       form: formTemplate,
       confirmLoading: false,
-      searchData: ''
+      searchData: '',
+      rowHeight: 70
     }
   },
   computed: {
@@ -156,6 +159,9 @@ export default {
       :element-loading-text="$t('Loading')"
       border fit highlight-current-row
       :data="pagedData"
+      height="100%"
+      row-class-name="el-table-row"
+      :cell-style="{height: rowHeight + 'px'}"
     >
       <el-table-column
         align="center"

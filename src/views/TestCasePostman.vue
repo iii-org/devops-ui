@@ -1,10 +1,12 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getPostmanReport } from '@/api/postman'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
-  name: 'DevOpsTestCase',
+  name: 'PostmanTestCase',
   components: { Pagination },
+  mixins: [MixinElTable],
   data: () => ({
     reportList: [],
     dialogVisible: false,
@@ -50,7 +52,7 @@ export default {
         this.listLoading = true
         const response = await getPostmanReport(this.$route.params.id)
         const { data } = response
-        data ? (this.reportList = data.in_db.executions) : (this.reportList = [])
+        data ? (this.reportList = data.json_file.executions) : (this.reportList = [])
       } catch (e) {
         console.log(e)
       } finally {
@@ -88,7 +90,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
       <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>

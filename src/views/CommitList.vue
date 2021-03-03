@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   components: { Pagination },
@@ -14,6 +15,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [MixinElTable],
   data() {
     return {
       listLoading: true,
@@ -66,7 +68,7 @@ export default {
     <h3>
       {{ projectName }}
     </h3>
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column label="Author" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.author_name }}

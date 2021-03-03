@@ -329,7 +329,7 @@ export const asyncRoutes = [
         path: '',
         name: 'commitList',
         props: true,
-        component: () => import('@/views/CommitList/index'),
+        component: () => import('@/views/CommitList'),
         meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
       }
     ]
@@ -356,7 +356,7 @@ export const asyncRoutes = [
             path: 'devops/:id',
             name: 'DevOps Test Case',
             hidden: true,
-            component: () => import('@/views/DevOpsTestCase/index'),
+            component: () => import('@/views/TestCaseDevOps'),
             meta: {
               title: 'DevOps Test Case',
               roles: ['Engineer', 'Project Manager', 'Administrator'],
@@ -367,7 +367,7 @@ export const asyncRoutes = [
             path: 'postman/:id',
             name: 'Postman Test Case',
             hidden: true,
-            component: () => import('@/views/PostmanTestCase/index'),
+            component: () => import('@/views/TestCasePostman'),
             meta: {
               title: 'Postman Test Case',
               roles: ['Engineer', 'Project Manager', 'Administrator'],
@@ -382,16 +382,10 @@ export const asyncRoutes = [
         component: () => import('@/views/ScanCheckmarx'),
         meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
-      // {
-      //   path: 'check-marx',
-      //   name: 'check-marx',
-      //   component: () => import('@/views/CheckMarx/index'),
-      //   meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      // },
       {
         path: 'web-inspect',
         name: 'web-inspect',
-        component: () => import('@/views/WebInspect/index'),
+        component: () => import('@/views/ScanWebInspect'),
         meta: { title: 'WebInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
       // {
