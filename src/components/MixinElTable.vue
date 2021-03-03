@@ -16,7 +16,7 @@ export default {
     const rowHeight = this.rowHeight ? this.rowHeight : defaultRowHeight
     this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / rowHeight)
     eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) % rowHeight}px + 20px)`
-    console.log(tableHeight, rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
+    // console.log(tableHeight, rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
   }
 }
 </script>

@@ -1,17 +1,20 @@
 <script>
 import Pagination from '@/components/Pagination'
-import { getSystemSecrets, addSystemSecret, deleteSystemSecret } from '@/api/maintenance'
+import { getSystemRegistries, addSystemRegistry, deleteSystemRegistry } from '@/api/maintenance'
 import { formatTime } from '@/utils/index.js'
+import MixinElTable from '@/components/MixinElTable'
 
 const defaultFormData = () => ({
   name: '',
-  type: 'secret',
-  data: [{ key: '', value: '', showValue: false }]
+  url: '',
+  username: '',
+  password: ''
 })
 
 export default {
-  name: 'SystemSecrets',
+  name: 'SystemRegistry',
   components: { Pagination },
+  mixins: [MixinElTable],
   data: () => ({
     resultList: [],
     listLoading: true,
@@ -24,10 +27,14 @@ export default {
 
     formData: defaultFormData(),
     formRules: {
-      name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
+      name: [{ required: true, message: 'Please input registry name', trigger: 'blur' }],
+      url: [{ required: true, message: 'Please input url', trigger: 'blur' }],
+      username: [{ required: true, message: 'Please input username', trigger: 'blur' }]
     },
     dialogVisible: false,
-    confirmLoading: false
+    confirmLoading: false,
+
+    showPassword: false
   }),
   computed: {
     pagedData() {
@@ -53,20 +60,20 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      await getSystemSecrets().then(res => {
+      await getSystemRegistries().then(res => {
         this.resultList = res.data.map(item => ({
           name: item.name,
+          registries: item.registries ? Object.keys(item.registries).join(', ') : '',
           created: item.created,
-          keys: item.data ? Object.keys(item.data).join(', ') : '',
           status: item.removed ? 'Removing' : 'Active'
         }))
       })
       this.listLoading = false
     },
-    async handleDelete(secretName) {
+    async handleDelete(registryName) {
       this.listLoading = true
       try {
-        await deleteSystemSecret(secretName)
+        await deleteSystemRegistry(registryName)
         this.fetchData()
       } catch (error) {
         console.error(error)
@@ -78,13 +85,9 @@ export default {
         if (valid) {
           this.listLoading = true
           this.confirmLoading = true
-          const sendData = {
-            name: this.formData.name,
-            type: this.formData.type,
-            data: this.formData.data.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
-          }
+          const sendData = this.formData
           try {
-            await addSystemSecret(sendData)
+            await addSystemRegistry(sendData)
             this.fetchData()
             this.dialogVisible = false
           } catch (error) {
@@ -96,19 +99,6 @@ export default {
           return false
         }
       })
-    },
-    addItem() {
-      this.formData.data.push({
-        key: '',
-        value: '',
-        showValue: false
-      })
-    },
-    removeItem(item) {
-      const index = this.formData.data.indexOf(item)
-      if (index !== -1) {
-        this.formData.data.splice(index, 1)
-      }
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
@@ -129,13 +119,13 @@ export default {
 <template>
   <div class="app-container">
     <div class="d-flex justify-space-between">
-      <el-button id="btn-add-secret" type="success" @click="dialogVisible = true">
-        <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
+      <el-button id="btn-add-registry" type="success" @click="dialogVisible = true">
+        <i class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>
       <el-input
         id="input-search"
         v-model="searchData"
-        :placeholder="$t('Maintenance.SearchSecretName')"
+        :placeholder="$t('Maintenance.SearchRegistryName')"
         style="width: 250px"
       >
         <i slot="prefix" class="el-input__icon el-icon-search" />
@@ -147,7 +137,7 @@ export default {
         Reload
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%" row-class-name="el-table-row">
       <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'Active'" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
@@ -156,8 +146,8 @@ export default {
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Maintenance.SecretName')" prop="name" min-width="150" />
-      <el-table-column label="Keys" prop="keys" min-width="250" />
+      <el-table-column align="center" :label="$t('Maintenance.RegistryName')" prop="name" min-width="150" />
+      <el-table-column label="Registries" prop="registries" min-width="250" />
       <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="190">
         <template slot-scope="scope">
           <span>{{ myFormatTime(scope.row.created) }}</span>
@@ -197,56 +187,27 @@ export default {
       @pagination="onPagination"
     />
 
-    <el-dialog :title="$t('Maintenance.AddSecret')" :visible.sync="dialogVisible" @closed="onDialogClosed">
+    <el-dialog
+      :title="$t('Maintenance.AddRegistry')"
+      :visible.sync="dialogVisible"
+      width="50%"
+      @closed="onDialogClosed"
+    >
       <el-form ref="form" label-position="top" :model="formData" :rules="formRules" label-width="20%">
-        <el-form-item :label="$t('Maintenance.SecretName')" prop="name">
-          <el-input id="input-secret-name" v-model="formData.name" />
+        <el-form-item :label="$t('Maintenance.RegistryName')" prop="name">
+          <el-input id="input-registry-name" v-model="formData.name" />
         </el-form-item>
-        <el-row v-for="(item, index) in formData.data" :key="item + index" :gutter="12" type="flex">
-          <el-col :span="9">
-            <el-form-item
-              :label="`key ${index + 1} `"
-              :prop="'data.' + index + '.key'"
-              :rules="[{ required: true, message: 'Please input key', trigger: 'blur' }]"
-            >
-              <el-input :id="`input-key${index + 1}`" v-model="formData.data[index].key" placeholder="key" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="`value ${index + 1}`"
-              :prop="'data.' + index + '.value'"
-              :rules="[{ required: true, message: 'Please input value', trigger: 'blur' }]"
-            >
-              <el-input
-                :id="`input-value${index + 1}`"
-                v-model="formData.data[index].value"
-                placeholder="value"
-                :type="formData.data[index].showValue ? 'text' : 'password'"
-              >
-                <i
-                  slot="suffix"
-                  class="el-input__icon el-icon-view"
-                  @click="formData.data[index].showValue = !formData.data[index].showValue"
-                />
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3" style="padding-top: 45px">
-            <el-button
-              :id="`btn-delete${index + 1}`"
-              type="danger"
-              size="small"
-              :disabled="formData.data.length <= 1"
-              @click.prevent="removeItem(item)"
-            >
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-button id="btn-add-secret-item" type="success" size="small" @click="addItem">
-          <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
-        </el-button>
+        <el-form-item label="url" prop="url">
+          <el-input id="input-url" v-model="formData.url" />
+        </el-form-item>
+        <el-form-item :label="$t('Maintenance.UserName')" prop="username">
+          <el-input id="input-username" v-model="formData.username" />
+        </el-form-item>
+        <el-form-item :label="$t('Maintenance.Password')" prop="password">
+          <el-input id="input-password" v-model="formData.password" :type="showPassword ? 'text' : 'password'">
+            <i slot="suffix" class="el-input__icon el-icon-view" @click="showPassword = !showPassword" />
+          </el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button id="dialog-btn-cancel" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>

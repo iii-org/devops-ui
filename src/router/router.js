@@ -521,25 +521,25 @@ export const asyncRoutes = [
       {
         path: 'account-manage',
         name: '',
-        component: () => import('@/views/UserManage/index'),
+        component: () => import('@/views/UserManage'),
         meta: { title: 'Account Manage', roles: ['Administrator'] }
       },
       {
         path: 'system-activities',
         name: 'SystemActivities',
-        component: () => import('@/views/SystemActivities/index'),
+        component: () => import('@/views/SystemActivities'),
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
         path: 'system-secrets',
         name: 'System Secrets',
-        component: () => import('@/views/SystemSecrets/index'),
+        component: () => import('@/views/SystemSecrets'),
         meta: { title: 'System Secrets', roles: ['Administrator'] }
       },
       {
         path: 'system-registry',
         name: 'System Registry',
-        component: () => import('@/views/SystemRegistry/index'),
+        component: () => import('@/views/SystemRegistry'),
         meta: { title: 'System Registry', roles: ['Administrator'] }
       },
       {
