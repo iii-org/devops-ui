@@ -78,7 +78,7 @@ export default {
 }
 </script>
 <template>
-  <div>
+  <div class="table-container">
     <div class="clearfix">
       <el-input
         v-model="searchData"

@@ -4,6 +4,7 @@ import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getHarborRepoList, editHarborRepo, deleteHarborRepo, getHarborRepoStorageSummary } from '@/api/harbor'
 import { formatTime } from '@/utils/index.js'
+import MixinElTable from '@/components/MixinElTable'
 
 const formTemplate = {
   name: '',
@@ -18,6 +19,7 @@ export default {
     Pagination,
     ProjectListSelector
   },
+  mixins: [MixinElTable],
   data: () => ({
     projectName: '',
     listLoading: true,
@@ -217,7 +219,7 @@ export default {
           </el-col>
         </el-row>
       </el-card>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%">
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%" row-class-name="el-table-row">
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="150">
           <template slot-scope="scope">
             <el-link

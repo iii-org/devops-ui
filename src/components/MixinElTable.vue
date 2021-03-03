@@ -1,7 +1,6 @@
 <script>
 export default {
   mounted() {
-    console.log('mixin called.')
     const parentHeight = this.$el.clientHeight
     let siblingsHeight = 0
     const parentNode = this.$el.getElementsByClassName('el-table')[0].parentNode
@@ -17,6 +16,7 @@ export default {
     const rowHeight = this.rowHeight ? this.rowHeight : defaultRowHeight
     this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / rowHeight)
     eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) % rowHeight}px + 20px)`
+    console.log(tableHeight, rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
   }
 }
 </script>

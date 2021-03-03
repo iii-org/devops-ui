@@ -3,10 +3,12 @@ import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import { getServiceList, deleteService } from '@/api/projectResource'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'ServiceList',
   components: { ProjectListSelector, Pagination },
+  mixins: [MixinElTable],
   data: () => ({
     serviceList: [],
     listLoading: true,
@@ -78,7 +80,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="table-container">
     <div class="clearfix">
       <project-list-selector />
       <el-input
@@ -91,7 +93,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column :label="$t('general.Name')" align="center" prop="name" min-width="200" />
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">

@@ -2,13 +2,15 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import { getConfigmapList, deleteConfigmap } from '@/api/projectResource'
+import { getSecretList, deleteSecret } from '@/api/projectResource'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
-  name: 'ConfigMapsList',
+  name: 'SecretList',
   components: { ProjectListSelector, Pagination },
+  mixins: [MixinElTable],
   data: () => ({
-    configMapList: [],
+    secretList: [],
     listLoading: true,
     // dialogVisible: false,
     listQuery: {
@@ -21,7 +23,7 @@ export default {
   computed: {
     ...mapGetters(['projectSelectedId']),
     pagedData() {
-      const listData = this.configMapList.filter(data => {
+      const listData = this.secretList.filter(data => {
         if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
           return data
         }
@@ -48,8 +50,8 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      await getConfigmapList(this.projectSelectedId).then(res => {
-        this.configMapList = res.data.map(item => {
+      await getSecretList(this.projectSelectedId).then(res => {
+        this.secretList = res.data.map(item => {
           return {
             name: item
           }
@@ -60,13 +62,13 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    // handleEdit(configMapName) {
+    // handleEdit(secretName) {
     //   this.dialogVisible = true
     // },
-    async handleDelete(pId, configMapName) {
+    async handleDelete(pId, secretName) {
       this.listLoading = true
       try {
-        await deleteConfigmap(pId, configMapName)
+        await deleteSecret(pId, secretName)
         this.fetchData()
       } catch (error) {
         console.error(error)
@@ -78,7 +80,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="table-container">
     <div class="clearfix">
       <project-list-selector />
       <el-input
@@ -91,7 +93,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column :label="$t('general.Name')" align="center" prop="name" />
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">

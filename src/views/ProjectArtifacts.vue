@@ -1,11 +1,13 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getProjectArtifacts, deleteProjectArtifact } from '@/api/harbor'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   components: {
     Pagination
   },
+  mixins: [MixinElTable],
   data() {
     return {
       listLoading: true,
@@ -67,7 +69,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="table-container">
     <div class="clearfix">
       <el-input
         v-model="searchData"
@@ -79,7 +81,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%" row-class-name="el-table-row">
       <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}

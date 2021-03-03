@@ -388,19 +388,6 @@ export const asyncRoutes = [
         component: () => import('@/views/ScanWebInspect'),
         meta: { title: 'WebInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
-      // {
-      //   path: 'test-case',
-      //   name: 'Test Case',
-      //   component: () => import('@/views/TestCase/index'),
-      //   meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      // },
-      // {
-      //   path: 'test-case/:testCaseId',
-      //   name: 'Test Item',
-      //   hidden: true,
-      //   component: () => import('@/views/TestItem/index'),
-      //   meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      // }
     ]
   },
 
@@ -414,49 +401,49 @@ export const asyncRoutes = [
       {
         path: 'kubernetes',
         name: 'Kubernetes',
-        component: () => import('@/views/ProjectUsage/index'),
+        component: () => import('@/views/ProjectUsage'),
         meta: { title: 'Kubernetes', roles: ['Project Manager', 'Administrator'], rolePage: true },
         children: [
           {
             path: 'deployment-list',
             name: 'Deployment List',
             hidden: true,
-            component: () => import('@/views/DeploymentList/index'),
+            component: () => import('@/views/DeploymentList'),
             meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           },
           {
             path: 'pods-list',
             name: 'Pods List',
             hidden: true,
-            component: () => import('@/views/PodsList/index'),
+            component: () => import('@/views/PodsList'),
             meta: { title: 'Pods List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           },
           {
             path: 'service-list',
             name: 'Service List',
             hidden: true,
-            component: () => import('@/views/ServiceList/index'),
+            component: () => import('@/views/ServiceList'),
             meta: { title: 'Service List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           },
           {
             path: 'secret-list',
             name: 'Secret List',
             hidden: true,
-            component: () => import('@/views/SecretList/index'),
+            component: () => import('@/views/SecretList'),
             meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           },
           {
             path: 'configmaps-list',
             name: 'ConfigMaps List',
             hidden: true,
-            component: () => import('@/views/ConfigMapsList/index'),
+            component: () => import('@/views/ConfigMapsList'),
             meta: { title: 'ConfigMaps List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           },
           {
             path: 'ingress-list',
             name: 'Ingress List',
             hidden: true,
-            component: () => import('@/views/IngressList/index'),
+            component: () => import('@/views/IngressList'),
             meta: { title: 'Ingress List', roles: ['Project Manager', 'Administrator'], rolePage: false }
           }
         ]
@@ -464,21 +451,21 @@ export const asyncRoutes = [
       {
         path: 'plugin-resource',
         name: 'Plugin Resource',
-        component: () => import('@/views/PluginResource/index'),
+        component: () => import('@/views/PluginResource'),
         meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'harbor',
         name: 'Harbor',
         hidden: true,
-        component: () => import('@/views/ProjectResource/index'),
+        component: () => import('@/views/ProjectResource'),
         meta: { title: 'Harbor', roles: ['Project Manager', 'Administrator'], rolePage: true },
         children: [
           {
             path: 'artifacts',
             name: 'Artifacts',
             hidden: true,
-            component: () => import('@/views/ProjectArtifacts/index'),
+            component: () => import('@/views/ProjectArtifacts'),
             meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'], rolePage: false }
           }
         ]
@@ -496,7 +483,7 @@ export const asyncRoutes = [
       {
         path: 'project-activities',
         name: 'ProjectActivities',
-        component: () => import('@/views/ProjectActivities/index'),
+        component: () => import('@/views/ProjectActivities'),
         meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
       }
     ]

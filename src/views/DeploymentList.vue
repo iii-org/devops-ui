@@ -3,10 +3,12 @@ import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import { getDeploymentList, deleteDeployment, updateDeployment } from '@/api/projectResource'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'DeploymentList',
   components: { ProjectListSelector, Pagination },
+  mixins: [MixinElTable],
   data: () => ({
     deploymentList: [],
     listLoading: true,
@@ -91,7 +93,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="table-container">
     <div class="clearfix">
       <project-list-selector />
       <el-input
@@ -104,7 +106,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="deployment_name" min-width="200" />
       <el-table-column :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" width="190">
         <template slot-scope="scope">

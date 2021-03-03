@@ -64,7 +64,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="table-container">
     <div class="clearfix">
       <project-list-selector />
       <el-input
