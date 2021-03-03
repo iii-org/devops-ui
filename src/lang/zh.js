@@ -360,7 +360,7 @@ export default {
     ActionType: '動作',
     ActionParts: '內容',
     ActAt: '發生時間',
-    SearchActAt: '搜尋 發生時間'
+    SearchActionParts: '搜尋 內容'
   },
   Maintenance: {
     AddSecret: '新增 Secret',

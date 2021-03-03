@@ -6,7 +6,7 @@ import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   name: 'ProjectListPM',
-  components: { Pagination, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  components: { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -17,41 +17,22 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [ElTableMixin],
   data: () => ({
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     editProject: {},
     deleteProject: { id: '', name: '' },
+    searchKey: 'display',
     rowHeight: 70
   }),
   computed: {
     ...mapGetters(['projectList', 'projectListTotal', 'userProjectList']),
-    pagedData() {
-      const listData = this.projectList.filter(data => {
-        if (this.searchData === '' || data.display.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
+    listData() {
+      return this.projectList
     }
   },
   async created() {
     this.loadList()
   },
-  mixins: [ElTableMixin],
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
     async loadList() {
@@ -80,9 +61,6 @@ export default {
       this.deleteProject.id = row.id
       this.deleteProject.name = row.name
       this.$refs.deleteProjectDialog.showDialog = true
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     returnProgress(current, total) {
       const percent = Math.round((current / total) * 100)
@@ -232,7 +210,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

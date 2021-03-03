@@ -363,7 +363,7 @@ export default {
     ActionType: 'Action Type',
     ActionParts: 'Action Parts',
     ActAt: 'Act At',
-    SearchActAt: 'Search Act At'
+    SearchActionParts: 'Search Action Parts'
   },
   Maintenance: {
     AddSecret: 'Add Secret',
