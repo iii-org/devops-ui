@@ -294,7 +294,7 @@ export const asyncRoutes = [
         path: '',
         name: 'fileList',
         props: true,
-        component: () => import('@/views/FileList/index'),
+        component: () => import('@/views/FileList'),
         meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
       }
     ]
@@ -309,7 +309,7 @@ export const asyncRoutes = [
       {
         path: '',
         name: 'cicdPipelines',
-        component: () => import('@/views/CicdPipelines/index'),
+        component: () => import('@/views/CicdPipelines'),
         meta: {
           title: 'CICD Pipelines',
           icon: 'example',
@@ -349,7 +349,7 @@ export const asyncRoutes = [
       {
         path: 'postman-result',
         name: 'Postman result',
-        component: () => import('@/views/PostmanResult/index'),
+        component: () => import('@/views/PostmanResult'),
         meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
         children: [
           {

@@ -3,10 +3,12 @@ import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 import { getPostmanResult } from '@/api/postman'
 import ProjectListSelector from '@/components/ProjectListSelector'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'PostmanResult',
   components: { ProjectListSelector, Pagination },
+  mixins: [MixinElTable],
   data: () => ({
     resultList: [],
     dialogVisible: false,
@@ -89,6 +91,8 @@ export default {
         border
         fit
         highlight-current-row
+        height="100%"
+        row-class-name="el-table-row"
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
         <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />

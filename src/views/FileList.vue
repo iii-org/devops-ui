@@ -2,6 +2,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import * as monaco from 'monaco-editor'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   components: { Pagination },
@@ -15,6 +16,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [MixinElTable],
   data() {
     return {
       listLoading: true,
@@ -199,7 +201,7 @@ export default {
       </h3>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column label="File Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
