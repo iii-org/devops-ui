@@ -374,5 +374,10 @@ export default {
     UserName: '使用者名稱',
     Password: '密碼'
   },
+  PodsList: {
+    Pods: 'Pods / 建立時間',
+    Container: '容器',
+    Image: '映像檔'
+  },
   Loading: '讀取中……'
 }

@@ -377,5 +377,10 @@ export default {
     UserName: 'User Name',
     Password: 'Password'
   },
+  PodsList: {
+    Pods: 'Pods / Created time',
+    Container: 'Container',
+    Image: 'Image'
+  },
   Loading: 'Loading...'
 }
