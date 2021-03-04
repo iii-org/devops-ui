@@ -67,7 +67,7 @@ export default {
 
     <el-table
       :data="issueParameter"
-      element-loading-text="Loading"
+      :element-loading-text="$t('Loading')"
       border
       fit
       highlight-current-row

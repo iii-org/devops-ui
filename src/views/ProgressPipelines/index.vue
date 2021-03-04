@@ -5,10 +5,12 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { formatTime } from '@/utils/index.js'
 import { getPipelines, getPipelinesLogs, changePipelineByAction } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'ProgressPipelines',
   components: { Pagination, ProjectListSelector, TestDetail },
+  mixins: [MixinElTable],
   data: () => ({
     isLoading: false,
     listLoading: false,
@@ -21,10 +23,11 @@ export default {
       limit: 10
     },
     listTotal: 0,
-    searchData: ''
+    searchData: '',
+    rowHeight: 90
   }),
   computed: {
-    ...mapGetters(['projectSelectedObject']),
+    ...mapGetters(['selectedProject']),
     pagedData() {
       const listData = this.testList.filter(data => {
         if (this.searchData === '' || data.commit_message.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -38,7 +41,7 @@ export default {
     }
   },
   watch: {
-    projectSelectedObject(obj) {
+    selectedProject(obj) {
       this.fetchData()
       this.listQuery.page = 1
       this.searchData = ''
@@ -53,7 +56,7 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      const rid = this.projectSelectedObject.repository_id || this.projectSelectedObject[0].repository_id
+      const rid = this.selectedProject.repository_id || this.selectedProject[0].repository_id
       try {
         const res = await getPipelines(rid)
         const { data } = res
@@ -88,7 +91,7 @@ export default {
     },
     async onDetailsClick(row) {
       this.isLoading = true
-      const { repository_id } = this.projectSelectedObject
+      const { repository_id } = this.selectedProject
       const params = {
         repository_id,
         pipelines_exec_run: row.id
@@ -105,7 +108,7 @@ export default {
       this.isLoading = false
     },
     async onActionClick(id, action) {
-      const { repository_id } = this.projectSelectedObject
+      const { repository_id } = this.selectedProject
       const data = {
         pipelines_exec_run: id,
         action
@@ -154,7 +157,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" :cell-style="{height: rowHeight + 'px'}">
       <el-table-column :label="$t('ProcessDevBranchTest.Id')" align="center" width="80" prop="id" />
       <el-table-column :label="$t('ProcessDevBranchTest.TestItems')" align="center" width="120">
         <template slot-scope="scope">

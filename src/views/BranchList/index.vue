@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
+import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   components: { Pagination },
@@ -52,6 +53,7 @@ export default {
     projectName() {
       return this.$route.params.projectName
     },
+    mixins: [ElTableMixin],
     pagedData() {
       const listData = this.branchesByProject.filter((data) => {
         if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase()) || data.last_commit_message.toLowerCase().includes(this.searchData.toLowerCase()) || data.short_id.toLowerCase().includes(this.searchData.toLowerCase())) {
@@ -214,7 +216,7 @@ export default {
     </div>
     <el-divider />
 
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
       <el-table-column label="Branch Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link

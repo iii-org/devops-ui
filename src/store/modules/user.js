@@ -1,6 +1,6 @@
 import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
 
 const getDefaultState = () => {
@@ -94,18 +94,15 @@ const actions = {
           commit('SET_USER_PROJECT', data.project)
           if (data.project.length > 0) {
             const projectstorage = data.project.filter(elm => {
-              // console.log(elm.id)
               if (String(elm.id) === localStorage.getItem('project')) {
                 return true
               }
             }
             )
             if (projectstorage.length === 1) {
-              commit('projects/SET_PROJET_SELECTED_ID', parseInt(localStorage.getItem('project')), { root: true })
-              commit('projects/SET_PROJET_SELECTED', projectstorage, { root: true })
+              commit('projects/SET_SELECTED_PROJECT', projectstorage[0], { root: true })
             } else {
-              commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
-              commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
+              commit('projects/SET_SELECTED_PROJECT', data.project[0], { root: true })
             }
             // commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
             // commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })

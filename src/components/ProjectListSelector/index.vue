@@ -25,11 +25,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('projects', ['changeSelectedProjectId', 'changeSelectedProjectObject']),
+    ...mapActions('projects', ['setSelectedProject']),
     onProjectChange(value) {
       localStorage.setItem('project', value)
-      this.changeSelectedProjectId(value)
-      this.changeSelectedProjectObject(this.userProjectList.filter(elm => elm.id === value)[0])
+      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === value)[0])
     }
   }
 }

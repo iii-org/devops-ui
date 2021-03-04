@@ -17,8 +17,8 @@ module.exports = {
     "vue/max-attributes-per-line": [2, {
       "singleline": 10,
       "multiline": {
-        "max": 1,
-        "allowFirstLine": false
+        "max": 5,
+        "allowFirstLine": true
       }
     }],
     "vue/singleline-html-element-content-newline": "off",
@@ -132,7 +132,7 @@ module.exports = {
     'no-sparse-arrays': 2,
     'no-this-before-super': 2,
     'no-throw-literal': 2,
-    'no-trailing-spaces': 2,
+    'no-trailing-spaces': 0,
     'no-undef': 2,
     'no-undef-init': 2,
     'no-unexpected-multiline': 2,
@@ -150,7 +150,7 @@ module.exports = {
     'no-useless-computed-key': 2,
     'no-useless-constructor': 2,
     'no-useless-escape': 0,
-    'no-whitespace-before-property': 2,
+    'no-whitespace-before-property': 1,
     'no-with': 2,
     'one-var': [2, {
       'initialized': 'never'
@@ -161,8 +161,8 @@ module.exports = {
         ':': 'before'
       }
     }],
-    'padded-blocks': [2, 'never'],
-    'quotes': [2, 'single', {
+    'padded-blocks': [1, 'never'],
+    'quotes': [1, 'single', {
       'avoidEscape': true,
       'allowTemplateLiterals': true
     }],
@@ -172,7 +172,7 @@ module.exports = {
       'after': true
     }],
     'space-before-blocks': [2, 'always'],
-    'space-before-function-paren': [2, 'never'],
+    'space-before-function-paren': [0, 'never'],
     'space-in-parens': [2, 'never'],
     'space-infix-ops': 2,
     'space-unary-ops': [2, {

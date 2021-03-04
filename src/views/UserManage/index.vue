@@ -4,6 +4,7 @@ import { Message } from 'element-ui'
 import { getInfo, getAllUser, deleteUser } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import UserDialog from './components/UserDialog'
+import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'UserManage',
@@ -11,6 +12,7 @@ export default {
     UserDialog,
     Pagination
   },
+  mixins: [MixinElTable],
   data: () => ({
     userList: [],
     userDialogVisible: false,
@@ -119,7 +121,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" element-loading-text="Loading" border fit highlight-current-row>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
       <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
       <el-table-column align="center" label="Email" prop="email" min-width="250" />

@@ -395,7 +395,7 @@ export default {
         <el-button type="primary" @click="commentDialogVisible = true">Add Comment</el-button>
         <el-table
           :data="detailComment"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -423,7 +423,7 @@ export default {
         <el-button type="primary" @click="showFlowDialog('', 'Add Flow')">Add Flow</el-button>
         <el-table
           :data="detailFlow"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -458,7 +458,7 @@ export default {
         <el-button type="primary" @click="showParamDialog('', 'Add Parameter')">Add Parameter</el-button>
         <el-table
           :data="detailParam"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row

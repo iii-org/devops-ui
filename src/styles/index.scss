@@ -63,7 +63,22 @@ div:focus {
   }
 }
 
-// main-container global css
+// Containers global css
 .app-container {
+  height: 100%;
   padding: 20px;
+  overflow: scroll;
+}
+
+.dashboard-container {
+  height: 100%;
+  overflow: scroll;
+}
+
+.table-container {
+  height: inherit;
+}
+
+.role-Page {
+  height: inherit;
 }

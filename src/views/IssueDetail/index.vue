@@ -70,12 +70,14 @@
         <el-table
           v-loading="listLoading"
           :data="issue_detail.journals"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           class="mt-2"
+          height="100%"
+
         >
           <el-table-column label="Description">
             <template slot-scope="scope">
@@ -100,7 +102,7 @@
         <el-table
           v-loading="listLoading"
           :data="issue_detail.features"
-          element-loading-text="Loading"
+          :element-loading-text="$t('Loading')"
           border
           fit
           highlight-current-row
@@ -151,6 +153,7 @@
 import { getIssue, updateIssue } from '@/api/issue'
 import EditIssue from './components/EditIssue'
 import AddContent from './components/AddContent'
+import MixinElTable from '@/components/MixinElTable'
 // import Pagination from '@/components/Pagination'
 
 export default {
@@ -168,6 +171,7 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [MixinElTable],
   data() {
     return {
       activeName: 'content',
