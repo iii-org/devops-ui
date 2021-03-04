@@ -41,11 +41,17 @@ const formatChartData = item => {
   return result
 }
 
+const getQuotaString = item =>
+  item.quota.value !== '' ? `（${formatValue(item.title, item.quota.value)}${getValueUnit(item.title)}）` : ''
+
 const handleChartData = data =>
-  data.map(item => ({
-    title: item.title,
-    data: formatChartData(item)
-  }))
+  data.map(item => {
+    return {
+      title: item.title,
+      data: formatChartData(item),
+      quota: getQuotaString(item)
+    }
+  })
 
 export default {
   name: 'PluginResource',
@@ -98,7 +104,7 @@ export default {
       <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
         <el-card v-loading="listLoading" class="mb-4">
           <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
-            <strong>{{ item.title }}</strong>
+            <strong>{{ item.title }}{{ item.quota }}</strong>
             <div>
               <el-tooltip effect="dark" :content="`${item.title} Resource`" placement="top-start">
                 <el-button
