@@ -115,7 +115,7 @@ export default {
       <el-form-item :label="$t('general.Title')" prop="subject">
         <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
       </el-form-item>
-      <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+      <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id" :required="focusStatus === 'Assigned'">
         <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
           <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
