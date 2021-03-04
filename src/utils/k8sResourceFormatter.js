@@ -67,7 +67,8 @@ const formatMemoryUsedQuota = (quota, used) => {
 export const formatChartDataResult = result =>
   result.map(item => ({
     title: item.title,
-    data: formatData(item)
+    data: formatData(item),
+    quota: item.quota.value === null ? '' : `（${item.quota.value}${item.quota.unit}）`
   }))
 
 const formatData = item => {
