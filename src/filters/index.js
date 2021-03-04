@@ -22,9 +22,8 @@ export function YMDhmA(time) {
 }
 export function YMDHms(time) {
   const formateTime = moment(time).format('YYYY-MM-DD HH:mm:ss')
-  if (time === 'Invalid date') {
-    return '-'
-  }
+  if (time === 'Invalid date') return '-'
+  if (time === null) return '-'
   return formateTime
 }
 export function UTCtoLocalTime(utcTime) {
