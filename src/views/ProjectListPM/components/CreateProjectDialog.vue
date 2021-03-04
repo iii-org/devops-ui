@@ -38,11 +38,10 @@
               placeholder="Please select template"
               style="width:100%"
               clearable
+              filterable
               @change="handleTemplateSelect"
             >
-              <el-option v-for="item in templateList" :key="item.id" :label="item.name" :value="item.id">
-                <span>{{ item.name }}</span>
-              </el-option>
+              <el-option v-for="item in templateList" :key="item.id" :label="item.display" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-col>
