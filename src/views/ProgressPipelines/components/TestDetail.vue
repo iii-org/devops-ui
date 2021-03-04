@@ -11,16 +11,7 @@
         >
           <div class="d-flex justify-space-between">
             <span class="text-h6"> {{ activity.name }} </span>
-            <el-tag v-if="activity.state == 'Failed'" type="danger" size="medium" effect="dark">
-              {{ activity.state }}
-            </el-tag>
-            <el-tag v-else-if="activity.state == 'Success'" type="success" size="medium" effect="dark">
-              {{ activity.state }}
-            </el-tag>
-            <el-tag v-else-if="activity.state == 'Waiting'" type="responded" size="medium" effect="dark">
-              {{ activity.state }}
-            </el-tag>
-            <el-tag v-else-if="activity.state == 'Building'" type="warning" size="medium" effect="dark">
+            <el-tag v-if="activity.state" :type="getStateTagType(activity.state)" size="medium" effect="dark">
               {{ activity.state }}
             </el-tag>
           </div>
@@ -76,6 +67,22 @@ export default {
   methods: {
     handleClose() {
       this.$emit('test-detail-visible', false)
+    },
+    getStateTagType(state) {
+      switch (state) {
+        case 'Failed':
+          return 'danger'
+        case 'Success':
+          return 'success'
+        case 'Aborted':
+          return 'warning'
+        case 'Waiting':
+          return 'slow'
+        case 'Building':
+          return 'warning'
+        default:
+          return 'slow'
+      }
     }
   }
 }
