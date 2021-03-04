@@ -21,13 +21,13 @@
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.Password')" prop="password">
-        <el-input v-model="userForm.password" type="password" />
+        <el-input v-model="userForm.password" type="password" show-password />
         <div style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.PasswordRule') }}
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.RepeatPassword')" prop="repeatPassword">
-        <el-input v-model="userForm.repeatPassword" type="password" />
+        <el-input v-model="userForm.repeatPassword" type="password" show-password />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
         <el-input v-model="userForm.name" />
