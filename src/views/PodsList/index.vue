@@ -132,45 +132,51 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
-      <el-table-column label="Pods" align="center" prop="name" min-width="200" show-overflow-tooltip />
-      <el-table-column label="Created time" align="center" width="180">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+      row-class-name="el-table-row"
+    >
+      <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
         <template slot-scope="scope">
-          {{ scope.row.created_time | YMDHms }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Container" align="center" min-width="200" show-overflow-tooltip>
-        <template slot-scope="scope">
-          <div v-for="item in scope.row.containers" :key="item.name" class="my-3">
-            {{ item.name }}
+          <div>{{ scope.row.name }}</div>
+          <div class="text-body-2 my-1">
+            <i class="el-icon-time" />
+            {{ scope.row.created_time | YMDHms }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="Image" align="center" min-width="300" show-overflow-tooltip>
+      <el-table-column :label="$t('PodsList.Container')" header-align="center" prop="container">
         <template slot-scope="scope">
-          <div v-for="item in scope.row.containers" :key="item.image" class="my-3">
-            {{ item.image }}
+          <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
+            <div style="text-align: left">
+              <div style="display: inline-block; width: 80px;text-align: center">
+                <el-tag v-if="container.state" :type="getStateType(container.state)" size="mini" effect="dark">
+                  {{ container.state }}
+                </el-tag>
+              </div>
+              <i class="el-icon-time" />
+              <span class="text-body-2">{{ container.time | YMDHms }} </span>
+              <div class="ml-3 my-1">
+                <i class="el-icon-box" /> <span class="text-h6 "> {{ container.name }}</span>
+              </div>
+              <div class=" ml-3 my-1">
+                <i class="el-icon-refresh-right" />
+                <span class="font-weight-regular">Restarts：{{ container.restart }}</span>
+              </div>
+            </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="Restart" align="center" width="100">
+      <el-table-column :label="$t('PodsList.Image')" align="center">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.containers" :key="item.name + idx" class="my-3">
-            {{ item.restart }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="State" align="center" width="140">
-        <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.containers" :key="item + idx" class="my-3">
-            <el-tag v-if="item.state" :type="getStateType(item.state)" size="medium" effect="dark">{{ item.state }}</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="time" align="center" width="220">
-        <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.containers" :key="item.time + idx" class="my-3">
-            {{ item.time | YMDHms }}
+          <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
+            <div>{{ container.image }}</div>
           </div>
         </template>
       </el-table-column>
