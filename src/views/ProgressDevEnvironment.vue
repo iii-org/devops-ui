@@ -28,69 +28,73 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Deployment')" align="center" prop="deployment" width="370">
+      <el-table-column :label="$t('ProcessDevEnvironment.Container')" header-align="center" min-width="500">
         <template slot-scope="scope">
-          <div v-for="(name, idx) in scope.row.deployments" :key="name + idx" class="my-1">
-            {{ name }}
-            <el-link
-              :id="`link-service-${scope.$index}`"
-              class="ml-2"
-              type="primary"
-              :underline="false"
-              style="font-size: 16px"
-              target="_blank"
-              :href="scope.row.services[idx].url"
-            >
-              <svg-icon icon-class="foreign" />
-            </el-link>
+          <div v-for="(container, idx) in scope.row.containers" :key="container.state + idx" class="my-3">
+            <div style="text-align: center">
+              <div style="display: inline-block; width: 100px;text-align: center">
+                <el-tag v-if="container.state" :type="getStateType(container.state)" size="mini" effect="dark">
+                  {{ container.state }}
+                </el-tag>
+              </div>
+              <div class="text-body-2" style="display: inline-block; width: 100px;text-align: left">
+                <i class="el-icon-time" />
+                {{ container.time | formatTime }}
+              </div>
+              <div class="text-subtitle-2" style="display: inline-block; width: 160px;text-align: left">
+                <i class="el-icon-box" /> {{ container.name }}
+              </div>
+            </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.State')" align="center" min-width="120">
+      <el-table-column :label="$t('ProcessDevEnvironment.Services')" header-align="center" min-width="220">
         <template slot-scope="scope">
-          <div v-for="(state, idx) in scope.row.states" :key="state + idx" class="my-1">
-            <el-tag v-if="scope.row.states" :type="getStateType(state)" size="small" effect="dark">{{ state }}</el-tag>
+          <div v-for="(container, idx) in scope.row.containers" :key="container.name + idx" class="my-3">
+            <span v-for="(service, index) in container.services" :key="service.type + index">
+              <el-popover
+                v-if="service.type === 'db-server'"
+                placement="top"
+                width="400"
+                trigger="click"
+                :open-delay="300"
+                :close-delay="50"
+              >
+                <p :id="`copy-${scope.$index}`" class="text-center">
+                  <span class="text-subtitle-1 font-weight-bold">{{ service.url }}</span>
+                </p>
+                <div class="d-flex justify-center">
+                  <el-button icon="el-icon-copy-document" circle size="mini" @click="copyUrl(`copy-${scope.$index}`)" />
+                </div>
+                <el-link
+                  slot="reference"
+                  :underline="false"
+                  type="primary"
+                  style="font-size: 14px"
+                  class="mr-3"
+                >
+                  <svg-icon :icon-class="getContainerType(service.type)" />
+                  {{ service.type }}（port:{{ service.target_port }}）
+                </el-link>
+              </el-popover>
+              <el-link
+                v-else
+                :id="`link-commit-${scope.$index}`"
+                type="primary"
+                class="mr-3"
+                :underline="false"
+                style="font-size: 14px"
+                target="_blank"
+                :href="service.url"
+              >
+                <svg-icon :icon-class="getContainerType(service.type)" />
+                {{ service.type }}（port:{{ service.target_port }}）
+              </el-link>
+            </span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Container')" align="center" min-width="200">
-        <template slot-scope="scope">
-          <div v-for="(container, idx) in scope.row.containers" :key="container + idx" class="my-1">
-            {{ container }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Image')" align="center" min-width="550">
-        <template slot-scope="scope">
-          <div v-for="(image, idx) in scope.row.images" :key="image + idx" class="my-1">
-            {{ image }}
-          </div>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column :label="$t('ProcessDevEnvironment.Service(Url)')" align="center" min-width="550">
-        <template slot-scope="scope">
-          <div v-for="(service, idx) in scope.row.services" :key="service + idx" class="my-1">
-            <el-link
-              :id="`link-service-${scope.$index}`"
-              type="primary"
-              :underline="false"
-              style="font-size: 16px"
-              target="_blank"
-              :href="service.url"
-            >
-              {{ service.service_name }}
-            </el-link>
-          </div>
-        </template>
-      </el-table-column> -->
-      <el-table-column :label="$t('general.StartTime')" align="center" width="190" class="my-1">
-        <template slot-scope="scope">
-          <div v-for="(time, idx) in scope.row.startTime" :key="time + idx">
-            {{ time | formatTime }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="250">
+      <el-table-column :label="$t('general.Actions')" align="center" width="240">
         <template slot-scope="scope">
           <el-button
             :id="`btn-redeploy-${scope.$index}`"
@@ -100,7 +104,7 @@
             icon="el-icon-refresh"
             @click="redeploy(projectSelectedId, scope.row.branch)"
           >
-            Redeploy
+            {{ $t('general.Redeploy') }}
           </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
@@ -202,12 +206,20 @@ export default {
         branch: item.branch,
         commit_id: item.commit_id,
         commit_url: item.commit_url,
-        deployments: item.deployment.map(i => i.deployment_name),
-        states: item.deployment.map(i => i.container.map(i => i.state)).flat(),
-        containers: item.deployment.map(i => i.container.map(i => i.name)).flat(),
-        images: item.deployment.map(i => i.container.map(i => i.image)).flat(),
-        services: item.deployment.flatMap(i => i.services),
-        services_type: item.deployment.map(i => i.services_type),
+        containers: item.deployment
+          .map(deployment =>
+            deployment.container.map(container => {
+              const result = container
+              result.services = deployment.services.map(service => {
+                const result = service
+                result.type = deployment.services_type
+                return result
+              })
+              return result
+            })
+          )
+          .flat(),
+        services: item.deployment.flatMap(deployment => deployment.services),
         startTime: item.deployment.map(i => i.container.map(i => i.time)).flat()
       }))
     },
@@ -240,6 +252,27 @@ export default {
           return 'slow'
       }
     },
+    getContainerType(type) {
+      switch (type) {
+        case 'db-server':
+          return 'db-server'
+        case 'db-gui':
+          return 'db-gui'
+        case 'web-server':
+          return 'web-server'
+        default:
+          return ''
+      }
+    },
+    copyUrl(id) {
+      const target = document.getElementById(id)
+      window.getSelection().selectAllChildren(target)
+      document.execCommand('Copy')
+      this.$message({
+        type: 'success',
+        message: this.$t('general.Copied')
+      })
+    },
     async handleDelete(pId, branchName) {
       this.btnLoading = true
       try {
@@ -253,3 +286,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scope>
+.table-flex {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-around;
+}
+</style>

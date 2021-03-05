@@ -90,7 +90,8 @@ export default {
     Enable: '啟用',
     LastUpdateTime: '最後更新時間',
     Copied: '已複製',
-    SwitchLanguageSuccess: '更換語言成功'
+    SwitchLanguageSuccess: '更換語言成功',
+    Redeploy: '重新部署'
   },
   TestCase: {
     TestCase: '測試案例',
@@ -324,7 +325,7 @@ export default {
     State: '狀態',
     Container: '容器',
     Image: '映像檔',
-    'Service(Url)': '連結'
+    Services: '服務'
   },
   ProjectResource: {
     Usage: '使用量',
