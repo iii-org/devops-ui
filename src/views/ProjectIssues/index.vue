@@ -1,40 +1,28 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { Message } from 'element-ui'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import { addIssue } from '@/api/issue'
 import { getProjectIssueListByTree } from '@/api/projects'
 import AddIssue from './components/AddIssue'
-import ElTableMixin from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectIssues',
   components: {
-    AddIssue,
-    ProjectListSelector,
-    Pagination
+    AddIssue
   },
-  mixins: [ElTableMixin],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    issueList: [],
     addTopicDialogVisible: false,
     search: '',
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     parentId: 0,
     parentName: '',
     parentList: []
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole', 'userName']),
-    pagedData() {
-      const listData = this.issueList.filter(data => {
+    ...mapGetters(['userRole', 'userName']),
+    filteredData() {
+      return this.listData.filter(data => {
         if (data.assigned_to === null) {
           data.assigned_to = ''
         }
@@ -80,30 +68,10 @@ export default {
           }
         }
       })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
     }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.search = ''
-    },
-    search() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.checkProjectSelected()
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
-    checkProjectSelected() {
-      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
-    },
     showNoProjectWarning() {
       this.$message({
         type: 'warning',
@@ -112,12 +80,14 @@ export default {
       this.listLoading = false
     },
     async fetchData() {
-      this.listLoading = true
-      const res = await getProjectIssueListByTree(this.projectSelectedId)
-      this.issueList = res.data
-      this.listLoading = false
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
+
+      const data = (await getProjectIssueListByTree(this.selectedProjectId)).data
       this.parentList = []
-      this.issueList.forEach(item => {
+      data.forEach(item => {
         this.parentList.push(item.id)
         if (item.children.length !== 0) {
           item.children.forEach(item2 => {
@@ -128,6 +98,7 @@ export default {
       if (this.userRole === 'Engineer') {
         this.searchData = this.userName
       }
+      return data
     },
     handleEdit(idx, row) {
       this.$router.push({ path: `list/${row.id}` })
@@ -137,33 +108,28 @@ export default {
       this.parentName = row.issue_name
       this.addTopicDialogVisible = true
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
     },
     async saveIssue(data) {
-      const res = await addIssue(data)
+      return await addIssue(data)
         .then(res => {
           Message({
             message: 'add successful',
             type: 'success',
             duration: 1 * 1000
           })
-          this.fetchData()
+          this.loadData()
           this.addTopicDialogVisible = false
           return res
         })
         .catch(error => {
           return error
         })
-      return res
       // this.addTopicDialogVisible = false
     },
     isParentIssue(row) {
-      if (row.parent_id === null && row.children.length === 0) return true
-      else return false
+      return row.parent_id === null && row.children.length === 0
     }
   }
 }
@@ -181,8 +147,8 @@ export default {
               id="btn-add-issue"
               type="success"
               style="float: right"
-              :disabled="projectSelectedId === -1"
-              @click=";(addTopicDialogVisible = true), (parentId = 0)"
+              :disabled="selectedProjectId === -1"
+              @click="(addTopicDialogVisible = true); (parentId = 0)"
             >
               <i class="el-icon-plus" />
               {{ $t('Issue.AddIssue') }}
@@ -261,42 +227,53 @@ export default {
         </el-table-column> -->
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium" effect="dark">
+            <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium"
+                    effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium" effect="dark">
+            <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium"
+                    effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium" effect="dark">
+            <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium"
+                    effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded" size="medium" effect="dark">
+            <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded"
+                    size="medium" effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium" effect="dark">
+            <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium"
+                    effect="dark">
               {{ scope.row.issue_status }}
             </el-tag>
-            <el-tag v-else type="finish" size="medium" effect="dark"> {{ scope.row.issue_status }}</el-tag>
+            <el-tag v-else type="finish" size="medium" effect="dark"> {{ scope.row.issue_status }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180"
+                         prop="assigned_to" />
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium" effect="dark">
+            <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium"
+                    effect="dark">
               {{ scope.row.issue_priority }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium" effect="dark">
+            <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium"
+                    effect="dark">
               {{ scope.row.issue_priority }}
             </el-tag>
-            <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium" effect="dark">
+            <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium"
+                    effect="dark">
               {{ scope.row.issue_priority }}
             </el-tag>
-            <el-tag v-else type="slow" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
+            <el-tag v-else type="slow" size="medium" effect="dark">{{ scope.row.issue_priority }}
+            </el-tag>
           </template>
         </el-table-column>
       </el-table>
       <pagination
-        :total="listTotal"
+        :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
@@ -306,7 +283,7 @@ export default {
       <add-issue
         :save-data="saveIssue"
         :dialog-visible.sync="addTopicDialogVisible"
-        :project-id="projectSelectedId"
+        :project-id="selectedProjectId"
         :parent-id="parentId"
         :parent-name="parentName"
         @add-topic-visible="emitAddTopicDialogVisible"
