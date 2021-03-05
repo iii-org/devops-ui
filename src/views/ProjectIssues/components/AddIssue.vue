@@ -207,7 +207,7 @@ export default {
         description: '',
         priority_id: 3,
         tracker_id: '',
-        status_id: 7,
+        status_id: 1,
         fixed_version_id: '',
         assigned_to_id: '',
         start_date: '',
@@ -243,7 +243,7 @@ export default {
       }
     },
     'issueForm.assigned_to_id'(val) {
-      if (val === '') this.issueForm.status_id = 7
+      if (val === '') this.issueForm.status_id = 1
       else if (val !== '') this.issueForm.status_id = 2
     }
   },
