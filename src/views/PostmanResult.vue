@@ -47,7 +47,6 @@ export default {
         fit
         highlight-current-row
         height="100%"
-        row-class-name="el-table-row"
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
         <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch"

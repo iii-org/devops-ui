@@ -36,9 +36,6 @@ export default {
   },
   computed: {
     ...mapGetters(['projectList', 'projectListTotal']),
-    listData() {
-      return this.projectList
-    },
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -53,8 +50,8 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList']),
     async fetchData() {
-      await this['projects/getProjectList']()
-      this.listLoading = false
+      await this['projects/getProjectList']().data
+      return this.projectList
     },
     handleEdit(idx, row) {
       this.dialogVisible = true
@@ -75,9 +72,6 @@ export default {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'No Test'
       return success + ' / ' + total
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     returnLatestTag(row) {
       const { tags } = row
@@ -138,7 +132,7 @@ export default {
       border fit highlight-current-row
       :data="pagedData"
       height="100%"
-      row-class-name="el-table-row"
+
       :cell-style="{height: rowHeight + 'px'}"
     >
       <el-table-column

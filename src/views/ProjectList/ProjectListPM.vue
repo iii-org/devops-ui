@@ -24,17 +24,13 @@ export default {
     rowHeight: 70
   }),
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList']),
-    listData() {
-      return this.projectList
-    }
+    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList'])
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
     async fetchData() {
-      this.listLoading = true
       await this.queryProjectList()
-      this.listLoading = false
+      return this.projectList
     },
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true
@@ -215,8 +211,8 @@ export default {
       @pagination="onPagination"
     />
 
-    <CreateProjectDialog ref="createProjectDialog" @update="fetchData" />
-    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="fetchData" />
-    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="fetchData" />
+    <CreateProjectDialog ref="createProjectDialog" @update="loadData" />
+    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="loadData" />
+    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
   </div>
 </template>
