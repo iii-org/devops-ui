@@ -1,70 +1,30 @@
 <script>
-import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import { formatTime } from '@/utils/index.js'
-import { getPipelines, getPipelinesLogs, changePipelineByAction } from '@/api/cicd'
+import { changePipelineByAction, getPipelines, getPipelinesLogs } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProgressPipelines',
-  components: { Pagination, ProjectListSelector, TestDetail },
-  mixins: [MixinElTable],
+  components: { TestDetail },
+  mixins: [MixinElTableWithAProject],
   data: () => ({
     isLoading: false,
-    listLoading: false,
-    testList: [],
     detailData: [],
     testDetailVisible: false,
     addDocumentDialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
-    rowHeight: 90
+    rowHeight: 90,
+    searchKey: 'commit_message'
   }),
-  computed: {
-    ...mapGetters(['selectedProject']),
-    pagedData() {
-      const listData = this.testList.filter(data => {
-        if (this.searchData === '' || data.commit_message.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    selectedProject(obj) {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  async created() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
       const rid = this.selectedProject.repository_id || this.selectedProject[0].repository_id
       try {
-        const res = await getPipelines(rid)
-        const { data } = res
-        this.testList = data
+        return (await getPipelines(rid)).data
       } catch (error) {
         console.error(error)
+        return []
       }
-      this.listLoading = false
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
@@ -75,9 +35,6 @@ export default {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'No Test'
       return success + ' / ' + total
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     statusBoo(obj) {
       if (obj.success === obj.total) return true
@@ -115,7 +72,7 @@ export default {
       }
       this.listLoading = true
       await changePipelineByAction(repository_id, data)
-        .then(res => {
+        .then(_ => {
           this.fetchData()
         })
         .catch(err => {
@@ -232,7 +189,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

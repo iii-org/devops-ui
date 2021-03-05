@@ -1,77 +1,28 @@
 <script>
-import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
-import { getPodList, deletePod, getPodLog } from '@/api/projectResource'
+import { deletePod, getPodList, getPodLog } from '@/api/projectResource'
 import PodLog from './components/PodLog'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'PodsList',
-  components: { ProjectListSelector, Pagination, PodLog },
-  mixins: [MixinElTable],
+  components: { PodLog },
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    podList: [],
-    listLoading: true,
     dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
-
     podLogDialogVisible: false,
     logData: '',
     focusPodName: '',
     focusContainerName: ''
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.podList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId(projectId) {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      await getPodList(this.projectSelectedId).then(res => {
-        this.podList = res.data
-      })
-      this.listLoading = false
+      return (await getPodList(this.selectedProjectId)).data
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    // handleEdit(podName) {
-    //   this.dialogVisible = true
-    // },
     async handleDelete(pId, podName) {
       this.listLoading = true
       try {
         await deletePod(pId, podName)
-        this.fetchData()
+        await this.fetchData()
       } catch (error) {
         console.error(error)
       }
@@ -81,7 +32,7 @@ export default {
       this.listLoading = true
       this.focusPodName = pName
       this.focusContainerName = cName
-      getPodLog(this.projectSelectedId, pName, {
+      getPodLog(this.selectedProjectId, pName, {
         container_name: cName
       })
         .then(res => {
@@ -196,7 +147,7 @@ export default {
                 icon="el-icon-info"
                 icon-color="red"
                 title="Are you sure?"
-                @onConfirm="handleDelete(projectSelectedId, scope.row.name)"
+                @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
               >
                 <el-button slot="reference" size="mini" type="danger">
                   <i class="el-icon-delete" />
@@ -209,7 +160,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
