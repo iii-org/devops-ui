@@ -116,7 +116,7 @@ export default {
           this.dialogVisible = false
           const data = this.form
           await editHarborRepo(data.name, { description: data.description })
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'
@@ -139,7 +139,7 @@ export default {
     //     type: 'error'
     //   }).then(async () => {
     //     await deleteHarborRepo(row.name)
-    //     this.$notify({
+    //     this.$message({
     //       title: this.$t('general.Success'),
     //       message: this.$t('Notify.Deleted'),
     //       type: 'success'
@@ -149,7 +149,7 @@ export default {
     // },
     async handleDeleteModal() {
       if (this.deleteResourceName !== this.inputDelResourceName) {
-        return this.$notify({
+        return this.$message({
           title: this.$t('general.Error'),
           message: this.$t('Notify.WrongResourceName'),
           type: 'error'
@@ -160,7 +160,7 @@ export default {
           text: 'Loading'
         })
         await deleteHarborRepo(this.deleteResourceName)
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'

@@ -125,7 +125,7 @@ export default {
       this.newBranchBtnLoading = false
       if (res.message === 'success') {
         this.dialogVisible = false
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Created'),
           type: 'success'
@@ -135,7 +135,7 @@ export default {
     async handleDeleteModal() {
       if (!this.$route.params.bId) return
       if (this.selectedBranch !== this.deleteBrancheName) {
-        return this.$notify({
+        return this.$message({
           title: this.$t('general.Error'),
           message: this.$t('Notify.WrongBranchName'),
           type: 'error'
@@ -165,7 +165,7 @@ export default {
     async handleNewTag() {
       if (!this.bId) return
       if (this.tagVersion === '') {
-        return this.$notify({
+        return this.$message({
           title: this.$t('general.Error'),
           message: this.$t('Notify.WrongTagVersionName'),
           type: 'error'
@@ -185,7 +185,7 @@ export default {
       if (res.message === 'success') {
         this.newTagBtnLoading = false
         this.tagDialogVisible = false
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Created'),
           type: 'success'

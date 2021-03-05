@@ -104,7 +104,7 @@ export default {
       this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.NoProject'),
         type: 'warning'
@@ -146,7 +146,7 @@ export default {
     async saveIssue(data) {
       const res = await addIssue(data)
         .then(res => {
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Added'),
             type: 'success'

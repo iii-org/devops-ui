@@ -57,7 +57,7 @@ export default {
         type: 'error'
       }).then(async () => {
         await deleteProjectArtifact(this.$route.params.rName, row.digest, row.name)
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'

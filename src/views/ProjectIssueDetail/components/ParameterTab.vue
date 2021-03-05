@@ -40,7 +40,7 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'
@@ -50,7 +50,7 @@ export default {
     },
     async deleteParameter(row) {
       await deleteParameter(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'

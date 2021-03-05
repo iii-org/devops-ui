@@ -41,7 +41,7 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'
@@ -51,7 +51,7 @@ export default {
 
     async deleteFlow(row) {
       await deleteFlow(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'

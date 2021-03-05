@@ -182,7 +182,7 @@ export default {
         const res = await this.addNewProject(sendData)
         this.isLoading = false
         if (res.message !== 'success') return
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Created'),
           type: 'success'

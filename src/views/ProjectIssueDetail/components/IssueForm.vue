@@ -140,14 +140,14 @@ export default {
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit'),
           type: 'warning'
@@ -181,7 +181,7 @@ export default {
               }, Promise.resolve([]))
               .then(() => {
                 this.$refs['upload'].clearFiles()
-                this.$notify({
+                this.$message({
                   title: this.$t('general.Success'),
                   message: this.$t('Notify.Updated'),
                   type: 'success'
@@ -191,7 +191,7 @@ export default {
           } else {
             updateIssue(this.issueId, form).then(() => {
               this.$emit('updated')
-              this.$notify({
+              this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Updated'),
                 type: 'success'
@@ -226,7 +226,7 @@ export default {
       this.isDeleting = true
       await deleteIssue(this.issueId)
         .then(res => {
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Deleted'),
             type: 'success'

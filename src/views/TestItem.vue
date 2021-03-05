@@ -173,7 +173,7 @@ export default {
     handleDelete() {},
     handleTestValueAdding() {
       if (this.selectTestItem === '') {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('TestValue.PleaseSelectTestItem'),
           type: 'warning'

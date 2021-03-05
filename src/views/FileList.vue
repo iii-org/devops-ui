@@ -156,7 +156,7 @@ export default {
       // console.log(file)
     },
     handleExceed(files, fileList) {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: `The limit is 3, you selected ${files.length} files this time, add up to ${files.length +
           fileList.length} totally`,

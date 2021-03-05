@@ -84,7 +84,7 @@ export default {
           sendData.project_id = this.projectSelectedId
           await addIssue(sendData)
             .then(res => {
-              this.$notify({
+              this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Added'),
                 type: 'success'

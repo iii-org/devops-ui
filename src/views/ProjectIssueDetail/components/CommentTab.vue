@@ -38,7 +38,7 @@ export default {
     async handleAddComment() {
       await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Updated'),
         type: 'success'

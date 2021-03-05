@@ -47,7 +47,7 @@ export default {
     },
     async handleDeleteModal() {
       if (this.deleteProjectObj.name !== this.confirmProjectName) {
-        return this.$notify({
+        return this.$message({
           title: this.$t('general.Error'),
           message: this.$t('Notify.WrongProjectName'),
           type: 'error'
@@ -59,7 +59,7 @@ export default {
           if (res.message !== 'success') {
             throw new Error()
           }
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Deleted'),
             type: 'success'

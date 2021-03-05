@@ -231,7 +231,7 @@ export default {
       }
       await updateIssue(this.issueId, data)
       this.fetchData()
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Updated'),
         type: 'success'
@@ -244,7 +244,7 @@ export default {
       await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
       this.issueNote = ''
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Updated'),
         type: 'success'
@@ -259,7 +259,7 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'
@@ -268,7 +268,7 @@ export default {
     },
     async deleteFlow(row) {
       await deleteFlow(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'
@@ -279,7 +279,7 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'
@@ -288,7 +288,7 @@ export default {
     },
     async deleteParameter(row) {
       await deleteParameter(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'
@@ -301,7 +301,7 @@ export default {
       }
       await addTestCaseByIssue(this.issueId, data)
       this.testDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'
@@ -310,7 +310,7 @@ export default {
     },
     async deleteTestCase(row) {
       await deleteTestCase(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'
@@ -327,7 +327,7 @@ export default {
     },
     async saveTestItem(data) {
       if (this.choose_testCase === '') {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Error'),
           message: 'please select test case',
           type: 'error'
@@ -347,7 +347,7 @@ export default {
       }
       // await addTestItemByCase(this.choose_testCase, data)
       this.testItemDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'
@@ -356,7 +356,7 @@ export default {
     },
     async deleteTestItem(row) {
       await deleteTestItem(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'
@@ -388,7 +388,7 @@ export default {
     },
     async deleteTestValue(row) {
       await deleteTestValue(row.id)
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Deleted'),
         type: 'success'
@@ -397,7 +397,7 @@ export default {
     },
     async saveTestValue(data) {
       if (this.choose_testItem === '' || this.choose_testCase === '') {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Error'),
           message: 'please select test item',
           type: 'error'
@@ -414,7 +414,7 @@ export default {
 
       await addTestValueByItem(this.choose_testItem, data)
       this.testValueDialogVisible = false
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Added'),
         type: 'success'

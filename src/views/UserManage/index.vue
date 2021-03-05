@@ -88,7 +88,7 @@ export default {
     async handleDelete(userId) {
       try {
         await deleteUser(userId)
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'

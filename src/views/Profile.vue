@@ -177,7 +177,7 @@ export default {
             phone: this.userProfileForm.userPhone
           }
           await updateUser(this.userId, data)
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'
@@ -195,7 +195,7 @@ export default {
             password: this.userPwdForm.userNewPwd,
             old_password: this.userPwdForm.old_password
           })
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'

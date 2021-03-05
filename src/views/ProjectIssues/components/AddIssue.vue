@@ -310,7 +310,7 @@ export default {
       })
     },
     handleExceed(files, fileList) {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.SingleFileLimit'),
         type: 'warning'
@@ -318,14 +318,14 @@ export default {
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit'),
           type: 'warning'

@@ -110,7 +110,7 @@ export default {
           try {
             this.memberConfirmLoading = true
             await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
-            this.$notify({
+            this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Added'),
               type: 'success'
@@ -128,7 +128,7 @@ export default {
       this.listLoading = true
       try {
         await deleteProjectMember(this.projectSelectedId, row.id)
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'

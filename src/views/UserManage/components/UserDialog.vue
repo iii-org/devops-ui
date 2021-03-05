@@ -262,7 +262,7 @@ export default {
               this.$refs[this.formName].resetFields()
               this.dialogLoading = false
               this.$emit('add-user-visible', false, 'refresh')
-              this.$notify({
+              this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Added'),
                 type: 'success'
@@ -277,7 +277,7 @@ export default {
               this.$refs[this.formName].resetFields()
               this.dialogLoading = false
               this.$emit('add-user-visible', false, 'refresh')
-              this.$notify({
+              this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Updated'),
                 type: 'success'

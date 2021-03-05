@@ -106,7 +106,7 @@ export default {
         type: 'error'
       }).then(async () => {
         await deleteProjectVersion(this.projectSelectedId, row.id)
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'
@@ -121,14 +121,14 @@ export default {
           const data = this.form
           if (this.dialogStatus === 1) {
             await addProjectVersion(this.projectSelectedId, { version: data })
-            this.$notify({
+            this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Added'),
               type: 'success'
             })
           } else {
             await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
-            this.$notify({
+            this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Updated'),
               type: 'success'

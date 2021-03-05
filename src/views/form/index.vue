@@ -65,14 +65,14 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Submit'),
         type: 'success'
       })
     },
     onCancel() {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.Canceled'),
         type: 'warning'

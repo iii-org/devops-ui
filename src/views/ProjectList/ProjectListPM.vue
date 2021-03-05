@@ -97,7 +97,7 @@ export default {
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
-      this.$notify({
+      this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Copied'),
         type: 'success'

@@ -84,7 +84,7 @@ export default {
       this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.NoProject'),
         type: 'warning'
@@ -102,7 +102,7 @@ export default {
       const text = this.newWikiContent
       try {
         await putWikiDetail(this.projectSelectedId, this.wikiData.title, { wiki_text: text })
-        this.$notify({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
           type: 'success'
@@ -175,7 +175,7 @@ export default {
         const text = this.newWikiContent
         try {
           await putWikiDetail(this.projectSelectedId, this.form.wikiTitle, { wiki_text: text })
-          this.$notify({
+          this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Created'),
             type: 'success'

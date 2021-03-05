@@ -93,8 +93,8 @@ service.interceptors.response.use(
     }
     Message({
       message: res_msg,
-      type: 'error',
-      duration: 10 * 1000
+      type: res.error.code < 3000 ? 'warning' : 'error',
+      duration: 6 * 1000
     })
     return Promise.reject(error)
   }

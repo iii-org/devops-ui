@@ -88,7 +88,7 @@ export default {
       this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.NoProject'),
         type: 'warning'
@@ -116,7 +116,7 @@ export default {
       this.dialogStatus = 1
     },
     handleExceed(files, fileList) {
-      this.$notify({
+      this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.SingleFileLimit'),
         type: 'warning'
@@ -145,14 +145,14 @@ export default {
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$notify({
+        this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit'),
           type: 'warning'
@@ -187,7 +187,7 @@ export default {
             })
             await uploadProjectFile(this.projectSelectedId, form)
             this.loadingInstance.close()
-            this.$notify({
+            this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Uploaded'),
               type: 'success'
