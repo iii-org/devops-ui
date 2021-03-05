@@ -1,54 +1,12 @@
 <script>
-import Pagination from '@/components/Pagination'
-import { getProjectArtifacts, deleteProjectArtifact } from '@/api/harbor'
-import MixinElTable from '@/components/MixinElTable'
+import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
-  components: {
-    Pagination
-  },
-  mixins: [MixinElTable],
-  data() {
-    return {
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      listTotal: 0, // 總筆數
-      searchData: '',
-      artifactsList: []
-    }
-  },
-  computed: {
-    pagedData() {
-      const listData = this.artifactsList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
-  created() {
-    if (!this.$route.params.rName) return
-    this.fetchData()
-  },
+  mixins: [MixinElTableWithAProject],
   methods: {
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     async fetchData() {
-      this.listLoading = true
-      const res = await getProjectArtifacts(this.$route.params.rName)
-      this.artifactsList = res.data
-      this.listLoading = false
+      return (await getProjectArtifacts(this.$route.params.rName)).data
     },
     async handleDelete(idx, row) {
       this.$confirm(`Are you sure to Delete Artifact ${row.name}?`, 'Delete', {
@@ -81,7 +39,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%">
       <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
@@ -122,7 +80,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

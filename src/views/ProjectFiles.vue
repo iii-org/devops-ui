@@ -1,16 +1,13 @@
 <script>
-import { mapGetters } from 'vuex'
 import { fileExtension } from '@/utils/extension.js'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import {
-  getProjectFileList,
+  deleteProjectFile,
   downloadProjectFile,
+  getProjectFileList,
   getProjectVersion,
-  uploadProjectFile,
-  deleteProjectFile
+  uploadProjectFile
 } from '@/api/projects'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 const formTemplate = {
   name: '',
@@ -20,26 +17,14 @@ const formTemplate = {
 
 export default {
   name: 'ProjectFiles',
-  components: {
-    Pagination,
-    ProjectListSelector
-  },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    listLoading: true,
     dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     fileFormRules: {
       // name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
       // version: [{ required: false, message: 'Please select version', trigger: 'blur' }],
       // description: [{ required: false, message: 'Please input description', trigger: 'blur' }]
     },
-    fileList: [],
     versionList: [],
     dialogStatus: 1,
     memberConfirmLoading: false,
@@ -49,60 +34,24 @@ export default {
     extension: {},
     isDownloading: false
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.fileList.filter(data => {
-        if (this.searchData === '' || data.filename.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    // form(value) {
-    //   console.log(value)
-    // },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
   mounted() {
-    this.checkProjectSelected()
     this.extension = fileExtension()
   },
   methods: {
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    checkProjectSelected() {
-      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
-    },
     showNoProjectWarning() {
       this.$message({
         type: 'warning',
         message: 'There are no projects currently, please create a new project.'
       })
-      this.listLoading = false
     },
     async fetchData() {
-      this.listLoading = true
-      await Promise.all([getProjectFileList(this.projectSelectedId), getProjectVersion(this.projectSelectedId)]).then(
-        res => {
-          this.fileList = this.sortFiles(res[0].data.files)
-          this.versionList = res[1].data.versions
-        }
-      )
-      this.listLoading = false
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
+      const res = await Promise.all([getProjectFileList(this.selectedProjectId), getProjectVersion(this.selectedProjectId)])
+      this.versionList = res[1].data.versions
+      return this.sortFiles(res[0].data.files)
     },
     sortFiles(files) {
       const sortedFiles = files.map(file => file)
@@ -136,7 +85,7 @@ export default {
       this.listLoading = true
       try {
         await deleteProjectFile(row.id)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -184,7 +133,7 @@ export default {
               target: '.el-dialog',
               text: 'Loading'
             })
-            await uploadProjectFile(this.projectSelectedId, form)
+            await uploadProjectFile(this.selectedProjectId, form)
             this.loadingInstance.close()
             this.$message({
               message: 'Upload successful',
@@ -192,7 +141,7 @@ export default {
             })
             this.$refs['fileForm'].resetFields()
             this.dialogVisible = false
-            this.fetchData()
+            await this.loadData()
           } catch (err) {
             this.loadingInstance.close()
             console.error(err)
@@ -219,7 +168,7 @@ export default {
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
-        <el-button type="success" :disabled="projectSelectedId === -1" @click="handleAdding">
+        <el-button type="success" :disabled="selectedProjectId === -1" @click="handleAdding">
           <i class="el-icon-plus" />
           {{ $t('File.AddFile') }}
         </el-button>
@@ -289,7 +238,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
@@ -371,6 +320,6 @@ export default {
   height: 100px;
 }
 .el-upload__text {
-  margin-top: 0px;
+  margin-top: 0;
 }
 </style>
