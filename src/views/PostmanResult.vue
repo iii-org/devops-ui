@@ -2,12 +2,12 @@
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'PostmanResult',
   components: { ProjectListSelector },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
     resultList: [],
     dialogVisible: false,
@@ -17,16 +17,6 @@ export default {
     ...mapGetters(['projectSelectedId', 'userRole']),
     listData() {
       return this.resultList
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
     }
   },
   methods: {
@@ -99,10 +89,14 @@ export default {
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="220">
           <template slot-scope="scope">
-            <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain @click="handleClick('devops', scope.row.id)">
+            <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain
+                       @click="handleClick('devops', scope.row.id)"
+            >
               {{ $t('Postman.DevOps') }}
             </el-button>
-            <el-button :id="`btn-postman-${scope.$index}`" size="mini" type="primary" @click="handleClick('postman', scope.row.id)">
+            <el-button :id="`btn-postman-${scope.$index}`" size="mini" type="primary"
+                       @click="handleClick('postman', scope.row.id)"
+            >
               {{ $t('Postman.Postman') }}
             </el-button>
           </template>

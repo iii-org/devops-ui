@@ -3,7 +3,7 @@
   Mixin for pages using el-table. Things to implement:
   computed.listData: Indicates the data list array.
   data.searchKey: Indicates what key the search box filters. Default is "name".
-  methods.fetchData: The process to fetch initial data.
+  async methods.fetchData: The process to fetch initial data.
  */
 import Pagination from '@/components/Pagination'
 
@@ -62,6 +62,9 @@ export default {
     // console.log(tableHeight, rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
   },
   methods: {
+    fetchData() {
+      return []
+    },
     onPagination(listQuery) {
       this.listQuery = listQuery
     }
