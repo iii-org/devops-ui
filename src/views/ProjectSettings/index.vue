@@ -12,7 +12,7 @@
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%">
       <el-table-column :label="'功能'" align="center" prop="function" min-width="100" />
       <el-table-column :label="'軟體名稱'" align="center" prop="softwareName" min-width="100" />
       <el-table-column :label="'狀態'" align="center" prop="state" width="100" />
@@ -25,7 +25,7 @@
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
@@ -39,52 +39,17 @@
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectSettings',
-  components: { ProjectListSelector, Pagination },
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    settingList: [],
-    listLoading: true,
-    btnLoading: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    btnLoading: false
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.settingList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      this.settingList = [
+      return [
         {
           function: 'Code Review',
           softwareName: 'CheckMarx',
@@ -107,10 +72,6 @@ export default {
         { function: 'Test', softwareName: 'postman', state: 'Active', activeBranches: [] },
         { function: 'Test', softwareName: 'TagUI', state: 'Active', activeBranches: [] }
       ]
-      this.listLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     }
   }
 }

@@ -55,7 +55,7 @@ export default {
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData"
               :element-loading-text="$t('Loading')" border fit
-              highlight-current-row height="100%" row-class-name="el-table-row"
+              highlight-current-row height="100%"
     >
       <el-table-column label="Author" :show-overflow-tooltip="true">
         <template slot-scope="scope">

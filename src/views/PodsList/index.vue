@@ -83,7 +83,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
       <el-table-column label="Pods" align="center" prop="name" min-width="200" show-overflow-tooltip />
       <el-table-column label="Created time" align="center" width="180">
         <template slot-scope="scope">
