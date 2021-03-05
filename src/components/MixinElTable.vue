@@ -1,6 +1,6 @@
 <script>
 /*
-  Mixin for pages using el-table. Things to implement:
+  Mixin for pages using el-table and pagination. Things to implement:
   data.searchKey: Indicates what key the search box filters. Default is "name".
   async methods.fetchData: The function to fetch list data. You must return the data array.
  */
