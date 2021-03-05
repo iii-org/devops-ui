@@ -16,15 +16,6 @@ export default {
   components: { Pagination },
   mixins: [MixinElTable],
   data: () => ({
-    resultList: [],
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
-
     formData: defaultFormData(),
     formRules: {
       name: [{ required: true, message: 'Please input registry name', trigger: 'blur' }],
@@ -36,45 +27,21 @@ export default {
 
     showPassword: false
   }),
-  computed: {
-    pagedData() {
-      const listData = this.resultList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      await getSystemRegistries().then(res => {
-        this.resultList = res.data.map(item => ({
-          name: item.name,
-          registries: item.registries ? Object.keys(item.registries).join(', ') : '',
-          created: item.created,
-          status: item.removed ? 'Removing' : 'Active'
-        }))
-      })
-      this.listLoading = false
+      const res = await getSystemRegistries()
+      return res.data.map(item => ({
+        name: item.name,
+        registries: item.registries ? Object.keys(item.registries).join(', ') : '',
+        created: item.created,
+        status: item.removed ? 'Removing' : 'Active'
+      }))
     },
     async handleDelete(registryName) {
       this.listLoading = true
       try {
         await deleteSystemRegistry(registryName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -88,7 +55,7 @@ export default {
           const sendData = this.formData
           try {
             await addSystemRegistry(sendData)
-            this.fetchData()
+            await this.loadData()
             this.dialogVisible = false
           } catch (error) {
             console.error(error)
@@ -137,7 +104,7 @@ export default {
         Reload
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
       <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'Active'" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
@@ -179,7 +146,7 @@ export default {
     </el-table>
 
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

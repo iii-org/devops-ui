@@ -29,7 +29,7 @@ export default {
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
-      return this.listData.slice(start, end)
+      return this.filteredData.slice(start, end)
     }
   },
   watch: {
