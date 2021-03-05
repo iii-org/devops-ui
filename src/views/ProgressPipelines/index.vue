@@ -18,7 +18,7 @@ export default {
   }),
   methods: {
     async fetchData() {
-      const rid = this.selectedProject.repository_id || this.selectedProject[0].repository_id
+      const rid = this.selectedProject.repository_id
       try {
         return (await getPipelines(rid)).data
       } catch (error) {

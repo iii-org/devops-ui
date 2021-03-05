@@ -28,7 +28,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
 
   methods: {
@@ -38,13 +38,13 @@ export default {
       this.paramDialogVisible = true
     },
     async saveParameter(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
       Message({
         message: 'add successful',
         type: 'success',
-        duration: 1 * 1000
+        duration: 1000
       })
       this.$emit('updated')
     },
@@ -53,7 +53,7 @@ export default {
       Message({
         message: 'delete successful',
         type: 'success',
-        duration: 1 * 1000
+        duration: 1000
       })
       this.$emit('updated')
     }
