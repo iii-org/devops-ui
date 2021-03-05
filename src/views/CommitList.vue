@@ -1,10 +1,8 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
-import MixinElTable from '@/components/MixinElTable'
+import { mapActions, mapGetters } from 'vuex'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
-  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -15,16 +13,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTable],
-  data() {
-    return {
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20
-      }
-    }
-  },
+  mixins: [MixinElTableWithAProject],
   computed: {
     ...mapGetters(['commitListByBranch', 'commitListTotalByBranch']),
     rId() {
@@ -36,23 +25,21 @@ export default {
     branchName() {
       return this.$route.params.branchName
     },
-    pagedData() {
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit - 1
-      this.listTotal = this.commitListByBranch.data.length
-      return this.commitListByBranch.data.slice(start, end)
+    listData() {
+      return this.commitListByBranch.data || []
     }
-  },
-  async created() {
-    await this['commitList/getCommitListByBranch']({ rId: this.rId, params: { branch: this.branchName }})
-    this.listLoading = false
   },
   methods: {
     ...mapActions(['commitList/getCommitListByBranch']),
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+    async fetchData() {
+      await this['commitList/getCommitListByBranch']({
+        rId: this.rId,
+        params: { branch: this.branchName }
+      })
+      this.listLoading = false
     },
-    handlePull() {},
+    handlePull() {
+    },
     handleMerge(index, row) {
       this.mergeDialogVisible = true
       this.selectedBranch = row.branch_name
@@ -68,7 +55,11 @@ export default {
     <h3>
       {{ projectName }}
     </h3>
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-divider />
+    <el-table v-loading="listLoading" :data="pagedData"
+              :element-loading-text="$t('Loading')" border fit
+              highlight-current-row height="100%" row-class-name="el-table-row"
+    >
       <el-table-column label="Author" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.author_name }}
@@ -96,7 +87,7 @@ export default {
       </el-table-column> -->
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[20]"
@@ -108,8 +99,4 @@ export default {
 </template>
 
 <style lang="css" scoped>
-.newBtn{
-  float:right;
-  padding-right: 6px;
-}
 </style>

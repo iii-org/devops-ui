@@ -112,7 +112,7 @@ export const asyncRoutes = [
         name: 'branches',
         props: true,
         hidden: true,
-        component: () => import('@/views/BranchList/index'),
+        component: () => import('@/views/BranchList'),
         meta: { title: 'Branches', icon: 'tree', roles: ['Engineer'] }
       }
     ]
