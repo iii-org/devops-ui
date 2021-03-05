@@ -77,7 +77,7 @@ export default {
             type: 'success',
             message: 'Succeed'
           })
-          this.fetchData()
+          await this.loadData()
         } else {
           return false
         }
@@ -120,7 +120,7 @@ export default {
         })
         this.loadingDelete.close()
         this.showDeleteDialog = false
-        this.fetchData()
+        await this.loadData()
       }
     },
     onDialogClosedDelete() {

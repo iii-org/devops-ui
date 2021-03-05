@@ -185,7 +185,7 @@ export default {
       this.btnLoading = true
       try {
         await redeployDevEnvironmentByBranchName(pId, branchName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -232,7 +232,7 @@ export default {
       this.btnLoading = true
       try {
         await deleteDevEnvironmentByBranchName(pId, branchName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }

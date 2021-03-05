@@ -73,7 +73,7 @@ export default {
       this.listLoading = true
       await changePipelineByAction(repository_id, data)
         .then(_ => {
-          this.fetchData()
+          this.loadData()
         })
         .catch(err => {
           this.listLoading = false

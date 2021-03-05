@@ -19,7 +19,7 @@ export default {
           type: 'success',
           message: 'Delete Succeed'
         })
-        this.fetchData()
+        await this.loadData()
       })
     }
   }

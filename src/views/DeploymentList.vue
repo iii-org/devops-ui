@@ -17,7 +17,7 @@ export default {
       this.listLoading = true
       try {
         await deleteDeployment(pId, deploymentName)
-        await this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -27,7 +27,7 @@ export default {
       this.btnLoading = true
       try {
         await updateDeployment(pId, deploymentName)
-        await this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }

@@ -30,7 +30,7 @@ export default {
     emitAddUserDialogVisible(visible, refresh) {
       this.userDialogVisible = visible
       if (refresh === 'refresh') {
-        this.fetchData()
+        this.loadData()
       }
     },
     async showUserDialog(user, title) {
@@ -60,7 +60,7 @@ export default {
           message: 'Member deleted',
           type: 'success'
         })
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }

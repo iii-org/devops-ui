@@ -22,7 +22,7 @@ export default {
       this.listLoading = true
       try {
         await deletePod(pId, podName)
-        await this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
