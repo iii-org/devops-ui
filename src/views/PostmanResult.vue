@@ -1,37 +1,22 @@
 <script>
 import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
 import { getPostmanResult } from '@/api/postman'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'PostmanResult',
-  components: { ProjectListSelector, Pagination },
+  components: { ProjectListSelector },
   mixins: [MixinElTable],
   data: () => ({
     resultList: [],
     dialogVisible: false,
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    searchKey: 'branch'
   }),
   computed: {
     ...mapGetters(['projectSelectedId', 'userRole']),
-    pagedData() {
-      const listData = this.resultList.filter(data => {
-        if (this.searchData === '' || data.branch.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
+    listData() {
+      return this.resultList
     }
   },
   watch: {
@@ -44,9 +29,6 @@ export default {
       this.listQuery.page = 1
     }
   },
-  created() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
       try {
@@ -58,9 +40,6 @@ export default {
       } finally {
         this.listLoading = false
       }
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     handleClick(target, id) {
       this.$router.push({ path: `/test/postman-result/${target}/${id}` })
@@ -130,7 +109,7 @@ export default {
         </el-table-column>
       </el-table>
       <pagination
-        :total="listTotal"
+        :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"

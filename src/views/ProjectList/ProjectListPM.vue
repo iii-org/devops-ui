@@ -1,7 +1,6 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
-import { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog } from './components'
+import { mapActions, mapGetters } from 'vuex'
+import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
 import ElTableMixin from '@/components/MixinElTable'
 
 export default {
@@ -30,12 +29,9 @@ export default {
       return this.projectList
     }
   },
-  async created() {
-    this.loadList()
-  },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
-    async loadList() {
+    async fetchData() {
       this.listLoading = true
       await this.queryProjectList()
       this.listLoading = false
@@ -63,8 +59,7 @@ export default {
       this.$refs.deleteProjectDialog.showDialog = true
     },
     returnProgress(current, total) {
-      const percent = Math.round((current / total) * 100)
-      return percent
+      return Math.round((current / total) * 100)
     },
     handleClick(id) {
       localStorage.setItem('project', id)
@@ -100,8 +95,11 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}">
-      <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true" min-width="250">
+              highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}"
+    >
+      <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true"
+                       min-width="250"
+      >
         <template slot-scope="scope">
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
             {{ scope.row.display }}
@@ -112,9 +110,8 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium" effect="dark">{{
-              scope.row.project_status
-            }}
+          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium" effect="dark">
+            {{ scope.row.project_status }}
           </el-tag>
           <el-tag v-else type="none" size="medium" effect="dark">{{ scope.row.project_status }}</el-tag>
         </template>
@@ -218,8 +215,8 @@ export default {
       @pagination="onPagination"
     />
 
-    <CreateProjectDialog ref="createProjectDialog" @update="loadList" />
-    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="loadList" />
-    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadList" />
+    <CreateProjectDialog ref="createProjectDialog" @update="fetchData" />
+    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="fetchData" />
+    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="fetchData" />
   </div>
 </template>
