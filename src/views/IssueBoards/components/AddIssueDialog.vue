@@ -78,6 +78,9 @@ export default {
         if (valid) {
           this.isLoading = true
           const sendData = Object.assign({}, this.issueForm)
+          for (const key in sendData) {
+            if (sendData[key] === '') delete sendData[key]
+          }
           sendData.project_id = this.projectSelectedId
           await addIssue(sendData)
             .then(res => {
