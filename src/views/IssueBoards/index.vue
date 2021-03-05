@@ -30,10 +30,10 @@ export default {
     relativeIssueList: []
   }),
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    projectSelectedId() {
+    selectedProjectId() {
       this.fetchData()
       this.versionValue = '-1'
       this.memberValue = '-1'
@@ -96,12 +96,12 @@ export default {
     },
     async fetchData() {
       this.isLoading = true
-      const projectIssueListRes = await getProjectIssueListByStatus(this.projectSelectedId)
+      const projectIssueListRes = await getProjectIssueListByStatus(this.selectedProjectId)
 
-      const versionsRes = await getProjectVersion(this.projectSelectedId)
+      const versionsRes = await getProjectVersion(this.selectedProjectId)
       this.projectVersionList = versionsRes.data.versions
 
-      const userRes = await this.getProjectUserList(this.projectSelectedId)
+      const userRes = await this.getProjectUserList(this.selectedProjectId)
       this.projectUserList = userRes.data.user_list
 
       this.isLoading = false
@@ -118,7 +118,7 @@ export default {
     },
     async updateRelativeList() {
       this.isLoading = true
-      await getProjectIssueListByTree(this.projectSelectedId).then(res => {
+      await getProjectIssueListByTree(this.selectedProjectId).then(res => {
         this.relativeIssueList = this.createRelativeList(res.data)
       })
       this.isLoading = false
@@ -191,7 +191,7 @@ export default {
         <el-select
           v-model="versionValue"
           :placeholder="$t('Version.SelectVersion')"
-          :disabled="projectSelectedId === -1"
+          :disabled="selectedProjectId === -1"
           @change="updateData"
         >
           <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
@@ -201,7 +201,7 @@ export default {
         <el-select
           v-model="memberValue"
           :placeholder="$t('Member.SelectMember')"
-          :disabled="projectSelectedId === -1"
+          :disabled="selectedProjectId === -1"
           @change="updateData"
         >
           <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
@@ -220,7 +220,7 @@ export default {
         :header-text="$t('ProjectActive.Active')"
         c-name="Active"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="loadData"
       />
       <Kanban
         key="2"
@@ -231,7 +231,7 @@ export default {
         :header-text="$t('ProjectActive.Assigned')"
         c-name="Assigned"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="loadData"
       />
       <Kanban
         key="3"
@@ -242,7 +242,7 @@ export default {
         :header-text="$t('ProjectActive.Solved')"
         c-name="Solved"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="loadData"
       />
       <Kanban
         key="4"
@@ -253,7 +253,7 @@ export default {
         :header-text="$t('ProjectActive.Responded')"
         c-name="Responded"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="loadData"
       />
       <Kanban
         key="5"
@@ -264,7 +264,7 @@ export default {
         :header-text="$t('ProjectActive.Finished')"
         c-name="Finished"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="loadData"
       />
       <Kanban
         key="6"
@@ -275,7 +275,7 @@ export default {
         :header-text="$t('ProjectActive.Closed')"
         c-name="Closed"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="loadData"
       />
     </div>
   </div>

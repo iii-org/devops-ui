@@ -28,7 +28,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
 
   methods: {
@@ -39,7 +39,7 @@ export default {
     },
 
     async saveFlow(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
       Message({

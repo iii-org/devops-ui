@@ -93,7 +93,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectSelectedId']),
+    ...mapGetters(['selectedProjectId']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
@@ -255,7 +255,7 @@ export default {
       this.commentDialogVisible = true
     },
     async saveFlow(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
       Message({
@@ -275,7 +275,7 @@ export default {
       this.fetchData()
     },
     async saveParameter(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
       Message({
