@@ -1,60 +1,26 @@
 <script>
-import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { getWebInspectScans, getWebInspectStatus, getWebInspectStats, getWebInspectReport } from '@/api/webInspect'
-import MixinElTable from '@/components/MixinElTable'
+import {
+  getWebInspectReport,
+  getWebInspectScans,
+  getWebInspectStats,
+  getWebInspectStatus
+} from '@/api/webInspect'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'WebInspect',
-  components: { ProjectListSelector, Pagination },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    webInspectScans: [],
-    listLoading: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
     confirmLoading: false,
-    searchData: ''
+    searchKey: 'commit_id'
   }),
-  computed: {
-    ...mapGetters(['selectedProject']),
-    pagedData() {
-      const listData = this.webInspectScans.filter(data => {
-        const isCommitId = data.commit_id.toString().includes(this.searchData.toString())
-        if (!this.searchData || isCommitId) return data
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    selectedProject() {
-      this.fetchWebInspectScans()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchWebInspectScans()
-  },
   methods: {
-    async fetchWebInspectScans() {
-      this.listLoading = true
+    async fetchData() {
       const rName = this.selectedProject.name || this.selectedProject[0].name
-      await getWebInspectScans(rName).then(res => {
-        this.webInspectScans = this.handleScans(res.data)
-      })
+      const res = await getWebInspectScans(rName)
+      const data = this.handleScans(res.data)
       await this.updateWebInspectScans()
-      this.listLoading = false
+      return data
     },
     handleScans(scans) {
       const sortedScans = scans.map(scan => {
@@ -66,15 +32,15 @@ export default {
       return sortedScans
     },
     updateWebInspectScans() {
-      this.webInspectScans.forEach(item => {
+      this.listData.forEach(item => {
         if (!item.finished) this.fetchStatus(item.scan_id)
       })
     },
     async fetchStatus(wiScanId) {
       this.listLoading = true
       getWebInspectStatus(wiScanId).then(res => {
-        const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        this.webInspectScans[idx].stats.status = res.data.status
+        const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
+        this.listData[idx].stats.status = res.data.status
         if (res.data.status === 'Complete') this.fetchStats(wiScanId)
       })
       this.listLoading = false
@@ -82,9 +48,9 @@ export default {
     async fetchStats(wiScanId) {
       this.listLoading = true
       await getWebInspectStats(wiScanId).then(res => {
-        const idx = this.webInspectScans.findIndex(item => item.scan_id === wiScanId)
-        this.webInspectScans[idx].stats = res.data.severity_count
-        this.webInspectScans[idx].stats.status = 'Complete'
+        const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
+        this.listData[idx].stats = res.data.severity_count
+        this.listData[idx].stats.status = 'Complete'
       })
       this.listLoading = false
     },
@@ -180,7 +146,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

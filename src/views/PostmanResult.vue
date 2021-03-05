@@ -1,30 +1,21 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'PostmanResult',
-  components: { ProjectListSelector },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     dialogVisible: false,
     searchKey: 'branch'
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole'])
+    ...mapGetters(['userRole'])
   },
   methods: {
     async fetchData() {
-      try {
-        this.listLoading = true
-        this.listData = (await getPostmanResult(this.projectSelectedId)).data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.listLoading = false
-      }
+      return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
       this.$router.push({ path: `/test/postman-result/${target}/${id}` })
@@ -59,7 +50,9 @@ export default {
         row-class-name="el-table-row"
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
-        <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />
+        <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch"
+                         min-width="120"
+        />
         <el-table-column align="center" label="Commit" width="130">
           <template slot-scope="scope">
             <el-link
@@ -73,8 +66,12 @@ export default {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="100" />
-        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="100" />
+        <el-table-column align="center" :label="$t('Postman.Success')" prop="success"
+                         min-width="100"
+        />
+        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure"
+                         min-width="100"
+        />
         <el-table-column align="center" :label="$t('Postman.StartTime')" width="190">
           <template slot-scope="scope">
             <span>
