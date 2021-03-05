@@ -1,7 +1,6 @@
 <script>
 import { updateIssue, deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
-import { Message } from 'element-ui'
 import { fileExtension } from '@/utils/extension'
 
 export default {
@@ -40,27 +39,27 @@ export default {
     async deleteIssueFile(row) {
       this.isLoading = true
       await deleteIssueFile(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.isLoading = false
       this.$emit('updated')
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$message({
-          message: `Unable to upload a file: This file type is not supported`,
-          type: 'warning',
-          duration: 10 * 1000
+        this.$notify({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.UnsupportedFileFormat'),
+          type: 'warning'
         })
         this.$refs.uploadFile.clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$message({
-          message: `This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`,
-          type: 'warning',
-          duration: 10 * 1000
+        this.$notify({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileSizeLimit'),
+          type: 'warning'
         })
         this.$refs.uploadFile.clearFiles()
       } else {
@@ -81,10 +80,10 @@ export default {
         }, Promise.resolve([]))
         .then(() => {
           this.$refs.uploadFile.clearFiles()
-          Message({
-            message: 'update successful',
-            type: 'success',
-            duration: 1 * 1000
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
           })
           this.isUploading = false
           this.uploadFileList = []

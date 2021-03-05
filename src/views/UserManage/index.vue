@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-import { Message } from 'element-ui'
 import { getInfo, getAllUser, deleteUser } from '@/api/user'
 import Pagination from '@/components/Pagination'
 import UserDialog from './components/UserDialog'
@@ -89,8 +88,9 @@ export default {
     async handleDelete(userId) {
       try {
         await deleteUser(userId)
-        Message({
-          message: 'Member deleted',
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
           type: 'success'
         })
         this.fetchData()

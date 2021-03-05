@@ -173,10 +173,10 @@ export default {
     handleDelete() {},
     handleTestValueAdding() {
       if (this.selectTestItem === '') {
-        this.$message({
+        this.$notify({
+          title: this.$t('general.Warning'),
           message: this.$t('TestValue.PleaseSelectTestItem'),
-          type: 'warning',
-          duration: 10 * 1000
+          type: 'warning'
         })
       } else {
         this.testValueDialogVisible = true
@@ -301,7 +301,6 @@ export default {
               highlight-current-row
               class="mt-2"
               height="100%"
-
             >
               <el-table-column :label="$t('TestItem.Id')">
                 <template slot-scope="scope">

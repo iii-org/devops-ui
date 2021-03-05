@@ -116,9 +116,10 @@ export default {
           this.dialogVisible = false
           const data = this.form
           await editHarborRepo(data.name, { description: data.description })
-          this.$message({
-            type: 'success',
-            message: 'Succeed'
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
           })
           this.fetchData()
         } else {
@@ -138,17 +139,19 @@ export default {
     //     type: 'error'
     //   }).then(async () => {
     //     await deleteHarborRepo(row.name)
-    //     this.$message({
-    //       type: 'success',
-    //       message: 'Delete Succeed'
+    //     this.$notify({
+    //       title: this.$t('general.Success'),
+    //       message: this.$t('Notify.Deleted'),
+    //       type: 'success'
     //     })
     //     this.fetchData()
     //   })
     // },
     async handleDeleteModal() {
       if (this.deleteResourceName !== this.inputDelResourceName) {
-        return this.$message({
-          message: 'Please input resource name correctly.',
+        return this.$notify({
+          title: this.$t('general.Error'),
+          message: this.$t('Notify.WrongResourceName'),
           type: 'error'
         })
       } else {
@@ -157,9 +160,10 @@ export default {
           text: 'Loading'
         })
         await deleteHarborRepo(this.deleteResourceName)
-        this.$message({
-          type: 'success',
-          message: 'Delete Succeed'
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
         })
         this.loadingDelete.close()
         this.showDeleteDialog = false
@@ -219,7 +223,15 @@ export default {
           </el-col>
         </el-row>
       </el-card>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%" row-class-name="el-table-row">
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        border
+        style="width: 100%"
+        height="100%"
+        row-class-name="el-table-row"
+      >
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="150">
           <template slot-scope="scope">
             <el-link

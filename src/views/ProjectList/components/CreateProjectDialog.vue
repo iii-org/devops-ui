@@ -116,7 +116,6 @@
 import { mapActions } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
-import { Message } from 'element-ui'
 
 const formTemplate = () => ({
   name: '',
@@ -183,10 +182,10 @@ export default {
         const res = await this.addNewProject(sendData)
         this.isLoading = false
         if (res.message !== 'success') return
-        Message({
-          message: 'Project added successfully',
-          type: 'success',
-          duration: 1 * 1000
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Created'),
+          type: 'success'
         })
         this.showDialog = false
         this.$emit('update')

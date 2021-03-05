@@ -49,7 +49,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { Message } from 'element-ui'
 
 export default {
   name: 'Login',

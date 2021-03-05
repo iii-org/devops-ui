@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-import { Message } from 'element-ui'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import EditorMD from '@/components/Editormd'
@@ -85,9 +84,10 @@ export default {
       this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
-      this.$message({
-        type: 'warning',
-        message: 'There are no projects currently, please create a new project.'
+      this.$notify({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
       })
       this.listLoading = false
     },
@@ -102,8 +102,9 @@ export default {
       const text = this.newWikiContent
       try {
         await putWikiDetail(this.projectSelectedId, this.wikiData.title, { wiki_text: text })
-        Message({
-          message: 'Wiki update successfully',
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
           type: 'success'
         })
         this.dialogVisible = false
@@ -174,8 +175,9 @@ export default {
         const text = this.newWikiContent
         try {
           await putWikiDetail(this.projectSelectedId, this.form.wikiTitle, { wiki_text: text })
-          Message({
-            message: 'Wiki create successfully',
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Created'),
             type: 'success'
           })
           this.fetchData()
@@ -216,7 +218,15 @@ export default {
         Edit
       </el-button>
     </div> -->
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
       <el-table-column align="center" :label="$t('general.CreateTime')" width="190">

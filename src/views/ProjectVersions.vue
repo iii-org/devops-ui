@@ -106,9 +106,10 @@ export default {
         type: 'error'
       }).then(async () => {
         await deleteProjectVersion(this.projectSelectedId, row.id)
-        this.$message({
-          type: 'success',
-          message: 'Delete Succeed'
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
         })
         this.fetchData()
       })
@@ -120,13 +121,20 @@ export default {
           const data = this.form
           if (this.dialogStatus === 1) {
             await addProjectVersion(this.projectSelectedId, { version: data })
+            this.$notify({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Added'),
+              type: 'success'
+            })
           } else {
             await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
+            this.$notify({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Updated'),
+              type: 'success'
+            })
           }
-          this.$message({
-            type: 'success',
-            message: 'Succeed'
-          })
+
           this.fetchData()
         } else {
           return false
@@ -158,7 +166,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" row-class-name="el-table-row">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      height="100%"
+      row-class-name="el-table-row"
+    >
       <el-table-column align="center" :label="$t('general.Name')" min-width="220" prop="name" />
       <el-table-column align="center" :label="$t('Version.DueDate')" width="120">
         <template slot-scope="scope">
@@ -172,7 +188,9 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" min-width="60">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'open'" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
+          <el-tag v-if="scope.row.status === 'open'" type="success" size="medium" effect="dark">{{
+            scope.row.status
+          }}</el-tag>
           <el-tag v-else type="danger" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>

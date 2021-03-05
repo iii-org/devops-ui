@@ -127,9 +127,10 @@ export default {
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
-      this.$message({
-        type: 'success',
-        message: this.$t('general.Copied')
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Copied'),
+        type: 'success'
       })
     }
   }
@@ -157,11 +158,13 @@ export default {
     <el-table
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
-      border fit highlight-current-row
+      border
+      fit
+      highlight-current-row
       :data="pagedData"
       height="100%"
       row-class-name="el-table-row"
-      :cell-style="{height: rowHeight + 'px'}"
+      :cell-style="{ height: rowHeight + 'px' }"
     >
       <el-table-column
         align="center"

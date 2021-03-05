@@ -21,13 +21,13 @@
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.Password')" prop="password">
-        <el-input v-model="userForm.password" type="password" show-password />
+        <el-input v-model="userForm.password" type="password" maxlength="20" show-password />
         <div style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.PasswordRule') }}
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.RepeatPassword')" prop="repeatPassword">
-        <el-input v-model="userForm.repeatPassword" type="password" show-password />
+        <el-input v-model="userForm.repeatPassword" type="password" maxlength="20" show-password />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
         <el-input v-model="userForm.name" />
@@ -64,7 +64,6 @@
 </template>
 <script>
 import { addUser, updateUser } from '@/api/user'
-import { Message } from 'element-ui'
 
 export default {
   props: {
@@ -263,10 +262,10 @@ export default {
               this.$refs[this.formName].resetFields()
               this.dialogLoading = false
               this.$emit('add-user-visible', false, 'refresh')
-              Message({
-                message: 'add successful',
-                type: 'success',
-                duration: 1 * 1000
+              this.$notify({
+                title: this.$t('general.Success'),
+                message: this.$t('Notify.Added'),
+                type: 'success'
               })
             } catch (error) {
               this.dialogLoading = false
@@ -278,10 +277,10 @@ export default {
               this.$refs[this.formName].resetFields()
               this.dialogLoading = false
               this.$emit('add-user-visible', false, 'refresh')
-              Message({
-                message: 'update successful',
-                type: 'success',
-                duration: 1 * 1000
+              this.$notify({
+                title: this.$t('general.Success'),
+                message: this.$t('Notify.Updated'),
+                type: 'success'
               })
             } catch (error) {
               this.dialogLoading = false

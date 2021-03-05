@@ -3,7 +3,6 @@ import { mapGetters } from 'vuex'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectAssignable } from '@/api/projects'
 import { addIssue } from '@/api/issue'
-import { Message } from 'element-ui'
 
 export default {
   props: {
@@ -82,10 +81,10 @@ export default {
           sendData.project_id = this.projectSelectedId
           await addIssue(sendData)
             .then(res => {
-              Message({
-                message: 'add successful',
-                type: 'success',
-                duration: 1 * 1000
+              this.$notify({
+                title: this.$t('general.Success'),
+                message: this.$t('Notify.Added'),
+                type: 'success'
               })
               this.$emit('update')
             })

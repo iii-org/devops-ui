@@ -65,11 +65,16 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$message('submit!')
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Submit'),
+        type: 'success'
+      })
     },
     onCancel() {
-      this.$message({
-        message: 'cancel!',
+      this.$notify({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.Canceled'),
         type: 'warning'
       })
     }
@@ -78,8 +83,7 @@ export default {
 </script>
 
 <style scoped>
-.line{
+.line {
   text-align: center;
 }
 </style>
-

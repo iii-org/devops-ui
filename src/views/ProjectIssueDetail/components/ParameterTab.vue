@@ -2,7 +2,6 @@
 import { mapGetters } from 'vuex'
 import ParamDialog from './ParamDialog'
 import { addParameterByIssue, deleteParameter } from '@/api/issueParameter'
-import { Message } from 'element-ui'
 
 export default {
   name: 'ParameterTab',
@@ -41,19 +40,20 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
+
       this.$emit('updated')
     },
     async deleteParameter(row) {
       await deleteParameter(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.$emit('updated')
     }

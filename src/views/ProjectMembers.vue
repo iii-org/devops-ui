@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-import { Message } from 'element-ui'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import { getProjectUserList, getNotInProject, addProjectMember, deleteProjectMember } from '@/api/projects'
@@ -111,8 +110,9 @@ export default {
           try {
             this.memberConfirmLoading = true
             await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
-            Message({
-              message: 'Member added successfully',
+            this.$notify({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Added'),
               type: 'success'
             })
             this.fetchData()
@@ -128,8 +128,9 @@ export default {
       this.listLoading = true
       try {
         await deleteProjectMember(this.projectSelectedId, row.id)
-        Message({
-          message: 'Member deleted',
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
           type: 'success'
         })
         this.fetchData()
@@ -167,7 +168,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" row-class-name="el-table-row">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      height="100%"
+      row-class-name="el-table-row"
+    >
       <el-table-column align="center" :label="$t('Member.Id')" min-width="40">
         <template slot-scope="scope">
           {{ scope.row.id }}

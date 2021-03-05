@@ -89,9 +89,30 @@ export default {
     Disable: '停用',
     Enable: '啟用',
     LastUpdateTime: '最後更新時間',
+    Redeploy: '重新部署',
+    Success: '成功',
+    Warning: '警告',
+    Info: '資訊',
+    Error: '錯誤'
+  },
+  Notify: {
+    Updated: '已更新',
+    Added: '已新增',
+    Deleted: '已刪除',
+    Uploaded: '已上傳',
+    Created: '已建立',
     Copied: '已複製',
-    SwitchLanguageSuccess: '更換語言成功',
-    Redeploy: '重新部署'
+    Canceled: '已取消',
+    Submit: '已送出',
+    SwitchLanguage: '更換語言成功',
+    NoProject: '目前沒有任何專案可供選擇，請先建立專案。',
+    WrongProjectName: '請輸入正確的專案名稱。',
+    WrongBranchName: '請輸入正確的分支名稱。',
+    WrongResourceName: '請輸入正確的資源名稱。',
+    WrongTagVersionName: '請輸入正確的版本名稱。',
+    SingleFileLimit: '一次只能選擇一個檔案，請先移除已選擇的檔案。',
+    UnsupportedFileFormat: '無法上傳，不支援此種檔案格式。',
+    FileSizeLimit: '超過可上傳的檔案大小 (20 MB)。'
   },
   TestCase: {
     TestCase: '測試案例',

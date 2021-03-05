@@ -1,7 +1,6 @@
 <script>
 import { updateIssue } from '@/api/issue'
 import EditorMD from '@/components/Editormd'
-import { Message } from 'element-ui'
 
 export default {
   name: 'CommentTab',
@@ -39,10 +38,10 @@ export default {
     async handleAddComment() {
       await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
-      Message({
-        message: 'update successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Updated'),
+        type: 'success'
       })
       this.$emit('updated')
     }

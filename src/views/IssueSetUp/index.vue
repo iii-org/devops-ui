@@ -21,9 +21,10 @@ import {
   addTestValueByItem
 } from '@/api/issueTestValue'
 import EditorMD from '@/components/Editormd'
-import { Message } from 'element-ui'
 import MixinElTable from '@/components/MixinElTable'
+
 export default {
+  name: 'IssueSetUp',
   components: {
     FlowDialog,
     ParamDialog,
@@ -230,10 +231,10 @@ export default {
       }
       await updateIssue(this.issueId, data)
       this.fetchData()
-      Message({
-        message: 'update successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Updated'),
+        type: 'success'
       })
     },
     emitGetEditorData(value) {
@@ -243,10 +244,10 @@ export default {
       await updateIssue(this.issueId, { notes: this.issueNote })
       this.commentDialogVisible = false
       this.issueNote = ''
-      Message({
-        message: 'update successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Updated'),
+        type: 'success'
       })
       this.fetchData()
     },
@@ -258,19 +259,19 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
       this.fetchData()
     },
     async deleteFlow(row) {
       await deleteFlow(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.fetchData()
     },
@@ -278,19 +279,19 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
       this.fetchData()
     },
     async deleteParameter(row) {
       await deleteParameter(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.fetchData()
     },
@@ -300,19 +301,19 @@ export default {
       }
       await addTestCaseByIssue(this.issueId, data)
       this.testDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
       this.fetchData()
     },
     async deleteTestCase(row) {
       await deleteTestCase(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.fetchData()
     },
@@ -326,10 +327,10 @@ export default {
     },
     async saveTestItem(data) {
       if (this.choose_testCase === '') {
-        Message({
+        this.$notify({
+          title: this.$t('general.Error'),
           message: 'please select test case',
-          type: 'error',
-          duration: 1 * 1000
+          type: 'error'
         })
         return
       }
@@ -346,19 +347,19 @@ export default {
       }
       // await addTestItemByCase(this.choose_testCase, data)
       this.testItemDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
       this.getTestItem(this.choose_testCase)
     },
     async deleteTestItem(row) {
       await deleteTestItem(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.getTestItem(this.choose_testCase)
     },
@@ -387,19 +388,19 @@ export default {
     },
     async deleteTestValue(row) {
       await deleteTestValue(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.getTestValue(this.choose_testItem)
     },
     async saveTestValue(data) {
       if (this.choose_testItem === '' || this.choose_testCase === '') {
-        Message({
+        this.$notify({
+          title: this.$t('general.Error'),
           message: 'please select test item',
-          type: 'error',
-          duration: 1 * 1000
+          type: 'error'
         })
         return
       }
@@ -413,10 +414,10 @@ export default {
 
       await addTestValueByItem(this.choose_testItem, data)
       this.testValueDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
       this.getTestValue(this.choose_testItem)
     }
@@ -547,7 +548,6 @@ export default {
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           class="mt-2"
           height="100%"
-
         >
           <el-table-column label="Comment">
             <template slot-scope="scope">

@@ -55,11 +55,12 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'error'
-      }).then(async() => {
+      }).then(async () => {
         await deleteProjectArtifact(this.$route.params.rName, row.digest, row.name)
-        this.$message({
-          type: 'success',
-          message: 'Delete Succeed'
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
         })
         this.fetchData()
       })
@@ -81,7 +82,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%" row-class-name="el-table-row">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      style="width: 100%"
+      height="100%"
+      row-class-name="el-table-row"
+    >
       <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}

@@ -2,7 +2,6 @@
 import { mapGetters } from 'vuex'
 import FlowDialog from './FlowDialog'
 import { addFlowByIssue, deleteFlow } from '@/api/issueFlow'
-import { Message } from 'element-ui'
 
 export default {
   name: 'FlowTab',
@@ -42,20 +41,20 @@ export default {
       data['project_id'] = this.projectSelectedId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
-      Message({
-        message: 'add successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
       })
       this.$emit('updated')
     },
 
     async deleteFlow(row) {
       await deleteFlow(row.id)
-      Message({
-        message: 'delete successful',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
       this.$emit('updated')
     }

@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { Message } from 'element-ui'
 import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { addIssue } from '@/api/issue'
@@ -105,9 +104,10 @@ export default {
       this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
-      this.$message({
-        type: 'warning',
-        message: 'There are no projects currently, please create a new project.'
+      this.$notify({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
       })
       this.listLoading = false
     },
@@ -146,11 +146,12 @@ export default {
     async saveIssue(data) {
       const res = await addIssue(data)
         .then(res => {
-          Message({
-            message: 'add successful',
-            type: 'success',
-            duration: 1 * 1000
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Added'),
+            type: 'success'
           })
+
           this.fetchData()
           this.addTopicDialogVisible = false
           return res
@@ -211,7 +212,6 @@ export default {
         default-expand-all
         :tree-props="{ children: 'children' }"
         height="100%"
-
       >
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
           <template slot-scope="scope">

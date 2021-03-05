@@ -89,9 +89,30 @@ export default {
     Disable: 'Disable',
     Enable: 'Enable',
     LastUpdateTime: 'Last Update Time',
+    Redeploy: 'Redeploy',
+    Success: 'Success',
+    Warning: 'Warning',
+    Info: 'Info',
+    Error: 'Error'
+  },
+  Notify: {
+    Updated: 'update successful',
+    Added: 'add successful',
+    Deleted: 'delete successful',
+    Uploaded: 'upload successful',
+    Created: 'create successful',
     Copied: 'Copied',
-    SwitchLanguageSuccess: 'Switch Language Success',
-    Redeploy: 'Redeploy'
+    Canceled: 'Cancel successful',
+    Submit: 'Submit',
+    SwitchLanguage: 'Switch Language Success',
+    NoProject: 'There are no projects currently, please create a new project.',
+    WrongProjectName: 'Please input project name correctly.',
+    WrongBranchName: 'Please input branch name correctly.',
+    WrongResourceName: 'Please input resource name correctly.',
+    WrongTagVersionName: 'Please input tag version correctly.',
+    SingleFileLimit: 'Only one file can be added at a time, please delete the existing file first.',
+    UnsupportedFileFormat: 'Unable to upload a file: This file type is not supported',
+    FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)'
   },
   TestCase: {
     TestCase: 'Test Case',

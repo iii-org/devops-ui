@@ -88,9 +88,10 @@ export default {
       this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
     },
     showNoProjectWarning() {
-      this.$message({
-        type: 'warning',
-        message: 'There are no projects currently, please create a new project.'
+      this.$notify({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
       })
       this.listLoading = false
     },
@@ -115,10 +116,10 @@ export default {
       this.dialogStatus = 1
     },
     handleExceed(files, fileList) {
-      this.$message({
-        message: 'Only one file can be added at a time, please delete the existing file first',
-        type: 'warning',
-        duration: 10 * 1000
+      this.$notify({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.SingleFileLimit'),
+        type: 'warning'
       })
     },
     async handleDownload(idx, row) {
@@ -144,17 +145,17 @@ export default {
     },
     async handleChange(file, fileList) {
       if (this.extension[file.raw.type] === undefined) {
-        this.$message({
-          message: `Unable to upload a file: This file type is not supported`,
-          type: 'warning',
-          duration: 10 * 1000
+        this.$notify({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.UnsupportedFileFormat'),
+          type: 'warning'
         })
         this.$refs['upload'].clearFiles()
       } else if (file.size / 1024 > 20480) {
-        this.$message({
-          message: `This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)`,
-          type: 'warning',
-          duration: 10 * 1000
+        this.$notify({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileSizeLimit'),
+          type: 'warning'
         })
         this.$refs['upload'].clearFiles()
       } else {
@@ -186,8 +187,9 @@ export default {
             })
             await uploadProjectFile(this.projectSelectedId, form)
             this.loadingInstance.close()
-            this.$message({
-              message: 'Upload successful',
+            this.$notify({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Uploaded'),
               type: 'success'
             })
             this.$refs['fileForm'].resetFields()
@@ -234,7 +236,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
       <el-table-column align="center" :label="$t('File.Id')" min-width="110">
         <template slot-scope="scope">
           {{ scope.row.id }}

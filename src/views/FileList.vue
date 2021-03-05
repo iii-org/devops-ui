@@ -156,7 +156,8 @@ export default {
       // console.log(file)
     },
     handleExceed(files, fileList) {
-      this.$message({
+      this.$notify({
+        title: this.$t('general.Warning'),
         message: `The limit is 3, you selected ${files.length} files this time, add up to ${files.length +
           fileList.length} totally`,
         type: 'warning',
@@ -201,7 +202,16 @@ export default {
       </h3>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+      row-class-name="el-table-row"
+    >
       <el-table-column label="File Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}

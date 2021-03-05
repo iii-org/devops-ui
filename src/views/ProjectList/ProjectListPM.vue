@@ -97,9 +97,10 @@ export default {
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
-      this.$message({
-        type: 'success',
-        message: this.$t('general.Copied')
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Copied'),
+        type: 'success'
       })
     }
   }
@@ -121,22 +122,33 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}">
-      <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true" min-width="250">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+      :cell-style="{ height: rowHeight + 'px' }"
+    >
+      <el-table-column
+        :label="$t('Project.Name') + '/' + $t('Project.Identifier')"
+        :show-overflow-tooltip="true"
+        min-width="250"
+      >
         <template slot-scope="scope">
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
             {{ scope.row.display }}
           </el-link>
-          <br>
+          <br />
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium" effect="dark">{{
-              scope.row.project_status
-            }}
+          <el-tag v-if="scope.row.project_status === '進行中'" type="success" size="medium" effect="dark">
+            {{ scope.row.project_status }}
           </el-tag>
           <el-tag v-else type="none" size="medium" effect="dark">{{ scope.row.project_status }}</el-tag>
         </template>
@@ -144,7 +156,7 @@ export default {
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
-          <br>
+          <br />
           <span class="status-bar-track">
             <span
               class="status-bar"

@@ -47,7 +47,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { Message } from 'element-ui'
 
 const formTemplate = () => ({
   id: '',
@@ -119,10 +118,10 @@ export default {
       const res = await this.editProject(sendData)
       this.isLoading = false
       if (res.message !== 'success') return
-      Message({
-        message: 'Project update successfully',
-        type: 'success',
-        duration: 1 * 1000
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Updated'),
+        type: 'success'
       })
       this.showDialog = false
       this.$emit('update')

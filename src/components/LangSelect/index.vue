@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" class="international" @command="handleSetLanguage">
     <div>
-      <i class="el-icon-location"></i>
+      <i class="el-icon-location" />
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item :disabled="language === 'zh'" command="zh">
@@ -25,8 +25,9 @@ export default {
     handleSetLanguage(lang) {
       this.$i18n.locale = lang
       this.$store.dispatch('app/setLanguage', lang)
-      this.$message({
-        message: this.$t('general.SwitchLanguageSuccess'),
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.SwitchLanguage'),
         type: 'success'
       })
     }

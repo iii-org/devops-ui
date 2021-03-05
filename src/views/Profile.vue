@@ -78,7 +78,6 @@
 <script>
 import store from '@/store'
 import { updateUser, getInfo, getK8SConfig } from '@/api/user'
-import { Message } from 'element-ui'
 
 export default {
   data() {
@@ -178,10 +177,10 @@ export default {
             phone: this.userProfileForm.userPhone
           }
           await updateUser(this.userId, data)
-          Message({
-            message: 'update successful',
-            type: 'success',
-            duration: 1 * 1000
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
           })
         } else {
           console.log('error submit!!')
@@ -196,10 +195,10 @@ export default {
             password: this.userPwdForm.userNewPwd,
             old_password: this.userPwdForm.old_password
           })
-          Message({
-            message: 'update successful',
-            type: 'success',
-            duration: 1 * 1000
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
           })
         }
       })

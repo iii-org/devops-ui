@@ -39,7 +39,7 @@ export default {
       mergeBranchBtnLoading: false,
       newTagBtnLoading: false,
       listTotal: 0, // 總筆數,
-      Mergebranches: []
+      mergeBranches: []
     }
   },
   computed: {
@@ -55,8 +55,13 @@ export default {
     },
     mixins: [ElTableMixin],
     pagedData() {
-      const listData = this.branchesByProject.filter((data) => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase()) || data.last_commit_message.toLowerCase().includes(this.searchData.toLowerCase()) || data.short_id.toLowerCase().includes(this.searchData.toLowerCase())) {
+      const listData = this.branchesByProject.filter(data => {
+        if (
+          this.searchData === '' ||
+          data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+          data.last_commit_message.toLowerCase().includes(this.searchData.toLowerCase()) ||
+          data.short_id.toLowerCase().includes(this.searchData.toLowerCase())
+        ) {
           return data
         }
       })
@@ -95,15 +100,15 @@ export default {
       })
     },
     handleMerge(index, row) {
-      this.Mergebranches = [...this.branchesByProject]
-      const listData = this.Mergebranches.filter((data) => {
+      this.mergeBranches = [...this.branchesByProject]
+      const listData = this.mergeBranches.filter(data => {
         if (data.name !== row.name) {
           return data
         }
       })
-      this.Mergebranches = listData
+      this.mergeBranches = listData
       this.mergeDialogVisible = true
-      this.newBranchFrom = this.Mergebranches[0].name
+      this.newBranchFrom = this.mergeBranches[0].name
       this.selectedBranch = row.name
     },
     handleDelete(index, row) {
@@ -120,8 +125,9 @@ export default {
       this.newBranchBtnLoading = false
       if (res.message === 'success') {
         this.dialogVisible = false
-        this.$message({
-          message: 'New Branch is created',
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Created'),
           type: 'success'
         })
       }
@@ -129,8 +135,9 @@ export default {
     async handleDeleteModal() {
       if (!this.$route.params.bId) return
       if (this.selectedBranch !== this.deleteBrancheName) {
-        return this.$message({
-          message: 'Please input branch name correctly.',
+        return this.$notify({
+          title: this.$t('general.Error'),
+          message: this.$t('Notify.WrongBranchName'),
           type: 'error'
         })
       }
@@ -158,8 +165,9 @@ export default {
     async handleNewTag() {
       if (!this.bId) return
       if (this.tagVersion === '') {
-        return this.$message({
-          message: 'Please input tag version correctly.',
+        return this.$notify({
+          title: this.$t('general.Error'),
+          message: this.$t('Notify.WrongTagVersionName'),
           type: 'error'
         })
       }
@@ -177,8 +185,9 @@ export default {
       if (res.message === 'success') {
         this.newTagBtnLoading = false
         this.tagDialogVisible = false
-        this.$message({
-          message: 'New tag is created',
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Created'),
           type: 'success'
         })
       }
@@ -189,17 +198,18 @@ export default {
 <template>
   <div class="app-container">
     <div class="clearfix">
-      <h3>
-        Projects : {{ projectName }}
-      </h3>
+      <h3>Projects : {{ projectName }}</h3>
       <span class="newBtn">
-        <el-button type="primary" @click="dialogVisible = true,newBranchName=''">
+        <el-button type="primary" @click=";(dialogVisible = true), (newBranchName = '')">
           <i class="el-icon-plus" />
           New Branch
         </el-button>
       </span>
       <span class="newBtn">
-        <el-button type="success" @click="tagDialogVisible = true,newBranchFrom='', tagVersion='', tagReleaseNote=''">
+        <el-button
+          type="success"
+          @click=";(tagDialogVisible = true), (newBranchFrom = ''), (tagVersion = ''), (tagReleaseNote = '')"
+        >
           <i class="el-icon-price-tag" />
           New Tag
         </el-button>
@@ -209,14 +219,20 @@ export default {
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Filter by Name/Message/ID"
         style="width: 250px; float: right"
-      ><i
-        slot="prefix"
-        class="el-input__icon el-icon-search"
+        ><i slot="prefix" class="el-input__icon el-icon-search"
       /></el-input>
     </div>
     <el-divider />
 
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
       <el-table-column label="Branch Name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <!-- <router-link
@@ -297,7 +313,7 @@ export default {
       <el-divider />
       <h4>Merge into</h4>
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
-        <el-option v-for="item in Mergebranches" :key="item.name" :label="item.name" :value="item.name" />
+        <el-option v-for="item in mergeBranches" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
       <!-- <h4>Commit Message :</h4>
       <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
@@ -323,8 +339,8 @@ export default {
       <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
         <el-option v-for="item in branchesByProject" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
-      <br>
-      <br>
+      <br />
+      <br />
       <h4>Release Note :</h4>
       <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">

@@ -12,7 +12,16 @@
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+      :cell-style="{ height: rowHeight + 'px' }"
+    >
       <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150">
         <template slot-scope="scope">
           <div>{{ scope.row.branch }}</div>
@@ -66,13 +75,7 @@
                 <div class="d-flex justify-center">
                   <el-button icon="el-icon-copy-document" circle size="mini" @click="copyUrl(`copy-${scope.$index}`)" />
                 </div>
-                <el-link
-                  slot="reference"
-                  :underline="false"
-                  type="primary"
-                  style="font-size: 14px"
-                  class="mr-3"
-                >
+                <el-link slot="reference" :underline="false" type="primary" style="font-size: 14px" class="mr-3">
                   <svg-icon :icon-class="getContainerType(service.type)" />
                   {{ service.type }}（port:{{ service.target_port }}）
                 </el-link>
@@ -268,9 +271,10 @@ export default {
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
-      this.$message({
-        type: 'success',
-        message: this.$t('general.Copied')
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Copied'),
+        type: 'success'
       })
     },
     async handleDelete(pId, branchName) {
