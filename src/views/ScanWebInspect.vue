@@ -16,7 +16,7 @@ export default {
   }),
   methods: {
     async fetchData() {
-      const rName = this.selectedProject.name || this.selectedProject[0].name
+      const rName = this.selectedProject.name
       const res = await getWebInspectScans(rName)
       const data = this.handleScans(res.data)
       await this.updateWebInspectScans()
@@ -98,7 +98,7 @@ export default {
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%">
       <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" min-width="120" :show-overflow-tooltip="true" />
       <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="120" />
       <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="100">
