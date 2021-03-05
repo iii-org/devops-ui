@@ -174,9 +174,9 @@ export default {
     handleTestValueAdding() {
       if (this.selectTestItem === '') {
         this.$message({
+          title: this.$t('general.Warning'),
           message: this.$t('TestValue.PleaseSelectTestItem'),
-          type: 'warning',
-          duration: 10 * 1000
+          type: 'warning'
         })
       } else {
         this.testValueDialogVisible = true
@@ -301,7 +301,6 @@ export default {
               highlight-current-row
               class="mt-2"
               height="100%"
-
             >
               <el-table-column :label="$t('TestItem.Id')">
                 <template slot-scope="scope">
@@ -456,8 +455,8 @@ export default {
       <span slot="footer" class="dialog-footer">
         <el-button @click="testItemDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button type="primary" :loading="confirmLoading" @click="handleTestItemConfirm">{{
-          $t('general.Confirm')
-        }}</el-button>
+            $t('general.Confirm')
+          }}</el-button>
       </span>
     </el-dialog>
 
@@ -499,8 +498,8 @@ export default {
       <span slot="footer" class="dialog-footer">
         <el-button @click="testValueDialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button type="primary" :loading="confirmLoading" @click="handleTestValueConfirm">{{
-          $t('general.Confirm')
-        }}</el-button>
+            $t('general.Confirm')
+          }}</el-button>
       </span>
     </el-dialog>
   </div>
