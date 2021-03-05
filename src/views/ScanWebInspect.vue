@@ -6,7 +6,7 @@ import { getWebInspectScans, getWebInspectStatus, getWebInspectStats, getWebInsp
 import MixinElTable from '@/components/MixinElTable'
 
 export default {
-  name: 'WebInspect',
+  name: 'ScanWebInspect',
   components: { ProjectListSelector, Pagination },
   mixins: [MixinElTable],
   data: () => ({
@@ -132,8 +132,23 @@ export default {
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
-      <el-table-column align="center" :label="$t('WebInspect.ScanId')" prop="scan_id" min-width="120" :show-overflow-tooltip="true" />
+    <el-table
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      :data="pagedData"
+      height="100%"
+      row-class-name="el-table-row"
+    >
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.ScanId')"
+        prop="scan_id"
+        min-width="120"
+        :show-overflow-tooltip="true"
+      />
       <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="120" />
       <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="100">
         <template slot-scope="scope">
@@ -168,9 +183,9 @@ export default {
       <el-table-column align="center" :label="$t('WebInspect.Report')" min-width="100">
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.scan_id"
             type="primary"
             style="font-size: 16px"
+            :disabled="!scope.row.scan_id"
             :underline="false"
             @click="fetchTestReport(scope.row.scan_id)"
           >

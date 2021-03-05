@@ -13,7 +13,7 @@ import {
 import ElTableMixin from '@/components/MixinElTable'
 
 export default {
-  name: 'CheckMarx',
+  name: 'ScanCheckmarx',
   components: { ProjectListSelector, Pagination },
   mixins: [ElTableMixin],
   data: () => ({
@@ -139,7 +139,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%">
+    <el-table
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      :data="pagedData"
+      height="100%"
+    >
       <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
       <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" />
       <el-table-column align="center" :label="$t('CheckMarx.Commit')" width="100">
@@ -157,11 +165,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" width="100" />
       <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-      <el-table-column
-        align="center"
-        :label="$t('CheckMarx.MediumSeverity')"
-        prop="stats.mediumSeverity"
-      />
+      <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
       <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
       <el-table-column align="center" :label="$t('CheckMarx.RunAt')" min-width="170">
@@ -172,11 +176,11 @@ export default {
       <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.report_ready"
             type="primary"
             target="_blank"
             style="font-size: 16px"
             class="download-btn"
+            :disabled="!scope.row.report_ready"
             :underline="false"
             @click="fetchTestReport(scope.row.report_id)"
           >
