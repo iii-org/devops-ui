@@ -150,9 +150,9 @@ export default {
     async handleDeleteModal() {
       if (this.deleteResourceName !== this.inputDelResourceName) {
         return this.$message({
-          title: this.$t('general.Error'),
+          title: this.$t('general.Warning'),
           message: this.$t('Notify.WrongResourceName'),
-          type: 'error'
+          type: 'warning'
         })
       } else {
         this.loadingDelete = this.$loading({

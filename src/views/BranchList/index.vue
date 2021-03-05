@@ -136,9 +136,9 @@ export default {
       if (!this.$route.params.bId) return
       if (this.selectedBranch !== this.deleteBrancheName) {
         return this.$message({
-          title: this.$t('general.Error'),
+          title: this.$t('general.Warning'),
           message: this.$t('Notify.WrongBranchName'),
-          type: 'error'
+          type: 'warning'
         })
       }
       this.deleteBranchBtnLoading = true
@@ -166,9 +166,9 @@ export default {
       if (!this.bId) return
       if (this.tagVersion === '') {
         return this.$message({
-          title: this.$t('general.Error'),
+          title: this.$t('general.Warning'),
           message: this.$t('Notify.WrongTagVersionName'),
-          type: 'error'
+          type: 'warning'
         })
       }
       this.newTagBtnLoading = true

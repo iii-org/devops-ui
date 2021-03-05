@@ -328,9 +328,9 @@ export default {
     async saveTestItem(data) {
       if (this.choose_testCase === '') {
         this.$message({
-          title: this.$t('general.Error'),
+          title: this.$t('general.Warning'),
           message: 'please select test case',
-          type: 'error'
+          type: 'warning'
         })
         return
       }
@@ -398,9 +398,9 @@ export default {
     async saveTestValue(data) {
       if (this.choose_testItem === '' || this.choose_testCase === '') {
         this.$message({
-          title: this.$t('general.Error'),
+          title: this.$t('general.Warning'),
           message: 'please select test item',
-          type: 'error'
+          type: 'warning'
         })
         return
       }
