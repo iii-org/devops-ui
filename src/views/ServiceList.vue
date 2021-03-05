@@ -1,79 +1,27 @@
 <script>
-import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
-import { getServiceList, deleteService } from '@/api/projectResource'
-import MixinElTable from '@/components/MixinElTable'
+import { deleteService, getServiceList } from '@/api/projectResource'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ServiceList',
-  components: { ProjectListSelector, Pagination },
-  mixins: [MixinElTable],
-  data: () => ({
-    serviceList: [],
-    listLoading: true,
-    // dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
-  }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.serviceList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId(projectId) {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
+  mixins: [MixinElTableWithAProject],
   methods: {
     async fetchData() {
       this.listLoading = true
-      await getServiceList(this.projectSelectedId).then(res => {
-        this.serviceList = res.data.map(item => {
-          return {
-            name: item
-          }
-        })
+      const res = await getServiceList(this.selectedProjectId)
+      return res.data.map(item => {
+        return {
+          name: item
+        }
       })
-      this.listLoading = false
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    // handleEdit(serviceName) {
-    //   this.dialogVisible = true
-    // },
     async handleDelete(pId, serviceName) {
-      this.listLoading = true
       try {
         await deleteService(pId, serviceName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
-      this.listLoading = false
     }
   }
 }
@@ -107,7 +55,7 @@ export default {
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.name)"
+            @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" />
@@ -118,7 +66,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
