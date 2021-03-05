@@ -1,64 +1,31 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Message } from 'element-ui'
-import { getInfo, getAllUser, deleteUser } from '@/api/user'
-import Pagination from '@/components/Pagination'
+import { deleteUser, getAllUser, getInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
 import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'UserManage',
   components: {
-    UserDialog,
-    Pagination
+    UserDialog
   },
   mixins: [MixinElTable],
   data: () => ({
-    userList: [],
     userDialogVisible: false,
     dialogTitle: '',
     search: '',
+    searchKey: 'login',
     editUserId: 0,
-    editUserData: {},
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    editUserData: {}
   }),
   computed: {
-    ...mapGetters(['userId']),
-    pagedData() {
-      const listData = this.userList.filter(data => {
-        if (this.searchData === '' || data.login.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.fetchData()
+    ...mapGetters(['userId'])
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
       const allUser = await getAllUser()
-      this.userList = allUser.data.user_list.filter(item => item.id !== this.userId)
-      this.listLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+      return allUser.data.user_list.filter(item => item.id !== this.userId)
     },
     emitAddUserDialogVisible(visible, refresh) {
       this.userDialogVisible = visible
@@ -121,7 +88,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
       <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
       <el-table-column align="center" label="Email" prop="email" min-width="250" />
@@ -159,7 +126,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
