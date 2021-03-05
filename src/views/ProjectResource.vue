@@ -1,10 +1,12 @@
 <script>
-import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { getHarborRepoList, editHarborRepo, deleteHarborRepo, getHarborRepoStorageSummary } from '@/api/harbor'
+import {
+  deleteHarborRepo,
+  editHarborRepo,
+  getHarborRepoList,
+  getHarborRepoStorageSummary
+} from '@/api/harbor'
 import { formatTime } from '@/utils/index.js'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 const formTemplate = {
   name: '',
@@ -15,25 +17,13 @@ const formTemplate = {
 
 export default {
   name: 'ProjectResource',
-  components: {
-    Pagination,
-    ProjectListSelector
-  },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
     projectName: '',
-    listLoading: true,
     dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     formRules: {
       description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
     },
-    resourceList: [],
     storage: {
       project_admin_count: 0,
       quota: {
@@ -51,54 +41,21 @@ export default {
     inputDelResourceName: '',
     placeholderText: ''
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId', 'selectedProject']),
-    pagedData() {
-      const listData = this.resourceList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    // form(value) {
-    //   console.log(value)
-    // },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     async fetchData() {
-      this.listLoading = true
-      if (this.projectSelectedId !== -1) {
-        const res = await getHarborRepoList(this.projectSelectedId)
-        this.resourceList = res.data.map(item => {
-          const name_ary = item.name.split('/')
-          item['name_in_harbor'] = name_ary[name_ary.length - 1]
-          return item
-        })
-        this.projectName = this.selectedProject['name']
-        const storageRes = await getHarborRepoStorageSummary(this.projectSelectedId)
-        this.storage = storageRes.data
+      if (this.selectedProjectId === -1) {
+        return []
       }
-      this.listLoading = false
+      const res = await getHarborRepoList(this.selectedProjectId)
+      const resourceList = res.data.map(item => {
+        const name_ary = item.name.split('/')
+        item['name_in_harbor'] = name_ary[name_ary.length - 1]
+        return item
+      })
+      this.projectName = this.selectedProject['name']
+      const storageRes = await getHarborRepoStorageSummary(this.selectedProjectId)
+      this.storage = storageRes.data
+      return resourceList
     },
     returnPercentage(quota) {
       const total = parseInt(quota.hard.storage)
@@ -219,7 +176,7 @@ export default {
           </el-col>
         </el-row>
       </el-card>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%" row-class-name="el-table-row">
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%">
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="150">
           <template slot-scope="scope">
             <el-link
@@ -280,7 +237,7 @@ export default {
         </el-table-column>
       </el-table>
       <pagination
-        :total="listTotal"
+        :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
