@@ -1,15 +1,15 @@
 <script>
 /*
   Mixin for pages using el-table. Things to implement:
-  computed.listData: Indicates the data list array.
   data.searchKey: Indicates what key the search box filters. Default is "name".
-  async methods.fetchData: The process to fetch initial data.
+  async methods.fetchData: The function to fetch list data. You must return the data array.
  */
 import Pagination from '@/components/Pagination'
 
 export default {
   components: { Pagination },
   data: () => ({
+    listData: [],
     listLoading: true,
     listQuery: {
       page: 1,
@@ -20,9 +20,6 @@ export default {
     searchData: ''
   }),
   computed: {
-    listData() {
-      return []
-    },
     filteredData() {
       return this.listData.filter(data => {
         return this.searchData === '' ||
@@ -41,7 +38,7 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    this.loadData()
   },
   mounted() {
     const parentHeight = this.$el.clientHeight
@@ -62,7 +59,12 @@ export default {
     // console.log(tableHeight, rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
   },
   methods: {
-    fetchData() {
+    async loadData() {
+      this.listLoading = true
+      this.listData = await this.fetchData()
+      this.listLoading = false
+    },
+    async fetchData() {
       return []
     },
     onPagination(listQuery) {

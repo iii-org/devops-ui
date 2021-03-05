@@ -9,22 +9,17 @@ export default {
   components: { ProjectListSelector },
   mixins: [MixinElTableWithAProject],
   data: () => ({
-    resultList: [],
     dialogVisible: false,
     searchKey: 'branch'
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole']),
-    listData() {
-      return this.resultList
-    }
+    ...mapGetters(['projectSelectedId', 'userRole'])
   },
   methods: {
     async fetchData() {
       try {
         this.listLoading = true
-        const response = await getPostmanResult(this.projectSelectedId)
-        this.resultList = response.data
+        this.listData = (await getPostmanResult(this.projectSelectedId)).data
       } catch (e) {
         console.log(e)
       } finally {

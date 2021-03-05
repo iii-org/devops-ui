@@ -9,7 +9,7 @@ export default {
   mixins: [MixinElTable],
   watch: {
     projectSelectedId() {
-      this.fetchData()
+      this.loadData()
       this.listQuery.page = 1
       this.searchData = ''
     }

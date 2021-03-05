@@ -24,9 +24,6 @@ export default {
     },
     branchName() {
       return this.$route.params.branchName
-    },
-    listData() {
-      return this.commitListByBranch.data || []
     }
   },
   methods: {
@@ -36,7 +33,7 @@ export default {
         rId: this.rId,
         params: { branch: this.branchName }
       })
-      this.listLoading = false
+      return this.commitListByBranch.data || []
     },
     handlePull() {
     },

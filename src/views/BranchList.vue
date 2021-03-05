@@ -44,9 +44,6 @@ export default {
     },
     projectName() {
       return this.$route.params.projectName
-    },
-    listData() {
-      return this.branchesByProject
     }
   },
   methods: {
@@ -58,10 +55,9 @@ export default {
       'tags/newTag'
     ]),
     async fetchData() {
-      this.listLoading = true
-      if (!this.$route.params.bId) return
+      if (!this.$route.params.bId) return []
       await this['branches/getBranchesByProject'](this.$route.params.bId)
-      this.listLoading = false
+      return this.branchesByProject
     },
     handlePull() {
     },
