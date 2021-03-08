@@ -2,10 +2,11 @@
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
 import ElTableMixin from '@/components/MixinElTable'
+import ElTableColumnLastUpdated from '@/components/ElTableColumnLastUpdated'
 
 export default {
   name: 'ProjectListPM',
-  components: { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  components: { ElTableColumnLastUpdated, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -125,13 +126,7 @@ export default {
           </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="150">
-        <template slot-scope="scope">
-          <el-tooltip placement="top" :content="scope.row.updated_time | UTCtoLocalTime">
-            <span>{{ scope.row.updated_time | relativeTime }}</span>
-          </el-tooltip>
-        </template>
-      </el-table-column>
+      <el-table-column-last-updated />
       <el-table-column align="center" label="GitLab" width="110">
         <template slot-scope="scope">
           <el-popover
