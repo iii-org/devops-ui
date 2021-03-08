@@ -2,8 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-import errorCodes from '../error-codes'
-import { getLanguage } from '@/lang/index'
+import i18n from '@/lang'
 
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 
@@ -60,20 +59,7 @@ service.interceptors.response.use(
       })
 
       return Promise.reject(new Error(message || 'Error'))
-    }
-    // TODO(nino): because some api success will not return right format, so comment here temporarily
-    // else if(res.message !== 'success') {
-    //   Message({
-    //     message: res.message,
-    //     type: 'error',
-    //     duration: 10 * 1000
-    //   })
-    //   return Promise.reject(new Error(res.message || 'Error'))
-    // }
-    // else {
-    //   return res
-    // }
-    else {
+    } else {
       if (res) {
         return res
       }
@@ -82,19 +68,14 @@ service.interceptors.response.use(
   },
   error => {
     const res = error.response.data
-    let res_msg = res.message
-    if ('error' in res && 'code' in res['error'] && res['error']['code'] in errorCodes) {
-      const error_msg = errorCodes[res['error']['code']][getLanguage() || 'zh'] // language default is zh
-      const error_msg_details = res.error.details || {}
-      res_msg = error_msg
-      Object.keys(error_msg_details).forEach(key => {
-        res_msg = res_msg.replace(new RegExp(`\\$${key}`), JSON.stringify(error_msg_details[key]))
-      })
-    }
+    const res_msg =
+      (res.error && i18n.te(`errorMessage.${res.error.code}`))
+        ? i18n.t(`errorMessage.${res.error.code}`, res.error.details || {})
+        : res.message
     Message({
       message: res_msg,
       type: res.error.code < 3000 ? 'warning' : 'error',
-      duration: 6 * 1000
+      duration: 6000
     })
     return Promise.reject(error)
   }
