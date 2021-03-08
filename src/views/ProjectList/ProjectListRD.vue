@@ -1,6 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
+import { mapActions, mapGetters } from 'vuex'
 import { formatTime } from '@/utils/index.js'
 import MixinElTable from '@/components/MixinElTable'
 
@@ -15,7 +14,6 @@ const formTemplate = {
 
 export default {
   name: 'ProjectList',
-  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -31,31 +29,13 @@ export default {
     return {
       dialogVisible: false,
       dialogStatus: 1,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 6
-      },
-      listTotal: 0,
       form: formTemplate,
       confirmLoading: false,
-      searchData: '',
       rowHeight: 70
     }
   },
   computed: {
     ...mapGetters(['projectList', 'projectListTotal']),
-    pagedData() {
-      const listData = this.projectList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    },
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -67,17 +47,12 @@ export default {
       }
     }
   },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  async created() {
-    await this['projects/getProjectList']()
-    this.listLoading = false
-  },
   methods: {
     ...mapActions(['projects/getProjectList']),
+    async fetchData() {
+      await this['projects/getProjectList']().data
+      return this.projectList
+    },
     handleEdit(idx, row) {
       this.dialogVisible = true
       this.dialogStatus = 2
@@ -97,9 +72,6 @@ export default {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'No Test'
       return success + ' / ' + total
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     returnLatestTag(row) {
       const { tags } = row
@@ -163,7 +135,7 @@ export default {
       highlight-current-row
       :data="pagedData"
       height="100%"
-      row-class-name="el-table-row"
+
       :cell-style="{ height: rowHeight + 'px' }"
     >
       <el-table-column
@@ -181,7 +153,7 @@ export default {
             style="color: #409eff"
           >
             <span style="color: #67c23a">{{ scope.row.display }}</span>
-            <br />
+            <br>
             <span>{{ scope.row.name }}</span>
           </router-link>
         </template>
@@ -319,7 +291,7 @@ export default {
       </el-table-column> -->
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

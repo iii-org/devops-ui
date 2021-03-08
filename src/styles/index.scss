@@ -67,12 +67,12 @@ div:focus {
 .app-container {
   height: 100%;
   padding: 20px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .dashboard-container {
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .table-container {

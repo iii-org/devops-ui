@@ -9,10 +9,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'projectSelectedId'])
+    ...mapGetters(['userProjectList', 'selectedProjectId'])
   },
   watch: {
-    projectSelectedId: {
+    selectedProjectId: {
       immediate: true,
       handler(val, old) {
         this.$nextTick(() => {

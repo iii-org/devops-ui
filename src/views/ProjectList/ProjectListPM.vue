@@ -1,12 +1,11 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
-import { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog } from './components'
+import { mapActions, mapGetters } from 'vuex'
+import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
 import ElTableMixin from '@/components/MixinElTable'
 
 export default {
   name: 'ProjectListPM',
-  components: { Pagination, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  components: { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -17,47 +16,21 @@ export default {
       return statusMap[status]
     }
   },
+  mixins: [ElTableMixin],
   data: () => ({
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     editProject: {},
     deleteProject: { id: '', name: '' },
+    searchKey: 'display',
     rowHeight: 70
   }),
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList']),
-    pagedData() {
-      const listData = this.projectList.filter(data => {
-        if (this.searchData === '' || data.display.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
+    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList'])
   },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  async created() {
-    this.loadList()
-  },
-  mixins: [ElTableMixin],
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
-    async loadList() {
-      this.listLoading = true
+    async fetchData() {
       await this.queryProjectList()
-      this.listLoading = false
+      return this.projectList
     },
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true
@@ -81,12 +54,8 @@ export default {
       this.deleteProject.name = row.name
       this.$refs.deleteProjectDialog.showDialog = true
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     returnProgress(current, total) {
-      const percent = Math.round((current / total) * 100)
-      return percent
+      return Math.round((current / total) * 100)
     },
     handleClick(id) {
       localStorage.setItem('project', id)
@@ -122,20 +91,11 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      height="100%"
-      :cell-style="{ height: rowHeight + 'px' }"
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit
+              highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}"
     >
-      <el-table-column
-        :label="$t('Project.Name') + '/' + $t('Project.Identifier')"
-        :show-overflow-tooltip="true"
-        min-width="250"
+      <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true"
+                       min-width="250"
       >
         <template slot-scope="scope">
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
@@ -244,7 +204,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
@@ -252,8 +212,8 @@ export default {
       @pagination="onPagination"
     />
 
-    <CreateProjectDialog ref="createProjectDialog" @update="loadList" />
-    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="loadList" />
-    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadList" />
+    <CreateProjectDialog ref="createProjectDialog" @update="loadData" />
+    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="loadData" />
+    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
   </div>
 </template>

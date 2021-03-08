@@ -1,63 +1,33 @@
 <script>
-import Pagination from '@/components/Pagination'
 import { getPostmanReport } from '@/api/postman'
 import MixinElTable from '@/components/MixinElTable'
 
 export default {
   name: 'PostmanTestCase',
-  components: { Pagination },
   mixins: [MixinElTable],
   data: () => ({
-    reportList: [],
-    dialogVisible: false,
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    dialogVisible: false
   }),
   computed: {
-    pagedData() {
-      const listData = this.reportList.filter(data => {
-        if (
-          this.searchData === '' ||
-          data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-          data.path.toLowerCase().includes(this.searchData.toLowerCase()) ||
-          JSON.stringify(data.assertions)
-            .toLowerCase()
-            .includes(this.searchData.toLowerCase())
-        ) {
-          return data
-        }
+    filteredData() {
+      return this.listData.filter(data => {
+        this.searchData === '' ||
+        data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+        data.path.toLowerCase().includes(this.searchData.toLowerCase()) ||
+        JSON.stringify(data.assertions)
+          .toLowerCase()
+          .includes(this.searchData.toLowerCase())
       })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
     }
-  },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.fetchData()
   },
   methods: {
     async fetchData() {
-      try {
-        this.listLoading = true
-        const response = await getPostmanReport(this.$route.params.id)
-        const { data } = response
-        data ? (this.reportList = data.json_file.executions) : (this.reportList = [])
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.listLoading = false
+      const response = await getPostmanReport(this.$route.params.id)
+      const { data } = response
+      if (!data) {
+        return []
       }
+      return data.json_file.executions
     },
     testResults(row) {
       const { assertions } = row
@@ -70,9 +40,6 @@ export default {
         }
       })
       return msg
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     }
   }
 }
@@ -90,13 +57,16 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit highlight-current-row :data="pagedData" height="100%" row-class-name="el-table-row">
-      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit
+              highlight-current-row :data="pagedData" height="100%">
+      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true"
+                       min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true" min-width="40">
+      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true"
+                       min-width="40">
         <template slot-scope="scope">
           <span>{{ scope.row.method }}</span>
         </template>
@@ -113,7 +83,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

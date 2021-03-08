@@ -1,96 +1,61 @@
 <script>
 import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import {
-  getCheckMarxScans,
-  getCheckMarxScanStatus,
-  getCheckMarxScanStats,
-  registerCheckMarxReport,
+  getCheckMarxReport,
   getCheckMarxReportStatus,
-  getCheckMarxReport
+  getCheckMarxScans,
+  getCheckMarxScanStats,
+  getCheckMarxScanStatus,
+  registerCheckMarxReport
 } from '@/api/checkMarx'
-import ElTableMixin from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ScanCheckmarx',
-  components: { ProjectListSelector, Pagination },
-  mixins: [ElTableMixin],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    checkMarxScans: [],
-    listLoading: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    searchKey: 'scan_id'
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole']),
-    pagedData() {
-      const listData = this.checkMarxScans.filter(data => {
-        const isScanId = data.scan_id.toString().includes(this.searchData.toString())
-        if (!this.searchData || isScanId) return data
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchCheckMarxScans()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchCheckMarxScans()
+    ...mapGetters(['userRole'])
   },
   methods: {
-    async fetchCheckMarxScans() {
-      this.listLoading = true
-      if (this.projectSelectedId !== -1) {
-        await getCheckMarxScans(this.projectSelectedId).then(res => {
-          this.checkMarxScans = res.data.map(item => item)
-        })
-        this.updateCheckMarxScansStatus()
+    async fetchData() {
+      if (this.selectedProjectId === -1) {
+        return []
       }
-      this.listLoading = false
+      const res = await getCheckMarxScans(this.selectedProjectId)
+      const ret = res.data
+      await this.updateCheckMarxScansStatus(ret)
+      return ret
     },
-    async updateCheckMarxScansStatus() {
-      this.checkMarxScans.forEach(item => {
+    async updateCheckMarxScansStatus(listData) {
+      listData.forEach(item => {
         if (item.status === null) this.fetchScanStatus(item.scan_id)
       })
     },
     fetchScanStatus(scanId) {
       this.listLoading = true
       getCheckMarxScanStatus(scanId).then(res => {
-        const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
-        this.checkMarxScans[idx].status = res.data.name
+        const idx = this.listData.findIndex(item => item.scan_id === scanId)
+        this.listData[idx].status = res.data.name
         if (res.data.id === 7) {
           this.fetchScanStats(scanId)
           this.registerReport(scanId)
         }
       })
-      this.listLoading = false
     },
     fetchScanStats(scanId) {
       getCheckMarxScanStats(scanId).then(res => {
-        const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
-        this.checkMarxScans[idx].stats = res.data
+        const idx = this.listData.findIndex(item => item.scan_id === scanId)
+        this.listData[idx].stats = res.data
       })
     },
     registerReport(scanId) {
       this.listLoading = true
       registerCheckMarxReport(scanId).then(res => {
-        const idx = this.checkMarxScans.findIndex(item => item.scan_id === scanId)
-        this.checkMarxScans[idx].reportId = res.data.reportId
+        const idx = this.listData.findIndex(item => item.scan_id === scanId)
+        this.listData[idx].reportId = res.data.reportId
         if (res.data.reportId > 0) {
           this.fetchReportStatus(res.data.reportId)
         }
@@ -100,9 +65,9 @@ export default {
     fetchReportStatus(reportId) {
       this.listLoading = true
       getCheckMarxReportStatus(reportId).then(res => {
-        const idx = this.checkMarxScans.findIndex(item => item.report_id === reportId)
+        const idx = this.listData.findIndex(item => item.report_id === reportId)
         if (res.data.id === 2) {
-          this.checkMarxScans[idx].report_ready = true
+          this.listData[idx].report_ready = true
         }
       })
       this.listLoading = false
@@ -190,7 +155,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

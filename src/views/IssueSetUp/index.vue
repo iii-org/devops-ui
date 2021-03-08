@@ -1,40 +1,47 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
+import { mapGetters } from 'vuex'
 import FlowDialog from './components/FlowDialog'
 import ParamDialog from './components/ParamDialog'
 import TestDialog from './components/TestDialog'
 import TestItemDialog from './components/TestItemDialog'
 import TestValueDialog from './components/TestValueDialog'
-import { getIssue } from '@/api/issue'
-import { getIssueStatus, getIssueTracker, getIssuePriority, updateIssue } from '@/api/issue'
-import { getProjectAssignable } from '@/api/projects'
-import { getFlowByIssue, addFlowByIssue, deleteFlow, getFlowType } from '@/api/issueFlow'
-import { getParameterByIssue, addParameterByIssue, deleteParameter } from '@/api/issueParameter'
-import { getTestCaseByIssue, addTestCaseByIssue, deleteTestCase } from '@/api/issueTestCase'
-import { getTestItemByCase, addTestItemByCase, updateTestItemByCase, deleteTestItem } from '@/api/issueTestItem'
 import {
-  getTestValueByItem,
-  getTestValueType,
-  getTestValueLocation,
+  getIssue,
+  getIssuePriority,
+  getIssueStatus,
+  getIssueTracker,
+  updateIssue
+} from '@/api/issue'
+import { getProjectAssignable } from '@/api/projects'
+import { addFlowByIssue, deleteFlow, getFlowByIssue, getFlowType } from '@/api/issueFlow'
+import { addParameterByIssue, deleteParameter, getParameterByIssue } from '@/api/issueParameter'
+import { addTestCaseByIssue, deleteTestCase, getTestCaseByIssue } from '@/api/issueTestCase'
+import {
+  addTestItemByCase,
+  deleteTestItem,
+  getTestItemByCase,
+  updateTestItemByCase
+} from '@/api/issueTestItem'
+import {
+  addTestValueByItem,
   deleteTestValue,
-  addTestValueByItem
+  getTestValueByItem,
+  getTestValueLocation,
+  getTestValueType
 } from '@/api/issueTestValue'
 import EditorMD from '@/components/Editormd'
-import MixinElTable from '@/components/MixinElTable'
+
 
 export default {
   name: 'IssueSetUp',
   components: {
     FlowDialog,
     ParamDialog,
-    Pagination,
     TestDialog,
     TestItemDialog,
     TestValueDialog,
     EditorMD
   },
-  mixins: [MixinElTable],
   data() {
     return {
       issueAssigneeList: [],
@@ -94,7 +101,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectSelectedId']),
+    ...mapGetters(['selectedProjectId']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
@@ -256,7 +263,7 @@ export default {
       this.commentDialogVisible = true
     },
     async saveFlow(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addFlowByIssue(this.issueId, data)
       this.flowDialogVisible = false
       this.$message({
@@ -276,7 +283,7 @@ export default {
       this.fetchData()
     },
     async saveParameter(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
       this.$message({

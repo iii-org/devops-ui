@@ -33,10 +33,10 @@ export default {
     legend: false
   }),
   computed: {
-    ...mapGetters(['userProjectList', 'projectSelectedId'])
+    ...mapGetters(['userProjectList', 'selectedProjectId'])
   },
   watch: {
-    projectSelectedId(projectId) {
+    selectedProjectId(projectId) {
       this.fetchAll()
     },
     projectVersion() {
@@ -57,8 +57,8 @@ export default {
     },
     async fetchAll() {
       this.isLoading = true
-      if (this.projectSelectedId !== -1) {
-        const versionsRes = await getProjectVersion(this.projectSelectedId)
+      if (this.selectedProjectId !== -1) {
+        const versionsRes = await getProjectVersion(this.selectedProjectId)
         this.projectVersionList = versionsRes.data.versions
         if (this.projectVersionList.length !== 0) {
           this.projectVersion = this.projectVersionList[0].id
@@ -79,9 +79,9 @@ export default {
         param = { fixed_version_id: this.projectVersion }
       }
       const res = await Promise.all([
-        getProjectIssueProgress(this.projectSelectedId, param),
-        getProjectIssueStatistics(this.projectSelectedId, param),
-        this.getProjectUserList(this.projectSelectedId)
+        getProjectIssueProgress(this.selectedProjectId, param),
+        getProjectIssueStatistics(this.selectedProjectId, param),
+        this.getProjectUserList(this.selectedProjectId)
       ])
       this.isLoading = false
       this.issueProgress = res[0].data
@@ -97,7 +97,7 @@ export default {
     async fetchProjectTest() {
       this.projectTestLoading = true
       this.projectData = []
-      let apiProjectData = await getProjectTest(this.projectSelectedId)
+      let apiProjectData = await getProjectTest(this.selectedProjectId)
       apiProjectData = apiProjectData.data
       for (const i in apiProjectData.test_results) {
         const object = {}
@@ -193,7 +193,7 @@ export default {
           <div slot="header" class="clearfix" style="line-height: 40px">
             <span>{{ $t('general.Status') }}</span>
           </div>
-          <div v-if="projectSelectedId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-if="selectedProjectId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <project-pie :the-data="issueProgress" />
         </el-card>
       </el-col>
@@ -224,7 +224,7 @@ export default {
               </div>
             </div>
           </div>
-          <div v-if="projectSelectedId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-if="selectedProjectId == -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <project-bar :the-data="workLoadSelected" @legend-fun="legendFun" />
         </el-card>
       </el-col>
@@ -250,7 +250,7 @@ export default {
             <span>{{ $t('Project.TestStatus') }}</span>
             <span class="reload-btn">
               <el-button
-                v-if="projectSelectedId !== -1"
+                v-if="selectedProjectId !== -1"
                 type="primary"
                 icon="el-icon-refresh"
                 circle

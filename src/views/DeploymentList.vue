@@ -1,72 +1,23 @@
 <script>
-import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
-import { getDeploymentList, deleteDeployment, updateDeployment } from '@/api/projectResource'
-import MixinElTable from '@/components/MixinElTable'
+import { deleteDeployment, getDeploymentList, updateDeployment } from '@/api/projectResource'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'DeploymentList',
-  components: { ProjectListSelector, Pagination },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    deploymentList: [],
-    listLoading: true,
-    btnLoading: false,
-    // dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    btnLoading: false
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.deploymentList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId(projectId) {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      await getDeploymentList(this.projectSelectedId).then(res => {
-        this.deploymentList = res.data
-      })
-      this.listLoading = false
+      const res = await getDeploymentList(this.selectedProjectId)
+      return res.data
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    // handleEdit(deploymentName) {
-    //   this.dialogVisible = true
-    // },
     async handleDelete(pId, deploymentName) {
       this.listLoading = true
       try {
         await deleteDeployment(pId, deploymentName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -76,7 +27,7 @@ export default {
       this.btnLoading = true
       try {
         await updateDeployment(pId, deploymentName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -106,7 +57,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
       <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="deployment_name" min-width="200" />
       <el-table-column :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" width="190">
         <template slot-scope="scope">
@@ -147,7 +98,7 @@ export default {
             type="primary"
             size="mini"
             icon="el-icon-refresh"
-            @click="redeploy(projectSelectedId, scope.row.deployment_name)"
+            @click="redeploy(selectedProjectId, scope.row.deployment_name)"
           >
             Redeploy
           </el-button>
@@ -158,7 +109,7 @@ export default {
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.deployment_name)"
+            @onConfirm="handleDelete(selectedProjectId, scope.row.deployment_name)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" />
@@ -169,7 +120,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

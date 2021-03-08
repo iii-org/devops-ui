@@ -15,15 +15,6 @@ export default {
   components: { Pagination },
   mixins: [MixinElTable],
   data: () => ({
-    resultList: [],
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
-
     formData: defaultFormData(),
     formRules: {
       name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
@@ -31,45 +22,21 @@ export default {
     dialogVisible: false,
     confirmLoading: false
   }),
-  computed: {
-    pagedData() {
-      const listData = this.resultList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      await getSystemSecrets().then(res => {
-        this.resultList = res.data.map(item => ({
-          name: item.name,
-          created: item.created,
-          keys: item.data ? Object.keys(item.data).join(', ') : '',
-          status: item.removed ? 'Removing' : 'Active'
-        }))
-      })
-      this.listLoading = false
+      const res = await getSystemSecrets()
+      return res.data.map(item => ({
+        name: item.name,
+        created: item.created,
+        keys: item.data ? Object.keys(item.data).join(', ') : '',
+        status: item.removed ? 'Removing' : 'Active'
+      }))
     },
     async handleDelete(secretName) {
       this.listLoading = true
       try {
         await deleteSystemSecret(secretName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -87,7 +54,7 @@ export default {
           }
           try {
             await addSystemSecret(sendData)
-            this.fetchData()
+            await this.loadData()
             this.dialogVisible = false
           } catch (error) {
             console.error(error)
@@ -149,7 +116,7 @@ export default {
         Reload
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
       <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'Active'" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
@@ -191,7 +158,7 @@ export default {
     </el-table>
 
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

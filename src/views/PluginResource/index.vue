@@ -64,10 +64,10 @@ export default {
     usageList: []
   }),
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    projectSelectedId() {
+    selectedProjectId() {
       this.fetchData()
     }
   },
@@ -77,8 +77,8 @@ export default {
   methods: {
     async fetchData() {
       this.listLoading = true
-      if (this.projectSelectedId !== -1) {
-        const res = await getPluginResource(this.projectSelectedId)
+      if (this.selectedProjectId !== -1) {
+        const res = await getPluginResource(this.selectedProjectId)
         this.usageList = handleChartData(res.data)
       }
       this.listLoading = false
@@ -119,7 +119,7 @@ export default {
               </el-tooltip>
             </div>
           </div>
-          <div v-if="projectSelectedId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-if="selectedProjectId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
           <div v-else>
             <resource-pie :chart-data="item.data" />
           </div>

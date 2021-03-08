@@ -1,66 +1,21 @@
 <script>
 import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
 import { getPostmanResult } from '@/api/postman'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'PostmanResult',
-  components: { ProjectListSelector, Pagination },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    resultList: [],
     dialogVisible: false,
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
+    searchKey: 'branch'
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole']),
-    pagedData() {
-      const listData = this.resultList.filter(data => {
-        if (this.searchData === '' || data.branch.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.fetchData()
+    ...mapGetters(['userRole'])
   },
   methods: {
     async fetchData() {
-      try {
-        this.listLoading = true
-        const response = await getPostmanResult(this.projectSelectedId)
-        this.resultList = response.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.listLoading = false
-      }
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+      return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
       this.$router.push({ path: `/test/postman-result/${target}/${id}` })
@@ -92,10 +47,11 @@ export default {
         fit
         highlight-current-row
         height="100%"
-        row-class-name="el-table-row"
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
-        <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />
+        <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch"
+                         min-width="120"
+        />
         <el-table-column align="center" label="Commit" width="130">
           <template slot-scope="scope">
             <el-link
@@ -109,8 +65,12 @@ export default {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="100" />
-        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="100" />
+        <el-table-column align="center" :label="$t('Postman.Success')" prop="success"
+                         min-width="100"
+        />
+        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure"
+                         min-width="100"
+        />
         <el-table-column align="center" :label="$t('Postman.StartTime')" width="190">
           <template slot-scope="scope">
             <span>
@@ -120,17 +80,21 @@ export default {
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="220">
           <template slot-scope="scope">
-            <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain @click="handleClick('devops', scope.row.id)">
+            <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain
+                       @click="handleClick('devops', scope.row.id)"
+            >
               {{ $t('Postman.DevOps') }}
             </el-button>
-            <el-button :id="`btn-postman-${scope.$index}`" size="mini" type="primary" @click="handleClick('postman', scope.row.id)">
+            <el-button :id="`btn-postman-${scope.$index}`" size="mini" type="primary"
+                       @click="handleClick('postman', scope.row.id)"
+            >
               {{ $t('Postman.Postman') }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <pagination
-        :total="listTotal"
+        :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"

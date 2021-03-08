@@ -27,7 +27,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
 
   methods: {
@@ -37,7 +37,7 @@ export default {
       this.paramDialogVisible = true
     },
     async saveParameter(data) {
-      data['project_id'] = this.projectSelectedId
+      data['project_id'] = this.selectedProjectId
       await addParameterByIssue(this.issueId, data)
       this.paramDialogVisible = false
       this.$message({

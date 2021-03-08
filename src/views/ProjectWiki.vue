@@ -1,25 +1,18 @@
 <script>
-import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
 import EditorMD from '@/components/Editormd'
-import { getWikiList, getWikiDetail, putWikiDetail, deleteWiki } from '@/api/wiki'
-import MixinElTable from '@/components/MixinElTable'
+import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectWiki',
   components: {
-    EditorMD,
-    ProjectListSelector,
-    Pagination
+    EditorMD
   },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
     isLoading: false,
-    listLoading: true,
     editBtnLoading: false,
     direction: 'rtl',
-    wikiList: [],
     wikiData: {},
     wikiContent: 'Hello DevOps',
     newWikiContent: '',
@@ -28,12 +21,6 @@ export default {
     dialogVisibleEdit: false,
     drawerTitle: '',
     wikiTitle: '',
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     formRules: {
       wikiTitle: [
         { required: true, message: 'Please input name', trigger: 'change' },
@@ -46,42 +33,13 @@ export default {
     },
     form: { wikiTitle: '' }
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.wikiList.filter(data => {
-        if (this.searchData === '' || data.title.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.checkProjectSelected()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      const res = await getWikiList(this.projectSelectedId)
-      this.wikiList = res.data.wiki_pages
-      this.listLoading = false
-    },
-    checkProjectSelected() {
-      this.projectSelectedId === -1 ? this.showNoProjectWarning() : this.fetchData()
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
+      return (await getWikiList(this.selectedProjectId)).data.wiki_pages
     },
     showNoProjectWarning() {
       this.$message({
@@ -101,7 +59,7 @@ export default {
       this.editBtnLoading = true
       const text = this.newWikiContent
       try {
-        await putWikiDetail(this.projectSelectedId, this.wikiData.title, { wiki_text: text })
+        await putWikiDetail(this.selectedProjectId, this.wikiData.title, { wiki_text: text })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -120,7 +78,7 @@ export default {
       this.listLoading = true
       this.drawerTitle = 'Edit'
       try {
-        const res = await getWikiDetail(this.projectSelectedId, row.title)
+        const res = await getWikiDetail(this.selectedProjectId, row.title)
         const { wiki_page } = res.data
         this.wikiData = wiki_page
         this.wikiTitle = wiki_page.title
@@ -134,8 +92,8 @@ export default {
     async handleDelete(idx, row) {
       this.listLoading = true
       try {
-        await deleteWiki(this.projectSelectedId, row.title)
-        this.fetchData()
+        await deleteWiki(this.selectedProjectId, row.title)
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -146,7 +104,7 @@ export default {
       try {
         this.listLoading = false
         this.drawerTitle = 'Detail'
-        const res = await getWikiDetail(this.projectSelectedId, row.title)
+        const res = await getWikiDetail(this.selectedProjectId, row.title)
         const { wiki_page } = res.data
         this.wikiData = wiki_page
         this.wikiContent = wiki_page.text
@@ -174,13 +132,13 @@ export default {
         this.editBtnLoading = true
         const text = this.newWikiContent
         try {
-          await putWikiDetail(this.projectSelectedId, this.form.wikiTitle, { wiki_text: text })
+          await putWikiDetail(this.selectedProjectId, this.form.wikiTitle, { wiki_text: text })
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Created'),
             type: 'success'
           })
-          this.fetchData()
+          await this.loadData()
         } catch (error) {
           console.error(error)
         } finally {
@@ -197,7 +155,7 @@ export default {
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
-        <el-button type="success" :disabled="projectSelectedId === -1" @click="handleAdding">
+        <el-button type="success" :disabled="selectedProjectId === -1" @click="handleAdding">
           <i class="el-icon-plus" />
           {{ $t('Wiki.AddWiki') }}
         </el-button>
@@ -265,7 +223,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
@@ -292,7 +250,7 @@ export default {
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br />
+          <br>
           <template>
             <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
           </template>

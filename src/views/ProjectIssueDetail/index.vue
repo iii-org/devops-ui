@@ -57,11 +57,11 @@ export default {
 
   mounted() {
     this.issueId = parseInt(this.$route.params.issueId)
-    this.fetchData()
+    this.loadData()
   },
 
   methods: {
-    fetchData() {
+    loadData() {
       this.isLoading = true
       Promise.all([
         getIssue(this.issueId),
@@ -135,7 +135,7 @@ export default {
           :author="author"
           :issue-form-ref="formData"
           :issue-link="issueLink"
-          @updated="fetchData"
+          @updated="loadData"
         />
       </el-card>
     </el-col>
@@ -143,19 +143,19 @@ export default {
     <el-col :span="14">
       <el-tabs v-model="activeName" v-loading="isLoading" type="border-card">
         <el-tab-pane :label="$t('Issue.Comment')" name="comment">
-          <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="fetchData" />
+          <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="loadData" />
         </el-tab-pane>
 
         <el-tab-pane :label="$t('Issue.Flow')" name="flow">
-          <FlowTab :issue-id="issueId" :issue-flow="issueFlow" @updated="fetchData" />
+          <FlowTab :issue-id="issueId" :issue-flow="issueFlow" @updated="loadData" />
         </el-tab-pane>
 
         <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
-          <ParameterTab :issue-id="issueId" :issue-parameter="issueParameter" @updated="fetchData" />
+          <ParameterTab :issue-id="issueId" :issue-parameter="issueParameter" @updated="loadData" />
         </el-tab-pane>
 
         <el-tab-pane :label="$t('File.File')" name="file">
-          <FileTab :issue-id="issueId" :issue-file="issueFile" @updated="fetchData" />
+          <FileTab :issue-id="issueId" :issue-file="issueFile" @updated="loadData" />
         </el-tab-pane>
       </el-tabs>
     </el-col>

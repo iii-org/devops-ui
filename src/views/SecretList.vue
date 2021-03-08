@@ -1,66 +1,18 @@
 <script>
-import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
-import { getSecretList, deleteSecret } from '@/api/projectResource'
-import MixinElTable from '@/components/MixinElTable'
+import { deleteSecret, getSecretList } from '@/api/projectResource'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'SecretList',
-  components: { ProjectListSelector, Pagination },
-  mixins: [MixinElTable],
-  data: () => ({
-    secretList: [],
-    listLoading: true,
-    // dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
-  }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.secretList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId(projectId) {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
+  mixins: [MixinElTableWithAProject],
   methods: {
     async fetchData() {
-      this.listLoading = true
-      await getSecretList(this.projectSelectedId).then(res => {
-        this.secretList = res.data.map(item => {
-          return {
-            name: item
-          }
-        })
+      const res = await getSecretList(this.selectedProjectId)
+      return res.data.map(item => {
+        return {
+          name: item
+        }
       })
-      this.listLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     // handleEdit(secretName) {
     //   this.dialogVisible = true
@@ -69,7 +21,7 @@ export default {
       this.listLoading = true
       try {
         await deleteSecret(pId, secretName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -93,7 +45,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-class-name="el-table-row">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
       <el-table-column :label="$t('general.Name')" align="center" prop="name" />
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">
@@ -107,7 +59,7 @@ export default {
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.name)"
+            @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" />
@@ -118,7 +70,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

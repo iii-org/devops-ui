@@ -1,64 +1,25 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
+import { mapActions, mapGetters } from 'vuex'
 import { formatTime } from '@/utils/index.js'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProcessDevBranch',
-  components: {
-    Pagination,
-    ProjectListSelector
-  },
-  mixins: [MixinElTable],
-  data: () => ({
-    branchList: [],
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: ''
-  }),
+  mixins: [MixinElTableWithAProject],
   computed: {
-    ...mapGetters(['projectSelectedId', 'selectedProject', 'branchesByProject']),
-    pagedData() {
-      const listData = this.branchList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
+    ...mapGetters(['branchesByProject'])
   },
   watch: {
     branchesByProject(ary) {
       this.branchList = ary
-    },
-    selectedProject(obj) {
-      this.fetchBranchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
     }
-  },
-  async created() {
-    this.fetchBranchData()
   },
   methods: {
     ...mapActions('branches', ['getBranchesByProject']),
-    async fetchBranchData() {
-      this.listLoading = true
-      const repository_id = this.selectedProject.repository_id || this.selectedProject[0].repository_id
+    async fetchData() {
+      const repository_id = this.selectedProject.repository_id
       await this.getBranchesByProject(repository_id)
-      this.listLoading = false
+      return this.branchList
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
@@ -157,7 +118,7 @@ export default {
       </el-table-column> -->
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

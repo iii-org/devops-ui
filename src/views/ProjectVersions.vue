@@ -1,9 +1,12 @@
 <script>
-import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import { getProjectVersion, addProjectVersion, editProjectVersion, deleteProjectVersion } from '@/api/projects'
-import MixinElTable from '@/components/MixinElTable'
+import {
+  addProjectVersion,
+  deleteProjectVersion,
+  editProjectVersion,
+  getProjectVersion
+} from '@/api/projects'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+
 const formTemplate = {
   name: '',
   due_date: '',
@@ -13,44 +16,20 @@ const formTemplate = {
 
 export default {
   name: 'ProjectVersions',
-  components: {
-    Pagination,
-    ProjectListSelector
-  },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    listLoading: true,
     dialogVisible: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     formRules: {
       name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
       due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
       status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
       description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
     },
-    versionList: [],
     dialogStatus: 1,
     memberConfirmLoading: false,
     form: formTemplate
   }),
   computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.versionList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    },
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -62,31 +41,9 @@ export default {
       }
     }
   },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    // form(value) {
-    //   console.log(value)
-    // },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     async fetchData() {
-      this.listLoading = true
-      const res = await getProjectVersion(this.projectSelectedId)
-      this.versionList = res.data.versions
-      this.listLoading = false
+      return (await getProjectVersion(this.selectedProjectId)).data.versions
     },
     handleAdding() {
       this.dialogVisible = true
@@ -105,13 +62,13 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'error'
       }).then(async () => {
-        await deleteProjectVersion(this.projectSelectedId, row.id)
+        await deleteProjectVersion(this.selectedProjectId, row.id)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
-        this.fetchData()
+        await this.loadData()
       })
     },
     async handleConfirm() {
@@ -120,14 +77,14 @@ export default {
           this.dialogVisible = false
           const data = this.form
           if (this.dialogStatus === 1) {
-            await addProjectVersion(this.projectSelectedId, { version: data })
+            await addProjectVersion(this.selectedProjectId, { version: data })
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Added'),
               type: 'success'
             })
           } else {
-            await editProjectVersion(this.projectSelectedId, this.form.id, { version: data })
+            await editProjectVersion(this.selectedProjectId, this.form.id, { version: data })
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Updated'),
@@ -135,7 +92,7 @@ export default {
             })
           }
 
-          this.fetchData()
+          await this.loadData()
         } else {
           return false
         }
@@ -166,15 +123,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      height="100%"
-      row-class-name="el-table-row"
-    >
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%">
       <el-table-column align="center" :label="$t('general.Name')" min-width="220" prop="name" />
       <el-table-column align="center" :label="$t('Version.DueDate')" width="120">
         <template slot-scope="scope">
@@ -208,7 +157,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

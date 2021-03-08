@@ -1,8 +1,9 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import ValidateDialog from './components/ValidateDialog'
 import MixinElTable from '@/components/MixinElTable'
+
 export default {
   components: {
     ValidateDialog,
@@ -83,7 +84,9 @@ export default {
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="search" placeholder="Filter Name" style="width: 200px;" class="filter-item" />
+      <el-input v-model="search" placeholder="Filter Name" style="width: 200px;"
+                class="filter-item"
+      />
       <el-button class="filter-item" type="primary" icon="el-icon-search">
         Search
       </el-button>
@@ -97,15 +100,14 @@ export default {
       </el-button>
     </div>
     <el-table
+      ref="multipleTable"
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
       border
-      ref="multipleTable"
       tooltip-effect="dark"
-      @selection-change="handleSelectionChange"
       height="100%"
-      row-class-name="el-table-row"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column align="center" label="Account" width="120">

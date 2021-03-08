@@ -1,9 +1,12 @@
 <script>
 import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
-import { getProjectUserList, getNotInProject, addProjectMember, deleteProjectMember } from '@/api/projects'
-import MixinElTable from '@/components/MixinElTable'
+import {
+  addProjectMember,
+  deleteProjectMember,
+  getNotInProject,
+  getProjectUserList
+} from '@/api/projects'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 const formTemplate = {
   // role_name: 'Engineer',
@@ -13,19 +16,10 @@ const formTemplate = {
 
 export default {
   name: 'ProjectMembers',
-  components: { Pagination, ProjectListSelector },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    listLoading: true,
     dialogVisible: false,
-    userList: [],
     assignableUsers: [],
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
     dialogStatus: 1,
     memberConfirmLoading: false,
     form: formTemplate,
@@ -34,21 +28,7 @@ export default {
     rules: { id: [{ required: true, message: 'Please select a member', trigger: 'change' }] }
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userId']),
-    pagedData() {
-      // const start = (this.listQuery.page - 1) * this.listQuery.limit
-      // const end = start + this.listQuery.limit - 1
-      // return this.userList.slice(start, end)
-      const listData = this.userList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    },
+    ...mapGetters(['userId']),
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -61,39 +41,25 @@ export default {
     }
   },
   watch: {
-    projectSelectedId(projectId) {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
     'form.id'(value) {
       this.roleName = this.userInfo[this.form.id]
-    },
-    searchData() {
-      this.listQuery.page = 1
     }
-  },
-  created() {
-    this.fetchData()
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
       try {
-        const res = await getProjectUserList(this.projectSelectedId)
-        const res_assignable = await getNotInProject(this.projectSelectedId)
-        this.userList = res.data.user_list
+        const res = await getProjectUserList(this.selectedProjectId)
+        const res_assignable = await getNotInProject(this.selectedProjectId)
+        const userList = res.data.user_list
         this.assignableUsers = res_assignable.data.user_list
         for (const i in this.assignableUsers) {
           this.userInfo[this.assignableUsers[i].id] = this.assignableUsers[i].role_name
         }
+        return userList
       } catch (error) {
         console.error(error)
+        return []
       }
-      this.listLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
     },
     handleAdding() {
       this.dialogVisible = true
@@ -109,13 +75,13 @@ export default {
         if (valid) {
           try {
             this.memberConfirmLoading = true
-            await addProjectMember(this.projectSelectedId, { user_id: this.form.id })
+            await addProjectMember(this.selectedProjectId, { user_id: this.form.id })
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Added'),
               type: 'success'
             })
-            this.fetchData()
+            await this.loadData()
             this.dialogVisible = false
           } catch (error) {
             console.error(error)
@@ -127,13 +93,13 @@ export default {
     async handleDelete(id, row) {
       this.listLoading = true
       try {
-        await deleteProjectMember(this.projectSelectedId, row.id)
+        await deleteProjectMember(this.selectedProjectId, row.id)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -168,15 +134,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      height="100%"
-      row-class-name="el-table-row"
-    >
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%">
       <el-table-column align="center" :label="$t('Member.Id')" min-width="40">
         <template slot-scope="scope">
           {{ scope.row.id }}
@@ -231,7 +189,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"

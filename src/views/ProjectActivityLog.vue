@@ -56,10 +56,10 @@ export default {
     projectList: []
   }),
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    projectSelectedId() {
+    selectedProjectId() {
       this.fetchData()
     }
   },
@@ -69,15 +69,14 @@ export default {
   methods: {
     async fetchData() {
       this.isLoading = true
-      const projectIssueListRes = await getProjectIssueListByDate(this.projectSelectedId)
+      const projectIssueListRes = await getProjectIssueListByDate(this.selectedProjectId)
       this.isLoading = false
       this.projectIssueList = Object.keys(projectIssueListRes.data).map((item, index) => {
-        const data = {
+        return {
           index: index,
           date: item,
           issues: projectIssueListRes.data[item].sort((a, b) => new Date(b.updated_on) - new Date(a.updated_on))
         }
-        return data
       })
     }
   }

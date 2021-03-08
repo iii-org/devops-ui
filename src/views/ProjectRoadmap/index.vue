@@ -30,10 +30,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'projectSelectedId'])
+    ...mapGetters(['userProjectList', 'selectedProjectId'])
   },
   watch: {
-    projectSelectedId(projectId) {
+    selectedProjectId(projectId) {
       this.fetchAll()
     }
   },
@@ -43,9 +43,9 @@ export default {
   methods: {
     async fetchAll() {
       this.listLoading = true
-      const res = await getProjectVersion(this.projectSelectedId)
+      const res = await getProjectVersion(this.selectedProjectId)
       const resAll = await Promise.all(
-        res.data.versions.map(({ id }) => getProjectIssueProgress(this.projectSelectedId, { fixed_version_id: id }))
+        res.data.versions.map(({ id }) => getProjectIssueProgress(this.selectedProjectId, { fixed_version_id: id }))
       )
       this.dataList = resAll.map(({ data }, idx) => {
         return { ...data, vId: res.data.versions[idx].id, name: res.data.versions[idx].name }
@@ -82,10 +82,10 @@ export default {
     },
     async fetchDetails(vId) {
       this.contentLoading = true
-      const data = await getProjectIssueListByVersion(this.projectSelectedId, { fixed_version_id: vId })
+      const data = await getProjectIssueListByVersion(this.selectedProjectId, { fixed_version_id: vId })
       this.$set(this.workList, vId, data.data)
 
-      const statistics = await getProjectIssueStatistics(this.projectSelectedId, { fixed_version_id: vId })
+      const statistics = await getProjectIssueStatistics(this.selectedProjectId, { fixed_version_id: vId })
       this.workLoadData = statistics.data
       this.workLoadTypes = Object.keys(this.workLoadData).map(key => {
         return { id: key, name: key }

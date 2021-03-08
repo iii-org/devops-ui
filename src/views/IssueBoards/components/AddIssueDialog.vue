@@ -37,10 +37,10 @@ export default {
     isLoading: false
   }),
   computed: {
-    ...mapGetters(['projectSelectedId'])
+    ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    projectSelectedId() {
+    selectedProjectId() {
       this.fetchData()
     },
     issueStatusList(val) {
@@ -58,7 +58,7 @@ export default {
         getIssuePriority(),
         getIssueTracker(),
         getIssueStatus(),
-        getProjectAssignable(this.projectSelectedId)
+        getProjectAssignable(this.selectedProjectId)
       ]).then(res => {
         this.issuePriorityList = res[0].data.map(item => ({ label: item.name, value: item.id }))
         this.issueTypeList = res[1].data.map(item => ({ label: item.name, value: item.id }))
@@ -83,7 +83,7 @@ export default {
           }
           sendData.project_id = this.projectSelectedId
           await addIssue(sendData)
-            .then(res => {
+            .then(_ => {
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Added'),

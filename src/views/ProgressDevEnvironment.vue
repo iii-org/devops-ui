@@ -105,7 +105,7 @@
             type="primary"
             size="mini"
             icon="el-icon-refresh"
-            @click="redeploy(projectSelectedId, scope.row.branch)"
+            @click="redeploy(selectedProjectId, scope.row.branch)"
           >
             {{ $t('general.Redeploy') }}
           </el-button>
@@ -115,7 +115,7 @@
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(projectSelectedId, scope.row.branch)"
+            @onConfirm="handleDelete(selectedProjectId, scope.row.branch)"
           >
             <el-button
               :id="`btn-delete-${scope.$index}`"
@@ -132,7 +132,7 @@
       </el-table-column>
     </el-table>
     <pagination
-      :total="listTotal"
+      :total="filteredData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
@@ -143,66 +143,24 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import Pagination from '@/components/Pagination'
 import {
+  deleteDevEnvironmentByBranchName,
   getDevEnvironmentList,
-  redeployDevEnvironmentByBranchName,
-  deleteDevEnvironmentByBranchName
+  redeployDevEnvironmentByBranchName
 } from '@/api/projects'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProgressDevEnvironment',
-  components: { ProjectListSelector, Pagination },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    deploymentList: [],
-    listLoading: true,
-    btnLoading: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
-    searchData: '',
+    searchKey: 'branch',
     rowHeight: 120
   }),
-  computed: {
-    ...mapGetters(['projectSelectedId']),
-    pagedData() {
-      const listData = this.deploymentList.filter(data => {
-        if (this.searchData === '' || data.branch.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    }
-  },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      await getDevEnvironmentList(this.projectSelectedId).then(res => {
-        this.deploymentList = this.handledDeploymentList(res.data)
-      })
-      this.listLoading = false
+      const res = await getDevEnvironmentList(this.selectedProjectId)
+      return this.handledDeploymentList(res.data)
     },
     handledDeploymentList(data) {
       return data.map(item => ({
@@ -226,14 +184,11 @@ export default {
         startTime: item.deployment.map(i => i.container.map(i => i.time)).flat()
       }))
     },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     async redeploy(pId, branchName) {
       this.btnLoading = true
       try {
         await redeployDevEnvironmentByBranchName(pId, branchName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -281,7 +236,7 @@ export default {
       this.btnLoading = true
       try {
         await deleteDevEnvironmentByBranchName(pId, branchName)
-        this.fetchData()
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
