@@ -1,144 +1,152 @@
 <template>
-  <div class="app-container">
-    <div class="clearfix">
+  <div v-loading="listLoading" class="app-container">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchBranch')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        style="width: 250px"
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      height="100%"
-      :cell-style="{ height: rowHeight + 'px' }"
-    >
-      <el-table-column :label="$t('ProcessDevEnvironment.Branch')" align="center" prop="branch" width="150">
-        <template slot-scope="scope">
-          <div>{{ scope.row.branch }}</div>
-          <el-link
-            :id="`link-commit-${scope.$index}`"
-            type="primary"
-            :underline="false"
-            style="font-size: 14px"
-            target="_blank"
-            :href="scope.row.commit_url"
-          >
-            {{ scope.row.commit_id }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Container')" header-align="center" min-width="500">
-        <template slot-scope="scope">
-          <div v-for="(container, idx) in scope.row.containers" :key="container.state + idx" class="my-3">
-            <div style="text-align: center">
-              <div style="display: inline-block; width: 100px;text-align: center">
-                <el-tag v-if="container.state" :type="getStateType(container.state)" size="mini" effect="dark">
-                  {{ container.state }}
-                </el-tag>
+
+    <el-row v-if="filteredData.length > 0" :gutter="10">
+      <el-col v-for="deployment in filteredData" :key="deployment.commit_id" v-loading="listLoading" :sm="12" :xl="8">
+        <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
+          <div slot="header">
+            <div class="d-flex justify-space-between">
+              <div class="text-h6 font-weight-bold">
+                <svg-icon icon-class="branch" />
+                {{ deployment.branch }}
+                <el-link
+                  class="ml-7"
+                  type="primary"
+                  :underline="false"
+                  style="font-size: 14px"
+                  target="_blank"
+                  :href="deployment.commit_url"
+                >
+                  {{ deployment.commit_id }}
+                </el-link>
               </div>
-              <div class="text-body-2" style="display: inline-block; width: 100px;text-align: left">
-                <i class="el-icon-time" />
-                {{ container.time | formatTime }}
-              </div>
-              <div class="text-subtitle-2" style="display: inline-block; width: 160px;text-align: left">
-                <i class="el-icon-box" /> {{ container.name }}
+              <div>
+                <el-button
+                  type="slow"
+                  size="mini"
+                  plain
+                  icon="el-icon-refresh"
+                  @click="redeploy(selectedProject.id, deployment.branch)"
+                >
+                  {{ $t('general.Redeploy') }}
+                </el-button>
+                <el-popconfirm
+                  confirm-button-text="Delete"
+                  cancel-button-text="Cancel"
+                  icon="el-icon-info"
+                  icon-color="red"
+                  title="Are you sure?"
+                  @onConfirm="handleDelete(selectedProject.id, deployment.branch)"
+                >
+                  <el-button slot="reference" size="mini" type="danger">
+                    <i class="el-icon-delete" />
+                    {{ $t('general.Delete') }}
+                  </el-button>
+                </el-popconfirm>
               </div>
             </div>
           </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('ProcessDevEnvironment.Services')" header-align="center" min-width="220">
-        <template slot-scope="scope">
-          <div v-for="(container, idx) in scope.row.containers" :key="container.name + idx" class="my-3">
-            <span v-for="(service, index) in container.services" :key="service.type + index">
-              <el-popover
-                v-if="service.type === 'db-server'"
-                placement="top"
-                width="400"
-                trigger="click"
-                :open-delay="300"
-                :close-delay="50"
-              >
-                <p :id="`copy-${scope.$index}`" class="text-center">
-                  <span class="text-subtitle-1 font-weight-bold">{{ service.url }}</span>
-                </p>
-                <div class="d-flex justify-center">
-                  <el-button icon="el-icon-copy-document" circle size="mini" @click="copyUrl(`copy-${scope.$index}`)" />
-                </div>
-                <el-link slot="reference" :underline="false" type="primary" style="font-size: 14px" class="mr-3">
-                  <svg-icon :icon-class="getContainerType(service.type)" />
-                  {{ service.type }}（port:{{ service.target_port }}）
-                </el-link>
-              </el-popover>
-              <el-link
-                v-else
-                :id="`link-commit-${scope.$index}`"
-                type="primary"
-                class="mr-3"
-                :underline="false"
-                style="font-size: 14px"
-                target="_blank"
-                :href="service.url"
-              >
-                <svg-icon :icon-class="getContainerType(service.type)" />
-                {{ service.type }}（port:{{ service.target_port }}）
-              </el-link>
+
+          <el-card v-for="pod in deployment.pods" :key="pod.pod_name" class="mb-5" shadow="hover">
+            <div class="text-caption">
+              <i class="el-icon-box mr-1" />
+              {{ $t('ProcessDevEnvironment.Container') }}
+            </div>
+
+            <span class="text-body-1 font-weight-bold">
+              {{ pod.app_name }}
             </span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="240">
-        <template slot-scope="scope">
-          <el-button
-            :id="`btn-redeploy-${scope.$index}`"
-            :loading="btnLoading"
-            type="primary"
-            size="mini"
-            icon="el-icon-refresh"
-            @click="redeploy(selectedProjectId, scope.row.branch)"
-          >
-            {{ $t('general.Redeploy') }}
-          </el-button>
-          <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
-            icon="el-icon-info"
-            icon-color="red"
-            title="Are you sure?"
-            @onConfirm="handleDelete(selectedProjectId, scope.row.branch)"
-          >
-            <el-button
-              :id="`btn-delete-${scope.$index}`"
-              slot="reference"
-              :loading="btnLoading"
-              size="mini"
-              type="danger"
-            >
-              <i class="el-icon-delete" />
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
+
+            <div v-for="(container, idx) in pod.containers" :key="container.name + idx">
+              <el-tag
+                v-if="container.status.state"
+                class="mb-2"
+                :type="getStateType(container.status.state)"
+                size="mini"
+                effect="dark"
+              >
+                {{ container.status.state }}
+              </el-tag>
+              <div class="text-caption  mr-1">
+                <svg-icon class="mr-1" icon-class="MdiClockOutline" />
+                {{ $t('general.StartTime') }}
+              </div>
+              <div class="font-weight-bold mb-2">{{ container.status.time | relativeTime }}</div>
+
+              <div v-for="(servicePM, servicePMIdx) in container.service_port_mapping" :key="servicePMIdx">
+                <div class="text-caption mr-1">
+                  <i class="el-icon-box mr-1" />
+                  <span class="text-caption">{{ $t('ProcessDevEnvironment.Services') }}</span>
+                </div>
+
+                <span v-for="(service, serviceIdx) in servicePM.services" :key="serviceIdx">
+                  <el-popover
+                    v-if="service.service_type === 'db-server'"
+                    placement="top"
+                    width="400"
+                    trigger="click"
+                    :open-delay="300"
+                    :close-delay="50"
+                  >
+                    <p :id="`copy-${serviceIdx}`" class="text-center">
+                      <span class="text-subtitle-1 font-weight-bold">{{ service.url[0] }}</span>
+                    </p>
+                    <div class="d-flex justify-center">
+                      <el-button
+                        icon="el-icon-copy-document"
+                        circle
+                        size="mini"
+                        @click="copyUrl(`copy-${serviceIdx}`)"
+                      />
+                    </div>
+                    <el-link
+                      slot="reference"
+                      :underline="false"
+                      type="primary"
+                      style="font-size: 14px"
+                      class="mr-3"
+                      :disabled="container.status.state !== 'running'"
+                    >
+                      <svg-icon :icon-class="getContainerType(service.service_type)" />
+                      {{ service.service_type }}（port:{{ service.port }}）
+                    </el-link>
+                  </el-popover>
+                  <el-link
+                    v-else
+                    :id="`link-commit-${serviceIdx}`"
+                    type="primary"
+                    class="mr-3"
+                    :underline="false"
+                    style="font-size: 14px"
+                    target="_blank"
+                    :href="service.url[0]"
+                    :disabled="container.status.state !== 'running'"
+                  >
+                    <svg-icon :icon-class="getContainerType(service.service_type)" />
+                    {{ service.service_type }}（port:{{ service.port }}）
+                  </el-link>
+                </span>
+              </div>
+            </div>
+          </el-card>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <div v-else class="text-center">
+      {{ $t('general.NoData') }}
+    </div>
   </div>
 </template>
 
@@ -148,41 +156,19 @@ import {
   getDevEnvironmentList,
   redeployDevEnvironmentByBranchName
 } from '@/api/projects'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
 
 export default {
   name: 'ProgressDevEnvironment',
-  mixins: [MixinElTableWithAProject],
+  mixins: [MixinElCardWithAProject],
   data: () => ({
     searchKey: 'branch',
-    rowHeight: 120
+    btnLoading: false
   }),
   methods: {
     async fetchData() {
       const res = await getDevEnvironmentList(this.selectedProjectId)
-      return this.handledDeploymentList(res.data)
-    },
-    handledDeploymentList(data) {
-      return data.map(item => ({
-        branch: item.branch,
-        commit_id: item.commit_id,
-        commit_url: item.commit_url,
-        containers: item.deployment
-          .map(deployment =>
-            deployment.container.map(container => {
-              const result = container
-              result.services = deployment.services.map(service => {
-                const result = service
-                result.type = deployment.services_type
-                return result
-              })
-              return result
-            })
-          )
-          .flat(),
-        services: item.deployment.flatMap(deployment => deployment.services),
-        startTime: item.deployment.map(i => i.container.map(i => i.time)).flat()
-      }))
+      return res.data
     },
     async redeploy(pId, branchName) {
       this.btnLoading = true
@@ -245,12 +231,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scope>
-.table-flex {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: space-around;
-}
-</style>
