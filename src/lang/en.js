@@ -63,6 +63,28 @@ export default {
     profile: 'Profile',
     versions: 'Versions'
   },
+  errorMessage: {
+    1001: 'Project identifier {identifier} has been taken.',
+    1002: 'Project name {name} is not legal. Project name may only contain lower cases, numbers, dash, and the heading and trailing character should be alphanumeric, and should be 2 to 225 characters long.',
+    1003: 'Project id {project_id} not found.',
+    1004: 'Repository id {repository_id} not found.',
+    1005: 'Project id {project_id} does not exist in redmine.',
+    1006: 'Unable to delete the version.',
+    2001: 'User id {user_id} not found.',
+    2002: 'User name {name} is not legal. The user name may only contain a-z, A-Z, 0-9, dot, dash, underline, and the heading and trailing character should be alphanumeric and should be 2 to 60 characters long.',
+    2003: 'Password is not legal. You can only use a-z, A-Z, 0-9, !@#$%^&*()_+|{}[]``~-=\'";:/?.>,<, and should contain at least an upper case alphabet, a lower case alphabet, and a digit, and is 8 to 20 characters long.',
+    2004: 'Wrong password or username.',
+    2005: 'The username or e-mail is already used.',
+    2006: 'The user {user_id} is already in project {project_id}.',
+    3001: 'The user doesn\'t have permission for this operation.',
+    3002: 'You need to be in the project for this operation.',
+    3003: 'You are not permitted to access another user\'s data.',
+    4001: 'Issue not found.',
+    8001: '{service_name} error: {response}',
+    9001: 'Internal exception: {type}: {exception}',
+    9003: 'An unexpected database error has occurred: {message}',
+    9999: 'An unknown error has occurred.'
+  },
   general: {
     Name: 'Name',
     Title: 'Title',
@@ -405,26 +427,7 @@ export default {
     Image: 'Image'
   },
   Loading: 'Loading...',
-  errorMessage: {
-    1001: 'Project identifier {identifier} has been taken.',
-    1002: 'Project name {name} is not legal. Project name may only contain lower cases, numbers, dash, and the heading and trailing character should be alphanumeric, and should be 2 to 225 characters long.',
-    1003: 'Project id {project_id} not found.',
-    1004: 'Repository id {repository_id} not found.',
-    1005: 'Project id {project_id} does not exist in redmine.',
-    1006: 'Unable to delete the version.',
-    2001: 'User id {user_id} not found.',
-    2002: 'User name {name} is not legal. The user name may only contain a-z, A-Z, 0-9, dot, dash, underline, and the heading and trailing character should be alphanumeric and should be 2 to 60 characters long.',
-    2003: 'Password is not legal. You can only use a-z, A-Z, 0-9, !@#$%^&*()_+|{}[]``~-=\'";:/?.>,<, and should contain at least an upper case alphabet, a lower case alphabet, and a digit, and is 8 to 20 characters long.',
-    2004: 'Wrong password or username.',
-    2005: 'The username or e-mail is already used.',
-    2006: 'The user {user_id} is already in project {project_id}.',
-    3001: 'The user doesn\'t have permission for this operation.',
-    3002: 'You need to be in the project for this operation.',
-    3003: 'You are not permitted to access another user\'s data.',
-    4001: 'Issue not found.',
-    8001: '{service_name} error: {response}',
-    9001: 'Internal exception: {type}: {exception}',
-    9003: 'An unexpected database error has occurred: {message}',
-    9999: 'An unknown error has occurred.'
+  Harbor: {
+    PushTime: 'Push Time'
   }
 }

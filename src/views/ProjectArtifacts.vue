@@ -1,8 +1,10 @@
 <script>
 import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   methods: {
     async fetchData() {
@@ -66,11 +68,7 @@ export default {
           <el-tag v-for="label in scope.row.labels" :key="label" type="success" effect="dark">{{ label }} </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Push Time" :show-overflow-tooltip="true" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.push_time | YMDhmA }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="push_time" :label="$t(Harbor.PushTime)" />
       <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">

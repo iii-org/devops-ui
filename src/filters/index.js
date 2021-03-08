@@ -10,19 +10,6 @@ export function relativeTime(dateTime) {
   return relativeTime
 }
 
-export function YMDhmA(time) {
-  const formateTime = moment(time).format('YYYY-MM-DD hh:mm A')
-  if (time === 'Invalid date') {
-    return '-'
-  }
-  return formateTime
-}
-export function YMDHms(time) {
-  const formateTime = moment(time).format('YYYY-MM-DD HH:mm:ss')
-  if (time === 'Invalid date') return '-'
-  if (time === null) return '-'
-  return formateTime
-}
 export function UTCtoLocalTime(utcTime) {
   const localTime = moment
     .utc(utcTime)

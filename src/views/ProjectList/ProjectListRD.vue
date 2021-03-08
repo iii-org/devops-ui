@@ -169,7 +169,9 @@ export default {
       <el-table-column align="center" :label="$t('Project.LastTest')" width="190">
         <template slot-scope="scope">
           <span v-if="scope.row.last_test_time === ''">No Test</span>
-          <span v-else>{{ myFormatTime(scope.row.last_test_time) }}</span>
+          <el-tooltip v-else placement="bottom" :content="scope.row.last_test_time | UTCtoLocalTime">
+            <span>{{ scope.row.last_test_time | relativeTime }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.LastTestResult')" width="170">

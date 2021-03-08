@@ -97,7 +97,9 @@ export default {
           <div>{{ scope.row.name }}</div>
           <div class="text-body-2 my-1">
             <i class="el-icon-time" />
-            {{ scope.row.created_time | YMDHms }}
+            <el-tooltip placement="bottom" :content="scope.row.created_time | UTCtoLocalTime">
+              <span>{{ scope.row.created_time | relativeTime }}</span>
+            </el-tooltip>
           </div>
         </template>
       </el-table-column>
@@ -111,7 +113,9 @@ export default {
                 </el-tag>
               </div>
               <i class="el-icon-time" />
-              <span class="text-body-2">{{ container.time | YMDHms }} </span>
+              <el-tooltip placement="top" :content="container.time | UTCtoLocalTime">
+                <span class="text-body-2" >{{ container.time | relativeTime }}</span>
+              </el-tooltip>
               <div class="ml-3 my-1">
                 <i class="el-icon-box" /> <span class="text-h6 "> {{ container.name }}</span>
               </div>

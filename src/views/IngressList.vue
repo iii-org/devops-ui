@@ -1,9 +1,11 @@
 <script>
 import { getIngressList } from '@/api/projectResource'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'IngressList',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   methods: {
     async fetchData() {
@@ -47,12 +49,7 @@ export default {
         </template>
       </el-table-column>
       <el-table-column label="tls" align="center" prop="tls" min-width="80" />
-      <el-table-column :label="$t('general.CreateTime')" align="center" prop="created_time"
-                       width="190">
-        <template slot-scope="scope">
-          {{ scope.row.created_time | YMDHms }}
-        </template>
-      </el-table-column>
+      <el-table-column-time :label="$t('general.CreateTime')" prop="created_time" />
     </el-table>
     <pagination
       :total="filteredData.length"
