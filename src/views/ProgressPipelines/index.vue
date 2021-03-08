@@ -1,12 +1,12 @@
 <script>
-import { formatTime } from '@/utils/index.js'
 import { changePipelineByAction, getPipelines, getPipelinesLogs } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ProgressPipelines',
-  components: { TestDetail },
+  components: { ElTableColumnTime, TestDetail },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     isLoading: false,
@@ -38,10 +38,6 @@ export default {
     },
     statusBoo(obj) {
       if (obj.success === obj.total) return true
-      false
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     },
     emitTestDetailVisible(visible) {
       this.testDetailVisible = visible
@@ -158,11 +154,7 @@ export default {
         min-width="220"
         prop="transitioning_message"
       />
-      <el-table-column :label="$t('ProcessDevBranchTest.LastUpdateTime')" align="center" width="180">
-        <template slot-scope="scope">
-          <span>{{ myFormatTime(scope.row.last_test_time) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="last_test_time" />
       <el-table-column :label="$t('general.Actions')" align="center" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row)">

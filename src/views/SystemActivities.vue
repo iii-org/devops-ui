@@ -1,10 +1,11 @@
 <script>
 import { getAllActivities } from '@/api/activities'
-import { formatTime } from '@/utils/index.js'
 import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'SystemActivities',
+  components: { ElTableColumnTime },
   mixins: [MixinElTable],
   data() {
     return {
@@ -22,9 +23,6 @@ export default {
   methods: {
     async fetchData() {
       return (await getAllActivities(this.formData)).data
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     }
   }
 }
@@ -49,11 +47,7 @@ export default {
       <el-table-column align="center" :label="$t('Activities.User')" min-width="100" prop="operator_name" />
       <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="150" prop="action_type" />
       <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="250" prop="action_parts" />
-      <el-table-column align="center" :label="$t('Activities.ActAt')" width="190">
-        <template slot-scope="scope">
-          {{ myFormatTime(scope.row.act_at) }}
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="act_at" :label="$t('Activities.ActAt')" />
     </el-table>
 
     <pagination

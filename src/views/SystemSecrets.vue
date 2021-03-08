@@ -1,8 +1,8 @@
 <script>
 import Pagination from '@/components/Pagination'
-import { getSystemSecrets, addSystemSecret, deleteSystemSecret } from '@/api/maintenance'
-import { formatTime } from '@/utils/index.js'
+import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
 import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const defaultFormData = () => ({
   name: '',
@@ -12,7 +12,7 @@ const defaultFormData = () => ({
 
 export default {
   name: 'SystemSecrets',
-  components: { Pagination },
+  components: { ElTableColumnTime, Pagination },
   mixins: [MixinElTable],
   data: () => ({
     formData: defaultFormData(),
@@ -87,9 +87,6 @@ export default {
         this.$refs['form'].resetFields()
         this.formData = defaultFormData()
       })
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     }
   }
 }
@@ -127,11 +124,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Maintenance.SecretName')" prop="name" min-width="150" />
       <el-table-column label="Keys" prop="keys" min-width="250" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="190">
-        <template slot-scope="scope">
-          <span>{{ myFormatTime(scope.row.created) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="120">
         <template slot-scope="scope">
           <el-popconfirm

@@ -190,7 +190,7 @@ export default {
     >
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
-      <el-table-column-time prop="created_on" label="general.CreateTime" />
+      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
       <el-table-column-time prop="updated_on" />
       <el-table-column align="center" :label="$t('general.Actions')" width="300">
         <template slot-scope="scope">

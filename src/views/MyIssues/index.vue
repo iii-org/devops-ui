@@ -43,7 +43,7 @@
           <span>{{ scope.row.issue_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column-time prop="last_test_time" label="general.LastUpdateTime" />
+      <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" />
       <el-table-column label="Last Test Result" align="center" width="130">
         <template slot-scope="scope">
           <div>

@@ -5,8 +5,8 @@ import {
   getHarborRepoList,
   getHarborRepoStorageSummary
 } from '@/api/harbor'
-import { formatTime } from '@/utils/index.js'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
   name: '',
@@ -17,6 +17,7 @@ const formTemplate = {
 
 export default {
   name: 'ProjectResource',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     projectName: '',
@@ -139,9 +140,6 @@ export default {
         this.$refs['form'].resetFields()
         this.form = formTemplate
       })
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     }
   }
 }
@@ -222,11 +220,7 @@ export default {
             <span>{{ scope.row.description }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.LastUpdateTime')" align="center" width="190">
-          <template slot-scope="scope">
-            <span>{{ myFormatTime(scope.row.update_time) }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column-time prop="update_time" />
         <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="200">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">

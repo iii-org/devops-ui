@@ -1,9 +1,11 @@
 <script>
 import { getProjectActivities } from '@/api/activities'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ProjectActivities',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     dialogVisible: false,
@@ -34,15 +36,11 @@ export default {
 
     <el-divider />
 
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
-      <el-table-column align="center" :label="$t('Activities.User')" min-width="30" prop="operator_name" />
-      <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="40" prop="action_type" />
-      <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="80" prop="action_parts" />
-      <el-table-column align="center" :label="$t('Activities.ActAt')" min-width="40">
-        <template slot-scope="scope">
-          {{ scope.row.act_at | UTCtoLocalTime }}
-        </template>
-      </el-table-column>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%" row-height="70">
+      <el-table-column align="center" :label="$t('Activities.User')" prop="operator_name" />
+      <el-table-column align="center" :label="$t('Activities.ActionType')" prop="action_type" />
+      <el-table-column align="center" :label="$t('Activities.ActionParts')" prop="action_parts" min-width="200" />
+      <el-table-column-time prop="act_at" :label="$t('Activities.ActAt')" min-width="100" />
     </el-table>
 
     <pagination

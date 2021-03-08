@@ -1,10 +1,11 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { formatTime } from '@/utils/index.js'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ProcessDevBranch',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   computed: {
     ...mapGetters(['branchesByProject'])
@@ -31,9 +32,6 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     },
     EnvironmentFormat(env) {
       const serviceArray = Object.keys(env)
@@ -76,23 +74,6 @@ export default {
           </div>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" :label="$t('ProcessDevBranch.Status')" width="120">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status == 'Failed'" type="danger" size="medium" effect="dark">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.status == 'Success'" type="success" size="medium" effect="dark">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.status == 'Waiting'" type="responded" size="medium" effect="dark">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else-if="scope.row.status == 'Building'" type="warning" size="medium" effect="dark">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag v-else type="close" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id">
         <template slot-scope="scope">
           <el-link
@@ -106,16 +87,7 @@ export default {
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('ProcessDevBranch.LastUpdateTime')" width="180">
-        <template slot-scope="scope">
-          {{ myFormatTime(scope.row.last_commit_time) }}
-        </template>
-      </el-table-column>
-      <!-- <el-table-column align="center" label="Test Completion">
-        <template slot-scope="scope">
-          {{ scope.row.test_completion.done }} / {{ scope.row.test_completion.total }}
-        </template>
-      </el-table-column> -->
+      <el-table-column-time prop="last_commit_time" />
     </el-table>
     <pagination
       :total="filteredData.length"

@@ -2,9 +2,11 @@
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'PostmanResult',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     dialogVisible: false,
@@ -71,13 +73,7 @@ export default {
         <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure"
                          min-width="100"
         />
-        <el-table-column align="center" :label="$t('Postman.StartTime')" width="190">
-          <template slot-scope="scope">
-            <span>
-              {{ scope.row.run_at | UTCtoLocalTime }}
-            </span>
-          </template>
-        </el-table-column>
+        <el-table-column-time :label="$t('Postman.StartTime')" prop="run_at" />
         <el-table-column align="center" :label="$t('general.Actions')" width="220">
           <template slot-scope="scope">
             <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain

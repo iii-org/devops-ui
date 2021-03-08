@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { formatTime } from '@/utils/index.js'
 import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
   name: '',
@@ -14,6 +14,7 @@ const formTemplate = {
 
 export default {
   name: 'ProjectList',
+  components: { ElTableColumnTime },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -89,13 +90,6 @@ export default {
       //   this.dialogVisible = false
       // console.log(this.form)
     },
-    myFormatTime(time) {
-      if (time == null) {
-        return '-'
-      } else {
-        return formatTime(new Date(time))
-      }
-    },
     copyUrl(id) {
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
@@ -156,11 +150,7 @@ export default {
           {{ scope.row.issues }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpcomingDeadline')" min-width="200">
-        <template slot-scope="scope">
-          {{ myFormatTime(scope.row.next_d_time) }}
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="next_d_time" :label="$t('Project.UpcomingDeadline')" />
       <el-table-column align="center" :label="$t('Project.Branches')" width="120">
         <template slot-scope="scope">
           <router-link

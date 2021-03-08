@@ -9,9 +9,11 @@ import {
   registerCheckMarxReport
 } from '@/api/checkMarx'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ScanCheckmarx',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     searchKey: 'scan_id'
@@ -133,11 +135,7 @@ export default {
       <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
       <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
       <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.RunAt')" min-width="170">
-        <template slot-scope="scope">
-          <span class="ml-2">{{ scope.row.run_at | UTCtoLocalTime }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
       <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
         <template slot-scope="scope">
           <el-link

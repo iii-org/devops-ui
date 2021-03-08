@@ -6,9 +6,11 @@ import {
   getWebInspectStatus
 } from '@/api/webInspect'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ScanWebInspect',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     confirmLoading: false,
@@ -126,11 +128,7 @@ export default {
       <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.2" />
       <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.1" />
       <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.0" />
-      <el-table-column align="center" :label="$t('WebInspect.RunAt')" min-width="190">
-        <template slot-scope="scope">
-          <span class="ml-2">{{ scope.row.run_at | formatToLocaleTime }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time :label="$t('WebInspect.RunAt')" prop="run_at" />
       <el-table-column align="center" :label="$t('WebInspect.Report')" min-width="100">
         <template slot-scope="scope">
           <el-link

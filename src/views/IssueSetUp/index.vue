@@ -567,7 +567,7 @@ export default {
               {{ scope.row.comment_author }}
             </template>
           </el-table-column>
-          <el-table-column-time prop="comment_at" label="Issue.CommentTime" />
+          <el-table-column-time prop="comment_at" :label="$t('Issue.CommentTime')" />
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Flow" name="Flow">

@@ -432,7 +432,7 @@ export const asyncRoutes = [
         path: 'harbor',
         name: 'Harbor',
         hidden: true,
-        component: () => import('@/views/ProjectResource'),
+        component: () => import('@/views/ResourceHarbor'),
         meta: { title: 'Harbor', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: true },
         children: [
           {

@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
-import ElTableMixin from '@/components/MixinElTable'
+import MixinElTable from '@/components/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
@@ -17,7 +17,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [ElTableMixin],
+  mixins: [MixinElTable],
   data: () => ({
     editProject: {},
     deleteProject: { id: '', name: '' },

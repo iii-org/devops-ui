@@ -1,8 +1,8 @@
 <script>
 import Pagination from '@/components/Pagination'
-import { getSystemRegistries, addSystemRegistry, deleteSystemRegistry } from '@/api/maintenance'
-import { formatTime } from '@/utils/index.js'
+import { addSystemRegistry, deleteSystemRegistry, getSystemRegistries } from '@/api/maintenance'
 import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const defaultFormData = () => ({
   name: '',
@@ -13,7 +13,7 @@ const defaultFormData = () => ({
 
 export default {
   name: 'SystemRegistry',
-  components: { Pagination },
+  components: { ElTableColumnTime, Pagination },
   mixins: [MixinElTable],
   data: () => ({
     formData: defaultFormData(),
@@ -75,9 +75,6 @@ export default {
         this.$refs['form'].resetFields()
         this.formData = defaultFormData()
       })
-    },
-    myFormatTime(time) {
-      return formatTime(new Date(time))
     }
   }
 }
@@ -115,11 +112,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Maintenance.RegistryName')" prop="name" min-width="150" />
       <el-table-column label="Registries" prop="registries" min-width="250" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" prop="created" width="190">
-        <template slot-scope="scope">
-          <span>{{ myFormatTime(scope.row.created) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="120">
         <template slot-scope="scope">
           <el-popconfirm
