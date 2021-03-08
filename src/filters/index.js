@@ -3,11 +3,7 @@
 import moment from 'moment'
 
 export function relativeTime(dateTime) {
-  const relativeTime = moment.utc(dateTime).local().fromNow()
-  if (relativeTime === 'Invalid date') {
-    return '-'
-  }
-  return relativeTime
+  return dateTime ? moment.utc(dateTime).local().fromNow() : '-'
 }
 
 export function UTCtoLocalTime(utcTime) {
