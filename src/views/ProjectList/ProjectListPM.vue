@@ -125,7 +125,7 @@ export default {
           </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="100">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="150">
         <template slot-scope="scope">
           <el-tooltip placement="top" :content="scope.row.updated_time | UTCtoLocalTime">
             <span>{{ scope.row.updated_time | relativeTime }}</span>
