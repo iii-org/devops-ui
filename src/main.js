@@ -4,7 +4,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import i18n from './lang' // internationalization
+import i18n, { getLanguage } from './lang' // internationalization
 
 import '@/styles/index.scss' // global css
 
@@ -15,7 +15,8 @@ import router from './router/router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
-import * as filters from './filters' // global filters
+import * as filters from './filters'
+import moment from 'moment' // global filters
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -28,6 +29,8 @@ import * as filters from './filters' // global filters
 //   const { mockXHR } = require('../mock')
 //   mockXHR()
 // }
+
+moment.locale(getLanguage())
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })

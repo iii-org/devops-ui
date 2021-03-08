@@ -2,9 +2,6 @@
 
 import moment from 'moment'
 
-/**
- * @param {string} datetime
- */
 export function relativeTime(dateTime) {
   const relativeTime = moment(dateTime).fromNow()
   if (relativeTime === 'Invalid date') {

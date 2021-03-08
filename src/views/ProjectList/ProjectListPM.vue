@@ -101,7 +101,7 @@ export default {
           <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
             {{ scope.row.display }}
           </el-link>
-          <br />
+          <br>
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
@@ -116,7 +116,7 @@ export default {
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
-          <br />
+          <br>
           <span class="status-bar-track">
             <span
               class="status-bar"
@@ -125,9 +125,11 @@ export default {
           </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="150">
+      <el-table-column align="center" :label="$t('Project.UpdateTime')" min-width="100">
         <template slot-scope="scope">
-          {{ scope.row.updated_time | relativeTime }}
+          <el-tooltip placement="top" :content="scope.row.updated_time | UTCtoLocalTime">
+            <span>{{ scope.row.updated_time | relativeTime }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column align="center" label="GitLab" width="110">
