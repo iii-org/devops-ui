@@ -248,38 +248,38 @@ export const asyncRoutes = [
     component: Layout,
     name: 'progress',
     redirect: '/progress/dev-branch',
-    meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager', 'Administrator'] },
+    meta: { title: 'Progress', icon: 'el-icon-odometer', roles: ['Project Manager', 'Administrator', 'Engineer'] },
     children: [
       {
         path: 'dev-branch',
         name: 'DevBranch',
         component: () => import('@/views/ProcessDevBranch'),
-        meta: { title: 'Dev Branch', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Dev Branch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'git-graph',
         name: 'Git Graph',
         component: () => import('@/views/ProjectGraph'),
-        meta: { title: 'Git Graph', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Git Graph', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'pipelines',
         name: 'Pipelines',
         component: () => import('@/views/ProgressPipelines'),
-        meta: { title: 'Pipelines', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'dev-branch/:branchName/test',
         name: 'DevBranchTest',
         hidden: true,
         component: () => import('@/views/ProcessDevBranchTestResult'),
-        meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'dev-environment',
         name: 'DevEnvironment',
         component: () => import('@/views/ProgressDevEnvironment'),
-        meta: { title: 'Dev Environment', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Dev Environment', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       }
     ]
   },
@@ -296,25 +296,6 @@ export const asyncRoutes = [
         props: true,
         component: () => import('@/views/FileList'),
         meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
-      }
-    ]
-  },
-
-  {
-    path: '/cicd/pipelines/:bId',
-    component: Layout,
-    hidden: true,
-    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
-    children: [
-      {
-        path: '',
-        name: 'cicdPipelines',
-        component: () => import('@/views/CicdPipelines'),
-        meta: {
-          title: 'CICD Pipelines',
-          icon: 'example',
-          roles: ['Engineer', 'Project Manager', 'Administrator']
-        }
       }
     ]
   },
@@ -396,55 +377,55 @@ export const asyncRoutes = [
     component: Layout,
     name: 'System Resource',
     redirect: '/system-resource/kubernetes',
-    meta: { title: 'System Resource', icon: 'el-icon-pie-chart', roles: ['Project Manager', 'Administrator'] },
+    meta: { title: 'System Resource', icon: 'el-icon-pie-chart', roles: ['Project Manager', 'Administrator', 'Engineer'] },
     children: [
       {
         path: 'kubernetes',
         name: 'Kubernetes',
         component: () => import('@/views/ProjectUsage'),
-        meta: { title: 'Kubernetes', roles: ['Project Manager', 'Administrator'], rolePage: true },
+        meta: { title: 'Kubernetes', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: true },
         children: [
           {
             path: 'deployment-list',
             name: 'Deployment List',
             hidden: true,
             component: () => import('@/views/DeploymentList'),
-            meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'Deployment List', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           },
           {
             path: 'pods-list',
             name: 'Pods List',
             hidden: true,
             component: () => import('@/views/PodsList'),
-            meta: { title: 'Pods List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'Pods List', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           },
           {
             path: 'service-list',
             name: 'Service List',
             hidden: true,
             component: () => import('@/views/ServiceList'),
-            meta: { title: 'Service List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'Service List', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           },
           {
             path: 'secret-list',
             name: 'Secret List',
             hidden: true,
             component: () => import('@/views/SecretList'),
-            meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'Secret List', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           },
           {
             path: 'configmaps-list',
             name: 'ConfigMaps List',
             hidden: true,
             component: () => import('@/views/ConfigMapsList'),
-            meta: { title: 'ConfigMaps List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'ConfigMaps List', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           },
           {
             path: 'ingress-list',
             name: 'Ingress List',
             hidden: true,
             component: () => import('@/views/IngressList'),
-            meta: { title: 'Ingress List', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'Ingress List', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           }
         ]
       },
@@ -452,21 +433,21 @@ export const asyncRoutes = [
         path: 'plugin-resource',
         name: 'Plugin Resource',
         component: () => import('@/views/PluginResource'),
-        meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'harbor',
         name: 'Harbor',
         hidden: true,
         component: () => import('@/views/ProjectResource'),
-        meta: { title: 'Harbor', roles: ['Project Manager', 'Administrator'], rolePage: true },
+        meta: { title: 'Harbor', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: true },
         children: [
           {
             path: 'artifacts',
             name: 'Artifacts',
             hidden: true,
             component: () => import('@/views/ProjectArtifacts'),
-            meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator'], rolePage: false }
+            meta: { title: 'Artifacts', roles: ['Project Manager', 'Administrator', 'Engineer'], rolePage: false }
           }
         ]
       }

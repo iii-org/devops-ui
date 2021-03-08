@@ -50,7 +50,7 @@ export default {
   methods: {
     ...mapActions(['projects/getProjectList']),
     async fetchData() {
-      await this['projects/getProjectList']().data
+      await this['projects/getProjectList']()
       return this.projectList
     },
     handleEdit(idx, row) {
@@ -58,7 +58,8 @@ export default {
       this.dialogStatus = 2
       this.form = Object.assign({}, this.form, row)
     },
-    handleDelete() {},
+    handleDelete() {
+    },
     handleAdding() {
       this.dialogVisible = true
       this.dialogStatus = 1
@@ -145,17 +146,9 @@ export default {
         min-width="200"
       >
         <template slot-scope="scope">
-          <router-link
-            :to="{
-              name: 'cicdPipelines',
-              params: { pId: scope.row.repository_ids }
-            }"
-            style="color: #409eff"
-          >
-            <span style="color: #67c23a">{{ scope.row.display }}</span>
-            <br>
-            <span>{{ scope.row.name }}</span>
-          </router-link>
+          <span style="color: #67c23a">{{ scope.row.display }}</span>
+          <br>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120">
@@ -335,7 +328,8 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
+        <el-button type="primary" :loading="confirmLoading"
+                   @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
@@ -343,6 +337,7 @@ export default {
 <style lang="scss" scoped>
 .clearfix {
   clear: both;
+
   .newBtn {
     float: right;
     padding-right: 6px;
