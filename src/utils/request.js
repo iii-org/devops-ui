@@ -68,10 +68,18 @@ service.interceptors.response.use(
   },
   error => {
     const res = error.response.data
-    const res_msg =
-      (res.error && i18n.te(`errorMessage.${res.error.code}`))
-        ? i18n.t(`errorMessage.${res.error.code}`, res.error.details || {})
-        : res.message
+    let res_msg
+    if (res.error && i18n.te(`errorMessage.${res.error.code}`)) {
+      const details = {}
+      if (res.error.details) {
+        for (const key in res.error.details) {
+          details[key] = JSON.stringify(res.error.details[key])
+        }
+      }
+      res_msg = i18n.t(`errorMessage.${res.error.code}`, details)
+    } else {
+      res_msg = res.message
+    }
     Message({
       message: res_msg,
       type: res.error.code < 3000 ? 'warning' : 'error',
