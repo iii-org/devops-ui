@@ -2,10 +2,12 @@
 import EditorMD from '@/components/Editormd'
 import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ProjectWiki',
   components: {
+    ElTableColumnTime,
     EditorMD
   },
   mixins: [MixinElTableWithAProject],
@@ -25,7 +27,7 @@ export default {
       wikiTitle: [
         { required: true, message: 'Please input name', trigger: 'change' },
         {
-          pattern: /^((?!,|\.|\/|\?|;|:|\|).)*$/,
+          pattern: /^((?![,.\/?;:|]).)*$/,
           message: 'Not allowing special characters (, . / ? ; : |)',
           trigger: 'blur'
         }
@@ -66,6 +68,7 @@ export default {
           type: 'success'
         })
         this.dialogVisible = false
+        await this.loadData()
       } catch (error) {
         console.error(error)
       }
@@ -138,12 +141,12 @@ export default {
             message: this.$t('Notify.Created'),
             type: 'success'
           })
-          await this.loadData()
         } catch (error) {
           console.error(error)
         } finally {
           this.dialogVisible = false
           this.editBtnLoading = false
+          await this.loadData()
         }
       })
     }
@@ -187,16 +190,8 @@ export default {
     >
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
-        <template slot-scope="scope">
-          <span>{{ scope.row.created_on | formatTime }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.UpdateTime')" width="190">
-        <template slot-scope="scope">
-          <span>{{ scope.row.updated_on | formatTime }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="created_on" label="general.CreateTime" />
+      <el-table-column-time prop="updated_on" />
       <el-table-column align="center" :label="$t('general.Actions')" width="300">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">

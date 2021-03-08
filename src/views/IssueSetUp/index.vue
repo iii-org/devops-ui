@@ -30,11 +30,12 @@ import {
   getTestValueType
 } from '@/api/issueTestValue'
 import EditorMD from '@/components/Editormd'
-
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'IssueSetUp',
   components: {
+    ElTableColumnTime,
     FlowDialog,
     ParamDialog,
     TestDialog,
@@ -566,11 +567,7 @@ export default {
               {{ scope.row.comment_author }}
             </template>
           </el-table-column>
-          <el-table-column label="Comment Time" width="180">
-            <template slot-scope="scope">
-              {{ scope.row.comment_at | relativeTime }}
-            </template>
-          </el-table-column>
+          <el-table-column-time prop="comment_at" label="Issue.CommentTime" />
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="Flow" name="Flow">

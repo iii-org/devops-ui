@@ -269,13 +269,6 @@ export const asyncRoutes = [
         meta: { title: 'Pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
-        path: 'dev-branch/:branchName/test',
-        name: 'DevBranchTest',
-        hidden: true,
-        component: () => import('@/views/ProcessDevBranchTestResult'),
-        meta: { title: 'Dev Branch Test Result', roles: ['Project Manager', 'Administrator', 'Engineer'] }
-      },
-      {
         path: 'dev-environment',
         name: 'DevEnvironment',
         component: () => import('@/views/ProgressDevEnvironment'),

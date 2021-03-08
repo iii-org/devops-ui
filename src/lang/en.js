@@ -219,7 +219,8 @@ export default {
     Length: 'Length',
     Limit: 'Limit',
     AddBy: 'Added by {user}',
-    Author: 'Author'
+    Author: 'Author',
+    CommentTime: 'Comment Time'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

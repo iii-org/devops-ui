@@ -43,11 +43,7 @@
           <span>{{ scope.row.issue_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Last Update Time" width="140">
-        <template slot-scope="scope">
-          <span>{{ scope.row.last_test_time | relativeTime }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="last_test_time" label="general.LastUpdateTime" />
       <el-table-column label="Last Test Result" align="center" width="130">
         <template slot-scope="scope">
           <div>
@@ -73,8 +69,10 @@
 <script>
 import { getIssuesByUser } from '@/api/issue'
 import { mapGetters } from 'vuex'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
+  components: { ElTableColumnTime },
   data() {
     return {
       list: null,

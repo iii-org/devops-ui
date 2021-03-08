@@ -83,17 +83,16 @@ export default {
     Creator: '建立者',
     CreateTime: '建立時間',
     StartTime: '開始時間',
-    UpdateTime: '修改時間',
     PleaseInput: '請輸入',
     Close: '關閉',
     Disable: '停用',
     Enable: '啟用',
-    LastUpdateTime: '最終更新',
     Redeploy: '重新部署',
     Success: '成功',
     Warning: '警告',
     Info: '資訊',
-    Error: '錯誤'
+    Error: '錯誤',
+    LastUpdateTime: '最終更新'
   },
   Notify: {
     Updated: '已更新',
@@ -219,7 +218,8 @@ export default {
     Length: '長度',
     Limit: '限制',
     AddBy: '由{user}新增',
-    Author: '作者'
+    Author: '作者',
+    CommentTime: '加註於'
   },
   Wiki: {
     AddWiki: '新增Wiki',
@@ -293,7 +293,6 @@ export default {
     Version: '版本',
     Status: '專案狀態',
     Progress: '專案工作進度',
-    UpdateTime: '最終更新',
     deleteProjectConfirmText: '確認刪除？',
     PleaseType: '請輸入',
     AndThen: '進行刪除或取消操作',
@@ -323,7 +322,6 @@ export default {
   },
   ProcessDevBranch: {
     Commit: 'Commit',
-    LastUpdateTime: '最終更新',
     Environment: '測試環境',
     SearchBranch: '搜尋分支',
     Branch: '分支',
@@ -337,7 +335,6 @@ export default {
     Branch: '分支',
     CommitMessage: '上傳訊息',
     TransitioningMessage: '處理訊息',
-    LastUpdateTime: '最後更新',
     SearchCommitMessage: '搜尋 上傳訊息'
   },
   ProcessDevEnvironment: {
