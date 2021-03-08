@@ -39,7 +39,7 @@ export default {
       this.$router.push({ name: `${target} List` })
     },
     allowEditUsage(target) {
-      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'Ingress']
+      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingress']
       return allowList.findIndex(i => i === target) > -1
     },
     handleChartData(data) {
