@@ -60,12 +60,11 @@
           <el-row :gutter="10">
             <el-col v-for="pod in deployment.pods" :key="pod.pod_name" class="mb-1" :sm="12" :md="8" :lg="6" :xl="4">
               <el-card :body-style="{ padding: '10px', 'background-color': '#f9fafc' }" shadow="never">
-                <div class="mb-3">
+                <div class="mb-2 ml-2">
                   <svg-icon class="mr-1 text-caption" icon-class="k8s-pod" />
                   <span class="text-caption">{{ $t('ProcessDevEnvironment.Pod') }}</span>
-                  <div class="font-weight-bold ml-3">{{ pod.pod_name }}</div>
+                  <div class="font-weight-bold">{{ pod.pod_name }}</div>
                 </div>
-                <!-- <span class="text-h6">{{ pod.pod_name }}</span> -->
                 <el-row :gutter="10">
                   <el-col :span="24">
                     <el-card
