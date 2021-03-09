@@ -373,7 +373,8 @@ export default {
     State: 'State',
     Container: 'Container',
     Image: 'Image',
-    Services: 'Services'
+    Services: 'Services',
+    Pod: 'Pod'
   },
   ProjectResource: {
     Usage: 'Usage',

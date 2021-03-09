@@ -368,7 +368,8 @@ export default {
     State: '狀態',
     Container: '容器',
     Image: '映像檔',
-    Services: '服務'
+    Services: '服務',
+    Pod: 'Pod'
   },
   ProjectResource: {
     Usage: '使用量',
