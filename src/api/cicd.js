@@ -45,3 +45,11 @@ export function getPipelinesPhase(rId, bName) {
     method: 'get'
   })
 }
+
+export function getPipelinesConfig(rId, params) {
+  return request({
+    url: `/pipelines/${rId}/config`,
+    method: 'get',
+    params
+  })
+}
