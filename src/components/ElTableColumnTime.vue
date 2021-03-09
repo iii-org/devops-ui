@@ -21,7 +21,7 @@ export default {
 </script>
 
 <template>
-  <el-table-column align="center" :label="label" :min-width="minWidth">
+  <el-table-column align="center" v-bind="$props">
     <template slot-scope="scope">
       <el-tooltip placement="top" :content="scope.row[prop] | UTCtoLocalTime">
         <span>{{ scope.row[prop] | relativeTime }}</span>
