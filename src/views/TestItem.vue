@@ -37,12 +37,11 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTable],
   data() {
     return {
       activeName: 'testItem',
       testCaseId: 0,
-      testCase: { name: '', data: { method: '', url: '' } },
+      testCase: { name: '', data: { method: '', url: '' }},
       testItemList: [],
       testItemDialogVisible: false,
       selectTestItem: '',
@@ -300,7 +299,6 @@ export default {
               fit
               highlight-current-row
               class="mt-2"
-              height="100%"
             >
               <el-table-column :label="$t('TestItem.Id')">
                 <template slot-scope="scope">
