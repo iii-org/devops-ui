@@ -14,7 +14,7 @@
 
     <el-row v-if="filteredData.length > 0" :gutter="10">
       <el-col v-for="deployment in filteredData" :key="deployment.commit_id" v-loading="listLoading" :span="24">
-        <el-card class="mb-2" :body-style="{ padding: '20px', 'background-color': '#f9fafc' }" shadow="never">
+        <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
           <div class="d-flex justify-space-between mb-2">
             <div>
               <span class="text-h6 font-weight-bold">
@@ -59,7 +59,7 @@
           </div>
           <el-row :gutter="10">
             <el-col v-for="pod in deployment.pods" :key="pod.pod_name" class="mb-1" :sm="12" :md="8" :lg="6" :xl="4">
-              <el-card :body-style="{ padding: '10px' }" shadow="never">
+              <el-card :body-style="{ padding: '10px', 'background-color': '#f9fafc' }" shadow="never">
                 <div class="mb-3">
                   <svg-icon class="mr-1 text-caption" icon-class="k8s-pod" />
                   <span class="text-caption">{{ $t('ProcessDevEnvironment.Pod') }}</span>
