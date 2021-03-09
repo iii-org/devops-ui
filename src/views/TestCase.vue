@@ -1,16 +1,15 @@
 <script>
 import { mapGetters } from 'vuex'
-import Pagination from '@/components/Pagination'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import {
-  getTestCaseByProject,
   addTestCaseByProject,
-  updateTestCase,
   deleteTestCase,
   getTestCaseAPIMethod,
-  getTestCaseType
+  getTestCaseByProject,
+  getTestCaseType,
+  updateTestCase
 } from '@/api/testCase'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 const formTemplate = {
   name: '',
@@ -22,7 +21,7 @@ const formTemplate = {
 
 export default {
   name: 'APITestCase',
-  components: { ProjectListSelector, Pagination },
+  components: { ProjectListSelector },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -33,20 +32,12 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithAProject],
   data: () => ({
-    testCaseList: [],
     dialogVisible: false,
     dialogStatus: 1,
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    listTotal: 0,
     testCaseForm: formTemplate,
     confirmLoading: false,
-    searchData: '',
     testCaseTypeList: [],
     testCaseAPIMethodList: [],
     testCaseFormRules: {
@@ -57,18 +48,7 @@ export default {
     }
   }),
   computed: {
-    ...mapGetters(['projectSelectedId', 'userRole']),
-    pagedData() {
-      const listData = this.testCaseList.filter(data => {
-        if (this.searchData === '' || data.name.toLowerCase().includes(this.searchData.toLowerCase())) {
-          return data
-        }
-      })
-      this.listTotal = listData.length
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return listData.slice(start, end)
-    },
+    ...mapGetters(['selectedProjectId', 'userRole']),
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -80,35 +60,19 @@ export default {
       }
     }
   },
-  watch: {
-    projectSelectedId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.searchData = ''
-    },
-    searchData() {
-      this.listQuery.page = 1
-    }
-  },
-  created() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      Promise.all([getTestCaseType(), getTestCaseAPIMethod(), getTestCaseByProject(this.projectSelectedId)])
-        .then(res => {
-          this.testCaseTypeList = res[0].data.map(item => {
-            return { label: item.name, value: item.test_case_type_id }
-          })
-          this.testCaseAPIMethodList = res[1].data.map(item => {
-            return { label: item.name, value: item.Http_Method_id }
-          })
-          this.testCaseList = res[2].data
-        })
-        .finally(() => {
-          this.listLoading = false
-        })
+      let res
+      res = await getTestCaseType()
+      this.testCaseTypeList = res.data.map(item => {
+        return { label: item.name, value: item.test_case_type_id }
+      })
+      res = await getTestCaseAPIMethod()
+      this.testCaseAPIMethodList = res.data.map(item => {
+        return { label: item.name, value: item.Http_Method_id }
+      })
+      res = await getTestCaseByProject(this.selectedProjectId)
+      return res.data
     },
     handleEdit(idx, row) {
       this.dialogVisible = true
@@ -120,7 +84,7 @@ export default {
     },
     async handleDelete(idx, row) {
       await deleteTestCase(row['id'])
-      this.fetchData()
+      await this.loadData()
     },
     handleAdding() {
       this.dialogVisible = true
@@ -161,15 +125,15 @@ export default {
             method: apiMethodObj['label'],
             method_id: apiMethodObj['value']
           }
-          testCaseData['project_id'] = this.projectSelectedId
+          testCaseData['project_id'] = this.selectedProjectId
           if (this.dialogStatus === 1) {
-            await addTestCaseByProject(this.projectSelectedId, testCaseData)
+            await addTestCaseByProject(this.selectedProjectId, testCaseData)
           } else {
             await updateTestCase(testCaseData['id'], testCaseData)
           }
           this.$refs['testCaseForm'].resetFields()
           this.dialogVisible = false
-          this.fetchData()
+          await this.loadData()
         } else {
           return false
         }
@@ -212,7 +176,6 @@ export default {
         highlight-current-row
         :data="pagedData"
         height="100%"
-
       >
         <el-table-column align="center" :label="$t('TestCase.Id')" width="110">
           <template slot-scope="scope">
@@ -277,7 +240,7 @@ export default {
         </el-table-column>
       </el-table>
       <pagination
-        :total="listTotal"
+        :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
