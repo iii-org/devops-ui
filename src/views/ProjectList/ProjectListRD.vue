@@ -59,8 +59,7 @@ export default {
       this.dialogStatus = 2
       this.form = Object.assign({}, this.form, row)
     },
-    handleDelete() {
-    },
+    handleDelete() {},
     handleAdding() {
       this.dialogVisible = true
       this.dialogStatus = 1
@@ -130,7 +129,6 @@ export default {
       highlight-current-row
       :data="pagedData"
       height="100%"
-
       :cell-style="{ height: rowHeight + 'px' }"
     >
       <el-table-column
@@ -320,8 +318,7 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="confirmLoading"
-                   @click="handleConfirm">Confirm</el-button>
+        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
       </span>
     </el-dialog>
   </div>

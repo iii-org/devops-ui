@@ -92,14 +92,23 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row height="100%" :cell-style="{height: rowHeight + 'px'}"
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+      :cell-style="{ height: rowHeight + 'px' }"
     >
-      <el-table-column :label="$t('Project.Name') + '/' + $t('Project.Identifier')" :show-overflow-tooltip="true"
-                       min-width="250"
+      <el-table-column
+        :label="$t('Project.Name') + '/' + $t('Project.Identifier')"
+        :show-overflow-tooltip="true"
+        min-width="250"
       >
         <template slot-scope="scope">
-          <el-link type="primary" style="font-size: 16px" :underline="false" @click="handleClick(scope.row.id)">
+          <el-link type="primary" :underline="false" @click="handleClick(scope.row.id)">
             {{ scope.row.display }}
           </el-link>
           <br>
