@@ -115,7 +115,8 @@ export default {
     Success: 'Success',
     Warning: 'Warning',
     Info: 'Info',
-    Error: 'Error'
+    Error: 'Error',
+    Refresh: 'Refresh'
   },
   Notify: {
     Updated: 'update successful',

@@ -105,16 +105,18 @@ export default {
     Creator: '建立者',
     CreateTime: '建立時間',
     StartTime: '開始時間',
+    UpdateTime: '更新時間',
     PleaseInput: '請輸入',
     Close: '關閉',
     Disable: '停用',
     Enable: '啟用',
+    LastUpdateTime: '最終更新',
     Redeploy: '重新部署',
     Success: '成功',
     Warning: '警告',
     Info: '資訊',
     Error: '錯誤',
-    LastUpdateTime: '最終更新'
+    Refresh: '更新'
   },
   Notify: {
     Updated: '已更新',
