@@ -207,7 +207,7 @@ export default {
       <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
         <el-form-item :label="$t('general.Name')" prop="id">
           <el-select v-model="form.id" :placeholder="$t('Member.SelectMember')" filterable>
-            <el-option v-for="item in assignableUsers" :key="item.id" :label="item.login" :value="item.id" />
+            <el-option v-for="item in assignableUsers" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('Member.Role')" prop="role_name">
