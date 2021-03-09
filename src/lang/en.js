@@ -242,7 +242,8 @@ export default {
     Limit: 'Limit',
     AddBy: 'Added by {user}',
     Author: 'Author',
-    CommentTime: 'Comment Time'
+    CommentTime: 'Comment Time',
+    ParentIssue: 'Parent Issue'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

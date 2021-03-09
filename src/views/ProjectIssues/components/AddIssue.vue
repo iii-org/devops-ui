@@ -12,7 +12,7 @@
         <el-row v-if="parentId != 0">
           <el-col :span="12">
             <el-form-item>
-              <div style="font-weight: bold">Parent issue : {{ parentName }}</div>
+              <div style="font-weight: bold">{{ $t('Issue.ParentIssue') }} : {{ parentName }}</div>
             </el-form-item>
           </el-col>
         </el-row>

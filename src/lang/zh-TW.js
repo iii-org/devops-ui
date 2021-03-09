@@ -241,7 +241,8 @@ export default {
     Limit: '限制',
     AddBy: '由{user}新增',
     Author: '作者',
-    CommentTime: '加註於'
+    CommentTime: '加註於',
+    ParentIssue: '子議題'
   },
   Wiki: {
     AddWiki: '新增Wiki',

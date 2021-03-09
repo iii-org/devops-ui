@@ -130,6 +130,52 @@ export default {
     },
     isParentIssue(row) {
       return row.parent_id === null && row.children.length === 0
+    },
+    getPriorityTagType(priority) {
+      switch (priority) {
+        case 'Immediate':
+          return 'danger'
+        case 'High':
+          return 'warning'
+        case 'Normal':
+          return 'success'
+        default:
+          return 'slow'
+      }
+    },
+    getStatusTagType(status) {
+      switch (status) {
+        case 'Active':
+          return 'active'
+        case 'Assigned':
+          return 'assigned'
+        case 'Solved':
+          return 'solved'
+        case 'Responded':
+          return 'responded'
+        case 'Closed':
+          return 'close'
+        default:
+          return 'finish'
+      }
+    },
+    getCategoryTagType(category) {
+      switch (category) {
+        case 'Feature':
+          return 'point feature'
+        case 'Document':
+          return 'point document'
+        case 'Bug':
+          return 'point bug'
+        case 'Research':
+          return 'point research'
+        default:
+          return 'point feature'
+      }
+    },
+    handleAddNewIssue() {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
     }
   }
 }
@@ -148,7 +194,7 @@ export default {
               type="success"
               style="float: right"
               :disabled="selectedProjectId === -1"
-              @click="(addTopicDialogVisible = true); (parentId = 0)"
+              @click="handleAddNewIssue"
             >
               <i class="el-icon-plus" />
               {{ $t('Issue.AddIssue') }}
@@ -181,7 +227,7 @@ export default {
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
           <template slot-scope="scope">
             <span :class="isParentIssue(scope.row) ? 'ml-6' : ''">
-              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="bottom-start">
+              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="bottom-start" :open-delay="1000">
                 <el-button
                   v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
                   :id="`btn-add-sub-issue-${scope.$index}`"
@@ -193,7 +239,7 @@ export default {
                   @click="handleParent(scope.$index, scope.row, scope)"
                 />
               </el-tooltip>
-              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start">
+              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start" :open-delay="1000">
                 <el-button
                   :id="`link-issue-name-${scope.$index}`"
                   class="mr-1"
@@ -212,61 +258,32 @@ export default {
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="150">
           <template slot-scope="scope">
-            <span v-if="scope.row.issue_category === 'Feature'" class="point feature" />
-            <span v-else-if="scope.row.issue_category === 'Document'" class="point document" />
-            <span v-else-if="scope.row.issue_category === 'Bug'" class="point bug" />
-            <span v-else-if="scope.row.issue_category === 'Research'" class="point research" />
-            <span v-else class="point feature" />{{ scope.row.issue_category }}
+            <span v-if="scope.row.issue_category" :class="getCategoryTagType(scope.row.issue_category)" />
+            {{ scope.row.issue_category }}
           </template>
         </el-table-column>
-        <!-- <el-table-column align="center" label="Description">
-          <template slot-scope="scope">
-            {{ scope.row.description }}
-          </template>
-        </el-table-column> -->
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.issue_status === 'Active'" type="active" size="medium"
-                    effect="dark">
+            <el-tag
+              v-if="scope.row.issue_status"
+              :type="getStatusTagType(scope.row.issue_status)"
+              size="medium"
+              effect="dark"
+            >
               {{ scope.row.issue_status }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Assigned'" type="assigned" size="medium"
-                    effect="dark">
-              {{ scope.row.issue_status }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Solved'" type="solved" size="medium"
-                    effect="dark">
-              {{ scope.row.issue_status }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Responded'" type="responded"
-                    size="medium" effect="dark">
-              {{ scope.row.issue_status }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.issue_status === 'Closed'" type="close" size="medium"
-                    effect="dark">
-              {{ scope.row.issue_status }}
-            </el-tag>
-            <el-tag v-else type="finish" size="medium" effect="dark"> {{ scope.row.issue_status }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180"
-                         prop="assigned_to" />
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium"
-                    effect="dark">
+            <el-tag
+              v-if="scope.row.issue_priority"
+              :type="getPriorityTagType(scope.row.issue_priority)"
+              size="medium"
+              effect="dark"
+            >
               {{ scope.row.issue_priority }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium"
-                    effect="dark">
-              {{ scope.row.issue_priority }}
-            </el-tag>
-            <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium"
-                    effect="dark">
-              {{ scope.row.issue_priority }}
-            </el-tag>
-            <el-tag v-else type="slow" size="medium" effect="dark">{{ scope.row.issue_priority }}
             </el-tag>
           </template>
         </el-table-column>
