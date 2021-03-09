@@ -1,0 +1,24 @@
+.border {
+  border: 1px solid;
+}
+
+.border- {
+  &success {
+    border-color: $success;
+  }
+  &danger {
+    border-color: $danger;
+  }
+  &warning {
+    border-color: $warning;
+  }
+  &slow {
+    border-color: $slow;
+  }
+  &warning {
+    border-color: $warning;
+  }
+  &light {
+    border-color: $light;
+  }
+}
