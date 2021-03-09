@@ -56,7 +56,9 @@ export default {
     'Secret List': 'Secret 列表',
     'ConfigMaps List': 'ConfigMaps 列表',
 
-    Artifacts: '資源成品'
+    Artifacts: '資源成品',
+
+    'System Arguments': '參數設定'
   },
   navbar: {
     logOut: '登出',
@@ -427,5 +429,9 @@ export default {
   Loading: '讀取中……',
   Harbor: {
     PushTime: '推送時間'
+  },
+  System: {
+    Secrets: 'Secrets',
+    Registry: 'Registry'
   }
 }

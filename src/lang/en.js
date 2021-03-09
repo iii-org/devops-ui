@@ -56,7 +56,9 @@ export default {
     'Secret List': 'Secret List',
     'ConfigMaps List': 'ConfigMaps List',
 
-    Artifacts: 'Project Artifacts'
+    Artifacts: 'Project Artifacts',
+
+    'System Arguments': 'System Arguments'
   },
   navbar: {
     logOut: 'Log Out',
@@ -433,5 +435,9 @@ export default {
   Loading: 'Loading...',
   Harbor: {
     PushTime: 'Push Time'
+  },
+  System: {
+    Secrets: 'Secrets',
+    Registry: 'Registry'
   }
 }

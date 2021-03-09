@@ -505,16 +505,10 @@ export const asyncRoutes = [
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
-        path: 'system-secrets',
-        name: 'System Secrets',
-        component: () => import('@/views/SystemSecrets'),
-        meta: { title: 'System Secrets', roles: ['Administrator'] }
-      },
-      {
-        path: 'system-registry',
-        name: 'System Registry',
-        component: () => import('@/views/SystemRegistry'),
-        meta: { title: 'System Registry', roles: ['Administrator'] }
+        path: 'system-arguments',
+        name: 'System Arguments',
+        component: () => import('@/views/SystemArguments'),
+        meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
       {
         path: 'validation',
