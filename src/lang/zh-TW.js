@@ -379,7 +379,8 @@ export default {
     DeleteResourceConfirmText: '確認刪除？',
     PleaseType: '請輸入',
     AndThen: '進行刪除或取消操作',
-    Storage: '硬碟空間'
+    Storage: '硬碟空間',
+    Details: '詳細資料 》'
   },
   ProjectUsage: {
     SearchPods: '搜尋 Pods'
