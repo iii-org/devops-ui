@@ -1,11 +1,7 @@
 <script>
-import {
-  addProjectVersion,
-  deleteProjectVersion,
-  editProjectVersion,
-  getProjectVersion
-} from '@/api/projects'
+import { addProjectVersion, deleteProjectVersion, editProjectVersion, getProjectVersion } from '@/api/projects'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
   name: '',
@@ -16,6 +12,7 @@ const formTemplate = {
 
 export default {
   name: 'ProjectVersions',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     dialogVisible: false,
@@ -130,11 +127,7 @@ export default {
           {{ scope.row.due_date }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.LastUpdateTime')" width="190">
-        <template slot-scope="scope">
-          {{ scope.row.updated_on | formatTime }}
-        </template>
-      </el-table-column>
+      <el-table-column-time :label="$t('general.LastUpdateTime')" prop="updated_on " width="190" />
       <el-table-column align="center" :label="$t('general.Status')" min-width="60">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'open'" type="success" size="medium" effect="dark">{{

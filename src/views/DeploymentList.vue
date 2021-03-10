@@ -1,9 +1,11 @@
 <script>
 import { deleteDeployment, getDeploymentList, updateDeployment } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'DeploymentList',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     btnLoading: false
@@ -57,13 +59,18 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
       <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" width="190">
-        <template slot-scope="scope">
-          {{ scope.row.createion_timestamp | formatTime }}
-        </template>
-      </el-table-column>
+      <el-table-column-time :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" width="190" />
+
       <el-table-column :label="$t('DeploymentList.Container')" align="center" min-width="200">
         <template slot-scope="scope">
           <div v-for="(item, idx) in scope.row.container" :key="item + idx">

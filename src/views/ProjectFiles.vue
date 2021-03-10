@@ -8,6 +8,7 @@ import {
   uploadProjectFile
 } from '@/api/projects'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
   name: '',
@@ -17,6 +18,7 @@ const formTemplate = {
 
 export default {
   name: 'ProjectFiles',
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data: () => ({
     dialogVisible: false,
@@ -215,11 +217,8 @@ export default {
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
-        <template slot-scope="scope">
-          {{ scope.row.created_on | formatTime }}
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" width="190" />
+
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="scope">
           <el-button

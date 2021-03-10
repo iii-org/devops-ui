@@ -2,9 +2,11 @@
 import { updateIssue, deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
 import { fileExtension } from '@/utils/extension'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'FileTab',
+
   props: {
     issueId: {
       type: Number,
@@ -15,7 +17,7 @@ export default {
       default: () => []
     }
   },
-
+  components: { ElTableColumnTime },
   data: () => ({
     isLoading: false,
     isUploading: false,
@@ -113,11 +115,7 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('general.CreateTime')" align="center" width="190">
-        <template slot-scope="scope">
-          {{ scope.row.created_on | formatTime }}
-        </template>
-      </el-table-column>
+      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" width="190"  />
 
       <el-table-column :label="$t('general.Actions')" align="center" width="250">
         <template slot-scope="scope">

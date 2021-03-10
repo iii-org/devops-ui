@@ -3,11 +3,13 @@ import { mapGetters } from 'vuex'
 import { deleteUser, getAllUser, getInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
 import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'UserManage',
   components: {
-    UserDialog
+    UserDialog,
+    ElTableColumnTime
   },
   mixins: [MixinElTable],
   data: () => ({
@@ -88,15 +90,19 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
       <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
       <el-table-column align="center" label="Email" prop="email" min-width="250" />
-      <el-table-column align="center" :label="$t('general.CreateTime')" width="190">
-        <template slot-scope="scope">
-          {{ scope.row.create_at | formatTime }}
-        </template>
-      </el-table-column>
+      <el-table-column-time :label="$t('general.CreateTime')" width="190" prop="create_at" />
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
       <el-table-column align="center" :label="$t('general.Status')" width="120">
         <template slot-scope="scope">
