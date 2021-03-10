@@ -1,5 +1,5 @@
 <script>
-import { deleteSecret, getSecretList } from '@/api/projectResource'
+import { deleteSecret, getSecretList } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {

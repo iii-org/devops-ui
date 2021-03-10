@@ -1,5 +1,5 @@
 <script>
-import { deleteService, getServiceList } from '@/api/projectResource'
+import { deleteService, getServiceList } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {

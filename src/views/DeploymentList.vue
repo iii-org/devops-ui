@@ -1,5 +1,5 @@
 <script>
-import { deleteDeployment, getDeploymentList, updateDeployment } from '@/api/projectResource'
+import { deleteDeployment, getDeploymentList, updateDeployment } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {

@@ -1,5 +1,5 @@
 <script>
-import { deletePod, getPodList, getPodLog } from '@/api/projectResource'
+import { deletePod, getPodList, getPodLog } from '@/api/kubernetes'
 import PodLog from './components/PodLog'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 

@@ -1,5 +1,5 @@
 <script>
-import { getProjectUsage } from '@/api/projectResource'
+import { getProjectUsage } from '@/api/kubernetes'
 import resourcePie from './components/resourcePie'
 import {
   formatChartDataResult,

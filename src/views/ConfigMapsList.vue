@@ -1,5 +1,5 @@
 <script>
-import { deleteConfigmap, getConfigmapList } from '@/api/projectResource'
+import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {

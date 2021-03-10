@@ -225,23 +225,4 @@ export function deleteProjectFile(file_id) {
   })
 }
 
-export function getDevEnvironmentList(pId) {
-  return request({
-    url: `/project/${pId}/environment`,
-    method: 'get'
-  })
-}
 
-export function redeployDevEnvironmentByBranchName(pId, brachName) {
-  return request({
-    url: `/project/${pId}/environment/branch/${brachName}`,
-    method: 'put'
-  })
-}
-
-export function deleteDevEnvironmentByBranchName(pId, brachName) {
-  return request({
-    url: `/project/${pId}/environment/branch/${brachName}`,
-    method: 'delete'
-  })
-}

@@ -168,10 +168,10 @@
 
 <script>
 import {
-  deleteDevEnvironmentByBranchName,
-  getDevEnvironmentList,
-  redeployDevEnvironmentByBranchName
-} from '@/api/projects'
+  deleteEnvironmentByBranchName,
+  getEnvironmentList,
+  redeployEnvironmentByBranchName
+} from '@/api/kubernetes'
 import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
 
 export default {
@@ -183,13 +183,13 @@ export default {
   }),
   methods: {
     async fetchData() {
-      const res = await getDevEnvironmentList(this.selectedProjectId)
+      const res = await getEnvironmentList(this.selectedProjectId)
       return res.data
     },
     async redeploy(pId, branchName) {
       this.btnLoading = true
       try {
-        await redeployDevEnvironmentByBranchName(pId, branchName)
+        await redeployEnvironmentByBranchName(pId, branchName)
         await this.loadData()
       } catch (error) {
         console.error(error)
@@ -237,7 +237,7 @@ export default {
     async handleDelete(pId, branchName) {
       this.btnLoading = true
       try {
-        await deleteDevEnvironmentByBranchName(pId, branchName)
+        await deleteEnvironmentByBranchName(pId, branchName)
         await this.loadData()
       } catch (error) {
         console.error(error)
