@@ -4,7 +4,7 @@
       <i class="el-icon-location" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="language === 'zh'" command="zh">
+      <el-dropdown-item :disabled="language === 'zh-TW'" command="zh-TW">
         中文
       </el-dropdown-item>
       <el-dropdown-item :disabled="language === 'en'" command="en">
