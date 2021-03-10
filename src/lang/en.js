@@ -78,9 +78,9 @@ export default {
     2004: 'Wrong password or username.',
     2005: 'The username or e-mail is already used.',
     2006: 'The user {user_id} is already in project {project_id}.',
-    3001: 'The user doesn\'t have permission for this operation.',
+    3001: "The user doesn't have permission for this operation.",
     3002: 'You need to be in the project for this operation.',
-    3003: 'You are not permitted to access another user\'s data.',
+    3003: "You are not permitted to access another user's data.",
     4001: 'Issue not found.',
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
@@ -138,6 +138,18 @@ export default {
     SingleFileLimit: 'Only one file can be added at a time, please delete the existing file first.',
     UnsupportedFileFormat: 'Unable to upload a file: This file type is not supported',
     FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)'
+  },
+  RuleMsg: {
+    PleaseInput: 'Please input',
+    PleaseSelect: 'Please select',
+    Invalid: 'Invalid',
+    Member: 'Member',
+    Email: 'email',
+    UserName: 'user name',
+    Password: 'password',
+    Description: 'description',
+    InputNewPwd: 'Please input new password',
+    InputRepeatPwd: 'Please input repeat password'
   },
   TestCase: {
     TestCase: 'Test Case',

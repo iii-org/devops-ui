@@ -151,6 +151,18 @@ export default {
     TestResult: '測試結果',
     SearchNameOrPathOrTestResult: '搜尋名稱,路徑或測試結果'
   },
+  RuleMsg: {
+    PleaseInput: '請輸入',
+    PleaseSelect: '請選擇',
+    Invalid: '無效的',
+    Member: '成員',
+    Email: '信箱',
+    UserName: '使用者名稱',
+    Password: '密碼',
+    Description: '敘述',
+    InputNewPwd: '請輸入新密碼',
+    InputRepeatPwd: '請再次輸入密碼'
+  },
   TestItem: {
     TestItem: '測試項目',
     AddTestItem: '新增測試項目',
