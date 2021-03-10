@@ -1,107 +1,114 @@
 import request from '@/utils/request'
 
-export function getProjectUsage(pId) {
+export function getProjectUsage(project_id) {
   return request({
-    url: `/project/${pId}/resource`,
+    url: `/project/${project_id}/resource`,
     method: 'get'
   })
 }
 
-export function updateProjectUsage(pId) {
+export function updateProjectUsage(project_id) {
   return request({
-    url: `/project/${pId}/resource`,
+    url: `/project/${project_id}/resource`,
     method: 'put'
   })
 }
 
-export function getPodList(pId) {
+export function getPodList(project_id) {
   return request({
-    url: `/project/${pId}/resource/list/pod`,
+    url: `/project/${project_id}/resource/list/pod`,
     method: 'get'
   })
 }
 
-export function getPodLog(pId, pod_name, params) {
+export function getPodLog(project_id, pod_name, params) {
   return request({
-    url: `/project/${pId}/resource/list/pod/${pod_name}/log`,
+    url: `/project/${project_id}/resource/list/pod/${pod_name}/log`,
     method: 'get',
     params
   })
 }
 
-export function deletePod(pId, pod_name) {
+export function deletePod(project_id, pod_name) {
   return request({
-    url: `/project/${pId}/resource/list/pod/${pod_name}`,
+    url: `/project/${project_id}/resource/list/pod/${pod_name}`,
     method: 'delete'
   })
 }
 
-export function getDeploymentList(pId) {
+export function getDeploymentList(project_id) {
   return request({
-    url: `project/${pId}/resource/list/deployment`,
+    url: `project/${project_id}/resource/list/deployment`,
     method: 'get'
   })
 }
 
-export function deleteDeployment(pId, deployment_name) {
+export function deleteDeployment(project_id, deployment_name) {
   return request({
-    url: `/project/${pId}/resource/list/deployment/${deployment_name}`,
+    url: `/project/${project_id}/resource/list/deployment/${deployment_name}`,
     method: 'delete'
   })
 }
 
-export function updateDeployment(pId, deployment_name) {
+export function updateDeployment(project_id, deployment_name) {
   return request({
-    url: `/project/${pId}/resource/list/deployment/${deployment_name}`,
+    url: `/project/${project_id}/resource/list/deployment/${deployment_name}`,
     method: 'put'
   })
 }
 
-export function getServiceList(pId) {
+export function getServiceList(project_id) {
   return request({
-    url: `/project/${pId}/resource/list/service`,
+    url: `/project/${project_id}/resource/list/service`,
     method: 'get'
   })
 }
 
-export function deleteService(pId, service_name) {
+export function deleteService(project_id, service_name) {
   return request({
-    url: `/project/${pId}/resource/list/service/${service_name}`,
+    url: `/project/${project_id}/resource/list/service/${service_name}`,
     method: 'delete'
   })
 }
 
-export function getSecretList(pId) {
+export function getSecretList(project_id) {
   return request({
-    url: `/project/${pId}/resource/list/secret`,
+    url: `/project/${project_id}/resource/list/secret`,
     method: 'get'
   })
 }
 
-export function deleteSecret(pId, secret_name) {
+export function deleteSecret(project_id, secret_name) {
   return request({
-    url: `/project/${pId}/resource/list/secret/${secret_name}`,
+    url: `/project/${project_id}/resource/list/secret/${secret_name}`,
     method: 'delete'
   })
 }
 
-export function getConfigmapList(pId) {
+export function getConfigmapList(project_id) {
   return request({
-    url: `/project/${pId}/resource/list/configmap`,
+    url: `/project/${project_id}/resource/list/configmap`,
     method: 'get'
   })
 }
 
-export function deleteConfigmap(pId, config_map_name) {
+export function deleteConfigmap(project_id, config_map_name) {
   return request({
-    url: `/project/${pId}/resource/list/configmap/${config_map_name}`,
+    url: `/project/${project_id}/resource/list/configmap/${config_map_name}`,
     method: 'delete'
   })
 }
 
-export function getIngressList(pId) {
+export function getIngressList(project_id) {
   return request({
-    url: `/project/${pId}/resource/list/ingress`,
+    url: `/project/${project_id}/resource/list/ingress`,
     method: 'get'
+  })
+}
+
+export function updateSecretList(project_id, secret_name) {
+  return request({
+    url: `/project/${project_id}/resource/list/secret/${secret_name}`,
+    method: 'put'
   })
 }
