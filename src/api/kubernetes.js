@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // secret
 export function getSecretList(project_id) {
   return request({
-    url: `/project/${project_id}/resource/secret`,
+    url: `/project/${project_id}/resource/secrets`,
     method: 'get'
   })
 }
@@ -17,7 +17,7 @@ export function addSecret(project_id, secret_name) {
 
 export function updateSecretList(project_id, secret_name) {
   return request({
-    url: `/project/${project_id}/resource/list/secret/${secret_name}`,
+    url: `/project/${project_id}/resource/secret/${secret_name}`,
     method: 'put'
   })
 }
@@ -39,7 +39,7 @@ export function deleteSecret(project_id, secret_name) {
 // config map
 export function getConfigmapList(project_id) {
   return request({
-    url: `/project/${project_id}/resource/configmap`,
+    url: `/project/${project_id}/resource/configmaps`,
     method: 'get'
   })
 }
@@ -54,14 +54,14 @@ export function deleteConfigmap(project_id, config_map_name) {
 // pod
 export function getPodList(project_id) {
   return request({
-    url: `/project/${project_id}/resource/list/pod`,
+    url: `/project/${project_id}/resource/pods`,
     method: 'get'
   })
 }
 
 export function getPodLog(project_id, pod_name, params) {
   return request({
-    url: `/project/${project_id}/resource/list/pod/${pod_name}/log`,
+    url: `/project/${project_id}/resource/pods/${pod_name}/log`,
     method: 'get',
     params
   })
@@ -77,7 +77,7 @@ export function deletePod(project_id, pod_name) {
 // service
 export function getServiceList(project_id) {
   return request({
-    url: `/project/${project_id}/resource/list/service`,
+    url: `/project/${project_id}/resource/services`,
     method: 'get'
   })
 }
@@ -92,14 +92,14 @@ export function deleteService(project_id, service_name) {
 // deployment
 export function getDeploymentList(project_id) {
   return request({
-    url: `project/${project_id}/resource/list/deployment`,
+    url: `project/${project_id}/resource/deployments`,
     method: 'get'
   })
 }
 
 export function deleteDeployment(project_id, deployment_name) {
   return request({
-    url: `/project/${project_id}/resource/list/deployment/${deployment_name}`,
+    url: `/project/${project_id}/resource/deployments/${deployment_name}`,
     method: 'delete'
   })
 }
@@ -114,7 +114,7 @@ export function updateDeployment(project_id, deployment_name) {
 // ingress
 export function getIngressList(project_id) {
   return request({
-    url: `/project/${project_id}/resource/list/ingress`,
+    url: `/project/${project_id}/resource/ingresses`,
     method: 'get'
   })
 }
