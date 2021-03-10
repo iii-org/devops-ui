@@ -111,7 +111,7 @@
                           >
                             <p :id="`copy-${serviceIdx}`" class="text-center">
                               <span class="text-subtitle-1 font-weight-bold">
-                                {{ service.url[0].substr(service.url[0].indexOf(':') + 3) }}
+                                {{ service.url[0] }}
                               </span>
                             </p>
                             <div class="d-flex justify-center">
