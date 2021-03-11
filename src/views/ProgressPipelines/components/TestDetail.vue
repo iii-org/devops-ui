@@ -1,21 +1,20 @@
 <template>
-  <el-dialog title="Test Detail" :visible="dialogVisible" width="80%" @close="handleClose">
+  <el-dialog title="Test Detail" :visible="dialogVisible" width="90%" @close="handleClose">
     <el-timeline>
       <el-timeline-item v-for="(activity, idx) in activities" :key="idx" placement="top">
         <el-card
           :body-style="{
             color: '#000',
-            background: '#FFF',
+            background: '#fcf7f8',
             lineHeight: 2
           }"
         >
-          <div class="d-flex justify-space-between">
-            <span class="text-h6"> {{ activity.name }} </span>
+          <div class="d-flex justify-space-between mb-3">
+            <span class="text-h6"><i class="el-icon-tickets mr-2" /> {{ activity.name }} </span>
             <el-tag v-if="activity.state" :type="getStateTagType(activity.state)" size="medium" effect="dark">
               {{ activity.state }}
             </el-tag>
           </div>
-          <el-divider />
           <el-card
             v-for="step in activity.steps"
             :key="step.message"
@@ -25,9 +24,10 @@
               background: '#222',
               lineHeight: 1,
               fontSize: '14px',
-              height: '200px',
+              height: '300px',
               overflow: 'auto'
             }"
+            shadow="never"
           >
             <pre>{{ step.message }}</pre>
           </el-card>
