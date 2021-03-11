@@ -17,21 +17,21 @@ export function addSecret(project_id, secret_name) {
 
 export function updateSecretList(project_id, secret_name) {
   return request({
-    url: `/project/${project_id}/resource/secret/${secret_name}`,
+    url: `/project/${project_id}/resource/secrets/${secret_name}`,
     method: 'put'
   })
 }
 
 export function getSecret(project_id, secret_name) {
   return request({
-    url: `/project/${project_id}/resource/secret/${secret_name}`,
+    url: `/project/${project_id}/resource/secrets/${secret_name}`,
     method: 'get'
   })
 }
 
 export function deleteSecret(project_id, secret_name) {
   return request({
-    url: `/project/${project_id}/resource/list/secret/${secret_name}`,
+    url: `/project/${project_id}/resource/secrets/${secret_name}`,
     method: 'delete'
   })
 }
@@ -69,7 +69,7 @@ export function getPodLog(project_id, pod_name, params) {
 
 export function deletePod(project_id, pod_name) {
   return request({
-    url: `/project/${project_id}/resource/list/pod/${pod_name}`,
+    url: `/project/${project_id}/resource/pods/${pod_name}`,
     method: 'delete'
   })
 }
@@ -84,7 +84,7 @@ export function getServiceList(project_id) {
 
 export function deleteService(project_id, service_name) {
   return request({
-    url: `/project/${project_id}/resource/list/service/${service_name}`,
+    url: `/project/${project_id}/resource/services/${service_name}`,
     method: 'delete'
   })
 }
@@ -106,7 +106,7 @@ export function deleteDeployment(project_id, deployment_name) {
 
 export function updateDeployment(project_id, deployment_name) {
   return request({
-    url: `/project/${project_id}/resource/list/deployment/${deployment_name}`,
+    url: `/project/${project_id}/resource/deployments/${deployment_name}`,
     method: 'put'
   })
 }
@@ -138,21 +138,21 @@ export function setProjectUsageLimit(project_id, data) {
 // environment
 export function getEnvironmentList(pId) {
   return request({
-    url: `/project/${pId}/environment`,
+    url: `/project/${pId}/environments`,
     method: 'get'
   })
 }
 
 export function redeployEnvironmentByBranchName(pId, brachName) {
   return request({
-    url: `/project/${pId}/environment/branch/${brachName}`,
+    url: `/project/${pId}/environments/branch/${brachName}`,
     method: 'put'
   })
 }
 
 export function deleteEnvironmentByBranchName(pId, brachName) {
   return request({
-    url: `/project/${pId}/environment/branch/${brachName}`,
+    url: `/project/${pId}/environments/branch/${brachName}`,
     method: 'delete'
   })
 }
