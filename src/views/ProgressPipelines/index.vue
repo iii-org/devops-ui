@@ -1,5 +1,5 @@
 <script>
-import { changePipelineByAction, getPipelines, getPipelinesLogs } from '@/api/cicd'
+import { changePipelineByAction, getPipelines, getPipelinesLogs, getPipelinesConfig } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -44,6 +44,7 @@ export default {
     },
     async onDetailsClick(row) {
       this.isLoading = true
+      this.fetchPipelineConfig() // for dev
       const { repository_id } = this.selectedProject
       const params = {
         repository_id,
@@ -91,6 +92,12 @@ export default {
         default:
           return 'slow'
       }
+    },
+    //  dev start
+    async fetchPipelineConfig() {
+      const rid = this.selectedProject.repository_id
+      const res = await getPipelinesConfig(rid, { pipelines_exec_run: 1 })
+      console.log('getPipelineConfig', res)
     }
   }
 }
@@ -110,7 +117,15 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%" :cell-style="{height: rowHeight + 'px'}">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      height="100%"
+      :cell-style="{ height: rowHeight + 'px' }"
+    >
       <el-table-column :label="$t('ProcessDevBranchTest.Id')" align="center" width="80" prop="id" />
       <el-table-column :label="$t('ProcessDevBranchTest.TestItems')" align="center" width="120">
         <template slot-scope="scope">
