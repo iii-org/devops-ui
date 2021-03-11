@@ -1,6 +1,6 @@
 <script>
-import SystemSecrets from '@/views/SystemArguments/SystemSecrets'
-import SystemRegistry from '@/views/SystemArguments/SystemRegistry'
+import SystemSecrets from '@/views/SystemArguments/components/SystemSecrets'
+import SystemRegistry from '@/views/SystemArguments/components/SystemRegistry'
 
 export default {
   name: 'SystemArguments',

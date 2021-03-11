@@ -507,8 +507,7 @@ export const asyncRoutes = [
       {
         path: 'system-arguments',
         name: 'System Arguments',
-        // FIXME: Don't know why vue-cli does not recognize import path without /index
-        component: () => import('@/views/SystemArguments/index'),
+        component: () => import('@/views/SystemArguments'),
         meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
       {

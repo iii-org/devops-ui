@@ -46,7 +46,7 @@ export function getConfigmapList(project_id) {
 
 export function deleteConfigmap(project_id, config_map_name) {
   return request({
-    url: `/project/${project_id}/resource/configmap/${config_map_name}`,
+    url: `/project/${project_id}/resource/configmaps/${config_map_name}`,
     method: 'delete'
   })
 }
