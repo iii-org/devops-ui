@@ -111,7 +111,7 @@ export function updateDeployment(project_id, deployment_name) {
   })
 }
 
-// ingress
+// ingresses
 export function getIngressList(project_id) {
   return request({
     url: `/project/${project_id}/resource/ingresses`,

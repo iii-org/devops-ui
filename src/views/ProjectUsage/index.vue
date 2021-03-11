@@ -24,7 +24,7 @@ export default {
       return this.handleChartData(res.data)
     },
     hasDetail(target) {
-      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingress']
+      const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingresses']
       return allowList.findIndex(i => i === target) > -1
     },
     showDetail(target) {
@@ -34,15 +34,15 @@ export default {
       this.$router.push({ name: `${target} List` })
     },
     handleChartData(data) {
-      const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingress']
-      const keys = ['cpu', 'memory', 'pods', 'services.nodeports', 'secrets', 'configmaps', 'deployments', 'ingress']
+      const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingresses']
+      const keys = ['cpu', 'memory', 'pods', 'services.nodeports', 'secrets', 'configmaps', 'deployments', 'ingresses']
       const result = titleList.map((title, idx) => {
         const quotaItem = data.quota[keys[idx]]
         const usedItem = data.used[keys[idx]]
         return {
           title: title,
           quota: {
-            value: quotaItem ? parseInt(quotaItem) : null, // deployment, ingress null, '0'
+            value: quotaItem ? parseInt(quotaItem) : null, // deployment, ingresses null, '0'
             unit: quotaItem ? getQuotaUnit(title, quotaItem) : ''
           },
           used: {

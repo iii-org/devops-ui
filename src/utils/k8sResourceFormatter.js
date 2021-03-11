@@ -8,7 +8,7 @@
 //     secrets: '60',
 //     'services.nodeports': '10',
 //     deployments: null,
-//     ingress: null
+//     ingresses: null
 //   },
 //   used: {
 //     configmaps: '0',
@@ -19,7 +19,7 @@
 //     secrets: '12',
 //     'services.nodeports': '0',
 //     deployments: '0',
-//     ingress: '0'
+//     ingresses: '0'
 //   }
 // }
 
