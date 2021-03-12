@@ -16,8 +16,8 @@
             </el-tag>
           </div>
           <el-card
-            v-for="step in activity.steps"
-            :key="step.message"
+            v-for="(step, stepIdx) in activity.steps"
+            :key="stepIdx"
             class="mb-2"
             :body-style="{
               color: '#fff',
@@ -41,6 +41,9 @@
 </template>
 
 <script>
+import { Manager } from 'socket.io-client'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'TestDetail',
   props: {
@@ -56,11 +59,15 @@ export default {
   data: () => ({
     activities: []
   }),
+  computed: {
+    ...mapGetters(['selectedProject'])
+  },
   watch: {
     theData: {
       immediate: true,
       handler(val) {
         this.activities = val
+        this.fetchHarborLogByStep()
       }
     }
   },
@@ -83,6 +90,24 @@ export default {
         default:
           return 'slow'
       }
+    },
+    fetchHarborLogByStep() {
+      const { repository_id } = this.selectedProject
+      this.activities.forEach((item, itemIdx) =>
+        item.steps.forEach((step, stepIdx) => {
+          const emitObj = { repository_id, pipelines_exec_run: 3, stage_index: item.stage_id, step_index: step.step_id }
+          const manager = new Manager(process.env.VUE_APP_BASE_API)
+          const socket = manager.socket('/rancher/websocket/logs')
+          // socket.on('connect', () => {
+          //   console.log('socket.connected', socket.connected)
+          // })
+          socket.emit('get_pipe_log', emitObj)
+          socket.on('pipeline_log', sioEvt => {
+            const { data } = sioEvt
+            data.length ? this.$set(this.activities[itemIdx].steps[stepIdx], 'message', data) : socket.disconnect()
+          })
+        })
+      )
     }
   }
 }

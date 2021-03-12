@@ -3,6 +3,7 @@ import { changePipelineByAction, getPipelines, getPipelinesLogs, getPipelinesCon
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { Manager } from 'socket.io-client'
 
 export default {
   name: 'ProgressPipelines',
@@ -42,25 +43,6 @@ export default {
     emitTestDetailVisible(visible) {
       this.testDetailVisible = visible
     },
-    async onDetailsClick(row) {
-      this.isLoading = true
-      this.fetchPipelineConfig() // for dev
-      const { repository_id } = this.selectedProject
-      const params = {
-        repository_id,
-        pipelines_exec_run: row.id
-      }
-      try {
-        const res = await getPipelinesLogs(params)
-        const { data } = res
-        this.detailData = data
-        this.emitTestDetailVisible(true)
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.isLoading = false
-    },
     async onActionClick(id, action) {
       const { repository_id } = this.selectedProject
       const data = {
@@ -93,11 +75,52 @@ export default {
           return 'slow'
       }
     },
-    //  dev start
-    async fetchPipelineConfig() {
-      const rid = this.selectedProject.repository_id
-      const res = await getPipelinesConfig(rid, { pipelines_exec_run: 1 })
-      console.log('getPipelineConfig', res)
+    // getPipelinesLogs (ori)
+    // async onDetailsClick(row) {
+    //   this.isLoading = true
+    //   const { repository_id } = this.selectedProject
+    //   const params = {
+    //     repository_id,
+    //     pipelines_exec_run: row.id
+    //   }
+    //   try {
+    //     const res = await getPipelinesLogs(params)
+    //     const { data } = res
+    //     this.detailData = data
+    //     this.emitTestDetailVisible(true)
+    //   } catch (error) {
+    //     console.error(error)
+    //   }
+    //   this.isLoading = false
+    // }
+
+    // getPipelinesConfig(for socket)
+    async onDetailsClick() {
+      this.isLoading = true
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: 1 })
+        this.detailData = res
+        this.emitTestDetailVisible(true)
+      } catch (error) {
+        console.error(error)
+      }
+      this.isLoading = false
+    },
+    fetchHarborLogByStep() {
+      const { repository_id } = this.selectedProject
+      this.detailData.forEach((item, itemIdx) =>
+        item.steps.forEach((step, stepIdx) => {
+          const emit = { repository_id, pipelines_exec_run: 3, stage_index: item.stage_id, step_index: step.step_id }
+          const manager = new Manager(process.env.VUE_APP_BASE_API)
+          const socket = manager.socket('/rancher/websocket/logs')
+          socket.emit('get_pipe_log', emit)
+          socket.on('pipeline_log', sioEvt => {
+            const { data } = sioEvt
+            data.length ? (this.detailData[itemIdx].steps[stepIdx].message = data) : socket.disconnect()
+          })
+        })
+      )
     }
   }
 }
