@@ -134,7 +134,6 @@ export default {
   },
   watch: {
     theData: {
-      immediate: true,
       handler(val) {
         this.stages = val
         this.activeStage = this.stages[0].name
