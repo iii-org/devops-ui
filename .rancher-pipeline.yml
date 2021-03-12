@@ -1,104 +1,36 @@
+---
 stages:
-- name: Build--NPM build dist
+- name: "Sonarqube source code scan"
   steps:
-  - runScriptConfig:
-      image: 10.50.1.63:5443/iiidevops/devops-ui-node
-      shellScript: ln -s /iiidevops-ui/node_modules node_modules; echo "VUE_APP_VERSION='$(git rev-parse HEAD)'" >> .env.staging; echo "VUE_APP_BASE_API = '/prod-api'" >> .env.staging; npm run build:stage; echo "server {\n\tlisten   80;\n\tserver_name   localhost;\n\n\tlocation / {\n\t\troot   /usr/share/nginx/html;\n\t\tindex  index.html index.htm;\n\t}\n\n\tlocation ^~ /prod-api/ {\n\t\tproxy_pass http://devops-system-develope-service:10009/;\n\t}\n\n\terror_page   500 502 503 504  /50x.html;\n\tlocation = /50x.html {\n\t\troot  /usr/share/nginx/html;\n\t}\n}" > default.conf
-    env:
-      PLUGIN_MTU: 1440
-    envFrom:
-      - sourceName: iiidevops
-        sourceKey: api-url
-        targetKey: api_url
-  when:
-    branch: [develop]
-
-- name: Publish-iiidevops-ui image
+  - applyAppConfig:
+      catalogTemplate: "cattle-global-data:iii-dev-charts3-scan-sonarqube"
+      version: "0.1.0"
+      name: "${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-sq"
+      targetNamespace: "${CICD_GIT_REPO_NAME}"
+      answers:
+        git.branch: "${CICD_GIT_BRANCH}"
+        git.commitID: "${CICD_GIT_COMMIT}"
+        git.repoName: "${CICD_GIT_REPO_NAME}"
+        git.url: "${CICD_GIT_URL}"
+        pipeline.sequence: "${CICD_EXECUTION_SEQUENCE}"
+    when:
+      branch:
+        include:
+        - "scan"
+- name: "Checkmarx source code scan"
   steps:
-  - publishImageConfig:
-      dockerfilePath: ./Dockerfile
-      buildContext: .
-      tag: iiidevops/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}-${CICD_GIT_COMMIT}
-      pushRemote: true
-      registry: 10.50.1.63:5443
-    env:
-      PLUGIN_MTU: 1440
-      PLUGIN_INSECURE: true
-  when:
-    branch: [develop]
-
-- name: deploy iiidevops-ui deployment and service on kubernetes
-  steps:
-  - applyYamlConfig:
-      path: ./k8s-yaml/devopswebui-dev-deployment.yaml
-  - applyYamlConfig:
-      path: ./k8s-yaml/devopswebui-dev-service.yaml
-  when:
-    branch: [develop]
-
-- name: Code Checkmarx test
-  steps:
-  - runScriptConfig:
-      image: 10.50.1.63:5443/iii-org/checkmarx-runner:devops-ui
-      shellScript: ln -s "$(pwd)" /usr/src/app/repo; cd /usr/src/app; ls; echo ${api_orign};node app.js;
-    env:
-      git_url: ${CICD_GIT_URL}
-      git_branch: ${CICD_GIT_BRANCH}
-      git_commit_id: ${CICD_GIT_COMMIT}
-      verbose: true
-    envFrom:
-    - sourceName: iiidevops
-      sourceKey: api-origin
-      targetKey: api_origin
-    - sourceName: iiidevops
-      sourceKey: api-username
-      targetKey: api_username
-    - sourceName: iiidevops
-      sourceKey: api-password
-      targetKey: api_password
-    - sourceName: checkmarx-secret
-      sourceKey: username
-      targetKey: username
-    - sourceName: checkmarx-secret
-      sourceKey: password
-      targetKey: password
-    - sourceName: checkmarx-secret
-      sourceKey: check-interval
-      targetKey: check_interval
-    - sourceName: checkmarx-secret
-      sourceKey: client-secret
-      targetKey: client_secret
-    - sourceName: checkmarx-secret
-      sourceKey: cm-url
-      targetKey: cm_url
-  when: 
-    branch: [checkmarx] 
-
-- name: Code webinspect test
-  steps:
-  - runScriptConfig:
-      image: iiiorg/webinspect-runner
-      shellScript: ln -s "$(pwd)" /usr/src/app/repo; cd /usr/src/app; node /usr/src/app/app.js; echo "project_name:$project_name" >> env; echo "git_branch:$git_branch" >> env; echo "git_commit_id:$git_commit_id" >> env; echo "api_origin:$api_origin" >> env; echo "api_username:$api_username" >> env; echo "api_password:$api_password" >> env; echo "wi_base_url:$wi_base_url" >> env; echo "inspect_url:$inspect_url" >> env; cat env
-    env:
-      project_name: ${CICD_GIT_REPO_NAME}
-      git_branch: ${CICD_GIT_BRANCH}
-      git_commit_id: ${CICD_GIT_COMMIT}
-      verbose: true
-    envFrom:
-    - sourceName: iiidevops
-      sourceKey: api-origin
-      targetKey: api_origin
-    - sourceName: iiidevops
-      sourceKey: api-username
-      targetKey: api_username
-    - sourceName: iiidevops
-      sourceKey: api-password
-      targetKey: api_password
-    - sourceName: webinspect
-      sourceKey: webinspect-url
-      targetKey: wi_base_url
-    - sourceName: webinspect
-      sourceKey: inspect-url
-      targetKey: inspect_url
-  when: 
-    branch: [webinspect] 
+  - applyAppConfig:
+      catalogTemplate: "cattle-global-data:iii-dev-charts3-scan-checkmarx"
+      version: "0.1.0"
+      name: "${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-cmx"
+      targetNamespace: "${CICD_GIT_REPO_NAME}"
+      answers:
+        git.branch: "${CICD_GIT_BRANCH}"
+        git.commitID: "${CICD_GIT_COMMIT}"
+        git.repoName: "${CICD_GIT_REPO_NAME}"
+        git.url: "${CICD_GIT_URL}"
+        pipeline.sequence: "${CICD_EXECUTION_SEQUENCE}"
+    when:
+      branch:
+        include:
+        - "scan"
