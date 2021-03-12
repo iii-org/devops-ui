@@ -1,22 +1,39 @@
 <template>
-  <el-dialog title="Test Detail" :visible="dialogVisible" width="90%" @close="handleClose">
-    <el-timeline>
-      <el-timeline-item v-for="(activity, idx) in activities" :key="idx" placement="top">
+  <el-dialog :visible="dialogVisible" width="95%" @close="handleClose">
+    <template slot="title">
+      <span class="font-weight-bold text-h6 ml-4">
+        {{ $t('ProcessDevBranchTest.TestDetail') }}
+      </span>
+    </template>
+
+    <!-- <el-timeline>
+      <el-timeline-item v-for="(stage, idx) in stages" :key="idx" placement="top">
         <el-card
           :body-style="{
             color: '#000',
-            background: '#fcf7f8',
+            background: '#DADADA',
             lineHeight: 2
           }"
         >
           <div class="d-flex justify-space-between mb-3">
-            <span class="text-h6"><i class="el-icon-tickets mr-2" /> {{ activity.name }} </span>
-            <el-tag v-if="activity.state" :type="getStateTagType(activity.state)" size="medium" effect="dark">
-              {{ activity.state }}
+            <span class="text-h6">
+              <i class="el-icon-tickets mr-2" />
+              <span class="mr-3">{{ stage.name }}</span>
+              <i v-if="stage.isLoading" class="el-icon-loading font-weight-bold" style="color: #F89F03" />
+              <i v-else class="el-icon-check font-weight-bold" style="color: #72C040" />
+            </span>
+            <el-tag
+              v-if="stage.state"
+              :type="getStateTagType(stage.state)"
+              class="font-weight-bold"
+              size="medium"
+              effect="dark"
+            >
+              {{ stage.state }}
             </el-tag>
           </div>
           <el-card
-            v-for="(step, stepIdx) in activity.steps"
+            v-for="(step, stepIdx) in stage.steps"
             :key="stepIdx"
             class="mb-2"
             :body-style="{
@@ -24,7 +41,7 @@
               background: '#222',
               lineHeight: 1,
               fontSize: '14px',
-              height: '300px',
+              'max-height': '300px',
               overflow: 'auto'
             }"
             shadow="never"
@@ -33,7 +50,59 @@
           </el-card>
         </el-card>
       </el-timeline-item>
-    </el-timeline>
+    </el-timeline> -->
+
+    <el-tabs v-model="activeStage" tab-position="left">
+      <el-tab-pane v-for="(stage, idx) in stages" :key="idx" :name="stage.name">
+        <div slot="label">
+          <div>
+            <el-tag
+              v-if="stage.state"
+              :type="getStateTagType(stage.state)"
+              class="mr-2"
+              size="mini"
+              effect="dark"
+            >
+              {{ stage.state }}
+            </el-tag>
+            {{ stage.name }}
+          </div>
+        </div>
+        <el-card
+          :body-style="{
+            color: '#000',
+            background: '#DADADA',
+            lineHeight: 2
+          }"
+        >
+          <div class="d-flex justify-space-between mb-3">
+            <span class="text-h6">
+              <i class="el-icon-tickets mr-2" />
+              <span class="mr-3">{{ stage.name }}</span>
+              <i v-if="stage.isLoading" class="el-icon-loading font-weight-bold" style="color: #F89F03" />
+              <i v-else class="el-icon-check font-weight-bold" style="color: #72C040" />
+            </span>
+          </div>
+          <el-card
+            v-for="(step, stepIdx) in stage.steps"
+            :key="stepIdx"
+            class="mb-2"
+            :body-style="{
+              color: '#fff',
+              background: '#222',
+              lineHeight: 1,
+              fontSize: '14px',
+              'max-height': '40vh',
+              overflow: 'auto'
+            }"
+            shadow="never"
+          >
+            <pre>{{ step.message }}</pre>
+          </el-card>
+        </el-card>
+      </el-tab-pane>
+    </el-tabs>
+
     <span slot="footer">
       <el-button @click="handleClose">{{ $t('general.Close') }}</el-button>
     </span>
@@ -57,7 +126,8 @@ export default {
     }
   },
   data: () => ({
-    activities: []
+    stages: [],
+    activeStage: ''
   }),
   computed: {
     ...mapGetters(['selectedProject'])
@@ -66,7 +136,8 @@ export default {
     theData: {
       immediate: true,
       handler(val) {
-        this.activities = val
+        this.stages = val
+        this.activeStage = this.stages[0].name
         this.fetchHarborLogByStep()
       }
     }
@@ -93,9 +164,10 @@ export default {
     },
     fetchHarborLogByStep() {
       const { repository_id } = this.selectedProject
-      this.activities.forEach((item, itemIdx) =>
+      this.stages.forEach((item, itemIdx) =>
         item.steps.forEach((step, stepIdx) => {
           const emitObj = { repository_id, pipelines_exec_run: 3, stage_index: item.stage_id, step_index: step.step_id }
+          this.$set(this.stages[itemIdx], 'isLoading', true)
           const manager = new Manager(process.env.VUE_APP_BASE_API, { reconnectionAttempts: 5 })
           const socket = manager.socket('/rancher/websocket/logs')
           // socket.on('connect', () => {
@@ -104,7 +176,12 @@ export default {
           socket.emit('get_pipe_log', emitObj)
           socket.on('pipeline_log', sioEvt => {
             const { data } = sioEvt
-            data.length ? this.$set(this.activities[itemIdx].steps[stepIdx], 'message', data) : socket.disconnect()
+            if (data.length) {
+              this.$set(this.stages[itemIdx].steps[stepIdx], 'message', data)
+            } else {
+              socket.disconnect()
+              this.stages[itemIdx].isLoading = false
+            }
           })
           // socket.on('disconnect', () => {
           //   console.log('socket.disconnected', socket.disconnected)

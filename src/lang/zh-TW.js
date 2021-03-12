@@ -374,7 +374,8 @@ export default {
     Branch: '分支',
     CommitMessage: '上傳訊息',
     TransitioningMessage: '處理訊息',
-    SearchCommitMessage: '搜尋 上傳訊息'
+    SearchCommitMessage: '搜尋 上傳訊息',
+    TestDetail: '測試細節'
   },
   ProcessDevEnvironment: {
     Branch: '分支',

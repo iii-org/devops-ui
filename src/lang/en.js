@@ -379,7 +379,8 @@ export default {
     CommitMessage: 'Commit Message',
     TransitioningMessage: 'Transitioning Message',
     LastUpdateTime: 'Last Update Time',
-    SearchCommitMessage: 'Search Commit Message'
+    SearchCommitMessage: 'Search Commit Message',
+    TestDetail: 'Test Detail'
   },
   ProcessDevEnvironment: {
     Branch: 'Branch',
@@ -451,5 +452,8 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry'
+  },
+  PipeLines: {
+    TestDetail: 'Test Detail'
   }
 }
