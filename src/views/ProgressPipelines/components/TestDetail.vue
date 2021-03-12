@@ -53,19 +53,13 @@
     </el-timeline> -->
 
     <el-tabs v-model="activeStage" tab-position="left">
-      <el-tab-pane v-for="(stage, idx) in stages" :key="idx" :name="stage.name">
+      <el-tab-pane v-for="(stage, idx) in stages" :key="idx" :name="stage.name" :disabled="!stage.state">
         <div slot="label">
-          <div>
-            <el-tag
-              v-if="stage.state"
-              :type="getStateTagType(stage.state)"
-              class="mr-2"
-              size="mini"
-              effect="dark"
-            >
+          <div class="d-flex justify-space-between align-center">
+            <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
+            <el-tag v-if="stage.state" :type="getStateTagType(stage.state)" class="ml-2" size="mini" effect="dark">
               {{ stage.state }}
             </el-tag>
-            {{ stage.name }}
           </div>
         </div>
         <el-card
