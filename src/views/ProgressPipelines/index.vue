@@ -75,7 +75,7 @@ export default {
           return 'slow'
       }
     },
-    // getPipelinesLogs (ori)
+    // // getPipelinesLogs (ori)
     // async onDetailsClick(row) {
     //   this.isLoading = true
     //   const { repository_id } = this.selectedProject
@@ -106,21 +106,6 @@ export default {
         console.error(error)
       }
       this.isLoading = false
-    },
-    fetchHarborLogByStep() {
-      const { repository_id } = this.selectedProject
-      this.detailData.forEach((item, itemIdx) =>
-        item.steps.forEach((step, stepIdx) => {
-          const emit = { repository_id, pipelines_exec_run: 3, stage_index: item.stage_id, step_index: step.step_id }
-          const manager = new Manager(process.env.VUE_APP_BASE_API)
-          const socket = manager.socket('/rancher/websocket/logs')
-          socket.emit('get_pipe_log', emit)
-          socket.on('pipeline_log', sioEvt => {
-            const { data } = sioEvt
-            data.length ? (this.detailData[itemIdx].steps[stepIdx].message = data) : socket.disconnect()
-          })
-        })
-      )
     }
   }
 }

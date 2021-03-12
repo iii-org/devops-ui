@@ -96,7 +96,7 @@ export default {
       this.activities.forEach((item, itemIdx) =>
         item.steps.forEach((step, stepIdx) => {
           const emitObj = { repository_id, pipelines_exec_run: 3, stage_index: item.stage_id, step_index: step.step_id }
-          const manager = new Manager(process.env.VUE_APP_BASE_API)
+          const manager = new Manager(process.env.VUE_APP_BASE_API, { reconnectionAttempts: 5 })
           const socket = manager.socket('/rancher/websocket/logs')
           // socket.on('connect', () => {
           //   console.log('socket.connected', socket.connected)
@@ -106,6 +106,9 @@ export default {
             const { data } = sioEvt
             data.length ? this.$set(this.activities[itemIdx].steps[stepIdx], 'message', data) : socket.disconnect()
           })
+          // socket.on('disconnect', () => {
+          //   console.log('socket.disconnected', socket.disconnected)
+          // })
         })
       )
     }
