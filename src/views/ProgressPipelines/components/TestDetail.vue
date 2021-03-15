@@ -117,6 +117,10 @@ export default {
     theData: {
       type: Array,
       default: () => []
+    },
+    pipelinesExecRun: {
+      type: Number,
+      default: 0
     }
   },
   data: () => ({
@@ -129,7 +133,7 @@ export default {
   watch: {
     theData: {
       handler(val) {
-        this.stages = val
+        this.stages = val.map(item => item)
         this.activeStage = this.stages[0].name
         this.fetchHarborLogByStep()
       }
@@ -156,23 +160,30 @@ export default {
       }
     },
     fetchHarborLogByStep() {
+      const manager = new Manager(process.env.VUE_APP_BASE_API, { reconnectionAttempts: 5 })
       const { repository_id } = this.selectedProject
+      const socket = manager.socket('/rancher/websocket/logs')
+      socket.on('connect', () => {
+        console.log('socket.connected', socket.connected)
+      })
       this.stages.forEach((item, itemIdx) =>
         item.steps.forEach((step, stepIdx) => {
-          const emitObj = { repository_id, pipelines_exec_run: 3, stage_index: item.stage_id, step_index: step.step_id }
-          this.$set(this.stages[itemIdx], 'isLoading', true)
-          const manager = new Manager(process.env.VUE_APP_BASE_API, { reconnectionAttempts: 5 })
-          const socket = manager.socket('/rancher/websocket/logs')
-          // socket.on('connect', () => {
-          //   console.log('socket.connected', socket.connected)
-          // })
+          const emitObj = {
+            repository_id,
+            pipelines_exec_run: this.pipelinesExecRun,
+            stage_index: item.stage_id,
+            step_index: step.step_id
+          }
           socket.emit('get_pipe_log', emitObj)
+          console.log('sioEmit ===>', { itemIdx, stepIdx, emitObj })
           socket.on('pipeline_log', sioEvt => {
             const { data } = sioEvt
+            console.log('sioEvt ===>', { itemIdx, stepIdx, sioEvt: sioEvt.data })
             if (data.length) {
-              this.$set(this.stages[itemIdx].steps[stepIdx], 'message', data)
+              // this.$set(this.stages[itemIdx].steps[stepIdx], 'message', data)
+              this.stages[itemIdx].steps[stepIdx].message = this.stages[itemIdx].steps[stepIdx].message.concat(data)
             } else {
-              socket.disconnect()
+              // socket.disconnect()
               this.stages[itemIdx].isLoading = false
             }
           })

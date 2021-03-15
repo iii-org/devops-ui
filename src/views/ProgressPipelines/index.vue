@@ -3,7 +3,6 @@ import { changePipelineByAction, getPipelines, getPipelinesLogs, getPipelinesCon
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { Manager } from 'socket.io-client'
 
 export default {
   name: 'ProgressPipelines',
@@ -15,7 +14,8 @@ export default {
     testDetailVisible: false,
     addDocumentDialogVisible: false,
     rowHeight: 90,
-    searchKey: 'commit_message'
+    searchKey: 'commit_message',
+    pipelinesExecRun: 0
   }),
   methods: {
     async fetchData() {
@@ -95,12 +95,18 @@ export default {
     // }
 
     // getPipelinesConfig(for socket)
-    async onDetailsClick() {
+    async onDetailsClick(id) {
       this.isLoading = true
       const { repository_id } = this.selectedProject
       try {
-        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: 1 })
-        this.detailData = res
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: id })
+        this.pipelinesExecRun = id
+        this.detailData = res.map(data => {
+          const stage = data
+          stage['isLoading'] = true
+          stage.steps.forEach(step => (step['message'] = ''))
+          return stage
+        })
         this.emitTestDetailVisible(true)
       } catch (error) {
         console.error(error)
@@ -180,7 +186,7 @@ export default {
       <el-table-column-time prop="last_test_time" />
       <el-table-column :label="$t('general.Actions')" align="center" width="200">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row)">
+          <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row.id)">
             <i class="el-icon-document" />
             Detail
           </el-button>
@@ -214,6 +220,7 @@ export default {
     <test-detail
       :dialog-visible.sync="testDetailVisible"
       :the-data="detailData"
+      :pipelines-exec-run="pipelinesExecRun"
       @test-detail-visible="emitTestDetailVisible"
     />
   </div>
