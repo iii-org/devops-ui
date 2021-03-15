@@ -28,6 +28,7 @@ export default {
     'Auto Testing': 'Auto Testing',
     Postman: 'Postman',
     CheckMarx: 'CheckMarx',
+    SonarQube: 'SonarQube',
     WebInspect: 'WebInspect',
     'DevOps Test Case': 'DevOps Test Case',
     'Postman Test Case': 'Postman Test Case',

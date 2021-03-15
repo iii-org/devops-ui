@@ -28,6 +28,7 @@ export default {
     'Auto Testing': '自動測試結果',
     Postman: 'API 測試(Postman)',
     CheckMarx: '白箱測試(CheckMarx)',
+    SonarQube: '白箱測試(SonarQube)',
     WebInspect: '黑箱測試(WebInspect)',
     'DevOps Test Case': 'DevOps Test Case',
     'Postman Test Case': 'Postman Test Case',
