@@ -13,9 +13,8 @@ export default {
   data: () => ({
     editDialogVisible: false,
     form: formTemplate(),
-    testCaseFormRules: {
-      name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-      type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }]
+    formRules: {
+      name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
     },
     isUpdating: false
   }),
@@ -157,7 +156,7 @@ export default {
       width="60%"
       @close="closeEditDialog"
     >
-      <el-form ref="form" :rules="testCaseFormRules" :model="form">
+      <el-form ref="form" :rules="formRules" :model="form">
         <el-form-item label="Secret Name" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
