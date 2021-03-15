@@ -1,24 +1,23 @@
 export default {
   route: {
+    Dashboard: 'Dashboard',
+
     'Project List': 'Project List',
     'PM Project List': 'PM Project List',
 
     Projects: 'Projects',
     Project: 'Project',
-
     Overview: 'Overview',
-    'Issue List': 'Issue List',
     'Issue Boards': 'Issue Boards',
-    'Test Case': 'API Test Case',
     'Activity Log': 'Activity Log',
-    Wiki: 'Wiki',
-    'File List': 'File List',
     'Project Roadmap': 'Project Roadmap',
 
-    'Auto Testing': 'Auto Testing',
-    Postman: 'Postman',
-    CheckMarx: 'CheckMarx',
-    WebInspect: 'WebInspect',
+    Issues: 'Issues',
+    'Issue List': 'Issue List',
+    'Issue Detail': 'Issue Detail',
+    Wiki: 'Wiki',
+    'File List': 'File List',
+    'Test Case': 'API Test Case',
 
     Progress: 'Progress',
     'Dev Branch': 'Dev Branch',
@@ -26,14 +25,15 @@ export default {
     Pipelines: 'Pipelines',
     'Dev Environment': 'Dev Environment',
 
+    'Auto Testing': 'Auto Testing',
+    Postman: 'Postman',
+    CheckMarx: 'CheckMarx',
+    WebInspect: 'WebInspect',
+    'DevOps Test Case': 'DevOps Test Case',
+    'Postman Test Case': 'Postman Test Case',
+
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
-    'Deployment List': 'Deployment List',
-    'Pods List': 'Pods List',
-    'Service List': 'Service List',
-    'Secret List': 'Secret List',
-    'ConfigMaps List': 'ConfigMaps List',
-
     'Plugin Resource': 'Plugin Resource',
     Harbor: 'Harbor',
 
@@ -44,18 +44,17 @@ export default {
     Members: 'Members',
     Versions: 'Versions',
 
-    Dashboard: 'Dashboard',
-    Issues: 'Issues',
-    'Issue Detail': 'Issue Detail',
-
-    'DevOps Test Case': 'DevOps Test Case',
-    'Postman Test Case': 'Postman Test Case',
-
     Admin: 'System Settings',
     'Account Manage': 'Account Manage',
     'System Activities': 'System Activities',
 
     'Dev Branch Test Result': 'Dev Branch Test Result',
+
+    'Deployment List': 'Deployment List',
+    'Pods List': 'Pods List',
+    'Service List': 'Service List',
+    'Secret List': 'Secret List',
+    'ConfigMaps List': 'ConfigMaps List',
 
     Artifacts: 'Project Artifacts',
 
