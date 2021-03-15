@@ -437,6 +437,7 @@ export default {
     AddRegistry: 'Add Registry',
     RegistryName: 'Registry Name',
     SearchRegistryName: 'Search Registry Name',
+    AddConfigMap: 'Add ConfigMap',
     UserName: 'User Name',
     Password: 'Password'
   },

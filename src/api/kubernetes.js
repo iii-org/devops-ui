@@ -52,6 +52,14 @@ export function deleteConfigmap(project_id, config_map_name) {
   })
 }
 
+export function updateConfigmapList(project_id, config_map_name, data) {
+  return request({
+    url: `/project/${project_id}/resource/configmaps/${config_map_name}`,
+    method: 'put',
+    data
+  })
+}
+
 // pod
 export function getPodList(project_id) {
   return request({

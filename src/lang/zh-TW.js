@@ -431,6 +431,7 @@ export default {
     AddRegistry: '新增 Registry',
     RegistryName: 'Registry 名稱',
     SearchRegistryName: '搜尋 Registry 名稱',
+    AddConfigMap: '新增 Config Map',
     UserName: '使用者名稱',
     Password: '密碼'
   },
