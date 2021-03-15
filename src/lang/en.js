@@ -183,6 +183,9 @@ export default {
     Report: 'Report',
     SearchScanId: 'Search Scan ID'
   },
+  SonarQube: {
+
+  },
   WebInspect: {
     ScanId: 'Scan ID',
     Branch: 'Branch',
@@ -456,5 +459,8 @@ export default {
   },
   PipeLines: {
     TestDetail: 'Test Detail'
+  },
+  Git: {
+    Commit: 'Commit'
   }
 }

@@ -32,9 +32,9 @@ export default {
     'DevOps Test Case': 'DevOps Test Case',
     'Postman Test Case': 'Postman Test Case',
 
-    'System Resource': '系統資源',
+    'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
-    'Plugin Resource': 'Plugin 資源',
+    'Plugin Resource': 'Plugin 資源',
     Harbor: 'Harbor 資源',
 
     Activities: '操作記錄',
@@ -447,5 +447,11 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry'
+  },
+  PipeLines: {
+    TestDetail: 'Test Detail'
+  },
+  Git: {
+    Commit: 'Commit'
   }
 }

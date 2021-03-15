@@ -13,7 +13,7 @@ stages:
         git.repoName: "${CICD_GIT_REPO_NAME}"
         git.url: "${CICD_GIT_URL}"
         pipeline.sequence: "${CICD_EXECUTION_SEQUENCE}"
-        sonarqube.runnerVersion: 0.0.2
+        sonarqube.runnerVersion: 0.0.3
     when:
       branch:
         include:
