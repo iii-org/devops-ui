@@ -15,10 +15,11 @@ export function addSecret(project_id, secret_name) {
   })
 }
 
-export function updateSecretList(project_id, secret_name) {
+export function updateSecretList(project_id, secret_name, data) {
   return request({
     url: `/project/${project_id}/resource/secrets/${secret_name}`,
-    method: 'put'
+    method: 'put',
+    data
   })
 }
 

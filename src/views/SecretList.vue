@@ -1,22 +1,59 @@
 <script>
-import { deleteSecret, getSecretList } from '@/api/kubernetes'
+import { deleteSecret, getSecretList, updateSecretList } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+
+const formTemplate = () => ({
+  name: '',
+  secrets: []
+})
 
 export default {
   name: 'SecretList',
   mixins: [MixinElTableWithAProject],
+  data: () => ({
+    editDialogVisible: false,
+    form: formTemplate(),
+    testCaseFormRules: {
+      name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+      type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }]
+    },
+    isUpdating: false
+  }),
   methods: {
     async fetchData() {
       const res = await getSecretList(this.selectedProjectId)
-      return res.data.map(item => {
-        return {
-          name: item
-        }
+      return res.data.map(secret => ({
+        name: secret.name,
+        keys: Object.keys(secret.data),
+        secrets: Object.entries(secret.data).map(item => ({
+          key: item[0],
+          value: item[1],
+          isDisabled: secret.is_iii
+        }))
+      }))
+    },
+    showEditDialog(secretName, secrets) {
+      this.editDialogVisible = true
+      this.form.name = secretName
+      this.form.secrets = secrets.map(item => item)
+    },
+    closeEditDialog() {
+      this.editDialogVisible = false
+      this.$nextTick(() => {
+        this.$refs['form'].resetFields()
+        this.form = formTemplate()
       })
     },
-    // handleEdit(secretName) {
-    //   this.dialogVisible = true
-    // },
+    async editSecretList() {
+      const sendData = {
+        secrets: this.form.secrets.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
+      }
+      this.isUpdating = true
+      const res = await updateSecretList(this.selectedProjectId, this.form.name, sendData)
+      this.isUpdating = false
+      this.closeEditDialog()
+      this.loadData()
+    },
     async handleDelete(pId, secretName) {
       this.listLoading = true
       try {
@@ -26,6 +63,19 @@ export default {
         console.error(error)
       }
       this.listLoading = false
+    },
+    addItem() {
+      this.form.secrets.push({
+        key: '',
+        value: '',
+        isDisabled: false
+      })
+    },
+    removeItem(item) {
+      const index = this.form.secrets.indexOf(item)
+      if (index !== -1) {
+        this.form.secrets.splice(index, 1)
+      }
     }
   }
 }
@@ -45,14 +95,37 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
-      <el-table-column :label="$t('general.Name')" align="center" prop="name" />
-      <el-table-column :label="$t('general.Actions')" align="center" width="180">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
+      <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
         <template slot-scope="scope">
-          <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
-              <i class="el-icon-edit" />
-              {{ $t('general.Edit') }}
-            </el-button> -->
+          <div class="font-weight-bold">{{ scope.row.name }}</div>
+          <div class="text-caption">
+            Keys：<span v-for="(key, keyIdx) in scope.row.keys" :key="keyIdx">
+              {{ key }}
+              <span v-if="keyIdx !== scope.row.keys.length - 1">/</span>
+            </span>
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="$t('general.Actions')" align="center" width="240">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            @click="showEditDialog(scope.row.name, scope.row.secrets)"
+          >
+            {{ $t('general.Edit') }}
+          </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
             cancel-button-text="Cancel"
@@ -77,5 +150,71 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+
+    <el-dialog
+      :title="`${$t('general.Edit')} Secret`"
+      :visible.sync="editDialogVisible"
+      width="60%"
+      @close="closeEditDialog"
+    >
+      <el-form ref="form" :rules="testCaseFormRules" :model="form">
+        <el-form-item label="Secret Name" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off" />
+        </el-form-item>
+        <el-row v-for="(secret, secretIdx) in form.secrets" :key="secret + secretIdx" :gutter="12" type="flex">
+          <el-col :span="6">
+            <el-form-item
+              :label="`key ${secretIdx + 1} `"
+              :prop="'secrets.' + secretIdx + '.key'"
+              :rules="[{ required: true, message: `${$t('general.PleaseInput')} key`, trigger: 'blur' }]"
+            >
+              <el-input
+                :id="`input-key${secretIdx + 1}`"
+                v-model="form.secrets[secretIdx].key"
+                placeholder="key"
+                :disabled="form.secrets[secretIdx].isDisabled"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="15">
+            <el-form-item
+              :label="`value ${secretIdx + 1}`"
+              :prop="'secrets.' + secretIdx + '.value'"
+              :rules="[{ required: true, message: `${$t('general.PleaseInput')}  value`, trigger: 'blur' }]"
+            >
+              <el-input
+                :id="`input-value${secretIdx + 1}`"
+                v-model="form.secrets[secretIdx].value"
+                show-password
+                placeholder="value"
+                :disabled="form.secrets[secretIdx].isDisabled"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="3" style="padding-top: 45px">
+            <el-button
+              :id="`btn-delete${secretIdx + 1}`"
+              type="danger"
+              size="small"
+              :disabled="form.secrets.length <= 1 || form.secrets[secretIdx].isDisabled"
+              @click.prevent="removeItem(secret)"
+            >
+              {{ $t('general.Delete') }}
+            </el-button>
+          </el-col>
+        </el-row>
+        <el-button id="btn-add-secret-item" type="success" size="small" @click="addItem">
+          <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
+        </el-button>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button :loading="isUpdating" @click="closeEditDialog">
+          {{ $t('general.Cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="isUpdating" @click="editSecretList">
+          {{ $t('general.Confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
