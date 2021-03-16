@@ -454,6 +454,9 @@ export default {
     Commit: 'Commit ID'
   },
   SonarQube: {
-    Bugs: 'Bugs'
+    Bugs: 'Bugs',
+    Vulnerabilities: '安全漏洞',
+    CodeSmells: '程式異味',
+    Duplicates: '重複程式碼'
   }
 }
