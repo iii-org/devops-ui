@@ -118,7 +118,8 @@ export default {
     Warning: '警告',
     Info: '資訊',
     Error: '錯誤',
-    Refresh: '更新'
+    Refresh: '更新',
+    RunAt: 'Start Time'
   },
   Notify: {
     Updated: '已更新',
@@ -172,16 +173,16 @@ export default {
   },
   CheckMarx: {
     ScanId: '測試編號',
-    Branch: '分支',
-    Commit: 'Commit',
     Status: '狀態',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
     InfoSeverity: '資訊',
-    RunAt: '開始時間',
     Report: '報告',
     SearchScanId: '搜尋 測試編號'
+  },
+  SonarQube: {
+    Bugs: 'Bugs'
   },
   WebInspect: {
     ScanId: '測試編號',
@@ -452,6 +453,7 @@ export default {
     TestDetail: 'Test Detail'
   },
   Git: {
+    Branch: '分支',
     Commit: 'Commit'
   }
 }

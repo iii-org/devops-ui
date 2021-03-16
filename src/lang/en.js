@@ -118,7 +118,8 @@ export default {
     Warning: 'Warning',
     Info: 'Info',
     Error: 'Error',
-    Refresh: 'Refresh'
+    Refresh: 'Refresh',
+    RunAt: 'Start Time'
   },
   Notify: {
     Updated: 'update successful',
@@ -172,8 +173,6 @@ export default {
   },
   CheckMarx: {
     ScanId: 'Scan ID',
-    Branch: 'Branch',
-    Commit: 'Commit',
     Status: 'Status',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
@@ -184,7 +183,7 @@ export default {
     SearchScanId: 'Search Scan ID'
   },
   SonarQube: {
-
+    Bugs: 'Bugs'
   },
   WebInspect: {
     ScanId: 'Scan ID',
@@ -461,6 +460,7 @@ export default {
     TestDetail: 'Test Detail'
   },
   Git: {
+    Branch: 'Branch',
     Commit: 'Commit'
   }
 }

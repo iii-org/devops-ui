@@ -11,7 +11,17 @@ export default {
       if (this.selectedProjectId === -1) {
         return []
       }
-      return await getSonarQubeData(this.selectedProject.name).data
+      const data = (await getSonarQubeData(this.selectedProject.name)).data
+      const ret = []
+      for (const key in data) {
+        const row = data[key]
+        row['date'] = key
+        ret.push(row)
+      }
+      ret.sort((a, b) => {
+        return Date.parse(b.date) - Date.parse(a.date)
+      })
+      return ret
     }
   }
 }
@@ -24,7 +34,7 @@ export default {
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
-        :placeholder="$t('CheckMarx.SearchScanId')"
+        :placeholder="$t('Git.Branch')"
         style="width: 250px; float: right"
       >
         <i slot="prefix" class="el-input__icon el-icon-search" />
@@ -41,40 +51,9 @@ export default {
       height="100%"
     >
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" width="100">
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :underline="false"
-            :href="scope.row.commit_url"
-          >
-            {{ scope.row.commit_id }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" width="100" />
-      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-      <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
-      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            class="download-btn"
-            :disabled="!scope.row.report_ready"
-            :underline="false"
-            @click="fetchTestReport(scope.row.report_id)"
-          >
-            <i class="el-icon-download" style="font-size: 16px" />
-          </el-link>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" />
+      <el-table-column align="center" :label="$t('SonarQube.Bugs')" prop="bugs" />
+      <el-table-column-time prop="run_at" :label="$t('General.RunAt')" />
     </el-table>
     <pagination
       :total="filteredData.length"

@@ -116,8 +116,8 @@ export default {
       height="100%"
     >
       <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
-      <el-table-column align="center" :label="$t('CheckMarx.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('CheckMarx.Commit')" width="100">
+      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
+      <el-table-column align="center" :label="$t('Git.Commit')" width="100">
         <template slot-scope="scope">
           <el-link
             type="primary"
