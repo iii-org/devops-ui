@@ -33,9 +33,9 @@ export default {
     'DevOps Test Case': 'DevOps Test Case',
     'Postman Test Case': 'Postman Test Case',
 
-    'System Resource': '系統資源',
+    'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
-    'Plugin Resource': 'Plugin 資源',
+    'Plugin Resource': 'Plugin 資源',
     Harbor: 'Harbor 資源',
 
     Activities: '操作記錄',
@@ -119,8 +119,7 @@ export default {
     Warning: '警告',
     Info: '資訊',
     Error: '錯誤',
-    Refresh: '更新',
-    RunAt: 'Start Time'
+    Refresh: '更新'
   },
   Notify: {
     Updated: '已更新',
@@ -174,16 +173,16 @@ export default {
   },
   CheckMarx: {
     ScanId: '測試編號',
+    Branch: '分支',
+    Commit: 'Commit',
     Status: '狀態',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
     InfoSeverity: '資訊',
+    RunAt: '開始時間',
     Report: '報告',
     SearchScanId: '搜尋 測試編號'
-  },
-  SonarQube: {
-    Bugs: 'Bugs'
   },
   WebInspect: {
     ScanId: '測試編號',
@@ -433,7 +432,6 @@ export default {
     AddRegistry: '新增 Registry',
     RegistryName: 'Registry 名稱',
     SearchRegistryName: '搜尋 Registry 名稱',
-    AddConfigMap: '新增 Config Map',
     UserName: '使用者名稱',
     Password: '密碼'
   },
@@ -450,11 +448,11 @@ export default {
     Secrets: 'Secrets',
     Registry: 'Registry'
   },
-  PipeLines: {
-    TestDetail: 'Test Detail'
-  },
   Git: {
     Branch: '分支',
-    Commit: 'Commit'
+    Commit: 'Commit ID'
+  },
+  SonarQube: {
+    Bugs: 'Bugs'
   }
 }
