@@ -12,7 +12,7 @@ export default {
       type: String,
       default: i18n.t('general.LastUpdateTime')
     },
-    width: {
+    minWidth: {
       type: Number,
       default: 130
     }
