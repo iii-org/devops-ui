@@ -127,7 +127,7 @@ export default {
           {{ scope.row.due_date }}
         </template>
       </el-table-column>
-      <el-table-column-time :label="$t('general.LastUpdateTime')" prop="updated_on " width="190" />
+      <el-table-column-time :label="$t('general.LastUpdateTime')" prop="updated_on" />
       <el-table-column align="center" :label="$t('general.Status')" min-width="60">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'open'" type="success" size="medium" effect="dark">{{

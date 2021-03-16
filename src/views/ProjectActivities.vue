@@ -40,7 +40,7 @@ export default {
       <el-table-column align="center" :label="$t('Activities.User')" prop="operator_name" />
       <el-table-column align="center" :label="$t('Activities.ActionType')" prop="action_type" />
       <el-table-column align="center" :label="$t('Activities.ActionParts')" prop="action_parts" min-width="200" />
-      <el-table-column-time prop="act_at" :label="$t('Activities.ActAt')" min-width="100" />
+      <el-table-column-time prop="act_at" :label="$t('Activities.ActAt')" />
     </el-table>
 
     <pagination

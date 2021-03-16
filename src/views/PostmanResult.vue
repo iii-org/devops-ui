@@ -51,9 +51,7 @@ export default {
         height="100%"
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
-        <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch"
-                         min-width="120"
-        />
+        <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />
         <el-table-column align="center" label="Commit" width="130">
           <template slot-scope="scope">
             <el-link
@@ -67,22 +65,25 @@ export default {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Postman.Success')" prop="success"
-                         min-width="100"
-        />
-        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure"
-                         min-width="100"
-        />
+        <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="100" />
+        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="100" />
         <el-table-column-time :label="$t('Postman.StartTime')" prop="run_at" />
         <el-table-column align="center" :label="$t('general.Actions')" width="220">
           <template slot-scope="scope">
-            <el-button :id="`btn-devops-${scope.$index}`" size="mini" type="primary" plain
-                       @click="handleClick('devops', scope.row.id)"
+            <el-button
+              :id="`btn-devops-${scope.$index}`"
+              size="mini"
+              type="primary"
+              plain
+              @click="handleClick('devops', scope.row.id)"
             >
               {{ $t('Postman.DevOps') }}
             </el-button>
-            <el-button :id="`btn-postman-${scope.$index}`" size="mini" type="primary"
-                       @click="handleClick('postman', scope.row.id)"
+            <el-button
+              :id="`btn-postman-${scope.$index}`"
+              size="mini"
+              type="primary"
+              @click="handleClick('postman', scope.row.id)"
             >
               {{ $t('Postman.Postman') }}
             </el-button>
