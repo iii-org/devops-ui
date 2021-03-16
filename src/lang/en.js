@@ -119,7 +119,8 @@ export default {
     Warning: 'Warning',
     Info: 'Info',
     Error: 'Error',
-    Refresh: 'Refresh'
+    Refresh: 'Refresh',
+    RunAt: 'Run At'
   },
   Notify: {
     Updated: 'update successful',

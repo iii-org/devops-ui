@@ -119,7 +119,8 @@ export default {
     Warning: '警告',
     Info: '資訊',
     Error: '錯誤',
-    Refresh: '更新'
+    Refresh: '更新',
+    RunAt: '執行時間'
   },
   Notify: {
     Updated: '已更新',

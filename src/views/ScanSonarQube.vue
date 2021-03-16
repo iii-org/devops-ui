@@ -1,12 +1,11 @@
 <script>
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-import { getCheckMarxScans } from '@/api/checkMarx'
 import { getSonarQubeData } from '@/api/sonarQube'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ScanSonarQube',
-  components: [ElTableColumnTime],
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   methods: {
     async fetchData() {
@@ -24,6 +23,10 @@ export default {
         return Date.parse(b.date) - Date.parse(a.date)
       })
       return ret
+    },
+    convertRating(rating) {
+      console.log('rating', rating)
+      return ['0', 'A', 'B', 'C', 'D', 'E'][parseInt(rating)]
     }
   }
 }
@@ -54,8 +57,12 @@ export default {
     >
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
       <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" />
-      <el-table-column align="center" :label="$t('SonarQube.Bugs')" prop="bugs" />
-      <el-table-column-time prop="run_at" :label="$t('general.RunAt')" />
+      <el-table-column align="center" :label="$t('SonarQube.Bugs')">
+        <template slot-scope="scope">
+          <span>{{ scope.row.bugs }}({{ convertRating(scope.row.reliability_rating) }})</span>
+        </template>
+      </el-table-column>
+      <el-table-column-time :label="$t('general.RunAt')" prop="date" />
     </el-table>
     <pagination
       :total="filteredData.length"
