@@ -2,9 +2,11 @@
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import { getCheckMarxScans } from '@/api/checkMarx'
 import { getSonarQubeData } from '@/api/sonarQube'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ScanSonarQube',
+  components: [ElTableColumnTime],
   mixins: [MixinElTableWithAProject],
   methods: {
     async fetchData() {
