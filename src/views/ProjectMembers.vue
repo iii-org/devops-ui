@@ -1,12 +1,8 @@
 <script>
 import { mapGetters } from 'vuex'
-import {
-  addProjectMember,
-  deleteProjectMember,
-  getNotInProject,
-  getProjectUserList
-} from '@/api/projects'
+import { addProjectMember, deleteProjectMember, getNotInProject, getProjectUserList } from '@/api/projects'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import i18n from '@/lang'
 
 const formTemplate = {
   // role_name: 'Engineer',
@@ -25,7 +21,9 @@ export default {
     form: formTemplate,
     roleName: '',
     userInfo: {},
-    rules: { id: [{ required: true, message: 'Please select a member', trigger: 'change' }] }
+    rules: {
+      id: [{ required: true, message: i18n.t('RuleMsg.PleaseInput') + i18n.t('RuleMsg.Member'), trigger: 'change' }]
+    }
   }),
   computed: {
     ...mapGetters(['userId']),

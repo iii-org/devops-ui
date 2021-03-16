@@ -142,12 +142,12 @@ export default {
   RuleMsg: {
     PleaseInput: 'Please input',
     PleaseSelect: 'Please select',
-    Invalid: 'Invalid',
-    Member: 'Member',
-    Email: 'email',
-    UserName: 'user name',
-    Password: 'password',
-    Description: 'description',
+    Invalid: ' Invalid',
+    Member: ' Member',
+    Email: ' email',
+    UserName: ' user name',
+    Password: ' password',
+    Description: ' description',
     InputNewPwd: 'Please input new password',
     InputRepeatPwd: 'Please input repeat password'
   },
