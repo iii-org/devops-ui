@@ -59,9 +59,20 @@ export default {
       <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" />
       <el-table-column align="center" :label="$t('SonarQube.Bugs')">
         <template slot-scope="scope">
-          <span>{{ scope.row.bugs }}({{ convertRating(scope.row.reliability_rating) }})</span>
+          <span>{{ scope.row.bugs }} ({{ convertRating(scope.row.reliability_rating) }})</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" :label="$t('SonarQube.Vulnerabilities')">
+        <template slot-scope="scope">
+          <span>{{ scope.row.vulnerabilities }} ({{ convertRating(scope.row.security_rating) }})</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('SonarQube.Duplicates')">
+        <template slot-scope="scope">
+          <span>{{ scope.row.duplicated_blocks }} ({{ scope.row.duplicated_lines_density }}%)</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('SonarQube.CodeSmells')" prop="code_smells" />
       <el-table-column-time :label="$t('general.RunAt')" prop="date" />
     </el-table>
     <pagination
