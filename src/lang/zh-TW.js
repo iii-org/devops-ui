@@ -457,6 +457,7 @@ export default {
     Bugs: 'Bugs',
     Vulnerabilities: '安全漏洞',
     CodeSmells: '程式異味',
-    Duplicates: '重複程式碼'
+    Duplicates: '重複程式碼',
+    Coverage: '覆蓋率'
   }
 }

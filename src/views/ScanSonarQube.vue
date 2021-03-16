@@ -67,12 +67,21 @@ export default {
           <span>{{ scope.row.vulnerabilities }} ({{ convertRating(scope.row.security_rating) }})</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" :label="$t('SonarQube.CodeSmells')">
+        <template slot-scope="scope">
+          <span>{{ scope.row.code_smells }} ({{ convertRating(scope.row.sqale_rating) }})</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('SonarQube.Duplicates')">
         <template slot-scope="scope">
           <span>{{ scope.row.duplicated_blocks }} ({{ scope.row.duplicated_lines_density }}%)</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SonarQube.CodeSmells')" prop="code_smells" />
+      <el-table-column align="center" :label="$t('SonarQube.Coverage')">
+        <template slot-scope="scope">
+          <span>{{ scope.row.coverage }}%</span>
+        </template>
+      </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="date" />
     </el-table>
     <pagination

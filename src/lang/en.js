@@ -462,9 +462,13 @@ export default {
   },
   Git: {
     Branch: 'Branch',
-    Commit: 'Commit ID'
+    Commit: 'Commit'
   },
   SonarQube: {
-    Bugs: 'Bugs'
+    Bugs: 'Bugs',
+    Vulnerabilities: 'Vulnerabilities',
+    CodeSmells: 'Code Smells',
+    Duplicates: 'Duplicates',
+    Coverage: 'Coverage'
   }
 }
