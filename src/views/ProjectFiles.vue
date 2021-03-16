@@ -217,7 +217,7 @@ export default {
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" width="190" />
+      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
 
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="scope">

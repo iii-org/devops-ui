@@ -69,7 +69,7 @@ export default {
       height="100%"
     >
       <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column-time :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" width="190" />
+      <el-table-column-time :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" />
 
       <el-table-column :label="$t('DeploymentList.Container')" align="center" min-width="200">
         <template slot-scope="scope">

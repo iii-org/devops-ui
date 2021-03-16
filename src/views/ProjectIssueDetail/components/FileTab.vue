@@ -115,7 +115,7 @@ export default {
         </template>
       </el-table-column>
 
-      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" width="190"  />
+      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
 
       <el-table-column :label="$t('general.Actions')" align="center" width="250">
         <template slot-scope="scope">
