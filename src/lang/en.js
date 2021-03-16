@@ -28,6 +28,7 @@ export default {
     'Auto Testing': 'Auto Testing',
     Postman: 'Postman',
     CheckMarx: 'CheckMarx',
+    SonarQube: 'SonarQube',
     WebInspect: 'WebInspect',
     'DevOps Test Case': 'DevOps Test Case',
     'Postman Test Case': 'Postman Test Case',
@@ -118,8 +119,7 @@ export default {
     Warning: 'Warning',
     Info: 'Info',
     Error: 'Error',
-    Refresh: 'Refresh',
-    RunAt: 'Start Time'
+    Refresh: 'Refresh'
   },
   Notify: {
     Updated: 'update successful',
@@ -143,12 +143,12 @@ export default {
   RuleMsg: {
     PleaseInput: 'Please input',
     PleaseSelect: 'Please select',
-    Invalid: ' Invalid',
-    Member: ' Member',
-    Email: ' email',
-    UserName: ' user name',
-    Password: ' password',
-    Description: ' description',
+    Invalid: 'Invalid',
+    Member: 'Member',
+    Email: 'email',
+    UserName: 'user name',
+    Password: 'password',
+    Description: 'description',
     InputNewPwd: 'Please input new password',
     InputRepeatPwd: 'Please input repeat password'
   },
@@ -173,6 +173,8 @@ export default {
   },
   CheckMarx: {
     ScanId: 'Scan ID',
+    Branch: 'Branch',
+    Commit: 'Commit',
     Status: 'Status',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
@@ -181,9 +183,6 @@ export default {
     RunAt: 'Start Time',
     Report: 'Report',
     SearchScanId: 'Search Scan ID'
-  },
-  SonarQube: {
-    Bugs: 'Bugs'
   },
   WebInspect: {
     ScanId: 'Scan ID',
@@ -439,7 +438,6 @@ export default {
     AddRegistry: 'Add Registry',
     RegistryName: 'Registry Name',
     SearchRegistryName: 'Search Registry Name',
-    AddConfigMap: 'Add ConfigMap',
     UserName: 'User Name',
     Password: 'Password'
   },
@@ -461,6 +459,9 @@ export default {
   },
   Git: {
     Branch: 'Branch',
-    Commit: 'Commit'
+    Commit: 'Commit ID'
+  },
+  SonarQube: {
+    Bugs: 'Bugs'
   }
 }

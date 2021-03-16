@@ -53,7 +53,7 @@ export default {
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
       <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" />
       <el-table-column align="center" :label="$t('SonarQube.Bugs')" prop="bugs" />
-      <el-table-column-time prop="run_at" :label="$t('General.RunAt')" />
+      <el-table-column-time prop="run_at" :label="$t('general.RunAt')" />
     </el-table>
     <pagination
       :total="filteredData.length"
