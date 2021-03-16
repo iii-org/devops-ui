@@ -136,35 +136,6 @@ export const asyncRoutes = [
         meta: { title: 'Overview', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'issue-boards',
-        name: 'Issue Boards',
-        component: () => import('@/views/IssueBoards'),
-        meta: { title: 'Issue Boards', roles: ['Project Manager', 'Administrator'] }
-      },
-
-      {
-        path: 'activity-log',
-        name: 'Activity Log',
-        component: () => import('@/views/ProjectActivityLog'),
-        meta: { title: 'Activity Log', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'project-roadmap',
-        name: 'Project Roadmap',
-        component: () => import('@/views/ProjectRoadmap'),
-        meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
-      }
-    ]
-  },
-
-  {
-    path: '/issue',
-    component: Layout,
-    name: 'Issues',
-    meta: { title: 'Issues', icon: 'el-icon-data-analysis', roles: ['Project Manager', 'Engineer', 'Administrator'] },
-    redirect: '/issue/list',
-    children: [
-      {
         path: 'list',
         name: 'IssueList',
         component: () => import('@/views/ProjectIssues'),
@@ -178,6 +149,33 @@ export const asyncRoutes = [
             meta: { title: 'Issue Detail', roles: ['Project Manager', 'Engineer', 'Administrator'], rolePage: false }
           }
         ]
+      },
+      {
+        path: 'issue-boards',
+        name: 'Issue Boards',
+        component: () => import('@/views/IssueBoards'),
+        meta: { title: 'Issue Boards', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'test-case',
+        name: 'Test Case',
+        component: () => import('@/views/TestCase'),
+        meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: 'test-item/:testCaseId',
+            name: 'Test Item',
+            hidden: true,
+            component: () => import('@/views/TestItem'),
+            meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
+          }
+        ]
+      },
+      {
+        path: 'activity-log',
+        name: 'Activity Log',
+        component: () => import('@/views/ProjectActivityLog'),
+        meta: { title: 'Activity Log', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: 'wiki',
@@ -198,19 +196,10 @@ export const asyncRoutes = [
         meta: { title: 'File List', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
-        path: 'test-case',
-        name: 'Test Case',
-        component: () => import('@/views/TestCase'),
-        meta: { title: 'Test Case', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
-        children: [
-          {
-            path: 'test-item/:testCaseId',
-            name: 'Test Item',
-            hidden: true,
-            component: () => import('@/views/TestItem'),
-            meta: { title: 'Test Item', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: false }
-          }
-        ]
+        path: 'project-roadmap',
+        name: 'Project Roadmap',
+        component: () => import('@/views/ProjectRoadmap'),
+        meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },
@@ -239,6 +228,68 @@ export const asyncRoutes = [
         path: '',
         component: () => import('@/views/IssueSetUp'),
         meta: { title: 'Issue SetUp', roles: ['Engineer'] }
+      }
+    ]
+  },
+
+  {
+    path: '/test',
+    component: Layout,
+    name: 'Test',
+    meta: {
+      title: 'Auto Testing',
+      icon: 'el-icon-s-cooperation',
+      roles: ['Engineer', 'Project Manager', 'Administrator']
+    },
+    redirect: '/test/postman-result',
+    children: [
+      {
+        path: 'postman-result',
+        name: 'Postman result',
+        component: () => import('@/views/PostmanResult'),
+        meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
+        children: [
+          {
+            path: 'devops/:id',
+            name: 'DevOps Test Case',
+            hidden: true,
+            component: () => import('@/views/TestCaseDevOps'),
+            meta: {
+              title: 'DevOps Test Case',
+              roles: ['Engineer', 'Project Manager', 'Administrator'],
+              rolePage: false
+            }
+          },
+          {
+            path: 'postman/:id',
+            name: 'Postman Test Case',
+            hidden: true,
+            component: () => import('@/views/TestCasePostman'),
+            meta: {
+              title: 'Postman Test Case',
+              roles: ['Engineer', 'Project Manager', 'Administrator'],
+              rolePage: false
+            }
+          }
+        ]
+      },
+      {
+        path: 'checkmarx',
+        name: 'checkmarx',
+        component: () => import('@/views/ScanCheckmarx'),
+        meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'web-inspect',
+        name: 'web-inspect',
+        component: () => import('@/views/ScanWebInspect'),
+        meta: { title: 'WebInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'sonarqube',
+        name: 'sonarqube',
+        component: () => import('@/views/ScanSonarQube'),
+        meta: { title: 'SonarQube', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       }
     ]
   },
@@ -310,73 +361,15 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/test',
-    component: Layout,
-    name: 'Test',
-    meta: {
-      title: 'Auto Testing',
-      icon: 'el-icon-s-cooperation',
-      roles: ['Engineer', 'Project Manager', 'Administrator']
-    },
-    redirect: '/test/postman-result',
-    children: [
-      {
-        path: 'postman-result',
-        name: 'Postman result',
-        component: () => import('@/views/PostmanResult'),
-        meta: { title: 'Postman', roles: ['Engineer', 'Project Manager', 'Administrator'], rolePage: true },
-        children: [
-          {
-            path: 'devops/:id',
-            name: 'DevOps Test Case',
-            hidden: true,
-            component: () => import('@/views/TestCaseDevOps'),
-            meta: {
-              title: 'DevOps Test Case',
-              roles: ['Engineer', 'Project Manager', 'Administrator'],
-              rolePage: false
-            }
-          },
-          {
-            path: 'postman/:id',
-            name: 'Postman Test Case',
-            hidden: true,
-            component: () => import('@/views/TestCasePostman'),
-            meta: {
-              title: 'Postman Test Case',
-              roles: ['Engineer', 'Project Manager', 'Administrator'],
-              rolePage: false
-            }
-          }
-        ]
-      },
-      {
-        path: 'checkmarx',
-        name: 'checkmarx',
-        component: () => import('@/views/ScanCheckmarx'),
-        meta: { title: 'CheckMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'sonarqube',
-        name: 'sonarqube',
-        component: () => import('@/views/ScanSonarQube'),
-        meta: { title: 'SonarQube', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'web-inspect',
-        name: 'web-inspect',
-        component: () => import('@/views/ScanWebInspect'),
-        meta: { title: 'WebInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
-      }
-    ]
-  },
-
-  {
     path: '/system-resource',
     component: Layout,
     name: 'System Resource',
     redirect: '/system-resource/kubernetes',
-    meta: { title: 'System Resource', icon: 'el-icon-pie-chart', roles: ['Project Manager', 'Administrator', 'Engineer'] },
+    meta: {
+      title: 'System Resource',
+      icon: 'el-icon-pie-chart',
+      roles: ['Project Manager', 'Administrator', 'Engineer']
+    },
     children: [
       {
         path: 'kubernetes',
