@@ -1,23 +1,24 @@
 export default {
   route: {
-    Dashboard: '儀表板',
+    'Project List': '總體專案',
+    'PM Project List': '總體專案',
 
-    'Project List': '專案列表',
-    'PM Project List': '專案列表',
+    Projects: '個別專案',
+    Project: '個別專案',
 
-    Projects: '專案概述',
-    Project: '專案概述',
-    Overview: '單一專案概述',
-    'Issue Boards': '議題看板',
-    'Activity Log': '活動紀錄',
-    'Project Roadmap': '專案藍圖',
-
-    Issues: '專案議題',
-    'Issue List': '議題列表',
-    'Issue Detail': '議題內容',
+    Overview: '個別專案總覽',
+    'Issue List': '專案議題列表',
+    'Issue Boards': '議題視覺看板',
+    'Test Case': '測試個案創建',
+    'Activity Log': '議題異動紀錄',
     Wiki: 'Wiki列表',
     'File List': '檔案列表',
-    'Test Case': '測試案例列表',
+    'Project Roadmap': '專案藍圖',
+
+    'Auto Testing': '測試紀錄',
+    Postman: 'API 測試(Postman)',
+    CheckMarx: '白箱測試(CheckMarx)',
+    WebInspect: '黑箱測試(WebInspect)',
 
     Progress: '開發進度',
     'Dev Branch': '開發分支',
@@ -25,36 +26,36 @@ export default {
     Pipelines: 'Pipeline 紀錄',
     'Dev Environment': '測試環境',
 
-    'Auto Testing': '自動測試結果',
-    Postman: 'API 測試(Postman)',
-    CheckMarx: '白箱測試(CheckMarx)',
-    WebInspect: '黑箱測試(WebInspect)',
-    'DevOps Test Case': 'DevOps Test Case',
-    'Postman Test Case': 'Postman Test Case',
-
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes 資源',
+    'Deployment List': 'Deployment 列表',
+    'Pods List': 'Pods 列表',
+    'Service List': 'Service 列表',
+    'Secret List': 'Secret 列表',
+    'ConfigMaps List': 'ConfigMaps 列表',
+
     'Plugin Resource': 'Plugin 資源',
     Harbor: 'Harbor 資源',
 
     Activities: '操作記錄',
     'Project Activities': '操作紀錄',
 
-    Settings: '設定',
-    Members: '專案成員',
+    Settings: '設定管理',
+    Members: '成員管理',
     Versions: '版本設定',
+
+    Dashboard: '儀表板',
+    Issues: '專案議題',
+    'Issue Detail': '議題內容',
+
+    'DevOps Test Case': 'DevOps Test Case',
+    'Postman Test Case': 'Postman Test Case',
 
     Admin: '系統設定',
     'Account Manage': '帳號管理',
     'System Activities': '系統紀錄',
 
     'Dev Branch Test Result': '開發分支測試紀錄',
-
-    'Deployment List': 'Deployment 列表',
-    'Pods List': 'Pods 列表',
-    'Service List': 'Service 列表',
-    'Secret List': 'Secret 列表',
-    'ConfigMaps List': 'ConfigMaps 列表',
 
     Artifacts: '資源成品',
 
