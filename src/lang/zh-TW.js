@@ -14,6 +14,7 @@ export default {
     Wiki: 'Wiki列表',
     'File List': '檔案列表',
     'Project Roadmap': '專案藍圖',
+    'Project Settings': '專案設定',
 
     'Auto Testing': '測試紀錄',
     Postman: 'API 測試(Postman)',
@@ -153,6 +154,7 @@ export default {
     Method: '方法',
     Path: '路徑',
     TestResult: '測試結果',
+    TestMessage: '回傳訊息',
     SearchNameOrPathOrTestResult: '搜尋名稱,路徑或測試結果'
   },
   RuleMsg: {

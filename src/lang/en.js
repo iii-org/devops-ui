@@ -14,6 +14,7 @@ export default {
     Wiki: 'Wiki',
     'File List': 'File List',
     'Project Roadmap': 'Project Roadmap',
+    'Project Settings': 'Project Settings',
 
     'Auto Testing': 'Auto Testing',
     Postman: 'Postman',
@@ -165,6 +166,7 @@ export default {
     Method: 'Method',
     Path: 'Path',
     TestResult: 'Test Result',
+    TestMessage: 'Test Message',
     SearchNameOrPathOrTestResult: 'Search Name, Path Or TestResult'
   },
   TestItem: {

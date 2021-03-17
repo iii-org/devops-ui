@@ -78,12 +78,6 @@ export const asyncRoutes = [
         component: () => import('@/views/ProjectList/ProjectListPM'),
         meta: { title: 'PM Project List', icon: 'list', roles: ['Project Manager', 'Administrator'] }
       }
-      // {
-      //   path: 'project-settings',
-      //   name: 'Project Settings',
-      //   component: () => import('@/views/ProjectSettings/index'),
-      //   meta: { title: 'Project Settings', icon: 'el-icon-s-operation', roles: ['Project Manager', 'Administrator'] }
-      // }
     ]
   },
 
@@ -201,6 +195,12 @@ export const asyncRoutes = [
         component: () => import('@/views/ProjectRoadmap'),
         meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
       }
+      // {
+      //   path: 'project-settings',
+      //   name: 'Project Settings',
+      //   component: () => import('@/views/ProjectSettings/index'),
+      //   meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
+      // }
     ]
   },
 
