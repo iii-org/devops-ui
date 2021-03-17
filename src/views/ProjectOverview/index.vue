@@ -1,4 +1,5 @@
 <script>
+// ready to refactor
 import { mapGetters, mapActions } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import projectPie from './components/project_pie'
@@ -10,13 +11,15 @@ import {
   getProjectTest,
   getTestReport
 } from '@/api/projects'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'OverviewProject',
   components: {
     projectPie,
     projectBar,
-    ProjectListSelector
+    ProjectListSelector,
+    ElTableColumnTime
   },
   data: () => ({
     isLoading: true,
@@ -98,7 +101,39 @@ export default {
       this.projectTestLoading = true
       this.projectData = []
       let apiProjectData = await getProjectTest(this.selectedProjectId)
-      apiProjectData = apiProjectData.data
+      // apiProjectData = apiProjectData.data
+      apiProjectData = {
+        test_results: {
+          postman: {
+            id: 17,
+            passed: 1,
+            failed: 0,
+            total: 1,
+            run_at: '2021-03-15 10:05:45.011605'
+          },
+          checkmarx: {
+            message: 'success',
+            status: 3,
+            highSeverity: 0,
+            mediumSeverity: 0,
+            lowSeverity: 10,
+            infoSeverity: 0,
+            statisticsCalculationDate: '2021-03-15T18:25:59.96',
+            run_at: '2021-03-15 10:03:47.411070',
+            report_id: 5600
+          },
+          webinspect: {
+            '0': 0,
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+            status: 'Complete',
+            run_at: '2021-03-05 08:15:42.146134'
+          }
+        }
+      }
+
       for (const i in apiProjectData.test_results) {
         const object = {}
         // console.log(apiProjectData.test_result[i])
@@ -106,24 +141,18 @@ export default {
         for (const j in apiProjectData.test_results[i]) {
           // console.log(j, apiProjectData.test_results[i][j])
           if (
-            (j !== 'message') &&
-            (j !== 'statisticsCalculationDate') &&
-            (j !== 'run_at') &&
-            (j !== 'status') &&
-            (j !== 'report_id') &&
-            (j !== 'id')
+            j !== 'message' &&
+            j !== 'statisticsCalculationDate' &&
+            j !== 'run_at' &&
+            j !== 'status' &&
+            j !== 'report_id' &&
+            j !== 'id'
           ) {
-            informationText =
-              informationText +
-              '<div  style="flex: 1;padding-left: 5px;">' +
-              j +
-              ':' +
-              apiProjectData.test_results[i][j] +
-              ' </div>'
+            informationText = `${informationText} <div>${j}: ${apiProjectData.test_results[i][j]}</div>`
           }
         }
         if (i === 'postman') {
-          informationText = informationText + '<div  style="flex: 1;padding-left: 5px;"> <div>'
+          informationText = `${informationText} <div style="flex: 1"> <div>`
           if (Object.keys(apiProjectData.test_results[i]).length === 0) {
             informationText = 'No data.'
           }
@@ -152,9 +181,16 @@ export default {
           } else if (apiProjectData.test_results[i].status === undefined) {
             informationText = 'No data.'
           }
+        } else if (i === 'webinspect') {
+          if (Object.keys(apiProjectData.test_results[i]).length === 0) {
+            informationText = 'No data.'
+          } else {
+            informationText = this.handleWebInspectInfoText(informationText)
+          }
         }
         object['Software'] = i
         object['status'] = apiProjectData.test_results[i].status
+        object['runAt'] = apiProjectData.test_results[i].run_at
         object['informationText'] = informationText
         this.projectData.push(object)
       }
@@ -171,6 +207,14 @@ export default {
         link.click()
       })
       this.projectTestLoading = false
+    },
+    handleWebInspectInfoText(text) {
+      let result = text.replace('0:', 'Critical:')
+      result = result.replace('1:', 'High Severity:')
+      result = result.replace('2:', 'Medium Severity:')
+      result = result.replace('3:', 'Low Severity:')
+      result = result.replace('4:', 'Info Severity:')
+      return result
     }
   }
 }
@@ -261,8 +305,15 @@ export default {
               </el-button>
             </span>
           </div>
-          <el-table :data="projectData" stripe style="width: 100%" border :header-cell-style="{background:'#f4f7fa',color:'#555'}">
+          <el-table
+            :data="projectData"
+            stripe
+            style="width: 100%"
+            border
+            :header-cell-style="{ background: '#f4f7fa', color: '#555' }"
+          >
             <el-table-column :label="$t('Project.Software')" prop="Software" width="130" align="center" />
+            <el-table-column-time :label="$t('general.RunAt')" prop="runAt" align="center" :min-width="50" />
             <el-table-column :label="$t('Project.Brief')" header-align="center">
               <template slot-scope="scope">
                 <div
@@ -342,4 +393,3 @@ export default {
   border: none;
 }
 </style>
-
