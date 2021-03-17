@@ -252,7 +252,14 @@ export default {
                 />
               </el-tooltip>
               <span class="text-success mr-2">{{ scope.row.id }}</span>
-              <span class="font-weight-regular">{{ scope.row.issue_name }}</span>
+              <span
+                class="font-weight-regular"
+                :style="{ 'font-size': '16px', cursor: 'pointer' }"
+                :underline="false"
+                @click="handleEdit(scope.$index, scope.row)"
+              >
+                {{ scope.row.issue_name }}
+              </span>
             </span>
           </template>
         </el-table-column>
