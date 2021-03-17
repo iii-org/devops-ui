@@ -1,12 +1,7 @@
 <script>
 import { getProjectUsage } from '@/api/kubernetes'
 import resourcePie from './components/resourcePie'
-import {
-  formatChartDataResult,
-  formateUsedQuota,
-  getQuotaUnit,
-  roundValue
-} from '@/utils/k8sResourceFormatter'
+import { formatChartDataResult, formateUsedQuota, getQuotaUnit, roundValue } from '@/utils/k8sResourceFormatter'
 import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
 
 export default {
@@ -73,14 +68,13 @@ export default {
       <el-divider />
       <el-row :gutter="12">
         <el-col v-for="item in listData" :key="item.title" :lg="8" :xl="6">
-          <el-card v-loading="listLoading"
-                   :class="{ 'mb-4': true, 'float-card': hasDetail(item.title) }"
-                   :shadow="hasDetail(item.title) ? 'always' : 'never'"
-                   @click.native="showDetail(item.title)"
+          <el-card
+            v-loading="listLoading"
+            :class="{ 'mb-4': true, 'float-card': hasDetail(item.title) }"
+            :shadow="hasDetail(item.title) ? 'always' : 'never'"
+            @click.native="showDetail(item.title)"
           >
-            <div slot="header" class="d-flex justify-space-between align-center"
-                 style="height: 24px"
-            >
+            <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
               <strong>{{ item.title }}{{ item.quota }}</strong>
             </div>
             <div v-if="selectedProjectId === -1" style="text-align: center;">
@@ -89,7 +83,7 @@ export default {
             <div v-else>
               <resource-pie :chart-data="item.data" />
             </div>
-            <div :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'">
+            <div :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'" :style="{ cursor: 'pointer' }">
               {{ $t('ProjectResource.Details') }}
             </div>
           </el-card>
