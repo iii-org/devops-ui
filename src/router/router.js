@@ -91,7 +91,7 @@ export const asyncRoutes = [
     path: '/projects',
     component: Layout,
     name: 'Projects',
-    meta: { title: 'Projects', icon: 'el-icon-s-cooperation', roles: ['Engineer'] },
+    meta: { title: 'Projects', icon: 'el-icon-data-analysis', roles: ['Engineer'] },
     redirect: '/projects/list',
     children: [
       {
@@ -125,7 +125,7 @@ export const asyncRoutes = [
     redirect: '/project/index',
     meta: {
       title: 'Project',
-      icon: 'el-icon-s-cooperation',
+      icon: 'el-icon-data-analysis',
       roles: ['Project Manager', 'Administrator']
     },
     children: [

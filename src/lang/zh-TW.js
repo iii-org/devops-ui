@@ -24,6 +24,7 @@ export default {
     Progress: '開發進度',
     'Dev Branch': '開發分支',
     'Git Graph': '開發線圖',
+    'Project Graph': '開發線圖',
     Pipelines: 'Pipeline 紀錄',
     'Dev Environment': '測試環境',
 

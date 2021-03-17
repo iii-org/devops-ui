@@ -24,6 +24,7 @@ export default {
     Progress: 'Progress',
     'Dev Branch': 'Dev Branch',
     'Git Graph': 'Git Graph',
+    'Project Graph': 'Git Graph',
     Pipelines: 'Pipelines',
     'Dev Environment': 'Dev Environment',
 
