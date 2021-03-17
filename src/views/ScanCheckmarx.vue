@@ -142,13 +142,11 @@ export default {
             type="primary"
             target="_blank"
             style="font-size: 16px"
-            class="download-btn"
             :disabled="!scope.row.report_ready"
             :underline="false"
+            icon="el-icon-download"
             @click="fetchTestReport(scope.row.report_id)"
-          >
-            <i class="el-icon-download" style="font-size: 16px" />
-          </el-link>
+          />
         </template>
       </el-table-column>
     </el-table>
