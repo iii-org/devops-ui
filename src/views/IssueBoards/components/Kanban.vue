@@ -92,7 +92,7 @@ export default {
       this.$emit('updateBoard')
     },
     handleClick(id) {
-      this.$router.push({ path: `/issue/list/${id}` })
+      this.$router.push({ path: `/project/list/${id}` })
     }
   }
 }
