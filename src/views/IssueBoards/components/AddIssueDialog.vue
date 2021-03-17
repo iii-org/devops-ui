@@ -81,9 +81,9 @@ export default {
           for (const key in sendData) {
             if (sendData[key] === '') delete sendData[key]
           }
-          sendData.project_id = this.projectSelectedId
+          sendData.project_id = this.selectedProjectId
           await addIssue(sendData)
-            .then(_ => {
+            .then(res => {
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Added'),
