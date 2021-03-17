@@ -101,39 +101,7 @@ export default {
       this.projectTestLoading = true
       this.projectData = []
       let apiProjectData = await getProjectTest(this.selectedProjectId)
-      // apiProjectData = apiProjectData.data
-      apiProjectData = {
-        test_results: {
-          postman: {
-            id: 17,
-            passed: 1,
-            failed: 0,
-            total: 1,
-            run_at: '2021-03-15 10:05:45.011605'
-          },
-          checkmarx: {
-            message: 'success',
-            status: 3,
-            highSeverity: 0,
-            mediumSeverity: 0,
-            lowSeverity: 10,
-            infoSeverity: 0,
-            statisticsCalculationDate: '2021-03-15T18:25:59.96',
-            run_at: '2021-03-15 10:03:47.411070',
-            report_id: 5600
-          },
-          webinspect: {
-            '0': 0,
-            '1': 0,
-            '2': 0,
-            '3': 0,
-            '4': 0,
-            status: 'Complete',
-            run_at: '2021-03-05 08:15:42.146134'
-          }
-        }
-      }
-
+      apiProjectData = apiProjectData.data
       for (const i in apiProjectData.test_results) {
         const object = {}
         // console.log(apiProjectData.test_result[i])
