@@ -246,14 +246,14 @@ export default {
 
       <el-col :span="12">
         <el-card v-loading="projectTestLoading" shadow="hover" style="min-height: 400px" class="status-wrap">
-          <div slot="header" class="clearfix">
+          <div slot="header" class="d-flex justify-space-between align-center">
             <span>{{ $t('Project.TestStatus') }}</span>
             <span class="reload-btn">
               <el-button
                 v-if="selectedProjectId !== -1"
-                type="primary"
+                type="text"
+                class="text-body-1 py-0"
                 icon="el-icon-refresh"
-                circle
                 size="mini"
                 @click="fetchProjectTest()"
               >
@@ -261,9 +261,9 @@ export default {
               </el-button>
             </span>
           </div>
-          <el-table :data="projectData" stripe style="width: 100%" border>
-            <el-table-column :label="$t('Project.Software')" prop="Software" width="130" />
-            <el-table-column :label="$t('Project.Brief')">
+          <el-table :data="projectData" stripe style="width: 100%" border :header-cell-style="{background:'#f4f7fa',color:'#555'}">
+            <el-table-column :label="$t('Project.Software')" prop="Software" width="130" align="center" />
+            <el-table-column :label="$t('Project.Brief')" header-align="center">
               <template slot-scope="scope">
                 <div
                   style="width: 100%; display: flex ;word-break: keep-all; flex-wrap: wrap;"
@@ -271,31 +271,16 @@ export default {
                 />
               </template>
             </el-table-column>
-            <el-table-column :label="$t('Project.Report')" width="160">
+            <el-table-column :label="$t('Project.Report')" width="80" align="center">
               <template slot-scope="scope">
-                <!-- <el-link
-                  v-if="scope.row.status == 3"
-                  target="_blank"
-                  type="primary"
-                  :underline="false"
-                  class="download-btn"
-                  @click="fetchTestReport(scope.row.report_id)"
-                >
-                  Download
-                  <i class="el-icon-download" style="font-size: 16px" />
-                </el-link> -->
-
                 <el-link
                   v-if="scope.row.status == 3"
                   type="primary"
                   target="_blank"
                   :underline="false"
-                  class="download-btn"
+                  icon="el-icon-download"
                   @click="fetchTestReport(scope.row.report_id)"
-                >
-                  Download
-                  <i class="el-icon-download" style="font-size: 16px" />
-                </el-link>
+                />
               </template>
             </el-table-column>
           </el-table>
@@ -357,36 +342,4 @@ export default {
   border: none;
 }
 </style>
-<style lang="scss">
-.el-table_2_column_4 {
-  text-align: center !important;
-}
 
-.status-wrap th {
-  text-align: center;
-  font-weight: 500;
-  background-color: #f4f7fa;
-}
-
-.reload-btn {
-  .el-button {
-    font-size: 16px;
-    float: right;
-    color: #3ecbbc;
-  }
-  i {
-    font-size: 13px;
-  }
-}
-
-.download-btn {
-  color: #ffffff !important;
-  padding: 6px 22px 7px 20px;
-  border-radius: 2px;
-  background-color: #68c239;
-  font-size: 16px;
-  i {
-    vertical-align: -1px;
-  }
-}
-</style>
