@@ -110,7 +110,7 @@ export default {
     <el-row :gutter="12">
       <el-col :span="24">
         <el-card shadow="hover" body-style="padding-top:0px;padding-bottom:0px">
-          <el-collapse v-model="activeNames" :accordion="true" @change="onCollapseChange">
+          <el-collapse v-if="dataList.length" v-model="activeNames" :accordion="true" @change="onCollapseChange">
             <el-collapse-item v-for="item in dataList" :key="item.vId" :name="item.vId">
               <template slot="title">
                 <div class="titleProgress">
@@ -131,13 +131,28 @@ export default {
                           <!-- <el-tag :type="scope.row.issue_priority === '急' ? 'warning' : 'danger'" effect="dark">{{
                             scope.row.issue_priority
                           }}</el-tag> -->
-                          <el-tag v-if="scope.row.issue_priority === 'Immediate'" type="danger" size="medium" effect="dark">
+                          <el-tag
+                            v-if="scope.row.issue_priority === 'Immediate'"
+                            type="danger"
+                            size="medium"
+                            effect="dark"
+                          >
                             {{ scope.row.issue_priority }}
                           </el-tag>
-                          <el-tag v-else-if="scope.row.issue_priority === 'High'" type="warning" size="medium" effect="dark">
+                          <el-tag
+                            v-else-if="scope.row.issue_priority === 'High'"
+                            type="warning"
+                            size="medium"
+                            effect="dark"
+                          >
                             {{ scope.row.issue_priority }}
                           </el-tag>
-                          <el-tag v-else-if="scope.row.issue_priority === 'Normal'" type="success" size="medium" effect="dark">
+                          <el-tag
+                            v-else-if="scope.row.issue_priority === 'Normal'"
+                            type="success"
+                            size="medium"
+                            effect="dark"
+                          >
                             {{ scope.row.issue_priority }}
                           </el-tag>
                           <el-tag v-else type="slow" size="medium" effect="dark">{{ scope.row.issue_priority }}</el-tag>
@@ -174,6 +189,9 @@ export default {
               </div>
             </el-collapse-item>
           </el-collapse>
+          <div v-else class="text-center ma-7">
+            <span>{{ $t('general.NoData') }}</span>
+          </div>
         </el-card>
       </el-col>
     </el-row>
