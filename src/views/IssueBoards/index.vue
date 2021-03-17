@@ -220,7 +220,7 @@ export default {
         :header-text="$t('ProjectActive.Active')"
         c-name="Active"
         @update="updateIssueStatus"
-        @updateBoard="loadData"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="2"
@@ -231,7 +231,7 @@ export default {
         :header-text="$t('ProjectActive.Assigned')"
         c-name="Assigned"
         @update="updateIssueStatus"
-        @updateBoard="loadData"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="3"
@@ -242,7 +242,7 @@ export default {
         :header-text="$t('ProjectActive.Solved')"
         c-name="Solved"
         @update="updateIssueStatus"
-        @updateBoard="loadData"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="4"
@@ -253,7 +253,7 @@ export default {
         :header-text="$t('ProjectActive.Responded')"
         c-name="Responded"
         @update="updateIssueStatus"
-        @updateBoard="loadData"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="5"
@@ -264,7 +264,7 @@ export default {
         :header-text="$t('ProjectActive.Finished')"
         c-name="Finished"
         @update="updateIssueStatus"
-        @updateBoard="loadData"
+        @updateBoard="fetchData"
       />
       <Kanban
         key="6"
@@ -275,7 +275,7 @@ export default {
         :header-text="$t('ProjectActive.Closed')"
         c-name="Closed"
         @update="updateIssueStatus"
-        @updateBoard="loadData"
+        @updateBoard="fetchData"
       />
     </div>
   </div>
