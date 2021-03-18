@@ -103,6 +103,12 @@ export default {
       :data="pagedData"
       height="100%"
     >
+      <el-table-column align="center" :label="$t('TestCase.Index')" width="70">
+        <template slot-scope="scope">
+          {{ scope.$index + 1 }}
+        </template>
+      </el-table-column>
+
       <el-table-column
         align="center"
         :label="$t('general.Name')"

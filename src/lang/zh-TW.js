@@ -148,6 +148,7 @@ export default {
     FileSizeLimit: '超過可上傳的檔案大小 (20 MB)。'
   },
   TestCase: {
+    Index: '項次',
     TestCase: '測試案例',
     AddTestCase: '新增測試案例',
     EditTestCase: '編輯測試案例',
