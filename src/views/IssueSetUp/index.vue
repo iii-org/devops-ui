@@ -248,11 +248,8 @@ export default {
         type: 'success'
       })
     },
-    emitGetEditorData(value) {
-      this.issueNote = value
-    },
     async handleAddComment() {
-      await updateIssue(this.issueId, { notes: this.issueNote })
+      await updateIssue(this.issueId, { notes: this.$refs.mdEditor.invoke('getMarkdown') })
       this.commentDialogVisible = false
       this.issueNote = ''
       this.$message({
@@ -440,7 +437,8 @@ export default {
     <el-card v-loading="listLoading" class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span style="font-size: 25px; padding-bottom: 10px">Issue #{{ issueId }}</span>
-        <el-button class="filter-item" size="small" type="success" style="float: right" @click="handleSaveDetail">
+        <el-button class="filter-item" size="small" type="success" style="float: right"
+                   @click="handleSaveDetail">
           Save
         </el-button>
         <!-- <div>{{ issueDescription }}</div> -->
@@ -475,7 +473,8 @@ export default {
           <el-col :span="6">
             <el-form-item label="Status" label-width="100px">
               <el-select v-model="issueDetail.issueStatus" style="width: 100%">
-                <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label"
+                           :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -494,7 +493,8 @@ export default {
           <el-col :span="6">
             <el-form-item label="Type" label-width="100px">
               <el-select v-model="issueDetail.issueType" style="width: 100%">
-                <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label"
+                           :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -539,7 +539,8 @@ export default {
           </el-col>
           <el-col :span="12">
             <el-form-item label="Desc." label-width="100px" prop="description">
-              <el-input v-model="issueDescription" type="textarea" placeholder="please input description" disabled />
+              <el-input v-model="issueDescription" type="textarea"
+                        placeholder="please input description" disabled />
               <!-- {{ issueDescription }} -->
             </el-form-item>
           </el-col>
@@ -701,7 +702,8 @@ export default {
           </el-table-column>
           <el-table-column label="Action">
             <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteTestCase(scope.row)">Delete</el-button>
+              <el-button type="danger" size="mini" @click="deleteTestCase(scope.row)">Delete
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -717,12 +719,15 @@ export default {
               :value="item.id"
             />
           </el-select>
-          <el-button type="primary" @click="showTestItemDialog('', 'Add Test Item')">Add Test Item</el-button>
+          <el-button type="primary" @click="showTestItemDialog('', 'Add Test Item')">Add Test Item
+          </el-button>
         </div>
-        <el-table :data="issueTestItem" :element-loading-text="$t('Loading')" border fit class="mt-2">
+        <el-table :data="issueTestItem" :element-loading-text="$t('Loading')" border fit
+                  class="mt-2">
           <el-table-column label="ID">
             <template slot-scope="scope">
-              <span style="color: #409eff; cursor: pointer" @click="showTestItemDialog(scope.row, 'Edit Test Item')">
+              <span style="color: #409eff; cursor: pointer"
+                    @click="showTestItemDialog(scope.row, 'Edit Test Item')">
                 {{ scope.row.id }}
               </span>
             </template>
@@ -739,7 +744,8 @@ export default {
           </el-table-column>
           <el-table-column label="Action">
             <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteTestItem(scope.row)">Delete</el-button>
+              <el-button type="danger" size="mini" @click="deleteTestItem(scope.row)">Delete
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -755,9 +761,12 @@ export default {
               :value="item.id"
             />
           </el-select>
-          <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test Value</el-button>
+          <el-button type="primary" @click="showTestValueDialog('', 'Add Test Value')">Add Test
+            Value
+          </el-button>
         </div>
-        <el-table :data="issueTestValue" :element-loading-text="$t('Loading')" border fit class="mt-2">
+        <el-table :data="issueTestValue" :element-loading-text="$t('Loading')" border fit
+                  class="mt-2">
           <el-table-column label="Type">
             <template slot-scope="scope">
               {{ scope.row.type }}
@@ -783,14 +792,20 @@ export default {
           </el-table-column>
           <el-table-column label="Action">
             <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete</el-button>
+              <el-button type="danger" size="mini" @click="deleteTestValue(scope.row)">Delete
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
-      <editor />
+    <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%"
+               @close="commentDialogVisible = false">
+      <editor
+        id="md_editor"
+        ref="mdEditor"
+        initial-edit-type="wysiwyg"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleAddComment">Confirm</el-button>

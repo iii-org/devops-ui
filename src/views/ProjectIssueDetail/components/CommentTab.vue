@@ -86,14 +86,12 @@ export default {
       :close-on-click-modal="false"
       @close="commentDialogVisible = false"
     >
-      <template>
-        <editor
-          v-if="commentDialogVisible"
-          id="md_editor"
-          ref="mdEditor"
-          initial-edit-type="wysiwyg"
-        />
-      </template>
+      <editor
+        v-if="commentDialogVisible"
+        id="md_editor"
+        ref="mdEditor"
+        initial-edit-type="wysiwyg"
+      />
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">{{ $t('general.Cancel') }}</el-button>

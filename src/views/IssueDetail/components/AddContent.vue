@@ -5,10 +5,12 @@
     width="50%"
     @close="handleClose"
   >
-    <editor />
-    <div>aaa</div>
     <el-form ref="form" label-width="80px">
-      <editor />
+      <editor id="md_editor"
+              ref="mdEditor"
+              initial-edit-type="wysiwyg"
+              height="300px"
+      />
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">Cancel</el-button>
