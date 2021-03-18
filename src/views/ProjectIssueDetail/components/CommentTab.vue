@@ -22,23 +22,16 @@ export default {
   },
 
   data: () => ({
-    issueNote: '',
-    issueNoteNew: '',
     commentDialogVisible: false
   }),
 
   methods: {
     showAddComment() {
-      this.issueNote = ''
       this.commentDialogVisible = true
     },
 
-    emitGetEditorData(value) {
-      this.issueNote = value
-    },
-
     async handleAddComment() {
-      await updateIssue(this.issueId, { notes: this.issueNote })
+      await updateIssue(this.issueId, { notes: this.$refs.mdEditor.invoke('getMarkdown') })
       this.commentDialogVisible = false
       this.$message({
         title: this.$t('general.Success'),
@@ -96,9 +89,9 @@ export default {
       <template>
         <editor
           v-if="commentDialogVisible"
-          id="editor"
-          :initial-value="issueNoteNew"
-          @get-editor-data="emitGetEditorData"
+          id="md_editor"
+          ref="mdEditor"
+          initial-edit-type="wysiwyg"
         />
       </template>
 

@@ -6,8 +6,6 @@ import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
 
-const NEW_WIKI_CONTENT = '# WIKI'
-
 export default {
   name: 'ProjectWiki',
   components: {
@@ -250,6 +248,7 @@ export default {
           <template>
             <editor
               v-if="dialogVisible"
+              id="md_editor"
               ref="mdEditor"
               :initial-value="wikiContent"
               initial-edit-type="wysiwyg"
