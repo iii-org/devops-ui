@@ -1,11 +1,13 @@
 <script>
 import { updateIssue } from '@/api/issue'
-import EditorMD from '@/components/Editormd'
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/vue-editor'
 
 export default {
   name: 'CommentTab',
   components: {
-    EditorMD
+    editor: Editor
   },
 
   props: {
@@ -92,10 +94,10 @@ export default {
       @close="commentDialogVisible = false"
     >
       <template>
-        <EditorMD
+        <editor
           v-if="commentDialogVisible"
-          id="editormd"
-          :content="issueNoteNew"
+          id="editor"
+          :initial-value="issueNoteNew"
           @get-editor-data="emitGetEditorData"
         />
       </template>

@@ -29,7 +29,10 @@ import {
   getTestValueLocation,
   getTestValueType
 } from '@/api/issueTestValue'
-import EditorMD from '@/components/Editormd'
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/vue-editor'
+
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
@@ -41,7 +44,7 @@ export default {
     TestDialog,
     TestItemDialog,
     TestValueDialog,
-    EditorMD
+    editor: Editor
   },
   data() {
     return {
@@ -787,7 +790,7 @@ export default {
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="Add Comment" :visible="commentDialogVisible" width="70%" @close="commentDialogVisible = false">
-      <EditorMD :content="''" @get-editor-data="emitGetEditorData" />
+      <editor />
       <span slot="footer" class="dialog-footer">
         <el-button @click="commentDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleAddComment">Confirm</el-button>

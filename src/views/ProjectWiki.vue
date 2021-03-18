@@ -1,14 +1,18 @@
 <script>
-import EditorMD from '@/components/Editormd'
 import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/vue-editor'
+
+const NEW_WIKI_CONTENT = '# WIKI'
 
 export default {
   name: 'ProjectWiki',
   components: {
     ElTableColumnTime,
-    EditorMD
+    editor: Editor
   },
   mixins: [MixinElTableWithAProject],
   data: () => ({
@@ -16,8 +20,7 @@ export default {
     editBtnLoading: false,
     direction: 'rtl',
     wikiData: {},
-    wikiContent: 'Hello DevOps',
-    newWikiContent: '',
+    wikiContent: '',
     detailVisible: false,
     dialogVisible: false,
     dialogVisibleEdit: false,
@@ -51,15 +54,12 @@ export default {
       })
       this.listLoading = false
     },
-    emitGetEditorData(value) {
-      this.newWikiContent = value
-    },
     handleClose() {
       this.detailVisible = false
     },
     async handleUpdate() {
       this.editBtnLoading = true
-      const text = this.newWikiContent
+      const text = this.$refs.mdEditor.invoke('getMarkdown')
       try {
         await putWikiDetail(this.selectedProjectId, this.wikiData.title, { wiki_text: text })
         this.$message({
@@ -123,9 +123,7 @@ export default {
       this.dialogVisible = true
       this.drawerTitle = 'Add'
       this.wikiContent = '# WIKI'
-      this.newWikiContent = '# WIKI'
       this.form.wikiTitle = ''
-      // this.$refs['form'].resetFields()
     },
     async handleConfirmAdd() {
       this.$refs['form'].validate(async valid => {
@@ -133,7 +131,7 @@ export default {
           return
         }
         this.editBtnLoading = true
-        const text = this.newWikiContent
+        const text = this.$refs.mdEditor.invoke('getMarkdown')
         try {
           await putWikiDetail(this.selectedProjectId, this.form.wikiTitle, { wiki_text: text })
           this.$message({
@@ -189,12 +187,14 @@ export default {
       height="100%"
     >
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
-      <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
+      <el-table-column align="center" :label="$t('Version.Version')" min-width="50"
+                       prop="version" />
       <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
       <el-table-column-time prop="updated_on" />
       <el-table-column align="center" :label="$t('general.Actions')" width="300">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
+          <el-button size="mini" type="primary" plain
+                     @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
             {{ $t('Wiki.Content') }}
           </el-button>
@@ -236,7 +236,8 @@ export default {
       size="80%"
     >
       <div class="container">
-        <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules" label-position="top">
+        <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules"
+                 label-position="top">
           <el-form-item ref="wikiTitle" label="Title" prop="wikiTitle">
             <!-- <div class="form__title"> -->
             <el-input v-model="form.wikiTitle" placeholder="Please Input Title" />
@@ -247,7 +248,13 @@ export default {
         <div class="form__body">
           <br>
           <template>
-            <EditorMD v-if="dialogVisible" id="editormd" :content="wikiContent" @get-editor-data="emitGetEditorData" />
+            <editor
+              v-if="dialogVisible"
+              ref="mdEditor"
+              :initial-value="wikiContent"
+              initial-edit-type="wysiwyg"
+              height="500px"
+            />
           </template>
         </div>
         <div class="form__footer">
@@ -259,7 +266,8 @@ export default {
           >
             {{ $t('general.Cancel') }}
           </el-button>
-          <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading" @click="handleUpdate">
+          <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading"
+                     @click="handleUpdate">
             {{ $t('general.Confirm') }}
           </el-button>
           <el-button
@@ -295,7 +303,7 @@ export default {
           <VueShowdown :markdown="wikiContent" />
         </div>
         <div class="form__footer">
-          <el-button @click="detailVisible = false"> {{ $t('general.Close') }} </el-button>
+          <el-button @click="detailVisible = false"> {{ $t('general.Close') }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -308,29 +316,36 @@ export default {
   overflow-y: auto;
   padding: 5px;
 }
+
 .clearfix {
   clear: both;
+
   .newBtn {
     float: right;
     padding-right: 6px;
   }
 }
+
 .wiki {
   a {
     text-decoration: underline;
   }
 }
+
 .container {
   display: flex;
   height: 100%;
   flex-direction: column;
   padding: 20px;
+
   .form__title {
     flex-basis: 60px;
   }
+
   .form__body {
     flex: 1;
   }
+
   .form__footer {
     flex-basis: 60px;
     padding-top: 20px;
@@ -341,12 +356,14 @@ export default {
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
   }
+
   table td,
   table th {
     border-bottom: 1px solid #ccc;
     border-right: 1px solid #ccc;
     padding: 3px 5px;
   }
+
   table th {
     border-bottom: 2px solid #ccc;
     text-align: center;
@@ -371,6 +388,7 @@ export default {
     padding: 3px 5px;
     margin: 0 3px;
   }
+
   pre code {
     display: block;
   }
@@ -379,13 +397,16 @@ export default {
   ol {
     margin: 10px 0 10px 20px;
   }
+
   #editor-container {
     flex: 1;
   }
+
   .file-commit-message {
     flex-basis: 160px;
   }
-  >>> #w-e-text {
+
+  > > > #w-e-text {
     white-space: pre-line;
   }
 }

@@ -5,8 +5,10 @@
     width="50%"
     @close="handleClose"
   >
+    <editor />
+    <div>aaa</div>
     <el-form ref="form" label-width="80px">
-      <markdown-editor height="300px" />
+      <editor />
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">Cancel</el-button>
@@ -16,9 +18,12 @@
 </template>
 <script>
 import { getIssueStatus } from '@/api/issue'
-import MarkdownEditor from '@/components/MarkdownEditor'
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/vue-editor'
+
 export default {
-  components: { MarkdownEditor },
+  components: { editor: Editor },
   props: {
     dialogVisible: {
       type: Boolean,
