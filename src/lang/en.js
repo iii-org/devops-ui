@@ -280,6 +280,8 @@ export default {
     IssuesShouldBeClosedWithinThisMonth: 'Issues Should Be Closed Within This Month',
     Finished: 'Finished',
     Unfinished: 'Unfinished',
+    TotalVersion:'All Versions',
+    TotalMember: 'All Members',
     Total: 'Total',
     AssignIssuesPriority: 'Assign Issues Priority',
     AssignIssuesProject: 'Assign Issues Project',
