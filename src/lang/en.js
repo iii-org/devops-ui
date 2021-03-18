@@ -124,7 +124,9 @@ export default {
     Error: 'Error',
     Refresh: 'Refresh',
     RunAt: 'Run At',
-    Detail: 'Detail'
+    ScanAt: 'Scan At',
+    Detail: 'Detail',
+    Exit: 'Exit'
   },
   Notify: {
     Updated: 'update successful',
@@ -168,7 +170,7 @@ export default {
     Path: 'Path',
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
-    SearchNameOrPathOrTestResult: 'Search Name, Path Or TestResult'
+    SearchName: 'Search Name'
   },
   TestItem: {
     TestItem: 'Test Item',

@@ -124,7 +124,9 @@ export default {
     Error: '錯誤',
     Refresh: '更新',
     RunAt: '執行時間',
-    Detail: '細節'
+    ScanAt: '掃描時間',
+    Detail: '細節',
+    Exit: '退出'
   },
   Notify: {
     Updated: '已更新',
@@ -156,7 +158,7 @@ export default {
     Path: '路徑',
     TestResult: '測試結果',
     TestMessage: '回傳訊息',
-    SearchNameOrPathOrTestResult: '搜尋名稱,路徑或測試結果'
+    SearchName: '搜尋名稱'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
