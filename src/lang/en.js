@@ -123,7 +123,8 @@ export default {
     Info: 'Info',
     Error: 'Error',
     Refresh: 'Refresh',
-    RunAt: 'Run At'
+    RunAt: 'Run At',
+    Detail: 'Detail'
   },
   Notify: {
     Updated: 'update successful',

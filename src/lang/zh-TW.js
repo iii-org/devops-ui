@@ -123,7 +123,8 @@ export default {
     Info: '資訊',
     Error: '錯誤',
     Refresh: '更新',
-    RunAt: '執行時間'
+    RunAt: '執行時間',
+    Detail: '細節'
   },
   Notify: {
     Updated: '已更新',
