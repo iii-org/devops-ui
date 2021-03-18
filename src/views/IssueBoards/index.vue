@@ -194,7 +194,7 @@ export default {
           :disabled="selectedProjectId === -1"
           @change="updateData"
         >
-          <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
+          <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
           <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
 
@@ -204,7 +204,7 @@ export default {
           :disabled="selectedProjectId === -1"
           @change="updateData"
         >
-          <el-option :key="-1" :label="$t('Dashboard.Total')" :value="'-1'" />
+          <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
           <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
         </el-select>
       </div>
