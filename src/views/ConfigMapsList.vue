@@ -1,22 +1,14 @@
 <script>
-import { deleteConfigmap, getConfigmapList, updateConfigmapList } from '@/api/kubernetes'
+import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-
-const formTemplate = () => ({
-  name: '',
-  configMaps: []
-})
 
 export default {
   name: 'ConfigMapsList',
   mixins: [MixinElTableWithAProject],
   data: () => ({
     editDialogVisible: false,
-    form: formTemplate(),
-    formRules: {
-      name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
-    },
-    isUpdating: false
+    configMapName: '',
+    configMapData: []
   }),
   methods: {
     async fetchData() {
@@ -26,8 +18,7 @@ export default {
         keys: Object.keys(configMap.data),
         configMaps: Object.entries(configMap.data).map(item => ({
           key: item[0],
-          value: item[1],
-          isDisabled: configMap.is_iii
+          value: item[1]
         }))
       }))
     },
@@ -43,38 +34,11 @@ export default {
     },
     showEditDialog(configMapName, configMaps) {
       this.editDialogVisible = true
-      this.form.name = configMapName
-      this.form.configMaps = configMaps.map(item => item)
+      this.configMapName = configMapName
+      this.configMapData = configMaps.map(item => item)
     },
     closeEditDialog() {
       this.editDialogVisible = false
-      this.$nextTick(() => {
-        this.$refs['form'].resetFields()
-        this.form = formTemplate()
-      })
-    },
-    async editList() {
-      const sendData = {
-        configMaps: this.form.configMaps.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
-      }
-      this.isUpdating = true
-      const res = await updateConfigmapList(this.selectedProjectId, this.form.name, sendData)
-      this.isUpdating = false
-      this.closeEditDialog()
-      this.loadData()
-    },
-    addItem() {
-      this.form.configMaps.push({
-        key: '',
-        value: '',
-        isDisabled: false
-      })
-    },
-    removeItem(item) {
-      const index = this.form.configMaps.indexOf(item)
-      if (index !== -1) {
-        this.form.configMaps.splice(index, 1)
-      }
     }
   }
 }
@@ -119,10 +83,10 @@ export default {
           <el-button
             size="mini"
             type="primary"
-            icon="el-icon-edit"
+            icon="el-icon-tickets"
             @click="showEditDialog(scope.row.name, scope.row.configMaps)"
           >
-            {{ $t('general.Edit') }}
+            {{ $t('general.Detail') }}
           </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
@@ -150,67 +114,33 @@ export default {
     />
 
     <el-dialog
-      :title="`${$t('general.Edit')} Config Map`"
+      :title="`Config Map ${$t('general.Detail')} `"
       :visible.sync="editDialogVisible"
-      width="60%"
+      width="80%"
       @close="closeEditDialog"
     >
-      <el-form ref="form" :rules="testCaseFormRules" :model="form">
-        <el-form-item label="Config Map Name" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" />
-        </el-form-item>
-        <el-row v-for="(configMap, configMapIdx) in form.configMaps" :key="configMap + configMapIdx" :gutter="12" type="flex">
-          <el-col :span="6">
-            <el-form-item
-              :label="`key ${configMapIdx + 1} `"
-              :prop="'configMaps.' + configMapIdx + '.key'"
-              :rules="[{ required: true, message: `${$t('general.PleaseInput')} key`, trigger: 'blur' }]"
-            >
-              <el-input
-                :id="`input-key${configMapIdx + 1}`"
-                v-model="form.configMaps[configMapIdx].key"
-                placeholder="key"
-                :disabled="form.configMaps[configMapIdx].isDisabled"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="15">
-            <el-form-item
-              :label="`value ${configMapIdx + 1}`"
-              :prop="'configMaps.' + configMapIdx + '.value'"
-              :rules="[{ required: true, message: `${$t('general.PleaseInput')}  value`, trigger: 'blur' }]"
-            >
-              <el-input
-                :id="`input-value${configMapIdx + 1}`"
-                v-model="form.configMaps[configMapIdx].value"
-                show-password
-                placeholder="value"
-                :disabled="form.configMaps[configMapIdx].isDisabled"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="3" style="padding-top: 45px">
-            <el-button
-              :id="`btn-delete${configMapIdx + 1}`"
-              type="danger"
-              size="small"
-              :disabled="form.configMaps.length <= 1 || form.configMaps[configMapIdx].isDisabled"
-              @click.prevent="removeItem(configMap)"
-            >
-              {{ $t('general.Delete') }}
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-button id="btn-add-configMap-item" type="success" size="small" @click="addItem">
-          <i class="el-icon-plus" /> {{ $t('Maintenance.AddConfigMap') }}
-        </el-button>
-      </el-form>
+      <div class="text-subtitle-1 font-weight-bold">Config Map Name</div>
+      <div>{{ configMapName }}</div>
+      <el-row
+        v-for="(configMap, configMapIdx) in configMapData"
+        :key="configMap + configMapIdx"
+        :gutter="12"
+        type="flex"
+        class="mt-3"
+      >
+        <el-col :span="6">
+          <div class="text-subtitle-1 font-weight-bold">key {{ configMapIdx + 1 }}</div>
+          <div>{{ configMapData[configMapIdx].key }}</div>
+        </el-col>
+        <el-col :span="18">
+          <div class="text-subtitle-1 font-weight-bold">value {{ configMapIdx + 1 }}</div>
+          <div>{{ configMapData[configMapIdx].value }}</div>
+        </el-col>
+      </el-row>
+
       <span slot="footer" class="dialog-footer">
-        <el-button :loading="isUpdating" @click="closeEditDialog">
-          {{ $t('general.Cancel') }}
-        </el-button>
-        <el-button type="primary" :loading="isUpdating" @click="editList">
-          {{ $t('general.Confirm') }}
+        <el-button type="primary" @click="closeEditDialog">
+          {{ $t('general.Close') }}
         </el-button>
       </span>
     </el-dialog>
