@@ -23,7 +23,8 @@ export default {
     userInfo: {},
     rules: {
       id: [{ required: true, message: i18n.t('RuleMsg.PleaseInput') + i18n.t('RuleMsg.Member'), trigger: 'change' }]
-    }
+    },
+    query: ''
   }),
   computed: {
     ...mapGetters(['userId']),
@@ -35,6 +36,13 @@ export default {
           return 'Edit'
         default:
           return 'Null'
+      }
+    },
+    filteredOptions() {
+      if (this.query) {
+        return this.assignableUsers.filter(user => user.name.includes(this.query) || user.login.includes(this.query))
+      } else {
+        return this.assignableUsers
       }
     }
   },
@@ -107,6 +115,12 @@ export default {
         this.$refs['thisForm'].resetFields()
         this.form = formTemplate
       })
+    },
+    filterMethod(query) {
+      this.query = query
+    },
+    handleVisibleChange(status) {
+      if (status) this.query = ''
     }
   }
 }
@@ -203,20 +217,31 @@ export default {
       @closed="onDialogClosed"
     >
       <el-form ref="thisForm" :model="form" :rules="rules" label-position="top">
-        <el-form-item :label="$t('general.Name')" prop="id">
-          <el-select v-model="form.id" :placeholder="$t('Member.SelectMember')" filterable>
-            <el-option v-for="item in assignableUsers" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('Member.Role')" prop="role_name">
-          <!-- <el-select v-model="form.role_name" placeholder="Select a role" style="width:100%">
-            <el-option label="Engineer" value="Engineer"></el-option>
-            <el-option label="Project Manager" value="Project Manager"></el-option>
-          </el-select> -->
-          <div>
-            {{ roleName }}
-          </div>
-        </el-form-item>
+        <el-row :gutter="10">
+          <el-col :span="12">
+            <el-form-item :label="$t('general.Name')" prop="id">
+              <el-select
+                v-model="form.id"
+                :placeholder="$t('Member.SelectMember')"
+                style="width: 100%"
+                filterable
+                :filter-method="filterMethod"
+                @visible-change="handleVisibleChange"
+              >
+                <el-option v-for="user in filteredOptions" :key="user.id" :label="user.name" :value="user.id">
+                  <span style="float: left">{{ user.name }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ user.login }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('Member.Role')" prop="role_name">
+              <el-input :value="roleName" disabled />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <!-- <el-form-item label="Duration">
           <el-col :span="11">
             <el-form-item prop="start_date">
