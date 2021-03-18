@@ -140,7 +140,7 @@ export default {
       })
     },
     handleDetail(idx, row) {
-      this.$router.push({ path: `/issue/test-case/test-item/${row.id}` })
+      this.$router.push({ path: `/project/test-case/test-item/${row.id}` })
     }
   }
 }
