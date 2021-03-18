@@ -229,6 +229,7 @@ export default {
     UploadAndSave: '上傳檔案並儲存'
   },
   Version: {
+    Manage: '專案版本管理',
     AddVersion: '新增版本',
     EditVersion: '修改版本',
     Duration: '期間',
@@ -291,6 +292,7 @@ export default {
     AssignIssuesType: '受分配議題種類'
   },
   Member: {
+    Manage: '專案成員管理',
     AddMember: '新增成員',
     Id: '成員編號',
     Phone: '電話',

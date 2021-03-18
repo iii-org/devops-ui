@@ -229,6 +229,7 @@ export default {
     UploadAndSave: 'Upload File and Save'
   },
   Version: {
+    Manage: 'Project Versions Manage',
     AddVersion: 'Add Version',
     EditVersion: 'Edit Version',
     Duration: 'Duration',
@@ -291,6 +292,7 @@ export default {
     AssignIssuesType: 'Assign Issues Type'
   },
   Member: {
+    Manage: 'Project Members Manage',
     AddMember: 'Add Member',
     Id: 'Id',
     Phone: 'Phone',
