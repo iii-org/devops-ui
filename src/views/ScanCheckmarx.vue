@@ -74,7 +74,7 @@ export default {
       })
       this.listLoading = false
     },
-    fetchTestReport(reportId) {
+    fetchTestReport(reportId, scanId) {
       getCheckMarxReport(reportId).then(res => {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement('a')
@@ -82,6 +82,9 @@ export default {
         link.setAttribute('download', 'checkmarx_Report.pdf')
         document.body.appendChild(link)
         link.click()
+      }).catch(_ => {
+        this.registerReport(scanId)
+        this.loadData()
       })
     },
 
@@ -145,7 +148,7 @@ export default {
             :disabled="!scope.row.report_ready"
             :underline="false"
             icon="el-icon-download"
-            @click="fetchTestReport(scope.row.report_id)"
+            @click="fetchTestReport(scope.row.report_id, scope.row.scan_id)"
           />
         </template>
       </el-table-column>
