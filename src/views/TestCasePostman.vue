@@ -33,9 +33,10 @@ export default {
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
-      return testCases.map(testCase => {
+      return testCases.map((testCase, idx) => {
         const result = testCase
         result['testResult'] = 'Fail'
+        result['index'] = idx + 1
         result.assertions.forEach(assertion => {
           if ('error_message' in assertion) {
             assertion['testResult'] = 'Ｘ'
@@ -103,12 +104,7 @@ export default {
       :data="pagedData"
       height="100%"
     >
-      <el-table-column align="center" :label="$t('TestCase.Index')" width="70">
-        <template slot-scope="scope">
-          {{ scope.$index + 1 }}
-        </template>
-      </el-table-column>
-
+      <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="80" />
       <el-table-column
         align="center"
         :label="$t('general.Name')"
@@ -120,7 +116,7 @@ export default {
         align="center"
         :label="$t('TestCase.TestResult')"
         prop="testResult"
-        min-width="60"
+        min-width="70"
         :filters="[{ text: 'Pass', value: 'Pass' }, { text: 'Fail', value: 'Fail' }]"
         :filter-method="filterHandler"
       >
@@ -134,7 +130,7 @@ export default {
         align="center"
         :label="$t('TestCase.Method')"
         :show-overflow-tooltip="true"
-        min-width="40"
+        min-width="50"
         prop="method"
       />
       <el-table-column align="center" :label="$t('TestCase.Path')" prop="path" min-width="120" />
