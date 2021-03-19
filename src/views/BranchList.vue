@@ -1,8 +1,10 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
+  components: { ElTableColumnTime },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -17,7 +19,6 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      mergeDialogVisible: false,
       deleteDialogVisible: false,
       newBranchName: '',
       newBranchFrom: 'master',
@@ -29,9 +30,7 @@ export default {
       tagReleaseNote: '',
       newBranchBtnLoading: false,
       deleteBranchBtnLoading: false,
-      mergeBranchBtnLoading: false,
-      newTagBtnLoading: false,
-      mergeBranches: []
+      newTagBtnLoading: false
     }
   },
   computed: {
@@ -51,7 +50,6 @@ export default {
       'branches/getBranchesByProject',
       'branches/newBranch',
       'branches/deleteBranch',
-      'branches/mergeBranch',
       'tags/newTag'
     ]),
     async fetchData() {
@@ -72,21 +70,10 @@ export default {
         }
       })
     },
-    handleMerge(index, row) {
-      this.mergeBranches = [...this.branchesByProject]
-      const listData = this.mergeBranches.filter(data => {
-        if (data.name !== row.name) {
-          return data
-        }
-      })
-      this.mergeBranches = listData
-      this.mergeDialogVisible = true
-      this.newBranchFrom = this.mergeBranches[0].name
-      this.selectedBranch = row.name
-    },
     handleDelete(index, row) {
       this.deleteDialogVisible = true
       this.selectedBranch = row.name
+      this.loadData()
     },
     async handleNewBranch() {
       if (this.newBranchName === '') return
@@ -104,6 +91,7 @@ export default {
           type: 'success'
         })
       }
+      await this.loadData()
     },
     async handleDeleteModal() {
       if (!this.$route.params.bId) return
@@ -121,22 +109,7 @@ export default {
       })
       this.deleteBranchBtnLoading = false
       this.deleteDialogVisible = false
-    },
-    async handleMergeBranch() {
-      this.mergeBranchBtnLoading = true
-      await this['branches/mergeBranch']({
-        rId: this.bId,
-        data: {
-          schemas: {
-            source_branch: this.selectedBranch,
-            target_branch: this.newBranchFrom,
-            title: 'merged_by_api'
-            // merge_commit_message: this.commitMsg
-          }
-        }
-      })
-      this.mergeBranchBtnLoading = false
-      this.mergeDialogVisible = false
+      await this.loadData()
     },
     async handleNewTag() {
       if (!this.bId) return
@@ -181,21 +154,12 @@ export default {
           New Branch
         </el-button>
       </span>
-      <span class="newBtn">
-        <el-button
-          type="success"
-          @click=";(tagDialogVisible = true), (newBranchFrom = ''), (tagVersion = ''), (tagReleaseNote = '')"
-        >
-          <i class="el-icon-price-tag" />
-          New Tag
-        </el-button>
-      </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
         placeholder="Filter by Name/Message/ID"
         style="width: 250px; float: right"
-        ><i slot="prefix" class="el-input__icon el-icon-search"
+      ><i slot="prefix" class="el-input__icon el-icon-search"
       /></el-input>
     </div>
     <el-divider />
@@ -203,42 +167,36 @@ export default {
     <el-table v-loading="listLoading" :data="pagedData"
               :element-loading-text="$t('Loading')" border fit highlight-current-row
               height="100%">
-      <el-table-column label="Branch Name" :show-overflow-tooltip="true">
+      <el-table-column label="Branch Name" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
-          <!-- <router-link
-            :to="{
-              name: 'fileList',
-              params: {
-                bId: bId,
-                projectName: projectName,
-                branchName: scope.row.name
-              }
-            }"
-            style="color: #409EFF"
-          >
-            <span>{{ scope.row.name }}</span>
-            <i class="el-icon-document" />
-          </router-link> -->
           <span>{{ scope.row.name }}</span>
           <i class="el-icon-document" />
         </template>
       </el-table-column>
-      <el-table-column label="Last Commit Message" :show-overflow-tooltip="true">
+      <el-table-column label="Last Commit Message" :show-overflow-tooltip="true" min-width="400">
         <template slot-scope="scope">
           <span>{{ scope.row.last_commit_message }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Commit Time" :show-overflow-tooltip="true">
+      <el-table-column-time
+        label="Commit Time"
+        :show-overflow-tooltip="true"
+        prop="last_commit_time"
+      />
+      <el-table-column :label="$t('Git.Commit')" :show-overflow-tooltip="true" min-width="100"
+                       align="center"
+      >
         <template slot-scope="scope">
-          {{ new Date(scope.row.last_commit_time).toLocaleString() }}
+          <el-link
+            :href="scope.row.commit_url"
+            target="_blank"
+            type="primary"
+          >
+            {{ scope.row.short_id }}
+          </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Commit ID" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          {{ scope.row.short_id }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Actions" align="center" width="350">
+      <el-table-column label="Actions" align="center" width="230">
         <!-- <template slot="header">
           <el-input :v-model="search2" size="mini" placeholder="Type to search" />
         </template> -->
@@ -248,9 +206,6 @@ export default {
                      @click="handleCommitClick(scope.$index, scope.row)">
             <i class="el-icon-finished" />
             Commits&nbsp;
-          </el-button>
-          <el-button size="mini" type="warning"
-                     @click="handleMerge(scope.$index, scope.row)">Merge
           </el-button>
           <el-button size="mini" type="danger"
                      @click="handleDelete(scope.$index, scope.row)">
@@ -283,23 +238,8 @@ export default {
       <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="newBranchBtnLoading" @click="handleNewBranch">Confirm</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog :title="'Merge'" :visible.sync="mergeDialogVisible" width="50%">
-      <h3>From: {{ selectedBranch }}</h3>
-      <el-divider />
-      <h4>Merge into</h4>
-      <el-select v-model="newBranchFrom" size="small" placeholder="Select" style="width: 100%">
-        <el-option v-for="item in mergeBranches" :key="item.name" :label="item.name" :value="item.name" />
-      </el-select>
-      <!-- <h4>Commit Message :</h4>
-      <el-input v-model="commitMsg" type="textarea" :rows="3" /> -->
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="mergeDialogVisible = false">Cancel</el-button>
-        <el-button type="warning" :loading="mergeBranchBtnLoading"
-                   @click="handleMergeBranch">Merge</el-button>
+        <el-button type="primary" :loading="newBranchBtnLoading"
+                   @click="handleNewBranch">Confirm</el-button>
       </span>
     </el-dialog>
 
@@ -331,7 +271,8 @@ export default {
       <el-input v-model="tagReleaseNote" type="textarea" :rows="3" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="tagDialogVisible = false">Cancel</el-button>
-        <el-button type="success" :loading="newTagBtnLoading" @click="handleNewTag">Confirm</el-button>
+        <el-button type="success" :loading="newTagBtnLoading"
+                   @click="handleNewTag">Confirm</el-button>
       </span>
     </el-dialog>
     <router-view />
