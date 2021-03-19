@@ -3,7 +3,7 @@ import { getPostmanReport } from '@/api/postman'
 import MixinElTable from '@/components/MixinElTable'
 
 export default {
-  name: 'DevOpsTestCase',
+  name: 'TestCaseDevOps',
   mixins: [MixinElTable],
   data: () => ({
     dialogVisible: false

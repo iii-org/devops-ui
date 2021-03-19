@@ -4,7 +4,7 @@ import { getPostmanReport } from '@/api/postman'
 import MixinElTable from '@/components/MixinElTable'
 
 export default {
-  name: 'PostmanTestCase',
+  name: 'TestCasePostman',
   mixins: [MixinElTable],
   data: () => ({
     testCaseInfos: {}

@@ -20,7 +20,7 @@ const formTemplate = {
 }
 
 export default {
-  name: 'APITestCase',
+  name: 'TestCase',
   components: { ProjectListSelector },
   filters: {
     statusFilter(status) {
