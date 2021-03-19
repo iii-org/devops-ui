@@ -133,8 +133,13 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
           >
-            <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" />
+            <el-button
+              slot="reference"
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              :disabled="scope.row.secrets.map(item => item.isDisabled).includes(true)"
+            >
               {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
@@ -157,7 +162,7 @@ export default {
       @close="closeEditDialog"
     >
       <el-form ref="form" :rules="formRules" :model="form">
-        <el-form-item label="Secret Name" :label-width="formLabelWidth">
+        <el-form-item label="Secret Name">
           <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
         <el-row v-for="(secret, secretIdx) in form.secrets" :key="secret + secretIdx" :gutter="12" type="flex">
