@@ -29,17 +29,18 @@ export default {
       this.testCaseInfos['commit_id'] = commit_id
       this.testCaseInfos['commit_url'] = commit_url
       this.testCaseInfos['start_time'] = start_time
-      const testCases = this.formatData(res.data.report.json_file.executions)
+      const testCases = this.formatData(res.data.json_file.executions)
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
       return testCases.map((testCase, idx) => {
         const result = testCase
-        result['testResult'] = 'Fail'
+        result['testResult'] = 'Pass'
         result['index'] = idx + 1
         result.assertions.forEach(assertion => {
           if ('error_message' in assertion) {
             assertion['testResult'] = 'Ｘ'
+            result['testResult'] = 'Fail'
           } else {
             assertion['testResult'] = 'Ｏ'
           }
