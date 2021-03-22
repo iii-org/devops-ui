@@ -1,5 +1,5 @@
 <script>
-import { changePipelineByAction, getPipelines, getPipelinesLogs, getPipelinesConfig } from '@/api/cicd'
+import { changePipelineByAction, getPipelines, getPipelinesConfig } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -75,26 +75,6 @@ export default {
           return 'slow'
       }
     },
-    // // getPipelinesLogs (ori)
-    // async onDetailsClick(row) {
-    //   this.isLoading = true
-    //   const { repository_id } = this.selectedProject
-    //   const params = {
-    //     repository_id,
-    //     pipelines_exec_run: row.id
-    //   }
-    //   try {
-    //     const res = await getPipelinesLogs(params)
-    //     const { data } = res
-    //     this.detailData = data
-    //     this.emitTestDetailVisible(true)
-    //   } catch (error) {
-    //     console.error(error)
-    //   }
-    //   this.isLoading = false
-    // }
-
-    // getPipelinesConfig(for socket)
     async onDetailsClick(id) {
       this.isLoading = true
       const { repository_id } = this.selectedProject
@@ -104,7 +84,7 @@ export default {
         this.detailData = res.map(data => {
           const stage = data
           stage['isLoading'] = true
-          stage.steps.forEach(step => (step['message'] = ''))
+          stage.steps.forEach(step => (step['message'] = 'Loading...'))
           return stage
         })
         this.emitTestDetailVisible(true)
