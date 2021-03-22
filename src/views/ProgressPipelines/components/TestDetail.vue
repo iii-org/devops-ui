@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogVisible" width="95%" top="20px" @close="handleClose">
+  <el-dialog :visible="dialogVisible" width="95%" top="10vh" @close="handleClose">
     <template slot="title">
       <span class="font-weight-bold text-h6 ml-4">
         {{ $t('ProcessDevBranchTest.TestDetail') }}
@@ -40,7 +40,7 @@
               background: '#222',
               lineHeight: 1,
               fontSize: '14px',
-              height: '65vh',
+              height: '45vh',
               overflow: 'auto'
             }"
             shadow="never"
