@@ -13,7 +13,7 @@
         :element-loading-text="$t('Loading')"
         border
         fit
-        height="100%"
+        height="25vh"
       >
         <el-table-column align="center" :label="$t('Member.Id')" min-width="40">
           <template slot-scope="scope">
