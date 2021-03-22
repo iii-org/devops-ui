@@ -334,6 +334,7 @@ export default {
     K8SConfigDownload: 'Download K8S Config'
   },
   Project: {
+    Project: ' Project',
     AddProject: 'Add Project',
     EditProject: 'Edit Project',
     NameIdentifier: 'Name / Identifier',

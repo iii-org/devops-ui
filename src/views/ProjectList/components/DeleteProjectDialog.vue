@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="`${$t('general.Delete')} ${$t('route.Projects')}`"
+    :title="`${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` "
     :visible.sync="showDialog"
     width="40%"
     :close-on-click-modal="false"
