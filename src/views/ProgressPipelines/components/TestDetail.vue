@@ -165,7 +165,9 @@ export default {
     },
     handleClick(tab) {
       const index = Number(tab.index)
-      if (this.stages[index].state === 'Waiting' || this.stages[index].isLoading === false) {
+      if (this.stages[index].isLoading === false) {
+        return
+      } else if (this.stages[index].state === 'Waiting') {
         this.stages[index].isLoading = false
         this.stages[index].steps.forEach(step => (step.message = 'Waiting'))
         return
