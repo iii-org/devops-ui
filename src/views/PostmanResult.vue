@@ -20,7 +20,7 @@ export default {
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
-      this.$router.push({ name: target, params: { id } })
+      this.$router.push({ name: target, params: { id }})
     }
   }
 }
@@ -75,7 +75,7 @@ export default {
               size="mini"
               type="primary"
               plain
-              @click="handleClick('DevOps Test Case', scope.row.id)"
+              @click="handleClick('devops-test-case', scope.row.id)"
             >
               {{ $t('Postman.DevOps') }}
             </el-button>
@@ -83,7 +83,7 @@ export default {
               :id="`btn-postman-${scope.$index}`"
               size="mini"
               type="primary"
-              @click="handleClick('Postman Test Case', scope.row.id)"
+              @click="handleClick('postman-test-case', scope.row.id)"
             >
               {{ $t('Postman.Postman') }}
             </el-button>

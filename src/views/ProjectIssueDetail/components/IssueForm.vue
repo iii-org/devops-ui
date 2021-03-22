@@ -231,7 +231,7 @@ export default {
             message: this.$t('Notify.Deleted'),
             type: 'success'
           })
-          this.$router.push({ name: 'IssueList' })
+          this.$router.push({ name: 'issue-list' })
         })
         .catch(error => {
           this.isDeleting = false

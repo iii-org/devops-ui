@@ -1,33 +1,35 @@
 export default {
   route: {
-    'Project List': 'Project List',
-    'PM Project List': 'PM Project List',
+    dashboard: 'Dashboard',
+    projectOverview: 'Overview',
+    projectList: 'Project List',
 
-    Projects: 'Projects',
-    Project: 'Project',
+    singleProject: 'Single Project',
+    kanban: 'Issue Board',
+    issueList: 'Issue List',
+    createTest: 'Create Test',
+    overview: 'Overview',
+    wikiList: 'Wiki List',
+    fileList: 'File List',
 
-    Overview: 'Overview',
-    'Issue List': 'Issue List',
-    'Issue Boards': 'Issue Boards',
-    'Test Case': 'API Test Case',
     'Activity Log': 'Activity Log',
-    Wiki: 'Wiki',
-    'File List': 'File List',
     'Project Roadmap': 'Project Roadmap',
     'Project Settings': 'Project Settings',
 
-    'Auto Testing': 'Auto Testing',
-    Postman: 'Postman',
-    CheckMarx: 'CheckMarx',
-    SonarQube: 'SonarQube',
-    WebInspect: 'WebInspect',
+    devProgress: 'Develop Progress',
+    devBranch: 'Git Branches',
+    gitGraph: 'Git Graph',
+    pipelines: 'Pipelines',
+    devEnvironment: 'Deployed Environments',
+    kubernetesResources: 'Kubernetes Resources',
 
-    Progress: 'Progress',
-    'Dev Branch': 'Dev Branch',
-    'Git Graph': 'Git Graph',
-    'Project Graph': 'Git Graph',
-    Pipelines: 'Pipelines',
-    'Dev Environment': 'Dev Environment',
+    autoTesting: 'Auto Testing',
+    postman: 'Postman',
+    fromDevops: 'From DevOps',
+    fromCollection: 'From Postman Collection',
+    checkMarx: 'CheckMarx',
+    sonarQube: 'SonarQube',
+    webInspect: 'WebInspect',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -47,12 +49,8 @@ export default {
     Members: 'Members',
     Versions: 'Versions',
 
-    Dashboard: 'Dashboard',
     Issues: 'Issues',
     'Issue Detail': 'Issue Detail',
-
-    'DevOps Test Case': 'DevOps Test Case',
-    'Postman Test Case': 'Postman Test Case',
 
     Admin: 'System Settings',
     'Account Manage': 'Account Manage',
@@ -171,7 +169,8 @@ export default {
     Path: 'Path',
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
-    SearchName: 'Search Name'
+    SearchName: 'Search Name',
+    SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result'
   },
   TestItem: {
     TestItem: 'Test Item',

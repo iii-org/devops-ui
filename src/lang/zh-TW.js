@@ -1,36 +1,37 @@
 export default {
   route: {
-    'Project List': '總體專案',
-    'PM Project List': '總體專案',
+    dashboard: '儀表板',
+    projectOverview: '專案總覽',
+    projectList: '專案列表',
 
-    Projects: '個別專案',
-    Project: '個別專案',
+    singleProject: '個別專案',
+    kanban: '議題看板',
+    issueList: '議題列表',
+    createTest: '測試創建',
+    overview: '專案總覽',
+    wikiList: 'Wiki列表',
+    fileList: '檔案列表',
 
-    Overview: '個別專案總覽',
-    'Issue List': '專案議題列表',
-    'Issue Boards': '議題視覺看板',
-    'Test Case': '測試個案創建',
     'Activity Log': '議題異動紀錄',
-    Wiki: 'Wiki列表',
-    'File List': '檔案列表',
     'Project Roadmap': '專案藍圖',
     'Project Settings': '專案設定',
 
-    'Auto Testing': '測試紀錄',
-    Postman: 'API 測試(Postman)',
-    CheckMarx: '白箱測試(CheckMarx)',
-    SonarQube: '白箱測試(SonarQube)',
-    WebInspect: '黑箱測試(WebInspect)',
+    devProgress: '開發進度',
+    devBranch: '開發分支',
+    gitGraph: '開發線圖',
+    pipelines: 'Pipeline',
+    devEnvironment: '實證環境',
+    kubernetesResources: 'Kubernetes 資源',
 
-    Progress: '開發進度',
-    'Dev Branch': '開發分支',
-    'Git Graph': '開發線圖',
-    'Project Graph': '開發線圖',
-    Pipelines: 'Pipeline 紀錄',
-    'Dev Environment': '測試環境',
+    autoTesting: '測試紀錄',
+    postman: 'API 測試(Postman)',
+    fromDevops: '來自 DevOps',
+    fromCollection: '來自 Postman Collection',
+    checkMarx: '白箱測試(CheckMarx)',
+    sonarQube: '白箱測試(SonarQube)',
+    webInspect: '黑箱測試(WebInspect)',
 
-    'System Resource': '系統資源',
-    Kubernetes: 'Kubernetes 資源',
+    'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',
     'Pods List': 'Pods 列表',
     'Service List': 'Service 列表',
@@ -47,12 +48,8 @@ export default {
     Members: '成員管理',
     Versions: '版本設定',
 
-    Dashboard: '儀表板',
     Issues: '專案議題',
     'Issue Detail': '議題內容',
-
-    'DevOps Test Case': 'DevOps Test Case',
-    'Postman Test Case': 'Postman Test Case',
 
     Admin: '系統設定',
     'Account Manage': '帳號管理',
@@ -159,7 +156,8 @@ export default {
     Path: '路徑',
     TestResult: '測試結果',
     TestMessage: '回傳訊息',
-    SearchName: '搜尋名稱'
+    SearchName: '搜尋名稱',
+    SearchNameOrPathOrTestResult: '搜尋名稱或路徑或測試結果'
   },
   RuleMsg: {
     PleaseInput: '請輸入',

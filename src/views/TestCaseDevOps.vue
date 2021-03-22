@@ -27,7 +27,7 @@ export default {
       if (!data) {
         return []
       }
-      return data.in_db.executions
+      return data.report.in_db.executions
     },
     testResults(row) {
       const { assertions } = row

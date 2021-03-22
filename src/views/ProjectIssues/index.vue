@@ -101,7 +101,7 @@ export default {
       return data
     },
     handleEdit(idx, row) {
-      this.$router.push({ path: `list/${row.id}` })
+      this.$router.push({ path: `issue-list/${row.id}` })
     },
     handleParent(idx, row, scope) {
       this.parentId = row.id

@@ -16,13 +16,16 @@ export default {
     confirmLoading: false,
     searchKey: 'commit_id'
   }),
+  watch: {
+    listData: function() {
+      this.updateWebInspectScans()
+    }
+  },
   methods: {
     async fetchData() {
       const rName = this.selectedProject.name
       const res = await getWebInspectScans(rName)
-      const data = this.handleScans(res.data)
-      await this.updateWebInspectScans()
-      return data
+      return this.handleScans(res.data)
     },
     handleScans(scans) {
       const sortedScans = scans.map(scan => {

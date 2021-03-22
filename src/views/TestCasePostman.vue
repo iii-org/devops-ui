@@ -29,7 +29,7 @@ export default {
       this.testCaseInfos['commit_id'] = commit_id
       this.testCaseInfos['commit_url'] = commit_url
       this.testCaseInfos['start_time'] = start_time
-      const testCases = this.formatData(res.data.json_file.executions)
+      const testCases = this.formatData(res.data.report.json_file.executions)
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
@@ -73,7 +73,7 @@ export default {
 <template>
   <div class="table-container">
     <div class="d-flex justify-space-between align-center mb-3">
-      <router-link :to="{ name: 'Postman result' }">
+      <router-link :to="{ name: 'postman-result' }">
         <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
       </router-link>
       <span>{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</span>
