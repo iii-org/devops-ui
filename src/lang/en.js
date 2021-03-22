@@ -476,6 +476,7 @@ export default {
     Commit: 'Commit'
   },
   SonarQube: {
+    ViewReport: 'View Report',
     Bugs: 'Bugs',
     Vulnerabilities: 'Vulnerabilities',
     CodeSmells: 'Code Smells',

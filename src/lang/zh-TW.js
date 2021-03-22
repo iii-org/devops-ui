@@ -466,6 +466,7 @@ export default {
     Commit: 'Commit ID'
   },
   SonarQube: {
+    ViewReport: '檢視報告',
     Bugs: 'Bugs',
     Vulnerabilities: '安全漏洞',
     CodeSmells: '程式異味',

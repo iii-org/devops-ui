@@ -7,12 +7,19 @@ export default {
   name: 'ScanSonarQube',
   components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
+  data: () => ({
+    sqLink: function() {
+      return ''
+    }
+  }),
   methods: {
     async fetchData() {
       if (this.selectedProjectId === -1) {
         return []
       }
-      const data = (await getSonarQubeData(this.selectedProject.name)).data
+      const res = (await getSonarQubeData(this.selectedProject.name)).data
+      this.sqLink = res.link
+      const data = res.history
       const ret = []
       for (const key in data) {
         const row = data[key]
@@ -27,6 +34,9 @@ export default {
     convertRating(rating) {
       console.log('rating', rating)
       return ['0', 'A', 'B', 'C', 'D', 'E'][parseInt(rating)]
+    },
+    openSonarQube() {
+      window.open(this.sqLink, '_blank')
     }
   }
 }
@@ -36,6 +46,12 @@ export default {
   <div class="app-container">
     <div class="clearfix">
       <project-list-selector />
+      <span class="newBtn">
+        <el-button type="success" @click="openSonarQube">
+          <svg-icon icon-class="PhArrowSquareOutFill" />
+          {{ $t('SonarQube.ViewReport') }}
+        </el-button>
+      </span>
       <el-input
         v-model="searchData"
         class="ob-search-input ob-shadow search-input mr-3"
