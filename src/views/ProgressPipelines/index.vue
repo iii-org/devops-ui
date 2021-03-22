@@ -169,11 +169,11 @@ export default {
         prop="transitioning_message"
       />
       <el-table-column-time prop="last_test_time" />
-      <el-table-column :label="$t('general.Actions')" align="center" width="200">
+      <el-table-column :label="$t('general.Actions')" align="center" width="220">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row.id)">
             <i class="el-icon-document" />
-            Detail
+            {{ $t('general.Detail') }}
           </el-button>
 
           <el-button
@@ -184,12 +184,12 @@ export default {
             @click="onActionClick(scope.row.id, 'stop')"
           >
             <i class="el-icon-circle-close" />
-            stop
+            {{ $t('general.Stop') }}
           </el-button>
 
           <el-button v-else size="mini" type="primary" plain @click="onActionClick(scope.row.id, 'rerun')">
             <i class="el-icon-refresh-left" />
-            rerun
+            {{ $t('general.Rerun') }}
           </el-button>
         </template>
       </el-table-column>
