@@ -7,7 +7,12 @@
     </template>
 
     <el-tabs v-model="activeStage" tab-position="left">
-      <el-tab-pane v-for="(stage, idx) in stages" :key="idx" :name="stage.name" :disabled="!stage.state">
+      <el-tab-pane
+        v-for="(stage, idx) in stages"
+        :key="idx"
+        :name="`${idx + 1} ${stage.name}`"
+        :disabled="!stage.state"
+      >
         <div slot="label">
           <div class="d-flex justify-space-between align-center">
             <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
@@ -88,7 +93,7 @@ export default {
     theData: {
       handler(val) {
         this.stages = val.map(item => item)
-        this.activeStage = this.stages[0].name
+        this.activeStage = `1 ${this.stages[0].name}`
         this.fetchHarborLogByStep()
       }
     }
