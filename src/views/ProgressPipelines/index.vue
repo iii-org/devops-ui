@@ -111,6 +111,11 @@ export default {
       </el-input>
     </div>
     <el-divider />
+    <div class="text-right mb-3">
+      <el-button id="btn-reload" type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">
+        {{ $t('general.Refresh') }}
+      </el-button>
+    </div>
     <el-table
       v-loading="listLoading"
       :data="pagedData"
