@@ -17,23 +17,38 @@ export default {
     },
     rowHeight: 53, // If you can, detect the real thead cell height
     searchKey: 'name',
-    searchData: ''
+    searchData: '',
+
+    checkedItems: ['Pass', 'Fail']
   }),
   computed: {
     filteredData() {
       return this.listData.filter(data => {
-        return this.searchData === '' ||
-          data[this.searchKey].toLowerCase().includes(this.searchData.toLowerCase())
+        return this.searchData === '' || data[this.searchKey].toLowerCase().includes(this.searchData.toLowerCase())
       })
     },
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return this.filteredData.slice(start, end)
+    },
+
+    checkedData() {
+      return this.filteredData.filter(
+        item => item.testResult.includes(this.checkedItems[0]) || item.testResult.includes(this.checkedItems[1])
+      )
+    },
+    pagedDataByChecked() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit
+      return this.checkedData.slice(start, end)
     }
   },
   watch: {
     searchData() {
+      this.listQuery.page = 1
+    },
+    checkedItems() {
       this.listQuery.page = 1
     }
   },
@@ -70,8 +85,8 @@ export default {
         const tableHeight = parentHeight - siblingsHeight - 40 // parent paddings 40 px
         const defaultRowHeight = 53 // FIXME: Detect real cell height
         this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / this.rowHeight)
-        eleTable.style.maxHeight =
-          `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) % this.rowHeight}px + 20px)`
+        eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) %
+          this.rowHeight}px + 20px)`
         // console.log(tableHeight, this.rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
       })
     }
