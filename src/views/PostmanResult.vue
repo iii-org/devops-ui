@@ -29,7 +29,7 @@ export default {
   <div class="app-container">
     <router-view />
     <div v-if="this.$route.meta.rolePage" class="role-Page">
-      <div class="clearfix">
+      <div class="d-flex justify-space-between">
         <project-list-selector />
         <el-input
           v-model="searchData"
@@ -101,8 +101,3 @@ export default {
     </div>
   </div>
 </template>
-<style lang="scss" scoped>
-.clearfix {
-  clear: both;
-}
-</style>

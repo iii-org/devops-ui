@@ -16,15 +16,14 @@ export default {
     },
     countFailNum() {
       return this.filteredData.filter(item => item.testResult === 'Fail').length
-    },
-    filterByStatusData() {
-      return this.isPass
     }
   },
   methods: {
     async fetchData() {
       const res = await getPostmanReport(this.$route.params.id)
       const { branch, commit_id, commit_url, start_time } = res.data
+      this.testCaseInfos = { branch, commit_id, commit_url, start_time }
+      const testCases = this.formatData(res.data.report.json_file.executions)
       this.testCaseInfos['branch'] = branch
       this.testCaseInfos['commit_id'] = commit_id
       this.testCaseInfos['commit_url'] = commit_url
@@ -35,13 +34,13 @@ export default {
     formatData(testCases) {
       return testCases.map((testCase, idx) => {
         const result = testCase
-        result['testResult'] = 'Pass'
         result['index'] = idx + 1
         result.assertions.forEach(assertion => {
           if ('error_message' in assertion) {
-            assertion['testResult'] = 'Ｘ'
             result['testResult'] = 'Fail'
+            assertion['testResult'] = 'Ｘ'
           } else {
+            result['testResult'] = 'Pass'
             assertion['testResult'] = 'Ｏ'
           }
         })
@@ -61,10 +60,6 @@ export default {
         default:
           return 'slow'
       }
-    },
-    filterHandler(value, row, column) {
-      const property = column['property']
-      return row[property] === value
     }
   }
 }
@@ -80,12 +75,26 @@ export default {
     </div>
     <div class="d-flex justify-space-between align-center">
       <div>
-        <span>{{ selectedProject.display }} >> {{ testCaseInfos.branch }}</span> #{{ testCaseInfos.commit_id }}
+        <span>{{ selectedProject.display }} >> {{ testCaseInfos.branch }}</span>
+        <el-link
+          type="primary"
+          target="_blank"
+          style="font-size: 16px"
+          :underline="false"
+          :href="testCaseInfos.commit_url"
+        >
+          #{{ testCaseInfos.commit_id }}
+        </el-link>
       </div>
-      <div>
-        <span style="color: #3ecbbc">{{ `Pass（${countPassNum}）` }}</span>
-        <span style="color: #e85656">{{ `Fail（${countFailNum}）` }}</span>
-
+      <div class="d-flex align-end text-h6">
+        <label style="color: #3ecbbc">
+          <input v-model="checkedItems" type="checkbox" value="Pass">
+          {{ `Pass(${countPassNum})` }}
+        </label>
+        <label class="ml-3" style="color: #e85656">
+          <input v-model="checkedItems" type="checkbox" value="Fail">
+          {{ `Fail(${countFailNum})` }}
+        </label>
         <el-input
           v-model="searchData"
           class="ml-3"
@@ -102,7 +111,7 @@ export default {
       border
       fit
       highlight-current-row
-      :data="pagedData"
+      :data="pagedDataByChecked"
       height="100%"
     >
       <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="80" />
@@ -113,14 +122,7 @@ export default {
         min-width="100"
         prop="name"
       />
-      <el-table-column
-        align="center"
-        :label="$t('TestCase.TestResult')"
-        prop="testResult"
-        min-width="70"
-        :filters="[{ text: 'Pass', value: 'Pass' }, { text: 'Fail', value: 'Fail' }]"
-        :filter-method="filterHandler"
-      >
+      <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.testResult" :type="getTagType(scope.row.testResult)" size="medium" effect="dark">
             {{ scope.row.testResult }}
@@ -150,7 +152,7 @@ export default {
       </el-table-column>
     </el-table>
     <pagination
-      :total="filteredData.length"
+      :total="checkedData.length"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
