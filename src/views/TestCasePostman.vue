@@ -24,11 +24,6 @@ export default {
       const { branch, commit_id, commit_url, start_time } = res.data
       this.testCaseInfos = { branch, commit_id, commit_url, start_time }
       const testCases = this.formatData(res.data.report.json_file.executions)
-      this.testCaseInfos['branch'] = branch
-      this.testCaseInfos['commit_id'] = commit_id
-      this.testCaseInfos['commit_url'] = commit_url
-      this.testCaseInfos['start_time'] = start_time
-      const testCases = this.formatData(res.data.report.json_file.executions)
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
