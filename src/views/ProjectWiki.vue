@@ -24,6 +24,7 @@ export default {
     dialogVisibleEdit: false,
     drawerTitle: '',
     wikiTitle: '',
+    searchKey: 'title',
     formRules: {
       wikiTitle: [
         { required: true, message: 'Please input name', trigger: 'change' },
