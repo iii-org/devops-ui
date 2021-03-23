@@ -21,15 +21,18 @@ export default {
   computed: {
     ...mapGetters(['userRole'])
   },
+  watch: {
+    listData: function() {
+      this.updateCheckMarxScansStatus(this.listData)
+    }
+  },
   methods: {
     async fetchData() {
       if (this.selectedProjectId === -1) {
         return []
       }
       const res = await getCheckMarxScans(this.selectedProjectId)
-      const ret = res.data
-      await this.updateCheckMarxScansStatus(ret)
-      return ret
+      return res.data
     },
     async updateCheckMarxScansStatus(listData) {
       listData.forEach(item => {
