@@ -124,7 +124,9 @@ export default {
     RunAt: 'Run At',
     ScanAt: 'Scan At',
     Detail: 'Detail',
-    Exit: 'Exit'
+    Exit: 'Exit',
+    Stop: 'Stop',
+    Rerun: 'Rerun'
   },
   Notify: {
     Updated: 'update successful',

@@ -123,7 +123,9 @@ export default {
     RunAt: '執行時間',
     ScanAt: '掃描時間',
     Detail: '細節',
-    Exit: '退出'
+    Exit: '退出',
+    Stop: '停止',
+    Rerun: '重新運行'
   },
   Notify: {
     Updated: '已更新',

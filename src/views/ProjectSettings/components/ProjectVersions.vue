@@ -13,7 +13,7 @@
         :element-loading-text="$t('Loading')"
         border
         fit
-        height="100%"
+        height="25vh"
       >
         <el-table-column align="center" :label="$t('general.Name')" min-width="220" prop="name" />
         <el-table-column align="center" :label="$t('Version.DueDate')" width="120">

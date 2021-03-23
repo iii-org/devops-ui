@@ -6,8 +6,13 @@
       </span>
     </template>
 
-    <el-tabs v-model="activeStage" tab-position="left">
-      <el-tab-pane v-for="(stage, idx) in stages" :key="idx" :name="stage.name" :disabled="!stage.state">
+    <el-tabs v-model="activeStage" tab-position="left" @tab-click="handleClick">
+      <el-tab-pane
+        v-for="(stage, idx) in stages"
+        :key="idx"
+        :name="`${idx + 1} ${stage.name}`"
+        :disabled="!stage.state"
+      >
         <div slot="label">
           <div class="d-flex justify-space-between align-center">
             <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
@@ -58,6 +63,7 @@
 </template>
 
 <script>
+// Testing
 import { Manager } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 
@@ -88,10 +94,19 @@ export default {
     theData: {
       handler(val) {
         this.stages = val.map(item => item)
-        this.activeStage = this.stages[0].name
-        this.fetchHarborLogByStep()
+        this.activeStage = `1 ${this.stages[0].name}`
+        this.handleClick({ index: 0 })
+        // this.fetchHarborLogByStep()
       }
     }
+    // stages: {
+    //   handler(val) {
+    //     if (val.some(item => item.isLoading === false)) {
+    //       console.log('Finished')
+    //     }
+    //   },
+    //   deep: true
+    // }
   },
   methods: {
     handleClose() {
@@ -147,6 +162,39 @@ export default {
           })
         })
       )
+    },
+    handleClick(tab) {
+      const index = Number(tab.index)
+      if (this.stages[index].isLoading === false) {
+        return
+      } else if (this.stages[index].state === 'Waiting') {
+        this.stages[index].isLoading = false
+        this.stages[index].steps.forEach(step => (step.message = 'Waiting'))
+        return
+      }
+      const manager = new Manager(process.env.VUE_APP_BASE_API, { reconnectionAttempts: 5 })
+      const { repository_id } = this.selectedProject
+      const socket = manager.socket('/rancher/websocket/logs')
+      this.stages[index].steps.forEach((step, stepIdx) => {
+        const emitObj = {
+          repository_id,
+          pipelines_exec_run: this.pipelinesExecRun,
+          stage_index: index + 1,
+          step_index: step.step_id
+        }
+        socket.emit('get_pipe_log', emitObj)
+        // console.log('sioEmit ===>', { emitObj, stage_index: emitObj.stage_index, step_index: emitObj.step_index })
+        socket.on('pipeline_log', sioEvt => {
+          const { stage_index, step_index, data } = sioEvt
+          // console.log('sioEvt ===>', { sioEvt, stage_index, step_index, data })
+          if (data.length && stage_index - 1 === index && step_index === stepIdx) {
+            this.stages[index].steps[stepIdx].message = data
+          } else if (!data.length && stage_index - 1 === index && step_index === stepIdx) {
+            this.stages[index].isLoading = false
+            socket.disconnect()
+          }
+        })
+      })
     }
   }
 }
