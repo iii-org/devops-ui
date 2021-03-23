@@ -213,7 +213,15 @@ export const asyncRoutes = [
         path: 'dev-branch',
         name: 'dev-branch',
         component: () => import('@/views/ProcessDevBranch'),
-        meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+      },
+      {
+        path: 'branches/:bId/:projectName',
+        name: 'branches',
+        props: true,
+        hidden: true,
+        component: () => import('@/views/BranchList'),
+        meta: { title: 'Branches', icon: 'tree', roles: ['Engineer'] }
       },
       {
         path: 'git-graph',
