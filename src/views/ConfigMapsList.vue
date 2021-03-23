@@ -13,14 +13,23 @@ export default {
   methods: {
     async fetchData() {
       const res = await getConfigmapList(this.selectedProjectId)
-      return res.data.map(configMap => ({
-        name: configMap.name,
-        keys: Object.keys(configMap.data),
-        configMaps: Object.entries(configMap.data).map(item => ({
-          key: item[0],
-          value: item[1]
-        }))
-      }))
+      return res.data.map(configMap => {
+        if (configMap.data) {
+          return {
+            name: configMap.name,
+            keys: Object.keys(configMap.data),
+            configMaps: Object.entries(configMap.data).map(item => ({
+              key: item[0],
+              value: item[1]
+            }))
+          }
+        } else {
+          return {
+            name: configMap.name,
+            keys: '-'
+          }
+        }
+      })
     },
     async handleDelete(pId, configMapName) {
       this.listLoading = true
@@ -84,6 +93,7 @@ export default {
             size="mini"
             type="primary"
             icon="el-icon-tickets"
+            :disabled="scope.row.keys === '-'"
             @click="showEditDialog(scope.row.name, scope.row.configMaps)"
           >
             {{ $t('general.Detail') }}
