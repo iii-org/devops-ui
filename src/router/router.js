@@ -318,6 +318,12 @@ export const asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/release-version',
+        name: 'releaseVersion',
+        component: () => import('@/views/ReleaseVersion'),
+        meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },

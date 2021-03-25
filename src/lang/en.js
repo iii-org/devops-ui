@@ -22,6 +22,7 @@ export default {
     pipelines: 'Pipelines',
     devEnvironment: 'Deployed Environments',
     kubernetesResources: 'Kubernetes Resources',
+    releaseVersion: 'Release Version',
 
     autoTesting: 'Auto Testing',
     postman: 'Postman',
@@ -484,5 +485,11 @@ export default {
     CodeSmells: 'Code Smells',
     Duplicates: 'Duplicates',
     Coverage: 'Coverage'
+  },
+  Release: {
+    internalVersions: 'Internal versions',
+    selectVersion: 'Select Versions',
+    writeNote: 'Write Release Note',
+    openIssueHint: 'Note: Please make sure all issues are closed.'
   }
 }

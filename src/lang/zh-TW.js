@@ -22,6 +22,7 @@ export default {
     pipelines: 'Pipeline',
     devEnvironment: '實證環境',
     kubernetesResources: 'Kubernetes 資源',
+    releaseVersion: '釋出版本',
 
     autoTesting: '測試紀錄',
     postman: 'API 測試(Postman)',
@@ -474,5 +475,11 @@ export default {
     CodeSmells: '程式異味',
     Duplicates: '重複程式碼',
     Coverage: '覆蓋率'
+  },
+  Release: {
+    internalVersions: '內部管控版號',
+    selectVersion: '請選擇版號',
+    writeNote: '撰寫Release note',
+    openIssueHint: '注意: 包版前請確認所有議題單是否已完結關閉，以利後續之包版作業'
   }
 }
