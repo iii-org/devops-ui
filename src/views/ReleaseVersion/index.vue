@@ -1,7 +1,9 @@
 <script>
 import { mapGetters } from 'vuex'
-import { getProjectVersion } from '@/api/projects'
+import { getProjectIssueListByVersion, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
+
+const CLOSED_STATUS = 'Closed'
 
 export default {
   name: 'ReleaseVersion',
@@ -9,7 +11,8 @@ export default {
   data: () => ({
     releaseVersions: [],
     projectVersions: [],
-    projectVersionOptions: []
+    projectVersionOptions: [],
+    openIssues: []
   }),
   computed: {
     ...mapGetters(['selectedProjectId']),
@@ -41,8 +44,21 @@ export default {
       })
       this.projectVersionOptions = options
     },
-    writeNote() {
-      // TODO
+    async writeNote() {
+      await this.checkIssues()
+    },
+    async checkIssues() {
+      // Check if all issues of selected versions are closed
+      this.openIssues = []
+      for (const vId of this.releaseVersions) {
+        const params = { fixed_version_id: vId }
+        const res = await getProjectIssueListByVersion(this.selectedProjectId, params)
+        for (const issue of res.data) {
+          if (issue['issue_status'] !== CLOSED_STATUS) {
+            this.openIssues.push(issue)
+          }
+        }
+      }
     }
   }
 }
@@ -87,18 +103,6 @@ export default {
     <span style="color: #f56c6c;">
       {{ $t('Release.openIssueHint') }}
     </span>
-
-    <el-table
-      v-if="hasOpenIssue"
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      :data="pagedData"
-      height="100%"
-    >
-    </el-table>
   </div>
 </template>
 
