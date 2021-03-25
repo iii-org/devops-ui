@@ -36,7 +36,13 @@ export default {
     },
     async updateCheckMarxScansStatus(listData) {
       listData.forEach(item => {
-        if (item.status === null) this.fetchScanStatus(item.scan_id)
+        if (item.status === null) {
+          this.fetchScanStatus(item.scan_id)
+          return
+        }
+        if (item.report_id && !item.report_ready) {
+          this.fetchReportStatus(item.report_id)
+        }
       })
     },
     fetchScanStatus(scanId) {
