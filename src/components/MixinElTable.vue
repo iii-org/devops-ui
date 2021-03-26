@@ -68,12 +68,12 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    adjustTable() {
+    adjustTable(forceRowNum) {
       this.$nextTick(function() {
         let siblingsHeight = 0
         const $table = this.$el.getElementsByClassName('el-table')[0]
         if (!$table) {
-          return // Not ready yet
+          return // Component not ready yet, will be called after
         }
         const parentNode = $table.parentNode
         const parentHeight = parentNode.clientHeight
@@ -86,10 +86,14 @@ export default {
         const eleTable = this.$el.getElementsByClassName('el-table')[0]
         const tableHeight = parentHeight - siblingsHeight - 40 // parent paddings 40 px
         const defaultRowHeight = 53 // FIXME: Detect real cell height
-        this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / this.rowHeight)
-        eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) %
+        if (forceRowNum) {
+          this.listQuery.limit = forceRowNum
+          eleTable.style.maxHeight = `70%`
+        } else {
+          this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / this.rowHeight)
+          eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) %
           this.rowHeight}px + 20px)`
-        // console.log(tableHeight, this.rowHeight, this.listQuery.limit, eleTable.style.maxHeight)
+        }
       })
     }
   }

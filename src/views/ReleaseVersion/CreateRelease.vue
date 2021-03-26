@@ -16,6 +16,7 @@ export default {
     openIssueDialog() {
       const com = this.$refs.issueDialog
       com.setData(this.issues)
+      com.adjustTable(6)
       com.visible = true
     }
   }
@@ -34,6 +35,12 @@ export default {
         >
           {{ $t('Release.issueCountLink', [issues.length]) }}
         </el-link>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :span="12">
+
       </el-col>
     </el-row>
     <issue-list-dialog ref="issueDialog" />

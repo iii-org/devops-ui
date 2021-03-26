@@ -277,7 +277,9 @@ export default {
     Solved: '已解決',
     Responded: '已回覆',
     Finished: '已完成',
-    Unknown: '狀態不明'
+    Unknown: '狀態不明',
+    id: '編號',
+    name: '議題名稱'
   },
   Wiki: {
     AddWiki: '新增Wiki',

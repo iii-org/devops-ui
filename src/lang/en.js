@@ -278,7 +278,9 @@ export default {
     Solved: 'Solved',
     Responded: 'Responded',
     Finished: 'Finished',
-    Unknown: 'Unknown'
+    Unknown: 'Unknown',
+    id: 'ID',
+    name: 'Name'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
