@@ -11,11 +11,11 @@ const handleLeftQuota = item => {
 }
 const formatValue = (title, value) => {
   if (title === 'Harbor') return (value / 1024 / 1024 / 1024).toFixed(2)
-  if (title === 'GitLab') return (value / 1024 / 1024).toFixed(2)
+  if (title === 'GitLab') return (value / 1024 / 1024 / 1024).toFixed(2)
 }
 const getValueUnit = title => {
   if (title === 'Harbor') return 'GB'
-  if (title === 'GitLab') return 'MB'
+  if (title === 'GitLab') return 'GB'
 }
 
 const formatChartData = item => {
