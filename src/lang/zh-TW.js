@@ -480,6 +480,7 @@ export default {
     internalVersions: '內部管控版號',
     selectVersion: '請選擇版號',
     writeNote: '撰寫Release note',
-    openIssueHint: '注意: 包版前請確認所有議題單是否已完結關閉，以利後續之包版作業'
+    openIssueHint: '注意: 包版前請確認所有議題單是否已完結關閉，以利後續之包版作業',
+    issueCount: '本版本共完成 {count} 議題'
   }
 }
