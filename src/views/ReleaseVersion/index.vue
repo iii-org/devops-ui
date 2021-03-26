@@ -79,7 +79,7 @@ export default {
       this.$refs.openIssues.listData = this.openIssues
     },
     showCreateRelease() {
-      this.$refs.createRelease.issues = this.allIssues
+      this.$refs.createRelease.setIssues(this.allIssues)
       this.state = STATE_CREATE_RELEASE
     }
   }

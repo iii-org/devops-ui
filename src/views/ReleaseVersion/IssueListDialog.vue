@@ -13,7 +13,12 @@ export default {
     async fetchData() {
       return []
     },
-    setData(listData) {
+    setData(listData, category) {
+      if (category) {
+        listData = listData.filter(item => {
+          return item['issue_category'] === category
+        })
+      }
       this.listData = listData.map(item => {
         item['checked'] = false
         return item
@@ -36,9 +41,9 @@ export default {
       :data="pagedData"
       height="100%"
     >
-      <el-table-column align="center">
+      <el-table-column align="center" width="60px">
         <template slot-scope="scope">
-          <el-checkbox :checked="scope.row.checked" />
+          <el-checkbox :checked="scope.row.checked" style="padding-right: 10px" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('Issue.id')" prop="id" />
