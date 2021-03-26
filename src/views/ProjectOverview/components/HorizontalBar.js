@@ -11,6 +11,12 @@ export default {
   data: () => ({
     options: {
       maintainAspectRatio: false,
+      legend: {
+        position: 'left',
+        labels: {
+          usePointStyle: true
+        }
+      },
       scales: {
         xAxes: [
           {

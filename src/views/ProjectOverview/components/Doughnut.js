@@ -14,7 +14,11 @@ export default {
     options: {
       maintainAspectRatio: false,
       legend: {
-        display: true
+        display: true,
+        position: 'left',
+        labels: {
+          usePointStyle: true
+        }
       },
       plugins: {
         datalabels: {
