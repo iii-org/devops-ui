@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab } from './components'
 import { getIssue } from '@/api/issue'
 import { getFlowByIssue, getFlowType } from '@/api/issueFlow'
@@ -48,6 +49,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['selectedProjectId']),
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit - 1
@@ -70,8 +72,7 @@ export default {
         getParameterByIssue(this.issueId)
       ]).then(res => {
         const [issueDetail, flowTypeList, flowList, parameterList] = res.map(item => item.data)
-
-        this.projectId = issueDetail.project.id
+        this.projectId = this.selectedProjectId
         this.author = issueDetail.author.name
         this.parentId = issueDetail.parent_id
         this.issueLink = issueDetail.issue_link

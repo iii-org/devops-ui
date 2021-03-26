@@ -87,7 +87,7 @@ export function getProjectIssueProgress(pId, params = {}) {
 }
 
 // 取得專案議題篩選條件狀態 [0.1_單一專案概述]
-export function getProjectIssueStatistics(pId, params) {
+export function getProjectIssueStatistics(pId, params = {}) {
   return request({
     url: `/project/${pId}/issues_statistics`,
     method: 'GET',
@@ -224,5 +224,3 @@ export function deleteProjectFile(file_id) {
     method: 'DELETE'
   })
 }
-
-

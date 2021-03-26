@@ -271,7 +271,14 @@ export default {
     AddBy: 'Added by {user}',
     Author: 'Author',
     CommentTime: 'Comment Time',
-    ParentIssue: 'Parent Issue'
+    ParentIssue: 'Parent Issue',
+    Active: 'Active',
+    Assigned: 'Assigned',
+    Closed: 'Closed',
+    Solved: 'Solved',
+    Responded: 'Responded',
+    Finished: 'Finished',
+    Unknown: 'Unknown'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
@@ -286,12 +293,19 @@ export default {
     IssuesShouldBeClosedWithinThisMonth: 'Issues Should Be Closed Within This Month',
     Finished: 'Finished',
     Unfinished: 'Unfinished',
-    TotalVersion:'All Versions',
+    TotalVersion: 'All Versions',
     TotalMember: 'All Members',
     Total: 'Total',
     AssignIssuesPriority: 'Assign Issues Priority',
     AssignIssuesProject: 'Assign Issues Project',
-    AssignIssuesType: 'Assign Issues Type'
+    AssignIssuesType: 'Assign Issues Type',
+    IssueTrackingStatus: 'Issue Tracking Status',
+    Workload: 'Workload',
+    ProjectUsers: 'Project Users',
+    TestStatus: 'Test Status',
+    Software: 'Software',
+    Brief: 'Brief',
+    Report: 'Report'
   },
   Member: {
     Manage: 'Project Members Manage',
@@ -356,19 +370,13 @@ export default {
     AndThen: 'to proceed or close this modal to cancel.',
     IdRule:
       'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
-    Workload: 'Workload',
     WorkloadValue: 'Workload',
     UpcomingDeadline: 'Upcoming Deadline',
-    ProjectMembers: 'Project Members',
-    TestStatus: 'Test Status',
     Title: 'Title',
     Branches: 'Branches',
     LastTest: 'Last Test',
     LastTestResult: 'Last Test Result',
     SearchIdentifier: 'Please Input Project Identifier',
-    Report: 'Report',
-    Brief: 'Brief',
-    Software: 'Software',
     SearchProjectName: 'Search Project Name'
   },
   ProjectActive: {
