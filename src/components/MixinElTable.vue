@@ -71,7 +71,11 @@ export default {
     adjustTable() {
       this.$nextTick(function() {
         let siblingsHeight = 0
-        const parentNode = this.$el.getElementsByClassName('el-table')[0].parentNode
+        const $table = this.$el.getElementsByClassName('el-table')[0]
+        if (!$table) {
+          return // Not ready yet
+        }
+        const parentNode = $table.parentNode
         const parentHeight = parentNode.clientHeight
         for (const child of parentNode.children) {
           if (child.className.match(/\bel-table\b/)) continue

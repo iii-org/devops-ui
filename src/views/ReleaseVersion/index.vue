@@ -79,7 +79,6 @@ export default {
       this.$refs.openIssues.listData = this.openIssues
     },
     showCreateRelease() {
-      console.log(this.allIssues)
       this.$refs.createRelease.issues = this.allIssues
       this.state = STATE_CREATE_RELEASE
     }

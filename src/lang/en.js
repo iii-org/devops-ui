@@ -499,6 +499,7 @@ export default {
     selectVersion: 'Select Versions',
     writeNote: 'Write Release Note',
     openIssueHint: 'Note: Please make sure all issues are closed.',
-    issueCount: '{count} issues completed in this version.'
+    issueCount: 'In this version: ',
+    issueCountLink: '{0} issues'
   }
 }
