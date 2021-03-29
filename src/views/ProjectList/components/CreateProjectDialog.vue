@@ -250,8 +250,9 @@ export default {
       this.isLoadingTemplate = true
       getTemplateParamsByVersion(this.form.template_id, this.form.tag_name)
         .then(res => {
-          if (res.arguments) {
-            this.handleArguments(res.arguments)
+          if (res.data.arguments) {
+            this.handleArguments(res.data.arguments)
+            
           } else {
             this.form.argumentsForm = []
           }
