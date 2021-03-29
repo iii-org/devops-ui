@@ -5,9 +5,12 @@ export default {
   name: 'CreateRelease',
   components: { IssueListDialog },
   data: () => ({
+    commitForm: {
+      versionName: '',
+      note: ''
+    },
     issues: [],
     issuesByCategory: [{}, {}],
-    releaseVersion: '',
     issueDialogVisible: false
   }),
   computed: {
@@ -35,6 +38,9 @@ export default {
       com.setData(this.issues, category)
       com.adjustTable(6)
       com.visible = true
+    },
+    release() {
+      // TODO
     }
   }
 }
@@ -86,23 +92,34 @@ export default {
         </ul>
       </el-col>
     </el-row>
-    <el-row>
-        <b>{{ $t('Release.releaseNote') }}</b>
-    </el-row>
-    <el-row>
-      <label for="release_version">{{ $t('Release.releaseVersionName') }}</label>
-      <el-input id="release_version" v-model="releaseVersion"></el-input>
-    </el-row>
+    <br>
+    <div style="font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
+    <p>
+      <el-form ref="form" :model="commitForm">
+        <el-form-item :label="$t('Release.releaseVersionName')">
+          <el-input v-model="commitForm.versionName" style="width: 120px;" />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="commitForm.note"
+                    type="textarea"
+                    style="width: 60%;"
+                    :rows="6"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="release">
+            <span class="el-icon-goods" />
+            {{ $t('Release.startRelease') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </p>
     <issue-list-dialog ref="issueDialog" />
   </div>
 </template>
 
 <style scoped>
 .el-link {
-  font-size: large;
-}
-
-b {
   font-size: large;
 }
 </style>

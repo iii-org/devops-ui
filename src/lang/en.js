@@ -504,6 +504,7 @@ export default {
     issueCount: 'In this version: ',
     issueCountLink: '{0} issues',
     releaseNote: '[Release Note]',
-    releaseVersionName: 'Version name'
+    releaseVersionName: 'Version name',
+    startRelease: 'Start releasing'
   }
 }

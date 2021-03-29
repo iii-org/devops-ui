@@ -494,6 +494,7 @@ export default {
     issueCount: '本版本共完成 ',
     issueCountLink: '{0} 議題',
     releaseNote: '[Release Note]',
-    releaseVersionName: '包版版號'
+    releaseVersionName: '包版版號',
+    startRelease: '開始包版'
   }
 }
