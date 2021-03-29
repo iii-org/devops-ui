@@ -26,10 +26,13 @@ export default {
       this.listData = listData
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val
+      this.multipleSelection[this.listQuery.page] = val
     },
     copy() {
-      // TODO
+      const text = ''
+      this.$copyText(text).then(function() {
+
+      })
     }
   }
 }
