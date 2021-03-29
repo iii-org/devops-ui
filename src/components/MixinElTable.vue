@@ -88,7 +88,7 @@ export default {
         const defaultRowHeight = 53 // FIXME: Detect real cell height
         if (forceRowNum) {
           this.listQuery.limit = forceRowNum
-          eleTable.style.maxHeight = `70%`
+          eleTable.style.maxHeight = null
         } else {
           this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / this.rowHeight)
           eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) %

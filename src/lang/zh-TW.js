@@ -495,6 +495,7 @@ export default {
     issueCountLink: '{0} 議題',
     releaseNote: '[Release Note]',
     releaseVersionName: '包版版號',
-    startRelease: '開始包版'
+    startRelease: '開始包版',
+    copyIssues: '複製選中議題名稱到剪貼簿'
   }
 }

@@ -5,7 +5,7 @@ export default {
   name: 'IssueListDialog',
   mixins: [MixinElTable],
   data: () => ({
-    checked: [],
+    multipleSelection: [],
     searchKey: 'issue_name',
     visible: false
   }),
@@ -19,10 +19,17 @@ export default {
           return item['issue_category'] === category
         })
       }
-      this.listData = listData.map(item => {
-        item['checked'] = false
-        return item
-      })
+      this.checked = {}
+      for (const item of listData) {
+        this.checked[item.id] = false
+      }
+      this.listData = listData
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    copy() {
+      // TODO
     }
   }
 }
@@ -32,20 +39,22 @@ export default {
   <el-dialog
     :visible.sync="visible"
   >
+    <p>
+      <el-button type="success" @click="copy">
+        {{ $t('Release.copyIssues') }}
+      </el-button>
+    </p>
     <el-table
+      ref="theTable"
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
       border
       fit
       highlight-current-row
       :data="pagedData"
-      height="100%"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column align="center" width="60px">
-        <template slot-scope="scope">
-          <el-checkbox :checked="scope.row.checked" style="padding-right: 10px" />
-        </template>
-      </el-table-column>
+      <el-table-column type="selection" width="55" />
       <el-table-column :label="$t('Issue.id')" prop="id" />
       <el-table-column :label="$t('Issue.name')" prop="issue_name" />
       <el-table-column :label="$t('general.Type')" prop="issue_category" />

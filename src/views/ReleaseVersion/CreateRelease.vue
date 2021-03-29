@@ -36,7 +36,7 @@ export default {
     openIssueDialog(category) {
       const com = this.$refs.issueDialog
       com.setData(this.issues, category)
-      com.adjustTable(6)
+      com.adjustTable(5)
       com.visible = true
     },
     release() {

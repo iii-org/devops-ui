@@ -505,6 +505,7 @@ export default {
     issueCountLink: '{0} issues',
     releaseNote: '[Release Note]',
     releaseVersionName: 'Version name',
-    startRelease: 'Start releasing'
+    startRelease: 'Start releasing',
+    copyIssues: 'Copy issue names to clipboard'
   }
 }
