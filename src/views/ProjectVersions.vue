@@ -49,7 +49,6 @@ export default {
     handleEdit(idx, row) {
       this.dialogVisible = true
       this.dialogStatus = 2
-
       this.form = Object.assign({}, this.form, row)
       // console.log(this.form)
     },

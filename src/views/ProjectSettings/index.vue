@@ -1,25 +1,46 @@
-<script>
-import { ProjectVersions, ProjectMembers } from './components'
-import ProjectListSelector from '@/components/ProjectListSelector'
-
-export default {
-  name: 'ProjectSettings',
-  components: { ProjectVersions, ProjectMembers, ProjectListSelector }
-}
-</script>
-
 <template>
   <div class="app-container">
-    <div class="mb-8">
-      <project-list-selector />
+    <div class="d-flex">
+      <ProjectListSelector />
     </div>
+    <el-divider />
     <el-row :gutter="10">
-      <el-col :span="24" class="mb-8">
-        <project-versions />
+      <el-col class="mb-4" :sm="24" :md="10" :lg="9">
+        <el-card shadow="never">
+          <el-collapse v-model="activeNames">
+            <PluginSettings />
+          </el-collapse>
+        </el-card>
       </el-col>
-      <el-col :span="24">
-        <project-members />
+      <el-col class="mb-4" :sm="24" :md="14" :lg="15">
+        <el-card shadow="never">
+          <el-collapse v-model="activeNames">
+            <ProjectVersions />
+          </el-collapse>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col class="mb-4" :xs="24">
+        <el-card shadow="never">
+          <el-collapse v-model="activeNames">
+            <ProjectMembers />
+          </el-collapse>
+        </el-card>
       </el-col>
     </el-row>
   </div>
 </template>
+
+<script>
+import { ProjectVersions, ProjectMembers, PluginSettings } from './components'
+import ProjectListSelector from '@/components/ProjectListSelector'
+
+export default {
+  name: 'ProjectSettings',
+  components: { ProjectListSelector, ProjectVersions, PluginSettings, ProjectMembers },
+  data: () => ({
+    activeNames: ['PluginSettings']
+  })
+}
+</script>

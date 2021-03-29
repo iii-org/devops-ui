@@ -230,7 +230,7 @@ export default {
     UploadAndSave: 'Upload File and Save'
   },
   Version: {
-    Manage: 'Project Versions Manage',
+    Manage: 'Manage Project Versions',
     AddVersion: 'Add Version',
     EditVersion: 'Edit Version',
     Duration: 'Duration',
@@ -307,7 +307,7 @@ export default {
     Report: 'Report'
   },
   Member: {
-    Manage: 'Project Members Manage',
+    Manage: 'Manage Project Members',
     AddMember: 'Add Member',
     Id: 'Id',
     Phone: 'Phone',

@@ -189,13 +189,13 @@ export const asyncRoutes = [
         name: 'Project Roadmap',
         component: () => import('@/views/ProjectRoadmap'),
         meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'project-settings',
+        name: 'Project Settings',
+        component: () => import('@/views/ProjectSettings/index'),
+        meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
       }
-      // {
-      //   path: 'project-settings',
-      //   name: 'Project Settings',
-      //   component: () => import('@/views/ProjectSettings/index'),
-      //   meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
-      // }
     ]
   },
 
@@ -485,27 +485,27 @@ export const asyncRoutes = [
     ]
   },
 
-  {
-    path: '/project-settings',
-    component: Layout,
-    name: 'Settings',
-    meta: { title: 'Settings', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
-    redirect: '/project-settings/members',
-    children: [
-      {
-        path: 'members',
-        name: 'Members',
-        component: () => import('@/views/ProjectMembers'),
-        meta: { title: 'Members', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'versions',
-        name: 'Versions',
-        component: () => import('@/views/ProjectVersions'),
-        meta: { title: 'Versions', roles: ['Project Manager', 'Administrator'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/project-settings',
+  //   component: Layout,
+  //   name: 'Settings',
+  //   meta: { title: 'Settings', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
+  //   redirect: '/project-settings/members',
+  //   children: [
+  //     {
+  //       path: 'members',
+  //       name: 'Members',
+  //       component: () => import('@/views/ProjectMembers'),
+  //       meta: { title: 'Members', roles: ['Project Manager', 'Administrator'] }
+  //     },
+  //     {
+  //       path: 'versions',
+  //       name: 'Versions',
+  //       component: () => import('@/views/ProjectVersions'),
+  //       meta: { title: 'Versions', roles: ['Project Manager', 'Administrator'] }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/admin',
