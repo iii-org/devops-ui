@@ -5,6 +5,7 @@ export default {
   name: 'IssueListDialog',
   mixins: [MixinElTable],
   data: () => ({
+    paged: false,
     multipleSelection: [],
     searchKey: 'issue_name',
     visible: false
@@ -26,6 +27,10 @@ export default {
       this.listData = listData
     },
     handleSelectionChange(val) {
+      if (this.paged) {
+        this.paged = false
+        return
+      }
       const indexes = []
       for (const row of val) {
         const index = this.pagedData.indexOf(row)
@@ -34,6 +39,7 @@ export default {
       this.multipleSelection[this.listQuery.page - 1] = indexes
     },
     async handlePagination(listQuery) {
+      this.paged = true
       await this.onPagination(listQuery)
       this.reselect()
     },
@@ -48,8 +54,13 @@ export default {
     },
     copy() {
       const thiz = this
-      const text = ''
-      // TODO: Get from selected items
+      let text = ''
+      for (const i in this.multipleSelection) {
+        for (const pos of this.multipleSelection[i]) {
+          const index = parseInt(i) * this.listQuery.limit + parseInt(pos)
+          text += this.listData[index]['issue_name'] + '\n'
+        }
+      }
       this.$copyText(text).then(function() {
         thiz.$message({
           message: thiz.$t('general.copied'),
