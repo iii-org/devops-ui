@@ -5,7 +5,6 @@
   async methods.fetchData: The function to fetch list data. You must return the data array.
  */
 import Pagination from '@/components/Pagination'
-import { login } from '@/api/user'
 
 export default {
   components: { Pagination },
@@ -66,7 +65,7 @@ export default {
     async fetchData() {
       return []
     },
-    onPagination(listQuery) {
+    async onPagination(listQuery) {
       this.listQuery = listQuery
     },
     adjustTable(forceRowNum) {

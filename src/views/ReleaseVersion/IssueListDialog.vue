@@ -5,27 +5,10 @@ export default {
   name: 'IssueListDialog',
   mixins: [MixinElTable],
   data: () => ({
-    multipleSelection: [[]],
+    multipleSelection: [],
     searchKey: 'issue_name',
     visible: false
   }),
-  watch: {
-    pagedData() {
-      if (!this.$refs.theTable) {
-        return
-      }
-      const sel = this.multipleSelection[this.listQuery.page - 1]
-      if (!sel) {
-        return
-      }
-      sel.forEach(row => {
-        this.$refs.theTable.toggleRowSelection(row, true)
-      })
-    },
-    multipleSelection() {
-      console.log('mul', this.multipleSelection)
-    }
-  },
   methods: {
     async fetchData() {
       return []
@@ -43,8 +26,25 @@ export default {
       this.listData = listData
     },
     handleSelectionChange(val) {
-      console.log('set', this.listQuery.page, val)
-      this.multipleSelection[this.listQuery.page] = val
+      const indexes = []
+      for (const row of val) {
+        const index = this.pagedData.indexOf(row)
+        indexes.push(index)
+      }
+      this.multipleSelection[this.listQuery.page - 1] = indexes
+    },
+    async handlePagination(listQuery) {
+      await this.onPagination(listQuery)
+      this.reselect()
+    },
+    reselect() {
+      const sel = this.multipleSelection[this.listQuery.page - 1]
+      if (!sel) {
+        return
+      }
+      sel.forEach(index => {
+        this.$refs.theTable.toggleRowSelection(this.pagedData[index])
+      })
     },
     copy() {
       const thiz = this
@@ -92,7 +92,7 @@ export default {
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
+      @pagination="handlePagination"
     />
   </el-dialog>
 </template>
