@@ -14,18 +14,18 @@
     </div>
     <el-divider />
     <el-row :gutter="10">
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <IssuePriorityCard ref="issuePriority" :statistics-obj="statisticsObj" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <ProjectUserCard ref="projectUserList" :user-list="userList" />
       </el-col>
-      <el-col :span="12">
+      <el-col :xs="24" :md="12">
         <TestStatusCard
           ref="testStatus"
           :is-loading="isProjectTestList"

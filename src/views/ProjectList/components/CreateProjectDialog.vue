@@ -162,7 +162,7 @@ export default {
     async init() {
       this.isLoadingTemplate = true
       await getTemplateList().then(res => {
-        this.templateList = res
+        this.templateList = res.data
       })
       this.isLoadingTemplate = false
     },
@@ -231,8 +231,8 @@ export default {
       this.isLoadingTemplate = true
       getTemplateParams(this.form.template_id)
         .then(res => {
-          if (res.arguments) {
-            this.handleArguments(res.arguments)
+          if (res.data.arguments) {
+            this.handleArguments(res.data.arguments)
           } else {
             this.form.argumentsForm = []
           }

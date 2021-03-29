@@ -17,7 +17,7 @@ import { mapGetters } from 'vuex'
 import Doughnut from './Doughnut.js'
 
 export default {
-  name: 'IssuePriorityCard',
+  name: 'IssueStatusCard',
   components: { Doughnut },
   props: {
     progressObj: {
@@ -46,12 +46,21 @@ export default {
       }
     },
     fillData(chartData) {
+      const issueStatusList = [
+        { label: this.$t('Issue.Active'), color: '#56b1e8', key: 'Active' },
+        { label: this.$t('Issue.Assigned'), color: '#5375bf', key: 'Assigned' },
+        { label: this.$t('Issue.Closed'), color: '#c4cfcf', key: 'Closed' },
+        { label: this.$t('Issue.Solved'), color: '#3ecbbc', key: 'Solved' },
+        { label: this.$t('Issue.Responded'), color: '#ec8539', key: 'Responded' },
+        { label: this.$t('Issue.Finished'), color: '#53bf64', key: 'Finished' }
+        // { label: this.$t('Issue.Unknown'), color: 'red', key: 'Unknown' }
+      ]
       this.dataCollection = {
-        labels: Object.keys(chartData),
+        labels: issueStatusList.map(status => status.label),
         datasets: [
           {
-            data: Object.values(chartData),
-            backgroundColor: ['#56b1e8', '#5375bf', '#3ecbbc', '#ec8539', '#53bf64', '#c4cfcf', 'red']
+            data: issueStatusList.map(status => status.key).map(key => chartData[key]),
+            backgroundColor: issueStatusList.map(status => status.color)
           }
         ]
       }
