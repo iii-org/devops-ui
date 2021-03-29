@@ -4,6 +4,7 @@
       <project-list-selector />
       <el-select
         v-model="selectedVersion"
+        :loading="isLoadingVersion"
         :disabled="isLoading"
         :placeholder="$t('Version.SelectVersion')"
         clearable
@@ -50,6 +51,7 @@ export default {
     versionList: [],
     selectedVersion: null,
     isLoading: false,
+    isLoadingVersion: false,
     progressObj: {},
     statisticsObj: {},
     userList: [],
@@ -94,9 +96,9 @@ export default {
       this.isLoading = false
     },
     async fetchVersionList() {
-      this.isLoading = true
+      this.isLoadingVersion = true
       const res = await getProjectVersion(this.selectedProjectId)
-      this.isLoading = false
+      this.isLoadingVersion = false
       const hasVersion = res.data.versions.length > 0
       if (hasVersion) {
         this.versionList = res.data.versions.map(version => ({ id: version.id, name: version.name }))
