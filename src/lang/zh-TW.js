@@ -126,7 +126,8 @@ export default {
     Detail: '細節',
     Exit: '退出',
     Stop: '停止',
-    Rerun: '重新運行'
+    Rerun: '重新運行',
+    copied: '已複製。'
   },
   Notify: {
     Updated: '已更新',

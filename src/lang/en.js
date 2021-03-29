@@ -127,7 +127,8 @@ export default {
     Detail: 'Detail',
     Exit: 'Exit',
     Stop: 'Stop',
-    Rerun: 'Rerun'
+    Rerun: 'Rerun',
+    copied: 'Copied.'
   },
   Notify: {
     Updated: 'update successful',

@@ -17,6 +17,7 @@ export default {
   data: () => ({
     state: STATE_INIT,
     allIssues: [],
+    fullscreenLoading: false,
     openIssues: [],
     projectVersions: [],
     projectVersionOptions: [],
@@ -52,12 +53,14 @@ export default {
       this.projectVersionOptions = options
     },
     async writeNote() {
+      this.fullscreenLoading = true
       await this.checkIssues()
       if (this.openIssues.length > 0) {
         this.listOpenIssues()
       } else {
         this.showCreateRelease()
       }
+      this.fullscreenLoading = false
     },
     async checkIssues() {
       // Check if all issues of selected versions are closed
@@ -115,7 +118,7 @@ export default {
       </el-select>
 
       <span class="newBtn">
-        <el-button type="success" @click="writeNote">
+        <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="writeNote" >
           <span class="el-icon-edit" />
           {{ $t('Release.writeNote') }}
         </el-button>

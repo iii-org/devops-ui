@@ -10,6 +10,7 @@ export default {
       note: ''
     },
     issues: [],
+    issueCategories: [],
     issuesByCategory: [{}, {}],
     issueDialogVisible: false
   }),
@@ -22,11 +23,15 @@ export default {
     setIssues(issues) {
       this.issues = issues
       this.issuesByCategory = [{}, {}]
-      for (const i in issues) {
-        const side = i % 2 === 0 ? 0 : 1
-        const store = this.issuesByCategory[side]
-        const issue = issues[i]
+      for (const issue of issues) {
         const cat = issue['issue_category']
+        let index = this.issueCategories.indexOf(cat)
+        if (index < 0) {
+          this.issueCategories.push(cat)
+          index = this.issueCategories.length - 1
+        }
+        const side = index % 2 === 0 ? 0 : 1
+        const store = this.issuesByCategory[side]
         if (!(cat in store)) {
           store[cat] = []
         }
@@ -63,7 +68,7 @@ export default {
     <el-row>
       <el-col :span="6">
         <ul>
-          <li v-for="(arr, cat) in issuesByCategory[0]" :key="0-cat">
+          <li v-for="(arr, cat) in issuesByCategory[0]" :key="cat">
             <span class="el-link">{{ cat }}</span> (
             <el-link
               underline
@@ -78,7 +83,7 @@ export default {
       </el-col>
       <el-col :span="6">
         <ul>
-          <li v-for="(arr, cat) in issuesByCategory[1]" :key="1-cat">
+          <li v-for="(arr, cat) in issuesByCategory[1]" :key="cat">
             <span class="el-link">{{ cat }}</span> (
             <el-link
               underline

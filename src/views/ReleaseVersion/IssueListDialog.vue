@@ -5,10 +5,27 @@ export default {
   name: 'IssueListDialog',
   mixins: [MixinElTable],
   data: () => ({
-    multipleSelection: [],
+    multipleSelection: [[]],
     searchKey: 'issue_name',
     visible: false
   }),
+  watch: {
+    pagedData() {
+      if (!this.$refs.theTable) {
+        return
+      }
+      const sel = this.multipleSelection[this.listQuery.page - 1]
+      if (!sel) {
+        return
+      }
+      sel.forEach(row => {
+        this.$refs.theTable.toggleRowSelection(row, true)
+      })
+    },
+    multipleSelection() {
+      console.log('mul', this.multipleSelection)
+    }
+  },
   methods: {
     async fetchData() {
       return []
@@ -26,12 +43,18 @@ export default {
       this.listData = listData
     },
     handleSelectionChange(val) {
+      console.log('set', this.listQuery.page, val)
       this.multipleSelection[this.listQuery.page] = val
     },
     copy() {
+      const thiz = this
       const text = ''
+      // TODO: Get from selected items
       this.$copyText(text).then(function() {
-
+        thiz.$message({
+          message: thiz.$t('general.copied'),
+          type: 'info'
+        })
       })
     }
   }
