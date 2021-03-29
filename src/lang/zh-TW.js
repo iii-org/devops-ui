@@ -492,6 +492,8 @@ export default {
     writeNote: '撰寫Release note',
     openIssueHint: '注意: 包版前請確認所有議題單是否已完結關閉，以利後續之包版作業',
     issueCount: '本版本共完成 ',
-    issueCountLink: '{0} 議題'
+    issueCountLink: '{0} 議題',
+    releaseNote: '[Release Note]',
+    releaseVersionName: '包版版號'
   }
 }

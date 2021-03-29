@@ -502,6 +502,8 @@ export default {
     writeNote: 'Write Release Note',
     openIssueHint: 'Note: Please make sure all issues are closed.',
     issueCount: 'In this version: ',
-    issueCountLink: '{0} issues'
+    issueCountLink: '{0} issues',
+    releaseNote: '[Release Note]',
+    releaseVersionName: 'Version name'
   }
 }

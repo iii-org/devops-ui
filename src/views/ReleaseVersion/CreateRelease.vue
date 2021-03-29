@@ -7,6 +7,7 @@ export default {
   data: () => ({
     issues: [],
     issuesByCategory: [{}, {}],
+    releaseVersion: '',
     issueDialogVisible: false
   }),
   computed: {
@@ -85,12 +86,23 @@ export default {
         </ul>
       </el-col>
     </el-row>
+    <el-row>
+        <b>{{ $t('Release.releaseNote') }}</b>
+    </el-row>
+    <el-row>
+      <label for="release_version">{{ $t('Release.releaseVersionName') }}</label>
+      <el-input id="release_version" v-model="releaseVersion"></el-input>
+    </el-row>
     <issue-list-dialog ref="issueDialog" />
   </div>
 </template>
 
 <style scoped>
 .el-link {
+  font-size: large;
+}
+
+b {
   font-size: large;
 }
 </style>
