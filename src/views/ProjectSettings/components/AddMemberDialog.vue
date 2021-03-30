@@ -123,20 +123,25 @@ export default {
     handleVisibleChange(status) {
       if (status) this.selectorQuery = ''
     },
-    async handleAddConfirm() {
+    handleAddConfirm() {
       this.$refs.memberForm.validate(async valid => {
         if (valid) {
           this.btnConfirmLoading = true
-          await addProjectMember(this.selectedProjectId, { user_id: this.form.id })
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
-          this.fetchData()
-          this.$emit('update')
-          this.btnConfirmLoading = false
-          this.dialogVisible = false
+          addProjectMember(this.selectedProjectId, { user_id: this.form.id })
+            .then(res => {
+              this.$message({
+                title: this.$t('general.Success'),
+                message: this.$t('Notify.Added'),
+                type: 'success'
+              })
+              this.fetchData()
+              this.$emit('update')
+            })
+            .catch(err => console.log(err))
+            .then(() => {
+              this.btnConfirmLoading = false
+              this.dialogVisible = false
+            })
         }
       })
     }
