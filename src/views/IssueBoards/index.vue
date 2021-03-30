@@ -35,8 +35,6 @@ export default {
   watch: {
     selectedProjectId() {
       this.fetchData()
-      this.versionValue = '-1'
-      this.memberValue = '-1'
     }
   },
   async created() {
@@ -114,6 +112,8 @@ export default {
         if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
         if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
       })
+      this.versionValue = '-1'
+      this.memberValue = '-1'
       this.updateRelativeList()
     },
     async updateRelativeList() {
@@ -184,31 +184,30 @@ export default {
 
 <template>
   <div v-loading="isLoading" class="app-container">
-    <div class="clearfix">
-      <div>
-        <project-list-selector />
+    <div class="d-flex">
+      <project-list-selector />
+      <el-select
+        v-model="versionValue"
+        :placeholder="$t('Version.SelectVersion')"
+        :disabled="selectedProjectId === -1"
+        class="mr-4"
+        @change="updateData"
+      >
+        <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
+        <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
 
-        <el-select
-          v-model="versionValue"
-          :placeholder="$t('Version.SelectVersion')"
-          :disabled="selectedProjectId === -1"
-          @change="updateData"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-          <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-
-        <el-select
-          v-model="memberValue"
-          :placeholder="$t('Member.SelectMember')"
-          :disabled="selectedProjectId === -1"
-          @change="updateData"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
-          <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
-        </el-select>
-      </div>
+      <el-select
+        v-model="memberValue"
+        :placeholder="$t('Member.SelectMember')"
+        :disabled="selectedProjectId === -1"
+        @change="updateData"
+      >
+        <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
+        <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
+      </el-select>
     </div>
+
     <el-divider />
     <div class="board">
       <Kanban
