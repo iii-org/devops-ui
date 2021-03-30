@@ -510,6 +510,7 @@ export default {
     releaseNote: '[Release Note]',
     releaseVersionName: 'Version name',
     startRelease: 'Start releasing',
-    copyIssues: 'Copy issue names to clipboard'
+    copyIssues: 'Copy issue names to clipboard',
+    allCategories: 'All'
   }
 }

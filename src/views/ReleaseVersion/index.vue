@@ -86,7 +86,7 @@ export default {
           confirmButtonText: this.$t('general.Confirm')
         })
       this.state = STATE_SHOW_OPEN_ISSUES
-      this.$refs.openIssues.listData = this.openIssues
+      this.$refs.openIssues.setData(this.openIssues)
     },
     showCreateRelease() {
       this.$refs.createRelease.setIssues(this.allIssues)

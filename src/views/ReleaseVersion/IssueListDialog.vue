@@ -5,13 +5,10 @@ export default {
   name: 'IssueListDialog',
   mixins: [MixinElTableWithCheckbox],
   data: () => ({
-    searchKey: 'issue_name',
+    searchKey: '',
     visible: false
   }),
   methods: {
-    async fetchData() {
-      return []
-    },
     setData(listData, category) {
       if (category) {
         listData = listData.filter(item => {
@@ -58,10 +55,10 @@ export default {
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column :label="$t('Issue.id')" prop="id" />
-      <el-table-column :label="$t('Issue.name')" prop="issue_name" />
-      <el-table-column :label="$t('Project.Version')" prop="fixed_version_name" />
-      <el-table-column :label="$t('general.Type')" prop="issue_category" />
+      <el-table-column :label="$t('Issue.id')" align="center" prop="id" width="75" />
+      <el-table-column :label="$t('Issue.name')" align="center" prop="issue_name" />
+      <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version_name" />
+      <el-table-column :label="$t('general.Type')" align="center" prop="issue_category" />
     </el-table>
     <pagination
       :total="filteredData.length"
