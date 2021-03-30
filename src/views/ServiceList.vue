@@ -9,11 +9,7 @@ export default {
     async fetchData() {
       this.listLoading = true
       const res = await getServiceList(this.selectedProjectId)
-      return res.data.map(item => {
-        return {
-          name: item
-        }
-      })
+      return res.data
     },
     async handleDelete(pId, serviceName) {
       try {
@@ -29,26 +25,28 @@ export default {
 
 <template>
   <div class="table-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        style="width: 250px"
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit highlight-current-row height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      height="100%"
+    >
       <el-table-column :label="$t('general.Name')" align="center" prop="name" min-width="200" />
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
         <template slot-scope="scope">
-          <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
-              <i class="el-icon-edit" />
-              {{ $t('general.Edit') }}
-            </el-button> -->
           <el-popconfirm
             confirm-button-text="Delete"
             cancel-button-text="Cancel"
@@ -57,7 +55,7 @@ export default {
             title="Are you sure?"
             @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
           >
-            <el-button slot="reference" size="mini" type="danger">
+            <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.is_iii">
               <i class="el-icon-delete" />
               {{ $t('general.Delete') }}
             </el-button>
