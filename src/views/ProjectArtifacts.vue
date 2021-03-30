@@ -93,13 +93,3 @@ export default {
     />
   </div>
 </template>
-
-<style lang="scss">
-.newBtn {
-  float: right;
-  padding-right: 6px;
-}
-.line {
-  text-align: center;
-}
-</style>
