@@ -128,7 +128,9 @@ export default {
     Exit: 'Exit',
     Stop: 'Stop',
     Rerun: 'Rerun',
-    copied: 'Copied.'
+    copied: 'Copied.',
+    caution: 'Caution!',
+    ok: 'OK'
   },
   Notify: {
     Updated: 'update successful',
@@ -502,6 +504,7 @@ export default {
     selectVersion: 'Select Versions',
     writeNote: 'Write Release Note',
     openIssueHint: 'Note: Please make sure all issues are closed.',
+    openIssueAlert: 'There are unclosed issues in selected versions, please close it first.',
     issueCount: 'In this version: ',
     issueCountLink: '{0} issues',
     releaseNote: '[Release Note]',

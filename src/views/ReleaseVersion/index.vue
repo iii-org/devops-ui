@@ -78,6 +78,13 @@ export default {
       }
     },
     listOpenIssues() {
+      const h = this.$createElement
+      this.$alert(
+        h('div', this.$t('Release.openIssueAlert')),
+        this.$t('general.caution'),
+        {
+          confirmButtonText: this.$t('general.Confirm')
+        })
       this.state = STATE_SHOW_OPEN_ISSUES
       this.$refs.openIssues.listData = this.openIssues
     },
@@ -118,7 +125,7 @@ export default {
       </el-select>
 
       <span class="newBtn">
-        <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="writeNote" >
+        <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="writeNote">
           <span class="el-icon-edit" />
           {{ $t('Release.writeNote') }}
         </el-button>

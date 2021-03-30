@@ -1,9 +1,9 @@
 <script>
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
 
 export default {
   name: 'OpenIssuesTable',
-  mixins: [MixinElTable],
+  mixins: [MixinElTableWithCheckbox],
   data: () => ({
     searchKey: 'issue_name'
   }),
@@ -18,16 +18,22 @@ export default {
 <template>
   <div class="table-container">
     <el-table
+      ref="theTable"
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
       border
       fit
       highlight-current-row
       :data="pagedData"
-      height="100%"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column :label="$t('general.Type')" prop="issue_name">
-      </el-table-column>
+      <el-table-column type="selection" width="55" />
+      <el-table-column :label="$t('Issue.id')" prop="id" />
+      <el-table-column :label="$t('Issue.name')" prop="issue_name" />
+      <el-table-column :label="$t('Project.Version')" prop="fixed_version_name" />
+      <el-table-column :label="$t('general.Type')" prop="issue_category" />
+      <el-table-column :label="$t('general.Status')" prop="issue_status" />
+      <el-table-column :label="$t('Issue.Assignee')" prop="issue_assignee" />
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -35,7 +41,7 @@ export default {
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
+      @pagination="handlePagination"
     />
   </div>
 </template>

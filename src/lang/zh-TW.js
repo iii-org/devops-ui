@@ -127,7 +127,9 @@ export default {
     Exit: '退出',
     Stop: '停止',
     Rerun: '重新運行',
-    copied: '已複製。'
+    copied: '已複製。',
+    caution: '注意！',
+    ok: '確定'
   },
   Notify: {
     Updated: '已更新',
@@ -492,6 +494,7 @@ export default {
     selectVersion: '請選擇版號',
     writeNote: '撰寫Release note',
     openIssueHint: '注意: 包版前請確認所有議題單是否已完結關閉，以利後續之包版作業',
+    openIssueAlert: '目前版本尚有未解之議單，請協助處理後再進行包版作業！',
     issueCount: '本版本共完成 ',
     issueCountLink: '{0} 議題',
     releaseNote: '[Release Note]',
