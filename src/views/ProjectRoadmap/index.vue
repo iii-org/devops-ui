@@ -21,8 +21,6 @@ export default {
       listLoading: true,
       contentLoading: false,
       workLoad: '',
-      workLoadData: {},
-      workLoadTypes: [],
       activeNames: '',
       versionList: [],
       workList: {},
@@ -52,28 +50,28 @@ export default {
         versions.map(({ id }) => getProjectIssueProgress(this.selectedProjectId, { fixed_version_id: id }))
       )
       this.versionList = resIssueProgress.map(({ data }, idx) => {
-        const { Active, Assigned, Closed, Finished, Responded, Solved, Unknown } = data
-        const total_issue = Active + Assigned + Closed + Finished + Responded + Solved + Unknown
-        const open = Active + Assigned + Finished + Responded + Solved + Unknown
+        const close = data.Closed || 0
+        const total_issue = Object.values(data).reduce((a, b) => a + b, 0)
         return {
           ...data,
           id: versions[idx].id,
           name: versions[idx].name,
-          total_issue,
-          open
+          workLoadData: {},
+          close,
+          total_issue
         }
       })
       this.listLoading = false
     },
-    getVersionTagType(item) {
-      const percentage = this.getProgressPercentage(item)
+    getVersionTagType(version) {
+      const percentage = this.getProgressPercentage(version)
       if (percentage === 0) return 'danger'
       if (percentage === 100) return 'success'
       return 'primary'
     },
-    getProgressPercentage(item) {
-      if (item.total_issue > 0 && item.open === 0) return 100
-      return Number((item.total_issue > 0 ? ((item.total_issue - item.open) / item.total_issue) * 100 : 0).toFixed(1))
+    getProgressPercentage(version) {
+      if (version.total_issue === 0) return 0
+      return Number(((version.close / version.total_issue) * 100).toFixed(1))
     },
     onCollapseChange(value) {
       if (!value) return
@@ -87,12 +85,11 @@ export default {
         fixed_version_id: versionId
       })
       this.$set(this.workList, versionId, resProjectIssue.data)
+
       const resStatistics = await getProjectIssueStatistics(this.selectedProjectId, { fixed_version_id: versionId })
-      this.workLoadData = resStatistics.data
-      this.workLoadTypes = Object.keys(this.workLoadData).map(key => {
-        return { id: key, name: key }
-      })
-      this.workLoad = this.workLoadTypes.length > 0 ? this.workLoadTypes[0].id : ''
+      const idx = this.versionList.findIndex(item => item.id === versionId)
+      this.versionList[idx].workLoadData = resStatistics.data
+
       this.contentLoading = false
     },
     getPriorityType(priority) {
@@ -117,21 +114,20 @@ export default {
       <project-list-selector />
     </div>
     <el-divider />
-
     <el-row :gutter="10">
       <el-col :span="24">
         <el-card shadow="hover">
           <el-collapse v-if="versionList.length" v-model="activeNames" :accordion="true" @change="onCollapseChange">
             <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
               <template slot="title">
-                <div class="d-flex justify-space-around align-center">
+                <div class="d-flex align-center">
                   <el-tag class="mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
                     {{ version.name }}
                   </el-tag>
                   <div class="mr-7" style="width: 700px">
                     <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
                   </div>
-                  <div class="text-h6">{{ version.total_issue - version.open }}／{{ version.total_issue }}</div>
+                  <div class="text-h6">{{ version.close }}／{{ version.total_issue }}</div>
                 </div>
               </template>
               <el-row v-loading="contentLoading" :gutter="12">
@@ -139,27 +135,30 @@ export default {
                   <el-table :data="workList[version.id]" style="width: 100%" border stripe>
                     <el-table-column label="Work List">
                       <template slot-scope="scope">
-                        <el-tag
-                          v-if="scope.row.issue_priority"
-                          :type="getPriorityType(scope.row.issue_priority)"
-                          size="medium"
-                          effect="dark"
-                        >
-                          {{ scope.row.issue_priority }}
-                        </el-tag>
-                        <span class="font-weight-bold mr-2">[{{ scope.row.issue_category }}]</span>
-                        <span>{{ scope.row.issue_name }} </span>
+                        <div class="d-flex justify-space-between">
+                          <el-tag
+                            v-if="scope.row.issue_priority"
+                            :type="getPriorityType(scope.row.issue_priority)"
+                            size="medium"
+                            effect="dark"
+                          >
+                            {{ scope.row.issue_priority }}
+                          </el-tag>
+                          <div>
+                            <span class="font-weight-bold mr-2">[{{ scope.row.issue_category }}]</span>
+                            <span>{{ scope.row.issue_name }} </span>
+                          </div>
+                        </div>
                       </template>
                     </el-table-column>
                   </el-table>
                 </el-col>
                 <el-col :span="16">
-                  <issue-priority-card ref="issuePriority" :statistics-obj="workLoadData" />
+                  <issue-priority-card ref="issuePriority" :statistics-obj="version.workLoadData" />
                 </el-col>
               </el-row>
             </el-collapse-item>
           </el-collapse>
-
           <div v-else class="text-center ma-7">
             <span>{{ $t('general.NoData') }}</span>
           </div>
