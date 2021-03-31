@@ -13,6 +13,10 @@ export default {
     focusStatus: {
       type: String,
       default: ''
+    },
+    focusVersion: {
+      type: String,
+      default: ''
     }
   },
   data: () => ({
@@ -22,7 +26,8 @@ export default {
       tracker_id: '',
       status_id: '',
       assigned_to_id: '',
-      description: ''
+      description: '',
+      fixed_version_id: ''
     },
     issueFormRules: {
       subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
@@ -78,6 +83,7 @@ export default {
         if (valid) {
           this.isLoading = true
           const sendData = Object.assign({}, this.issueForm)
+          sendData.fixed_version_id = this.focusVersion
           for (const key in sendData) {
             if (sendData[key] === '') delete sendData[key]
           }
@@ -89,7 +95,7 @@ export default {
                 message: this.$t('Notify.Added'),
                 type: 'success'
               })
-              this.$emit('update')
+              this.$emit('update', sendData)
             })
             .catch(err => {
               console.error(err)

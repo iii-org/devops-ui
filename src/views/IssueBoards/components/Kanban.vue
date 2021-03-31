@@ -29,7 +29,13 @@
         </div>
       </div>
     </draggable>
-    <AddIssueDialog :dialog-visible="showDialog" :focus-status="cName" @close="showDialog = false" @update="updateBoard" />
+    <AddIssueDialog
+      :dialog-visible="showDialog"
+      :focus-status="cName"
+      :focus-version="focusVersion"
+      @close="showDialog = false"
+      @update="updateBoard"
+    />
   </div>
 </template>
 
@@ -57,6 +63,10 @@ export default {
       default: () => []
     },
     cName: {
+      type: String,
+      default: ''
+    },
+    focusVersion: {
       type: String,
       default: ''
     }
@@ -88,8 +98,8 @@ export default {
     end(evt) {
       this.$emit('update', evt)
     },
-    updateBoard() {
-      this.$emit('updateBoard')
+    updateBoard(sendData) {
+      this.$emit('updateBoard', sendData)
     },
     handleClick(id) {
       this.$router.push({ path: `/project/issue-list/${id}` })

@@ -112,9 +112,13 @@ export default {
         if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
         if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
       })
+
+      this.updateRelativeList()
+    },
+    updateIssueBoard(sendData) {
+      this.fetchData()
       this.versionValue = '-1'
       this.memberValue = '-1'
-      this.updateRelativeList()
     },
     async updateRelativeList() {
       this.isLoading = true
@@ -146,6 +150,7 @@ export default {
       this.isLoading = false
     },
     updateData() {
+      console.log('updateData')
       this.resetKanbanCard()
       const versionOpt = {
         keys: ['version'],
@@ -218,8 +223,9 @@ export default {
         class="kanban active"
         :header-text="$t('ProjectActive.Active')"
         c-name="Active"
+        :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="updateIssueBoard"
       />
       <Kanban
         key="2"
@@ -229,8 +235,9 @@ export default {
         class="kanban assigned"
         :header-text="$t('ProjectActive.Assigned')"
         c-name="Assigned"
+        :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="updateIssueBoard"
       />
       <Kanban
         key="3"
@@ -240,8 +247,9 @@ export default {
         class="kanban solved"
         :header-text="$t('ProjectActive.Solved')"
         c-name="Solved"
+        :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="updateIssueBoard"
       />
       <Kanban
         key="4"
@@ -251,8 +259,9 @@ export default {
         class="kanban responded"
         :header-text="$t('ProjectActive.Responded')"
         c-name="Responded"
+        :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="updateIssueBoard"
       />
       <Kanban
         key="5"
@@ -262,8 +271,9 @@ export default {
         class="kanban finished"
         :header-text="$t('ProjectActive.Finished')"
         c-name="Finished"
+        :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="updateIssueBoard"
       />
       <Kanban
         key="6"
@@ -273,8 +283,9 @@ export default {
         class="kanban closed"
         :header-text="$t('ProjectActive.Closed')"
         c-name="Closed"
+        :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="fetchData"
+        @updateBoard="updateIssueBoard"
       />
     </div>
   </div>
