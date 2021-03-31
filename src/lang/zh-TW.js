@@ -501,6 +501,6 @@ export default {
     releaseVersionName: '包版版號',
     startRelease: '開始包版',
     copyIssues: '複製選中議題名稱到剪貼簿',
-    allCategories: '不分類'
+    allCategories: '所有種類'
   }
 }

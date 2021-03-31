@@ -40,6 +40,13 @@ export default {
       this.categories.sort()
       this.listData = this.issues
       this.adjustTable()
+    },
+    filterByCategory(cat) {
+      if (cat === this.$t('Release.allCategories')) {
+        this.listData = this.issues
+      } else {
+        this.listData = this.issues.filter(item => item['issue_category'] === cat)
+      }
     }
   }
 }
@@ -50,7 +57,7 @@ export default {
     <p>
       <el-form>
         <el-form-item :label="$t('Issue.Issue')">
-          <el-select v-model="selectedCategory">
+          <el-select v-model="selectedCategory" @change="filterByCategory">
             <el-option
               v-for="item in categorySel"
               :key="item"
@@ -77,7 +84,7 @@ export default {
         <el-table-column :label="$t('Issue.name')" align="center" prop="issue_name" />
         <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version_name" />
         <el-table-column :label="$t('general.Type')" align="center" prop="issue_category" />
-        <el-table-column :label="$t('general.Status')" align="center" rop="issue_status" />
+        <el-table-column :label="$t('general.Status')" align="center" prop="issue_status" />
         <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigned_to" />
         <el-table-column :label="$t('general.Actions')" align="center">
 
