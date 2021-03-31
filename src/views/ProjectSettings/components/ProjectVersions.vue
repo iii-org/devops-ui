@@ -18,7 +18,7 @@
     <el-table :data="pagedData" border fit>
       <el-table-column prop="name" :label="$t('general.Name')" show-overflow-tooltip />
       <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
-      <ElTableColumnTime prop="due_date" :label="$t('Version.DueDate')" />
+      <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" />
       <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
       <el-table-column prop="status" align="center" :label="$t('general.Status')" width="90">
         <template slot-scope="scope">
