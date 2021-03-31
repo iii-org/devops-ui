@@ -47,14 +47,18 @@ export default {
     },
     fetchScanStatus(scanId) {
       this.listLoading = true
-      getCheckMarxScanStatus(scanId).then(res => {
-        const idx = this.listData.findIndex(item => item.scan_id === scanId)
-        this.listData[idx].status = res.data.name
-        if (res.data.id === 7) {
-          this.fetchScanStats(scanId)
-          this.registerReport(scanId)
-        }
-      })
+      getCheckMarxScanStatus(scanId)
+        .then(res => {
+          const idx = this.listData.findIndex(item => item.scan_id === scanId)
+          this.listData[idx].status = res.data.name
+          if (res.data.id === 7) {
+            this.fetchScanStats(scanId)
+            this.registerReport(scanId)
+          }
+        })
+        .then(() => {
+          this.listLoading = false
+        })
     },
     fetchScanStats(scanId) {
       getCheckMarxScanStats(scanId).then(res => {
