@@ -425,7 +425,7 @@ export const asyncRoutes = [
     path: '/system-resource',
     component: Layout,
     name: 'System Resource',
-    redirect: '/system-resource/kubernetes',
+    redirect: '/system-resource/plugin-resource',
     meta: {
       title: 'System Resource',
       icon: 'el-icon-pie-chart',
