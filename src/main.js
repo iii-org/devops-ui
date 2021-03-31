@@ -5,6 +5,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import i18n, { getLanguage } from './lang' // internationalization
+import VueGtag from 'vue-gtag'
 
 import '@/styles/index.scss' // global css
 
@@ -50,6 +51,10 @@ Vue.use(VueShowdown, {
 })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
+
+Vue.use(VueGtag, {
+  config: { id: 'GTM-W2KLWN4' }
+})
 
 // register global utility filters
 Object.keys(filters).forEach(key => {
