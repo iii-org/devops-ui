@@ -30,6 +30,7 @@ export default {
     checkMarx: '白箱測試(CheckMarx)',
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
+    zap: '黑箱測試(OWASP ZAP)',
 
     'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',
@@ -473,7 +474,8 @@ export default {
   },
   Git: {
     Branch: '分支',
-    Commit: 'Commit ID'
+    Commit: 'Commit ID',
+    searchCommitId: '搜尋 Commit ID'
   },
   SonarQube: {
     ViewReport: '檢視報告',
@@ -482,5 +484,14 @@ export default {
     CodeSmells: '程式異味',
     Duplicates: '重複程式碼',
     Coverage: '覆蓋率'
+  },
+  Zap: {
+    id: '編號',
+    fail: '失敗',
+    warning: '警告',
+    info: '資訊',
+    ignore: '忽略',
+    pass: '通過',
+    fullLog: '完整記錄'
   }
 }

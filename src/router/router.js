@@ -381,6 +381,12 @@ export const asyncRoutes = [
         meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
       {
+        path: 'zap',
+        name: 'zap',
+        component: () => import('@/views/ScanZap'),
+        meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
         path: 'sonarqube',
         name: 'sonarqube',
         component: () => import('@/views/ScanSonarQube'),

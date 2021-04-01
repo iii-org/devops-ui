@@ -30,6 +30,7 @@ export default {
     checkMarx: 'CheckMarx',
     sonarQube: 'SonarQube',
     webInspect: 'WebInspect',
+    zap: 'OWASP ZAP',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -483,7 +484,8 @@ export default {
   },
   Git: {
     Branch: 'Branch',
-    Commit: 'Commit'
+    Commit: 'Commit',
+    searchCommitId: 'Search Commit ID'
   },
   SonarQube: {
     ViewReport: 'View Report',
@@ -492,5 +494,14 @@ export default {
     CodeSmells: 'Code Smells',
     Duplicates: 'Duplicates',
     Coverage: 'Coverage'
+  },
+  Zap: {
+    id: 'ID',
+    fail: 'Fail',
+    warning: 'Warning',
+    info: 'Info',
+    ignore: 'Ignore',
+    pass: 'Pass',
+    fullLog: 'Log'
   }
 }
