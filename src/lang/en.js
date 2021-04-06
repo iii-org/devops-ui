@@ -293,6 +293,7 @@ export default {
     IssuesShouldBeClosedWithinThisMonth: 'Issues Should Be Closed Within This Month',
     Finished: 'Finished',
     Unfinished: 'Unfinished',
+    Unassigned: 'Unassigned',
     TotalVersion: 'All Versions',
     TotalMember: 'All Members',
     Total: 'Total',

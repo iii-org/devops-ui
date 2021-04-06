@@ -13,16 +13,26 @@
     <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @end="end">
       <div v-for="element in list" :key="element.id" class="board-item">
         <div class="pb-4">
-          <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
-            {{ element.name }}
-          </el-link>
+          <div>
+            <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
+              {{ element.name }}
+            </el-link>
+            <p v-if="element.parent_id" class="parent">
+              <i class="el-icon-caret-right" /> 父議題：
+              <el-tag size="mini" :class="element.parent_status">{{ $t('ProjectActive.' + element.parent_status) }}
+              </el-tag>
+              <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
+                {{ element.parent_name }}
+              </el-link>
+            </p>
+          </div>
         </div>
         <div>
-          <span style="font-size: 15px;">
+          <span v-if="element.date" class="detail">
             <i class="el-icon-date" />
             <span class="ml-1">{{ element.date }}</span>
           </span>
-          <span class="ml-1" style="font-size: 15px">
+          <span v-if="element.user" class="ml-1 detail">
             <i class="el-icon-s-custom" />
             <span class="ml-1">{{ element.user }}</span>
           </span>
@@ -116,7 +126,7 @@ export default {
   background: #ffffff;
   border-radius: 3px;
   border: 1px solid #e7e7e7;
-  margin: 0px 5px 20px 5px;
+  margin: 0 5px 20px 5px;
 
   .board-column-header {
     height: 50px;
@@ -128,6 +138,7 @@ export default {
       background: red;
       height: 3px;
     }
+
     .header-icon {
       float: right;
       margin-right: 10px;
@@ -154,8 +165,14 @@ export default {
       box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.2);
     }
   }
+
   .add-button {
     cursor: pointer;
   }
+
+  .detail {
+    font-size: 1em;
+  }
 }
+
 </style>

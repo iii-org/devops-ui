@@ -292,6 +292,7 @@ export default {
     IssuesShouldBeClosedWithinThisMonth: '本月該完成議題',
     Finished: '已完成',
     Unfinished: '未完成',
+    Unassigned: '尚未指派',
     TotalVersion: '全部版本',
     TotalMember: '全部成員',
     Total: '全部',
