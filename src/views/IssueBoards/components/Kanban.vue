@@ -28,11 +28,11 @@
           </div>
         </div>
         <div>
-          <span v-if="element.date" class="detail">
+          <span class="detail">
             <i class="el-icon-date" />
             <span class="ml-1">{{ element.date }}</span>
           </span>
-          <span v-if="element.user" class="ml-1 detail">
+          <span class="ml-1 detail">
             <i class="el-icon-s-custom" />
             <span class="ml-1">{{ element.user }}</span>
           </span>
