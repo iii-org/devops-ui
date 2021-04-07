@@ -475,8 +475,8 @@ export default {
   },
   Git: {
     Branch: '分支',
-    Commit: 'Commit ID',
-    searchCommitId: '搜尋 Commit ID'
+    Commit: 'Commit',
+    searchCommitId: '搜尋 Commit'
   },
   SonarQube: {
     ViewReport: '檢視報告',
@@ -488,11 +488,11 @@ export default {
   },
   Zap: {
     id: '編號',
-    fail: '失敗',
-    warning: '警告',
+    high: '高風險',
+    medium: '中風險',
+    low: '低風險',
     info: '資訊',
-    ignore: '忽略',
-    pass: '通過',
-    fullLog: '完整記錄'
+    duration: '消耗時間',
+    fullLog: '報表'
   }
 }

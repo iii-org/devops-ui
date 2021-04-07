@@ -17,6 +17,10 @@ export function UTCtoLocalTime(utcTime) {
   return localTime
 }
 
+export function UTCtoTimestamp(utcTime) {
+  return moment.utc(utcTime).unix()
+}
+
 export function hmA(dateTime) {
   const hmA = moment(dateTime).format('hh:mm A')
   if (dateTime === 'Invalid date') {

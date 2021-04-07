@@ -498,11 +498,11 @@ export default {
   },
   Zap: {
     id: 'ID',
-    fail: 'Fail',
-    warning: 'Warning',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low',
     info: 'Info',
-    ignore: 'Ignore',
-    pass: 'Pass',
-    fullLog: 'Log'
+    duration: 'Duration',
+    fullLog: 'Report'
   }
 }

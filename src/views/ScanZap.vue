@@ -1,13 +1,8 @@
 <script>
-import {
-  getWebInspectReport,
-  getWebInspectScans,
-  getWebInspectStats,
-  getWebInspectStatus
-} from '@/api/webInspect'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getZapScans } from '@/api/zap'
+import moment from 'moment'
 
 export default {
   name: 'ScanZap',
@@ -42,15 +37,17 @@ export default {
           return 'slow'
       }
     },
-    showFullLog(log) {
-      const lines = []
-      for (const line of log.split('\n')) {
-        lines.push(this.$createElement('div', line))
+    durationText(start, end) {
+      if (end == null) {
+        return ''
       }
-      const content = this.$createElement('div', { class: 'full-log' }, lines)
-      this.$alert(content, null, {
-        confirmButtonText: this.$t('general.Confirm')
-      })
+      const s = moment.utc(start).unix()
+      const e = moment.utc(end).unix()
+      return moment.duration(e - s, 'seconds').humanize()
+    },
+    showFullLog(log) {
+      const wnd = window.open('about:blank', '', '_blank')
+      wnd.document.write(log)
     }
   }
 }
@@ -70,11 +67,10 @@ export default {
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row :data="pagedData" height="100%">
-      <el-table-column align="center" :label="$t('Zap.id')" prop="id"
-                       :show-overflow-tooltip="true" />
-      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" min-width="120" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" min-width="100">
+              highlight-current-row :data="pagedData" height="100%"
+    >
+      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
+      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id">
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -94,13 +90,33 @@ export default {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Zap.fail')" prop="result.fail" />
-      <el-table-column align="center" :label="$t('Zap.warning')" prop="result.warning" />
-      <el-table-column align="center" :label="$t('Zap.info')" prop="result.info" />
-      <el-table-column align="center" :label="$t('Zap.ignore')" prop="result.ignore" />
-      <el-table-column align="center" :label="$t('Zap.pass')" prop="result.pass" />
+      <el-table-column align="center" :label="$t('Zap.high')">
+        <template slot-scope="scope">
+          {{ scope.row.result['0'] }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('Zap.medium')">
+        <template slot-scope="scope">
+          {{ scope.row.result['1'] }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('Zap.low')">
+        <template slot-scope="scope">
+          {{ scope.row.result['2'] }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('Zap.info')">
+        <template slot-scope="scope">
+          {{ scope.row.result['3'] }}
+        </template>
+      </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />
-      <el-table-column align="center" :label="$t('Zap.fullLog')" min-width="100">
+      <el-table-column align="center" :label="$t('Zap.duration')">
+        <template slot-scope="scope">
+          {{ durationText(scope.row.run_at, scope.row.finished_at) }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('Zap.fullLog')" min-width="50">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.status === 'Finished'"
@@ -126,8 +142,4 @@ export default {
 </template>
 
 <style scoped>
-.full-log {
-  overflow: auto;
-  height: 70vh;
-}
 </style>
