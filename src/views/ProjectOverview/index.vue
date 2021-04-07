@@ -19,7 +19,7 @@
         <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
       </el-col>
       <el-col :xs="24" :md="12">
-        <IssuePriorityCard ref="issuePriority" :statistics-obj="statisticsObj" @click.native="showFullIssuePriority" />
+        <IssuePriorityCard ref="issuePriority" :statistics-obj="statisticsObj" class="cursor-point" @click.native="showFullIssuePriority" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -132,5 +132,8 @@ export default {
 <style lang="scss" scoped>
 .fullscreen > > > .el-dialog {
   width: 90%;
+}
+.cursor-point{
+  cursor: pointer;
 }
 </style>
