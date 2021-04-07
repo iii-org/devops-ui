@@ -19,7 +19,12 @@
         <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
       </el-col>
       <el-col :xs="24" :md="12">
-        <IssuePriorityCard ref="issuePriority" :statistics-obj="statisticsObj" class="cursor-point" @click.native="showFullIssuePriority" />
+        <WorkloadCard
+          ref="issuePriority"
+          :statistics-obj="statisticsObj"
+          class="cursor-point"
+          @click.native="showFullIssuePriority"
+        />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -36,7 +41,7 @@
       </el-col>
     </el-row>
     <el-dialog :visible.sync="fullIssuePriority" class="fullscreen" top="5vh">
-      <IssuePriorityCard :key="reload" :statistics-obj="statisticsObj" />
+      <WorkloadCard :key="reload" :statistics-obj="statisticsObj" />
     </el-dialog>
   </el-row>
 </template>
@@ -45,11 +50,11 @@
 import { mapGetters, mapActions } from 'vuex'
 import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssuePriorityCard, IssueStatusCard, ProjectUserCard, TestStatusCard } from './components'
+import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard } from './components'
 
 export default {
-  name: 'ProjectOverviewNew',
-  components: { ProjectListSelector, IssuePriorityCard, IssueStatusCard, ProjectUserCard, TestStatusCard },
+  name: 'ProjectOverview',
+  components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard },
   data: () => ({
     versionList: [],
     selectedVersion: null,
@@ -130,10 +135,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fullscreen > > > .el-dialog {
+.fullscreen > .el-dialog {
   width: 90%;
 }
-.cursor-point{
+.cursor-point {
   cursor: pointer;
 }
 </style>
