@@ -224,3 +224,33 @@ export function deleteProjectFile(file_id) {
     method: 'DELETE'
   })
 }
+
+export function getPipelineDefaultBranch(rId) {
+  return request({
+    url: `/project/${rId}/pipeline/default_branch`,
+    method: 'get'
+  })
+}
+
+export function editPipelineDefaultBranch(rId, data) {
+  return request({
+    url: `/project/${rId}/pipeline/default_branch`,
+    method: 'put',
+    data
+  })
+}
+
+export function getPipelineBranch(rId) {
+  return request({
+    url: `/project/${rId}/pipeline/branches`,
+    method: 'get'
+  })
+}
+
+export function editPipelineBranch(rId, data) {
+  return request({
+    url: `/project/${rId}/pipeline/branches`,
+    method: 'put',
+    data
+  })
+}
