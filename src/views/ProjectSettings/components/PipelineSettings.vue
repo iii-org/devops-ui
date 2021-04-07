@@ -10,9 +10,9 @@
           <span class="text-subtitle-2 mr-2">{{ $t('Git.Branch') }}：</span>
           <span class="text-subtitle-1 font-weight-bold">{{ defaultBranch }}</span>
         </div>
-        <!-- <el-button type="text" size="medium" @click="handleClick">
+        <el-button type="text" size="medium" @click="handleClick">
           {{ $t('route.advanceBranchSettings') }}
-        </el-button> -->
+        </el-button>
       </div>
       <el-table :data="stages" fit :show-header="false">
         <el-table-column prop="name" />

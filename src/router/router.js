@@ -210,7 +210,7 @@ export const asyncRoutes = [
         path: 'advance-branch-settings',
         name: 'advance-branch-settings',
         hidden: true,
-        // component: () => import('@/views/AdvanceBranchSettings'),
+        component: () => import('@/views/AdvanceBranchSettings'),
         meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
       }
     ]
