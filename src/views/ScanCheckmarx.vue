@@ -47,14 +47,18 @@ export default {
     },
     fetchScanStatus(scanId) {
       this.listLoading = true
-      getCheckMarxScanStatus(scanId).then(res => {
-        const idx = this.listData.findIndex(item => item.scan_id === scanId)
-        this.listData[idx].status = res.data.name
-        if (res.data.id === 7) {
-          this.fetchScanStats(scanId)
-          this.registerReport(scanId)
-        }
-      })
+      getCheckMarxScanStatus(scanId)
+        .then(res => {
+          const idx = this.listData.findIndex(item => item.scan_id === scanId)
+          this.listData[idx].status = res.data.name
+          if (res.data.id === 7) {
+            this.fetchScanStats(scanId)
+            this.registerReport(scanId)
+          }
+        })
+        .then(() => {
+          this.listLoading = false
+        })
     },
     fetchScanStats(scanId) {
       getCheckMarxScanStats(scanId).then(res => {
@@ -84,21 +88,19 @@ export default {
       this.listLoading = false
     },
     fetchTestReport(reportId, scanId) {
-      getCheckMarxReport(reportId).then(res => {
-        const url = window.URL.createObjectURL(new Blob([res]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'checkmarx_Report.pdf')
-        document.body.appendChild(link)
-        link.click()
-      }).catch(_ => {
-        this.registerReport(scanId)
-        this.loadData()
-      })
-    },
-
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+      getCheckMarxReport(reportId)
+        .then(res => {
+          const url = window.URL.createObjectURL(new Blob([res]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'checkmarx_Report.pdf')
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch(_ => {
+          this.registerReport(scanId)
+          this.loadData()
+        })
     }
   }
 }
@@ -106,16 +108,14 @@ export default {
 
 <template>
   <div class="app-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('CheckMarx.SearchScanId')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        prefix-icon="el-icon-search"
+        style="width: 250px"
+      />
     </div>
     <el-divider />
     <el-table
@@ -172,9 +172,3 @@ export default {
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.clearfix {
-  clear: both;
-}
-</style>

@@ -1,11 +1,7 @@
 <script>
-import {
-  deleteHarborRepo,
-  editHarborRepo,
-  getHarborRepoList,
-  getHarborRepoStorageSummary
-} from '@/api/harbor'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import MixinBasicTable from '@/components/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
@@ -16,9 +12,9 @@ const formTemplate = {
 }
 
 export default {
-  name: 'ProjectResource',
-  components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
+  name: 'ResourceHarbor',
+  components: { ElTableColumnTime, ProjectListSelector },
+  mixins: [MixinBasicTable],
   data: () => ({
     projectName: '',
     dialogVisible: false,
@@ -149,16 +145,14 @@ export default {
   <div class="app-container">
     <router-view />
     <div v-show="this.$route.meta.rolePage" class="role-page">
-      <div class="clearfix">
+      <div class="d-flex justify-space-between">
         <project-list-selector />
         <el-input
-          v-model="searchData"
-          class="ob-search-input ob-shadow search-input mr-3"
+          v-model="keyword"
           :placeholder="$t('general.SearchName')"
-          style="width: 250px; float: right"
-        >
-          <i slot="prefix" class="el-input__icon el-icon-search" />
-        </el-input>
+          prefix-icon="el-icon-search"
+          style="width: 250px"
+        />
       </div>
       <el-divider />
       <el-card shadow="never" class="mb-1">
@@ -178,8 +172,15 @@ export default {
           </el-col>
         </el-row>
       </el-card>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%">
-        <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="150">
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        border
+        style="width: 100%"
+        height="100%"
+      >
+        <el-table-column :label="$t('general.Name')" show-overflow-tooltip min-width="150">
           <template slot-scope="scope">
             <el-link
               type="primary"
@@ -192,12 +193,7 @@ export default {
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('ProjectResource.Artifacts')"
-          :show-overflow-tooltip="true"
-          align="center"
-          width="140"
-        >
+        <el-table-column :label="$t('ProjectResource.Artifacts')" show-overflow-tooltip align="center" width="140">
           <template slot-scope="scope">
             <router-link
               :to="{
@@ -210,18 +206,10 @@ export default {
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column label="pull" align="center" width="140">
-          <template slot-scope="scope">
-            <span>{{ scope.row.pull_count }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('general.Description')" min-width="200">
-          <template slot-scope="scope">
-            <span>{{ scope.row.description }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column label="pull" align="center" prop="pull_count" width="140" />
+        <el-table-column :label="$t('general.Description')" prop="description" min-width="200" />
         <el-table-column-time prop="update_time" />
-        <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="200">
+        <el-table-column :label="$t('general.Actions')" align="center" show-overflow-tooltip width="200">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
               <i class="el-icon-edit" />

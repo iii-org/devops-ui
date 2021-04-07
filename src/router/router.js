@@ -189,13 +189,13 @@ export const asyncRoutes = [
         name: 'Project Roadmap',
         component: () => import('@/views/ProjectRoadmap'),
         meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'project-settings',
+        name: 'Project Settings',
+        component: () => import('@/views/ProjectSettings/index'),
+        meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
       }
-      // {
-      //   path: 'project-settings',
-      //   name: 'Project Settings',
-      //   component: () => import('@/views/ProjectSettings/index'),
-      //   meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
-      // }
     ]
   },
 
@@ -387,6 +387,12 @@ export const asyncRoutes = [
         meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
       {
+        path: 'zap',
+        name: 'zap',
+        component: () => import('@/views/ScanZap'),
+        meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
         path: 'sonarqube',
         name: 'sonarqube',
         component: () => import('@/views/ScanSonarQube'),
@@ -431,7 +437,7 @@ export const asyncRoutes = [
     path: '/system-resource',
     component: Layout,
     name: 'System Resource',
-    redirect: '/system-resource/kubernetes',
+    redirect: '/system-resource/plugin-resource',
     meta: {
       title: 'System Resource',
       icon: 'el-icon-pie-chart',
@@ -487,28 +493,6 @@ export const asyncRoutes = [
         name: 'ProjectActivities',
         component: () => import('@/views/ProjectActivities'),
         meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
-      }
-    ]
-  },
-
-  {
-    path: '/project-settings',
-    component: Layout,
-    name: 'Settings',
-    meta: { title: 'Settings', icon: 'el-icon-s-tools', roles: ['Project Manager', 'Administrator'] },
-    redirect: '/project-settings/members',
-    children: [
-      {
-        path: 'members',
-        name: 'Members',
-        component: () => import('@/views/ProjectMembers'),
-        meta: { title: 'Members', roles: ['Project Manager', 'Administrator'] }
-      },
-      {
-        path: 'versions',
-        name: 'Versions',
-        component: () => import('@/views/ProjectVersions'),
-        meta: { title: 'Versions', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },

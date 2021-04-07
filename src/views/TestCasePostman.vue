@@ -7,7 +7,8 @@ export default {
   name: 'TestCasePostman',
   mixins: [MixinElTable],
   data: () => ({
-    testCaseInfos: {}
+    testCaseInfos: {},
+    checkedItems: ['Pass', 'Fail']
   }),
   computed: {
     ...mapGetters(['selectedProject']),
@@ -16,6 +17,21 @@ export default {
     },
     countFailNum() {
       return this.filteredData.filter(item => item.testResult === 'Fail').length
+    },
+    checkedData() {
+      return this.filteredData.filter(
+        item => item.testResult.includes(this.checkedItems[0]) || item.testResult.includes(this.checkedItems[1])
+      )
+    },
+    pagedDataByChecked() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit
+      return this.checkedData.slice(start, end)
+    }
+  },
+  watch: {
+    checkedItems() {
+      this.listQuery.page = 1
     }
   },
   methods: {
@@ -134,11 +150,10 @@ export default {
       <el-table-column align="center" :label="$t('TestCase.Path')" prop="path" min-width="120" />
       <el-table-column header-align="center" :label="$t('TestCase.TestMessage')" min-width="150" prop="assertions">
         <template slot-scope="scope">
-          <div v-for="(assertion, idx) in scope.row.assertions" :key="idx" class="mb-3 d-flex">
+          <div v-for="(assertion, idx) in scope.row.assertions" :key="idx" class="d-flex">
             <span :style="{ color: getTagType(assertion.testResult) }" size="mini" effect="dark">
               {{ assertion.testResult }}
             </span>
-
             <div class="ml-2">
               {{ `${assertion.assertion}, ${assertion.error_message}` }}
             </div>

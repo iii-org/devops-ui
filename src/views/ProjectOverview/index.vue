@@ -1,9 +1,10 @@
 <template>
-  <div v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" class="app-container">
     <div class="d-flex justify-start">
       <project-list-selector />
       <el-select
         v-model="selectedVersion"
+        :loading="isLoadingVersion"
         :disabled="isLoading"
         :placeholder="$t('Version.SelectVersion')"
         clearable
@@ -18,7 +19,7 @@
         <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
       </el-col>
       <el-col :xs="24" :md="12">
-        <IssuePriorityCard ref="issuePriority" :statistics-obj="statisticsObj" />
+        <IssuePriorityCard ref="issuePriority" :statistics-obj="statisticsObj" @click.native="showFullIssuePriority" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -34,7 +35,10 @@
         />
       </el-col>
     </el-row>
-  </div>
+    <el-dialog :visible.sync="fullIssuePriority" class="fullscreen" top="5vh">
+      <IssuePriorityCard :key="reload" :statistics-obj="statisticsObj" />
+    </el-dialog>
+  </el-row>
 </template>
 
 <script>
@@ -50,11 +54,14 @@ export default {
     versionList: [],
     selectedVersion: null,
     isLoading: false,
+    isLoadingVersion: false,
     progressObj: {},
     statisticsObj: {},
     userList: [],
     projectTestObj: {},
-    isProjectTestList: false
+    isProjectTestList: false,
+    fullIssuePriority: false,
+    reload: 0
   }),
   computed: {
     ...mapGetters(['userProjectList', 'selectedProjectId'])
@@ -94,9 +101,9 @@ export default {
       this.isLoading = false
     },
     async fetchVersionList() {
-      this.isLoading = true
+      this.isLoadingVersion = true
       const res = await getProjectVersion(this.selectedProjectId)
-      this.isLoading = false
+      this.isLoadingVersion = false
       const hasVersion = res.data.versions.length > 0
       if (hasVersion) {
         this.versionList = res.data.versions.map(version => ({ id: version.id, name: version.name }))
@@ -113,7 +120,17 @@ export default {
       const res = await getProjectTest(this.selectedProjectId)
       this.projectTestObj = res.data.test_results
       this.isProjectTestList = false
+    },
+    showFullIssuePriority() {
+      this.fullIssuePriority = true
+      this.reload += 1
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.fullscreen > > > .el-dialog {
+  width: 90%;
+}
+</style>

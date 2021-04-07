@@ -21,7 +21,11 @@ export default {
     async fetchData() {
       const rid = this.selectedProject.repository_id
       try {
-        return (await getPipelines(rid)).data
+        return (await getPipelines(rid)).data.map(item => {
+          const result = { ...item }
+          if (result.execution_state === 'Success') result.execution_state = 'Finished'
+          return result
+        })
       } catch (error) {
         console.error(error)
         return []
@@ -63,7 +67,7 @@ export default {
       switch (status) {
         case 'Failed':
           return 'danger'
-        case 'Success':
+        case 'Finished':
           return 'success'
         case 'Aborted':
           return 'warning'

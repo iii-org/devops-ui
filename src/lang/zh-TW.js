@@ -31,6 +31,7 @@ export default {
     checkMarx: '白箱測試(CheckMarx)',
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
+    zap: '黑箱測試(OWASP ZAP)',
 
     'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',
@@ -297,6 +298,7 @@ export default {
     IssuesShouldBeClosedWithinThisMonth: '本月該完成議題',
     Finished: '已完成',
     Unfinished: '未完成',
+    Unassigned: '尚未指派',
     TotalVersion: '全部版本',
     TotalMember: '全部成員',
     Total: '全部',
@@ -479,7 +481,8 @@ export default {
   },
   Git: {
     Branch: '分支',
-    Commit: 'Commit ID'
+    Commit: 'Commit',
+    searchCommitId: '搜尋 Commit'
   },
   SonarQube: {
     ViewReport: '檢視報告',
@@ -488,6 +491,15 @@ export default {
     CodeSmells: '程式異味',
     Duplicates: '重複程式碼',
     Coverage: '覆蓋率'
+  },
+  Zap: {
+    id: '編號',
+    high: '高風險',
+    medium: '中風險',
+    low: '低風險',
+    info: '資訊',
+    duration: '消耗時間',
+    fullLog: '報表'
   },
   Release: {
     internalVersions: '內部管控版號',

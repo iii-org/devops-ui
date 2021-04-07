@@ -31,18 +31,23 @@ export default {
 
 <template>
   <div class="table-container">
-    <div class="clearfix">
+    <div class="text-right">
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        prefix-icon="el-icon-search"
+        style="width: 250px"
+      />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border style="width: 100%" height="100%">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      border
+      style="width: 100%"
+      height="100%"
+    >
       <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
@@ -68,8 +73,8 @@ export default {
           <el-tag v-for="label in scope.row.labels" :key="label" type="success" effect="dark">{{ label }} </el-tag>
         </template>
       </el-table-column>
-      <el-table-column-time prop="push_time" :label="$t(Harbor.PushTime)" />
-      <el-table-column :label="$t('general.Actions')" align="center" :show-overflow-tooltip="true" width="260">
+      <el-table-column-time prop="push_time" :label="$t('Harbor.PushTime')" />
+      <el-table-column :label="$t('general.Actions')" align="center" show-overflow-tooltip width="260">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
             <i class="el-icon-delete" />
@@ -88,13 +93,3 @@ export default {
     />
   </div>
 </template>
-
-<style lang="scss">
-.newBtn {
-  float: right;
-  padding-right: 6px;
-}
-.line {
-  text-align: center;
-}
-</style>

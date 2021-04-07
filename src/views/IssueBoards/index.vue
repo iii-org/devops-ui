@@ -1,3 +1,110 @@
+<template>
+  <el-row v-loading="isLoading" class="app-container">
+    <div class="d-flex">
+      <project-list-selector />
+      <el-select
+        v-model="versionValue"
+        :placeholder="$t('Version.SelectVersion')"
+        :disabled="selectedProjectId === -1"
+        class="mr-4"
+        @change="updateData"
+      >
+        <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
+        <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+
+      <el-select
+        v-model="memberValue"
+        :placeholder="$t('Member.SelectMember')"
+        :disabled="selectedProjectId === -1"
+        @change="updateData"
+      >
+        <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
+        <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />
+        <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
+      </el-select>
+    </div>
+
+    <el-divider />
+    <div class="board">
+      <Kanban
+        v-for="(status, idx) in issueStatusList"
+        :key="idx"
+        :list="classifyIssueStatus[status.name]"
+        :relative-list="relativeIssueList"
+        :group="group"
+        class="kanban"
+        :header-text="$t('ProjectActive.'+status.name)"
+        :c-name="status.name"
+        :class="{[status.name.toLowerCase()]: true}"
+        :focus-version="String(versionValue)"
+        @update="updateIssueStatus"
+        @updateBoard="updateIssueBoard"
+      />
+      <!--      <Kanban-->
+      <!--        key="2"-->
+      <!--        :list="assignedList"-->
+      <!--        :relative-list="relativeIssueList"-->
+      <!--        :group="group"-->
+      <!--        class="kanban assigned"-->
+      <!--        :header-text="$t('ProjectActive.Assigned')"-->
+      <!--        c-name="Assigned"-->
+      <!--        :focus-version="String(versionValue)"-->
+      <!--        @update="updateIssueStatus"-->
+      <!--        @updateBoard="updateIssueBoard"-->
+      <!--      />-->
+      <!--      <Kanban-->
+      <!--        key="3"-->
+      <!--        :list="solvedList"-->
+      <!--        :relative-list="relativeIssueList"-->
+      <!--        :group="group"-->
+      <!--        class="kanban solved"-->
+      <!--        :header-text="$t('ProjectActive.Solved')"-->
+      <!--        c-name="Solved"-->
+      <!--        :focus-version="String(versionValue)"-->
+      <!--        @update="updateIssueStatus"-->
+      <!--        @updateBoard="updateIssueBoard"-->
+      <!--      />-->
+      <!--      <Kanban-->
+      <!--        key="4"-->
+      <!--        :list="respondedList"-->
+      <!--        :relative-list="relativeIssueList"-->
+      <!--        :group="group"-->
+      <!--        class="kanban responded"-->
+      <!--        :header-text="$t('ProjectActive.Responded')"-->
+      <!--        c-name="Responded"-->
+      <!--        :focus-version="String(versionValue)"-->
+      <!--        @update="updateIssueStatus"-->
+      <!--        @updateBoard="updateIssueBoard"-->
+      <!--      />-->
+      <!--      <Kanban-->
+      <!--        key="5"-->
+      <!--        :list="finishedList"-->
+      <!--        :relative-list="relativeIssueList"-->
+      <!--        :group="group"-->
+      <!--        class="kanban finished"-->
+      <!--        :header-text="$t('ProjectActive.Finished')"-->
+      <!--        c-name="Finished"-->
+      <!--        :focus-version="String(versionValue)"-->
+      <!--        @update="updateIssueStatus"-->
+      <!--        @updateBoard="updateIssueBoard"-->
+      <!--      />-->
+      <!--      <Kanban-->
+      <!--        key="6"-->
+      <!--        :list="closedList"-->
+      <!--        :relative-list="relativeIssueList"-->
+      <!--        :group="group"-->
+      <!--        class="kanban closed"-->
+      <!--        :header-text="$t('ProjectActive.Closed')"-->
+      <!--        c-name="Closed"-->
+      <!--        :focus-version="String(versionValue)"-->
+      <!--        @update="updateIssueStatus"-->
+      <!--        @updateBoard="updateIssueBoard"-->
+      <!--      />-->
+    </div>
+  </el-row>
+</template>
+
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
@@ -16,12 +123,7 @@ export default {
     isLoading: true,
     issueStatusList: [],
     projectIssueList: [],
-    activeList: [],
-    assignedList: [],
-    solvedList: [],
-    respondedList: [],
-    finishedList: [],
-    closedList: [],
+    classifyIssueStatus: {},
     group: 'mission',
     versionValue: '-1',
     memberValue: '-1',
@@ -35,62 +137,50 @@ export default {
   watch: {
     selectedProjectId() {
       this.fetchData()
-      this.versionValue = '-1'
-      this.memberValue = '-1'
     }
   },
   async created() {
     const issueStatusRes = await getIssueStatus()
     this.issueStatusList = issueStatusRes.data
-    this.fetchData()
+    this.issueStatusList.forEach((item) => {
+      this.classifyIssueStatus[item.name] = []
+    })
+    await this.fetchData()
   },
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
     searchKanbanCard(value, opt) {
-      const fuseActive = new Fuse(this.activeList, opt)
-      const resActive = fuseActive.search(`="${value}"`)
-      this.activeList = resActive.map(items => items.item)
-
-      const fuseAssign = new Fuse(this.assignedList, opt)
-      const resAssign = fuseAssign.search(`="${value}"`)
-      this.assignedList = resAssign.map(items => items.item)
-
-      const fuseSolved = new Fuse(this.solvedList, opt)
-      const resSolved = fuseSolved.search(`="${value}"`)
-      this.solvedList = resSolved.map(items => items.item)
-
-      const fuseRespond = new Fuse(this.respondedList, opt)
-      const resRespond = fuseRespond.search(`="${value}"`)
-      this.respondedList = resRespond.map(items => items.item)
-
-      const fuseFinish = new Fuse(this.finishedList, opt)
-      const resFinish = fuseFinish.search(`="${value}"`)
-      this.finishedList = resFinish.map(items => items.item)
-
-      const fuseClosed = new Fuse(this.closedList, opt)
-      const resClosed = fuseClosed.search(`="${value}"`)
-      this.closedList = resClosed.map(items => items.item)
+      this.issueStatusList.forEach((item) => {
+        const fuse = new Fuse(this.classifyIssueStatus[item.name], opt)
+        const res = fuse.search(`="${value}"`)
+        this.classifyIssueStatus[item.name] = res.map(items => items.item)
+      })
     },
     resetKanbanCard() {
       this.issueStatusList.forEach(item => {
-        if (item.name === 'Active') this.activeList = this.genKanbanCard('Active')
-        if (item.name === 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
-        if (item.name === 'Solved') this.solvedList = this.genKanbanCard('Solved')
-        if (item.name === 'Responded') this.respondedList = this.genKanbanCard('Responded')
-        if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
-        if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
+        this.classifyIssueStatus[item.name] = this.genKanbanCard(item.name)
       })
     },
     genKanbanCard(status) {
       if (!this.projectIssueList[status]) return [] // 該status不存在issue回傳空array
       return this.projectIssueList[status].map(issue => {
+        let parentDetail = {}
+        if (issue.parent_id) {
+          const parent = this.relativeIssueList.find((item) => (item.id === issue.parent_id))
+          parentDetail = {
+            parent_name: parent.issue_name,
+            parent_status: parent.issue_status,
+            parent_status_id: parent.issue_status_id
+          }
+        }
         return {
           name: issue.issue_name,
           id: issue.id,
           date: issue.due_date,
           user: issue.assigned_to,
           version: issue.fixed_version_id,
-          parent_id: issue.parent_id
+          parent_id: issue.parent_id,
+          ...parentDetail
         }
       })
     },
@@ -106,34 +196,35 @@ export default {
 
       this.isLoading = false
       this.projectIssueList = projectIssueListRes.data // 取得project全部issue by status
-      this.issueStatusList.forEach(item => {
-        if (item.name === 'Active') this.activeList = this.genKanbanCard('Active')
-        if (item.name === 'Assigned') this.assignedList = this.genKanbanCard('Assigned')
-        if (item.name === 'Solved') this.solvedList = this.genKanbanCard('Solved')
-        if (item.name === 'Responded') this.respondedList = this.genKanbanCard('Responded')
-        if (item.name === 'Finished') this.finishedList = this.genKanbanCard('Finished')
-        if (item.name === 'Closed') this.closedList = this.genKanbanCard('Closed')
-      })
-      this.updateRelativeList()
+      this.relativeIssueList = await this.updateRelativeList()
+      await this.resetKanbanCard()
     },
-    async updateRelativeList() {
+    updateIssueBoard() {
+      this.fetchData()
+      this.versionValue = '-1'
+      this.memberValue = '-1'
+    },
+    updateRelativeList() {
       this.isLoading = true
-      await getProjectIssueListByTree(this.selectedProjectId).then(res => {
-        this.relativeIssueList = this.createRelativeList(res.data)
+      return getProjectIssueListByTree(this.selectedProjectId).then(res => {
+        return Promise.resolve(this.createRelativeList(res.data))
       })
-      this.isLoading = false
+        .catch((e) => {
+          console.log(e)
+          return Promise.reject()
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
     },
     async updateIssueStatus(evt) {
       this.isLoading = true
       const { to, newIndex } = evt
+      const classList = to.className.split(' ')
+      const className = classList[classList.length - 1]
       let issue = {}
       let newStatusId = 0
-      if (to.className.search('Active') !== -1) issue = this.activeList[newIndex]
-      if (to.className.search('Assigned') !== -1) issue = this.assignedList[newIndex]
-      if (to.className.search('Solved') !== -1) issue = this.solvedList[newIndex]
-      if (to.className.search('Responded') !== -1) issue = this.respondedList[newIndex]
-      if (to.className.search('Finished') !== -1) issue = this.finishedList[newIndex]
-      if (to.className.search('Closed') !== -1) issue = this.closedList[newIndex]
+      issue = this.classifyIssueStatus[className][newIndex]
       this.issueStatusList.forEach(item => {
         if (to.className.search(item.name) !== -1) {
           newStatusId = item.id
@@ -146,6 +237,7 @@ export default {
       this.isLoading = false
     },
     updateData() {
+      console.log('updateData')
       this.resetKanbanCard()
       const versionOpt = {
         keys: ['version'],
@@ -168,6 +260,7 @@ export default {
     },
     createRelativeList(list) {
       const result = []
+
       function flatList(parent) {
         for (let i = 0; i < parent.length; i++) {
           result.push(parent[i])
@@ -175,6 +268,7 @@ export default {
           if (parent[i].children.length) flatList(children)
         }
       }
+
       flatList(list)
       return result
     }
@@ -182,152 +276,99 @@ export default {
 }
 </script>
 
-<template>
-  <div v-loading="isLoading" class="app-container">
-    <div class="clearfix">
-      <div>
-        <project-list-selector />
+<style lang="scss" scoped>
+$active: #85c1e9;
+$assigned: #ff7b00;
+$solved: #82e0aa;
+$responded: #ffc300;
+$finished: #a4bebe;
+$closed: #aeb6bf;
 
-        <el-select
-          v-model="versionValue"
-          :placeholder="$t('Version.SelectVersion')"
-          :disabled="selectedProjectId === -1"
-          @change="updateData"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-          <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-
-        <el-select
-          v-model="memberValue"
-          :placeholder="$t('Member.SelectMember')"
-          :disabled="selectedProjectId === -1"
-          @change="updateData"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
-          <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
-        </el-select>
-      </div>
-    </div>
-    <el-divider />
-    <div class="board">
-      <Kanban
-        key="1"
-        :list="activeList"
-        :relative-list="relativeIssueList"
-        :group="group"
-        class="kanban active"
-        :header-text="$t('ProjectActive.Active')"
-        c-name="Active"
-        @update="updateIssueStatus"
-        @updateBoard="fetchData"
-      />
-      <Kanban
-        key="2"
-        :list="assignedList"
-        :relative-list="relativeIssueList"
-        :group="group"
-        class="kanban assigned"
-        :header-text="$t('ProjectActive.Assigned')"
-        c-name="Assigned"
-        @update="updateIssueStatus"
-        @updateBoard="fetchData"
-      />
-      <Kanban
-        key="3"
-        :list="solvedList"
-        :relative-list="relativeIssueList"
-        :group="group"
-        class="kanban solved"
-        :header-text="$t('ProjectActive.Solved')"
-        c-name="Solved"
-        @update="updateIssueStatus"
-        @updateBoard="fetchData"
-      />
-      <Kanban
-        key="4"
-        :list="respondedList"
-        :relative-list="relativeIssueList"
-        :group="group"
-        class="kanban responded"
-        :header-text="$t('ProjectActive.Responded')"
-        c-name="Responded"
-        @update="updateIssueStatus"
-        @updateBoard="fetchData"
-      />
-      <Kanban
-        key="5"
-        :list="finishedList"
-        :relative-list="relativeIssueList"
-        :group="group"
-        class="kanban finished"
-        :header-text="$t('ProjectActive.Finished')"
-        c-name="Finished"
-        @update="updateIssueStatus"
-        @updateBoard="fetchData"
-      />
-      <Kanban
-        key="6"
-        :list="closedList"
-        :relative-list="relativeIssueList"
-        :group="group"
-        class="kanban closed"
-        :header-text="$t('ProjectActive.Closed')"
-        c-name="Closed"
-        @update="updateIssueStatus"
-        @updateBoard="fetchData"
-      />
-    </div>
-  </div>
-</template>
-
-<style lang="scss">
 .board {
   display: flex;
   justify-content: start;
   flex-wrap: wrap;
   align-items: start;
-}
-.kanban {
-  &.active {
-    .board-column-header {
-      .header-bar {
-        background: #85c1e9;
+
+  .kanban {
+    > > > .parent {
+      font-size: 0.75em;
+      margin: 0;
+
+      .el-tag {
+        font-size: 0.5em;
+      }
+
+      .Active {
+        background: $active;
+      }
+
+      .Assigned {
+        background: $assigned;
+      }
+
+      .Solved {
+        background: $solved;
+      }
+
+      .Responded {
+        background: $responded;
+      }
+
+      .Finished {
+        background: $finished;
+      }
+
+      .Closed {
+        background: $closed;
       }
     }
-  }
-  &.assigned {
-    .board-column-header {
-      .header-bar {
-        background: #ff7b00;
+
+    > > > &.active {
+      .board-column-header {
+        .header-bar {
+          background: $active;
+        }
       }
     }
-  }
-  &.solved {
-    .board-column-header {
-      .header-bar {
-        background: #82e0aa;
+
+    > > > &.assigned {
+      .board-column-header {
+        .header-bar {
+          background: $assigned;
+        }
       }
     }
-  }
-  &.responded {
-    .board-column-header {
-      .header-bar {
-        background: #ffc300;
+
+    > > > &.solved {
+      .board-column-header {
+        .header-bar {
+          background: $solved;
+        }
       }
     }
-  }
-  &.finished {
-    .board-column-header {
-      .header-bar {
-        background: #a4bebe;
+
+    > > > &.responded {
+      .board-column-header {
+        .header-bar {
+          background: $responded;
+        }
       }
     }
-  }
-  &.closed {
-    .board-column-header {
-      .header-bar {
-        background: #aeb6bf;
+
+    > > > &.finished {
+      .board-column-header {
+        .header-bar {
+          background: $finished;
+        }
+      }
+    }
+
+    > > > &.closed {
+      .board-column-header {
+        .header-bar {
+          background: $closed;
+        }
       }
     }
   }

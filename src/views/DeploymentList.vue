@@ -68,20 +68,20 @@ export default {
       highlight-current-row
       height="100%"
     >
-      <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="deployment_name" min-width="200" />
-      <el-table-column-time :label="$t('general.CreateTime')" align="center" prop="createion_timestamp" />
+      <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="name" min-width="200" />
+      <el-table-column-time :label="$t('general.CreateTime')" align="center" prop="created_time" />
 
       <el-table-column :label="$t('DeploymentList.Container')" align="center" min-width="200">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item + idx">
-            {{ item.name }}
+          <div v-for="(container, idx) in scope.row.containers" :key="container + idx">
+            {{ container.name }}
           </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('DeploymentList.Image')" align="center" min-width="250">
         <template slot-scope="scope">
-          <div v-for="(item, idx) in scope.row.container" :key="item + idx">
-            {{ item.image }}
+          <div v-for="(container, idx) in scope.row.containers" :key="container + idx">
+            {{ container.image }}
           </div>
         </template>
       </el-table-column>
@@ -105,7 +105,7 @@ export default {
             type="primary"
             size="mini"
             icon="el-icon-refresh"
-            @click="redeploy(selectedProjectId, scope.row.deployment_name)"
+            @click="redeploy(selectedProjectId, scope.row.name)"
           >
             Redeploy
           </el-button>
@@ -116,7 +116,7 @@ export default {
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(selectedProjectId, scope.row.deployment_name)"
+            @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" />

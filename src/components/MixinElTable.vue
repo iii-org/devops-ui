@@ -17,8 +17,7 @@ export default {
     },
     rowHeight: 53, // If you can, detect the real thead cell height
     searchKey: 'name',
-    searchData: '',
-    checkedItems: ['Pass', 'Fail']
+    searchData: ''
   }),
   computed: {
     filteredData() {
@@ -30,23 +29,10 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return this.filteredData.slice(start, end)
-    },
-    checkedData() {
-      return this.filteredData.filter(
-        item => item.testResult.includes(this.checkedItems[0]) || item.testResult.includes(this.checkedItems[1])
-      )
-    },
-    pagedDataByChecked() {
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return this.checkedData.slice(start, end)
     }
   },
   watch: {
     searchData() {
-      this.listQuery.page = 1
-    },
-    checkedItems() {
       this.listQuery.page = 1
     }
   },

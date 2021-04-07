@@ -41,6 +41,9 @@ export default {
       this.handleStatistics(val)
     }
   },
+  mounted() {
+    this.handleStatistics(this.statisticsObj)
+  },
   methods: {
     handleStatistics(statistics) {
       const hasStatistics = Object.keys(statistics).length > 0

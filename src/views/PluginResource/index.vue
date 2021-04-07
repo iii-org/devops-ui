@@ -5,8 +5,8 @@ import { getPluginResource } from '@/api/harbor'
 import resourcePie from './components/resourcePie'
 
 const handleLeftQuota = item => {
-  const quotaValue = item.quota.value === '' ? 0 : item.quota.value
-  const usedValue = item.used.value === '' ? 0 : item.used.value
+  const quotaValue = item.quota.value === '' ? 0 : Number(item.quota.value)
+  const usedValue = item.used.value === '' ? 0 : Number(item.used.value)
   return quotaValue - usedValue
 }
 const formatValue = (title, value) => {

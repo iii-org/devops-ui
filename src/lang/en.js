@@ -31,6 +31,7 @@ export default {
     checkMarx: 'CheckMarx',
     sonarQube: 'SonarQube',
     webInspect: 'WebInspect',
+    zap: 'OWASP ZAP',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -234,7 +235,7 @@ export default {
     UploadAndSave: 'Upload File and Save'
   },
   Version: {
-    Manage: 'Project Versions Manage',
+    Manage: 'Manage Project Versions',
     AddVersion: 'Add Version',
     EditVersion: 'Edit Version',
     Duration: 'Duration',
@@ -298,6 +299,7 @@ export default {
     IssuesShouldBeClosedWithinThisMonth: 'Issues Should Be Closed Within This Month',
     Finished: 'Finished',
     Unfinished: 'Unfinished',
+    Unassigned: 'Unassigned',
     TotalVersion: 'All Versions',
     TotalMember: 'All Members',
     Total: 'Total',
@@ -313,7 +315,7 @@ export default {
     Report: 'Report'
   },
   Member: {
-    Manage: 'Project Members Manage',
+    Manage: 'Manage Project Members',
     AddMember: 'Add Member',
     Id: 'Id',
     Phone: 'Phone',
@@ -489,7 +491,8 @@ export default {
   },
   Git: {
     Branch: 'Branch',
-    Commit: 'Commit'
+    Commit: 'Commit',
+    searchCommitId: 'Search Commit ID'
   },
   SonarQube: {
     ViewReport: 'View Report',
@@ -498,6 +501,15 @@ export default {
     CodeSmells: 'Code Smells',
     Duplicates: 'Duplicates',
     Coverage: 'Coverage'
+  },
+  Zap: {
+    id: 'ID',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low',
+    info: 'Info',
+    duration: 'Duration',
+    fullLog: 'Report'
   },
   Release: {
     internalVersions: 'Internal versions',
