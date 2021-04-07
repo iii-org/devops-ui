@@ -78,13 +78,23 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'project-pm',
-    redirect: '/project-list',
+    redirect: '/dashboard',
     meta: {
       title: 'projectList',
-      icon: 'el-icon-tickets',
+      icon: 'el-icon-s-cooperation',
       roles: ['Project Manager', 'Administrator']
     },
     children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/dashboard/roles/admin'),
+        meta: {
+          title: 'dashboard',
+          icon: 'dashboard',
+          roles: ['Project Manager', 'Administrator']
+        }
+      },
       {
         path: 'project-list',
         name: 'project-list-pm',
@@ -200,7 +210,7 @@ export const asyncRoutes = [
         path: 'advance-branch-settings',
         name: 'advance-branch-settings',
         hidden: true,
-        component: () => import('@/views/AdvanceBranchSettings'),
+        // component: () => import('@/views/AdvanceBranchSettings'),
         meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
       }
     ]
