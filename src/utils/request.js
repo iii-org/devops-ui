@@ -46,8 +46,11 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    console.log(response)
-    return response
+    const res = response.data
+    if (response.status >= 300) {
+      return Promise.reject(new Error())
+    }
+    return res
   },
   error => {
     const res = error.response.data
