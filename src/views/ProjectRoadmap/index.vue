@@ -1,3 +1,63 @@
+<template>
+  <div v-loading="listLoading" class="app-container">
+    <div class="d-flex">
+      <project-list-selector />
+    </div>
+    <el-divider />
+    <el-row :gutter="10">
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <el-collapse v-if="versionList.length" v-model="activeNames" :accordion="true" @change="onCollapseChange">
+            <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
+              <template slot="title">
+                <div class="d-flex align-center">
+                  <el-tag class="mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
+                    {{ version.name }}
+                  </el-tag>
+                  <div class="mr-7" style="width: 700px">
+                    <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
+                  </div>
+                  <div class="text-h6">{{ version.close }}／{{ version.total_issue }}</div>
+                </div>
+              </template>
+              <el-row v-loading="contentLoading" :gutter="12">
+                <el-col :span="8">
+                  <el-table :data="workList[version.id]" style="width: 100%" border stripe>
+                    <el-table-column label="Work List">
+                      <template slot-scope="scope">
+                        <div class="d-flex justify-space-between">
+                          <el-tag
+                            v-if="scope.row.issue_priority"
+                            :type="getPriorityType(scope.row.issue_priority)"
+                            size="medium"
+                            effect="dark"
+                          >
+                            {{ scope.row.issue_priority }}
+                          </el-tag>
+                          <div>
+                            <span class="font-weight-bold mr-2">[{{ scope.row.issue_category }}]</span>
+                            <span>{{ scope.row.issue_name }} </span>
+                          </div>
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-col>
+                <el-col :span="16">
+                  <WorkloadCard ref="issuePriority" :statistics-obj="version.workLoadData" />
+                </el-col>
+              </el-row>
+            </el-collapse-item>
+          </el-collapse>
+          <div v-else class="text-center ma-7">
+            <span>{{ $t('general.NoData') }}</span>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
 <script>
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
@@ -8,13 +68,13 @@ import {
   getProjectIssueStatistics
 } from '@/api/projects'
 
-import IssuePriorityCard from '@/views/ProjectOverview/components/IssuePriorityCard'
+import WorkloadCard from '@/views/ProjectOverview/components/WorkloadCard'
 
 export default {
   name: 'ProjectRoadmap',
   components: {
     ProjectListSelector,
-    IssuePriorityCard
+    WorkloadCard
   },
   data() {
     return {
@@ -107,63 +167,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div v-loading="listLoading" class="app-container">
-    <div class="d-flex">
-      <project-list-selector />
-    </div>
-    <el-divider />
-    <el-row :gutter="10">
-      <el-col :span="24">
-        <el-card shadow="hover">
-          <el-collapse v-if="versionList.length" v-model="activeNames" :accordion="true" @change="onCollapseChange">
-            <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
-              <template slot="title">
-                <div class="d-flex align-center">
-                  <el-tag class="mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
-                    {{ version.name }}
-                  </el-tag>
-                  <div class="mr-7" style="width: 700px">
-                    <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
-                  </div>
-                  <div class="text-h6">{{ version.close }}／{{ version.total_issue }}</div>
-                </div>
-              </template>
-              <el-row v-loading="contentLoading" :gutter="12">
-                <el-col :span="8">
-                  <el-table :data="workList[version.id]" style="width: 100%" border stripe>
-                    <el-table-column label="Work List">
-                      <template slot-scope="scope">
-                        <div class="d-flex justify-space-between">
-                          <el-tag
-                            v-if="scope.row.issue_priority"
-                            :type="getPriorityType(scope.row.issue_priority)"
-                            size="medium"
-                            effect="dark"
-                          >
-                            {{ scope.row.issue_priority }}
-                          </el-tag>
-                          <div>
-                            <span class="font-weight-bold mr-2">[{{ scope.row.issue_category }}]</span>
-                            <span>{{ scope.row.issue_name }} </span>
-                          </div>
-                        </div>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-col>
-                <el-col :span="16">
-                  <issue-priority-card ref="issuePriority" :statistics-obj="version.workLoadData" />
-                </el-col>
-              </el-row>
-            </el-collapse-item>
-          </el-collapse>
-          <div v-else class="text-center ma-7">
-            <span>{{ $t('general.NoData') }}</span>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-  </div>
-</template>

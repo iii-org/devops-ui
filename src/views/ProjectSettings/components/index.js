@@ -1,5 +1,5 @@
 import ProjectMembers from './ProjectMembers'
 import ProjectVersions from './ProjectVersions'
-import PluginSettings from './PluginSettings'
+import PipelineSettings from './PipelineSettings'
 
-export { ProjectMembers, ProjectVersions, PluginSettings }
+export { ProjectMembers, ProjectVersions, PipelineSettings }
