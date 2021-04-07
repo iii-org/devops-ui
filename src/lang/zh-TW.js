@@ -14,6 +14,7 @@ export default {
 
     'Activity Log': '議題異動紀錄',
     'Project Roadmap': '專案藍圖',
+    advanceBranchSettings: '進階分支設定',
     'Project Settings': '專案設定',
 
     devProgress: '開發進度',
@@ -149,7 +150,8 @@ export default {
     WrongTagVersionName: '請輸入正確的版本名稱。',
     SingleFileLimit: '一次只能選擇一個檔案，請先移除已選擇的檔案。',
     UnsupportedFileFormat: '無法上傳，不支援此種檔案格式。',
-    FileSizeLimit: '超過可上傳的檔案大小 (20 MB)。'
+    FileSizeLimit: '超過可上傳的檔案大小 (20 MB)。',
+    LoadFail: '讀取失敗，請洽您的系統管理員。'
   },
   TestCase: {
     Index: '項次',
@@ -321,6 +323,11 @@ export default {
     Role: '角色',
     Account: '帳號',
     SelectMember: '選擇成員'
+  },
+  Plugin: {
+    Manage: '測試工具管理',
+    CustomEnvWarning: '本專案為自定義環境，無法透過網頁進行設定',
+    CustomRecommendWarning: '建議使用本平台之環境範本建置'
   },
   DevOps: {
     Id: '編號',

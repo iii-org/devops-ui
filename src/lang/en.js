@@ -14,6 +14,7 @@ export default {
 
     'Activity Log': 'Activity Log',
     'Project Roadmap': 'Project Roadmap',
+    advanceBranchSettings: 'Advance Branch Settings',
     'Project Settings': 'Project Settings',
 
     devProgress: 'Develop Progress',
@@ -150,7 +151,8 @@ export default {
     WrongTagVersionName: 'Please input tag version correctly.',
     SingleFileLimit: 'Only one file can be added at a time, please delete the existing file first.',
     UnsupportedFileFormat: 'Unable to upload a file: This file type is not supported',
-    FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)'
+    FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)',
+    LoadFail: 'Something went wrong, please contact your system administrator.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -322,6 +324,11 @@ export default {
     Role: 'Role',
     Account: 'Account',
     SelectMember: 'Select Member'
+  },
+  Plugin: {
+    Manage: 'Manage Plugins',
+    CustomEnvWarning: 'This project is a custom environment and cannot be configured via this system.',
+    CustomRecommendWarning: 'We recommend you use our templates to build project.'
   },
   DevOps: {
     Id: 'Id',

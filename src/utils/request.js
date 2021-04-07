@@ -47,24 +47,10 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (response.status < 200 || response.status >= 300) {
-      let message = 'Unknown Error'
-      res.code === 401 && (message = 'Unauthorized')
-      res.code === 403 && (message = 'Forbidden')
-      res.code === 500 && (message = 'Internal Server Error')
-      Message({
-        message: message,
-        type: 'error',
-        duration: 10 * 1000
-      })
-
-      return Promise.reject(new Error(message || 'Error'))
-    } else {
-      if (res) {
-        return res
-      }
-      return 'test'
+    if (response.status >= 300) {
+      return Promise.reject(new Error())
     }
+    return res
   },
   error => {
     const res = error.response.data

@@ -20,7 +20,7 @@ import { mapGetters } from 'vuex'
 import HorizontalBar from './HorizontalBar.js'
 
 export default {
-  name: 'IssuePriorityCard',
+  name: 'WorkloadCard',
   components: { HorizontalBar },
   props: {
     statisticsObj: {

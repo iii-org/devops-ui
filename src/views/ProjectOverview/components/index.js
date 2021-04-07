@@ -1,6 +1,6 @@
-import IssuePriorityCard from './IssuePriorityCard'
 import IssueStatusCard from './IssueStatusCard'
+import WorkloadCard from './WorkloadCard'
 import ProjectUserCard from './ProjectUserCard'
 import TestStatusCard from './TestStatusCard'
 
-export { IssuePriorityCard, IssueStatusCard, ProjectUserCard, TestStatusCard }
+export { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard }

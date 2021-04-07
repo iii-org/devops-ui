@@ -17,6 +17,27 @@ $warning: #f9be6e;
 $slow: #56b1e8;
 $light: #c1c3c5;
 
+$danger-1: mix($danger, #FFFFFF, 10%);
+$danger-2: mix($danger, #FFFFFF, 20%);
+$danger-3: mix($danger, #FFFFFF, 30%);
+$danger-4: mix($danger, #FFFFFF, 40%);
+$danger-5: mix($danger, #FFFFFF, 50%);
+$danger-6: mix($danger, #FFFFFF, 60%);
+$danger-7: mix($danger, #FFFFFF, 70%);
+$danger-8: mix($danger, #FFFFFF, 80%);
+$danger-9: mix($danger, #FFFFFF, 90%);
+
+$info-1: mix(#000000, #FFFFFF, 10%);
+$info-2: mix(#000000, #FFFFFF, 20%);
+$info-3: mix(#000000, #FFFFFF, 30%);
+$info-4: mix(#000000, #FFFFFF, 40%);
+$info-5: mix(#000000, #FFFFFF, 50%);
+$info-6: mix(#000000, #FFFFFF, 60%);
+$info-7: mix(#000000, #FFFFFF, 70%);
+$info-8: mix(#000000, #FFFFFF, 80%);
+$info-9: mix(#000000, #FFFFFF, 90%);
+
+
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
 :export {
