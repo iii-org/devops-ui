@@ -123,7 +123,7 @@
               </el-form-item>
             </el-col>
             <!-- <el-col :span="24">
-              <el-form-item :label="$t('TestCase.Issue')" prop="issue_id">
+              <el-form-item :label="$t('Issue.Issue')" prop="issue_id">
                 <el-input v-model="testCaseForm.issue_id" />
               </el-form-item>
             </el-col> -->
@@ -162,6 +162,7 @@ const formTemplate = {
   name: '',
   method_id: '',
   type_id: '',
+  // issue_id: '',
   url: '',
   description: ''
 }
