@@ -116,10 +116,10 @@ export default {
     <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
       <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'Active'" type="success" size="medium" effect="dark">{{
+          <el-tag v-if="scope.row.status === 'Active'" class="el-tag--circle" type="success" size="medium" effect="dark">{{
             scope.row.status
           }}</el-tag>
-          <el-tag v-else-if="scope.row.status === 'Removing'" type="warning" size="medium" effect="dark">{{
+          <el-tag v-else-if="scope.row.status === 'Removing'" class="el-tag--circle" type="warning" size="medium" effect="dark">{{
             scope.row.status
           }}</el-tag>
         </template>

@@ -108,13 +108,13 @@ export default {
           <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
             <div style="text-align: left">
               <div style="display: inline-block; width: 80px;text-align: center">
-                <el-tag v-if="container.state" :type="getStateType(container.state)" size="mini" effect="dark">
+                <el-tag v-if="container.state" class="el-tag--circle" :type="getStateType(container.state)" size="mini" effect="dark">
                   {{ container.state }}
                 </el-tag>
               </div>
               <i class="el-icon-time" />
               <el-tooltip placement="top" :content="container.time | UTCtoLocalTime">
-                <span class="text-body-2" >{{ container.time | relativeTime }}</span>
+                <span class="text-body-2">{{ container.time | relativeTime }}</span>
               </el-tooltip>
               <div class="ml-3 my-1">
                 <i class="el-icon-box" /> <span class="text-h6 "> {{ container.name }}</span>

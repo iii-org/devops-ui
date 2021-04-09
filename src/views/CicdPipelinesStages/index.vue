@@ -10,13 +10,13 @@
             <el-row :gutter="20">
               <el-col :span="6">Status</el-col>
               <el-col :span="18">
-                <el-tag v-if="pipeline.status === 'Failed'" type="danger" size="medium" effect="dark">
+                <el-tag v-if="pipeline.status === 'Failed'" class="el-tag--circle" type="danger" size="medium" effect="dark">
                   <i class="el-icon-circle-close" /> {{ pipeline.status }}
                 </el-tag>
-                <el-tag v-else-if="pipeline.status === 'Running'" size="medium" effect="dark">
+                <el-tag v-else-if="pipeline.status === 'Running'" class="el-tag--circle" size="medium" effect="dark">
                   <i class="el-icon-loading" /> {{ pipeline.status }}
                 </el-tag>
-                <el-tag v-else type="success" size="medium" effect="dark">
+                <el-tag v-else class="el-tag--circle" type="success" size="medium" effect="dark">
                   <i class="el-icon-circle-check" /> {{ pipeline.status }}
                 </el-tag>
               </el-col>
@@ -81,7 +81,7 @@
           placement="top"
         >
           <el-card>
-            <el-tag style="font-weight: 700;margin-bottom:10px" effect="dark">
+            <el-tag class="el-tag--circle" style="font-weight: 700;margin-bottom:10px" effect="dark">
               {{ stg.name }}
             </el-tag>
             <el-row v-for="(content, index2) in stg.content" :key="index2" :gutter="20">

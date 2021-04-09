@@ -121,7 +121,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.Status')" prop="stats.status" min-width="130">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.stats.status" :type="getStatusTagType(scope.row.stats.status)" effect="dark">
+          <el-tag v-if="scope.row.stats.status" class="el-tag--circle" :type="getStatusTagType(scope.row.stats.status)" effect="dark">
             {{ scope.row.stats.status }}
           </el-tag>
         </template>

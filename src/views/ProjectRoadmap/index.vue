@@ -11,7 +11,7 @@
             <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
               <template slot="title">
                 <div class="d-flex align-center">
-                  <el-tag class="mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
+                  <el-tag class="el-tag--circle mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
                     {{ version.name }}
                   </el-tag>
                   <div class="mr-7" style="width: 700px">

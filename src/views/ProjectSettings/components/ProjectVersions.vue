@@ -22,7 +22,7 @@
       <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
       <el-table-column prop="status" align="center" :label="$t('general.Status')" width="90">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status" :type="getTagType(scope.row.status)" size="mini" effect="dark">
+          <el-tag v-if="scope.row.status" class="el-tag--circle" :type="getTagType(scope.row.status)" size="mini" effect="dark">
             {{ scope.row.status }}
           </el-tag>
         </template>

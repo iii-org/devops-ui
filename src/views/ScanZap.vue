@@ -85,7 +85,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" min-width="130">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status" :type="getStatusTagType(scope.row.status)" effect="dark">
+          <el-tag v-if="scope.row.status" class="el-tag--circle" :type="getStatusTagType(scope.row.status)" effect="dark">
             {{ scope.row.status }}
           </el-tag>
         </template>

@@ -174,7 +174,7 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.LastTestResult')" width="170">
         <template slot-scope="scope">
-          <el-tag :type="returnTagType(scope.row)" size="large" effect="dark">
+          <el-tag class="el-tag--circle" :type="returnTagType(scope.row)" size="large" effect="dark">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
             <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
             <i v-else class="el-icon-error" />

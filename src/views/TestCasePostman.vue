@@ -135,7 +135,7 @@ export default {
       />
       <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.testResult" :type="getTagType(scope.row.testResult)" size="medium" effect="dark">
+          <el-tag v-if="scope.row.testResult" class="el-tag--circle" :type="getTagType(scope.row.testResult)" size="medium" effect="dark">
             {{ scope.row.testResult }}
           </el-tag>
         </template>
