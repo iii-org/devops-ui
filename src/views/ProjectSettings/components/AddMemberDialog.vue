@@ -3,132 +3,176 @@
     :title="$t(`Member.AddMember`)"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    width="50%"
+    width="80%"
+    top="0"
     @closed="onDialogClosed"
   >
-    <el-form ref="memberForm" :model="form" :rules="formRules" label-position="top">
-      <el-row :gutter="10">
-        <el-col :span="12">
-          <el-form-item :label="$t('general.Name')" prop="id">
-            <el-select
-              v-model="form.id"
-              :placeholder="$t('Member.SelectMember')"
-              :style="{ width: '100%' }"
-              filterable
-              :filter-method="filterMethod"
-              @visible-change="handleVisibleChange"
-            >
-              <el-option
-                v-for="user in filteredUserList"
-                :key="user.id"
-                :label="user.name"
-                :value="user.id"
-                class="d-flex justify-space-between align-center"
-              >
-                <span>{{ user.name }}</span>
-                <span :style="{ color: '#8492a6', 'font-size': '13px' }">{{ user.login }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="$t('Member.Role')" prop="role_name">
-            <el-input v-model="focusRoleName" disabled />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-      <el-button type="primary" :loading="btnConfirmLoading" @click="handleAddConfirm">
-        {{ $t('general.Confirm') }}
-      </el-button>
-    </span>
+    <el-row class="el-card">
+      <el-col class="el-card__header">
+        <el-row>
+          <el-col :span="16">
+            <el-input
+              v-model="searchValue"
+              size="medium"
+              prefix-icon="el-icon-search"
+              :style="{ width: '300px' }"
+              :placeholder="$t('general.SearchName')"
+            />
+          </el-col>
+          <el-col :span="8" class="text-right">
+            <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+            <el-button type="primary" :loading="btnConfirmLoading" @click="handleAddConfirm">
+              {{ $t('general.Confirm') }}
+            </el-button>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col class="el-card__body">
+        <el-table
+          v-if="dialogVisible"
+          ref="userTable"
+          :element-loading-text="$t('Loading')"
+          border
+          fit
+          highlight-current-row
+          :data="pagedData"
+          height="100%"
+          :cell-style="{ height: rowHeight + 'px' }"
+        >
+          <el-table-column
+            width="55"
+          >
+            <template slot-scope="scope">
+              <el-checkbox :value="isSelectedMember(scope.row)" class="el-checkbox" @change="toggleMember(scope.row)" />
+            </template>
+          </el-table-column>
+          <el-table-column label="姓名" prop="name" />
+          <el-table-column label="帳號" prop="login" />
+        </el-table>
+        <pagination
+          :total="filteredData.length"
+          :page="listQuery.page"
+          :limit="listQuery.limit"
+          :page-sizes="[listQuery.limit]"
+          :layout="'total, prev, pager, next'"
+          @pagination="onPagination"
+        />
+      </el-col>
+      <el-col class="el-card__footer">
+        <el-tag v-for="(item,idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
+          {{ idx + 1 }}.{{ item.name }}
+        </el-tag>
+      </el-col>
+    </el-row>
   </el-dialog>
 </template>
 
 <script>
 import { addProjectMember, getNotInProject } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import i18n from '@/lang'
-
-const formTemplate = {
-  id: ''
-}
+import MixinBasicTable from '@/components/MixinBasicTable'
+import Fuse from 'fuse.js'
 
 export default {
   name: 'AddMemberDialog',
+  mixins: [MixinBasicTable],
   data: () => ({
     dialogVisible: false,
-    form: formTemplate,
-    formRules: {
-      id: [{ required: true, message: i18n.t('RuleMsg.PleaseInput') + i18n.t('RuleMsg.Member'), trigger: 'change' }]
-    },
     assignableUserList: [],
+    selectedUser: [],
+    search: [],
     isLoading: false,
     btnConfirmLoading: false,
     selectorQuery: '',
-    focusRoleName: ''
+    focusRoleName: '',
+    rowHeight: 20,
+    listQuery: {
+      page: 1,
+      limit: 5
+    },
+    inputVisible: false,
+    searchValue: ''
   }),
   computed: {
     ...mapGetters(['selectedProject']),
     selectedProjectId() {
       return this.selectedProject.id
     },
-    filteredUserList() {
-      return this.assignableUserList.filter(user => {
-        const keyword = this.selectorQuery
-        return keyword === '' || user.name.includes(keyword) || user.login.includes(keyword)
-      })
+    filteredData() {
+      if (this.assignableUserList.length <= 0) return []
+      if (this.searchValue.length <= 0) return this.assignableUserList
+      const fuse = new Fuse(this.assignableUserList, { includeScore: true, keys: ['name', 'login'] })
+      const res = fuse.search('!' + this.searchValue)
+      return res.map(items => items.item)
     }
   },
   watch: {
-    'form.id'(val) {
-      if (val) {
-        const idx = this.assignableUserList.findIndex(item => item.id === val)
-        this.focusRoleName = this.assignableUserList[idx].role_name
-      }
-    },
     selectedProjectId() {
       this.fetchData()
+    },
+    pagedData() {
+      this.selectedUser.forEach(row => {
+        this.$refs['userTable'].toggleRowSelection(row)
+      })
     }
   },
   mounted() {
-    this.fetchData()
+    this.assignableUserList = this.fetchData()
   },
   methods: {
-    async fetchData() {
-      try {
-        const res = await getNotInProject(this.selectedProjectId)
-        this.assignableUserList = res.data.user_list.map(user => ({
-          id: user.id,
-          name: user.name,
-          login: user.login,
-          role_name: user.role_name
-        }))
-      } catch (error) {
-        console.error(error)
+    fetchData() {
+      return getNotInProject(this.selectedProjectId)
+        .then((res) => {
+          this.assignableUserList = res.data.user_list.map(user => ({
+            id: user.id,
+            name: user.name,
+            login: user.login,
+            role_name: user.role_name
+          }))
+          return this.assignableUserList
+        })
+        .catch((e) => {
+          return Promise.reject(e)
+        })
+    },
+    toggleSelectAllMember(event) {
+      if (event) {
+        this.$refs['userTable'].data.forEach((item) => {
+          this.onAddMember(item)
+        })
+      } else {
+        this.$refs['userTable'].data.forEach((item) => {
+          this.onRemoveMember(item)
+        })
       }
+    },
+    toggleMember(row) {
+      if (this.isSelectedMember(row)) {
+        this.onRemoveMember(row)
+      } else {
+        this.onAddMember(row)
+      }
+    },
+    onAddMember(row) {
+      this.selectedUser.push(row)
+    },
+    onRemoveMember(row) {
+      this.selectedUser.splice(this.selectedUser.indexOf(row), 1)
+    },
+    isSelectedMember(row) {
+      return this.selectedUser.indexOf(row) >= 0
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        this.$refs['memberForm'].resetFields()
-        this.form = formTemplate
-        this.focusRoleName = ''
+        this.selectedUser = []
       })
     },
-    filterMethod(selectorQuery) {
-      this.selectorQuery = selectorQuery
-    },
-    handleVisibleChange(status) {
-      if (status) this.selectorQuery = ''
-    },
     handleAddConfirm() {
-      this.$refs.memberForm.validate(async valid => {
-        if (valid) {
-          this.btnConfirmLoading = true
-          addProjectMember(this.selectedProjectId, { user_id: this.form.id })
-            .then(res => {
+      if (this.selectedUser.length > 0) {
+        this.btnConfirmLoading = true
+        this.selectedUser.forEach((user) => {
+          addProjectMember(this.selectedProjectId, { user_id: user.id })
+            .then(() => {
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Added'),
@@ -142,9 +186,77 @@ export default {
               this.btnConfirmLoading = false
               this.dialogVisible = false
             })
-        }
-      })
+        })
+        this.selectedUser = []
+      }
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import "src/styles/variables.scss";
+
+> > > .el-card {
+  &__footer {
+    padding: 18px 20px;
+    border-top: 1px solid #ebeef5;
+    box-sizing: border-box;
+    width: 100%;
+    height: 75px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+
+    .item {
+      font-size: 16px;
+      margin: 0 10px;
+    }
+  }
+}
+
+> > > .pagination-container {
+  padding: 10px 0;
+}
+
+> > > .el-table .el-button {
+  color: #FFFFFF !important;
+
+  &:hover {
+    color: #FFFFFF !important;
+  }
+
+  &--success {
+    background: $success !important;
+  }
+
+  &--warning {
+    background: $warning !important;
+  }
+
+  &--slow {
+    background: $slow !important;
+  }
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+> > > .el-form {
+  display: inline;
+  margin: 0 0 0 10px;
+
+  .el-form-item {
+    margin: 0;
+  }
+}
+</style>
