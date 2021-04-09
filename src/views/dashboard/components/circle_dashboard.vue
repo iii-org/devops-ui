@@ -26,10 +26,10 @@ export default {
 <style lang="scss" scoped>
 .circleBase {
   margin: auto;
-  width: 150px;
-  height: 150px;
+  width: 11vw;
+  height: 11vw;
   border-radius: 50%;
-  border: #000000 15px solid;
+  border: #000000 1.125vw solid;
   position: relative;
   background: #FFFFFF;
 
@@ -38,8 +38,8 @@ export default {
     text-align: center;
 
     h1 {
-      font-size: 3em;
-      line-height: 0.5em;
+      font-size: 3.25vw;
+      line-height: 0.75vw;
     }
   }
 

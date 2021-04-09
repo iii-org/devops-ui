@@ -1,8 +1,25 @@
+
+<template>
+  <div class="app-container">
+    <div class="clearfix">
+      <project-list-selector />
+    </div>
+    <el-divider />
+    <el-card v-loading="listLoading" class="box-card">
+      <div class="cardBody">
+        <div v-show="isNoData" style="text-align: center;">{{ $t('general.NoData') }}</div>
+        <div v-show="!isNoData" id="graph-container" />
+      </div>
+    </el-card>
+  </div>
+</template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '@/api/git-graph'
 import ProjectListSelector from '@/components/ProjectListSelector'
+import { UTCtoLocalTime } from '@/filters'
 
 export default {
   name: 'ProjectGraph', // ready to refactor
@@ -84,7 +101,7 @@ export default {
               // Check if new branch begins
               const commit_opts = {
                 subject: commit.message,
-                author: commit.author_name + ' <' + commit.committed_date + '>',
+                author: `${commit.author_name} <${UTCtoLocalTime(commit.committed_date)}>`,
                 hash: commit.id
               }
               this.graph.commit(commit_opts)
@@ -157,21 +174,6 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <div class="clearfix">
-      <project-list-selector />
-    </div>
-    <el-divider />
-    <el-card v-loading="listLoading" class="box-card">
-      <div class="cardBody">
-        <div v-show="isNoData" style="text-align: center;">{{ $t('general.NoData') }}</div>
-        <div v-show="!isNoData" id="graph-container" />
-      </div>
-    </el-card>
-  </div>
-</template>
 
 <style lang="scss">
 .cardBody {

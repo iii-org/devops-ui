@@ -1,3 +1,38 @@
+<template>
+  <div class="app-container">
+    <div class="d-flex justify-start">
+      <project-list-selector />
+    </div>
+    <el-divider />
+    <el-row :gutter="12">
+      <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
+        <el-card v-loading="listLoading" class="mb-4">
+          <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
+            <strong>{{ item.title }}{{ item.quota }}</strong>
+            <div>
+              <el-tooltip effect="dark" :content="`${item.title} Resource`" placement="top-start">
+                <el-button
+                  v-if="allowEditUsage(item.title)"
+                  type="primary"
+                  icon="el-icon-edit"
+                  size="mini"
+                  circle
+                  plain
+                  @click="handleEdit(item.title)"
+                />
+              </el-tooltip>
+            </div>
+          </div>
+          <div v-if="selectedProjectId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+          <div v-else>
+            <resource-pie :chart-data="item.data" />
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
 <script>
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
@@ -93,38 +128,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <div class="clearfix">
-      <project-list-selector />
-    </div>
-    <el-divider />
-    <el-row :gutter="12">
-      <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
-        <el-card v-loading="listLoading" class="mb-4">
-          <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
-            <strong>{{ item.title }}{{ item.quota }}</strong>
-            <div>
-              <el-tooltip effect="dark" :content="`${item.title} Resource`" placement="top-start">
-                <el-button
-                  v-if="allowEditUsage(item.title)"
-                  type="primary"
-                  icon="el-icon-edit"
-                  size="mini"
-                  circle
-                  plain
-                  @click="handleEdit(item.title)"
-                />
-              </el-tooltip>
-            </div>
-          </div>
-          <div v-if="selectedProjectId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
-          <div v-else>
-            <resource-pie :chart-data="item.data" />
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-  </div>
-</template>

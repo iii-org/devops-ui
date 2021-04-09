@@ -2,11 +2,11 @@
   <el-row class="app-container">
     <el-row type="flex" :gutter="10" class="flex-wrap">
       <el-col :xs="24" :sm="24" :md="10">
-        <el-card>
+        <el-card class="overview">
           <template slot="header">
             <span class="font-weight-bold">Overview</span>
           </template>
-          <el-row class="circle hidden-sm-and-down" justify="center">
+          <el-row class="circle hidden-sm-and-down" type="flex" justify="center" align="middle">
             <el-col v-for="(item,idx) in overview" :key="idx" :xs="24" :sm="24" :md="8">
               <CircleDashboard :count="item.count" :item="item.item" :class="'circle-'+item.class" />
             </el-col>
@@ -24,7 +24,7 @@
           <template slot="header">
             <span class="font-weight-bold">Project Members</span>
           </template>
-          <v-chart class="chart" :option="projectMembers" autoresize />
+          <v-chart class="chart" :option="projectMembers" autoresize theme="macarons" />
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="24" :md="7">
@@ -60,7 +60,7 @@
           <template slot="header">
             <span class="font-weight-bold">通過比率</span>
           </template>
-          <v-chart class="chart" :option="passive" autoresize />
+          <v-chart class="chart" :option="passive" autoresize theme="macarons" />
         </el-card>
       </el-col>
     </el-row>
@@ -98,6 +98,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, ScatterChart } from 'echarts/charts'
 import CircleDashboard from '../components/circle_dashboard'
+require('echarts/theme/macarons') // echarts theme
 
 use([
   CanvasRenderer,
@@ -121,11 +122,14 @@ export default {
       ],
       projectMembers: {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          textStyle: {
+            color: '#FFFFFF'
+          }
         },
         legend: {
-          orient: 'vertical',
-          left: 'left'
+          type: 'scroll',
+          bottom: '0'
         },
         series: [
           {
@@ -167,6 +171,12 @@ export default {
         { value: 'OO Solved the issue #3345' },
         { value: 'OO Solved the issue #3345' }],
       passive: {
+        tooltip: {
+          trigger: 'item',
+          textStyle: {
+            color: '#FFFFFF'
+          }
+        },
         grid: {
           left: '8%',
           top: '10%'
@@ -251,14 +261,11 @@ export default {
     }
   },
   methods: {
-    tableRowClassName({ row, rowIndex }) {
+    tableRowClassName({ row }) {
       if (row.due_date < this.lastUpdate) {
         return 'danger-row'
       }
       return ''
-    },
-    overviewTableRowClassName({ row, rowIndex }) {
-      return 'table-' + row.class
     },
     overviewTableCellClassName({ column }) {
       if (column.property === 'count') {
@@ -273,12 +280,28 @@ export default {
 @import 'src/styles/variables.scss';
 @import '~element-ui/lib/theme-chalk/display.css';
 
-> > > .el-row {
+.overview{
+  height:90%;
+
+  .el-row {
+    height:100%;
+
+    .el-col{
+      margin-bottom: 0;
+    }
+  }
+
+}
+
+> > > .el-row, .el-row .el-col {
   margin-bottom: 1em;
 }
 
 > > > .el-card {
   height: 100%;
+  .el-card__body{
+    height: 85%;
+  }
 }
 
 > > > .align-center {
