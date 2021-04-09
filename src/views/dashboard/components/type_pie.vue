@@ -1,14 +1,27 @@
 <template>
-  <div :class="className" :style="{ height: height, width: width }" />
+  <v-chart ref="chart" :style="{ height, width }" :option="option" autoresize theme="macarons" />
 </template>
 
 <script>
 import { getRdDashboardIssuesType } from '@/api/dashboard'
 import { mapGetters } from 'vuex'
-import echarts from 'echarts'
+import { use } from 'echarts/core'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { PieChart, ScatterChart } from 'echarts/charts'
+
 require('echarts/theme/macarons') // echarts theme
 
+use([
+  CanvasRenderer,
+  ScatterChart,
+  PieChart
+])
+
 export default {
+  components: {
+    'v-chart': VChart
+  },
   props: {
     className: {
       type: String,
@@ -23,38 +36,16 @@ export default {
       default: '300px'
     }
   },
-  computed: {
-    ...mapGetters(['userId'])
-  },
   data() {
     return {
       chart: null,
       types: []
     }
   },
-  mounted() {
-    getRdDashboardIssuesType(this.userId).then((res) => {
-      this.types = res.data.map((item) => {
-        item.value = item.number
-        return item
-      })
-      this.$nextTick(() => {
-        this.initChart()
-      })
-    })
-  },
-  beforeDestroy() {
-    if (!this.chart) {
-      return
-    }
-    this.chart.dispose()
-    this.chart = null
-  },
-  methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-
-      this.chart.setOption({
+  computed: {
+    ...mapGetters(['userId']),
+    option() {
+      return {
         title: {
           show: this.types.length === 0,
           textStyle: {
@@ -67,7 +58,10 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
+          formatter: '{b} : {c} ({d}%)',
+          textStyle: {
+            color: '#FFFFFF'
+          }
         },
         color: ['#67c23a', '#f56c6c'],
         legend: {
@@ -85,8 +79,16 @@ export default {
             animationDuration: 2600
           }
         ]
-      })
+      }
     }
+  },
+  mounted() {
+    getRdDashboardIssuesType(this.userId).then((res) => {
+      this.types = res.data.map((item) => {
+        item.value = item.number
+        return item
+      })
+    })
   }
 }
 </script>
