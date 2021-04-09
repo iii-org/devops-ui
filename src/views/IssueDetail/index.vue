@@ -14,16 +14,16 @@
             <el-row :gutter="20">
               <el-col :span="6">Priority</el-col>
               <el-col :span="18">
-                <el-tag v-if="issue_detail.priority.name === '特急'" type="danger" size="medium" effect="dark">
+                <el-tag v-if="issue_detail.priority.name === '特急'" class="el-tag--circle" type="danger" size="medium" effect="dark">
                   {{ issue_detail.priority.name }}
                 </el-tag>
-                <el-tag v-else-if="issue_detail.priority.name === '急'" type="warning" size="medium" effect="dark">
+                <el-tag v-else-if="issue_detail.priority.name === '急'" class="el-tag--circle" type="warning" size="medium" effect="dark">
                   {{ issue_detail.priority.name }}
                 </el-tag>
-                <el-tag v-else-if="issue_detail.priority.name === '一般'" size="medium" effect="dark">
+                <el-tag v-else-if="issue_detail.priority.name === '一般'" class="el-tag--circle" size="medium" effect="dark">
                   {{ issue_detail.priority.name }}
                 </el-tag>
-                <el-tag v-else type="success" size="medium" effect="dark">{{ issue_detail.priority.name }}</el-tag>
+                <el-tag v-else class="el-tag--circle" type="success" size="medium" effect="dark">{{ issue_detail.priority.name }}</el-tag>
               </el-col>
             </el-row>
           </el-col>
@@ -77,7 +77,6 @@
           :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
           class="mt-2"
           height="100%"
-
         >
           <el-table-column label="Description">
             <template slot-scope="scope">

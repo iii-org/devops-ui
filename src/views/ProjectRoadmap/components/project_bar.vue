@@ -1,12 +1,25 @@
 <template>
-  <div :class="className" :style="{ height: height, width: width }" />
+  <v-chart ref="chart" :style="{ height, width }" :option="option" autoresize theme="macarons" />
 </template>
 
 <script>
-import echarts from 'echarts'
+import { use } from 'echarts/core'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { PieChart, ScatterChart } from 'echarts/charts'
+
 require('echarts/theme/macarons') // echarts theme
 
+use([
+  CanvasRenderer,
+  ScatterChart,
+  PieChart
+])
+
 export default {
+  components: {
+    'v-chart': VChart
+  },
   props: {
     className: {
       type: String,
@@ -27,34 +40,14 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      chart: null
-    }
-  },
-  watch: {
-    theData(value) {
-      this.$nextTick(() => {
-        const CONFIG_DATA = {
-          yAxis: Object.keys(value),
-          finished: Object.keys(value).map(key => value[key].closed),
-          unfinished: Object.keys(value).map(key => value[key].open)
-        }
-        this.initChart(CONFIG_DATA)
-      })
-    }
-  },
-  beforeDestroy() {
-    if (!this.chart) {
-      return
-    }
-    this.chart.dispose()
-    this.chart = null
-  },
-  methods: {
-    initChart(CONFIG_DATA) {
-      this.chart = echarts.init(this.$el, 'macarons')
-      this.chart.setOption({
+  computed: {
+    option() {
+      const CONFIG_DATA = {
+        yAxis: Object.keys(this.theData),
+        finished: Object.keys(this.theData).map(key => this.theData[key].closed),
+        unfinished: Object.keys(this.theData).map(key => this.theData[key].open)
+      }
+      return {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -91,7 +84,7 @@ export default {
         yAxis: {
           type: 'category',
           data: CONFIG_DATA.yAxis,
-          //data: ['一般', '緊急', '特急'],
+          // data: ['一般', '緊急', '特急'],
           axisTick: {
             lineStyle: {
               color: '#C8C8C8'
@@ -102,7 +95,7 @@ export default {
           },
           axisLabel: {
             textStyle: {
-              color: function(value, index) {
+              color: function(value) {
                 if (value === 'Immediate') {
                   return '#E85656'
                 } else if (value === 'High') {
@@ -156,7 +149,7 @@ export default {
             itemStyle: { normal: { color: '#EBEBEB' }}
           }
         ]
-      })
+      }
     }
   }
 }

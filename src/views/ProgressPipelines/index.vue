@@ -141,7 +141,7 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('ProcessDevBranchTest.Status')" align="center" width="110">
         <template slot-scope="scope">
-          <el-tag :type="getStatusTagType(scope.row.execution_state)" size="medium" effect="dark">
+          <el-tag class="el-tag--circle" :type="getStatusTagType(scope.row.execution_state)" size="medium" effect="dark">
             {{ scope.row.execution_state }}
           </el-tag>
         </template>

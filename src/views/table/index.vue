@@ -30,7 +30,7 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="Status" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter" effect="dark">{{ scope.row.status }}</el-tag>
+          <el-tag class="el-tag--circle" :type="scope.row.status | statusFilter" effect="dark">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="Display_time" width="200">

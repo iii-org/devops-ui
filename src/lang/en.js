@@ -480,6 +480,7 @@ export default {
     Image: 'Image'
   },
   Loading: 'Loading...',
+  Updating: 'Updating...',
   Harbor: {
     PushTime: 'Push Time'
   },

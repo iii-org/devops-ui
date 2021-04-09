@@ -16,7 +16,7 @@
         <div slot="label">
           <div class="d-flex justify-space-between align-center">
             <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
-            <el-tag v-if="stage.state" :type="getStateTagType(stage.state)" class="ml-2" size="mini" effect="dark">
+            <el-tag v-if="stage.state" class="el-tag--circle ml-2" :type="getStateTagType(stage.state)" size="mini" effect="dark">
               {{ stage.state }}
             </el-tag>
           </div>

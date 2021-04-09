@@ -117,7 +117,7 @@ const actions = {
 
   // user logout
   logout({ commit, state }) {
-    localStorage.removeItem('project')
+    localStorage.clear()
     removeToken()
     resetRouter()
     commit('RESET_STATE')
