@@ -473,6 +473,7 @@ export default {
     Image: '映像檔'
   },
   Loading: '讀取中……',
+  Updating: '更新中……',
   Harbor: {
     PushTime: '推送時間'
   },

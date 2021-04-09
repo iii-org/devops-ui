@@ -1,20 +1,25 @@
 <template>
-  <el-collapse-item v-loading="listLoading" :element-loading-text="$t('Loading')" name="PluginSettings">
+  <el-collapse-item v-loading="isLoading" :element-loading-text="$t('Loading')" name="PluginSettings">
     <template slot="title">
-      <span class="text-subtitle-1 font-weight-bold">{{ $t('Plugin.Manage') }}</span>
+      <span class="text-subtitle-1 font-weight-bold mr-3">{{ $t('Plugin.Manage') }}</span>
     </template>
-
     <template v-if="settingStatus === 'Active'">
       <div class="d-flex justify-space-between align-center mb-1">
         <div>
           <span class="text-subtitle-2 mr-2">{{ $t('Git.Branch') }}：</span>
-          <span class="text-subtitle-1 font-weight-bold">{{ defaultBranch }}</span>
+          <span class="text-subtitle-1 font-weight-bold">{{ branch }}</span>
         </div>
         <el-button type="text" size="medium" @click="handleClick">
           {{ $t('route.advanceBranchSettings') }}
         </el-button>
       </div>
-      <el-table :data="stages" fit :show-header="false">
+      <el-table
+        v-loading="isStagesLoading"
+        :element-loading-text="$t('Updating')"
+        :data="stagesData"
+        fit
+        :show-header="false"
+      >
         <el-table-column prop="name" />
         <el-table-column align="center">
           <template slot-scope="scope">
@@ -22,18 +27,16 @@
               v-model="scope.row.has_default_branch"
               active-color="#13ce66"
               inactive-color="gray"
-              @change="updatePipelineDefaultBranch"
+              @change="handleStageChange(scope.row)"
             />
           </template>
         </el-table-column>
       </el-table>
     </template>
-
     <template v-else-if="settingStatus === 'unSupported'">
       <div class="text-center text-h6 mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
       <div class="text-center text-danger font-weight-bold">{{ $t('Plugin.CustomRecommendWarning') }}</div>
     </template>
-
     <template v-else-if="settingStatus === 'error'">
       <div class="text-center text-h6">{{ $t('Notify.LoadFail') }}</div>
     </template>
@@ -47,10 +50,12 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'PipelineSettings',
   data: () => ({
-    listLoading: false,
+    isLoading: false,
+    isStagesLoading: false,
     settingStatus: '',
-    defaultBranch: '',
-    stages: []
+    branch: '',
+    stagesData: [],
+    webDependencyKeys: ['test-postman', 'test-webinspect']
   }),
   computed: {
     ...mapGetters(['selectedProject']),
@@ -68,13 +73,14 @@ export default {
   },
   methods: {
     async fetchPipelineDefaultBranch() {
-      this.listLoading = true
+      this.isLoading = true
       try {
         const res = await getPipelineDefaultBranch(this.selectedProjectRepositoryId)
-        if (Object.keys(res.data).length > 0) {
+        const hasStages = Object.keys(res.data).length > 0
+        if (hasStages) {
           const { default_branch, stages } = res.data
-          this.defaultBranch = default_branch
-          this.stages = stages.map(stage => stage)
+          this.branch = default_branch
+          this.stagesData = stages.map(stage => stage)
           this.settingStatus = 'Active'
         } else {
           this.resetSettings()
@@ -82,20 +88,55 @@ export default {
       } catch (err) {
         this.settingStatus = 'error'
       } finally {
-        this.listLoading = false
+        this.isLoading = false
       }
     },
     resetSettings() {
       this.settingStatus = 'unSupported'
-      this.stages = []
-      this.defaultBranch = ''
+      this.stagesData = []
+      this.branch = ''
     },
     handleClick() {
       this.$router.push({ name: 'advance-branch-settings' })
     },
+    handleStageChange(stage) {
+      const { key, has_default_branch } = stage
+      switch (key) {
+        case 'web':
+          this.handleWebStageChange(has_default_branch)
+          break
+        case 'test-postman':
+          this.handleWebDependencyChange(has_default_branch)
+          break
+        case 'test-webinspect':
+          this.handleWebDependencyChange(has_default_branch)
+          break
+        default:
+          this.updatePipelineDefaultBranch()
+          break
+      }
+    },
+    handleWebStageChange(stageStatus) {
+      const { stagesData, webDependencyKeys } = this
+      if (!stageStatus) {
+        webDependencyKeys.forEach(key => {
+          const idx = stagesData.findIndex(stage => stage.key === key)
+          if (idx !== -1) stagesData[idx].has_default_branch = false
+        })
+      }
+      this.updatePipelineDefaultBranch()
+    },
+    handleWebDependencyChange(stageStatus) {
+      const { stagesData } = this
+      if (stageStatus) {
+        const idx = stagesData.findIndex(stage => stage.key === 'web')
+        if (idx !== -1) stagesData[idx].has_default_branch = true
+      }
+      this.updatePipelineDefaultBranch()
+    },
     async updatePipelineDefaultBranch() {
-      const sendData = { detail: { stages: this.stages } }
-      this.listLoading = true
+      const sendData = { detail: { stages: this.stagesData } }
+      this.isStagesLoading = true
       try {
         await editPipelineDefaultBranch(this.selectedProjectRepositoryId, sendData)
       } catch (err) {
@@ -106,7 +147,7 @@ export default {
           type: 'error'
         })
       } finally {
-        this.listLoading = false
+        this.isStagesLoading = false
       }
     }
   }
