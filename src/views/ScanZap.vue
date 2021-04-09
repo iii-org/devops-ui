@@ -31,6 +31,8 @@ export default {
           return 'success'
         case 'Scanning':
           return 'slow'
+        case 'Aborted':
+          return 'info'
         case 'Failed':
           return 'danger'
         default:
