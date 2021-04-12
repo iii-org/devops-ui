@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
-export function getTemplateList() {
+export function getTemplateList(params) {
   return request({
     url: '/template_list',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
