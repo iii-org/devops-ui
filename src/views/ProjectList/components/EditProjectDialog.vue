@@ -22,7 +22,11 @@
           </el-col>
           <el-col :span="24" :sm="8" :xl="3">
             <el-form-item :label="$t('Project.ProjectOwner')" prop="owner_id">
-              <el-select v-model="form.owner_id" style="width: 100%" />
+              <el-select v-model="form.owner_id" style="width: 100%">
+                <el-option v-for="item in assignedList" :key="item.id" :label="item.label" :value="item.id">
+                  {{ item.label }}
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="8" :xl="3">
@@ -67,6 +71,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { getProjectAssignable } from '@/api/projects'
 
 const formTemplate = () => ({
   id: '',
@@ -105,16 +110,28 @@ export default {
       start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
       due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
       owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }]
-    }
+    },
+    assignableList: []
   }),
+
+  computed: {
+    assignedList() {
+      return this.assignableList.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
+    }
+  },
   watch: {
     editProjectObj() {
       const formItems = Object.keys(this.form)
       formItems.forEach(item => (this.form[item] = this.editProjectObj[item]))
+      this.fetchProjectAssignableList(this.editProjectObj.id)
+      this.form.owner_id = this.editProjectObj.pm_user_id
     }
   },
   methods: {
     ...mapActions('projects', ['editProject']),
+    fetchProjectAssignableList(projectId) {
+      getProjectAssignable(projectId).then(res => (this.assignableList = res.data.user_list))
+    },
     onDialogClosed() {
       this.showDialog = false
       this.$nextTick(() => {
