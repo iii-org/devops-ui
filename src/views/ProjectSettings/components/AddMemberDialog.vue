@@ -10,7 +10,7 @@
     <el-row class="el-card">
       <el-col class="el-card__header">
         <el-row>
-          <el-col :span="16">
+          <el-col :xs="24" :md="12">
             <el-input
               v-model="searchValue"
               size="medium"
@@ -19,7 +19,7 @@
               :placeholder="$t('general.SearchName')"
             />
           </el-col>
-          <el-col :span="8" class="text-right">
+          <el-col :xs="24" :md="12" class="text-right">
             <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
             <el-button type="primary" :loading="btnConfirmLoading" @click="handleAddConfirm">
               {{ $t('general.Confirm') }}
@@ -58,10 +58,15 @@
           @pagination="onPagination"
         />
       </el-col>
-      <el-col class="el-card__footer">
-        <el-tag v-for="(item,idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
-          {{ idx + 1 }}.{{ item.name }}
-        </el-tag>
+      <el-col v-if="selectedUser.length >0" class="el-card__footer">
+        <el-col :xs="8" :md="2">
+          <div class="selected_count">已選<span class="value">{{ selectedUser.length }}</span></div>
+        </el-col>
+        <el-col :xs="16" :md="22" class="scroll-x">
+          <el-tag v-for="(item,idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
+            <b>{{ idx + 1 }}</b>.{{ item.name }}
+          </el-tag>
+        </el-col>
       </el-col>
     </el-row>
   </el-dialog>
@@ -204,9 +209,41 @@ export default {
     box-sizing: border-box;
     width: 100%;
     height: 75px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
+
+    .selected_count {
+      display: inline-block;
+      line-height: 1;
+      white-space: nowrap;
+      background: #FFF;
+      border: 1px solid #DCDFE6;
+      color: #606266;
+      -webkit-appearance: none;
+      text-align: center;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      outline: 0;
+      margin: 0;
+      -webkit-transition: .1s;
+      transition: .1s;
+      font-weight: 500;
+      padding: 12px 10px;
+      font-size: 14px;
+      border-radius: 4px;
+
+      .value {
+        background: $danger;
+        color: #FFFFFF;
+        padding: 2px 5px;
+        margin-left: 5px;
+        border-radius: 50%;
+      }
+    }
+
+    .scroll-x {
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+    }
 
     .item {
       font-size: 16px;
@@ -239,8 +276,10 @@ export default {
   }
 }
 
-.el-tag + .el-tag {
-  margin-left: 10px;
+>>>.el-tag {
+  &.el-tag {
+    margin-left: 10px;
+  }
 }
 
 .button-new-tag {
@@ -259,4 +298,5 @@ export default {
     margin: 0;
   }
 }
+
 </style>
