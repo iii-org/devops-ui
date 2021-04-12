@@ -2,7 +2,7 @@
   <el-dialog
     :title="$t('Project.AddProject')"
     :visible.sync="showDialog"
-    width="50%"
+    width="70%"
     :close-on-click-modal="false"
     @closed="onDialogClosed"
   >
@@ -10,15 +10,29 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('Project.Info') }}</el-divider>
-          <el-form-item :label="$t('Project.Name')" prop="display">
-            <el-input v-model="form.display" />
-          </el-form-item>
-          <el-form-item :label="$t('Project.Identifier')" prop="name">
-            <el-input v-model="form.name" :maxlength="30" show-word-limit />
-            <div style="word-break: keep-all;margin-top: 5px;">
-              {{ $t('Project.IdRule') }}
-            </div>
-          </el-form-item>
+          <el-col :span="24" :sm="12" :xl="9">
+            <el-form-item :label="$t('Project.Name')" prop="display">
+              <el-input v-model="form.display" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :xl="9">
+            <el-form-item :label="$t('Project.Identifier')" prop="name">
+              <el-input v-model="form.name" :maxlength="30" show-word-limit />
+              <div style="word-break: keep-all;margin-top: 5px;">
+                {{ $t('Project.IdRule') }}
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :xl="3">
+            <el-form-item :label="$t('Project.StartDate')" prop="start_date">
+              <el-date-picker v-model="form.start_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :xl="3">
+            <el-form-item :label="$t('Project.DueDate')" prop="due_date">
+              <el-date-picker v-model="form.due_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+            </el-form-item>
+          </el-col>
           <el-form-item :label="$t('general.Description')" prop="description">
             <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
           </el-form-item>
@@ -59,13 +73,11 @@
             </el-select>
           </el-form-item>
         </el-col>
-
         <el-col v-if="focusTemplate.description" :span="24">
           <el-form-item label="Template Description">
             <p v-html="focusTemplate.description" />
           </el-form-item>
         </el-col>
-
         <div>
           <el-col v-for="(argument, idx) in form.argumentsForm" :key="argument.key" :span="8">
             <el-form-item
@@ -123,6 +135,8 @@ const formTemplate = () => ({
   display: '',
   disabled: false,
   template_id: '',
+  start_date: '',
+  due_date: '',
   tag_name: '',
   argumentsForm: []
 })
@@ -143,7 +157,9 @@ export default {
           trigger: 'blur'
         }
       ],
-      display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
+      display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
+      start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
+      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }]
     },
     templateList: [],
     focusTemplate: {},
@@ -252,7 +268,6 @@ export default {
         .then(res => {
           if (res.data.arguments) {
             this.handleArguments(res.data.arguments)
-            
           } else {
             this.form.argumentsForm = []
           }

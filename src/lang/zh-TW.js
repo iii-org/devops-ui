@@ -381,7 +381,9 @@ export default {
     LastTest: '最後測試',
     LastTestResult: '最後測試結果',
     SearchIdentifier: '搜尋ID',
-    SearchProjectName: '搜尋專案名稱'
+    SearchProjectName: '搜尋專案名稱',
+    StartDate: '起始日',
+    DueDate: '到期日'
   },
   ProjectActive: {
     Active: '進行中',

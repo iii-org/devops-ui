@@ -385,7 +385,9 @@ export default {
     LastTest: 'Last Test',
     LastTestResult: 'Last Test Result',
     SearchIdentifier: 'Please Input Project Identifier',
-    SearchProjectName: 'Search Project Name'
+    SearchProjectName: 'Search Project Name',
+    StartDate: 'Start Date',
+    DueDate: 'Due Date'
   },
   ProjectActive: {
     Active: 'Active',
