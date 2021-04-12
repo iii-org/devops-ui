@@ -383,7 +383,8 @@ export default {
     SearchIdentifier: '搜尋ID',
     SearchProjectName: '搜尋專案名稱',
     StartDate: '起始日',
-    DueDate: '到期日'
+    DueDate: '到期日',
+    ProjectOwner: '專案經理'
   },
   ProjectActive: {
     Active: '進行中',

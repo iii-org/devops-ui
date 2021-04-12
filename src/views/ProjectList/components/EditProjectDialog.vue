@@ -2,26 +2,46 @@
   <el-dialog
     :title="$t('Project.EditProject')"
     :visible.sync="showDialog"
-    width="50%"
+    width="70vw"
     :close-on-click-modal="false"
     @closed="onDialogClosed"
   >
-    <el-form ref="editProjectForm" :model="form" :rules="rules" label-position="top">
+    <el-form ref="editProjectForm" :model="form" :rules="rules" label-position="top" size="medium">
       <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('Project.Info') }}</el-divider>
-          <el-form-item :label="$t('Project.Identifier')">
-            <el-input v-model="form.name" disabled />
-          </el-form-item>
-          <el-form-item :label="$t('Project.Name')" prop="display">
-            <el-input v-model="form.display" />
-          </el-form-item>
-          <el-form-item :label="$t('general.Description')" prop="description">
-            <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
-          </el-form-item>
+          <el-col :span="24" :sm="12" :xl="9">
+            <el-form-item :label="$t('Project.Identifier')">
+              <el-input v-model="form.name" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :xl="9">
+            <el-form-item :label="$t('Project.Name')" prop="display">
+              <el-input v-model="form.display" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="8" :xl="3">
+            <el-form-item :label="$t('Project.ProjectOwner')" prop="owner_id">
+              <el-select v-model="form.owner_id" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="8" :xl="3">
+            <el-form-item :label="$t('Project.StartDate')" prop="start_date">
+              <el-date-picker v-model="form.start_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="8" :xl="3">
+            <el-form-item :label="$t('Project.DueDate')" prop="due_date">
+              <el-date-picker v-model="form.due_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item :label="$t('general.Description')" prop="description">
+              <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
+            </el-form-item>
+          </el-col>
         </el-col>
-      </el-row>
-      <el-row :gutter="10">
+
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
           <el-form-item prop="disabled">
@@ -53,6 +73,9 @@ const formTemplate = () => ({
   name: '',
   display: '',
   description: '',
+  start_date: '',
+  due_date: '',
+  owner_id: '',
   disabled: false
 })
 
@@ -78,16 +101,16 @@ export default {
           trigger: 'blur'
         }
       ],
-      display: [{ required: true, message: 'Project Name  is required', trigger: 'blur' }]
+      display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
+      start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
+      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
+      owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }]
     }
   }),
   watch: {
     editProjectObj() {
-      this.form.id = this.editProjectObj.id
-      this.form.name = this.editProjectObj.name
-      this.form.display = this.editProjectObj.display
-      this.form.description = this.editProjectObj.description
-      this.form.disabled = this.editProjectObj.disabled
+      const formItems = Object.keys(this.form)
+      formItems.forEach(item => (this.form[item] = this.editProjectObj[item]))
     }
   },
   methods: {
@@ -110,8 +133,11 @@ export default {
       const sendData = {
         pId: this.form.id,
         data: {
-          display: this.form.display,
           description: this.form.description,
+          display: this.form.display,
+          owner_id: this.form.owner_id,
+          start_date: this.form.start_date,
+          due_date: this.form.due_date,
           disabled: this.form.disabled
         }
       }

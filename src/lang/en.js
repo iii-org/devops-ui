@@ -387,7 +387,8 @@ export default {
     SearchIdentifier: 'Please Input Project Identifier',
     SearchProjectName: 'Search Project Name',
     StartDate: 'Start Date',
-    DueDate: 'Due Date'
+    DueDate: 'Due Date',
+    ProjectOwner: 'Project Owner'
   },
   ProjectActive: {
     Active: 'Active',

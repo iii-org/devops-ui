@@ -38,16 +38,7 @@ export default {
       this.$refs.createProjectDialog.refreshTemplate()
     },
     handleEdit(row) {
-      this.editProject = Object.assign(
-        {},
-        {
-          id: row.id,
-          name: row.name,
-          display: row.display,
-          description: row.description,
-          disabled: row.disabled
-        }
-      )
+      this.editProject = Object.assign({}, row)
       this.$refs.editProjectDialog.showDialog = true
     },
     handleDelete(row) {
@@ -117,10 +108,18 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.project_status === '進行中'" class="el-tag--circle" type="success" size="medium" effect="dark">
+          <el-tag
+            v-if="scope.row.project_status === '進行中'"
+            class="el-tag--circle"
+            type="success"
+            size="medium"
+            effect="dark"
+          >
             {{ scope.row.project_status }}
           </el-tag>
-          <el-tag v-else class="el-tag--circle" type="none" size="medium" effect="dark">{{ scope.row.project_status }}</el-tag>
+          <el-tag v-else class="el-tag--circle" type="none" size="medium" effect="dark">{{
+            scope.row.project_status
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
