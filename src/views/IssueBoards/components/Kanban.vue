@@ -17,14 +17,6 @@
             <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
               {{ element.name }}
             </el-link>
-            <p v-if="element.parent_id" class="parent">
-              <i class="el-icon-caret-right" /> 父議題：
-              <el-tag class="el-tag--circle" size="mini" :class="element.parent_status">{{ $t('ProjectActive.' + element.parent_status) }}
-              </el-tag>
-              <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
-                {{ element.parent_name }}
-              </el-link>
-            </p>
           </div>
         </div>
         <div>
@@ -36,6 +28,14 @@
             <i class="el-icon-s-custom" />
             <span class="ml-1">{{ element.user }}</span>
           </span>
+          <p v-if="element.parent_id" class="parent">
+            <i class="el-icon-caret-right" /> 父議題：
+            <el-tag class="el-tag--circle" size="mini" :class="element.parent_status">{{ $t('ProjectActive.' + element.parent_status) }}
+            </el-tag>
+            <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
+              {{ element.parent_name }}
+            </el-link>
+          </p>
         </div>
       </div>
     </draggable>
