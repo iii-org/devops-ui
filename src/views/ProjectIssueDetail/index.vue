@@ -146,14 +146,14 @@ export default {
         <el-tab-pane :label="$t('Issue.Comment')" name="comment">
           <CommentTab :issue-id="issueId" :issue-comment="issueComment" @updated="loadData" />
         </el-tab-pane>
-
+<!-- 
         <el-tab-pane :label="$t('Issue.Flow')" name="flow">
           <FlowTab :issue-id="issueId" :issue-flow="issueFlow" @updated="loadData" />
         </el-tab-pane>
 
         <el-tab-pane :label="$t('Issue.Parameter')" name="parameter">
           <ParameterTab :issue-id="issueId" :issue-parameter="issueParameter" @updated="loadData" />
-        </el-tab-pane>
+        </el-tab-pane> -->
 
         <el-tab-pane :label="$t('File.File')" name="file">
           <FileTab :issue-id="issueId" :issue-file="issueFile" @updated="loadData" />
