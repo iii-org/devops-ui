@@ -1,3 +1,18 @@
+<template>
+  <el-col class="mr-4" :xs="10" :sm="8" :md="7" :lg="6" :xl="4">
+    <el-select
+      v-model="projectValue"
+      placeholder="select a project"
+      style="width: 100%"
+      filterable
+      @change="onProjectChange"
+    >
+      <el-option v-for="item in userProjectList" :key="item.id" :label="item.display" :value="item.id" />
+    </el-select>
+    <slot />
+  </el-col>
+</template>
+
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
@@ -14,7 +29,7 @@ export default {
   watch: {
     selectedProjectId: {
       immediate: true,
-      handler(val, old) {
+      handler(val) {
         this.$nextTick(() => {
           this.projectValue = val
           if (this.projectValue === -1) {
@@ -33,17 +48,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <el-col class="mr-4" :xs="10" :sm="8" :md="7" :lg="6" :xl="4">
-    <el-select
-      v-model="projectValue"
-      placeholder="select a project"
-      style="width: 100%"
-      @change="onProjectChange"
-    >
-      <el-option v-for="item in userProjectList" :key="item.id" :label="item.display" :value="item.id" />
-    </el-select>
-    <slot />
-  </el-col>
-</template>

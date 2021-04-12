@@ -7,6 +7,7 @@
         :placeholder="$t('Version.SelectVersion')"
         :disabled="selectedProjectId === -1"
         class="mr-4"
+        filterable
         @change="updateData"
       >
         <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
@@ -17,6 +18,7 @@
         v-model="memberValue"
         :placeholder="$t('Member.SelectMember')"
         :disabled="selectedProjectId === -1"
+        filterable
         @change="updateData"
       >
         <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
