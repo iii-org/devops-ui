@@ -1,5 +1,5 @@
 import IssueForm from './IssueForm'
 import IssueNotes from './IssueNotes'
-import FileUploader from './FileUploader'
+import IssueFileUploader from './IssueFileUploader'
 
-export { IssueForm, IssueNotes, FileUploader }
+export { IssueForm, IssueNotes, IssueFileUploader }

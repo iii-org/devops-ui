@@ -1,7 +1,6 @@
 <template>
   <el-upload
     ref="fileUploader"
-    v-loading="isUploading"
     :auto-upload="false"
     :on-change="handleChange"
     action
@@ -21,13 +20,9 @@ import { fileExtension } from '@/utils/extension'
 // import { deleteIssueFile } from '@/api/issue'
 
 export default {
-  name: 'FileUploader',
+  name: 'IssueFileUploader',
   data() {
     return {
-      isLoading: false,
-      isUploading: false,
-      issueId: 0,
-      issueFile: [],
       uploadFileList: []
     }
   },

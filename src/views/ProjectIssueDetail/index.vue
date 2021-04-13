@@ -28,7 +28,7 @@
             <issue-notes ref="IssueNotes" />
           </el-col>
           <el-col :span="24">
-            <file-uploader ref="FileUploader" />
+            <issue-file-uploader ref="IssueFileUploader" />
           </el-col>
         </el-row>
       </el-col>
@@ -39,7 +39,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
-import { IssueForm, IssueNotes, FileUploader } from './components'
+import { IssueForm, IssueNotes, IssueFileUploader } from './components'
 
 const getFormTemplate = () => ({
   project_id: 0,
@@ -61,7 +61,7 @@ export default {
   components: {
     IssueForm,
     IssueNotes,
-    FileUploader
+    IssueFileUploader
   },
   data() {
     return {
@@ -159,7 +159,8 @@ export default {
     handleCancel() {
       this.fetchIssue()
       this.$refs.IssueNotes.$refs.mdEditor.invoke('reset')
-      this.$refs.FileUploader.$refs.fileUploader.clearFiles()
+      this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
+      this.$refs.IssueFileUploader.uploadFileList = []
     },
     showLoading(status) {
       this.isLoading = status
@@ -172,7 +173,7 @@ export default {
     editIssue() {
       const sendData = Object.assign({}, this.form)
       const notes = this.$refs.IssueNotes.$refs.mdEditor.invoke('getMarkdown')
-      sendData['notes'] = notes
+      if (notes !== '') sendData['notes'] = notes
       // Object.keys(sendData).map(item => {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
@@ -180,7 +181,7 @@ export default {
       Object.keys(sendData).forEach(objKey => {
         sendForm.append(objKey, sendData[objKey])
       })
-      const uploadFileList = this.$refs.FileUploader.uploadFileList
+      const uploadFileList = this.$refs.IssueFileUploader.uploadFileList
       uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : this.updateIssueForm(sendForm)
     },
     uploadFiles(sendForm, fileList) {
@@ -203,7 +204,7 @@ export default {
             type: 'success'
           })
         })
-        .catch(err => console.log(err))
+        .catch(err => console.error(err))
         .then(() => {
           this.isLoading = false
         })
@@ -220,7 +221,7 @@ export default {
           })
           this.handleCancel()
         })
-        .catch(err => console.log(err))
+        .catch(err => console.error(err))
         .then(() => {
           this.isLoading = false
         })
