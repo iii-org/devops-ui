@@ -30,7 +30,7 @@ export default {
       this.issuesByCategory = {}
       for (const issue of issues) {
         const cat = issue['issue_category']
-        if (!(cat in this.categories)) {
+        if (this.categories.indexOf(cat) < 0) {
           this.categories.push(cat)
         }
         if (!(cat in this.issuesByCategory)) {
@@ -40,7 +40,7 @@ export default {
       }
       this.categories.sort()
       this.listData = this.issues
-      this.adjustTable()
+      this.adjustTable(5)
     },
     filterByCategory(cat) {
       if (cat === this.$t('Release.allCategories')) {
@@ -58,9 +58,12 @@ export default {
       await updateIssue(row.id, { status_id: CLOSED_STATUS_ID })
       for (const i in this.issues) {
         if (this.issues[i].id === row.id) {
-          this.issues.splice(i, 1)
+          this.issues.splice(parseInt(i), 1)
           break
         }
+      }
+      if (this.pagedData.length === 0 && this.listQuery.page > 1) {
+        this.listQuery.page -= 1
       }
       this.listLoading = false
     }
@@ -82,6 +85,7 @@ export default {
             />
           </el-select>
         </el-form-item>
+
       </el-form>
     </p>
     <p style="height: inherit;">
