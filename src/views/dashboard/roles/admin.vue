@@ -117,7 +117,7 @@ use([
   PieChart
 ])
 const commitLimit = 10
-const refreshCommitLog = 3000 // ms
+const refreshCommitLog = 30000 // ms
 export default {
   name: 'DashboardAdmin',
   components: {
