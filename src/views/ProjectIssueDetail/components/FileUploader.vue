@@ -16,9 +16,9 @@
 </template>
 
 <script>
-// import { downloadProjectFile } from '@/api/projects'
-import { updateIssue, deleteIssueFile } from '@/api/issue'
 import { fileExtension } from '@/utils/extension'
+// import { downloadProjectFile } from '@/api/projects'
+// import { deleteIssueFile } from '@/api/issue'
 
 export default {
   name: 'FileUploader',
@@ -34,8 +34,26 @@ export default {
   mounted() {
     this.extension = fileExtension()
   },
-
   methods: {
+    async handleChange(file, fileList) {
+      if (this.extension[file.raw.type] === undefined) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.UnsupportedFileFormat'),
+          type: 'warning'
+        })
+        this.$refs.fileUploader.clearFiles()
+      } else if (file.size / 1024 > 20480) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileSizeLimit'),
+          type: 'warning'
+        })
+        this.$refs.fileUploader.clearFiles()
+      } else {
+        this.uploadFileList = fileList
+      }
+    }
     // async handleDownload(row) {
     //   const res = await downloadProjectFile({ id: row.id, filename: row.filename })
     //   const url = window.URL.createObjectURL(new Blob([res]))
@@ -56,49 +74,6 @@ export default {
     //   this.isLoading = false
     //   this.$emit('updated')
     // },
-    async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
-        this.$message({
-          title: this.$t('general.Warning'),
-          message: this.$t('Notify.UnsupportedFileFormat'),
-          type: 'warning'
-        })
-        this.$refs.uploadFile.clearFiles()
-      } else if (file.size / 1024 > 20480) {
-        this.$message({
-          title: this.$t('general.Warning'),
-          message: this.$t('Notify.FileSizeLimit'),
-          type: 'warning'
-        })
-        this.$refs.uploadFile.clearFiles()
-      } else {
-        this.uploadFileList = fileList
-      }
-    },
-    async uploadFile() {
-      const vm = this
-      this.isUploading = true
-      const form = new FormData()
-      this.uploadFileList
-        .reduce(function(prev, curr) {
-          return prev.then(() => {
-            form.delete('upload_file')
-            form.append('upload_file', curr.raw, curr.raw.name)
-            return updateIssue(vm.issueId, form)
-          })
-        }, Promise.resolve([]))
-        .then(() => {
-          this.$refs.uploadFile.clearFiles()
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.isUploading = false
-          this.uploadFileList = []
-          vm.$emit('updated')
-        })
-    }
   }
 }
 </script>
