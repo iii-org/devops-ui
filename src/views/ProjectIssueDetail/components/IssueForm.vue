@@ -93,6 +93,7 @@
             value-format="yyyy-MM-dd"
             style="width: 100%"
             :placeholder="$t('RuleMsg.PleaseSelect')"
+            @change="clearDueDate"
           />
         </el-form-item>
       </el-col>
@@ -224,6 +225,11 @@ export default {
     updateChildrenList() {
       const idx = this.relativeIssueList.findIndex(item => item.id === this.issueId)
       this.childrenIssueList = this.relativeIssueList[idx].children
+    },
+    clearDueDate(val) {
+      this.$nextTick(() => {
+        if (val === null) this.form.due_date = ''
+      })
     }
   }
 }
