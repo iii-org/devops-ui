@@ -37,22 +37,10 @@ export default {
   },
   methods: {
     setData(issues) {
-      const CLOSED_STATUS = 'Closed'
       this.issues = issues
-      this.closedIssueCount = 0
-      this.openIssueCount = 0
-      const filteredIssues = issues.filter(issue => {
-        if (issue['issue_status'] === CLOSED_STATUS) {
-          this.closedIssueCount++
-          return this.showClosed
-        } else {
-          this.openIssueCount++
-          return this.showOpen
-        }
-      })
       this.categories = []
       this.issuesByCategory = {}
-      for (const issue of filteredIssues) {
+      for (const issue of issues) {
         const cat = issue['issue_category']
         if (this.categories.indexOf(cat) < 0) {
           this.categories.push(cat)
@@ -63,15 +51,29 @@ export default {
         this.issuesByCategory[cat].push(issue)
       }
       this.categories.sort()
-      this.listData = filteredIssues
-      this.adjustTable(5)
+      this.processData()
     },
-    filterByCategory(cat) {
-      if (cat === this.$t('Release.allCategories')) {
-        this.listData = this.issues
+    processData() {
+      const CLOSED_STATUS = 'Closed'
+      let partialIssues
+      if (this.selectedCategory === this.$t('Release.allCategories')) {
+        partialIssues = this.issues
       } else {
-        this.listData = this.issues.filter(item => item['issue_category'] === cat)
+        partialIssues = this.issues.filter(
+          item => item['issue_category'] === this.selectedCategory)
       }
+      this.closedIssueCount = 0
+      this.openIssueCount = 0
+      this.listData = partialIssues.filter(issue => {
+        if (issue['issue_status'] === CLOSED_STATUS) {
+          this.closedIssueCount++
+          return this.showClosed
+        } else {
+          this.openIssueCount++
+          return this.showOpen
+        }
+      })
+      this.adjustTable(5)
     },
     handleEdit(idx, row) {
       this.$router.push({ path: `/project/issue-list/${row.id}` })
@@ -102,7 +104,7 @@ export default {
     <p>
       <el-form inline>
         <el-form-item :label="$t('Issue.Issue')">
-          <el-select v-model="selectedCategory" @change="filterByCategory">
+          <el-select v-model="selectedCategory" @change="processData">
             <el-option
               v-for="item in categorySel"
               :key="item"
