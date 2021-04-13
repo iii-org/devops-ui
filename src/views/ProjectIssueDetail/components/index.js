@@ -1,7 +1,5 @@
 import IssueForm from './IssueForm'
-import CommentTab from './CommentTab'
-import FlowTab from './FlowTab'
-import ParameterTab from './ParameterTab'
-import FileTab from './FileTab'
+import IssueNotes from './IssueNotes'
+import FileUploader from './FileUploader'
 
-export { IssueForm, CommentTab, FlowTab, ParameterTab, FileTab }
+export { IssueForm, IssueNotes, FileUploader }

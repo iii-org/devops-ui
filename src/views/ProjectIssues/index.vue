@@ -1,9 +1,141 @@
+<template>
+  <div class="app-container">
+    <router-view />
+    <div v-show="this.$route.meta.rolePage" class="role-Page">
+      <div class="clearfix">
+        <div>
+          <project-list-selector />
+          <span class="newBtn">
+            <el-button
+              id="btn-add-issue"
+              type="success"
+              style="float: right"
+              icon="el-icon-plus"
+              :disabled="selectedProjectId === -1"
+              @click="handleAddNewIssue"
+            >
+              {{ $t('Issue.AddIssue') }}
+            </el-button>
+          </span>
+          <el-input
+            id="input-search"
+            v-model="searchData"
+            prefix-icon="el-icon-search"
+            :placeholder="$t('Issue.SearchNameOrAssignee')"
+            style="width: 250px; float: right"
+          />
+        </div>
+      </div>
+      <el-divider />
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        border
+        fit
+        highlight-current-row
+        row-key="id"
+        default-expand-all
+        :tree-props="{ children: 'children' }"
+        height="100%"
+      >
+        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span :class="isParentIssue(scope.row) ? 'ml-6' : ''">
+              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="bottom-start" :open-delay="1000">
+                <el-button
+                  v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
+                  :id="`btn-add-sub-issue-${scope.$index}`"
+                  icon="el-icon-plus"
+                  type="text"
+                  circle
+                  plain
+                  size="mini"
+                  @click="handleParent(scope.$index, scope.row, scope)"
+                />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start" :open-delay="1000">
+                <el-button
+                  :id="`link-issue-name-${scope.$index}`"
+                  class="mr-1"
+                  type="primary"
+                  circle
+                  plain
+                  size="mini"
+                  icon="el-icon-edit"
+                  @click="handleEdit(scope.$index, scope.row)"
+                />
+              </el-tooltip>
+              <span class="text-success mr-2">{{ scope.row.id }}</span>
+              <span
+                class="font-weight-regular"
+                :style="{ 'font-size': '16px', cursor: 'pointer' }"
+                :underline="false"
+                @click="handleEdit(scope.$index, scope.row)"
+              >
+                {{ scope.row.issue_name }}
+              </span>
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.Type')" width="150">
+          <template slot-scope="scope">
+            <span v-if="scope.row.issue_category" :class="getCategoryTagType(scope.row.issue_category)" />
+            {{ scope.row.issue_category }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Status')" width="150">
+          <template slot-scope="scope">
+            <el-tag
+              v-if="scope.row.issue_status"
+              :type="getStatusTagType(scope.row.issue_status)"
+              size="medium"
+              effect="dark"
+            >
+              {{ scope.row.issue_status }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
+        <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
+          <template slot-scope="scope">
+            <el-tag
+              v-if="scope.row.issue_priority"
+              :type="getPriorityTagType(scope.row.issue_priority)"
+              size="medium"
+              effect="dark"
+            >
+              {{ scope.row.issue_priority }}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+      <add-issue
+        :save-data="saveIssue"
+        :dialog-visible.sync="addTopicDialogVisible"
+        :project-id="selectedProjectId"
+        :parent-id="parentId"
+        :parent-name="parentName"
+        @add-topic-visible="emitAddTopicDialogVisible"
+      />
+    </div>
+  </div>
+</template>
+
 <script>
+import AddIssue from './components/AddIssue'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import { mapActions, mapGetters } from 'vuex'
 import { addIssue } from '@/api/issue'
 import { getProjectIssueListByTree } from '@/api/projects'
-import AddIssue from './components/AddIssue'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectIssues',
@@ -180,137 +312,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <router-view />
-    <div v-if="this.$route.meta.rolePage" class="role-Page">
-      <div class="clearfix">
-        <div>
-          <project-list-selector />
-          <span class="newBtn">
-            <el-button
-              id="btn-add-issue"
-              type="success"
-              style="float: right"
-              :disabled="selectedProjectId === -1"
-              @click="handleAddNewIssue"
-            >
-              <i class="el-icon-plus" />
-              {{ $t('Issue.AddIssue') }}
-            </el-button>
-          </span>
-          <el-input
-            id="input-search"
-            v-model="searchData"
-            class="ob-search-input ob-shadow search-input mr-3"
-            :placeholder="$t('Issue.SearchNameOrAssignee')"
-            style="width: 250px; float: right"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search" />
-          </el-input>
-        </div>
-      </div>
-      <el-divider />
-      <el-table
-        v-loading="listLoading"
-        :data="pagedData"
-        :element-loading-text="$t('Loading')"
-        border
-        fit
-        highlight-current-row
-        row-key="id"
-        default-expand-all
-        :tree-props="{ children: 'children' }"
-        height="100%"
-      >
-        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span :class="isParentIssue(scope.row) ? 'ml-6' : ''">
-              <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="bottom-start" :open-delay="1000">
-                <el-button
-                  v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
-                  :id="`btn-add-sub-issue-${scope.$index}`"
-                  icon="el-icon-plus"
-                  type="text"
-                  circle
-                  plain
-                  size="mini"
-                  @click="handleParent(scope.$index, scope.row, scope)"
-                />
-              </el-tooltip>
-              <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start" :open-delay="1000">
-                <el-button
-                  :id="`link-issue-name-${scope.$index}`"
-                  class="mr-1"
-                  type="primary"
-                  circle
-                  plain
-                  size="mini"
-                  icon="el-icon-edit"
-                  @click="handleEdit(scope.$index, scope.row)"
-                />
-              </el-tooltip>
-              <span class="text-success mr-2">{{ scope.row.id }}</span>
-              <span
-                class="font-weight-regular"
-                :style="{ 'font-size': '16px', cursor: 'pointer' }"
-                :underline="false"
-                @click="handleEdit(scope.$index, scope.row)"
-              >
-                {{ scope.row.issue_name }}
-              </span>
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('general.Type')" width="150">
-          <template slot-scope="scope">
-            <span v-if="scope.row.issue_category" :class="getCategoryTagType(scope.row.issue_category)" />
-            {{ scope.row.issue_category }}
-          </template>
-        </el-table-column>
-        <el-table-column align="center" :label="$t('general.Status')" width="150">
-          <template slot-scope="scope">
-            <el-tag
-              v-if="scope.row.issue_status"
-              :type="getStatusTagType(scope.row.issue_status)"
-              size="medium"
-              effect="dark"
-            >
-              {{ scope.row.issue_status }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
-        <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
-          <template slot-scope="scope">
-            <el-tag
-              v-if="scope.row.issue_priority"
-              :type="getPriorityTagType(scope.row.issue_priority)"
-              size="medium"
-              effect="dark"
-            >
-              {{ scope.row.issue_priority }}
-            </el-tag>
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-        :total="filteredData.length"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
-        @pagination="onPagination"
-      />
-      <add-issue
-        :save-data="saveIssue"
-        :dialog-visible.sync="addTopicDialogVisible"
-        :project-id="selectedProjectId"
-        :parent-id="parentId"
-        :parent-name="parentName"
-        @add-topic-visible="emitAddTopicDialogVisible"
-      />
-    </div>
-  </div>
-</template>
