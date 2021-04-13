@@ -27,3 +27,5 @@ export function getVersion(issue_id) {
     method: 'get'
   })
 }
+
+export const getGitCommitLog = (limit) => request.get('/dashboard/the_last_hours_commits?the_last_hours=24&show_commit_rows=' + limit)

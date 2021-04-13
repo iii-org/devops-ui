@@ -30,12 +30,20 @@
       <el-col :xs="24" :sm="24" :md="7">
         <el-card>
           <template slot="header">
-            <span class="font-weight-bold">Issue Log</span>
-          </template>
+            <span class="font-weight-bold">Commit Log
+            </span></template>
           <el-col class="inner">
-            <el-table :show-header="false" :data="issueLog">
-              <el-table-column prop="value" />
-            </el-table>
+            <transition-group name="slide-fade" tag="el-timeline">
+              <el-timeline-item v-for="commit in gitCommitLog" :key="commit.id" :timestamp="commit.commit_time"
+                                placement="top"
+              >
+                <el-card class="timeline-item-card">
+                  <h4>{{ commit.commit_title }}</h4>
+                  <p v-if="commit.commit_message!==commit.commit_title">{{ commit.commit_message }}</p>
+                  <p class="author">{{ commit.author_name }} @ {{ commit.pj_name }}</p>
+                </el-card>
+              </el-timeline-item>
+            </transition-group>
           </el-col>
         </el-card>
       </el-col>
@@ -98,6 +106,9 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, ScatterChart } from 'echarts/charts'
 import CircleDashboard from '../components/circle_dashboard'
+import { getGitCommitLog } from '@/api/dashboard'
+import { UTCtoLocalTime } from '@/filters'
+
 require('echarts/theme/macarons') // echarts theme
 
 use([
@@ -105,7 +116,8 @@ use([
   ScatterChart,
   PieChart
 ])
-
+const commitLimit = 10
+const refreshCommitLog = 3000 // ms
 export default {
   name: 'DashboardAdmin',
   components: {
@@ -163,13 +175,7 @@ export default {
           }
         ]
       },
-      issueLog: [{ value: 'OO Solved the issue #3345' },
-        { value: 'OO Solved the issue #3345' },
-        { value: 'OO Solved the issue #3345' },
-        { value: 'OO Solved the issue #3345' },
-        { value: 'OO Solved the issue #3345' },
-        { value: 'OO Solved the issue #3345' },
-        { value: 'OO Solved the issue #3345' }],
+      gitCommitLog: [],
       passive: {
         tooltip: {
           trigger: 'item',
@@ -257,10 +263,45 @@ export default {
           due_days: null,
           due_date: '2021/06/30'
         }
-      ]
+      ],
+      init: true,
+      requestGitLabLastTime: null
     }
   },
+  watch: {
+    gitCommitLog: {
+      deep: true,
+      async handler(value) {
+        // if (this.init) {
+        //   this.init = false
+        //   return value
+        // }
+        if (!this.requestGitLabLastTime) {
+          this.requestGitLabLastTime = (new Date()).valueOf()
+        }
+        await this.sleep(refreshCommitLog)
+        const nowTime = (new Date()).valueOf()
+        const gap = nowTime - this.requestGitLabLastTime
+        if (gap >= refreshCommitLog) {
+          this.gitCommitLog = await this.getGitCommitLogData()
+        }
+      }
+    }
+  },
+  async mounted() {
+    this.gitCommitLog = await this.getGitCommitLogData()
+  },
   methods: {
+    getGitCommitLogData() {
+      return getGitCommitLog(commitLimit)
+        .then((res) => {
+          res.data.forEach((item, index) => {
+            item['id'] = index
+            item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+          })
+          return Promise.resolve(res.data)
+        })
+    },
     tableRowClassName({ row }) {
       if (row.due_date < this.lastUpdate) {
         return 'danger-row'
@@ -271,6 +312,9 @@ export default {
       if (column.property === 'count') {
         return 'count'
       }
+    },
+    sleep(ms) {
+      return new Promise((resolve) => (setTimeout(resolve, ms)))
     }
   }
 }
@@ -280,13 +324,13 @@ export default {
 @import 'src/styles/variables.scss';
 @import '~element-ui/lib/theme-chalk/display.css';
 
-.overview{
-  height:90%;
+.overview {
+  height: 90%;
 
   .el-row {
-    height:100%;
+    height: 100%;
 
-    .el-col{
+    .el-col {
       margin-bottom: 0;
     }
   }
@@ -299,7 +343,8 @@ export default {
 
 > > > .el-card {
   height: 100%;
-  .el-card__body{
+
+  .el-card__body {
     height: 85%;
   }
 }
@@ -311,6 +356,7 @@ export default {
 .inner {
   height: 250px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .chart {
@@ -374,6 +420,31 @@ export default {
 
 .no-margin {
   margin: 0;
+}
+
+.timeline-item-card {
+  > > > .el-card__body {
+    padding: 10px;
+  }
+
+  .author {
+    margin-bottom: 0;
+  }
+}
+
+.slide-fade-enter-active {
+  transition: all .5s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */
+{
+  transform: translateX(10px);
+  opacity: 0;
 }
 
 </style>
