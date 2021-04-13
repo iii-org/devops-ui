@@ -153,9 +153,13 @@ export default {
     ...mapActions('projects', ['getProjectUserList']),
     searchKanbanCard(value, opt) {
       this.issueStatusList.forEach((item) => {
-        const fuse = new Fuse(this.classifyIssueStatus[item.name], opt)
-        const res = fuse.search(`="${value}"`)
-        this.classifyIssueStatus[item.name] = res.map(items => items.item)
+        if (value === '') {
+          this.classifyIssueStatus[item.name] = this.classifyIssueStatus[item.name].filter((item) => (item[opt['keys'][0]] === value))
+        } else {
+          const fuse = new Fuse(this.classifyIssueStatus[item.name], opt)
+          const res = fuse.search(`="${value}"`)
+          this.classifyIssueStatus[item.name] = res.map(items => items.item)
+        }
       })
     },
     resetKanbanCard() {
