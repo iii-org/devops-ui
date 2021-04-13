@@ -1,5 +1,6 @@
 <script>
 import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
+import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'OpenIssuesTable',
@@ -50,6 +51,18 @@ export default {
     },
     handleEdit(idx, row) {
       this.$router.push({ path: `/project/issue-list/${row.id}` })
+    },
+    async handleClose(idx, row) {
+      this.listLoading = true
+      const CLOSED_STATUS_ID = 6
+      await updateIssue(row.id, { status_id: CLOSED_STATUS_ID })
+      for (const i in this.issues) {
+        if (this.issues[i].id === row.id) {
+          this.issues.splice(i, 1)
+          break
+        }
+      }
+      this.listLoading = false
     }
   }
 }
@@ -103,6 +116,20 @@ export default {
                 size="mini"
                 icon="el-icon-edit"
                 @click="handleEdit(scope.$index, scope.row)"
+              />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('general.Close')" placement="bottom-start"
+                        :open-delay="1000"
+            >
+              <el-button
+                :id="`link-issue-name-${scope.$index}`"
+                class="mr-1"
+                type="primary"
+                circle
+                plain
+                size="mini"
+                icon="el-icon-close"
+                @click="handleClose(scope.$index, scope.row)"
               />
             </el-tooltip>
           </template>

@@ -58,11 +58,13 @@ export default {
       this.projectVersionOptions = options
     },
     checkQuery(vsString) {
+      console.log('checkQuery')
       this.fromQuery = true
       this.releaseVersions = JSON.parse(`[${vsString}]`)
       this.startRelease()
     },
     writeNote() {
+      console.log('writeNote')
       this.fromQuery = false
       this.startRelease()
     },
@@ -78,9 +80,9 @@ export default {
       }
       await this.checkIssues()
       if (this.openIssues.length > 0) {
-        this.listOpenIssues()
+        await this.listOpenIssues()
       } else {
-        this.showCreateRelease()
+        await this.showCreateRelease()
       }
       this.fullscreenLoading = false
     },
@@ -99,7 +101,7 @@ export default {
         }
       }
     },
-    listOpenIssues() {
+    async listOpenIssues() {
       if (!this.fromQuery) {
         const h = this.$createElement
         this.$alert(
@@ -112,7 +114,7 @@ export default {
       this.state = STATE_SHOW_OPEN_ISSUES
       this.$refs.openIssues.setData(this.openIssues)
     },
-    showCreateRelease() {
+    async showCreateRelease() {
       this.$refs.createRelease.setIssues(this.allIssues)
       this.state = STATE_CREATE_RELEASE
     }
