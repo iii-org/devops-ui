@@ -18,6 +18,7 @@ export default {
     state: STATE_INIT,
     allIssues: [],
     fullscreenLoading: false,
+    fromQuery: false,
     openIssues: [],
     projectVersions: [],
     projectVersionOptions: [],
@@ -38,6 +39,10 @@ export default {
   },
   created() {
     this.loadData()
+    const vsString = this.$route.query.versions
+    if (vsString) {
+      this.checkQuery(vsString)
+    }
   },
   methods: {
     async loadData() {
@@ -52,8 +57,25 @@ export default {
       })
       this.projectVersionOptions = options
     },
-    async writeNote() {
+    checkQuery(vsString) {
+      this.fromQuery = true
+      this.releaseVersions = JSON.parse(`[${vsString}]`)
+      this.startRelease()
+    },
+    writeNote() {
+      this.fromQuery = false
+      this.startRelease()
+    },
+    async startRelease() {
       this.fullscreenLoading = true
+      if (!this.fromQuery) {
+        const vsString = JSON.stringify(this.releaseVersions)
+        this.$router.push({
+          path: '', query: {
+            versions: vsString.substring(1, vsString.length - 1)
+          }
+        })
+      }
       await this.checkIssues()
       if (this.openIssues.length > 0) {
         this.listOpenIssues()
@@ -78,13 +100,15 @@ export default {
       }
     },
     listOpenIssues() {
-      const h = this.$createElement
-      this.$alert(
-        h('div', this.$t('Release.openIssueAlert')),
-        this.$t('general.caution'),
-        {
-          confirmButtonText: this.$t('general.Confirm')
-        })
+      if (!this.fromQuery) {
+        const h = this.$createElement
+        this.$alert(
+          h('div', this.$t('Release.openIssueAlert')),
+          this.$t('general.caution'),
+          {
+            confirmButtonText: this.$t('general.Confirm')
+          })
+      }
       this.state = STATE_SHOW_OPEN_ISSUES
       this.$refs.openIssues.setData(this.openIssues)
     },

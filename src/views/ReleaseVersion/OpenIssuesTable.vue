@@ -47,6 +47,9 @@ export default {
       } else {
         this.listData = this.issues.filter(item => item['issue_category'] === cat)
       }
+    },
+    handleEdit(idx, row) {
+      this.$router.push({ path: `/project/issue-list/${row.id}` })
     }
   }
 }
@@ -87,7 +90,22 @@ export default {
         <el-table-column :label="$t('general.Status')" align="center" prop="issue_status" />
         <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigned_to" />
         <el-table-column :label="$t('general.Actions')" align="center">
-
+          <template slot-scope="scope">
+            <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start"
+                        :open-delay="1000"
+            >
+              <el-button
+                :id="`link-issue-name-${scope.$index}`"
+                class="mr-1"
+                type="primary"
+                circle
+                plain
+                size="mini"
+                icon="el-icon-edit"
+                @click="handleEdit(scope.$index, scope.row)"
+              />
+            </el-tooltip>
+          </template>
         </el-table-column>
       </el-table>
       <pagination
