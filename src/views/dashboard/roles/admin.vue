@@ -24,7 +24,7 @@
           <template slot="header">
             <span class="font-weight-bold">Project Members</span>
           </template>
-          <v-chart class="chart" :option="projectMembers" autoresize theme="macarons" />
+          <v-chart class="chart" :option="projectMembersOptions" autoresize theme="macarons" />
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="24" :md="7">
@@ -55,10 +55,10 @@
             <span class="font-weight-bold">開放議題排行榜 Top 5</span>
           </template>
           <el-col>
-            <el-table :data="rank" cell-class-name="align-center" header-cell-class-name="align-center">
-              <el-table-column prop="name" label="專案成員" />
-              <el-table-column prop="active" label="尚待解決" />
-              <el-table-column prop="project" label="專案參與數" />
+            <el-table :data="issueRank" cell-class-name="align-center" header-cell-class-name="align-center">
+              <el-table-column prop="user_name" label="專案成員" />
+              <el-table-column prop="unclosed_count" label="尚待解決" />
+              <el-table-column prop="project_count" label="專案參與數" />
             </el-table>
           </el-col>
         </el-card>
@@ -68,7 +68,7 @@
           <template slot="header">
             <span class="font-weight-bold">通過比率</span>
           </template>
-          <v-chart class="chart" :option="passive" autoresize theme="macarons" />
+          <v-chart class="chart" :option="passingRateOptions" autoresize theme="macarons" />
         </el-card>
       </el-col>
     </el-row>
@@ -85,13 +85,13 @@
                     header-cell-class-name="align-center"
           >
             <el-table-column prop="project_name" label="專案名稱" />
-            <el-table-column prop="name" label="專案經理" />
-            <el-table-column prop="percentage" label="完成百分比" />
-            <el-table-column prop="active" label="未解決問題數" />
-            <el-table-column prop="resolved" label="已解決問題數" />
-            <el-table-column prop="people" label="參與人數" />
-            <el-table-column prop="due_days" label="到期天數" />
-            <el-table-column prop="due_date" label="到期日" />
+            <el-table-column prop="pm_user_name" label="專案經理" />
+            <el-table-column prop="complete_percent" label="完成百分比" />
+            <el-table-column prop="unclosed_issue_count" label="未解決問題數" />
+            <el-table-column prop="closed_issue_count" label="已解決問題數" />
+            <el-table-column prop="member_count" label="參與人數" />
+            <el-table-column prop="expired_day" label="到期天數" />
+            <el-table-column prop="end_date" label="到期日" />
           </el-table>
         </el-card>
       </el-col>
@@ -106,7 +106,14 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, ScatterChart } from 'echarts/charts'
 import CircleDashboard from '../components/circle_dashboard'
-import { getGitCommitLog } from '@/api/dashboard'
+import {
+  getGitCommitLog,
+  getIssueRank,
+  getPassingRate,
+  getProjectList,
+  getProjectMembers,
+  getProjectOverview
+} from '@/api/dashboard'
 import { UTCtoLocalTime } from '@/filters'
 
 require('echarts/theme/macarons') // echarts theme
@@ -116,6 +123,11 @@ use([
   ScatterChart,
   PieChart
 ])
+const overview = {
+  projects: { item: 'Projects', class: 'primary' },
+  overdue: { item: 'Overdue', class: 'danger' },
+  not_started: { item: 'Not Started', class: 'info' }
+}
 const commitLimit = 10
 const refreshCommitLog = 30000 // ms
 export default {
@@ -127,105 +139,11 @@ export default {
   data() {
     return {
       lastUpdate: '2021/04/01',
-      overview: [
-        { item: 'Projects', count: 215, class: 'primary' },
-        { item: 'Overdue', count: 2, class: 'danger' },
-        { item: 'Not Started', count: 10, class: 'info' }
-      ],
-      projectMembers: {
-        tooltip: {
-          trigger: 'item',
-          textStyle: {
-            color: '#FFFFFF'
-          }
-        },
-        legend: {
-          type: 'scroll',
-          bottom: '0'
-        },
-        series: [
-          {
-            name: '專案成員',
-            type: 'pie',
-            radius: '80%',
-            data: [
-              { value: 26, name: '專案X' },
-              { value: 21, name: '專案Y' },
-              { value: 18, name: '專案Z' },
-              { value: 91, name: '建構專案' },
-              { value: 76, name: '整合案' },
-              { value: 28, name: '推廣活動' }
-            ],
-            label: {
-              normal: {
-                show: true,
-                formatter: '{b}\n\n{c}',
-                textStyle: {
-                  fontSize: '1em'
-                }
-              }
-            },
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
-      },
+      overview: [],
       gitCommitLog: [],
-      passive: {
-        tooltip: {
-          trigger: 'item',
-          textStyle: {
-            color: '#FFFFFF'
-          }
-        },
-        grid: {
-          left: '8%',
-          top: '10%'
-        },
-        xAxis: {
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          }
-        },
-        yAxis: {
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          },
-          scale: true
-        },
-        series: [{
-          symbolSize: function(data) {
-            return data[0]
-          },
-          data: [
-            [80, 0.52],
-            [16, 0.8],
-            [47, 0.45],
-            [58, 0.23],
-            [103, 0.35]
-          ],
-          label: {
-            normal: {
-              show: true,
-              formatter: (data) => {
-                return data.value[0]
-              }
-            },
-            fontWeight: 'bolder'
-          },
-          type: 'scatter'
-        }]
-      },
-      rank: [
+      projectMembers: [],
+      passingRate: [],
+      issueRank: [
         { name: '黃立安', active: 230, project: 3 },
         { name: '陳尚品', active: 120, project: 5 },
         { name: '林大儀', active: 112, project: 2 },
@@ -268,14 +186,95 @@ export default {
       requestGitLabLastTime: null
     }
   },
+  computed: {
+    projectMembersOptions() {
+      return {
+        tooltip: {
+          trigger: 'item',
+          textStyle: {
+            color: '#FFFFFF'
+          }
+        },
+        legend: {
+          type: 'scroll',
+          bottom: '0'
+        },
+        series: [
+          {
+            name: '專案成員',
+            type: 'pie',
+            radius: '80%',
+            data: this.projectMembers,
+            label: {
+              normal: {
+                show: true,
+                formatter: '{b}\n\n{c}',
+                textStyle: {
+                  fontSize: '1em'
+                }
+              }
+            },
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      }
+    },
+    passingRateOptions() {
+      return {
+        tooltip: {
+          trigger: 'item',
+          textStyle: {
+            color: '#FFFFFF'
+          }
+        },
+        grid: {
+          left: '8%',
+          top: '10%'
+        },
+        xAxis: {
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          }
+        },
+        yAxis: {
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          },
+          scale: true
+        },
+        series: [{
+          symbolSize: function(data) {
+            return data[2] * 20
+          },
+          data: this.passingRate,
+          label: {
+            normal: {
+              show: true,
+              formatter: (data) => {
+                return data.value[0]
+              }
+            },
+            fontWeight: 'bolder'
+          },
+          type: 'scatter'
+        }]
+      }
+    }
+  },
   watch: {
     gitCommitLog: {
       deep: true,
-      async handler(value) {
-        // if (this.init) {
-        //   this.init = false
-        //   return value
-        // }
+      async handler() {
         if (!this.requestGitLabLastTime) {
           this.requestGitLabLastTime = (new Date()).valueOf()
         }
@@ -288,10 +287,35 @@ export default {
       }
     }
   },
-  async mounted() {
-    this.gitCommitLog = await this.getGitCommitLogData()
+  mounted() {
+    this.initDashboard()
   },
   methods: {
+    async initDashboard() {
+      this.overview = await this.getProjectOverviewData()
+      this.projectMembers = await this.getProjectMembersData()
+      this.gitCommitLog = await this.getGitCommitLogData()
+      this.issueRank = await this.getIssueRankData()
+      this.passingRate = await this.getPassingRateData()
+      this.projectList = await this.getProjectListData()
+    },
+    getProjectOverviewData() {
+      return getProjectOverview()
+        .then((res) => {
+          const result = []
+          Object.keys(res.data[0]).forEach((item) => {
+            result.push({ item: overview[item]['item'], count: res.data[0][item], class: overview[item]['class'] })
+          })
+          return Promise.resolve(result)
+        })
+    },
+    getProjectMembersData() {
+      return getProjectMembers()
+        .then((res) => {
+          const result = res.data.map((item) => ({ id: item['project_id'], name: item['project_name'], value: item['member_count'] }))
+          return Promise.resolve(result)
+        })
+    },
     getGitCommitLogData() {
       return getGitCommitLog(commitLimit)
         .then((res) => {
@@ -299,6 +323,26 @@ export default {
             item['id'] = index
             item['commit_time'] = UTCtoLocalTime(item['commit_time'])
           })
+          return Promise.resolve(res.data)
+        })
+    },
+    getIssueRankData() {
+      return getIssueRank()
+        .then((res) => {
+          const result = res.data.sort((a, b) => (a.unclosed_count > b.unclosed_count) ? -1 : ((b.unclosed_count > a.unclosed_count) ? 1 : 0))
+          return Promise.resolve(result.slice(0, 5))
+        })
+    },
+    getPassingRateData() {
+      return getPassingRate()
+        .then((res) => {
+          const result = res.data.map((item) => ({ name: item['project_id'], value: [item['count'], item['rate'], item['total']] }))
+          return Promise.resolve(result)
+        })
+    },
+    getProjectListData() {
+      return getProjectList()
+        .then((res) => {
           return Promise.resolve(res.data)
         })
     },
