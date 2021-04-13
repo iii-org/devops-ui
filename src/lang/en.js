@@ -530,6 +530,9 @@ export default {
     releaseVersionName: 'Version name',
     startRelease: 'Start releasing',
     copyIssues: 'Copy issue names to clipboard',
-    allCategories: 'All'
+    allCategories: 'All',
+    batchClose: 'Batch close',
+    confirmBatchClose: 'Confirm closing {0} issues in batch?',
+    batchMove: 'Batch move'
   }
 }

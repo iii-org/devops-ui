@@ -25,6 +25,20 @@ export default {
         ret.push(c)
       }
       return ret
+    },
+    selectedRowCountArray() {
+      return [this.selectedRowCount]
+    },
+    selectedRowCount() {
+      let ret = 0
+      console.log(this.multipleSelection)
+      for (const i in this.multipleSelection) {
+        const arr = this.multipleSelection[i]
+        console.log(arr)
+        console.log(arr.length)
+        ret += arr.length
+      }
+      return ret
     }
   },
   watch: {
@@ -94,6 +108,19 @@ export default {
       this.openIssueCount--
       this.closedIssueCount++
       this.listLoading = false
+    },
+    async batchClose() {
+      const indexes = []
+      for (const i in this.multipleSelection) {
+        const arr = this.multipleSelection[i]
+        for (const idx of arr) {
+          indexes.push(i * this.listQuery.limit + idx)
+        }
+      }
+      console.log(indexes)
+    },
+    async batchMove() {
+
     }
   }
 }
@@ -117,14 +144,33 @@ export default {
           <el-checkbox
             v-model="showClosed"
             :label="`${$t('Issue.Closed')} (${closedIssueCount})`"
-            class="issue-count"
+            class="valign-middle"
           />
+        </el-form-item>
+        <el-form-item>
           <el-checkbox
             v-model="showOpen"
             :label="`${$t('Dashboard.Unfinished')} (${openIssueCount})`"
-            class="issue-count"
+            class="valign-middle"
             checked
           />
+        </el-form-item>
+        <el-form-item>
+          <el-popconfirm
+            :title="$t('Release.confirmBatchClose', selectedRowCountArray)"
+            :confirm-button-text="$t('general.Confirm')"
+            :cancel-button-text="$t('general.Cancel')"
+            @onConfirm="batchClose"
+          >
+            <el-button slot="reference" class="valign-middle">
+              {{ $t('Release.batchClose') }}
+            </el-button>
+          </el-popconfirm>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="valign-middle" @click="batchMove">
+            {{ $t('Release.batchMove') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </p>
@@ -192,8 +238,8 @@ export default {
 </template>
 
 <style scoped>
-.issue-count {
-  padding: 10px 0;
+.valign-middle {
+  padding: 10px 10px;
   font-weight: bold;
 }
 </style>

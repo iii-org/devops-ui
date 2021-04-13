@@ -520,6 +520,9 @@ export default {
     releaseVersionName: '包版版號',
     startRelease: '開始包版',
     copyIssues: '複製選中議題名稱到剪貼簿',
-    allCategories: '所有種類'
+    allCategories: '所有種類',
+    batchClose: '批次關閉',
+    confirmBatchClose: '確定批次關閉 {0} 個議題？',
+    batchMove: '批次搬移'
   }
 }
