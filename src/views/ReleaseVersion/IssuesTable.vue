@@ -3,15 +3,19 @@ import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
 import { updateIssue } from '@/api/issue'
 
 export default {
-  name: 'OpenIssuesTable',
+  name: 'IssuesTable',
   mixins: [MixinElTableWithCheckbox],
   data: function() {
     return {
       issues: [],
+      closedIssueCount: 0,
+      openIssueCount: 0,
       categories: [],
       issuesByCategory: {},
       selectedCategory: this.$t('Release.allCategories'),
-      searchKey: ''
+      searchKey: '',
+      showOpen: true,
+      showClosed: false
     }
   },
   computed: {
@@ -23,12 +27,32 @@ export default {
       return ret
     }
   },
+  watch: {
+    showClosed() {
+      this.setData(this.issues)
+    },
+    showOpen() {
+      this.setData(this.issues)
+    }
+  },
   methods: {
     setData(issues) {
+      const CLOSED_STATUS = 'Closed'
       this.issues = issues
+      this.closedIssueCount = 0
+      this.openIssueCount = 0
+      const filteredIssues = issues.filter(issue => {
+        if (issue['issue_status'] === CLOSED_STATUS) {
+          this.closedIssueCount++
+          return this.showClosed
+        } else {
+          this.openIssueCount++
+          return this.showOpen
+        }
+      })
       this.categories = []
       this.issuesByCategory = {}
-      for (const issue of issues) {
+      for (const issue of filteredIssues) {
         const cat = issue['issue_category']
         if (this.categories.indexOf(cat) < 0) {
           this.categories.push(cat)
@@ -39,7 +63,7 @@ export default {
         this.issuesByCategory[cat].push(issue)
       }
       this.categories.sort()
-      this.listData = this.issues
+      this.listData = filteredIssues
       this.adjustTable(5)
     },
     filterByCategory(cat) {
@@ -63,8 +87,10 @@ export default {
         }
       }
       if (this.pagedData.length === 0 && this.listQuery.page > 1) {
-        this.listQuery.page -= 1
+        this.listQuery.page--
       }
+      this.openIssueCount--
+      this.closedIssueCount++
       this.listLoading = false
     }
   }
@@ -74,7 +100,7 @@ export default {
 <template>
   <div style="height: 70%;">
     <p>
-      <el-form>
+      <el-form inline>
         <el-form-item :label="$t('Issue.Issue')">
           <el-select v-model="selectedCategory" @change="filterByCategory">
             <el-option
@@ -85,10 +111,20 @@ export default {
             />
           </el-select>
         </el-form-item>
+        <el-form-item>
+          <el-checkbox
+            v-model="showClosed"
+            :label="`${$t('Issue.Closed')} (${closedIssueCount})`"
+            class="issue-count"
+          />
+          <el-checkbox
+            v-model="showOpen"
+            :label="`${$t('Dashboard.Unfinished')} (${openIssueCount})`"
+            class="issue-count"
+            checked
+          />
+        </el-form-item>
       </el-form>
-      &emsp;
-      <el-checkbox :label="$t('Issue.Closed')" class="issue-count" />
-      <el-checkbox :label="$t('Dashboard.Unfinished')" class="issue-count" checked />
     </p>
     <p style="height: inherit;">
       <el-table
@@ -154,4 +190,8 @@ export default {
 </template>
 
 <style scoped>
+.issue-count {
+  padding: 10px 0;
+  font-weight: bold;
+}
 </style>

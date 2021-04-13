@@ -2,7 +2,7 @@
 import { mapGetters } from 'vuex'
 import { getProjectIssueListByVersion, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import OpenIssuesTable from '@/views/ReleaseVersion/OpenIssuesTable'
+import IssuesTable from '@/views/ReleaseVersion/IssuesTable'
 import CreateRelease from '@/views/ReleaseVersion/CreateRelease'
 
 const STATE_INIT = 0
@@ -13,13 +13,13 @@ const CLOSED_STATUS = 'Closed'
 
 export default {
   name: 'ReleaseVersion',
-  components: { CreateRelease, OpenIssuesTable, ProjectListSelector },
+  components: { CreateRelease, IssuesTable, ProjectListSelector },
   data: () => ({
     state: STATE_INIT,
     allIssues: [],
     fullscreenLoading: false,
     fromQuery: false,
-    openIssues: [],
+    hasOpenIssue: false,
     projectVersions: [],
     projectVersionOptions: [],
     releaseVersions: [],
@@ -58,13 +58,11 @@ export default {
       this.projectVersionOptions = options
     },
     checkQuery(vsString) {
-      console.log('checkQuery')
       this.fromQuery = true
       this.releaseVersions = JSON.parse(`[${vsString}]`)
       this.startRelease()
     },
     writeNote() {
-      console.log('writeNote')
       this.fromQuery = false
       this.startRelease()
     },
@@ -79,7 +77,7 @@ export default {
         })
       }
       await this.checkIssues()
-      if (this.openIssues.length > 0) {
+      if (this.hasOpenIssue) {
         await this.listOpenIssues()
       } else {
         await this.showCreateRelease()
@@ -89,14 +87,14 @@ export default {
     async checkIssues() {
       // Check if all issues of selected versions are closed
       this.allIssues = []
-      this.openIssues = []
+      this.hasOpenIssue = false
       for (const vId of this.releaseVersions) {
         const params = { fixed_version_id: vId }
         const res = await getProjectIssueListByVersion(this.selectedProjectId, params)
         for (const issue of res.data) {
           this.allIssues.push(issue)
           if (issue['issue_status'] !== CLOSED_STATUS) {
-            this.openIssues.push(issue)
+            this.hasOpenIssue = true
           }
         }
       }
@@ -112,7 +110,7 @@ export default {
           })
       }
       this.state = STATE_SHOW_OPEN_ISSUES
-      this.$refs.openIssues.setData(this.openIssues)
+      this.$refs.issueList.setData(this.allIssues)
     },
     async showCreateRelease() {
       this.$refs.createRelease.setIssues(this.allIssues)
@@ -161,7 +159,7 @@ export default {
     <span v-if="state === STATE_INIT" style="color: #f56c6c;">
       {{ $t('Release.openIssueHint') }}
     </span>
-    <open-issues-table v-show="state == STATE_SHOW_OPEN_ISSUES" ref="openIssues" />
+    <issues-table v-show="state == STATE_SHOW_OPEN_ISSUES" ref="issueList" />
     <create-release v-show="state == STATE_CREATE_RELEASE" ref="createRelease" />
   </div>
 </template>
