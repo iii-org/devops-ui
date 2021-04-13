@@ -15,7 +15,7 @@
       <div>
         <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
         <el-button size="medium" type="info" plain @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
-        <el-button size="medium" type="primary" disabled @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
     </div>
     <el-row :gutter="20">
@@ -37,11 +37,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
 import { IssueForm, IssueNotes, FileUploader } from './components'
 
 const getFormTemplate = () => ({
-  project_id: -1,
+  project_id: 0,
   assigned_to_id: -1,
   subject: '',
   fixed_version_id: '',
@@ -70,6 +71,9 @@ export default {
       author: '',
       form: getFormTemplate()
     }
+  },
+  computed: {
+    ...mapGetters(['selectedProjectId'])
   },
   mounted() {
     this.issueId = parseInt(this.$route.params.issueId)
@@ -111,6 +115,8 @@ export default {
       } = data
       this.issue_link = issue_link
       this.author = author.name
+
+      this.form.project_id = this.selectedProjectId
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.subject = subject
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
@@ -155,71 +161,69 @@ export default {
       this.$refs.IssueNotes.$refs.mdEditor.invoke('reset')
       this.$refs.FileUploader.$refs.fileUploader.clearFiles()
     },
-    handleSave() {
-      const notes = this.$refs.IssueNotes.$refs.mdEditor.invoke('getMarkdown')
-      const files = this.$refs.FileUploader.uploadFileList
-      this.isLoading = true
-      const sendData = Object.assign({}, this.form)
-      sendData['notes'] = notes
-      // updateIssue(this.issueId, { notes })
-      //   .then(() => this.fetchIssue())
-      //   .catch(err => {
-      //     this.$message({
-      //       title: this.$t('general.Error'),
-      //       message: err,
-      //       type: 'error'
-      //     })
-      //   })
-      setTimeout(() => {
-        this.isLoading = false
-      }, 5000)
-    },
     showLoading(status) {
       this.isLoading = status
     },
-    async handleSaveDetail() {
-      this.$refs['issueForm'].validate(async valid => {
-        if (valid) {
-          const data = JSON.parse(JSON.stringify(this.issueForm))
-          // Object.keys(data).map(item => {
-          //   if (data[item] === '' || !data[item]) delete data[item]
-          // })
-          const form = new FormData()
-          Object.keys(data).forEach(objKey => {
-            form.append(objKey, data[objKey])
-          })
-          const issueId = this.issueId
-          if (this.uploadFileList && this.uploadFileList.length > 0) {
-            // use one by one edit issue to upload file
-            this.uploadFileList
-              .reduce(function(prev, curr) {
-                return prev.then(() => {
-                  form.delete('upload_file')
-                  form.append('upload_file', curr.raw, curr.raw.name)
-                  return updateIssue(issueId, form)
-                })
-              }, Promise.resolve([]))
-              .then(() => {
-                this.$refs['upload'].clearFiles()
-                this.$message({
-                  title: this.$t('general.Success'),
-                  message: this.$t('Notify.Updated'),
-                  type: 'success'
-                })
-                this.$emit('updated')
-              })
-          } else {
-            updateIssue(this.issueId, form).then(() => {
-              this.$emit('updated')
-              this.$message({
-                title: this.$t('general.Success'),
-                message: this.$t('Notify.Updated'),
-                type: 'success'
-              })
-            })
-          }
-        }
+    handleSave() {
+      this.$refs.IssueForm.$refs.form.validate(valid => {
+        if (valid) this.editIssue()
       })
+    },
+    editIssue() {
+      const sendData = Object.assign({}, this.form)
+      const notes = this.$refs.IssueNotes.$refs.mdEditor.invoke('getMarkdown')
+      sendData['notes'] = notes
+      // Object.keys(sendData).map(item => {
+      //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
+      // })
+      const sendForm = new FormData()
+      Object.keys(sendData).forEach(objKey => {
+        sendForm.append(objKey, sendData[objKey])
+      })
+      const uploadFileList = this.$refs.FileUploader.uploadFileList
+      uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : this.updateIssueForm(sendForm)
+    },
+    uploadFiles(sendForm, fileList) {
+      this.isLoading = true
+      // use one by one edit issue to upload file
+      const { issueId } = this
+      fileList
+        .reduce(function(prev, curr) {
+          return prev.then(() => {
+            sendForm.delete('upload_file')
+            sendForm.append('upload_file', curr.raw, curr.raw.name)
+            return updateIssue(issueId, sendForm)
+          })
+        }, Promise.resolve([]))
+        .then(() => {
+          this.handleCancel()
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+        })
+        .catch(err => console.log(err))
+        .then(() => {
+          this.isLoading = false
+        })
+    },
+    updateIssueForm(sendForm) {
+      this.isLoading = true
+      const { issueId } = this
+      updateIssue(issueId, sendForm)
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          this.handleCancel()
+        })
+        .catch(err => console.log(err))
+        .then(() => {
+          this.isLoading = false
+        })
     }
   }
 }
