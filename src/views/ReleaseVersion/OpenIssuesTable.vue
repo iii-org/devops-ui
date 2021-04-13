@@ -85,8 +85,10 @@ export default {
             />
           </el-select>
         </el-form-item>
-
       </el-form>
+      &emsp;
+      <el-checkbox :label="$t('Issue.Closed')" class="issue-count" />
+      <el-checkbox :label="$t('Dashboard.Unfinished')" class="issue-count" checked />
     </p>
     <p style="height: inherit;">
       <el-table
@@ -152,5 +154,4 @@ export default {
 </template>
 
 <style scoped>
-
 </style>
