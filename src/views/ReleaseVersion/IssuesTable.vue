@@ -19,24 +19,18 @@ export default {
     }
   },
   computed: {
+    batchCloseHint() {
+      let ret = 0
+      for (const i in this.multipleSelection) {
+        const arr = this.multipleSelection[i]
+        ret += arr.length
+      }
+      return this.$t('Release.confirmBatchClose', [ret])
+    },
     categorySel() {
       const ret = [this.$t('Release.allCategories')]
       for (const c of this.categories) {
         ret.push(c)
-      }
-      return ret
-    },
-    selectedRowCountArray() {
-      return [this.selectedRowCount]
-    },
-    selectedRowCount() {
-      let ret = 0
-      console.log(this.multipleSelection)
-      for (const i in this.multipleSelection) {
-        const arr = this.multipleSelection[i]
-        console.log(arr)
-        console.log(arr.length)
-        ret += arr.length
       }
       return ret
     }
@@ -157,7 +151,7 @@ export default {
         </el-form-item>
         <el-form-item>
           <el-popconfirm
-            :title="$t('Release.confirmBatchClose', selectedRowCountArray)"
+            :title="batchCloseHint"
             :confirm-button-text="$t('general.Confirm')"
             :cancel-button-text="$t('general.Cancel')"
             @onConfirm="batchClose"

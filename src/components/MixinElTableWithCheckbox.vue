@@ -4,10 +4,12 @@ import MixinElTable from '@/components/MixinElTable'
 export default {
   name: 'MixinElTableWithCheckbox',
   mixins: [MixinElTable],
-  data: () => ({
-    paged: false,
-    multipleSelection: []
-  }),
+  data() {
+    return {
+      paged: false,
+      multipleSelection: []
+    }
+  },
   methods: {
     handleSelectionChange(val) {
       if (this.paged) {
@@ -19,7 +21,7 @@ export default {
         const index = this.pagedData.indexOf(row)
         indexes.push(index)
       }
-      this.multipleSelection[this.listQuery.page - 1] = indexes
+      this.multipleSelection.splice(this.listQuery.page - 1, 1, indexes)
     },
     async handlePagination(listQuery) {
       this.paged = true
