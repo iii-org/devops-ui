@@ -1,23 +1,17 @@
 <template>
-  <el-upload
-    ref="fileUploader"
-    :auto-upload="false"
-    :on-change="handleChange"
-    action
-    multiple
-    drag
-  >
-    <div>
-      <el-button size="small" type="success" class="mb-2">{{ $t('File.UploadBtn') }}</el-button>
-      <div>{{ $t('File.SelectFileOrDragHere') }}</div>
-    </div>
-  </el-upload>
+  <div>
+    <div class="text-subtitle-2 mb-2">{{ $t('Issue.UploadFiles') }}</div>
+    <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action multiple drag>
+      <div>
+        <el-button size="small" type="success" class="mb-2">{{ $t('File.UploadBtn') }}</el-button>
+        <div>{{ $t('File.SelectFileOrDragHere') }}</div>
+      </div>
+    </el-upload>
+  </div>
 </template>
 
 <script>
 import { fileExtension } from '@/utils/extension'
-// import { downloadProjectFile } from '@/api/projects'
-// import { deleteIssueFile } from '@/api/issue'
 
 export default {
   name: 'IssueFileUploader',
@@ -38,6 +32,7 @@ export default {
           type: 'warning'
         })
         this.$refs.fileUploader.clearFiles()
+        this.uploadFileList.length = []
       } else if (file.size / 1024 > 20480) {
         this.$message({
           title: this.$t('general.Warning'),
@@ -45,30 +40,11 @@ export default {
           type: 'warning'
         })
         this.$refs.fileUploader.clearFiles()
+        this.uploadFileList.length = []
       } else {
         this.uploadFileList = fileList
       }
     }
-    // async handleDownload(row) {
-    //   const res = await downloadProjectFile({ id: row.id, filename: row.filename })
-    //   const url = window.URL.createObjectURL(new Blob([res]))
-    //   const link = document.createElement('a')
-    //   link.href = url
-    //   link.setAttribute('download', row.filename)
-    //   document.body.appendChild(link)
-    //   link.click()
-    // },
-    // async handleDelete(row) {
-    //   this.isLoading = true
-    //   await deleteIssueFile(row.id)
-    //   this.$message({
-    //     title: this.$t('general.Success'),
-    //     message: this.$t('Notify.Deleted'),
-    //     type: 'success'
-    //   })
-    //   this.isLoading = false
-    //   this.$emit('updated')
-    // },
   }
 }
 </script>
