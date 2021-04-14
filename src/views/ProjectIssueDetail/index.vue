@@ -129,7 +129,6 @@ export default {
         })
     },
     initIssueDetails(data) {
-      console.log(data)
       const { issue_link, author, attachments, journals } = data
       this.issue_link = issue_link
       this.author = author.name
