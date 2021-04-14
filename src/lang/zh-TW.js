@@ -148,7 +148,8 @@ export default {
     SingleFileLimit: '一次只能選擇一個檔案，請先移除已選擇的檔案。',
     UnsupportedFileFormat: '無法上傳，不支援此種檔案格式。',
     FileSizeLimit: '超過可上傳的檔案大小 (20 MB)。',
-    LoadFail: '讀取失敗，請洽您的系統管理員。'
+    LoadFail: '讀取失敗，請洽您的系統管理員。',
+    UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？'
   },
   TestCase: {
     Index: '項次',
@@ -281,7 +282,8 @@ export default {
     Solved: '已解決',
     Responded: '已回覆',
     Finished: '已完成',
-    Unknown: '狀態不明'
+    Unknown: '狀態不明',
+    DeleteIssue: '確認要刪除「{issueName}」嗎?'
   },
   Wiki: {
     AddWiki: '新增Wiki',

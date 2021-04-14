@@ -149,7 +149,8 @@ export default {
     SingleFileLimit: 'Only one file can be added at a time, please delete the existing file first.',
     UnsupportedFileFormat: 'Unable to upload a file: This file type is not supported',
     FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)',
-    LoadFail: 'Something went wrong, please contact your system administrator.'
+    LoadFail: 'Something went wrong, please contact your system administrator.',
+    UnSavedChanges: 'Do you really want to leave? you have unsaved changes!'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -282,7 +283,8 @@ export default {
     Solved: 'Solved',
     Responded: 'Responded',
     Finished: 'Finished',
-    Unknown: 'Unknown'
+    Unknown: 'Unknown',
+    DeleteIssue: 'Are you sure to Delete 「{issueName}」?'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

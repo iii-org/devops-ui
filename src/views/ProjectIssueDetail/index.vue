@@ -130,7 +130,7 @@ export default {
       this.form.description = description === null ? '' : description
     },
     handleDelete() {
-      this.$confirm(`Are you sure to Delete Issue?`, this.$t('general.Delete'), {
+      this.$confirm(this.$t('Issue.DeleteIssue', { issueName: this.form.subject }), this.$t('general.Delete'), {
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
         type: 'error',
