@@ -1,51 +1,62 @@
 <template>
-  <el-card v-loading="isLoading" :element-loading-text="$t('Loading')">
-    <div slot="header" class="d-flex justify-space-between align-center">
+  <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">
+    <div class="d-flex justify-space-between align-center mb-2">
       <div>
         <el-row type="flex" align="middle">
           <span class="text-h5 mr-3">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
+          <div class="text-body-1 mr-3">
+            {{ $t('Issue.AddBy', { user: author }) }}
+          </div>
           <el-link :href="issue_link" target="_blank" type="primary" :underline="false">
             <i class="el-icon-link" /> Redmine
           </el-link>
         </el-row>
-        <div class="text-body-1">
-          {{ $t('Issue.AddBy', { user: author }) }}
-        </div>
       </div>
-      <div>
+      <div v-show="focusTab === 'editIssue'">
         <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
         <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
         <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
     </div>
-    <el-row :gutter="20">
-      <el-col :span="24" :md="12">
-        <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
-      </el-col>
-      <el-col :span="24" :md="12">
-        <el-row :gutter="10">
-          <el-col :span="24" class="mb-2">
-            <issue-notes ref="IssueNotes" />
-          </el-col>
-          <el-col :span="24">
-            <issue-file-uploader ref="IssueFileUploader" />
-          </el-col>
-        </el-row>
-      </el-col>
-    </el-row>
-  </el-card>
+    <el-divider />
+    <el-tab-pane :label="$t('Issue.EditIssue')" name="editIssue">
+      <el-row :gutter="20">
+        <el-col :span="24" :md="12">
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
+        </el-col>
+        <el-col :span="24" :md="12">
+          <el-row :gutter="10">
+            <el-col :span="24" class="mb-3">
+              <issue-notes-editor ref="IssueNotesEditor" />
+            </el-col>
+            <el-col :span="24">
+              <issue-file-uploader ref="IssueFileUploader" />
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+    <el-tab-pane :label="$t('Issue.Notes')" name="issueNotes">
+      <issue-notes :issue-notes="journals" />
+    </el-tab-pane>
+    <el-tab-pane :label="$t('Issue.Files')" name="issueFiles">
+      <issue-files :issue-file.sync="files" />
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
-import { IssueForm, IssueNotes, IssueFileUploader } from './components'
+import { IssueNotes, IssueFiles, IssueForm, IssueNotesEditor, IssueFileUploader } from './components'
 
 export default {
   name: 'ProjectIssueDetail',
   components: {
-    IssueForm,
     IssueNotes,
+    IssueFiles,
+    IssueForm,
+    IssueNotesEditor,
     IssueFileUploader
   },
   data() {
@@ -68,7 +79,10 @@ export default {
         start_date: '',
         due_date: '',
         description: ''
-      }
+      },
+      focusTab: 'editIssue',
+      files: [],
+      journals: []
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -82,6 +96,7 @@ export default {
           next()
         })
         .catch(() => {
+          this.focusTab = 'editIssue'
           next(false)
         })
     } else {
@@ -114,9 +129,12 @@ export default {
         })
     },
     initIssueDetails(data) {
-      const { issue_link, author } = data
+      console.log(data)
+      const { issue_link, author, attachments, journals } = data
       this.issue_link = issue_link
       this.author = author.name
+      this.files = attachments
+      this.journals = journals
       this.setFormData(data)
     },
     setFormData(data) {
@@ -176,7 +194,7 @@ export default {
     },
     handleCancel() {
       this.fetchIssue()
-      this.$refs.IssueNotes.$refs.mdEditor.invoke('reset')
+      this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
     },
@@ -190,7 +208,7 @@ export default {
     },
     editIssue() {
       const sendData = Object.assign({}, this.form)
-      const notes = this.$refs.IssueNotes.$refs.mdEditor.invoke('getMarkdown')
+      const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
       if (notes !== '') sendData['notes'] = notes
       // Object.keys(sendData).map(item => {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
@@ -245,7 +263,7 @@ export default {
         })
     },
     hasUnsavedChanges() {
-      const isNotesChanged = this.$refs.IssueNotes.$refs.mdEditor.invoke('getMarkdown') !== ''
+      const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
       const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
       return this.isFormDataChanged() || isNotesChanged || isFilesChanged
     },
