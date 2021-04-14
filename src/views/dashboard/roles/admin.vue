@@ -21,10 +21,12 @@
       </el-col>
       <el-col :xs="24" :sm="24" :md="7">
         <el-card>
-          <template slot="header">
-            <span class="font-weight-bold">Project Members</span>
-          </template>
-          <v-chart class="chart" :option="projectMembersOptions" autoresize theme="macarons" />
+          <div slot="header" class="pointer" @click="$refs['projectMember'].detailDialog=true">
+            <span class="font-weight-bold">Project Members
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
+            </span>
+          </div>
+          <admin-project-member ref="projectMember" :data="getProjectMembersData" />
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="24" :md="7">
@@ -54,21 +56,17 @@
           <template slot="header">
             <span class="font-weight-bold">開放議題排行榜 Top 5</span>
           </template>
-          <el-col>
-            <el-table :data="issueRank" cell-class-name="align-center" header-cell-class-name="align-center">
-              <el-table-column prop="user_name" label="專案成員" />
-              <el-table-column prop="unclosed_count" label="尚待解決" />
-              <el-table-column prop="project_count" label="專案參與數" />
-            </el-table>
-          </el-col>
+          <admin-issue-rank :data="getIssueRankData" />
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="24" :md="14">
         <el-card>
-          <template slot="header">
-            <span class="font-weight-bold">通過比率</span>
-          </template>
-          <v-chart class="chart" :option="passingRateOptions" autoresize theme="macarons" />
+          <div slot="header" class="pointer" @click="$refs['passingRate'].detailDialog=true">
+            <span class="font-weight-bold">通過比率
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
+            </span>
+          </div>
+          <admin-passing-rate ref="passingRate" :data="getPassingRateData" />
         </el-card>
       </el-col>
     </el-row>
@@ -81,18 +79,7 @@
               <el-col :span="12" class="text-right">最後更新：{{ lastUpdate }}</el-col>
             </el-row>
           </template>
-          <el-table :data="projectList" :row-class-name="tableRowClassName" cell-class-name="align-center"
-                    header-cell-class-name="align-center"
-          >
-            <el-table-column prop="project_name" label="專案名稱" />
-            <el-table-column prop="pm_user_name" label="專案經理" />
-            <el-table-column prop="complete_percent" label="完成百分比" />
-            <el-table-column prop="unclosed_issue_count" label="未解決問題數" />
-            <el-table-column prop="closed_issue_count" label="已解決問題數" />
-            <el-table-column prop="member_count" label="參與人數" />
-            <el-table-column prop="expired_day" label="到期天數" />
-            <el-table-column prop="end_date" label="到期日" />
-          </el-table>
+          <admin-project-list :fetch="getProjectListData" />
         </el-card>
       </el-col>
     </el-row>
@@ -100,11 +87,6 @@
 </template>
 
 <script>
-import VChart from 'vue-echarts'
-import { use } from 'echarts/core'
-
-import { CanvasRenderer } from 'echarts/renderers'
-import { PieChart, ScatterChart } from 'echarts/charts'
 import CircleDashboard from '../components/circle_dashboard'
 import {
   getGitCommitLog,
@@ -115,14 +97,11 @@ import {
   getProjectOverview
 } from '@/api/dashboard'
 import { UTCtoLocalTime } from '@/filters'
+import AdminProjectList from '@/views/dashboard/components/admin_project-list'
+import AdminProjectMember from '../components/admin_project-member'
+import AdminIssueRank from '../components/admin_issue-rank'
+import AdminPassingRate from '../components/admin_passing-rate'
 
-require('echarts/theme/macarons') // echarts theme
-
-use([
-  CanvasRenderer,
-  ScatterChart,
-  PieChart
-])
 const overview = {
   projects: { item: 'Projects', class: 'primary' },
   overdue: { item: 'Overdue', class: 'danger' },
@@ -133,142 +112,20 @@ const refreshCommitLog = 30000 // ms
 export default {
   name: 'DashboardAdmin',
   components: {
-    'v-chart': VChart,
+    AdminIssueRank,
+    AdminProjectMember,
+    AdminProjectList,
+    AdminPassingRate,
     CircleDashboard
   },
   data() {
     return {
-      lastUpdate: '2021/04/01',
+      lastUpdate: '',
       overview: [],
       gitCommitLog: [],
-      projectMembers: [],
-      passingRate: [],
-      issueRank: [
-        { name: '黃立安', active: 230, project: 3 },
-        { name: '陳尚品', active: 120, project: 5 },
-        { name: '林大儀', active: 112, project: 2 },
-        { name: '林長易', active: 80, project: 4 },
-        { name: '黃河道', active: 75, project: 1 }
-      ],
-      projectList: [
-        {
-          project_name: '專案ㄧ',
-          name: '林君容',
-          percentage: null,
-          active: 32,
-          resolved: null,
-          people: null,
-          due_days: null,
-          due_date: '2021/02/20'
-        },
-        {
-          project_name: '專案二',
-          name: '陳一成',
-          percentage: null,
-          active: 3,
-          resolved: null,
-          people: null,
-          due_days: null,
-          due_date: '2021/04/30'
-        },
-        {
-          project_name: '專案三',
-          name: '王笠人',
-          percentage: null,
-          active: 12,
-          resolved: null,
-          people: null,
-          due_days: null,
-          due_date: '2021/06/30'
-        }
-      ],
+      projectList: [],
       init: true,
       requestGitLabLastTime: null
-    }
-  },
-  computed: {
-    projectMembersOptions() {
-      return {
-        tooltip: {
-          trigger: 'item',
-          textStyle: {
-            color: '#FFFFFF'
-          }
-        },
-        legend: {
-          type: 'scroll',
-          bottom: '0'
-        },
-        series: [
-          {
-            name: '專案成員',
-            type: 'pie',
-            radius: '80%',
-            data: this.projectMembers,
-            label: {
-              normal: {
-                show: true,
-                formatter: '{b}\n\n{c}',
-                textStyle: {
-                  fontSize: '1em'
-                }
-              }
-            },
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
-      }
-    },
-    passingRateOptions() {
-      return {
-        tooltip: {
-          trigger: 'item',
-          textStyle: {
-            color: '#FFFFFF'
-          }
-        },
-        grid: {
-          left: '8%',
-          top: '10%'
-        },
-        xAxis: {
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          }
-        },
-        yAxis: {
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          },
-          scale: true
-        },
-        series: [{
-          symbolSize: function(data) {
-            return data[2] * 20
-          },
-          data: this.passingRate,
-          label: {
-            normal: {
-              show: true,
-              formatter: (data) => {
-                return data.value[0]
-              }
-            },
-            fontWeight: 'bolder'
-          },
-          type: 'scatter'
-        }]
-      }
     }
   },
   watch: {
@@ -293,10 +150,7 @@ export default {
   methods: {
     async initDashboard() {
       this.overview = await this.getProjectOverviewData()
-      this.projectMembers = await this.getProjectMembersData()
       this.gitCommitLog = await this.getGitCommitLogData()
-      this.issueRank = await this.getIssueRankData()
-      this.passingRate = await this.getPassingRateData()
       this.projectList = await this.getProjectListData()
     },
     getProjectOverviewData() {
@@ -312,8 +166,8 @@ export default {
     getProjectMembersData() {
       return getProjectMembers()
         .then((res) => {
-          const result = res.data.map((item) => ({ id: item['project_id'], name: item['project_name'], value: item['member_count'] }))
-          return Promise.resolve(result)
+          // const result = res.data.map((item) => ({ id: item['project_id'], name: item['project_name'], value: item['member_count'] }))
+          return Promise.resolve(res.data)
         })
     },
     getGitCommitLogData() {
@@ -329,14 +183,13 @@ export default {
     getIssueRankData() {
       return getIssueRank()
         .then((res) => {
-          const result = res.data.sort((a, b) => (a.unclosed_count > b.unclosed_count) ? -1 : ((b.unclosed_count > a.unclosed_count) ? 1 : 0))
-          return Promise.resolve(result.slice(0, 5))
+          return Promise.resolve(res.data)
         })
     },
     getPassingRateData() {
       return getPassingRate()
         .then((res) => {
-          const result = res.data.map((item) => ({ name: item['project_id'], value: [item['count'], item['rate'], item['total']] }))
+          const result = res.data.map((item) => ({ name: item['project_id'], value: [item['count'], item['passing_rate'], item['total']] }))
           return Promise.resolve(result)
         })
     },
@@ -345,12 +198,6 @@ export default {
         .then((res) => {
           return Promise.resolve(res.data)
         })
-    },
-    tableRowClassName({ row }) {
-      if (row.due_date < this.lastUpdate) {
-        return 'danger-row'
-      }
-      return ''
     },
     overviewTableCellClassName({ column }) {
       if (column.property === 'count') {
@@ -489,6 +336,10 @@ export default {
 {
   transform: translateX(10px);
   opacity: 0;
+}
+
+.pointer{
+  cursor: pointer;
 }
 
 </style>
