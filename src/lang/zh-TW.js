@@ -272,7 +272,7 @@ export default {
     AddParameter: '新增參數',
     Length: '長度',
     Limit: '限制',
-    AddBy: '由{user}新增',
+    AddBy: '由 {user} 新增',
     Author: '作者',
     CommentTime: '加註於',
     ParentIssue: '子議題',
@@ -283,7 +283,9 @@ export default {
     Responded: '已回覆',
     Finished: '已完成',
     Unknown: '狀態不明',
-    DeleteIssue: '確認要刪除「{issueName}」嗎?'
+    DeleteIssue: '確認要刪除「{issueName}」嗎?',
+    Files: '附件',
+    UploadFiles: '附件上傳'
   },
   Wiki: {
     AddWiki: '新增Wiki',

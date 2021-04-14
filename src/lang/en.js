@@ -284,7 +284,9 @@ export default {
     Responded: 'Responded',
     Finished: 'Finished',
     Unknown: 'Unknown',
-    DeleteIssue: 'Are you sure to Delete 「{issueName}」?'
+    DeleteIssue: 'Are you sure to Delete「{issueName}」?',
+    Files: 'Files',
+    UploadFiles: 'Upload Files'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
