@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="text-subtitle-2 mb-5">{{ $t('Issue.Notes') }}</div>
-    <editor id="md_editor" ref="mdEditor" initial-edit-type="wysiwyg" />
+    <editor ref="mdEditor" initial-edit-type="wysiwyg" />
   </div>
 </template>
 
 <script>
-// import { updateIssue } from '@/api/issue'
 import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
+// import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'IssueNotes',

@@ -14,7 +14,7 @@
       </div>
       <div>
         <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-        <el-button size="medium" type="info" plain @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
+        <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
         <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
     </div>
@@ -41,21 +41,6 @@ import { mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
 import { IssueForm, IssueNotes, IssueFileUploader } from './components'
 
-const getFormTemplate = () => ({
-  project_id: 0,
-  assigned_to_id: -1,
-  subject: '',
-  fixed_version_id: '',
-  tracker_id: -1,
-  status_id: 7,
-  priority_id: 3,
-  estimated_hours: 0,
-  done_ratio: 0,
-  start_date: '',
-  due_date: '',
-  description: ''
-})
-
 export default {
   name: 'ProjectIssueDetail',
   components: {
@@ -65,11 +50,42 @@ export default {
   },
   data() {
     return {
+      originForm: {},
       isLoading: false,
       issue_link: '',
       issueId: 0,
       author: '',
-      form: getFormTemplate()
+      form: {
+        project_id: 0,
+        assigned_to_id: -1,
+        subject: '',
+        fixed_version_id: '',
+        tracker_id: -1,
+        status_id: 7,
+        priority_id: 3,
+        estimated_hours: 0,
+        done_ratio: 0,
+        start_date: '',
+        due_date: '',
+        description: ''
+      }
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.hasUnsavedChanges()) {
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          next(false)
+        })
+    } else {
+      next()
     }
   },
   computed: {
@@ -98,6 +114,12 @@ export default {
         })
     },
     initIssueDetails(data) {
+      const { issue_link, author } = data
+      this.issue_link = issue_link
+      this.author = author.name
+      this.setFormData(data)
+    },
+    setFormData(data) {
       const {
         assigned_to,
         fixed_version,
@@ -109,13 +131,8 @@ export default {
         done_ratio,
         start_date,
         due_date,
-        description,
-        issue_link,
-        author
+        description
       } = data
-      this.issue_link = issue_link
-      this.author = author.name
-
       this.form.project_id = this.selectedProjectId
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.subject = subject
@@ -128,6 +145,7 @@ export default {
       this.form.start_date = start_date === null ? '' : start_date
       this.form.due_date = due_date === null ? '' : due_date
       this.form.description = description === null ? '' : description
+      this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {
       this.$confirm(this.$t('Issue.DeleteIssue', { issueName: this.form.subject }), this.$t('general.Delete'), {
@@ -225,6 +243,23 @@ export default {
         .then(() => {
           this.isLoading = false
         })
+    },
+    hasUnsavedChanges() {
+      const isNotesChanged = this.$refs.IssueNotes.$refs.mdEditor.invoke('getMarkdown') !== ''
+      const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
+      return this.isFormDataChanged() || isNotesChanged || isFilesChanged
+    },
+    isFormDataChanged() {
+      let isChanged
+      for (const key in this.form) {
+        if (this.originForm[key] !== this.form[key]) {
+          isChanged = true
+          break
+        } else {
+          isChanged = false
+        }
+      }
+      return isChanged
     }
   }
 }
