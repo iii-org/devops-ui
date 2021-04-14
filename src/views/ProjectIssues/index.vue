@@ -91,6 +91,7 @@
               :type="getStatusTagType(scope.row.issue_status)"
               size="medium"
               effect="dark"
+              class="el-tag--circle"
             >
               {{ scope.row.issue_status }}
             </el-tag>
@@ -104,6 +105,7 @@
               :type="getPriorityTagType(scope.row.issue_priority)"
               size="medium"
               effect="dark"
+              class="el-tag--circle"
             >
               {{ scope.row.issue_priority }}
             </el-tag>
