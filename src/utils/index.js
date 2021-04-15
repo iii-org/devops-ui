@@ -109,3 +109,7 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+export function momentTime (time) {
+  return moment(time)
+}

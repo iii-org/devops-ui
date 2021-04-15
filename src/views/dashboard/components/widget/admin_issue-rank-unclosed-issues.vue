@@ -15,6 +15,7 @@
       </el-col>
       <el-col :span="12" class="text-right">
         統計日期：
+        <!--        {{ listData[0].sync_date }}-->
       </el-col>
     </el-row>
     <el-table v-if="listData.length>0" :data="pagedData">
@@ -35,7 +36,7 @@
                        label="狀態"
       />
       <el-table-column sortable
-                       prop="issue_date"
+                       prop="start_date"
                        label="開立時間"
       />
     </el-table>
@@ -106,5 +107,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

@@ -12,13 +12,15 @@
             clearable
           />
         </el-col>
-        <el-col :span="12" class="text-right">
-          統計日期：
+        <el-col v-if="listData.length>0" :span="12" class="text-right">
+          統計日期：{{ listData[0].sync_date }}
         </el-col>
       </el-row>
       <el-table v-if="listData.length>0" ref="tableData"
                 :data="pagedData"
                 row-key="project_id"
+                cell-class-name="align-center"
+                header-cell-class-name="align-center"
                 @row-click="rowClicked"
       >
         <el-table-column
@@ -27,25 +29,34 @@
           sortable
         />
         <el-table-column
-          label="專案經理"
-          prop="pm_user_name"
+          label="測試個案數"
+          prop="count"
           sortable
         />
         <el-table-column
-          label="參與人數"
-          prop="member_count"
+          label="成功次數"
+          prop="success"
           sortable
         />
         <el-table-column
-          label="專案起始日"
-          prop="start_date"
+          label="失敗次數"
+          prop="fail"
           sortable
         />
         <el-table-column
-          prop="end_date"
-          label="專案結束日"
+          label="累積測試次數"
+          prop="total"
           sortable
         />
+        <el-table-column
+          label="最近測試時間"
+          prop="run_at"
+          sortable
+        >
+          <template slot-scope="scope">
+            {{ formatTime(scope.row.run_at) }}
+          </template>
+        </el-table-column>
       </el-table>
       <pagination
         :total="filteredData.length"
@@ -62,7 +73,7 @@
 <script>
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
-
+import moment from 'moment'
 import { CanvasRenderer } from 'echarts/renderers'
 import { ScatterChart } from 'echarts/charts'
 import { getPassingRateDetail } from '@/api/dashboard'
@@ -92,7 +103,8 @@ export default {
       chartData: [],
       detailData: [],
       detailDialog: false,
-      searchKeys: ['project_name', 'pm_user_name'],
+      searchKeys: ['project_name'],
+      keyword: '',
       reload: 0
     }
   },
@@ -103,6 +115,9 @@ export default {
           trigger: 'item',
           textStyle: {
             color: '#FFFFFF'
+          },
+          formatter: (data) => {
+            return data.marker + data.name + ': ' + data.value[1] + '%'
           }
         },
         grid: {
@@ -128,12 +143,12 @@ export default {
           symbolSize: function(data) {
             return data[2] * 20
           },
-          data: this.passingRate,
+          data: this.chartData,
           label: {
             normal: {
               show: true,
               formatter: (data) => {
-                return data.value[0]
+                return data.value[1] + '%'
               }
             },
             fontWeight: 'bolder'
@@ -179,6 +194,9 @@ export default {
     },
     closeHandler() {
       this.keyword = ''
+    },
+    formatTime(value) {
+      return moment(value).fromNow()
     }
   }
 }

@@ -58,3 +58,5 @@ export function getK8SConfig(userId) {
     method: 'get'
   })
 }
+
+export const getRoleList = () => request.get('/user/role/list')

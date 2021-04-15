@@ -17,6 +17,11 @@ $warning: #f9be6e;
 $slow: #56b1e8;
 $light: #c1c3c5;
 
+$danger_border:#5b1111;
+$danger_text:#ffffff;
+$warning_text:#543a12;
+$success_text:#074540;
+
 $danger-1: mix($danger, #FFFFFF, 10%);
 $danger-2: mix($danger, #FFFFFF, 20%);
 $danger-3: mix($danger, #FFFFFF, 30%);

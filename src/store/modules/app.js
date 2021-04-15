@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import { getLanguage } from '@/lang/index'
+import { getRoleList } from '@/api/user'
 
 const state = {
   sidebar: {
@@ -7,7 +8,8 @@ const state = {
     withoutAnimation: false
   },
   device: 'desktop',
-  language: getLanguage()
+  language: getLanguage(),
+  roleList: []
 }
 
 const mutations = {
@@ -31,6 +33,9 @@ const mutations = {
   SET_LANGUAGE: (state, language) => {
     state.language = language
     Cookies.set('language', language)
+  },
+  SET_ROLE_LIST: (state, roleList) => {
+    state.roleList = roleList
   }
 }
 
@@ -46,6 +51,16 @@ const actions = {
   },
   setLanguage({ commit }, language) {
     commit('SET_LANGUAGE', language)
+  },
+  async setRoleList({ commit }) {
+    const result = await getRoleList()
+      .then((res) => {
+        console.log('ya')
+        return Promise.resolve(res.data.role_list)
+      }).catch((e) => {
+        return Promise.reject(e)
+      })
+    commit('SET_ROLE_LIST', result)
   }
 }
 

@@ -64,7 +64,7 @@ const actions = {
   },
 
   // get e info
-  getInfo({ commit, state }) {
+  getInfo({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       const token = getToken()
       const jwtContent = VueJwtDecode.decode(token)
@@ -90,6 +90,7 @@ const actions = {
           data.project = data.project.sort(function(a, b) {
             return a['id'] < b['id'] ? 1 : -1
           })
+          dispatch('app/setRoleList', null, { root: true })
           commit('SET_USER_ROLE', role.name)
           commit('SET_USER_PROJECT', data.project)
           if (data.project.length > 0) {

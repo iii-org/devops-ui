@@ -74,51 +74,17 @@ export const asyncRoutes = [
   },
 
   // PM Root
-  {
-    path: '/',
-    component: Layout,
-    name: 'project-pm',
-    redirect: '/project-list',
-    meta: {
-    //   title: 'projectList',
-    //   icon: 'el-icon-s-cooperation',
-      roles: ['Project Manager', 'Administrator']
-    },
-    children: [
-      {
-        path: 'project-list',
-        name: 'project-list-pm',
-        component: () => import('@/views/ProjectList/ProjectListPM'),
-        meta: {
-          title: 'projectList',
-          icon: 'list',
-          roles: ['Project Manager', 'Administrator']
-        }
-      }
-    ]
-  },
-  // admin Root
   // {
   //   path: '/',
   //   component: Layout,
-  //   name: 'project-admin',
-  //   redirect: '/dashboard',
+  //   name: 'project-pm',
+  //   redirect: '/project-list',
   //   meta: {
-  //     title: 'projectList',
-  //     icon: 'el-icon-s-cooperation',
-  //     roles: ['Administrator']
+  //   //   title: 'projectList',
+  //   //   icon: 'el-icon-s-cooperation',
+  //     roles: ['Project Manager', 'Administrator']
   //   },
   //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       name: 'dashboard',
-  //       component: () => import('@/views/dashboard/roles/admin'),
-  //       meta: {
-  //         title: 'dashboard',
-  //         icon: 'dashboard',
-  //         roles: ['Administrator']
-  //       }
-  //     },
   //     {
   //       path: 'project-list',
   //       name: 'project-list-pm',
@@ -131,6 +97,40 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
+  // admin Root
+  {
+    path: '/',
+    component: Layout,
+    name: 'project-admin',
+    redirect: '/dashboard',
+    meta: {
+      title: 'projectList',
+      icon: 'el-icon-s-cooperation',
+      roles: ['Project Manager', 'Administrator']
+    },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/dashboard/roles/admin'),
+        meta: {
+          title: 'dashboard',
+          icon: 'dashboard',
+          roles: ['Project Manager', 'Administrator']
+        }
+      },
+      {
+        path: 'project-list',
+        name: 'project-list-pm',
+        component: () => import('@/views/ProjectList/ProjectListPM'),
+        meta: {
+          title: 'projectList',
+          icon: 'list',
+          roles: ['Project Manager', 'Administrator']
+        }
+      }
+    ]
+  },
   {
     path: '/project',
     component: Layout,

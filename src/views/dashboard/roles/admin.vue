@@ -6,17 +6,7 @@
           <template slot="header">
             <span class="font-weight-bold">Overview</span>
           </template>
-          <el-row class="circle hidden-sm-and-down" type="flex" justify="center" align="middle">
-            <el-col v-for="(item,idx) in overview" :key="idx" :xs="24" :sm="24" :md="8">
-              <CircleDashboard :count="item.count" :item="item.item" :class="'circle-'+item.class" />
-            </el-col>
-          </el-row>
-          <div class="table hidden-md-and-up">
-            <el-row v-for="(item,idx) in overview" :key="idx" :class="'table-'+item.class" align="bottom" type="flex">
-              <el-col :span="12" class="text-right count">{{ item.count }}</el-col>
-              <el-col :span="12">{{ item.item }}</el-col>
-            </el-row>
-          </div>
+          <admin-overview :data="getProjectOverviewData" />
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="24" :md="7">
@@ -73,13 +63,15 @@
     <el-row type="flex" class="flex-wrap" :gutter="10">
       <el-col :xs="24" :sm="24" :md="24">
         <el-card>
-          <template slot="header">
+          <div slot="header" class="pointer" @click="$refs['projectList'].detailDialog=true">
             <el-row type="flex" align="center" class="no-margin">
-              <el-col :span="12" class="font-weight-bold">專案清單</el-col>
+              <el-col :span="12" class="font-weight-bold">專案清單
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
+              </el-col>
               <el-col :span="12" class="text-right">最後更新：{{ lastUpdate }}</el-col>
             </el-row>
-          </template>
-          <admin-project-list :fetch="getProjectListData" />
+          </div>
+          <admin-project-list ref="projectList" :data="getProjectListData" />
         </el-card>
       </el-col>
     </el-row>
@@ -101,22 +93,23 @@ import AdminProjectList from '@/views/dashboard/components/admin_project-list'
 import AdminProjectMember from '../components/admin_project-member'
 import AdminIssueRank from '../components/admin_issue-rank'
 import AdminPassingRate from '../components/admin_passing-rate'
+import AdminOverview from '@/views/dashboard/components/admin_overview'
 
 const overview = {
-  projects: { item: 'Projects', class: 'primary' },
-  overdue: { item: 'Overdue', class: 'danger' },
-  not_started: { item: 'Not Started', class: 'info' }
+  projects: { item: 'Projects', class: 'primary', database: '' },
+  overdue: { item: 'Overdue', class: 'danger', database: 'Overdue' },
+  not_started: { item: 'Not Started', class: 'info', database: 'Not_Started' }
 }
 const commitLimit = 10
-const refreshCommitLog = 30000 // ms
+const refreshCommitLog = 10000 // ms
 export default {
   name: 'DashboardAdmin',
   components: {
+    AdminOverview,
     AdminIssueRank,
     AdminProjectMember,
     AdminProjectList,
-    AdminPassingRate,
-    CircleDashboard
+    AdminPassingRate
   },
   data() {
     return {
@@ -149,7 +142,6 @@ export default {
   },
   methods: {
     async initDashboard() {
-      this.overview = await this.getProjectOverviewData()
       this.gitCommitLog = await this.getGitCommitLogData()
       this.projectList = await this.getProjectListData()
     },
@@ -158,7 +150,7 @@ export default {
         .then((res) => {
           const result = []
           Object.keys(res.data[0]).forEach((item) => {
-            result.push({ item: overview[item]['item'], count: res.data[0][item], class: overview[item]['class'] })
+            result.push({ item: overview[item]['item'], count: res.data[0][item], class: overview[item]['class'], database: overview[item]['database'] })
           })
           return Promise.resolve(result)
         })
@@ -189,7 +181,7 @@ export default {
     getPassingRateData() {
       return getPassingRate()
         .then((res) => {
-          const result = res.data.map((item) => ({ name: item['project_id'], value: [item['count'], item['passing_rate'], item['total']] }))
+          const result = res.data.map((item) => ({ name: item['project_name'], value: [item['count'], item['passing_rate'] * 100, item['total']] }))
           return Promise.resolve(result)
         })
     },
@@ -258,54 +250,6 @@ export default {
 > > > .el-table {
   .danger-row {
     background: $danger-4;
-  }
-}
-
-.circle {
-  > > > .circle-primary {
-    border-color: $menuActiveText;
-    color: $menuActiveText;
-  }
-
-  > > > .circle-danger {
-    border-color: $danger;
-    color: $danger;
-  }
-
-  > > > .circle-info {
-    border-color: $info-4;
-    color: $info-4;
-  }
-}
-
-> > > .table {
-  font-size: 1.5em;
-
-  .count {
-    font-size: 2em;
-    padding-right: 0.25em;
-    text-align: right;
-    font-weight: bolder;
-  }
-
-  .el-row {
-    border-width: 5px;
-    border-style: solid;
-  }
-
-  .table-primary {
-    border-color: $menuActiveText;
-    color: $menuActiveText;
-  }
-
-  .table-danger {
-    border-color: $danger;
-    color: $danger;
-  }
-
-  .table-info {
-    border-color: $info-4;
-    color: $info-4;
   }
 }
 

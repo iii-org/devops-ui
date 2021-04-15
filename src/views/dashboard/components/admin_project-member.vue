@@ -12,8 +12,8 @@
             clearable
           />
         </el-col>
-        <el-col :span="12" class="text-right">
-          統計日期：
+        <el-col v-if="listData.length>0" :span="12" class="text-right">
+          統計日期：{{ listData[0].sync_date }}
         </el-col>
       </el-row>
       <el-table v-if="listData.length>0" ref="tableData"
@@ -24,22 +24,7 @@
       >
         <el-table-column type="expand">
           <template slot-scope="props">
-            <el-table :key="reload"
-                      v-loading="props.row.loading"
-                      :data="props.row.children"
-                      row-key="user_id"
-            >
-              <el-table-column
-                label="角色"
-                prop="role_name"
-                sortable
-              />
-              <el-table-column
-                label="專案成員"
-                prop="user_name"
-                sortable
-              />
-            </el-table>
+            <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.children" />
           </template>
         </el-table-column>
         <el-table-column
@@ -88,6 +73,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
 import MixinBasicTable from '@/components/MixinBasicTable'
+import AdminMemberTable from '@/views/dashboard/components/widget/admin_member-table'
 
 require('echarts/theme/macarons') // echarts theme
 
@@ -98,6 +84,7 @@ use([
 export default {
   name: 'AdminProjectMember',
   components: {
+    AdminMemberTable,
     'v-chart': VChart
   },
   mixins: [MixinBasicTable],
@@ -111,7 +98,6 @@ export default {
     return {
       loading: false,
       chartData: [],
-      detailData: [],
       detailDialog: false,
       searchKeys: ['project_name', 'pm_user_name'],
       reload: 0
