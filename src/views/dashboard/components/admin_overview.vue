@@ -58,6 +58,11 @@ export default {
       this.$nextTick(() => {
         this.$refs['projectList'].searchStatus = value
       })
+    },
+    overviewTableCellClassName({ column }) {
+      if (column.property === 'count') {
+        return 'count'
+      }
     }
   }
 }

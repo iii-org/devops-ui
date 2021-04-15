@@ -115,7 +115,7 @@ export default {
       this.listData = this.listData.sort((a, b) => (a[prop] > b[prop]) ? orderSign : ((b[prop] > a[prop]) ? -1 * orderSign : 0))
     },
     tableRowClassName({ row }) {
-      if (row.due_date < this.lastUpdate) {
+      if (row.project_status === 'Overdue') {
         return 'danger-row'
       }
       return ''

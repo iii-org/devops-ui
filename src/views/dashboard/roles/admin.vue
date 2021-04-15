@@ -79,7 +79,6 @@
 </template>
 
 <script>
-import CircleDashboard from '../components/circle_dashboard'
 import {
   getGitCommitLog,
   getIssueRank,
@@ -116,7 +115,6 @@ export default {
       lastUpdate: '',
       overview: [],
       gitCommitLog: [],
-      projectList: [],
       init: true,
       requestGitLabLastTime: null
     }
@@ -143,7 +141,6 @@ export default {
   methods: {
     async initDashboard() {
       this.gitCommitLog = await this.getGitCommitLogData()
-      this.projectList = await this.getProjectListData()
     },
     getProjectOverviewData() {
       return getProjectOverview()
@@ -190,11 +187,6 @@ export default {
         .then((res) => {
           return Promise.resolve(res.data)
         })
-    },
-    overviewTableCellClassName({ column }) {
-      if (column.property === 'count') {
-        return 'count'
-      }
     },
     sleep(ms) {
       return new Promise((resolve) => (setTimeout(resolve, ms)))
