@@ -118,7 +118,7 @@ export default {
         .catch(() => {
           this.$router.push({ name: 'issue-list' })
           this.$message({
-            message: '議題已被刪除或找不到該議題',
+            message: this.$t('Issue.RemovedIssue'),
             type: 'warning'
           })
         })

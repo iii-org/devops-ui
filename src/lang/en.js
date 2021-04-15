@@ -286,7 +286,8 @@ export default {
     Unknown: 'Unknown',
     DeleteIssue: 'Are you sure to Delete「{issueName}」?',
     Files: 'Files',
-    UploadFiles: 'Upload Files'
+    UploadFiles: 'Upload Files',
+    RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed."
   },
   Wiki: {
     AddWiki: 'Add Wiki',
