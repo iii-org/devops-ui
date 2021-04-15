@@ -15,7 +15,9 @@ export default {
       selectedCategory: this.$t('Release.allCategories'),
       searchKey: '',
       showOpen: true,
-      showClosed: false
+      showClosed: false,
+      CLOSED_STATUS: 'Closed',
+      CLOSED_STATUS_ID: 6
     }
   },
   computed: {
@@ -82,17 +84,30 @@ export default {
         }
       })
       this.adjustTable(5)
+
+      // If data reduces, we need to set current page to smaller one making data visible
+      this.$nextTick(() => {
+        const len = this.listData.length
+        const pageSize = this.listQuery.limit
+        if ((this.listQuery.page - 1) * pageSize >= len) {
+          if (len > 0) {
+            this.listQuery.page = 1 + Math.floor((len - 1) / pageSize)
+          } else {
+            this.listQuery.page = 1
+          }
+        }
+      })
     },
     handleEdit(idx, row) {
       this.$router.push({ path: `/project/issue-list/${row.id}` })
     },
     async handleClose(idx, row) {
       this.listLoading = true
-      const CLOSED_STATUS_ID = 6
-      await updateIssue(row.id, { status_id: CLOSED_STATUS_ID })
+      await updateIssue(row.id, { status_id: this.CLOSED_STATUS_ID })
+      row.issue_status = this.CLOSED_STATUS
       for (const i in this.issues) {
         if (this.issues[i].id === row.id) {
-          this.issues.splice(parseInt(i), 1)
+          this.issues.splice(parseInt(i), 1, row)
           break
         }
       }
@@ -104,6 +119,7 @@ export default {
       this.listLoading = false
     },
     async batchClose() {
+      this.listLoading = true
       const indexes = []
       for (const i in this.multipleSelection) {
         const arr = this.multipleSelection[i]
@@ -111,7 +127,11 @@ export default {
           indexes.push(i * this.listQuery.limit + idx)
         }
       }
-      console.log(indexes)
+      for (const index of indexes) {
+        await updateIssue(this.listData[index].id, { status_id: this.CLOSED_STATUS_ID })
+      }
+      this.$parent.init()
+      this.listLoading = false
     },
     async batchMove() {
 
@@ -202,8 +222,12 @@ export default {
                 @click="handleEdit(scope.$index, scope.row)"
               />
             </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('general.Close')" placement="bottom-start"
-                        :open-delay="1000"
+            <el-tooltip
+              v-if="scope.row.issue_status !== CLOSED_STATUS"
+              effect="dark"
+              :content="$t('general.Close')"
+              placement="bottom-start"
+              :open-delay="1000"
             >
               <el-button
                 :id="`link-issue-name-${scope.$index}`"

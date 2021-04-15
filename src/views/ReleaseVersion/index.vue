@@ -38,13 +38,16 @@ export default {
     }
   },
   created() {
-    this.loadData()
-    const vsString = this.$route.query.versions
-    if (vsString) {
-      this.checkQuery(vsString)
-    }
+    this.init()
   },
   methods: {
+    async init() {
+      await this.loadData()
+      const vsString = this.$route.query.versions
+      if (vsString) {
+        this.checkQuery(vsString)
+      }
+    },
     async loadData() {
       const res = await getProjectVersion(this.selectedProjectId)
       this.projectVersions = res.data.versions
