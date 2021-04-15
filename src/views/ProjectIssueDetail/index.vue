@@ -189,11 +189,15 @@ export default {
         this.isLoading = false
       })
     },
-    handleCancel() {
+    handleUpdated() {
       this.fetchIssue()
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
+      this.$router.push({ name: 'issue-list' })
+    },
+    handleCancel() {
+      this.$router.push({ name: 'issue-list' })
     },
     showLoading(status) {
       this.isLoading = status
@@ -230,7 +234,7 @@ export default {
           })
         }, Promise.resolve([]))
         .then(() => {
-          this.handleCancel()
+          this.handleUpdated()
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
@@ -247,12 +251,12 @@ export default {
       const { issueId } = this
       updateIssue(issueId, sendForm)
         .then(() => {
+          this.handleUpdated()
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
-          this.handleCancel()
         })
         .catch(err => console.error(err))
         .then(() => {
