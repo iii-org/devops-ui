@@ -194,7 +194,9 @@ export default {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
-      this.$router.push({ name: 'issue-list' })
+      setTimeout(() => {
+        this.$router.push({ name: 'issue-list' })
+      }, 1000)
     },
     handleCancel() {
       this.$router.push({ name: 'issue-list' })
