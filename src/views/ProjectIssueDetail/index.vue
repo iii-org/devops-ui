@@ -1,16 +1,14 @@
 <template>
   <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">
-    <div class="d-flex justify-space-between align-center mb-2">
-      <div>
-        <el-row type="flex" align="middle">
-          <span class="text-h5 mr-3">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
-          <div class="text-body-1 mr-3">
-            {{ $t('Issue.AddBy', { user: author }) }}
-          </div>
-          <el-link :href="issue_link" target="_blank" type="primary" :underline="false">
-            <i class="el-icon-link" /> Redmine
-          </el-link>
-        </el-row>
+    <div class="d-flex justify-space-between mb-2">
+      <div class="d-flex align-end">
+        <span class="text-h5 mr-3">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
+        <div class="text-body-1 mr-3">
+          {{ $t('Issue.AddBy', { user: author }) }}
+        </div>
+        <el-link :href="issue_link" target="_blank" type="primary" :underline="false">
+          <i class="el-icon-link" /> Redmine
+        </el-link>
       </div>
       <div v-show="focusTab === 'editIssue'">
         <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
