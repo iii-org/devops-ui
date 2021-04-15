@@ -14,13 +14,7 @@
       >
         <div slot="label" class="d-flex justify-space-between align-center">
           <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
-          <el-tag
-            v-if="stage.state"
-            class="el-tag--circle ml-2"
-            :type="getStateTagType(stage.state)"
-            size="mini"
-            effect="dark"
-          >
+          <el-tag v-if="stage.state" class="el-tag ml-2" :type="getStateTagType(stage.state)" size="mini" effect="dark">
             {{ stage.state }}
           </el-tag>
         </div>
@@ -116,8 +110,10 @@ export default {
           return 'slow'
         case 'Building':
           return 'warning'
+        case 'Skipped':
+          return 'info'
         default:
-          return 'slow'
+          return 'info'
       }
     },
     handleClick(tab) {
