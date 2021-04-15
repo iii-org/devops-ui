@@ -22,12 +22,15 @@ export default {
   },
   computed: {
     batchCloseHint() {
+      return this.$t('Release.confirmBatchClose', [this.selectedRowCount])
+    },
+    selectedRowCount() {
       let ret = 0
       for (const i in this.multipleSelection) {
         const arr = this.multipleSelection[i]
         ret += arr.length
       }
-      return this.$t('Release.confirmBatchClose', [ret])
+      return ret
     },
     categorySel() {
       const ret = [this.$t('Release.allCategories')]
@@ -176,13 +179,21 @@ export default {
             :cancel-button-text="$t('general.Cancel')"
             @onConfirm="batchClose"
           >
-            <el-button slot="reference" class="valign-middle">
+            <el-button
+              slot="reference"
+              class="valign-middle"
+              :disabled="selectedRowCount === 0"
+            >
               {{ $t('Release.batchClose') }}
             </el-button>
           </el-popconfirm>
         </el-form-item>
         <el-form-item>
-          <el-button class="valign-middle" @click="batchMove">
+          <el-button
+            class="valign-middle"
+            :disabled="selectedRowCount === 0"
+            @click="batchMove"
+          >
             {{ $t('Release.batchMove') }}
           </el-button>
         </el-form-item>
