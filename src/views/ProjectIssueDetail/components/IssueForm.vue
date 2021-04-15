@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" :rules="issueFormRules" :label-position="'left'">
+  <el-form ref="form" v-loading="isLoading" :model="form" :rules="issueFormRules" label-position="left">
     <el-row :gutter="10">
       <el-col :span="12" :md="8">
         <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
@@ -145,7 +145,8 @@ export default {
     parentId: null,
     parentIssue: {},
     relativeIssueList: [],
-    childrenIssueList: []
+    childrenIssueList: [],
+    isLoading: false
   }),
   computed: {
     ...mapGetters(['selectedProjectId']),
@@ -178,7 +179,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      this.$emit('isLoading', true)
+      this.isLoading = true
       await Promise.all([
         getProjectAssignable(this.selectedProjectId),
         getProjectVersion(this.selectedProjectId),
@@ -205,7 +206,7 @@ export default {
         this.relativeIssueList = this.createRelativeList(issueListByTree)
         this.updateChildrenList()
       })
-      this.$emit('isLoading', false)
+      this.isLoading = false
     },
     isChildrenAllClosed() {
       return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.issue_status === 'Closed')

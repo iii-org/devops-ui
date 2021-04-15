@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <router-view />
-    <div v-show="this.$route.meta.rolePage" class="role-Page">
+    <div v-if="this.$route.meta.rolePage" class="role-Page">
       <div class="clearfix">
         <div>
           <project-list-selector />

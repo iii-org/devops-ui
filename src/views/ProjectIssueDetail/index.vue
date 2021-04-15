@@ -104,14 +104,15 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId'])
   },
-  mounted() {
+  async mounted() {
     this.issueId = parseInt(this.$route.params.issueId)
-    this.fetchIssue()
+    await this.fetchIssue()
+    this.isLoading = false
   },
   methods: {
-    fetchIssue() {
+    async fetchIssue() {
       this.isLoading = true
-      getIssue(this.issueId)
+      return getIssue(this.issueId)
         .then(res => {
           this.initIssueDetails(res.data)
         })
@@ -121,8 +122,6 @@ export default {
             message: this.$t('Issue.RemovedIssue'),
             type: 'warning'
           })
-        })
-        .then(() => {
           this.isLoading = false
         })
     },
@@ -189,14 +188,13 @@ export default {
         this.isLoading = false
       })
     },
-    handleUpdated() {
-      this.fetchIssue()
+    async handleUpdated() {
+      await this.fetchIssue()
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
-      setTimeout(() => {
-        this.$router.push({ name: 'issue-list' })
-      }, 1000)
+      this.isLoading = false
+      this.$router.push({ name: 'issue-list' })
     },
     handleCancel() {
       this.$router.push({ name: 'issue-list' })
@@ -236,15 +234,15 @@ export default {
           })
         }, Promise.resolve([]))
         .then(() => {
-          this.handleUpdated()
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
+          this.handleUpdated()
         })
-        .catch(err => console.error(err))
-        .then(() => {
+        .catch(err => {
+          console.error(err)
           this.isLoading = false
         })
     },
@@ -253,15 +251,15 @@ export default {
       const { issueId } = this
       updateIssue(issueId, sendForm)
         .then(() => {
-          this.handleUpdated()
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
+          this.handleUpdated()
         })
-        .catch(err => console.error(err))
-        .then(() => {
+        .catch(err => {
+          console.error(err)
           this.isLoading = false
         })
     },
@@ -272,6 +270,7 @@ export default {
     },
     isFormDataChanged() {
       let isChanged
+      if (Object.keys(this.originForm).length === 0) return false
       for (const key in this.form) {
         if (this.originForm[key] !== this.form[key]) {
           isChanged = true
