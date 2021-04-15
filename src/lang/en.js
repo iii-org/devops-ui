@@ -533,6 +533,10 @@ export default {
     allCategories: 'All',
     batchClose: 'Batch close',
     confirmBatchClose: 'Confirm closing {0} issues in batch?',
-    batchMove: 'Batch move'
+    batchMove: 'Batch move',
+    batchMoveDialogTitle: 'Batch move version',
+    futureVersion: 'Future version',
+    selectMoveToVersion: 'Please select version',
+    batchMoveDialogHint: 'Will batch move {0} issues'
   }
 }

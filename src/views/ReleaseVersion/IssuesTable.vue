@@ -16,6 +16,9 @@ export default {
       searchKey: '',
       showOpen: true,
       showClosed: false,
+      showBatchMoveDialog: false,
+      batchMoveToVersion: null,
+      fullScreenLoading: false,
       CLOSED_STATUS: 'Closed',
       CLOSED_STATUS_ID: 6
     }
@@ -121,8 +124,7 @@ export default {
       this.closedIssueCount++
       this.listLoading = false
     },
-    async batchClose() {
-      this.listLoading = true
+    getSelectedIndexes() {
       const indexes = []
       for (const i in this.multipleSelection) {
         const arr = this.multipleSelection[i]
@@ -130,14 +132,30 @@ export default {
           indexes.push(i * this.listQuery.limit + idx)
         }
       }
+      return indexes
+    },
+    async batchClose() {
+      this.listLoading = true
+      const indexes = this.getSelectedIndexes()
       for (const index of indexes) {
         await updateIssue(this.listData[index].id, { status_id: this.CLOSED_STATUS_ID })
       }
-      this.$parent.init()
+      this.multipleSelection = []
+      await this.$parent.init()
       this.listLoading = false
     },
     async batchMove() {
-
+      this.fullScreenLoading = true
+      const indexes = this.getSelectedIndexes()
+      for (const index of indexes) {
+        await updateIssue(
+          this.listData[index].id, { fixed_version_id: this.batchMoveToVersion }
+        )
+      }
+      this.multipleSelection = []
+      await this.$parent.init()
+      this.fullScreenLoading = false
+      this.showBatchMoveDialog = false
     }
   }
 }
@@ -192,7 +210,7 @@ export default {
           <el-button
             class="valign-middle"
             :disabled="selectedRowCount === 0"
-            @click="batchMove"
+            @click="showBatchMoveDialog = true;"
           >
             {{ $t('Release.batchMove') }}
           </el-button>
@@ -263,6 +281,40 @@ export default {
         @pagination="handlePagination"
       />
     </p>
+    <el-dialog :visible.sync="showBatchMoveDialog" :title="$t('Release.batchMoveDialogTitle')">
+      <el-form>
+        <el-form-item :label="$t('Release.futureVersion')">
+          <el-select
+            v-model="batchMoveToVersion"
+            :placeholder="$t('Release.selectMoveToVersion')"
+            filterable
+          >
+            <el-option
+              v-for="item in $parent.projectVersionOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          {{ $t('Release.batchMoveDialogHint', [selectedRowCount]) }}
+        </el-form-item>
+        <el-button
+          v-loading.fullscreen.lock="fullScreenLoading"
+          type="primary"
+          :disabled="!batchMoveToVersion"
+          @click="batchMove"
+        >{{ $t('general.Confirm') }}
+        </el-button>
+        <el-button
+          type="info"
+          @click="showBatchMoveDialog = false"
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 

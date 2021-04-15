@@ -523,6 +523,10 @@ export default {
     allCategories: '所有種類',
     batchClose: '批次關閉',
     confirmBatchClose: '確定批次關閉 {0} 個議題？',
-    batchMove: '批次搬移'
+    batchMove: '批次搬移',
+    batchMoveDialogTitle: '批次版本搬移',
+    futureVersion: '未來版本',
+    selectMoveToVersion: '請選擇版本',
+    batchMoveDialogHint: '將批次搬移 {0} 個議題'
   }
 }
