@@ -152,7 +152,10 @@ export default {
         })
     },
     getGitCommitLogData() {
-      return getGitCommitLog(commitLimit)
+      return getGitCommitLog({
+        the_last_hours: 24,
+        show_commit_rows: commitLimit
+      })
         .then((res) => {
           res.data.forEach((item, index) => {
             item['id'] = index

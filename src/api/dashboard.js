@@ -32,7 +32,7 @@ export const getProjectOverview = () => request.get('/dashboard/project_overview
 export const getProjectMembers = () => request.get('/dashboard/project_members_count')
 export const getProjectMembersDetail = () => request.get('/dashboard/project_members_detail')
 export const getProjectMembersByProjectID = (id) => request.get('/dashboard/' + id + '/project_members')
-export const getGitCommitLog = (limit) => request.get('/dashboard/the_last_hours_commits?the_last_hours=24&show_commit_rows=' + limit)
+export const getGitCommitLog = (params) => request.get('/dashboard/the_last_hours_commits', { params: params })
 export const getIssueRank = () => request.get('/dashboard/issue_rank')
 export const getPassingRate = () => request.get('/dashboard/passing_rate')
 export const getPassingRateDetail = () => request.get('/dashboard/passing_rate_detail')
