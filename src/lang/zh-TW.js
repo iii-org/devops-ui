@@ -528,6 +528,7 @@ export default {
     batchMoveDialogTitle: '批次版本搬移',
     futureVersion: '未來版本',
     selectMoveToVersion: '請選擇版本',
-    batchMoveDialogHint: '將批次搬移 {0} 個議題'
+    batchMoveDialogHint: '將批次搬移 {0} 個議題',
+    releaseDone: '版本 {0} 包版成功。'
   }
 }

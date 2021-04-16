@@ -538,6 +538,7 @@ export default {
     batchMoveDialogTitle: 'Batch move version',
     futureVersion: 'Future version',
     selectMoveToVersion: 'Please select version',
-    batchMoveDialogHint: 'Will batch move {0} issues'
+    batchMoveDialogHint: 'Will batch move {0} issues',
+    releaseDone: 'Done releasing version {0}.'
   }
 }

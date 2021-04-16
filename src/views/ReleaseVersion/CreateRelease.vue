@@ -2,6 +2,7 @@
 import IssueListDialog from '@/views/ReleaseVersion/IssueListDialog'
 import { mapGetters } from 'vuex'
 import { getBranchesByProject } from '@/api/branches'
+import { createRelease } from '@/api/release'
 
 export default {
   name: 'CreateRelease',
@@ -19,7 +20,8 @@ export default {
       issueDialogVisible: false,
       releaseVersions: [],
       releaseVersionOptions: [],
-      branches: []
+      branches: [],
+      fullscreenLoading: false
     }
   },
   computed: {
@@ -75,19 +77,37 @@ export default {
           })
         }
       }
-      if (this.releaseVersionOptions.length === 1) {
-        this.commitForm.mainVersion = this.releaseVersionOptions[0].label
-      }
     },
     async release() {
+      if (!this.commitForm.mainVersion) {
+        this.$message.error(this.$t('Release.selectMainVersion'))
+        return
+      }
+      this.fullscreenLoading = true
       const params = {
         main: this.commitForm.mainVersion,
         versions: this.releaseVersions,
         branch: this.commitForm.branch,
         description: this.commitForm.note
       }
-      console.log(params)
-      // await createRelease(this.selectedProjectId, params)
+      try {
+        await createRelease(this.selectedProjectId, params)
+      } catch (e) {
+        this.fullscreenLoading = false
+        return
+      }
+      let mainName
+      for (const opt of this.releaseVersionOptions) {
+        if (opt.value === this.commitForm.mainVersion) {
+          mainName = opt.label
+          break
+        }
+      }
+      this.$message({
+        message: this.$t('Release.releaseDone', [mainName]),
+        type: 'success'
+      })
+      this.fullscreenLoading = false
     }
   }
 }
@@ -160,7 +180,6 @@ export default {
         <el-form-item :label="$t('Git.Branch')">
           <el-select
             v-model="commitForm.branch"
-            :placeholder="$t('Release.selectMainVersion')"
             filterable
           >
             <el-option
@@ -181,7 +200,11 @@ export default {
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="success" @click="release">
+          <el-button
+            v-loading.fullscreen.lock="fullscreenLoading"
+            type="success"
+            @click="release"
+          >
             <span class="el-icon-goods" />
             {{ $t('Release.startRelease') }}
           </el-button>
