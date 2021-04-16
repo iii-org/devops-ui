@@ -288,11 +288,10 @@ export default {
     Responded: 'Responded',
     Finished: 'Finished',
     Unknown: 'Unknown',
-    DeleteIssue: 'Are you sure to Delete¡u{issueName}¡v?',
+    DeleteIssue: 'Are you sure to Delete {issueName}?',
     Files: 'Files',
     UploadFiles: 'Upload Files',
-    RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed."
-    Unknown: 'Unknown',
+    RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
     name: 'Name'
   },

@@ -224,6 +224,12 @@ export const asyncRoutes = [
         meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
       },
       {
+        path: '/release-version',
+        name: 'releaseVersion',
+        component: () => import('@/views/ReleaseVersion'),
+        meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
         path: 'project-settings',
         name: 'Project Settings',
         component: () => import('@/views/ProjectSettings/index'),
@@ -359,12 +365,6 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
-        path: '/release-version',
-        name: 'releaseVersion',
-        component: () => import('@/views/ReleaseVersion'),
-        meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },

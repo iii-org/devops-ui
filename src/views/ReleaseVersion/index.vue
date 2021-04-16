@@ -35,9 +35,6 @@ export default {
       this.loadData()
       this.listQuery.page = 1
       this.searchData = ''
-    },
-    releaseVersions() {
-      this.$refs.createRelease.updateReleaseVersions(this.releaseVersions)
     }
   },
   created() {
@@ -53,7 +50,7 @@ export default {
     },
     async loadData() {
       const res = await getProjectVersion(this.selectedProjectId)
-      this.projectVersions = res.data.versions
+      this.projectVersions = res.data.versions.filter(ver => ver.status !== 'closed')
       const options = []
       this.projectVersions.forEach(ver => {
         options.push({
@@ -119,8 +116,16 @@ export default {
       this.$refs.issueList.setData(this.allIssues)
     },
     async showCreateRelease() {
-      this.$refs.createRelease.setIssues(this.allIssues)
+      const $createRelease = this.$refs.createRelease
+      $createRelease.setIssues(this.allIssues)
+      $createRelease.updateReleaseVersions(this.releaseVersions)
       this.state = STATE_CREATE_RELEASE
+    },
+    reset() {
+      this.$router.replace('')
+      this.state = STATE_INIT
+      this.releaseVersions = []
+      this.init()
     }
   }
 }

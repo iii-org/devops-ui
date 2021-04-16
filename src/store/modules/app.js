@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { getLanguage } from '@/lang/index'
+import { getLanguage } from '@/lang'
 import { getRoleList } from '@/api/user'
 
 const state = {
@@ -55,7 +55,6 @@ const actions = {
   async setRoleList({ commit }) {
     const result = await getRoleList()
       .then((res) => {
-        console.log('ya')
         return Promise.resolve(res.data.role_list)
       }).catch((e) => {
         return Promise.reject(e)

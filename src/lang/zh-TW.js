@@ -290,8 +290,7 @@ export default {
     DeleteIssue: '確認要刪除「{issueName}」嗎?',
     Files: '附件',
     UploadFiles: '附件上傳',
-    RemovedIssue: '議題已被刪除或找不到該議題'
-    Unknown: '狀態不明',
+    RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
     name: '議題名稱'
   },

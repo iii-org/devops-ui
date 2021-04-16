@@ -67,6 +67,7 @@ export default {
       com.visible = true
     },
     updateReleaseVersions(versions) {
+      this.commitForm.mainVersion = null
       this.releaseVersions = versions
       this.releaseVersionOptions = []
       for (const ver of this.$parent.projectVersions) {
@@ -76,6 +77,9 @@ export default {
             label: ver.name
           })
         }
+      }
+      if (this.releaseVersions.length === 1) {
+        this.commitForm.mainVersion = this.releaseVersions[0]
       }
     },
     async release() {
@@ -108,6 +112,7 @@ export default {
         type: 'success'
       })
       this.fullscreenLoading = false
+      this.$parent.reset()
     }
   }
 }
