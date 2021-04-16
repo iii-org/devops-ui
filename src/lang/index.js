@@ -5,8 +5,10 @@ import elementEnLocale from 'element-ui/lib/locale/lang/en' // element-ui lang
 import elementZhTWLocale from 'element-ui/lib/locale/lang/zh-TW' // element-ui lang
 import enLocale from './en'
 import zhTWLocale from './zh-TW'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueI18n)
+Vue.use(VueClipboard)
 // console.log(elementZhLocale)
 const messages = {
   'en': {

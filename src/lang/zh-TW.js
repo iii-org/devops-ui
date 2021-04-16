@@ -23,6 +23,7 @@ export default {
     pipelines: 'Pipeline',
     devEnvironment: '實證環境',
     kubernetesResources: 'Kubernetes 資源',
+    releaseVersion: '釋出版本',
 
     autoTesting: '測試紀錄',
     postman: 'API 測試(Postman)',
@@ -128,7 +129,10 @@ export default {
     Detail: '細節',
     Exit: '退出',
     Stop: '停止',
-    Rerun: '重新運行'
+    Rerun: '重新運行',
+    copied: '已複製。',
+    caution: '注意！',
+    ok: '確定'
   },
   Notify: {
     Updated: '已更新',
@@ -287,6 +291,9 @@ export default {
     Files: '附件',
     UploadFiles: '附件上傳',
     RemovedIssue: '議題已被刪除或找不到該議題'
+    Unknown: '狀態不明',
+    id: '編號',
+    name: '議題名稱'
   },
   Wiki: {
     AddWiki: '新增Wiki',
@@ -512,5 +519,28 @@ export default {
     info: '資訊',
     duration: '消耗時間',
     fullLog: '報表'
+  },
+  Release: {
+    internalVersions: '內部管控版號',
+    selectVersion: '請選擇版號',
+    writeNote: '撰寫Release note',
+    openIssueHint: '注意: 包版前請確認所有議題單是否已完結關閉，以利後續之包版作業',
+    openIssueAlert: '目前版本尚有未解之議單，請協助處理後再進行包版作業！',
+    issueCount: '本版本共完成 ',
+    issueCountLink: '{0} 議題',
+    releaseNote: '[Release Note]',
+    releaseVersionName: '包版版號',
+    selectMainVersion: '請選擇主版本',
+    startRelease: '開始包版',
+    copyIssues: '複製選中議題名稱到剪貼簿',
+    allCategories: '所有種類',
+    batchClose: '批次關閉',
+    confirmBatchClose: '確定批次關閉 {0} 個議題？',
+    batchMove: '批次搬移',
+    batchMoveDialogTitle: '批次版本搬移',
+    futureVersion: '未來版本',
+    selectMoveToVersion: '請選擇版本',
+    batchMoveDialogHint: '將批次搬移 {0} 個議題',
+    releaseDone: '版本 {0} 包版成功。'
   }
 }

@@ -23,6 +23,7 @@ export default {
     pipelines: 'Pipelines',
     devEnvironment: 'Deployed Environments',
     kubernetesResources: 'Kubernetes Resources',
+    releaseVersion: 'Release Version',
 
     autoTesting: 'Auto Testing',
     postman: 'Postman',
@@ -129,7 +130,10 @@ export default {
     Detail: 'Detail',
     Exit: 'Exit',
     Stop: 'Stop',
-    Rerun: 'Rerun'
+    Rerun: 'Rerun',
+    copied: 'Copied.',
+    caution: 'Caution!',
+    ok: 'OK'
   },
   Notify: {
     Updated: 'update successful',
@@ -284,10 +288,13 @@ export default {
     Responded: 'Responded',
     Finished: 'Finished',
     Unknown: 'Unknown',
-    DeleteIssue: 'Are you sure to Delete„Äå{issueName}„Äç?',
+    DeleteIssue: 'Are you sure to Delete°u{issueName}°v?',
     Files: 'Files',
     UploadFiles: 'Upload Files',
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed."
+    Unknown: 'Unknown',
+    id: 'ID',
+    name: 'Name'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
@@ -522,5 +529,28 @@ export default {
     info: 'Info',
     duration: 'Duration',
     fullLog: 'Report'
+  },
+  Release: {
+    internalVersions: 'Internal versions',
+    selectVersion: 'Select Versions',
+    writeNote: 'Write Release Note',
+    openIssueHint: 'Note: Please make sure all issues are closed.',
+    openIssueAlert: 'There are unclosed issues in selected versions, please close it first.',
+    issueCount: 'In this version: ',
+    issueCountLink: '{0} issues',
+    releaseNote: '[Release Note]',
+    releaseVersionName: 'Version name',
+    selectMainVersion: 'Please main version',
+    startRelease: 'Start releasing',
+    copyIssues: 'Copy issue names to clipboard',
+    allCategories: 'All',
+    batchClose: 'Batch close',
+    confirmBatchClose: 'Confirm closing {0} issues in batch?',
+    batchMove: 'Batch move',
+    batchMoveDialogTitle: 'Batch move version',
+    futureVersion: 'Future version',
+    selectMoveToVersion: 'Please select version',
+    batchMoveDialogHint: 'Will batch move {0} issues',
+    releaseDone: 'Done releasing version {0}.'
   }
 }
