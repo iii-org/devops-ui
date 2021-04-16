@@ -22,7 +22,7 @@ import {
   getUnclosedIssues
 } from '@/api/dashboard'
 import MixinBasicTable from '@/components/MixinBasicTable'
-import AdminIssueRankUnclosedIssues from './widget/admin_issue-rank-unclosed-issues'
+import AdminIssueRankUnclosedIssues from './widget/AdminIssueRankUnclosedIssues'
 
 export default {
   name: 'AdminProjectMember',

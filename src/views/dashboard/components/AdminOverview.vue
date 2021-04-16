@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import CircleDashboard from '@/views/dashboard/components/circle_dashboard'
-import AdminProjectList from '@/views/dashboard/components/admin_project-list'
+import CircleDashboard from './widget/CircleDashboard'
+import AdminProjectList from './AdminProjectList'
 import { getProjectListDetail } from '@/api/dashboard'
-import NoData from '@/views/dashboard/components/widget/no_data'
+import NoData from './widget/NoData'
 
 export default {
   name: 'AdminOverview',
@@ -95,16 +95,6 @@ export default {
   > > > .circle-info {
     border-color: $info-4;
     color: $info-4;
-  }
-}
-
-.timeline-item-card {
-  > > > .el-card__body {
-    padding: 10px;
-  }
-
-  .author {
-    margin-bottom: 0;
   }
 }
 

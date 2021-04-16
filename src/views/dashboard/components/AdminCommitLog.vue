@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import NoData from '@/views/dashboard/components/widget/no_data'
+import NoData from './widget/NoData'
 export default {
   name: 'AdminCommitLog',
   components: { NoData },

@@ -78,12 +78,12 @@ import {
   getProjectOverview
 } from '@/api/dashboard'
 import { UTCtoLocalTime } from '@/filters'
-import AdminProjectList from '@/views/dashboard/components/admin_project-list'
-import AdminProjectMember from '../components/admin_project-member'
-import AdminIssueRank from '../components/admin_issue-rank'
-import AdminPassingRate from '../components/admin_passing-rate'
-import AdminOverview from '@/views/dashboard/components/admin_overview'
-import AdminCommitLog from '@/views/dashboard/components/admin_commit-log'
+import AdminProjectList from '../components/AdminProjectList'
+import AdminProjectMember from '../components/AdminProjectMember'
+import AdminIssueRank from '../components/AdminIssueRank'
+import AdminPassingRate from '../components/AdminPassingRate'
+import AdminOverview from '../components/AdminOverview'
+import AdminCommitLog from '../components/AdminCommitLog'
 
 const overview = {
   projects: { item: 'Projects', class: 'primary', database: '' },
@@ -200,7 +200,7 @@ export default {
 .overview {
   height: 90%;
 
-  .el-row {
+  >>>.el-row {
     height: 100%;
 
     .el-col {

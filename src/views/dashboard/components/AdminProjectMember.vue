@@ -74,8 +74,8 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
 import MixinBasicTable from '@/components/MixinBasicTable'
-import AdminMemberTable from '@/views/dashboard/components/widget/admin_member-table'
-import NoData from '@/views/dashboard/components/widget/no_data'
+import AdminMemberTable from './widget/AdminMemberTable'
+import NoData from './widget/NoData'
 
 require('echarts/theme/macarons') // echarts theme
 
@@ -121,7 +121,7 @@ export default {
         },
         series: [
           {
-            name: '專案成員',
+            name: this.$t('Dashboard.ADMIN.ProjectMembers.NAME'),
             type: 'pie',
             radius: '80%',
             data: this.chartData,
