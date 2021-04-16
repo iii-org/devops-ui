@@ -7,10 +7,10 @@
         <el-table-column prop="project_count" :label="$t('Dashboard.ADMIN.IssueRank.project_count')" />
       </el-table>
     </el-col>
-    <el-dialog :visible.sync="unclosedIssuesDialog" width="80%" :title="$t('Dashboard.ADMIN.IssueRank.DETAIL', [issueRankDetail['user_name']])" @close="closeHandler">
+    <el-dialog :visible.sync="unclosedIssuesDialog" :title="$t('Dashboard.ADMIN.IssueRank.DETAIL', [issueRankDetail['user_name']])" @close="closeHandler">
       <admin-issue-rank-unclosed-issues :detail="issueRankDetail" :user="listData" @update-detail="updateUnclosedIssuesDetail" />
     </el-dialog>
-    <!--    <el-dialog :visible.sync="involvedProjectsDialog" width="80%" :title="issueRankDetail['user_name'] +' - 參與專案'" @close="closeHandler">-->
+    <!--    <el-dialog :visible.sync="involvedProjectsDialog" :title="issueRankDetail['user_name'] +' - 參與專案'" @close="closeHandler">-->
     <!--      <admin-issue-rank-involved-projects :detail="issueRankDetail" />-->
     <!--    </el-dialog>-->
   </el-col>

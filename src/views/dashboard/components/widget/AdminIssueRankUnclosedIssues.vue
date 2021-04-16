@@ -1,6 +1,6 @@
 <template>
   <el-row v-loading="listLoading">
-    <el-row>
+    <el-row type="flex" align="middle">
       <el-col :span="12">
         <el-select v-model="searchUser" value-key="user_id">
           <el-option v-for="item in user" :key="item.user_id" :label="item.user_name" :value="item.user_id" />
@@ -17,36 +17,38 @@
         {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
       </el-col>
     </el-row>
-    <el-table v-if="listData.length>0" :data="pagedData">
-      <el-table-column sortable
-                       prop="project_name"
-                       :label="$t('Dashboard.ADMIN.IssueRank.project_name')"
+    <el-card>
+      <el-table v-if="listData.length>0" :data="pagedData">
+        <el-table-column sortable
+                         prop="project_name"
+                         :label="$t('Dashboard.ADMIN.IssueRank.project_name')"
+        />
+        <el-table-column sortable
+                         prop="issue_name"
+                         :label="$t('Dashboard.ADMIN.IssueRank.issue_name')"
+        />
+        <el-table-column sortable
+                         prop="issue_type"
+                         :label="$t('Dashboard.ADMIN.IssueRank.issue_type')"
+        />
+        <el-table-column sortable
+                         prop="status_id"
+                         :label="$t('Dashboard.ADMIN.IssueRank.status_id')"
+        />
+        <el-table-column sortable
+                         prop="start_date"
+                         :label="$t('Dashboard.ADMIN.IssueRank.start_date')"
+        />
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
       />
-      <el-table-column sortable
-                       prop="issue_name"
-                       :label="$t('Dashboard.ADMIN.IssueRank.issue_name')"
-      />
-      <el-table-column sortable
-                       prop="issue_type"
-                       :label="$t('Dashboard.ADMIN.IssueRank.issue_type')"
-      />
-      <el-table-column sortable
-                       prop="status_id"
-                       :label="$t('Dashboard.ADMIN.IssueRank.status_id')"
-      />
-      <el-table-column sortable
-                       prop="start_date"
-                       :label="$t('Dashboard.ADMIN.IssueRank.start_date')"
-      />
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
+    </el-card>
   </el-row>
 </template>
 

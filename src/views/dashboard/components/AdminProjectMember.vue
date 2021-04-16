@@ -3,7 +3,7 @@
     <v-chart v-if="chartData.length>0" class="chart" :option="projectMembersOptions" autoresize theme="macarons" @click="onClickChart" />
     <no-data v-else />
     <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectMembers.NAME')" @close="closeHandler">
-      <el-row>
+      <el-row type="flex" align="middle">
         <el-col :span="12">
           <el-input
             v-model="keyword"
@@ -17,51 +17,53 @@
           {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
         </el-col>
       </el-row>
-      <el-table v-if="listData.length>0" ref="tableData"
-                :data="pagedData"
-                row-key="project_id"
-                @row-click="rowClicked"
-                @expand-change="loadMembers"
-      >
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.children" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')"
-          prop="project_name"
-          sortable
+      <el-card>
+        <el-table v-if="listData.length>0" ref="tableData"
+                  :data="pagedData"
+                  row-key="project_id"
+                  @row-click="rowClicked"
+                  @expand-change="loadMembers"
+        >
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.children" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')"
+            prop="project_name"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.ProjectMembers.pm_user_name')"
+            prop="pm_user_name"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')"
+            prop="member_count"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')"
+            prop="start_date"
+            sortable
+          />
+          <el-table-column
+            prop="end_date"
+            :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')"
+            sortable
+          />
+        </el-table>
+        <pagination
+          :total="filteredData.length"
+          :page="listQuery.page"
+          :limit="listQuery.limit"
+          :page-sizes="[listQuery.limit]"
+          :layout="'total, prev, pager, next'"
+          @pagination="onPagination"
         />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.ProjectMembers.pm_user_name')"
-          prop="pm_user_name"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')"
-          prop="member_count"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')"
-          prop="start_date"
-          sortable
-        />
-        <el-table-column
-          prop="end_date"
-          :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')"
-          sortable
-        />
-      </el-table>
-      <pagination
-        :total="filteredData.length"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
-        @pagination="onPagination"
-      />
+      </el-card>
     </el-dialog>
   </el-col>
 </template>

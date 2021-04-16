@@ -26,8 +26,8 @@ export default {
 <style lang="scss" scoped>
 .circleBase {
   margin: auto;
-  width: 11vw;
-  height: 11vw;
+  width: 10.5vw;
+  height: 10.5vw;
   border-radius: 50%;
   border: #000000 1.125vw solid;
   position: relative;

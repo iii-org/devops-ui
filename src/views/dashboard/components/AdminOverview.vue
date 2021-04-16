@@ -18,7 +18,7 @@
         <el-col :span="12">{{ item.item }}</el-col>
       </el-row>
     </div>
-    <el-dialog width="80%" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
+    <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
       <admin-project-list ref="projectList" :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>

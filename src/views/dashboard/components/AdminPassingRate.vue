@@ -3,7 +3,7 @@
     <v-chart v-if="chartData.length>0" class="chart" :option="passingRateOptions" autoresize theme="macarons" @click="onClickChart" />
     <no-data v-else />
     <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.PassingRate.DETAIL')" @close="closeHandler">
-      <el-row>
+      <el-row type="flex" align="middle">
         <el-col :span="12">
           <el-input
             v-model="keyword"
@@ -17,56 +17,58 @@
           {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
         </el-col>
       </el-row>
-      <el-table v-if="listData.length>0" ref="tableData"
-                :data="pagedData"
-                row-key="project_id"
-                cell-class-name="align-center"
-                header-cell-class-name="align-center"
-                @row-click="rowClicked"
-      >
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.PassingRate.project_name')"
-          prop="project_name"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.PassingRate.count')"
-          prop="count"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.PassingRate.success')"
-          prop="success"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.PassingRate.fail')"
-          prop="fail"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.PassingRate.total')"
-          prop="total"
-          sortable
-        />
-        <el-table-column
-          :label="$t('Dashboard.ADMIN.PassingRate.run_at')"
-          prop="run_at"
-          sortable
+      <el-card v-loading="listLoading">
+        <el-table ref="tableData"
+                  :data="pagedData"
+                  row-key="project_id"
+                  cell-class-name="align-center"
+                  header-cell-class-name="align-center"
+                  @row-click="rowClicked"
         >
-          <template slot-scope="scope">
-            {{ formatTime(scope.row.run_at) }}
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-        :total="filteredData.length"
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
-        @pagination="onPagination"
-      />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.PassingRate.project_name')"
+            prop="project_name"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.PassingRate.count')"
+            prop="count"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.PassingRate.success')"
+            prop="success"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.PassingRate.fail')"
+            prop="fail"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.PassingRate.total')"
+            prop="total"
+            sortable
+          />
+          <el-table-column
+            :label="$t('Dashboard.ADMIN.PassingRate.run_at')"
+            prop="run_at"
+            sortable
+          >
+            <template slot-scope="scope">
+              {{ formatTime(scope.row.run_at) }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination
+          :total="filteredData.length"
+          :page="listQuery.page"
+          :limit="listQuery.limit"
+          :page-sizes="[listQuery.limit]"
+          :layout="'total, prev, pager, next'"
+          @pagination="onPagination"
+        />
+      </el-card>
     </el-dialog>
   </el-col>
 </template>

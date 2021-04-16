@@ -13,7 +13,13 @@
         <el-card>
           <div slot="header" class="pointer" @click="$refs['projectMember'].detailDialog=true">
             <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
-              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
+                   style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+                   preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
+              ><path
+                d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"
+                fill="#626262"
+              /></svg>
             </span>
           </div>
           <admin-project-member ref="projectMember" :data="getProjectMembersData" />
@@ -42,7 +48,13 @@
         <el-card>
           <div slot="header" class="pointer" @click="$refs['passingRate'].detailDialog=true">
             <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
-              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
+                   style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+                   preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
+              ><path
+                d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"
+                fill="#626262"
+              /></svg>
             </span>
           </div>
           <admin-passing-rate ref="passingRate" :data="getPassingRateData" />
@@ -55,7 +67,15 @@
           <div slot="header" class="pointer" @click="$refs['projectList'].detailDialog=true">
             <el-row type="flex" align="center" class="no-margin">
               <el-col :span="12" class="font-weight-bold">{{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
-                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
+                     style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+                     preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"
+                    fill="#626262"
+                  />
+                </svg>
               </el-col>
               <el-col :span="12" class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [getSyncDate('projectList')]) }}
               </el-col>
@@ -139,7 +159,12 @@ export default {
         .then((res) => {
           const result = []
           Object.keys(res.data[0]).forEach((item) => {
-            result.push({ item: overview[item]['item'], count: res.data[0][item], class: overview[item]['class'], database: overview[item]['database'] })
+            result.push({
+              item: overview[item]['item'],
+              count: res.data[0][item],
+              class: overview[item]['class'],
+              database: overview[item]['database']
+            })
           })
           return Promise.resolve(result)
         })
@@ -173,7 +198,10 @@ export default {
     getPassingRateData() {
       return getPassingRate()
         .then((res) => {
-          const result = res.data.map((item) => ({ name: item['project_name'], value: [item['count'], item['passing_rate'] * 100, item['total']] }))
+          const result = res.data.map((item) => ({
+            name: item['project_name'],
+            value: [item['count'], item['passing_rate'] * 100, item['total']]
+          }))
           return Promise.resolve(result)
         })
     },
@@ -203,7 +231,7 @@ export default {
 .overview {
   height: 90%;
 
-  >>>.el-row {
+  > > > .el-row {
     height: 100%;
 
     .el-col {
@@ -211,6 +239,15 @@ export default {
     }
   }
 
+}
+
+> > > .el-dialog {
+  width: 80%;
+
+  &__header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #EBEEF5;
+  }
 }
 
 > > > .el-row, .el-row .el-col {
@@ -244,7 +281,7 @@ export default {
   margin: 0;
 }
 
-.pointer{
+.pointer {
   cursor: pointer;
 }
 

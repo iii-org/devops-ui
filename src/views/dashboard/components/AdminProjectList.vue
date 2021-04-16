@@ -1,6 +1,6 @@
 <template>
   <el-row v-loading="listLoading">
-    <el-row v-if="inDialog">
+    <el-row v-if="inDialog" type="flex" align="middle">
       <el-col :span="12">
         <el-select v-model="searchStatus" value-key="user_id">
           <el-option label="全部" value="" />
@@ -20,30 +20,32 @@
         {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
       </el-col>
     </el-row>
-    <el-table :data="pagedData" :row-class-name="tableRowClassName" cell-class-name="align-center"
-              header-cell-class-name="align-center"
-              @sort-change="onSortChange"
-    >
-      <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
-      <el-table-column sortable prop="pm_user_name" :label="$t('Dashboard.ADMIN.ProjectList.pm_user_name')" />
-      <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')" />
-      <el-table-column sortable prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
-      <el-table-column sortable prop="unclosed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.unclosed_issue_count')" />
-      <el-table-column sortable prop="closed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.closed_issue_count')" />
-      <el-table-column sortable prop="member_count" :label="$t('Dashboard.ADMIN.ProjectList.member_count')" />
-      <el-table-column sortable prop="expired_day" :label="$t('Dashboard.ADMIN.ProjectList.expired_day')" />
-      <el-table-column sortable prop="end_date" :label="$t('Dashboard.ADMIN.ProjectList.end_date')" />
-    </el-table>
-    <pagination
-      v-if="inDialog"
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <el-dialog v-if="!inDialog" width="80%" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
+    <component :is="showShadow">
+      <el-table :data="pagedData" :row-class-name="tableRowClassName" cell-class-name="align-center"
+                header-cell-class-name="align-center"
+                @sort-change="onSortChange"
+      >
+        <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
+        <el-table-column sortable prop="pm_user_name" :label="$t('Dashboard.ADMIN.ProjectList.pm_user_name')" />
+        <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')" />
+        <el-table-column sortable prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
+        <el-table-column sortable prop="unclosed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.unclosed_issue_count')" />
+        <el-table-column sortable prop="closed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.closed_issue_count')" />
+        <el-table-column sortable prop="member_count" :label="$t('Dashboard.ADMIN.ProjectList.member_count')" />
+        <el-table-column sortable prop="expired_day" :label="$t('Dashboard.ADMIN.ProjectList.expired_day')" />
+        <el-table-column sortable prop="end_date" :label="$t('Dashboard.ADMIN.ProjectList.end_date')" />
+      </el-table>
+      <pagination
+        v-if="inDialog"
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+    </component>
+    <el-dialog v-if="!inDialog" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
       <admin-project-list :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>
@@ -77,6 +79,11 @@ export default {
       searchKeys: ['project_name', 'pm_user_name'],
       searchStatus: '',
       reload: 0
+    }
+  },
+  computed: {
+    showShadow() {
+      return (this.inDialog) ? 'el-card' : 'div'
     }
   },
   watch: {
