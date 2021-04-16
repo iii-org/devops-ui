@@ -132,7 +132,9 @@ export default {
     Rerun: '重新運行',
     copied: '已複製。',
     caution: '注意！',
-    ok: '確定'
+    ok: '確定',
+    project_name: '專案名稱',
+    pm_user_name: '專案經理'
   },
   Notify: {
     Updated: '已更新',
@@ -320,7 +322,64 @@ export default {
     TestStatus: '測試狀態',
     Software: '軟體',
     Brief: '摘要',
-    Report: '報表'
+    Report: '報表',
+    ADMIN: {
+      sync_date: '統計日期：{0}',
+      Overview: {
+        NAME: '總覽',
+        Projects: '專案數',
+        Overdue: '已超時',
+        'Not Started': '未開始'
+      },
+      ProjectMembers: {
+        NAME: '專案成員',
+        project_name: '@:general.project_name',
+        pm_user_name: '@:general.pm_user_name',
+        member_count: '參與人數',
+        start_date: '專案起始日',
+        end_date: '專案結束日'
+      },
+      CommitLog: {
+        NAME: 'Commit紀錄'
+      },
+      IssueRank: {
+        NAME: '議題排行',
+        DETAIL: '{0} - 待解決議題',
+        user_name: '專案成員',
+        unclosed_count: '尚待解決',
+        project_count: '專案參與數',
+        project_name: '@:general.project_name',
+        issue_name: '議題名稱',
+        issue_type: '議題類別',
+        status_id: '狀態',
+        start_date: '開立時間'
+      },
+      PassingRate: {
+        NAME: '通過比率',
+        DETAIL: '專案測試品質',
+        project_name: '@:general.project_name',
+        count: '測試個案數',
+        success: '成功次數',
+        fail: '失敗次數',
+        total: '累積測試次數',
+        run_at: '最近測試時間'
+      },
+      ProjectList: {
+        NAME: '專案清單',
+        user_name: '專案成員',
+        unclosed_count: '尚待解決',
+        project_count: '參與專案數',
+        project_name: '@:general.project_name',
+        pm_user_name: '@:general.pm_user_name',
+        project_status: '執行狀態',
+        complete_percent: '完成百分比',
+        unclosed_issue_count: '未解決問題數',
+        closed_issue_count: '已解決問題數',
+        member_count: '參與人數',
+        expired_day: '到期天數',
+        end_date: '到期日'
+      }
+    }
   },
   Member: {
     Manage: '專案成員管理',

@@ -14,30 +14,29 @@
         />
       </el-col>
       <el-col v-if="listData.length>0" :span="12" class="text-right">
-        統計日期：
-        {{ listData[0].sync_date }}
+        {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
       </el-col>
     </el-row>
     <el-table v-if="listData.length>0" :data="pagedData">
       <el-table-column sortable
                        prop="project_name"
-                       label="專案名稱"
+                       :label="$t('Dashboard.ADMIN.IssueRank.project_name')"
       />
       <el-table-column sortable
                        prop="issue_name"
-                       label="議題名稱"
+                       :label="$t('Dashboard.ADMIN.IssueRank.issue_name')"
       />
       <el-table-column sortable
                        prop="issue_type"
-                       label="議題類別"
+                       :label="$t('Dashboard.ADMIN.IssueRank.issue_type')"
       />
       <el-table-column sortable
                        prop="status_id"
-                       label="狀態"
+                       :label="$t('Dashboard.ADMIN.IssueRank.status_id')"
       />
       <el-table-column sortable
                        prop="start_date"
-                       label="開立時間"
+                       :label="$t('Dashboard.ADMIN.IssueRank.start_date')"
       />
     </el-table>
     <pagination

@@ -2,7 +2,7 @@
   <el-col v-loading="loading">
     <v-chart v-if="chartData.length>0" class="chart" :option="passingRateOptions" autoresize theme="macarons" @click="onClickChart" />
     <no-data v-else />
-    <el-dialog :visible.sync="detailDialog" title="專案測試品質" @close="closeHandler">
+    <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.PassingRate.DETAIL')" @close="closeHandler">
       <el-row>
         <el-col :span="12">
           <el-input
@@ -14,7 +14,7 @@
           />
         </el-col>
         <el-col v-if="listData.length>0" :span="12" class="text-right">
-          統計日期：{{ listData[0].sync_date }}
+          {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
         </el-col>
       </el-row>
       <el-table v-if="listData.length>0" ref="tableData"
@@ -25,32 +25,32 @@
                 @row-click="rowClicked"
       >
         <el-table-column
-          label="專案名稱"
+          :label="$t('Dashboard.ADMIN.PassingRate.project_name')"
           prop="project_name"
           sortable
         />
         <el-table-column
-          label="測試個案數"
+          :label="$t('Dashboard.ADMIN.PassingRate.count')"
           prop="count"
           sortable
         />
         <el-table-column
-          label="成功次數"
+          :label="$t('Dashboard.ADMIN.PassingRate.success')"
           prop="success"
           sortable
         />
         <el-table-column
-          label="失敗次數"
+          :label="$t('Dashboard.ADMIN.PassingRate.fail')"
           prop="fail"
           sortable
         />
         <el-table-column
-          label="累積測試次數"
+          :label="$t('Dashboard.ADMIN.PassingRate.total')"
           prop="total"
           sortable
         />
         <el-table-column
-          label="最近測試時間"
+          :label="$t('Dashboard.ADMIN.PassingRate.run_at')"
           prop="run_at"
           sortable
         >

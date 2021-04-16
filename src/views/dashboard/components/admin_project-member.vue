@@ -2,7 +2,7 @@
   <el-col v-loading="loading">
     <v-chart v-if="chartData.length>0" class="chart" :option="projectMembersOptions" autoresize theme="macarons" @click="onClickChart" />
     <no-data v-else />
-    <el-dialog :visible.sync="detailDialog" title="專案總覽" @close="closeHandler">
+    <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectMembers.NAME')" @close="closeHandler">
       <el-row>
         <el-col :span="12">
           <el-input
@@ -14,7 +14,7 @@
           />
         </el-col>
         <el-col v-if="listData.length>0" :span="12" class="text-right">
-          統計日期：{{ listData[0].sync_date }}
+          {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
         </el-col>
       </el-row>
       <el-table v-if="listData.length>0" ref="tableData"
@@ -29,28 +29,28 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="專案名稱"
+          :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')"
           prop="project_name"
           sortable
         />
         <el-table-column
-          label="專案經理"
+          :label="$t('Dashboard.ADMIN.ProjectMembers.pm_user_name')"
           prop="pm_user_name"
           sortable
         />
         <el-table-column
-          label="參與人數"
+          :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')"
           prop="member_count"
           sortable
         />
         <el-table-column
-          label="專案起始日"
+          :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')"
           prop="start_date"
           sortable
         />
         <el-table-column
           prop="end_date"
-          label="專案結束日"
+          :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')"
           sortable
         />
       </el-table>
@@ -176,7 +176,7 @@ export default {
     rowClicked(row) {
       this.$refs['tableData'].toggleRowExpansion(row)
     },
-    loadMembers(row, expandedRows) {
+    loadMembers(row) {
       const _this = this
       row.loading = true
       getProjectMembersByProjectID(row.project_id)

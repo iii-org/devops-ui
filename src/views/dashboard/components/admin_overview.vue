@@ -3,7 +3,7 @@
     <el-row class="circle hidden-sm-and-down" type="flex" justify="center" align="middle">
       <template v-if="listData.length>0">
         <el-col v-for="(item,idx) in listData" :key="idx" :xs="24" :sm="24" :md="8">
-          <CircleDashboard :count="item.count" :item="item.item" class="pointer" :class="'circle-'+item.class"
+          <CircleDashboard :count="item.count" :item="$t('Dashboard.ADMIN.Overview.'+item.item)" class="pointer" :class="'circle-'+item.class"
                            @click.native="onShowDetail(item.database)"
           />
         </el-col>
@@ -18,7 +18,7 @@
         <el-col :span="12">{{ item.item }}</el-col>
       </el-row>
     </div>
-    <el-dialog width="80%" :visible.sync="detailDialog" title="專案清單">
+    <el-dialog width="80%" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
       <admin-project-list ref="projectList" :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>

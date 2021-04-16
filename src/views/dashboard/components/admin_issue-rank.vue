@@ -2,12 +2,12 @@
   <el-col v-loading="listLoading">
     <el-col>
       <el-table :data="pagedData" cell-class-name="align-center" row-class-name="pointer" header-cell-class-name="align-center" @row-click="showUnclosedIssuesDetail">
-        <el-table-column prop="user_name" label="專案成員" />
-        <el-table-column prop="unclosed_count" label="尚待解決" />
-        <el-table-column prop="project_count" label="專案參與數" />
+        <el-table-column prop="user_name" :label="$t('Dashboard.ADMIN.IssueRank.user_name')" />
+        <el-table-column prop="unclosed_count" :label="$t('Dashboard.ADMIN.IssueRank.unclosed_count')" />
+        <el-table-column prop="project_count" :label="$t('Dashboard.ADMIN.IssueRank.project_count')" />
       </el-table>
     </el-col>
-    <el-dialog :visible.sync="unclosedIssuesDialog" width="80%" :title="issueRankDetail['user_name'] +' - 待解決議題'" @close="closeHandler">
+    <el-dialog :visible.sync="unclosedIssuesDialog" width="80%" :title="$t('Dashboard.ADMIN.IssueRank.DETAIL', [issueRankDetail['user_name']])" @close="closeHandler">
       <admin-issue-rank-unclosed-issues :detail="issueRankDetail" :user="listData" @update-detail="updateUnclosedIssuesDetail" />
     </el-dialog>
     <!--    <el-dialog :visible.sync="involvedProjectsDialog" width="80%" :title="issueRankDetail['user_name'] +' - 參與專案'" @close="closeHandler">-->
@@ -22,14 +22,11 @@ import {
   getUnclosedIssues
 } from '@/api/dashboard'
 import MixinBasicTable from '@/components/MixinBasicTable'
-import AdminIssueRankInvolvedProjects from './widget/admin_issue-rank-involved-projects'
 import AdminIssueRankUnclosedIssues from './widget/admin_issue-rank-unclosed-issues'
-import NoData from '@/views/dashboard/components/widget/no_data'
 
 export default {
   name: 'AdminProjectMember',
   components: {
-    NoData,
     AdminIssueRankUnclosedIssues
   },
   mixins: [MixinBasicTable],
@@ -92,7 +89,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+// noinspection
 >>>.pointer{
   cursor: pointer;
 }
