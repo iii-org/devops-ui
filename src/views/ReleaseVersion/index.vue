@@ -35,6 +35,9 @@ export default {
       this.loadData()
       this.listQuery.page = 1
       this.searchData = ''
+    },
+    releaseVersions() {
+      this.$refs.createRelease.updateReleaseVersions(this.releaseVersions)
     }
   },
   created() {

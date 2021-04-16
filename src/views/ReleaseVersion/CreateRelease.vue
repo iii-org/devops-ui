@@ -1,22 +1,42 @@
 <script>
 import IssueListDialog from '@/views/ReleaseVersion/IssueListDialog'
+import { mapGetters } from 'vuex'
+import { getBranchesByProject } from '@/api/branches'
 
 export default {
   name: 'CreateRelease',
   components: { IssueListDialog },
-  data: () => ({
-    commitForm: {
-      versionName: '',
-      note: ''
-    },
-    issues: [],
-    issueCategories: [],
-    issuesByCategory: [{}, {}],
-    issueDialogVisible: false
-  }),
+  data: function() {
+    return {
+      commitForm: {
+        mainVersion: null,
+        branch: this.$t('Loading'),
+        note: ''
+      },
+      issues: [],
+      issueCategories: [],
+      issuesByCategory: [{}, {}],
+      issueDialogVisible: false,
+      releaseVersions: [],
+      releaseVersionOptions: [],
+      branches: []
+    }
+  },
   computed: {
+    ...mapGetters(['selectedProject', 'selectedProjectId']),
     issueCount() {
       return this.issues.length
+    }
+  },
+  async created() {
+    this.branches = []
+    const response = await getBranchesByProject(this.selectedProject.repository_id)
+    const branches = response.data.branch_list
+    for (const branch of branches) {
+      this.branches.push(branch.name)
+    }
+    if (branches.length > 0) {
+      this.commitForm.branch = branches[0].name
     }
   },
   methods: {
@@ -44,8 +64,30 @@ export default {
       com.adjustTable(5)
       com.visible = true
     },
-    release() {
-      // TODO
+    updateReleaseVersions(versions) {
+      this.releaseVersions = versions
+      this.releaseVersionOptions = []
+      for (const ver of this.$parent.projectVersions) {
+        if (this.releaseVersions.indexOf(ver.id) >= 0) {
+          this.releaseVersionOptions.push({
+            value: ver.id,
+            label: ver.name
+          })
+        }
+      }
+      if (this.releaseVersionOptions.length === 1) {
+        this.commitForm.mainVersion = this.releaseVersionOptions[0].label
+      }
+    },
+    async release() {
+      const params = {
+        main: this.commitForm.mainVersion,
+        versions: this.releaseVersions,
+        branch: this.commitForm.branch,
+        description: this.commitForm.note
+      }
+      console.log(params)
+      // await createRelease(this.selectedProjectId, params)
     }
   }
 }
@@ -100,10 +142,37 @@ export default {
     <br>
     <div style="font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
     <p>
-      <el-form ref="form" :model="commitForm">
+      <el-form ref="form" :model="commitForm" inline>
         <el-form-item :label="$t('Release.releaseVersionName')">
-          <el-input v-model="commitForm.versionName" style="width: 120px;" />
+          <el-select
+            v-model="commitForm.mainVersion"
+            :placeholder="$t('Release.selectMainVersion')"
+            filterable
+          >
+            <el-option
+              v-for="item in releaseVersionOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
+        <el-form-item :label="$t('Git.Branch')">
+          <el-select
+            v-model="commitForm.branch"
+            :placeholder="$t('Release.selectMainVersion')"
+            filterable
+          >
+            <el-option
+              v-for="item in branches"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-form>
         <el-form-item>
           <el-input v-model="commitForm.note"
                     type="textarea"
