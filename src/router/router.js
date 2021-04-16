@@ -150,7 +150,7 @@ export const asyncRoutes = [
       {
         path: 'issue-boards',
         name: 'issue-boards',
-        component: () => import('@/views/IssueBoards'),
+        component: () => import('@/views/Project/IssueBoards'),
         meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {

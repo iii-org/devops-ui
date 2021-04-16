@@ -1,109 +1,70 @@
 <template>
   <el-row v-loading="isLoading" class="app-container">
-    <div class="d-flex">
-      <project-list-selector />
-      <el-select
-        v-model="versionValue"
-        :placeholder="$t('Version.SelectVersion')"
-        :disabled="selectedProjectId === -1"
-        class="mr-4"
-        filterable
-        @change="updateData"
-      >
-        <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-        <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
-      </el-select>
+    <el-row>
+      <el-col :md="14">
+        <project-list-selector />
+        <el-select
+          v-model="versionValue"
+          :placeholder="$t('Version.SelectVersion')"
+          :disabled="selectedProjectId === -1"
+          class="mr-4"
+          filterable
+          @change="updateData"
+        >
+          <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
+          <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+        <el-select
+          v-model="memberValue"
+          :placeholder="$t('Member.SelectMember')"
+          :disabled="selectedProjectId === -1"
+          filterable
+          @change="updateData"
+        >
+          <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
+          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />
+          <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
+        </el-select>
+      </el-col>
+      <el-col :md="10" class="text-right">
+        <el-form inline>
+          <el-form-item label="篩選維度">
+            <el-select
+              v-model="filterDimension"
+              :placeholder="$t('Version.SelectVersion')"
+              :disabled="selectedProjectId === -1"
+              class="mr-4"
+              filterable
+              @change="updateData"
+            >
+              <el-option label="議題狀態" value="issue_status" />
+              <el-option label="議題類別" value="issue_type" />
+              <el-option label="專案成員" value="user_name" />
+              <el-option label="專案版本" value="project_version" />
 
-      <el-select
-        v-model="memberValue"
-        :placeholder="$t('Member.SelectMember')"
-        :disabled="selectedProjectId === -1"
-        filterable
-        @change="updateData"
-      >
-        <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
-        <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />
-        <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
-      </el-select>
-    </div>
-
+            </el-select>
+          </el-form-item>
+          <el-select-all v-model="filterValue" filterable multiple collapse-tags :options="filterValueOptions" />
+        </el-form>
+      </el-col>
+    </el-row>
     <el-divider />
-    <div class="board">
+    <el-col class="board">
       <Kanban
-        v-for="(status, idx) in issueStatusList"
+        v-for="(status, idx) in Object.keys(classifyIssueStatus)"
         :key="idx"
-        :list="classifyIssueStatus[status.name]"
+        :list="classifyIssueStatus[status]"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
-        :header-text="$t('ProjectActive.'+status.name)"
-        :c-name="status.name"
-        :class="{[status.name.toLowerCase()]: true}"
+        :header-text="$t('ProjectActive.'+status)"
+        :c-name="status"
+        :class="{[status.toLowerCase()]: true}"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
         @updateBoard="updateIssueBoard"
       />
-      <!--      <Kanban-->
-      <!--        key="2"-->
-      <!--        :list="assignedList"-->
-      <!--        :relative-list="relativeIssueList"-->
-      <!--        :group="group"-->
-      <!--        class="kanban assigned"-->
-      <!--        :header-text="$t('ProjectActive.Assigned')"-->
-      <!--        c-name="Assigned"-->
-      <!--        :focus-version="String(versionValue)"-->
-      <!--        @update="updateIssueStatus"-->
-      <!--        @updateBoard="updateIssueBoard"-->
-      <!--      />-->
-      <!--      <Kanban-->
-      <!--        key="3"-->
-      <!--        :list="solvedList"-->
-      <!--        :relative-list="relativeIssueList"-->
-      <!--        :group="group"-->
-      <!--        class="kanban solved"-->
-      <!--        :header-text="$t('ProjectActive.Solved')"-->
-      <!--        c-name="Solved"-->
-      <!--        :focus-version="String(versionValue)"-->
-      <!--        @update="updateIssueStatus"-->
-      <!--        @updateBoard="updateIssueBoard"-->
-      <!--      />-->
-      <!--      <Kanban-->
-      <!--        key="4"-->
-      <!--        :list="respondedList"-->
-      <!--        :relative-list="relativeIssueList"-->
-      <!--        :group="group"-->
-      <!--        class="kanban responded"-->
-      <!--        :header-text="$t('ProjectActive.Responded')"-->
-      <!--        c-name="Responded"-->
-      <!--        :focus-version="String(versionValue)"-->
-      <!--        @update="updateIssueStatus"-->
-      <!--        @updateBoard="updateIssueBoard"-->
-      <!--      />-->
-      <!--      <Kanban-->
-      <!--        key="5"-->
-      <!--        :list="finishedList"-->
-      <!--        :relative-list="relativeIssueList"-->
-      <!--        :group="group"-->
-      <!--        class="kanban finished"-->
-      <!--        :header-text="$t('ProjectActive.Finished')"-->
-      <!--        c-name="Finished"-->
-      <!--        :focus-version="String(versionValue)"-->
-      <!--        @update="updateIssueStatus"-->
-      <!--        @updateBoard="updateIssueBoard"-->
-      <!--      />-->
-      <!--      <Kanban-->
-      <!--        key="6"-->
-      <!--        :list="closedList"-->
-      <!--        :relative-list="relativeIssueList"-->
-      <!--        :group="group"-->
-      <!--        class="kanban closed"-->
-      <!--        :header-text="$t('ProjectActive.Closed')"-->
-      <!--        c-name="Closed"-->
-      <!--        :focus-version="String(versionValue)"-->
-      <!--        @update="updateIssueStatus"-->
-      <!--        @updateBoard="updateIssueBoard"-->
-      <!--      />-->
-    </div>
+    </el-col>
   </el-row>
 </template>
 
@@ -114,15 +75,19 @@ import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssueStatus, updateIssue } from '@/api/issue'
 import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
+import ElSelectAll from '@/components/ElSelectAll'
 
 export default {
   name: 'IssueBoards',
   components: {
+    ElSelectAll,
     Kanban,
     ProjectListSelector
   },
   data: () => ({
     isLoading: true,
+    filterDimension: 'issue_status',
+    filterValue: [],
     issueStatusList: [],
     projectIssueList: [],
     classifyIssueStatus: {},
@@ -134,19 +99,28 @@ export default {
     relativeIssueList: []
   }),
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    filterValueOptions() {
+      return this.issueStatusList.map((item) => ({ key: item.id, label: item.name, value: item.name }))
+    }
   },
   watch: {
     selectedProjectId() {
       this.fetchData()
+    },
+    filterValue: {
+      deep: true,
+      handler() {
+        this.resetKanbanCard()
+      }
     }
   },
   async created() {
     const issueStatusRes = await getIssueStatus()
     this.issueStatusList = issueStatusRes.data
-    this.issueStatusList.forEach((item) => {
-      this.classifyIssueStatus[item.name] = []
-    })
+    // this.issueStatusList.forEach((item) => {
+    //   this.classifyIssueStatus[item.name] = []
+    // })
     await this.fetchData()
   },
   methods: {
@@ -163,7 +137,12 @@ export default {
       })
     },
     resetKanbanCard() {
-      this.issueStatusList.forEach(item => {
+      this.classifyIssueStatus = {}
+      let objectArray = this.issueStatusList
+      if (this.filterValue.length > 0) {
+        objectArray = this.filterValue.map((item) => ({ name: item }))
+      }
+      objectArray.forEach(item => {
         this.classifyIssueStatus[item.name] = this.genKanbanCard(item.name)
       })
     },
