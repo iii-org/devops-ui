@@ -1,6 +1,7 @@
 <template>
   <el-col v-loading="loading">
-    <v-chart class="chart" :option="passingRateOptions" autoresize theme="macarons" @click="onClickChart" />
+    <v-chart v-if="chartData.length>0" class="chart" :option="passingRateOptions" autoresize theme="macarons" @click="onClickChart" />
+    <no-data v-else />
     <el-dialog :visible.sync="detailDialog" title="專案測試品質" @close="closeHandler">
       <el-row>
         <el-col :span="12">
@@ -78,6 +79,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { ScatterChart } from 'echarts/charts'
 import { getPassingRateDetail } from '@/api/dashboard'
 import MixinBasicTable from '@/components/MixinBasicTable'
+import NoData from '@/views/dashboard/components/widget/no_data'
 
 require('echarts/theme/macarons') // echarts theme
 
@@ -88,6 +90,7 @@ use([
 export default {
   name: 'AdminProjectMember',
   components: {
+    NoData,
     'v-chart': VChart
   },
   mixins: [MixinBasicTable],

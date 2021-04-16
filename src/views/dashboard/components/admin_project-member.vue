@@ -1,6 +1,7 @@
 <template>
   <el-col v-loading="loading">
-    <v-chart class="chart" :option="projectMembersOptions" autoresize theme="macarons" @click="onClickChart" />
+    <v-chart v-if="chartData.length>0" class="chart" :option="projectMembersOptions" autoresize theme="macarons" @click="onClickChart" />
+    <no-data v-else />
     <el-dialog :visible.sync="detailDialog" title="專案總覽" @close="closeHandler">
       <el-row>
         <el-col :span="12">
@@ -74,6 +75,7 @@ import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
 import MixinBasicTable from '@/components/MixinBasicTable'
 import AdminMemberTable from '@/views/dashboard/components/widget/admin_member-table'
+import NoData from '@/views/dashboard/components/widget/no_data'
 
 require('echarts/theme/macarons') // echarts theme
 
@@ -84,6 +86,7 @@ use([
 export default {
   name: 'AdminProjectMember',
   components: {
+    NoData,
     AdminMemberTable,
     'v-chart': VChart
   },

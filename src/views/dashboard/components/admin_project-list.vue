@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row v-loading="listLoading">
     <el-row v-if="inDialog">
       <el-col :span="12">
         <el-select v-model="searchStatus" value-key="user_id">
@@ -18,7 +18,7 @@
       </el-col>
       <el-col v-if="listData.length>0" :span="12" class="text-right">
         統計日期：
-        <!--        {{ listData[0].sync_date }}-->
+        {{ listData[0].sync_date }}
       </el-col>
     </el-row>
     <el-table :data="pagedData" :row-class-name="tableRowClassName" cell-class-name="align-center"
@@ -73,7 +73,6 @@ export default {
         page: 1,
         limit: 10
       },
-      loading: false,
       detailDialog: false,
       detailData: [],
       searchKeys: ['project_name', 'pm_user_name'],

@@ -24,10 +24,12 @@ import {
 import MixinBasicTable from '@/components/MixinBasicTable'
 import AdminIssueRankInvolvedProjects from './widget/admin_issue-rank-involved-projects'
 import AdminIssueRankUnclosedIssues from './widget/admin_issue-rank-unclosed-issues'
+import NoData from '@/views/dashboard/components/widget/no_data'
 
 export default {
   name: 'AdminProjectMember',
   components: {
+    NoData,
     AdminIssueRankUnclosedIssues
   },
   mixins: [MixinBasicTable],

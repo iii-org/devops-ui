@@ -1,12 +1,19 @@
 <template>
-  <el-row>
+  <el-row v-loading="listLoading">
     <el-row class="circle hidden-sm-and-down" type="flex" justify="center" align="middle">
-      <el-col v-for="(item,idx) in listData" :key="idx" :xs="24" :sm="24" :md="8">
-        <CircleDashboard :count="item.count" :item="item.item" class="pointer" :class="'circle-'+item.class" @click.native="onShowDetail(item.database)" />
-      </el-col>
+      <template v-if="listData.length>0">
+        <el-col v-for="(item,idx) in listData" :key="idx" :xs="24" :sm="24" :md="8">
+          <CircleDashboard :count="item.count" :item="item.item" class="pointer" :class="'circle-'+item.class"
+                           @click.native="onShowDetail(item.database)"
+          />
+        </el-col>
+      </template>
+      <no-data v-else />
     </el-row>
     <div class="table hidden-md-and-up">
-      <el-row v-for="(item,idx) in listData" :key="idx" :class="'table-'+item.class" align="bottom" type="flex" @click="onShowDetail(item.database)">
+      <el-row v-for="(item,idx) in listData" :key="idx" :class="'table-'+item.class" align="bottom" type="flex"
+              @click="onShowDetail(item.database)"
+      >
         <el-col :span="12" class="text-right count">{{ item.count }}</el-col>
         <el-col :span="12">{{ item.item }}</el-col>
       </el-row>
@@ -21,10 +28,12 @@
 import CircleDashboard from '@/views/dashboard/components/circle_dashboard'
 import AdminProjectList from '@/views/dashboard/components/admin_project-list'
 import { getProjectListDetail } from '@/api/dashboard'
+import NoData from '@/views/dashboard/components/widget/no_data'
 
 export default {
   name: 'AdminOverview',
   components: {
+    NoData,
     AdminProjectList,
     CircleDashboard
   },
@@ -36,6 +45,7 @@ export default {
   },
   data() {
     return {
+      listLoading: false,
       listData: [],
       detailDialog: false
     }
@@ -72,53 +82,64 @@ export default {
 @import 'src/styles/variables.scss';
 
 .circle {
-> > > .circle-primary {
-  border-color: $menuActiveText;
-  color: $menuActiveText;
+  > > > .circle-primary {
+    border-color: $menuActiveText;
+    color: $menuActiveText;
+  }
+
+  > > > .circle-danger {
+    border-color: $danger;
+    color: $danger;
+  }
+
+  > > > .circle-info {
+    border-color: $info-4;
+    color: $info-4;
+  }
 }
 
-> > > .circle-danger {
-  border-color: $danger;
-  color: $danger;
-}
+.timeline-item-card {
+  > > > .el-card__body {
+    padding: 10px;
+  }
 
-> > > .circle-info {
-  border-color: $info-4;
-  color: $info-4;
-}
+  .author {
+    margin-bottom: 0;
+  }
 }
 
 > > > .table {
   font-size: 1.5em;
 
-.count {
-  font-size: 2em;
-  padding-right: 0.25em;
-  text-align: right;
-  font-weight: bolder;
+  .count {
+    font-size: 2em;
+    padding-right: 0.25em;
+    text-align: right;
+    font-weight: bolder;
+  }
+
+  .el-row {
+    border-width: 5px;
+    border-style: solid;
+  }
+
+  .table-primary {
+    border-color: $menuActiveText;
+    color: $menuActiveText;
+  }
+
+  .table-danger {
+    border-color: $danger;
+    color: $danger;
+  }
+
+  .table-info {
+    border-color: $info-4;
+    color: $info-4;
+  }
 }
 
-.el-row {
-  border-width: 5px;
-  border-style: solid;
-}
-
-.table-primary {
-  border-color: $menuActiveText;
-  color: $menuActiveText;
-}
-
-.table-danger {
-  border-color: $danger;
-  color: $danger;
-}
-
-.table-info {
-  border-color: $info-4;
-  color: $info-4;
-}
-}
-.pointer{
+.pointer {
   cursor: pointer;
 }
 </style>

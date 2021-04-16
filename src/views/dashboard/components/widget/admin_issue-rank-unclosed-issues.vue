@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row v-loading="listLoading">
     <el-row>
       <el-col :span="12">
         <el-select v-model="searchUser" value-key="user_id">
@@ -13,9 +13,9 @@
           clearable
         />
       </el-col>
-      <el-col :span="12" class="text-right">
+      <el-col v-if="listData.length>0" :span="12" class="text-right">
         統計日期：
-        <!--        {{ listData[0].sync_date }}-->
+        {{ listData[0].sync_date }}
       </el-col>
     </el-row>
     <el-table v-if="listData.length>0" :data="pagedData">

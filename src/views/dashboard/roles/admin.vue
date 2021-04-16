@@ -23,20 +23,9 @@
         <el-card>
           <template slot="header">
             <span class="font-weight-bold">Commit Log
-            </span></template>
-          <el-col class="inner">
-            <transition-group name="slide-fade" tag="el-timeline">
-              <el-timeline-item v-for="commit in gitCommitLog" :key="commit.id" :timestamp="commit.commit_time"
-                                placement="top"
-              >
-                <el-card class="timeline-item-card">
-                  <h4>{{ commit.commit_title }}</h4>
-                  <p v-if="commit.commit_message!==commit.commit_title">{{ commit.commit_message }}</p>
-                  <p class="author">{{ commit.author_name }} @ {{ commit.pj_name }}</p>
-                </el-card>
-              </el-timeline-item>
-            </transition-group>
-          </el-col>
+            </span>
+          </template>
+          <admin-commit-log :data="getGitCommitLogData" />
         </el-card>
       </el-col>
     </el-row>
@@ -68,7 +57,9 @@
               <el-col :span="12" class="font-weight-bold">專案清單
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z" fill="#626262" /></svg>
               </el-col>
-              <el-col :span="12" class="text-right">最後更新：{{ lastUpdate }}</el-col>
+              <el-col :span="12" class="text-right">統計日期：
+                {{ getSyncDate('projectList') }}
+              </el-col>
             </el-row>
           </div>
           <admin-project-list ref="projectList" :data="getProjectListData" />
@@ -93,6 +84,7 @@ import AdminProjectMember from '../components/admin_project-member'
 import AdminIssueRank from '../components/admin_issue-rank'
 import AdminPassingRate from '../components/admin_passing-rate'
 import AdminOverview from '@/views/dashboard/components/admin_overview'
+import AdminCommitLog from '@/views/dashboard/components/admin_commit-log'
 
 const overview = {
   projects: { item: 'Projects', class: 'primary', database: '' },
@@ -100,10 +92,11 @@ const overview = {
   not_started: { item: 'Not Started', class: 'info', database: 'Not_Started' }
 }
 const commitLimit = 10
-const refreshCommitLog = 10000 // ms
+const refreshCommitLog = 300000 // ms
 export default {
   name: 'DashboardAdmin',
   components: {
+    AdminCommitLog,
     AdminOverview,
     AdminIssueRank,
     AdminProjectMember,
@@ -188,6 +181,12 @@ export default {
           return Promise.resolve(res.data)
         })
     },
+    getSyncDate(ref_name) {
+      if (this.$refs[ref_name] && this.$refs[ref_name].listData.length > 0) {
+        return this.$refs[ref_name].listData[0].sync_date
+      }
+      return null
+    },
     sleep(ms) {
       return new Promise((resolve) => (setTimeout(resolve, ms)))
     }
@@ -228,12 +227,6 @@ export default {
   text-align: center;
 }
 
-.inner {
-  height: 250px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
 .chart {
   height: 100%;
   min-height: 250px;
@@ -247,31 +240,6 @@ export default {
 
 .no-margin {
   margin: 0;
-}
-
-.timeline-item-card {
-  > > > .el-card__body {
-    padding: 10px;
-  }
-
-  .author {
-    margin-bottom: 0;
-  }
-}
-
-.slide-fade-enter-active {
-  transition: all .5s ease;
-}
-
-.slide-fade-leave-active {
-  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-
-.slide-fade-enter, .slide-fade-leave-to
-  /* .slide-fade-leave-active for below version 2.1.8 */
-{
-  transform: translateX(10px);
-  opacity: 0;
 }
 
 .pointer{
