@@ -33,7 +33,7 @@ export default {
   async created() {
     this.branches = []
     const response = await getBranchesByProject(this.selectedProject.repository_id)
-    const branches = response.data.branch_list
+    const branches = response.data['branch_list']
     for (const branch of branches) {
       this.branches.push(branch.name)
     }

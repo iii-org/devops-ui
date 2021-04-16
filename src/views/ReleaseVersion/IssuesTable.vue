@@ -25,15 +25,7 @@ export default {
   },
   computed: {
     batchCloseHint() {
-      return this.$t('Release.confirmBatchClose', [this.selectedRowCount])
-    },
-    selectedRowCount() {
-      let ret = 0
-      for (const i in this.multipleSelection) {
-        const arr = this.multipleSelection[i]
-        ret += arr.length
-      }
-      return ret
+      return this.$t('Release.confirmBatchClose', [this.selectedIndexes.length])
     },
     categorySel() {
       const ret = [this.$t('Release.allCategories')]
@@ -120,23 +112,17 @@ export default {
       if (this.pagedData.length === 0 && this.listQuery.page > 1) {
         this.listQuery.page--
       }
-      this.openIssueCount--
-      this.closedIssueCount++
+      this.processData()
       this.listLoading = false
-    },
-    getSelectedIndexes() {
-      const indexes = []
-      for (const i in this.multipleSelection) {
-        const arr = this.multipleSelection[i]
-        for (const idx of arr) {
-          indexes.push(i * this.listQuery.limit + idx)
-        }
+
+      // If all issues are closed, change to create release screen
+      if (this.openIssueCount === 0) {
+        this.$parent.init()
       }
-      return indexes
     },
     async batchClose() {
       this.listLoading = true
-      const indexes = this.getSelectedIndexes()
+      const indexes = this.selectedIndexes
       for (const index of indexes) {
         await updateIssue(this.listData[index].id, { status_id: this.CLOSED_STATUS_ID })
       }
@@ -146,7 +132,7 @@ export default {
     },
     async batchMove() {
       this.fullScreenLoading = true
-      const indexes = this.getSelectedIndexes()
+      const indexes = this.selectedIndexes
       for (const index of indexes) {
         await updateIssue(
           this.listData[index].id, { fixed_version_id: this.batchMoveToVersion }
@@ -200,7 +186,7 @@ export default {
             <el-button
               slot="reference"
               class="valign-middle"
-              :disabled="selectedRowCount === 0"
+              :disabled="noRowSelected"
             >
               {{ $t('Release.batchClose') }}
             </el-button>
@@ -209,7 +195,7 @@ export default {
         <el-form-item>
           <el-button
             class="valign-middle"
-            :disabled="selectedRowCount === 0"
+            :disabled="noRowSelected"
             @click="showBatchMoveDialog = true;"
           >
             {{ $t('Release.batchMove') }}
@@ -298,7 +284,7 @@ export default {
           </el-select>
         </el-form-item>
         <el-form-item>
-          {{ $t('Release.batchMoveDialogHint', [selectedRowCount]) }}
+          {{ $t('Release.batchMoveDialogHint', [selectedIndexes.length]) }}
         </el-form-item>
         <el-button
           v-loading.fullscreen.lock="fullScreenLoading"

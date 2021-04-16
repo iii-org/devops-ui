@@ -40,7 +40,7 @@ export default {
 <template>
   <el-dialog :visible.sync="visible">
     <p>
-      <el-button type="success" @click="copy">
+      <el-button type="success" :disabled="noRowSelected" @click="copy">
         {{ $t('Release.copyIssues') }}
       </el-button>
     </p>

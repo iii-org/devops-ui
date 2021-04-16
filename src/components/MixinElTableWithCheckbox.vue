@@ -10,6 +10,21 @@ export default {
       multipleSelection: []
     }
   },
+  computed: {
+    selectedIndexes() {
+      const indexes = []
+      for (const i in this.multipleSelection) {
+        const arr = this.multipleSelection[i]
+        for (const idx of arr) {
+          indexes.push(i * this.listQuery.limit + idx)
+        }
+      }
+      return indexes
+    },
+    noRowSelected() {
+      return this.selectedIndexes.length === 0
+    }
+  },
   methods: {
     handleSelectionChange(val) {
       if (this.paged) {
