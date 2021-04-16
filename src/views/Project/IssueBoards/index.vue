@@ -1,7 +1,7 @@
 <template>
   <el-row v-loading="isLoading" class="app-container">
     <el-row>
-      <el-col :md="14">
+      <el-col :md="24" :lg="14">
         <project-list-selector />
         <el-select
           v-model="versionValue"
@@ -26,7 +26,7 @@
           <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
         </el-select>
       </el-col>
-      <el-col :md="10" class="text-right">
+      <el-col :md="24" :lg="10" class="text-right">
         <el-form inline>
           <el-form-item label="篩選維度">
             <el-select
