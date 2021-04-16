@@ -48,7 +48,6 @@ export default {
     categoryByRole() {
       const category = {}
       const result = []
-      console.log(this.data)
       this.data.forEach((item) => {
         if (!category.hasOwnProperty(item.role_name)) {
           category[item.role_name] = []
