@@ -2,50 +2,72 @@
   <div class="board-column">
     <div class="board-column-header">
       <div class="header-bar" />
-      <div class="d-flex">
-        <div>
+      <el-row class="d-flex">
+        <el-col :span="3">
           <i class="el-icon-plus ml-4 mr-5 add-button" @click="showDialog = true" />
-        </div>
-        <div class="ml-15">{{ headerText }}</div>
+        </el-col>
+        <el-col :span="19" class="text-center">{{ headerText }}</el-col>
         <!-- <i class="el-icon-more header-icon" /> -->
-      </div>
+      </el-row>
     </div>
-    <draggable :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @end="end">
+    <draggable
+      :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @change="end(cName, $event)"
+    >
       <div v-for="element in list" :key="element.id" class="board-item">
         <div class="pb-4">
           <div>
             <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
-              {{ element.name }}
+              {{ element.issue_name }}
             </el-link>
           </div>
         </div>
         <div>
           <span class="detail">
             <i class="el-icon-date" />
-            <span class="ml-1">{{ element.date }}</span>
+            <span class="ml-1">{{ element.due_date }}</span>
           </span>
           <span class="ml-1 detail">
             <i class="el-icon-s-custom" />
-            <span class="ml-1">{{ element.user }}</span>
+            <span class="ml-1">{{ element.assigned_to }}</span>
           </span>
           <p v-if="element.parent_id" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
-            <el-tag class="el-tag--circle" size="mini" :class="element.parent_status">{{ $t('ProjectActive.' + element.parent_status) }}
+            <el-tag class="el-tag--circle" size="mini" :class="element.parent_status">
+              {{ $t('ProjectActive.' + element.parent_status) }}
             </el-tag>
             <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
               {{ element.parent_name }}
             </el-link>
           </p>
+          <div v-if="element.children.length>0" class="parent">
+            <el-collapse>
+              <el-collapse-item>
+                <template #title>
+                  <i class="el-icon-caret-right" /> 子議題 ({{ element.children|lengthFilter }})
+                </template>
+                <ol class="children_list">
+                  <li v-for="(subElement,idx) in element.children" :key="idx">
+                    <el-tag class="el-tag--circle" size="mini" :class="subElement.issue_status">
+                      {{ $t('ProjectActive.' + subElement.issue_status) }}
+                    </el-tag>
+                    <el-link type="primary" :underline="false" @click="handleClick(element.id)">
+                      {{ subElement.issue_name }}
+                    </el-link>
+                  </li>
+                </ol>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
         </div>
       </div>
     </draggable>
-    <AddIssueDialog
-      :dialog-visible="showDialog"
-      :focus-status="cName"
-      :focus-version="focusVersion"
-      @close="showDialog = false"
-      @update="updateBoard"
-    />
+    <!--    <AddIssueDialog-->
+    <!--      :dialog-visible="showDialog"-->
+    <!--      :focus-status="cName"-->
+    <!--      :focus-version="focusVersion"-->
+    <!--      @close="showDialog = false"-->
+    <!--      @update="updateBoard"-->
+    <!--    />-->
   </div>
 </template>
 
@@ -56,8 +78,13 @@ import AddIssueDialog from './AddIssueDialog.vue'
 export default {
   name: 'Kanban',
   components: {
-    draggable,
-    AddIssueDialog
+    draggable
+    // AddIssueDialog
+  },
+  filters: {
+    lengthFilter(value) {
+      return value.length
+    }
   },
   props: {
     headerText: {
@@ -86,27 +113,28 @@ export default {
   }),
   methods: {
     checkRelatives(evt) {
-      let result = true
-      const { id, parent_id } = evt.draggedContext.element
-      const toName = evt.to.classList[1]
-      const cIdx = this.relativeList.findIndex(item => item.id === id)
-      const childrenIssueList = this.relativeList[cIdx].children
-      const pIdx = this.relativeList.findIndex(item => item.id === parent_id)
-      const parentIssue = this.relativeList[pIdx] || {}
-      if (
-        toName === 'Closed' &&
-        childrenIssueList.length &&
-        !childrenIssueList.every(item => item.issue_status === 'Closed')
-      ) {
-        result = false
-      }
-      if (parentIssue !== {} && parentIssue.issue_status === 'Closed') {
-        result = false
-      }
+      const result = true
+      // this.$emit('update', evt)
+      // const { id, parent_id } = evt.draggedContext.element
+      // const toName = evt.to.classList[1]
+      // const cIdx = this.relativeList.findIndex(item => item.id === id)
+      // const childrenIssueList = this.relativeList[cIdx].children
+      // const pIdx = this.relativeList.findIndex(item => item.id === parent_id)
+      // const parentIssue = this.relativeList[pIdx] || {}
+      // if (
+      //   toName === 'Closed' &&
+      //   childrenIssueList.length &&
+      //   !childrenIssueList.every(item => item.issue_status === 'Closed')
+      // ) {
+      //   result = false
+      // }
+      // if (parentIssue !== {} && parentIssue.issue_status === 'Closed') {
+      //   result = false
+      // }
       return result
     },
-    end(evt) {
-      this.$emit('update', evt)
+    end(list, event) {
+      this.$emit('update', { list: list, event: event })
     },
     updateBoard(sendData) {
       this.$emit('updateBoard', sendData)
@@ -175,4 +203,18 @@ export default {
   }
 }
 
+.parent {
+  .children_list {
+    margin: 0;
+  }
+  >>>.el-collapse-item {
+    &__header {
+      height: 2.5em;
+    }
+
+    &__content {
+      padding-bottom: 0;
+    }
+  }
+}
 </style>

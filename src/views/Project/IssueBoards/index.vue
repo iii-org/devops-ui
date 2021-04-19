@@ -4,6 +4,7 @@
       <el-col :md="24" :lg="14">
         <project-list-selector />
         <el-select
+          v-if="filterDimension!=='fixed_version_name'"
           v-model="versionValue"
           :placeholder="$t('Version.SelectVersion')"
           :disabled="selectedProjectId === -1"
@@ -12,9 +13,10 @@
           @change="updateData"
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-          <el-option v-for="item in projectVersionList" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in fixed_version_name" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-select
+          v-if="filterDimension!=='assigned_to'"
           v-model="memberValue"
           :placeholder="$t('Member.SelectMember')"
           :disabled="selectedProjectId === -1"
@@ -22,8 +24,10 @@
           @change="updateData"
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
-          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />
-          <el-option v-for="item in projectUserList" :key="item.id" :label="item.name" :value="item.name" />
+          <!--          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />-->
+          <el-option v-for="item in assigned_to" :key="item.id" :label="item.name"
+                     :value="searchNullValueOption(item)"
+          />
         </el-select>
       </el-col>
       <el-col :md="24" :lg="10" class="text-right">
@@ -35,35 +39,35 @@
               :disabled="selectedProjectId === -1"
               class="mr-4"
               filterable
-              @change="updateData"
             >
               <el-option label="議題狀態" value="issue_status" />
-              <el-option label="議題類別" value="issue_type" />
-              <el-option label="專案成員" value="user_name" />
-              <el-option label="專案版本" value="project_version" />
-
+              <el-option label="議題類別" value="issue_category" />
+              <el-option label="專案成員" value="assigned_to" />
+              <el-option label="專案版本" value="fixed_version_name" />
             </el-select>
           </el-form-item>
-          <el-select-all v-model="filterValue" filterable multiple collapse-tags :options="filterValueOptions" />
+          <el-select-all ref="filterValue" v-model="filterValue" filterable multiple collapse-tags
+                         :options="filterValueOptions"
+          />
         </el-form>
       </el-col>
     </el-row>
     <el-divider />
     <el-col class="board">
       <Kanban
-        v-for="(status, idx) in Object.keys(classifyIssueStatus)"
+        v-for="(status, idx) in filterValueOnBoard"
         :key="idx"
-        :list="classifyIssueStatus[status]"
+        :list="classifyIssueList[status]"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
-        :header-text="$t('ProjectActive.'+status)"
+        :header-text="getTranslateHeader(status)"
         :c-name="status"
         :class="{[status.toLowerCase()]: true}"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
-        @updateBoard="updateIssueBoard"
       />
+      <!--      @updateBoard="updateIssueBoard"-->
     </el-col>
   </el-row>
 </template>
@@ -73,7 +77,7 @@ import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
 import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { getIssueStatus, updateIssue } from '@/api/issue'
+import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 
@@ -88,148 +92,187 @@ export default {
     isLoading: true,
     filterDimension: 'issue_status',
     filterValue: [],
-    issueStatusList: [],
     projectIssueList: [],
-    classifyIssueStatus: {},
+    classifyIssueList: {},
     group: 'mission',
     versionValue: '-1',
     memberValue: '-1',
-    projectVersionList: [],
-    projectUserList: '',
+    fixed_version_name: [],
+    issue_status: [],
+    issue_category: [],
+    assigned_to: [],
     relativeIssueList: []
   }),
   computed: {
     ...mapGetters(['selectedProjectId']),
     filterValueOptions() {
-      return this.issueStatusList.map((item) => ({ key: item.id, label: item.name, value: item.name }))
+      // const result = [...new Set(this.projectIssueList.map((item) => (item[this.filterDimension])))]
+      // return result.map((item, idx) => ({ id: idx, label: item, value: item }))
+      return this[this.filterDimension].map((item, idx) => ({
+        id: idx,
+        label: item.name,
+        value: this.searchNullValueOption(item)
+      }))
+    },
+    filterValueOnBoard() {
+      if (this.filterValue.length <= 0) {
+        return this[this.filterDimension].map((item) => (this.searchNullValueOption(item)))
+      }
+      return this.filterValue
     }
   },
   watch: {
     selectedProjectId() {
       this.fetchData()
     },
+    filterDimension() {
+      this.$set(this.$data, 'filterValue', [])
+      this.$refs['filterValue'].selected = []
+      this.resetClassifyIssue()
+      this.classifyIssue()
+    },
     filterValue: {
       deep: true,
       handler() {
-        this.resetKanbanCard()
+        // this.resetKanbanCard()
+        this.resetClassifyIssue()
+        this.classifyIssue()
       }
     }
   },
   async created() {
     const issueStatusRes = await getIssueStatus()
-    this.issueStatusList = issueStatusRes.data
-    // this.issueStatusList.forEach((item) => {
-    //   this.classifyIssueStatus[item.name] = []
+    this.issue_status = issueStatusRes.data
+    const issueCategoryRes = await getIssueTracker()
+    this.issue_category = issueCategoryRes.data
+    // this.issue_status.forEach((item) => {
+    //   this.classifyIssueList[item.name] = []
     // })
     await this.fetchData()
   },
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
-    searchKanbanCard(value, opt) {
-      this.issueStatusList.forEach((item) => {
-        if (value === '') {
-          this.classifyIssueStatus[item.name] = this.classifyIssueStatus[item.name].filter((item) => (item[opt['keys'][0]] === value))
-        } else {
-          const fuse = new Fuse(this.classifyIssueStatus[item.name], opt)
-          const res = fuse.search(`="${value}"`)
-          this.classifyIssueStatus[item.name] = res.map(items => items.item)
-        }
-      })
-    },
-    resetKanbanCard() {
-      this.classifyIssueStatus = {}
-      let objectArray = this.issueStatusList
-      if (this.filterValue.length > 0) {
-        objectArray = this.filterValue.map((item) => ({ name: item }))
-      }
-      objectArray.forEach(item => {
-        this.classifyIssueStatus[item.name] = this.genKanbanCard(item.name)
-      })
-    },
-    genKanbanCard(status) {
-      if (!this.projectIssueList[status]) return [] // 該status不存在issue回傳空array
-      return this.projectIssueList[status].map(issue => {
-        let parentDetail = {}
-        if (issue.parent_id) {
-          const parent = this.relativeIssueList.find((item) => (item.id === issue.parent_id))
-          parentDetail = {
-            parent_name: parent.issue_name,
-            parent_status: parent.issue_status,
-            parent_status_id: parent.issue_status_id
-          }
-        }
-        return {
-          name: issue.issue_name,
-          id: issue.id,
-          date: issue.due_date,
-          user: issue.assigned_to,
-          version: issue.fixed_version_id,
-          parent_id: issue.parent_id,
-          ...parentDetail
-        }
-      })
-    },
     async fetchData() {
       this.isLoading = true
-      const projectIssueListRes = await getProjectIssueListByStatus(this.selectedProjectId)
+      await this.resetClassifyIssue()
+      const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.projectVersionList = versionsRes.data.versions
+      this.fixed_version_name = versionsRes.data.versions
 
       const userRes = await this.getProjectUserList(this.selectedProjectId)
-      this.projectUserList = userRes.data.user_list
-
+      this.assigned_to = [{ name: '尚未指派', id: '' }, ...userRes.data.user_list]
       this.isLoading = false
-      this.projectIssueList = projectIssueListRes.data // 取得project全部issue by status
-      this.relativeIssueList = await this.updateRelativeList()
-      await this.resetKanbanCard()
+      this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
+      await this.classifyIssue()
+      // this.relativeIssueList = await this.updateRelativeList()
+      // await this.resetKanbanCard()
     },
-    updateIssueBoard() {
-      this.fetchData()
-      this.versionValue = '-1'
-      this.memberValue = '-1'
+    checkInFilterValue(value) {
+      if (this.filterValue.length <= 0) return true
+      return this.filterValue.includes(value)
     },
-    updateRelativeList() {
-      this.isLoading = true
-      return getProjectIssueListByTree(this.selectedProjectId).then(res => {
-        return Promise.resolve(this.createRelativeList(res.data))
-      })
-        .catch((e) => {
-          console.log(e)
-          return Promise.reject()
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
-    },
-    async updateIssueStatus(evt) {
-      this.isLoading = true
-      const { to, newIndex } = evt
-      const classList = to.className.split(' ')
-      const className = classList[classList.length - 1]
-      let issue = {}
-      let newStatusId = 0
-      issue = this.classifyIssueStatus[className][newIndex]
-      this.issueStatusList.forEach(item => {
-        if (to.className.search(item.name) !== -1) {
-          newStatusId = item.id
+    classifyIssue() {
+      this.projectIssueList.forEach((issue) => {
+        if (this.checkInFilterValue(issue[this.filterDimension])) {
+          if (!this.classifyIssueList.hasOwnProperty(issue[this.filterDimension])) {
+            this.classifyIssueList[issue[this.filterDimension]] = []
+          }
+          let parentDetail = {}
+          if (issue.parent_id) {
+            const parent = this.projectIssueList.find((item) => (item.id === issue.parent_id))
+            parentDetail = {
+              parent_name: parent.issue_name,
+              parent_status: parent.issue_status,
+              parent_status_id: parent.issue_status_id
+            }
+          }
+          this.classifyIssueList[issue[this.filterDimension]].push({
+            ...issue,
+            ...parentDetail
+          })
         }
       })
-      if (issue.id && newStatusId !== 0) {
-        await updateIssue(issue.id, { status_id: newStatusId })
+    },
+    resetClassifyIssue() {
+      this.classifyIssueList = {}
+    },
+    getTranslateHeader(value) {
+      return this.$te('ProjectActive.' + value) ? this.$t('ProjectActive.' + value) : value
+    },
+    searchKanbanCard(value, opt) {
+      Object.keys(this.classifyIssueList).forEach((item) => {
+        if (value === '') {
+          this.classifyIssueList[item] = this.classifyIssueList[item].filter((item) => (item[opt['keys'][0]] === value))
+        } else {
+          const fuse = new Fuse(this.classifyIssueList[item], opt)
+          const res = fuse.search(`="${value}"`)
+          this.classifyIssueList[item] = res.map(items => items.item)
+        }
+      })
+    },
+    searchNullValueOption(item) {
+      return (item.id === '') ? item.id : item.name
+    },
+    // resetKanbanCard() {
+    //   this.classifyIssueList = {}
+    //   let objectArray = this.issue_status
+    //   if (this.filterValue.length > 0) {
+    //     objectArray = this.filterValue.map((item) => ({ name: item }))
+    //   }
+    //   objectArray.forEach(item => {
+    //     this.classifyIssueList[item.name] = this.genKanbanCard(item.name)
+    //   })
+    // },
+    // genKanbanCard(status) {
+    //   if (!this.projectIssueList[status]) return [] // 該status不存在issue回傳空array
+    //   return this.projectIssueList[status].map(issue => {
+    //   })
+    // },
+    // updateIssueBoard() {
+    //   this.fetchData()
+    //   this.versionValue = '-1'
+    //   this.memberValue = '-1'
+    // },
+    // updateRelativeList() {
+    //   this.isLoading = true
+    //   return getProjectIssueListByTree(this.selectedProjectId).then(res => {
+    //     return Promise.resolve(this.createRelativeList(res.data))
+    //   })
+    //     .catch((e) => {
+    //       console.log(e)
+    //       return Promise.reject()
+    //     })
+    //     .finally(() => {
+    //       this.isLoading = false
+    //     })
+    // },
+    async updateIssueStatus(evt) {
+      if (evt.event.hasOwnProperty('added')) {
+        this.isLoading = true
+        const getUpdateDimension = this[this.filterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
+        await updateIssue(evt.event.added.element.id, { [this.filterDimension + '_id']: getUpdateDimension.id })
+        this.projectIssueList.forEach((item) => {
+          if (item.id === evt.event.added.element.id) {
+            item[this.filterDimension] = evt.list
+            item[this.filterDimension + '_id'] = getUpdateDimension.id
+          }
+        })
+        this.resetClassifyIssue()
+        this.classifyIssue()
+        this.isLoading = false
       }
-      this.updateRelativeList()
-      this.isLoading = false
     },
     updateData() {
       console.log('updateData')
-      this.resetKanbanCard()
+      this.resetClassifyIssue()
+      this.classifyIssue()
       const versionOpt = {
-        keys: ['version'],
+        keys: ['fixed_version_name'],
         useExtendedSearch: true
       }
       const userOpt = {
-        keys: ['user'],
+        keys: ['assigned_to'],
         useExtendedSearch: true
       }
       if (this.versionValue !== '-1' && this.memberValue === '-1') {
