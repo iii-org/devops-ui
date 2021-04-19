@@ -275,14 +275,10 @@ export default {
         keys: ['assigned_to'],
         useExtendedSearch: true
       }
-      if (this.versionValue !== '-1' && this.memberValue === '-1') {
+      if (this.versionValue !== '-1') {
         this.searchKanbanCard(this.versionValue, versionOpt)
       }
-      if (this.versionValue === '-1' && this.memberValue !== '-1') {
-        this.searchKanbanCard(this.memberValue, userOpt)
-      }
-      if (this.versionValue !== '-1' && this.memberValue !== '-1') {
-        this.searchKanbanCard(this.versionValue, versionOpt)
+      if (this.memberValue !== '-1') {
         this.searchKanbanCard(this.memberValue, userOpt)
       }
     },
