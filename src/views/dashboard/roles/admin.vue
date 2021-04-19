@@ -159,7 +159,6 @@ export default {
         .then((res) => {
           const result = []
           res.data.forEach((item) => {
-            console.log(overview[item['project_status']], item['project_status'])
             result.push({
               ...item,
               class: overview[item['project_status']]['class'],
@@ -172,6 +171,7 @@ export default {
     getProjectMembersData() {
       return getProjectMembers()
         .then((res) => {
+          // const result = res.data.map((item) => ({ id: item['project_id'], name: item['project_name'], value: item['member_count'] }))
           return Promise.resolve(res.data)
         })
     },
