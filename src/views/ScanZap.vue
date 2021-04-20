@@ -2,7 +2,6 @@
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getZapScans } from '@/api/zap'
-import moment from 'moment'
 
 export default {
   name: 'ScanZap',
@@ -43,9 +42,9 @@ export default {
       if (end == null) {
         return ''
       }
-      const s = moment.utc(start).unix()
-      const e = moment.utc(end).unix()
-      return moment.duration(e - s, 'seconds').humanize()
+      const s = this.$dayjs.utc(start).unix()
+      const e = this.$dayjs.utc(end).unix()
+      return this.$dayjs.duration(e - s, 'seconds').humanize()
     },
     showFullLog(log) {
       const wnd = window.open('about:blank', '', '_blank')

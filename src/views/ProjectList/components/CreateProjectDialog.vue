@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
@@ -150,7 +150,7 @@ const formTemplate = () => ({
   display: '',
   disabled: false,
   template_id: '',
-  start_date: moment().format('YYYY-MM-DD'),
+  start_date: dayjs().format('YYYY-MM-DD'),
   due_date: '',
   tag_name: '',
   argumentsForm: []
