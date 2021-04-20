@@ -26,7 +26,9 @@
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
             <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-              <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value">
+                {{ item.label }}{{ `（${item.login}）` }}
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -272,7 +274,7 @@ export default {
           return { label: item.name, value: item.id }
         })
         this.issueAssigneeList = res[3].data.user_list.map(item => {
-          return { label: item.name, value: item.id }
+          return { label: item.name, value: item.id, login: item.login }
         })
         this.issueVersionList = res[4].data.versions.map(item => {
           return { label: item.name, value: item.id, status: item.status }

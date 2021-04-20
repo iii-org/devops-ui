@@ -20,13 +20,13 @@
       <el-card>
         <el-table v-if="listData.length>0" ref="tableData"
                   :data="pagedData"
-                  row-key="project_id"
+                  :row-key="'project_id'"
                   @row-click="rowClicked"
                   @expand-change="loadMembers"
         >
           <el-table-column type="expand">
             <template slot-scope="props">
-              <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.children" />
+              <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.childrens" />
             </template>
           </el-table-column>
           <el-table-column
@@ -183,7 +183,7 @@ export default {
       row.loading = true
       getProjectMembersByProjectID(row.project_id)
         .then((res) => {
-          row['children'] = res.data
+          row['childrens'] = res.data
         })
         .finally(() => {
           row.loading = false
@@ -196,6 +196,10 @@ export default {
     },
     closeHandler() {
       this.keyword = ''
+      this.pagedData.forEach((item) => {
+        this.$refs['tableData'].toggleRowExpansion(item, false)
+      })
+      this.listQuery.page = 1
     }
   }
 }

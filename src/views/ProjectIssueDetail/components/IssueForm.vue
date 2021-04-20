@@ -9,7 +9,9 @@
             clearable
             :placeholder="$t('RuleMsg.PleaseSelect')"
           >
-            <el-option v-for="item in dynamicAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in dynamicAssigneeList" :key="item.value" :label="item.label" :value="item.value">
+              {{ item.label }}（{{ item.login }}）
+            </el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -193,7 +195,11 @@ export default {
           item => item.data
         )
 
-        this.assigneeList = assigneeList.user_list.map(item => ({ label: item.login, value: item.id }))
+        this.assigneeList = assigneeList.user_list.map(item => ({
+          label: item.name,
+          login: item.login,
+          value: item.id
+        }))
         this.versionList = versionList.versions.map(item => ({
           label: item.name,
           value: item.id,

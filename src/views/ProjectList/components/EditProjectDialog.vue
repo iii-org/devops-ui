@@ -10,17 +10,17 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('Project.Info') }}</el-divider>
-          <el-col :span="24" :sm="12" :xl="9">
+          <el-col :span="24" :sm="12" :xl="6">
             <el-form-item :label="$t('Project.Identifier')">
               <el-input v-model="form.name" disabled />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :xl="9">
+          <el-col :span="24" :sm="12" :xl="7">
             <el-form-item :label="$t('Project.Name')" prop="display">
               <el-input v-model="form.display" />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="8" :xl="3">
+          <el-col :span="24" :sm="8" :xl="5">
             <el-form-item :label="$t('Project.ProjectOwner')" prop="owner_id">
               <el-select v-model="form.owner_id" style="width: 100%">
                 <el-option v-for="item in assignedList" :key="item.id" :label="item.label" :value="item.id">
@@ -31,12 +31,24 @@
           </el-col>
           <el-col :span="24" :sm="8" :xl="3">
             <el-form-item :label="$t('Project.StartDate')" prop="start_date">
-              <el-date-picker v-model="form.start_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+              <el-date-picker
+                v-model="form.start_date"
+                type="date"
+                value-format="yyyy-MM-dd"
+                style="width: 100%"
+                @change="checkDueDate"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="8" :xl="3">
             <el-form-item :label="$t('Project.DueDate')" prop="due_date">
-              <el-date-picker v-model="form.due_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+              <el-date-picker
+                v-model="form.due_date"
+                type="date"
+                value-format="yyyy-MM-dd"
+                style="width: 100%"
+                :picker-options="pickerOptions(form.start_date)"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -111,9 +123,15 @@ export default {
       due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
       owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }]
     },
-    assignableList: []
+    assignableList: [],
+    pickerOptions(startDate) {
+      return {
+        disabledDate(time) {
+          return time.getTime() < new Date(startDate).getTime()
+        }
+      }
+    }
   }),
-
   computed: {
     assignedList() {
       return this.assignableList.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
@@ -122,7 +140,9 @@ export default {
   watch: {
     editProjectObj() {
       const formItems = Object.keys(this.form)
-      formItems.forEach(item => (this.form[item] = this.editProjectObj[item]))
+      formItems.forEach(item => {
+        this.form[item] = this.editProjectObj[item] === 'None' ? '' : this.editProjectObj[item]
+      })
       this.fetchProjectAssignableList(this.editProjectObj.id)
       this.form.owner_id = this.editProjectObj.pm_user_id
     }
@@ -168,6 +188,9 @@ export default {
       })
       this.showDialog = false
       this.$emit('update')
+    },
+    checkDueDate(startDate) {
+      if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
     }
   }
 }

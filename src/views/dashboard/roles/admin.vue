@@ -106,9 +106,9 @@ import AdminOverview from '../components/AdminOverview'
 import AdminCommitLog from '../components/AdminCommitLog'
 
 const overview = {
-  projects: { item: 'Projects', class: 'primary', database: '' },
-  overdue: { item: 'Overdue', class: 'danger', database: 'Overdue' },
-  not_started: { item: 'Not Started', class: 'info', database: 'Not_Started' }
+  Projects: { class: 'primary', database: '' },
+  Overdue: { class: 'danger', database: 'Overdue' },
+  Not_Started: { class: 'info', database: 'Not_Started' }
 }
 const commitLimit = 10
 const refreshCommitLog = 300000 // ms
@@ -158,12 +158,11 @@ export default {
       return getProjectOverview()
         .then((res) => {
           const result = []
-          Object.keys(res.data[0]).forEach((item) => {
+          res.data.forEach((item) => {
             result.push({
-              item: overview[item]['item'],
-              count: res.data[0][item],
-              class: overview[item]['class'],
-              database: overview[item]['database']
+              ...item,
+              class: overview[item['project_status']]['class'],
+              database: overview[item['project_status']]['database']
             })
           })
           return Promise.resolve(result)

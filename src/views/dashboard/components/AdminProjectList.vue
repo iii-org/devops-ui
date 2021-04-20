@@ -21,7 +21,7 @@
       </el-col>
     </el-row>
     <component :is="showShadow">
-      <el-table :data="pagedData" :row-class-name="tableRowClassName" cell-class-name="align-center"
+      <el-table v-loading="listLoading" :data="pagedData" :row-class-name="tableRowClassName" cell-class-name="align-center"
                 header-cell-class-name="align-center"
                 @sort-change="onSortChange"
       >

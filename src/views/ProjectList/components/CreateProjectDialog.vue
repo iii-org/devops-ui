@@ -25,17 +25,31 @@
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
             <el-form-item :label="$t('Project.StartDate')" prop="start_date">
-              <el-date-picker v-model="form.start_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+              <el-date-picker
+                v-model="form.start_date"
+                type="date"
+                value-format="yyyy-MM-dd"
+                style="width: 100%"
+                @change="checkDueDate"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
             <el-form-item :label="$t('Project.DueDate')" prop="due_date">
-              <el-date-picker v-model="form.due_date" type="date" value-format="yyyy-MM-dd" style="width: 100%" />
+              <el-date-picker
+                v-model="form.due_date"
+                type="date"
+                value-format="yyyy-MM-dd"
+                style="width: 100%"
+                :picker-options="pickerOptions(form.start_date)"
+              />
             </el-form-item>
           </el-col>
-          <el-form-item :label="$t('general.Description')" prop="description">
-            <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
-          </el-form-item>
+          <el-col :span="24">
+            <el-form-item :label="$t('general.Description')" prop="description">
+              <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
+            </el-form-item>
+          </el-col>
         </el-col>
       </el-row>
       <el-row v-loading="isLoadingTemplate" :gutter="10">
@@ -125,6 +139,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { mapActions } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
@@ -135,7 +150,7 @@ const formTemplate = () => ({
   display: '',
   disabled: false,
   template_id: '',
-  start_date: '',
+  start_date: moment().format('YYYY-MM-DD'),
   due_date: '',
   tag_name: '',
   argumentsForm: []
@@ -163,7 +178,14 @@ export default {
     },
     templateList: [],
     focusTemplate: {},
-    isLoadingTemplate: false
+    isLoadingTemplate: false,
+    pickerOptions(startDate) {
+      return {
+        disabledDate(time) {
+          return time.getTime() < new Date(startDate).getTime()
+        }
+      }
+    }
   }),
   computed: {
     versionList() {
@@ -296,6 +318,9 @@ export default {
         .catch(err => {
           console.error(err)
         })
+    },
+    checkDueDate(startDate) {
+      if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
     }
   }
 }
