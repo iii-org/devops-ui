@@ -83,6 +83,7 @@ export default {
     2004: 'Wrong password or username.',
     2005: 'The username or e-mail is already used.',
     2006: 'The user {user_id} is already in project {project_id}.',
+    2007: 'This user is project owner in the project.',
     3001: "The user doesn't have permission for this operation.",
     3002: 'You need to be in the project for this operation.',
     3003: "You are not permitted to access another user's data.",

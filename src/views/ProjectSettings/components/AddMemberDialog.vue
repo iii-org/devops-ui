@@ -121,8 +121,8 @@ export default {
       })
     }
   },
-  mounted() {
-    this.assignableUserList = this.fetchData()
+  async mounted() {
+    this.assignableUserList = await this.fetchData()
   },
   methods: {
     fetchData() {
