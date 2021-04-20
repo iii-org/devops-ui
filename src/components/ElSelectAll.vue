@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="selected" multiple v-bind="$attrsAll" v-on="$listenserAll" @change="onChange">
+  <el-select v-model="selected" multiple v-bind="$attrsAll" :value-key="valueKey" v-on="$listenserAll" @change="onChange">
     <el-option v-for="item in mdoptionsList" :key="item.key" :label="item.label" :value="item.value" />
   </el-select>
 </template>
@@ -13,6 +13,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    valueKey: {
+      type: String,
+      default: null
     },
     options: {
       type: Array,

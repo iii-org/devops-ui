@@ -44,7 +44,7 @@
             </el-select>
           </el-form-item>
           <el-select-all ref="filterValue" v-model="filterValue" filterable multiple collapse-tags
-                         :options="filterValueOptions"
+                         :options="filterValueOptions" value-key="id"
           />
         </el-form>
       </el-col>
@@ -54,14 +54,15 @@
       <Kanban
         v-for="(status, idx) in filterValueOnBoard"
         :key="idx"
-        :list="classifyIssueList[status]"
+        :board-object="status"
+        :list="classifyIssueList[status.name]"
         :dimension="filterDimension"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
-        :header-text="getTranslateHeader(status)"
-        :c-name="status"
-        :class="{[status.toLowerCase()]: true}"
+        :header-text="getTranslateHeader(status.name)"
+        :c-name="status.name"
+        :class="{[status.name.toLowerCase()]: true}"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
         @update-drag="quickUpdateIssue"
@@ -70,14 +71,17 @@
         <el-row v-for="(item,idx) in filterDimensionOptions" :key="idx" class="panel">
           <el-card>
             <template slot="header">{{ item.label }}</template>
-            <div v-for="(subItem, idx) in getFilterValueList(item.value)" :id="idx" :key="idx" draggable="true"
-                 class="item"
-                 @dragstart="dragStart($event, {[item.value]: subItem})"
-                 @dragend="dragEnd"
-            >
-              <el-tag>{{ subItem.name }}</el-tag>
-              <el-alert class="help_text" :closable="false">拖曳到議題，可以將 {{ item.label }} 改變成 {{ subItem.name }}</el-alert>
-            </div>
+            <template v-for="(subItem, idx) in getFilterValueList(item.value)">
+              <div v-if="subItem.status!=='closed'" :id="idx" :key="idx"
+                   draggable="true"
+                   class="item"
+                   @dragstart="dragStart($event, {[item.value]: subItem})"
+                   @dragend="dragEnd"
+              >
+                <el-tag>{{ subItem.name }}</el-tag>
+                <el-alert class="help_text" :closable="false">拖曳到議題，可以將 {{ item.label }} 改變成 {{ subItem.name }}</el-alert>
+              </div>
+            </template>
           </el-card>
         </el-row>
       </right-panel>
@@ -105,7 +109,7 @@ export default {
   },
   data: () => ({
     isLoading: true,
-    filterDimension: 'issue_status',
+    filterDimension: 'status',
     filterValue: [],
     projectIssueList: [],
     classifyIssueList: {},
@@ -113,8 +117,8 @@ export default {
     versionValue: '-1',
     memberValue: '-1',
     fixed_version: [],
-    issue_status: [],
-    issue_category: [],
+    status: [],
+    tracker: [],
     assigned_to: [],
     relativeIssueList: []
   }),
@@ -122,8 +126,8 @@ export default {
     ...mapGetters(['selectedProjectId']),
     filterDimensionOptions() {
       return [
-        { label: '議題狀態', value: 'issue_status' },
-        { label: '議題類別', value: 'issue_category' },
+        { label: '議題狀態', value: 'status' },
+        { label: '議題類別', value: 'tracker' },
         { label: '專案成員', value: 'assigned_to' },
         { label: '專案版本', value: 'fixed_version' }
       ]
@@ -134,12 +138,12 @@ export default {
       return this[this.filterDimension].map((item, idx) => ({
         id: idx,
         label: item.name,
-        value: this.searchNullValueOption(item)
+        value: item
       }))
     },
     filterValueOnBoard() {
       if (this.filterValue.length <= 0) {
-        return this[this.filterDimension].map((item) => (this.searchNullValueOption(item)))
+        return this[this.filterDimension].map((item) => (item))
       }
       return this.filterValue
     }
@@ -165,10 +169,10 @@ export default {
   },
   async created() {
     const issueStatusRes = await getIssueStatus()
-    this.issue_status = issueStatusRes.data
-    const issueCategoryRes = await getIssueTracker()
-    this.issue_category = issueCategoryRes.data
-    // this.issue_status.forEach((item) => {
+    this.status = issueStatusRes.data
+    const issueTrackerRes = await getIssueTracker()
+    this.tracker = issueTrackerRes.data
+    // this.status.forEach((item) => {
     //   this.classifyIssueList[item.name] = []
     // })
     await this.fetchData()
@@ -193,24 +197,24 @@ export default {
     },
     checkInFilterValue(value) {
       if (this.filterValue.length <= 0) return true
-      return this.filterValue.includes(value)
+      return this.filterValue.filter((item) => (item.name === value))
     },
     classifyIssue() {
       this.projectIssueList.forEach((issue) => {
-        if (this.checkInFilterValue(issue[this.filterDimension])) {
-          if (!this.classifyIssueList.hasOwnProperty(issue[this.filterDimension])) {
-            this.classifyIssueList[issue[this.filterDimension]] = []
+        const dimensionName = issue[this.filterDimension].name
+        if (this.checkInFilterValue(dimensionName)) {
+          if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
+            this.classifyIssueList[dimensionName] = []
           }
           let parentDetail = {}
           if (issue.parent_id) {
             const parent = this.projectIssueList.find((item) => (item.id === issue.parent_id))
             parentDetail = {
-              parent_name: parent.issue_name,
-              parent_status: parent.issue_status,
-              parent_status_id: parent.issue_status_id
+              parent_name: parent.name,
+              parent_status: parent.status
             }
           }
-          this.classifyIssueList[issue[this.filterDimension]].push({
+          this.classifyIssueList[dimensionName].push({
             ...issue,
             ...parentDetail
           })
@@ -226,7 +230,11 @@ export default {
     searchKanbanCard(value, opt) {
       Object.keys(this.classifyIssueList).forEach((item) => {
         if (value === '') {
-          this.classifyIssueList[item] = this.classifyIssueList[item].filter((item) => (item[opt['keys'][0]] === value))
+          this.classifyIssueList[item] = this.classifyIssueList[item].filter((subItem) => {
+            const findKey = opt['keys'][0].split('.')
+            const findName = findKey.reduce((total, current) => (total[current]), subItem)
+            return findName === undefined || findKey[0] === ''
+          })
         } else {
           const fuse = new Fuse(this.classifyIssueList[item], opt)
           const res = fuse.search(`="${value}"`)
@@ -239,7 +247,7 @@ export default {
     },
     // resetKanbanCard() {
     //   this.classifyIssueList = {}
-    //   let objectArray = this.issue_status
+    //   let objectArray = this.status
     //   if (this.filterValue.length > 0) {
     //     objectArray = this.filterValue.map((item) => ({ name: item }))
     //   }
@@ -273,12 +281,11 @@ export default {
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
         this.isLoading = true
-        const getUpdateDimension = this[this.filterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
-        await updateIssue(evt.event.added.element.id, { [this.filterDimension + '_id']: getUpdateDimension.id })
+        // const getUpdateDimension = this[this.filterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
+        await updateIssue(evt.event.added.element.id, { [this.filterDimension + '_id']: evt.boardObject.id })
         this.projectIssueList.forEach((item) => {
           if (item.id === evt.event.added.element.id) {
-            item[this.filterDimension] = evt.list
-            item[this.filterDimension + '_id'] = getUpdateDimension.id
+            item[this.filterDimension] = evt.boardObject
           }
         })
         this.resetClassifyIssue()
@@ -295,8 +302,7 @@ export default {
       await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
       this.projectIssueList.forEach((item) => {
         if (item.id === id) {
-          item[filterDimension] = value[filterDimension].name
-          item[filterDimension + '_id'] = value[filterDimension].id
+          item[filterDimension] = value[filterDimension]
         }
       })
       this.resetClassifyIssue()
@@ -308,11 +314,11 @@ export default {
       this.resetClassifyIssue()
       this.classifyIssue()
       const versionOpt = {
-        keys: ['fixed_version'],
+        keys: ['fixed_version.name'],
         useExtendedSearch: true
       }
       const userOpt = {
-        keys: ['assigned_to'],
+        keys: ['assigned_to.name'],
         useExtendedSearch: true
       }
       if (this.versionValue !== '-1') {

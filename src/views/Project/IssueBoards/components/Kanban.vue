@@ -12,7 +12,7 @@
     </div>
     <draggable
       :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives"
-      @change="end(cName, $event)"
+      @change="end(boardObject, $event)"
     >
       <div v-for="(element,idx) in list" :key="element.id" class="board-item" @drop="drop($event, idx)"
            @dragover="allowDrop($event, idx)"
@@ -20,7 +20,7 @@
         <div class="pb-4">
           <div>
             <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
-              {{ element.issue_name }}
+              {{ element.name }}
             </el-link>
           </div>
         </div>
@@ -29,14 +29,16 @@
             <i class="el-icon-date" />
             <span class="ml-1">{{ element.due_date }}</span>
           </span>
-          <span class="ml-1 detail">
-            <i class="el-icon-s-custom" />
-            <span class="ml-1">{{ element.assigned_to }}</span>
-          </span>
+          <el-tooltip :content="element.assigned_to.login" placement="right-start" :disabled="!element.assigned_to.login">
+            <span class="ml-1 detail">
+              <i class="el-icon-s-custom" />
+              <span class="ml-1">{{ element.assigned_to.name }}</span>
+            </span>
+          </el-tooltip>
           <p v-if="element.parent_id" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
-            <el-tag class="el-tag--circle" size="mini" :class="element.parent_status">
-              {{ $t('ProjectActive.' + element.parent_status) }}
+            <el-tag class="el-tag--circle" size="mini" :class="element.parent_status.name">
+              {{ $t('ProjectActive.' + element.parent_status.name) }}
             </el-tag>
             <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
               {{ element.parent_name }}
@@ -50,11 +52,11 @@
                 </template>
                 <ol class="children_list">
                   <li v-for="(subElement,idx) in element.children" :key="idx">
-                    <el-tag class="el-tag--circle" size="mini" :class="subElement.issue_status">
-                      {{ $t('ProjectActive.' + subElement.issue_status) }}
+                    <el-tag class="el-tag--circle" size="mini" :class="subElement.status.name">
+                      {{ $t('ProjectActive.' + subElement.status.name) }}
                     </el-tag>
                     <el-link type="primary" :underline="false" @click="handleClick(element.id)">
-                      {{ subElement.issue_name }}
+                      {{ subElement.name }}
                     </el-link>
                   </li>
                 </ol>
@@ -99,6 +101,10 @@ export default {
       type: String,
       default: 'Header'
     },
+    boardObject: {
+      type: Object,
+      default: () => ({})
+    },
     list: {
       type: Array,
       default: () => []
@@ -133,17 +139,17 @@ export default {
       // if (
       //   toName === 'Closed' &&
       //   childrenIssueList.length &&
-      //   !childrenIssueList.every(item => item.issue_status === 'Closed')
+      //   !childrenIssueList.every(item => item.status.name === 'Closed')
       // ) {
       //   result = false
       // }
-      // if (parentIssue !== {} && parentIssue.issue_status === 'Closed') {
+      // if (parentIssue !== {} && parentIssue.status.name === 'Closed') {
       //   result = false
       // }
       return result
     },
-    end(list, event) {
-      this.$emit('update', { list: list, event: event })
+    end(boardObject, event) {
+      this.$emit('update', { boardObject: boardObject, event: event })
     },
     updateBoard(sendData) {
       this.$emit('updateBoard', sendData)
