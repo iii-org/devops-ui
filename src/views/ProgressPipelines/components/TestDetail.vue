@@ -58,9 +58,10 @@
 </template>
 
 <script>
-// Testing
-import { Manager } from 'socket.io-client'
+import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
+
+const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', { reconnectionAttempts: 5 })
 
 export default {
   name: 'TestDetail',
@@ -80,7 +81,8 @@ export default {
   },
   data: () => ({
     stages: [],
-    activeStage: ''
+    activeStage: '',
+    sid: ''
   }),
   computed: {
     ...mapGetters(['selectedProject'])
@@ -93,6 +95,12 @@ export default {
         this.handleClick({ index: 0 })
       }
     }
+  },
+  mounted() {
+    socket.on('connect', () => {
+      this.sid = socket.id
+    })
+    socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
   },
   methods: {
     handleClose() {
@@ -118,36 +126,36 @@ export default {
     },
     handleClick(tab) {
       const index = Number(tab.index)
-      if (this.stages[index].isLoading === false) {
-        return
-      } else if (this.stages[index].state === 'Waiting') {
-        this.stages[index].isLoading = false
-        this.stages[index].steps.forEach(step => (step.message = 'Waiting'))
-        return
+      const stage = this.stages[index]
+      if (!stage.isLoading) return
+      const emitObj = {
+        pipelines_exec_run: this.pipelinesExecRun,
+        repository_id: this.selectedProject.repository_id,
+        stage_index: index + 1,
+        step_index: stage.steps[0].step_id,
+        sid: this.sid
       }
-      const manager = new Manager(process.env.VUE_APP_BASE_API, { reconnectionAttempts: 5 })
-      const { repository_id } = this.selectedProject
-      const socket = manager.socket('/rancher/websocket/logs')
-      this.stages[index].steps.forEach((step, stepIdx) => {
-        const emitObj = {
-          repository_id,
-          pipelines_exec_run: this.pipelinesExecRun,
-          stage_index: index + 1,
-          step_index: step.step_id
+      socket.emit('get_pipe_log', emitObj)
+      // console.log('EMIT get_pipe_log ===>', emitObj)
+      socket.on('pipeline_log', sioEvt => {
+        // console.log('EVENT pipeline_log ===>', sioEvt)
+        const { stage_index, step_index, data } = sioEvt
+        if (data === '') {
+          this.stages[stage_index - 1].isLoading = false
+          return
         }
-        socket.emit('get_pipe_log', emitObj)
-        // console.log('sioEmit ===>', { emitObj, stage_index: emitObj.stage_index, step_index: emitObj.step_index })
-        socket.on('pipeline_log', sioEvt => {
-          const { stage_index, step_index, data } = sioEvt
-          // console.log('sioEvt ===>', { sioEvt, stage_index, step_index, data })
-          if (data.length && stage_index - 1 === index && step_index === stepIdx) {
-            this.stages[index].steps[stepIdx].message = data
-          } else if (!data.length && stage_index - 1 === index && step_index === stepIdx) {
-            this.stages[index].isLoading = false
-            socket.disconnect()
-          }
-        })
+        const isHistoryMessage =
+          this.stages[stage_index - 1].steps[step_index].message === data ||
+          this.stages[stage_index - 1].steps[step_index].message === 'Loading...'
+        if (isHistoryMessage) {
+          this.stages[stage_index - 1].steps[step_index].message = data
+        } else {
+          this.stages[stage_index - 1].steps[step_index].message = this.stages[stage_index - 1].steps[
+            step_index
+          ].message.concat(data)
+        }
       })
+      socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
     }
   }
 }
