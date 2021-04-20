@@ -94,22 +94,22 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.high')">
         <template slot-scope="scope">
-          {{ scope.row.result['0'] }}
+          {{ scope.row.result['3'] }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.medium')">
         <template slot-scope="scope">
-          {{ scope.row.result['1'] }}
+          {{ scope.row.result['2'] }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.low')">
         <template slot-scope="scope">
-          {{ scope.row.result['2'] }}
+          {{ scope.row.result['1'] }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.info')">
         <template slot-scope="scope">
-          {{ scope.row.result['3'] }}
+          {{ scope.row.result['0'] }}
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />
