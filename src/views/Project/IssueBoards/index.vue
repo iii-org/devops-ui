@@ -65,14 +65,15 @@
         :class="{[status.name.toLowerCase()]: true}"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
+        @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
       />
       <right-panel ref="rightPanel" :click-not-close="true">
         <el-row v-for="(item,idx) in filterDimensionOptions" :key="idx" class="panel">
           <el-card>
             <template slot="header">{{ item.label }}</template>
-            <template v-for="(subItem, idx) in getFilterValueList(item.value)">
-              <div v-if="subItem.status!=='closed'" :id="idx" :key="idx"
+            <template v-for="(subItem, index) in getFilterValueList(item.value)">
+              <div v-if="subItem.status!=='closed'" :id="index" :key="index"
                    draggable="true"
                    class="item"
                    @dragstart="dragStart($event, {[item.value]: subItem})"
@@ -95,7 +96,7 @@ import Fuse from 'fuse.js'
 import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
-import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
+import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import RightPanel from '@/views/Project/IssueBoards/components/RightPanel'
 
@@ -245,39 +246,11 @@ export default {
     searchNullValueOption(item) {
       return (item.id === '') ? item.id : item.name
     },
-    // resetKanbanCard() {
-    //   this.classifyIssueList = {}
-    //   let objectArray = this.status
-    //   if (this.filterValue.length > 0) {
-    //     objectArray = this.filterValue.map((item) => ({ name: item }))
-    //   }
-    //   objectArray.forEach(item => {
-    //     this.classifyIssueList[item.name] = this.genKanbanCard(item.name)
-    //   })
-    // },
-    // genKanbanCard(status) {
-    //   if (!this.projectIssueList[status]) return [] // 該status不存在issue回傳空array
-    //   return this.projectIssueList[status].map(issue => {
-    //   })
-    // },
-    // updateIssueBoard() {
-    //   this.fetchData()
-    //   this.versionValue = '-1'
-    //   this.memberValue = '-1'
-    // },
-    // updateRelativeList() {
-    //   this.isLoading = true
-    //   return getProjectIssueListByTree(this.selectedProjectId).then(res => {
-    //     return Promise.resolve(this.createRelativeList(res.data))
-    //   })
-    //     .catch((e) => {
-    //       console.log(e)
-    //       return Promise.reject()
-    //     })
-    //     .finally(() => {
-    //       this.isLoading = false
-    //     })
-    // },
+    updateIssueBoard() {
+      this.fetchData()
+      this.versionValue = '-1'
+      this.memberValue = '-1'
+    },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
         this.isLoading = true

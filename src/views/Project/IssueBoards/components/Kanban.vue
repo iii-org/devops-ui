@@ -7,7 +7,7 @@
           <i class="el-icon-plus ml-4 mr-5 add-button" @click="showDialog = true" />
         </el-col>
         <el-col :span="19" class="text-center">{{ headerText }}</el-col>
-        <!-- <i class="el-icon-more header-icon" /> -->
+        <!--        <i class="el-icon-more header-icon" />-->
       </el-row>
     </div>
     <draggable
@@ -51,7 +51,7 @@
                   <i class="el-icon-caret-right" /> 子議題 ({{ element.children|lengthFilter }})
                 </template>
                 <ol class="children_list">
-                  <li v-for="(subElement,idx) in element.children" :key="idx">
+                  <li v-for="(subElement,index) in element.children" :key="index">
                     <el-tag class="el-tag--circle" size="mini" :class="subElement.status.name">
                       {{ $t('ProjectActive.' + subElement.status.name) }}
                     </el-tag>
@@ -69,7 +69,7 @@
     <AddIssueDialog
       :dialog-visible="showDialog"
       :dimension="dimension"
-      :focus-value="cName"
+      :focus-value="boardObject"
       :focus-version="focusVersion"
       @close="showDialog = false"
       @update="updateBoard"
@@ -152,7 +152,7 @@ export default {
       this.$emit('update', { boardObject: boardObject, event: event })
     },
     updateBoard(sendData) {
-      this.$emit('updateBoard', sendData)
+      this.$emit('update-board', sendData)
     },
     handleClick(id) {
       this.$router.push({ path: `/project/issue-list/${id}` })
@@ -160,15 +160,13 @@ export default {
     drop(e, idx) {
       e.preventDefault()
       const data = JSON.parse(e.dataTransfer.getData('json'))
-      // this.$set(this.list[idx], Object.keys(data)[0], Object.values(data)[0].name)
       this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
       this.reload += 1
     },
-    allowDrop(e, idx) {
+    allowDrop(e) {
       e.dataTransfer.dropEffect = 'copy'
       e.dataTransfer.clearData()
       e.preventDefault()
-      // console.log('dragover')
     }
   }
 }

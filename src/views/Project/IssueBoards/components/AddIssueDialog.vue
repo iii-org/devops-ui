@@ -1,3 +1,53 @@
+<template>
+  <el-dialog
+    :title="$t('Issue.AddIssue')"
+    :visible.sync="dialogVisible"
+    width="40%"
+    :close-on-click-modal="false"
+    :before-close="handleClose"
+  >
+    <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" label-width="100px">
+      <el-form-item :label="$t('general.Title')" prop="subject">
+        <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
+      </el-form-item>
+      <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id" :required="focusValue === 'Assigned'">
+        <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
+          <el-option v-for="item in assigned_to" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
+        <el-select v-model="issueForm.priority_id" style="width: 100%">
+          <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('general.Type')" prop="tracker_id">
+        <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%" :disabled="isDisabledField('tracker')">
+          <el-option v-for="item in tracker" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('general.Status')" prop="status_id">
+        <el-select v-model="issueForm.status_id" style="width: 100%" :disabled="isDisabledField('status')">
+          <el-option v-for="item in status" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('general.Description')" prop="description">
+        <el-input
+          id="input-description"
+          v-model="issueForm.description"
+          type="textarea"
+          :placeholder="$t('general.PleaseInput')"
+        />
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button id="dialog-btn-cancel" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button id="dialog-btn-confirm" :loading="isLoading" type="primary" @click="handleSave">
+        {{ $t('general.Confirm') }}
+      </el-button>
+    </span>
+  </el-dialog>
+</template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
@@ -6,13 +56,17 @@ import { addIssue } from '@/api/issue'
 
 export default {
   props: {
+    dimension: {
+      type: String,
+      default: null
+    },
     dialogVisible: {
       type: Boolean,
       default: false
     },
-    focusStatus: {
-      type: String,
-      default: ''
+    focusValue: {
+      type: [Object, String],
+      default: null
     },
     focusVersion: {
       type: String,
@@ -36,9 +90,9 @@ export default {
       status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }]
     },
     issuePriorityList: [],
-    issueTypeList: [],
-    issueStatusList: [],
-    issueAssigneeList: [],
+    tracker: [],
+    status: [],
+    assigned_to: [],
     isLoading: false
   }),
   computed: {
@@ -48,14 +102,20 @@ export default {
     selectedProjectId() {
       this.fetchData()
     },
-    issueStatusList(val) {
-      if (val) {
-        this.issueForm.status_id = this.issueStatusList.find(i => i.label === this.focusStatus).value
+    focusValue: {
+      deep: true,
+      handler(value) {
+        if (this.dimension) {
+          this.issueForm[this.dimension + '_id'] = value.id
+        }
       }
     }
   },
   mounted() {
     this.fetchData()
+    if (this.dimension) {
+      this.issueForm[this.dimension + '_id'] = this.focusValue.id
+    }
   },
   methods: {
     fetchData() {
@@ -66,13 +126,13 @@ export default {
         getProjectAssignable(this.selectedProjectId)
       ]).then(res => {
         this.issuePriorityList = res[0].data.map(item => ({ label: item.name, value: item.id }))
-        this.issueTypeList = res[1].data.map(item => ({ label: item.name, value: item.id }))
-        this.issueStatusList = res[2].data.map(item => ({ label: item.name, value: item.id }))
-        this.issueAssigneeList = res[3].data.user_list.map(item => ({
-          label: item.login,
-          value: item.id
-        }))
+        this.tracker = res[1].data
+        this.status = res[2].data
+        this.assigned_to = res[3].data.user_list
       })
+    },
+    isDisabledField(value) {
+      return value === this.dimension
     },
     handleClose() {
       this.$emit('close')
@@ -110,53 +170,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <el-dialog
-    :title="$t('Issue.AddIssue')"
-    :visible.sync="dialogVisible"
-    width="40%"
-    :close-on-click-modal="false"
-    :before-close="handleClose"
-  >
-    <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" label-width="100px">
-      <el-form-item :label="$t('general.Title')" prop="subject">
-        <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
-      </el-form-item>
-      <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id" :required="focusStatus === 'Assigned'">
-        <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
-          <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-        <el-select v-model="issueForm.priority_id" style="width: 100%">
-          <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('general.Type')" prop="tracker_id">
-        <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-          <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('general.Status')" prop="status_id">
-        <el-select v-model="issueForm.status_id" style="width: 100%" disabled>
-          <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('general.Description')" prop="description">
-        <el-input
-          id="input-description"
-          v-model="issueForm.description"
-          type="textarea"
-          :placeholder="$t('general.PleaseInput')"
-        />
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button id="dialog-btn-cancel" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-      <el-button id="dialog-btn-confirm" :loading="isLoading" type="primary" @click="handleSave">
-        {{ $t('general.Confirm') }}
-      </el-button>
-    </span>
-  </el-dialog>
-</template>
