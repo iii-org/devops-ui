@@ -98,6 +98,7 @@ export default {
   },
   mounted() {
     socket.on('connect', () => {
+      console.log('sio connected ===>', socket)
       this.sid = socket.id
     })
     socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
@@ -136,9 +137,9 @@ export default {
         sid: this.sid
       }
       socket.emit('get_pipe_log', emitObj)
-      // console.log('EMIT get_pipe_log ===>', emitObj)
+      console.log('EMIT get_pipe_log ===>', emitObj)
       socket.on('pipeline_log', sioEvt => {
-        // console.log('EVENT pipeline_log ===>', sioEvt)
+        console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         if (data === '') {
           this.stages[stage_index - 1].isLoading = false
