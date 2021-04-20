@@ -4,7 +4,7 @@
       <el-col :md="24" :lg="14">
         <project-list-selector />
         <el-select
-          v-if="filterDimension!=='fixed_version_name'"
+          v-if="filterDimension!=='fixed_version'"
           v-model="versionValue"
           :placeholder="$t('Version.SelectVersion')"
           :disabled="selectedProjectId === -1"
@@ -13,7 +13,7 @@
           @change="updateData"
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-          <el-option v-for="item in fixed_version_name" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-select
           v-if="filterDimension!=='assigned_to'"
@@ -40,10 +40,7 @@
               class="mr-4"
               filterable
             >
-              <el-option label="議題狀態" value="issue_status" />
-              <el-option label="議題類別" value="issue_category" />
-              <el-option label="專案成員" value="assigned_to" />
-              <el-option label="專案版本" value="fixed_version_name" />
+              <el-option v-for="(item,idx) in filterDimensionOptions" :key="idx" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-select-all ref="filterValue" v-model="filterValue" filterable multiple collapse-tags
@@ -58,6 +55,7 @@
         v-for="(status, idx) in filterValueOnBoard"
         :key="idx"
         :list="classifyIssueList[status]"
+        :dimension="filterDimension"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
@@ -66,8 +64,19 @@
         :class="{[status.toLowerCase()]: true}"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
+        @update-drag="quickUpdateIssue"
       />
-      <!--      @updateBoard="updateIssueBoard"-->
+      <right-panel ref="rightPanel" :click-not-close="true">
+        <el-row v-for="(item,idx) in filterDimensionOptions" :key="idx" class="panel">
+          <el-card>
+            <template slot="header">{{ item.label }}</template>
+            <el-tag v-for="(subItem, idx) in getFilterValueList(item.value)" :id="idx" :key="idx" draggable="true"
+                    @dragstart.native="dragStart($event, {[item.value]: subItem})"
+            >{{ subItem.name }}
+            </el-tag>
+          </el-card>
+        </el-row>
+      </right-panel>
     </el-col>
   </el-row>
 </template>
@@ -80,10 +89,12 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueListByStatus, getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
+import RightPanel from '@/views/Project/IssueBoards/components/RightPanel'
 
 export default {
   name: 'IssueBoards',
   components: {
+    RightPanel,
     ElSelectAll,
     Kanban,
     ProjectListSelector
@@ -97,7 +108,7 @@ export default {
     group: 'mission',
     versionValue: '-1',
     memberValue: '-1',
-    fixed_version_name: [],
+    fixed_version: [],
     issue_status: [],
     issue_category: [],
     assigned_to: [],
@@ -105,6 +116,14 @@ export default {
   }),
   computed: {
     ...mapGetters(['selectedProjectId']),
+    filterDimensionOptions() {
+      return [
+        { label: '議題狀態', value: 'issue_status' },
+        { label: '議題類別', value: 'issue_category' },
+        { label: '專案成員', value: 'assigned_to' },
+        { label: '專案版本', value: 'fixed_version' }
+      ]
+    },
     filterValueOptions() {
       // const result = [...new Set(this.projectIssueList.map((item) => (item[this.filterDimension])))]
       // return result.map((item, idx) => ({ id: idx, label: item, value: item }))
@@ -158,7 +177,7 @@ export default {
       const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version_name = versionsRes.data.versions
+      this.fixed_version = versionsRes.data.versions
 
       const userRes = await this.getProjectUserList(this.selectedProjectId)
       this.assigned_to = [{ name: '尚未指派', id: '' }, ...userRes.data.user_list]
@@ -263,12 +282,29 @@ export default {
         this.isLoading = false
       }
     },
+    async quickUpdateIssue(event) {
+      const { id, value } = event
+      this.isLoading = true
+      const filterDimension = Object.keys(value)[0]
+      // const getUpdateDimension = this[filterDimension].find((item) => (item.id === value[filterDimension].id))
+      // console.log(id, getUpdateDimension)
+      await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
+      this.projectIssueList.forEach((item) => {
+        if (item.id === id) {
+          item[filterDimension] = value[filterDimension].name
+          item[filterDimension + '_id'] = value[filterDimension].id
+        }
+      })
+      this.resetClassifyIssue()
+      this.classifyIssue()
+      this.isLoading = false
+    },
     updateData() {
       console.log('updateData')
       this.resetClassifyIssue()
       this.classifyIssue()
       const versionOpt = {
-        keys: ['fixed_version_name'],
+        keys: ['fixed_version'],
         useExtendedSearch: true
       }
       const userOpt = {
@@ -295,6 +331,15 @@ export default {
 
       flatList(list)
       return result
+    },
+    dragStart(e, item) {
+      e.effectAllowed = 'copy'
+      e.dataTransfer.setData('json', JSON.stringify(item))
+      // console.log('dragStart')
+      // console.log(e)
+    },
+    getFilterValueList(value) {
+      return this[value]
     }
   }
 }
@@ -396,5 +441,27 @@ $closed: #aeb6bf;
       }
     }
   }
+}
+
+>>>.rightPanel-items{
+  overflow-y: auto;
+  height:100%;
+  .panel {
+    padding: 30px 20px;
+    .el-tag{
+      font-size: 1.05em;
+      margin: 3px;
+    }
+  }
+}
+
+// For drag sources
+.dragging {
+  opacity: .25;
+}
+
+// For drop target
+.hover {
+  background-color: rgba(0, 191, 165, .04);
 }
 </style>

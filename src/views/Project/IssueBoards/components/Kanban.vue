@@ -1,5 +1,5 @@
 <template>
-  <div class="board-column">
+  <div :key="reload" class="board-column">
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="d-flex">
@@ -11,9 +11,12 @@
       </el-row>
     </div>
     <draggable
-      :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives" @change="end(cName, $event)"
+      :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives"
+      @change="end(cName, $event)"
     >
-      <div v-for="element in list" :key="element.id" class="board-item">
+      <div v-for="(element,idx) in list" :key="element.id" class="board-item" @drop="drop($event, idx)"
+           @dragover="allowDrop($event, idx)"
+      >
         <div class="pb-4">
           <div>
             <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
@@ -61,13 +64,14 @@
         </div>
       </div>
     </draggable>
-    <!--    <AddIssueDialog-->
-    <!--      :dialog-visible="showDialog"-->
-    <!--      :focus-status="cName"-->
-    <!--      :focus-version="focusVersion"-->
-    <!--      @close="showDialog = false"-->
-    <!--      @update="updateBoard"-->
-    <!--    />-->
+    <AddIssueDialog
+      :dialog-visible="showDialog"
+      :dimension="dimension"
+      :focus-value="cName"
+      :focus-version="focusVersion"
+      @close="showDialog = false"
+      @update="updateBoard"
+    />
   </div>
 </template>
 
@@ -78,8 +82,8 @@ import AddIssueDialog from './AddIssueDialog.vue'
 export default {
   name: 'Kanban',
   components: {
-    draggable
-    // AddIssueDialog
+    draggable,
+    AddIssueDialog
   },
   filters: {
     lengthFilter(value) {
@@ -87,6 +91,10 @@ export default {
     }
   },
   props: {
+    dimension: {
+      type: String,
+      default: null
+    },
     headerText: {
       type: String,
       default: 'Header'
@@ -109,7 +117,8 @@ export default {
     }
   },
   data: () => ({
-    showDialog: false
+    showDialog: false,
+    reload: 0
   }),
   methods: {
     checkRelatives(evt) {
@@ -141,6 +150,20 @@ export default {
     },
     handleClick(id) {
       this.$router.push({ path: `/project/issue-list/${id}` })
+    },
+    drop(e, idx) {
+      e.preventDefault()
+      const data = JSON.parse(e.dataTransfer.getData('json'))
+      // this.$set(this.list[idx], Object.keys(data)[0], Object.values(data)[0].name)
+      this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+      this.reload += 1
+    },
+    allowDrop(e, idx) {
+      e.dataTransfer.dropEffect = 'copy'
+      e.dataTransfer.clearData()
+      e.preventDefault()
+      // console.log('dragover')
+      // console.log(e)
     }
   }
 }
@@ -207,7 +230,8 @@ export default {
   .children_list {
     margin: 0;
   }
-  >>>.el-collapse-item {
+
+  > > > .el-collapse-item {
     &__header {
       height: 2.5em;
     }
