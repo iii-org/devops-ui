@@ -156,7 +156,7 @@ export const asyncRoutes = [
       {
         path: 'issue-list',
         name: 'issue-list',
-        component: () => import('@/views/ProjectIssues'),
+        component: () => import('@/views/Project/IssueList'),
         meta: {
           title: 'issueList',
           roles: ['Project Manager', 'Engineer', 'Administrator'],

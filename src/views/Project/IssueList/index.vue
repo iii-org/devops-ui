@@ -44,7 +44,7 @@
             <span :class="isParentIssue(scope.row) ? 'ml-6' : ''">
               <el-tooltip effect="dark" :content="$t('Issue.AddSubIssue')" placement="bottom-start" :open-delay="1000">
                 <el-button
-                  v-if="parentList.includes(scope.row.id) == true && scope.row.issue_status !== 'Closed'"
+                  v-if="parentList.includes(scope.row.id) && scope.row.status.name !== 'Closed'"
                   :id="`btn-add-sub-issue-${scope.$index}`"
                   icon="el-icon-plus"
                   type="text"
@@ -73,41 +73,41 @@
                 :underline="false"
                 @click="handleEdit(scope.$index, scope.row)"
               >
-                {{ scope.row.issue_name }}
+                {{ scope.row.name }}
               </span>
             </span>
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="150">
           <template slot-scope="scope">
-            <span v-if="scope.row.issue_category" :class="getCategoryTagType(scope.row.issue_category)" />
-            {{ scope.row.issue_category }}
+            <span v-if="scope.row.tracker" :class="getCategoryTagType(scope.row.tracker.name)" />
+            {{ scope.row.tracker.name }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
             <el-tag
-              v-if="scope.row.issue_status"
-              :type="getStatusTagType(scope.row.issue_status)"
+              v-if="scope.row.status.name"
+              :type="getStatusTagType(scope.row.status.name)"
               size="medium"
               effect="dark"
               class="el-tag--circle"
             >
-              {{ scope.row.issue_status }}
+              {{ scope.row.status.name }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" />
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to.name" />
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
             <el-tag
-              v-if="scope.row.issue_priority"
-              :type="getPriorityTagType(scope.row.issue_priority)"
+              v-if="scope.row.priority.name"
+              :type="getPriorityTagType(scope.row.priority.name)"
               size="medium"
               effect="dark"
               class="el-tag--circle"
             >
-              {{ scope.row.issue_priority }}
+              {{ scope.row.priority.name }}
             </el-tag>
           </template>
         </el-table-column>
@@ -161,7 +161,7 @@ export default {
         }
         if (
           this.searchData === '' ||
-          data.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+          data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
           data.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
         ) {
           return data
@@ -173,7 +173,7 @@ export default {
               dataChildren1.assigned_to = ''
             }
             if (
-              dataChildren1.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+              dataChildren1.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
               dataChildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
             ) {
               return dataChildren1
@@ -185,7 +185,7 @@ export default {
                   dataChildren2.assigned_to = ''
                 }
                 if (
-                  dataChildren2.issue_name.toLowerCase().includes(this.searchData.toLowerCase()) ||
+                  dataChildren2.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
                   dataChildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
                 ) {
                   return dataChildren2
@@ -237,9 +237,9 @@ export default {
     handleEdit(idx, row) {
       this.$router.push({ path: `issue-list/${row.id}` })
     },
-    handleParent(idx, row, scope) {
+    handleParent(idx, row) {
       this.parentId = row.id
-      this.parentName = row.issue_name
+      this.parentName = row.name
       this.addTopicDialogVisible = true
     },
     emitAddTopicDialogVisible(visible) {

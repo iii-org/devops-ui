@@ -9,7 +9,7 @@
   >
     <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
       <el-row>
-        <el-row v-if="parentId != 0">
+        <el-row v-if="parentId !== 0">
           <el-col :span="12">
             <el-form-item>
               <div style="font-weight: bold">{{ $t('Issue.ParentIssue') }} : {{ parentName }}</div>
@@ -178,7 +178,7 @@
 import dayjs from 'dayjs'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
-import { fileExtension } from '../../../utils/extension.js'
+import { fileExtension } from '@/utils/extension'
 
 const getFormTemplate = () => ({
   subject: '',
@@ -214,7 +214,10 @@ export default {
       type: Number,
       default: 0
     },
-    saveData: Function
+    saveData: {
+      type: Function,
+      default: () => {}
+    }
   },
 
   data() {
@@ -325,7 +328,7 @@ export default {
         }
       })
     },
-    handleExceed(files, fileList) {
+    handleExceed() {
       this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.SingleFileLimit'),
