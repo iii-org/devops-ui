@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 /**
  * Created by PanJiaChen on 16/11/18.
  */
@@ -84,7 +84,7 @@ export function formatTime(time, option) {
     return parseTime(time, option)
   } else {
     // return d.toLocaleString()
-    return moment(d).format('YYYY-MM-DD HH:mm:ss')
+    return dayjs(d).format('YYYY-MM-DD HH:mm:ss')
   }
 }
 
@@ -111,5 +111,5 @@ export function param2Obj(url) {
 }
 
 export function momentTime (time) {
-  return moment(time)
+  return dayjs(time)
 }

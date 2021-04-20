@@ -111,6 +111,7 @@
               :placeholder="$t('Issue.SelectDate')"
               style="width: 100%"
               value-format="yyyy-MM-dd"
+              @change="checkDueDate"
             />
           </el-form-item>
         </el-col>
@@ -124,6 +125,8 @@
               :placeholder="$t('Issue.SelectDate')"
               style="width: 100%"
               value-format="yyyy-MM-dd"
+              :picker-options="pickerOptions(issueForm.start_date)"
+              @change="clearDueDate"
             />
           </el-form-item>
         </el-col>
@@ -172,9 +175,26 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '../../../utils/extension.js'
+
+const getFormTemplate = () => ({
+  subject: '',
+  description: '',
+  priority_id: 3,
+  tracker_id: '',
+  status_id: 1,
+  fixed_version_id: '',
+  assigned_to_id: '',
+  start_date: dayjs().format('YYYY-MM-DD'),
+  due_date: '',
+  done_ratio: '',
+  estimated_hours: '',
+  parent_id: ''
+})
+
 export default {
   name: 'AddIssue',
   props: {
@@ -204,20 +224,7 @@ export default {
       issuePriorityList: [],
       issueAssigneeList: [],
       issueVersionList: [],
-      issueForm: {
-        subject: '',
-        description: '',
-        priority_id: 3,
-        tracker_id: '',
-        status_id: 1,
-        fixed_version_id: '',
-        assigned_to_id: '',
-        start_date: '',
-        due_date: '',
-        done_ratio: '',
-        estimated_hours: '',
-        parent_id: ''
-      },
+      issueForm: getFormTemplate(),
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
@@ -226,7 +233,14 @@ export default {
       },
       LoadingConfirm: false,
       uploadFileList: [],
-      extension: {}
+      extension: {},
+      pickerOptions(startDate) {
+        return {
+          disabledDate(time) {
+            return time.getTime() < new Date(startDate).getTime()
+          }
+        }
+      }
     }
   },
 
@@ -336,6 +350,13 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
+    },
+    clearDueDate(dueDate) {
+      if (dueDate === null) this.issueForm.due_date = ''
+    },
+    checkDueDate(startDate) {
+      if (startDate === null) this.issueForm.start_date = ''
+      if (new Date(startDate).getTime() >= new Date(this.issueForm.due_date)) this.issueForm.due_date = ''
     }
   }
 }

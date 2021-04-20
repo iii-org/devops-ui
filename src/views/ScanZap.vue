@@ -2,7 +2,6 @@
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getZapScans } from '@/api/zap'
-import moment from 'moment'
 
 export default {
   name: 'ScanZap',
@@ -43,9 +42,9 @@ export default {
       if (end == null) {
         return ''
       }
-      const s = moment.utc(start).unix()
-      const e = moment.utc(end).unix()
-      return moment.duration(e - s, 'seconds').humanize()
+      const s = this.$dayjs.utc(start).unix()
+      const e = this.$dayjs.utc(end).unix()
+      return this.$dayjs.duration(e - s, 'seconds').humanize()
     },
     showFullLog(log) {
       const wnd = window.open('about:blank', '', '_blank')
@@ -94,22 +93,22 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.high')">
         <template slot-scope="scope">
-          {{ scope.row.result['0'] }}
+          {{ scope.row.result['3'] }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.medium')">
         <template slot-scope="scope">
-          {{ scope.row.result['1'] }}
+          {{ scope.row.result['2'] }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.low')">
         <template slot-scope="scope">
-          {{ scope.row.result['2'] }}
+          {{ scope.row.result['1'] }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.info')">
         <template slot-scope="scope">
-          {{ scope.row.result['3'] }}
+          {{ scope.row.result['0'] }}
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />

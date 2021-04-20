@@ -90,6 +90,7 @@ export default {
         await this.loadData()
       } catch (error) {
         console.error(error)
+        this.listLoading = false
       }
     }
   }

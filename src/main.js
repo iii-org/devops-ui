@@ -1,39 +1,32 @@
 import Vue from 'vue'
 import VueShowdown from 'vue-showdown'
-import 'normalize.css/normalize.css' // A modern alternative to CSS resets
-
+import 'normalize.css/normalize.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import i18n, { getLanguage } from './lang' // internationalization
+import i18n, { getLanguage } from './lang'
 import VueGtag from 'vue-gtag'
-
-import '@/styles/index.scss' // global css
+import '@/styles/index.scss'
 
 import App from './App'
 import store from './store'
 import router from './router/router'
 
-import '@/icons' // icon
-import '@/permission' // permission control
+import '@/icons'
+import '@/permission'
 
 import * as filters from './filters'
-import moment from 'moment' // global filters
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
- */
-// if (process.env.NODE_ENV === 'production') {
-//   const { mockXHR } = require('../mock')
-//   mockXHR()
-// }
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import utc from 'dayjs/plugin/utc'
+import duration from 'dayjs/plugin/duration'
+import 'dayjs/locale/zh-tw'
+dayjs.extend(relativeTime)
+dayjs.extend(utc)
+dayjs.extend(duration)
 
-moment.locale(getLanguage())
+dayjs.locale(getLanguage().toLowerCase())
+Vue.prototype.$dayjs = dayjs
 
-// set ElementUI lang to EN
 Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
 Vue.use(VueShowdown, {
   options: {
@@ -49,14 +42,11 @@ Vue.use(VueShowdown, {
     strikethrough: true
   }
 })
-// 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI)
-
 Vue.use(VueGtag, {
   config: { id: 'GTM-W2KLWN4' }
 })
 
-// register global utility filters
+// Filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })

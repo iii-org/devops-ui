@@ -11,8 +11,10 @@
       />
     </div>
     <el-divider />
-
     <el-row v-if="filteredData.length > 0" :gutter="10">
+      <el-col class="text-right text-body-1 mb-2">
+        {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
+      </el-col>
       <el-col v-for="deployment in filteredData" :key="deployment.commit_id" v-loading="listLoading" :span="24">
         <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
           <div class="d-flex justify-space-between mb-2">
@@ -167,11 +169,8 @@
 </template>
 
 <script>
-import {
-  deleteEnvironmentByBranchName,
-  getEnvironmentList,
-  redeployEnvironmentByBranchName
-} from '@/api/kubernetes'
+import dayjs from 'dayjs'
+import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName } from '@/api/kubernetes'
 import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
 
 export default {
@@ -179,11 +178,21 @@ export default {
   mixins: [MixinElCardWithAProject],
   data: () => ({
     searchKey: 'branch',
-    btnLoading: false
+    btnLoading: false,
+    timer: null,
+    lastUpdateTime: ''
   }),
+  mounted() {
+    this.timer = setInterval(() => this.fetchData(), 30000)
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+    this.timer = null
+  },
   methods: {
     async fetchData() {
       const res = await getEnvironmentList(this.selectedProjectId)
+        .then(this.lastUpdateTime = dayjs().format('YYYY-MM-DD hh:mm:ss'))
       return res.data
     },
     async redeploy(pId, branchName) {
