@@ -84,6 +84,7 @@
             value-format="yyyy-MM-dd"
             :clearable="false"
             style="width: 100%"
+            @change="checkDueDate(form.start_date)"
           />
         </el-form-item>
       </el-col>
@@ -95,6 +96,7 @@
             value-format="yyyy-MM-dd"
             style="width: 100%"
             :placeholder="$t('RuleMsg.PleaseSelect')"
+            :picker-options="pickerOptions(form.start_date)"
             @change="clearDueDate"
           />
         </el-form-item>
@@ -148,7 +150,15 @@ export default {
     parentIssue: {},
     relativeIssueList: [],
     childrenIssueList: [],
-    isLoading: false
+    isLoading: false,
+
+    pickerOptions(startDate) {
+      return {
+        disabledDate(time) {
+          return time.getTime() < new Date(startDate).getTime()
+        }
+      }
+    }
   }),
   computed: {
     ...mapGetters(['selectedProjectId']),
@@ -237,6 +247,9 @@ export default {
       this.$nextTick(() => {
         if (val === null) this.form.due_date = ''
       })
+    },
+    checkDueDate(startDate) {
+      if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
     }
   }
 }
