@@ -150,13 +150,13 @@ export const asyncRoutes = [
       {
         path: 'issue-boards',
         name: 'issue-boards',
-        component: () => import('@/views/IssueBoards'),
+        component: () => import('@/views/Project/IssueBoards'),
         meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'issue-list',
         name: 'issue-list',
-        component: () => import('@/views/ProjectIssues'),
+        component: () => import('@/views/Project/IssueList'),
         meta: {
           title: 'issueList',
           roles: ['Project Manager', 'Engineer', 'Administrator'],
