@@ -70,10 +70,14 @@
         <el-row v-for="(item,idx) in filterDimensionOptions" :key="idx" class="panel">
           <el-card>
             <template slot="header">{{ item.label }}</template>
-            <el-tag v-for="(subItem, idx) in getFilterValueList(item.value)" :id="idx" :key="idx" draggable="true"
-                    @dragstart.native="dragStart($event, {[item.value]: subItem})"
-            >{{ subItem.name }}
-            </el-tag>
+            <div v-for="(subItem, idx) in getFilterValueList(item.value)" :id="idx" :key="idx" draggable="true"
+                 class="item"
+                 @dragstart="dragStart($event, {[item.value]: subItem})"
+                 @dragend="dragEnd"
+            >
+              <el-tag>{{ subItem.name }}</el-tag>
+              <el-alert class="help_text" :closable="false">拖曳到議題，可以將 {{ item.label }} 改變成 {{ subItem.name }}</el-alert>
+            </div>
           </el-card>
         </el-row>
       </right-panel>
@@ -334,9 +338,15 @@ export default {
     },
     dragStart(e, item) {
       e.effectAllowed = 'copy'
+      console.log(e.target)
+      e.target.classList.add('draggingObject')
       e.dataTransfer.setData('json', JSON.stringify(item))
       // console.log('dragStart')
       // console.log(e)
+    },
+    dragEnd(e) {
+      e.target.classList.remove('draggingObject')
+      console.log(e)
     },
     getFilterValueList(value) {
       return this[value]
@@ -448,9 +458,16 @@ $closed: #aeb6bf;
   height:100%;
   .panel {
     padding: 30px 20px;
-    .el-tag{
-      font-size: 1.05em;
-      margin: 3px;
+    .item {
+      width: fit-content;
+      cursor: copy;
+      .el-tag {
+        font-size: 1.05em;
+        margin: 3px;
+      }
+      .help_text{
+        display: none;
+      }
     }
   }
 }
@@ -458,6 +475,13 @@ $closed: #aeb6bf;
 // For drag sources
 .dragging {
   opacity: .25;
+}
+.draggingObject{
+  width:100%;
+  .help_text{
+    display:block !important;
+    opacity: 1 !important;
+  }
 }
 
 // For drop target

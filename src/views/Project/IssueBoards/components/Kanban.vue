@@ -163,7 +163,6 @@ export default {
       e.dataTransfer.clearData()
       e.preventDefault()
       // console.log('dragover')
-      // console.log(e)
     }
   }
 }
