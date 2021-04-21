@@ -25,7 +25,7 @@
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
           <!--          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />-->
-          <el-option v-for="item in assigned_to" :key="item.id" :label="item.name"
+          <el-option v-for="item in assigned_to" :key="item.id" :label="`${item.name}(${item.login})`"
                      :value="searchNullValueOption(item)"
           />
         </el-select>
