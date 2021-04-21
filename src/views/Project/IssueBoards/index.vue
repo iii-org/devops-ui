@@ -98,7 +98,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
-import RightPanel from '@/views/Project/IssueBoards/components/RightPanel'
+import RightPanel from './components/RightPanel'
 
 export default {
   name: 'IssueBoards',
@@ -439,7 +439,7 @@ $closed: #aeb6bf;
     padding: 30px 20px;
     .item {
       width: fit-content;
-      cursor: copy;
+      cursor: move;
       .el-tag {
         font-size: 1.05em;
         margin: 3px;
