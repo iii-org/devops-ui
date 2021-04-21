@@ -32,8 +32,12 @@ export default {
       return ret
     },
     convertRating(rating) {
-      console.log('rating', rating)
-      return ['0', 'A', 'B', 'C', 'D', 'E'][parseInt(rating)]
+      const r = parseInt(rating)
+      if (r) {
+        return ['0', 'A', 'B', 'C', 'D', 'E'][r]
+      } else {
+        return '-'
+      }
     },
     openSonarQube() {
       window.open(this.sqLink, '_blank')
