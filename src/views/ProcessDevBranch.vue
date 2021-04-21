@@ -18,6 +18,10 @@ export default {
   methods: {
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchData() {
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
       const repository_id = this.selectedProject.repository_id
       await this.getBranchesByProject(repository_id)
       return this.branchList
@@ -44,6 +48,13 @@ export default {
         })
       })
       return environmentArray
+    },
+    showNoProjectWarning() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
+      })
     }
   }
 }

@@ -65,11 +65,11 @@ export default {
   },
   watch: {
     selectedProject() {
-      this.fetchPipelineDefaultBranch()
+      if(this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
     }
   },
   mounted() {
-    this.fetchPipelineDefaultBranch()
+    if(this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
   },
   methods: {
     async fetchPipelineDefaultBranch() {

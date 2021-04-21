@@ -133,6 +133,10 @@ export default {
   }),
   methods: {
     async fetchData() {
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
       const rid = this.selectedProject.repository_id
       try {
         return (await getPipelines(rid)).data.map(item => {
@@ -144,6 +148,13 @@ export default {
         console.error(error)
         return []
       }
+    },
+    showNoProjectWarning() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
+      })
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result

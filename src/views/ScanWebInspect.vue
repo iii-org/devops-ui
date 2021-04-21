@@ -104,9 +104,18 @@ export default {
   },
   methods: {
     async fetchData() {
-      const rName = this.selectedProject.name
-      const res = await getWebInspectScans(rName)
-      return this.handleScans(res.data)
+      const scansData = []
+      this.listLoading = true
+      try {
+        const rName = this.selectedProject.name
+        const res = await getWebInspectScans(rName)
+        scansData = this.handleScans(res.data)
+      } catch(err) {
+        console.error(err)
+      } finally {
+        this.listLoading = false
+      }
+      return scansData
     },
     handleScans(scans) {
       const sortedScans = scans.map(scan => {

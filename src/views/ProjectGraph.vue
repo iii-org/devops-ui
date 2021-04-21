@@ -20,12 +20,14 @@ import { createGitgraph } from '@gitgraph/js'
 import { getGitGraphByRepo } from '@/api/git-graph'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { UTCtoLocalTime } from '@/filters'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectGraph', // ready to refactor
   components: {
     ProjectListSelector
   },
+  mixins: [MixinElTableWithAProject],
   data: () => ({
     listLoading: true,
     isNoData: false
@@ -43,6 +45,10 @@ export default {
   },
   methods: {
     async fetchData() {
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
       this.listLoading = true
       try {
         const svgs = document.querySelector('#graph-container').children
@@ -56,6 +62,13 @@ export default {
       } finally {
         this.listLoading = false
       }
+    },
+    showNoProjectWarning() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
+      })
     },
     createGraph(data) {
       // Get the graph container HTML element.
