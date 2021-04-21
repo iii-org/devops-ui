@@ -9,7 +9,6 @@
     </el-upload>
   </div>
 </template>
-
 <script>
 import { fileExtension } from '@/utils/extension'
 

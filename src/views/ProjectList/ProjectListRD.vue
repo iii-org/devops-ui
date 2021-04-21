@@ -261,7 +261,7 @@ export default {
           </router-link>
         </template>
       </el-table-column> -->
-      <!-- <el-table-column label="Actions" align="center" width="250px">
+      <!-- <el-table-column label="Actions" align="center" widget="250px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
             <i class="el-icon-edit" />

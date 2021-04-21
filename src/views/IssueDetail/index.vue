@@ -108,12 +108,12 @@
           :header-cell-style="{background:'#fafafa', color:'rgba(0,0,0,.85)'}"
           class="mt-2"
         >
-          <el-table-column label="API Name" width="160">
+          <el-table-column label="API Name" widget="160">
             <template slot-scope="scope">
               <span style="color: #409EFF">{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="API URL" width="160">
+          <el-table-column label="API URL" widget="160">
             <template slot-scope="scope">
               {{ scope.row.url }}
             </template>
@@ -123,7 +123,7 @@
               {{ scope.row.description }}
             </template>
           </el-table-column>
-          <el-table-column label="Last Update Time" width="160">
+          <el-table-column label="Last Update Time" widget="160">
             <template slot-scope="scope">
               {{ scope.row.last_update_at }}
             </template>

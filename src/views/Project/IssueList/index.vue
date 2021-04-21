@@ -240,7 +240,7 @@ export default {
       return data
     },
     handleEdit(idx, row) {
-      this.$router.push({ path: `issue-list/${row.id}` })
+      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
     },
     handleParent(idx, row) {
       this.parentId = row.id

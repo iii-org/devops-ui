@@ -97,7 +97,7 @@ export default {
       })
     },
     handleEdit(idx, row) {
-      this.$router.push({ path: `/project/issue-list/${row.id}` })
+      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
     },
     async handleClose(idx, row) {
       this.listLoading = true

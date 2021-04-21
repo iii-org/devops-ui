@@ -206,7 +206,7 @@ export default {
           {{ scope.row.filename }}
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Description" width="200">
+      <!-- <el-table-column label="Description" widget="200">
         <template slot-scope="scope">
           <span>{{ scope.row.description }}</span>
         </template>

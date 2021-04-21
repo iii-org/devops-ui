@@ -2,9 +2,9 @@
   <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">
     <div class="d-flex justify-space-between mb-2">
       <div class="d-flex align-end">
-        <span class="text-h5 mr-3">{{ $t('Issue.Issue') }} #{{ issueId }}</span>
+        <span class="text-h5 mr-3">{{ $t('Issue.Issue') }} #{{ issueId }}<template v-if="mode==='view'"> - {{ issueSubject }}</template></span>
         <div class="text-body-1 mr-3">
-          {{ $t('Issue.AddBy', { user: author }) }}
+          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
         </div>
         <el-link :href="issue_link" target="_blank" type="primary" :underline="false">
           <i class="el-icon-link" /> Redmine
@@ -12,25 +12,49 @@
       </div>
       <div v-show="focusTab === 'editIssue'">
         <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-        <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
-        <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <template v-if="mode==='edit'">
+          <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
+          <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        </template>
+        <template v-else>
+          <el-button size="medium" type="primary" @click="mode='edit'">{{ $t('general.Edit') }}</el-button>
+        </template>
       </div>
     </div>
     <el-divider />
     <el-tab-pane :label="$t('Issue.EditIssue')" name="editIssue">
       <el-row :gutter="20">
-        <el-col :span="24" :md="12">
+        <el-col v-if="mode==='edit'" :span="24" :md="12">
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
         </el-col>
+        <el-col v-else :span="24" :md="24">
+          <issue-view-tag ref="IssueView" :issue-id="issueId" :form.sync="view" @isLoading="showLoading" />
+        </el-col>
         <el-col :span="24" :md="12">
-          <el-row :gutter="10">
-            <el-col :span="24" class="mb-3">
-              <issue-notes-editor ref="IssueNotesEditor" />
+          <el-row :gutter="10" type="flex">
+            <el-col :span="editorCheckMode" class="mb-3">
+              <issue-notes-editor ref="IssueNotesEditor" :height="editorHeight" @change="onEditorChange" />
             </el-col>
+            <el-col v-if="mode==='view'" :span="2">
+              <el-button size="medium" type="primary" style="width:100%; height:100%;" @click="handleSaveComment">
+                {{ $t('general.Save') }}
+              </el-button>
+            </el-col>
+          </el-row>
+          <el-row :gutter="10">
             <el-col :span="24">
               <issue-file-uploader ref="IssueFileUploader" />
             </el-col>
+            <el-col v-if="mode==='view'" :span="24" class="mb-3">
+              <issue-notes-dialog :height="dialogHeight" :data="journals" />
+            </el-col>
           </el-row>
+        </el-col>
+        <el-col v-if="mode==='view'" :span="24" :md="12">
+          <issue-view ref="IssueView" :issue-id="issueId" :form.sync="view" @isLoading="showLoading" />
+          <h2>Attachment</h2>
+          <el-divider />
+          <issue-files :issue-file.sync="files" />
         </el-col>
       </el-row>
     </el-tab-pane>
@@ -46,7 +70,17 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
-import { IssueNotes, IssueFiles, IssueForm, IssueNotesEditor, IssueFileUploader } from './components'
+import {
+  IssueNotes,
+  IssueFiles,
+  IssueForm,
+  IssueView,
+  IssueViewTag,
+  IssueNotesDialog,
+  IssueNotesEditor,
+  IssueFileUploader
+} from './components'
+import dayjs from 'dayjs'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -54,16 +88,23 @@ export default {
     IssueNotes,
     IssueFiles,
     IssueForm,
+    IssueView,
+    IssueViewTag,
+    IssueNotesDialog,
     IssueNotesEditor,
     IssueFileUploader
   },
   data() {
     return {
+      mode: 'view',
       originForm: {},
       isLoading: false,
       issue_link: '',
       issueId: 0,
+      issueSubject: '',
       author: '',
+      created_date: '',
+      view: {},
       form: {
         project_id: 0,
         assigned_to_id: -1,
@@ -81,7 +122,9 @@ export default {
       focusTab: 'editIssue',
       files: [],
       journals: [],
-      fromRouterName: ''
+      fromRouterName: '',
+      dialogHeight: '100%',
+      editorHeight: '100px'
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -108,7 +151,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    editorCheckMode() {
+      return (this.mode === 'edit') ? 24 : 22
+    },
+    editorCheckModeHeight() {
+      return (this.mode === 'edit') ? '350px' : '150px'
+    }
+  },
+  watch: {
+    mode(value) {
+      if (value === 'view') {
+        this.editorHeight = '100px'
+      } else {
+        this.editorHeight = '390px'
+      }
+    }
   },
   async mounted() {
     this.issueId = parseInt(this.$route.params.issueId)
@@ -132,12 +190,15 @@ export default {
         })
     },
     initIssueDetails(data) {
-      const { issue_link, author, attachments, journals } = data
+      const { issue_link, author, attachments, created_date, journals, subject } = data
       this.issue_link = issue_link
+      this.issueSubject = subject
       this.author = author.name
       this.files = attachments
-      this.journals = journals
+      this.created_date = created_date
+      this.journals = journals.reverse()
       this.setFormData(data)
+      this.view = data
     },
     setFormData(data) {
       const {
@@ -203,7 +264,8 @@ export default {
       this.$router.push({ name: this.fromRouterName })
     },
     handleCancel() {
-      this.$router.push({ name: this.fromRouterName })
+      this.mode = 'view'
+      // this.$router.push({ name: this.fromRouterName })
     },
     showLoading(status) {
       this.isLoading = status
@@ -212,6 +274,18 @@ export default {
       this.$refs.IssueForm.$refs.form.validate(valid => {
         if (valid) this.editIssue()
       })
+    },
+    handleSaveComment() {
+      const sendData = Object.assign({}, this.form)
+      console.log(this.form)
+      const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
+      if (notes !== '') sendData['notes'] = notes
+      const sendForm = new FormData()
+      Object.keys(sendData).forEach(objKey => {
+        sendForm.append(objKey, sendData[objKey])
+      })
+      const uploadFileList = this.$refs.IssueFileUploader.uploadFileList
+      uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : this.updateIssueForm(sendForm)
     },
     editIssue() {
       const sendData = Object.assign({}, this.form)
@@ -286,6 +360,21 @@ export default {
         }
       }
       return isChanged
+    },
+    onEditorChange() {
+      if (this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')) {
+        this.editorHeight = this.editorCheckModeHeight
+        // this.dialogHeight = '200px'
+      } else {
+        if (this.mode === 'view') {
+          this.editorHeight = '100px'
+        } else {
+          this.editorHeight = '350px'
+        }
+      }
+    },
+    formatTime(value) {
+      return dayjs(value).fromNow()
     }
   }
 }

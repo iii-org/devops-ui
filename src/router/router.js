@@ -154,7 +154,7 @@ export const asyncRoutes = [
         meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
-        path: 'issue-list',
+        path: 'issue',
         name: 'issue-list',
         component: () => import('@/views/Project/IssueList'),
         meta: {
@@ -167,7 +167,7 @@ export const asyncRoutes = [
             path: ':issueId',
             name: 'issue-detail',
             hidden: true,
-            component: () => import('@/views/ProjectIssueDetail'),
+            component: () => import('@/views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
               roles: ['Project Manager', 'Engineer', 'Administrator'],
