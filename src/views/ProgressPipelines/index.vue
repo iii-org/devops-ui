@@ -38,7 +38,7 @@
       </el-table-column>
       <el-table-column :label="$t('ProcessDevBranchTest.Status')" align="center" width="110">
         <template slot-scope="scope">
-          <el-tag class="el-tag" :type="getStatusTagType(scope.row.execution_state)" size="medium" effect="dark">
+          <el-tag class="el-tag" :type="getStatusTagType(scope.row.execution_state)" size="medium" :effect="getStatusTagEffect(scope.row.execution_state)">
             {{ scope.row.execution_state }}
           </el-tag>
         </template>
@@ -188,9 +188,17 @@ export default {
         case 'Waiting':
           return 'slow'
         case 'Building':
-          return 'warning'
+          return 'success'
         default:
           return 'info'
+      }
+    },
+    getStatusTagEffect(status) {
+      switch (status) {
+        case 'Building':
+          return 'light'
+        default:
+          return 'dark'
       }
     },
     async onDetailsClick(id) {
