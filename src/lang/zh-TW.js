@@ -330,7 +330,7 @@ export default {
         NAME: '總覽',
         Projects: '專案數',
         Overdue: '已超時',
-        'Not_Started': '未開始'
+        Not_Started: '未開始'
       },
       ProjectMembers: {
         NAME: '專案成員',
@@ -360,8 +360,8 @@ export default {
         DETAIL: '專案測試品質',
         project_name: '@:general.project_name',
         count: '測試個案數',
-        success: '成功次數',
-        fail: '失敗次數',
+        success: '成功',
+        fail: '失敗',
         total: '累積測試次數',
         run_at: '最近測試時間'
       },

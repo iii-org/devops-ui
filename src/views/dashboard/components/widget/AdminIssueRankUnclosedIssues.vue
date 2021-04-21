@@ -32,7 +32,7 @@
                          :label="$t('Dashboard.ADMIN.IssueRank.issue_type')"
         />
         <el-table-column sortable
-                         prop="status_id"
+                         prop="status"
                          :label="$t('Dashboard.ADMIN.IssueRank.status_id')"
         />
         <el-table-column sortable
@@ -74,7 +74,7 @@ export default {
         page: 1,
         limit: 5
       },
-      searchKeys: ['project_name'],
+      searchKeys: ['project_name', 'issue_name'],
       searchUser: '',
       keyword: ''
     }

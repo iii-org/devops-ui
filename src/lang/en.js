@@ -134,7 +134,9 @@ export default {
     Rerun: 'Rerun',
     copied: 'Copied.',
     caution: 'Caution!',
-    ok: 'OK'
+    ok: 'OK',
+    project_name: 'Project Name',
+    pm_user_name: 'Project Manager'
   },
   Notify: {
     Updated: 'update successful',
@@ -322,7 +324,64 @@ export default {
     TestStatus: 'Test Status',
     Software: 'Software',
     Brief: 'Brief',
-    Report: 'Report'
+    Report: 'Report',
+    ADMIN: {
+      sync_date: 'created by: {0}',
+      Overview: {
+        NAME: 'Overview',
+        Projects: 'Projects',
+        Overdue: 'Overdue',
+        Not_Started: 'Not Started'
+      },
+      ProjectMembers: {
+        NAME: 'Project Members',
+        project_name: '@:general.project_name',
+        pm_user_name: '@:general.pm_user_name',
+        member_count: 'members',
+        start_date: 'start date',
+        end_date: 'end date'
+      },
+      CommitLog: {
+        NAME: 'Commit Log'
+      },
+      IssueRank: {
+        NAME: 'Workload Top 5',
+        DETAIL: '{0} - Unsolved',
+        user_name: 'Member',
+        unclosed_count: 'Unsolved',
+        project_count: 'Projects',
+        project_name: '@:general.project_name',
+        issue_name: 'Issue title',
+        issue_type: 'Types',
+        status_id: 'Status',
+        start_date: 'Created'
+      },
+      PassingRate: {
+        NAME: 'Test results (Quauntity and Quality)',
+        DETAIL: 'Test results (Lastest)',
+        project_name: '@:general.project_name',
+        count: 'Test cases',
+        success: 'Success',
+        fail: 'Fail',
+        total: 'Test counts',
+        run_at: 'Last test'
+      },
+      ProjectList: {
+        NAME: 'Project list',
+        user_name: 'PM',
+        unclosed_count: '# unsolved',
+        project_count: '# projects',
+        project_name: '@:general.project_name',
+        pm_user_name: '@:general.pm_user_name',
+        project_status: 'Status',
+        complete_percent: 'Progress',
+        unclosed_issue_count: 'Unsolved',
+        closed_issue_count: 'Solved',
+        member_count: 'Members',
+        expired_day: 'Remains(day)',
+        end_date: 'Due date'
+      }
+    }
   },
   Member: {
     Manage: 'Manage Project Members',
