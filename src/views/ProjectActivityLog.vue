@@ -1,39 +1,53 @@
 <template>
-  <div v-loading="isLoading" class="app-container">
-    <div class="clearfix">
-      <div>
+  <el-row v-loading="isLoading" class="app-container">
+    <el-col>
+      <div class="d-flex">
         <project-list-selector />
       </div>
-    </div>
-    <el-divider />
-    <el-timeline>
-      <el-timeline-item v-for="item in projectIssueList" :key="item.index" :timestamp="item.date" placement="top">
-        <el-card v-for="issue in item.issues" :key="issue.id" :gutter="20" class="timeline-item">
-          <el-row class="issue-row">
-            <el-col :span="5" class="el-col-title">
-              <span class="issue-name">{{ issue.issue_name }}</span>
-              <span class="issue-date">{{ issue.updated_on | hmA }}, {{ issue.updated_on | relativeTime }}</span>
-            </el-col>
-            <el-col :span="15" class="el-col-content">
-              <p>{{ issue.description || '-' }}</p>
-            </el-col>
-            <el-col :span="2" class="el-col-account">
-              <el-tag class="el-tag--circle el-tag-account" effect="dark">
-                <i class="el-icon-s-custom" />
-                {{ issue.assigned_to || '-' }}
-              </el-tag>
-            </el-col>
-          </el-row>
-        </el-card>
-      </el-timeline-item>
-    </el-timeline>
-  </div>
+      <el-divider />
+      <el-timeline v-if="projectIssueList.length > 0">
+        <el-timeline-item v-for="item in projectIssueList" :key="item.index" :timestamp="item.date" placement="top">
+          <el-card v-for="issue in item.issues" :key="issue.id" :gutter="20" class="mb-3">
+            <el-row type="flex" align="middle" :gutter="20">
+              <el-col :span="5" :lg="5" :xl="3">
+                <div class="text-subtitle-1 font-weight-bold">{{ issue.name }}</div>
+                <div>
+                  <svg-icon icon-class="mdi-clock-outline" />
+                  {{ issue.updated_on | hmA }}, {{ issue.updated_on | relativeTime }}
+                </div>
+              </el-col>
+              <el-col :span="13" :lg="15" :xl="18">
+                <div class="text-subtitle-2">{{ issue.description || '-' }}</div>
+              </el-col>
+              <el-col :span="6" :lg="4" :xl="3">
+                <el-row type="flex" align="middle">
+                  <el-col :span="5" :sm="4">
+                    <i class="text-success el-icon-user-solid pr-2" />
+                  </el-col>
+                  <el-col :span="19" :sm="20">
+                    {{
+                      Object.keys(issue.assigned_to).length === 0
+                        ? '-'
+                        : `${issue.assigned_to.name} (${issue.assigned_to.login})`
+                    }}
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
+      <div v-else class="text-center">
+        {{ $t('general.NoData') }}
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import ProjectListSelector from '../components/ProjectListSelector'
 import { getProjectIssueListByDate } from '@/api/projects'
+import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
   name: 'ProjectActivityLog',
@@ -50,11 +64,12 @@ export default {
       return statusMap[status]
     }
   },
-  data: () => ({
-    projectIssueList: [],
-    isLoading: true,
-    projectList: []
-  }),
+  data() {
+    return {
+      isLoading: true,
+      projectIssueList: []
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },
@@ -69,15 +84,13 @@ export default {
   methods: {
     async fetchData() {
       this.isLoading = true
-      const projectIssueListRes = await getProjectIssueListByDate(this.selectedProjectId)
+      const res = await getProjectIssueListByDate(this.selectedProjectId)
+      this.projectIssueList = Object.keys(res.data).map((item, index) => ({
+        index: index,
+        date: item,
+        issues: res.data[item].sort((a, b) => new Date(b.updated_on) - new Date(a.updated_on))
+      }))
       this.isLoading = false
-      this.projectIssueList = Object.keys(projectIssueListRes.data).map((item, index) => {
-        return {
-          index: index,
-          date: item,
-          issues: projectIssueListRes.data[item].sort((a, b) => new Date(b.updated_on) - new Date(a.updated_on))
-        }
-      })
     }
   }
 }
