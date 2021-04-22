@@ -82,3 +82,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+>>> .el-timeline-item__timestamp {
+  color: #3ecbbc;
+  font-size: 16px;
+}
+</style>

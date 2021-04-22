@@ -319,3 +319,26 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.point {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: 4px;
+  display: inline-block;
+  &.feature {
+    background: #66d7ff;
+  }
+  &.document {
+    background: #5388ff;
+  }
+  &.bug {
+    background: #fea859;
+  }
+  &.research {
+    background: #a0da2c;
+  }
+}
+</style>

@@ -245,4 +245,11 @@ export default {
     }
   }
 }
+
+.board-column .board-column-content .board-item {
+  font-size: 16px;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  height: auto !important;
+}
 </style>

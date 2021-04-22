@@ -222,3 +222,25 @@ export default {
     <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.status-bar-track {
+  background: #f5f5f5;
+  border-radius: 5px;
+  max-width: 160px;
+  width: 100%;
+  height: 4px;
+  position: relative;
+  margin-bottom: 3px;
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.status-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #3ecbbc;
+  height: 4px;
+}
+</style>
