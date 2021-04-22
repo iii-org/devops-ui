@@ -67,7 +67,7 @@
 import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 
-const socket = io(process.env.VUE_APP_DEV_PROXY_URL + process.env.VUE_APP_WS + '/rancher/websocket/logs', {
+const socket = io(process.env.VUE_APP_WS + '/rancher/websocket/logs', {
   reconnectionAttempts: 5
 })
 
