@@ -106,18 +106,18 @@ export default {
           {{ scope.row.result['1'] }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Zap.info')">
+      <el-table-column align="center" :label="$t('Log.info')">
         <template slot-scope="scope">
           {{ scope.row.result['0'] }}
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />
-      <el-table-column align="center" :label="$t('Zap.duration')">
+      <el-table-column align="center" :label="$t('Log.duration')">
         <template slot-scope="scope">
           {{ durationText(scope.row.run_at, scope.row.finished_at) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Zap.fullLog')" min-width="50">
+      <el-table-column align="center" :label="$t('Log.fullLog')" min-width="50">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.status === 'Finished'"

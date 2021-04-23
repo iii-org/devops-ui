@@ -33,6 +33,7 @@ export default {
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
     zap: '黑箱測試(OWASP ZAP)',
+    sideex: '黑箱測試(Sideex)',
 
     'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',
@@ -560,7 +561,8 @@ export default {
   Git: {
     Branch: '分支',
     Commit: 'Commit',
-    searchCommitId: '搜尋 Commit'
+    searchCommitId: '搜尋 Commit',
+    testId: '測試編號'
   },
   SonarQube: {
     ViewReport: '檢視報告',
@@ -570,14 +572,21 @@ export default {
     Duplicates: '重複程式碼',
     Coverage: '覆蓋率'
   },
+  Log: {
+    info: '資訊',
+    duration: '消耗時間',
+    fullLog: '報表'
+  },
   Zap: {
     id: '編號',
     high: '高風險',
     medium: '中風險',
-    low: '低風險',
-    info: '資訊',
-    duration: '消耗時間',
-    fullLog: '報表'
+    low: '低風險'
+  },
+  Sideex: {
+    promptMessage: '本系統提供最新五份報表下載',
+    suitesPassedRatio: '成功案例',
+    casesPassedRatio: '通過項目'
   },
   Release: {
     internalVersions: '內部管控版號',
