@@ -12,7 +12,7 @@
     </div>
     <el-divider />
     <el-row v-if="filteredData.length > 0" :gutter="10">
-      <el-col class="text-right text-body-1 mb-2">
+      <el-col class="text-right text-body-1 mb-2 text-info">
         {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
       </el-col>
       <el-col v-for="deployment in filteredData" :key="deployment.commit_id" v-loading="listLoading" :span="24">
