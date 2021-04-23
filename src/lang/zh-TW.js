@@ -561,8 +561,7 @@ export default {
   Git: {
     Branch: '分支',
     Commit: 'Commit',
-    searchCommitId: '搜尋 Commit',
-    testId: '測試編號'
+    searchCommitId: '搜尋 Commit'
   },
   SonarQube: {
     ViewReport: '檢視報告',
@@ -575,7 +574,8 @@ export default {
   Log: {
     info: '資訊',
     duration: '消耗時間',
-    fullLog: '報表'
+    fullLog: '報表',
+    testId: '測試編號'
   },
   Zap: {
     id: '編號',

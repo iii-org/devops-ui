@@ -580,14 +580,22 @@ export default {
     Duplicates: 'Duplicates',
     Coverage: 'Coverage'
   },
+  Log: {
+    info: 'Info',
+    duration: 'Duration',
+    fullLog: 'Report',
+    testId: 'Test ID'
+  },
   Zap: {
     id: 'ID',
     high: 'High',
     medium: 'Medium',
-    low: 'Low',
-    info: 'Info',
-    duration: 'Duration',
-    fullLog: 'Report'
+    low: 'Low'
+  },
+  Sideex: {
+    promptMessage: 'The system provides the latest 5 reports to download.',
+    suitesPassedRatio: 'Suites Passed',
+    casesPassedRatio: 'Cases Passed'
   },
   Release: {
     internalVersions: 'Internal versions',

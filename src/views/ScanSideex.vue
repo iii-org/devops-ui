@@ -10,17 +10,15 @@
         prefix-icon="el-icon-search"
       />
     </div>
-    <el-row style="top: 15px; color: #606266">
-      <el-col :offset="19">
-        <span><i class="el-icon-warning" /></span>
-        <span>{{ $t('Sideex.promptMessage') }}</span>
-      </el-col>
-    </el-row>
+    <div class="text-right text-info" style="position: relative; top: 15px">
+      <span><i class="el-icon-warning" /></span>
+      <span>{{ $t('Sideex.promptMessage') }}</span>
+    </div>
     <el-divider />
     <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit
               highlight-current-row :data="pagedData" height="100%"
     >
-      <el-table-column align="center" :label="$t('Git.testId')" prop="id" />
+      <el-table-column align="center" :label="$t('Log.testId')" prop="id" />
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
       <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id">
         <template slot-scope="scope">
@@ -90,8 +88,7 @@
 <script>
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { getSideexScans } from '@/api/sideex'
-import { getSideexReport } from '@/api/sideexReport'
+import { getSideexScans, getSideexReport } from '@/api/sideex'
 
 export default {
   name: 'ScanSideex',
