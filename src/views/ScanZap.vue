@@ -93,22 +93,26 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.high')">
         <template slot-scope="scope">
-          {{ scope.row.result['3'] }}
+          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.medium')">
         <template slot-scope="scope">
-          {{ scope.row.result['2'] }}
+          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['2'] }}</span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.low')">
         <template slot-scope="scope">
-          {{ scope.row.result['1'] }}
+          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['1'] }}</span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Log.info')">
         <template slot-scope="scope">
-          {{ scope.row.result['0'] }}
+          <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />

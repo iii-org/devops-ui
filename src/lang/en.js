@@ -33,6 +33,7 @@ export default {
     sonarQube: 'SonarQube',
     webInspect: 'WebInspect',
     zap: 'OWASP ZAP',
+    sideex: 'Sideex',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',

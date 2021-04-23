@@ -33,7 +33,7 @@ export default {
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
     zap: '黑箱測試(OWASP ZAP)',
-    sideex: '黑箱測試(Sideex)',
+    sideex: 'ＷEB 測試(Sideex)',
 
     'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',

@@ -42,16 +42,18 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
         <template slot-scope="scope">
-          <span v-if="scope.row.result.suitesPassed >= 0">
+          <span v-if="Object.keys(scope.row.result).length > 0">
             {{ scope.row.result.suitesPassed }}/{{ scope.row.result.suitesTotal }}
           </span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Sideex.casesPassedRatio')">
         <template slot-scope="scope">
-          <span v-if="scope.row.result.casesPassed >= 0">
+          <span v-if="Object.keys(scope.row.result).length > 0">
             {{ scope.row.result.casesPassed }}/{{ scope.row.result.casesTotal }}
           </span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />
