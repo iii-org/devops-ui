@@ -12,9 +12,7 @@
     </div>
     <el-row style="top: 15px; color: #606266">
       <el-col :offset="19">
-        <span>
-          <i class="el-icon-warning"></i>
-        </span>
+        <span><i class="el-icon-warning" /></span>
         <span>{{ $t('Sideex.promptMessage') }}</span>
       </el-col>
     </el-row>
