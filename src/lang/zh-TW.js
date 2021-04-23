@@ -475,7 +475,7 @@ export default {
     Branch: '分支',
     Status: '狀態'
   },
-  ProcessDevBranchTest: {
+  ProgressPipelines: {
     Id: '項次',
     TestItems: '測試項目',
     Status: '狀態',

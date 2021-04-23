@@ -2,7 +2,7 @@
   <el-dialog :visible="dialogVisible" width="95%" top="10vh" @close="handleClose">
     <template slot="title">
       <span class="font-weight-bold text-h6 ml-4">
-        {{ $t('ProcessDevBranchTest.TestDetail') }}
+        {{ $t('ProgressPipelines.TestDetail') }}
       </span>
     </template>
     <el-tabs v-model="activeStage" tab-position="left" @tab-click="handleClick">

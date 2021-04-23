@@ -479,7 +479,7 @@ export default {
     Branch: 'Branch',
     Status: 'Status'
   },
-  ProcessDevBranchTest: {
+  ProgressPipelines: {
     Id: 'Id',
     TestItems: 'Test Items',
     Status: 'Status',
