@@ -472,14 +472,6 @@ export default {
     DueDate: 'Due Date',
     ProjectOwner: 'Project Owner'
   },
-  ProjectActive: {
-    Active: 'Active',
-    Assigned: 'Assigned',
-    Solved: 'Solved',
-    Responded: 'Responded',
-    Finished: 'Finished',
-    Closed: 'Closed'
-  },
   ProcessDevBranch: {
     Commit: 'Commit',
     LastUpdateTime: 'Last Update Time',

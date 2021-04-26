@@ -50,7 +50,7 @@
           <p v-if="element.parent_id" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
             <el-tag class="el-tag--circle" size="mini" :class="element.parent_status.name">
-              {{ $t('ProjectActive.' + element.parent_status.name) }}
+              {{ $t('Issue.' + element.parent_status.name) }}
             </el-tag>
             <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
               {{ element.parent_name }}
@@ -65,7 +65,7 @@
                 <ol class="children_list">
                   <li v-for="(subElement, index) in element.children" :key="index">
                     <el-tag class="el-tag--circle" size="mini" :class="subElement.status.name">
-                      {{ $t('ProjectActive.' + subElement.status.name) }}
+                      {{ $t('Issue.' + subElement.status.name) }}
                     </el-tag>
                     <el-link type="primary" :underline="false" @click="handleClick(element.id)">
                       {{ subElement.name }}

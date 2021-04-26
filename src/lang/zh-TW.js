@@ -468,14 +468,6 @@ export default {
     DueDate: '到期日',
     ProjectOwner: '專案經理'
   },
-  ProjectActive: {
-    Active: '進行中',
-    Assigned: '已指派',
-    Solved: '已解決',
-    Responded: '已回覆',
-    Finished: '已完成',
-    Closed: '已關閉'
-  },
   ProcessDevBranch: {
     Commit: 'Commit',
     Environment: '測試環境',
