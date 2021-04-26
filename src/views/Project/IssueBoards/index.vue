@@ -25,7 +25,7 @@
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
           <!--          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />-->
-          <el-option v-for="item in assigned_to" :key="item.id" :label="item.name"
+          <el-option v-for="item in assigned_to" :key="item.id" :label="`${item.name}(${item.login})`"
                      :value="searchNullValueOption(item)"
           />
         </el-select>
@@ -98,7 +98,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
-import RightPanel from '@/views/Project/IssueBoards/components/RightPanel'
+import RightPanel from './components/RightPanel'
 
 export default {
   name: 'IssueBoards',
@@ -439,7 +439,7 @@ $closed: #aeb6bf;
     padding: 30px 20px;
     .item {
       width: fit-content;
-      cursor: copy;
+      cursor: move;
       .el-tag {
         font-size: 1.05em;
         margin: 3px;

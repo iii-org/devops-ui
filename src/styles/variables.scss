@@ -16,6 +16,7 @@ $danger: #e85656;
 $warning: #f9be6e;
 $slow: #56b1e8;
 $light: #c1c3c5;
+$info: #606260;
 
 $danger_border:#5b1111;
 $danger_text:#ffffff;
@@ -59,4 +60,5 @@ $info-9: mix(#000000, #FFFFFF, 90%);
   warning: $warning;
   slow: $slow;
   light: $light;
+  info: $info;
 }

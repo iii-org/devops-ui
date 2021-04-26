@@ -22,3 +22,19 @@
     border-color: $light;
   }
 }
+
+.rounded {
+  border-radius: 4px;
+  &-sm {
+    border-radius: 2px;
+  }
+  &-lg {
+    border-radius: 8px;
+  }
+  &-xl {
+    border-radius: 16px;
+  }
+  &-pill {
+    border-radius: 9999px;
+  }
+}

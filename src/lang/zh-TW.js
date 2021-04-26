@@ -33,6 +33,7 @@ export default {
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
     zap: '黑箱測試(OWASP ZAP)',
+    sideex: 'ＷEB 測試(Sideex)',
 
     'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',
@@ -290,6 +291,14 @@ export default {
     Responded: '已回覆',
     Finished: '已完成',
     Unknown: '狀態不明',
+    Low: '低',
+    Normal: '一般',
+    High: '高',
+    Immediate: '緊急',
+    Document: '文件',
+    Research: '研究',
+    Bug: '臭蟲',
+    Feature: '功能',
     DeleteIssue: '確認要刪除「{issueName}」嗎?',
     Files: '附件',
     UploadFiles: '附件上傳',
@@ -330,7 +339,7 @@ export default {
         NAME: '總覽',
         Projects: '專案數',
         Overdue: '已超時',
-        'Not_Started': '未開始'
+        Not_Started: '未開始'
       },
       ProjectMembers: {
         NAME: '專案成員',
@@ -360,8 +369,8 @@ export default {
         DETAIL: '專案測試品質',
         project_name: '@:general.project_name',
         count: '測試個案數',
-        success: '成功次數',
-        fail: '失敗次數',
+        success: '成功',
+        fail: '失敗',
         total: '累積測試次數',
         run_at: '最近測試時間'
       },
@@ -474,7 +483,7 @@ export default {
     Branch: '分支',
     Status: '狀態'
   },
-  ProcessDevBranchTest: {
+  ProgressPipelines: {
     Id: '項次',
     TestItems: '測試項目',
     Status: '狀態',
@@ -570,14 +579,22 @@ export default {
     Duplicates: '重複程式碼',
     Coverage: '覆蓋率'
   },
+  Log: {
+    info: '資訊',
+    duration: '消耗時間',
+    fullLog: '報表',
+    testId: '測試編號'
+  },
   Zap: {
     id: '編號',
     high: '高風險',
     medium: '中風險',
-    low: '低風險',
-    info: '資訊',
-    duration: '消耗時間',
-    fullLog: '報表'
+    low: '低風險'
+  },
+  Sideex: {
+    promptMessage: '本系統提供最新五份報表下載',
+    suitesPassedRatio: '成功案例',
+    casesPassedRatio: '通過項目'
   },
   Release: {
     internalVersions: '內部管控版號',

@@ -11,11 +11,18 @@
       </el-row>
     </div>
     <draggable
-      :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives"
+      :list="list"
+      v-bind="$attrs"
+      :class="['board-column-content', cName]"
+      :move="checkRelatives"
       @change="end(boardObject, $event)"
     >
-      <div v-for="(element,idx) in list" :key="element.id" class="board-item" @drop="drop($event, idx)"
-           @dragover="allowDrop($event, idx)"
+      <div
+        v-for="(element, idx) in list"
+        :key="element.id"
+        class="board-item"
+        @drop="drop($event, idx)"
+        @dragover="allowDrop($event, idx)"
       >
         <div class="pb-4">
           <div>
@@ -29,10 +36,15 @@
             <i class="el-icon-date" />
             <span class="ml-1">{{ element.due_date }}</span>
           </span>
-          <el-tooltip :content="element.assigned_to.login" placement="right-start" :disabled="!element.assigned_to.login">
+          <el-tooltip
+            :content="element.assigned_to.login"
+            placement="right-start"
+            :disabled="!element.assigned_to.login"
+          >
             <span class="ml-1 detail">
-              <i class="el-icon-s-custom" />
+              <i class="el-icon-user-solid" />
               <span class="ml-1">{{ element.assigned_to.name }}</span>
+              <span v-if="element.assigned_to.login" class="m1-1">({{ element.assigned_to.login }})</span>
             </span>
           </el-tooltip>
           <p v-if="element.parent_id" class="parent">
@@ -44,14 +56,14 @@
               {{ element.parent_name }}
             </el-link>
           </p>
-          <div v-if="element.children.length>0" class="parent">
+          <div v-if="element.children.length > 0" class="parent">
             <el-collapse>
               <el-collapse-item>
                 <template #title>
-                  <i class="el-icon-caret-right" /> 子議題 ({{ element.children|lengthFilter }})
+                  <i class="el-icon-caret-right" /> 子議題 ({{ element.children | lengthFilter }})
                 </template>
                 <ol class="children_list">
-                  <li v-for="(subElement,index) in element.children" :key="index">
+                  <li v-for="(subElement, index) in element.children" :key="index">
                     <el-tag class="el-tag--circle" size="mini" :class="subElement.status.name">
                       {{ $t('ProjectActive.' + subElement.status.name) }}
                     </el-tag>
@@ -234,7 +246,7 @@ export default {
     margin: 0;
   }
 
-  > > > .el-collapse-item {
+  >>> .el-collapse-item {
     &__header {
       height: 2.5em;
     }
@@ -243,5 +255,12 @@ export default {
       padding-bottom: 0;
     }
   }
+}
+
+.board-column .board-column-content .board-item {
+  font-size: 16px;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  height: auto !important;
 }
 </style>

@@ -372,4 +372,31 @@ export default {
 .el-upload__text {
   margin-top: 18px;
 }
+.uploadBtn {
+  font-size: 13px;
+  padding: 5px 11px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 2px;
+  display: inline-block;
+}
+.custom-list {
+  .el-row {
+    font-size: 0;
+  }
+  .el-col {
+    float: none;
+    padding: 0 10px;
+    vertical-align: top;
+    display: inline-block;
+    @media (max-width: 767px) {
+      width: 100%;
+      display: block;
+    }
+  }
+  .el-form-item__label {
+    float: none;
+    text-align: left;
+  }
+}
 </style>

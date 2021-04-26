@@ -35,10 +35,12 @@
 <script>
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectSettings',
   components: { ProjectListSelector, ProjectVersions, PipelineSettings, ProjectMembers },
+  mixins: [MixinElTableWithAProject],
   data: () => ({
     activeNames: []
   }),
@@ -54,6 +56,19 @@ export default {
     getActiveCollapseItem() {
       const target = JSON.parse(localStorage.getItem('ProjectSettingsActiveNames'))
       this.activeNames = target === null ? ['ProjectMembers'] : target
+    },
+    showNoProjectWarning() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
+      })
+    },
+    async fetchData() {
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
     }
   }
 }

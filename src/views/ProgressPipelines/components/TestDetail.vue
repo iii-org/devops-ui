@@ -2,7 +2,7 @@
   <el-dialog :visible="dialogVisible" width="95%" top="10vh" @close="handleClose">
     <template slot="title">
       <span class="font-weight-bold text-h6 ml-4">
-        {{ $t('ProcessDevBranchTest.TestDetail') }}
+        {{ $t('ProgressPipelines.TestDetail') }}
       </span>
     </template>
     <el-tabs v-model="activeStage" tab-position="left" @tab-click="handleClick">
@@ -14,7 +14,13 @@
       >
         <div slot="label" class="d-flex justify-space-between align-center">
           <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
-          <el-tag v-if="stage.state" class="el-tag ml-2" :type="getStateTagType(stage.state)" size="mini" effect="dark">
+          <el-tag
+            v-if="stage.state"
+            class="el-tag ml-2"
+            :type="getStateTagType(stage.state)"
+            size="mini"
+            :effect="getStateTagEffect(stage.state)"
+          >
             {{ stage.state }}
           </el-tag>
         </div>
@@ -61,7 +67,9 @@
 import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 
-const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', { reconnectionAttempts: 5 })
+const socket = io(process.env.VUE_APP_WS + '/rancher/websocket/logs', {
+  reconnectionAttempts: 5
+})
 
 export default {
   name: 'TestDetail',
@@ -118,11 +126,19 @@ export default {
         case 'Waiting':
           return 'slow'
         case 'Building':
-          return 'warning'
+          return 'success'
         case 'Skipped':
           return 'info'
         default:
           return 'info'
+      }
+    },
+    getStateTagEffect(state) {
+      switch (state) {
+        case 'Building':
+          return 'light'
+        default:
+          return 'dark'
       }
     },
     handleClick(tab) {

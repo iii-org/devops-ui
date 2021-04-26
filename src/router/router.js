@@ -433,6 +433,12 @@ export const asyncRoutes = [
         meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'Administrator'] }
       },
       {
+        path: 'sideex',
+        name: 'sideex',
+        component: () => import('@/views/ScanSideex'),
+        meta: { title: 'sideex', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+      },
+      {
         path: 'sonarqube',
         name: 'sonarqube',
         component: () => import('@/views/ScanSonarQube'),
