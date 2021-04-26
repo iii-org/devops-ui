@@ -314,6 +314,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
+
 .point {
   width: 10px;
   height: 10px;
@@ -321,22 +323,22 @@ export default {
   margin-right: 5px;
   display: inline-block;
   &.feature {
-    background: #66d7ff;
+    background: $feature;
   }
   &.document {
-    background: #5388ff;
+    background: $document;
   }
   &.bug {
-    background: #fea859;
+    background: $bug;
   }
   &.research {
-    background: #a0da2c;
+    background: $research;
   }
 }
 .el-tag {
   &--secondary {
-    background-color: #3ecbbc;
-    border-color: #3ecbbc;
+    background-color: $secondary;
+    border-color: $secondary;
   }
 }
 </style>

@@ -96,10 +96,13 @@
                 @dragstart="dragStart($event, { [item.value]: subItem })"
                 @dragend="dragEnd"
               >
-                <el-tag>{{ subItem.name }}</el-tag>
-                <el-alert class="help_text" :closable="false"
-                  >拖曳到議題，可以將 {{ item.label }} 改變成 {{ subItem.name }}</el-alert
-                >
+                <el-tag effect="dark" :type="getTagType(subItem.name)">{{
+                  $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name
+                }}</el-tag>
+                <el-alert class="help_text" :closable="false">
+                  拖曳到議題，可以將 {{ item.label }} 改變成
+                  {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+                </el-alert>
               </div>
             </template>
           </el-card>
@@ -348,18 +351,37 @@ export default {
     },
     getFilterValueList(value) {
       return this[value]
+    },
+    getTagType(name) {
+      switch (name) {
+        case 'Active':
+          return ''
+        case 'Assigned':
+          return 'danger'
+        case 'Closed':
+          return 'info'
+        case 'Solved':
+          return 'secondary'
+        case 'Responded':
+          return 'warning'
+        case 'Finished':
+          return 'success'
+        case 'Feature':
+          return 'feature'
+        case 'Bug':
+          return 'bug'
+        case 'Document':
+          return 'document'
+        case 'Research':
+          return 'research'
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$active: #409eff;
-$assigned: #f56c6c;
-$closed: #909399;
-$solved: #3ecbbc;
-$responded: #e6a23c;
-$finished: #67c23a;
+@import '@/styles/variables.scss';
 
 .board {
   display: flex;
@@ -368,7 +390,7 @@ $finished: #67c23a;
   align-items: start;
 
   .kanban {
-    > > > .parent {
+    >>> .parent {
       font-size: 0.75em;
       margin: 0;
 
@@ -401,7 +423,7 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.active {
+    >>> &.active {
       .board-column-header {
         .header-bar {
           background: $active;
@@ -409,7 +431,7 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.assigned {
+    >>> &.assigned {
       .board-column-header {
         .header-bar {
           background: $assigned;
@@ -417,7 +439,7 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.solved {
+    >>> &.solved {
       .board-column-header {
         .header-bar {
           background: $solved;
@@ -425,7 +447,7 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.responded {
+    >>> &.responded {
       .board-column-header {
         .header-bar {
           background: $responded;
@@ -433,7 +455,7 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.finished {
+    >>> &.finished {
       .board-column-header {
         .header-bar {
           background: $finished;
@@ -441,7 +463,7 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.closed {
+    >>> &.closed {
       .board-column-header {
         .header-bar {
           background: $closed;
@@ -449,34 +471,34 @@ $finished: #67c23a;
       }
     }
 
-    > > > &.feature {
+    >>> &.feature {
       .board-column-header {
         .header-bar {
-          background: #66d7ff;
+          background: $feature;
         }
       }
     }
 
-    > > > &.bug {
+    >>> &.bug {
       .board-column-header {
         .header-bar {
-          background: #fea859;
+          background: $bug;
         }
       }
     }
 
-    > > > &.document {
+    >>> &.document {
       .board-column-header {
         .header-bar {
-          background: #5388ff;
+          background: $document;
         }
       }
     }
 
-    > > > &.research {
+    >>> &.research {
       .board-column-header {
         .header-bar {
-          background: #a0da2c;
+          background: $research;
         }
       }
     }
@@ -517,5 +539,20 @@ $finished: #67c23a;
 // For drop target
 .hover {
   background-color: rgba(0, 191, 165, 0.04);
+}
+
+$tag-options: (
+  secondary: $secondary,
+  document: $document,
+  research: $research,
+  bug: $bug,
+  feature: $feature
+);
+
+@each $key, $value in $tag-options {
+  .el-tag--#{$key} {
+    background-color: $value;
+    border-color: $value;
+  }
 }
 </style>

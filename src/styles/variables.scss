@@ -18,31 +18,42 @@ $slow: #56b1e8;
 $light: #c1c3c5;
 $info: #606260;
 
-$danger_border:#5b1111;
-$danger_text:#ffffff;
-$warning_text:#543a12;
-$success_text:#074540;
+$secondary: #3ecbbc;
+$active: #409eff;
+$assigned: #f56c6c;
+$closed: #909399;
+$solved: #3ecbbc;
+$responded: #e6a23c;
+$finished: #67c23a;
+$feature: #66d7ff;
+$document: #5388ff;
+$bug: #fea859;
+$research: #a0da2c;
 
-$danger-1: mix($danger, #FFFFFF, 10%);
-$danger-2: mix($danger, #FFFFFF, 20%);
-$danger-3: mix($danger, #FFFFFF, 30%);
-$danger-4: mix($danger, #FFFFFF, 40%);
-$danger-5: mix($danger, #FFFFFF, 50%);
-$danger-6: mix($danger, #FFFFFF, 60%);
-$danger-7: mix($danger, #FFFFFF, 70%);
-$danger-8: mix($danger, #FFFFFF, 80%);
-$danger-9: mix($danger, #FFFFFF, 90%);
+$danger_border: #5b1111;
+$danger_text: #ffffff;
+$warning_text: #543a12;
+$success_text: #074540;
 
-$info-1: mix(#000000, #FFFFFF, 10%);
-$info-2: mix(#000000, #FFFFFF, 20%);
-$info-3: mix(#000000, #FFFFFF, 30%);
-$info-4: mix(#000000, #FFFFFF, 40%);
-$info-5: mix(#000000, #FFFFFF, 50%);
-$info-6: mix(#000000, #FFFFFF, 60%);
-$info-7: mix(#000000, #FFFFFF, 70%);
-$info-8: mix(#000000, #FFFFFF, 80%);
-$info-9: mix(#000000, #FFFFFF, 90%);
+$danger-1: mix($danger, #ffffff, 10%);
+$danger-2: mix($danger, #ffffff, 20%);
+$danger-3: mix($danger, #ffffff, 30%);
+$danger-4: mix($danger, #ffffff, 40%);
+$danger-5: mix($danger, #ffffff, 50%);
+$danger-6: mix($danger, #ffffff, 60%);
+$danger-7: mix($danger, #ffffff, 70%);
+$danger-8: mix($danger, #ffffff, 80%);
+$danger-9: mix($danger, #ffffff, 90%);
 
+$info-1: mix(#000000, #ffffff, 10%);
+$info-2: mix(#000000, #ffffff, 20%);
+$info-3: mix(#000000, #ffffff, 30%);
+$info-4: mix(#000000, #ffffff, 40%);
+$info-5: mix(#000000, #ffffff, 50%);
+$info-6: mix(#000000, #ffffff, 60%);
+$info-7: mix(#000000, #ffffff, 70%);
+$info-8: mix(#000000, #ffffff, 80%);
+$info-9: mix(#000000, #ffffff, 90%);
 
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
@@ -61,4 +72,8 @@ $info-9: mix(#000000, #FFFFFF, 90%);
   slow: $slow;
   light: $light;
   info: $info;
+  feature: $feature;
+  document: $document;
+  bug: $bug;
+  research: $research;
 }
