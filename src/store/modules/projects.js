@@ -71,7 +71,7 @@ const actions = {
     try {
       const res = await ANP(data)
       dispatch('user/getInfo', null, { root: true })
-      return Promise.solve(res)
+      return Promise.resolve(res)
     } catch (error) {
       console.error(error.toString())
       return Promise.reject(error)
