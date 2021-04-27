@@ -1,0 +1,7 @@
+$cursors: auto, default, pointer, wait, text, move, help, not-allowed;
+
+@each $cursor in $cursors {
+  .cursor-#{$cursor} {
+    cursor: $cursor;
+  }
+}
