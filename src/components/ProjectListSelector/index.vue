@@ -42,7 +42,7 @@ export default {
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
     onProjectChange(value) {
-      localStorage.setItem('project', value)
+      localStorage.setItem('projectId', value)
       this.setSelectedProject(this.userProjectList.filter(elm => elm.id === value)[0])
     }
   }

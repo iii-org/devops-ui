@@ -49,9 +49,9 @@ export default {
     returnProgress(current, total) {
       return Math.round((current / total) * 100)
     },
-    handleClick(id) {
-      localStorage.setItem('project', id)
-      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === id)[0])
+    handleClick(projectId) {
+      localStorage.setItem('projectId', projectId)
+      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === projectId)[0])
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {
@@ -99,7 +99,7 @@ export default {
         min-width="250"
       >
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="handleClick(scope.row.id)">
+          <el-link type="primary" :underline="false" @click="handleClick(scope.row)">
             {{ scope.row.display }}
           </el-link>
           <br>

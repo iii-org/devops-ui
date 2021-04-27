@@ -49,7 +49,7 @@ export default {
       this.categories = []
       this.issuesByCategory = {}
       for (const issue of issues) {
-        const cat = issue['issue_category']
+        const cat = issue.tracker.name
         if (this.categories.indexOf(cat) < 0) {
           this.categories.push(cat)
         }
@@ -68,12 +68,12 @@ export default {
         partialIssues = this.issues
       } else {
         partialIssues = this.issues.filter(
-          item => item['issue_category'] === this.selectedCategory)
+          item => item.tracker.name === this.selectedCategory)
       }
       this.closedIssueCount = 0
       this.openIssueCount = 0
       this.listData = partialIssues.filter(issue => {
-        if (issue['issue_status'] === CLOSED_STATUS) {
+        if (issue.status.name === CLOSED_STATUS) {
           this.closedIssueCount++
           return this.showClosed
         } else {
@@ -102,7 +102,7 @@ export default {
     async handleClose(idx, row) {
       this.listLoading = true
       await updateIssue(row.id, { status_id: this.CLOSED_STATUS_ID })
-      row.issue_status = this.CLOSED_STATUS
+      row.status.name = this.CLOSED_STATUS
       for (const i in this.issues) {
         if (this.issues[i].id === row.id) {
           this.issues.splice(parseInt(i), 1, row)
@@ -216,11 +216,11 @@ export default {
       >
         <el-table-column type="selection" width="55" />
         <el-table-column :label="$t('Issue.id')" prop="id" align="center" width="75" />
-        <el-table-column :label="$t('Issue.name')" align="center" prop="issue_name" />
-        <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version_name" />
-        <el-table-column :label="$t('general.Type')" align="center" prop="issue_category" />
-        <el-table-column :label="$t('general.Status')" align="center" prop="issue_status" />
-        <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigned_to" />
+        <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
+        <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version.name" />
+        <el-table-column :label="$t('general.Type')" align="center" prop="tracker.name" />
+        <el-table-column :label="$t('general.Status')" align="center" prop="status.name" />
+        <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigned_to.name" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
             <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start"
@@ -238,7 +238,7 @@ export default {
               />
             </el-tooltip>
             <el-tooltip
-              v-if="scope.row.issue_status !== CLOSED_STATUS"
+              v-if="scope.row.status.name !== CLOSED_STATUS"
               effect="dark"
               :content="$t('general.Close')"
               placement="bottom-start"
