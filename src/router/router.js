@@ -230,10 +230,16 @@ export const asyncRoutes = [
         meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'project-settings',
+        path: 'settings',
         name: 'Project Settings',
-        component: () => import('@/views/ProjectSettings/index'),
-        meta: { title: 'Project Settings', roles: ['Project Manager', 'QA', 'Administrator'] }
+        component: () => import('@/views/Project/Settings/index'),
+        meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'settings',
+        name: 'Project Settings',
+        component: () => import('@/views/Project/Settings/roles/QA'),
+        meta: { title: 'Project Settings', roles: ['QA'] }
       },
       {
         path: 'advance-branch-settings',
@@ -593,7 +599,7 @@ export const asyncRoutes = [
           title: 'Profile',
           icon: 'user',
           noCache: true,
-          roles: ['Engineer', 'Project Manager', 'Administrator']
+          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
         }
       }
     ]
@@ -602,19 +608,19 @@ export const asyncRoutes = [
   {
     path: '/SystemVersion',
     component: Layout,
-    redirect: '/SystemVersion/index',
+    redirect: '/SystemVersion',
     hidden: true,
-    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
+    meta: { roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] },
     children: [
       {
-        path: 'index',
+        path: '',
         component: () => import('@/views/SystemVersion'),
         name: 'SystemVersion',
         meta: {
           title: 'System Version',
           icon: 'user',
           noCache: true,
-          roles: ['Engineer', 'Project Manager', 'Administrator']
+          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
         }
       }
     ]
