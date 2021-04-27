@@ -1,10 +1,12 @@
 <template>
-  <v-chart
-    class="chart"
-    :option="option"
-    theme="macarons"
-    autoresize
-  />
+  <div style="height: 400px">
+    <v-chart
+      class="chart"
+      :option="option"
+      theme="macarons"
+      autoresize
+    />
+  </div>
 </template>
 
 <script>
@@ -37,16 +39,16 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          top: '25%',
-          left: 'left'
+          left: 'left',
+          y: 'center'
         },
         color: this.chartData.color,
         series: [
           {
             name: '',
             type: 'pie',
-            radius: ['50%', '95%'],
-            center: ['55%', '50%'],
+            radius: ['50%', '80%'],
+            center: ['60%', '50%'],
             avoidLabelOverlap: false,
             label: {
               show: false,
