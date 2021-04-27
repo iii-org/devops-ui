@@ -23,7 +23,8 @@
           ref="issuePriority"
           :statistics-obj="statisticsObj"
           class="cursor-point"
-          @click.native="showFullIssuePriority"
+          @emitSelectedItem="handleSelectedItem"
+          @showFullIssuePriority="showFullIssuePriority"
         />
       </el-col>
     </el-row>
@@ -41,7 +42,7 @@
       </el-col>
     </el-row>
     <el-dialog :visible.sync="fullIssuePriority" class="fullscreen" top="5vh">
-      <WorkloadCard :key="reload" :statistics-obj="statisticsObj" />
+      <WorkloadCard :key="reload" :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
     </el-dialog>
   </el-row>
 </template>
@@ -66,7 +67,8 @@ export default {
     projectTestObj: {},
     isProjectTestList: false,
     fullIssuePriority: false,
-    reload: 0
+    reload: 0,
+    saveSelectedItem: ''
   }),
   computed: {
     ...mapGetters(['userProjectList', 'selectedProjectId'])
@@ -129,6 +131,9 @@ export default {
     showFullIssuePriority() {
       this.fullIssuePriority = true
       this.reload += 1
+    },
+    handleSelectedItem (val) {
+      this.saveSelectedItem = val
     }
   }
 }
