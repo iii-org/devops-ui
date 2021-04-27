@@ -208,10 +208,10 @@ export default {
       const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version = versionsRes.data.versions
+      this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
 
       const userRes = await this.getProjectUserList(this.selectedProjectId)
-      this.assigned_to = [{ name: '尚未指派', id: '' }, ...userRes.data.user_list]
+      this.assigned_to = [{ name: this.$t('Dashboard.Unassigned'), id: '' }, ...userRes.data.user_list]
       this.isLoading = false
       this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       await this.classifyIssue()
@@ -381,7 +381,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@import 'src/styles/variables.scss';
 
 .board {
   display: flex;
