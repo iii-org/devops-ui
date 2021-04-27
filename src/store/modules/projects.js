@@ -71,9 +71,10 @@ const actions = {
     try {
       const res = await ANP(data)
       dispatch('user/getInfo', null, { root: true })
-      return res
+      return Promise.solve(res)
     } catch (error) {
       console.error(error.toString())
+      return Promise.reject(error)
     }
   },
   async editProject({ commit, dispatch }, { pId, data }) {

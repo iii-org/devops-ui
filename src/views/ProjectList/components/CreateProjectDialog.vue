@@ -217,16 +217,23 @@ export default {
         if (!valid) return
         this.isLoading = true
         const sendData = this.handleSendData()
-        const res = await this.addNewProject(sendData)
-        this.isLoading = false
-        if (res.message !== 'success') return
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Created'),
-          type: 'success'
-        })
-        this.showDialog = false
-        this.$emit('update')
+        this.addNewProject(sendData)
+          .then(res => {
+            console.log('res ===>', res)
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Created'),
+              type: 'success'
+            })
+            this.showDialog = false
+            this.$emit('update')
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          .then(() => {
+            this.isLoading = false
+          })
       })
     },
     handleSendData() {

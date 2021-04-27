@@ -10,7 +10,7 @@
       />
     </div>
     <el-divider />
-    <div class="text-right text-body-1 mb-2 text-info"> {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }} </div>
+    <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
     <el-table
       v-loading="listLoading"
       :data="pagedData"
@@ -131,7 +131,8 @@ export default {
       searchKey: 'commit_message',
       pipelinesExecRun: 0,
       lastUpdateTime: '',
-      timer: null
+      timer: null,
+      logMessage: []
     }
   },
   mounted() {
@@ -149,9 +150,9 @@ export default {
       }
       const rid = this.selectedProject.repository_id
       try {
+        this.lastUpdateTime = this.$dayjs().format('YYYY-MM-DD hh:mm:ss')
         return (await getPipelines(rid)).data.map(item => {
           const result = { ...item }
-          this.lastUpdateTime = this.$dayjs().format('YYYY-MM-DD hh:mm:ss')
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
           return result
         })

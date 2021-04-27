@@ -1,44 +1,15 @@
-<script>
-import { mapGetters } from 'vuex'
-import { getPostmanResult } from '@/api/postman'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-export default {
-  name: 'PostmanResult',
-  components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
-  data: () => ({
-    dialogVisible: false,
-    searchKey: 'branch'
-  }),
-  computed: {
-    ...mapGetters(['userRole'])
-  },
-  methods: {
-    async fetchData() {
-      return (await getPostmanResult(this.selectedProjectId)).data
-    },
-    handleClick(target, id) {
-      this.$router.push({ name: target, params: { id }})
-    }
-  }
-}
-</script>
 <template>
-  <div class="app-container">
+  <el-row class="app-container">
     <router-view />
-    <div v-if="this.$route.meta.rolePage" class="role-Page">
+    <template v-if="this.$route.meta.rolePage">
       <div class="d-flex justify-space-between">
         <project-list-selector />
         <el-input
           v-model="searchData"
-          class="ob-search-input ob-shadow search-input mr-3"
           :placeholder="$t('Postman.SearchBranch')"
-          style="width: 250px; float: right"
-        >
-          <i slot="prefix" class="el-input__icon el-icon-search" />
-        </el-input>
+          style="width: 250px"
+          prefix-icon="el-icon-search"
+        />
       </div>
       <el-divider />
       <el-table
@@ -47,7 +18,6 @@ export default {
         :data="pagedData"
         border
         fit
-        highlight-current-row
         height="100%"
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
@@ -68,9 +38,9 @@ export default {
         <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="100" />
         <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="100" />
         <el-table-column-time :label="$t('Postman.StartTime')" prop="run_at" />
-        <el-table-column align="center" :label="$t('general.Actions')" width="220">
+        <el-table-column align="center" :label="$t('general.Actions')" width="120">
           <template slot-scope="scope">
-            <el-button
+            <!-- <el-button
               :id="`btn-devops-${scope.$index}`"
               size="mini"
               type="primary"
@@ -78,7 +48,7 @@ export default {
               @click="handleClick('devops-test-case', scope.row.id)"
             >
               {{ $t('Postman.DevOps') }}
-            </el-button>
+            </el-button> -->
             <el-button
               :id="`btn-postman-${scope.$index}`"
               size="mini"
@@ -98,6 +68,36 @@ export default {
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-    </div>
-  </div>
+    </template>
+  </el-row>
 </template>
+
+<script>
+import { mapGetters } from 'vuex'
+import { getPostmanResult } from '@/api/postman'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+export default {
+  name: 'PostmanResult',
+  components: { ElTableColumnTime },
+  mixins: [MixinElTableWithAProject],
+  data() {
+    return {
+      dialogVisible: false,
+      searchKey: 'branch'
+    }
+  },
+  computed: {
+    ...mapGetters(['userRole'])
+  },
+  methods: {
+    async fetchData() {
+      return (await getPostmanResult(this.selectedProjectId)).data
+    },
+    handleClick(target, id) {
+      this.$router.push({ name: target, params: { id } })
+    }
+  }
+}
+</script>

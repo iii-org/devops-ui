@@ -1,5 +1,5 @@
-import { login, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getInfo, login } from '@/api/user'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
 
@@ -95,7 +95,7 @@ const actions = {
           commit('SET_USER_PROJECT', data.project)
           if (data.project.length > 0) {
             const projectstorage = data.project.filter(elm => {
-              if (String(elm.id) === localStorage.getItem('project')) {
+              if (String(elm.id) === localStorage.getItem('projectId')) {
                 return true
               }
             }

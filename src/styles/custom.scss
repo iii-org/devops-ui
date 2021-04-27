@@ -1,3 +1,4 @@
+// el-table
 .el-table {
   font-size: 16px;
 }
@@ -56,6 +57,7 @@
   padding-left: 22px;
 }
 
+// el-dialog
 .el-dialog__header {
   padding-left: 12px;
   padding-right: 12px;
@@ -66,7 +68,7 @@
   padding-right: 24px;
 }
 
-
+// el-form
 .el-form--label-top .el-form-item__label {
   padding-bottom: 0;
 }
@@ -94,6 +96,7 @@
   float: left !important;
 }
 
+// el-tag--circle
 .el-tag--circle {
   color: #ffffff;
   font-size: 14px;
@@ -167,17 +170,7 @@
   color: #3ecbbc;
 }
 
-.el-tag-account {
-  i {
-    color: #3ecbbc;
-    margin-right: 4px;
-  }
-  color: #000000 !important;
-  font-size: 15px;
-  background: none;
-  border: none;
-}
-
+// el-upload
 .el-upload,
 .el-upload-dragger {
   width: 100%;

@@ -12,7 +12,7 @@ export default {
     setData(listData, category) {
       if (category) {
         listData = listData.filter(item => {
-          return item['issue_category'] === category
+          return item.tracker.name === category
         })
       }
       this.listData = listData
@@ -23,7 +23,7 @@ export default {
       for (const i in this.multipleSelection) {
         for (const pos of this.multipleSelection[i]) {
           const index = parseInt(i) * this.listQuery.limit + parseInt(pos)
-          text += this.listData[index]['issue_name'] + '\n'
+          text += this.listData[index].name + '\n'
         }
       }
       this.$copyText(text).then(function() {
@@ -56,9 +56,9 @@ export default {
     >
       <el-table-column type="selection" width="55" />
       <el-table-column :label="$t('Issue.id')" align="center" prop="id" width="75" />
-      <el-table-column :label="$t('Issue.name')" align="center" prop="issue_name" />
-      <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version_name" />
-      <el-table-column :label="$t('general.Type')" align="center" prop="issue_category" />
+      <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
+      <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version.name" />
+      <el-table-column :label="$t('general.Type')" align="center" prop="tracker.name" />
     </el-table>
     <pagination
       :total="filteredData.length"

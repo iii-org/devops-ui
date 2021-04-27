@@ -81,12 +81,12 @@ export default {
       focusTab: 'editIssue',
       files: [],
       journals: [],
-      fromRouterName: ''
+      formObj: {}
     }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.fromRouterName = from.name
+      vm.formObj = from
     })
   },
   beforeRouteLeave(to, from, next) {
@@ -123,7 +123,7 @@ export default {
           this.initIssueDetails(res.data)
         })
         .catch(() => {
-          this.$router.push({ name: this.fromRouterName })
+          this.$router.push(this.formObj)
           this.$message({
             message: this.$t('Issue.RemovedIssue'),
             type: 'warning'
@@ -182,7 +182,7 @@ export default {
               message: this.$t('Notify.Deleted'),
               type: 'success'
             })
-            this.$router.push({ name: this.fromRouterName })
+            this.$router.push(this.formObj)
           })
           .catch(err => {
             this.$message({
@@ -200,10 +200,10 @@ export default {
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
       this.isLoading = false
-      this.$router.push({ name: this.fromRouterName })
+      this.$router.push(this.formObj)
     },
     handleCancel() {
-      this.$router.push({ name: this.fromRouterName })
+      this.$router.push(this.formObj)
     },
     showLoading(status) {
       this.isLoading = status

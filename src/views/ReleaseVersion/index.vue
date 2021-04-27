@@ -31,10 +31,10 @@ export default {
     ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    selectedProject() {
+    selectedProjectId() {
+      this.state = STATE_INIT
+      this.releaseVersions = []
       this.loadData()
-      this.listQuery.page = 1
-      this.searchData = ''
     }
   },
   created() {
@@ -160,7 +160,12 @@ export default {
       </el-select>
 
       <span class="newBtn">
-        <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="writeNote">
+        <el-button
+          v-loading.fullscreen.lock="fullscreenLoading"
+          type="success"
+          :disabled="releaseVersions.length === 0"
+          @click="writeNote"
+        >
           <span class="el-icon-edit" />
           {{ $t('Release.writeNote') }}
         </el-button>
