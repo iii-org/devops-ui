@@ -53,7 +53,8 @@ export default {
           containLabel: true
         },
         xAxis: {
-          type: 'value'
+          type: 'value',
+          minInterval: 1
         },
         yAxis: {
           type: 'category',
