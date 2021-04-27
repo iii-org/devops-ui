@@ -154,35 +154,6 @@ export default {
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
-      testCases = [
-        {
-          name: 'index',
-          method: 'GET',
-          path: '',
-          assertions: [
-            { assertion: 'Response time is less than 800ms', error_message: 'error 1' },
-            { assertion: 'Status code is 200' }
-          ],
-          testResult: 'Pass'
-        },
-        {
-          name: 'request2',
-          method: 'POST',
-          path: '',
-          assertions: [{ assertion: 'Response time is less than 800ms' }, { assertion: 'Status code is 200' }],
-          testResult: 'Pass'
-        },
-        {
-          name: 'request3',
-          method: 'POST',
-          path: '',
-          assertions: [
-            { assertion: 'Response time is less than 800ms', error_message: 'error 2' },
-            { assertion: 'Status code is 200', error_message: 'error 3' }
-          ],
-          testResult: 'Pass'
-        }
-      ]
       return testCases.map((testCase, idx) => {
         const result = testCase
         result.index = idx + 1
