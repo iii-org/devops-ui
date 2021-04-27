@@ -218,9 +218,10 @@ export default {
     returnProgress(current, total) {
       return Math.round((current / total) * 100)
     },
-    handleClick(projectId) {
-      localStorage.setItem('projectId', projectId)
-      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === projectId)[0])
+    handleClick(projectObj) {
+      const { id } = projectObj
+      localStorage.setItem('projectId', id)
+      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === id)[0])
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {
