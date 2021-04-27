@@ -1,6 +1,9 @@
 <template>
   <el-row class="app-container">
     <el-row type="flex" :gutter="10" class="flex-wrap">
+      <el-col class="text-right update">
+        *本表每小時更新一次
+      </el-col>
       <el-col :xs="24" :sm="24" :md="10">
         <el-card class="overview">
           <template slot="header">
@@ -226,6 +229,10 @@ export default {
 <style lang="scss" scoped>
 @import 'src/styles/variables.scss';
 @import '~element-ui/lib/theme-chalk/display.css';
+
+.update{
+  font-size: 0.875em;
+}
 
 .overview {
   height: 90%;
