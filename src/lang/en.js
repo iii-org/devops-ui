@@ -185,7 +185,12 @@ export default {
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
     SearchName: 'Search Name',
-    SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result'
+    SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
+    Request: 'request | requests',
+    Pass: 'Pass',
+    Fail: 'Fail',
+    TestPass: 'Test Pass',
+    TestFail: 'Test Fail'
   },
   TestItem: {
     TestItem: 'Test Item',
