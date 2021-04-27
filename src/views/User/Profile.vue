@@ -14,13 +14,13 @@
               :label-position="labelPosition"
             >
               <el-form-item :label="$t('general.Name')" prop="userName">
-                <el-input v-model="userProfileForm.userName" style="width: 250px" />
+                <el-input v-model="userProfileForm.userName" :disabled="disableEdit" style="width: 250px" />
               </el-form-item>
               <el-form-item label="Email" prop="userEmail">
-                <el-input v-model="userProfileForm.userEmail" style="width: 250px" />
+                <el-input v-model="userProfileForm.userEmail" :disabled="disableEdit" style="width: 250px" />
               </el-form-item>
               <el-form-item :label="$t('Profile.Phone')" prop="userPhone">
-                <el-input v-model="userProfileForm.userPhone" style="width: 250px" />
+                <el-input v-model="userProfileForm.userPhone" :disabled="disableEdit" style="width: 250px" />
               </el-form-item>
             </el-form>
             <el-row class="mt-4">
@@ -30,7 +30,7 @@
             </el-row>
             <el-row class="mt-4">
               <el-col :span="8">
-                <el-button type="primary" @click="submitUpdateUserProfile('userProfileForm')">{{
+                <el-button :disabled="disableEdit" type="primary" @click="submitUpdateUserProfile('userProfileForm')">{{
                   $t('Profile.Save')
                 }}</el-button>
               </el-col>
@@ -49,21 +49,21 @@
               :label-position="labelPosition"
             >
               <el-form-item :label="$t('Profile.Password')" prop="old_password">
-                <el-input v-model="userPwdForm.old_password" type="password" style="width: 250px" />
+                <el-input v-model="userPwdForm.old_password" :disabled="disableEdit" type="password" style="width: 250px" />
               </el-form-item>
               <el-form-item :label="$t('Profile.NewPassword')" prop="userNewPwd">
-                <el-input v-model="userPwdForm.userNewPwd" type="password" style="width: 250px" />
+                <el-input v-model="userPwdForm.userNewPwd" :disabled="disableEdit" type="password" style="width: 250px" />
                 <div style="word-break: keep-all; margin-top: 5px">
                   {{ $t('Profile.PasswordRule') }}
                 </div>
               </el-form-item>
               <el-form-item :label="$t('Profile.RepeatNewPassword')" prop="userRepeatNewPwd">
-                <el-input v-model="userPwdForm.userRepeatNewPwd" type="password" style="width: 250px" />
+                <el-input v-model="userPwdForm.userRepeatNewPwd" :disabled="disableEdit" type="password" style="width: 250px" />
               </el-form-item>
             </el-form>
             <el-row class="mt-4">
               <el-col :span="8">
-                <el-button type="primary" @click="handleUpdateUserPwd('userPwdForm')">{{
+                <el-button :disabled="disableEdit" type="primary" @click="handleUpdateUserPwd('userPwdForm')">{{
                   $t('Profile.Save')
                 }}</el-button>
               </el-col>
@@ -100,6 +100,7 @@ export default {
     return {
       labelPosition: 'top',
       tabPosition: 'left',
+      from_ad: false,
       userName: '',
       userEmail: '',
       userPhone: 0,
@@ -143,9 +144,15 @@ export default {
       }
     }
   },
+  computed: {
+    disableEdit() {
+      return this.from_ad
+    }
+  },
   async created() {
     this.userId = store.getters.userId
     const userProfile = await getInfo(this.userId)
+    // this.from_ad = userProfile.data.from_ad
     this.userProfileForm.userName = userProfile.data.name
     this.userProfileForm.userEmail = userProfile.data.email
     this.userProfileForm.userPhone = userProfile.data.phone
@@ -169,39 +176,43 @@ export default {
       fileLink.click()
     },
     submitUpdateUserProfile(formName) {
-      this.$refs[formName].validate(async valid => {
-        if (valid) {
-          const data = {
-            name: this.userProfileForm.userName,
-            email: this.userProfileForm.userEmail,
-            phone: this.userProfileForm.userPhone
+      if (!this.disableEdit) {
+        this.$refs[formName].validate(async valid => {
+          if (valid) {
+            const data = {
+              name: this.userProfileForm.userName,
+              email: this.userProfileForm.userEmail,
+              phone: this.userProfileForm.userPhone
+            }
+            await updateUser(this.userId, data)
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Updated'),
+              type: 'success'
+            })
+          } else {
+            console.log('error submit!!')
+            return false
           }
-          await updateUser(this.userId, data)
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+        })
+      }
     },
     async handleUpdateUserPwd(formName) {
-      this.$refs[formName].validate(async valid => {
-        if (valid) {
-          await updateUser(this.userId, {
-            password: this.userPwdForm.userNewPwd,
-            old_password: this.userPwdForm.old_password
-          })
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-        }
-      })
+      if (!this.disableEdit) {
+        this.$refs[formName].validate(async valid => {
+          if (valid) {
+            await updateUser(this.userId, {
+              password: this.userPwdForm.userNewPwd,
+              old_password: this.userPwdForm.old_password
+            })
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Updated'),
+              type: 'success'
+            })
+          }
+        })
+      }
     }
   }
 }
