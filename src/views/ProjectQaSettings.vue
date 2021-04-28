@@ -9,7 +9,12 @@
           <el-input v-model="keyword" prefix-icon="el-icon-search" :placeholder="$t('Project.SearchProjectName')" />
         </el-col>
         <el-col :span="24" :style="{ overflow: 'hidden auto', 'max-height': `calc(100vh - 200px)` }">
-          <draggable :list="filteredProjects" :group="{ name: 'project', pull: 'clone', put: false }" :sort="false">
+          <draggable
+            :list="filteredProjects"
+            :group="{ name: 'project', pull: 'clone', put: false }"
+            :sort="false"
+            :move="checkMove"
+          >
             <el-card
               v-for="project in filteredProjects"
               :key="project.project_id"
@@ -46,15 +51,15 @@
             <draggable
               :list="user.projects"
               group="project"
-              :sort="false"
               :move="checkMove"
-              @change="log(user, $event)"
+              :sort="false"
+              @change="setProject(user.id, $event)"
             >
-              <el-card v-for="project in user.projects" :key="project.project_id" class="mb-2" shadow="hover">
+              <el-card v-for="project in user.projects" :key="project.project_id" :body-style="{ padding: '10px' }" class="mb-2" shadow="hover">
                 <div class="d-flex justify-space-between">
-                  <span>{{ project.project_name }}</span>
+                  <span class="text-subtitle-2">{{ project.project_name }}</span>
                   <i
-                    class="el-icon-close cursor-pointer"
+                    class="el-icon-close cursor-pointer text-subtitle-2"
                     @click="removeProjectPermission(user.id, project.project_id)"
                   />
                 </div>
@@ -130,9 +135,8 @@ export default {
         .catch(err => console.error(err))
     },
     addProjectPermission(user_id, project_id) {
-      console.log({ user_id, project_id })
       setProjectPermission({ user_id, project_id })
-        .then(res => console.log(res))
+        .then()
         .catch(err => console.error(err))
     },
     removeProjectPermission(user_id, project_id) {
@@ -152,12 +156,20 @@ export default {
       const projectIdx = this.subAdminProjects[userIdx].projects.findIndex(project => project.id === projectId)
       this.subAdminProjects[userIdx].projects.splice(projectIdx, 1)
     },
-    log(user, evt) {
-      console.log('log')
-      console.log(evt)
-    },
     checkMove(evt) {
-      console.log(evt)
+      const draggedId = evt.draggedContext.element.project_id
+      const qaProjects = evt.relatedContext.list.map(project => project.project_id)
+      if (qaProjects.includes(draggedId)) return false
+    },
+    setProject(userId, evt) {
+      const isAdded = evt.hasOwnProperty('added')
+      if (isAdded) {
+        const { project_id } = evt.added.element
+        this.addProjectPermission(userId, project_id)
+      } else {
+        const { project_id } = evt.removed.element
+        this.removeProjectPermission(userId, project_id)
+      }
     }
   }
 }
