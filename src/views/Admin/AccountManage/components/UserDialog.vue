@@ -47,8 +47,8 @@
       <el-form-item :label="$t('User.Phone')" prop="phone">
         <el-input v-model="userForm.phone" :disabled="disableEdit" />
       </el-form-item>
-      <el-form-item :label="$t('User.Role')" prop="role">
-        <el-select v-model="userForm.role" style="width: 100%">
+      <el-form-item :label="$t('User.Role')" prop="default_role">
+        <el-select v-model="userForm.default_role" style="width: 100%">
           <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
@@ -99,7 +99,7 @@ export default {
         repeatPassword: '',
         email: '',
         phone: '',
-        role: '',
+        default_role: '',
         status: 'enable'
       },
       userFormRules: {
@@ -120,7 +120,7 @@ export default {
           { required: true, message: 'Please input email', trigger: 'blur' },
           { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
         ],
-        role: [{ required: true, message: 'Please select role', trigger: 'blur' }]
+        default_role: [{ required: true, message: 'Please select role', trigger: 'blur' }]
       },
       dialogLoading: false,
       dialogTitle: 'AddUser',
@@ -139,9 +139,9 @@ export default {
   },
   watch: {
     userData: function(data) {
-      if (isNaN(data.role)) {
+      if (isNaN(data.default_role)) {
         // get role id from role object
-        data.role = data.role.id
+        data.default_role = data.default_role.id
       }
       this.userForm = data
     }
@@ -248,7 +248,7 @@ export default {
             name: this.userForm.name,
             email: this.userForm.email,
             phone: this.userForm.phone,
-            role_id: this.userForm.role,
+            role_id: this.userForm.default_role,
             status: this.userForm.status
           }
 

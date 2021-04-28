@@ -132,7 +132,6 @@ export default {
       } else {
         this.editUserId = user.id
         const userData = await getInfo(this.editUserId)
-        console.log('get', userData['data'])
         this.editUserData = userData['data']
       }
       this.dialogTitle = title

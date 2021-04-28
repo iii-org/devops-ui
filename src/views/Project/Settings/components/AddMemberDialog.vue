@@ -133,6 +133,8 @@ export default {
           this.assignableUserList = res.data.user_list.map(user => ({
             id: user.id,
             name: user.name,
+            department: user.department,
+            title: user.title,
             login: user.login,
             role_name: user.role_name
           }))
