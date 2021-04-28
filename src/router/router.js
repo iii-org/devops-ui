@@ -589,7 +589,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/profile',
     hidden: true,
-    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
+    meta: { roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] },
     children: [
       {
         path: '',
