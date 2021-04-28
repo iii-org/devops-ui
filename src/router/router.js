@@ -582,9 +582,9 @@ export const asyncRoutes = [
         meta: { title: 'validation', roles: ['Administrator'] }
       },
       {
-        path: 'project-qa-settings',
-        name: 'projectQaSettings',
-        component: () => import('@/views/ProjectQaSettings'),
+        path: 'sub-admin-projects',
+        name: 'Sub Admin Projects',
+        component: () => import('@/views/SubAdminProjects'),
         meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
       }
     ]

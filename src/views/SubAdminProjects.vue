@@ -1,6 +1,6 @@
 <template>
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="20">
-    <el-col :span="5">
+    <el-col :span="11" :xs="7" :sm="5">
       <el-row :gutter="10" class="text-center">
         <el-col :span="24" class="text-h6 mb-5">
           {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
@@ -22,14 +22,14 @@
               class="mb-2 cursor-pointer"
               shadow="hover"
             >
-              <span class="text-subtitle-2">{{ project.project_name }}</span>
+              <span class="text-subtitle-2">{{ project.project_name }} / {{ project.project_id }}</span>
             </el-card>
           </draggable>
         </el-col>
       </el-row>
     </el-col>
 
-    <el-col :span="19">
+    <el-col :span="13" :xs="17" :sm="19">
       <el-row :gutter="10">
         <el-col :span="24" class="mb-3">
           <el-select
@@ -37,17 +37,17 @@
             filterable
             multiple
             :style="{ width: '100%' }"
-            @remove-tag="fetchSubAdminProjects"
-            @visible-change="fetchSubAdminProjects"
+            @remove-tag="handleSelectChange"
+            @visible-change="handleSelectChange"
           >
             <el-option v-for="user in subAdmins" :key="user.id" :value="user.id" :label="user.name" />
           </el-select>
         </el-col>
       </el-row>
       <el-row :gutter="10">
-        <el-col v-for="user in subAdminProjects" :key="user.id" :span="8" class="mb-2">
+        <el-col v-for="user in subAdminProjects" :key="user.id" :span="24" :sm="12" :lg="8" :xl="6" class="mb-2">
           <el-card :style="{ 'border-top': `5px solid ${user.color}` }">
-            <div class="text-center text-h6 mb-1">{{ user.name }}</div>
+            <div class="text-center text-h6 mb-1">{{ user.name }} {{ user.id }}</div>
             <draggable
               :list="user.projects"
               group="project"
@@ -55,9 +55,15 @@
               :sort="false"
               @change="setProject(user.id, $event)"
             >
-              <el-card v-for="project in user.projects" :key="project.project_id" :body-style="{ padding: '10px' }" class="mb-2" shadow="hover">
+              <el-card
+                v-for="project in user.projects"
+                :key="project.project_id"
+                :body-style="{ padding: '10px' }"
+                class="mb-2 cursor-pointer"
+                shadow="hover"
+              >
                 <div class="d-flex justify-space-between">
-                  <span class="text-subtitle-2">{{ project.project_name }}</span>
+                  <span class="text-subtitle-2">{{ project.project_name }} / {{ project.project_id }}</span>
                   <i
                     class="el-icon-close cursor-pointer text-subtitle-2"
                     @click="removeProjectPermission(user.id, project.project_id)"
@@ -84,8 +90,19 @@ import {
 
 const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`
 
+const mapping = {
+  added: {
+    propName: 'added',
+    method: 'addProjectPermission'
+  },
+  removed: {
+    propName: 'remove',
+    method: 'removeProjectPermission'
+  }
+}
+
 export default {
-  name: 'ProjectQaSettings',
+  name: 'SubAdminProjects',
   components: { draggable },
   data() {
     return {
@@ -122,8 +139,15 @@ export default {
           this.isLoading = false
         })
     },
-    fetchSubAdminProjects(status) {
-      if (status === true || this.selectedSubAdmins.length === 0) return
+    handleSelectChange(isDropdownAppears) {
+      if (isDropdownAppears === true) return
+      if (this.selectedSubAdmins.length === 0) {
+        this.subAdminProjects = []
+      } else {
+        this.fetchSubAdminProjects()
+      }
+    },
+    fetchSubAdminProjects() {
       const params = { id: this.selectedSubAdmins.toString() }
       getSubAdminProjects(params)
         .then(res => {
@@ -136,7 +160,13 @@ export default {
     },
     addProjectPermission(user_id, project_id) {
       setProjectPermission({ user_id, project_id })
-        .then()
+        .then(res => {
+          this.$notify({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+        })
         .catch(err => console.error(err))
     },
     removeProjectPermission(user_id, project_id) {
@@ -161,14 +191,19 @@ export default {
       const qaProjects = evt.relatedContext.list.map(project => project.project_id)
       if (qaProjects.includes(draggedId)) return false
     },
+    getSetMode(evt) {
+      if (evt.hasOwnProperty('added')) {
+        return 'added'
+      } else if (evt.hasOwnProperty('removed')) {
+        return 'removed'
+      }
+    },
     setProject(userId, evt) {
-      const isAdded = evt.hasOwnProperty('added')
-      if (isAdded) {
-        const { project_id } = evt.added.element
-        this.addProjectPermission(userId, project_id)
-      } else {
-        const { project_id } = evt.removed.element
-        this.removeProjectPermission(userId, project_id)
+      const setMode = this.getSetMode(evt)
+      if (setMode) {
+        const { propName, method } = mapping[setMode]
+        const { project_id } = evt[propName].element
+        this[method](userId, project_id)
       }
     }
   }
