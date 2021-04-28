@@ -78,20 +78,20 @@ const actions = {
         .then(response => {
           // console.log('getInfo', response)
           const { data } = response
-          const { role, name } = data
-          if (!role) {
+          const { default_role, name } = data
+          if (!default_role) {
             reject('role is not exist in user info')
           }
           commit('SET_USER_NAME', name)
 
-          if (!role.name) {
+          if (!default_role.name) {
             reject('name is not exist in role')
           }
           data.project = data.project.sort(function(a, b) {
             return a['id'] < b['id'] ? 1 : -1
           })
           dispatch('app/setRoleList', null, { root: true })
-          commit('SET_USER_ROLE', role.name)
+          commit('SET_USER_ROLE', default_role.name)
           commit('SET_USER_PROJECT', data.project)
           if (data.project.length > 0) {
             const projectstorage = data.project.filter(elm => {
