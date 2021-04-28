@@ -63,7 +63,7 @@ export default {
 
     Artifacts: '資源成品',
 
-    'System Arguments': '參數設定', 
+    'System Arguments': '參數設定',
     'Project Settings (QA)': '專案品控清單設置'
   },
   navbar: {
@@ -137,7 +137,9 @@ export default {
     caution: '注意！',
     ok: '確定',
     project_name: '專案名稱',
-    pm_user_name: '專案經理'
+    pm_user_name: '專案經理',
+    Department: '部門',
+    UserTitle: '職稱'
   },
   Notify: {
     Updated: '已更新',
@@ -421,6 +423,8 @@ export default {
     AddUser: '新增用戶',
     EditUser: '修改用戶',
     Account: '帳號',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: '電話',
     Password: '密碼',
     RepeatPassword: '重新輸入密碼',
@@ -429,12 +433,18 @@ export default {
     Enable: '啟用',
     SearchAccount: '搜尋帳號',
     Role: '角色',
+    Source: '帳號來源',
+    AD: 'Active Directory',
+    SYSTEM: '系統',
+    Selected: '已選',
     AccountRule: '帳號需要2-60個字並只接受._-特殊字元在中間',
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字'
   },
   Profile: {
     Basic: '基本設定',
     ProfileBasicSetting: '個人基本設定',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: '電話',
     Security: '安全設定',
     ProfileSecuritySetting: '個人安全設定',

@@ -1,97 +1,3 @@
-<script>
-import Pagination from '@/components/Pagination'
-import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
-import MixinElTable from '@/components/MixinElTable'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-const defaultFormData = () => ({
-  name: '',
-  type: 'secret',
-  data: [{ key: '', value: '', showValue: false }]
-})
-
-export default {
-  name: 'SystemSecrets',
-  components: { ElTableColumnTime, Pagination },
-  mixins: [MixinElTable],
-  data: () => ({
-    formData: defaultFormData(),
-    formRules: {
-      name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
-    },
-    dialogVisible: false,
-    confirmLoading: false
-  }),
-  methods: {
-    async fetchData() {
-      const res = await getSystemSecrets()
-      return res.data.map(item => ({
-        name: item.name,
-        created: item.created,
-        keys: item.data ? Object.keys(item.data).join(', ') : '',
-        status: item.removed ? 'Removing' : 'Active'
-      }))
-    },
-    async handleDelete(secretName) {
-      this.listLoading = true
-      try {
-        await deleteSystemSecret(secretName)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
-    async handleConfirm() {
-      this.$refs['form'].validate(async valid => {
-        if (valid) {
-          this.listLoading = true
-          this.confirmLoading = true
-          const sendData = {
-            name: this.formData.name,
-            type: this.formData.type,
-            data: this.formData.data.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
-          }
-          try {
-            await addSystemSecret(sendData)
-            await this.loadData()
-            this.dialogVisible = false
-          } catch (error) {
-            console.error(error)
-          }
-          this.listLoading = false
-          this.confirmLoading = false
-        } else {
-          return false
-        }
-      })
-    },
-    addItem() {
-      this.formData.data.push({
-        key: '',
-        value: '',
-        showValue: false
-      })
-    },
-    removeItem(item) {
-      const index = this.formData.data.indexOf(item)
-      if (index !== -1) {
-        this.formData.data.splice(index, 1)
-      }
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    onDialogClosed() {
-      this.$nextTick(() => {
-        this.$refs['form'].resetFields()
-        this.formData = defaultFormData()
-      })
-    }
-  }
-}
-</script>
-
 <template>
   <div class="app-container">
     <div class="d-flex justify-space-between">
@@ -108,7 +14,7 @@ export default {
       </el-input>
     </div>
     <el-divider />
-    <div align="right" class="mb-5">
+    <div class="mb-5 text-right">
       <el-button id="btn-reload" type="primary" icon="el-icon-refresh" size="mini" plain @click="fetchData()">
         {{ $t('general.Refresh') }}
       </el-button>
@@ -221,3 +127,97 @@ export default {
     </el-dialog>
   </div>
 </template>
+
+<script>
+import Pagination from '@/components/Pagination'
+import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
+import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+const defaultFormData = () => ({
+  name: '',
+  type: 'secret',
+  data: [{ key: '', value: '', showValue: false }]
+})
+
+export default {
+  name: 'SystemSecrets',
+  components: { ElTableColumnTime, Pagination },
+  mixins: [MixinElTable],
+  data: () => ({
+    formData: defaultFormData(),
+    formRules: {
+      name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
+    },
+    dialogVisible: false,
+    confirmLoading: false
+  }),
+  methods: {
+    async fetchData() {
+      const res = await getSystemSecrets()
+      return res.data.map(item => ({
+        name: item.name,
+        created: item.created,
+        keys: item.data ? Object.keys(item.data).join(', ') : '',
+        status: item.removed ? 'Removing' : 'Active'
+      }))
+    },
+    async handleDelete(secretName) {
+      this.listLoading = true
+      try {
+        await deleteSystemSecret(secretName)
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
+    async handleConfirm() {
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          this.listLoading = true
+          this.confirmLoading = true
+          const sendData = {
+            name: this.formData.name,
+            type: this.formData.type,
+            data: this.formData.data.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
+          }
+          try {
+            await addSystemSecret(sendData)
+            await this.loadData()
+            this.dialogVisible = false
+          } catch (error) {
+            console.error(error)
+          }
+          this.listLoading = false
+          this.confirmLoading = false
+        } else {
+          return false
+        }
+      })
+    },
+    addItem() {
+      this.formData.data.push({
+        key: '',
+        value: '',
+        showValue: false
+      })
+    },
+    removeItem(item) {
+      const index = this.formData.data.indexOf(item)
+      if (index !== -1) {
+        this.formData.data.splice(index, 1)
+      }
+    },
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    onDialogClosed() {
+      this.$nextTick(() => {
+        this.$refs['form'].resetFields()
+        this.formData = defaultFormData()
+      })
+    }
+  }
+}
+</script>

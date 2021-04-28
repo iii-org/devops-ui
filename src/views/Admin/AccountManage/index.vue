@@ -1,75 +1,3 @@
-<script>
-import { mapGetters } from 'vuex'
-import { deleteUser, getAllUser, getInfo } from '@/api/user'
-import UserDialog from './components/UserDialog'
-import MixinElTable from '@/components/MixinElTable'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-export default {
-  name: 'UserManage',
-  components: {
-    UserDialog,
-    ElTableColumnTime
-  },
-  mixins: [MixinElTable],
-  data: () => ({
-    userDialogVisible: false,
-    dialogTitle: '',
-    search: '',
-    searchKey: 'login',
-    editUserId: 0,
-    editUserData: {}
-  }),
-  computed: {
-    ...mapGetters(['userId'])
-  },
-  methods: {
-    async fetchData() {
-      const allUser = await getAllUser()
-      return allUser.data.user_list.filter(item => item.id !== this.userId)
-    },
-    emitAddUserDialogVisible(visible, refresh) {
-      this.userDialogVisible = visible
-      if (refresh === 'refresh') {
-        this.loadData()
-      }
-    },
-    async showUserDialog(user, title) {
-      if (user === '') {
-        this.editUserId = 0
-        this.editUserData = {
-          login: '',
-          name: '',
-          email: '',
-          phone: '',
-          role: { id: 1 },
-          enable: true,
-          status: 'enable'
-        }
-      } else {
-        this.editUserId = user.id
-        const userData = await getInfo(this.editUserId)
-        this.editUserData = userData['data']
-      }
-      this.dialogTitle = title
-      this.userDialogVisible = true
-    },
-    async handleDelete(userId) {
-      try {
-        await deleteUser(userId)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Deleted'),
-          type: 'success'
-        })
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }
-}
-</script>
 <template>
   <div class="app-container">
     <div class="clearfix">
@@ -152,3 +80,77 @@ export default {
     />
   </div>
 </template>
+
+<script>
+import { mapGetters } from 'vuex'
+import { deleteUser, getAllUser, getInfo } from '@/api/user'
+import UserDialog from './components/UserDialog'
+import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+export default {
+  name: 'UserManage',
+  components: {
+    UserDialog,
+    ElTableColumnTime
+  },
+  mixins: [MixinElTable],
+  data: () => ({
+    userDialogVisible: false,
+    dialogTitle: '',
+    search: '',
+    searchKey: 'login',
+    editUserId: 0,
+    editUserData: {}
+  }),
+  computed: {
+    ...mapGetters(['userId'])
+  },
+  methods: {
+    async fetchData() {
+      const allUser = await getAllUser()
+      return allUser.data.user_list.filter(item => item.id !== this.userId)
+    },
+    emitAddUserDialogVisible(visible, refresh) {
+      this.userDialogVisible = visible
+      if (refresh === 'refresh') {
+        this.loadData()
+      }
+    },
+    async showUserDialog(user, title) {
+      if (user === '') {
+        this.editUserId = 0
+        this.editUserData = {
+          login: '',
+          name: '',
+          email: '',
+          phone: '',
+          role: { id: 1 },
+          enable: true,
+          status: 'enable'
+        }
+      } else {
+        this.editUserId = user.id
+        const userData = await getInfo(this.editUserId)
+        console.log('get', userData['data'])
+        this.editUserData = userData['data']
+      }
+      this.dialogTitle = title
+      this.userDialogVisible = true
+    },
+    async handleDelete(userId) {
+      try {
+        await deleteUser(userId)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+}
+</script>

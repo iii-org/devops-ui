@@ -14,6 +14,9 @@
       label-width="30%"
       class="demo-ruleForm"
     >
+      <el-form-item v-if="'from_ad' in userForm" :label="$t('User.Source')" prop="login">
+        <el-input v-model="source" disabled />
+      </el-form-item>
       <el-form-item :label="$t('User.Account')" prop="login">
         <el-input v-model="userForm.login" :disabled="disableAccount" />
         <div v-if="dialogTitle === 'AddUser'" style="word-break: keep-all; margin-top: 5px">
@@ -21,26 +24,32 @@
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.Password')" prop="password">
-        <el-input v-model="userForm.password" type="password" maxlength="20" show-password />
+        <el-input v-model="userForm.password" type="password" maxlength="20" show-password :disabled="disableEdit" />
         <div style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.PasswordRule') }}
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.RepeatPassword')" prop="repeatPassword">
-        <el-input v-model="userForm.repeatPassword" type="password" maxlength="20" show-password />
+        <el-input v-model="userForm.repeatPassword" type="password" maxlength="20" show-password :disabled="disableEdit" />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
-        <el-input v-model="userForm.name" />
+        <el-input v-model="userForm.name" :disabled="disableEdit" />
+      </el-form-item>
+      <el-form-item :label="$t('User.Department')">
+        <el-input v-model="userForm.department" :disabled="disableEdit" />
+      </el-form-item>
+      <el-form-item :label="$t('User.Title')">
+        <el-input v-model="userForm.title" :disabled="disableEdit" />
       </el-form-item>
       <el-form-item label="Email" prop="email">
-        <el-input v-model="userForm.email" />
+        <el-input v-model="userForm.email" :disabled="disableEdit" />
       </el-form-item>
       <el-form-item :label="$t('User.Phone')" prop="phone">
-        <el-input v-model="userForm.phone" />
+        <el-input v-model="userForm.phone" :disabled="disableEdit" />
       </el-form-item>
       <el-form-item :label="$t('User.Role')" prop="role">
-        <el-select v-model="userForm.role" style="width: 100%" :disabled="disableRole">
-          <el-option v-for="item in roleList" :key="item.value" :label="item.label" :value="item.value" />
+        <el-select v-model="userForm.role" style="width: 100%">
+          <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('User.IsEnable')" prop="status">
@@ -64,6 +73,7 @@
 </template>
 <script>
 import { addUser, updateUser } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -82,21 +92,6 @@ export default {
   },
   data() {
     return {
-      // TODO: roleList's data should from API
-      roleList: [
-        {
-          value: 1,
-          label: 'Engineer'
-        },
-        {
-          value: 3,
-          label: 'Project Manager'
-        },
-        {
-          value: 5,
-          label: 'Administrator'
-        }
-      ],
       userForm: {
         login: '',
         name: '',
@@ -130,8 +125,16 @@ export default {
       dialogLoading: false,
       dialogTitle: 'AddUser',
       disableAccount: false,
-      formName: 'userForm',
-      disableRole: true
+      formName: 'userForm'
+    }
+  },
+  computed: {
+    ...mapGetters(['roleList']),
+    source() {
+      return (this.userForm.from_ad) ? this.$t('User.AD') : this.$t('User.SYSTEM')
+    },
+    disableEdit() {
+      return this.userForm.from_ad
     }
   },
   watch: {
@@ -147,7 +150,6 @@ export default {
     if (this.userId === 0) {
       this.dialogTitle = 'AddUser'
       this.disableAccount = false
-      this.disableRole = false
       // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' },
@@ -209,7 +211,7 @@ export default {
     checkRepeatPwd(rule, value, callback) {
       if (
         (value !== this.userForm.password) &
-        (this.userForm.password !== '') &
+        (this.userForm.password !== '') &&
         (this.userForm.repeatPassword !== '')
       ) {
         callback(new Error('password not same'))
@@ -218,11 +220,9 @@ export default {
       }
     },
     validatePassword(rule, value, callback) {
-      // console.log('rule', rule)
-      // console.log('value', value)
       if (value === undefined) {
         callback()
-      } else if (value.length > 0 && (value.length < 8) & (this.userForm.password !== '')) {
+      } else if (value.length > 0 && (value.length < 8) && (this.userForm.password !== '')) {
         callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()
@@ -243,6 +243,8 @@ export default {
             login: this.userForm.login,
             password: this.userForm.password,
             username: this.userForm.name,
+            department: this.userForm.department,
+            title: this.userForm.title,
             name: this.userForm.name,
             email: this.userForm.email,
             phone: this.userForm.phone,
@@ -287,7 +289,6 @@ export default {
             }
           }
         } else {
-          console.log('error!!')
           return false
         }
       })

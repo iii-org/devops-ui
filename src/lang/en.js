@@ -64,7 +64,7 @@ export default {
 
     Artifacts: 'Project Artifacts',
 
-    'System Arguments': 'System Arguments', 
+    'System Arguments': 'System Arguments',
     'Project Settings (QA)': 'Project Settings (QA)'
   },
   navbar: {
@@ -138,7 +138,9 @@ export default {
     caution: 'Caution!',
     ok: 'OK',
     project_name: 'Project Name',
-    pm_user_name: 'Project Manager'
+    pm_user_name: 'Project Manager',
+    Department: 'Department',
+    UserTitle: 'Title'
   },
   Notify: {
     Updated: 'update successful',
@@ -422,6 +424,8 @@ export default {
     AddUser: 'Add User',
     EditUser: 'Edit User',
     Account: 'Account',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: 'Phone',
     Password: 'Password',
     RepeatPassword: 'Repeat Password',
@@ -430,12 +434,18 @@ export default {
     Enable: 'Enable',
     SearchAccount: 'Search Account',
     Role: 'Role',
+    Source: 'Source',
+    AD: 'Active Directory',
+    SYSTEM: 'System',
+    Selected: 'Selected',
     AccountRule: 'Account should be 2-60 characters long and "._-" can be accepted at the middle of string',
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number'
   },
   Profile: {
     Basic: 'Basic',
     ProfileBasicSetting: 'Profile Basic Setting',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: 'Phone',
     Security: 'Security',
     ProfileSecuritySetting: 'Profile Security Setting',

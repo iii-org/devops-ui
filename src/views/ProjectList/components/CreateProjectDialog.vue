@@ -45,6 +45,13 @@
               />
             </el-form-item>
           </el-col>
+          <el-col v-if="userRole==='QA'" :span="24">
+            <el-form-item :label="$t('Project.ProjectOwner')" :prop="(userRole==='QA')?'owner_id':''">
+              <el-select v-model="form.owner_id" filterable style="width:100%">
+                <el-option v-for="user in userList" :key="user.id" :value="user.id" :label="user.name+' ('+user.login+')'" />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <el-form-item :label="$t('general.Description')" prop="description">
               <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
@@ -140,9 +147,10 @@
 
 <script>
 import dayjs from 'dayjs'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
+import { getUserListByFilter } from '@/api/user'
 
 const formTemplate = () => ({
   name: '',
@@ -176,6 +184,7 @@ export default {
       start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
       due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }]
     },
+    userList: [],
     templateList: [],
     focusTemplate: {},
     isLoadingTemplate: false,
@@ -188,6 +197,7 @@ export default {
     }
   }),
   computed: {
+    ...mapGetters(['userRole']),
     versionList() {
       return this.focusTemplate.version || []
     }
@@ -198,6 +208,10 @@ export default {
   methods: {
     ...mapActions('projects', ['addNewProject']),
     async init(isForceUpdate) {
+      if (this.userRole === 'QA') {
+        const userList = await getUserListByFilter({ role_ids: 3 }) // pm
+        this.userList = userList.data.user_list
+      }
       this.isLoadingTemplate = true
       await getTemplateList({ force_update: isForceUpdate }).then(res => {
         this.templateList = res.data
@@ -218,8 +232,7 @@ export default {
         this.isLoading = true
         const sendData = this.handleSendData()
         this.addNewProject(sendData)
-          .then(res => {
-            console.log('res ===>', res)
+          .then(() => {
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Created'),
@@ -276,8 +289,8 @@ export default {
       this.isLoadingTemplate = true
       getTemplateParams(this.form.template_id)
         .then(res => {
-          if (res.data.arguments) {
-            this.handleArguments(res.data.arguments)
+          if (res.data['arguments']) {
+            this.handleArguments(res.data['arguments'])
           } else {
             this.form.argumentsForm = []
           }
@@ -319,7 +332,7 @@ export default {
     },
     async refreshTemplate() {
       await refreshRancherCatalogs()
-        .then(res => {
+        .then(() => {
           // console.log(res)
         })
         .catch(err => {

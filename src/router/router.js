@@ -559,19 +559,19 @@ export const asyncRoutes = [
       {
         path: 'account-manage',
         name: '',
-        component: () => import('@/views/UserManage'),
+        component: () => import('@/views/Admin/AccountManage'),
         meta: { title: 'Account Manage', roles: ['Administrator'] }
       },
       {
         path: 'system-activities',
         name: 'SystemActivities',
-        component: () => import('@/views/SystemActivities'),
+        component: () => import('@/views/Admin/SystemActivities'),
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
         path: 'system-arguments',
         name: 'System Arguments',
-        component: () => import('@/views/SystemArguments'),
+        component: () => import('@/views/Admin/SystemArguments'),
         meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
       {

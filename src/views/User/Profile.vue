@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <div style="background: white; padding: 15px 15px">
+    <el-card>
       <el-tabs :tab-position="tabPosition">
         <el-tab-pane :label="$t('Profile.Basic')">
-          <div style="padding: 0px 25px">
+          <div class="tab-inner">
             <h3>{{ $t('Profile.ProfileBasicSetting') }}</h3>
             <el-form
               ref="userProfileForm"
@@ -13,14 +13,23 @@
               class="demo-ruleForm"
               :label-position="labelPosition"
             >
+              <el-form-item v-if="'from_ad' in $data" :label="$t('User.Source')" class="form-input">
+                <el-input v-model="source" :disabled="true" />
+              </el-form-item>
               <el-form-item :label="$t('general.Name')" prop="userName">
-                <el-input v-model="userProfileForm.userName" :disabled="disableEdit" style="width: 250px" />
+                <el-input v-model="userProfileForm.userName" :disabled="disableEdit" class="form-input" />
+              </el-form-item>
+              <el-form-item :label="$t('Profile.Department')">
+                <el-input v-model="userProfileForm.department" :disabled="disableEdit" class="form-input" />
+              </el-form-item>
+              <el-form-item :label="$t('Profile.Title')">
+                <el-input v-model="userProfileForm.title" :disabled="disableEdit" class="form-input" />
               </el-form-item>
               <el-form-item label="Email" prop="userEmail">
-                <el-input v-model="userProfileForm.userEmail" :disabled="disableEdit" style="width: 250px" />
+                <el-input v-model="userProfileForm.userEmail" :disabled="disableEdit" class="form-input" />
               </el-form-item>
               <el-form-item :label="$t('Profile.Phone')" prop="userPhone">
-                <el-input v-model="userProfileForm.userPhone" :disabled="disableEdit" style="width: 250px" />
+                <el-input v-model="userProfileForm.userPhone" :disabled="disableEdit" class="form-input" />
               </el-form-item>
             </el-form>
             <el-row class="mt-4">
@@ -38,7 +47,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('Profile.Security')">
-          <div style="padding: 0px 25px">
+          <div class="tab-inner">
             <h3>{{ $t('Profile.ProfileSecuritySetting') }}</h3>
             <el-form
               ref="userPwdForm"
@@ -49,16 +58,16 @@
               :label-position="labelPosition"
             >
               <el-form-item :label="$t('Profile.Password')" prop="old_password">
-                <el-input v-model="userPwdForm.old_password" :disabled="disableEdit" type="password" style="width: 250px" />
+                <el-input v-model="userPwdForm.old_password" :disabled="disableEdit" type="password" class="form-input" />
               </el-form-item>
               <el-form-item :label="$t('Profile.NewPassword')" prop="userNewPwd">
-                <el-input v-model="userPwdForm.userNewPwd" :disabled="disableEdit" type="password" style="width: 250px" />
+                <el-input v-model="userPwdForm.userNewPwd" :disabled="disableEdit" type="password" class="form-input" />
                 <div style="word-break: keep-all; margin-top: 5px">
                   {{ $t('Profile.PasswordRule') }}
                 </div>
               </el-form-item>
               <el-form-item :label="$t('Profile.RepeatNewPassword')" prop="userRepeatNewPwd">
-                <el-input v-model="userPwdForm.userRepeatNewPwd" :disabled="disableEdit" type="password" style="width: 250px" />
+                <el-input v-model="userPwdForm.userRepeatNewPwd" :disabled="disableEdit" type="password" class="form-input" />
               </el-form-item>
             </el-form>
             <el-row class="mt-4">
@@ -71,7 +80,7 @@
           </div>
         </el-tab-pane>
       </el-tabs>
-    </div>
+    </el-card>
   </div>
 </template>
 
@@ -110,6 +119,8 @@ export default {
       userRepeatNewPwd: '',
       userProfileForm: {
         userName: '',
+        title: '',
+        department: '',
         userEmail: '',
         userPhone: 0
       },
@@ -147,12 +158,15 @@ export default {
   computed: {
     disableEdit() {
       return this.from_ad
+    },
+    source() {
+      return (this.from_ad) ? this.$t('User.AD') : this.$t('User.SYSTEM')
     }
   },
   async created() {
     this.userId = store.getters.userId
     const userProfile = await getInfo(this.userId)
-    // this.from_ad = userProfile.data.from_ad
+    this.from_ad = userProfile.data.from_ad
     this.userProfileForm.userName = userProfile.data.name
     this.userProfileForm.userEmail = userProfile.data.email
     this.userProfileForm.userPhone = userProfile.data.phone
@@ -217,3 +231,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.tab-inner{
+  padding: 0 25px;
+}
+.form-input{
+  width: 250px;
+}
+</style>
