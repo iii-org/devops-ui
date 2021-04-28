@@ -64,7 +64,8 @@ export default {
 
     Artifacts: 'Project Artifacts',
 
-    'System Arguments': 'System Arguments'
+    'System Arguments': 'System Arguments', 
+    'Project Settings (QA)': 'Project Settings (QA)'
   },
   navbar: {
     logOut: 'Log Out',

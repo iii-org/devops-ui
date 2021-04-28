@@ -63,7 +63,8 @@ export default {
 
     Artifacts: '資源成品',
 
-    'System Arguments': '參數設定'
+    'System Arguments': '參數設定', 
+    'Project Settings (QA)': '專案品控清單設置'
   },
   navbar: {
     logOut: '登出',
