@@ -580,6 +580,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/UserValidation'),
         meta: { title: 'validation', roles: ['Administrator'] }
+      },
+      {
+        path: 'project-qa-settings',
+        name: 'projectQaSettings',
+        component: () => import('@/views/ProjectQaSettings'),
+        meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
       }
     ]
   },
