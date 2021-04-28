@@ -63,7 +63,7 @@
       :data="pagedDataByChecked"
       height="100%"
     >
-      <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="70" />
+      <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="110" />
       <el-table-column align="center" :label="$t('general.Name')" prop="name" min-width="100" show-overflow-tooltip />
       <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
         <template slot-scope="scope">

@@ -176,7 +176,7 @@ export default {
     InputRepeatPwd: 'Please input repeat password'
   },
   TestCase: {
-    Index: 'Index',
+    Index: 'Requests',
     TestCase: 'Test Case',
     AddTestCase: 'Add Test Case',
     EditTestCase: 'Edit Test Case',
