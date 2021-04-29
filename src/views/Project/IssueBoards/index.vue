@@ -64,17 +64,18 @@
     <el-divider />
     <el-col class="board">
       <Kanban
-        v-for="(status, idx) in filterValueOnBoard"
+        v-for="(classObj, idx) in filterValueOnBoard"
         :key="idx"
-        :board-object="status"
-        :list="classifyIssueList[status.id]"
+        :status="status"
+        :board-object="classObj"
+        :list="classifyIssueList[classObj.id]"
         :dimension="filterDimension"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
-        :header-text="getTranslateHeader(status.name)"
-        :c-name="status.name"
-        :class="{ [status.name.toLowerCase()]: true }"
+        :header-text="getTranslateHeader(classObj.name)"
+        :c-name="classObj.name"
+        :class="{ [classObj.name.toLowerCase()]: true }"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
@@ -221,7 +222,11 @@ export default {
       return this.filterValue.filter(item => item.id === value)
     },
     classifyIssue() {
-      this.projectIssueList.forEach(issue => {
+      let issueList = this.projectIssueList
+      if (this.filterDimension !== 'status') {
+        issueList = this.projectIssueList.filter((issue) => (issue.status.id !== 6))
+      }
+      issueList.forEach(issue => {
         let dimensionName = issue[this.filterDimension].id
         if (!dimensionName) {
           dimensionName = ''
