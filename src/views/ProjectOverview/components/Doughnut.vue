@@ -51,13 +51,9 @@ export default {
             center: ['60%', '50%'],
             avoidLabelOverlap: false,
             label: {
-              normal: {
-                show: true,
-                formatter: '{b}\n\n{c}',
-                textStyle: {
-                  fontSize: '15px'
-                }
-              }
+              show: true,
+              formatter: '{b}\n\n{c}',
+              fontSize: '15px'
             },
             emphasis: {
               label: {

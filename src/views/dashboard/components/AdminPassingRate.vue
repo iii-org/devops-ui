@@ -142,11 +142,9 @@ export default {
             },
             data: this.chartData,
             label: {
-              normal: {
-                show: true,
-                formatter: data => {
-                  return data.value[1] + '%'
-                }
+              show: true,
+              formatter: data => {
+                return data.value[1] + '%'
               },
               fontWeight: 'bolder'
             },
