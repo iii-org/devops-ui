@@ -194,7 +194,8 @@ export default {
     rowHeight: 70
   }),
   computed: {
-    ...mapGetters(['userRole', 'projectList', 'projectListTotal', 'userProjectList'])
+    ...mapGetters(['userRole', 'projectList', 'projectListTotal', 'userProjectList',
+      'userProjectList', 'selectedProjectId'])
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
@@ -221,7 +222,14 @@ export default {
     handleClick(projectObj) {
       const { id } = projectObj
       localStorage.setItem('projectId', id)
-      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === id)[0])
+      console.log('id', id)
+      const selectedProject = this.userProjectList.filter(elm => {
+        console.log('elm', elm, 'id', id)
+        return elm.id === id
+      })[0]
+      this.setSelectedProject(selectedProject)
+      console.log('sel_p', selectedProject)
+      console.log('get sel_p', this.selectedProject)
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {
