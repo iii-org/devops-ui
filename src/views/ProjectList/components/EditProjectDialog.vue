@@ -53,7 +53,11 @@
           </el-col>
           <el-col :span="24">
             <el-form-item :label="$t('general.Description')" prop="description">
-              <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
+              <el-input
+                v-model="form.description"
+                type="textarea"
+                :placeholder="$t('RuleMsg.PleaseInput') + $t('RuleMsg.Description')"
+              />
             </el-form-item>
           </el-col>
         </el-col>
