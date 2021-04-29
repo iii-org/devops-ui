@@ -17,12 +17,12 @@
           >
             <el-card
               v-for="project in filteredProjects"
-              :key="project.project_id"
+              :key="project.id"
               :body-style="{ padding: '10px' }"
               class="mb-2 cursor-pointer"
               shadow="hover"
             >
-              <span class="text-subtitle-2">{{ project.project_name }}</span>
+              <span class="text-subtitle-2">{{ project.name }}</span>
             </el-card>
           </draggable>
         </el-col>
@@ -57,16 +57,16 @@
             >
               <el-card
                 v-for="project in user.projects"
-                :key="project.project_id"
+                :key="project.id"
                 :body-style="{ padding: '10px' }"
                 class="mb-2 cursor-pointer"
                 shadow="hover"
               >
                 <div class="d-flex justify-space-between">
-                  <span class="text-subtitle-2">{{ project.project_name }}</span>
+                  <span class="text-subtitle-2">{{ project.name }}</span>
                   <i
                     class="el-icon-close cursor-pointer text-subtitle-2"
-                    @click="removeProjectPermission(user.id, project.project_id)"
+                    @click="removeProjectPermission(user.id, project.id)"
                   />
                 </div>
               </el-card>
@@ -117,7 +117,7 @@ export default {
   computed: {
     filteredProjects() {
       const keyword = this.keyword.toLowerCase()
-      return this.adminProjects.filter(project => project.project_name.toLowerCase().includes(keyword))
+      return this.adminProjects.filter(project => project.name.toLowerCase().includes(keyword))
     }
   },
   mounted() {
@@ -129,8 +129,8 @@ export default {
       Promise.all([getAdminProjects(), getSubAdmins()])
         .then(res => {
           this.adminProjects = res[0].data.map(project => ({
-            project_id: project.id,
-            project_name: project.name
+            id: project.id,
+            name: project.name
           }))
           this.subAdmins = res[1].data
         })
@@ -187,8 +187,8 @@ export default {
       this.subAdminProjects[userIdx].projects.splice(projectIdx, 1)
     },
     checkMove(evt) {
-      const draggedId = evt.draggedContext.element.project_id
-      const qaProjects = evt.relatedContext.list.map(project => project.project_id)
+      const draggedId = evt.draggedContext.element.id
+      const qaProjects = evt.relatedContext.list.map(project => project.id)
       if (qaProjects.includes(draggedId)) return false
     },
     getSetMode(evt) {
@@ -202,8 +202,8 @@ export default {
       const setMode = this.getSetMode(evt)
       if (setMode) {
         const { propName, method } = mapping[setMode]
-        const { project_id } = evt[propName].element
-        this[method](userId, project_id)
+        const { id } = evt[propName].element
+        this[method](userId, id)
       }
     }
   }
