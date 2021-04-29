@@ -55,7 +55,7 @@ export default {
                 show: true,
                 formatter: '{b}\n\n{c}',
                 textStyle: {
-                  fontSize: '10px'
+                  fontSize: '15px'
                 }
               }
             },
