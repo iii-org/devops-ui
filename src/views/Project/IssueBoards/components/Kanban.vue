@@ -21,12 +21,19 @@
         v-for="(element, idx) in list"
         :key="element.id"
         class="board-item"
+        :style="{ cursor: 'move' }"
         @drop="drop($event, idx)"
         @dragover="allowDrop($event, idx)"
       >
         <div class="pb-4">
           <div>
-            <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
+            <el-link
+              class="cursor-pointer"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              @click="handleClick(element.id)"
+            >
               {{ element.name }}
             </el-link>
           </div>
@@ -172,7 +179,7 @@ export default {
     drop(e, idx) {
       e.preventDefault()
       const data = JSON.parse(e.dataTransfer.getData('json'))
-      this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+      this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] } })
       this.reload += 1
     },
     allowDrop(e) {
