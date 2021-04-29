@@ -68,7 +68,7 @@ import {
   getProjectIssueStatistics
 } from '@/api/projects'
 
-import WorkloadCard from '@/views/ProjectOverview/components/WorkloadCard'
+import WorkloadCard from '@/views/Project/Overview/components/WorkloadCard'
 
 export default {
   name: 'ProjectRoadmap',

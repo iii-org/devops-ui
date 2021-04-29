@@ -163,6 +163,7 @@ export default {
     },
     async loadData() {
       this.listLoading = true
+      this.listData = []
       await this.fetchData()
       this.listLoading = false
     },
