@@ -176,14 +176,16 @@ import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
 export default {
   name: 'ProgressDevEnvironment',
   mixins: [MixinElCardWithAProject],
-  data: () => ({
-    searchKey: 'branch',
-    btnLoading: false,
-    timer: null,
-    lastUpdateTime: ''
-  }),
+  data() {
+    return {
+      searchKey: 'branch',
+      btnLoading: false,
+      timer: null,
+      lastUpdateTime: ''
+    }
+  },
   mounted() {
-    this.timer = setInterval(() => this.fetchData(), 30000)
+    this.timer = setInterval(() => this.fetchData(), 10000)
   },
   beforeDestroy() {
     clearInterval(this.timer)
@@ -192,7 +194,13 @@ export default {
   methods: {
     async fetchData() {
       const res = await getEnvironmentList(this.selectedProjectId)
-        .then(this.lastUpdateTime = dayjs().format('YYYY-MM-DD hh:mm:ss'))
+      this.lastUpdateTime = this.$dayjs(res.datetime)
+        .utcOffset(16)
+        .format('YYYY-MM-DD HH:mm:ss')
+      res.data.forEach((item, idx) => {
+        const result = { ...item }
+        this.$set(this.listData, idx, result)
+      })
       return res.data
     },
     async redeploy(pId, branchName) {
