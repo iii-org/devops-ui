@@ -56,20 +56,22 @@ import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard } from '
 export default {
   name: 'ProjectOverview',
   components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard },
-  data: () => ({
-    versionList: [],
-    selectedVersion: null,
-    isLoading: false,
-    isLoadingVersion: false,
-    progressObj: {},
-    statisticsObj: {},
-    userList: [],
-    projectTestObj: {},
-    isProjectTestList: false,
-    fullIssuePriority: false,
-    reload: 0,
-    saveSelectedItem: ''
-  }),
+  data() {
+    return {
+      versionList: [],
+      selectedVersion: null,
+      isLoading: false,
+      isLoadingVersion: false,
+      progressObj: {},
+      statisticsObj: {},
+      userList: [],
+      projectTestObj: {},
+      isProjectTestList: false,
+      fullIssuePriority: false,
+      reload: 0,
+      saveSelectedItem: ''
+    }
+  },
   computed: {
     ...mapGetters(['userProjectList', 'selectedProjectId'])
   },
@@ -89,6 +91,7 @@ export default {
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
     async fetchAllData() {
+      if (this.selectedProjectId < 0) return
       let param = {}
       if (this.projectVersion !== null) {
         param = { fixed_version_id: this.selectedVersion }
