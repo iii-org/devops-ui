@@ -181,7 +181,21 @@ export default {
       e.preventDefault()
       if (e.dataTransfer.getData('json')) {
         const data = JSON.parse(e.dataTransfer.getData('json'))
-        this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+        const toClassObj = Object.values(data)[0]
+        const element = this.list[idx]
+        if (Object.keys(data)[0] === 'status') {
+          if (toClassObj.id === 6) {
+            if (this.checkAssigned(toClassObj, element) && this.checkChildrenStatus(element)) {
+              this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+            }
+          } else {
+            if (this.checkAssigned(toClassObj, element)) {
+              this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+            }
+          }
+        } else {
+          this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+        }
         this.reload += 1
       }
     },
