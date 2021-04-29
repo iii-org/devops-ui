@@ -31,8 +31,10 @@ export default {
     }
   },
   async created() {
+    if (this.selectedProjectId < 0) {
+      return
+    }
     this.branches = []
-
     const response = await getBranchesByProject(this.selectedProject.repository_id)
     const branches = response.data['branch_list']
     for (const branch of branches) {
