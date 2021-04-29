@@ -51,18 +51,23 @@ export default {
             center: ['60%', '50%'],
             avoidLabelOverlap: false,
             label: {
-              show: false,
-              position: 'center'
+              normal: {
+                show: true,
+                formatter: '{b}\n\n{c}',
+                textStyle: {
+                  fontSize: '10px'
+                }
+              }
             },
             emphasis: {
               label: {
                 show: true,
-                fontSize: '40',
+                fontSize: '20',
                 fontWeight: 'bold'
               }
             },
             labelLine: {
-              show: false
+              show: true
             },
             data: this.chartData.data
           }
