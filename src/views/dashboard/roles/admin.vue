@@ -202,7 +202,7 @@ export default {
         .then((res) => {
           const result = res.data.map((item) => ({
             name: item['project_name'],
-            value: [item['count'], item['passing_rate'] * 100, item['total']]
+            value: [item['total'], item['passing_rate'] * 100, item['count']]
           }))
           return Promise.resolve(result)
         })

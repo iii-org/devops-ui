@@ -373,14 +373,15 @@ export default {
         start_date: '開立時間'
       },
       PassingRate: {
-        NAME: '通過比率',
+        NAME: '功能測試結果',
         DETAIL: '專案測試品質',
         project_name: '@:general.project_name',
         count: '測試個案數',
         success: '成功',
         fail: '失敗',
         total: '累積測試次數',
-        run_at: '最近測試時間'
+        run_at: '最近測試時間',
+        rate: '通過率'
       },
       ProjectList: {
         NAME: '專案清單',

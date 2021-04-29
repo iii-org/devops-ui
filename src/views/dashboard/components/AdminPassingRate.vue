@@ -90,11 +90,13 @@ export default {
       detailDialog: false,
       searchKeys: ['project_name'],
       keyword: '',
+      maxCircleWidth: 120,
       reload: 0
     }
   },
   computed: {
     passingRateOptions() {
+      const _this = this
       return {
         tooltip: {
           trigger: 'item',
@@ -102,7 +104,7 @@ export default {
             color: '#FFFFFF'
           },
           formatter: data => {
-            return data.marker + data.name + ': ' + data.value[1] + '%'
+            return data.marker + data.name + ': ' + this.$t('Dashboard.ADMIN.PassingRate.count') + data.value[2]
           }
         },
         grid: {
@@ -110,24 +112,33 @@ export default {
           top: '10%'
         },
         xAxis: {
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          }
-        },
-        yAxis: {
+          name: this.$t('Dashboard.ADMIN.PassingRate.total'),
+          nameLocation: 'middle',
           splitLine: {
             lineStyle: {
               type: 'dashed'
             }
           },
+          minInterval: 1,
+          min: 0
+        },
+        yAxis: {
+          name: this.$t('Dashboard.ADMIN.PassingRate.rate'),
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          },
+          min: 0,
+          max: 100,
+          minInterval: 1,
           scale: true
         },
         series: [
           {
+            name: this.$t('Dashboard.ADMIN.PassingRate.success'),
             symbolSize: function(data) {
-              return data[2] * 20
+              return data[2] * _this.getSizeRate()
             },
             data: this.chartData,
             label: {
@@ -183,6 +194,11 @@ export default {
     },
     formatTime(value) {
       return this.$dayjs(value).fromNow()
+    },
+    getSizeRate() {
+      const caseCount = this.chartData.map((row) => (row.value[2]))
+      const maxCount = Math.max(...caseCount)
+      return this.maxCircleWidth / maxCount
     }
   }
 }

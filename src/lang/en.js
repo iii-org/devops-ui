@@ -381,7 +381,8 @@ export default {
         success: 'Success',
         fail: 'Fail',
         total: 'Test counts',
-        run_at: 'Last test'
+        run_at: 'Last test',
+        rate: 'Pass rate'
       },
       ProjectList: {
         NAME: 'Project list',
