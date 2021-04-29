@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-row>
       <el-col :md="24" :lg="14">
         <project-list-selector />
@@ -36,11 +36,7 @@
       <el-col :md="24" :lg="10" class="text-right">
         <el-form inline>
           <el-form-item label="篩選維度">
-            <el-select
-              v-model="filterDimension"
-              class="mr-4"
-              filterable
-            >
+            <el-select v-model="filterDimension" class="mr-4" filterable>
               <el-option
                 v-for="(item, idx) in filterDimensionOptions"
                 :key="idx"

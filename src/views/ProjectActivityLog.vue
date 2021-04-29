@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-col>
       <div class="d-flex">
         <project-list-selector />

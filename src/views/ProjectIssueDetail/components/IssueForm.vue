@@ -1,5 +1,12 @@
 <template>
-  <el-form ref="form" v-loading="isLoading" :model="form" :rules="issueFormRules" label-position="left">
+  <el-form
+    ref="form"
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
+    :model="form"
+    :rules="issueFormRules"
+    label-position="left"
+  >
     <el-row :gutter="10">
       <el-col :span="12" :md="8">
         <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">

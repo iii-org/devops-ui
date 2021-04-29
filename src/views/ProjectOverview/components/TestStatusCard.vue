@@ -1,5 +1,5 @@
 <template>
-  <el-card v-loading="isLoading" class="mb-3" shadow="hover">
+  <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" class="mb-3" shadow="hover">
     <div slot="header" class="d-flex justify-space-between align-center" :style="{ height: '30px' }">
       <span class="font-weight-bold">{{ $t('Dashboard.TestStatus') }}</span>
       <el-button

@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div class="d-flex justify-start">
       <project-list-selector />
       <el-select
@@ -132,7 +132,7 @@ export default {
       this.fullIssuePriority = true
       this.reload += 1
     },
-    handleSelectedItem (val) {
+    handleSelectedItem(val) {
       this.saveSelectedItem = val
     }
   }
