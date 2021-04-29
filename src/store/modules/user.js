@@ -76,7 +76,6 @@ const actions = {
 
       getInfo(state.userId)
         .then(response => {
-          // console.log('getInfo', response)
           const { data } = response
           const { default_role, name } = data
           if (!default_role) {

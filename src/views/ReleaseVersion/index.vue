@@ -42,6 +42,9 @@ export default {
   },
   methods: {
     async init() {
+      if (this.selectedProjectId < 0) {
+        return
+      }
       await this.loadData()
       const vsString = this.$route.query.versions
       if (vsString) {
