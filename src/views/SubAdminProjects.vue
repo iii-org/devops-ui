@@ -22,7 +22,7 @@
               class="mb-2 cursor-pointer"
               shadow="hover"
             >
-              <span class="text-subtitle-2">{{ project.project_name }} / {{ project.project_id }}</span>
+              <span class="text-subtitle-2">{{ project.project_name }}</span>
             </el-card>
           </draggable>
         </el-col>
@@ -47,7 +47,7 @@
       <el-row :gutter="10">
         <el-col v-for="user in subAdminProjects" :key="user.id" :span="24" :sm="12" :lg="8" :xl="6" class="mb-2">
           <el-card :style="{ 'border-top': `5px solid ${user.color}` }">
-            <div class="text-center text-h6 mb-1">{{ user.name }} {{ user.id }}</div>
+            <div class="text-center text-h6 mb-1">{{ user.name }}</div>
             <draggable
               :list="user.projects"
               group="project"
@@ -63,7 +63,7 @@
                 shadow="hover"
               >
                 <div class="d-flex justify-space-between">
-                  <span class="text-subtitle-2">{{ project.project_name }} / {{ project.project_id }}</span>
+                  <span class="text-subtitle-2">{{ project.project_name }}</span>
                   <i
                     class="el-icon-close cursor-pointer text-subtitle-2"
                     @click="removeProjectPermission(user.id, project.project_id)"
