@@ -45,8 +45,8 @@
               />
             </el-form-item>
           </el-col>
-          <el-col v-if="userRole==='QA'" :span="24">
-            <el-form-item :label="$t('Project.ProjectOwner')" :prop="(userRole==='QA')?'owner_id':''">
+          <el-col v-if="checkOwnerRequired" :span="24">
+            <el-form-item :label="$t('Project.ProjectOwner')" :prop="(checkOwnerRequired)?'owner_id':''">
               <el-select v-model="form.owner_id" filterable style="width:100%">
                 <el-option v-for="user in userList" :key="user.id" :value="user.id" :label="user.name+' ('+user.login+')'" />
               </el-select>
@@ -182,7 +182,8 @@ export default {
       ],
       display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
       start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }]
+      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
+      owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }]
     },
     userList: [],
     templateList: [],
@@ -200,6 +201,9 @@ export default {
     ...mapGetters(['userRole']),
     versionList() {
       return this.focusTemplate.version || []
+    },
+    checkOwnerRequired() {
+      return this.userRole === 'QA' || this.userRole === 'Administrator'
     }
   },
   mounted() {
@@ -208,7 +212,7 @@ export default {
   methods: {
     ...mapActions('projects', ['addNewProject']),
     async init(isForceUpdate) {
-      if (this.userRole === 'QA') {
+      if (this.checkOwnerRequired) {
         const userList = await getUserListByFilter({ role_ids: 3 }) // pm
         this.userList = userList.data.user_list
       }

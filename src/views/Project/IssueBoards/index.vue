@@ -38,8 +38,6 @@
           <el-form-item label="篩選維度">
             <el-select
               v-model="filterDimension"
-              :placeholder="$t('Version.SelectVersion')"
-              :disabled="selectedProjectId === -1"
               class="mr-4"
               filterable
             >
@@ -69,7 +67,7 @@
         v-for="(status, idx) in filterValueOnBoard"
         :key="idx"
         :board-object="status"
-        :list="classifyIssueList[status.name]"
+        :list="classifyIssueList[status.id]"
         :dimension="filterDimension"
         :relative-list="relativeIssueList"
         :group="group"
@@ -220,11 +218,14 @@ export default {
     },
     checkInFilterValue(value) {
       if (this.filterValue.length <= 0) return true
-      return this.filterValue.filter(item => item.name === value)
+      return this.filterValue.filter(item => item.id === value)
     },
     classifyIssue() {
       this.projectIssueList.forEach(issue => {
-        const dimensionName = issue[this.filterDimension].name
+        let dimensionName = issue[this.filterDimension].id
+        if (!dimensionName) {
+          dimensionName = ''
+        }
         if (this.checkInFilterValue(dimensionName)) {
           if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
             this.classifyIssueList[dimensionName] = []
