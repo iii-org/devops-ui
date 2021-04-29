@@ -151,15 +151,20 @@ export default {
       const rid = this.selectedProject.repository_id
       try {
         this.lastUpdateTime = this.$dayjs().format('YYYY-MM-DD hh:mm:ss')
-        return (await getPipelines(rid)).data.map(item => {
+        const pipe = await getPipelines(rid)
+        pipe.data.forEach((item, idx) => {
           const result = { ...item }
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
-          return result
+          this.$set(this.listData, idx, result)
         })
       } catch (error) {
         console.error(error)
-        return []
       }
+    },
+    async loadData() {
+      this.listLoading = true
+      await this.fetchData()
+      this.listLoading = false
     },
     showNoProjectWarning() {
       this.$message({
