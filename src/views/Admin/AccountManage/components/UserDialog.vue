@@ -3,22 +3,16 @@
     :title="$t(`User.${dialogTitle}`)"
     :visible="dialogVisible"
     width="40%"
+    class="scroll-dialog"
     :close-on-click-modal="false"
     @close="handleClose('userForm')"
   >
-    <el-form
-      ref="userForm"
-      v-loading="dialogLoading"
-      :model="userForm"
-      :rules="userFormRules"
-      label-width="30%"
-      class="demo-ruleForm"
-    >
+    <el-form ref="userForm" v-loading="dialogLoading" :model="userForm" :rules="userFormRules" label-width="30%">
       <el-form-item v-if="'from_ad' in userForm" :label="$t('User.Source')" prop="login">
         <el-input v-model="source" disabled />
       </el-form-item>
       <el-form-item :label="$t('User.Account')" prop="login">
-        <el-input v-model="userForm.login" :disabled="disableAccount" />
+        <el-input v-model="userForm.login" :disabled="disableAccount" maxlength="60" show-word-limit />
         <div v-if="dialogTitle === 'AddUser'" style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.AccountRule') }}
         </div>
@@ -30,7 +24,13 @@
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.RepeatPassword')" prop="repeatPassword">
-        <el-input v-model="userForm.repeatPassword" type="password" maxlength="20" show-password :disabled="disableEdit" />
+        <el-input
+          v-model="userForm.repeatPassword"
+          type="password"
+          maxlength="20"
+          show-password
+          :disabled="disableEdit"
+        />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
         <el-input v-model="userForm.name" :disabled="disableEdit" />
@@ -131,7 +131,7 @@ export default {
   computed: {
     ...mapGetters(['roleList']),
     source() {
-      return (this.userForm.from_ad) ? this.$t('User.AD') : this.$t('User.SYSTEM')
+      return this.userForm.from_ad ? this.$t('User.AD') : this.$t('User.SYSTEM')
     },
     disableEdit() {
       return this.userForm.from_ad
@@ -209,11 +209,7 @@ export default {
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {
-      if (
-        (value !== this.userForm.password) &
-        (this.userForm.password !== '') &&
-        (this.userForm.repeatPassword !== '')
-      ) {
+      if ((value !== this.userForm.password) & (this.userForm.password !== '') && this.userForm.repeatPassword !== '') {
         callback(new Error('password not same'))
       } else {
         callback()
@@ -222,7 +218,7 @@ export default {
     validatePassword(rule, value, callback) {
       if (value === undefined) {
         callback()
-      } else if (value.length > 0 && (value.length < 8) && (this.userForm.password !== '')) {
+      } else if (value.length > 0 && value.length < 8 && this.userForm.password !== '') {
         callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()
@@ -309,5 +305,12 @@ export default {
 .el-dialog .el-dialog__body {
   flex: 1;
   overflow: auto;
+}
+</style>
+
+<style lang="scss" scoped>
+>>> .el-dialog .el-dialog__body {
+  overflow: auto;
+  max-height: 75vh;
 }
 </style>
