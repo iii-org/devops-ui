@@ -170,6 +170,8 @@ export default {
     this.userProfileForm.userName = userProfile.data.name
     this.userProfileForm.userEmail = userProfile.data.email
     this.userProfileForm.userPhone = userProfile.data.phone
+    this.userProfileForm.department = userProfile.data.department
+    this.userProfileForm.title = userProfile.data.title
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {
