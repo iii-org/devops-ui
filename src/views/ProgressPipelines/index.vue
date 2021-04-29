@@ -150,8 +150,8 @@ export default {
       }
       const rid = this.selectedProject.repository_id
       try {
-        this.lastUpdateTime = this.$dayjs().format('YYYY-MM-DD hh:mm:ss')
         const pipe = await getPipelines(rid)
+        this.lastUpdateTime = this.$dayjs(pipe.datetime).utcOffset(16).format('YYYY-MM-DD hh:mm:ss')
         pipe.data.forEach((item, idx) => {
           const result = { ...item }
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
