@@ -111,6 +111,7 @@ export default {
       this.isLoading = false
     },
     async fetchVersionList() {
+      if (this.selectedProjectId < 0) return
       this.isLoadingVersion = true
       const res = await getProjectVersion(this.selectedProjectId)
       this.isLoadingVersion = false
