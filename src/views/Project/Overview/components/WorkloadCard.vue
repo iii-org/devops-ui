@@ -60,7 +60,7 @@ export default {
     selectedItem(val) {
       this.$emit('emitSelectedItem', val)
     },
-    saveSelectedItem(val) {
+    saveSelectedItem() {
       this.handleStatistics(this.statisticsObj)
     }
   },

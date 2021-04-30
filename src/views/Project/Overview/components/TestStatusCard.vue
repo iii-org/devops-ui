@@ -89,11 +89,14 @@ export default {
   methods: {
     handleTestRes(data) {
       const ret = []
-      const rowData = Object.values(data)
-      // console.log('handleTestRes', rowData)
-      ret[0] = this.formatPostmanResult(rowData[0])
-      ret[1] = this.formatCheckmarxResult(rowData[1])
-      ret[2] = this.formatWebinspectResult(rowData[2])
+      const rowData = data
+      console.log('handleTestRes', rowData['postman'])
+      ret[0] = this.formatPostmanResult(rowData['postman'])
+      ret[1] = this.formatCheckmarxResult(rowData['checkmarx'])
+      ret[2] = this.formatWebinspectResult(rowData['webinspect'])
+      ret[3] = this.formatSonarqubeResult(rowData['sonarqube'])
+      ret[4] = this.formatZapResult(rowData['zap'])
+      ret[5] = this.formatSideexResult(rowData['sideex'])
       return ret
     },
     formatPostmanResult(postmanResult) {
@@ -211,6 +214,63 @@ export default {
             { status: 'Medium Severity', count: webinspectResult['2'] },
             { status: 'Low Severity', count: webinspectResult['3'] },
             { status: 'Info Severity', count: webinspectResult['4'] }
+          ]
+        })
+      }
+      return ret
+    },
+
+    formatSonarqubeResult(sonarqubeResult) {
+      const ret = {}
+      if (Object.keys(sonarqubeResult).length === 0) {
+        Object.assign(ret, {
+          Software: 'sonarqube',
+          informationText: []
+        })
+      } else {
+        Object.assign(ret, {
+          Software: 'sonarqube',
+          // status: webinspectResult.status,
+          runAt: sonarqubeResult.run_at,
+          informationText: sonarqubeResult.sonarqube.map((row) => ({ status: row.metric, count: row.value }))
+        })
+      }
+      return ret
+    },
+
+    formatSideexResult(sideexResult) {
+      const ret = {}
+      if (Object.keys(sideexResult).length === 0) {
+        Object.assign(ret, {
+          Software: 'sideex',
+          informationText: []
+        })
+      } else {
+        Object.assign(ret, {
+          Software: 'sideex',
+          runAt: sideexResult.run_at,
+          informationText: Object.keys(sideexResult.result).map((key) => ({ status: key, count: sideexResult.result[key] }))
+        })
+      }
+      return ret
+    },
+
+    formatZapResult(zapResult) {
+      const ret = {}
+      if (Object.keys(zapResult).length === 0) {
+        Object.assign(ret, {
+          Software: 'zap',
+          informationText: []
+        })
+      } else {
+        Object.assign(ret, {
+          Software: 'zap',
+          runAt: zapResult.run_at,
+          informationText: [
+            { status: 'Critical', count: zapResult['0'] },
+            { status: 'High Severity', count: zapResult['1'] },
+            { status: 'Medium Severity', count: zapResult['2'] },
+            { status: 'Low Severity', count: zapResult['3'] }
           ]
         })
       }
