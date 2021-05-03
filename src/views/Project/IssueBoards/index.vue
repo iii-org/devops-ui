@@ -29,7 +29,7 @@
             v-for="item in assigned_to"
             :key="item.id"
             :label="`${item.name}(${item.login})`"
-            :value="searchNullValueOption(item)"
+            :value="item.id"
           />
         </el-select>
       </el-col>
@@ -267,9 +267,6 @@ export default {
         }
       })
     },
-    searchNullValueOption(item) {
-      return item.id === '' ? item.id : item.name
-    },
     updateIssueBoard() {
       this.fetchData()
       this.versionValue = '-1'
@@ -311,11 +308,11 @@ export default {
       this.resetClassifyIssue()
       this.classifyIssue()
       const versionOpt = {
-        keys: ['fixed_version.name'],
+        keys: ['fixed_version.id'],
         useExtendedSearch: true
       }
       const userOpt = {
-        keys: ['assigned_to.name'],
+        keys: ['assigned_to.id'],
         useExtendedSearch: true
       }
       if (this.versionValue !== '-1') {
@@ -341,7 +338,6 @@ export default {
     },
     dragStart(e, item) {
       e.effectAllowed = 'copy'
-      console.log(e.target)
       e.target.classList.add('draggingObject')
       e.dataTransfer.setData('json', JSON.stringify(item))
       // console.log('dragStart')
@@ -349,7 +345,6 @@ export default {
     },
     dragEnd(e) {
       e.target.classList.remove('draggingObject')
-      console.log(e)
     },
     getFilterValueList(value) {
       return this[value]
