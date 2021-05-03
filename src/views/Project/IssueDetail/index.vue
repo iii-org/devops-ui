@@ -2,7 +2,12 @@
   <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">
     <div class="d-flex justify-space-between mb-2">
       <div class="d-flex align-end">
-        <span class="text-h5 mr-3">{{ $t('Issue.Issue') }} #{{ issueId }}<template v-if="mode==='view'"> - {{ issueSubject }}</template></span>
+        <span class="text-h5 mr-3">
+          <template v-if="tracker">
+            <span :class="getCategoryTagType(tracker)" />
+            {{ $t(`Issue.${tracker}`) }}
+          </template>
+          <template v-else>{{ $t('Issue.Issue') }}</template> #{{ issueId }}<template v-if="mode==='view'"> - {{ issueSubject }}</template></span>
         <div class="text-body-1 mr-3">
           {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
         </div>
@@ -28,9 +33,9 @@
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
         </el-col>
         <el-col v-else :span="24" :md="24">
-          <issue-view-tag ref="IssueView" :issue-id="issueId" :form.sync="view" @isLoading="showLoading" />
+          <issue-view-tag ref="IssueView" :issue-id="issueId" :form.sync="view" :issue-file.sync="files" @isLoading="showLoading" />
         </el-col>
-        <el-col :span="24" :md="12">
+        <el-col :span="24">
           <el-row :gutter="10" type="flex">
             <el-col :span="editorCheckMode" class="mb-3">
               <issue-notes-editor ref="IssueNotesEditor" :height="editorHeight" @change="onEditorChange" />
@@ -50,12 +55,12 @@
             </el-col>
           </el-row>
         </el-col>
-        <el-col v-if="mode==='view'" :span="24" :md="12">
-          <issue-view ref="IssueView" :issue-id="issueId" :form.sync="view" @isLoading="showLoading" />
-          <h2>Attachment</h2>
-          <el-divider />
-          <issue-files :issue-file.sync="files" />
-        </el-col>
+        <!--        <el-col v-if="mode==='view'" :span="24" :md="12">-->
+        <!--          <issue-view ref="IssueView" :issue-id="issueId" :form.sync="view" @isLoading="showLoading" />-->
+        <!--          <h2>Attachment</h2>-->
+        <!--          <el-divider />-->
+        <!--          <issue-files :issue-file.sync="files" />-->
+        <!--        </el-col>-->
       </el-row>
     </el-tab-pane>
     <el-tab-pane :label="$t('Issue.Notes')" name="issueNotes">
@@ -104,6 +109,7 @@ export default {
       issueSubject: '',
       author: '',
       created_date: '',
+      tracker: '',
       view: {},
       form: {
         project_id: 0,
@@ -190,10 +196,11 @@ export default {
         })
     },
     initIssueDetails(data) {
-      const { issue_link, author, attachments, created_date, journals, subject } = data
+      const { issue_link, author, attachments, created_date, journals, subject, tracker } = data
       this.issue_link = issue_link
       this.issueSubject = subject
       this.author = author.name
+      this.tracker = tracker.name
       this.files = attachments
       this.created_date = created_date
       this.journals = journals.reverse()
@@ -269,6 +276,20 @@ export default {
     },
     showLoading(status) {
       this.isLoading = status
+    },
+    getCategoryTagType(category) {
+      switch (category) {
+        case 'Feature':
+          return 'point feature'
+        case 'Document':
+          return 'point document'
+        case 'Bug':
+          return 'point bug'
+        case 'Research':
+          return 'point research'
+        default:
+          return 'point feature'
+      }
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
@@ -379,3 +400,32 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+@import '@/styles/variables.scss';
+
+.point {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+  display: inline-block;
+  &.feature {
+    background: $feature;
+  }
+  &.document {
+    background: $document;
+  }
+  &.bug {
+    background: $bug;
+  }
+  &.research {
+    background: $research;
+  }
+}
+.el-tag {
+  &--secondary {
+    background-color: $secondary;
+    border-color: $secondary;
+  }
+}
+</style>

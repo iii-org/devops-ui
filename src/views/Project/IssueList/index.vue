@@ -9,7 +9,6 @@
             <el-button
               id="btn-add-issue"
               type="success"
-              style="float: right"
               icon="el-icon-plus"
               :disabled="selectedProjectId === -1"
               @click="handleAddNewIssue"

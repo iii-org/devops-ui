@@ -174,7 +174,7 @@ export default {
       return this.isChildrenAllClosed() ? this.statusList : listWithoutClosedOption
     },
     isParentIssueClosed() {
-      return this.parentIssue !== {} && this.parentIssue.status.name === 'Closed'
+      return Object.keys(this.parentIssue).length > 0 && this.parentIssue.status.name === 'Closed'
     },
     dynamicAssigneeList() {
       const hasInactiveAssignee =

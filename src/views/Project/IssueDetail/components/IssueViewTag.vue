@@ -1,56 +1,93 @@
 <template>
   <el-row>
-    <el-row>
-      <el-col :span="8" :md="4">
+    <el-row type="flex" align="center" class="flex-warp">
+      <el-col :span="12" :md="8">
+        <template v-if="form.status" :span="18">
+          <el-tag
+            v-if="form.status.name"
+            :type="getStatusTagType(form.status.name)"
+            effect="dark"
+            class="rounded-xl font-weight-bold"
+          >
+            {{ $t(`Issue.${form.status.name}`) }}
+          </el-tag>
+        </template>
+        <template v-if="form.priority" :span="18">
+          <el-tag v-if="form.priority.name" :type="getPriorityTagType(form.priority.name)">
+            {{ $t(`Issue.${form.priority.name}`) }}
+          </el-tag>
+        </template>
+        @
+        <template v-if="form.priority" :span="18">
+          <b>{{ $t('Version.Version') }}</b> {{ form.fixed_version.name }}</template>
+      </el-col>
+      <el-col :span="12" :md="8">
         <b><i class="el-icon-s-custom" /> {{ $t('Issue.Assignee') }}</b>
-        <el-tag v-if="form.assigned_to">{{ form.assigned_to.name }}</el-tag>
+        <el-tag v-if="form.assigned_to">{{ form.assigned_to.name }}({{ form.assigned_to.login }})</el-tag>
+      </el-col>
+      <el-col :span="24" :md="8">
+        <el-row type="flex" align="middle" :gutter="20">
+          <el-col :span="4" class="text-right">
+            <b>進度</b>
+          </el-col>
+          <el-col :span="14">
+            <el-row type="flex" align="center">
+              <el-col :span="11">{{ form.start_date }}</el-col>
+              <el-col :span="2" class="text-center">~</el-col>
+              <el-col :span="11" class="text-right">{{ form.due_date }}</el-col>
+            </el-row>
+            <el-progress :text-inside="true" :stroke-width="20" :percentage="form.done_ratio" />
+          </el-col>
+          <el-col :span="6">
+            <b>{{ $t('Issue.Estimate') }}</b>
+            {{ form.estimated_hours }}
+          </el-col>
+        </el-row>
       </el-col>
     </el-row>
-    <el-row class="info">
-      <el-row>
-        <el-col :span="8" :md="4">
-          <el-col :span="6">
-            <b>{{ $t('general.Status') }}</b>
-          </el-col>
-          <el-col v-if="form.status" :span="18">
-            {{ form.status.name }}
-          </el-col>
-        </el-col>
-        <el-col :span="8" :md="4">
-          <el-col :span="6">
-            <b>{{ $t('Issue.Priority') }}</b>
-          </el-col>
-          <el-col v-if="form.priority" :span="18">
-            {{ form.priority.name }}
-          </el-col>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="8" :md="4">
-          <el-col :span="6">
-            <b>{{ $t('Version.Version') }}</b>
-          </el-col>
-          <el-col v-if="form.priority" :span="18">
-            {{ form.fixed_version.name }}
-          </el-col>
-        </el-col>
-        <el-col :span="8" :md="4">
-          <el-col :span="6">
-            <b>{{ $t('general.Type') }}</b>
-          </el-col>
-          <el-col :span="18">
-            {{ form.tracker.name }}
-          </el-col>
-        </el-col>
-      </el-row>
+    <el-row v-if="form.description" class="info">
+      {{ form.description }}
+    </el-row>
+    <el-row v-if="issueFile.length>0">
+      <el-col>
+        <b>{{ $t('Issue.Files') }}</b>
+      </el-col>
+      <el-col>
+        <el-row class="el-upload-list">
+          <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
+            <el-col :span="20">
+              <a class="el-upload-list__item-name" @click="handleDownload(file)">
+                <i class="el-icon-document" />{{ file.filename }} ({{ file.created_on }})
+              </a>
+            </el-col>
+            <el-col :span="4" class="text-right">
+              <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                :loading="isLoading"
+                @click="deleteIssueFile(file)"
+              >
+                {{ $t('general.Delete') }}
+              </el-button>
+            </el-col>
+          </el-row>
+        </el-row>
+      </el-col>
     </el-row>
   </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
+import { getIssueStatus, getIssueTracker, getIssuePriority, deleteIssueFile } from '@/api/issue'
+import {
+  getProjectAssignable,
+  getProjectVersion,
+  getProjectIssueList,
+  getProjectIssueListByTree,
+  downloadProjectFile
+} from '@/api/projects'
 
 export default {
   name: 'IssueForm',
@@ -63,6 +100,10 @@ export default {
       type: Object,
       default: () => {
       }
+    },
+    issueFile: {
+      type: Array,
+      default: () => ([])
     }
   },
   data: () => ({
@@ -184,19 +225,77 @@ export default {
     },
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
+    },
+    async handleDownload(row) {
+      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
+      const url = window.URL.createObjectURL(new Blob([res]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', row.filename) // or any other extension
+      document.body.appendChild(link)
+      link.click()
+    },
+    deleteIssueFile(row) {
+      this.isLoading = true
+      deleteIssueFile(row.id)
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Deleted'),
+            type: 'success'
+          })
+          this.removeFile(row.id)
+        })
+        .catch(err => console.err(err))
+        .then(() => {
+          this.isLoading = false
+        })
+    },
+    removeFile(id) {
+      const idx = this.issueFile.findIndex(item => item.id === id)
+      this.issueFile.splice(idx, 1)
+    },
+    getStatusTagType(status) {
+      switch (status) {
+        case 'Active':
+          return ''
+        case 'Assigned':
+          return 'danger'
+        case 'Closed':
+          return 'info'
+        case 'Solved':
+          return 'secondary'
+        case 'Responded':
+          return 'warning'
+        case 'Finished':
+          return 'success'
+      }
+    },
+    getPriorityTagType(priority) {
+      switch (priority) {
+        case 'Immediate':
+          return 'danger'
+        case 'High':
+          return 'warning'
+        case 'Normal':
+          return ''
+        case 'Low':
+          return 'info'
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.info{
+.info {
   background: #eeeeee;
   border: 1px solid #eeeeee;
   border-radius: 10px;
-  padding:15px;
+  padding: 15px;
   margin: 10px 0;
 }
+
 .flex-warp {
   flex-wrap: wrap;
 }
