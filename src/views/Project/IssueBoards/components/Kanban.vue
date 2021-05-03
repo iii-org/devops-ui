@@ -151,13 +151,32 @@ export default {
   methods: {
     checkRelatives(evt) {
       if (this.dimension === 'status') {
+        const h = this.$createElement
         const toName = evt.to.classList[1]
         const toClassObj = this.status.find((item) => (item.name === toName))
         const element = evt.draggedContext.element
-        if (toClassObj.id === 6) {
-          return this.checkAssigned(toClassObj, element) && this.checkChildrenStatus(element)
+        const checkAssigned = this.checkAssigned(toClassObj, element)
+        const errorMsg = []
+        if (!checkAssigned) {
+          errorMsg.push(h('li',
+            [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')]
+          ))
         }
-        return this.checkAssigned(toClassObj, element)
+        if (toClassObj.id === 6) {
+          const checkChildrenStatus = this.checkChildrenStatus(element)
+          if (!checkChildrenStatus) {
+            errorMsg.push(h('li',
+              [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
+          }
+          if (!checkAssigned || !checkChildrenStatus) {
+            this.$msgbox({ message: h('ul', errorMsg), title: '異動議題錯誤' })
+          }
+          return checkAssigned && checkChildrenStatus
+        }
+        if (!checkAssigned) {
+          this.$msgbox({ message: h('ul', errorMsg), title: '異動議題錯誤' })
+        }
+        return checkAssigned
       }
     },
     checkAssigned(to, element) {
