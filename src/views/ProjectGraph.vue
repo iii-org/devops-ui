@@ -6,6 +6,9 @@
     </div>
     <el-divider />
     <el-card v-loading="listLoading" class="box-card">
+      <!--      <div v-for="(item,idx) in testData" :key="idx">-->
+      <!--        {{ item }}-->
+      <!--      </div>-->
       <div class="cardBody">
         <div v-show="isNoData" style="text-align: center;">{{ $t('general.NoData') }}</div>
         <div v-show="!isNoData" id="graph-container" />
@@ -17,7 +20,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { createGitgraph } from '@gitgraph/js'
-import { getGitGraphByRepo } from '@/api/git-graph'
+import { getGitBranchByRepo, getGitCommitByRepo, getGitGraphByRepo } from '@/api/git-graph'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { UTCtoLocalTime } from '@/filters'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
@@ -30,7 +33,8 @@ export default {
   mixins: [MixinElTableWithAProject],
   data: () => ({
     listLoading: true,
-    isNoData: false
+    isNoData: false,
+    testData: []
   }),
   computed: {
     ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'selectedProject'])
@@ -56,7 +60,8 @@ export default {
         const repository_id = this.selectedProject.repository_id
         const res = await getGitGraphByRepo(repository_id)
         this.isNoData = !res.data.length
-        this.createGraph(res.data)
+        this.testData = await this.createGitgraph(res.data)
+        // this.createGraph(res.data)
       } catch (err) {
         console.error(err)
       } finally {
@@ -69,6 +74,161 @@ export default {
         message: this.$t('Notify.NoProject'),
         type: 'warning'
       })
+    },
+    async createGitgraph(data) {
+      const repository_id = this.selectedProject.repository_id
+      const refes = await getGitBranchByRepo(repository_id)
+      // const commit = await getGitCommitByRepo(repository_id, { branch: 'master' })
+      console.log(refes.data.branch_list)
+      // console.log(commit.data)
+      const graphContainer = document.getElementById('graph-container')
+      const gitgraph = createGitgraph(graphContainer)
+      const commits = {}
+      const parentObj = {}
+      const childrenObj = {}
+      const parents = {}
+      // const parents_branch = {}
+      const graph_branch = {}
+      const commit_order = []
+      const master = gitgraph.branch('master')
+      const branch = { master: master }
+      let last_commit
+
+      function Commit(commit) {
+        this.parent = []
+        this.children = []
+        for (const key in commit) {
+          this[key] = commit[key]
+        }
+        delete this.branch_name
+
+        this.branches = [commit.branch_name]
+        this.addBranch = function(branch_name) {
+          this.branches.push(branch_name)
+        }
+
+        const id = commit.id
+        commits[id] = this
+
+        this.parent_ids.forEach((parent) => {
+          // if (!(parent in parentObj)) {
+          //   parentObj[parent] = []
+          // }
+          if (!(parent in childrenObj)) {
+            childrenObj[parent] = []
+          }
+          // parentObj[parent].push(this)
+          childrenObj[parent].push(commits[id])
+        })
+        if (childrenObj[id]) {
+          this.children = childrenObj[id]
+        } else {
+          this.children = []
+        }
+        // this.linkParentCommit = function(idx, Commit) {
+        //   this.parent[idx] = Commit
+        // }
+
+        // this.linkChildrenCommit = function(idx, Commit) {
+        //   this.children[idx] = Commit
+        // }
+
+        return Promise.resolve(this)
+      }
+
+      for (const commit of data.reverse()) {
+        const nowCommit = await new Commit(commit)
+        // if (parentObj.hasOwnProperty(commit.id)) {
+        //   parentObj[commit.id].forEach((childCommit, idx) => {
+        //     childCommit.linkParentCommit(idx, nowCommit)
+        //   })
+        // }
+        // if (childrenObj.hasOwnProperty(commit.id)) {
+        //   childrenObj[commit.id].forEach((childCommit, idx) => {
+        //     childCommit.linkParentCommit(idx, nowCommit)
+        //   })
+        // }
+        commit_order.push(nowCommit)
+      }
+
+      let startPoint = commit_order[commit_order.length - 1]
+      branch[startPoint.id] = master
+      const commitMessage = {
+        subject: startPoint.message,
+        author: `${startPoint.author_name} <${UTCtoLocalTime(startPoint.committed_date)}>`,
+        hash: startPoint.id
+      }
+      // console.log(commitMessage)
+      branch[startPoint.id].commit(commitMessage)
+      // console.log(startPoint.children.length)
+      startPoint = startPoint.children
+      // console.log(startPoint.length, startPoint)
+      while (startPoint.length > 0) {
+        const splitBranch = startPoint.length > 1
+        startPoint.forEach((item, idx) => {
+          const commitMessage = {
+            subject: item.message,
+            author: `${item.author_name} <${UTCtoLocalTime(item.committed_date)}>`,
+            hash: item.id
+          }
+          if (item.parent_ids.length >= 2 && idx === 0) {
+            branch[item.id] = branch[item.parent_ids[idx + 1]].merge(branch[item.parent_ids[idx]], item.message)
+          } else if (splitBranch && idx < 1) {
+            branch[item.id] = gitgraph.branch('hi').commit(commitMessage)
+            // console.log(item.message, item.parent_ids[idx], branch)
+          } else {
+            branch[item.id] = branch[item.parent_ids[0]].commit(commitMessage)
+          }
+          startPoint = item.children
+        })
+      }
+
+      return Promise.resolve(commit_order.map((item) => ({ id: item.id, date: item.committed_date, children: item.children })))
+      // commit_order.reverse().forEach((commit) => {
+      //   console.log(commit)
+      // })
+      // commit_order.forEach((id) => {
+      //   const commit = commits[id]
+      //   // 繼承分岔點
+      //   // if (commit.parent_ids.length >= 2) {
+      //   //   const masterMerge = Object.values(graph_branch).find((branch) => (branch.name === 'master'))
+      //   //   const mergedBranch = Object.values(graph_branch).find((branch) => (branch.name === '1'))
+      //   //   console.log(masterMerge, mergedBranch)
+      //   //   masterMerge.graph.merge(mergedBranch.graph, commit.message)
+      //   // }
+      //   commit.parent_ids.forEach((parent) => {
+      //     const subCommit = parents[parent].find((item) => (commit.id === item.id))
+      //     const subCommitIndex = parents[parent].findIndex((item) => (commit.id === item.id))
+      //     let branch
+      //     // 檢查上個點是不是有分支
+      //     if (subCommitIndex > 0) {
+      //       branch = parents_branch[parent]
+      //     } else if (last_commit && last_commit.last_id === parent) {
+      //       branch = last_commit
+      //     } else {
+      //       branch = new Branch('master')
+      //     }
+      //     last_commit = branch.addCommit(commit)
+      //     branch.graph.commit({
+      //       subject: subCommit.message,
+      //       author: `${subCommit.author_name} <${UTCtoLocalTime(subCommit.committed_date)}>`
+      //       // hash: commit.id
+      //     })
+      //     console.log(parents)
+      //   })
+      //   // 當前點的分岔檢查
+      //   if (id in parents && parents[id].length >= 2) {
+      //     const mainBranch = Object.values(graph_branch).find((branch) => (branch.last_id === id))
+      //     parents[id].forEach((parent, idx) => {
+      //       console.log(mainBranch)
+      //       if (mainBranch) {
+      //         parents_branch[commit.id] = new Branch(idx.toString(), mainBranch)
+      //       } else {
+      //         parents_branch[commit.id] = new Branch(idx.toString())
+      //       }
+      //     })
+      //   }
+      // })
     },
     createGraph(data) {
       // Get the graph container HTML element.

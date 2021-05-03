@@ -6,3 +6,6 @@ export function getGitGraphByRepo(rId) {
     method: 'GET'
   })
 }
+
+export const getGitBranchByRepo = (rId) => request.get('/repositories/' + rId + '/branches')
+export const getGitCommitByRepo = (rId, params) => request.get('/repositories/' + rId + '/commits', { params: params })
