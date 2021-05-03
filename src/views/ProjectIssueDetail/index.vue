@@ -25,7 +25,7 @@
         <el-col :span="24" :md="12">
           <el-row :gutter="10">
             <el-col :span="24" class="mb-3">
-              <issue-notes-editor ref="IssueNotesEditor" />
+              <issue-notes-editor ref="IssueNotesEditor" page="ProjectIssueDetail" />
             </el-col>
             <el-col :span="24">
               <issue-file-uploader ref="IssueFileUploader" />

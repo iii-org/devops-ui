@@ -9,7 +9,7 @@
         </el-button>
       </span>
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         class="ob-search-input ob-shadow search-input mr-3"
         :placeholder="$t('User.SearchAccount')"
         style="width: 250px; float: right"
@@ -85,7 +85,7 @@
 import { mapGetters } from 'vuex'
 import { deleteUser, getAllUser, getInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
-import MixinElTable from '@/components/MixinElTable'
+import MixinBasicTable from '@/components/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
@@ -94,12 +94,12 @@ export default {
     UserDialog,
     ElTableColumnTime
   },
-  mixins: [MixinElTable],
+  mixins: [MixinBasicTable],
   data: () => ({
     userDialogVisible: false,
     dialogTitle: '',
     search: '',
-    searchKey: 'login',
+    searchKeys: ['login', 'name'],
     editUserId: 0,
     editUserData: {}
   }),
