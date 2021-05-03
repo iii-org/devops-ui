@@ -69,26 +69,29 @@
         prop="transitioning_message"
       />
       <el-table-column-time prop="last_test_time" />
-      <el-table-column :label="$t('general.Actions')" align="center" width="220">
+      <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain @click="onDetailsClick(scope.row.id)">
-            <i class="el-icon-document" />
+          <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">
             {{ $t('general.Detail') }}
           </el-button>
-
           <el-button
             v-if="scope.row.execution_state === 'Waiting' || scope.row.execution_state === 'Building'"
             size="mini"
             type="danger"
             plain
+            icon="el-icon-circle-close"
             @click="onActionClick(scope.row.id, 'stop')"
           >
-            <i class="el-icon-circle-close" />
             {{ $t('general.Stop') }}
           </el-button>
-
-          <el-button v-else size="mini" type="primary" plain @click="onActionClick(scope.row.id, 'rerun')">
-            <i class="el-icon-refresh-left" />
+          <el-button
+            v-else
+            size="mini"
+            type="primary"
+            icon="el-icon-refresh-left"
+            plain
+            @click="onActionClick(scope.row.id, 'rerun')"
+          >
             {{ $t('general.Rerun') }}
           </el-button>
         </template>
@@ -112,7 +115,7 @@
 </template>
 
 <script>
-import { changePipelineByAction, getPipelines, getPipelinesConfig, getPipelinesLogs } from '@/api/cicd'
+import { changePipelineByAction, getPipelines, getPipelinesLogs } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -151,7 +154,9 @@ export default {
       const rid = this.selectedProject.repository_id
       try {
         const pipe = await getPipelines(rid)
-        this.lastUpdateTime = this.$dayjs(pipe.datetime).utcOffset(16).format('YYYY-MM-DD HH:mm:ss')
+        this.lastUpdateTime = this.$dayjs(pipe.datetime)
+          .utcOffset(16)
+          .format('YYYY-MM-DD HH:mm:ss')
         pipe.data.forEach((item, idx) => {
           const result = { ...item }
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
@@ -173,19 +178,6 @@ export default {
         message: this.$t('Notify.NoProject'),
         type: 'warning'
       })
-    },
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'info'
-      return success === total ? 'success' : 'danger'
-    },
-    testResults(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'No Test'
-      return success + ' / ' + total
-    },
-    statusBoo(obj) {
-      if (obj.success === obj.total) return true
     },
     emitTestDetailVisible(visible) {
       this.testDetailVisible = visible
@@ -238,15 +230,8 @@ export default {
         pipelines_exec_run: id
       }
       try {
-        // const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: id })
         const res = await getPipelinesLogs(params)
         this.pipelinesExecRun = id
-        // this.detailData = res.map(data => {
-        //   const stage = data
-        //   stage['isLoading'] = true
-        //   stage.steps.forEach(step => (step['message'] = 'Loading...'))
-        //   return stage
-        // })
         this.detailData = res.data
         this.emitTestDetailVisible(true)
       } catch (error) {
