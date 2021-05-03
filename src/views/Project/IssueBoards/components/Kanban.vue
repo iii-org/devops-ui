@@ -55,9 +55,10 @@
           </el-tooltip>
           <p v-if="element.parent_id" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
-            <el-tag class="el-tag--circle" size="mini" :class="element.parent_status.name">
-              {{ $t('Issue.' + element.parent_status.name) }}
-            </el-tag>
+            <!--            <el-tag class="el-tag&#45;&#45;circle" size="mini" :class="element.parent_status.name">-->
+            <!--              {{ $t('Issue.' + ) }}-->
+            <!--            </el-tag>-->
+            <status :name="element.parent_status.name" size="mini" />
             <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
               {{ element.parent_name }}
             </el-link>
@@ -70,9 +71,7 @@
                 </template>
                 <ol class="children_list">
                   <li v-for="(subElement, index) in element.children" :key="index">
-                    <el-tag class="el-tag--circle" size="mini" :class="subElement.status.name">
-                      {{ $t('Issue.' + subElement.status.name) }}
-                    </el-tag>
+                    <status :name="subElement.status.name" size="mini" />
                     <el-link type="primary" :underline="false" @click="handleClick(element.id)">
                       {{ subElement.name }}
                     </el-link>
@@ -98,10 +97,12 @@
 <script>
 import draggable from 'vuedraggable'
 import AddIssueDialog from './AddIssueDialog.vue'
+import Status from '@/components/Issue/Status'
 
 export default {
   name: 'Kanban',
   components: {
+    Status,
     draggable,
     AddIssueDialog
   },

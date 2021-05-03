@@ -30,11 +30,19 @@
         <el-table-column sortable
                          prop="issue_type"
                          :label="$t('Dashboard.ADMIN.IssueRank.issue_type')"
-        />
+        >
+          <template slot-scope="scope">
+            <tracker :name="scope.row.issue_type" />
+          </template>
+        </el-table-column>
         <el-table-column sortable
                          prop="status"
                          :label="$t('Dashboard.ADMIN.IssueRank.status_id')"
-        />
+        >
+          <template slot-scope="scope">
+            <status :name="scope.row.status" />
+          </template>
+        </el-table-column>
         <el-table-column sortable
                          prop="start_date"
                          :label="$t('Dashboard.ADMIN.IssueRank.start_date')"
@@ -54,9 +62,12 @@
 
 <script>
 import MixinBasicTable from '@/components/MixinBasicTable'
+import Tracker from '@/components/Issue/Tracker'
+import Status from '@/components/Issue/Status'
 
 export default {
   name: 'AdminIssueRankDetail',
+  components: { Status, Tracker },
   mixins: [MixinBasicTable],
   props: {
     detail: {

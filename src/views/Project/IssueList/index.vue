@@ -80,20 +80,15 @@
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130">
           <template slot-scope="scope">
-            <span v-if="scope.row.tracker" :class="getCategoryTagType(scope.row.tracker.name)" />
-            {{ $t(`Issue.${scope.row.tracker.name}`) }}
+            <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
-            <el-tag
+            <status
               v-if="scope.row.status.name"
-              :type="getStatusTagType(scope.row.status.name)"
-              effect="dark"
-              class="rounded-xl font-weight-bold"
-            >
-              {{ $t(`Issue.${scope.row.status.name}`) }}
-            </el-tag>
+              :name="scope.row.status.name"
+            />
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
@@ -104,9 +99,7 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.priority.name" :type="getPriorityTagType(scope.row.priority.name)">
-              {{ $t(`Issue.${scope.row.priority.name}`) }}
-            </el-tag>
+            <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
           </template>
         </el-table-column>
       </el-table>
@@ -136,11 +129,17 @@ import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import { mapActions, mapGetters } from 'vuex'
 import { addIssue } from '@/api/issue'
 import { getProjectIssueListByTree } from '@/api/projects'
+import Status from '@/components/Issue/Status'
+import Priority from '@/components/Issue/Priority'
+import Tracker from '@/components/Issue/Tracker'
 
 export default {
   name: 'ProjectIssues',
   components: {
-    AddIssue
+    AddIssue,
+    Priority,
+    Status,
+    Tracker
   },
   mixins: [MixinElTableWithAProject],
   data: () => ({
@@ -263,48 +262,6 @@ export default {
     isParentIssue(row) {
       return row.parent_id === null && row.children.length === 0
     },
-    getPriorityTagType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return 'danger'
-        case 'High':
-          return 'warning'
-        case 'Normal':
-          return ''
-        case 'Low':
-          return 'info'
-      }
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return ''
-        case 'Assigned':
-          return 'danger'
-        case 'Closed':
-          return 'info'
-        case 'Solved':
-          return 'secondary'
-        case 'Responded':
-          return 'warning'
-        case 'Finished':
-          return 'success'
-      }
-    },
-    getCategoryTagType(category) {
-      switch (category) {
-        case 'Feature':
-          return 'point feature'
-        case 'Document':
-          return 'point document'
-        case 'Bug':
-          return 'point bug'
-        case 'Research':
-          return 'point research'
-        default:
-          return 'point feature'
-      }
-    },
     handleAddNewIssue() {
       this.addTopicDialogVisible = true
       this.parentId = 0
@@ -314,31 +271,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
-
-.point {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 5px;
-  display: inline-block;
-  &.feature {
-    background: $feature;
-  }
-  &.document {
-    background: $document;
-  }
-  &.bug {
-    background: $bug;
-  }
-  &.research {
-    background: $research;
-  }
-}
-.el-tag {
-  &--secondary {
-    background-color: $secondary;
-    border-color: $secondary;
-  }
-}
 </style>
