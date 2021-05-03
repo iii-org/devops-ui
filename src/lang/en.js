@@ -472,7 +472,7 @@ export default {
     Progress: 'Progress',
     UpdateTime: 'Update Time',
     deleteProjectConfirmText:
-      'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
+      'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     IdRule:
