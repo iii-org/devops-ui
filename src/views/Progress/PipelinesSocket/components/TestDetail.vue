@@ -70,9 +70,6 @@ import { mapGetters } from 'vuex'
 const socket = io('/rancher/websocket/logs', {
   reconnectionAttempts: 5
 })
-// const socket = io(process.env.VUE_APP_WS + '/rancher/websocket/logs', {
-//   reconnectionAttempts: 5
-// })
 
 export default {
   name: 'TestDetailSocket',
@@ -90,11 +87,13 @@ export default {
       default: 0
     }
   },
-  data: () => ({
-    stages: [],
-    activeStage: '',
-    sid: ''
-  }),
+  data() {
+    return {
+      stages: [],
+      activeStage: '',
+      sid: ''
+    }
+  },
   computed: {
     ...mapGetters(['selectedProject'])
   },
@@ -156,9 +155,9 @@ export default {
         sid: this.sid
       }
       socket.emit('get_pipe_log', emitObj)
-      console.log('EMIT get_pipe_log ===>', emitObj)
+      // console.log('EMIT get_pipe_log ===>', emitObj)
       socket.on('pipeline_log', sioEvt => {
-        console.log('EVENT pipeline_log ===>', sioEvt)
+        // console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         if (data === '') {
           this.stages[stage_index - 1].isLoading = false

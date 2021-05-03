@@ -71,7 +71,7 @@
       <el-table-column-time prop="last_test_time" />
       <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">
+          <el-button size="mini" type="primary" icon="el-icon-document" plain @click="updateDetails(scope.row.id)">
             {{ $t('general.Detail') }}
           </el-button>
           <el-button
@@ -222,7 +222,10 @@ export default {
           return 'dark'
       }
     },
-    async onDetailsClick(id) {
+    // onDetailsClick(id) {
+    //   this.timer = setInterval(() => this.updateDetails(id), 5000)
+    // },
+    async updateDetails(id) {
       this.isLoading = true
       const { repository_id } = this.selectedProject
       try {

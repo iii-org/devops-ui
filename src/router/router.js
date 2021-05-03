@@ -291,7 +291,6 @@ export const asyncRoutes = [
       {
         path: 'pipelines-socket',
         name: 'pipelines-socket',
-        hidden: true,
         component: () => import('@/views/Progress/PipelinesSocket'),
         meta: { title: 'pipelines (socket)', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
