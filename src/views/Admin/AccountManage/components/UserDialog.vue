@@ -3,44 +3,53 @@
     :title="$t(`User.${dialogTitle}`)"
     :visible="dialogVisible"
     width="40%"
+    class="scroll-dialog"
     :close-on-click-modal="false"
     @close="handleClose('userForm')"
   >
-    <el-form
-      ref="userForm"
-      v-loading="dialogLoading"
-      :model="userForm"
-      :rules="userFormRules"
-      label-width="30%"
-      class="demo-ruleForm"
-    >
+    <el-form ref="userForm" v-loading="dialogLoading" :model="userForm" :rules="userFormRules" label-width="30%">
+      <el-form-item v-if="'from_ad' in userForm" :label="$t('User.Source')" prop="login">
+        <el-input v-model="source" disabled />
+      </el-form-item>
       <el-form-item :label="$t('User.Account')" prop="login">
-        <el-input v-model="userForm.login" :disabled="disableAccount" />
+        <el-input v-model="userForm.login" :disabled="disableAccount" maxlength="60" show-word-limit />
         <div v-if="dialogTitle === 'AddUser'" style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.AccountRule') }}
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.Password')" prop="password">
-        <el-input v-model="userForm.password" type="password" maxlength="20" show-password />
+        <el-input v-model="userForm.password" type="password" maxlength="20" show-password :disabled="disableEdit" />
         <div style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.PasswordRule') }}
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.RepeatPassword')" prop="repeatPassword">
-        <el-input v-model="userForm.repeatPassword" type="password" maxlength="20" show-password />
+        <el-input
+          v-model="userForm.repeatPassword"
+          type="password"
+          maxlength="20"
+          show-password
+          :disabled="disableEdit"
+        />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
-        <el-input v-model="userForm.name" />
+        <el-input v-model="userForm.name" :disabled="disableEdit" />
+      </el-form-item>
+      <el-form-item :label="$t('User.Department')">
+        <el-input v-model="userForm.department" :disabled="disableEdit" />
+      </el-form-item>
+      <el-form-item :label="$t('User.Title')">
+        <el-input v-model="userForm.title" :disabled="disableEdit" />
       </el-form-item>
       <el-form-item label="Email" prop="email">
-        <el-input v-model="userForm.email" />
+        <el-input v-model="userForm.email" :disabled="disableEdit" />
       </el-form-item>
       <el-form-item :label="$t('User.Phone')" prop="phone">
-        <el-input v-model="userForm.phone" />
+        <el-input v-model="userForm.phone" :disabled="disableEdit" />
       </el-form-item>
-      <el-form-item :label="$t('User.Role')" prop="role">
-        <el-select v-model="userForm.role" style="width: 100%" :disabled="disableRole">
-          <el-option v-for="item in roleList" :key="item.value" :label="item.label" :value="item.value" />
+      <el-form-item :label="$t('User.Role')" prop="default_role">
+        <el-select v-model="userForm.default_role" style="width: 100%">
+          <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('User.IsEnable')" prop="status">
@@ -64,6 +73,7 @@
 </template>
 <script>
 import { addUser, updateUser } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -82,21 +92,6 @@ export default {
   },
   data() {
     return {
-      // TODO: roleList's data should from API
-      roleList: [
-        {
-          value: 1,
-          label: 'Engineer'
-        },
-        {
-          value: 3,
-          label: 'Project Manager'
-        },
-        {
-          value: 5,
-          label: 'Administrator'
-        }
-      ],
       userForm: {
         login: '',
         name: '',
@@ -104,7 +99,7 @@ export default {
         repeatPassword: '',
         email: '',
         phone: '',
-        role: '',
+        default_role: '',
         status: 'enable'
       },
       userFormRules: {
@@ -125,20 +120,28 @@ export default {
           { required: true, message: 'Please input email', trigger: 'blur' },
           { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
         ],
-        role: [{ required: true, message: 'Please select role', trigger: 'blur' }]
+        default_role: [{ required: true, message: 'Please select role', trigger: 'blur' }]
       },
       dialogLoading: false,
       dialogTitle: 'AddUser',
       disableAccount: false,
-      formName: 'userForm',
-      disableRole: true
+      formName: 'userForm'
+    }
+  },
+  computed: {
+    ...mapGetters(['roleList']),
+    source() {
+      return this.userForm.from_ad ? this.$t('User.AD') : this.$t('User.SYSTEM')
+    },
+    disableEdit() {
+      return this.userForm.from_ad
     }
   },
   watch: {
     userData: function(data) {
-      if (isNaN(data.role)) {
+      if (isNaN(data.default_role)) {
         // get role id from role object
-        data.role = data.role.id
+        data.default_role = data.default_role.id
       }
       this.userForm = data
     }
@@ -147,7 +150,6 @@ export default {
     if (this.userId === 0) {
       this.dialogTitle = 'AddUser'
       this.disableAccount = false
-      this.disableRole = false
       // new user's role default is enginners
       this.userFormRules.password = [
         { required: true, message: 'Please input password', trigger: 'blur' },
@@ -207,22 +209,16 @@ export default {
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {
-      if (
-        (value !== this.userForm.password) &
-        (this.userForm.password !== '') &
-        (this.userForm.repeatPassword !== '')
-      ) {
+      if ((value !== this.userForm.password) & (this.userForm.password !== '') && this.userForm.repeatPassword !== '') {
         callback(new Error('password not same'))
       } else {
         callback()
       }
     },
     validatePassword(rule, value, callback) {
-      // console.log('rule', rule)
-      // console.log('value', value)
       if (value === undefined) {
         callback()
-      } else if (value.length > 0 && (value.length < 8) & (this.userForm.password !== '')) {
+      } else if (value.length > 0 && value.length < 8 && this.userForm.password !== '') {
         callback(new Error('The password can not be less than 8 digits'))
       } else {
         callback()
@@ -243,10 +239,12 @@ export default {
             login: this.userForm.login,
             password: this.userForm.password,
             username: this.userForm.name,
+            department: this.userForm.department,
+            title: this.userForm.title,
             name: this.userForm.name,
             email: this.userForm.email,
             phone: this.userForm.phone,
-            role_id: this.userForm.role,
+            role_id: this.userForm.default_role,
             status: this.userForm.status
           }
 
@@ -287,7 +285,6 @@ export default {
             }
           }
         } else {
-          console.log('error!!')
           return false
         }
       })
@@ -308,5 +305,12 @@ export default {
 .el-dialog .el-dialog__body {
   flex: 1;
   overflow: auto;
+}
+</style>
+
+<style lang="scss" scoped>
+>>> .el-dialog .el-dialog__body {
+  overflow: auto;
+  max-height: 75vh;
 }
 </style>

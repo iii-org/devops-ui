@@ -8,7 +8,11 @@
     </div>
     <el-table v-else :data="userList" style="width: 100%" stripe>
       <el-table-column prop="role_name" :label="$t('Project.Title')" />
-      <el-table-column prop="name" :label="$t('general.Name')" />
+      <el-table-column prop="name" :label="$t('general.Name')">
+        <template slot-scope="scope">
+          {{ `${scope.row.name} (${scope.row.login})` }}
+        </template>
+      </el-table-column>
       <el-table-column prop="email" :label="$t('general.Email')" />
     </el-table>
   </el-card>

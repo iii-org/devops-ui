@@ -31,6 +31,9 @@ export default {
     }
   },
   async created() {
+    if (this.selectedProjectId < 0) {
+      return
+    }
     this.branches = []
     const response = await getBranchesByProject(this.selectedProject.repository_id)
     const branches = response.data['branch_list']
@@ -46,7 +49,7 @@ export default {
       this.issues = issues
       this.issuesByCategory = [{}, {}]
       for (const issue of issues) {
-        const cat = issue['issue_category']
+        const cat = issue.tracker.name
         let index = this.issueCategories.indexOf(cat)
         if (index < 0) {
           this.issueCategories.push(cat)

@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="listLoading" class="app-container">
+  <div v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
@@ -12,7 +12,7 @@
     </div>
     <el-divider />
     <el-row v-if="filteredData.length > 0" :gutter="10">
-      <el-col class="text-right text-body-1 mb-2">
+      <el-col class="text-right text-body-1 mb-2 text-info">
         {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
       </el-col>
       <el-col v-for="deployment in filteredData" :key="deployment.commit_id" v-loading="listLoading" :span="24">
@@ -176,14 +176,16 @@ import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
 export default {
   name: 'ProgressDevEnvironment',
   mixins: [MixinElCardWithAProject],
-  data: () => ({
-    searchKey: 'branch',
-    btnLoading: false,
-    timer: null,
-    lastUpdateTime: ''
-  }),
+  data() {
+    return {
+      searchKey: 'branch',
+      btnLoading: false,
+      timer: null,
+      lastUpdateTime: ''
+    }
+  },
   mounted() {
-    this.timer = setInterval(() => this.fetchData(), 30000)
+    this.timer = setInterval(() => this.fetchData(), 10000)
   },
   beforeDestroy() {
     clearInterval(this.timer)
@@ -192,7 +194,13 @@ export default {
   methods: {
     async fetchData() {
       const res = await getEnvironmentList(this.selectedProjectId)
-        .then(this.lastUpdateTime = dayjs().format('YYYY-MM-DD hh:mm:ss'))
+      this.lastUpdateTime = this.$dayjs(res.datetime)
+        .utcOffset(16)
+        .format('YYYY-MM-DD HH:mm:ss')
+      res.data.forEach((item, idx) => {
+        const result = { ...item }
+        this.$set(this.listData, idx, result)
+      })
       return res.data
     },
     async redeploy(pId, branchName) {

@@ -65,11 +65,11 @@ export default {
   },
   watch: {
     selectedProject() {
-      if(this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
+      if (this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
     }
   },
   mounted() {
-    if(this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
+    if (this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
   },
   methods: {
     async fetchPipelineDefaultBranch() {
@@ -135,7 +135,7 @@ export default {
       this.updatePipelineDefaultBranch()
     },
     async updatePipelineDefaultBranch() {
-      const sendData = { detail: { stages: this.stagesData } }
+      const sendData = { detail: { stages: this.stagesData }}
       this.isStagesLoading = true
       try {
         await editPipelineDefaultBranch(this.selectedProjectRepositoryId, sendData)

@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="listLoading" class="app-container">
+  <div :element-loading-text="$t('Loading')" class="app-container">
     <div class="d-flex">
       <project-list-selector />
     </div>
@@ -27,15 +27,15 @@
                       <template slot-scope="scope">
                         <div class="d-flex justify-space-between">
                           <el-tag
-                            v-if="scope.row.issue_priority"
-                            :type="getPriorityType(scope.row.issue_priority)"
+                            v-if="scope.row.issue.priority.name"
+                            :type="getPriorityType(scope.row.issue.priority.name)"
                             size="medium"
                             effect="dark"
                           >
-                            {{ scope.row.issue_priority }}
+                            {{ scope.row.issue.priority.name }}
                           </el-tag>
                           <div>
-                            <span class="font-weight-bold mr-2">[{{ scope.row.issue_category }}]</span>
+                            <span class="font-weight-bold mr-2">[{{ scope.row.issue.tracker.name }}]</span>
                             <span>{{ scope.row.issue_name }} </span>
                           </div>
                         </div>
@@ -68,7 +68,7 @@ import {
   getProjectIssueStatistics
 } from '@/api/projects'
 
-import WorkloadCard from '@/views/ProjectOverview/components/WorkloadCard'
+import WorkloadCard from '@/views/Project/Overview/components/WorkloadCard'
 
 export default {
   name: 'ProjectRoadmap',

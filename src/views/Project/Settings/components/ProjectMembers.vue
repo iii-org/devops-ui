@@ -36,7 +36,7 @@
               size="mini"
               type="danger"
               icon="el-icon-delete"
-              :disabled="scope.row.id == userId"
+              :disabled="scope.row.id === userId"
             >
               {{ $t('general.Delete') }}
             </el-button>

@@ -33,6 +33,7 @@ export default {
     sonarQube: 'SonarQube',
     webInspect: 'WebInspect',
     zap: 'OWASP ZAP',
+    sideex: 'Sideex',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -63,7 +64,8 @@ export default {
 
     Artifacts: 'Project Artifacts',
 
-    'System Arguments': 'System Arguments'
+    'System Arguments': 'System Arguments',
+    'Project Settings (QA)': 'Project Settings (QA)'
   },
   navbar: {
     logOut: 'Log Out',
@@ -136,7 +138,9 @@ export default {
     caution: 'Caution!',
     ok: 'OK',
     project_name: 'Project Name',
-    pm_user_name: 'Project Manager'
+    pm_user_name: 'Project Manager',
+    Department: 'Department',
+    UserTitle: 'Title'
   },
   Notify: {
     Updated: 'update successful',
@@ -172,7 +176,7 @@ export default {
     InputRepeatPwd: 'Please input repeat password'
   },
   TestCase: {
-    Index: 'Index',
+    Index: 'Requests',
     TestCase: 'Test Case',
     AddTestCase: 'Add Test Case',
     EditTestCase: 'Edit Test Case',
@@ -184,7 +188,12 @@ export default {
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
     SearchName: 'Search Name',
-    SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result'
+    SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
+    Request: 'request | requests',
+    Pass: 'Pass',
+    Fail: 'Fail',
+    TestPass: 'Test Pass',
+    TestFail: 'Test Fail'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -291,6 +300,14 @@ export default {
     Responded: 'Responded',
     Finished: 'Finished',
     Unknown: 'Unknown',
+    Low: 'Low',
+    Normal: 'Normal',
+    High: 'High',
+    Immediate: 'Immediate',
+    Document: 'Document',
+    Research: 'Research',
+    Bug: 'Bug',
+    Feature: 'Feature',
     DeleteIssue: 'Are you sure to Delete {issueName}?',
     Files: 'Files',
     UploadFiles: 'Upload Files',
@@ -364,7 +381,8 @@ export default {
         success: 'Success',
         fail: 'Fail',
         total: 'Test counts',
-        run_at: 'Last test'
+        run_at: 'Last test',
+        rate: 'Pass rate'
       },
       ProjectList: {
         NAME: 'Project list',
@@ -407,6 +425,8 @@ export default {
     AddUser: 'Add User',
     EditUser: 'Edit User',
     Account: 'Account',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: 'Phone',
     Password: 'Password',
     RepeatPassword: 'Repeat Password',
@@ -415,12 +435,18 @@ export default {
     Enable: 'Enable',
     SearchAccount: 'Search Account',
     Role: 'Role',
+    Source: 'Source',
+    AD: 'Active Directory',
+    SYSTEM: 'System',
+    Selected: 'Selected',
     AccountRule: 'Account should be 2-60 characters long and "._-" can be accepted at the middle of string',
     PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number'
   },
   Profile: {
     Basic: 'Basic',
     ProfileBasicSetting: 'Profile Basic Setting',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: 'Phone',
     Security: 'Security',
     ProfileSecuritySetting: 'Profile Security Setting',
@@ -463,14 +489,6 @@ export default {
     DueDate: 'Due Date',
     ProjectOwner: 'Project Owner'
   },
-  ProjectActive: {
-    Active: 'Active',
-    Assigned: 'Assigned',
-    Solved: 'Solved',
-    Responded: 'Responded',
-    Finished: 'Finished',
-    Closed: 'Closed'
-  },
   ProcessDevBranch: {
     Commit: 'Commit',
     LastUpdateTime: 'Last Update Time',
@@ -479,7 +497,7 @@ export default {
     Branch: 'Branch',
     Status: 'Status'
   },
-  ProcessDevBranchTest: {
+  ProgressPipelines: {
     Id: 'Id',
     TestItems: 'Test Items',
     Status: 'Status',
@@ -580,14 +598,22 @@ export default {
     Duplicates: 'Duplicates',
     Coverage: 'Coverage'
   },
+  Log: {
+    info: 'Info',
+    duration: 'Duration',
+    fullLog: 'Report',
+    testId: 'Test ID'
+  },
   Zap: {
     id: 'ID',
     high: 'High',
     medium: 'Medium',
-    low: 'Low',
-    info: 'Info',
-    duration: 'Duration',
-    fullLog: 'Report'
+    low: 'Low'
+  },
+  Sideex: {
+    promptMessage: 'The system provides the latest 5 reports to download.',
+    suitesPassedRatio: 'Suites Passed',
+    casesPassedRatio: 'Cases Passed'
   },
   Release: {
     internalVersions: 'Internal versions',

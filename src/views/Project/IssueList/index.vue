@@ -78,10 +78,10 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Type')" width="150">
+        <el-table-column :label="$t('general.Type')" width="130">
           <template slot-scope="scope">
             <span v-if="scope.row.tracker" :class="getCategoryTagType(scope.row.tracker.name)" />
-            {{ scope.row.tracker.name }}
+            {{ $t(`Issue.${scope.row.tracker.name}`) }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Status')" width="150">
@@ -89,11 +89,10 @@
             <el-tag
               v-if="scope.row.status.name"
               :type="getStatusTagType(scope.row.status.name)"
-              size="medium"
               effect="dark"
-              class="el-tag--circle"
+              class="rounded-xl font-weight-bold"
             >
-              {{ scope.row.status.name }}
+              {{ $t(`Issue.${scope.row.status.name}`) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -105,14 +104,8 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
-            <el-tag
-              v-if="scope.row.priority.name"
-              :type="getPriorityTagType(scope.row.priority.name)"
-              size="medium"
-              effect="dark"
-              class="el-tag--circle"
-            >
-              {{ scope.row.priority.name }}
+            <el-tag v-if="scope.row.priority.name" :type="getPriorityTagType(scope.row.priority.name)">
+              {{ $t(`Issue.${scope.row.priority.name}`) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -277,25 +270,25 @@ export default {
         case 'High':
           return 'warning'
         case 'Normal':
-          return 'success'
-        default:
-          return 'slow'
+          return ''
+        case 'Low':
+          return 'info'
       }
     },
     getStatusTagType(status) {
       switch (status) {
         case 'Active':
-          return 'active'
+          return ''
         case 'Assigned':
-          return 'assigned'
-        case 'Solved':
-          return 'solved'
-        case 'Responded':
-          return 'responded'
+          return 'danger'
         case 'Closed':
-          return 'close'
-        default:
-          return 'finish'
+          return 'info'
+        case 'Solved':
+          return 'secondary'
+        case 'Responded':
+          return 'warning'
+        case 'Finished':
+          return 'success'
       }
     },
     getCategoryTagType(category) {
@@ -319,3 +312,33 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import '@/styles/variables.scss';
+
+.point {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+  display: inline-block;
+  &.feature {
+    background: $feature;
+  }
+  &.document {
+    background: $document;
+  }
+  &.bug {
+    background: $bug;
+  }
+  &.research {
+    background: $research;
+  }
+}
+.el-tag {
+  &--secondary {
+    background-color: $secondary;
+    border-color: $secondary;
+  }
+}
+</style>

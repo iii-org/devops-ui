@@ -46,8 +46,10 @@
               <el-checkbox :value="isSelectedMember(scope.row)" class="el-checkbox" @change="toggleMember(scope.row)" />
             </template>
           </el-table-column>
-          <el-table-column label="姓名" prop="name" />
-          <el-table-column label="帳號" prop="login" />
+          <el-table-column :label="$t('general.Name')" prop="name" />
+          <el-table-column :label="$t('User.Department')" prop="department" />
+          <el-table-column :label="$t('User.Title')" prop="title" />
+          <el-table-column :label="$t('User.Account')" prop="login" />
         </el-table>
         <pagination
           :total="filteredData.length"
@@ -60,7 +62,7 @@
       </el-col>
       <el-col v-if="selectedUser.length >0" class="el-card__footer">
         <el-col :xs="8" :md="2">
-          <div class="selected_count">已選<span class="value">{{ selectedUser.length }}</span></div>
+          <div class="selected_count">{{ $t('User.Selected') }}<span class="value">{{ selectedUser.length }}</span></div>
         </el-col>
         <el-col :xs="16" :md="22" class="scroll-x">
           <el-tag v-for="(item,idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
@@ -106,7 +108,7 @@ export default {
     filteredData() {
       if (this.assignableUserList.length <= 0) return []
       if (this.searchValue.length <= 0) return this.assignableUserList
-      const fuse = new Fuse(this.assignableUserList, { includeScore: true, keys: ['name', 'login'] })
+      const fuse = new Fuse(this.assignableUserList, { includeScore: true, keys: ['name', 'login', 'department', 'title'] })
       const res = fuse.search('!' + this.searchValue)
       return res.map(items => items.item)
     }
@@ -131,6 +133,8 @@ export default {
           this.assignableUserList = res.data.user_list.map(user => ({
             id: user.id,
             name: user.name,
+            department: user.department,
+            title: user.title,
             login: user.login,
             role_name: user.role_name
           }))

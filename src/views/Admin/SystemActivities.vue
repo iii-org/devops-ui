@@ -1,33 +1,3 @@
-<script>
-import { getAllActivities } from '@/api/activities'
-import MixinElTable from '@/components/MixinElTable'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-export default {
-  name: 'SystemActivities',
-  components: { ElTableColumnTime },
-  mixins: [MixinElTable],
-  data() {
-    return {
-      dialogVisible: false,
-      formData: {
-        // from_date: '2020-01-01',
-        // to_date: '2021-12-31',
-        // limit: 100,
-        // page: 0,
-        // actions: 'CREATE_USER, UPDATE_USER, DELETE_USER'
-      },
-      searchKey: 'action_parts'
-    }
-  },
-  methods: {
-    async fetchData() {
-      return (await getAllActivities(this.formData)).data
-    }
-  }
-}
-</script>
-
 <template>
   <div class="app-container">
     <div class="clearfix">
@@ -60,3 +30,33 @@ export default {
     />
   </div>
 </template>
+
+<script>
+import { getAllActivities } from '@/api/activities'
+import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+export default {
+  name: 'SystemActivities',
+  components: { ElTableColumnTime },
+  mixins: [MixinElTable],
+  data() {
+    return {
+      dialogVisible: false,
+      formData: {
+        // from_date: '2020-01-01',
+        // to_date: '2021-12-31',
+        // limit: 100,
+        // page: 0,
+        // actions: 'CREATE_USER, UPDATE_USER, DELETE_USER'
+      },
+      searchKey: 'action_parts'
+    }
+  },
+  methods: {
+    async fetchData() {
+      return (await getAllActivities(this.formData)).data
+    }
+  }
+}
+</script>

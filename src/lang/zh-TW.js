@@ -33,6 +33,7 @@ export default {
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
     zap: '黑箱測試(OWASP ZAP)',
+    sideex: 'ＷEB 測試(Sideex)',
 
     'System Resource': '系統資源',
     'Deployment List': 'Deployment 列表',
@@ -62,7 +63,8 @@ export default {
 
     Artifacts: '資源成品',
 
-    'System Arguments': '參數設定'
+    'System Arguments': '參數設定',
+    'Project Settings (QA)': '專案品控清單設置'
   },
   navbar: {
     logOut: '登出',
@@ -135,7 +137,9 @@ export default {
     caution: '注意！',
     ok: '確定',
     project_name: '專案名稱',
-    pm_user_name: '專案經理'
+    pm_user_name: '專案經理',
+    Department: '部門',
+    UserTitle: '職稱'
   },
   Notify: {
     Updated: '已更新',
@@ -171,7 +175,12 @@ export default {
     TestResult: '測試結果',
     TestMessage: '回傳訊息',
     SearchName: '搜尋名稱',
-    SearchNameOrPathOrTestResult: '搜尋名稱或路徑或測試結果'
+    SearchNameOrPathOrTestResult: '搜尋名稱或路徑或測試結果',
+    Request: '項次 | 項次',
+    Pass: '通過',
+    Fail: '失敗',
+    TestPass: '測試通過',
+    TestFail: '測試失敗'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -290,6 +299,14 @@ export default {
     Responded: '已回覆',
     Finished: '已完成',
     Unknown: '狀態不明',
+    Low: '低',
+    Normal: '一般',
+    High: '高',
+    Immediate: '緊急',
+    Document: '文件',
+    Research: '研究',
+    Bug: '臭蟲',
+    Feature: '功能',
     DeleteIssue: '確認要刪除「{issueName}」嗎?',
     Files: '附件',
     UploadFiles: '附件上傳',
@@ -356,14 +373,15 @@ export default {
         start_date: '開立時間'
       },
       PassingRate: {
-        NAME: '通過比率',
+        NAME: '功能測試結果',
         DETAIL: '專案測試品質',
         project_name: '@:general.project_name',
         count: '測試個案數',
         success: '成功',
         fail: '失敗',
         total: '累積測試次數',
-        run_at: '最近測試時間'
+        run_at: '最近測試時間',
+        rate: '通過率'
       },
       ProjectList: {
         NAME: '專案清單',
@@ -406,6 +424,8 @@ export default {
     AddUser: '新增用戶',
     EditUser: '修改用戶',
     Account: '帳號',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: '電話',
     Password: '密碼',
     RepeatPassword: '重新輸入密碼',
@@ -414,12 +434,18 @@ export default {
     Enable: '啟用',
     SearchAccount: '搜尋帳號',
     Role: '角色',
+    Source: '帳號來源',
+    AD: 'Active Directory',
+    SYSTEM: '系統',
+    Selected: '已選',
     AccountRule: '帳號需要2-60個字並只接受._-特殊字元在中間',
     PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字'
   },
   Profile: {
     Basic: '基本設定',
     ProfileBasicSetting: '個人基本設定',
+    Department: '@:general.Department',
+    Title: '@:general.UserTitle',
     Phone: '電話',
     Security: '安全設定',
     ProfileSecuritySetting: '個人安全設定',
@@ -459,14 +485,6 @@ export default {
     DueDate: '到期日',
     ProjectOwner: '專案經理'
   },
-  ProjectActive: {
-    Active: '進行中',
-    Assigned: '已指派',
-    Solved: '已解決',
-    Responded: '已回覆',
-    Finished: '已完成',
-    Closed: '已關閉'
-  },
   ProcessDevBranch: {
     Commit: 'Commit',
     Environment: '測試環境',
@@ -474,7 +492,7 @@ export default {
     Branch: '分支',
     Status: '狀態'
   },
-  ProcessDevBranchTest: {
+  ProgressPipelines: {
     Id: '項次',
     TestItems: '測試項目',
     Status: '狀態',
@@ -570,14 +588,22 @@ export default {
     Duplicates: '重複程式碼',
     Coverage: '覆蓋率'
   },
+  Log: {
+    info: '資訊',
+    duration: '消耗時間',
+    fullLog: '報表',
+    testId: '測試編號'
+  },
   Zap: {
     id: '編號',
     high: '高風險',
     medium: '中風險',
-    low: '低風險',
-    info: '資訊',
-    duration: '消耗時間',
-    fullLog: '報表'
+    low: '低風險'
+  },
+  Sideex: {
+    promptMessage: '本系統提供最新五份報表下載',
+    suitesPassedRatio: '成功案例',
+    casesPassedRatio: '通過項目'
   },
   Release: {
     internalVersions: '內部管控版號',

@@ -128,13 +128,9 @@ export default {
             radius: '80%',
             data: this.chartData,
             label: {
-              normal: {
-                show: true,
-                formatter: '{b}\n\n{c}',
-                textStyle: {
-                  fontSize: '1em'
-                }
-              }
+              show: true,
+              formatter: '{b}\n\n{c}',
+              fontSize: '1em'
             },
             emphasis: {
               itemStyle: {

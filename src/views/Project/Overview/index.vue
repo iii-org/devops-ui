@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div class="d-flex justify-start">
       <project-list-selector />
       <el-select
@@ -23,7 +23,8 @@
           ref="issuePriority"
           :statistics-obj="statisticsObj"
           class="cursor-point"
-          @click.native="showFullIssuePriority"
+          @emitSelectedItem="handleSelectedItem"
+          @showFullIssuePriority="showFullIssuePriority"
         />
       </el-col>
     </el-row>
@@ -41,7 +42,7 @@
       </el-col>
     </el-row>
     <el-dialog :visible.sync="fullIssuePriority" class="fullscreen" top="5vh">
-      <WorkloadCard :key="reload" :statistics-obj="statisticsObj" />
+      <WorkloadCard :key="reload" :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
     </el-dialog>
   </el-row>
 </template>
@@ -55,19 +56,22 @@ import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard } from '
 export default {
   name: 'ProjectOverview',
   components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard },
-  data: () => ({
-    versionList: [],
-    selectedVersion: null,
-    isLoading: false,
-    isLoadingVersion: false,
-    progressObj: {},
-    statisticsObj: {},
-    userList: [],
-    projectTestObj: {},
-    isProjectTestList: false,
-    fullIssuePriority: false,
-    reload: 0
-  }),
+  data() {
+    return {
+      versionList: [],
+      selectedVersion: null,
+      isLoading: false,
+      isLoadingVersion: false,
+      progressObj: {},
+      statisticsObj: {},
+      userList: [],
+      projectTestObj: {},
+      isProjectTestList: false,
+      fullIssuePriority: false,
+      reload: 0,
+      saveSelectedItem: ''
+    }
+  },
   computed: {
     ...mapGetters(['userProjectList', 'selectedProjectId'])
   },
@@ -87,6 +91,7 @@ export default {
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
     async fetchAllData() {
+      if (this.selectedProjectId < 0) return
       let param = {}
       if (this.projectVersion !== null) {
         param = { fixed_version_id: this.selectedVersion }
@@ -106,6 +111,7 @@ export default {
       this.isLoading = false
     },
     async fetchVersionList() {
+      if (this.selectedProjectId < 0) return
       this.isLoadingVersion = true
       const res = await getProjectVersion(this.selectedProjectId)
       this.isLoadingVersion = false
@@ -129,6 +135,9 @@ export default {
     showFullIssuePriority() {
       this.fullIssuePriority = true
       this.reload += 1
+    },
+    handleSelectedItem(val) {
+      this.saveSelectedItem = val
     }
   }
 }

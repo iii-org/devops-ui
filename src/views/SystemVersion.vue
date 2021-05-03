@@ -8,7 +8,7 @@
       </el-table-column>
       <el-table-column align="center" label="Version" width="180">
         <template>
-          <span>V1.3.2</span>
+          <span>V1.4.0</span>
         </template>
       </el-table-column>
       <el-table-column label="Commit ID">

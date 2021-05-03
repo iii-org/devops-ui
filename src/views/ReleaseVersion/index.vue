@@ -31,10 +31,10 @@ export default {
     ...mapGetters(['selectedProjectId'])
   },
   watch: {
-    selectedProject() {
+    selectedProjectId() {
+      this.state = STATE_INIT
+      this.releaseVersions = []
       this.loadData()
-      this.listQuery.page = 1
-      this.searchData = ''
     }
   },
   created() {
@@ -42,6 +42,9 @@ export default {
   },
   methods: {
     async init() {
+      if (this.selectedProjectId < 0) {
+        return
+      }
       await this.loadData()
       const vsString = this.$route.query.versions
       if (vsString) {
@@ -96,7 +99,7 @@ export default {
         const res = await getProjectIssueListByVersion(this.selectedProjectId, params)
         for (const issue of res.data) {
           this.allIssues.push(issue)
-          if (issue['issue_status'] !== CLOSED_STATUS) {
+          if (issue.status.name !== CLOSED_STATUS) {
             this.hasOpenIssue = true
           }
         }
@@ -160,7 +163,12 @@ export default {
       </el-select>
 
       <span class="newBtn">
-        <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="writeNote">
+        <el-button
+          v-loading.fullscreen.lock="fullscreenLoading"
+          type="success"
+          :disabled="releaseVersions.length === 0"
+          @click="writeNote"
+        >
           <span class="el-icon-edit" />
           {{ $t('Release.writeNote') }}
         </el-button>
@@ -170,8 +178,8 @@ export default {
     <span v-if="state === STATE_INIT" style="color: #f56c6c;">
       {{ $t('Release.openIssueHint') }}
     </span>
-    <issues-table v-show="state == STATE_SHOW_OPEN_ISSUES" ref="issueList" />
-    <create-release v-show="state == STATE_CREATE_RELEASE" ref="createRelease" />
+    <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
+    <create-release v-show="state === STATE_CREATE_RELEASE" ref="createRelease" />
   </div>
 </template>
 

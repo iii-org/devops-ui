@@ -11,15 +11,29 @@
       </el-row>
     </div>
     <draggable
-      :list="list" v-bind="$attrs" :class="['board-column-content', cName]" :move="checkRelatives"
+      :list="list"
+      v-bind="$attrs"
+      :class="['board-column-content', cName]"
+      :move="checkRelatives"
       @change="end(boardObject, $event)"
     >
-      <div v-for="(element,idx) in list" :key="element.id" class="board-item" @drop="drop($event, idx)"
-           @dragover="allowDrop($event, idx)"
+      <div
+        v-for="(element, idx) in list"
+        :key="element.id"
+        class="board-item"
+        :style="{ cursor: 'move' }"
+        @drop="drop($event, idx)"
+        @dragover="allowDrop($event, idx)"
       >
         <div class="pb-4">
           <div>
-            <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(element.id)">
+            <el-link
+              class="cursor-pointer"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              @click="handleClick(element.id)"
+            >
               {{ element.name }}
             </el-link>
           </div>
@@ -29,32 +43,35 @@
             <i class="el-icon-date" />
             <span class="ml-1">{{ element.due_date }}</span>
           </span>
-          <el-tooltip :content="element.assigned_to.login" placement="right-start" :disabled="!element.assigned_to.login">
+          <el-tooltip
+            :content="element.assigned_to.login"
+            placement="right-start"
+            :disabled="!element.assigned_to.login"
+          >
             <span class="ml-1 detail">
-              <i class="el-icon-s-custom" />
+              <i class="el-icon-user-solid" />
               <span class="ml-1">{{ element.assigned_to.name }}</span>
-              <span class="m1-1" v-if="element.assigned_to.login">({{ element.assigned_to.login }})</span>
             </span>
           </el-tooltip>
           <p v-if="element.parent_id" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
             <el-tag class="el-tag--circle" size="mini" :class="element.parent_status.name">
-              {{ $t('ProjectActive.' + element.parent_status.name) }}
+              {{ $t('Issue.' + element.parent_status.name) }}
             </el-tag>
             <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
               {{ element.parent_name }}
             </el-link>
           </p>
-          <div v-if="element.children.length>0" class="parent">
+          <div v-if="element.children.length > 0" class="parent">
             <el-collapse>
               <el-collapse-item>
                 <template #title>
-                  <i class="el-icon-caret-right" /> 子議題 ({{ element.children|lengthFilter }})
+                  <i class="el-icon-caret-right" /> 子議題 ({{ element.children | lengthFilter }})
                 </template>
                 <ol class="children_list">
-                  <li v-for="(subElement,index) in element.children" :key="index">
+                  <li v-for="(subElement, index) in element.children" :key="index">
                     <el-tag class="el-tag--circle" size="mini" :class="subElement.status.name">
-                      {{ $t('ProjectActive.' + subElement.status.name) }}
+                      {{ $t('Issue.' + subElement.status.name) }}
                     </el-tag>
                     <el-link type="primary" :underline="false" @click="handleClick(element.id)">
                       {{ subElement.name }}
@@ -121,6 +138,10 @@ export default {
     focusVersion: {
       type: String,
       default: ''
+    },
+    status: {
+      type: Array,
+      default: () => ([])
     }
   },
   data: () => ({
@@ -129,27 +150,25 @@ export default {
   }),
   methods: {
     checkRelatives(evt) {
-      const result = true
-      // this.$emit('update', evt)
-      // const { id, parent_id } = evt.draggedContext.element
-      // const toName = evt.to.classList[1]
-      // const cIdx = this.relativeList.findIndex(item => item.id === id)
-      // const childrenIssueList = this.relativeList[cIdx].children
-      // const pIdx = this.relativeList.findIndex(item => item.id === parent_id)
-      // const parentIssue = this.relativeList[pIdx] || {}
-      // if (
-      //   toName === 'Closed' &&
-      //   childrenIssueList.length &&
-      //   !childrenIssueList.every(item => item.status.name === 'Closed')
-      // ) {
-      //   result = false
-      // }
-      // if (parentIssue !== {} && parentIssue.status.name === 'Closed') {
-      //   result = false
-      // }
-      return result
+      if (this.dimension === 'status') {
+        const toName = evt.to.classList[1]
+        const toClassObj = this.status.find((item) => (item.name === toName))
+        const element = evt.draggedContext.element
+        if (toClassObj.id === 6) {
+          return this.checkAssigned(toClassObj, element) && this.checkChildrenStatus(element)
+        }
+        return this.checkAssigned(toClassObj, element)
+      }
+    },
+    checkAssigned(to, element) {
+      return !(Object.keys(element.assigned_to).length <= 2 && to.id >= 2)
+    },
+    checkChildrenStatus(element) {
+      if (element.children.length <= 0) return true
+      return element.children.map((issue) => (issue.status.id === 6)).reduce((issue_status, all) => (issue_status && all))
     },
     end(boardObject, event) {
+      this.reload += 1
       this.$emit('update', { boardObject: boardObject, event: event })
     },
     updateBoard(sendData) {
@@ -160,9 +179,25 @@ export default {
     },
     drop(e, idx) {
       e.preventDefault()
-      const data = JSON.parse(e.dataTransfer.getData('json'))
-      this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
-      this.reload += 1
+      if (e.dataTransfer.getData('json')) {
+        const data = JSON.parse(e.dataTransfer.getData('json'))
+        const toClassObj = Object.values(data)[0]
+        const element = this.list[idx]
+        if (Object.keys(data)[0] === 'status') {
+          if (toClassObj.id === 6) {
+            if (this.checkAssigned(toClassObj, element) && this.checkChildrenStatus(element)) {
+              this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+            }
+          } else {
+            if (this.checkAssigned(toClassObj, element)) {
+              this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+            }
+          }
+        } else {
+          this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+        }
+        this.reload += 1
+      }
     },
     allowDrop(e) {
       e.dataTransfer.dropEffect = 'copy'
@@ -235,7 +270,7 @@ export default {
     margin: 0;
   }
 
-  > > > .el-collapse-item {
+  >>> .el-collapse-item {
     &__header {
       height: 2.5em;
     }
@@ -244,5 +279,12 @@ export default {
       padding-bottom: 0;
     }
   }
+}
+
+.board-column .board-column-content .board-item {
+  font-size: 16px;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  height: auto !important;
 }
 </style>

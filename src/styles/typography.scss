@@ -135,4 +135,22 @@
   &right {
     text-align: right;
   }
+  &success {
+    color: $success;
+  }
+  &danger {
+    color: $danger;
+  }
+  &warning {
+    color: $warning;
+  }
+  &slow {
+    color: $slow;
+  }
+  &light {
+    color: $light;
+  }
+  &info {
+    color: $info;
+  }
 }

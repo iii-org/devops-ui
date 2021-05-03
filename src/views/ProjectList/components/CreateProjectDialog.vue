@@ -45,6 +45,13 @@
               />
             </el-form-item>
           </el-col>
+          <el-col v-if="checkOwnerRequired" :span="24">
+            <el-form-item :label="$t('Project.ProjectOwner')" :prop="(checkOwnerRequired)?'owner_id':''">
+              <el-select v-model="form.owner_id" filterable style="width:100%">
+                <el-option v-for="user in userList" :key="user.id" :value="user.id" :label="user.name+' ('+user.login+')'" />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <el-form-item :label="$t('general.Description')" prop="description">
               <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
@@ -140,9 +147,10 @@
 
 <script>
 import dayjs from 'dayjs'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
+import { getUserListByFilter } from '@/api/user'
 
 const formTemplate = () => ({
   name: '',
@@ -174,8 +182,10 @@ export default {
       ],
       display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
       start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }]
+      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
+      owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }]
     },
+    userList: [],
     templateList: [],
     focusTemplate: {},
     isLoadingTemplate: false,
@@ -188,8 +198,12 @@ export default {
     }
   }),
   computed: {
+    ...mapGetters(['userRole']),
     versionList() {
       return this.focusTemplate.version || []
+    },
+    checkOwnerRequired() {
+      return this.userRole === 'QA' || this.userRole === 'Administrator'
     }
   },
   mounted() {
@@ -198,6 +212,10 @@ export default {
   methods: {
     ...mapActions('projects', ['addNewProject']),
     async init(isForceUpdate) {
+      if (this.checkOwnerRequired) {
+        const userList = await getUserListByFilter({ role_ids: 3 }) // pm
+        this.userList = userList.data.user_list
+      }
       this.isLoadingTemplate = true
       await getTemplateList({ force_update: isForceUpdate }).then(res => {
         this.templateList = res.data
@@ -217,16 +235,22 @@ export default {
         if (!valid) return
         this.isLoading = true
         const sendData = this.handleSendData()
-        const res = await this.addNewProject(sendData)
-        this.isLoading = false
-        if (res.message !== 'success') return
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Created'),
-          type: 'success'
-        })
-        this.showDialog = false
-        this.$emit('update')
+        this.addNewProject(sendData)
+          .then(() => {
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Created'),
+              type: 'success'
+            })
+            this.showDialog = false
+            this.$emit('update')
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          .then(() => {
+            this.isLoading = false
+          })
       })
     },
     handleSendData() {
@@ -269,8 +293,8 @@ export default {
       this.isLoadingTemplate = true
       getTemplateParams(this.form.template_id)
         .then(res => {
-          if (res.data.arguments) {
-            this.handleArguments(res.data.arguments)
+          if (res.data['arguments']) {
+            this.handleArguments(res.data['arguments'])
           } else {
             this.form.argumentsForm = []
           }
@@ -312,7 +336,7 @@ export default {
     },
     async refreshTemplate() {
       await refreshRancherCatalogs()
-        .then(res => {
+        .then(() => {
           // console.log(res)
         })
         .catch(err => {

@@ -151,7 +151,7 @@ export default {
 }
 </script>
 <template>
-  <div v-loading="isLoading" class="app-container">
+  <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
@@ -186,14 +186,12 @@ export default {
       height="100%"
     >
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
-      <el-table-column align="center" :label="$t('Version.Version')" min-width="50"
-                       prop="version" />
+      <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
       <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
       <el-table-column-time prop="updated_on" />
       <el-table-column align="center" :label="$t('general.Actions')" width="300">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain
-                     @click="handleDetail(scope.$index, scope.row)">
+          <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
             <i class="el-icon-document" />
             {{ $t('Wiki.Content') }}
           </el-button>
@@ -235,8 +233,7 @@ export default {
       size="80%"
     >
       <div class="container">
-        <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules"
-                 label-position="top">
+        <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules" label-position="top">
           <el-form-item ref="wikiTitle" label="Title" prop="wikiTitle">
             <!-- <div class="form__title"> -->
             <el-input v-model="form.wikiTitle" placeholder="Please Input Title" />
@@ -245,7 +242,7 @@ export default {
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br>
+          <br />
           <template>
             <editor
               v-if="dialogVisible"
@@ -266,8 +263,7 @@ export default {
           >
             {{ $t('general.Cancel') }}
           </el-button>
-          <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading"
-                     @click="handleUpdate">
+          <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading" @click="handleUpdate">
             {{ $t('general.Confirm') }}
           </el-button>
           <el-button
@@ -406,7 +402,7 @@ export default {
     flex-basis: 160px;
   }
 
-  > > > #w-e-text {
+  > #w-e-text {
     white-space: pre-line;
   }
 }

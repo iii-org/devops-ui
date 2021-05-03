@@ -1,10 +1,10 @@
 <template>
-  <el-row v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-row>
       <el-col :md="24" :lg="14">
         <project-list-selector />
         <el-select
-          v-if="filterDimension!=='fixed_version'"
+          v-if="filterDimension !== 'fixed_version'"
           v-model="versionValue"
           :placeholder="$t('Version.SelectVersion')"
           :disabled="selectedProjectId === -1"
@@ -16,7 +16,7 @@
           <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-select
-          v-if="filterDimension!=='assigned_to'"
+          v-if="filterDimension !== 'assigned_to'"
           v-model="memberValue"
           :placeholder="$t('Member.SelectMember')"
           :disabled="selectedProjectId === -1"
@@ -25,26 +25,34 @@
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
           <!--          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />-->
-          <el-option v-for="item in assigned_to" :key="item.id" :label="`${item.name}(${item.login})`"
-                     :value="searchNullValueOption(item)"
+          <el-option
+            v-for="item in assigned_to"
+            :key="item.id"
+            :label="`${item.name}(${item.login})`"
+            :value="item.id"
           />
         </el-select>
       </el-col>
       <el-col :md="24" :lg="10" class="text-right">
         <el-form inline>
           <el-form-item label="篩選維度">
-            <el-select
-              v-model="filterDimension"
-              :placeholder="$t('Version.SelectVersion')"
-              :disabled="selectedProjectId === -1"
-              class="mr-4"
-              filterable
-            >
-              <el-option v-for="(item,idx) in filterDimensionOptions" :key="idx" :label="item.label" :value="item.value" />
+            <el-select v-model="filterDimension" class="mr-4" filterable>
+              <el-option
+                v-for="(item, idx) in filterDimensionOptions"
+                :key="idx"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
-          <el-select-all ref="filterValue" v-model="filterValue" filterable multiple collapse-tags
-                         :options="filterValueOptions" value-key="id"
+          <el-select-all
+            ref="filterValue"
+            v-model="filterValue"
+            filterable
+            multiple
+            collapse-tags
+            :options="filterValueOptions"
+            value-key="id"
           />
         </el-form>
       </el-col>
@@ -52,35 +60,44 @@
     <el-divider />
     <el-col class="board">
       <Kanban
-        v-for="(status, idx) in filterValueOnBoard"
+        v-for="(classObj, idx) in filterValueOnBoard"
         :key="idx"
-        :board-object="status"
-        :list="classifyIssueList[status.name]"
+        :status="status"
+        :board-object="classObj"
+        :list="classifyIssueList[classObj.id]"
         :dimension="filterDimension"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
-        :header-text="getTranslateHeader(status.name)"
-        :c-name="status.name"
-        :class="{[status.name.toLowerCase()]: true}"
+        :header-text="getTranslateHeader(classObj.name)"
+        :c-name="classObj.name"
+        :class="{ [classObj.name.toLowerCase()]: true }"
         :focus-version="String(versionValue)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
       />
       <right-panel ref="rightPanel" :click-not-close="true">
-        <el-row v-for="(item,idx) in filterDimensionOptions" :key="idx" class="panel">
+        <el-row v-for="(item, idx) in filterDimensionOptions" :key="idx" class="panel">
           <el-card>
             <template slot="header">{{ item.label }}</template>
             <template v-for="(subItem, index) in getFilterValueList(item.value)">
-              <div v-if="subItem.status!=='closed'" :id="index" :key="index"
-                   draggable="true"
-                   class="item"
-                   @dragstart="dragStart($event, {[item.value]: subItem})"
-                   @dragend="dragEnd"
+              <div
+                v-if="subItem.status !== 'closed'"
+                :id="index"
+                :key="index"
+                draggable="true"
+                class="item"
+                @dragstart="dragStart($event, { [item.value]: subItem })"
+                @dragend="dragEnd"
               >
-                <el-tag>{{ subItem.name }}</el-tag>
-                <el-alert class="help_text" :closable="false">拖曳到議題，可以將 {{ item.label }} 改變成 {{ subItem.name }}</el-alert>
+                <el-tag effect="dark" :type="getTagType(subItem.name)">{{
+                  $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name
+                }}</el-tag>
+                <el-alert class="help_text" :closable="false">
+                  拖曳到議題，可以將 {{ item.label }} 改變成
+                  {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+                </el-alert>
               </div>
             </template>
           </el-card>
@@ -144,7 +161,7 @@ export default {
     },
     filterValueOnBoard() {
       if (this.filterValue.length <= 0) {
-        return this[this.filterDimension].map((item) => (item))
+        return this[this.filterDimension].map(item => item)
       }
       return this.filterValue
     }
@@ -186,10 +203,10 @@ export default {
       const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version = versionsRes.data.versions
+      this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
 
       const userRes = await this.getProjectUserList(this.selectedProjectId)
-      this.assigned_to = [{ name: '尚未指派', id: '' }, ...userRes.data.user_list]
+      this.assigned_to = [{ name: this.$t('Dashboard.Unassigned'), id: '' }, ...userRes.data.user_list]
       this.isLoading = false
       this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       await this.classifyIssue()
@@ -198,18 +215,25 @@ export default {
     },
     checkInFilterValue(value) {
       if (this.filterValue.length <= 0) return true
-      return this.filterValue.filter((item) => (item.name === value))
+      return this.filterValue.filter(item => item.id === value)
     },
     classifyIssue() {
-      this.projectIssueList.forEach((issue) => {
-        const dimensionName = issue[this.filterDimension].name
+      let issueList = this.projectIssueList
+      if (this.filterDimension !== 'status') {
+        issueList = this.projectIssueList.filter((issue) => (issue.status.id !== 6))
+      }
+      issueList.forEach(issue => {
+        let dimensionName = issue[this.filterDimension].id
+        if (!dimensionName) {
+          dimensionName = ''
+        }
         if (this.checkInFilterValue(dimensionName)) {
           if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
             this.classifyIssueList[dimensionName] = []
           }
           let parentDetail = {}
           if (issue.parent_id) {
-            const parent = this.projectIssueList.find((item) => (item.id === issue.parent_id))
+            const parent = this.projectIssueList.find(item => item.id === issue.parent_id)
             parentDetail = {
               parent_name: parent.name,
               parent_status: parent.status
@@ -226,14 +250,14 @@ export default {
       this.classifyIssueList = {}
     },
     getTranslateHeader(value) {
-      return this.$te('ProjectActive.' + value) ? this.$t('ProjectActive.' + value) : value
+      return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
     searchKanbanCard(value, opt) {
-      Object.keys(this.classifyIssueList).forEach((item) => {
+      Object.keys(this.classifyIssueList).forEach(item => {
         if (value === '') {
-          this.classifyIssueList[item] = this.classifyIssueList[item].filter((subItem) => {
+          this.classifyIssueList[item] = this.classifyIssueList[item].filter(subItem => {
             const findKey = opt['keys'][0].split('.')
-            const findName = findKey.reduce((total, current) => (total[current]), subItem)
+            const findName = findKey.reduce((total, current) => total[current], subItem)
             return findName === undefined || findKey[0] === ''
           })
         } else {
@@ -242,9 +266,6 @@ export default {
           this.classifyIssueList[item] = res.map(items => items.item)
         }
       })
-    },
-    searchNullValueOption(item) {
-      return (item.id === '') ? item.id : item.name
     },
     updateIssueBoard() {
       this.fetchData()
@@ -256,7 +277,7 @@ export default {
         this.isLoading = true
         // const getUpdateDimension = this[this.filterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
         await updateIssue(evt.event.added.element.id, { [this.filterDimension + '_id']: evt.boardObject.id })
-        this.projectIssueList.forEach((item) => {
+        this.projectIssueList.forEach(item => {
           if (item.id === evt.event.added.element.id) {
             item[this.filterDimension] = evt.boardObject
           }
@@ -273,7 +294,7 @@ export default {
       // const getUpdateDimension = this[filterDimension].find((item) => (item.id === value[filterDimension].id))
       // console.log(id, getUpdateDimension)
       await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
-      this.projectIssueList.forEach((item) => {
+      this.projectIssueList.forEach(item => {
         if (item.id === id) {
           item[filterDimension] = value[filterDimension]
         }
@@ -287,11 +308,11 @@ export default {
       this.resetClassifyIssue()
       this.classifyIssue()
       const versionOpt = {
-        keys: ['fixed_version.name'],
+        keys: ['fixed_version.id'],
         useExtendedSearch: true
       }
       const userOpt = {
-        keys: ['assigned_to.name'],
+        keys: ['assigned_to.id'],
         useExtendedSearch: true
       }
       if (this.versionValue !== '-1') {
@@ -317,7 +338,6 @@ export default {
     },
     dragStart(e, item) {
       e.effectAllowed = 'copy'
-      console.log(e.target)
       e.target.classList.add('draggingObject')
       e.dataTransfer.setData('json', JSON.stringify(item))
       // console.log('dragStart')
@@ -325,22 +345,40 @@ export default {
     },
     dragEnd(e) {
       e.target.classList.remove('draggingObject')
-      console.log(e)
     },
     getFilterValueList(value) {
       return this[value]
+    },
+    getTagType(name) {
+      switch (name) {
+        case 'Active':
+          return ''
+        case 'Assigned':
+          return 'danger'
+        case 'Closed':
+          return 'info'
+        case 'Solved':
+          return 'secondary'
+        case 'Responded':
+          return 'warning'
+        case 'Finished':
+          return 'success'
+        case 'Feature':
+          return 'feature'
+        case 'Bug':
+          return 'bug'
+        case 'Document':
+          return 'document'
+        case 'Research':
+          return 'research'
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$active: #85c1e9;
-$assigned: #ff7b00;
-$solved: #82e0aa;
-$responded: #ffc300;
-$finished: #a4bebe;
-$closed: #aeb6bf;
+@import 'src/styles/variables.scss';
 
 .board {
   display: flex;
@@ -349,7 +387,7 @@ $closed: #aeb6bf;
   align-items: start;
 
   .kanban {
-    > > > .parent {
+    >>> .parent {
       font-size: 0.75em;
       margin: 0;
 
@@ -382,7 +420,7 @@ $closed: #aeb6bf;
       }
     }
 
-    > > > &.active {
+    >>> &.active {
       .board-column-header {
         .header-bar {
           background: $active;
@@ -390,7 +428,7 @@ $closed: #aeb6bf;
       }
     }
 
-    > > > &.assigned {
+    >>> &.assigned {
       .board-column-header {
         .header-bar {
           background: $assigned;
@@ -398,7 +436,7 @@ $closed: #aeb6bf;
       }
     }
 
-    > > > &.solved {
+    >>> &.solved {
       .board-column-header {
         .header-bar {
           background: $solved;
@@ -406,7 +444,7 @@ $closed: #aeb6bf;
       }
     }
 
-    > > > &.responded {
+    >>> &.responded {
       .board-column-header {
         .header-bar {
           background: $responded;
@@ -414,7 +452,7 @@ $closed: #aeb6bf;
       }
     }
 
-    > > > &.finished {
+    >>> &.finished {
       .board-column-header {
         .header-bar {
           background: $finished;
@@ -422,19 +460,51 @@ $closed: #aeb6bf;
       }
     }
 
-    > > > &.closed {
+    >>> &.closed {
       .board-column-header {
         .header-bar {
           background: $closed;
         }
       }
     }
+
+    >>> &.feature {
+      .board-column-header {
+        .header-bar {
+          background: $feature;
+        }
+      }
+    }
+
+    >>> &.bug {
+      .board-column-header {
+        .header-bar {
+          background: $bug;
+        }
+      }
+    }
+
+    >>> &.document {
+      .board-column-header {
+        .header-bar {
+          background: $document;
+        }
+      }
+    }
+
+    >>> &.research {
+      .board-column-header {
+        .header-bar {
+          background: $research;
+        }
+      }
+    }
   }
 }
 
->>>.rightPanel-items{
+>>> .rightPanel-items {
   overflow-y: auto;
-  height:100%;
+  height: 100%;
   .panel {
     padding: 30px 20px;
     .item {
@@ -444,7 +514,7 @@ $closed: #aeb6bf;
         font-size: 1.05em;
         margin: 3px;
       }
-      .help_text{
+      .help_text {
         display: none;
       }
     }
@@ -453,18 +523,33 @@ $closed: #aeb6bf;
 
 // For drag sources
 .dragging {
-  opacity: .25;
+  opacity: 0.25;
 }
-.draggingObject{
-  width:100%;
-  .help_text{
-    display:block !important;
+.draggingObject {
+  width: 100%;
+  .help_text {
+    display: block !important;
     opacity: 1 !important;
   }
 }
 
 // For drop target
 .hover {
-  background-color: rgba(0, 191, 165, .04);
+  background-color: rgba(0, 191, 165, 0.04);
+}
+
+$tag-options: (
+  secondary: $secondary,
+  document: $document,
+  research: $research,
+  bug: $bug,
+  feature: $feature
+);
+
+@each $key, $value in $tag-options {
+  .el-tag--#{$key} {
+    background-color: $value;
+    border-color: $value;
+  }
 }
 </style>

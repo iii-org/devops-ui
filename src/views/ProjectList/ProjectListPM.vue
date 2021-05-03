@@ -1,72 +1,3 @@
-<script>
-import { mapActions, mapGetters } from 'vuex'
-import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
-import MixinElTable from '@/components/MixinElTable'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-export default {
-  name: 'ProjectListPM',
-  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
-  mixins: [MixinElTable],
-  data: () => ({
-    editProject: {},
-    deleteProject: { id: '', name: '' },
-    searchKey: 'display',
-    rowHeight: 70
-  }),
-  computed: {
-    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList'])
-  },
-  methods: {
-    ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
-    async fetchData() {
-      await this.queryProjectList()
-      return this.projectList
-    },
-    handleAdding() {
-      this.$refs.createProjectDialog.showDialog = true
-      this.$refs.createProjectDialog.refreshTemplate()
-    },
-    handleEdit(row) {
-      this.editProject = Object.assign({}, row)
-      this.$refs.editProjectDialog.showDialog = true
-    },
-    handleDelete(row) {
-      this.deleteProject.id = row.id
-      this.deleteProject.name = row.name
-      this.$refs.deleteProjectDialog.showDialog = true
-    },
-    returnProgress(current, total) {
-      return Math.round((current / total) * 100)
-    },
-    handleClick(id) {
-      localStorage.setItem('project', id)
-      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === id)[0])
-      this.$router.push({ name: 'Overview' })
-    },
-    copyUrl(id) {
-      const target = document.getElementById(id)
-      window.getSelection().selectAllChildren(target)
-      document.execCommand('Copy')
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Copied'),
-        type: 'success'
-      })
-    }
-  }
-}
-</script>
 <template>
   <div class="app-container">
     <div class="d-flex justify-space-between">
@@ -99,9 +30,12 @@ export default {
         min-width="250"
       >
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="handleClick(scope.row.id)">
+          <el-link v-if="userRole !== 'QA'" type="primary" :underline="false" @click="handleClick(scope.row)">
             {{ scope.row.display }}
           </el-link>
+          <template v-else>
+            {{ scope.row.display }}
+          </template>
           <br>
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
@@ -119,7 +53,8 @@ export default {
           </el-tag>
           <el-tag v-else class="el-tag--circle" type="none" size="medium" effect="dark">{{
             scope.row.project_status
-          }}</el-tag>
+          }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
@@ -197,7 +132,12 @@ export default {
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="210">
+      <el-table-column
+        v-if="userRole !== 'QA'"
+        :label="$t('general.Actions')"
+        align="center"
+        width="210"
+      >
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
             {{ $t('general.Edit') }}
@@ -218,7 +158,112 @@ export default {
     />
 
     <CreateProjectDialog ref="createProjectDialog" @update="loadData" />
-    <EditProjectDialog ref="editProjectDialog" :edit-project-obj="editProject" @update="loadData" />
-    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
+    <EditProjectDialog v-if="userRole !== 'QA'" ref="editProjectDialog" :edit-project-obj="editProject"
+                       @update="loadData"
+    />
+    <DeleteProjectDialog v-if="userRole !== 'QA'" ref="deleteProjectDialog" :delete-project-obj="deleteProject"
+                         @update="loadData"
+    />
   </div>
 </template>
+
+<script>
+import { mapActions, mapGetters } from 'vuex'
+import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
+import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+export default {
+  name: 'ProjectListPM',
+  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+  mixins: [MixinElTable],
+  data: () => ({
+    editProject: {},
+    deleteProject: { id: '', name: '' },
+    searchKey: 'display',
+    rowHeight: 70
+  }),
+  computed: {
+    ...mapGetters(['userRole', 'projectList', 'projectListTotal', 'userProjectList',
+      'userProjectList', 'selectedProjectId'])
+  },
+  methods: {
+    ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
+    async fetchData() {
+      await this.queryProjectList()
+      return this.projectList
+    },
+    handleAdding() {
+      this.$refs.createProjectDialog.showDialog = true
+      this.$refs.createProjectDialog.refreshTemplate()
+    },
+    handleEdit(row) {
+      this.editProject = Object.assign({}, row)
+      this.$refs.editProjectDialog.showDialog = true
+    },
+    handleDelete(row) {
+      this.deleteProject.id = row.id
+      this.deleteProject.name = row.name
+      this.$refs.deleteProjectDialog.showDialog = true
+    },
+    returnProgress(current, total) {
+      return Math.round((current / total) * 100)
+    },
+    handleClick(projectObj) {
+      const { id } = projectObj
+      localStorage.setItem('projectId', id)
+      console.log('id', id)
+      const selectedProject = this.userProjectList.filter(elm => {
+        console.log('elm', elm, 'id', id)
+        return elm.id === id
+      })[0]
+      this.setSelectedProject(selectedProject)
+      console.log('sel_p', selectedProject)
+      console.log('get sel_p', this.selectedProject)
+      this.$router.push({ name: 'Overview' })
+    },
+    copyUrl(id) {
+      const target = document.getElementById(id)
+      window.getSelection().selectAllChildren(target)
+      document.execCommand('Copy')
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Copied'),
+        type: 'success'
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.status-bar-track {
+  background: #f5f5f5;
+  border-radius: 5px;
+  max-width: 160px;
+  width: 100%;
+  height: 4px;
+  position: relative;
+  margin-bottom: 3px;
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.status-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #3ecbbc;
+  height: 4px;
+}
+</style>

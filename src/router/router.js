@@ -82,7 +82,7 @@ export const asyncRoutes = [
   //   meta: {
   //   //   title: 'projectList',
   //   //   icon: 'el-icon-s-cooperation',
-  //     roles: ['Project Manager', 'Administrator']
+  //     roles: ['Project Manager', Administrator']
   //   },
   //   children: [
   //     {
@@ -92,7 +92,7 @@ export const asyncRoutes = [
   //       meta: {
   //         title: 'projectList',
   //         icon: 'list',
-  //         roles: ['Project Manager', 'Administrator']
+  //         roles: ['Project Manager', Administrator']
   //       }
   //     }
   //   ]
@@ -106,7 +106,7 @@ export const asyncRoutes = [
     meta: {
       title: 'projectList',
       icon: 'el-icon-s-cooperation',
-      roles: ['Project Manager', 'Administrator']
+      roles: ['Project Manager', 'QA', 'Administrator']
     },
     children: [
       {
@@ -116,7 +116,7 @@ export const asyncRoutes = [
         meta: {
           title: 'dashboard',
           icon: 'dashboard',
-          roles: ['Project Manager', 'Administrator']
+          roles: ['Project Manager', 'QA', 'Administrator']
         }
       },
       {
@@ -126,7 +126,7 @@ export const asyncRoutes = [
         meta: {
           title: 'projectList',
           icon: 'list',
-          roles: ['Project Manager', 'Administrator']
+          roles: ['Project Manager', 'QA', 'Administrator']
         }
       }
     ]
@@ -138,13 +138,13 @@ export const asyncRoutes = [
     meta: {
       title: 'singleProject',
       icon: 'el-icon-data-analysis',
-      roles: ['Project Manager', 'Administrator', 'Engineer']
+      roles: ['Project Manager', 'QA', 'Administrator', 'Engineer']
     },
     children: [
       {
         path: 'overview',
         name: 'Overview',
-        component: () => import('@/views/ProjectOverview'),
+        component: () => import('@/views/Project/Overview'),
         meta: { title: 'projectOverview', roles: ['Project Manager', 'Administrator'] }
       },
       {
@@ -230,10 +230,16 @@ export const asyncRoutes = [
         meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
       },
       {
-        path: 'project-settings',
+        path: 'settings',
         name: 'Project Settings',
-        component: () => import('@/views/ProjectSettings/index'),
+        component: () => import('@/views/Project/Settings/index'),
         meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'settings',
+        name: 'Project Settings',
+        component: () => import('@/views/Project/Settings/roles/QA'),
+        meta: { title: 'Project Settings', roles: ['QA'] }
       },
       {
         path: 'advance-branch-settings',
@@ -376,7 +382,7 @@ export const asyncRoutes = [
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
-      roles: ['Engineer', 'Project Manager', 'Administrator']
+      roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
     },
     redirect: '/test/postman-result',
     children: [
@@ -386,7 +392,7 @@ export const asyncRoutes = [
         component: () => import('@/views/PostmanResult'),
         meta: {
           title: 'postman',
-          roles: ['Engineer', 'Project Manager', 'Administrator'],
+          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
           rolePage: true
         },
         children: [
@@ -397,7 +403,7 @@ export const asyncRoutes = [
             component: () => import('@/views/TestCaseDevOps'),
             meta: {
               title: 'fromDevops',
-              roles: ['Engineer', 'Project Manager', 'Administrator'],
+              roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
               rolePage: false
             }
           },
@@ -408,7 +414,7 @@ export const asyncRoutes = [
             component: () => import('@/views/TestCasePostman'),
             meta: {
               title: 'fromCollection',
-              roles: ['Engineer', 'Project Manager', 'Administrator'],
+              roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
               rolePage: false
             }
           }
@@ -418,25 +424,31 @@ export const asyncRoutes = [
         path: 'checkmarx',
         name: 'checkmarx',
         component: () => import('@/views/ScanCheckmarx'),
-        meta: { title: 'checkMarx', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'checkMarx', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'web-inspect',
         name: 'web-inspect',
         component: () => import('@/views/ScanWebInspect'),
-        meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'zap',
         name: 'zap',
         component: () => import('@/views/ScanZap'),
-        meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
+      },
+      {
+        path: 'sideex',
+        name: 'sideex',
+        component: () => import('@/views/ScanSideex'),
+        meta: { title: 'sideex', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'sonarqube',
         name: 'sonarqube',
         component: () => import('@/views/ScanSonarQube'),
-        meta: { title: 'sonarQube', roles: ['Engineer', 'Project Manager', 'Administrator'] }
+        meta: { title: 'sonarQube', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       }
     ]
   },
@@ -525,14 +537,14 @@ export const asyncRoutes = [
     meta: {
       title: 'Activities',
       icon: 'el-icon-s-order',
-      roles: ['Project Manager', 'Administrator']
+      roles: ['Project Manager', 'QA', 'Administrator']
     },
     children: [
       {
         path: 'project-activities',
         name: 'ProjectActivities',
         component: () => import('@/views/ProjectActivities'),
-        meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
+        meta: { title: 'Project Activities', roles: ['Project Manager', 'QA', 'Administrator'] }
       }
     ]
   },
@@ -547,19 +559,19 @@ export const asyncRoutes = [
       {
         path: 'account-manage',
         name: '',
-        component: () => import('@/views/UserManage'),
+        component: () => import('@/views/Admin/AccountManage'),
         meta: { title: 'Account Manage', roles: ['Administrator'] }
       },
       {
         path: 'system-activities',
         name: 'SystemActivities',
-        component: () => import('@/views/SystemActivities'),
+        component: () => import('@/views/Admin/SystemActivities'),
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
         path: 'system-arguments',
         name: 'System Arguments',
-        component: () => import('@/views/SystemArguments'),
+        component: () => import('@/views/Admin/SystemArguments'),
         meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
       {
@@ -568,6 +580,12 @@ export const asyncRoutes = [
         hidden: true,
         component: () => import('@/views/UserValidation'),
         meta: { title: 'validation', roles: ['Administrator'] }
+      },
+      {
+        path: 'sub-admin-projects',
+        name: 'Sub Admin Projects',
+        component: () => import('@/views/SubAdminProjects'),
+        meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
       }
     ]
   },
@@ -575,19 +593,19 @@ export const asyncRoutes = [
   {
     path: '/profile',
     component: Layout,
-    redirect: '/profile/index',
+    redirect: '/profile',
     hidden: true,
-    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
+    meta: { roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/Profile'),
+        path: '',
+        component: () => import('@/views/User/Profile'),
         name: 'Profile',
         meta: {
           title: 'Profile',
           icon: 'user',
           noCache: true,
-          roles: ['Engineer', 'Project Manager', 'Administrator']
+          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
         }
       }
     ]
@@ -596,19 +614,19 @@ export const asyncRoutes = [
   {
     path: '/SystemVersion',
     component: Layout,
-    redirect: '/SystemVersion/index',
+    redirect: '/SystemVersion',
     hidden: true,
-    meta: { roles: ['Engineer', 'Project Manager', 'Administrator'] },
+    meta: { roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] },
     children: [
       {
-        path: 'index',
+        path: '',
         component: () => import('@/views/SystemVersion'),
         name: 'SystemVersion',
         meta: {
           title: 'System Version',
           icon: 'user',
           noCache: true,
-          roles: ['Engineer', 'Project Manager', 'Administrator']
+          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
         }
       }
     ]
