@@ -1,152 +1,3 @@
-<script>
-import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
-import { updateIssue } from '@/api/issue'
-
-export default {
-  name: 'IssuesTable',
-  mixins: [MixinElTableWithCheckbox],
-  data: function() {
-    return {
-      issues: [],
-      closedIssueCount: 0,
-      openIssueCount: 0,
-      categories: [],
-      issuesByCategory: {},
-      selectedCategory: this.$t('Release.allCategories'),
-      searchKey: '',
-      showOpen: true,
-      showClosed: false,
-      showBatchMoveDialog: false,
-      batchMoveToVersion: null,
-      fullScreenLoading: false,
-      CLOSED_STATUS: 'Closed',
-      CLOSED_STATUS_ID: 6
-    }
-  },
-  computed: {
-    batchCloseHint() {
-      return this.$t('Release.confirmBatchClose', [this.selectedIndexes.length])
-    },
-    categorySel() {
-      const ret = [this.$t('Release.allCategories')]
-      for (const c of this.categories) {
-        ret.push(c)
-      }
-      return ret
-    }
-  },
-  watch: {
-    showClosed() {
-      this.setData(this.issues)
-    },
-    showOpen() {
-      this.setData(this.issues)
-    }
-  },
-  methods: {
-    setData(issues) {
-      this.issues = issues
-      this.categories = []
-      this.issuesByCategory = {}
-      for (const issue of issues) {
-        const cat = issue.tracker.name
-        if (this.categories.indexOf(cat) < 0) {
-          this.categories.push(cat)
-        }
-        if (!(cat in this.issuesByCategory)) {
-          this.issuesByCategory[cat] = []
-        }
-        this.issuesByCategory[cat].push(issue)
-      }
-      this.categories.sort()
-      this.processData()
-    },
-    processData() {
-      const CLOSED_STATUS = 'Closed'
-      let partialIssues
-      if (this.selectedCategory === this.$t('Release.allCategories')) {
-        partialIssues = this.issues
-      } else {
-        partialIssues = this.issues.filter(
-          item => item.tracker.name === this.selectedCategory)
-      }
-      this.closedIssueCount = 0
-      this.openIssueCount = 0
-      this.listData = partialIssues.filter(issue => {
-        if (issue.status.name === CLOSED_STATUS) {
-          this.closedIssueCount++
-          return this.showClosed
-        } else {
-          this.openIssueCount++
-          return this.showOpen
-        }
-      })
-      this.adjustTable(5)
-
-      // If data reduces, we need to set current page to smaller one making data visible
-      this.$nextTick(() => {
-        const len = this.listData.length
-        const pageSize = this.listQuery.limit
-        if ((this.listQuery.page - 1) * pageSize >= len) {
-          if (len > 0) {
-            this.listQuery.page = 1 + Math.floor((len - 1) / pageSize)
-          } else {
-            this.listQuery.page = 1
-          }
-        }
-      })
-    },
-    handleEdit(idx, row) {
-      this.$router.push({ path: `/project/issue-list/${row.id}` })
-    },
-    async handleClose(idx, row) {
-      this.listLoading = true
-      await updateIssue(row.id, { status_id: this.CLOSED_STATUS_ID })
-      row.status.name = this.CLOSED_STATUS
-      for (const i in this.issues) {
-        if (this.issues[i].id === row.id) {
-          this.issues.splice(parseInt(i), 1, row)
-          break
-        }
-      }
-      if (this.pagedData.length === 0 && this.listQuery.page > 1) {
-        this.listQuery.page--
-      }
-      this.processData()
-      this.listLoading = false
-
-      // If all issues are closed, change to create release screen
-      if (this.openIssueCount === 0) {
-        this.$parent.init()
-      }
-    },
-    async batchClose() {
-      this.listLoading = true
-      const indexes = this.selectedIndexes
-      for (const index of indexes) {
-        await updateIssue(this.listData[index].id, { status_id: this.CLOSED_STATUS_ID })
-      }
-      this.multipleSelection = []
-      await this.$parent.init()
-      this.listLoading = false
-    },
-    async batchMove() {
-      this.fullScreenLoading = true
-      const indexes = this.selectedIndexes
-      for (const index of indexes) {
-        await updateIssue(
-          this.listData[index].id, { fixed_version_id: this.batchMoveToVersion }
-        )
-      }
-      this.multipleSelection = []
-      await this.$parent.init()
-      this.fullScreenLoading = false
-      this.showBatchMoveDialog = false
-    }
-  }
-}
-</script>
-
 <template>
   <div style="height: 70%;">
     <p>
@@ -301,8 +152,204 @@ export default {
         </el-button>
       </el-form>
     </el-dialog>
+    <el-dialog :visible.sync="showFormDialog" :title="$t('Issue.AskDeleteIssue')">
+      <issue-notes-editor ref="IssueNotesEditor" page="IssuesTable" />
+      <div slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="handleCloseIssue()">{{ $t('Issue.CloseIssue') }}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
+
+<script>
+import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
+import { updateIssue } from '@/api/issue'
+
+export default {
+  name: 'IssuesTable',
+  components: {
+    IssueNotesEditor: () => import ('@/views/ProjectIssueDetail/components/IssueNotesEditor')
+  },
+  mixins: [MixinElTableWithCheckbox],
+  data: function() {
+    return {
+      issues: [],
+      closedIssueCount: 0,
+      openIssueCount: 0,
+      categories: [],
+      issuesByCategory: {},
+      selectedCategory: this.$t('Release.allCategories'),
+      searchKey: '',
+      showOpen: true,
+      showClosed: false,
+      showBatchMoveDialog: false,
+      showFormDialog: false,
+      batchMoveToVersion: null,
+      fullScreenLoading: false,
+      CLOSED_STATUS: 'Closed',
+      CLOSED_STATUS_ID: 6,
+      closedIdex: '',
+      closedRow: {}
+    }
+  },
+  computed: {
+    batchCloseHint() {
+      return this.$t('Release.confirmBatchClose', [this.selectedIndexes.length])
+    },
+    categorySel() {
+      const ret = [this.$t('Release.allCategories')]
+      for (const c of this.categories) {
+        ret.push(c)
+      }
+      return ret
+    }
+  },
+  watch: {
+    showClosed() {
+      this.setData(this.issues)
+    },
+    showOpen() {
+      this.setData(this.issues)
+    }
+  },
+  methods: {
+    setData(issues) {
+      this.issues = issues
+      this.categories = []
+      this.issuesByCategory = {}
+      for (const issue of issues) {
+        const cat = issue.tracker.name
+        if (this.categories.indexOf(cat) < 0) {
+          this.categories.push(cat)
+        }
+        if (!(cat in this.issuesByCategory)) {
+          this.issuesByCategory[cat] = []
+        }
+        this.issuesByCategory[cat].push(issue)
+      }
+      this.categories.sort()
+      this.processData()
+    },
+    processData() {
+      const CLOSED_STATUS = 'Closed'
+      let partialIssues
+      if (this.selectedCategory === this.$t('Release.allCategories')) {
+        partialIssues = this.issues
+      } else {
+        partialIssues = this.issues.filter(
+          item => item.tracker.name === this.selectedCategory)
+      }
+      this.closedIssueCount = 0
+      this.openIssueCount = 0
+      this.listData = partialIssues.filter(issue => {
+        if (issue.status.name === CLOSED_STATUS) {
+          this.closedIssueCount++
+          return this.showClosed
+        } else {
+          this.openIssueCount++
+          return this.showOpen
+        }
+      })
+      this.adjustTable(5)
+
+      // If data reduces, we need to set current page to smaller one making data visible
+      this.$nextTick(() => {
+        const len = this.listData.length
+        const pageSize = this.listQuery.limit
+        if ((this.listQuery.page - 1) * pageSize >= len) {
+          if (len > 0) {
+            this.listQuery.page = 1 + Math.floor((len - 1) / pageSize)
+          } else {
+            this.listQuery.page = 1
+          }
+        }
+      })
+    },
+    handleEdit(idx, row) {
+      this.$router.push({ path: `/project/issue-list/${row.id}` })
+    },
+    handleClose(idx, row) {
+      this.closedIdex = idx
+      this.closedRow = row
+      this.showFormDialog = true
+    },
+    handleCloseIssue() {
+      const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
+      const sendForm = new FormData()
+      sendForm.append('notes', notes)
+      this.updateIssueForm(sendForm)
+    },
+    updateIssueForm(sendForm) {
+      this.isLoading = true
+      const issueId = this.closedRow.id
+
+      updateIssue(issueId, sendForm)
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          this.handleUpdated()
+        })
+        .catch(err => {
+          console.error(err)
+          this.isLoading = false
+        })
+    },
+    handleUpdated() {
+      this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
+      this.showFormDialog = false
+      this.deleteIssue(this.closedIdex, this.closedRow)
+    },
+    async deleteIssue(idx, row) {
+      this.listLoading = true
+      await updateIssue(row.id, { status_id: this.CLOSED_STATUS_ID })
+      row.status.name = this.CLOSED_STATUS
+      for (const i in this.issues) {
+        if (this.issues[i].id === row.id) {
+          this.issues.splice(parseInt(i), 1, row)
+          break
+        }
+      }
+      if (this.pagedData.length === 0 && this.listQuery.page > 1) {
+        this.listQuery.page--
+      }
+      this.processData()
+      this.listLoading = false
+      this.showFormDialog = false
+
+      // If all issues are closed, change to create release screen
+      if (this.openIssueCount === 0) {
+        this.$parent.init()
+      }
+    },
+    async batchClose() {
+      this.listLoading = true
+      const indexes = this.selectedIndexes
+      for (const index of indexes) {
+        await updateIssue(this.listData[index].id, { status_id: this.CLOSED_STATUS_ID })
+      }
+      this.multipleSelection = []
+      await this.$parent.init()
+      this.listLoading = false
+    },
+    async batchMove() {
+      this.fullScreenLoading = true
+      const indexes = this.selectedIndexes
+      for (const index of indexes) {
+        await updateIssue(
+          this.listData[index].id, { fixed_version_id: this.batchMoveToVersion }
+        )
+      }
+      this.multipleSelection = []
+      await this.$parent.init()
+      this.fullScreenLoading = false
+      this.showBatchMoveDialog = false
+    }
+  }
+}
+</script>
 
 <style scoped>
 .valign-middle {

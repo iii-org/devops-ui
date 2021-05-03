@@ -1,3 +1,52 @@
+<template>
+  <div class="app-container">
+    <p class="clearfix">
+      <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
+        {{ $t('Project.Name') }}
+      </b>
+      <project-list-selector />
+    </p>
+    <p>
+      <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
+        {{ $t('Release.internalVersions') }}
+      </b>
+
+      <el-select
+        id="release_versions"
+        v-model="releaseVersions"
+        :placeholder="$t('Release.selectVersion')"
+        multiple
+        filterable
+      >
+        <el-option
+          v-for="item in projectVersionOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+
+      <span class="newBtn">
+        <el-button
+          v-loading.fullscreen.lock="fullscreenLoading"
+          type="success"
+          :disabled="releaseVersions.length === 0"
+          @click="writeNote"
+        >
+          <span class="el-icon-edit" />
+          {{ $t('Release.writeNote') }}
+        </el-button>
+      </span>
+    </p>
+    <el-divider />
+    <span v-if="state === STATE_INIT" style="color: #f56c6c;">
+      {{ $t('Release.openIssueHint') }}
+    </span>
+    <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
+    <create-release v-show="state === STATE_CREATE_RELEASE" ref="createRelease" />
+  </div>
+</template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { getProjectIssueListByVersion, getProjectVersion } from '@/api/projects'
@@ -133,55 +182,6 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <p class="clearfix">
-      <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
-        {{ $t('Project.Name') }}
-      </b>
-      <project-list-selector />
-    </p>
-    <p>
-      <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
-        {{ $t('Release.internalVersions') }}
-      </b>
-
-      <el-select
-        id="release_versions"
-        v-model="releaseVersions"
-        :placeholder="$t('Release.selectVersion')"
-        multiple
-        filterable
-      >
-        <el-option
-          v-for="item in projectVersionOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-
-      <span class="newBtn">
-        <el-button
-          v-loading.fullscreen.lock="fullscreenLoading"
-          type="success"
-          :disabled="releaseVersions.length === 0"
-          @click="writeNote"
-        >
-          <span class="el-icon-edit" />
-          {{ $t('Release.writeNote') }}
-        </el-button>
-      </span>
-    </p>
-    <el-divider />
-    <span v-if="state === STATE_INIT" style="color: #f56c6c;">
-      {{ $t('Release.openIssueHint') }}
-    </span>
-    <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
-    <create-release v-show="state === STATE_CREATE_RELEASE" ref="createRelease" />
-  </div>
-</template>
 
 <style scoped>
 .clearfix {

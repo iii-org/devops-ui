@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-subtitle-2 mt-2 mb-3">{{ $t('Issue.Notes') }}</div>
+    <div class="text-subtitle-2 mt-2 mb-3">{{ selectedPage }}</div>
     <editor ref="mdEditor" initial-edit-type="wysiwyg" />
   </div>
 </template>
@@ -14,6 +14,17 @@ export default {
   name: 'IssueNotesEditor',
   components: {
     editor: Editor
+  },
+  props: {
+    page: {
+      type: String,
+      default: 'ProjectIssueDetail'
+    }
+  },
+  computed: {
+    selectedPage () {
+      return this.page === 'ProjectIssueDetail' ? this.$t('Issue.Notes') : this.$t('Issue.DeleteIssueReason')
+    }
   }
 }
 </script>
