@@ -4,12 +4,11 @@ import { getProjectIssueListByVersion, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import IssuesTable from '@/views/ReleaseVersion/IssuesTable'
 import CreateRelease from '@/views/ReleaseVersion/CreateRelease'
+import Issue from '@/data/issue.js'
 
 const STATE_INIT = 0
 const STATE_SHOW_OPEN_ISSUES = 1
 const STATE_CREATE_RELEASE = 2
-
-const CLOSED_STATUS = 'Closed'
 
 export default {
   name: 'ReleaseVersion',
@@ -97,9 +96,10 @@ export default {
       for (const vId of this.releaseVersions) {
         const params = { fixed_version_id: vId }
         const res = await getProjectIssueListByVersion(this.selectedProjectId, params)
-        for (const issue of res.data) {
+        for (const issueJson of res.data) {
+          const issue = new Issue(issueJson)
           this.allIssues.push(issue)
-          if (issue.status.name !== CLOSED_STATUS) {
+          if (issue.isOpen()) {
             this.hasOpenIssue = true
           }
         }

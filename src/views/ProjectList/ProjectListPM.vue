@@ -222,14 +222,10 @@ export default {
     handleClick(projectObj) {
       const { id } = projectObj
       localStorage.setItem('projectId', id)
-      console.log('id', id)
       const selectedProject = this.userProjectList.filter(elm => {
-        console.log('elm', elm, 'id', id)
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
-      console.log('sel_p', selectedProject)
-      console.log('get sel_p', this.selectedProject)
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {

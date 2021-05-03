@@ -49,7 +49,7 @@ export default {
       this.categories = []
       this.issuesByCategory = {}
       for (const issue of issues) {
-        const cat = issue.tracker.name
+        const cat = issue.category
         if (this.categories.indexOf(cat) < 0) {
           this.categories.push(cat)
         }
@@ -62,18 +62,17 @@ export default {
       this.processData()
     },
     processData() {
-      const CLOSED_STATUS = 'Closed'
       let partialIssues
       if (this.selectedCategory === this.$t('Release.allCategories')) {
         partialIssues = this.issues
       } else {
         partialIssues = this.issues.filter(
-          item => item.tracker.name === this.selectedCategory)
+          item => item.category === this.selectedCategory)
       }
       this.closedIssueCount = 0
       this.openIssueCount = 0
       this.listData = partialIssues.filter(issue => {
-        if (issue.status.name === CLOSED_STATUS) {
+        if (!issue.isOpen()) {
           this.closedIssueCount++
           return this.showClosed
         } else {
@@ -101,9 +100,8 @@ export default {
     },
     async handleClose(idx, row) {
       this.listLoading = true
-      await updateIssue(row.id, { status_id: this.CLOSED_STATUS_ID })
-      row.status.name = this.CLOSED_STATUS
-      for (const i in this.issues) {
+      await row.close()
+      for (const i of this.issues.keys()) {
         if (this.issues[i].id === row.id) {
           this.issues.splice(parseInt(i), 1, row)
           break
@@ -124,7 +122,7 @@ export default {
       this.listLoading = true
       const indexes = this.selectedIndexes
       for (const index of indexes) {
-        await updateIssue(this.listData[index].id, { status_id: this.CLOSED_STATUS_ID })
+        await this.listData[index].close()
       }
       this.multipleSelection = []
       await this.$parent.init()
@@ -217,10 +215,10 @@ export default {
         <el-table-column type="selection" width="55" />
         <el-table-column :label="$t('Issue.id')" prop="id" align="center" width="75" />
         <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
-        <el-table-column :label="$t('Project.Version')" align="center" prop="fixed_version.name" />
-        <el-table-column :label="$t('general.Type')" align="center" prop="tracker.name" />
-        <el-table-column :label="$t('general.Status')" align="center" prop="status.name" />
-        <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigned_to.name" />
+        <el-table-column :label="$t('Project.Version')" align="center" prop="versionName" />
+        <el-table-column :label="$t('general.Type')" align="center" prop="category" />
+        <el-table-column :label="$t('general.Status')" align="center" prop="statusName" />
+        <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigneeName" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
             <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start"
@@ -238,7 +236,7 @@ export default {
               />
             </el-tooltip>
             <el-tooltip
-              v-if="scope.row.status.name !== CLOSED_STATUS"
+              v-if="scope.row.isOpen()"
               effect="dark"
               :content="$t('general.Close')"
               placement="bottom-start"
