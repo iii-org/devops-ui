@@ -174,7 +174,7 @@ export default {
       return this.isChildrenAllClosed() ? this.statusList : listWithoutClosedOption
     },
     isParentIssueClosed() {
-      return this.parentIssue !== {} && this.parentIssue.issue_status === 'Closed'
+      return this.parentIssue !== {} && this.parentIssue.status.name === 'Closed'
     },
     dynamicAssigneeList() {
       const hasInactiveAssignee =
@@ -232,7 +232,7 @@ export default {
       this.isLoading = false
     },
     isChildrenAllClosed() {
-      return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.issue_status === 'Closed')
+      return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.status.name === 'Closed')
     },
     createRelativeList(list) {
       const result = []

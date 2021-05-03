@@ -99,7 +99,7 @@ export default {
         const res = await getProjectIssueListByVersion(this.selectedProjectId, params)
         for (const issue of res.data) {
           this.allIssues.push(issue)
-          if (issue['issue_status'] !== CLOSED_STATUS) {
+          if (issue.status.name !== CLOSED_STATUS) {
             this.hasOpenIssue = true
           }
         }
@@ -178,8 +178,8 @@ export default {
     <span v-if="state === STATE_INIT" style="color: #f56c6c;">
       {{ $t('Release.openIssueHint') }}
     </span>
-    <issues-table v-show="state == STATE_SHOW_OPEN_ISSUES" ref="issueList" />
-    <create-release v-show="state == STATE_CREATE_RELEASE" ref="createRelease" />
+    <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
+    <create-release v-show="state === STATE_CREATE_RELEASE" ref="createRelease" />
   </div>
 </template>
 

@@ -49,7 +49,7 @@ export default {
       this.issues = issues
       this.issuesByCategory = [{}, {}]
       for (const issue of issues) {
-        const cat = issue['issue_category']
+        const cat = issue.tracker.name
         let index = this.issueCategories.indexOf(cat)
         if (index < 0) {
           this.issueCategories.push(cat)
