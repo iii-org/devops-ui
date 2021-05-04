@@ -265,7 +265,7 @@ export const asyncRoutes = [
       {
         path: 'dev-branch',
         name: 'dev-branch',
-        component: () => import('@/views/ProcessDevBranch'),
+        component: () => import('@/views//Progress/DevBranch'),
         meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
@@ -297,13 +297,13 @@ export const asyncRoutes = [
       {
         path: 'dev-environment',
         name: 'dev-environment',
-        component: () => import('@/views/ProgressDevEnvironment'),
+        component: () => import('@/views/Progress/DevEnvironment'),
         meta: { title: 'devEnvironment', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'kubernetes-resources',
         name: 'Kubernetes-resources',
-        component: () => import('@/views/ProjectUsage'),
+        component: () => import('@/views/Progress/KubernetesResources'),
         meta: {
           title: 'kubernetesResources',
           roles: ['Project Manager', 'Administrator', 'Engineer'],
