@@ -18,14 +18,16 @@
           </el-select>
           <el-select
             v-model="trackerValue"
-            :placeholder="$t('Tacker.SelectTracker')"
+            :placeholder="$t('Issue.SelectType')"
             :disabled="selectedProjectId === -1"
             class="mr-4"
             filterable
             clearable
             @change="updateData"
           >
-            <el-option v-for="item in tracker" :key="item.id" :label="item.name" :value="item.id" />
+            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+              <tracker :name="item.name" />
+            </el-option>
           </el-select>
           <el-button
             id="btn-add-issue"

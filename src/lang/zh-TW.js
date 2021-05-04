@@ -278,6 +278,7 @@ export default {
     EndDate: '結束日期',
     Description: '議題描述',
     SelectDate: '選擇日期',
+    SelectType: '選擇種類',
     SearchNameOrAssignee: '搜尋名稱或受分配者',
     Save: '儲存',
     Notes: '處理紀錄 / 訊息回覆',

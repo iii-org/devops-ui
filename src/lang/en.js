@@ -279,6 +279,7 @@ export default {
     EndDate: 'End Date',
     Description: 'Issue Description',
     SelectDate: 'Select Date',
+    SelectType: 'Select Type',
     SearchNameOrAssignee: 'Search Name Or Assignee',
     Save: 'Save',
     Notes: 'Notes',
