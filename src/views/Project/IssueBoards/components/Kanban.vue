@@ -147,6 +147,7 @@ export default {
   },
   data: () => ({
     showDialog: false,
+    showAlert: false,
     reload: 0
   }),
   methods: {
@@ -170,12 +171,12 @@ export default {
               [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
           }
           if (!checkAssigned || !checkChildrenStatus) {
-            this.$msgbox({ message: h('ul', errorMsg), title: '異動議題錯誤' })
+            this.showErrorAlert(errorMsg)
           }
           return checkAssigned && checkChildrenStatus
         }
         if (!checkAssigned) {
-          this.$msgbox({ message: h('ul', errorMsg), title: '異動議題錯誤' })
+          this.showErrorAlert(errorMsg)
         }
         return checkAssigned
       }
@@ -197,20 +198,47 @@ export default {
     handleClick(id) {
       this.$router.push({ path: `/project/issue-list/${id}` })
     },
+    showErrorAlert(errorMsg) {
+      const h = this.$createElement
+      if (!this.showAlert) {
+        this.showAlert = true
+        this.$msgbox({ message: h('ul', errorMsg), title: '異動議題錯誤' }).then(() => {
+          this.showAlert = false
+        })
+      }
+    },
     drop(e, idx) {
       e.preventDefault()
       if (e.dataTransfer.getData('json')) {
         const data = JSON.parse(e.dataTransfer.getData('json'))
         const toClassObj = Object.values(data)[0]
         const element = this.list[idx]
+        const h = this.$createElement
+        const checkAssigned = this.checkAssigned(toClassObj, element)
+        const errorMsg = []
+
         if (Object.keys(data)[0] === 'status') {
+          if (!checkAssigned) {
+            errorMsg.push(h('li',
+              [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')]
+            ))
+          }
           if (toClassObj.id === 6) {
-            if (this.checkAssigned(toClassObj, element) && this.checkChildrenStatus(element)) {
+            const checkChildrenStatus = this.checkChildrenStatus(element)
+            if (checkAssigned && checkChildrenStatus) {
               this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+            } else {
+              if (!checkChildrenStatus) {
+                errorMsg.push(h('li',
+                  [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
+              }
+              this.showErrorAlert(errorMsg)
             }
           } else {
-            if (this.checkAssigned(toClassObj, element)) {
+            if (checkAssigned) {
               this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+            } else {
+              this.showErrorAlert(errorMsg)
             }
           }
         } else {
