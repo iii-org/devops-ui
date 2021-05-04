@@ -1,103 +1,109 @@
 <template>
-  <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">
-    <div class="d-flex justify-space-between mb-2">
-      <div class="d-flex align-end">
-        <span class="text-h5 mr-3">
-          <template v-if="tracker">
-            <span :class="getCategoryTagType(tracker)" />
-            {{ $t(`Issue.${tracker}`) }}
-          </template>
-          <template v-else>{{ $t('Issue.Issue') }}</template> #{{ issueId }}<template v-if="mode==='view'"> - {{ issueSubject }}</template></span>
-        <div class="text-body-1 mr-3">
-          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-        </div>
-        <el-link :href="issue_link" target="_blank" type="primary" :underline="false">
-          <i class="el-icon-link" /> Redmine
-        </el-link>
-      </div>
-      <div v-show="focusTab === 'editIssue'">
-        <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-        <template v-if="mode==='edit'">
+  <el-card>
+    <el-row slot="header">
+      <el-row type="flex" align="bottom" justify="space-between">
+        <el-row>
+          <el-col class="text-h5 mr-3">
+            <template v-if="tracker">
+              <span :class="getCategoryTagType(tracker)" />
+              {{ $t(`Issue.${tracker}`) }}
+            </template>
+            <template v-else>{{ $t('Issue.Issue') }}</template> #{{ issueId }} - <IssueTitle v-model="form.subject" />
+            <span class="text-body-1 mr-3">
+              {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+            </span>
+          </el-col>
+        </el-row>
+        <el-col v-show="focusTab === 'editIssue'" :span="6" class="text-right">
+          <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
           <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
           <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        </template>
-        <template v-else>
-          <el-button size="medium" type="primary" @click="mode='edit'">{{ $t('general.Edit') }}</el-button>
-        </template>
-      </div>
-    </div>
-    <el-divider />
-    <el-tab-pane :label="$t('Issue.EditIssue')" name="editIssue">
-      <el-row :gutter="20">
-        <el-col v-if="mode==='edit'" :span="24" :md="12">
-          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
         </el-col>
-        <el-col v-else :span="24" :md="24">
-          <issue-view-tag ref="IssueView" :issue-id="issueId" :form.sync="view" :issue-file.sync="files" @isLoading="showLoading" />
-        </el-col>
-        <el-col :span="24">
-          <el-row :gutter="10" type="flex">
-            <el-col :span="editorCheckMode" class="mb-3">
-              <issue-notes-editor ref="IssueNotesEditor" :height="editorHeight" @change="onEditorChange" />
-            </el-col>
-            <el-col v-if="mode==='view'" :span="2">
-              <el-button size="medium" type="primary" style="width:100%; height:100%;" @click="handleSaveComment">
-                {{ $t('general.Save') }}
-              </el-button>
-            </el-col>
-          </el-row>
-          <el-row :gutter="10">
-            <el-col :span="24">
-              <issue-file-uploader ref="IssueFileUploader" />
-            </el-col>
-            <el-col v-if="mode==='view'" :span="24" class="mb-3">
-              <issue-notes-dialog :height="dialogHeight" :data="journals" />
-            </el-col>
-          </el-row>
-        </el-col>
-        <!--        <el-col v-if="mode==='view'" :span="24" :md="12">-->
-        <!--          <issue-view ref="IssueView" :issue-id="issueId" :form.sync="view" @isLoading="showLoading" />-->
-        <!--          <h2>Attachment</h2>-->
-        <!--          <el-divider />-->
-        <!--          <issue-files :issue-file.sync="files" />-->
-        <!--        </el-col>-->
       </el-row>
-    </el-tab-pane>
-    <el-tab-pane :label="$t('Issue.Notes')" name="issueNotes">
-      <issue-notes :issue-notes="journals" />
-    </el-tab-pane>
-    <el-tab-pane :label="$t('Issue.Files')" name="issueFiles">
-      <issue-files :issue-file.sync="files" />
-    </el-tab-pane>
-  </el-tabs>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="24" :md="16">
+        <el-col :span="24">
+          <IssueToolbar />
+        </el-col>
+        <el-row :gutter="10" class="issueHeight">
+          <el-col :span="24" class="mb-3">
+            <issue-description v-model="form.description" />
+          </el-col>
+          <el-col :span="24" class="mb-3">
+            <issue-notes-editor ref="IssueNotesEditor" :height="editorHeight" @change="onEditorChange" />
+          </el-col>
+          <el-col :span="24">
+            <issue-file-uploader ref="IssueFileUploader" />
+          </el-col>
+          <el-col :span="24">
+            <issue-notes-dialog :height="dialogHeight" :data="journals" />
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="24" :md="8" class="issueHeight">
+        <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
+      </el-col>
+    </el-row>
+  </el-card>
+  <!--  <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">-->
+  <!--    <div class="d-flex justify-space-between mb-2">-->
+  <!--      <div class="d-flex align-end">-->
+  <!--        <span class="text-h5 mr-3">-->
+  <!--          <template v-if="tracker">-->
+  <!--            <span :class="getCategoryTagType(tracker)" />-->
+  <!--            {{ $t(`Issue.${tracker}`) }}-->
+  <!--          </template>-->
+  <!--          <template v-else>{{ $t('Issue.Issue') }}</template> #{{ issueId }} - {{ issueSubject }}</span>-->
+  <!--        <div class="text-body-1 mr-3">-->
+  <!--          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}-->
+  <!--        </div>-->
+  <!--        <el-link :href="issue_link" target="_blank" type="primary" :underline="false">-->
+  <!--          <i class="el-icon-link" /> Redmine-->
+  <!--        </el-link>-->
+  <!--      </div>-->
+  <!--      <div v-show="focusTab === 'editIssue'">-->
+  <!--        <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>-->
+  <!--        <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>-->
+  <!--        <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--    <el-divider />-->
+  <!--    <el-tab-pane :label="$t('Issue.EditIssue')" name="editIssue">-->
+  <!--    </el-tab-pane>-->
+  <!--    <el-tab-pane :label="$t('Issue.Notes')" name="issueNotes">-->
+  <!--      <issue-notes :issue-notes="journals" />-->
+  <!--    </el-tab-pane>-->
+  <!--    <el-tab-pane :label="$t('Issue.Files')" name="issueFiles">-->
+  <!--      <issue-files :issue-file.sync="files" />-->
+  <!--    </el-tab-pane>-->
+  <!--  </el-tabs>-->
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
 import {
-  IssueNotes,
-  IssueFiles,
   IssueForm,
-  IssueView,
-  IssueViewTag,
   IssueNotesDialog,
   IssueNotesEditor,
-  IssueFileUploader
+  IssueFileUploader,
+  IssueDescription,
+  IssueTitle,
+  IssueToolbar
 } from './components'
 import dayjs from 'dayjs'
 
 export default {
   name: 'ProjectIssueDetail',
   components: {
-    IssueNotes,
-    IssueFiles,
+    IssueTitle,
+    IssueDescription,
     IssueForm,
-    IssueView,
-    IssueViewTag,
     IssueNotesDialog,
     IssueNotesEditor,
-    IssueFileUploader
+    IssueFileUploader,
+    IssueToolbar
   },
   data() {
     return {
@@ -401,7 +407,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@import 'src/styles/variables.scss';
+
+.issueHeight {
+  height: calc(95vh - 50px - 81px - 40px - 32px);
+  overflow-y: auto;
+}
 
 .point {
   width: 10px;
@@ -409,19 +420,24 @@ export default {
   border-radius: 50%;
   margin-right: 5px;
   display: inline-block;
+
   &.feature {
     background: $feature;
   }
+
   &.document {
     background: $document;
   }
+
   &.bug {
     background: $bug;
   }
+
   &.research {
     background: $research;
   }
 }
+
 .el-tag {
   &--secondary {
     background-color: $secondary;
