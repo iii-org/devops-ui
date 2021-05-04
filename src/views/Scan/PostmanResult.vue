@@ -96,7 +96,7 @@ export default {
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
-      this.$router.push({ name: target, params: { id } })
+      this.$router.push({ name: target, params: { id }})
     }
   }
 }

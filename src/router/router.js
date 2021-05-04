@@ -382,20 +382,20 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/test',
+    path: '/scan',
     component: Layout,
-    name: 'test',
+    name: 'scan',
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
       roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
     },
-    redirect: '/test/postman-result',
+    redirect: '/scan/postman-result',
     children: [
       {
         path: 'postman-result',
         name: 'postman-result',
-        component: () => import('@/views/PostmanResult'),
+        component: () => import('@/views/Scan/PostmanResult'),
         meta: {
           title: 'postman',
           roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
@@ -406,7 +406,7 @@ export const asyncRoutes = [
             path: 'devops/:id',
             name: 'devops-test-case',
             hidden: true,
-            component: () => import('@/views/TestCaseDevOps'),
+            component: () => import('@/views/Scan/TestCaseDevOps'),
             meta: {
               title: 'fromDevops',
               roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
@@ -417,7 +417,7 @@ export const asyncRoutes = [
             path: 'postman/:id',
             name: 'postman-test-case',
             hidden: true,
-            component: () => import('@/views/TestCasePostman'),
+            component: () => import('@/views/Scan/TestCasePostman'),
             meta: {
               title: 'fromCollection',
               roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
@@ -429,31 +429,31 @@ export const asyncRoutes = [
       {
         path: 'checkmarx',
         name: 'checkmarx',
-        component: () => import('@/views/ScanCheckmarx'),
+        component: () => import('@/views/Scan/Checkmarx'),
         meta: { title: 'checkMarx', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'web-inspect',
         name: 'web-inspect',
-        component: () => import('@/views/ScanWebInspect'),
+        component: () => import('@/views/Scan/WebInspect'),
         meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'zap',
         name: 'zap',
-        component: () => import('@/views/ScanZap'),
+        component: () => import('@/views/Scan/Zap'),
         meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'sideex',
         name: 'sideex',
-        component: () => import('@/views/ScanSideex'),
+        component: () => import('@/views/Scan/Sideex'),
         meta: { title: 'sideex', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'sonarqube',
         name: 'sonarqube',
-        component: () => import('@/views/ScanSonarQube'),
+        component: () => import('@/views/Scan/SonarQube'),
         meta: { title: 'sonarQube', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       }
     ]

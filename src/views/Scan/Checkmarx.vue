@@ -1,3 +1,70 @@
+<template>
+  <el-row class="app-container">
+    <div class="d-flex justify-space-between">
+      <project-list-selector />
+      <el-input
+        v-model="searchData"
+        :placeholder="$t('CheckMarx.SearchScanId')"
+        prefix-icon="el-icon-search"
+        style="width: 250px"
+      />
+    </div>
+    <el-divider />
+    <el-table
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      :data="pagedData"
+      height="100%"
+    >
+      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
+      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
+      <el-table-column align="center" :label="$t('Git.Commit')" width="100">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="scope.row.commit_url"
+          >
+            {{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" width="100" />
+      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
+      <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
+      <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
+      <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
+      <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
+      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :disabled="!scope.row.report_ready"
+            :underline="false"
+            icon="el-icon-download"
+            @click="fetchTestReport(scope.row.report_id, scope.row.scan_id)"
+          />
+        </template>
+      </el-table-column>
+    </el-table>
+    <pagination
+      :total="filteredData.length"
+      :page="listQuery.page"
+      :limit="listQuery.limit"
+      :page-sizes="[listQuery.limit]"
+      :layout="'total, prev, pager, next'"
+      @pagination="onPagination"
+    />
+  </el-row>
+</template>
+
 <script>
 import { mapGetters } from 'vuex'
 import {
@@ -15,9 +82,11 @@ export default {
   name: 'ScanCheckmarx',
   components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    searchKey: 'scan_id'
-  }),
+  data() {
+    return {
+      searchKey: 'scan_id'
+    }
+  },
   computed: {
     ...mapGetters(['userRole'])
   },
@@ -105,70 +174,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <div class="d-flex justify-space-between">
-      <project-list-selector />
-      <el-input
-        v-model="searchData"
-        :placeholder="$t('CheckMarx.SearchScanId')"
-        prefix-icon="el-icon-search"
-        style="width: 250px"
-      />
-    </div>
-    <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      :data="pagedData"
-      height="100%"
-    >
-      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
-      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" width="100">
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :underline="false"
-            :href="scope.row.commit_url"
-          >
-            {{ scope.row.commit_id }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" width="100" />
-      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-      <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
-      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :disabled="!scope.row.report_ready"
-            :underline="false"
-            icon="el-icon-download"
-            @click="fetchTestReport(scope.row.report_id, scope.row.scan_id)"
-          />
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-  </div>
-</template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <el-row class="app-container">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
@@ -81,7 +81,7 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-  </div>
+  </el-row>
 </template>
 
 <script>
@@ -93,10 +93,12 @@ export default {
   name: 'ScanWebInspect',
   components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    confirmLoading: false,
-    searchKey: 'commit_id'
-  }),
+  data() {
+    return {
+      confirmLoading: false,
+      searchKey: 'commit_id'
+    }
+  },
   watch: {
     listData: function() {
       this.updateWebInspectScans()

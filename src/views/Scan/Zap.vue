@@ -1,74 +1,23 @@
-<script>
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { getZapScans } from '@/api/zap'
-
-export default {
-  name: 'ScanZap',
-  components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
-  data: () => ({
-    confirmLoading: false,
-    searchKey: 'commit_id'
-  }),
-  methods: {
-    async fetchData() {
-      const res = await getZapScans(this.selectedProjectId)
-      return this.handleScans(res.data)
-    },
-    handleScans(scans) {
-      const sortedScans = scans.map(scan => {
-        if (scan.result === 'None') scan.result = {}
-        return scan
-      })
-      sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
-      return sortedScans
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Finished':
-          return 'success'
-        case 'Scanning':
-          return 'slow'
-        case 'Aborted':
-          return 'info'
-        case 'Failed':
-          return 'danger'
-        default:
-          return 'slow'
-      }
-    },
-    durationText(start, end) {
-      if (end == null) {
-        return ''
-      }
-      const s = this.$dayjs.utc(start).unix()
-      const e = this.$dayjs.utc(end).unix()
-      return this.$dayjs.duration(e - s, 'seconds').humanize()
-    },
-    showFullLog(log) {
-      const wnd = window.open('about:blank', '', '_blank')
-      wnd.document.write(log)
-    }
-  }
-}
-</script>
-
 <template>
-  <div class="app-container">
+  <el-row class="app-container">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
         v-model="searchData"
-        class="mr-3"
         :placeholder="$t('Git.searchCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row :data="pagedData" height="100%"
+    <el-table
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      :data="pagedData"
+      height="100%"
     >
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
       <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id">
@@ -86,7 +35,12 @@ export default {
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" min-width="130">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status" class="el-tag--circle" :type="getStatusTagType(scope.row.status)" effect="dark">
+          <el-tag
+            v-if="scope.row.status"
+            class="el-tag--circle"
+            :type="getStatusTagType(scope.row.status)"
+            effect="dark"
+          >
             {{ scope.row.status }}
           </el-tag>
         </template>
@@ -143,8 +97,63 @@ export default {
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-  </div>
+  </el-row>
 </template>
 
-<style scoped>
-</style>
+<script>
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { getZapScans } from '@/api/zap'
+
+export default {
+  name: 'ScanZap',
+  components: { ElTableColumnTime },
+  mixins: [MixinElTableWithAProject],
+  data() {
+    return {
+      confirmLoading: false,
+      searchKey: 'commit_id'
+    }
+  },
+  methods: {
+    async fetchData() {
+      const res = await getZapScans(this.selectedProjectId)
+      return this.handleScans(res.data)
+    },
+    handleScans(scans) {
+      const sortedScans = scans.map(scan => {
+        if (scan.result === 'None') scan.result = {}
+        return scan
+      })
+      sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
+      return sortedScans
+    },
+    getStatusTagType(status) {
+      switch (status) {
+        case 'Finished':
+          return 'success'
+        case 'Scanning':
+          return 'slow'
+        case 'Aborted':
+          return 'info'
+        case 'Failed':
+          return 'danger'
+        default:
+          return 'slow'
+      }
+    },
+    durationText(start, end) {
+      if (end == null) {
+        return ''
+      }
+      const s = this.$dayjs.utc(start).unix()
+      const e = this.$dayjs.utc(end).unix()
+      return this.$dayjs.duration(e - s, 'seconds').humanize()
+    },
+    showFullLog(log) {
+      const wnd = window.open('about:blank', '', '_blank')
+      wnd.document.write(log)
+    }
+  }
+}
+</script>

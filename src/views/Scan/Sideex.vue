@@ -1,10 +1,9 @@
 <template>
-  <div class="app-container">
+  <el-row class="app-container">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
         v-model="searchData"
-        class="mr-3"
         :placeholder="$t('Git.searchCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
@@ -15,8 +14,14 @@
       <span>{{ $t('Sideex.promptMessage') }}</span>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" border fit
-              highlight-current-row :data="pagedData" height="100%"
+    <el-table
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      border
+      fit
+      highlight-current-row
+      :data="pagedData"
+      height="100%"
     >
       <el-table-column align="center" :label="$t('Log.testId')" prop="id" />
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
@@ -35,7 +40,12 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" min-width="130">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status" class="el-tag--circle" :type="getStatusTagType(scope.row.status)" effect="dark">
+          <el-tag
+            v-if="scope.row.status"
+            class="el-tag--circle"
+            :type="getStatusTagType(scope.row.status)"
+            effect="dark"
+          >
             {{ scope.row.status }}
           </el-tag>
         </template>
@@ -84,7 +94,7 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-  </div>
+  </el-row>
 </template>
 
 <script>
@@ -96,10 +106,12 @@ export default {
   name: 'ScanSideex',
   components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    confirmLoading: false,
-    searchKey: 'commit_id'
-  }),
+  data() {
+    return {
+      confirmLoading: false,
+      searchKey: 'commit_id'
+    }
+  },
   methods: {
     async fetchData() {
       const res = await getSideexScans(this.selectedProjectId)
@@ -146,6 +158,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>
