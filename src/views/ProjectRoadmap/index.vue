@@ -27,16 +27,16 @@
                       <template slot-scope="scope">
                         <div class="d-flex justify-space-between">
                           <el-tag
-                            v-if="scope.row.issue.priority.name"
-                            :type="getPriorityType(scope.row.issue.priority.name)"
+                            v-if="scope.row.priorityName"
+                            :type="getPriorityType(scope.row.priorityName)"
                             size="medium"
                             effect="dark"
                           >
-                            {{ scope.row.issue.priority.name }}
+                            {{ scope.row.priorityName }}
                           </el-tag>
                           <div>
-                            <span class="font-weight-bold mr-2">[{{ scope.row.issue.tracker.name }}]</span>
-                            <span>{{ scope.row.issue_name }} </span>
+                            <span class="font-weight-bold mr-2">[{{ scope.row.trackerName }}]</span>
+                            <span>{{ scope.row.name }} </span>
                           </div>
                         </div>
                       </template>
@@ -69,6 +69,7 @@ import {
 } from '@/api/projects'
 
 import WorkloadCard from '@/views/Project/Overview/components/WorkloadCard'
+import Issue from '@/data/issue'
 
 export default {
   name: 'ProjectRoadmap',
@@ -144,7 +145,11 @@ export default {
       const resProjectIssue = await getProjectIssueListByVersion(this.selectedProjectId, {
         fixed_version_id: versionId
       })
-      this.$set(this.workList, versionId, resProjectIssue.data)
+      const issues = []
+      for (const issue_data of resProjectIssue.data) {
+        issues.push(new Issue(issue_data))
+      }
+      this.$set(this.workList, versionId, issues)
 
       const resStatistics = await getProjectIssueStatistics(this.selectedProjectId, { fixed_version_id: versionId })
       const idx = this.versionList.findIndex(item => item.id === versionId)
