@@ -69,7 +69,7 @@
         <el-table-column :label="$t('Issue.id')" prop="id" align="center" width="75" />
         <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
         <el-table-column :label="$t('Project.Version')" align="center" prop="versionName" />
-        <el-table-column :label="$t('general.Type')" align="center" prop="category" />
+        <el-table-column :label="$t('general.Type')" align="center" prop="trackerName" />
         <el-table-column :label="$t('general.Status')" align="center" prop="statusName" />
         <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigneeName" />
         <el-table-column :label="$t('general.Actions')" align="center">

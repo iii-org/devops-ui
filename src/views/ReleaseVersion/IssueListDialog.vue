@@ -58,7 +58,7 @@ export default {
       <el-table-column :label="$t('Issue.id')" align="center" prop="id" width="75" />
       <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
       <el-table-column :label="$t('Project.Version')" align="center" prop="versionName" />
-      <el-table-column :label="$t('general.Type')" align="center" prop="category" />
+      <el-table-column :label="$t('general.Type')" align="center" prop="trackerName" />
     </el-table>
     <pagination
       :total="filteredData.length"
