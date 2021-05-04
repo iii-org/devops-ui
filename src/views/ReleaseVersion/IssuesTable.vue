@@ -89,7 +89,7 @@
               />
             </el-tooltip>
             <el-tooltip
-              v-if="scope.row.isOpen()"
+              v-if="!scope.row.isClosed"
               effect="dark"
               :content="$t('general.Close')"
               placement="bottom-start"
@@ -239,7 +239,7 @@ export default {
       this.closedIssueCount = 0
       this.openIssueCount = 0
       this.listData = partialIssues.filter(issue => {
-        if (!issue.isOpen()) {
+        if (issue.isClosed) {
           this.closedIssueCount++
           return this.showClosed
         } else {

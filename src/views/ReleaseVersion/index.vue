@@ -148,7 +148,7 @@ export default {
         for (const issueJson of res.data) {
           const issue = new Issue(issueJson)
           this.allIssues.push(issue)
-          if (issue.isOpen()) {
+          if (!issue.isClosed) {
             this.hasOpenIssue = true
           }
         }

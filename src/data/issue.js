@@ -4,44 +4,40 @@ const CLOSED_STATUS_ID = 6
 const CLOSED_STATUS_NAME = 'Closed'
 
 function Issue(issue) {
-  this.data = issue
-
   // Flatten the data for performance since it's not necessary to be nested
-  this.id = this.data.id
-  this.name = this.data.name
-  this.description = this.data.description
-  this.updatedOn = this.data.updated_on
-  this.startDate = this.data.start_date
-  this.dueDate = this.data.due_date
-  this.parentId = this.data.parent_id
-  this.issueLink = this.data.issue_link
+  this.id = issue.id
+  this.name = issue.name
+  this.description = issue.description
+  this.updatedOn = issue.updated_on
+  this.startDate = issue.start_date
+  this.dueDate = issue.due_date
+  this.parentId = issue.parent_id
+  this.issueLink = issue.issue_link
 
-  this.projectId = this.data.project.id
-  this.projectName = this.data.project.name
-  this.projectDisplay = this.data.project.display
-  this.trackerId = this.data.tracker.id
-  this.trackerName = this.data.tracker.name
-  this.priorityId = this.data.priority.id
-  this.priorityName = this.data.priority.name
-  this.statusId = this.data.status.id
-  this.statusName = this.data.status.name
-  this.versionId = this.data.fixed_version.id
-  this.versionName = this.data.fixed_version.name
-  this.assigneeId = this.data.assigned_to.id
-  this.assigneeName = this.data.assigned_to.name
-  this.assigneeLogin = this.data.assigned_to.login
+  this.projectId = issue.project.id
+  this.projectName = issue.project.name
+  this.projectDisplay = issue.project.display
+  this.trackerId = issue.tracker.id
+  this.trackerName = issue.tracker.name
+  this.priorityId = issue.priority.id
+  this.priorityName = issue.priority.name
+  this.statusId = issue.status.id
+  this.statusName = issue.status.name
+  this.isClosed = issue.is_closed
+  this.versionId = issue.fixed_version.id
+  this.versionName = issue.fixed_version.name
+  this.assigneeId = issue.assigned_to.id
+  this.assigneeName = issue.assigned_to.name
+  this.assigneeLogin = issue.assigned_to.login
 
-  this.isOpen = function() {
-    return this.data.status.id !== CLOSED_STATUS_ID
-  }
   this.close = async function() {
     await updateIssue(this.id, { status_id: CLOSED_STATUS_ID })
-    this.setStatus(CLOSED_STATUS_ID, CLOSED_STATUS_NAME)
+    this.setStatus(CLOSED_STATUS_ID, CLOSED_STATUS_NAME, true)
   }
-  this.setStatus = function(id, name) {
-    this.data.status.id = id
-    this.data.status.name = name
-    this.statusName = this.data.status.name // For reactive
+  this.setStatus = function(id, name, isClosed) {
+    this.statusId = id
+    this.statusName = name
+    this.isClosed = isClosed
   }
 }
 
