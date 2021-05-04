@@ -12,7 +12,7 @@ export default {
     setData(listData, category) {
       if (category) {
         listData = listData.filter(item => {
-          return item.category === category
+          return item.trackerName === category
         })
       }
       this.listData = listData

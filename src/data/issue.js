@@ -6,16 +6,33 @@ const CLOSED_STATUS_NAME = 'Closed'
 function Issue(issue) {
   this.data = issue
 
-  // Set props for vue.js usage, only this level is reactive
+  // Flatten the data for performance since it's not necessary to be nested
   this.id = this.data.id
   this.name = this.data.name
-  this.versionName = this.data.fixed_version.name
-  this.category = this.data.tracker.name
+  this.description = this.data.description
+  this.updatedOn = this.data.updated_on
+  this.startDate = this.data.start_date
+  this.dueDate = this.data.due_date
+  this.parentId = this.data.parent_id
+  this.issueLink = this.data.issue_link
+
+  this.projectId = this.data.project.id
+  this.projectName = this.data.project.name
+  this.projectDisplay = this.data.project.display
+  this.trackerId = this.data.tracker.id
+  this.trackerName = this.data.tracker.name
+  this.priorityId = this.data.priority.id
+  this.priorityName = this.data.priority.name
+  this.statusId = this.data.status.id
   this.statusName = this.data.status.name
+  this.versionId = this.data.fixed_version.id
+  this.versionName = this.data.fixed_version.name
+  this.assigneeId = this.data.assigned_to.id
   this.assigneeName = this.data.assigned_to.name
+  this.assigneeLogin = this.data.assigned_to.login
 
   this.isOpen = function() {
-    return this.data.status.id !== 6
+    return this.data.status.id !== CLOSED_STATUS_ID
   }
   this.close = async function() {
     await updateIssue(this.id, { status_id: CLOSED_STATUS_ID })

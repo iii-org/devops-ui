@@ -216,7 +216,7 @@ export default {
       this.categories = []
       this.issuesByCategory = {}
       for (const issue of issues) {
-        const cat = issue.category
+        const cat = issue.trackerName
         if (this.categories.indexOf(cat) < 0) {
           this.categories.push(cat)
         }
@@ -234,7 +234,7 @@ export default {
         partialIssues = this.issues
       } else {
         partialIssues = this.issues.filter(
-          item => item.category === this.selectedCategory)
+          item => item.trackerName === this.selectedCategory)
       }
       this.closedIssueCount = 0
       this.openIssueCount = 0
