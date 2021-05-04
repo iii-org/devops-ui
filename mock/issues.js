@@ -62,18 +62,6 @@ for (let i = 0; i < issue_status_name.length; i++) {
 
 module.exports = [
   {
-    url: '/issues_by_user/[A-Za-z0-9]',
-    type: 'get',
-    response: config => {
-      const issue_list = mock_issue_list.data
-      return {
-        message: 'success',
-        total: issue_list.length,
-        data: issue_list
-      }
-    }
-  },
-  {
     url: '/issues/[A-Za-z0-9]',
     type: 'get',
     response: config => {
