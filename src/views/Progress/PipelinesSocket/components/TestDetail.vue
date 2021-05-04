@@ -56,7 +56,6 @@
         </el-card>
       </el-tab-pane>
     </el-tabs>
-
     <span slot="footer">
       <el-button @click="handleClose">{{ $t('general.Close') }}</el-button>
     </span>
@@ -66,7 +65,9 @@
 <script>
 import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
+import { getPipelinesConfig } from '@/api/cicd'
 
+// const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
 const socket = io('/rancher/websocket/logs', {
   reconnectionAttempts: 5
 })
@@ -74,35 +75,29 @@ const socket = io('/rancher/websocket/logs', {
 export default {
   name: 'TestDetailSocket',
   props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false
-    },
-    theData: {
-      type: Array,
-      default: () => []
-    },
-    pipelinesExecRun: {
+    pipelineId: {
       type: Number,
       default: 0
     }
   },
   data() {
     return {
+      dialogVisible: false,
       stages: [],
       activeStage: '',
-      sid: ''
+      sid: '',
+      pipelinesExecRun: 0,
+      timer: null
     }
   },
   computed: {
     ...mapGetters(['selectedProject'])
   },
   watch: {
-    theData: {
+    pipelineId: {
       handler(val) {
-        this.stages = val.map(item => item)
-        this.activeStage = `1 ${this.stages[0].name}`
-        this.handleClick({ index: 0 })
+        this.pipelinesExecRun = val
+        this.fetchStages()
       }
     }
   },
@@ -113,9 +108,13 @@ export default {
     })
     socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
   },
+  beforeDestroy() {
+    this.clearTimer()
+  },
   methods: {
     handleClose() {
-      this.$emit('test-detail-visible', false)
+      this.dialogVisible = false
+      this.clearTimer()
     },
     getStateTagType(state) {
       switch (state) {
@@ -155,12 +154,15 @@ export default {
         sid: this.sid
       }
       socket.emit('get_pipe_log', emitObj)
-      // console.log('EMIT get_pipe_log ===>', emitObj)
+      console.log('EMIT get_pipe_log ===>', emitObj)
       socket.on('pipeline_log', sioEvt => {
-        // console.log('EVENT pipeline_log ===>', sioEvt)
+        console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         if (data === '') {
           this.stages[stage_index - 1].isLoading = false
+          // const stageIdx = this.index + 1
+          // const stageNameIdx = this.index - 1
+          // this.activeStage = `${stageIdx} ${this.stages[stageNameIdx].name}`
           return
         }
         const isHistoryMessage =
@@ -174,7 +176,48 @@ export default {
           ].message.concat(data)
         }
       })
-      socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
+      // socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
+    },
+    async fetchStages() {
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        this.stages = res.map(stage => ({
+          stage_id: stage.stage_id,
+          name: stage.name,
+          state: stage.state,
+          isLoading: true,
+          steps: stage.steps.map(step => ({
+            step_id: step.step_id,
+            state: step.state,
+            message: 'Loading...'
+          }))
+        }))
+        this.dialogVisible = true
+        this.activeStage = `1 ${this.stages[0].name}`
+        this.handleClick({ index: 0 })
+        this.setTimer()
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async updateStages() {
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        res.forEach((data, idx) => {
+          this.stages[idx].state = data.state
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    setTimer() {
+      this.timer = setInterval(() => this.updateStages(), 5000)
+    },
+    clearTimer() {
+      clearInterval(this.timer)
+      this.timer = null
     }
   }
 }

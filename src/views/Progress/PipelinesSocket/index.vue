@@ -4,9 +4,9 @@
       <project-list-selector />
       <el-input
         v-model="searchData"
-        :placeholder="$t('ProgressPipelines.SearchCommitMessage')"
         style="width: 250px"
         prefix-icon="el-icon-search"
+        :placeholder="$t('ProgressPipelines.SearchCommitMessage')"
       />
     </div>
     <el-divider />
@@ -71,7 +71,7 @@
       <el-table-column-time prop="last_test_time" />
       <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" icon="el-icon-document" plain @click="updateDetails(scope.row.id)">
+          <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">
             {{ $t('general.Detail') }}
           </el-button>
           <el-button
@@ -105,17 +105,12 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <test-detail
-      :dialog-visible.sync="testDetailVisible"
-      :the-data="detailData"
-      :pipelines-exec-run="pipelinesExecRun"
-      @test-detail-visible="emitTestDetailVisible"
-    />
+    <test-detail ref="testDetail" :pipeline-id="focusPipelineId" />
   </el-row>
 </template>
 
 <script>
-import { changePipelineByAction, getPipelines, getPipelinesConfig } from '@/api/cicd'
+import { changePipelineByAction, getPipelines } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -127,15 +122,11 @@ export default {
   data() {
     return {
       isLoading: false,
-      detailData: [],
-      testDetailVisible: false,
-      addDocumentDialogVisible: false,
       rowHeight: 90,
       searchKey: 'commit_message',
-      pipelinesExecRun: 0,
       lastUpdateTime: '',
       timer: null,
-      logMessage: []
+      focusPipelineId: 0
     }
   },
   mounted() {
@@ -179,9 +170,6 @@ export default {
         type: 'warning'
       })
     },
-    emitTestDetailVisible(visible) {
-      this.testDetailVisible = visible
-    },
     async onActionClick(id, action) {
       const { repository_id } = this.selectedProject
       const data = {
@@ -222,26 +210,8 @@ export default {
           return 'dark'
       }
     },
-    // onDetailsClick(id) {
-    //   this.timer = setInterval(() => this.updateDetails(id), 5000)
-    // },
-    async updateDetails(id) {
-      this.isLoading = true
-      const { repository_id } = this.selectedProject
-      try {
-        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: id })
-        this.pipelinesExecRun = id
-        this.detailData = res.map(data => {
-          const stage = data
-          stage['isLoading'] = true
-          stage.steps.forEach(step => (step['message'] = 'Loading...'))
-          return stage
-        })
-        this.emitTestDetailVisible(true)
-      } catch (error) {
-        console.error(error)
-      }
-      this.isLoading = false
+    onDetailsClick(id) {
+      this.focusPipelineId = id
     }
   }
 }
