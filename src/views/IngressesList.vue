@@ -1,32 +1,13 @@
-<script>
-import { getIngressList } from '@/api/kubernetes'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-export default {
-  name: 'IngressList',
-  components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
-  methods: {
-    async fetchData() {
-      return (await getIngressList(this.selectedProjectId)).data
-    }
-  }
-}
-</script>
-
 <template>
   <div class="table-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        v-model="keyword"
         :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        style="width: 250px"
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
     <el-table
@@ -35,8 +16,6 @@ export default {
       :element-loading-text="$t('Loading')"
       border
       fit
-      highlight-current-row
-      height="100%"
     >
       <el-table-column :label="$t('general.Name')" align="center" prop="name" width="200" show-overflow-tooltip />
       <el-table-column label="hostname" align="center" prop="hostname" min-width="120" show-overflow-tooltip />
@@ -70,3 +49,20 @@ export default {
     />
   </div>
 </template>
+
+<script>
+import { getIngressList } from '@/api/kubernetes'
+import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+export default {
+  name: 'IngressList',
+  components: { ElTableColumnTime },
+  mixins: [MixinBasicTableWithProject],
+  methods: {
+    async fetchData() {
+      return (await getIngressList(this.selectedProjectId)).data
+    }
+  }
+}
+</script>

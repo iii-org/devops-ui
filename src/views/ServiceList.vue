@@ -1,34 +1,9 @@
-<script>
-import { deleteService, getServiceList } from '@/api/kubernetes'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-
-export default {
-  name: 'ServiceList',
-  mixins: [MixinElTableWithAProject],
-  methods: {
-    async fetchData() {
-      this.listLoading = true
-      const res = await getServiceList(this.selectedProjectId)
-      return res.data
-    },
-    async handleDelete(pId, serviceName) {
-      try {
-        await deleteService(pId, serviceName)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }
-}
-</script>
-
 <template>
   <div class="table-container">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         :placeholder="$t('general.SearchName')"
         style="width: 250px"
         prefix-icon="el-icon-search"
@@ -39,10 +14,8 @@ export default {
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       fit
-      highlight-current-row
-      height="100%"
+      border
     >
       <el-table-column :label="$t('general.Name')" align="center" prop="name" min-width="200" />
       <el-table-column :label="$t('general.Actions')" align="center" width="180">
@@ -73,3 +46,28 @@ export default {
     />
   </div>
 </template>
+
+<script>
+import { deleteService, getServiceList } from '@/api/kubernetes'
+import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+
+export default {
+  name: 'ServiceList',
+  mixins: [MixinBasicTableWithProject],
+  methods: {
+    async fetchData() {
+      this.listLoading = true
+      const res = await getServiceList(this.selectedProjectId)
+      return res.data
+    },
+    async handleDelete(pId, serviceName) {
+      try {
+        await deleteService(pId, serviceName)
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+}
+</script>

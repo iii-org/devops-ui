@@ -1,108 +1,16 @@
-<script>
-import { deleteSecret, getSecretList, updateSecretList } from '@/api/kubernetes'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-
-const formTemplate = () => ({
-  name: '',
-  secrets: []
-})
-
-export default {
-  name: 'SecretList',
-  mixins: [MixinElTableWithAProject],
-  data: () => ({
-    editDialogVisible: false,
-    form: formTemplate(),
-    formRules: {
-      name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
-    },
-    isUpdating: false
-  }),
-  methods: {
-    async fetchData() {
-      const res = await getSecretList(this.selectedProjectId)
-      return res.data.map(secret => ({
-        name: secret.name,
-        keys: Object.keys(secret.data),
-        secrets: Object.entries(secret.data).map(item => ({
-          key: item[0],
-          value: item[1],
-          isDisabled: secret.is_iii
-        }))
-      }))
-    },
-    showEditDialog(secretName, secrets) {
-      this.editDialogVisible = true
-      this.form.name = secretName
-      this.form.secrets = secrets.map(item => item)
-    },
-    closeEditDialog() {
-      this.editDialogVisible = false
-      this.$nextTick(() => {
-        this.$refs['form'].resetFields()
-        this.form = formTemplate()
-      })
-    },
-    async editSecretList() {
-      const sendData = {
-        secrets: this.form.secrets.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
-      }
-      this.isUpdating = true
-      const res = await updateSecretList(this.selectedProjectId, this.form.name, sendData)
-      this.isUpdating = false
-      this.closeEditDialog()
-      this.loadData()
-    },
-    async handleDelete(pId, secretName) {
-      this.listLoading = true
-      try {
-        await deleteSecret(pId, secretName)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
-    addItem() {
-      this.form.secrets.push({
-        key: '',
-        value: '',
-        isDisabled: false
-      })
-    },
-    removeItem(item) {
-      const index = this.form.secrets.indexOf(item)
-      if (index !== -1) {
-        this.form.secrets.splice(index, 1)
-      }
-    }
-  }
-}
-</script>
-
 <template>
   <div class="table-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        v-model="keyword"
         :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        prefix-icon="el-icon-search"
+        style="width: 250px"
+      />
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      height="100%"
-    >
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
         <template slot-scope="scope">
           <div class="font-weight-bold">{{ scope.row.name }}</div>
@@ -222,3 +130,87 @@ export default {
     </el-dialog>
   </div>
 </template>
+
+<script>
+import { deleteSecret, getSecretList, updateSecretList } from '@/api/kubernetes'
+import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+
+const formTemplate = () => ({
+  name: '',
+  secrets: []
+})
+
+export default {
+  name: 'SecretList',
+  mixins: [MixinBasicTableWithProject],
+  data() {
+    return {
+      editDialogVisible: false,
+      form: formTemplate(),
+      formRules: {
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
+      },
+      isUpdating: false
+    }
+  },
+  methods: {
+    async fetchData() {
+      const res = await getSecretList(this.selectedProjectId)
+      return res.data.map(secret => ({
+        name: secret.name,
+        keys: Object.keys(secret.data),
+        secrets: Object.entries(secret.data).map(item => ({
+          key: item[0],
+          value: item[1],
+          isDisabled: secret.is_iii
+        }))
+      }))
+    },
+    showEditDialog(secretName, secrets) {
+      this.editDialogVisible = true
+      this.form.name = secretName
+      this.form.secrets = secrets.map(item => item)
+    },
+    closeEditDialog() {
+      this.editDialogVisible = false
+      this.$nextTick(() => {
+        this.$refs['form'].resetFields()
+        this.form = formTemplate()
+      })
+    },
+    async editSecretList() {
+      const sendData = {
+        secrets: this.form.secrets.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
+      }
+      this.isUpdating = true
+      const res = await updateSecretList(this.selectedProjectId, this.form.name, sendData)
+      this.isUpdating = false
+      this.closeEditDialog()
+      this.loadData()
+    },
+    async handleDelete(pId, secretName) {
+      this.listLoading = true
+      try {
+        await deleteSecret(pId, secretName)
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
+    addItem() {
+      this.form.secrets.push({
+        key: '',
+        value: '',
+        isDisabled: false
+      })
+    },
+    removeItem(item) {
+      const index = this.form.secrets.indexOf(item)
+      if (index !== -1) {
+        this.form.secrets.splice(index, 1)
+      }
+    }
+  }
+}
+</script>
