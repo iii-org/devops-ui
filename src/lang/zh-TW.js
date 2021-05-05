@@ -436,7 +436,7 @@ export default {
     IsEnable: '是否啟用',
     Disable: '停用',
     Enable: '啟用',
-    SearchAccount: '搜尋帳號',
+    SearchAccount: '搜尋帳號或名稱',
     Role: '角色',
     Source: '帳號來源',
     AD: 'Active Directory',

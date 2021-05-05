@@ -437,7 +437,7 @@ export default {
     IsEnable: 'Is Enable',
     Disable: 'Disable',
     Enable: 'Enable',
-    SearchAccount: 'Search Account',
+    SearchAccount: 'Search Account or Name',
     Role: 'Role',
     Source: 'Source',
     AD: 'Active Directory',
