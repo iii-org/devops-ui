@@ -76,6 +76,7 @@ import { addUser, updateUser } from '@/api/user'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'UserDialog',
   props: {
     dialogVisible: {
       type: Boolean,
@@ -292,6 +293,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 .el-dialog {
   display: flex;

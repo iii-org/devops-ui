@@ -8,17 +8,19 @@ import Pagination from '@/components/Pagination'
 
 export default {
   components: { Pagination },
-  data: () => ({
-    listData: [],
-    listLoading: true,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    rowHeight: 53, // If you can, detect the real thead cell height
-    searchKey: 'name',
-    searchData: ''
-  }),
+  data() {
+    return {
+      listData: [],
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      rowHeight: 53, // If you can, detect the real thead cell height
+      searchKey: 'name',
+      searchData: ''
+    }
+  },
   computed: {
     filteredData() {
       return this.listData.filter(data => {
@@ -78,7 +80,7 @@ export default {
         } else {
           this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / this.rowHeight)
           eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) %
-          this.rowHeight}px + 20px)`
+            this.rowHeight}px + 20px)`
         }
       })
     }
