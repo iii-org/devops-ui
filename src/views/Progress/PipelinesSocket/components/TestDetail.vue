@@ -67,8 +67,8 @@ import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 import { getPipelinesConfig } from '@/api/cicd'
 
-// const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
-const socket = io('/rancher/websocket/logs', {
+const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+  // const socket = io('/rancher/websocket/logs', {
   reconnectionAttempts: 5,
   transports: ['websocket']
 })
@@ -104,7 +104,7 @@ export default {
   },
   mounted() {
     socket.on('connect', () => {
-      // console.log('sio connected ===>', socket)
+      console.log('sio connected ===>', socket)
       this.sid = socket.id
     })
     socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
@@ -161,9 +161,10 @@ export default {
         const { stage_index, step_index, data } = sioEvt
         if (data === '') {
           this.stages[stage_index - 1].isLoading = false
-          const order = index + 2
-          const stageIdx = index + 1
-          if (index < this.stages.length - 1) this.changeFocusTab(order, stageIdx)
+          const order = stage_index + 1
+          const stageIdx = stage_index
+          console.log({ order, stageIdx })
+          if (stage_index < this.stages.length) this.changeFocusTab(order, stageIdx)
           return
         }
         const isHistoryMessage =
@@ -224,7 +225,8 @@ export default {
     clearTimer() {
       clearInterval(this.timer)
       this.timer = null
-    }
+    },
+    scrollToBottom() {}
   }
 }
 </script>
