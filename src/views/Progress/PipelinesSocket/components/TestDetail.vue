@@ -51,7 +51,7 @@
             }"
             shadow="never"
           >
-            <pre>{{ step.message }}</pre>
+            <pre ref="logMsg">{{ step.message }}</pre>
           </el-card>
         </el-card>
       </el-tab-pane>
@@ -67,9 +67,10 @@ import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 import { getPipelinesConfig } from '@/api/cicd'
 
-// const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
-const socket = io('/rancher/websocket/logs', {
-  reconnectionAttempts: 5
+const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+  // const socket = io('/rancher/websocket/logs', {
+  reconnectionAttempts: 5,
+  transports: ['websocket']
 })
 
 export default {
@@ -103,7 +104,7 @@ export default {
   },
   mounted() {
     socket.on('connect', () => {
-      console.log('sio connected ===>', socket)
+      // console.log('sio connected ===>', socket)
       this.sid = socket.id
     })
     socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
@@ -154,15 +155,15 @@ export default {
         sid: this.sid
       }
       socket.emit('get_pipe_log', emitObj)
-      console.log('EMIT get_pipe_log ===>', emitObj)
+      // console.log('EMIT get_pipe_log ===>', emitObj)
       socket.on('pipeline_log', sioEvt => {
-        console.log('EVENT pipeline_log ===>', sioEvt)
+        // console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         if (data === '') {
           this.stages[stage_index - 1].isLoading = false
-          // const stageIdx = this.index + 1
-          // const stageNameIdx = this.index - 1
-          // this.activeStage = `${stageIdx} ${this.stages[stageNameIdx].name}`
+          const order = index + 2
+          const stageIdx = index + 1
+          if (index < this.stages.length - 1) this.changeFocusTab(order, stageIdx)
           return
         }
         const isHistoryMessage =
@@ -194,12 +195,18 @@ export default {
           }))
         }))
         this.dialogVisible = true
-        this.activeStage = `1 ${this.stages[0].name}`
-        this.handleClick({ index: 0 })
+        this.changeFocusTab(1, 0)
         this.setTimer()
       } catch (error) {
         console.error(error)
       }
+    },
+    changeFocusTab(order, stageIdx) {
+      console.log('changeFocusTab', { order, stageIdx })
+      setTimeout(() => {
+        this.activeStage = `${order} ${this.stages[stageIdx].name}`
+        this.handleClick({ index: stageIdx })
+      }, 2000)
     },
     async updateStages() {
       const { repository_id } = this.selectedProject
