@@ -68,7 +68,7 @@ import { mapGetters } from 'vuex'
 import { getPipelinesConfig } from '@/api/cicd'
 
 // const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
-  const socket = io('/rancher/websocket/logs', {
+const socket = io('/rancher/websocket/logs', {
   reconnectionAttempts: 5,
   transports: ['websocket']
 })
@@ -163,8 +163,11 @@ export default {
           this.stages[stage_index - 1].isLoading = false
           const order = stage_index + 1
           const stageIdx = stage_index
-          console.log({ order, stageIdx })
-          if (stage_index < this.stages.length) this.changeFocusTab(order, stageIdx)
+          if (stage_index < this.stages.length) {
+            this.changeFocusTab(order, stageIdx)
+          } else {
+            this.clearTimer()
+          }
           return
         }
         const isHistoryMessage =
@@ -203,10 +206,15 @@ export default {
       }
     },
     changeFocusTab(order, stageIdx) {
-      setTimeout(() => {
+      if (order === 1 && stageIdx === 0) {
         this.activeStage = `${order} ${this.stages[stageIdx].name}`
         this.handleClick({ index: stageIdx })
-      }, 2000)
+      } else {
+        setTimeout(() => {
+          this.activeStage = `${order} ${this.stages[stageIdx].name}`
+          this.handleClick({ index: stageIdx })
+        }, 2000)
+      }
     },
     async updateStages() {
       const { repository_id } = this.selectedProject
