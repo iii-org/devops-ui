@@ -69,7 +69,7 @@
         </template>
       </el-table-column>
       <el-table-column-time prop="updated_time" />
-      <el-table-column align="center" label="GitLab" width="110">
+      <el-table-column v-if="userRole !== 'QA'" align="center" label="GitLab" width="110">
         <template slot-scope="scope">
           <el-popover
             v-if="scope.row.git_url"
@@ -103,7 +103,7 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="110">
+      <el-table-column v-if="userRole !== 'QA'" align="center" label="Redmine" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
@@ -117,7 +117,7 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Harbor" width="110">
+      <el-table-column v-if="userRole !== 'QA'" align="center" label="Harbor" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.harbor_url"
