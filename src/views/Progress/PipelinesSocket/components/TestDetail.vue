@@ -65,7 +65,7 @@
 <script>
 import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
-import { getPipelinesConfig } from '@/api/cicd'
+import { getPipelinesConfig, getCiPipelineId } from '@/api/cicd'
 
 // const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
 const socket = io('/rancher/websocket/logs', {
@@ -88,7 +88,9 @@ export default {
       activeStage: '',
       sid: '',
       pipelinesExecRun: 0,
-      timer: null
+      timer: null,
+      ciPipelineId: 0,
+      emitStages: []
     }
   },
   computed: {
@@ -103,6 +105,7 @@ export default {
     }
   },
   mounted() {
+    this.fetchCiPipelineId()
     socket.on('connect', () => {
       console.log('sio connected ===>', socket)
       this.sid = socket.id
@@ -113,6 +116,13 @@ export default {
     this.clearTimer()
   },
   methods: {
+    fetchCiPipelineId() {
+      getCiPipelineId(this.selectedProject.repository_id)
+        .then(res => {
+          this.ciPipelineId = res.data
+        })
+        .catch(err => console.error(err))
+    },
     handleClose() {
       this.dialogVisible = false
       this.clearTimer()
@@ -145,19 +155,21 @@ export default {
     },
     handleClick(tab) {
       const index = Number(tab.index)
+      this.emitStages.push(index)
       const stage = this.stages[index]
       if (!stage.isLoading) return
       const emitObj = {
         pipelines_exec_run: this.pipelinesExecRun,
-        repository_id: this.selectedProject.repository_id,
+        // repository_id: this.selectedProject.repository_id,
+        ci_pipeline_id: this.ciPipelineId,
         stage_index: index + 1,
         step_index: stage.steps[0].step_id,
         sid: this.sid
       }
       socket.emit('get_pipe_log', emitObj)
-      // console.log('EMIT get_pipe_log ===>', emitObj)
+      console.log('EMIT get_pipe_log ===>', emitObj)
       socket.on('pipeline_log', sioEvt => {
-        // console.log('EVENT pipeline_log ===>', sioEvt)
+        console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         if (data === '') {
           this.stages[stage_index - 1].isLoading = false
@@ -208,10 +220,12 @@ export default {
     changeFocusTab(order, stageIdx) {
       if (order === 1 && stageIdx === 0) {
         this.activeStage = `${order} ${this.stages[stageIdx].name}`
+        if (this.emitStages.includes(stageIdx)) return
         this.handleClick({ index: stageIdx })
       } else {
         setTimeout(() => {
           this.activeStage = `${order} ${this.stages[stageIdx].name}`
+          if (this.emitStages.includes(stageIdx)) return
           this.handleClick({ index: stageIdx })
         }, 2000)
       }
