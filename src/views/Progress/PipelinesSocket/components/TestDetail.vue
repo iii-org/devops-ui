@@ -96,14 +96,14 @@ export default {
   computed: {
     ...mapGetters(['selectedProject'])
   },
-  watch: {
-    pipelineId: {
-      handler(val) {
-        this.pipelinesExecRun = val
-        this.fetchStages()
-      }
-    }
-  },
+  // watch: {
+  //   pipelineId: {
+  //     handler(val) {
+  //       this.pipelinesExecRun = val
+  //       this.fetchStages()
+  //     }
+  //   }
+  // },
   mounted() {
     this.fetchCiPipelineId()
     socket.on('connect', () => {
@@ -126,6 +126,7 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.clearTimer()
+      this.emitStages = []
     },
     getStateTagType(state) {
       switch (state) {

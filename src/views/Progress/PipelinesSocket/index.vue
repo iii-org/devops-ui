@@ -211,7 +211,8 @@ export default {
       }
     },
     onDetailsClick(id) {
-      this.focusPipelineId = id
+      this.$refs.testDetail.pipelinesExecRun = id
+      this.$refs.testDetail.fetchStages()
     }
   }
 }
