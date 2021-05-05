@@ -5,30 +5,30 @@
       <div class="clearfix">
         <div>
           <project-list-selector />
-          <el-select
-            v-model="versionValue"
-            :placeholder="$t('Version.SelectVersion')"
-            :disabled="selectedProjectId === -1"
-            class="mr-4"
-            filterable
-            @change="updateData"
-          >
-            <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-            <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
-          </el-select>
-          <el-select
-            v-model="trackerValue"
-            :placeholder="$t('Issue.SelectType')"
-            :disabled="selectedProjectId === -1"
-            class="mr-4"
-            filterable
-            clearable
-            @change="updateData"
-          >
-            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
-              <tracker :name="item.name" />
-            </el-option>
-          </el-select>
+          <!--          <el-select-->
+          <!--            v-model="versionValue"-->
+          <!--            :placeholder="$t('Version.SelectVersion')"-->
+          <!--            :disabled="selectedProjectId === -1"-->
+          <!--            class="mr-4"-->
+          <!--            filterable-->
+          <!--            @change="updateData"-->
+          <!--          >-->
+          <!--            <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />-->
+          <!--            <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />-->
+          <!--          </el-select>-->
+          <!--          <el-select-->
+          <!--            v-model="trackerValue"-->
+          <!--            :placeholder="$t('Issue.SelectType')"-->
+          <!--            :disabled="selectedProjectId === -1"-->
+          <!--            class="mr-4"-->
+          <!--            filterable-->
+          <!--            clearable-->
+          <!--            @change="updateData"-->
+          <!--          >-->
+          <!--            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">-->
+          <!--              <tracker :name="item.name" />-->
+          <!--            </el-option>-->
+          <!--          </el-select>-->
           <el-button
             id="btn-add-issue"
             type="success"
