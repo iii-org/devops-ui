@@ -67,8 +67,8 @@ import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 import { getPipelinesConfig } from '@/api/cicd'
 
-const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
-  // const socket = io('/rancher/websocket/logs', {
+// const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+  const socket = io('/rancher/websocket/logs', {
   reconnectionAttempts: 5,
   transports: ['websocket']
 })
