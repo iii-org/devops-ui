@@ -304,7 +304,6 @@ export default {
       this.isLoading = false
     },
     updateData() {
-      console.log('updateData')
       this.resetClassifyIssue()
       this.classifyIssue()
       const versionOpt = {
