@@ -1,15 +1,24 @@
 <template>
-  <el-input
-    v-if="edit"
-    v-model="newValue"
-    style="display:inline-block;"
-    :placeholder="$t('RuleMsg.PleaseInput')"
-  />
-  <span v-else>{{ value }} <el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
+  <span v-if="edit">
+    <span class="el-input inline">
+      <input
+        v-model="newValue"
+        v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 0}"
+        type="text"
+        :placeholder="$t('general.Title')"
+        class="el-input__inner text-h5"
+      >
+    </span>
   </span>
+  <span v-else @click="edit=true">{{ value }}</span>
 </template>
 
 <script>
+import VueInputAutoWidth from 'vue-input-autowidth'
+import Vue from 'vue'
+
+Vue.use(VueInputAutoWidth)
+
 export default {
   name: 'IssueTitle',
   props: {
@@ -39,5 +48,7 @@ export default {
 </script>
 
 <style scoped>
-
+.inline{
+  display: inline;
+}
 </style>

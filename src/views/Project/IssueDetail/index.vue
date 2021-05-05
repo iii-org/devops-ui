@@ -4,11 +4,16 @@
       <el-row type="flex" align="bottom" justify="space-between">
         <el-row>
           <el-col class="text-h5 mr-3">
+            <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+              {{ $t('general.Back') }}
+            </el-button>
             <template v-if="tracker">
               <span :class="getCategoryTagType(tracker)" />
               {{ $t(`Issue.${tracker}`) }}
             </template>
-            <template v-else>{{ $t('Issue.Issue') }}</template> #{{ issueId }} - <IssueTitle v-model="form.subject" />
+            <template v-else>{{ $t('Issue.Issue') }}</template>
+            #{{ issueId }} -
+            <IssueTitle ref="IssueTitle" v-model="form.subject" />
             <span class="text-body-1 mr-3">
               {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
             </span>
@@ -16,35 +21,36 @@
         </el-row>
         <el-col v-show="focusTab === 'editIssue'" :span="6" class="text-right">
           <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-          <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
           <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
         </el-col>
       </el-row>
     </el-row>
     <el-row :gutter="20">
-      <el-col :span="24" :md="16">
+      <el-col ref="mainIssueWrapper" :span="24" :md="16">
         <el-col :span="24">
-          <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject" @update-issue="handleUpdated" />
+          <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
+                        @update-issue="handleUpdated"
+          />
         </el-col>
-        <el-row :gutter="10" class="issueHeight">
+        <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
           <el-col :span="24" class="mb-3">
-            <issue-description v-model="form.description" />
+            <issue-description ref="IssueDescription" v-model="form.description" />
           </el-col>
           <el-col v-if="files.length>0">
-            <issue-files :issue-file.sync="files" />
+            <issue-files ref="IssueFiles" :issue-file.sync="files" />
           </el-col>
-          <el-col :span="24" class="mb-3">
-            <issue-notes-editor ref="IssueNotesEditor" :height="editorHeight" @change="onEditorChange" />
+          <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
+            <issue-notes-editor ref="IssueNotesEditor" height="125px" @change="onEditorChange" />
           </el-col>
-          <!--          <el-col :span="24">-->
-          <!--            <issue-file-uploader ref="IssueFileUploader" />-->
-          <!--          </el-col>-->
           <el-col :span="24">
-            <issue-notes-dialog :height="dialogHeight" :data="journals" />
+            <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" />
           </el-col>
         </el-row>
+        <!--        <el-col :span="24" class="mb-3">-->
+        <!--          <issue-notes-editor ref="IssueNotesEditorBottom" height="125px" class="fixedBottom" @change="onEditorChange" />-->
+        <!--        </el-col>-->
       </el-col>
-      <el-col :span="24" :md="8" class="issueHeight">
+      <el-col :span="24" :md="8" class="issueOptionHeight">
         <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
       </el-col>
     </el-row>
@@ -107,7 +113,9 @@ export default {
       journals: [],
       formObj: {},
       dialogHeight: '100%',
-      editorHeight: '100px'
+      editorHeight: '100px',
+      issueScrollTop: 0,
+      scrollClass: 'issueHeight'
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -239,13 +247,11 @@ export default {
     async handleUpdated() {
       await this.fetchIssue()
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
-      this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
-      this.$refs.IssueFileUploader.uploadFileList = []
+      this.$refs.IssueTitle.edit = false
+      this.$refs.IssueDescription.edit = false
       this.isLoading = false
-      this.$router.push(this.formObj)
     },
-    handleCancel() {
-      this.mode = 'view'
+    handleBackPage() {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
@@ -319,19 +325,38 @@ export default {
       return isChanged
     },
     onEditorChange() {
-      if (this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')) {
-        this.editorHeight = this.editorCheckModeHeight
-        // this.dialogHeight = '200px'
-      } else {
-        if (this.mode === 'view') {
-          this.editorHeight = '100px'
-        } else {
-          this.editorHeight = '350px'
-        }
-      }
+      // if (this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')) {
+      //   this.editorHeight = this.editorCheckModeHeight
+      //   // this.dialogHeight = '200px'
+      // } else {
+      //   if (this.mode === 'view') {
+      //     this.editorHeight = '100px'
+      //   } else {
+      //     this.editorHeight = '350px'
+      //   }
+      // }
     },
     formatTime(value) {
       return dayjs(value).fromNow()
+    },
+    onScrollIssue() {
+      this.$nextTick(() => {
+        const editorHeight = this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
+          this.$refs['IssueDescription'].$el.getBoundingClientRect().height -
+          this.$refs['IssueFiles'].$el.getBoundingClientRect().height
+
+        if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
+          if (this.$refs['mainIssue'].$children[1].$children[0].$options.name === 'IssueNotesEditor') {
+            this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
+            this.scrollClass = 'issueHeightEditor'
+          }
+        } else {
+          if (this.$refs['mainIssueWrapper'].$el.children.length >= 3 && editorHeight > 0) {
+            this.$refs['mainIssue'].$el.insertBefore(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0], this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1])
+            this.scrollClass = 'issueHeight'
+          }
+        }
+      })
     }
   }
 }
@@ -341,6 +366,16 @@ export default {
 
 .issueHeight {
   height: calc(95vh - 50px - 81px - 40px - 32px);
+  overflow-y: auto;
+}
+
+.issueHeightEditor {
+  height: calc(95vh - 50px - 81px - 40px - 32px - 175px);
+  overflow-y: auto;
+}
+
+.issueOptionHeight {
+  height: calc(95vh - 50px - 81px - 40px);
   overflow-y: auto;
 }
 
@@ -373,5 +408,9 @@ export default {
     background-color: $secondary;
     border-color: $secondary;
   }
+}
+
+.previous {
+  font-size: 0.75em;
 }
 </style>

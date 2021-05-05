@@ -139,7 +139,8 @@ export default {
     project_name: '專案名稱',
     pm_user_name: '專案經理',
     Department: '部門',
-    UserTitle: '職稱'
+    UserTitle: '職稱',
+    Back: '返回'
   },
   Notify: {
     Updated: '已更新',
