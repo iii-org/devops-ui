@@ -1,6 +1,12 @@
 <template>
-  <v-chart ref="chart" :style="{ height, width }" :option="option" autoresize theme="macarons"
-           @mouseover="onMouseOver" @mouseout="onMouseOut"
+  <v-chart
+    ref="chart"
+    :style="{ height, width }"
+    :option="option"
+    theme="macarons"
+    autoresize
+    @mouseover="onMouseOver"
+    @mouseout="onMouseOut"
   />
 </template>
 
@@ -12,11 +18,7 @@ import { PieChart, ScatterChart } from 'echarts/charts'
 
 require('echarts/theme/macarons') // echarts theme
 
-use([
-  CanvasRenderer,
-  ScatterChart,
-  PieChart
-])
+use([CanvasRenderer, ScatterChart, PieChart])
 
 export default {
   components: {
@@ -103,7 +105,9 @@ export default {
     }
   },
   mounted() {
-    this.initChart()
+    this.$nextTick(() => {
+      this.initChart()
+    })
   },
   methods: {
     initChart() {
