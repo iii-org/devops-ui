@@ -24,18 +24,21 @@
     <el-row :gutter="20">
       <el-col :span="24" :md="16">
         <el-col :span="24">
-          <IssueToolbar />
+          <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject" @update-issue="handleUpdated" />
         </el-col>
         <el-row :gutter="10" class="issueHeight">
           <el-col :span="24" class="mb-3">
             <issue-description v-model="form.description" />
           </el-col>
+          <el-col v-if="files.length>0">
+            <issue-files :issue-file.sync="files" />
+          </el-col>
           <el-col :span="24" class="mb-3">
             <issue-notes-editor ref="IssueNotesEditor" :height="editorHeight" @change="onEditorChange" />
           </el-col>
-          <el-col :span="24">
-            <issue-file-uploader ref="IssueFileUploader" />
-          </el-col>
+          <!--          <el-col :span="24">-->
+          <!--            <issue-file-uploader ref="IssueFileUploader" />-->
+          <!--          </el-col>-->
           <el-col :span="24">
             <issue-notes-dialog :height="dialogHeight" :data="journals" />
           </el-col>
@@ -46,38 +49,6 @@
       </el-col>
     </el-row>
   </el-card>
-  <!--  <el-tabs v-model="focusTab" v-loading="isLoading" :element-loading-text="$t('Loading')" type="border-card">-->
-  <!--    <div class="d-flex justify-space-between mb-2">-->
-  <!--      <div class="d-flex align-end">-->
-  <!--        <span class="text-h5 mr-3">-->
-  <!--          <template v-if="tracker">-->
-  <!--            <span :class="getCategoryTagType(tracker)" />-->
-  <!--            {{ $t(`Issue.${tracker}`) }}-->
-  <!--          </template>-->
-  <!--          <template v-else>{{ $t('Issue.Issue') }}</template> #{{ issueId }} - {{ issueSubject }}</span>-->
-  <!--        <div class="text-body-1 mr-3">-->
-  <!--          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}-->
-  <!--        </div>-->
-  <!--        <el-link :href="issue_link" target="_blank" type="primary" :underline="false">-->
-  <!--          <i class="el-icon-link" /> Redmine-->
-  <!--        </el-link>-->
-  <!--      </div>-->
-  <!--      <div v-show="focusTab === 'editIssue'">-->
-  <!--        <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>-->
-  <!--        <el-button size="medium" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>-->
-  <!--        <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <el-divider />-->
-  <!--    <el-tab-pane :label="$t('Issue.EditIssue')" name="editIssue">-->
-  <!--    </el-tab-pane>-->
-  <!--    <el-tab-pane :label="$t('Issue.Notes')" name="issueNotes">-->
-  <!--      <issue-notes :issue-notes="journals" />-->
-  <!--    </el-tab-pane>-->
-  <!--    <el-tab-pane :label="$t('Issue.Files')" name="issueFiles">-->
-  <!--      <issue-files :issue-file.sync="files" />-->
-  <!--    </el-tab-pane>-->
-  <!--  </el-tabs>-->
 </template>
 
 <script>
@@ -87,7 +58,7 @@ import {
   IssueForm,
   IssueNotesDialog,
   IssueNotesEditor,
-  IssueFileUploader,
+  IssueFiles,
   IssueDescription,
   IssueTitle,
   IssueToolbar
@@ -102,8 +73,8 @@ export default {
     IssueForm,
     IssueNotesDialog,
     IssueNotesEditor,
-    IssueFileUploader,
-    IssueToolbar
+    IssueToolbar,
+    IssueFiles
   },
   data() {
     return {
@@ -164,9 +135,6 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
-    editorCheckMode() {
-      return (this.mode === 'edit') ? 24 : 22
-    },
     editorCheckModeHeight() {
       return (this.mode === 'edit') ? '350px' : '150px'
     }
@@ -302,18 +270,6 @@ export default {
         if (valid) this.editIssue()
       })
     },
-    handleSaveComment() {
-      const sendData = Object.assign({}, this.form)
-      console.log(this.form)
-      const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
-      if (notes !== '') sendData['notes'] = notes
-      const sendForm = new FormData()
-      Object.keys(sendData).forEach(objKey => {
-        sendForm.append(objKey, sendData[objKey])
-      })
-      const uploadFileList = this.$refs.IssueFileUploader.uploadFileList
-      uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : this.updateIssueForm(sendForm)
-    },
     editIssue() {
       const sendData = Object.assign({}, this.form)
       const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
@@ -325,33 +281,7 @@ export default {
       Object.keys(sendData).forEach(objKey => {
         sendForm.append(objKey, sendData[objKey])
       })
-      const uploadFileList = this.$refs.IssueFileUploader.uploadFileList
-      uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : this.updateIssueForm(sendForm)
-    },
-    uploadFiles(sendForm, fileList) {
-      this.isLoading = true
-      // use one by one edit issue to upload file
-      const { issueId } = this
-      fileList
-        .reduce(function(prev, curr) {
-          return prev.then(() => {
-            sendForm.delete('upload_file')
-            sendForm.append('upload_file', curr.raw, curr.raw.name)
-            return updateIssue(issueId, sendForm)
-          })
-        }, Promise.resolve([]))
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.handleUpdated()
-        })
-        .catch(err => {
-          console.error(err)
-          this.isLoading = false
-        })
+      this.updateIssueForm(sendForm)
     },
     updateIssueForm(sendForm) {
       this.isLoading = true
@@ -372,8 +302,8 @@ export default {
     },
     hasUnsavedChanges() {
       const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
-      const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
-      return this.isFormDataChanged() || isNotesChanged || isFilesChanged
+      // const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
+      return this.isFormDataChanged() || isNotesChanged
     },
     isFormDataChanged() {
       let isChanged

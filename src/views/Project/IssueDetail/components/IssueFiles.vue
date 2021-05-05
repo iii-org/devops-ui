@@ -1,53 +1,33 @@
 <template>
-  <el-table
-    :data="issueFile"
-    :element-loading-text="$t('Loading')"
-    border
-    fit
-    :header-cell-style="{ background: '#fafafa', color: 'rgba(0,0,0,.85)' }"
-    class="my-3"
-  >
-    <el-table-column :label="$t('general.Name')" align="center" show-overflow-tooltip min-width="150">
-      <template slot-scope="scope">
-        <span v-if="scope.row.filename">
-          {{ scope.row.filename }}
-        </span>
-      </template>
-    </el-table-column>
-    <el-table-column-time align="center" prop="created_on" :label="$t('general.CreateTime')" />
-    <el-table-column align="center" :label="$t('general.Actions')" width="250">
-      <template slot-scope="scope">
-        <el-button
-          type="primary"
-          size="mini"
-          icon="el-icon-download"
-          :loading="isLoading"
-          @click="handleDownload(scope.row)"
-        >
-          {{ $t('File.Download') }}
-        </el-button>
+  <el-row class="el-upload-list">
+    <div class="text-subtitle-2 mb-2">{{ $t('Issue.Files') }}</div>
+    <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
+      <el-col :span="20">
+        <a class="el-upload-list__item-name" @click="handleDownload(file)">
+          <i class="el-icon-document" />{{ file.filename }} ({{ file.created_on }})
+        </a>
+      </el-col>
+      <el-col :span="4" class="text-right">
         <el-button
           type="danger"
           size="mini"
           icon="el-icon-delete"
           :loading="isLoading"
-          @click="deleteIssueFile(scope.row)"
+          @click="deleteIssueFile(file)"
         >
           {{ $t('general.Delete') }}
         </el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+      </el-col>
+    </el-row>
+  </el-row>
 </template>
 
 <script>
 import { deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'IssueFiles',
-  components: { ElTableColumnTime },
   props: {
     issueFile: {
       type: Array,
