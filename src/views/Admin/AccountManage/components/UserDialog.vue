@@ -294,8 +294,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.el-dialog {
+<style lang="scss" scoped>
+>>>.el-dialog {
   display: flex;
   flex-direction: column;
   margin: 0 !important;
@@ -304,14 +304,8 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.el-dialog .el-dialog__body {
+>>>.el-dialog .el-dialog__body {
   flex: 1;
-  overflow: auto;
-}
-</style>
-
-<style lang="scss" scoped>
->>> .el-dialog .el-dialog__body {
   overflow: auto;
   max-height: 75vh;
 }
