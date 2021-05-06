@@ -64,9 +64,6 @@
                           </template>
                           <template v-else>{{ $t('Issue.Issue') }}</template>
                           #{{ issueId }} - {{ child.subject }}
-                          <span class="mr-3">
-                            {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-                          </span>
                         </el-link>
                       </li>
                     </ol>
