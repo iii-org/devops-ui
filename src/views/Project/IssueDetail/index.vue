@@ -33,11 +33,67 @@
           />
         </el-col>
         <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-          <el-col :span="24" class="mb-3">
-            <issue-description ref="IssueDescription" v-model="form.description" />
+          <el-col ref="IssueDescription" :span="24" class="mb-3">
+            <issue-description v-model="form.description" />
           </el-col>
-          <el-col v-if="files.length>0">
-            <issue-files ref="IssueFiles" :issue-file.sync="files" />
+          <el-col ref="IssueFiles">
+            <issue-files v-if="files.length>0" :issue-file.sync="files" />
+          </el-col>
+          <el-col ref="IssueRelation">
+            <el-collapse>
+              <el-collapse-item name="" title="關聯議題 (3)">
+                <ul>
+                  <li>父議題：
+                    <el-tag size="mini">
+                      已解決
+                    </el-tag>
+                    <template v-if="tracker">
+                      <span :class="getCategoryTagType(tracker)" />
+                      {{ $t(`Issue.${tracker}`) }}
+                    </template>
+                    <template v-else>{{ $t('Issue.Issue') }}</template>
+                    #{{ issueId }} -
+                    <IssueTitle ref="IssueTitle" v-model="form.subject" />
+                    <span class="mr-3">
+                      {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+                    </span></li>
+                  <li>子議題：
+                    <ol>
+                      <li>
+                        <el-tag size="mini">
+                          已解決
+                        </el-tag>
+                        <template v-if="tracker">
+                          <span :class="getCategoryTagType(tracker)" />
+                          {{ $t(`Issue.${tracker}`) }}
+                        </template>
+                        <template v-else>{{ $t('Issue.Issue') }}</template>
+                        #{{ issueId }} -
+                        <IssueTitle ref="IssueTitle" v-model="form.subject" />
+                        <span class="mr-3">
+                          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+                        </span>
+                      </li>
+                      <li>
+                        <el-tag size="mini">
+                          已解決
+                        </el-tag>
+                        <template v-if="tracker">
+                          <span :class="getCategoryTagType(tracker)" />
+                          {{ $t(`Issue.${tracker}`) }}
+                        </template>
+                        <template v-else>{{ $t('Issue.Issue') }}</template>
+                        #{{ issueId }} -
+                        <IssueTitle ref="IssueTitle" v-model="form.subject" />
+                        <span class="mr-3">
+                          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+                        </span>
+                      </li>
+                    </ol>
+                  </li>
+                </ul>
+              </el-collapse-item>
+            </el-collapse>
           </el-col>
           <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
             <issue-notes-editor ref="IssueNotesEditor" height="125px" @change="onEditorChange" />
@@ -343,14 +399,15 @@ export default {
       this.$nextTick(() => {
         const editorHeight = this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
           this.$refs['IssueDescription'].$el.getBoundingClientRect().height -
-          this.$refs['IssueFiles'].$el.getBoundingClientRect().height
-
+          this.$refs['IssueFiles'].$el.getBoundingClientRect().height -
+          this.$refs['IssueRelation'].$el.getBoundingClientRect().height
         if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (this.$refs['mainIssue'].$children[1].$children[0].$options.name === 'IssueNotesEditor') {
+          if (this.$refs['mainIssue'].$children[2].$children[0].$options.name === 'IssueNotesEditor') {
             this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
             this.scrollClass = 'issueHeightEditor'
           }
         } else {
+          console.log(this.$refs['mainIssueWrapper'].$el.children.length >= 3)
           if (this.$refs['mainIssueWrapper'].$el.children.length >= 3 && editorHeight > 0) {
             this.$refs['mainIssue'].$el.insertBefore(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0], this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1])
             this.scrollClass = 'issueHeight'
