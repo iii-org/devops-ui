@@ -35,14 +35,6 @@ export default {
   computed: {
     ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'selectedProject'])
   },
-  watch: {
-    selectedProject() {
-      this.fetchData()
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -51,7 +43,8 @@ export default {
       }
       this.listLoading = true
       try {
-        const svgs = document.querySelector('#graph-container').children
+        const svgs = document.querySelector('#graph-container')
+          ? document.querySelector('#graph-container').children : []
         if (svgs && svgs.length > 0) [...svgs].forEach(_svg => _svg.remove())
         const repository_id = this.selectedProject.repository_id
         const res = await getGitGraphByRepo(repository_id)
