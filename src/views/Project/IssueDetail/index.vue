@@ -4,7 +4,9 @@
       <el-row type="flex" align="bottom" justify="space-between">
         <el-row>
           <el-col class="text-h5 mr-3">
-            <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+            <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
+                       @click="handleBackPage"
+            >
               {{ $t('general.Back') }}
             </el-button>
             <template v-if="tracker">
@@ -46,15 +48,15 @@
                   <li v-if="parent&&Object.keys(parent).length>0">
                     父議題：
                     <el-link @click="onRelationIssueDialog(parent.id)">
-                      <status :name="parent.status.name" />
+                      <status :name="parent.status.name" size="mini" />
                       <template v-if="parent.tracker">
                         <tracker :name="parent.tracker.name" />
                       </template>
                       <template v-else>{{ $t('Issue.Issue') }}</template>
-                      #{{ issueId }} - {{ parent.subject }}
+                      #{{ parent.id }} - {{ parent.subject }}
                     </el-link>
                   </li>
-                  <li>子議題：
+                  <li v-if="children.length>0">子議題：
                     <ol>
                       <li v-for="child in children" :key="child.id">
                         <el-link @click="onRelationIssueDialog(child.id)">
@@ -62,7 +64,7 @@
                             <tracker :name="child.tracker.name" />
                           </template>
                           <template v-else>{{ $t('Issue.Issue') }}</template>
-                          #{{ issueId }} - {{ child.subject }}
+                          #{{ child.id }} - {{ child.subject }}
                         </el-link>
                       </li>
                     </ol>
@@ -78,9 +80,6 @@
             <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" />
           </el-col>
         </el-row>
-        <!--        <el-col :span="24" class="mb-3">-->
-        <!--          <issue-notes-editor ref="IssueNotesEditorBottom" height="125px" class="fixedBottom" @change="onEditorChange" />-->
-        <!--        </el-col>-->
       </el-col>
       <el-col :span="24" :md="8" class="issueOptionHeight">
         <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
@@ -201,10 +200,10 @@ export default {
     countRelationIssue() {
       let parent = 0
       let children = 0
-      if (this.parent) {
-        parent = ((Object.keys(this.parent).length > 0) ? 1 : 0)
+      if (this.parent && Object.keys(this.parent).length > 0) {
+        parent = 1
       }
-      if (this.children) {
+      if (this.children !== undefined) {
         children = this.children.length
       }
       return parent + children
@@ -252,8 +251,12 @@ export default {
       this.files = attachments
       this.created_date = created_date
       this.journals = journals.reverse()
-      this.parent = parent
-      this.children = children
+      if (parent) {
+        this.parent = parent
+      }
+      if (children) {
+        this.children = children
+      }
       this.setFormData(data)
       this.view = data
     },
