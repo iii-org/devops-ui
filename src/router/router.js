@@ -51,7 +51,7 @@ export const asyncRoutes = [
     // RD root
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/overview/dashboard',
     meta: {
       title: 'projectOverview',
       icon: 'el-icon-s-cooperation',
@@ -59,15 +59,15 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'dashboard',
+        path: 'overview/dashboard',
         name: 'dashboard-rd',
-        component: () => import('@/views/Dashboard/index'),
+        component: () => import('@/views/Overview/Dashboard'),
         meta: { title: 'dashboard', icon: 'dashboard', roles: ['Engineer'] }
       },
       {
-        path: 'project-list',
+        path: 'overview/project-list',
         name: 'project-list-rd',
-        component: () => import('@/views/ProjectList/ProjectListRD'),
+        component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
         meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
       }
     ]
@@ -102,7 +102,7 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'project-admin',
-    redirect: '/dashboard',
+    redirect: '/overview/dashboard',
     meta: {
       title: 'projectList',
       icon: 'el-icon-s-cooperation',
@@ -110,9 +110,9 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'dashboard',
+        path: 'overview/dashboard',
         name: 'dashboard',
-        component: () => import('@/views/Dashboard/roles/admin'),
+        component: () => import('@/views/Overview/Dashboard/roles/admin'),
         meta: {
           title: 'dashboard',
           icon: 'dashboard',
@@ -120,9 +120,9 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'project-list',
+        path: 'overview/project-list',
         name: 'project-list-pm',
-        component: () => import('@/views/ProjectList/ProjectListPM'),
+        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
         meta: {
           title: 'projectList',
           icon: 'list',
