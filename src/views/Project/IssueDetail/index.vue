@@ -4,7 +4,7 @@
       <el-row type="flex" align="bottom" justify="space-between">
         <el-row>
           <el-col class="text-h5 mr-3">
-            <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+            <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
               {{ $t('general.Back') }}
             </el-button>
             <template v-if="tracker">
@@ -40,54 +40,34 @@
             <issue-files v-if="files.length>0" :issue-file.sync="files" />
           </el-col>
           <el-col ref="IssueRelation">
+
             <el-collapse>
-              <el-collapse-item name="" title="關聯議題 (3)">
-                <ul>
-                  <li>父議題：
-                    <el-tag size="mini">
-                      已解決
-                    </el-tag>
-                    <template v-if="tracker">
-                      <span :class="getCategoryTagType(tracker)" />
-                      {{ $t(`Issue.${tracker}`) }}
-                    </template>
-                    <template v-else>{{ $t('Issue.Issue') }}</template>
-                    #{{ issueId }} -
-                    <IssueTitle ref="IssueTitle" v-model="form.subject" />
-                    <span class="mr-3">
-                      {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-                    </span></li>
+              <el-collapse-item name="" :title="'關聯議題 ('+countRelationIssue+')'">
+                <ul v-if="countRelationIssue">
+                  <li v-if="parent&&Object.keys(parent).length>0">
+                    父議題：
+                    <el-link @click="onRelationIssueDialog(parent.id)">
+                      <status :name="parent.status.name" />
+                      <template v-if="parent.tracker">
+                        <tracker :name="parent.tracker.name" />
+                      </template>
+                      <template v-else>{{ $t('Issue.Issue') }}</template>
+                      #{{ issueId }} - {{ parent.subject }}
+                    </el-link>
+                  </li>
                   <li>子議題：
                     <ol>
-                      <li>
-                        <el-tag size="mini">
-                          已解決
-                        </el-tag>
-                        <template v-if="tracker">
-                          <span :class="getCategoryTagType(tracker)" />
-                          {{ $t(`Issue.${tracker}`) }}
-                        </template>
-                        <template v-else>{{ $t('Issue.Issue') }}</template>
-                        #{{ issueId }} -
-                        <IssueTitle ref="IssueTitle" v-model="form.subject" />
-                        <span class="mr-3">
-                          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-                        </span>
-                      </li>
-                      <li>
-                        <el-tag size="mini">
-                          已解決
-                        </el-tag>
-                        <template v-if="tracker">
-                          <span :class="getCategoryTagType(tracker)" />
-                          {{ $t(`Issue.${tracker}`) }}
-                        </template>
-                        <template v-else>{{ $t('Issue.Issue') }}</template>
-                        #{{ issueId }} -
-                        <IssueTitle ref="IssueTitle" v-model="form.subject" />
-                        <span class="mr-3">
-                          {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-                        </span>
+                      <li v-for="child in children" :key="child.id">
+                        <el-link @click="onRelationIssueDialog(child.id)">
+                          <template v-if="child.tracker">
+                            <tracker :name="child.tracker.name" />
+                          </template>
+                          <template v-else>{{ $t('Issue.Issue') }}</template>
+                          #{{ issueId }} - {{ child.subject }}
+                          <span class="mr-3">
+                            {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+                          </span>
+                        </el-link>
                       </li>
                     </ol>
                   </li>
@@ -110,6 +90,9 @@
         <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
       </el-col>
     </el-row>
+    <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body>
+      <ProjectIssueDetail :props-issue-id="relationIssue.id" :is-in-dialog="true" />
+    </el-dialog>
   </el-card>
 </template>
 
@@ -126,10 +109,14 @@ import {
   IssueToolbar
 } from './components'
 import dayjs from 'dayjs'
+import Tracker from '@/components/Issue/Tracker'
+import Status from '@/components/Issue/Status'
 
 export default {
   name: 'ProjectIssueDetail',
   components: {
+    Tracker,
+    Status,
     IssueTitle,
     IssueDescription,
     IssueForm,
@@ -137,6 +124,16 @@ export default {
     IssueNotesEditor,
     IssueToolbar,
     IssueFiles
+  },
+  props: {
+    propsIssueId: {
+      type: [String, Number],
+      default: null
+    },
+    isInDialog: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -168,10 +165,16 @@ export default {
       files: [],
       journals: [],
       formObj: {},
+      parent: {},
+      children: [],
       dialogHeight: '100%',
       editorHeight: '100px',
       issueScrollTop: 0,
-      scrollClass: 'issueHeight'
+      scrollClass: 'issueHeight',
+      relationIssue: {
+        visible: false,
+        id: null
+      }
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -199,8 +202,16 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
-    editorCheckModeHeight() {
-      return (this.mode === 'edit') ? '350px' : '150px'
+    countRelationIssue() {
+      let parent = 0
+      let children = 0
+      if (this.parent) {
+        parent = ((Object.keys(this.parent).length > 0) ? 1 : 0)
+      }
+      if (this.children) {
+        children = this.children.length
+      }
+      return parent + children
     }
   },
   watch: {
@@ -214,6 +225,9 @@ export default {
   },
   async mounted() {
     this.issueId = parseInt(this.$route.params.issueId)
+    if (this.propsIssueId) {
+      this.issueId = parseInt(this.propsIssueId)
+    }
     await this.fetchIssue()
     this.isLoading = false
   },
@@ -234,7 +248,7 @@ export default {
         })
     },
     initIssueDetails(data) {
-      const { issue_link, author, attachments, created_date, journals, subject, tracker } = data
+      const { issue_link, author, attachments, created_date, journals, subject, tracker, parent, children } = data
       this.issue_link = issue_link
       this.issueSubject = subject
       this.author = author.name
@@ -242,6 +256,8 @@ export default {
       this.files = attachments
       this.created_date = created_date
       this.journals = journals.reverse()
+      this.parent = parent
+      this.children = children
       this.setFormData(data)
       this.view = data
     },
@@ -379,6 +395,10 @@ export default {
         }
       }
       return isChanged
+    },
+    onRelationIssueDialog(id) {
+      this.relationIssue.visible = true
+      this.relationIssue.id = id
     },
     onEditorChange() {
       // if (this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')) {
