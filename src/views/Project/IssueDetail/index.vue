@@ -226,6 +226,7 @@ export default {
     }
     await this.fetchIssue()
     this.isLoading = false
+    this.$route.meta.title = this.$t('route.Issue Detail') + ':' + this.issueSubject
   },
   methods: {
     async fetchIssue() {
