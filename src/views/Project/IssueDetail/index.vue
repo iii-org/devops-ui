@@ -40,10 +40,9 @@
             <issue-files v-if="files.length>0" :issue-file.sync="files" />
           </el-col>
           <el-col ref="IssueRelation">
-
-            <el-collapse>
+            <el-collapse v-if="countRelationIssue">
               <el-collapse-item name="" :title="'關聯議題 ('+countRelationIssue+')'">
-                <ul v-if="countRelationIssue">
+                <ul>
                   <li v-if="parent&&Object.keys(parent).length>0">
                     父議題：
                     <el-link @click="onRelationIssueDialog(parent.id)">
