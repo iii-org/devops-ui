@@ -245,7 +245,7 @@ export const asyncRoutes = [
         path: 'advance-branch-settings',
         name: 'advance-branch-settings',
         hidden: true,
-        component: () => import('@/views/AdvanceBranchSettings'),
+        component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
         meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
       }
     ]
@@ -279,7 +279,7 @@ export const asyncRoutes = [
       {
         path: 'git-graph',
         name: 'git-graph',
-        component: () => import('@/views/ProjectGraph'),
+        component: () => import('@/views/Progress/GitGraph'),
         meta: { title: 'gitGraph', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
@@ -549,14 +549,14 @@ export const asyncRoutes = [
       {
         path: 'project-activities',
         name: 'ProjectActivities',
-        component: () => import('@/views/ProjectActivities'),
+        component: () => import('@/views/Activities/ProjectActivities'),
         meta: { title: 'Project Activities', roles: ['Project Manager', 'QA', 'Administrator'] }
       }
     ]
   },
 
   {
-    path: '/admin',
+    path: '/system-settings',
     component: Layout,
     name: 'Admin',
     redirect: '/admin/account-manage',
@@ -565,32 +565,25 @@ export const asyncRoutes = [
       {
         path: 'account-manage',
         name: '',
-        component: () => import('@/views/Admin/AccountManage'),
+        component: () => import('@/views/SystemSettings/AccountManage'),
         meta: { title: 'Account Manage', roles: ['Administrator'] }
       },
       {
         path: 'system-activities',
         name: 'SystemActivities',
-        component: () => import('@/views/Admin/SystemActivities'),
+        component: () => import('@/views/SystemSettings/SystemActivities'),
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
         path: 'system-arguments',
         name: 'System Arguments',
-        component: () => import('@/views/Admin/SystemArguments'),
+        component: () => import('@/views/SystemSettings/SystemArguments'),
         meta: { title: 'System Arguments', roles: ['Administrator'] }
-      },
-      {
-        path: 'validation',
-        name: 'validation',
-        hidden: true,
-        component: () => import('@/views/UserValidation'),
-        meta: { title: 'validation', roles: ['Administrator'] }
       },
       {
         path: 'sub-admin-projects',
         name: 'Sub Admin Projects',
-        component: () => import('@/views/SubAdminProjects'),
+        component: () => import('@/views/SystemSettings/SubAdminProjects'),
         meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
       }
     ]

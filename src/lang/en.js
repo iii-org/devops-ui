@@ -560,7 +560,7 @@ export default {
     ActionType: 'Action Type',
     ActionParts: 'Action Parts',
     ActAt: 'Act At',
-    SearchActionParts: 'Search Action Parts'
+    SearchPlaceholder: 'Search User, Action Type or Action Parts'
   },
   Maintenance: {
     AddSecret: 'Add Secret',

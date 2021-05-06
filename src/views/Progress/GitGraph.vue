@@ -1,17 +1,16 @@
-
 <template>
-  <div class="app-container">
-    <div class="clearfix">
+  <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
+    <div class="d-flex">
       <project-list-selector />
     </div>
     <el-divider />
-    <el-card v-loading="listLoading" class="box-card">
+    <el-card class="box-card">
       <div class="cardBody">
         <div v-show="isNoData" style="text-align: center;">{{ $t('general.NoData') }}</div>
         <div v-show="!isNoData" id="graph-container" />
       </div>
     </el-card>
-  </div>
+  </el-row>
 </template>
 
 <script>
@@ -23,15 +22,17 @@ import { UTCtoLocalTime } from '@/filters'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 
 export default {
-  name: 'ProjectGraph', // ready to refactor
+  name: 'ProgressGitGraph', // ready to refactor
   components: {
     ProjectListSelector
   },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    listLoading: true,
-    isNoData: false
-  }),
+  data() {
+    return {
+      listLoading: true,
+      isNoData: false
+    }
+  },
   computed: {
     ...mapGetters(['branchesByProject', 'branchesTotalNumByProject', 'selectedProject'])
   },
@@ -44,7 +45,8 @@ export default {
       this.listLoading = true
       try {
         const svgs = document.querySelector('#graph-container')
-          ? document.querySelector('#graph-container').children : []
+          ? document.querySelector('#graph-container').children
+          : []
         if (svgs && svgs.length > 0) [...svgs].forEach(_svg => _svg.remove())
         const repository_id = this.selectedProject.repository_id
         const res = await getGitGraphByRepo(repository_id)
@@ -181,7 +183,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .cardBody {
   display: flex;
   flex-direction: column;

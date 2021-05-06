@@ -16,9 +16,11 @@ import SystemRegistry from './components/SystemRegistry'
 export default {
   name: 'SystemArguments',
   components: { SystemRegistry, SystemSecrets },
-  data: () => ({
-    activeName: 'secrets'
-  }),
+  data() {
+    return {
+      activeName: 'secrets'
+    }
+  },
   methods: {
     handleClick() {
       this.$refs[this.activeName].adjustTable()

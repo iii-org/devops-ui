@@ -10,12 +10,10 @@
       </span>
       <el-input
         v-model="keyword"
-        class="ob-search-input ob-shadow search-input mr-3"
+        prefix-icon="el-icon-search"
         :placeholder="$t('User.SearchAccount')"
         style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+      />
     </div>
     <el-divider />
     <el-table
@@ -37,7 +35,13 @@
           <el-tag v-if="scope.row.status === 'enable'" class="el-tag--circle" type="finish" size="small" effect="dark">
             {{ scope.row.status }}
           </el-tag>
-          <el-tag v-else-if="scope.row.status === 'disable'" class="el-tag--circle" type="danger" size="small" effect="dark">
+          <el-tag
+            v-else-if="scope.row.status === 'disable'"
+            class="el-tag--circle"
+            type="danger"
+            size="small"
+            effect="dark"
+          >
             {{ scope.row.status }}
           </el-tag>
         </template>
@@ -89,20 +93,22 @@ import MixinAccountManageTable from '@/components/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
-  name: 'UserManage',
+  name: 'AccountManage',
   components: {
     UserDialog,
     ElTableColumnTime
   },
   mixins: [MixinAccountManageTable],
-  data: () => ({
-    userDialogVisible: false,
-    dialogTitle: '',
-    search: '',
-    searchKeys: ['login', 'name'],
-    editUserId: 0,
-    editUserData: {}
-  }),
+  data() {
+    return {
+      userDialogVisible: false,
+      dialogTitle: '',
+      search: '',
+      searchKeys: ['login', 'name'],
+      editUserId: 0,
+      editUserData: {}
+    }
+  },
   computed: {
     ...mapGetters(['userId'])
   },

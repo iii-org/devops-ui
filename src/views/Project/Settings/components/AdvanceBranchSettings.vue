@@ -1,34 +1,36 @@
 <template>
-  <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <router-link :to="{ name: 'Project Settings' }">
-      <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
-    </router-link>
-    <div class="d-flex justify-space-between align-center mt-2">
-      <div class="text-h6">{{ selectedProject.display }}</div>
-      <el-input
-        v-model="keyword"
-        size="medium"
-        prefix-icon="el-icon-search"
-        :style="{ width: '140px' }"
-        :placeholder="$t('general.SearchBranch')"
-      />
-    </div>
-    <el-divider />
-    <el-table :data="filteredData" border fit>
-      <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" :width="150" />
-      <el-table-column :label="$t('general.Description')" align="center" prop="commit_message" />
-      <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" :min-width="80" />
-      <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center">
-        <template slot="header">
-          <div class="mb-1">{{ tool.name }}</div>
-          <!-- <el-checkbox v-model="tool.checkAll" @change="handleCheckAllChange(idx)" /> -->
-        </template>
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.testing_tools[idx].enable" @change="updatePipelineBranch" />
-        </template>
-      </el-table-column>
-    </el-table>
-  </div>
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+    <el-col>
+      <router-link :to="{ name: 'Project Settings' }">
+        <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
+      </router-link>
+      <div class="d-flex justify-space-between align-center mt-2">
+        <div class="text-h6">{{ selectedProject.display }}</div>
+        <el-input
+          v-model="keyword"
+          size="medium"
+          prefix-icon="el-icon-search"
+          :style="{ width: '250px' }"
+          :placeholder="$t('general.SearchBranch')"
+        />
+      </div>
+      <el-divider />
+      <el-table :data="filteredData" border fit>
+        <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" :width="150" />
+        <el-table-column :label="$t('general.Description')" align="center" prop="commit_message" />
+        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" :min-width="80" />
+        <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center">
+          <template slot="header">
+            <div class="mb-1">{{ tool.name }}</div>
+            <!-- <el-checkbox v-model="tool.checkAll" @change="handleCheckAllChange(idx)" /> -->
+          </template>
+          <template slot-scope="scope">
+            <el-checkbox v-model="scope.row.testing_tools[idx].enable" @change="updatePipelineBranch" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -41,7 +43,7 @@ export default {
   name: 'AdvanceBranchSettings',
   components: { ElTableColumnTime },
   mixins: [MixinBasicTable],
-  data: function() {
+  data() {
     return {
       listData: [],
       testingToolNames: [],
