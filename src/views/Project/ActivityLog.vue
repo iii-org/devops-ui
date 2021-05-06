@@ -10,7 +10,9 @@
           <el-card v-for="issue in item.issues" :key="issue.id" :gutter="20" class="mb-3">
             <el-row type="flex" align="middle" :gutter="20">
               <el-col :span="5" :lg="5" :xl="3">
-                <div class="text-subtitle-1 font-weight-bold">{{ issue.name }}</div>
+                <div class="text text-subtitle-1 font-weight-bold cursor-pointer mb-1" @click="onClick(issue.id)">
+                  {{ issue.name }}
+                </div>
                 <div>
                   <svg-icon icon-class="mdi-clock-outline" />
                   {{ issue.updated_on | hmA }}, {{ issue.updated_on | relativeTime }}
@@ -91,6 +93,9 @@ export default {
         issues: res.data[item].sort((a, b) => new Date(b.updated_on) - new Date(a.updated_on))
       }))
       this.isLoading = false
+    },
+    onClick(issueId) {
+      this.$router.push({ name: 'issue-detail', params: { issueId }})
     }
   }
 }

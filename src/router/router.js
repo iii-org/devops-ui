@@ -202,7 +202,7 @@ export const asyncRoutes = [
       {
         path: 'activity-log',
         name: 'Activity Log',
-        component: () => import('@/views/ProjectActivityLog'),
+        component: () => import('@/views/Project/ActivityLog'),
         meta: { title: 'Activity Log', roles: ['Project Manager', 'Administrator'] }
       },
       {
