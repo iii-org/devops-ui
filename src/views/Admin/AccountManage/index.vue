@@ -64,10 +64,10 @@
       </el-table-column>
     </el-table>
     <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
+      :total="listQuery.total ? listQuery.total : 1"
+      :page="listQuery.current"
+      :limit="listQuery.per_page"
+      :page-sizes="[listQuery.per_page]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -83,9 +83,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { deleteUser, getAllUser, getInfo } from '@/api/user'
+import { deleteUser, getUser, getInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinAccountManageTable from '@/components/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
@@ -94,7 +94,7 @@ export default {
     UserDialog,
     ElTableColumnTime
   },
-  mixins: [MixinBasicTable],
+  mixins: [MixinAccountManageTable],
   data: () => ({
     userDialogVisible: false,
     dialogTitle: '',
@@ -107,8 +107,9 @@ export default {
     ...mapGetters(['userId'])
   },
   methods: {
-    async fetchData() {
-      const allUser = await getAllUser()
+    async fetchData(page, per_page, search) {
+      const allUser = await getUser(page, per_page, search)
+      this.listQuery = allUser.data.page
       return allUser.data.user_list.filter(item => item.id !== this.userId)
     },
     emitAddUserDialogVisible(visible, refresh) {
@@ -145,6 +146,7 @@ export default {
           message: this.$t('Notify.Deleted'),
           type: 'success'
         })
+        this.keyword = ''
         await this.loadData()
       } catch (error) {
         console.error(error)
