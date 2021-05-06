@@ -54,6 +54,7 @@
                       </template>
                       <template v-else>{{ $t('Issue.Issue') }}</template>
                       #{{ parent.id }} - {{ parent.subject }}
+                      <span v-if="Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }})</span>
                     </el-link>
                   </li>
                   <li v-if="children.length>0">子議題：
