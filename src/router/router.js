@@ -273,7 +273,7 @@ export const asyncRoutes = [
         name: 'branches',
         props: true,
         hidden: true,
-        component: () => import('@/views/BranchList'),
+        component: () => import('@/views/Progress/BranchListRD'),
         meta: { title: 'Branches', icon: 'tree', roles: ['Engineer'] }
       },
       {
@@ -458,38 +458,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
-  // {
-  //   path: '/file_list/:rId/:branchName/:projectName',
-  //   component: Layout,
-  //   hidden: true,
-  //   meta: { roles: ['Engineer'] },
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'fileList',
-  //       props: true,
-  //       component: () => import('@/views/FileList'),
-  //       meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/commit_list/:rId/:branchName/:projectName',
-  //   component: Layout,
-  //   // hidden: true,
-  //   meta: { roles: ['Engineer'] },
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'commitList',
-  //       props: true,
-  //       component: () => import('@/views/CommitList'),
-  //       meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
-  //     }
-  //   ]
-  // },
 
   {
     path: '/system-resource',
