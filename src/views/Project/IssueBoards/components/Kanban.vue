@@ -152,13 +152,13 @@ export default {
   }),
   methods: {
     checkRelatives(evt) {
+      const errorMsg = []
+      const toName = evt.to.classList[1]
+      const toClassObj = this.status.find((item) => (item.name === toName))
+      const element = evt.draggedContext.element
+      const h = this.$createElement
       if (this.dimension === 'status') {
-        const h = this.$createElement
-        const toName = evt.to.classList[1]
-        const toClassObj = this.status.find((item) => (item.name === toName))
-        const element = evt.draggedContext.element
         const checkAssigned = this.checkAssigned(toClassObj, element)
-        const errorMsg = []
         if (!checkAssigned) {
           errorMsg.push(h('li',
             [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')]
@@ -179,6 +179,14 @@ export default {
           this.showErrorAlert(errorMsg)
         }
         return checkAssigned
+      } else if (this.dimension === 'priority') {
+        const checkPriority = this.checkPriority(element)
+        if (!checkPriority) {
+          errorMsg.push(h('li',
+            [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]
+          ))
+          this.showErrorAlert(errorMsg)
+        }
       }
     },
     checkAssigned(to, element) {
@@ -187,6 +195,9 @@ export default {
     checkChildrenStatus(element) {
       if (element.children.length <= 0) return true
       return element.children.map((issue) => (issue.status.id === 6)).reduce((issue_status, all) => (issue_status && all))
+    },
+    checkPriority(to, element) {
+      return element.children.length <= 0
     },
     end(boardObject, event) {
       this.reload += 1
@@ -240,6 +251,14 @@ export default {
             } else {
               this.showErrorAlert(errorMsg)
             }
+          }
+        } else if (Object.keys(data)[0] === 'priority') {
+          const checkPriority = this.checkPriority(element)
+          if (!checkPriority) {
+            errorMsg.push(h('li',
+              [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]
+            ))
+            this.showErrorAlert(errorMsg)
           }
         } else {
           this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
