@@ -491,7 +491,8 @@ export default {
     SearchProjectName: 'Search Project Name',
     StartDate: 'Start Date',
     DueDate: 'Due Date',
-    ProjectOwner: 'Project Owner'
+    ProjectOwner: 'Project Owner',
+    SelectProject: 'Select a project'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

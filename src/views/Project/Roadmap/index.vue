@@ -1,5 +1,5 @@
 <template>
-  <div :element-loading-text="$t('Loading')" class="app-container">
+  <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div class="d-flex">
       <project-list-selector />
     </div>
@@ -7,7 +7,7 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <el-card shadow="hover">
-          <el-collapse v-if="versionList.length" v-model="activeNames" :accordion="true" @change="onCollapseChange">
+          <el-collapse v-if="versionList.length" v-model="activeNames" accordion @change="onCollapseChange">
             <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
               <template slot="title">
                 <div class="d-flex align-center">
@@ -55,7 +55,7 @@
         </el-card>
       </el-col>
     </el-row>
-  </div>
+  </el-row>
 </template>
 
 <script>

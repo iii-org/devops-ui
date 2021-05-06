@@ -208,25 +208,25 @@ export const asyncRoutes = [
       {
         path: 'wiki',
         name: 'wiki-list',
-        component: () => import('@/views/ProjectWiki'),
+        component: () => import('@/views/Project/Wiki'),
         meta: { title: 'wikiList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
         path: 'file',
         name: 'file-list',
-        component: () => import('@/views/ProjectFiles'),
+        component: () => import('@/views/Project/Files'),
         meta: { title: 'fileList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
-        path: 'project-roadmap',
+        path: 'roadmap',
         name: 'Project Roadmap',
-        component: () => import('@/views/ProjectRoadmap'),
+        component: () => import('@/views/Project/Roadmap'),
         meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: '/release-version',
         name: 'releaseVersion',
-        component: () => import('@/views/ReleaseVersion'),
+        component: () => import('@/views/Project/ReleaseVersion'),
         meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
       },
       {
@@ -459,37 +459,37 @@ export const asyncRoutes = [
     ]
   },
 
-  {
-    path: '/file_list/:rId/:branchName/:projectName',
-    component: Layout,
-    hidden: true,
-    meta: { roles: ['Engineer'] },
-    children: [
-      {
-        path: '',
-        name: 'fileList',
-        props: true,
-        component: () => import('@/views/FileList'),
-        meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/file_list/:rId/:branchName/:projectName',
+  //   component: Layout,
+  //   hidden: true,
+  //   meta: { roles: ['Engineer'] },
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'fileList',
+  //       props: true,
+  //       component: () => import('@/views/FileList'),
+  //       meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
+  //     }
+  //   ]
+  // },
 
-  {
-    path: '/commit_list/:rId/:branchName/:projectName',
-    component: Layout,
-    hidden: true,
-    meta: { roles: ['Engineer'] },
-    children: [
-      {
-        path: '',
-        name: 'commitList',
-        props: true,
-        component: () => import('@/views/CommitList'),
-        meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/commit_list/:rId/:branchName/:projectName',
+  //   component: Layout,
+  //   // hidden: true,
+  //   meta: { roles: ['Engineer'] },
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'commitList',
+  //       props: true,
+  //       component: () => import('@/views/CommitList'),
+  //       meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/system-resource',

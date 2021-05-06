@@ -4,12 +4,7 @@
       <el-form inline>
         <el-form-item :label="$t('Issue.Issue')">
           <el-select v-model="selectedCategory" @change="processData">
-            <el-option
-              v-for="item in categorySel"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+            <el-option v-for="item in categorySel" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -34,21 +29,13 @@
             :cancel-button-text="$t('general.Cancel')"
             @onConfirm="batchClose"
           >
-            <el-button
-              slot="reference"
-              class="valign-middle"
-              :disabled="noRowSelected"
-            >
+            <el-button slot="reference" class="valign-middle" :disabled="noRowSelected">
               {{ $t('Release.batchClose') }}
             </el-button>
           </el-popconfirm>
         </el-form-item>
         <el-form-item>
-          <el-button
-            class="valign-middle"
-            :disabled="noRowSelected"
-            @click="showBatchMoveDialog = true;"
-          >
+          <el-button class="valign-middle" :disabled="noRowSelected" @click="showBatchMoveDialog = true">
             {{ $t('Release.batchMove') }}
           </el-button>
         </el-form-item>
@@ -74,9 +61,7 @@
         <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigneeName" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
-            <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start"
-                        :open-delay="1000"
-            >
+            <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start" :open-delay="1000">
               <el-button
                 :id="`link-issue-name-${scope.$index}`"
                 class="mr-1"
@@ -121,11 +106,7 @@
     <el-dialog :visible.sync="showBatchMoveDialog" :title="$t('Release.batchMoveDialogTitle')">
       <el-form>
         <el-form-item :label="$t('Release.futureVersion')">
-          <el-select
-            v-model="batchMoveToVersion"
-            :placeholder="$t('Release.selectMoveToVersion')"
-            filterable
-          >
+          <el-select v-model="batchMoveToVersion" :placeholder="$t('Release.selectMoveToVersion')" filterable>
             <el-option
               v-for="item in $parent.projectVersionOptions"
               :key="item.value"
@@ -142,12 +123,10 @@
           type="primary"
           :disabled="!batchMoveToVersion"
           @click="batchMove"
-        >{{ $t('general.Confirm') }}
-        </el-button>
-        <el-button
-          type="info"
-          @click="showBatchMoveDialog = false"
         >
+          {{ $t('general.Confirm') }}
+        </el-button>
+        <el-button type="info" @click="showBatchMoveDialog = false">
           {{ $t('general.Cancel') }}
         </el-button>
       </el-form>
@@ -168,7 +147,7 @@ import { updateIssue } from '@/api/issue'
 export default {
   name: 'IssuesTable',
   components: {
-    IssueNotesEditor: () => import ('@/views/ProjectIssueDetail/components/IssueNotesEditor')
+    IssueNotesEditor: () => import('@/views/ProjectIssueDetail/components/IssueNotesEditor')
   },
   mixins: [MixinElTableWithCheckbox],
   data: function() {
@@ -233,8 +212,7 @@ export default {
       if (this.selectedCategory === this.$t('Release.allCategories')) {
         partialIssues = this.issues
       } else {
-        partialIssues = this.issues.filter(
-          item => item.trackerName === this.selectedCategory)
+        partialIssues = this.issues.filter(item => item.trackerName === this.selectedCategory)
       }
       this.closedIssueCount = 0
       this.openIssueCount = 0
@@ -263,7 +241,7 @@ export default {
       })
     },
     handleEdit(idx, row) {
-      this.$router.push({ path: `/project/issue-list/${row.id}` })
+      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
     },
     handleClose(idx, row) {
       this.closedIdex = idx
@@ -334,9 +312,7 @@ export default {
       this.fullScreenLoading = true
       const indexes = this.selectedIndexes
       for (const index of indexes) {
-        await updateIssue(
-          this.listData[index].id, { fixed_version_id: this.batchMoveToVersion }
-        )
+        await updateIssue(this.listData[index].id, { fixed_version_id: this.batchMoveToVersion })
       }
       this.multipleSelection = []
       await this.$parent.init()

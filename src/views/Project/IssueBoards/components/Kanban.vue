@@ -196,7 +196,7 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      this.$router.push({ path: `/project/issue-list/${id}` })
+      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement

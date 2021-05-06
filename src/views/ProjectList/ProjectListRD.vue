@@ -1,107 +1,3 @@
-<script>
-import { mapActions, mapGetters } from 'vuex'
-import MixinElTable from '@/components/MixinElTable'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-const formTemplate = {
-  name: '',
-  code: '',
-  amount: 0,
-  ppm: 0,
-  status: false,
-  desc: ''
-}
-
-export default {
-  name: 'ProjectList',
-  components: { ElTableColumnTime },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
-  mixins: [MixinElTable],
-  data() {
-    return {
-      dialogVisible: false,
-      dialogStatus: 1,
-      form: formTemplate,
-      confirmLoading: false,
-      rowHeight: 70
-    }
-  },
-  computed: {
-    ...mapGetters(['projectList', 'projectListTotal']),
-    dialogStatusText() {
-      switch (this.dialogStatus) {
-        case 1:
-          return 'Add'
-        case 2:
-          return 'Edit'
-        default:
-          return 'Null'
-      }
-    }
-  },
-  methods: {
-    ...mapActions(['projects/getProjectList']),
-    async fetchData() {
-      await this['projects/getProjectList']()
-      return this.projectList
-    },
-    handleEdit(idx, row) {
-      this.dialogVisible = true
-      this.dialogStatus = 2
-      this.form = Object.assign({}, this.form, row)
-    },
-    handleDelete() {},
-    handleAdding() {
-      this.dialogVisible = true
-      this.dialogStatus = 1
-    },
-    returnTagType(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'info'
-      return success === total ? 'success' : 'danger'
-    },
-    testResults(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'No Test'
-      return success + ' / ' + total
-    },
-    returnLatestTag(row) {
-      const { tags } = row
-      if (!tags || tags.length === 0) return 'No Tag'
-      return tags[0].name
-    },
-    onDialogClosed() {
-      this.$nextTick(() => {
-        this.$refs['thisForm'].resetFields()
-        this.form = formTemplate
-      })
-    },
-    handleConfirm() {
-      //   this.dialogVisible = false
-      // console.log(this.form)
-    },
-    copyUrl(id) {
-      const target = document.getElementById(id)
-      window.getSelection().selectAllChildren(target)
-      document.execCommand('Copy')
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Copied'),
-        type: 'success'
-      })
-    }
-  }
-}
-</script>
 <template>
   <div class="app-container">
     <div class="clearfix">
@@ -113,12 +9,10 @@ export default {
       </span> -->
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        prefix-icon="el-icon-search"
         :placeholder="$t('Project.SearchIdentifier')"
         style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+      />
     </div>
     <el-divider />
     <el-table
@@ -323,6 +217,112 @@ export default {
     </el-dialog>
   </div>
 </template>
+
+<script>
+import { mapActions, mapGetters } from 'vuex'
+import MixinElTable from '@/components/MixinElTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+const formTemplate = {
+  name: '',
+  code: '',
+  amount: 0,
+  ppm: 0,
+  status: false,
+  desc: ''
+}
+
+export default {
+  name: 'ProjectListRD',
+  components: { ElTableColumnTime },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+  mixins: [MixinElTable],
+  data() {
+    return {
+      dialogVisible: false,
+      dialogStatus: 1,
+      form: formTemplate,
+      confirmLoading: false,
+      rowHeight: 70
+    }
+  },
+  computed: {
+    ...mapGetters(['projectList', 'projectListTotal']),
+    dialogStatusText() {
+      switch (this.dialogStatus) {
+        case 1:
+          return 'Add'
+        case 2:
+          return 'Edit'
+        default:
+          return 'Null'
+      }
+    }
+  },
+  methods: {
+    ...mapActions(['projects/getProjectList']),
+    async fetchData() {
+      await this['projects/getProjectList']()
+      return this.projectList
+    },
+    handleEdit(idx, row) {
+      this.dialogVisible = true
+      this.dialogStatus = 2
+      this.form = Object.assign({}, this.form, row)
+    },
+    handleDelete() {},
+    handleAdding() {
+      this.dialogVisible = true
+      this.dialogStatus = 1
+    },
+    returnTagType(row) {
+      const { success, total } = row.last_test_result
+      if (!success || !total) return 'info'
+      return success === total ? 'success' : 'danger'
+    },
+    testResults(row) {
+      const { success, total } = row.last_test_result
+      if (!success || !total) return 'No Test'
+      return success + ' / ' + total
+    },
+    returnLatestTag(row) {
+      const { tags } = row
+      if (!tags || tags.length === 0) return 'No Tag'
+      return tags[0].name
+    },
+    onDialogClosed() {
+      this.$nextTick(() => {
+        this.$refs['thisForm'].resetFields()
+        this.form = formTemplate
+      })
+    },
+    handleConfirm() {
+      //   this.dialogVisible = false
+      // console.log(this.form)
+    },
+    copyUrl(id) {
+      const target = document.getElementById(id)
+      window.getSelection().selectAllChildren(target)
+      document.execCommand('Copy')
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Copied'),
+        type: 'success'
+      })
+    }
+  }
+}
+</script>
+
 <style lang="scss" scoped>
 .clearfix {
   clear: both;

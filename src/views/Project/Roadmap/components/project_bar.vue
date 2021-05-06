@@ -17,6 +17,7 @@ use([
 ])
 
 export default {
+  name: 'ProjectBar',
   components: {
     'v-chart': VChart
   },

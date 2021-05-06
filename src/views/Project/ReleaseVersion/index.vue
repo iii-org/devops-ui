@@ -51,8 +51,8 @@
 import { mapGetters } from 'vuex'
 import { getProjectIssueListByVersion, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import IssuesTable from '@/views/ReleaseVersion/IssuesTable'
-import CreateRelease from '@/views/ReleaseVersion/CreateRelease'
+import IssuesTable from './IssuesTable'
+import CreateRelease from './CreateRelease'
 import Issue from '@/data/issue.js'
 
 const STATE_INIT = 0

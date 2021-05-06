@@ -1,5 +1,5 @@
 <script>
-import IssueListDialog from '@/views/ReleaseVersion/IssueListDialog'
+import IssueListDialog from './IssueListDialog'
 import { mapGetters } from 'vuex'
 import { getBranchesByProject } from '@/api/branches'
 import { createRelease } from '@/api/release'

@@ -2,7 +2,7 @@
   <el-col class="mr-4" :xs="10" :sm="8" :md="7" :lg="6" :xl="4">
     <el-select
       v-model="projectValue"
-      placeholder="select a project"
+      :placeholder="$t('Project.SelectProject')"
       style="width: 100%"
       filterable
       @change="onProjectChange"

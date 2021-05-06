@@ -487,7 +487,8 @@ export default {
     SearchProjectName: '搜尋專案名稱',
     StartDate: '起始日',
     DueDate: '到期日',
-    ProjectOwner: '專案經理'
+    ProjectOwner: '專案經理',
+    SelectProject: '請選擇專案'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

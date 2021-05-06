@@ -1,157 +1,5 @@
-<script>
-import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-import 'codemirror/lib/codemirror.css'
-import '@toast-ui/editor/dist/toastui-editor.css'
-import { Editor } from '@toast-ui/vue-editor'
-
-export default {
-  name: 'ProjectWiki',
-  components: {
-    ElTableColumnTime,
-    editor: Editor
-  },
-  mixins: [MixinElTableWithAProject],
-  data: () => ({
-    isLoading: false,
-    editBtnLoading: false,
-    direction: 'rtl',
-    wikiData: {},
-    wikiContent: '',
-    detailVisible: false,
-    dialogVisible: false,
-    dialogVisibleEdit: false,
-    drawerTitle: '',
-    wikiTitle: '',
-    searchKey: 'title',
-    formRules: {
-      wikiTitle: [
-        { required: true, message: 'Please input name', trigger: 'change' },
-        {
-          pattern: /^((?![,.\/?;:|]).)*$/,
-          message: 'Not allowing special characters (, . / ? ; : |)',
-          trigger: 'blur'
-        }
-      ]
-    },
-    form: { wikiTitle: '' }
-  }),
-  methods: {
-    async fetchData() {
-      if (this.selectedProjectId === -1) {
-        this.showNoProjectWarning()
-        return []
-      }
-      return (await getWikiList(this.selectedProjectId)).data.wiki_pages
-    },
-    showNoProjectWarning() {
-      this.$message({
-        title: this.$t('general.Warning'),
-        message: this.$t('Notify.NoProject'),
-        type: 'warning'
-      })
-      this.listLoading = false
-    },
-    handleClose() {
-      this.detailVisible = false
-    },
-    async handleUpdate() {
-      this.editBtnLoading = true
-      const text = this.$refs.mdEditor.invoke('getMarkdown')
-      try {
-        await putWikiDetail(this.selectedProjectId, this.wikiData.title, { wiki_text: text })
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        this.dialogVisible = false
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.editBtnLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    async handleEdit(idx, row) {
-      this.listLoading = true
-      this.drawerTitle = 'Edit'
-      try {
-        const res = await getWikiDetail(this.selectedProjectId, row.title)
-        const { wiki_page } = res.data
-        this.wikiData = wiki_page
-        this.wikiTitle = wiki_page.title
-        this.wikiContent = wiki_page.text
-        this.dialogVisible = true
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
-    async handleDelete(idx, row) {
-      this.listLoading = true
-      try {
-        await deleteWiki(this.selectedProjectId, row.title)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.listLoading = false
-    },
-    async handleDetail(idx, row) {
-      try {
-        this.listLoading = false
-        this.drawerTitle = 'Detail'
-        const res = await getWikiDetail(this.selectedProjectId, row.title)
-        const { wiki_page } = res.data
-        this.wikiData = wiki_page
-        this.wikiContent = wiki_page.text
-        this.detailVisible = true
-        this.dialogVisibleEdit = false
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.listLoading = false
-      }
-    },
-    async handleAdding() {
-      this.dialogVisible = true
-      this.drawerTitle = 'Add'
-      this.wikiContent = '# WIKI'
-      this.form.wikiTitle = ''
-    },
-    async handleConfirmAdd() {
-      this.$refs['form'].validate(async valid => {
-        if (!valid) {
-          return
-        }
-        this.editBtnLoading = true
-        const text = this.$refs.mdEditor.invoke('getMarkdown')
-        try {
-          await putWikiDetail(this.selectedProjectId, this.form.wikiTitle, { wiki_text: text })
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Created'),
-            type: 'success'
-          })
-        } catch (error) {
-          console.error(error)
-        } finally {
-          this.dialogVisible = false
-          this.editBtnLoading = false
-          await this.loadData()
-        }
-      })
-    }
-  }
-}
-</script>
 <template>
-  <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
@@ -162,12 +10,10 @@ export default {
       </span>
       <el-input
         v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        prefix-icon="el-icon-search"
         :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+      />
     </div>
 
     <el-divider />
@@ -303,8 +149,164 @@ export default {
         </div>
       </div>
     </el-drawer>
-  </div>
+  </el-row>
 </template>
+
+<script>
+import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/vue-editor'
+
+export default {
+  name: 'ProjectWiki',
+  components: {
+    ElTableColumnTime,
+    editor: Editor
+  },
+  mixins: [MixinElTableWithAProject],
+  data() {
+    return {
+      isLoading: false,
+      editBtnLoading: false,
+      direction: 'rtl',
+      wikiData: {},
+      wikiContent: '',
+      detailVisible: false,
+      dialogVisible: false,
+      dialogVisibleEdit: false,
+      drawerTitle: '',
+      wikiTitle: '',
+      searchKey: 'title',
+      formRules: {
+        wikiTitle: [
+          { required: true, message: 'Please input name', trigger: 'change' },
+          {
+            pattern: /^((?![,.\/?;:|]).)*$/,
+            message: 'Not allowing special characters (, . / ? ; : |)',
+            trigger: 'blur'
+          }
+        ]
+      },
+      form: { wikiTitle: '' }
+    }
+  },
+  methods: {
+    async fetchData() {
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
+      }
+      return (await getWikiList(this.selectedProjectId)).data.wiki_pages
+    },
+    showNoProjectWarning() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
+      })
+      this.listLoading = false
+    },
+    handleClose() {
+      this.detailVisible = false
+    },
+    async handleUpdate() {
+      this.editBtnLoading = true
+      const text = this.$refs.mdEditor.invoke('getMarkdown')
+      try {
+        await putWikiDetail(this.selectedProjectId, this.wikiData.title, { wiki_text: text })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        this.dialogVisible = false
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.editBtnLoading = false
+    },
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    async handleEdit(idx, row) {
+      this.listLoading = true
+      this.drawerTitle = 'Edit'
+      try {
+        const res = await getWikiDetail(this.selectedProjectId, row.title)
+        const { wiki_page } = res.data
+        this.wikiData = wiki_page
+        this.wikiTitle = wiki_page.title
+        this.wikiContent = wiki_page.text
+        this.dialogVisible = true
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
+    async handleDelete(idx, row) {
+      this.listLoading = true
+      try {
+        await deleteWiki(this.selectedProjectId, row.title)
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+
+      this.listLoading = false
+    },
+    async handleDetail(idx, row) {
+      try {
+        this.listLoading = false
+        this.drawerTitle = 'Detail'
+        const res = await getWikiDetail(this.selectedProjectId, row.title)
+        const { wiki_page } = res.data
+        this.wikiData = wiki_page
+        this.wikiContent = wiki_page.text
+        this.detailVisible = true
+        this.dialogVisibleEdit = false
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.listLoading = false
+      }
+    },
+    async handleAdding() {
+      this.dialogVisible = true
+      this.drawerTitle = 'Add'
+      this.wikiContent = '# WIKI'
+      this.form.wikiTitle = ''
+    },
+    async handleConfirmAdd() {
+      this.$refs['form'].validate(async valid => {
+        if (!valid) {
+          return
+        }
+        this.editBtnLoading = true
+        const text = this.$refs.mdEditor.invoke('getMarkdown')
+        try {
+          await putWikiDetail(this.selectedProjectId, this.form.wikiTitle, { wiki_text: text })
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Created'),
+            type: 'success'
+          })
+        } catch (error) {
+          console.error(error)
+        } finally {
+          this.dialogVisible = false
+          this.editBtnLoading = false
+          await this.loadData()
+        }
+      })
+    }
+  }
+}
+</script>
+
 <style lang="scss">
 .el-drawer__body {
   height: 100%;
