@@ -139,7 +139,8 @@ export default {
     project_name: '專案名稱',
     pm_user_name: '專案經理',
     Department: '部門',
-    UserTitle: '職稱'
+    UserTitle: '職稱',
+    Back: '返回'
   },
   Notify: {
     Updated: '已更新',
@@ -290,7 +291,7 @@ export default {
     AddParameter: '新增參數',
     Length: '長度',
     Limit: '限制',
-    AddBy: '由 {user} 新增',
+    AddBy: '由 {user} 於 {created_date} 新增',
     Author: '作者',
     CommentTime: '加註於',
     ParentIssue: '子議題',

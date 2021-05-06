@@ -55,9 +55,6 @@
           </el-tooltip>
           <p v-if="element.parent_id" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
-            <!--            <el-tag class="el-tag&#45;&#45;circle" size="mini" :class="element.parent_status.name">-->
-            <!--              {{ $t('Issue.' + ) }}-->
-            <!--            </el-tag>-->
             <status :name="element.parent_status.name" size="mini" />
             <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
               {{ element.parent_name }}

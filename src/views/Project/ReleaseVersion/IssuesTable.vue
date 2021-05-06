@@ -147,7 +147,7 @@ import { updateIssue } from '@/api/issue'
 export default {
   name: 'IssuesTable',
   components: {
-    IssueNotesEditor: () => import('@/views/ProjectIssueDetail/components/IssueNotesEditor')
+    IssueNotesEditor: () => import('@/views/Project/IssueDetail/components/IssueNotesEditor')
   },
   mixins: [MixinElTableWithCheckbox],
   data: function() {

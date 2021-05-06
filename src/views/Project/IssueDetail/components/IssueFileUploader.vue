@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div class="text-subtitle-2 mb-2">{{ $t('Issue.UploadFiles') }}</div>
-    <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action multiple drag>
+    <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
       <div>
         <el-button size="small" type="success" class="mb-2">{{ $t('File.UploadBtn') }}</el-button>
         <div>{{ $t('File.SelectFileOrDragHere') }}</div>
@@ -9,7 +8,6 @@
     </el-upload>
   </div>
 </template>
-
 <script>
 import { fileExtension } from '@/utils/extension'
 
@@ -44,8 +42,7 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
-    }
-  }
+    } }
 }
 </script>
 
@@ -55,6 +52,6 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 400px;
 }
 </style>

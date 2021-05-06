@@ -5,29 +5,11 @@
     :element-loading-text="$t('Loading')"
     :model="form"
     :rules="issueFormRules"
-    label-position="left"
+    label-position="right"
+    label-width="20%"
   >
     <el-row :gutter="10">
-      <el-col :span="12" :md="8">
-        <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-          <el-select
-            v-model="form.assigned_to_id"
-            style="width: 100%"
-            clearable
-            :placeholder="$t('RuleMsg.PleaseSelect')"
-          >
-            <el-option v-for="item in dynamicAssigneeList" :key="item.value" :label="item.label" :value="item.value">
-              {{ item.label }}（{{ item.login }}）
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12" :md="16">
-        <el-form-item :label="$t('general.Title')" prop="subject">
-          <el-input v-model="form.subject" style="width: 100%" :placeholder="$t('RuleMsg.PleaseInput')" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12" :md="8">
+      <el-col>
         <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
           <el-select
             v-model="form.fixed_version_id"
@@ -45,14 +27,7 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="12" :md="8">
-        <el-form-item :label="$t('general.Type')" prop="tracker_id">
-          <el-select v-model="form.tracker_id" style="width: 100%">
-            <el-option v-for="option in typeList" :key="option.value" :label="option.label" :value="option.value" />
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12" :md="8">
+      <el-col>
         <el-form-item :label="$t('general.Status')" prop="status_id">
           <el-select v-model="form.status_id" :disabled="isParentIssueClosed" style="width: 100%">
             <el-option
@@ -64,26 +39,45 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="12" :md="8">
+      <el-col>
+        <el-form-item :label="$t('general.Type')" prop="tracker_id">
+          <el-select v-model="form.tracker_id" style="width: 100%">
+            <el-option v-for="option in typeList" :key="option.value" :label="option.label" :value="option.value" />
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col>
+        <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+          <el-select
+            v-model="form.assigned_to_id"
+            style="width: 100%"
+            clearable
+            :placeholder="$t('RuleMsg.PleaseSelect')"
+          >
+            <el-option v-for="item in dynamicAssigneeList" :key="item.value" :label="item.label" :value="item.value">
+              {{ item.label }}（{{ item.login }}）
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col>
         <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
           <el-select v-model="form.priority_id" :disabled="childrenIssueList.length > 0" style="width: 100%">
             <el-option v-for="option in priorityList" :key="option.value" :label="option.label" :value="option.value" />
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="12" :md="8">
+      <el-col>
         <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
           <el-input-number v-model="form.estimated_hours" :min="0" :max="100" style="width: 100%" />
         </el-form-item>
       </el-col>
-      <el-col :span="12" :md="8">
+      <el-col>
         <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
           <el-input-number v-model="form.done_ratio" :min="0" :max="100" style="width: 100%" />
         </el-form-item>
       </el-col>
-    </el-row>
-    <el-row :gutter="10">
-      <el-col :span="12">
+      <el-col>
         <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
           <el-date-picker
             v-model="form.start_date"
@@ -95,7 +89,7 @@
           />
         </el-form-item>
       </el-col>
-      <el-col :span="12">
+      <el-col>
         <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
           <el-date-picker
             v-model="form.due_date"
@@ -105,17 +99,6 @@
             :placeholder="$t('RuleMsg.PleaseSelect')"
             :picker-options="pickerOptions(form.start_date)"
             @change="clearDueDate"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col :span="24">
-        <el-form-item :label="$t('Issue.Description')" prop="description">
-          <el-input
-            v-model="form.description"
-            type="textarea"
-            rows="4"
-            style="width: 100%"
-            :placeholder="$t('RuleMsg.PleaseInput')"
           />
         </el-form-item>
       </el-col>
@@ -174,7 +157,7 @@ export default {
       return this.isChildrenAllClosed() ? this.statusList : listWithoutClosedOption
     },
     isParentIssueClosed() {
-      return this.parentIssue !== {} && this.parentIssue.issue_status === 'Closed'
+      return Object.keys(this.parentIssue).length > 0 && this.parentIssue.status.name === 'Closed'
     },
     dynamicAssigneeList() {
       const hasInactiveAssignee =
@@ -232,7 +215,7 @@ export default {
       this.isLoading = false
     },
     isChildrenAllClosed() {
-      return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.issue_status === 'Closed')
+      return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.status.name === 'Closed')
     },
     createRelativeList(list) {
       const result = []

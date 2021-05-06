@@ -209,7 +209,7 @@ export default {
       this.dialogVisible = true
       this.dialogStatus = 1
     },
-    handleExceed(files, fileList) {
+    handleExceed() {
       this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.SingleFileLimit'),

@@ -140,7 +140,8 @@ export default {
     project_name: 'Project Name',
     pm_user_name: 'Project Manager',
     Department: 'Department',
-    UserTitle: 'Title'
+    UserTitle: 'Title',
+    Back: 'Back'
   },
   Notify: {
     Updated: 'update successful',
