@@ -181,20 +181,22 @@ export default {
     }
   },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    dialogVisible: false,
-    dialogStatus: 1,
-    testCaseForm: formTemplate,
-    confirmLoading: false,
-    testCaseTypeList: [],
-    testCaseAPIMethodList: [],
-    testCaseFormRules: {
-      name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-      type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
-      method_id: [{ required: true, message: 'Please select method', trigger: 'blur' }],
-      url: [{ required: true, message: 'Please input url', trigger: 'blur' }]
+  data() {
+    return {
+      dialogVisible: false,
+      dialogStatus: 1,
+      testCaseForm: formTemplate,
+      confirmLoading: false,
+      testCaseTypeList: [],
+      testCaseAPIMethodList: [],
+      testCaseFormRules: {
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        type_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        method_id: [{ required: true, message: 'Please select method', trigger: 'blur' }],
+        url: [{ required: true, message: 'Please input url', trigger: 'blur' }]
+      }
     }
-  }),
+  },
   computed: {
     ...mapGetters(['selectedProjectId', 'userRole']),
     dialogStatusText() {

@@ -61,7 +61,7 @@ export const asyncRoutes = [
       {
         path: 'dashboard',
         name: 'dashboard-rd',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/Dashboard/index'),
         meta: { title: 'dashboard', icon: 'dashboard', roles: ['Engineer'] }
       },
       {
@@ -112,7 +112,7 @@ export const asyncRoutes = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/views/dashboard/roles/admin'),
+        component: () => import('@/views/Dashboard/roles/admin'),
         meta: {
           title: 'dashboard',
           icon: 'dashboard',
@@ -179,7 +179,7 @@ export const asyncRoutes = [
       {
         path: 'test-case',
         name: 'test-case',
-        component: () => import('@/views/TestCase'),
+        component: () => import('@/views/Project/TestCase/TestCase'),
         meta: {
           title: 'createTest',
           roles: ['Engineer', 'Project Manager', 'Administrator'],
@@ -190,7 +190,7 @@ export const asyncRoutes = [
             path: 'test-item/:testCaseId',
             name: 'test-item',
             hidden: true,
-            component: () => import('@/views/TestItem'),
+            component: () => import('@/views/Project/TestCase/TestItem'),
             meta: {
               title: 'Test Item',
               roles: ['Engineer', 'Project Manager', 'Administrator'],
@@ -314,7 +314,7 @@ export const asyncRoutes = [
             path: 'deployment-list',
             name: 'Deployment List',
             hidden: true,
-            component: () => import('@/views/DeploymentList'),
+            component: () => import('@/views/Progress/KubernetesResources/components/DeploymentList'),
             meta: {
               title: 'Deployment List',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -325,7 +325,7 @@ export const asyncRoutes = [
             path: 'pods-list',
             name: 'Pods List',
             hidden: true,
-            component: () => import('@/views/PodsList'),
+            component: () => import('@/views/Progress/KubernetesResources/components/PodsList'),
             meta: {
               title: 'Pods List',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -336,7 +336,7 @@ export const asyncRoutes = [
             path: 'service-list',
             name: 'Service List',
             hidden: true,
-            component: () => import('@/views/ServiceList'),
+            component: () => import('@/views/Progress/KubernetesResources/components/ServiceList'),
             meta: {
               title: 'Service List',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -347,7 +347,7 @@ export const asyncRoutes = [
             path: 'secret-list',
             name: 'Secret List',
             hidden: true,
-            component: () => import('@/views/SecretList'),
+            component: () => import('@/views/Progress/KubernetesResources/components/SecretList'),
             meta: {
               title: 'Secret List',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -358,7 +358,7 @@ export const asyncRoutes = [
             path: 'configmaps-list',
             name: 'ConfigMaps List',
             hidden: true,
-            component: () => import('@/views/ConfigMapsList'),
+            component: () => import('@/views/Progress/KubernetesResources/components/ConfigMapsList'),
             meta: {
               title: 'ConfigMaps List',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -369,7 +369,7 @@ export const asyncRoutes = [
             path: 'ingresses-list',
             name: 'Ingresses List',
             hidden: true,
-            component: () => import('@/views/IngressesList'),
+            component: () => import('@/views/Progress/KubernetesResources/components/IngressesList'),
             meta: {
               title: 'Ingresses List',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -505,14 +505,14 @@ export const asyncRoutes = [
       {
         path: 'plugin-resource',
         name: 'Plugin Resource',
-        component: () => import('@/views/PluginResource'),
+        component: () => import('@/views/SystemResource/PluginResource'),
         meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'harbor',
         name: 'Harbor',
         hidden: true,
-        component: () => import('@/views/ResourceHarbor'),
+        component: () => import('@/views/SystemResource/Harbor/ResourceHarbor'),
         meta: {
           title: 'Harbor',
           roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -523,7 +523,7 @@ export const asyncRoutes = [
             path: 'artifacts',
             name: 'Artifacts',
             hidden: true,
-            component: () => import('@/views/ProjectArtifacts'),
+            component: () => import('@/views/SystemResource/Harbor/components/ProjectArtifacts'),
             meta: {
               title: 'Artifacts',
               roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -598,7 +598,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/User/Profile'),
+        component: () => import('@/views/Profile'),
         name: 'Profile',
         meta: {
           title: 'Profile',

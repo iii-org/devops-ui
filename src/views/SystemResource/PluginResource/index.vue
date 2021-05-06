@@ -63,18 +63,18 @@ const formatChartData = item => {
     result.push({
       value: formatValue(item.title, item.used.value),
       name: `Usage (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
+      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' } }
     })
   } else {
     result.push({
       value: formatValue(item.title, handleLeftQuota(item)),
       name: `Left Quota (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' }}
+      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' } }
     })
     result.push({
       value: formatValue(item.title, item.used.value),
       name: `Usage (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
+      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' } }
     })
   }
   return result
@@ -98,10 +98,12 @@ export default {
     ProjectListSelector,
     resourcePie
   },
-  data: () => ({
-    listLoading: true,
-    usageList: []
-  }),
+  data() {
+    return {
+      listLoading: true,
+      usageList: []
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },

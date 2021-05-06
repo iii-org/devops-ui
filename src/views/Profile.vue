@@ -58,7 +58,12 @@
               :label-position="labelPosition"
             >
               <el-form-item :label="$t('Profile.Password')" prop="old_password">
-                <el-input v-model="userPwdForm.old_password" :disabled="disableEdit" type="password" class="form-input" />
+                <el-input
+                  v-model="userPwdForm.old_password"
+                  :disabled="disableEdit"
+                  type="password"
+                  class="form-input"
+                />
               </el-form-item>
               <el-form-item :label="$t('Profile.NewPassword')" prop="userNewPwd">
                 <el-input v-model="userPwdForm.userNewPwd" :disabled="disableEdit" type="password" class="form-input" />
@@ -67,7 +72,12 @@
                 </div>
               </el-form-item>
               <el-form-item :label="$t('Profile.RepeatNewPassword')" prop="userRepeatNewPwd">
-                <el-input v-model="userPwdForm.userRepeatNewPwd" :disabled="disableEdit" type="password" class="form-input" />
+                <el-input
+                  v-model="userPwdForm.userRepeatNewPwd"
+                  :disabled="disableEdit"
+                  type="password"
+                  class="form-input"
+                />
               </el-form-item>
             </el-form>
             <el-row class="mt-4">
@@ -89,6 +99,7 @@ import store from '@/store'
 import { updateUser, getInfo, getK8SConfig } from '@/api/user'
 
 export default {
+  name: 'Profile',
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length > 0 && value.length < 8) {
@@ -160,7 +171,7 @@ export default {
       return this.from_ad
     },
     source() {
-      return (this.from_ad) ? this.$t('User.AD') : this.$t('User.SYSTEM')
+      return this.from_ad ? this.$t('User.AD') : this.$t('User.SYSTEM')
     }
   },
   async created() {
@@ -235,10 +246,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tab-inner{
+.tab-inner {
   padding: 0 25px;
 }
-.form-input{
+.form-input {
   width: 250px;
 }
 </style>

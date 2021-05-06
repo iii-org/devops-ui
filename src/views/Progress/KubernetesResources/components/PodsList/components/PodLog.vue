@@ -1,35 +1,3 @@
-<script>
-export default {
-  name: 'PodLog',
-  props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false
-    },
-    logMessage: {
-      type: String,
-      default: ''
-    },
-    isLoading: {
-      type: Boolean,
-      default: false
-    },
-    containerName: {
-      type: String,
-      default: ''
-    }
-  },
-  methods: {
-    handleClose() {
-      this.$emit('hideDialog', false)
-    },
-    handleRefresh() {
-      this.$emit('refresh')
-    }
-  }
-}
-</script>
-
 <template>
   <el-dialog :title="containerName" :visible="dialogVisible" width="90%" @close="handleClose">
     <div class="text-right">
@@ -64,3 +32,35 @@ export default {
     </span>
   </el-dialog>
 </template>
+
+<script>
+export default {
+  name: 'PodLog',
+  props: {
+    dialogVisible: {
+      type: Boolean,
+      default: false
+    },
+    logMessage: {
+      type: String,
+      default: ''
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
+    containerName: {
+      type: String,
+      default: ''
+    }
+  },
+  methods: {
+    handleClose() {
+      this.$emit('hideDialog', false)
+    },
+    handleRefresh() {
+      this.$emit('refresh')
+    }
+  }
+}
+</script>

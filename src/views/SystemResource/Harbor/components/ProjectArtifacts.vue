@@ -1,34 +1,3 @@
-<script>
-import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-export default {
-  components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
-  methods: {
-    async fetchData() {
-      return (await getProjectArtifacts(this.$route.params.rName)).data
-    },
-    async handleDelete(idx, row) {
-      this.$confirm(`Are you sure to Delete Artifact ${row.name}?`, 'Delete', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'error'
-      }).then(async () => {
-        await deleteProjectArtifact(this.$route.params.rName, row.digest, row.name)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Deleted'),
-          type: 'success'
-        })
-        await this.loadData()
-      })
-    }
-  }
-}
-</script>
-
 <template>
   <div class="table-container">
     <div class="text-right">
@@ -70,7 +39,9 @@ export default {
       </el-table-column>
       <el-table-column label="Labels">
         <template slot-scope="scope">
-          <el-tag v-for="label in scope.row.labels" :key="label" class="el-tag--circle" type="success" effect="dark">{{ label }} </el-tag>
+          <el-tag v-for="label in scope.row.labels" :key="label" class="el-tag--circle" type="success" effect="dark"
+            >{{ label }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column-time prop="push_time" :label="$t('Harbor.PushTime')" />
@@ -93,3 +64,34 @@ export default {
     />
   </div>
 </template>
+
+<script>
+import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
+import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+export default {
+  components: { ElTableColumnTime },
+  mixins: [MixinElTableWithAProject],
+  methods: {
+    async fetchData() {
+      return (await getProjectArtifacts(this.$route.params.rName)).data
+    },
+    async handleDelete(idx, row) {
+      this.$confirm(`Are you sure to Delete Artifact ${row.name}?`, 'Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'error'
+      }).then(async () => {
+        await deleteProjectArtifact(this.$route.params.rName, row.digest, row.name)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+        await this.loadData()
+      })
+    }
+  }
+}
+</script>

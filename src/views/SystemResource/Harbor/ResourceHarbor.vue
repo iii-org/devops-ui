@@ -1,146 +1,3 @@
-<script>
-import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinBasicTable from '@/components/MixinBasicTable'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
-
-const formTemplate = {
-  name: '',
-  due_date: '',
-  status: 'open',
-  description: ''
-}
-
-export default {
-  name: 'ResourceHarbor',
-  components: { ElTableColumnTime, ProjectListSelector },
-  mixins: [MixinBasicTable],
-  data: () => ({
-    projectName: '',
-    dialogVisible: false,
-    formRules: {
-      description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
-    },
-    storage: {
-      project_admin_count: 0,
-      quota: {
-        hard: { storage: 0 },
-        used: { storage: 0 }
-      },
-      repo_count: 0
-    },
-    memberConfirmLoading: false,
-    form: formTemplate,
-
-    showDeleteDialog: false,
-    loadingDelete: '',
-    deleteResourceName: '',
-    inputDelResourceName: '',
-    placeholderText: ''
-  }),
-  methods: {
-    async fetchData() {
-      if (this.selectedProjectId === -1) {
-        return []
-      }
-      const res = await getHarborRepoList(this.selectedProjectId)
-      const resourceList = res.data.map(item => {
-        const name_ary = item.name.split('/')
-        item['name_in_harbor'] = name_ary[name_ary.length - 1]
-        return item
-      })
-      this.projectName = this.selectedProject['name']
-      const storageRes = await getHarborRepoStorageSummary(this.selectedProjectId)
-      this.storage = storageRes.data
-      return resourceList
-    },
-    returnPercentage(quota) {
-      const total = parseInt(quota.hard.storage)
-      const use = parseInt(quota.used.storage)
-      const p = Math.round((use / total) * 100)
-      return isNaN(p) ? 0 : p
-    },
-    handleEdit(idx, row) {
-      this.dialogVisible = true
-      this.form = Object.assign({}, this.form, row)
-    },
-    async handleConfirm(index, row) {
-      this.$refs['form'].validate(async valid => {
-        if (valid) {
-          this.dialogVisible = false
-          const data = this.form
-          await editHarborRepo(data.name, { description: data.description })
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          await this.loadData()
-        } else {
-          return false
-        }
-      })
-    },
-    handleDelete(index, row) {
-      this.showDeleteDialog = true
-      this.deleteResourceName = row.name
-      this.placeholderText = 'Please Input ' + this.deleteResourceName
-    },
-    // async handleDelete(idx, row) {
-    //   this.$confirm(`Are you sure to Delete ${row.name}?`, 'Delete', {
-    //     confirmButtonText: 'Delete',
-    //     cancelButtonText: 'Cancel',
-    //     type: 'error'
-    //   }).then(async () => {
-    //     await deleteHarborRepo(row.name)
-    //     this.$message({
-    //       title: this.$t('general.Success'),
-    //       message: this.$t('Notify.Deleted'),
-    //       type: 'success'
-    //     })
-    //     this.fetchData()
-    //   })
-    // },
-    async handleDeleteModal() {
-      if (this.deleteResourceName !== this.inputDelResourceName) {
-        return this.$message({
-          title: this.$t('general.Warning'),
-          message: this.$t('Notify.WrongResourceName'),
-          type: 'warning'
-        })
-      } else {
-        this.loadingDelete = this.$loading({
-          target: '.el-dialog',
-          text: 'Loading'
-        })
-        await deleteHarborRepo(this.deleteResourceName)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Deleted'),
-          type: 'success'
-        })
-        this.loadingDelete.close()
-        this.showDeleteDialog = false
-        await this.loadData()
-      }
-    },
-    onDialogClosedDelete() {
-      this.$nextTick(() => {
-        this.deleteResourceName = ''
-        this.placeholderText = ''
-        this.inputDelResourceName = ''
-      })
-    },
-    onDialogClosed() {
-      this.$nextTick(() => {
-        this.$refs['form'].resetFields()
-        this.form = formTemplate
-      })
-    }
-  }
-}
-</script>
-
 <template>
   <div class="app-container">
     <router-view />
@@ -275,3 +132,148 @@ export default {
     </div>
   </div>
 </template>
+
+<script>
+import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import MixinBasicTable from '@/components/MixinBasicTable'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
+
+const formTemplate = {
+  name: '',
+  due_date: '',
+  status: 'open',
+  description: ''
+}
+
+export default {
+  name: 'ResourceHarbor',
+  components: { ElTableColumnTime, ProjectListSelector },
+  mixins: [MixinBasicTable],
+  data() {
+    return {
+      projectName: '',
+      dialogVisible: false,
+      formRules: {
+        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
+      },
+      storage: {
+        project_admin_count: 0,
+        quota: {
+          hard: { storage: 0 },
+          used: { storage: 0 }
+        },
+        repo_count: 0
+      },
+      memberConfirmLoading: false,
+      form: formTemplate,
+
+      showDeleteDialog: false,
+      loadingDelete: '',
+      deleteResourceName: '',
+      inputDelResourceName: '',
+      placeholderText: ''
+    }
+  },
+  methods: {
+    async fetchData() {
+      if (this.selectedProjectId === -1) {
+        return []
+      }
+      const res = await getHarborRepoList(this.selectedProjectId)
+      const resourceList = res.data.map(item => {
+        const name_ary = item.name.split('/')
+        item['name_in_harbor'] = name_ary[name_ary.length - 1]
+        return item
+      })
+      this.projectName = this.selectedProject['name']
+      const storageRes = await getHarborRepoStorageSummary(this.selectedProjectId)
+      this.storage = storageRes.data
+      return resourceList
+    },
+    returnPercentage(quota) {
+      const total = parseInt(quota.hard.storage)
+      const use = parseInt(quota.used.storage)
+      const p = Math.round((use / total) * 100)
+      return isNaN(p) ? 0 : p
+    },
+    handleEdit(idx, row) {
+      this.dialogVisible = true
+      this.form = Object.assign({}, this.form, row)
+    },
+    async handleConfirm(index, row) {
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          this.dialogVisible = false
+          const data = this.form
+          await editHarborRepo(data.name, { description: data.description })
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          await this.loadData()
+        } else {
+          return false
+        }
+      })
+    },
+    handleDelete(index, row) {
+      this.showDeleteDialog = true
+      this.deleteResourceName = row.name
+      this.placeholderText = 'Please Input ' + this.deleteResourceName
+    },
+    // async handleDelete(idx, row) {
+    //   this.$confirm(`Are you sure to Delete ${row.name}?`, 'Delete', {
+    //     confirmButtonText: 'Delete',
+    //     cancelButtonText: 'Cancel',
+    //     type: 'error'
+    //   }).then(async () => {
+    //     await deleteHarborRepo(row.name)
+    //     this.$message({
+    //       title: this.$t('general.Success'),
+    //       message: this.$t('Notify.Deleted'),
+    //       type: 'success'
+    //     })
+    //     this.fetchData()
+    //   })
+    // },
+    async handleDeleteModal() {
+      if (this.deleteResourceName !== this.inputDelResourceName) {
+        return this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.WrongResourceName'),
+          type: 'warning'
+        })
+      } else {
+        this.loadingDelete = this.$loading({
+          target: '.el-dialog',
+          text: 'Loading'
+        })
+        await deleteHarborRepo(this.deleteResourceName)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+        this.loadingDelete.close()
+        this.showDeleteDialog = false
+        await this.loadData()
+      }
+    },
+    onDialogClosedDelete() {
+      this.$nextTick(() => {
+        this.deleteResourceName = ''
+        this.placeholderText = ''
+        this.inputDelResourceName = ''
+      })
+    },
+    onDialogClosed() {
+      this.$nextTick(() => {
+        this.$refs['form'].resetFields()
+        this.form = formTemplate
+      })
+    }
+  }
+}
+</script>
