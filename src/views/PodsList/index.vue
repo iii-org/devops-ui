@@ -1,96 +1,21 @@
-<script>
-import { deletePod, getPodList, getPodLog } from '@/api/kubernetes'
-import PodLog from './components/PodLog'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-
-export default {
-  name: 'PodsList',
-  components: { PodLog },
-  mixins: [MixinElTableWithAProject],
-  data: () => ({
-    dialogVisible: false,
-    podLogDialogVisible: false,
-    logData: '',
-    focusPodName: '',
-    focusContainerName: ''
-  }),
-  methods: {
-    async fetchData() {
-      return (await getPodList(this.selectedProjectId)).data
-    },
-    async handleDelete(pId, podName) {
-      this.listLoading = true
-      try {
-        await deletePod(pId, podName)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
-    handleLogClick(pName, cName) {
-      this.listLoading = true
-      this.focusPodName = pName
-      this.focusContainerName = cName
-      getPodLog(this.selectedProjectId, pName, {
-        container_name: cName
-      })
-        .then(res => {
-          this.logData = res.data
-          this.showPodLogDialog(true)
-        })
-        .catch(err => {
-          console.error(err)
-        })
-        .then(() => {
-          this.listLoading = false
-        })
-    },
-    showPodLogDialog(visible) {
-      this.podLogDialogVisible = visible
-    },
-    getStateType(state) {
-      switch (state) {
-        case 'pending':
-          return 'slow'
-        case 'running':
-          return 'success'
-        case 'succeeded':
-          return 'success'
-        case 'failed':
-          return 'danger'
-        case 'unknown':
-          return 'warning'
-        default:
-          return 'slow'
-      }
-    }
-  }
-}
-</script>
-
 <template>
   <div class="table-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        v-model="keyword"
+        prefix-icon="el-icon-search"
         :placeholder="$t('ProjectUsage.SearchPods')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        style="width: 250px"
+      />
     </div>
     <el-divider />
     <el-table
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       fit
-      highlight-current-row
-      height="100%"
+      border
     >
       <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
         <template slot-scope="scope">
@@ -108,7 +33,13 @@ export default {
           <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
             <div style="text-align: left">
               <div style="display: inline-block; width: 80px;text-align: center">
-                <el-tag v-if="container.state" class="el-tag--circle" :type="getStateType(container.state)" size="mini" effect="dark">
+                <el-tag
+                  v-if="container.state"
+                  class="el-tag--circle"
+                  :type="getStateType(container.state)"
+                  size="mini"
+                  effect="dark"
+                >
                   {{ container.state }}
                 </el-tag>
               </div>
@@ -186,3 +117,76 @@ export default {
     />
   </div>
 </template>
+
+<script>
+import { deletePod, getPodList, getPodLog } from '@/api/kubernetes'
+import PodLog from './components/PodLog'
+import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+
+export default {
+  name: 'PodsList',
+  components: { PodLog },
+  mixins: [MixinBasicTableWithProject],
+  data() {
+    return {
+      dialogVisible: false,
+      podLogDialogVisible: false,
+      logData: '',
+      focusPodName: '',
+      focusContainerName: ''
+    }
+  },
+  methods: {
+    async fetchData() {
+      return (await getPodList(this.selectedProjectId)).data
+    },
+    async handleDelete(pId, podName) {
+      this.listLoading = true
+      try {
+        await deletePod(pId, podName)
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
+    handleLogClick(pName, cName) {
+      this.listLoading = true
+      this.focusPodName = pName
+      this.focusContainerName = cName
+      getPodLog(this.selectedProjectId, pName, {
+        container_name: cName
+      })
+        .then(res => {
+          this.logData = res.data
+          this.showPodLogDialog(true)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+        .then(() => {
+          this.listLoading = false
+        })
+    },
+    showPodLogDialog(visible) {
+      this.podLogDialogVisible = visible
+    },
+    getStateType(state) {
+      switch (state) {
+        case 'pending':
+          return 'slow'
+        case 'running':
+          return 'success'
+        case 'succeeded':
+          return 'success'
+        case 'failed':
+          return 'danger'
+        case 'unknown':
+          return 'warning'
+        default:
+          return 'slow'
+      }
+    }
+  }
+}
+</script>

@@ -270,6 +270,7 @@ export default {
     AddIssue: 'Add Issue',
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
+    CloseIssue: 'Close Issue',
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',
@@ -279,6 +280,7 @@ export default {
     EndDate: 'End Date',
     Description: 'Issue Description',
     SelectDate: 'Select Date',
+    SelectType: 'Select Type',
     SearchNameOrAssignee: 'Search Name Or Assignee',
     Save: 'Save',
     Notes: 'Notes',
@@ -310,6 +312,8 @@ export default {
     Bug: 'Bug',
     Feature: 'Feature',
     DeleteIssue: 'Are you sure to Delete {issueName}?',
+    AskDeleteIssue: 'Close work item/issue?',
+    DeleteIssueReason: 'Please specify the reason for closure',
     Files: 'Files',
     UploadFiles: 'Upload Files',
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
@@ -434,7 +438,7 @@ export default {
     IsEnable: 'Is Enable',
     Disable: 'Disable',
     Enable: 'Enable',
-    SearchAccount: 'Search Account',
+    SearchAccount: 'Search Account or Name',
     Role: 'Role',
     Source: 'Source',
     AD: 'Active Directory',
@@ -473,7 +477,7 @@ export default {
     Progress: 'Progress',
     UpdateTime: 'Update Time',
     deleteProjectConfirmText:
-      'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
+      'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     IdRule:
@@ -488,7 +492,8 @@ export default {
     SearchProjectName: 'Search Project Name',
     StartDate: 'Start Date',
     DueDate: 'Due Date',
-    ProjectOwner: 'Project Owner'
+    ProjectOwner: 'Project Owner',
+    SelectProject: 'Select a project'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

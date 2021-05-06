@@ -5,17 +5,39 @@
       <div class="clearfix">
         <div>
           <project-list-selector />
-          <span class="newBtn">
-            <el-button
-              id="btn-add-issue"
-              type="success"
-              icon="el-icon-plus"
-              :disabled="selectedProjectId === -1"
-              @click="handleAddNewIssue"
-            >
-              {{ $t('Issue.AddIssue') }}
-            </el-button>
-          </span>
+          <!--          <el-select-->
+          <!--            v-model="versionValue"-->
+          <!--            :placeholder="$t('Version.SelectVersion')"-->
+          <!--            :disabled="selectedProjectId === -1"-->
+          <!--            class="mr-4"-->
+          <!--            filterable-->
+          <!--            @change="updateData"-->
+          <!--          >-->
+          <!--            <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />-->
+          <!--            <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />-->
+          <!--          </el-select>-->
+          <!--          <el-select-->
+          <!--            v-model="trackerValue"-->
+          <!--            :placeholder="$t('Issue.SelectType')"-->
+          <!--            :disabled="selectedProjectId === -1"-->
+          <!--            class="mr-4"-->
+          <!--            filterable-->
+          <!--            clearable-->
+          <!--            @change="updateData"-->
+          <!--          >-->
+          <!--            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">-->
+          <!--              <tracker :name="item.name" />-->
+          <!--            </el-option>-->
+          <!--          </el-select>-->
+          <el-button
+            id="btn-add-issue"
+            type="success"
+            icon="el-icon-plus"
+            :disabled="selectedProjectId === -1"
+            @click="handleAddNewIssue"
+          >
+            {{ $t('Issue.AddIssue') }}
+          </el-button>
           <el-input
             id="input-search"
             v-model="searchData"
@@ -79,20 +101,15 @@
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130">
           <template slot-scope="scope">
-            <span v-if="scope.row.tracker" :class="getCategoryTagType(scope.row.tracker.name)" />
-            {{ $t(`Issue.${scope.row.tracker.name}`) }}
+            <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
-            <el-tag
+            <status
               v-if="scope.row.status.name"
-              :type="getStatusTagType(scope.row.status.name)"
-              effect="dark"
-              class="rounded-xl font-weight-bold"
-            >
-              {{ $t(`Issue.${scope.row.status.name}`) }}
-            </el-tag>
+              :name="scope.row.status.name"
+            />
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
@@ -103,9 +120,7 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.priority.name" :type="getPriorityTagType(scope.row.priority.name)">
-              {{ $t(`Issue.${scope.row.priority.name}`) }}
-            </el-tag>
+            <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
           </template>
         </el-table-column>
       </el-table>
@@ -133,13 +148,20 @@
 import AddIssue from './components/AddIssue'
 import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
 import { mapActions, mapGetters } from 'vuex'
-import { addIssue } from '@/api/issue'
-import { getProjectIssueListByTree } from '@/api/projects'
+import { addIssue, getIssueTracker } from '@/api/issue'
+import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
+import Status from '@/components/Issue/Status'
+import Priority from '@/components/Issue/Priority'
+import Tracker from '@/components/Issue/Tracker'
+import Fuse from 'fuse.js'
 
 export default {
   name: 'ProjectIssues',
   components: {
-    AddIssue
+    AddIssue,
+    Priority,
+    Status,
+    Tracker
   },
   mixins: [MixinElTableWithAProject],
   data: () => ({
@@ -147,43 +169,49 @@ export default {
     search: '',
     parentId: 0,
     parentName: '',
+    versionValue: '-1',
+    trackerValue: '',
+    fixed_version: [],
+    tracker: [],
+    listFilterVersionTrackerData: [],
     parentList: []
   }),
   computed: {
     ...mapGetters(['userRole', 'userName']),
     filteredData() {
-      return this.listData.filter(data => {
-        if (data.assigned_to === null) {
-          data.assigned_to = ''
+      return this.listFilterVersionTrackerData.filter(data => {
+        if (Object.keys(data.assigned_to).length <= 0) {
+          data.assigned_to.name = ''
         }
         if (
           this.searchData === '' ||
           data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-          data.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+          data.assigned_to.name.toLowerCase().includes(this.searchData.toLowerCase())
         ) {
           return data
         }
+
         // Sub issue level 1
         if (data.children.length > 0) {
           const children1 = data.children.filter(dataChildren1 => {
-            if (dataChildren1.assigned_to === null) {
-              dataChildren1.assigned_to = ''
+            if (Object.keys(dataChildren1.assigned_to).length <= 0) {
+              dataChildren1.assigned_to.name = ''
             }
             if (
               dataChildren1.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-              dataChildren1.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+              dataChildren1.assigned_to.name.toLowerCase().includes(this.searchData.toLowerCase())
             ) {
               return dataChildren1
             }
             // Sub issue level 2
             if (dataChildren1.children.length > 0) {
               const children2 = dataChildren1.children.filter(dataChildren2 => {
-                if (dataChildren2.assigned_to === null) {
-                  dataChildren2.assigned_to = ''
+                if (Object.keys(dataChildren2.assigned_to).length <= 0) {
+                  dataChildren2.assigned_to.name = ''
                 }
                 if (
                   dataChildren2.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-                  dataChildren2.assigned_to.toLowerCase().includes(this.searchData.toLowerCase())
+                  dataChildren2.assigned_to.name.toLowerCase().includes(this.searchData.toLowerCase())
                 ) {
                   return dataChildren2
                 }
@@ -199,6 +227,17 @@ export default {
         }
       })
     }
+  },
+  watch: {
+    listData: {
+      deep: true,
+      handler() {
+        this.resetFilterVersionTrackerData()
+      }
+    }
+  },
+  mounted() {
+    this.adjustTable()
   },
   methods: {
     ...mapActions(['projects/getProjectList']),
@@ -218,6 +257,10 @@ export default {
 
       const data = (await getProjectIssueListByTree(this.selectedProjectId)).data
       this.parentList = []
+      const versionsRes = await getProjectVersion(this.selectedProjectId)
+      this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
+      const issueTrackerRes = await getIssueTracker()
+      this.tracker = issueTrackerRes.data
       data.forEach(item => {
         this.parentList.push(item.id)
         if (item.children.length !== 0) {
@@ -230,6 +273,40 @@ export default {
         this.searchData = this.userName
       }
       return data
+    },
+    resetFilterVersionTrackerData() {
+      this.listFilterVersionTrackerData = this.listData
+    },
+    updateData() {
+      console.log('updateData')
+      this.resetFilterVersionTrackerData()
+      const versionOpt = {
+        keys: ['fixed_version.id'],
+        useExtendedSearch: true
+      }
+      const userOpt = {
+        keys: ['tracker.id'],
+        useExtendedSearch: true
+      }
+      if (this.versionValue !== '-1') {
+        this.searchIssueList(this.versionValue, versionOpt)
+      }
+      if (this.trackerValue !== '') {
+        this.searchIssueList(this.trackerValue, userOpt)
+      }
+    },
+    searchIssueList(value, opt) {
+      if (value === '') {
+        this.listFilterVersionTrackerData = this.listData.filter(subItem => {
+          const findKey = opt['keys'][0].split('.')
+          const findName = findKey.reduce((total, current) => total[current], subItem)
+          return findName === undefined || findKey[0] === ''
+        })
+      } else {
+        const fuse = new Fuse(this.listData, opt)
+        const res = fuse.search(`="${value}"`)
+        this.listFilterVersionTrackerData = res.map(items => items.item)
+      }
     },
     handleEdit(idx, row) {
       this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
@@ -262,48 +339,6 @@ export default {
     isParentIssue(row) {
       return row.parent_id === null && row.children.length === 0
     },
-    getPriorityTagType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return 'danger'
-        case 'High':
-          return 'warning'
-        case 'Normal':
-          return ''
-        case 'Low':
-          return 'info'
-      }
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return ''
-        case 'Assigned':
-          return 'danger'
-        case 'Closed':
-          return 'info'
-        case 'Solved':
-          return 'secondary'
-        case 'Responded':
-          return 'warning'
-        case 'Finished':
-          return 'success'
-      }
-    },
-    getCategoryTagType(category) {
-      switch (category) {
-        case 'Feature':
-          return 'point feature'
-        case 'Document':
-          return 'point document'
-        case 'Bug':
-          return 'point bug'
-        case 'Research':
-          return 'point research'
-        default:
-          return 'point feature'
-      }
-    },
     handleAddNewIssue() {
       this.addTopicDialogVisible = true
       this.parentId = 0
@@ -313,31 +348,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
-
-.point {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 5px;
-  display: inline-block;
-  &.feature {
-    background: $feature;
-  }
-  &.document {
-    background: $document;
-  }
-  &.bug {
-    background: $bug;
-  }
-  &.research {
-    background: $research;
-  }
-}
-.el-tag {
-  &--secondary {
-    background-color: $secondary;
-    border-color: $secondary;
-  }
-}
 </style>

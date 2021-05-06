@@ -1,16 +1,9 @@
 <template>
-  <el-dialog
-    :title="`${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` "
-    :visible.sync="showDialog"
-    width="40%"
-    :close-on-click-modal="false"
-    @closed="onDialogClosedDelete"
-  >
-    <p>{{ $t('Project.deleteProjectConfirmText') }}</p>
+  <el-dialog :visible.sync="showDialog" width="40%" :close-on-click-modal="false" @closed="onDialogClosedDelete">
+    <div slot="title">{{ `${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` }}</div>
+    <p class="text-danger">{{ $t('Project.deleteProjectConfirmText') }}</p>
     <p>
-      {{ $t('Project.PleaseType') }}
-      <strong>{{ deleteProjectObj.name }}</strong>
-      {{ $t('Project.AndThen') }}
+      <span>{{ $t('Project.PleaseType') }}</span><span class="text-h6 font-weight-bold text-danger mx-1">{{ deleteProjectObj.name }}</span><span>{{ $t('Project.AndThen') }}</span>
     </p>
     <el-input v-model="confirmProjectName" :placeholder="`Please Input ${deleteProjectObj.name}`" />
     <span slot="footer" class="dialog-footer">

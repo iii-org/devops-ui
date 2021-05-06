@@ -51,9 +51,8 @@
           >
             {{ scope.row.project_status }}
           </el-tag>
-          <el-tag v-else class="el-tag--circle" type="none" size="medium" effect="dark">{{
-            scope.row.project_status
-          }}
+          <el-tag v-else class="el-tag--circle" type="none" size="medium" effect="dark">
+            {{ scope.row.project_status }}
           </el-tag>
         </template>
       </el-table-column>
@@ -70,7 +69,7 @@
         </template>
       </el-table-column>
       <el-table-column-time prop="updated_time" />
-      <el-table-column align="center" label="GitLab" width="110">
+      <el-table-column v-if="userRole !== 'QA'" align="center" label="GitLab" width="110">
         <template slot-scope="scope">
           <el-popover
             v-if="scope.row.git_url"
@@ -104,7 +103,7 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Redmine" width="110">
+      <el-table-column v-if="userRole !== 'QA'" align="center" label="Redmine" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.redmine_url"
@@ -118,7 +117,7 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Harbor" width="110">
+      <el-table-column v-if="userRole !== 'QA'" align="center" label="Harbor" width="110">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.harbor_url"
@@ -132,17 +131,24 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column
-        v-if="userRole !== 'QA'"
-        :label="$t('general.Actions')"
-        align="center"
-        width="210"
-      >
+      <el-table-column :label="$t('general.Actions')" align="center" width="210">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
+          <el-button
+            v-if="userRole !== 'QA'"
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            @click="handleEdit(scope.row)"
+          >
             {{ $t('general.Edit') }}
           </el-button>
-          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">
+          <el-button
+            :disabled="scope.row.creator_id !== userId"
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+          >
             {{ $t('general.Delete') }}
           </el-button>
         </template>
@@ -158,12 +164,13 @@
     />
 
     <CreateProjectDialog ref="createProjectDialog" @update="loadData" />
-    <EditProjectDialog v-if="userRole !== 'QA'" ref="editProjectDialog" :edit-project-obj="editProject"
-                       @update="loadData"
+    <EditProjectDialog
+      v-if="userRole !== 'QA'"
+      ref="editProjectDialog"
+      :edit-project-obj="editProject"
+      @update="loadData"
     />
-    <DeleteProjectDialog v-if="userRole !== 'QA'" ref="deleteProjectDialog" :delete-project-obj="deleteProject"
-                         @update="loadData"
-    />
+    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
   </div>
 </template>
 
@@ -187,15 +194,24 @@ export default {
     }
   },
   mixins: [MixinElTable],
-  data: () => ({
-    editProject: {},
-    deleteProject: { id: '', name: '' },
-    searchKey: 'display',
-    rowHeight: 70
-  }),
+  data() {
+    return {
+      editProject: {},
+      deleteProject: { id: '', name: '' },
+      searchKey: 'display',
+      rowHeight: 70
+    }
+  },
   computed: {
-    ...mapGetters(['userRole', 'projectList', 'projectListTotal', 'userProjectList',
-      'userProjectList', 'selectedProjectId'])
+    ...mapGetters([
+      'userId',
+      'userRole',
+      'projectList',
+      'projectListTotal',
+      'userProjectList',
+      'userProjectList',
+      'selectedProjectId'
+    ])
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'queryProjectList']),
@@ -222,14 +238,10 @@ export default {
     handleClick(projectObj) {
       const { id } = projectObj
       localStorage.setItem('projectId', id)
-      console.log('id', id)
       const selectedProject = this.userProjectList.filter(elm => {
-        console.log('elm', elm, 'id', id)
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
-      console.log('sel_p', selectedProject)
-      console.log('get sel_p', this.selectedProject)
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {

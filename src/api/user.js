@@ -29,6 +29,13 @@ export function getAllUser() {
   })
 }
 
+export function getUser(page = 1, per_page = 10, search = '') {
+  return request({
+    url: `/user/list?page=${page}&per_page=${per_page}&search=${search}`,
+    method: 'get'
+  })
+}
+
 export function updateUser(userId, data) {
   return request({
     url: `/user/${userId}`,

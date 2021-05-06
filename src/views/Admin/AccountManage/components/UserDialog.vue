@@ -76,6 +76,7 @@ import { addUser, updateUser } from '@/api/user'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'UserDialog',
   props: {
     dialogVisible: {
       type: Boolean,
@@ -141,7 +142,7 @@ export default {
     userData: function(data) {
       if (isNaN(data.default_role)) {
         // get role id from role object
-        data.default_role = data.default_role.id
+        data.default_role = data.role ? data.role.id : data.default_role.id
       }
       this.userForm = data
     }
@@ -292,8 +293,9 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.el-dialog {
+
+<style lang="scss" scoped>
+>>>.el-dialog {
   display: flex;
   flex-direction: column;
   margin: 0 !important;
@@ -302,14 +304,8 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.el-dialog .el-dialog__body {
+>>>.el-dialog .el-dialog__body {
   flex: 1;
-  overflow: auto;
-}
-</style>
-
-<style lang="scss" scoped>
->>> .el-dialog .el-dialog__body {
   overflow: auto;
   max-height: 75vh;
 }

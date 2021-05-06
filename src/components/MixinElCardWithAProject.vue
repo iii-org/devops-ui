@@ -5,12 +5,14 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'MixinElCardWithAProject',
   components: { ProjectListSelector },
-  data: () => ({
-    listData: [],
-    listLoading: true,
-    searchKey: 'name',
-    searchData: ''
-  }),
+  data() {
+    return {
+      listData: [],
+      listLoading: true,
+      searchKey: 'name',
+      searchData: ''
+    }
+  },
 
   computed: {
     ...mapGetters(['selectedProject']),

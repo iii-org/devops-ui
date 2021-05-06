@@ -111,13 +111,13 @@ export default {
           }).catch(e => {
             // console.log(e)
             if (e.message === 'Request failed with status code 401') {
-              console.log(e)
+              // console.log(e)
             }
           }).finally(() => {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          // console.log('error submit!!')
           return false
         }
       })

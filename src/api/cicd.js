@@ -53,3 +53,10 @@ export function getPipelinesConfig(rId, params) {
     params
   })
 }
+
+export function getCiPipelineId(rId) {
+  return request({
+    url: `/git_repo_id_to_ci_pipe_id/${rId}`,
+    method: 'get'
+  })
+}

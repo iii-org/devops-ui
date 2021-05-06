@@ -1,70 +1,14 @@
-<script>
-import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
-
-export default {
-  name: 'ConfigMapsList',
-  mixins: [MixinElTableWithAProject],
-  data: () => ({
-    editDialogVisible: false,
-    configMapName: '',
-    configMapData: []
-  }),
-  methods: {
-    async fetchData() {
-      const res = await getConfigmapList(this.selectedProjectId)
-      return res.data.map(configMap => {
-        if (configMap.data) {
-          return {
-            name: configMap.name,
-            keys: Object.keys(configMap.data),
-            configMaps: Object.entries(configMap.data).map(item => ({
-              key: item[0],
-              value: item[1]
-            }))
-          }
-        } else {
-          return {
-            name: configMap.name,
-            keys: '-'
-          }
-        }
-      })
-    },
-    async handleDelete(pId, configMapName) {
-      this.listLoading = true
-      try {
-        await deleteConfigmap(pId, configMapName)
-        await this.fetchData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
-    showEditDialog(configMapName, configMaps) {
-      this.editDialogVisible = true
-      this.configMapName = configMapName
-      this.configMapData = configMaps.map(item => item)
-    },
-    closeEditDialog() {
-      this.editDialogVisible = false
-    }
-  }
-}
-</script>
 
 <template>
   <div class="table-container">
-    <div class="clearfix">
+    <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input mr-3"
+        v-model="keyword"
         :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        prefix-icon="el-icon-search"
+        style="width: 250px"
+      />
     </div>
     <el-divider />
     <el-table
@@ -73,8 +17,6 @@ export default {
       :element-loading-text="$t('Loading')"
       border
       fit
-      highlight-current-row
-      height="100%"
     >
       <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
         <template slot-scope="scope">
@@ -156,3 +98,61 @@ export default {
     </el-dialog>
   </div>
 </template>
+
+<script>
+import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
+import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+
+export default {
+  name: 'ConfigMapsList',
+  mixins: [MixinBasicTableWithProject],
+  data() {
+    return {
+      editDialogVisible: false,
+      configMapName: '',
+      configMapData: []
+    }
+  },
+  methods: {
+    async fetchData() {
+      const res = await getConfigmapList(this.selectedProjectId)
+      return res.data.map(configMap => {
+        if (configMap.data) {
+          return {
+            name: configMap.name,
+            keys: Object.keys(configMap.data),
+            configMaps: Object.entries(configMap.data).map(item => ({
+              key: item[0],
+              value: item[1]
+            }))
+          }
+        } else {
+          return {
+            name: configMap.name,
+            keys: '-'
+          }
+        }
+      })
+    },
+    async handleDelete(pId, configMapName) {
+      this.listLoading = true
+      try {
+        await deleteConfigmap(pId, configMapName)
+        await this.fetchData()
+      } catch (error) {
+        console.error(error)
+      }
+      this.listLoading = false
+    },
+    showEditDialog(configMapName, configMaps) {
+      this.editDialogVisible = true
+      this.configMapName = configMapName
+      this.configMapData = configMaps.map(item => item)
+    },
+    closeEditDialog() {
+      this.editDialogVisible = false
+    }
+  }
+}
+</script>
+

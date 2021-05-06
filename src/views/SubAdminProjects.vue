@@ -40,14 +40,22 @@
             @remove-tag="handleSelectChange"
             @visible-change="handleSelectChange"
           >
-            <el-option v-for="user in subAdmins" :key="user.id" :value="user.id" :label="user.name" />
+            <el-option
+              v-for="user in subAdmins"
+              :key="user.id"
+              :value="user.id"
+              :label="`${user.name} (${user.login})`"
+            />
           </el-select>
         </el-col>
       </el-row>
       <el-row :gutter="10">
         <el-col v-for="user in subAdminProjects" :key="user.id" :span="24" :sm="12" :lg="8" :xl="6" class="mb-2">
           <el-card :style="{ 'border-top': `5px solid ${user.color}` }">
-            <div class="text-center text-h6 mb-1">{{ user.name }}</div>
+            <div class="text-center mb-1">
+              <span class="text-h6">{{ user.name }}</span>
+              <span class="text-subtitle-2">({{ user.login }})</span>
+            </div>
             <draggable
               :list="user.projects"
               group="project"

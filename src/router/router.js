@@ -208,25 +208,25 @@ export const asyncRoutes = [
       {
         path: 'wiki',
         name: 'wiki-list',
-        component: () => import('@/views/ProjectWiki'),
+        component: () => import('@/views/Project/Wiki'),
         meta: { title: 'wikiList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
         path: 'file',
         name: 'file-list',
-        component: () => import('@/views/ProjectFiles'),
+        component: () => import('@/views/Project/Files'),
         meta: { title: 'fileList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
       },
       {
-        path: 'project-roadmap',
+        path: 'roadmap',
         name: 'Project Roadmap',
-        component: () => import('@/views/ProjectRoadmap'),
+        component: () => import('@/views/Project/Roadmap'),
         meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
       },
       {
         path: '/release-version',
         name: 'releaseVersion',
-        component: () => import('@/views/ReleaseVersion'),
+        component: () => import('@/views/Project/ReleaseVersion'),
         meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
       },
       {
@@ -265,7 +265,7 @@ export const asyncRoutes = [
       {
         path: 'dev-branch',
         name: 'dev-branch',
-        component: () => import('@/views/ProcessDevBranch'),
+        component: () => import('@/views//Progress/DevBranch'),
         meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
@@ -285,19 +285,25 @@ export const asyncRoutes = [
       {
         path: 'pipelines',
         name: 'Pipelines',
-        component: () => import('@/views/ProgressPipelines'),
+        component: () => import('@/views/Progress/Pipelines'),
         meta: { title: 'pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+      },
+      {
+        path: 'pipelines-socket',
+        name: 'pipelines-socket',
+        component: () => import('@/views/Progress/PipelinesSocket'),
+        meta: { title: 'Pipelines (socket)', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'dev-environment',
         name: 'dev-environment',
-        component: () => import('@/views/ProgressDevEnvironment'),
+        component: () => import('@/views/Progress/DevEnvironment'),
         meta: { title: 'devEnvironment', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
         path: 'kubernetes-resources',
         name: 'Kubernetes-resources',
-        component: () => import('@/views/ProjectUsage'),
+        component: () => import('@/views/Progress/KubernetesResources'),
         meta: {
           title: 'kubernetesResources',
           roles: ['Project Manager', 'Administrator', 'Engineer'],
@@ -376,20 +382,20 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/test',
+    path: '/scan',
     component: Layout,
-    name: 'test',
+    name: 'scan',
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
       roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
     },
-    redirect: '/test/postman-result',
+    redirect: '/scan/postman-result',
     children: [
       {
         path: 'postman-result',
         name: 'postman-result',
-        component: () => import('@/views/PostmanResult'),
+        component: () => import('@/views/Scan/PostmanResult'),
         meta: {
           title: 'postman',
           roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
@@ -400,7 +406,7 @@ export const asyncRoutes = [
             path: 'devops/:id',
             name: 'devops-test-case',
             hidden: true,
-            component: () => import('@/views/TestCaseDevOps'),
+            component: () => import('@/views/Scan/TestCaseDevOps'),
             meta: {
               title: 'fromDevops',
               roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
@@ -411,7 +417,7 @@ export const asyncRoutes = [
             path: 'postman/:id',
             name: 'postman-test-case',
             hidden: true,
-            component: () => import('@/views/TestCasePostman'),
+            component: () => import('@/views/Scan/TestCasePostman'),
             meta: {
               title: 'fromCollection',
               roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
@@ -423,67 +429,67 @@ export const asyncRoutes = [
       {
         path: 'checkmarx',
         name: 'checkmarx',
-        component: () => import('@/views/ScanCheckmarx'),
+        component: () => import('@/views/Scan/Checkmarx'),
         meta: { title: 'checkMarx', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'web-inspect',
         name: 'web-inspect',
-        component: () => import('@/views/ScanWebInspect'),
+        component: () => import('@/views/Scan/WebInspect'),
         meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'zap',
         name: 'zap',
-        component: () => import('@/views/ScanZap'),
+        component: () => import('@/views/Scan/Zap'),
         meta: { title: 'zap', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'sideex',
         name: 'sideex',
-        component: () => import('@/views/ScanSideex'),
+        component: () => import('@/views/Scan/Sideex'),
         meta: { title: 'sideex', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },
       {
         path: 'sonarqube',
         name: 'sonarqube',
-        component: () => import('@/views/ScanSonarQube'),
+        component: () => import('@/views/Scan/SonarQube'),
         meta: { title: 'sonarQube', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       }
     ]
   },
 
-  {
-    path: '/file_list/:rId/:branchName/:projectName',
-    component: Layout,
-    hidden: true,
-    meta: { roles: ['Engineer'] },
-    children: [
-      {
-        path: '',
-        name: 'fileList',
-        props: true,
-        component: () => import('@/views/FileList'),
-        meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/file_list/:rId/:branchName/:projectName',
+  //   component: Layout,
+  //   hidden: true,
+  //   meta: { roles: ['Engineer'] },
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'fileList',
+  //       props: true,
+  //       component: () => import('@/views/FileList'),
+  //       meta: { title: 'File List', icon: 'tree', roles: ['Engineer'] }
+  //     }
+  //   ]
+  // },
 
-  {
-    path: '/commit_list/:rId/:branchName/:projectName',
-    component: Layout,
-    hidden: true,
-    meta: { roles: ['Engineer'] },
-    children: [
-      {
-        path: '',
-        name: 'commitList',
-        props: true,
-        component: () => import('@/views/CommitList'),
-        meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/commit_list/:rId/:branchName/:projectName',
+  //   component: Layout,
+  //   // hidden: true,
+  //   meta: { roles: ['Engineer'] },
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'commitList',
+  //       props: true,
+  //       component: () => import('@/views/CommitList'),
+  //       meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/system-resource',

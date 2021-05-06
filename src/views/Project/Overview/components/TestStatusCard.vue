@@ -90,7 +90,7 @@ export default {
     handleTestRes(data) {
       const ret = []
       const rowData = data
-      console.log('handleTestRes', rowData['postman'])
+      // console.log('handleTestRes', rowData['postman'])
       ret[0] = this.formatPostmanResult(rowData['postman'])
       ret[1] = this.formatCheckmarxResult(rowData['checkmarx'])
       ret[2] = this.formatWebinspectResult(rowData['webinspect'])

@@ -4,7 +4,7 @@
       <ProjectListSelector />
     </div>
     <el-divider />
-    <el-row :gutter="10">
+    <el-row v-if="selectedProjectId !== -1" :gutter="10">
       <el-col class="mb-4" :xs="24">
         <el-card shadow="never">
           <el-collapse v-model="activeNames">
@@ -13,6 +13,10 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-alert v-else type="warning" :closable="false">
+      <h2><i class="el-icon-warning" /> {{ $t('general.Warning') }}</h2>
+      <h3>{{ this.$t('Notify.NoProject') }}</h3>
+    </el-alert>
   </div>
 </template>
 
