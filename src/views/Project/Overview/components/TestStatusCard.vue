@@ -232,7 +232,7 @@ export default {
           Software: 'sonarqube',
           // status: webinspectResult.status,
           runAt: sonarqubeResult.run_at,
-          informationText: sonarqubeResult.sonarqube.map((row) => ({ status: row.metric, count: row.value }))
+          informationText: sonarqubeResult.map((row) => ({ status: row.metric, count: row.value }))
         })
       }
       return ret
