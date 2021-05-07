@@ -109,7 +109,7 @@ export default {
           this.fetchScanStatus(item.scan_id)
           return
         }
-        if (item.report_id && !item.report_ready) {
+        if (item.report_id && item.report_id > 0 && !item.report_ready) {
           this.fetchReportStatus(item.report_id)
         }
       })
