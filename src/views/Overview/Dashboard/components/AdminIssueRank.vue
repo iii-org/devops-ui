@@ -21,7 +21,7 @@ import {
   getInvolvedProjects,
   getUnclosedIssues
 } from '@/api/dashboard'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import AdminIssueRankUnclosedIssues from './widget/AdminIssueRankUnclosedIssues'
 
 export default {

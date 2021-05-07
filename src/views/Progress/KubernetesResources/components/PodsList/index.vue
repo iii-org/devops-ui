@@ -121,7 +121,7 @@
 <script>
 import { deletePod, getPodList, getPodLog } from '@/api/kubernetes'
 import PodLog from './components/PodLog'
-import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 
 export default {
   name: 'PodsList',

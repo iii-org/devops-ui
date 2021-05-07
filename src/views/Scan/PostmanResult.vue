@@ -75,7 +75,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

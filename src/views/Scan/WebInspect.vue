@@ -86,7 +86,7 @@
 
 <script>
 import { getWebInspectReport, getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

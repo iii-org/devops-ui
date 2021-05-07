@@ -89,7 +89,7 @@
 import { mapGetters } from 'vuex'
 import { deleteUser, getUser, getInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
-import MixinAccountManageTable from '@/components/MixinAccountManageTable'
+import MixinAccountManageTable from '@/mixins/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

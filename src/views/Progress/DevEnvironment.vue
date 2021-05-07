@@ -189,7 +189,7 @@
 
 <script>
 import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName } from '@/api/kubernetes'
-import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
+import MixinElCardWithAProject from '@/mixins/MixinElCardWithAProject'
 
 export default {
   name: 'ProgressDevEnvironment',

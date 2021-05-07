@@ -60,7 +60,7 @@
 
 <script>
 import { getProjectUserList, deleteProjectMember } from '@/api/projects'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import AddMemberDialog from './AddMemberDialog'
 
 export default {

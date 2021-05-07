@@ -1,5 +1,4 @@
 'use strict'
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
 
@@ -47,8 +46,7 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    },
-    plugins: [new MonacoWebpackPlugin()]
+    }
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload

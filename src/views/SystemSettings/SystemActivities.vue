@@ -28,7 +28,7 @@
 
 <script>
 import { getAllActivities } from '@/api/activities'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

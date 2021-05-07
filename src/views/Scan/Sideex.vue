@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getSideexScans, getSideexReport } from '@/api/sideex'
 

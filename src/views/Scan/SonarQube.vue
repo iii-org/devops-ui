@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { getSonarQubeData } from '@/api/sonarQube'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 

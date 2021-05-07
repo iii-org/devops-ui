@@ -52,7 +52,7 @@
 
 <script>
 import { getPostmanReport } from '@/api/postman'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTable from '@/mixins/MixinElTable'
 
 export default {
   name: 'TestCaseDevOps',

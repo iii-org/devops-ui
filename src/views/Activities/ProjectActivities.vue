@@ -31,7 +31,7 @@
 
 <script>
 import { getProjectActivities } from '@/api/activities'
-import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

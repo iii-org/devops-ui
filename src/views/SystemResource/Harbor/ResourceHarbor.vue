@@ -136,7 +136,7 @@
 <script>
 import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {

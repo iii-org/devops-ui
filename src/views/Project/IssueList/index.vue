@@ -146,7 +146,7 @@
 
 <script>
 import AddIssue from './components/AddIssue'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { mapActions, mapGetters } from 'vuex'
 import { addIssue, getIssueTracker } from '@/api/issue'
 import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'

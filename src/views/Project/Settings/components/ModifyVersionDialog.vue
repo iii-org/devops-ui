@@ -41,7 +41,7 @@
 
 <script>
 import { addProjectVersion, editProjectVersion } from '@/api/projects'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 const formTemplate = () => ({
   name: '',

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 export default {
   name: 'AdminIssueRankDetail',

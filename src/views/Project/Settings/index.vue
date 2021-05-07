@@ -35,7 +35,7 @@
 <script>
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 export default {
   name: 'ProjectSettings',

@@ -1,5 +1,5 @@
 <script>
-import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
+import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
 
 export default {
   name: 'IssueListDialog',

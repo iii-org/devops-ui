@@ -131,7 +131,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTable from '@/mixins/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const defaultFormData = () => ({

@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 

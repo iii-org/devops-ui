@@ -77,7 +77,7 @@
 <script>
 import { addProjectMember, getNotInProject } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import Fuse from 'fuse.js'
 
 export default {

@@ -382,6 +382,22 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/commit_list/:rId/:branchName/:projectName',
+    component: Layout,
+    hidden: true,
+    meta: { roles: ['Engineer'] },
+    children: [
+      {
+        path: '',
+        name: 'commitList',
+        props: true,
+        component: () => import('@/views/Progress/CommitList'),
+        meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
+      }
+    ]
+  },
+
+  {
     path: '/scan',
     component: Layout,
     name: 'scan',

@@ -67,7 +67,7 @@
 
 <script>
 import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

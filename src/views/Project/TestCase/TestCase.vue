@@ -156,7 +156,7 @@ import {
   getTestCaseType,
   updateTestCase
 } from '@/api/testCase'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 const formTemplate = {
   name: '',

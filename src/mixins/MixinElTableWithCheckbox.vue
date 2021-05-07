@@ -1,5 +1,5 @@
 <script>
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTable from '@/mixins/MixinElTable'
 
 export default {
   name: 'MixinElTableWithCheckbox',

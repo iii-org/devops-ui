@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getZapScans } from '@/api/zap'
 

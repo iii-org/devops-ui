@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import { getProjectListDetail } from '@/api/dashboard'
 
 export default {

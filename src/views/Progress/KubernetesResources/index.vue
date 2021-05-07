@@ -42,7 +42,7 @@
 
 <script>
 import { getProjectUsage } from '@/api/kubernetes'
-import MixinElCardWithAProject from '@/components/MixinElCardWithAProject'
+import MixinElCardWithAProject from '@/mixins/MixinElCardWithAProject'
 import { formatChartDataResult, formateUsedQuota, getQuotaUnit, roundValue } from '@/utils/k8sResourceFormatter'
 import resourcePie from './components/resourcePie'
 

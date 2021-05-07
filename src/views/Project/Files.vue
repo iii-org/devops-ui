@@ -145,7 +145,7 @@ import {
   getProjectVersion,
   uploadProjectFile
 } from '@/api/projects'
-import MixinElTableWithAProject from '@/components/MixinElTableWithAProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {

@@ -75,7 +75,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import AdminMemberTable from './widget/AdminMemberTable'
 import NoData from './widget/NoData'
 

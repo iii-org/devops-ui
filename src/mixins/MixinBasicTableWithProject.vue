@@ -2,14 +2,14 @@
 /*
   Extended from MixinElTable, used for pages using el-table and is bound to a selected project.
  */
-import MixinElTable from '@/components/MixinElTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'MixinElTableWithAProject',
   components: { ProjectListSelector },
-  mixins: [MixinElTable],
+  mixins: [MixinBasicTable],
   computed: {
     ...mapGetters(['selectedProject']),
     selectedProjectId() {

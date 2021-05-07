@@ -37,7 +37,7 @@
 import { getPipelineBranch, editPipelineBranch } from '@/api/projects'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { mapGetters } from 'vuex'
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 export default {
   name: 'AdvanceBranchSettings',

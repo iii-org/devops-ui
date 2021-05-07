@@ -138,23 +138,6 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" label="Last Tag">
-        <template slot-scope="scope">
-          <router-link
-            :to="{
-              name: 'fileList',
-              params: {
-                bId: scope.row.id,
-                projectName: scope.row.name,
-                branchName: scope.row.branch
-              }
-            }"
-            style="color: #409EFF"
-          >
-            {{ returnLatestTag(scope.row) }}
-          </router-link>
-        </template>
-      </el-table-column> -->
       <!-- <el-table-column label="Actions" align="center" width="250px">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
@@ -220,7 +203,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTable from '@/mixins/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {

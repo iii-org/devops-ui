@@ -52,7 +52,7 @@
 
 <script>
 import { getIngressList } from '@/api/kubernetes'
-import MixinBasicTableWithProject from '@/components/MixinBasicTableWithProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {

@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import MixinElTableWithCheckbox from '@/components/MixinElTableWithCheckbox'
+import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
 import { updateIssue } from '@/api/issue'
 
 export default {

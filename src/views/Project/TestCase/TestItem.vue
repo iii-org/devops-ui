@@ -260,7 +260,7 @@ import {
   getTestValueLocation
 } from '@/api/testValue'
 import { getTestCaseById } from '@/api/testCase'
-import MixinElTable from '@/components/MixinElTable'
+import MixinElTable from '@/mixins/MixinElTable'
 
 const testItemFormTemplate = {
   name: '',

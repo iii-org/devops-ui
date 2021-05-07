@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import MixinBasicTable from '@/components/MixinBasicTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
 import ModifyVersionDialog from './ModifyVersionDialog'
