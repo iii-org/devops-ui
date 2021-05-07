@@ -232,7 +232,7 @@ export default {
           Software: 'sonarqube',
           // status: webinspectResult.status,
           runAt: sonarqubeResult.run_at,
-          informationText: sonarqubeResult.map((row) => ({ status: row.metric, count: row.value }))
+          informationText: sonarqubeResult.map(row => ({ status: row.metric, count: row.value }))
         })
       }
       return ret
@@ -249,7 +249,10 @@ export default {
         Object.assign(ret, {
           Software: 'sideex',
           runAt: sideexResult.run_at,
-          informationText: Object.keys(sideexResult.result).map((key) => ({ status: key, count: sideexResult.result[key] }))
+          informationText: Object.keys(sideexResult.result).map(key => ({
+            status: key,
+            count: sideexResult.result[key]
+          }))
         })
       }
       return ret
@@ -289,20 +292,7 @@ export default {
       this.isDisabled = false
     },
     handleClick(target) {
-      switch (target) {
-        case 'postman':
-          this.$router.push({ name: 'postman-result' })
-          break
-        case 'checkmarx':
-          this.$router.push({ name: 'checkmarx' })
-          break
-        case 'webinspect':
-          this.$router.push({ name: 'web-inspect' })
-          break
-        default:
-          this.$router.push({ name: '404' })
-          break
-      }
+      this.$router.push({ name: target })
     },
     updateProjectTestList() {
       this.$emit('update')
