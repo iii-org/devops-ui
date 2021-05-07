@@ -1,7 +1,7 @@
 <template>
   <el-row class="table-container">
     <div class="d-flex justify-space-between align-center">
-      <router-link :to="{ name: 'postman-result' }">
+      <router-link :to="{ name: 'postman' }">
         <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
       </router-link>
       <div class="text-center">

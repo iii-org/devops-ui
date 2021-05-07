@@ -79,7 +79,7 @@ import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
-  name: 'PostmanResult',
+  name: 'Postman',
   components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data() {

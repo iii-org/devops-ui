@@ -406,12 +406,12 @@ export const asyncRoutes = [
       icon: 'el-icon-circle-check',
       roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
     },
-    redirect: '/scan/postman-result',
+    redirect: '/scan/postman',
     children: [
       {
-        path: 'postman-result',
-        name: 'postman-result',
-        component: () => import('@/views/Scan/PostmanResult'),
+        path: 'postman',
+        name: 'postman',
+        component: () => import('@/views/Scan/Postman'),
         meta: {
           title: 'postman',
           roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
