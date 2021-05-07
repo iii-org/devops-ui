@@ -25,7 +25,7 @@ import MixinBasicTable from '@/mixins/MixinBasicTable'
 import AdminIssueRankUnclosedIssues from './widget/AdminIssueRankUnclosedIssues'
 
 export default {
-  name: 'AdminProjectMember',
+  name: 'AdminIssueRank',
   components: {
     AdminIssueRankUnclosedIssues
   },
