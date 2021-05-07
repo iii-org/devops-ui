@@ -107,10 +107,22 @@ export default {
   mounted() {
     this.fetchCiPipelineId()
     socket.on('connect', () => {
+      this.$notify({
+        title: this.$t('general.Success'),
+        message: 'WebSocket connect',
+        type: 'success'
+      })
       console.log('sio connected ===>', socket)
       this.sid = socket.id
     })
-    socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
+    socket.on('disconnect', sioEvt => {
+      this.$notify({
+        title: this.$t('general.Error'),
+        message: 'WebSocket disconnect',
+        type: 'error'
+      })
+      console.log('sio disconnect ===>', sioEvt)
+    })
   },
   beforeDestroy() {
     this.clearTimer()
