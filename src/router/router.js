@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import parentBlank from '@/layout/components/parentBlank'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -155,14 +156,19 @@ export const asyncRoutes = [
       },
       {
         path: 'issue',
-        name: 'issue-list',
-        component: () => import('@/views/Project/IssueList'),
-        meta: {
-          title: 'issueList',
-          roles: ['Project Manager', 'Engineer', 'Administrator'],
-          rolePage: true
-        },
+        redirect: '/project/issue',
+        component: parentBlank,
         children: [
+          {
+            path: '',
+            name: 'issue-list',
+            component: () => import('@/views/Project/IssueList'),
+            meta: {
+              title: 'issueList',
+              roles: ['Project Manager', 'Engineer', 'Administrator'],
+              rolePage: true
+            }
+          },
           {
             path: ':issueId',
             name: 'issue-detail',

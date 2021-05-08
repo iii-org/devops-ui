@@ -48,6 +48,7 @@
     </div>
     <el-divider />
     <el-table
+      ref="issueList"
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
@@ -58,36 +59,39 @@
       :tree-props="{ children: 'child' }"
       height="100%"
       :row-class-name="getRowClass"
+      @cell-click="handleClick"
     >
       <el-table-column type="expand" class-name="informationExpand">
         <template slot-scope="scope">
-          <div v-if="scope.row.parent_id">
-            <b>父議題:</b>
-            <el-link
-              class="font-weight-regular"
-              :style="{ 'font-size': '14px', cursor: 'pointer' }"
-              :underline="false"
-              @click="handleEdit(scope.row.parent_id)"
-            >
-              #{{ scope.row.parent_id }}
-            </el-link>
-          </div>
-          <div v-if="scope.row.children.length">
-            <b>子議題:</b>
-            <ol>
-              <li v-for="child in scope.row.children" :key="child.id">
-                <el-link
-                  class="font-weight-regular"
-                  :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                  :underline="false"
-                  @click="handleEdit(child.id)"
-                >
-                  <status :name="child.status.name" size="mini" />  <tracker :name="child.tracker.name" /> #{{ child.id }} - {{ child.name }}
-                  <span v-if="Object.keys(child.assigned_to).length>1">({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span>
-                </el-link>
-              </li>
-            </ol>
-          </div></template>
+          <ul>
+            <li v-if="scope.row.parent_id">
+              <b>父議題:</b>
+              <el-link
+                class="font-weight-regular"
+                :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                :underline="false"
+                @click="handleEdit(scope.row.parent_id)"
+              >#{{ scope.row.parent_id }}
+              </el-link>
+            </li>
+            <li v-if="scope.row.children.length">
+              <b>子議題:</b>
+              <ol>
+                <li v-for="child in scope.row.children" :key="child.id">
+                  <el-link
+                    class="font-weight-regular"
+                    :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                    :underline="false"
+                    @click="handleEdit(child.id)"
+                  >
+                    <status :name="child.status.name" size="mini" />  <tracker :name="child.tracker.name" /> #{{ child.id }} - {{ child.name }}
+                    <span v-if="Object.keys(child.assigned_to).length>1">({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span>
+                  </el-link>
+                </li>
+              </ol>
+            </li>
+          </ul>
+        </template>
       </el-table-column>
       <el-table-column :label="$t('general.Type')" width="130">
         <template slot-scope="scope">
@@ -97,14 +101,7 @@
       <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
         <template slot-scope="scope">
           <span class="text-success mr-2">#{{ scope.row.id }}</span>
-          <el-link
-            class="font-weight-regular"
-            :style="{ 'font-size': '16px', cursor: 'pointer' }"
-            :underline="false"
-            @click="handleEdit(scope.row.id)"
-          >
-            {{ scope.row.name }}
-          </el-link>
+          {{ scope.row.name }}
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
@@ -265,6 +262,13 @@ export default {
         this.listFilterVersionTrackerData = res.map(items => items.item)
       }
     },
+    handleClick(row, column) {
+      if (column.type === 'expand' && this.hasRelationIssue(row)) {
+        this.$refs['issueList'].toggleRowExpansion(row)
+      } else {
+        this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      }
+    },
     handleEdit(id) {
       this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
@@ -313,11 +317,12 @@ export default {
       return !!row.parent_id || (row.children !== undefined && row.children.length > 0)
     },
     getRowClass({ row }) {
+      const result = []
       if (this.hasRelationIssue(row) === false) {
-        return 'row-expand-cover'
-      } else {
-        return ''
+        result.push('row-expand-cover')
       }
+      result.push('cursor-pointer')
+      return result.join(' ')
     }
   }
 }
