@@ -21,7 +21,7 @@
             </span>
           </el-col>
         </el-row>
-        <el-col v-show="focusTab === 'editIssue'" :span="6" class="text-right">
+        <el-col :span="6" class="text-right">
           <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
           <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
         </el-col>
@@ -157,7 +157,6 @@ export default {
         due_date: '',
         description: ''
       },
-      focusTab: 'editIssue',
       files: [],
       journals: [],
       formObj: {},
@@ -189,7 +188,6 @@ export default {
           next()
         })
         .catch(() => {
-          this.focusTab = 'editIssue'
           next(false)
         })
     } else {
@@ -385,17 +383,17 @@ export default {
       return this.isFormDataChanged() || isNotesChanged
     },
     isFormDataChanged() {
-      let isChanged
       if (Object.keys(this.originForm).length === 0) return false
       for (const key in this.form) {
+        console.log(key, this.originForm[key], this.form[key], this.originForm[key] !== this.form[key])
+        if (this.originForm[key] === null) {
+          this.originForm[key] = 0
+        }
         if (this.originForm[key] !== this.form[key]) {
-          isChanged = true
-          break
-        } else {
-          isChanged = false
+          return true
         }
       }
-      return isChanged
+      return false
     },
     onRelationIssueDialog(id) {
       this.relationIssue.visible = true
