@@ -1,95 +1,97 @@
 <template>
-  <el-card>
-    <el-row slot="header">
-      <el-row type="flex" align="bottom" justify="space-between">
-        <el-row>
-          <el-col class="text-h5 mr-3">
-            <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
-                       @click="handleBackPage"
-            >
-              {{ $t('general.Back') }}
-            </el-button>
-            <template v-if="tracker">
-              <span :class="getCategoryTagType(tracker)" />
-              {{ $t(`Issue.${tracker}`) }}
-            </template>
-            <template v-else>{{ $t('Issue.Issue') }}</template>
-            #{{ issueId }} -
-            <IssueTitle ref="IssueTitle" v-model="form.subject" />
-            <span class="text-body-1 mr-3">
-              {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-            </span>
+  <div class="app-container">
+    <el-card>
+      <el-row slot="header">
+        <el-row type="flex" align="bottom" justify="space-between">
+          <el-row>
+            <el-col class="text-h5 mr-3">
+              <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
+                         @click="handleBackPage"
+              >
+                {{ $t('general.Back') }}
+              </el-button>
+              <template v-if="tracker">
+                <span :class="getCategoryTagType(tracker)" />
+                {{ $t(`Issue.${tracker}`) }}
+              </template>
+              <template v-else>{{ $t('Issue.Issue') }}</template>
+              #{{ issueId }} -
+              <IssueTitle ref="IssueTitle" v-model="form.subject" />
+              <span class="text-body-1 mr-3">
+                {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+              </span>
+            </el-col>
+          </el-row>
+          <el-col :span="6" class="text-right">
+            <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
+            <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
           </el-col>
         </el-row>
-        <el-col :span="6" class="text-right">
-          <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-          <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col ref="mainIssueWrapper" :span="24" :md="16">
+          <el-col :span="24">
+            <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
+                          @update-issue="handleUpdated"
+            />
+          </el-col>
+          <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
+            <el-col ref="IssueDescription" :span="24" class="mb-3">
+              <issue-description v-model="form.description" />
+            </el-col>
+            <el-col ref="IssueFiles">
+              <issue-files v-if="files.length>0" :issue-file.sync="files" />
+            </el-col>
+            <el-col ref="IssueRelation">
+              <el-collapse v-if="countRelationIssue">
+                <el-collapse-item :title="'關聯議題 ('+countRelationIssue+')'">
+                  <ul>
+                    <li v-if="parent&&Object.keys(parent).length>0">
+                      父議題：
+                      <el-link @click="onRelationIssueDialog(parent.id)">
+                        <status :name="parent.status.name" size="mini" />
+                        <template v-if="parent.tracker">
+                          <tracker :name="parent.tracker.name" />
+                        </template>
+                        <template v-else>{{ $t('Issue.Issue') }}</template>
+                        #{{ parent.id }} - {{ parent.subject }}
+                        <span v-if="Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }})</span>
+                      </el-link>
+                    </li>
+                    <li v-if="children.length>0">子議題：
+                      <ol>
+                        <li v-for="child in children" :key="child.id">
+                          <el-link @click="onRelationIssueDialog(child.id)">
+                            <template v-if="child.tracker">
+                              <tracker :name="child.tracker.name" />
+                            </template>
+                            <template v-else>{{ $t('Issue.Issue') }}</template>
+                            #{{ child.id }} - {{ child.subject }}
+                          </el-link>
+                        </li>
+                      </ol>
+                    </li>
+                  </ul>
+                </el-collapse-item>
+              </el-collapse>
+            </el-col>
+            <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
+              <issue-notes-editor ref="IssueNotesEditor" height="125px" @change="onEditorChange" />
+            </el-col>
+            <el-col :span="24">
+              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" />
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="24" :md="8" class="issueOptionHeight">
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
         </el-col>
       </el-row>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col ref="mainIssueWrapper" :span="24" :md="16">
-        <el-col :span="24">
-          <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
-                        @update-issue="handleUpdated"
-          />
-        </el-col>
-        <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-          <el-col ref="IssueDescription" :span="24" class="mb-3">
-            <issue-description v-model="form.description" />
-          </el-col>
-          <el-col ref="IssueFiles">
-            <issue-files v-if="files.length>0" :issue-file.sync="files" />
-          </el-col>
-          <el-col ref="IssueRelation">
-            <el-collapse v-if="countRelationIssue">
-              <el-collapse-item :title="'關聯議題 ('+countRelationIssue+')'">
-                <ul>
-                  <li v-if="parent&&Object.keys(parent).length>0">
-                    父議題：
-                    <el-link @click="onRelationIssueDialog(parent.id)">
-                      <status :name="parent.status.name" size="mini" />
-                      <template v-if="parent.tracker">
-                        <tracker :name="parent.tracker.name" />
-                      </template>
-                      <template v-else>{{ $t('Issue.Issue') }}</template>
-                      #{{ parent.id }} - {{ parent.subject }}
-                      <span v-if="Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }})</span>
-                    </el-link>
-                  </li>
-                  <li v-if="children.length>0">子議題：
-                    <ol>
-                      <li v-for="child in children" :key="child.id">
-                        <el-link @click="onRelationIssueDialog(child.id)">
-                          <template v-if="child.tracker">
-                            <tracker :name="child.tracker.name" />
-                          </template>
-                          <template v-else>{{ $t('Issue.Issue') }}</template>
-                          #{{ child.id }} - {{ child.subject }}
-                        </el-link>
-                      </li>
-                    </ol>
-                  </li>
-                </ul>
-              </el-collapse-item>
-            </el-collapse>
-          </el-col>
-          <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
-            <issue-notes-editor ref="IssueNotesEditor" height="125px" @change="onEditorChange" />
-          </el-col>
-          <el-col :span="24">
-            <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" />
-          </el-col>
-        </el-row>
-      </el-col>
-      <el-col :span="24" :md="8" class="issueOptionHeight">
-        <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
-      </el-col>
-    </el-row>
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body>
-      <ProjectIssueDetail :props-issue-id="relationIssue.id" :is-in-dialog="true" />
-    </el-dialog>
-  </el-card>
+      <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body>
+        <ProjectIssueDetail :props-issue-id="relationIssue.id" :is-in-dialog="true" />
+      </el-dialog>
+    </el-card>
+  </div>
 </template>
 
 <script>
