@@ -142,9 +142,9 @@ export default {
     userData: function(data) {
       if (isNaN(data.default_role)) {
         // get role id from role object
-        data.default_role = data.role ? data.role.id : data.default_role.id
+        const default_role = data.role ? data.role.id : data.default_role.id
+        this.$set(this.userForm, 'default_role', default_role)
       }
-      this.userForm = data
     }
   },
   updated() {
