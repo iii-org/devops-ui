@@ -497,31 +497,41 @@ export const asyncRoutes = [
     children: [
       {
         path: 'plugin-resource',
-        name: 'Plugin Resource',
-        component: () => import('@/views/SystemResource/PluginResource'),
-        meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator', 'Engineer'] }
-      },
-      {
-        path: 'harbor',
-        name: 'Harbor',
-        hidden: true,
-        component: () => import('@/views/SystemResource/Harbor/ResourceHarbor'),
-        meta: {
-          title: 'Harbor',
-          roles: ['Project Manager', 'Administrator', 'Engineer'],
-          rolePage: true
-        },
+        component: parentBlank,
+        meta: { title: 'Plugin Resource', roles: ['Project Manager', 'Administrator'] },
         children: [
           {
-            path: 'artifacts',
-            name: 'Artifacts',
+            path: '',
+            name: 'Plugin Resource',
             hidden: true,
-            component: () => import('@/views/SystemResource/Harbor/components/ProjectArtifacts'),
+            component: () => import('@/views/SystemResource/PluginResource')
+          },
+          {
+            path: 'harbor',
+            hidden: true,
+            component: parentBlank,
             meta: {
-              title: 'Artifacts',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
-            }
+              title: 'Harbor',
+              roles: ['Project Manager', 'Administrator']
+            },
+            children: [
+              {
+                path: '',
+                name: 'Harbor',
+                hidden: true,
+                component: () => import('@/views/SystemResource/Harbor/ResourceHarbor')
+              },
+              {
+                path: 'artifacts',
+                name: 'Artifacts',
+                hidden: true,
+                component: () => import('@/views/SystemResource/Harbor/components/ProjectArtifacts'),
+                meta: {
+                  title: 'Artifacts',
+                  roles: ['Project Manager', 'Administrator']
+                }
+              }
+            ]
           }
         ]
       }

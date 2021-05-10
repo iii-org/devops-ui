@@ -3,21 +3,14 @@
     <el-col>
       <div class="text-right">
         <el-input
-          v-model="searchData"
+          v-model="keyword"
           :placeholder="$t('general.SearchName')"
           prefix-icon="el-icon-search"
           style="width: 250px"
         />
       </div>
       <el-divider />
-      <el-table
-        v-loading="listLoading"
-        :data="pagedData"
-        :element-loading-text="$t('Loading')"
-        border
-        style="width: 100%"
-        height="100%"
-      >
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             {{ scope.row.name }}
@@ -69,12 +62,12 @@
 
 <script>
 import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
+  mixins: [MixinBasicTableWithProject],
   methods: {
     async fetchData() {
       return (await getProjectArtifacts(this.$route.params.rName)).data

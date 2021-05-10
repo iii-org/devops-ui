@@ -1,7 +1,6 @@
 <template>
-  <div class="app-container">
-    <router-view />
-    <div v-show="this.$route.meta.rolePage" class="role-page">
+  <el-row class="app-container">
+    <el-col>
       <div class="d-flex justify-space-between">
         <project-list-selector />
         <el-input
@@ -29,14 +28,7 @@
           </el-col>
         </el-row>
       </el-card>
-      <el-table
-        v-loading="listLoading"
-        :data="pagedData"
-        :element-loading-text="$t('Loading')"
-        border
-        style="width: 100%"
-        height="100%"
-      >
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
         <el-table-column :label="$t('general.Name')" show-overflow-tooltip min-width="150">
           <template slot-scope="scope">
             <el-link
@@ -87,7 +79,6 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-
       <el-dialog
         :title="`${$t('general.Delete')} ${$t('route.Harbor')}`"
         :visible.sync="showDeleteDialog"
@@ -107,7 +98,6 @@
           <el-button type="danger" @click="handleDeleteModal()">{{ $t('general.Delete') }}</el-button>
         </span>
       </el-dialog>
-
       <el-dialog
         :title="$t(`ProjectResource.EditResource`)"
         :visible.sync="dialogVisible"
@@ -129,8 +119,8 @@
           </el-button>
         </span>
       </el-dialog>
-    </div>
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
