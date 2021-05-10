@@ -23,7 +23,7 @@
           </div>
         </div>
         <el-input
-          v-model="searchData"
+          v-model="keyword"
           class="ml-3"
           :placeholder="$t('TestCase.SearchName')"
           style="width: 250px"
@@ -56,14 +56,7 @@
           <span class="tex-subtitle-2">{{ countRequestMsg('Fail') }}</span>
         </div>
       </div>
-      <el-table
-        v-loading="listLoading"
-        :element-loading-text="$t('Loading')"
-        border
-        fit
-        :data="pagedDataByChecked"
-        height="100%"
-      >
+      <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedDataByChecked" border fit>
         <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="110" />
         <el-table-column align="center" :label="$t('general.Name')" prop="name" min-width="100" show-overflow-tooltip />
         <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
@@ -111,11 +104,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
-import MixinElTable from '@/mixins/MixinElTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 export default {
   name: 'TestCasePostman',
-  mixins: [MixinElTable],
+  mixins: [MixinBasicTable],
   data() {
     return {
       testCaseInfos: {},

@@ -330,8 +330,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Progress/KubernetesResources/components/DeploymentList'),
             meta: {
               title: 'Deployment List',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
+              roles: ['Project Manager', 'Administrator', 'Engineer']
             }
           },
           {
@@ -341,8 +340,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Progress/KubernetesResources/components/PodsList'),
             meta: {
               title: 'Pods List',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
+              roles: ['Project Manager', 'Administrator', 'Engineer']
             }
           },
           {
@@ -352,8 +350,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Progress/KubernetesResources/components/ServiceList'),
             meta: {
               title: 'Service List',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
+              roles: ['Project Manager', 'Administrator', 'Engineer']
             }
           },
           {
@@ -363,8 +360,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Progress/KubernetesResources/components/SecretList'),
             meta: {
               title: 'Secret List',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
+              roles: ['Project Manager', 'Administrator', 'Engineer']
             }
           },
           {
@@ -374,8 +370,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Progress/KubernetesResources/components/ConfigMapsList'),
             meta: {
               title: 'ConfigMaps List',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
+              roles: ['Project Manager', 'Administrator', 'Engineer']
             }
           },
           {
@@ -385,8 +380,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Progress/KubernetesResources/components/IngressesList'),
             meta: {
               title: 'Ingresses List',
-              roles: ['Project Manager', 'Administrator', 'Engineer'],
-              rolePage: false
+              roles: ['Project Manager', 'Administrator', 'Engineer']
             }
           }
         ]
@@ -423,14 +417,18 @@ export const asyncRoutes = [
     children: [
       {
         path: 'postman',
-        name: 'postman',
-        component: () => import('@/views/Scan/Postman'),
+        component: parentBlank,
         meta: {
           title: 'postman',
-          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
-          rolePage: true
+          roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
         },
         children: [
+          {
+            path: '',
+            name: 'postman',
+            hidden: true,
+            component: () => import('@/views/Scan/Postman')
+          },
           {
             path: 'devops/:id',
             name: 'devops-test-case',
@@ -438,8 +436,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Scan/TestCaseDevOps'),
             meta: {
               title: 'fromDevops',
-              roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
-              rolePage: false
+              roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
             }
           },
           {
@@ -449,8 +446,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Scan/TestCasePostman'),
             meta: {
               title: 'fromCollection',
-              roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'],
-              rolePage: false
+              roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
             }
           }
         ]

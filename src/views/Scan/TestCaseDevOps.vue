@@ -3,7 +3,7 @@
     <el-col>
       <div class="d-flex">
         <el-input
-          v-model="searchData"
+          v-model="keyword"
           :placeholder="$t('TestCase.SearchNameOrPathOrTestResult')"
           style="width: 250px"
           prefix-icon="el-icon-search"
@@ -54,11 +54,11 @@
 
 <script>
 import { getPostmanReport } from '@/api/postman'
-import MixinElTable from '@/mixins/MixinElTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 export default {
   name: 'TestCaseDevOps',
-  mixins: [MixinElTable],
+  mixins: [MixinBasicTable],
   data() {
     return {
       dialogVisible: false

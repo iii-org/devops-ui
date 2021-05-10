@@ -1,25 +1,17 @@
 <template>
   <el-row class="app-container">
-    <router-view />
-    <template v-if="this.$route.meta.rolePage">
+    <el-col>
       <div class="d-flex justify-space-between">
         <project-list-selector />
         <el-input
-          v-model="searchData"
+          v-model="keyword"
           :placeholder="$t('Postman.SearchBranch')"
           style="width: 250px"
           prefix-icon="el-icon-search"
         />
       </div>
       <el-divider />
-      <el-table
-        v-loading="listLoading"
-        :element-loading-text="$t('Loading')"
-        :data="pagedData"
-        border
-        fit
-        height="100%"
-      >
+      <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
         <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />
         <el-table-column align="center" label="Commit" width="130">
@@ -68,24 +60,24 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-    </template>
+    </el-col>
   </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'Postman',
   components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
+  mixins: [MixinBasicTableWithProject],
   data() {
     return {
       dialogVisible: false,
-      searchKey: 'branch'
+      searchKeys: ['branch']
     }
   },
   computed: {
@@ -96,7 +88,7 @@ export default {
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
-      this.$router.push({ name: target, params: { id }})
+      this.$router.push({ name: target, params: { id } })
     }
   }
 }
