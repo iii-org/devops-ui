@@ -65,7 +65,7 @@
         </el-table-column>
         <el-table-column label="pull" align="center" prop="pull_count" width="140" />
         <el-table-column :label="$t('general.Description')" prop="description" min-width="200" />
-        <el-table-column-time prop="update_time" />
+        <el-table-column-time prop="update_time" :label="$t('general.LastUpdateTime')" />
         <el-table-column :label="$t('general.Actions')" align="center" show-overflow-tooltip width="200">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">

@@ -16,6 +16,26 @@ export default {
       type: Number,
       default: 130
     }
+  },
+  methods: {
+    UTCtoLocalTime(dateTime) {
+      const localTime = this.$dayjs(dateTime)
+        .utc()
+        .local()
+        .format('YYYY-MM-DD HH:mm:ss')
+      if (dateTime === 'Invalid date') {
+        return '-'
+      }
+      return localTime
+    },
+    relativeTime(dateTime) {
+      return dateTime
+        ? this.$dayjs(dateTime)
+          .utc()
+          .local()
+          .fromNow()
+        : '-'
+    }
   }
 }
 </script>

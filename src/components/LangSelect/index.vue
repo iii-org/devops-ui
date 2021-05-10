@@ -24,6 +24,7 @@ export default {
   methods: {
     handleSetLanguage(lang) {
       this.$i18n.locale = lang
+      this.$dayjs.locale(lang.toLowerCase())
       this.$store.dispatch('app/setLanguage', lang)
       this.$message({
         title: this.$t('general.Success'),

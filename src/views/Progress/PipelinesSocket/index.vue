@@ -68,7 +68,7 @@
         min-width="220"
         prop="transitioning_message"
       />
-      <el-table-column-time prop="last_test_time" />
+      <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" />
       <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">

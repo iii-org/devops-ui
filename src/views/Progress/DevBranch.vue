@@ -35,7 +35,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-time prop="last_commit_time" />
+      <el-table-column-time prop="last_commit_time" :label="$t('general.LastUpdateTime')" />
     </el-table>
     <pagination
       :total="filteredData.length"

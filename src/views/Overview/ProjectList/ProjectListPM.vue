@@ -68,7 +68,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column-time prop="updated_time" />
+      <el-table-column-time prop="updated_time" :label="$t('general.LastUpdateTime')" />
       <el-table-column v-if="userRole !== 'QA'" align="center" label="GitLab" width="110">
         <template slot-scope="scope">
           <el-popover
