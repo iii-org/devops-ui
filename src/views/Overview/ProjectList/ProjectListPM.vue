@@ -40,7 +40,11 @@
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.Status')" width="100">
+      <el-table-column-tag
+        prop="project_status"
+        :label="$t('Project.Status')"
+      />
+      <!-- <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.project_status === '進行中'"
@@ -55,7 +59,7 @@
             {{ scope.row.project_status }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
@@ -179,10 +183,11 @@ import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
 import MixinElTable from '@/mixins/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'ProjectListPM',
-  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog, ElTableColumnTag },
   filters: {
     statusFilter(status) {
       const statusMap = {

@@ -30,7 +30,8 @@
       <el-table-column align="center" label="Email" prop="email" min-width="250" />
       <el-table-column-time :label="$t('general.CreateTime')" prop="create_at" />
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
-      <el-table-column align="center" :label="$t('general.Status')" width="120">
+      <el-table-column-tag prop="status" :label="$t('general.Status')" :width="Number(120)" size="small" />
+      <!-- <el-table-column align="center" :label="$t('general.Status')" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'enable'" class="el-tag--circle" type="finish" size="small" effect="dark">
             {{ scope.row.status }}
@@ -45,7 +46,7 @@
             {{ scope.row.status }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" :label="$t('general.Actions')" width="210">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
@@ -91,12 +92,14 @@ import { deleteUser, getUser, getInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
 import MixinAccountManageTable from '@/mixins/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'AccountManage',
   components: {
     UserDialog,
-    ElTableColumnTime
+    ElTableColumnTime,
+    ElTableColumnTag
   },
   mixins: [MixinAccountManageTable],
   data() {
