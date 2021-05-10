@@ -105,6 +105,7 @@ export default {
   //   }
   // },
   mounted() {
+    if (this.selectedProject.id === -1) return
     this.fetchCiPipelineId()
     socket.on('connect', () => {
       this.$notify({

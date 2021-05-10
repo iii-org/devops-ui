@@ -110,6 +110,7 @@ export default {
       this.listLoading = true
       try {
         const rName = this.selectedProject.name
+        if (!rName) return []
         const res = await getWebInspectScans(rName)
         scansData = this.handleScans(res.data)
       } catch (err) {
