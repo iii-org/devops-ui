@@ -1,41 +1,35 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <router-view />
-      <div v-if="this.$route.meta.rolePage" class="role-page">
-        <el-row>
-          <el-col>
-            <project-list-selector />
-          </el-col>
-        </el-row>
-        <el-divider />
-        <el-row :gutter="12">
-          <el-col v-for="item in listData" :key="item.title" :md="12" :lg="8" :xl="6">
-            <el-card
-              v-loading="listLoading"
-              :class="{ 'mb-3': true, 'float-card': hasDetail(item.title) }"
-              :shadow="hasDetail(item.title) ? 'always' : 'never'"
-              @click.native="showDetail(item.title)"
-            >
-              <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
-                <strong>{{ item.title }}{{ item.quota }}</strong>
-              </div>
-              <div v-if="selectedProjectId === -1" style="text-align: center;">
-                {{ $t('general.NoData') }}
-              </div>
-              <div v-else>
-                <resource-pie :chart-data="item.data" />
-              </div>
-              <div
-                :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'"
-                :style="{ cursor: 'pointer' }"
-              >
-                {{ $t('ProjectResource.Details') }}
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
+      <el-row>
+        <el-col>
+          <project-list-selector />
+        </el-col>
+      </el-row>
+      <el-divider />
+      <el-row :gutter="12">
+        <el-col v-for="item in listData" :key="item.title" :md="12" :lg="8" :xl="6">
+          <el-card
+            v-loading="listLoading"
+            :class="{ 'mb-3': true, 'float-card': hasDetail(item.title) }"
+            :shadow="hasDetail(item.title) ? 'always' : 'never'"
+            @click.native="showDetail(item.title)"
+          >
+            <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
+              <strong>{{ item.title }}{{ item.quota }}</strong>
+            </div>
+            <div v-if="selectedProjectId === -1" style="text-align: center;">
+              {{ $t('general.NoData') }}
+            </div>
+            <div v-else>
+              <resource-pie :chart-data="item.data" />
+            </div>
+            <div :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'" :style="{ cursor: 'pointer' }">
+              {{ $t('ProjectResource.Details') }}
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </el-col>
   </el-row>
 </template>

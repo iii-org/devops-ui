@@ -311,14 +311,18 @@ export const asyncRoutes = [
       },
       {
         path: 'kubernetes-resources',
-        name: 'Kubernetes-resources',
-        component: () => import('@/views/Progress/KubernetesResources'),
+        component: parentBlank,
         meta: {
           title: 'kubernetesResources',
-          roles: ['Project Manager', 'Administrator', 'Engineer'],
-          rolePage: true
+          roles: ['Project Manager', 'Administrator', 'Engineer']
         },
         children: [
+          {
+            path: '',
+            name: 'Kubernetes-resources',
+            component: () => import('@/views/Progress/KubernetesResources'),
+            hidden: true
+          },
           {
             path: 'deployment-list',
             name: 'Deployment List',

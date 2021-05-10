@@ -1,121 +1,117 @@
 <template>
-  <div class="table-container">
-    <div class="d-flex justify-space-between">
-      <project-list-selector />
-      <el-input
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        :placeholder="$t('ProjectUsage.SearchPods')"
-        style="width: 250px"
-      />
-    </div>
-    <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      fit
-      border
-    >
-      <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
-        <template slot-scope="scope">
-          <div>{{ scope.row.name }}</div>
-          <div class="text-body-2 my-1">
-            <i class="el-icon-time" />
-            <el-tooltip placement="bottom" :content="scope.row.created_time | UTCtoLocalTime">
-              <span>{{ scope.row.created_time | relativeTime }}</span>
-            </el-tooltip>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('PodsList.Container')" header-align="center" prop="container">
-        <template slot-scope="scope">
-          <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
-            <div style="text-align: left">
-              <div style="display: inline-block; width: 80px;text-align: center">
-                <el-tag
-                  v-if="container.state"
-                  class="el-tag--circle"
-                  :type="getStateType(container.state)"
-                  size="mini"
-                  effect="dark"
-                >
-                  {{ container.state }}
-                </el-tag>
-              </div>
+  <el-row class="app-container">
+    <el-col>
+      <div class="d-flex justify-space-between">
+        <project-list-selector />
+        <el-input
+          v-model="keyword"
+          prefix-icon="el-icon-search"
+          :placeholder="$t('ProjectUsage.SearchPods')"
+          style="width: 250px"
+        />
+      </div>
+      <el-divider />
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit border>
+        <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
+          <template slot-scope="scope">
+            <div>{{ scope.row.name }}</div>
+            <div class="text-body-2 my-1">
               <i class="el-icon-time" />
-              <el-tooltip placement="top" :content="container.time | UTCtoLocalTime">
-                <span class="text-body-2">{{ container.time | relativeTime }}</span>
+              <el-tooltip placement="bottom" :content="scope.row.created_time | UTCtoLocalTime">
+                <span>{{ scope.row.created_time | relativeTime }}</span>
               </el-tooltip>
-              <div class="ml-3 my-1">
-                <i class="el-icon-box" /> <span class="text-h6 "> {{ container.name }}</span>
-              </div>
-              <div class=" ml-3 my-1">
-                <i class="el-icon-refresh-right" />
-                <span class="font-weight-regular">Restarts：{{ container.restart }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('PodsList.Container')" header-align="center" prop="container">
+          <template slot-scope="scope">
+            <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
+              <div style="text-align: left">
+                <div style="display: inline-block; width: 80px;text-align: center">
+                  <el-tag
+                    v-if="container.state"
+                    class="el-tag--circle"
+                    :type="getStateType(container.state)"
+                    size="mini"
+                    effect="dark"
+                  >
+                    {{ container.state }}
+                  </el-tag>
+                </div>
+                <i class="el-icon-time" />
+                <el-tooltip placement="top" :content="container.time | UTCtoLocalTime">
+                  <span class="text-body-2">{{ container.time | relativeTime }}</span>
+                </el-tooltip>
+                <div class="ml-3 my-1">
+                  <i class="el-icon-box" /> <span class="text-h6 "> {{ container.name }}</span>
+                </div>
+                <div class=" ml-3 my-1">
+                  <i class="el-icon-refresh-right" />
+                  <span class="font-weight-regular">Restarts：{{ container.restart }}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('PodsList.Image')" align="center">
-        <template slot-scope="scope">
-          <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
-            <div>{{ container.image }}</div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="180">
-        <template slot-scope="scope">
-          <div class="d-flex align-center">
-            <div>
-              <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
-                <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">
-                  log
-                </el-button>
-              </div>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('PodsList.Image')" align="center">
+          <template slot-scope="scope">
+            <div v-for="container in scope.row.containers" :key="container.name" class="my-3">
+              <div>{{ container.image }}</div>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.Actions')" align="center" width="180">
+          <template slot-scope="scope">
+            <div class="d-flex align-center">
+              <div>
+                <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
+                  <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">
+                    log
+                  </el-button>
+                </div>
+              </div>
 
-            <div>
-              <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
+              <div>
+                <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
               <i class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button> -->
-              <el-popconfirm
-                confirm-button-text="Delete"
-                cancel-button-text="Cancel"
-                icon="el-icon-info"
-                icon-color="red"
-                title="Are you sure?"
-                @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
-              >
-                <el-button slot="reference" size="mini" type="danger">
-                  <i class="el-icon-delete" />
-                  {{ $t('general.Delete') }}
-                </el-button>
-              </el-popconfirm>
+                <el-popconfirm
+                  confirm-button-text="Delete"
+                  cancel-button-text="Cancel"
+                  icon="el-icon-info"
+                  icon-color="red"
+                  title="Are you sure?"
+                  @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
+                >
+                  <el-button slot="reference" size="mini" type="danger">
+                    <i class="el-icon-delete" />
+                    {{ $t('general.Delete') }}
+                  </el-button>
+                </el-popconfirm>
+              </div>
             </div>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <pod-log
-      :is-loading="listLoading"
-      :dialog-visible.sync="podLogDialogVisible"
-      :log-message="logData"
-      :container-name="focusContainerName"
-      @hideDialog="showPodLogDialog(false)"
-      @refresh="handleLogClick(focusPodName, focusContainerName)"
-    />
-  </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+      <pod-log
+        :is-loading="listLoading"
+        :dialog-visible.sync="podLogDialogVisible"
+        :log-message="logData"
+        :container-name="focusContainerName"
+        @hideDialog="showPodLogDialog(false)"
+        @refresh="handleLogClick(focusPodName, focusContainerName)"
+      />
+    </el-col>
+  </el-row>
 </template>
 
 <script>
