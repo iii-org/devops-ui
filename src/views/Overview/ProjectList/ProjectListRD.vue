@@ -49,7 +49,7 @@
             v-if="scope.row.branch"
             :to="{
               name: 'branches',
-              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids }
+              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids[0] }
             }"
             style="color: #409eff"
           >

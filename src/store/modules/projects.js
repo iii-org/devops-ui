@@ -38,7 +38,7 @@ const actions = {
       const response = await getProjectList(rootState.user.userId, params)
       let { data } = response
       data = data.sort(function(a, b) {
-        return a['repository_ids'] < b['repository_ids'] ? 1 : -1
+        return a['repository_ids'][0] < b['repository_ids'][0] ? 1 : -1
       })
       const dataWithTag = await data.reduce(async (acc, cur) => {
         const res = await acc

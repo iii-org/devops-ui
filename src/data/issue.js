@@ -4,6 +4,10 @@ const CLOSED_STATUS_ID = 6
 const CLOSED_STATUS_NAME = 'Closed'
 
 function Issue(issue) {
+  if (!issue) {
+    return
+  }
+
   // Flatten the data for performance since it's not necessary to be nested
   this.id = issue.id
   this.name = issue.name
@@ -12,6 +16,7 @@ function Issue(issue) {
   this.startDate = issue.start_date
   this.dueDate = issue.due_date
   this.parentId = issue.parent_id
+  this.children = issue.children
   this.issueLink = issue.issue_link
 
   this.projectId = issue.project.id
