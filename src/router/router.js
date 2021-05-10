@@ -184,23 +184,26 @@ export const asyncRoutes = [
       },
       {
         path: 'test-case',
-        name: 'test-case',
-        component: () => import('@/views/Project/TestCase/TestCase'),
+        component: parentBlank,
         meta: {
           title: 'createTest',
-          roles: ['Engineer', 'Project Manager', 'Administrator'],
-          rolePage: true
+          roles: ['Engineer', 'Project Manager', 'Administrator']
         },
         children: [
           {
+            path: '',
+            name: 'test-case',
+            component: () => import('@/views/Project/TestCase/TestCase'),
+            hidden: true
+          },
+          {
             path: 'test-item/:testCaseId',
             name: 'test-item',
-            hidden: true,
             component: () => import('@/views/Project/TestCase/TestItem'),
+            hidden: true,
             meta: {
-              title: 'Test Item',
-              roles: ['Engineer', 'Project Manager', 'Administrator'],
-              rolePage: false
+              title: 'testItem',
+              roles: ['Engineer', 'Project Manager', 'Administrator']
             }
           }
         ]

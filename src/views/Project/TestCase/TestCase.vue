@@ -1,7 +1,6 @@
 <template>
-  <div class="app-container">
-    <router-view />
-    <div v-if="this.$route.meta.rolePage" class="role-Page">
+  <el-row class="app-container">
+    <el-col>
       <project-list-selector />
       <div class="d-flex justify-space-between align-center">
         <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
@@ -141,8 +140,8 @@
           </el-button>
         </span>
       </el-dialog>
-    </div>
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>

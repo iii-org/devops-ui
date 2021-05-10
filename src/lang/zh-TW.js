@@ -8,6 +8,7 @@ export default {
     kanban: '議題看板',
     issueList: '議題列表',
     createTest: '測試創建',
+    testItem: '測試項目',
     overview: '專案總覽',
     wikiList: 'Wiki列表',
     fileList: '檔案列表',
@@ -474,7 +475,8 @@ export default {
     Version: '版本',
     Status: '專案狀態',
     Progress: '專案工作進度',
-    deleteProjectConfirmText: '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',
+    deleteProjectConfirmText:
+      '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',
     PleaseType: '請輸入',
     AndThen: '進行刪除或關閉本視窗以取消操作。',
     IdRule: '請輸入2-30個字元的小寫英文或數字組合，中間可包含符號"-"，且不可全為數字',

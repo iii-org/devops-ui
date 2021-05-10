@@ -8,6 +8,7 @@ export default {
     kanban: 'Issue Board',
     issueList: 'Issue List',
     createTest: 'Create Test',
+    testItem: 'Test Item',
     overview: 'Overview',
     wikiList: 'Wiki List',
     fileList: 'File List',
