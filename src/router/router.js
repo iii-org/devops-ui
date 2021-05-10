@@ -156,7 +156,6 @@ export const asyncRoutes = [
       },
       {
         path: 'issue',
-        redirect: '/project/issue',
         component: parentBlank,
         children: [
           {
@@ -165,8 +164,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/IssueList'),
             meta: {
               title: 'issueList',
-              roles: ['Project Manager', 'Engineer', 'Administrator'],
-              rolePage: true
+              roles: ['Project Manager', 'Engineer', 'Administrator']
             }
           },
           {
@@ -176,8 +174,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
-              roles: ['Project Manager', 'Engineer', 'Administrator'],
-              rolePage: false
+              roles: ['Project Manager', 'Engineer', 'Administrator']
             }
           }
         ]
@@ -562,7 +559,7 @@ export const asyncRoutes = [
     path: '/system-settings',
     component: Layout,
     name: 'Admin',
-    redirect: '/admin/account-manage',
+    redirect: '/system-settings/account-manage',
     meta: { title: 'Admin', icon: 'el-icon-setting', roles: ['Administrator'] },
     children: [
       {
