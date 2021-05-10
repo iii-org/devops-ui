@@ -1,53 +1,55 @@
 <template>
-  <div class="table-container">
-    <div class="d-flex">
-      <el-input
-        v-model="searchData"
-        :placeholder="$t('TestCase.SearchNameOrPathOrTestResult')"
-        style="width: 250px"
-        prefix-icon="el-icon-search"
+  <el-row class="app-container">
+    <el-col>
+      <div class="d-flex">
+        <el-input
+          v-model="searchData"
+          :placeholder="$t('TestCase.SearchNameOrPathOrTestResult')"
+          style="width: 250px"
+          prefix-icon="el-icon-search"
+        />
+      </div>
+      <el-divider />
+      <el-table
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
+        border
+        fit
+        highlight-current-row
+        :data="pagedData"
+        height="100%"
+      >
+        <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
+          <template slot-scope="scope">
+            <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true" min-width="40">
+          <template slot-scope="scope">
+            <span>{{ scope.row.method }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('TestCase.Path')" min-width="120">
+          <template slot-scope="scope">
+            {{ scope.row.path }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('TestCase.TestResult')" min-width="150">
+          <template slot-scope="scope">
+            <span v-html="testResults(scope.row)" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
       />
-    </div>
-    <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      :data="pagedData"
-      height="100%"
-    >
-      <el-table-column align="center" :label="$t('general.Name')" :show-overflow-tooltip="true" min-width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Method')" :show-overflow-tooltip="true" min-width="40">
-        <template slot-scope="scope">
-          <span>{{ scope.row.method }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.Path')" min-width="120">
-        <template slot-scope="scope">
-          {{ scope.row.path }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('TestCase.TestResult')" min-width="150">
-        <template slot-scope="scope">
-          <span v-html="testResults(scope.row)" />
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
