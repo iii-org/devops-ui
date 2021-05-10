@@ -2,7 +2,11 @@
   <el-col v-loading="listLoading">
     <el-col>
       <el-table :data="pagedData" cell-class-name="align-center" row-class-name="pointer" header-cell-class-name="align-center" @row-click="showUnclosedIssuesDetail">
-        <el-table-column prop="user_name" :label="$t('Dashboard.ADMIN.IssueRank.user_name')" />
+        <el-table-column prop="user_name" :label="$t('Dashboard.ADMIN.IssueRank.user_name')">
+          <template slot-scope="scope">
+            {{ `${scope.row.user_name} (${scope.row.user_login})` }}
+          </template>
+        </el-table-column>
         <el-table-column prop="unclosed_count" :label="$t('Dashboard.ADMIN.IssueRank.unclosed_count')" />
         <el-table-column prop="project_count" :label="$t('Dashboard.ADMIN.IssueRank.project_count')" />
       </el-table>

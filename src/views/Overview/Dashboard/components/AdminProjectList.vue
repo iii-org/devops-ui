@@ -26,7 +26,11 @@
                 @sort-change="onSortChange"
       >
         <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
-        <el-table-column sortable prop="pm_user_name" :label="$t('Dashboard.ADMIN.ProjectList.pm_user_name')" />
+        <el-table-column sortable prop="pm_user_name" :label="$t('Dashboard.ADMIN.ProjectList.pm_user_name')">
+          <template slot-scope="scope">
+            {{ `${scope.row.pm_user_name} (${scope.row.pm_user_login})` }}
+          </template>
+        </el-table-column>
         <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')" />
         <el-table-column sortable prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
         <el-table-column sortable prop="unclosed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.unclosed_issue_count')" />
