@@ -202,7 +202,6 @@ export default {
       'createHarbor',
       'integrationProject'
     ],
-    loadingInstance: {},
     timeout: ''
   }),
   computed: {
@@ -217,7 +216,7 @@ export default {
   watch: {
     isLoading(val) {
       if (val) {
-        this.loadingInstance = this.$loading({
+        this.$loading({
           text: this.$t('Loading'),
           lock: true,
           spinner: 'el-icon-loading',
@@ -282,8 +281,8 @@ export default {
     openFullScreen(loadingText) {
       // handle i18n log warning when sec is undefined
       const text = loadingText ? this.$t(`LoadingText.${loadingText}`) : this.$t('LoadingText.integrationProject')
-      if (loadingText) this.loadingInstance.setText(text) // set loading text per 3 seconds
-      else this.loadingInstance.close() // if loadingText is undefined, close the instance
+      if (loadingText) this.$loading().setText(text) // set loading text per 3 seconds
+      else this.$loading().close() // if loadingText is undefined, close the instance
     },
     handleSendData() {
       const result = Object.assign({}, this.form)
