@@ -489,6 +489,7 @@ export default {
     LastTestResult: '最後測試結果',
     SearchIdentifier: '搜尋ID',
     SearchProjectName: '搜尋專案名稱',
+    SearchProjectNameOrId: '搜尋專案名稱或 ID',
     StartDate: '起始日',
     DueDate: '到期日',
     ProjectOwner: '專案經理',

@@ -380,8 +380,8 @@ export default {
         start_date: 'Created'
       },
       PassingRate: {
-        NAME: 'Test results (Quauntity and Quality)',
-        DETAIL: 'Test results (Lastest)',
+        NAME: 'Test results (Quantity and Quality)',
+        DETAIL: 'Test results (Latest)',
         project_name: '@:general.project_name',
         count: 'Test cases',
         success: 'Success',
@@ -492,6 +492,7 @@ export default {
     LastTestResult: 'Last Test Result',
     SearchIdentifier: 'Please Input Project Identifier',
     SearchProjectName: 'Search Project Name',
+    SearchProjectNameOrId: 'Search Project Name or ID',
     StartDate: 'Start Date',
     DueDate: 'Due Date',
     ProjectOwner: 'Project Owner',

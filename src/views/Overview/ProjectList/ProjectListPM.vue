@@ -5,25 +5,14 @@
         {{ $t('Project.AddProject') }}
       </el-button>
       <el-input
-        v-model="searchData"
-        class="ob-search-input ob-shadow search-input"
+        v-model="keyword"
         style="width: 250px"
-        :placeholder="$t('Project.SearchProjectName')"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        :placeholder="$t('Project.SearchProjectNameOrId')"
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      height="100%"
-      :cell-style="{ height: rowHeight + 'px' }"
-    >
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column
         :label="$t('Project.Name') + '/' + $t('Project.Identifier')"
         :show-overflow-tooltip="true"
@@ -36,14 +25,11 @@
           <template v-else>
             {{ scope.row.display }}
           </template>
-          <br>
+          <br />
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column-tag
-        prop="project_status"
-        :label="$t('Project.Status')"
-      />
+      <el-table-column-tag prop="project_status" :label="$t('Project.Status')" />
       <!-- <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
           <el-tag
@@ -63,7 +49,7 @@
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
-          <br>
+          <br />
           <span class="status-bar-track">
             <span
               class="status-bar"
@@ -181,7 +167,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
-import MixinElTable from '@/mixins/MixinElTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
@@ -198,12 +184,12 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTable],
+  mixins: [MixinBasicTable],
   data() {
     return {
       editProject: {},
       deleteProject: { id: '', name: '' },
-      searchKey: 'display',
+      searchKeys: ['display', 'name'],
       rowHeight: 70
     }
   },

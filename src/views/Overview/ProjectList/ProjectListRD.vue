@@ -8,23 +8,14 @@
         </el-button>
       </span> -->
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         prefix-icon="el-icon-search"
-        :placeholder="$t('Project.SearchIdentifier')"
+        :placeholder="$t('Project.SearchProjectNameOrId')"
         style="width: 250px; float: right"
       />
     </div>
     <el-divider />
-    <el-table
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      :data="pagedData"
-      height="100%"
-      :cell-style="{ height: rowHeight + 'px' }"
-    >
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column
         align="center"
         :label="$t('Project.NameIdentifier')"
@@ -33,7 +24,7 @@
       >
         <template slot-scope="scope">
           <span style="color: #67c23a">{{ scope.row.display }}</span>
-          <br>
+          <br />
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
@@ -203,7 +194,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import MixinElTable from '@/mixins/MixinElTable'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
@@ -228,14 +219,14 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTable],
+  mixins: [MixinBasicTable],
   data() {
     return {
       dialogVisible: false,
       dialogStatus: 1,
       form: formTemplate,
       confirmLoading: false,
-      rowHeight: 70
+      keywords: ['display', 'name']
     }
   },
   computed: {
