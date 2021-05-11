@@ -323,6 +323,7 @@ export default {
           this.LoadingConfirm = true
           await this.saveData(form)
           this.LoadingConfirm = false
+          this.handleClose()
         } else {
           return false
         }

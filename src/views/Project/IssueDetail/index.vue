@@ -43,10 +43,10 @@
               <issue-files v-if="files.length>0" :issue-file.sync="files" />
             </el-col>
             <el-col ref="IssueRelation">
-              <el-collapse v-if="countRelationIssue">
+              <el-collapse v-if="countRelationIssue>0">
                 <el-collapse-item :title="'關聯議題 ('+countRelationIssue+')'">
                   <ul>
-                    <li v-if="parent&&Object.keys(parent).length>0">
+                    <li v-if="Object.keys(parent).length>0">
                       父議題：
                       <el-link @click="onRelationIssueDialog(parent.id)">
                         <status :name="parent.status.name" size="mini" />
@@ -55,7 +55,7 @@
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
                         #{{ parent.id }} - {{ parent.subject }}
-                        <span v-if="Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }})</span>
+                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }})</span>
                       </el-link>
                     </li>
                     <li v-if="children.length>0">子議題：
@@ -198,6 +198,9 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
+    hasRelationIssue() {
+      return Object.keys(this.parent).length > 0 || this.children.length > 0
+    },
     countRelationIssue() {
       let parent = 0
       let children = 0
@@ -230,10 +233,11 @@ export default {
   },
   methods: {
     async fetchIssue() {
+      const _this = this
       this.isLoading = true
       return getIssue(this.issueId)
         .then(res => {
-          this.initIssueDetails(res.data)
+          _this.initIssueDetails(res.data)
         })
         .catch(() => {
           this.$router.push(this.formObj)
@@ -387,7 +391,6 @@ export default {
     isFormDataChanged() {
       if (Object.keys(this.originForm).length === 0) return false
       for (const key in this.form) {
-        console.log(key, this.originForm[key], this.form[key], this.originForm[key] !== this.form[key])
         if (this.originForm[key] === null) {
           this.originForm[key] = 0
         }
@@ -428,7 +431,6 @@ export default {
             this.scrollClass = 'issueHeightEditor'
           }
         } else {
-          console.log(this.$refs['mainIssueWrapper'].$el.children.length >= 3)
           if (this.$refs['mainIssueWrapper'].$el.children.length >= 3 && editorHeight > 0) {
             this.$refs['mainIssue'].$el.insertBefore(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0], this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1])
             this.scrollClass = 'issueHeight'

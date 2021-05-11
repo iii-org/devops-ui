@@ -13,7 +13,7 @@
     background-color: $menuBg;
     height: 100%;
     position: fixed;
-    font-size: 0px;
+    font-size: 0;
     top: 0;
     bottom: 0;
     left: 0;
@@ -30,7 +30,7 @@
     }
 
     .el-scrollbar__bar.is-vertical {
-      right: 0px;
+      right: 0;
     }
 
     .el-scrollbar {
@@ -159,7 +159,7 @@
   // mobile responsive
   .mobile {
     .main-container {
-      margin-left: 0px;
+      margin-left: 0;
     }
 
     .sidebar-container {
@@ -183,44 +183,45 @@
       transition: none;
     }
   }
+  // when menu collapsed
+  .el-menu--vertical {
+    &>.el-menu {
+      .svg-icon {
+        margin-right: 16px;
+      }
+      .sub-el-icon {
+        margin-right: 12px;
+        margin-left: -2px;
+      }
+    }
+
+    .nest-menu .el-submenu>.el-submenu__title,
+    .el-menu-item {
+      &:hover {
+        // you can use $subMenuHover
+        background-color: $menuHover !important;
+      }
+    }
+
+    // the scroll bar appears when the subMenu is too long
+    >.el-menu--popup {
+      max-height: 100vh;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar-track-piece {
+        background: #d3dce6;
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #99a9bf;
+        border-radius: 20px;
+      }
+    }
+  }
 }
 
-// when menu collapsed
-.el-menu--vertical {
-  &>.el-menu {
-    .svg-icon {
-      margin-right: 16px;
-    }
-    .sub-el-icon {
-      margin-right: 12px;
-      margin-left: -2px;
-    }
-  }
 
-  .nest-menu .el-submenu>.el-submenu__title,
-  .el-menu-item {
-    &:hover {
-      // you can use $subMenuHover
-      background-color: $menuHover !important;
-    }
-  }
-
-  // the scroll bar appears when the subMenu is too long
-  >.el-menu--popup {
-    max-height: 100vh;
-    overflow-y: auto;
-
-    &::-webkit-scrollbar-track-piece {
-      background: #d3dce6;
-    }
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #99a9bf;
-      border-radius: 20px;
-    }
-  }
-}
