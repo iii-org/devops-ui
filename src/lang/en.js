@@ -644,5 +644,11 @@ export default {
     selectMoveToVersion: 'Please select version',
     batchMoveDialogHint: 'Will batch move {0} issues',
     releaseDone: 'Done releasing version {0}.'
+  },
+  LoadingText: {
+    createRedmine: 'Creating a Redmine account...',
+    createGitLab: 'Creating GitLab resources...',
+    createHarbor: 'Linking to Harbor resources...',
+    integrationProject: 'Start integrating project resources...'
   }
 }

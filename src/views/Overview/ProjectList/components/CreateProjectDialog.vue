@@ -195,7 +195,15 @@ export default {
           return time.getTime() < new Date(startDate).getTime()
         }
       }
-    }
+    },
+    loadingText: [
+      'createRedmine',
+      'createGitLab',
+      'createHarbor',
+      'integrationProject'
+    ],
+    loadingInstance: {},
+    timeout: ''
   }),
   computed: {
     ...mapGetters(['userRole']),
@@ -204,6 +212,18 @@ export default {
     },
     checkOwnerRequired() {
       return this.userRole === 'QA' || this.userRole === 'Administrator'
+    }
+  },
+  watch: {
+    isLoading(val) {
+      if (val) {
+        this.loadingText.map((text, index) => {
+          this.timeout = setTimeout(() => this.openFullScreen(index + 1), 3000 * index)
+        })
+      } else {
+        clearTimeout(this.timeout)
+        this.openFullScreen()
+      }
     }
   },
   mounted() {
@@ -252,6 +272,23 @@ export default {
             this.isLoading = false
           })
       })
+    },
+    openFullScreen(sec) {
+      // handle i18n log warning when sec is undefined
+      const text = sec
+        ? this.$t(`LoadingText.${this.loadingText[sec - 1]}`) : this.$t('LoadingText.integrationProject')
+      if (sec === 1) {
+        // create loading instance
+        this.loadingInstance = this.$loading({
+          text,
+          lock: true,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+      } else if (sec > 1) {
+        // set loading text per second
+        this.loadingInstance.setText(text)
+      } else this.loadingInstance.close() // if sec is undefined, close the instance
     },
     handleSendData() {
       const result = Object.assign({}, this.form)
