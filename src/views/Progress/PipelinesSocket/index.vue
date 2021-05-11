@@ -75,7 +75,7 @@
             {{ $t('general.Detail') }}
           </el-button>
           <el-button
-            v-if="scope.row.execution_state === 'Waiting' || scope.row.execution_state === 'Building'"
+            v-if="isAllowStop(scope.row.execution_state)"
             size="mini"
             type="danger"
             plain
@@ -213,6 +213,13 @@ export default {
     onDetailsClick(id) {
       this.$refs.testDetail.pipelinesExecRun = id
       this.$refs.testDetail.fetchStages()
+    },
+    isAllowStop(status) {
+      if (status === 'Waiting' || status === 'Building' || status === 'Queueing') {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }
