@@ -38,7 +38,11 @@
             :label="$t('Dashboard.ADMIN.ProjectMembers.pm_user_name')"
             prop="pm_user_name"
             sortable
-          />
+          >
+            <template slot-scope="props">
+              {{ `${props.row.pm_user_name} (${props.row.pm_user_login})` }}
+            </template>
+          </el-table-column>
           <el-table-column
             :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')"
             prop="member_count"
