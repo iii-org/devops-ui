@@ -88,6 +88,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
+import i18n from '@/lang'
 
 const formTemplate = () => ({
   id: '',
@@ -101,41 +102,50 @@ const formTemplate = () => ({
 })
 
 export default {
-  name: '',
+  name: 'EditProjectDialog',
   props: {
     editProjectObj: {
       type: Object,
       default: () => {}
     }
   },
-  data: () => ({
-    showDialog: false,
-    isLoading: false,
-    form: formTemplate(),
-    rules: {
-      name: [
-        { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-        {
-          required: true,
-          pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-          message: 'Identifier is invalid.',
-          trigger: 'blur'
-        }
-      ],
-      display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
-      start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
-      owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }]
-    },
-    assignableList: [],
-    pickerOptions(startDate) {
-      return {
-        disabledDate(time) {
-          return time.getTime() < new Date(startDate).getTime()
+  data() {
+    return {
+      showDialog: false,
+      isLoading: false,
+      form: formTemplate(),
+      rules: {
+        name: [
+          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
+            message: 'Identifier is invalid.',
+            trigger: 'blur'
+          }
+        ],
+        display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
+        start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
+        due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
+        owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }],
+        description: [
+          {
+            pattern: /^((?!<|&).)*$/,
+            message: i18n.t('Project.DescriptionRule'),
+            trigger: 'blur'
+          }
+        ]
+      },
+      assignableList: [],
+      pickerOptions(startDate) {
+        return {
+          disabledDate(time) {
+            return time.getTime() < new Date(startDate).getTime()
+          }
         }
       }
     }
-  }),
+  },
   computed: {
     assignedList() {
       return this.assignableList.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
@@ -182,16 +192,25 @@ export default {
           disabled: this.form.disabled
         }
       }
-      const res = await this.editProject(sendData)
-      this.isLoading = false
-      if (res.message !== 'success') return
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Updated'),
-        type: 'success'
+      this.editProject(sendData).then(res => {
+        console.log({ res })
+        this.isLoading = false
+        if (res.message === 'success') {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          this.showDialog = false
+          this.$emit('update')
+        } else {
+          this.$message({
+            title: this.$t('general.Warning'),
+            message: res.error.message,
+            type: 'warning'
+          })
+        }
       })
-      this.showDialog = false
-      this.$emit('update')
     },
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''

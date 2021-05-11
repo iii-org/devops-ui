@@ -483,6 +483,7 @@ export default {
     AndThen: 'to proceed or close this modal to cancel.',
     IdRule:
       'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
+    DescriptionRule: 'Description cannot includes "<" or "&"',
     WorkloadValue: 'Workload',
     UpcomingDeadline: 'Upcoming Deadline',
     Title: 'Title',

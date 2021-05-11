@@ -480,6 +480,7 @@ export default {
     PleaseType: '請輸入',
     AndThen: '進行刪除或關閉本視窗以取消操作。',
     IdRule: '請輸入2-30個字元的小寫英文或數字組合，中間可包含符號"-"，且不可全為數字',
+    DescriptionRule: '敘述內容不可包含符號 "<" 或 "&"',
     WorkloadValue: '工作量',
     UpcomingDeadline: '最近逾期日',
     Title: '職稱',
