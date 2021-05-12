@@ -129,8 +129,19 @@ export default {
       searchKeys: ['commit_message']
     }
   },
-  mounted() {
-    this.setTimer()
+  computed: {
+    isActivePipeline() {
+      return this.pagedData.some(item => item.execution_state === 'Building' || item.execution_state === 'Waiting')
+    }
+  },
+  watch: {
+    isActivePipeline(isActive) {
+      if (isActive) {
+        this.setTimer()
+      } else {
+        this.clearTimer()
+      }
+    }
   },
   beforeDestroy() {
     this.clearTimer()

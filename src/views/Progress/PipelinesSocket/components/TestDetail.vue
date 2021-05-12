@@ -140,7 +140,7 @@ export default {
         if (isHistoryMessage) {
           this.stages[stageIdx].steps[step_index].message = data
         } else {
-          this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.push(data)
+          this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(data)
         }
       })
     },
@@ -195,16 +195,16 @@ export default {
           message: 'WebSocket connect',
           type: 'success'
         })
-        console.log('sio connected ===>', this.socket)
+        // console.log('sio connected ===>', this.socket)
         this.sid = this.socket.id
       })
       this.socket.on('disconnect', sioEvt => {
-        // this.$notify({
-        //   title: this.$t('general.Info'),
-        //   message: 'WebSocket disconnects',
-        //   type: 'warning'
-        // })
-        console.log('sio disconnect ===>', sioEvt)
+        this.$notify({
+          title: this.$t('general.Info'),
+          message: sioEvt,
+          type: 'warning'
+        })
+        // console.log('sio disconnect ===>', sioEvt)
       })
     },
     async updateStages() {
