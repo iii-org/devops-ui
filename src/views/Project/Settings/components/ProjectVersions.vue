@@ -20,13 +20,21 @@
       <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
       <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" />
       <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
-      <el-table-column prop="status" align="center" :label="$t('general.Status')" width="90">
+      <el-table-column-tag
+        prop="status"
+        :label="$t('general.Status')"
+        element-class="el-tag--circle"
+        min-width="90"
+        size="mini"
+        location="projectVersions"
+      />
+      <!-- <el-table-column prop="status" align="center" :label="$t('general.Status')" width="90">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status" class="el-tag--circle" :type="getTagType(scope.row.status)" size="mini" effect="dark">
             {{ scope.row.status }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column :label="$t('general.Actions')" align="center" width="210">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
@@ -53,12 +61,13 @@
 <script>
 import MixinBasicTable from '@/mixins/MixinBasicTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
 import ModifyVersionDialog from './ModifyVersionDialog'
 
 export default {
   name: 'ProjectVersions',
-  components: { ElTableColumnTime, ModifyVersionDialog },
+  components: { ElTableColumnTime, ModifyVersionDialog, ElTableColumnTag },
   mixins: [MixinBasicTable],
   methods: {
     async fetchData() {
@@ -90,17 +99,17 @@ export default {
         })
         await this.loadData()
       })
-    },
-    getTagType(status) {
-      switch (status) {
-        case 'open':
-          return 'success'
-        case 'closed':
-          return 'danger'
-        default:
-          return 'slow'
-      }
     }
+    // getTagType(status) {
+    //   switch (status) {
+    //     case 'open':
+    //       return 'success'
+    //     case 'closed':
+    //       return 'danger'
+    //     default:
+    //       return 'slow'
+    //   }
+    // }
   }
 }
 </script>

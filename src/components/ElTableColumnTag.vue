@@ -1,11 +1,12 @@
 <template>
-  <el-table-column align="center" v-bind="$props">
+  <el-table-column align="center" v-bind="$props" :min-width="minWidth">
     <template slot-scope="scope">
       <el-tag
-        :type="handleType(scope.row[prop])"
+        v-if="scope.row[prop]"
+        :type="handleType(scope.row[prop] || 'default')"
         :class="elementClass"
         :size="size"
-        :effect="effect"
+        :effect="getStatusTagEffect(scope.row[prop]) || effect"
       >
         <span>{{ scope.row[prop] }}</span>
       </el-tag>
@@ -15,6 +16,7 @@
 
 <script>
 import i18n from '@/lang'
+import * as elementTagType from '@/utils/element-tag-type'
 
 export default {
   name: 'ElTableColumnTag',
@@ -22,6 +24,10 @@ export default {
     prop: {
       type: String,
       required: true
+    },
+    location: {
+      type: String,
+      default: 'pipelines'
     },
     size: {
       type: String,
@@ -35,9 +41,9 @@ export default {
       type: String,
       default: i18n.t('Project.Status')
     },
-    width: {
-      type: Number,
-      default: 100
+    minWidth: {
+      type: String,
+      default: '85'
     },
     elementClass: {
       type: String,
@@ -46,17 +52,14 @@ export default {
   },
   methods: {
     handleType(prop) {
-      switch (prop) {
-        case '進行中':
-          return 'success'
-        case '未開始':
-          return ''
-        case 'enable':
-          return 'success'
-        case 'disable':
-          return 'danger'
+      return elementTagType[this.location][prop]
+    },
+    getStatusTagEffect(status) {
+      switch (status) {
+        case 'Building':
+          return 'light'
         default:
-          return 'none'
+          return 'dark'
       }
     }
   }

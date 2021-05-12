@@ -20,7 +20,14 @@
       </el-button>
     </div>
     <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
-      <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
+      <el-table-column-tag
+        prop="status"
+        :label="$t('Maintenance.Status')"
+        min-width="85"
+        size="midium"
+        location="systemSecrets"
+      />
+      <!-- <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'Active'" class="el-tag--circle" type="success" size="medium" effect="dark">{{
             scope.row.status
@@ -29,7 +36,7 @@
             scope.row.status
           }}</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" :label="$t('Maintenance.SecretName')" prop="name" min-width="150" />
       <el-table-column label="Keys" prop="keys" min-width="250" />
       <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
@@ -133,6 +140,7 @@ import Pagination from '@/components/Pagination'
 import { addSystemSecret, deleteSystemSecret, getSystemSecrets } from '@/api/maintenance'
 import MixinElTable from '@/mixins/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 const defaultFormData = () => ({
   name: '',
@@ -142,7 +150,7 @@ const defaultFormData = () => ({
 
 export default {
   name: 'SystemSecrets',
-  components: { ElTableColumnTime, Pagination },
+  components: { ElTableColumnTime, Pagination, ElTableColumnTag },
   mixins: [MixinElTable],
   data: () => ({
     formData: defaultFormData(),

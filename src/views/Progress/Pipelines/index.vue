@@ -30,7 +30,15 @@
           />
         </template>
       </el-table-column>
-      <el-table-column :label="$t('ProgressPipelines.Status')" align="center" width="110">
+      <el-table-column-tag
+        prop="execution_state"
+        :label="$t('ProgressPipelines.Status')"
+        min-width="110"
+        size="medium"
+        element-class="el-tag"
+        loaction="pipelines"
+      />
+      <!-- <el-table-column :label="$t('ProgressPipelines.Status')" align="center" width="110">
         <template slot-scope="scope">
           <el-tag
             class="el-tag"
@@ -41,7 +49,7 @@
             {{ scope.row.execution_state }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column :label="$t('ProgressPipelines.Commit')" align="center" min-width="180">
         <template slot-scope="scope">
           <el-link
@@ -119,10 +127,11 @@ import { changePipelineByAction, getPipelines, getPipelinesLogs } from '@/api/ci
 import TestDetail from './components/TestDetail'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'ProgressPipelines',
-  components: { ElTableColumnTime, TestDetail },
+  components: { ElTableColumnTime, TestDetail, ElTableColumnTag },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
@@ -198,30 +207,30 @@ export default {
           return err
         })
     },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Failed':
-          return 'danger'
-        case 'Finished':
-          return 'success'
-        case 'Aborted':
-          return 'warning'
-        case 'Waiting':
-          return 'slow'
-        case 'Building':
-          return 'success'
-        default:
-          return 'info'
-      }
-    },
-    getStatusTagEffect(status) {
-      switch (status) {
-        case 'Building':
-          return 'light'
-        default:
-          return 'dark'
-      }
-    },
+    // getStatusTagType(status) {
+    //   switch (status) {
+    //     case 'Failed':
+    //       return 'danger'
+    //     case 'Finished':
+    //       return 'success'
+    //     case 'Aborted':
+    //       return 'warning'
+    //     case 'Waiting':
+    //       return 'slow'
+    //     case 'Building':
+    //       return 'success'
+    //     default:
+    //       return 'info'
+    //   }
+    // },
+    // getStatusTagEffect(status) {
+    //   switch (status) {
+    //     case 'Building':
+    //       return 'light'
+    //     default:
+    //       return 'dark'
+    //   }
+    // },
     async onDetailsClick(id) {
       this.isLoading = true
       const { repository_id } = this.selectedProject

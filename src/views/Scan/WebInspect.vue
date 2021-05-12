@@ -41,7 +41,13 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="stats.status" min-width="130">
+      <el-table-column-tag
+        prop="stats.status"
+        size="medium"
+        min-width="130"
+        location="webInspect"
+      />
+      <!-- <el-table-column align="center" :label="$t('WebInspect.Status')" prop="stats.status" min-width="130">
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.stats.status"
@@ -52,7 +58,7 @@
             {{ scope.row.stats.status }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.4" />
       <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.3" />
       <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.2" />
@@ -88,10 +94,11 @@
 import { getWebInspectReport, getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'ScanWebInspect',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, ElTableColumnTag },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
@@ -164,21 +171,21 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
-    },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Complete':
-          return 'success'
-        case 'Running':
-          return 'slow'
-        case 'NotRunning':
-          return 'warning'
-        case 'Interrupted':
-          return 'danger'
-        default:
-          return 'slow'
-      }
     }
+    // getStatusTagType(status) {
+    //   switch (status) {
+    //     case 'Complete':
+    //       return 'success'
+    //     case 'Running':
+    //       return 'slow'
+    //     case 'NotRunning':
+    //       return 'warning'
+    //     case 'Interrupted':
+    //       return 'danger'
+    //     default:
+    //       return 'slow'
+    //   }
+    // }
   }
 }
 </script>

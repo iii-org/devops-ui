@@ -59,13 +59,19 @@
       <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedDataByChecked" border fit>
         <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="110" />
         <el-table-column align="center" :label="$t('general.Name')" prop="name" min-width="100" show-overflow-tooltip />
-        <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
+        <el-table-column-tag
+          prop="testResult"
+          :label="$t('TestCase.TestResult')"
+          min-width="70"
+          location="testCasePostman"
+        />
+        <!-- <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.testResult" :type="getTagType(scope.row.testResult)" effect="dark">
               {{ $t(`TestCase.${scope.row.testResult}`) }}
             </el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           align="center"
           :label="$t('TestCase.Method')"
@@ -105,10 +111,12 @@
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
 import MixinBasicTable from '@/mixins/MixinBasicTable'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'TestCasePostman',
   mixins: [MixinBasicTable],
+  component: { ElTableColumnTag },
   data() {
     return {
       testCaseInfos: {},

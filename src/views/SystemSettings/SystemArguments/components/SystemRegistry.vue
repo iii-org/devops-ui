@@ -20,14 +20,21 @@
       </el-button>
     </div>
     <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
-      <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
+      <el-table-column-tag
+        prop="status"
+        :label="$t('Maintenance.Status')"
+        min-width="85"
+        size="midium"
+        location="systemRegistry"
+      />
+      <!-- <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'Active'" class="el-tag--circle" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
           <el-tag v-else-if="scope.row.status === 'Removing'" class="el-tag--circle" type="warning" size="medium" effect="dark">{{
             scope.row.status
           }}</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" :label="$t('Maintenance.RegistryName')" prop="name" min-width="150" />
       <el-table-column label="Registries" prop="registries" min-width="250" />
       <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
@@ -102,6 +109,7 @@ import Pagination from '@/components/Pagination'
 import { addSystemRegistry, deleteSystemRegistry, getSystemRegistries } from '@/api/maintenance'
 import MixinElTable from '@/mixins/MixinElTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 const defaultFormData = () => ({
   name: '',
@@ -112,7 +120,7 @@ const defaultFormData = () => ({
 
 export default {
   name: 'SystemRegistry',
-  components: { ElTableColumnTime, Pagination },
+  components: { ElTableColumnTime, Pagination, ElTableColumnTag },
   mixins: [MixinElTable],
   data: () => ({
     formData: defaultFormData(),

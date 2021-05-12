@@ -25,11 +25,11 @@
           <template v-else>
             {{ scope.row.display }}
           </template>
-          <br />
+          <br>
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="project_status" :label="$t('Project.Status')" />
+      <el-table-column-tag prop="project_status" :label="$t('Project.Status')" location="projectListPM" min-width="100" />
       <!-- <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
           <el-tag
@@ -49,7 +49,7 @@
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
-          <br />
+          <br>
           <span class="status-bar-track">
             <span
               class="status-bar"

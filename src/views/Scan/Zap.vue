@@ -33,7 +33,14 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Status')" min-width="130">
+      <el-table-column-tag
+        prop="status"
+        :label="$t('general.Status')"
+        size="medium"
+        location="zap"
+        min-width="130"
+      />
+      <!-- <el-table-column align="center" :label="$t('general.Status')" min-width="130">
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.status"
@@ -44,7 +51,7 @@
             {{ scope.row.status }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" :label="$t('Zap.high')">
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
@@ -103,11 +110,12 @@
 <script>
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getZapScans } from '@/api/zap'
 
 export default {
   name: 'ScanZap',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, ElTableColumnTag },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
@@ -128,20 +136,20 @@ export default {
       sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
       return sortedScans
     },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Finished':
-          return 'success'
-        case 'Scanning':
-          return 'slow'
-        case 'Aborted':
-          return 'info'
-        case 'Failed':
-          return 'danger'
-        default:
-          return 'slow'
-      }
-    },
+    // getStatusTagType(status) {
+    //   switch (status) {
+    //     case 'Finished':
+    //       return 'success'
+    //     case 'Scanning':
+    //       return 'slow'
+    //     case 'Aborted':
+    //       return 'info'
+    //     case 'Failed':
+    //       return 'danger'
+    //     default:
+    //       return 'slow'
+    //   }
+    // },
     durationText(start, end) {
       if (end == null) {
         return ''

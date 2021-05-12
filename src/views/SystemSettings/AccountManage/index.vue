@@ -30,7 +30,13 @@
       <el-table-column align="center" label="Email" prop="email" min-width="250" />
       <el-table-column-time :label="$t('general.CreateTime')" prop="create_at" />
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
-      <el-table-column-tag prop="status" :label="$t('general.Status')" :width="Number(120)" size="small" />
+      <el-table-column-tag
+        prop="status"
+        :label="$t('general.Status')"
+        min-width="120"
+        size="small"
+        location="accountManage"
+      />
       <!-- <el-table-column align="center" :label="$t('general.Status')" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'enable'" class="el-tag--circle" type="finish" size="small" effect="dark">
