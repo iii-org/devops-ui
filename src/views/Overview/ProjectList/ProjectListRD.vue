@@ -24,7 +24,7 @@
       >
         <template slot-scope="scope">
           <span style="color: #67c23a">{{ scope.row.display }}</span>
-          <br />
+          <br>
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
@@ -243,7 +243,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['projects/getProjectList']),
+    ...mapActions(['projects/getRDProjectList']),
     async fetchData() {
       await this['projects/getProjectList']()
       return this.projectList

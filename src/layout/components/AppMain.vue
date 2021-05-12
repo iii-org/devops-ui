@@ -15,19 +15,6 @@ export default {
     key() {
       return this.$route.path
     }
-  },
-  async created() {
-    // const loading = this.$loading({
-    //   lock: true,
-    //   text: 'Loading',
-    //   spinner: 'el-icon-loading',
-    //   background: 'rgba(0, 0, 0, 0.7)'
-    // })
-    // await this['projects/getProjectList']()
-    // loading.close()
-  },
-  methods: {
-    ...mapActions(['projects/getProjectList'])
   }
 }
 </script>

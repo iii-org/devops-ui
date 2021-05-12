@@ -33,16 +33,15 @@ const mutations = {
 }
 
 const actions = {
-  async getProjectList({ commit, rootState }, params) {
+  async getRDProjectList({ commit, rootState }, params) {
     try {
       const response = await getProjectList(rootState.user.userId, params)
       let { data } = response
       data = data.sort(function(a, b) {
-        return a['repository_ids'][0] < b['repository_ids'][0] ? 1 : -1
+        return a.id < b.id ? 1 : -1
       })
       const dataWithTag = await data.reduce(async (acc, cur) => {
         const res = await acc
-        // const id = cur.repository_ids[0]
         if (!cur.repository_ids || !cur.repository_ids[0]) {
           res.push(cur)
           return Promise.resolve(res)
@@ -57,7 +56,7 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async queryProjectList({ commit }) {
+  async getPMProjectList({ commit }) {
     try {
       const res = await QPL()
       const { data } = res

@@ -203,7 +203,6 @@ export default {
     this.adjustTable()
   },
   methods: {
-    ...mapActions(['projects/getProjectList']),
     showNoProjectWarning() {
       this.$message({
         title: this.$t('general.Warning'),
