@@ -33,16 +33,20 @@
             <el-option
               v-for="option in dynamicStatusList"
               :key="option.value"
-              :label="option.label"
+              :label="$t('Issue.'+option.label)"
               :value="option.value"
-            />
+            >
+              <status :name="option.label" />
+            </el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col>
         <el-form-item :label="$t('general.Type')" prop="tracker_id">
           <el-select v-model="form.tracker_id" style="width: 100%">
-            <el-option v-for="option in typeList" :key="option.value" :label="option.label" :value="option.value" />
+            <el-option v-for="option in typeList" :key="option.value" :label="$t('Issue.'+option.label)" :value="option.value">
+              <tracker :name="option.label" />
+            </el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -63,7 +67,9 @@
       <el-col>
         <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
           <el-select v-model="form.priority_id" :disabled="childrenIssueList.length > 0" style="width: 100%">
-            <el-option v-for="option in priorityList" :key="option.value" :label="option.label" :value="option.value" />
+            <el-option v-for="option in priorityList" :key="option.value" :label="$t('Issue.'+option.label)" :value="option.value">
+              <priority :name="option.label" />
+            </el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -110,9 +116,13 @@
 import { mapGetters } from 'vuex'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
+import Priority from '@/components/Issue/Priority'
+import Tracker from '@/components/Issue/Tracker'
+import Status from '@/components/Issue/Status'
 
 export default {
   name: 'IssueForm',
+  components: { Status, Tracker, Priority },
   props: {
     issueId: {
       type: Number,

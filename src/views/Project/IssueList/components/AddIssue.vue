@@ -5,6 +5,8 @@
     width="50%"
     top="5px"
     :close-on-click-modal="false"
+    destroy-on-close
+    append-to-body
     @close="handleClose"
   >
     <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
@@ -52,7 +54,11 @@
         <el-col :span="12">
           <el-form-item :label="$t('general.Type')" prop="tracker_id">
             <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-              <el-option v-for="item in issueTypeList" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in issueTypeList" :key="item.value" :label="$t('Issue.'+item.label)"
+                         :value="item.value"
+              >
+                <tracker :name="item.label" />
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -61,7 +67,11 @@
         <el-col :span="12">
           <el-form-item :label="$t('general.Status')" prop="status_id">
             <el-select v-model="issueForm.status_id" style="width: 100%">
-              <el-option v-for="item in issueStatusList" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in issueStatusList" :key="item.value" :label="$t('Issue.'+item.label)"
+                         :value="item.value"
+              >
+                <status :name="item.label" />
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -69,7 +79,11 @@
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
             <el-select v-model="issueForm.priority_id" style="width: 100%">
-              <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option v-for="item in issuePriorityList" :key="item.value" :label="$t('Issue.'+item.label)"
+                         :value="item.value"
+              >
+                <priority :name="item.label" />
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -179,6 +193,9 @@ import dayjs from 'dayjs'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '@/utils/extension'
+import Tracker from '@/components/Issue/Tracker'
+import Status from '@/components/Issue/Status'
+import Priority from '@/components/Issue/Priority'
 
 const getFormTemplate = () => ({
   subject: '',
@@ -197,6 +214,7 @@ const getFormTemplate = () => ({
 
 export default {
   name: 'AddIssue',
+  components: { Tracker, Status, Priority },
   props: {
     dialogVisible: {
       type: Boolean,
@@ -214,9 +232,14 @@ export default {
       type: Number,
       default: 0
     },
+    prefill: {
+      type: Object,
+      default: () => ({})
+    },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => {
+      }
     }
   },
 
@@ -253,23 +276,28 @@ export default {
     },
     dialogVisible() {
       this.LoadingConfirm = false
-      if (this.dialogVisible === true) {
-        this.uploadFileList = []
-        this.$nextTick(() => {
-          this.$refs['upload'].clearFiles()
-          this.$refs['issueForm'].resetFields()
-        })
-      }
     },
     'issueForm.assigned_to_id'(val) {
-      if (val === '') this.issueForm.status_id = 1
-      else if (val !== '') this.issueForm.status_id = 2
+      if (val === '') {
+        this.issueForm.status_id = 1
+      } else if (val !== '') this.issueForm.status_id = 2
+    },
+    prefill: {
+      deep: true,
+      handler(val) {
+        Object.keys(val).forEach((item) => {
+          this.$set(this.issueForm, item, val[item])
+        })
+      }
     }
   },
 
   mounted() {
     this.fetchData()
     this.extension = fileExtension()
+    Object.keys(this.prefill).forEach((item) => {
+      this.issueForm[item] = this.prefill[item]
+    })
   },
 
   methods: {
@@ -299,6 +327,13 @@ export default {
       })
     },
     handleClose() {
+      if (this.dialogVisible) {
+        this.uploadFileList = []
+        this.$nextTick(() => {
+          this.$refs['upload'].clearFiles()
+          this.$refs['issueForm'].resetFields()
+        })
+      }
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
@@ -370,9 +405,11 @@ export default {
 .el-upload-dragger {
   height: 50px;
 }
+
 .el-upload__text {
   margin-top: 18px;
 }
+
 .uploadBtn {
   font-size: 13px;
   padding: 5px 11px;
@@ -381,10 +418,12 @@ export default {
   border-radius: 2px;
   display: inline-block;
 }
+
 .custom-list {
   .el-row {
     font-size: 0;
   }
+
   .el-col {
     float: none;
     padding: 0 10px;
@@ -395,6 +434,7 @@ export default {
       display: block;
     }
   }
+
   .el-form-item__label {
     float: none;
     text-align: left;
