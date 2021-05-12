@@ -12,14 +12,7 @@
       </div>
       <el-divider />
       <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
-      <el-table
-        v-loading="listLoading"
-        :data="pagedData"
-        :element-loading-text="$t('Loading')"
-        border
-        fit
-        :style="{ height: 'calc(100vh - 310px)', overflow: 'auto' }"
-      >
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
           :label="`${$t('ProgressPipelines.Status')} / ${$t('ProgressPipelines.TestItems')}`"
@@ -228,7 +221,7 @@ export default {
       }
     },
     setTimer() {
-      this.timer = setInterval(() => this.fetchData(), 10000)
+      this.timer = setInterval(() => this.fetchData(), 5000)
     },
     clearTimer() {
       clearInterval(this.timer)

@@ -5,7 +5,7 @@
         {{ $t('ProgressPipelines.TestDetail') }}
       </span>
     </template>
-    <el-tabs v-model="activeStage" tab-position="left" @tab-click="handleClick">
+    <el-tabs v-model="activeStage" tab-position="left" @tab-click="handleStageClick">
       <el-tab-pane
         v-for="(stage, idx) in stages"
         :key="idx"
@@ -67,12 +67,6 @@ import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
 import { getPipelinesConfig, getCiPipelineId } from '@/api/cicd'
 
-// const socket = io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
-const socket = io('/rancher/websocket/logs', {
-  reconnectionAttempts: 5,
-  transports: ['websocket']
-})
-
 export default {
   name: 'TestDetailSocket',
   props: {
@@ -88,47 +82,105 @@ export default {
       activeStage: '',
       sid: '',
       pipelinesExecRun: 0,
-      timer: null,
       ciPipelineId: 0,
-      emitStages: []
+      emitStages: [],
+      timer: null,
+      socket: io('/rancher/websocket/logs', {
+        // io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      })
     }
   },
   computed: {
     ...mapGetters(['selectedProject'])
   },
-  // watch: {
-  //   pipelineId: {
-  //     handler(val) {
-  //       this.pipelinesExecRun = val
-  //       this.fetchStages()
-  //     }
-  //   }
-  // },
   mounted() {
     if (this.selectedProject.id === -1) return
     this.fetchCiPipelineId()
-    socket.on('connect', () => {
-      this.$notify({
-        title: this.$t('general.Success'),
-        message: 'WebSocket connect',
-        type: 'success'
-      })
-      console.log('sio connected ===>', socket)
-      this.sid = socket.id
-    })
-    socket.on('disconnect', sioEvt => {
-      this.$notify({
-        title: this.$t('general.Error'),
-        message: 'WebSocket disconnect',
-        type: 'error'
-      })
-      console.log('sio disconnect ===>', sioEvt)
-    })
+    this.setConnectStatusListener()
   },
   beforeDestroy() {
-    this.clearTimer()
+    this.handleClose()
   },
   methods: {
+    handleStageClick(tab) {
+      const index = Number(tab.index)
+      this.emitStages.push(index)
+      const stage = this.stages[index]
+      if (!stage.isLoading) return
+      const emitObj = {
+        pipelines_exec_run: this.pipelinesExecRun,
+        ci_pipeline_id: this.ciPipelineId,
+        stage_index: index + 1,
+        step_index: stage.steps[0].step_id,
+        sid: this.sid
+      }
+      console.log('EMIT get_pipe_log ===>', emitObj)
+      this.socket.emit('get_pipe_log', emitObj)
+      this.updateStageLogMessage()
+    },
+    updateStageLogMessage() {
+      this.socket.on('pipeline_log', sioEvt => {
+        console.log('EVENT pipeline_log ===>', sioEvt)
+        const { stage_index, step_index, data } = sioEvt
+        const stageIdx = stage_index - 1
+        if (data === '') {
+          this.stages[stageIdx].isLoading = false
+          const order = stage_index + 1
+          if (stage_index <= this.stages.length) {
+            if (!this.isBuildingPipeline()) return
+            this.changeFocusTab(order, stage_index)
+          }
+          return
+        }
+        const isHistoryMessage =
+          this.stages[stageIdx].steps[step_index].message === data ||
+          this.stages[stageIdx].steps[step_index].message === 'Loading...'
+        if (isHistoryMessage) {
+          this.stages[stageIdx].steps[step_index].message = data
+        } else {
+          this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.push(data)
+        }
+      })
+    },
+    changeFocusTab(order, stageIdx) {
+      if (order === 1 && stageIdx === 0) {
+        this.activeStage = `${order} ${this.stages[stageIdx].name}`
+        if (this.emitStages.includes(stageIdx)) return
+        this.handleStageClick({ index: stageIdx })
+      } else {
+        setTimeout(() => {
+          this.activeStage = `${order} ${this.stages[stageIdx].name}`
+          if (this.emitStages.includes(stageIdx)) return
+          this.handleStageClick({ index: stageIdx })
+        }, 2000)
+      }
+    },
+
+    async fetchStages() {
+      this.socket.connect()
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        this.stages = res.map(stage => ({
+          stage_id: stage.stage_id,
+          name: stage.name,
+          state: stage.state,
+          isLoading: true,
+          steps: stage.steps.map(step => ({
+            step_id: step.step_id,
+            state: step.state,
+            message: 'Loading...'
+          }))
+        }))
+        this.dialogVisible = true
+        this.changeFocusTab(1, 0)
+        if (this.isBuildingPipeline()) this.setTimer()
+      } catch (error) {
+        console.error(error)
+      }
+    },
     fetchCiPipelineId() {
       getCiPipelineId(this.selectedProject.repository_id)
         .then(res => {
@@ -136,10 +188,52 @@ export default {
         })
         .catch(err => console.error(err))
     },
+    setConnectStatusListener() {
+      this.socket.on('connect', () => {
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: 'WebSocket connect',
+          type: 'success'
+        })
+        console.log('sio connected ===>', this.socket)
+        this.sid = this.socket.id
+      })
+      this.socket.on('disconnect', sioEvt => {
+        // this.$notify({
+        //   title: this.$t('general.Info'),
+        //   message: 'WebSocket disconnects',
+        //   type: 'warning'
+        // })
+        console.log('sio disconnect ===>', sioEvt)
+      })
+    },
+    async updateStages() {
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        res.forEach((data, idx) => {
+          this.stages[idx].state = data.state
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    },
     handleClose() {
-      this.dialogVisible = false
       this.clearTimer()
+      this.stages = []
       this.emitStages = []
+      this.socket.close()
+      this.dialogVisible = false
+    },
+    setTimer() {
+      this.timer = setInterval(() => this.updateStages(), 5000)
+    },
+    clearTimer() {
+      clearInterval(this.timer)
+      this.timer = null
+    },
+    isBuildingPipeline() {
+      return this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
     },
     getStateTagType(state) {
       switch (state) {
@@ -166,103 +260,7 @@ export default {
         default:
           return 'dark'
       }
-    },
-    handleClick(tab) {
-      const index = Number(tab.index)
-      this.emitStages.push(index)
-      const stage = this.stages[index]
-      if (!stage.isLoading) return
-      const emitObj = {
-        pipelines_exec_run: this.pipelinesExecRun,
-        // repository_id: this.selectedProject.repository_id,
-        ci_pipeline_id: this.ciPipelineId,
-        stage_index: index + 1,
-        step_index: stage.steps[0].step_id,
-        sid: this.sid
-      }
-      socket.emit('get_pipe_log', emitObj)
-      console.log('EMIT get_pipe_log ===>', emitObj)
-      socket.on('pipeline_log', sioEvt => {
-        console.log('EVENT pipeline_log ===>', sioEvt)
-        const { stage_index, step_index, data } = sioEvt
-        if (data === '') {
-          this.stages[stage_index - 1].isLoading = false
-          const order = stage_index + 1
-          const stageIdx = stage_index
-          if (stage_index < this.stages.length) {
-            this.changeFocusTab(order, stageIdx)
-          } else {
-            this.clearTimer()
-          }
-          return
-        }
-        const isHistoryMessage =
-          this.stages[stage_index - 1].steps[step_index].message === data ||
-          this.stages[stage_index - 1].steps[step_index].message === 'Loading...'
-        if (isHistoryMessage) {
-          this.stages[stage_index - 1].steps[step_index].message = data
-        } else {
-          this.stages[stage_index - 1].steps[step_index].message = this.stages[stage_index - 1].steps[
-            step_index
-          ].message.concat(data)
-        }
-      })
-      // socket.on('disconnect', sioEvt => console.log('sio disconnect ===>', sioEvt))
-    },
-    async fetchStages() {
-      const { repository_id } = this.selectedProject
-      try {
-        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
-        this.stages = res.map(stage => ({
-          stage_id: stage.stage_id,
-          name: stage.name,
-          state: stage.state,
-          isLoading: true,
-          steps: stage.steps.map(step => ({
-            step_id: step.step_id,
-            state: step.state,
-            message: 'Loading...'
-          }))
-        }))
-        this.dialogVisible = true
-        this.changeFocusTab(1, 0)
-        this.setTimer()
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    changeFocusTab(order, stageIdx) {
-      if (order === 1 && stageIdx === 0) {
-        this.activeStage = `${order} ${this.stages[stageIdx].name}`
-        if (this.emitStages.includes(stageIdx)) return
-        this.handleClick({ index: stageIdx })
-      } else {
-        setTimeout(() => {
-          this.activeStage = `${order} ${this.stages[stageIdx].name}`
-          if (this.emitStages.includes(stageIdx)) return
-          this.handleClick({ index: stageIdx })
-        }, 2000)
-      }
-    },
-    async updateStages() {
-      const { repository_id } = this.selectedProject
-      try {
-        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
-        res.forEach((data, idx) => {
-          this.stages[idx].state = data.state
-        })
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    setTimer() {
-      this.timer = setInterval(() => this.updateStages(), 5000)
-    },
-    clearTimer() {
-      clearInterval(this.timer)
-      this.timer = null
-    },
-    scrollToBottom() {}
+    }
   }
 }
 </script>
