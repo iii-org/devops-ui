@@ -204,3 +204,14 @@
   right: 7px;
   display: block;
 }
+
+.project-dialog-loading {
+  .el-loading-spinner {
+    i {
+      font-size: 30px;
+    }
+    .el-loading-text {
+      font-size: 30px;
+    }
+  }
+}

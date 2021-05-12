@@ -46,14 +46,9 @@
             </el-form-item>
           </el-col>
           <el-col v-if="checkOwnerRequired" :span="24">
-            <el-form-item :label="$t('Project.ProjectOwner')" :prop="checkOwnerRequired ? 'owner_id' : ''">
+            <el-form-item :label="$t('Project.ProjectOwner')" :prop="(checkOwnerRequired)?'owner_id':''">
               <el-select v-model="form.owner_id" filterable style="width:100%">
-                <el-option
-                  v-for="user in userList"
-                  :key="user.id"
-                  :value="user.id"
-                  :label="user.name + ' (' + user.login + ')'"
-                />
+                <el-option v-for="user in userList" :key="user.id" :value="user.id" :label="user.name+' ('+user.login+')'" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -152,7 +147,6 @@
 
 <script>
 import dayjs from 'dayjs'
-import i18n from '@/lang'
 import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
@@ -171,49 +165,46 @@ const formTemplate = () => ({
 })
 
 export default {
-  name: 'CreateProjectDialog',
-  data() {
-    return {
-      showDialog: false,
-      isLoading: false,
-      form: formTemplate(),
-      rules: {
-        name: [
-          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-          {
-            required: true,
-            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-            message: 'Identifier is invalid.',
-            trigger: 'blur'
-          }
-        ],
-        display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
-        start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-        due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
-        owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }],
-        description: [
-          {
-            pattern: /^((?!<|&).)*$/,
-            message: i18n.t('Project.DescriptionRule'),
-            trigger: 'blur'
-          }
-        ]
-      },
-      userList: [],
-      templateList: [],
-      focusTemplate: {},
-      isLoadingTemplate: false,
-      pickerOptions(startDate) {
-        return {
-          disabledDate(time) {
-            return time.getTime() < new Date(startDate).getTime()
-          }
+  name: '',
+  data: () => ({
+    showDialog: false,
+    isLoading: false,
+    form: formTemplate(),
+    rules: {
+      name: [
+        { required: true, message: 'Project Identifier is required', trigger: 'blur' },
+        {
+          required: true,
+          pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
+          message: 'Identifier is invalid.',
+          trigger: 'blur'
         }
-      },
-      loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
-      timeout: ''
-    }
-  },
+      ],
+      display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
+      start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
+      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
+      owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }]
+    },
+    userList: [],
+    templateList: [],
+    focusTemplate: {},
+    isLoadingTemplate: false,
+    pickerOptions(startDate) {
+      return {
+        disabledDate(time) {
+          return time.getTime() < new Date(startDate).getTime()
+        }
+      }
+    },
+    loadingText: [
+      'createRedmine',
+      'createGitLab',
+      'createHarbor',
+      'integrationProject'
+    ],
+    loadingInstance: {},
+    timeout: ''
+  }),
   computed: {
     ...mapGetters(['userRole']),
     versionList() {
@@ -226,11 +217,12 @@ export default {
   watch: {
     isLoading(val) {
       if (val) {
-        this.$loading({
+        this.loadingInstance = this.$loading({
           text: this.$t('Loading'),
           lock: true,
           spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
+          background: 'rgba(0, 0, 0, 0.7)',
+          customClass: 'project-dialog-loading'
         })
         this.loadingText.map((text, index) => {
           this.timeout = setTimeout(() => this.openFullScreen(text), 3000 * index)
@@ -289,11 +281,10 @@ export default {
       })
     },
     openFullScreen(loadingText) {
-      // handle i18n log warning when sec is undefined
+      // handle i18n log warning when loadingText is undefined
       const text = loadingText ? this.$t(`LoadingText.${loadingText}`) : this.$t('LoadingText.integrationProject')
-      if (loadingText) this.$loading().setText(text)
-      // set loading text per 3 seconds
-      else this.$loading().close() // if loadingText is undefined, close the instance
+      if (loadingText) this.loadingInstance.setText(text) // set loading text every 3 seconds
+      else this.loadingInstance.close() // if loadingText is undefined, close the instance
     },
     handleSendData() {
       const result = Object.assign({}, this.form)

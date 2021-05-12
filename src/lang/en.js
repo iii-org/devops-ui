@@ -648,7 +648,7 @@ export default {
     releaseDone: 'Done releasing version {0}.'
   },
   LoadingText: {
-    createRedmine: 'Creating a Redmine account...',
+    createRedmine: 'Adding a Redmine project...',
     createGitLab: 'Creating GitLab resources...',
     createHarbor: 'Linking to Harbor resources...',
     integrationProject: 'Start integrating project resources...'

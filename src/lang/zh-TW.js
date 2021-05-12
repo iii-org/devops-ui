@@ -639,7 +639,7 @@ export default {
     releaseDone: '版本 {0} 包版成功。'
   },
   LoadingText: {
-    createRedmine: '開立Redmine帳號中...',
+    createRedmine: '建立Redmine專案中...',
     createGitLab: '創建GitLab資源中...',
     createHarbor: '連結Harbor資源...',
     integrationProject: '開始整合專案資源...'
