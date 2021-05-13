@@ -140,6 +140,7 @@ export default {
   },
   watch: {
     userData: function(data) {
+      this.userForm = data
       if (isNaN(data.default_role)) {
         // get role id from role object
         const default_role = data.role ? data.role.id : data.default_role.id
