@@ -47,11 +47,12 @@
               lineHeight: 1,
               fontSize: '14px',
               height: '45vh',
-              overflow: 'auto'
+              overflow: 'auto',
+              'scroll-behavior': 'smooth'
             }"
             shadow="never"
           >
-            <pre ref="logMsg">{{ step.message }}</pre>
+            <pre>{{ step.message }}</pre>
           </el-card>
         </el-card>
       </el-tab-pane>
@@ -116,13 +117,13 @@ export default {
         step_index: stage.steps[0].step_id,
         sid: this.sid
       }
-      console.log('EMIT get_pipe_log ===>', emitObj)
+      // console.log('EMIT get_pipe_log ===>', emitObj)
       this.socket.emit('get_pipe_log', emitObj)
       this.updateStageLogMessage()
     },
     updateStageLogMessage() {
       this.socket.on('pipeline_log', sioEvt => {
-        console.log('EVENT pipeline_log ===>', sioEvt)
+        // console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         const stageIdx = stage_index - 1
         if (data === '') {
@@ -140,8 +141,13 @@ export default {
         if (isHistoryMessage) {
           this.stages[stageIdx].steps[step_index].message = data
         } else {
-          this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(data)
+          if (!this.stages[stageIdx].steps[step_index].message.includes(data)) {
+            this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(
+              data
+            )
+          }
         }
+        this.scrollToBottom()
       })
     },
     changeFocusTab(order, stageIdx) {
@@ -157,7 +163,6 @@ export default {
         }, 2000)
       }
     },
-
     async fetchStages() {
       this.socket.connect()
       const { repository_id } = this.selectedProject
@@ -198,14 +203,14 @@ export default {
         // console.log('sio connected ===>', this.socket)
         this.sid = this.socket.id
       })
-      this.socket.on('disconnect', sioEvt => {
-        this.$notify({
-          title: this.$t('general.Info'),
-          message: sioEvt,
-          type: 'warning'
-        })
-        // console.log('sio disconnect ===>', sioEvt)
-      })
+      // this.socket.on('disconnect', sioEvt => {
+      // this.$notify({
+      //   title: this.$t('general.Info'),
+      //   message: sioEvt,
+      //   type: 'warning'
+      // })
+      // console.log('sio disconnect ===>', sioEvt)
+      // })
     },
     async updateStages() {
       const { repository_id } = this.selectedProject
@@ -260,6 +265,12 @@ export default {
         default:
           return 'dark'
       }
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const target = this.$el.querySelector('.el-card__body').childNodes[2].childNodes[1]
+        target.scrollTop = target.scrollHeight
+      })
     }
   }
 }
