@@ -76,8 +76,8 @@
             <div slot="label" class="d-flex mb-2 align-center">
               <span class="mr-3">{{ $t('Project.TemplateName') }}</span>
               <el-radio-group v-model="focusSources" size="mini">
-                <el-radio-button label="Local Templates">Local</el-radio-button>
                 <el-radio-button label="Public Templates">Public</el-radio-button>
+                <el-radio-button label="Local Templates">Local</el-radio-button>
               </el-radio-group>
             </div>
             <el-select
@@ -215,7 +215,7 @@ export default {
       loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
       loadingInstance: {},
       timeout: '',
-      focusSources: 'Local Templates'
+      focusSources: 'Public Templates'
     }
   },
   computed: {
