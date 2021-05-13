@@ -131,7 +131,12 @@ export default {
   },
   computed: {
     isActivePipeline() {
-      return this.pagedData.some(item => item.execution_state === 'Building' || item.execution_state === 'Waiting')
+      return this.pagedData.some(
+        item =>
+          item.execution_state === 'Building' ||
+          item.execution_state === 'Waiting' ||
+          item.execution_state === 'Queueing'
+      )
     }
   },
   watch: {

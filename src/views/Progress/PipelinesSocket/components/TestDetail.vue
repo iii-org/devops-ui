@@ -5,7 +5,7 @@
         {{ $t('ProgressPipelines.TestDetail') }}
       </span>
     </template>
-    <el-tabs v-model="activeStage" tab-position="left" @tab-click="handleStageClick">
+    <el-tabs v-model="activeStage" tab-position="left" @tab-click="emitPipeLog">
       <el-tab-pane
         v-for="(stage, idx) in stages"
         :key="idx"
@@ -87,7 +87,7 @@ export default {
       emitStages: [],
       timer: null,
       socket: io('/rancher/websocket/logs', {
-        // io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+        // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
       })
@@ -100,12 +100,13 @@ export default {
     if (this.selectedProject.id === -1) return
     this.fetchCiPipelineId()
     this.setConnectStatusListener()
+    this.setLogMessageListener()
   },
   beforeDestroy() {
     this.handleClose()
   },
   methods: {
-    handleStageClick(tab) {
+    emitPipeLog(tab) {
       const index = Number(tab.index)
       this.emitStages.push(index)
       const stage = this.stages[index]
@@ -119,48 +120,55 @@ export default {
       }
       // console.log('EMIT get_pipe_log ===>', emitObj)
       this.socket.emit('get_pipe_log', emitObj)
-      this.updateStageLogMessage()
     },
-    updateStageLogMessage() {
+    setLogMessageListener() {
       this.socket.on('pipeline_log', sioEvt => {
         // console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         const stageIdx = stage_index - 1
         if (data === '') {
           this.stages[stageIdx].isLoading = false
-          const order = stage_index + 1
-          if (stage_index <= this.stages.length) {
-            if (!this.isBuildingPipeline()) return
-            this.changeFocusTab(order, stage_index)
-          }
-          return
-        }
-        const isHistoryMessage =
-          this.stages[stageIdx].steps[step_index].message === data ||
-          this.stages[stageIdx].steps[step_index].message === 'Loading...'
-        if (isHistoryMessage) {
-          this.stages[stageIdx].steps[step_index].message = data
+          this.moveToNextStage(stage_index)
         } else {
-          if (!this.stages[stageIdx].steps[step_index].message.includes(data)) {
-            this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(
-              data
-            )
-          }
+          this.setLogMessage(stageIdx, step_index, data)
         }
         this.scrollToBottom()
       })
     },
-    changeFocusTab(order, stageIdx) {
+    moveToNextStage(stage_index) {
+      if (stage_index < this.stages.length) {
+        const buildingStageIdx = this.getBuildingStageIdx()
+        // console.log(buildingStageIdx)
+        if (buildingStageIdx < 0) return
+        // if (userClick) {
+        // this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx, 1500)
+        // } else {
+        this.changeFocusTab(stage_index + 1, stage_index, 1500)
+        // }
+      }
+    },
+    setLogMessage(stageIdx, step_index, data) {
+      const target = this.stages[stageIdx].steps[step_index].message
+      const isHistoryMessage = target === data || target === 'Loading...'
+      if (isHistoryMessage) {
+        this.stages[stageIdx].steps[step_index].message = data
+      } else {
+        if (target.includes(data)) return
+        this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(data)
+      }
+    },
+    changeFocusTab(order, stageIdx, timeout = 0) {
+      console.log('changeFocusTab')
       if (order === 1 && stageIdx === 0) {
         this.activeStage = `${order} ${this.stages[stageIdx].name}`
         if (this.emitStages.includes(stageIdx)) return
-        this.handleStageClick({ index: stageIdx })
+        this.emitPipeLog({ index: stageIdx })
       } else {
         setTimeout(() => {
           this.activeStage = `${order} ${this.stages[stageIdx].name}`
           if (this.emitStages.includes(stageIdx)) return
-          this.handleStageClick({ index: stageIdx })
-        }, 2000)
+          this.emitPipeLog({ index: stageIdx })
+        }, timeout)
       }
     },
     async fetchStages() {
@@ -180,8 +188,13 @@ export default {
           }))
         }))
         this.dialogVisible = true
-        this.changeFocusTab(1, 0)
-        if (this.isBuildingPipeline()) this.setTimer()
+        this.setTimer()
+        const buildingStageIdx = this.getBuildingStageIdx()
+        if (buildingStageIdx < 0) {
+          this.changeFocusTab(1, 0)
+        } else {
+          this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx)
+        }
       } catch (error) {
         console.error(error)
       }
@@ -200,45 +213,37 @@ export default {
           message: 'WebSocket connect',
           type: 'success'
         })
-        // console.log('sio connected ===>', this.socket)
         this.sid = this.socket.id
       })
-      // this.socket.on('disconnect', sioEvt => {
-      // this.$notify({
-      //   title: this.$t('general.Info'),
-      //   message: sioEvt,
-      //   type: 'warning'
-      // })
-      // console.log('sio disconnect ===>', sioEvt)
-      // })
     },
-    async updateStages() {
+    async updateStagesState() {
       const { repository_id } = this.selectedProject
       try {
         const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
-        res.forEach((data, idx) => {
-          this.stages[idx].state = data.state
+        res.forEach((stage, idx) => {
+          this.stages[idx].state = stage.state
         })
       } catch (error) {
         console.error(error)
       }
     },
     handleClose() {
+      this.socket.close()
       this.clearTimer()
       this.stages = []
       this.emitStages = []
-      this.socket.close()
       this.dialogVisible = false
     },
     setTimer() {
-      this.timer = setInterval(() => this.updateStages(), 5000)
+      const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
+      if (isActive) this.timer = setInterval(() => this.updateStagesState(), 5000)
     },
     clearTimer() {
       clearInterval(this.timer)
       this.timer = null
     },
-    isBuildingPipeline() {
-      return this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
+    getBuildingStageIdx() {
+      return this.stages.findIndex(item => item.state === 'Building')
     },
     getStateTagType(state) {
       switch (state) {
@@ -259,12 +264,7 @@ export default {
       }
     },
     getStateTagEffect(state) {
-      switch (state) {
-        case 'Building':
-          return 'light'
-        default:
-          return 'dark'
-      }
+      return state === 'Building' ? 'light' : 'dark'
     },
     scrollToBottom() {
       this.$nextTick(() => {
