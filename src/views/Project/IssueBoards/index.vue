@@ -269,10 +269,9 @@ export default {
         }
       })
     },
-    updateIssueBoard() {
-      this.fetchData()
-      this.versionValue = '-1'
-      this.memberValue = '-1'
+    async updateIssueBoard() {
+      await this.fetchData()
+      await this.updateData()
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
@@ -284,8 +283,7 @@ export default {
             item[this.filterDimension] = evt.boardObject
           }
         })
-        this.resetClassifyIssue()
-        this.classifyIssue()
+        await this.updateData()
         this.isLoading = false
       }
     },
@@ -301,13 +299,13 @@ export default {
           item[filterDimension] = value[filterDimension]
         }
       })
-      this.resetClassifyIssue()
-      this.classifyIssue()
+      await this.updateData()
       this.isLoading = false
     },
     updateData() {
       this.resetClassifyIssue()
       this.classifyIssue()
+      console.log(this.versionValue, this.memberValue)
       const versionOpt = {
         keys: ['fixed_version.id'],
         useExtendedSearch: true
