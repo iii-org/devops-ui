@@ -245,7 +245,7 @@ export default {
   methods: {
     ...mapActions(['projects/getRDProjectList']),
     async fetchData() {
-      await this['projects/getProjectList']()
+      await this['projects/getRDProjectList']()
       return this.projectList
     },
     handleEdit(idx, row) {
