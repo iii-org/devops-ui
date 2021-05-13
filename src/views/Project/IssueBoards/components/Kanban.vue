@@ -50,7 +50,7 @@
           >
             <span class="ml-1 detail">
               <i class="el-icon-user-solid" />
-              <span class="ml-1">{{ element.assigned_to.name }}({{ element.assigned_to.login }})</span>
+              <span class="ml-1">{{ element.assigned_to.name }}</span>
             </span>
           </el-tooltip>
           <p v-if="element.parent_id" class="parent">
