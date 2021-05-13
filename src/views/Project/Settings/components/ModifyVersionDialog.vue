@@ -53,18 +53,20 @@ const formTemplate = () => ({
 export default {
   name: 'ModifyVersionDialog',
   mixins: [MixinBasicTable],
-  data: () => ({
-    dialogVisible: false,
-    dialogStatus: 1,
-    form: formTemplate(),
-    formRules: {
-      name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-      due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
-      status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
-      description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
-    },
-    btnConfirmLoading: false
-  }),
+  data() {
+    return {
+      dialogVisible: false,
+      dialogStatus: 1,
+      form: formTemplate(),
+      formRules: {
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        due_date: [{ required: true, message: 'Please input due_date', trigger: 'blur' }],
+        status: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        description: [{ required: true, message: 'Please input description', trigger: 'blur' }]
+      },
+      btnConfirmLoading: false
+    }
+  },
   computed: {
     dialogStatusText() {
       switch (this.dialogStatus) {

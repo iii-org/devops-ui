@@ -152,14 +152,16 @@ export default {
   name: 'SystemSecrets',
   components: { ElTableColumnTime, Pagination, ElTableColumnTag },
   mixins: [MixinElTable],
-  data: () => ({
-    formData: defaultFormData(),
-    formRules: {
-      name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
-    },
-    dialogVisible: false,
-    confirmLoading: false
-  }),
+  data() {
+    return {
+      formData: defaultFormData(),
+      formRules: {
+        name: [{ required: true, message: 'Please input Secret Name', trigger: 'blur' }]
+      },
+      dialogVisible: false,
+      confirmLoading: false
+    }
+  },
   methods: {
     async fetchData() {
       const res = await getSystemSecrets()

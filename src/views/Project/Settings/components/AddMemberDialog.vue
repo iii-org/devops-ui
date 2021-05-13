@@ -39,9 +39,7 @@
           height="100%"
           :cell-style="{ height: rowHeight + 'px' }"
         >
-          <el-table-column
-            width="55"
-          >
+          <el-table-column width="55">
             <template slot-scope="scope">
               <el-checkbox :value="isSelectedMember(scope.row)" class="el-checkbox" @change="toggleMember(scope.row)" />
             </template>
@@ -60,13 +58,16 @@
           @pagination="onPagination"
         />
       </el-col>
-      <el-col v-if="selectedUser.length >0" class="el-card__footer">
+      <el-col v-if="selectedUser.length > 0" class="el-card__footer">
         <el-col :xs="8" :md="2">
-          <div class="selected_count">{{ $t('User.Selected') }}<span class="value">{{ selectedUser.length }}</span></div>
+          <div class="selected_count">
+            {{ $t('User.Selected') }}<span class="value">{{ selectedUser.length }}</span>
+          </div>
         </el-col>
         <el-col :xs="16" :md="22" class="scroll-x">
-          <el-tag v-for="(item,idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
-            <b>{{ idx + 1 }}</b>.{{ item.name }}
+          <el-tag v-for="(item, idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
+            <b>{{ idx + 1 }}</b>
+            .{{ item.name }}
           </el-tag>
         </el-col>
       </el-col>
@@ -83,23 +84,25 @@ import Fuse from 'fuse.js'
 export default {
   name: 'AddMemberDialog',
   mixins: [MixinBasicTable],
-  data: () => ({
-    dialogVisible: false,
-    assignableUserList: [],
-    selectedUser: [],
-    search: [],
-    isLoading: false,
-    btnConfirmLoading: false,
-    selectorQuery: '',
-    focusRoleName: '',
-    rowHeight: 20,
-    listQuery: {
-      page: 1,
-      limit: 5
-    },
-    inputVisible: false,
-    searchValue: ''
-  }),
+  data() {
+    return {
+      dialogVisible: false,
+      assignableUserList: [],
+      selectedUser: [],
+      search: [],
+      isLoading: false,
+      btnConfirmLoading: false,
+      selectorQuery: '',
+      focusRoleName: '',
+      rowHeight: 20,
+      listQuery: {
+        page: 1,
+        limit: 5
+      },
+      inputVisible: false,
+      searchValue: ''
+    }
+  },
   computed: {
     ...mapGetters(['selectedProject']),
     selectedProjectId() {
@@ -108,7 +111,10 @@ export default {
     filteredData() {
       if (this.assignableUserList.length <= 0) return []
       if (this.searchValue.length <= 0) return this.assignableUserList
-      const fuse = new Fuse(this.assignableUserList, { includeScore: true, keys: ['name', 'login', 'department', 'title'] })
+      const fuse = new Fuse(this.assignableUserList, {
+        includeScore: true,
+        keys: ['name', 'login', 'department', 'title']
+      })
       const res = fuse.search('!' + this.searchValue)
       return res.map(items => items.item)
     }
@@ -129,7 +135,7 @@ export default {
   methods: {
     fetchData() {
       return getNotInProject(this.selectedProjectId)
-        .then((res) => {
+        .then(res => {
           this.assignableUserList = res.data.user_list.map(user => ({
             id: user.id,
             name: user.name,
@@ -140,17 +146,17 @@ export default {
           }))
           return this.assignableUserList
         })
-        .catch((e) => {
+        .catch(e => {
           return Promise.reject(e)
         })
     },
     toggleSelectAllMember(event) {
       if (event) {
-        this.$refs['userTable'].data.forEach((item) => {
+        this.$refs['userTable'].data.forEach(item => {
           this.onAddMember(item)
         })
       } else {
-        this.$refs['userTable'].data.forEach((item) => {
+        this.$refs['userTable'].data.forEach(item => {
           this.onRemoveMember(item)
         })
       }
@@ -179,7 +185,7 @@ export default {
     handleAddConfirm() {
       if (this.selectedUser.length > 0) {
         this.btnConfirmLoading = true
-        this.selectedUser.forEach((user) => {
+        this.selectedUser.forEach(user => {
           addProjectMember(this.selectedProjectId, { user_id: user.id })
             .then(() => {
               this.$message({
@@ -204,9 +210,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/styles/variables.scss";
+@import 'src/styles/variables.scss';
 
-> > > .el-card {
+>>> .el-card {
   &__footer {
     padding: 18px 20px;
     border-top: 1px solid #ebeef5;
@@ -218,8 +224,8 @@ export default {
       display: inline-block;
       line-height: 1;
       white-space: nowrap;
-      background: #FFF;
-      border: 1px solid #DCDFE6;
+      background: #fff;
+      border: 1px solid #dcdfe6;
       color: #606266;
       -webkit-appearance: none;
       text-align: center;
@@ -227,8 +233,8 @@ export default {
       box-sizing: border-box;
       outline: 0;
       margin: 0;
-      -webkit-transition: .1s;
-      transition: .1s;
+      -webkit-transition: 0.1s;
+      transition: 0.1s;
       font-weight: 500;
       padding: 12px 10px;
       font-size: 14px;
@@ -236,7 +242,7 @@ export default {
 
       .value {
         background: $danger;
-        color: #FFFFFF;
+        color: #ffffff;
         padding: 2px 5px;
         margin-left: 5px;
         border-radius: 50%;
@@ -256,15 +262,15 @@ export default {
   }
 }
 
-> > > .pagination-container {
+>>> .pagination-container {
   padding: 10px 0;
 }
 
-> > > .el-table .el-button {
-  color: #FFFFFF !important;
+>>> .el-table .el-button {
+  color: #ffffff !important;
 
   &:hover {
-    color: #FFFFFF !important;
+    color: #ffffff !important;
   }
 
   &--success {
@@ -280,7 +286,7 @@ export default {
   }
 }
 
->>>.el-tag {
+>>> .el-tag {
   &.el-tag {
     margin-left: 10px;
   }
@@ -294,7 +300,7 @@ export default {
   padding-bottom: 0;
 }
 
-> > > .el-form {
+>>> .el-form {
   display: inline;
   margin: 0 0 0 10px;
 
@@ -302,5 +308,4 @@ export default {
     margin: 0;
   }
 }
-
 </style>

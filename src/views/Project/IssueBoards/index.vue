@@ -125,21 +125,23 @@ export default {
     Kanban,
     ProjectListSelector
   },
-  data: () => ({
-    isLoading: true,
-    filterDimension: 'status',
-    filterValue: [],
-    projectIssueList: [],
-    classifyIssueList: {},
-    group: 'mission',
-    versionValue: '-1',
-    memberValue: '-1',
-    fixed_version: [],
-    status: [],
-    tracker: [],
-    assigned_to: [],
-    relativeIssueList: []
-  }),
+  data() {
+    return {
+      isLoading: true,
+      filterDimension: 'status',
+      filterValue: [],
+      projectIssueList: [],
+      classifyIssueList: {},
+      group: 'mission',
+      versionValue: '-1',
+      memberValue: '-1',
+      fixed_version: [],
+      status: [],
+      tracker: [],
+      assigned_to: [],
+      relativeIssueList: []
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId']),
     filterDimensionOptions() {
@@ -220,7 +222,7 @@ export default {
     classifyIssue() {
       let issueList = this.projectIssueList
       if (this.filterDimension !== 'status') {
-        issueList = this.projectIssueList.filter((issue) => (issue.status.id !== 6))
+        issueList = this.projectIssueList.filter(issue => issue.status.id !== 6)
       }
       issueList.forEach(issue => {
         let dimensionName = issue[this.filterDimension].id

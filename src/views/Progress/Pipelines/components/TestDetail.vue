@@ -82,11 +82,13 @@ export default {
       default: 0
     }
   },
-  data: () => ({
-    stages: [],
-    activeStage: '',
-    sid: ''
-  }),
+  data() {
+    return {
+      stages: [],
+      activeStage: '',
+      sid: ''
+    }
+  },
   computed: {
     ...mapGetters(['selectedProject'])
   },

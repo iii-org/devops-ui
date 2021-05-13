@@ -8,13 +8,7 @@
         </a>
       </el-col>
       <el-col :span="4" class="text-right">
-        <el-button
-          type="danger"
-          size="mini"
-          icon="el-icon-delete"
-          :loading="isLoading"
-          @click="deleteIssueFile(file)"
-        >
+        <el-button type="danger" size="mini" icon="el-icon-delete" :loading="isLoading" @click="deleteIssueFile(file)">
           {{ $t('general.Delete') }}
         </el-button>
       </el-col>
@@ -34,9 +28,11 @@ export default {
       default: () => []
     }
   },
-  data: () => ({
-    isLoading: false
-  }),
+  data() {
+    return {
+      isLoading: false
+    }
+  },
   methods: {
     async handleDownload(row) {
       const res = await downloadProjectFile({ id: row.id, filename: row.filename })

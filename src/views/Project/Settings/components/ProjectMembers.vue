@@ -67,9 +67,11 @@ export default {
   name: 'ProjectMembers',
   components: { AddMemberDialog },
   mixins: [MixinBasicTable],
-  data: () => ({
-    searchKeys: ['name', 'login']
-  }),
+  data() {
+    return {
+      searchKeys: ['name', 'login']
+    }
+  },
   methods: {
     async fetchData() {
       const res = await getProjectUserList(this.selectedProjectId)

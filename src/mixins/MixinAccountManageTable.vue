@@ -4,17 +4,19 @@ import Pagination from '@/components/Pagination'
 
 export default {
   components: { Pagination },
-  data: () => ({
-    listData: [],
-    listLoading: false,
-    listQuery: {
-      page: 1,
-      limit: 10
-    },
-    searchKeys: ['name'],
-    keyword: '',
-    timeoutId: -1
-  }),
+  data() {
+    return {
+      listData: [],
+      listLoading: false,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      searchKeys: ['name'],
+      keyword: '',
+      timeoutId: -1
+    }
+  },
   computed: {
     // ...mapGetters(['selectedProject', 'userId']),
     // selectedProjectId() {

@@ -41,9 +41,11 @@ export default {
   name: 'ProjectSettings',
   components: { ProjectListSelector, ProjectVersions, PipelineSettings, ProjectMembers },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    activeNames: []
-  }),
+  data() {
+    return {
+      activeNames: []
+    }
+  },
   watch: {
     activeNames(val) {
       localStorage.setItem('ProjectSettingsActiveNames', JSON.stringify(val))

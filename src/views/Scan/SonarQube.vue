@@ -72,12 +72,14 @@ export default {
   name: 'ScanSonarQube',
   components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    searchKey: 'branch',
-    sqLink: function() {
-      return ''
+  data() {
+    return {
+      searchKey: 'branch',
+      sqLink: function() {
+        return ''
+      }
     }
-  }),
+  },
   methods: {
     async fetchData() {
       if (this.selectedProjectId === -1) {

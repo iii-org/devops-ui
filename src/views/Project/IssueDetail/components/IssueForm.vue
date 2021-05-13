@@ -33,7 +33,7 @@
             <el-option
               v-for="option in dynamicStatusList"
               :key="option.value"
-              :label="$t('Issue.'+option.label)"
+              :label="$t('Issue.' + option.label)"
               :value="option.value"
             >
               <status :name="option.label" />
@@ -44,7 +44,12 @@
       <el-col>
         <el-form-item :label="$t('general.Type')" prop="tracker_id">
           <el-select v-model="form.tracker_id" style="width: 100%">
-            <el-option v-for="option in typeList" :key="option.value" :label="$t('Issue.'+option.label)" :value="option.value">
+            <el-option
+              v-for="option in typeList"
+              :key="option.value"
+              :label="$t('Issue.' + option.label)"
+              :value="option.value"
+            >
               <tracker :name="option.label" />
             </el-option>
           </el-select>
@@ -67,7 +72,12 @@
       <el-col>
         <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
           <el-select v-model="form.priority_id" :disabled="childrenIssueList.length > 0" style="width: 100%">
-            <el-option v-for="option in priorityList" :key="option.value" :label="$t('Issue.'+option.label)" :value="option.value">
+            <el-option
+              v-for="option in priorityList"
+              :key="option.value"
+              :label="$t('Issue.' + option.label)"
+              :value="option.value"
+            >
               <priority :name="option.label" />
             </el-option>
           </el-select>
@@ -133,33 +143,35 @@ export default {
       default: () => {}
     }
   },
-  data: () => ({
-    issueFormRules: {
-      subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-      tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
-      status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
-      priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
-    },
-    assigneeList: [],
-    versionList: [],
-    typeList: [],
-    statusList: [],
-    priorityList: [],
+  data() {
+    return {
+      issueFormRules: {
+        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
+      },
+      assigneeList: [],
+      versionList: [],
+      typeList: [],
+      statusList: [],
+      priorityList: [],
 
-    parentId: null,
-    parentIssue: {},
-    relativeIssueList: [],
-    childrenIssueList: [],
-    isLoading: false,
+      parentId: null,
+      parentIssue: {},
+      relativeIssueList: [],
+      childrenIssueList: [],
+      isLoading: false,
 
-    pickerOptions(startDate) {
-      return {
-        disabledDate(time) {
-          return time.getTime() < new Date(startDate).getTime()
+      pickerOptions(startDate) {
+        return {
+          disabledDate(time) {
+            return time.getTime() < new Date(startDate).getTime()
+          }
         }
       }
     }
-  }),
+  },
   computed: {
     ...mapGetters(['selectedProjectId']),
     dynamicStatusList() {

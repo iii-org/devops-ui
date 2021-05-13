@@ -21,7 +21,12 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('general.Type')" prop="tracker_id">
-        <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%" :disabled="isDisabledField('tracker')">
+        <el-select
+          id="input-type"
+          v-model="issueForm.tracker_id"
+          style="width: 100%"
+          :disabled="isDisabledField('tracker')"
+        >
           <el-option v-for="item in tracker" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
@@ -73,28 +78,30 @@ export default {
       default: ''
     }
   },
-  data: () => ({
-    issueForm: {
-      subject: '',
-      priority_id: '',
-      tracker_id: '',
-      status_id: '',
-      assigned_to_id: '',
-      description: '',
-      fixed_version_id: ''
-    },
-    issueFormRules: {
-      subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-      priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }],
-      tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
-      status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }]
-    },
-    issuePriorityList: [],
-    tracker: [],
-    status: [],
-    assigned_to: [],
-    isLoading: false
-  }),
+  data() {
+    return {
+      issueForm: {
+        subject: '',
+        priority_id: '',
+        tracker_id: '',
+        status_id: '',
+        assigned_to_id: '',
+        description: '',
+        fixed_version_id: ''
+      },
+      issueFormRules: {
+        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }],
+        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }]
+      },
+      issuePriorityList: [],
+      tracker: [],
+      status: [],
+      assigned_to: [],
+      isLoading: false
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },

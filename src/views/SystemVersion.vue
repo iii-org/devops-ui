@@ -35,9 +35,11 @@ export default {
       return statusMap[status]
     }
   },
-  data: () => ({
-    list: []
-  }),
+  data() {
+    return {
+      list: []
+    }
+  },
   created() {
     const uiData = { source: 'UI', commitId: process.env.VUE_APP_VERSION }
     this.list.push(uiData)

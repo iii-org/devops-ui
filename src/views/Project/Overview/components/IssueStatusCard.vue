@@ -25,9 +25,11 @@ export default {
       default: () => {}
     }
   },
-  data: () => ({
-    dataCollection: {}
-  }),
+  data() {
+    return {
+      dataCollection: {}
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },

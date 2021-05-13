@@ -4,10 +4,12 @@ import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
 export default {
   name: 'IssueListDialog',
   mixins: [MixinElTableWithCheckbox],
-  data: () => ({
-    searchKey: '',
-    visible: false
-  }),
+  data() {
+    return {
+      searchKey: '',
+      visible: false
+    }
+  },
   methods: {
     setData(listData, category) {
       if (category) {
@@ -18,7 +20,7 @@ export default {
       this.listData = listData
     },
     copy() {
-      const thiz = this
+      const vm = this
       let text = ''
       this.multipleSelection.forEach((val, i) => {
         for (const pos of val) {
@@ -27,8 +29,8 @@ export default {
         }
       })
       this.$copyText(text).then(function() {
-        thiz.$message({
-          message: thiz.$t('general.copied'),
+        vm.$message({
+          message: vm.$t('general.copied'),
           type: 'info'
         })
       })
@@ -71,6 +73,4 @@ export default {
   </el-dialog>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

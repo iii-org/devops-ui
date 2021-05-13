@@ -74,10 +74,12 @@ export default {
       default: () => {}
     }
   },
-  data: () => ({
-    testResultList: [],
-    isDisabled: false
-  }),
+  data() {
+    return {
+      testResultList: [],
+      isDisabled: false
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },

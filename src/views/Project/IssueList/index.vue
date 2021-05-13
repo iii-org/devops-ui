@@ -24,7 +24,7 @@
           clearable
           @change="updateData"
         >
-          <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+          <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
             <tracker :name="item.name" />
           </el-option>
         </el-select>
@@ -71,7 +71,7 @@
                 :style="{ 'font-size': '14px', cursor: 'pointer' }"
                 :underline="false"
                 @click="handleEdit(scope.row.parent_id)"
-              >#{{ scope.row.parent_id }}
+                >#{{ scope.row.parent_id }}
               </el-link>
             </li>
             <li v-if="scope.row.children.length">
@@ -84,8 +84,13 @@
                     :underline="false"
                     @click="handleEdit(child.id)"
                   >
-                    <status :name="child.status.name" size="mini" />  <tracker :name="child.tracker.name" /> #{{ child.id }} - {{ child.name }}
-                    <span v-if="Object.keys(child.assigned_to).length>1">({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span>
+                    <status :name="child.status.name" size="mini" /> <tracker :name="child.tracker.name" /> #{{
+                      child.id
+                    }}
+                    - {{ child.name }}
+                    <span v-if="Object.keys(child.assigned_to).length > 1"
+                      >({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span
+                    >
                   </el-link>
                 </li>
               </ol>
@@ -111,10 +116,7 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" width="150">
         <template slot-scope="scope">
-          <status
-            v-if="scope.row.status.name"
-            :name="scope.row.status.name"
-          />
+          <status v-if="scope.row.status.name" :name="scope.row.status.name" />
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
@@ -146,7 +148,7 @@
 <script>
 import AddIssue from './components/AddIssue'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { addIssue, getIssueTracker } from '@/api/issue'
 import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
@@ -163,17 +165,19 @@ export default {
     Tracker
   },
   mixins: [MixinElTableWithAProject],
-  data: () => ({
-    addTopicDialogVisible: false,
-    search: '',
-    parentId: 0,
-    parentName: '',
-    versionValue: '-1',
-    trackerValue: '',
-    fixed_version: [],
-    tracker: [],
-    listFilterVersionTrackerData: []
-  }),
+  data() {
+    return {
+      addTopicDialogVisible: false,
+      search: '',
+      parentId: 0,
+      parentName: '',
+      versionValue: '-1',
+      trackerValue: '',
+      fixed_version: [],
+      tracker: [],
+      listFilterVersionTrackerData: []
+    }
+  },
   computed: {
     ...mapGetters(['userRole', 'userName']),
     filteredData() {
@@ -265,11 +269,11 @@ export default {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+        this.$router.push({ name: 'issue-detail', params: { issueId: row.id } })
       }
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$router.push({ name: 'issue-detail', params: { issueId: id } })
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
@@ -328,10 +332,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
->>>.row-expand-cover .el-table__expand-column .cell {
-  display:none;
+>>> .row-expand-cover .el-table__expand-column .cell {
+  display: none;
 }
->>>.el-table__expanded-cell{
+>>> .el-table__expanded-cell {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;

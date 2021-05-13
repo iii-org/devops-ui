@@ -18,12 +18,7 @@
         multiple
         filterable
       >
-        <el-option
-          v-for="item in projectVersionOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
+        <el-option v-for="item in projectVersionOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
 
       <span class="newBtn">
@@ -62,19 +57,21 @@ const STATE_CREATE_RELEASE = 2
 export default {
   name: 'ReleaseVersion',
   components: { CreateRelease, IssuesTable, ProjectListSelector },
-  data: () => ({
-    state: STATE_INIT,
-    allIssues: [],
-    fullscreenLoading: false,
-    fromQuery: false,
-    hasOpenIssue: false,
-    projectVersions: [],
-    projectVersionOptions: [],
-    releaseVersions: [],
-    STATE_INIT: STATE_INIT,
-    STATE_SHOW_OPEN_ISSUES: STATE_SHOW_OPEN_ISSUES,
-    STATE_CREATE_RELEASE: STATE_CREATE_RELEASE
-  }),
+  data() {
+    return {
+      state: STATE_INIT,
+      allIssues: [],
+      fullscreenLoading: false,
+      fromQuery: false,
+      hasOpenIssue: false,
+      projectVersions: [],
+      projectVersionOptions: [],
+      releaseVersions: [],
+      STATE_INIT: STATE_INIT,
+      STATE_SHOW_OPEN_ISSUES: STATE_SHOW_OPEN_ISSUES,
+      STATE_CREATE_RELEASE: STATE_CREATE_RELEASE
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },
@@ -125,7 +122,8 @@ export default {
       if (!this.fromQuery) {
         const vsString = JSON.stringify(this.releaseVersions)
         this.$router.push({
-          path: '', query: {
+          path: '',
+          query: {
             versions: vsString.substring(1, vsString.length - 1)
           }
         })
@@ -157,12 +155,9 @@ export default {
     async listOpenIssues() {
       if (!this.fromQuery) {
         const h = this.$createElement
-        this.$alert(
-          h('div', this.$t('Release.openIssueAlert')),
-          this.$t('general.caution'),
-          {
-            confirmButtonText: this.$t('general.Confirm')
-          })
+        this.$alert(h('div', this.$t('Release.openIssueAlert')), this.$t('general.caution'), {
+          confirmButtonText: this.$t('general.Confirm')
+        })
       }
       this.state = STATE_SHOW_OPEN_ISSUES
       this.$refs.issueList.setData(this.allIssues)

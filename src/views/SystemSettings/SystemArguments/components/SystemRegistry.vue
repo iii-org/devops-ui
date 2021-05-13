@@ -122,18 +122,20 @@ export default {
   name: 'SystemRegistry',
   components: { ElTableColumnTime, Pagination, ElTableColumnTag },
   mixins: [MixinElTable],
-  data: () => ({
-    formData: defaultFormData(),
-    formRules: {
-      name: [{ required: true, message: 'Please input registry name', trigger: 'blur' }],
-      url: [{ required: true, message: 'Please input url', trigger: 'blur' }],
-      username: [{ required: true, message: 'Please input username', trigger: 'blur' }]
-    },
-    dialogVisible: false,
-    confirmLoading: false,
+  data() {
+    return {
+      formData: defaultFormData(),
+      formRules: {
+        name: [{ required: true, message: 'Please input registry name', trigger: 'blur' }],
+        url: [{ required: true, message: 'Please input url', trigger: 'blur' }],
+        username: [{ required: true, message: 'Please input username', trigger: 'blur' }]
+      },
+      dialogVisible: false,
+      confirmLoading: false,
 
-    showPassword: false
-  }),
+      showPassword: false
+    }
+  },
   methods: {
     async fetchData() {
       const res = await getSystemRegistries()

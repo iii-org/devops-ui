@@ -4,9 +4,15 @@
       <span class="font-weight-bold">
         {{ $t('Dashboard.Workload') }}
         <span v-if="!saveSelectedItem" @click="showFullIssuePriority">
-          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
-               style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
-               preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+            width="1em"
+            height="1em"
+            style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 24 24"
           >
             <path
               d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"
@@ -45,11 +51,13 @@ export default {
       default: ''
     }
   },
-  data: () => ({
-    dataCollection: {},
-    selectList: [],
-    selectedItem: ''
-  }),
+  data() {
+    return {
+      dataCollection: {},
+      selectList: [],
+      selectedItem: ''
+    }
+  },
   computed: {
     ...mapGetters(['selectedProjectId'])
   },
@@ -97,7 +105,9 @@ export default {
       const chartData = this.selectList.find(item => item.label === this.selectedItem).data
       const yAxis = Object.keys(chartData)
       const seriesData = []
-      issueStatusList.map(status => seriesData.push(yAxis.map(yAxisItem => chartData[yAxisItem]).map(item => item[status.key])))
+      issueStatusList.map(status =>
+        seriesData.push(yAxis.map(yAxisItem => chartData[yAxisItem]).map(item => item[status.key]))
+      )
 
       this.dataCollection = {
         legend: issueStatusList.map(status => status.label),
@@ -117,7 +127,7 @@ export default {
         }))
       }
     },
-    showFullIssuePriority () {
+    showFullIssuePriority() {
       this.$emit('showFullIssuePriority')
     }
   }

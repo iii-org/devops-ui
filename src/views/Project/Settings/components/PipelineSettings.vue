@@ -49,14 +49,16 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PipelineSettings',
-  data: () => ({
-    isLoading: false,
-    isStagesLoading: false,
-    settingStatus: '',
-    branch: '',
-    stagesData: [],
-    webDependencyKeys: ['test-postman', 'test-webinspect']
-  }),
+  data() {
+    return {
+      isLoading: false,
+      isStagesLoading: false,
+      settingStatus: '',
+      branch: '',
+      stagesData: [],
+      webDependencyKeys: ['test-postman', 'test-webinspect']
+    }
+  },
   computed: {
     ...mapGetters(['selectedProject']),
     selectedProjectRepositoryId() {

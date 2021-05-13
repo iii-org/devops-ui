@@ -139,33 +139,34 @@ export default {
     },
     status: {
       type: Array,
-      default: () => ([])
+      default: () => []
     }
   },
-  data: () => ({
-    showDialog: false,
-    showAlert: false,
-    reload: 0
-  }),
+  data() {
+    return {
+      showDialog: false,
+      showAlert: false,
+      reload: 0
+    }
+  },
   methods: {
     checkRelatives(evt) {
       const errorMsg = []
       const toName = evt.to.classList[1]
-      const toClassObj = this.status.find((item) => (item.name === toName))
+      const toClassObj = this.status.find(item => item.name === toName)
       const element = evt.draggedContext.element
       const h = this.$createElement
       if (this.dimension === 'status') {
         const checkAssigned = this.checkAssigned(toClassObj, element)
         if (!checkAssigned) {
-          errorMsg.push(h('li',
-            [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')]
-          ))
+          errorMsg.push(
+            h('li', [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')])
+          )
         }
         if (toClassObj.id === 6) {
           const checkChildrenStatus = this.checkChildrenStatus(element)
           if (!checkChildrenStatus) {
-            errorMsg.push(h('li',
-              [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
+            errorMsg.push(h('li', [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
           }
           if (!checkAssigned || !checkChildrenStatus) {
             this.showErrorAlert(errorMsg)
@@ -179,9 +180,7 @@ export default {
       } else if (this.dimension === 'priority') {
         const checkPriority = this.checkPriority(element)
         if (!checkPriority) {
-          errorMsg.push(h('li',
-            [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]
-          ))
+          errorMsg.push(h('li', [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]))
           this.showErrorAlert(errorMsg)
         }
       }
@@ -191,7 +190,7 @@ export default {
     },
     checkChildrenStatus(element) {
       if (element.children.length <= 0) return true
-      return element.children.map((issue) => (issue.status.id === 6)).reduce((issue_status, all) => (issue_status && all))
+      return element.children.map(issue => issue.status.id === 6).reduce((issue_status, all) => issue_status && all)
     },
     checkPriority(to, element) {
       return element.children.length <= 0
@@ -204,7 +203,7 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$router.push({ name: 'issue-detail', params: { issueId: id } })
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement
@@ -227,24 +226,31 @@ export default {
 
         if (Object.keys(data)[0] === 'status') {
           if (!checkAssigned) {
-            errorMsg.push(h('li',
-              [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')]
-            ))
+            errorMsg.push(
+              h('li', [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')])
+            )
           }
           if (toClassObj.id === 6) {
             const checkChildrenStatus = this.checkChildrenStatus(element)
             if (checkAssigned && checkChildrenStatus) {
-              this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+              this.$emit('update-drag', {
+                id: this.list[idx].id,
+                value: { [Object.keys(data)[0]]: Object.values(data)[0] }
+              })
             } else {
               if (!checkChildrenStatus) {
-                errorMsg.push(h('li',
-                  [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
+                errorMsg.push(
+                  h('li', [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')])
+                )
               }
               this.showErrorAlert(errorMsg)
             }
           } else {
             if (checkAssigned) {
-              this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+              this.$emit('update-drag', {
+                id: this.list[idx].id,
+                value: { [Object.keys(data)[0]]: Object.values(data)[0] }
+              })
             } else {
               this.showErrorAlert(errorMsg)
             }
@@ -252,13 +258,16 @@ export default {
         } else if (Object.keys(data)[0] === 'priority') {
           const checkPriority = this.checkPriority(element)
           if (!checkPriority) {
-            errorMsg.push(h('li',
-              [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]
-            ))
+            errorMsg.push(
+              h('li', [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')])
+            )
             this.showErrorAlert(errorMsg)
           }
         } else {
-          this.$emit('update-drag', { id: this.list[idx].id, value: { [Object.keys(data)[0]]: Object.values(data)[0] }})
+          this.$emit('update-drag', {
+            id: this.list[idx].id,
+            value: { [Object.keys(data)[0]]: Object.values(data)[0] }
+          })
         }
         this.reload += 1
       }

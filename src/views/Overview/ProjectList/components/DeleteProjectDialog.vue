@@ -3,7 +3,9 @@
     <div slot="title">{{ `${$t('general.Delete')} 「${deleteProjectObj.name}」 ${$t('Project.Project')}` }}</div>
     <p class="text-danger">{{ $t('Project.deleteProjectConfirmText') }}</p>
     <p>
-      <span>{{ $t('Project.PleaseType') }}</span><span class="text-h6 font-weight-bold text-danger mx-1">{{ deleteProjectObj.name }}</span><span>{{ $t('Project.AndThen') }}</span>
+      <span>{{ $t('Project.PleaseType') }} </span>
+      <span class="text-h6 font-weight-bold text-danger mx-1">{{ deleteProjectObj.name }}</span>
+      <span>{{ $t('Project.AndThen') }}</span>
     </p>
     <el-input v-model="confirmProjectName" :placeholder="`Please Input ${deleteProjectObj.name}`" />
     <span slot="footer" class="dialog-footer">
@@ -28,11 +30,13 @@ export default {
       default: () => {}
     }
   },
-  data: () => ({
-    showDialog: false,
-    isLoading: false,
-    confirmProjectName: ''
-  }),
+  data() {
+    return {
+      showDialog: false,
+      isLoading: false,
+      confirmProjectName: ''
+    }
+  },
   methods: {
     ...mapActions('projects', ['deleteProject']),
     onDialogClosedDelete() {
