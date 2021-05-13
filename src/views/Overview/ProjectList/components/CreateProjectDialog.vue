@@ -88,7 +88,12 @@
               filterable
               @change="handleTemplateSelect"
             >
-              <el-option v-for="item in activeTemplateList" :key="item.id" :label="item.display" :value="item.id" />
+              <el-option
+                v-for="item in activeTemplateList"
+                :key="item.id"
+                :label="item.display || item.name"
+                :value="item.id"
+              />
             </el-select>
           </el-form-item>
         </el-col>
