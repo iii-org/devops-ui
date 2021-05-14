@@ -644,6 +644,7 @@ export default {
     createRedmine: '建立Redmine專案中...',
     createGitLab: '創建GitLab資源中...',
     createHarbor: '連結Harbor資源...',
-    integrationProject: '開始整合專案資源...'
+    integrationProject: '開始整合專案資源...',
+    loadingTemplateText: '更新所有範本最新資訊中'
   }
 }

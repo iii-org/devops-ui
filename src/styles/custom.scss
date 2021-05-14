@@ -215,3 +215,14 @@
     }
   }
 }
+
+.project-dialog-template-loading {
+  .el-loading-spinner {
+    i {
+      font-size: 15px;
+    }
+    .el-loading-text {
+      font-size: 15px;
+    }
+  }
+}

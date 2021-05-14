@@ -64,7 +64,7 @@
           </el-col>
         </el-col>
       </el-row>
-      <el-row v-loading="isLoadingTemplate" :gutter="10">
+      <el-row class="loading-template" :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">
             {{ $t('Project.Template') }}
@@ -218,7 +218,9 @@ export default {
         }
       },
       loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
+      loadingTemplateText: ['', '.', '..', '...'],
       loadingInstance: {},
+      tamplateLoadingInstance: {},
       timeout: '',
       focusSources: 'Public Templates'
     }
@@ -248,11 +250,31 @@ export default {
           customClass: 'project-dialog-loading'
         })
         this.loadingText.map((text, index) => {
-          this.timeout = setTimeout(() => this.openFullScreen(text), 3000 * index)
+          this.timeout = setTimeout(() => this.openFullLoading(text), 3000 * index)
         })
       } else {
         clearTimeout(this.timeout)
-        this.openFullScreen()
+        this.openFullLoading()
+      }
+    },
+    isLoadingTemplate(val) {
+      if (val) {
+        const text = this.$t('LoadingText.loadingTemplateText')
+        this.tamplateLoadingInstance = this.$loading({
+          text,
+          spinner: 'el-icon-loading',
+          background: 'rgba(255, 255, 255, 0.9)',
+          target: '.loading-template',
+          customClass: 'project-dialog-template-loading'
+        })
+        // set 60secs for loading to show different words
+        for (let sec = 1; sec < 60; sec++) {
+          const templateText = `${text}${this.loadingTemplateText[sec % 4]}`
+          this.timeout = setTimeout(() => this.openTemplateFullLoading(templateText), 1000 * sec)
+        }
+      } else {
+        clearTimeout(this.timeout)
+        this.openTemplateFullLoading()
       }
     },
     focusSources(val) {
@@ -306,12 +328,15 @@ export default {
           })
       })
     },
-    openFullScreen(loadingText) {
+    openFullLoading(loadingText) {
       // handle i18n log warning when loadingText is undefined
       const text = loadingText ? this.$t(`LoadingText.${loadingText}`) : this.$t('LoadingText.integrationProject')
-      if (loadingText) this.loadingInstance.setText(text)
-      // set loading text every 3 seconds
+      if (loadingText) this.loadingInstance.setText(text) // set loading text every 3 second
       else this.loadingInstance.close() // if loadingText is undefined, close the instance
+    },
+    openTemplateFullLoading(loadingText) {
+      if (loadingText) this.tamplateLoadingInstance.setText(loadingText)
+      else this.tamplateLoadingInstance.close()
     },
     handleSendData() {
       const result = Object.assign({}, this.form)

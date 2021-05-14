@@ -653,6 +653,7 @@ export default {
     createRedmine: 'Adding a Redmine project...',
     createGitLab: 'Creating GitLab resources...',
     createHarbor: 'Linking to Harbor resources...',
-    integrationProject: 'Start integrating project resources...'
+    integrationProject: 'Start integrating project resources...',
+    loadingTemplateText: 'Update latest templates'
   }
 }
