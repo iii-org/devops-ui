@@ -472,6 +472,7 @@ export default {
     Info: '專案資訊',
     Template: '開發範本',
     TemplateName: '開發範本名稱',
+    TemplateDescription: '開發範本敘述',
     Version: '版本',
     Status: '專案狀態',
     Progress: '專案工作進度',
@@ -493,7 +494,8 @@ export default {
     StartDate: '起始日',
     DueDate: '到期日',
     ProjectOwner: '專案經理',
-    SelectProject: '請選擇專案'
+    SelectProject: '請選擇專案',
+    SelectTemplate: '請選擇範本'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

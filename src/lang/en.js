@@ -473,6 +473,7 @@ export default {
     Info: 'Project Info',
     Template: 'Template',
     TemplateName: 'Template Name',
+    TemplateDescription: 'Template Description',
     Version: 'Version',
     Status: 'Status',
     Progress: 'Progress',
@@ -496,7 +497,8 @@ export default {
     StartDate: 'Start Date',
     DueDate: 'Due Date',
     ProjectOwner: 'Project Owner',
-    SelectProject: 'Select a project'
+    SelectProject: 'Select a project',
+    SelectTemplate: 'Select a template'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

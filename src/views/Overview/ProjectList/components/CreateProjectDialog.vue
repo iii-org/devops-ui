@@ -82,7 +82,7 @@
             </div>
             <el-select
               v-model="form.template_id"
-              placeholder="Please select template"
+              :placeholder="$t('Project.SelectTemplate')"
               style="width:100%"
               clearable
               filterable
@@ -100,7 +100,7 @@
         <el-col :xs="24" :sm="6" :md="4">
           <el-form-item :label="$t('Project.Version')">
             <div slot="label" class="mb-2">
-              <span>{{ $t('Project.TemplateName') }}</span>
+              <span>{{ $t('Project.Version') }}</span>
             </div>
             <el-select
               v-model="form.tag_name"
@@ -115,7 +115,7 @@
           </el-form-item>
         </el-col>
         <el-col v-if="focusTemplate.description" :span="24">
-          <el-form-item label="Template Description">
+          <el-form-item :label="$t('Project.TemplateDescription')">
             <p v-html="focusTemplate.description" />
           </el-form-item>
         </el-col>
