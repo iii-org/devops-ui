@@ -185,7 +185,6 @@ export default {
     },
     handleClick(row, column) {
       if (column.type !== 'first') {
-        // this.$refs['userTable'].toggleRowExpansion(row)
         this.toggleMember(row)
       }
     },
