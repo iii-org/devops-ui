@@ -1,5 +1,5 @@
 <template>
-  <el-table-column align="center" v-bind="$props" :min-width="minWidth">
+  <el-table-column align="center" v-bind="$props">
     <template slot-scope="scope">
       <el-tag
         v-if="scope.row[prop]"
