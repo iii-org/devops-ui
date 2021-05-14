@@ -1,42 +1,18 @@
 <template>
   <div class="app-container">
-    <router-view />
     <div class="clearfix">
       <div>
         <project-list-selector />
-        <el-select
-          v-model="versionValue"
-          :placeholder="$t('Version.SelectVersion')"
-          :disabled="selectedProjectId === -1"
-          class="mr-4"
-          filterable
-          @change="updateData"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-          <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <el-select
-          v-model="trackerValue"
-          :placeholder="$t('Issue.SelectType')"
-          :disabled="selectedProjectId === -1"
-          class="mr-4"
-          filterable
-          clearable
-          @change="updateData"
-        >
-          <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
-            <tracker :name="item.name" />
-          </el-option>
-        </el-select>
         <el-button
           id="btn-add-issue"
           type="success"
           icon="el-icon-plus"
           :disabled="selectedProjectId === -1"
-          @click="handleAddNewIssue"
+          @click="handleQuickAddClose"
         >
           {{ $t('Issue.AddIssue') }}
         </el-button>
+        <el-button icon="el-icon-s-operation" @click="filterVisible=!filterVisible" />
         <el-input
           id="input-search"
           v-model="searchData"
@@ -47,6 +23,40 @@
       </div>
     </div>
     <el-divider />
+    <quick-add-issue ref="quickAddIssue"
+                     :save-data="saveIssue" :project-id="selectedProjectId"
+                     :visible.sync="quickAddTopicDialogVisible"
+                     :tracker="tracker"
+                     @add-issue="advancedAddIssue"
+    />
+    <el-row v-if="filterVisible" type="flex" :gutter="10">
+      <el-col>
+        <el-form inline label-position="left">
+          <el-form-item>
+            <el-select
+              v-model="versionValue"
+              :placeholder="$t('Version.SelectVersion')"
+              :disabled="selectedProjectId === -1"
+              class="mr-4"
+              filterable
+            >
+              <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
+              <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="onToggleSelect">
+              全選
+            </el-button>
+          </el-form-item>
+          <el-form-item v-for="(item) in tracker" :key="item.id">
+            <el-checkbox v-model="item.visible">
+              <tracker :name="item.name" />
+            </el-checkbox>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
     <el-table
       ref="issueList"
       v-loading="listLoading"
@@ -57,7 +67,7 @@
       highlight-current-row
       row-key="id"
       :tree-props="{ children: 'child' }"
-      height="100%"
+      height="60vh"
       :row-class-name="getRowClass"
       @cell-click="handleClick"
     >
@@ -71,7 +81,7 @@
                 :style="{ 'font-size': '14px', cursor: 'pointer' }"
                 :underline="false"
                 @click="handleEdit(scope.row.parent_id)"
-                >#{{ scope.row.parent_id }}
+              >#{{ scope.row.parent_id }}
               </el-link>
             </li>
             <li v-if="scope.row.children.length">
@@ -84,13 +94,11 @@
                     :underline="false"
                     @click="handleEdit(child.id)"
                   >
-                    <status :name="child.status.name" size="mini" /> <tracker :name="child.tracker.name" /> #{{
-                      child.id
-                    }}
-                    - {{ child.name }}
-                    <span v-if="Object.keys(child.assigned_to).length > 1"
-                      >({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span
-                    >
+                    <status :name="child.status.name" size="mini" />
+                    <tracker :name="child.tracker.name" />
+                    #{{ child.id }} - {{ child.name }}
+                    <span v-if="Object.keys(child.assigned_to).length>1">
+                      ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span>
                   </el-link>
                 </li>
               </ol>
@@ -116,7 +124,10 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Status')" width="150">
         <template slot-scope="scope">
-          <status v-if="scope.row.status.name" :name="scope.row.status.name" />
+          <status
+            v-if="scope.row.status.name"
+            :name="scope.row.status.name"
+          />
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
@@ -140,6 +151,7 @@
       :project-id="selectedProjectId"
       :parent-id="parentId"
       :parent-name="parentName"
+      :prefill="form"
       @add-topic-visible="emitAddTopicDialogVisible"
     />
   </div>
@@ -155,11 +167,13 @@ import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Fuse from 'fuse.js'
+import QuickAddIssue from './components/QuickAddIssue'
 
 export default {
   name: 'ProjectIssues',
   components: {
     AddIssue,
+    QuickAddIssue,
     Priority,
     Status,
     Tracker
@@ -167,21 +181,26 @@ export default {
   mixins: [MixinElTableWithAProject],
   data() {
     return {
+      filterVisible: false,
+      quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       search: '',
       parentId: 0,
       parentName: '',
       versionValue: '-1',
-      trackerValue: '',
       fixed_version: [],
       tracker: [],
-      listFilterVersionTrackerData: []
+      listFilterData: [],
+      quickChangeDialogVisible: false,
+      quickChangeForm: {},
+      assigneeList: [],
+      form: {}
     }
   },
   computed: {
     ...mapGetters(['userRole', 'userName']),
     filteredData() {
-      return this.listFilterVersionTrackerData.filter(data => {
+      return this.listFilterData.filter(data => {
         if (Object.keys(data.assigned_to).length <= 0) {
           data.assigned_to.name = ''
         }
@@ -193,14 +212,29 @@ export default {
           return data
         }
       })
+    },
+    trackerValue() {
+      return this.tracker.filter((item) => (item.visible === true))
     }
   },
   watch: {
+    selectedProjectId() {
+      this.versionValue = '-1'
+    },
     listData: {
       deep: true,
       handler() {
-        this.resetFilterVersionTrackerData()
+        this.updateData()
       }
+    },
+    trackerValue: {
+      deep: true,
+      handler() {
+        this.updateData()
+      }
+    },
+    versionValue() {
+      this.updateData()
     }
   },
   mounted() {
@@ -226,13 +260,23 @@ export default {
       this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
       const issueTrackerRes = await getIssueTracker()
       this.tracker = issueTrackerRes.data
+      this.tracker.forEach((item, idx) => {
+        this.$set(this.tracker[idx], 'visible', true)
+      })
       if (this.userRole === 'Engineer') {
         this.searchData = this.userName
       }
       return data
     },
     resetFilterVersionTrackerData() {
-      this.listFilterVersionTrackerData = this.listData
+      this.listFilterData = this.listData
+    },
+    onToggleSelect() {
+      const select = this.tracker.filter((item) => (item.visible === true))
+      const checker = select.length > 0
+      this.tracker.forEach((item, idx) => {
+        this.$set(this.tracker[idx], 'visible', !checker)
+      })
     },
     updateData() {
       console.log('updateData')
@@ -241,39 +285,37 @@ export default {
         keys: ['fixed_version.id'],
         useExtendedSearch: true
       }
-      const userOpt = {
+      const trackOpt = {
         keys: ['tracker.id'],
         useExtendedSearch: true
       }
       if (this.versionValue !== '-1') {
         this.searchIssueList(this.versionValue, versionOpt)
       }
-      if (this.trackerValue !== '') {
-        this.searchIssueList(this.trackerValue, userOpt)
+      if (this.trackerValue.length > 0) {
+        this.searchIssueList(this.trackerValue, trackOpt)
+      } else {
+        this.listFilterData = []
       }
     },
     searchIssueList(value, opt) {
-      if (value === '') {
-        this.listFilterVersionTrackerData = this.listData.filter(subItem => {
-          const findKey = opt['keys'][0].split('.')
-          const findName = findKey.reduce((total, current) => total[current], subItem)
-          return findName === undefined || findKey[0] === ''
-        })
-      } else {
-        const fuse = new Fuse(this.listData, opt)
-        const res = fuse.search(`="${value}"`)
-        this.listFilterVersionTrackerData = res.map(items => items.item)
+      const fuse = new Fuse(this.listFilterData, opt)
+      let search = `="${value}"`
+      if (Array.isArray(value) && value.length >= 1) {
+        search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item.id}"` })) }
       }
+      const res = fuse.search(search)
+      this.listFilterData = res.map(items => items.item)
     },
     handleClick(row, column) {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: row.id } })
+        this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
       }
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id } })
+      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
@@ -288,6 +330,7 @@ export default {
           })
           this.loadData()
           this.addTopicDialogVisible = false
+          this.$refs['quickAddIssue'].form.subject = ''
           return res
         })
         .catch(error => {
@@ -319,6 +362,12 @@ export default {
     hasRelationIssue(row) {
       return !!row.parent_id || (row.children !== undefined && row.children.length > 0)
     },
+    handleQuickAddClose() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+    },
+    getFilterCount(name) {
+      return this.listFilterData.filter((item) => (item.tracker.name === name)).length
+    },
     getRowClass({ row }) {
       const result = []
       if (this.hasRelationIssue(row) === false) {
@@ -326,18 +375,28 @@ export default {
       }
       result.push('cursor-pointer')
       return result.join(' ')
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
->>> .row-expand-cover .el-table__expand-column .cell {
+> > > .row-expand-cover .el-table__expand-column .cell {
   display: none;
 }
->>> .el-table__expanded-cell {
+
+> > > .el-table__expanded-cell {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+> > > .context-menu {
+  cursor: context-menu;
 }
 </style>
