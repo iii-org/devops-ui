@@ -38,8 +38,9 @@
           :data="pagedData"
           height="100%"
           :cell-style="{ height: rowHeight + 'px' }"
+          @cell-click="handleClick"
         >
-          <el-table-column width="55">
+          <el-table-column width="55" type="first">
             <template slot-scope="scope">
               <el-checkbox :value="isSelectedMember(scope.row)" class="el-checkbox" @change="toggleMember(scope.row)" />
             </template>
@@ -181,6 +182,12 @@ export default {
       this.$nextTick(() => {
         this.selectedUser = []
       })
+    },
+    handleClick(row, column) {
+      if (column.type !== 'first') {
+        // this.$refs['userTable'].toggleRowExpansion(row)
+        this.toggleMember(row)
+      }
     },
     handleAddConfirm() {
       if (this.selectedUser.length > 0) {
