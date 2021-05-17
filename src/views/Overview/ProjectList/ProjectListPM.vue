@@ -25,11 +25,16 @@
           <template v-else>
             {{ scope.row.display }}
           </template>
-          <br>
+          <br />
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="project_status" :label="$t('Project.Status')" location="projectListPM" min-width="100" />
+      <el-table-column-tag
+        prop="project_status"
+        :label="$t('Project.Status')"
+        location="projectListPM"
+        min-width="100"
+      />
       <!-- <el-table-column align="center" :label="$t('Project.Status')" width="100">
         <template slot-scope="scope">
           <el-tag
@@ -49,7 +54,7 @@
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
-          <br>
+          <br />
           <span class="status-bar-track">
             <span
               class="status-bar"
@@ -133,7 +138,7 @@
             {{ $t('general.Edit') }}
           </el-button>
           <el-button
-            :disabled="scope.row.creator_id !== userId"
+            :disabled="isAllowDelete(scope.row)"
             size="mini"
             type="danger"
             icon="el-icon-delete"
@@ -244,6 +249,16 @@ export default {
         message: this.$t('Notify.Copied'),
         type: 'success'
       })
+    },
+    isAllowDelete(row) {
+      const { creator_id, owner_id } = row
+      if (this.userRole === 'QA') {
+        if (creator_id !== this.userId) return true
+      } else if (this.userRole === 'Administrator') {
+        return false
+      } else {
+        if (owner_id !== this.userId) return true
+      }
     }
   }
 }
