@@ -15,17 +15,22 @@
         />
       </div>
       <el-divider />
-      <el-table :data="filteredData" border fit>
+      <div class="text-right mb-2">
+        <el-button class="mr-1" @click="fetchPipelineBranch">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
+      </div>
+      <el-table :data="filteredData" fit>
         <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" :width="150" />
         <el-table-column :label="$t('general.Description')" align="center" prop="commit_message" />
         <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" :min-width="80" />
         <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center">
           <template slot="header">
-            <div class="mb-1">{{ tool.name }}</div>
-            <!-- <el-checkbox v-model="tool.checkAll" @change="handleCheckAllChange(idx)" /> -->
+            <div class="mb-2">{{ tool.name }}</div>
+            <!-- <div class="mb-2">{{ tool.checkAll }}</div> -->
+            <!-- <el-switch v-model="tool.checkAll" /> -->
           </template>
           <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.testing_tools[idx].enable" @change="updatePipelineBranch" />
+            <el-checkbox v-model="scope.row.testing_tools[idx].enable" />
           </template>
         </el-table-column>
       </el-table>
@@ -50,9 +55,27 @@ export default {
       isAllSelected: [],
       isLoading: false,
       keyword: '',
-      searchKeys: ['branch']
+      searchKeys: ['branch'],
+      formChange: false
     }
   },
+  // beforeRouteLeave(to, from, next) {
+  //   if (this.formChange) {
+  //     this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+  //       confirmButtonText: this.$t('general.Confirm'),
+  //       cancelButtonText: this.$t('general.Cancel'),
+  //       type: 'warning'
+  //     })
+  //       .then(() => {
+  //         next()
+  //       })
+  //       .catch(() => {
+  //         next(false)
+  //       })
+  //   } else {
+  //     next()
+  //   }
+  // },
   computed: {
     ...mapGetters(['selectedProject']),
     selectedProjectRepositoryId() {
@@ -70,6 +93,14 @@ export default {
         }
         return result
       })
+    }
+  },
+  watch: {
+    listData: {
+      handler() {
+        this.formChange = true
+      },
+      deep: true
     }
   },
   mounted() {
@@ -123,9 +154,6 @@ export default {
         this.isLoading = false
       }
     }
-    // handleCheckAllChange(idx) {
-    //   console.log(idx)
-    // }
   }
 }
 </script>

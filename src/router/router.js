@@ -237,22 +237,29 @@ export const asyncRoutes = [
       },
       {
         path: 'settings',
-        name: 'Project Settings',
-        component: () => import('@/views/Project/Settings/index'),
-        meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] }
+        component: parentBlank,
+        meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] },
+        children: [
+          {
+            path: '',
+            name: 'Project Settings',
+            hidden: true,
+            component: () => import('@/views/Project/Settings/index')
+          },
+          {
+            path: 'advance-branch-settings',
+            name: 'advance-branch-settings',
+            hidden: true,
+            component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
+            meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
+          }
+        ]
       },
       {
         path: 'settings',
         name: 'Project Settings',
         component: () => import('@/views/Project/Settings/roles/QA'),
         meta: { title: 'Project Settings', roles: ['QA'] }
-      },
-      {
-        path: 'advance-branch-settings',
-        name: 'advance-branch-settings',
-        hidden: true,
-        component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
-        meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },
