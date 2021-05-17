@@ -110,15 +110,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { changePipelineByAction, getPipelines } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'ProgressPipelinesSocket',
-  components: { ElTableColumnTime, TestDetail },
-  mixins: [MixinBasicTableWithProject],
+  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination },
   data() {
     return {
       isLoading: false,
@@ -126,17 +127,35 @@ export default {
       lastUpdateTime: '',
       timer: null,
       focusPipelineId: 0,
-      searchKeys: ['commit_message']
+      listData: [],
+      listLoading: false,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      searchKeys: ['commit_message'],
+      keyword: ''
     }
   },
   computed: {
-    isActivePipeline() {
-      return this.pagedData.some(
-        item =>
-          item.execution_state === 'Building' ||
-          item.execution_state === 'Waiting' ||
-          item.execution_state === 'Queueing'
-      )
+    ...mapGetters(['selectedProject', 'selectedProjectId', 'userId']),
+    pagedData() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit
+      return this.filteredData.slice(start, end)
+    },
+    filteredData() {
+      const { listData, searchKeys } = this
+      const keyword = this.keyword.toLowerCase()
+      return listData.filter(data => {
+        let result = false
+        for (let i = 0; i < searchKeys.length; i++) {
+          const columnValue = data[searchKeys[i]].toLowerCase()
+          result = result || columnValue.includes(keyword)
+          if (result) break
+        }
+        return result
+      })
     }
   },
   watch: {
@@ -146,12 +165,33 @@ export default {
       } else {
         this.clearTimer()
       }
+    },
+    selectedProject() {
+      this.loadData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    keyword() {
+      this.listQuery.page = 1
     }
+  },
+  mounted() {
+    this.loadData()
+    this.setTimer()
   },
   beforeDestroy() {
     this.clearTimer()
   },
   methods: {
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    async loadData() {
+      this.listLoading = true
+      this.listData = []
+      await this.fetchData()
+      this.listLoading = false
+    },
     async fetchData() {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
@@ -171,12 +211,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-    },
-    async loadData() {
-      this.listLoading = true
-      this.listData = []
-      await this.fetchData()
-      this.listLoading = false
     },
     showNoProjectWarning() {
       this.$message({
@@ -202,39 +236,26 @@ export default {
         })
     },
     getTagType(status) {
-      switch (status) {
-        case 'Failed':
-          return 'danger'
-        case 'Finished':
-          return 'success'
-        case 'Aborted':
-          return 'warning'
-        case 'Waiting':
-          return 'slow'
-        case 'Building':
-          return 'success'
-        default:
-          return 'info'
+      const mapping = {
+        Failed: 'danger',
+        Finished: 'success',
+        Aborted: 'warning',
+        Waiting: 'slow',
+        Building: 'success'
       }
+      return mapping[status] || 'info'
     },
     getTagEffect(status) {
-      switch (status) {
-        case 'Building':
-          return 'light'
-        default:
-          return 'dark'
-      }
+      const mapping = { Building: 'light' }
+      return mapping[status] || 'dark'
     },
     onDetailsClick(id) {
       this.$refs.testDetail.pipelinesExecRun = id
       this.$refs.testDetail.fetchStages()
     },
     isAllowStop(status) {
-      if (status === 'Waiting' || status === 'Building' || status === 'Queueing') {
-        return true
-      } else {
-        return false
-      }
+      const allowStatus = ['Waiting', 'Building', 'Queueing']
+      return allowStatus.includes(status)
     },
     setTimer() {
       this.timer = setInterval(() => this.fetchData(), 5000)

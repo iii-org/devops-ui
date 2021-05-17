@@ -5,7 +5,7 @@
         {{ $t('ProgressPipelines.TestDetail') }}
       </span>
     </template>
-    <el-tabs v-model="activeStage" tab-position="left" @tab-click="emitPipeLog">
+    <el-tabs v-model="activeStage" tab-position="left" @tab-click="userClick">
       <el-tab-pane
         v-for="(stage, idx) in stages"
         :key="idx"
@@ -96,6 +96,11 @@ export default {
   computed: {
     ...mapGetters(['selectedProject'])
   },
+  watch: {
+    selectedProject() {
+      this.fetchCiPipelineId()
+    }
+  },
   mounted() {
     if (this.selectedProject.id === -1) return
     this.fetchCiPipelineId()
@@ -106,6 +111,9 @@ export default {
     this.handleClose()
   },
   methods: {
+    userClick(tab) {
+      this.emitPipeLog(tab)
+    },
     emitPipeLog(tab) {
       const index = Number(tab.index)
       this.emitStages.push(index)
@@ -118,12 +126,12 @@ export default {
         step_index: stage.steps[0].step_id,
         sid: this.sid
       }
-      // console.log('EMIT get_pipe_log ===>', emitObj)
+      console.log('EMIT get_pipe_log ===>', emitObj)
       this.socket.emit('get_pipe_log', emitObj)
     },
     setLogMessageListener() {
       this.socket.on('pipeline_log', sioEvt => {
-        // console.log('EVENT pipeline_log ===>', sioEvt)
+        console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         const stageIdx = stage_index - 1
         if (data === '') {
@@ -158,7 +166,6 @@ export default {
       }
     },
     changeFocusTab(order, stageIdx, timeout = 0) {
-      console.log('changeFocusTab')
       if (order === 1 && stageIdx === 0) {
         this.activeStage = `${order} ${this.stages[stageIdx].name}`
         if (this.emitStages.includes(stageIdx)) return
@@ -215,6 +222,14 @@ export default {
         })
         this.sid = this.socket.id
       })
+      // this.socket.on('disconnect', msg => {
+      //   this.$notify({
+      //     title: this.$t('general.Info'),
+      //     message: msg,
+      //     type: 'warning'
+      //   })
+      //   this.sid = this.socket.id
+      // })
     },
     async updateStagesState() {
       const { repository_id } = this.selectedProject
@@ -233,6 +248,7 @@ export default {
       this.stages = []
       this.emitStages = []
       this.dialogVisible = false
+      this.activeStage = ''
     },
     setTimer() {
       const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
