@@ -167,6 +167,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import i18n from '@/lang'
 import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
@@ -201,10 +202,25 @@ export default {
             trigger: 'blur'
           }
         ],
-        display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
+        display: [
+          { required: true, message: 'Project Name is required', trigger: 'blur' },
+          {
+            required: true,
+            pattern: /^((?!<|&).)*$/,
+            message: i18n.t('Project.DisplayRule'),
+            trigger: 'blur'
+          }
+        ],
         start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
         due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
-        owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }]
+        owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }],
+        description: [
+          {
+            pattern: /^((?!<|&).)*$/,
+            message: i18n.t('Project.DescriptionRule'),
+            trigger: 'blur'
+          }
+        ]
       },
       userList: [],
       templateList: [],
@@ -221,7 +237,7 @@ export default {
       loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
       loadingTemplateText: ['', '.', '..', '...'],
       loadingInstance: {},
-      tamplateLoadingInstance: {},
+      templateLoadingInstance: {},
       timeout: '',
       focusSources: 'Public Templates'
     }
@@ -261,7 +277,7 @@ export default {
     isClickUpdateTemplate(val) {
       if (val) {
         const text = this.$t('LoadingText.loadingTemplateText')
-        this.tamplateLoadingInstance = this.$loading({
+        this.templateLoadingInstance = this.$loading({
           text,
           spinner: 'el-icon-loading',
           background: 'rgba(255, 255, 255, 0.9)',
@@ -334,12 +350,13 @@ export default {
     openFullLoading(loadingText) {
       // handle i18n log warning when loadingText is undefined
       const text = loadingText ? this.$t(`LoadingText.${loadingText}`) : this.$t('LoadingText.integrationProject')
-      if (loadingText) this.loadingInstance.setText(text) // set loading text every 3 second
+      if (loadingText) this.loadingInstance.setText(text)
+      // set loading text every 3 second
       else this.loadingInstance.close() // if loadingText is undefined, close the instance
     },
     openTemplateFullLoading(loadingText) {
-      if (loadingText) this.tamplateLoadingInstance.setText(loadingText)
-      else this.tamplateLoadingInstance.close()
+      if (loadingText) this.templateLoadingInstance.setText(loadingText)
+      else this.templateLoadingInstance.close()
     },
     handleSendData() {
       const result = Object.assign({}, this.form)
