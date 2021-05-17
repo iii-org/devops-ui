@@ -426,7 +426,7 @@ export default {
           this.$refs['IssueFiles'].$el.getBoundingClientRect().height -
           this.$refs['IssueRelation'].$el.getBoundingClientRect().height
         if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (this.$refs['mainIssue'].$children[2].$children[0].$options.name === 'IssueNotesEditor') {
+          if (this.$refs['mainIssue'].$children[3].$children[0].$options.name === 'IssueNotesEditor') {
             this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
             this.scrollClass = 'issueHeightEditor'
           }

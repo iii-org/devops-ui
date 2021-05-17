@@ -318,7 +318,24 @@ export default {
     UploadFiles: '附件上傳',
     RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
-    name: '議題名稱'
+    name: '議題名稱',
+    detail: {
+      message: {
+        set_to: '{user}: {action}，{message} ({time})',
+        from_to: '從 {0} 設定成 {1} ',
+        to: '設定成 {0}',
+        from: '從 {0} 清除設定'
+      },
+      assigned_to_id: '@:Issue.Assignee',
+      subject: '@:general.Title',
+      description: '@:Issue.Description',
+      estimated_hours: '@:Issue.Estimate',
+      start_date: '@:Issue.StartDate',
+      due_date: '@:Issue.EndDate',
+      priority_id: '@:Issue.Priority',
+      status_id: '@:general.Status',
+      tracker_id: '@:general.Type'
+    }
   },
   Wiki: {
     AddWiki: '新增Wiki',

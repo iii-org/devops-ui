@@ -17,18 +17,44 @@
       </template>
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
-      <el-divider v-for="(detail,index) in note.details" :key="index" content-position="center">
-        {{ note.user.name }}: <b>{{ detail.name }}</b> set {{ getValueName(detail.old_value) }} to {{ getValueName(detail.new_value) }} ({{ note.created_on | formatTime }})
-      </el-divider>
+      <el-row v-for="(detail,index) in note.details" :key="index">
+        <div class="el-divider el-divider--horizontal">
+          <i18n path="Issue.detail.message.set_to" tag="div" class="el-divider__text is-center">
+            <span place="user">{{ note.user.name }}</span>
+            <b place="action">{{ $t('Issue.detail.'+detail.name) }}</b>
+            <span place="message">
+              <span v-if="detail.old_value&&detail.new_value">
+                <i18n path="Issue.detail.message.from_to">
+                  <b place="0">{{ getValueName(detail.old_value) }}</b>
+                  <b place="1">{{ getValueName(detail.new_value) }}</b>
+                </i18n>
+              </span>
+              <span v-else-if="detail.old_value">
+                <i18n path="Issue.detail.message.from">
+                  <b place="0">{{ getValueName(detail.old_value) }}</b>
+                </i18n>
+              </span>
+              <span v-else>
+                <i18n path="Issue.detail.message.to">
+                  <b place="0">{{ getValueName(detail.new_value) }}</b>
+                </i18n>
+              </span>
+            </span>
+            <span place="time">{{ note.created_on | formatTime }}</span>
+          </i18n>
+        </div>
+      </el-row>
     </template>
   </el-row>
 </template>
 
 <script>
 import dayjs from 'dayjs'
+import i18n from '@/lang'
 
 export default {
   name: 'DialogContent',
+  i18n,
   filters: {
     justifyRight(value) {
       return (value) ? 'end' : 'start'

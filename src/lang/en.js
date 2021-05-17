@@ -319,7 +319,24 @@ export default {
     UploadFiles: 'Upload Files',
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
-    name: 'Name'
+    name: 'Name',
+    detail: {
+      message: {
+        set_to: '{user}: {action} {message} ({time})',
+        from_to: 'from {0} set to {1} .',
+        to: 'set to {0}',
+        from: 'from {0} clean set.'
+      },
+      assigned_to_id: '@:Issue.Assignee',
+      subject: '@:general.Title',
+      description: '@:Issue.Description',
+      estimated_hours: '@:Issue.Estimate',
+      start_date: '@:Issue.StartDate',
+      due_date: '@:Issue.EndDate',
+      priority_id: '@:Issue.Priority',
+      status_id: '@:general.Status',
+      tracker_id: '@:general.Type'
+    }
   },
   Wiki: {
     AddWiki: 'Add Wiki',
