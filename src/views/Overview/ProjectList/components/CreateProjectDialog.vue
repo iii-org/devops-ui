@@ -210,6 +210,7 @@ export default {
       templateList: [],
       focusTemplate: {},
       isLoadingTemplate: false,
+      isClickUpdateTemplate: false,
       pickerOptions(startDate) {
         return {
           disabledDate(time) {
@@ -257,7 +258,7 @@ export default {
         this.openFullLoading()
       }
     },
-    isLoadingTemplate(val) {
+    isClickUpdateTemplate(val) {
       if (val) {
         const text = this.$t('LoadingText.loadingTemplateText')
         this.tamplateLoadingInstance = this.$loading({
@@ -291,11 +292,13 @@ export default {
         const userList = await getUserListByFilter({ role_ids: 3 }) // pm
         this.userList = userList.data.user_list
       }
+      if (isForceUpdate) this.isClickUpdateTemplate = true
       this.isLoadingTemplate = true
       await getTemplateList({ force_update: isForceUpdate }).then(res => {
         this.templateList = res.data
       })
       this.isLoadingTemplate = false
+      this.isClickUpdateTemplate = false
     },
     onDialogClosed() {
       this.showDialog = false
