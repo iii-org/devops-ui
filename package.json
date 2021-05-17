@@ -3,20 +3,21 @@
   "version": "1.1.0",
   "description": "III devops UI component",
   "author": "iii-org",
-  "license": "MIT",
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "test:unit": "jest --clearCache && vue-cli-service test:unit",
+    "lint": "eslint --ext .js,.vue src",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
+    "dev": "vue-cli-service serve",
     "preview": "node build/index.js --preview",
-    "lint": "eslint --ext .js,.vue src",
-    "test:unit": "jest --clearCache && vue-cli-service test:unit",
-    "test:ci": "npm run lint && npm run test:unit",
-    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
+    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
+    "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
     "@gitgraph/js": "^1.3.5",
+    "@tailwindcss/postcss7-compat": "^2.0.2",
     "@toast-ui/vue-editor": "^2.5.1",
+    "autoprefixer": "^9",
     "axios": "0.18.1",
     "dayjs": "^1.10.4",
     "echarts": "^5.0.2",
@@ -29,7 +30,10 @@
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
+    "postcss": "^7",
     "socket.io-client": "^4.0.0",
+    "sortablejs": "^1.13.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "tui-editor": "1.3.3",
     "vue": "2.6.12",
     "vue-clipboard2": "^0.3.1",
@@ -40,7 +44,7 @@
     "vue-jwt-decode": "^0.1.0",
     "vue-router": "3.0.6",
     "vue-showdown": "^2.4.1",
-    "vuedraggable": "2.20.0",
+    "vuedraggable": "^2.24.3",
     "vuex": "3.1.0"
   },
   "devDependencies": {
@@ -67,14 +71,16 @@
     "serve-static": "^1.13.2",
     "svg-sprite-loader": "4.1.3",
     "svgo": "1.2.2",
+    "vue-cli-plugin-tailwind": "~2.0.6",
     "vue-template-compiler": "^2.6.12"
-  },
-  "engines": {
-    "node": ">=8.9",
-    "npm": ">= 3.0.0"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "engines": {
+    "node": ">=8.9",
+    "npm": ">= 3.0.0"
+  },
+  "license": "MIT"
 }

@@ -20,6 +20,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/zh-tw'
+import '@/assets/tailwind.css'
+
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 dayjs.extend(duration)
