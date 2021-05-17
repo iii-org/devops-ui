@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueShowdown from 'vue-showdown'
+import '@/assets/tailwind.css'
 import 'normalize.css/normalize.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -20,7 +21,6 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/zh-tw'
-import '@/assets/tailwind.css'
 
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
