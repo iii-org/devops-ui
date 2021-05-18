@@ -332,7 +332,6 @@ export default {
         this.addNewProject(sendData)
           .then(() => {
             this.$message({
-              title: this.$t('general.Success'),
               message: this.$t('Notify.Created'),
               type: 'success'
             })
@@ -340,7 +339,10 @@ export default {
             this.$emit('update')
           })
           .catch(err => {
-            console.log(err)
+            this.$message({
+              message: err,
+              type: 'error'
+            })
           })
           .then(() => {
             this.isLoading = false
