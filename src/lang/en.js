@@ -320,6 +320,9 @@ export default {
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
     name: 'Name',
+    priority: '@:Issue.Priority',
+    tracker: '@:general.Type',
+    assigned_to: '@:Issue.Assignee',
     detail: {
       message: {
         set_to: '{user}: {action} {message} ({time})',
