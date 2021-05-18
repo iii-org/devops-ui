@@ -32,6 +32,10 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- <div class="text-right mt-3">
+        <el-button size="mini" @click="fetchPipeDefBranch">{{ $t('general.Cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="updatePipeDefBranch">{{ $t('general.Confirm') }}</el-button>
+      </div> -->
     </template>
     <template v-else-if="settingStatus === 'unSupported'">
       <div class="text-center text-h6 mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
@@ -56,7 +60,8 @@ export default {
       settingStatus: '',
       branch: '',
       stagesData: [],
-      webDependencyKeys: ['test-postman', 'test-webinspect']
+      services: ['web', 'db'],
+      dependenceKeys: ['test-postman', 'test-webinspect', 'test-zap', 'test-sideex']
     }
   },
   computed: {
@@ -67,14 +72,14 @@ export default {
   },
   watch: {
     selectedProject() {
-      if (this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
+      if (this.selectedProjectRepositoryId !== undefined) this.fetchPipeDefBranch()
     }
   },
   mounted() {
-    if (this.selectedProjectRepositoryId !== undefined) this.fetchPipelineDefaultBranch()
+    if (this.selectedProjectRepositoryId !== undefined) this.fetchPipeDefBranch()
   },
   methods: {
-    async fetchPipelineDefaultBranch() {
+    async fetchPipeDefBranch() {
       this.isLoading = true
       try {
         const res = await getPipelineDefaultBranch(this.selectedProjectRepositoryId)
@@ -103,47 +108,32 @@ export default {
     },
     handleStageChange(stage) {
       const { key, has_default_branch } = stage
-      switch (key) {
-        case 'web':
-          this.handleWebStageChange(has_default_branch)
-          break
-        case 'test-postman':
-          this.handleWebDependencyChange(has_default_branch)
-          break
-        case 'test-webinspect':
-          this.handleWebDependencyChange(has_default_branch)
-          break
-        default:
-          this.updatePipelineDefaultBranch()
-          break
-      }
-    },
-    handleWebStageChange(stageStatus) {
-      const { stagesData, webDependencyKeys } = this
-      if (!stageStatus) {
-        webDependencyKeys.forEach(key => {
-          const idx = stagesData.findIndex(stage => stage.key === key)
-          if (idx !== -1) stagesData[idx].has_default_branch = false
+      if (this.services.includes(key)) {
+        if (has_default_branch) return
+        this.dependenceKeys.forEach(key => {
+          const idx = this.stagesData.findIndex(stage => key === stage.key)
+          if (idx < 0) return
+          this.stagesData[idx].has_default_branch = has_default_branch
         })
       }
-      this.updatePipelineDefaultBranch()
-    },
-    handleWebDependencyChange(stageStatus) {
-      const { stagesData } = this
-      if (stageStatus) {
-        const idx = stagesData.findIndex(stage => stage.key === 'web')
-        if (idx !== -1) stagesData[idx].has_default_branch = true
+      if (this.dependenceKeys.includes(key)) {
+        if (!has_default_branch) return
+        this.services.forEach(key => {
+          const idx = this.stagesData.findIndex(stage => key === stage.key)
+          if (idx < 0) return
+          this.stagesData[idx].has_default_branch = has_default_branch
+        })
       }
-      this.updatePipelineDefaultBranch()
+      this.updatePipeDefBranch()
     },
-    async updatePipelineDefaultBranch() {
-      const sendData = { detail: { stages: this.stagesData }}
+    async updatePipeDefBranch() {
+      const sendData = { detail: { stages: this.stagesData } }
       this.isStagesLoading = true
       try {
         await editPipelineDefaultBranch(this.selectedProjectRepositoryId, sendData)
       } catch (err) {
-        this.fetchPipelineDefaultBranch()
-        this.$message({
+        this.fetchPipeDefBranch()
+        this.$notify({
           title: this.$t('general.Error'),
           message: err,
           type: 'error'
