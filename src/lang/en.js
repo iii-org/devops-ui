@@ -338,7 +338,8 @@ export default {
       due_date: '@:Issue.EndDate',
       priority_id: '@:Issue.Priority',
       status_id: '@:general.Status',
-      tracker_id: '@:general.Type'
+      tracker_id: '@:general.Type',
+      fixed_version_id: '@:Version.Version'
     }
   },
   Wiki: {

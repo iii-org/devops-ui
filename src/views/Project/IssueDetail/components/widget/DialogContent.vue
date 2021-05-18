@@ -20,27 +20,27 @@
       <el-row v-for="(detail,index) in note.details" :key="index">
         <div class="el-divider el-divider--horizontal">
           <i18n path="Issue.detail.message.set_to" tag="div" class="el-divider__text is-center">
-            <span place="user">{{ note.user.name }}</span>
-            <b place="action">{{ $t('Issue.detail.'+detail.name) }}</b>
-            <span place="message">
+            <span slot="user">{{ note.user.name }}</span>
+            <b slot="action">{{ ($te('Issue.detail.'+detail.name))?$t('Issue.detail.'+detail.name):$t('Issue.detail.'+detail.property) }}</b>
+            <span slot="message">
               <span v-if="detail.old_value&&detail.new_value">
                 <i18n path="Issue.detail.message.from_to">
-                  <b place="0">{{ getValueName(detail.old_value) }}</b>
-                  <b place="1">{{ getValueName(detail.new_value) }}</b>
+                  <b slot="0">{{ getValueName(detail.old_value) }}</b>
+                  <b slot="1">{{ getValueName(detail.new_value) }}</b>
                 </i18n>
               </span>
               <span v-else-if="detail.old_value">
                 <i18n path="Issue.detail.message.from">
-                  <b place="0">{{ getValueName(detail.old_value) }}</b>
+                  <b slot="0">{{ getValueName(detail.old_value) }}</b>
                 </i18n>
               </span>
               <span v-else>
                 <i18n path="Issue.detail.message.to">
-                  <b place="0">{{ getValueName(detail.new_value) }}</b>
+                  <b slot="0">{{ getValueName(detail.new_value) }}</b>
                 </i18n>
               </span>
             </span>
-            <span place="time">{{ note.created_on | formatTime }}</span>
+            <span slot="time">{{ note.created_on | formatTime }}</span>
           </i18n>
         </div>
       </el-row>
