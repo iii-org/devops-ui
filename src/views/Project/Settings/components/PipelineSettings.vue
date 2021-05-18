@@ -32,10 +32,14 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <div class="text-right mt-3">
-        <el-button size="mini" @click="fetchPipeDefBranch">{{ $t('general.Cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="updatePipeDefBranch">{{ $t('general.Confirm') }}</el-button>
-      </div> -->
+      <div class="text-right mt-3">
+        <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">{{
+          $t('general.Cancel')
+        }}</el-button>
+        <el-button size="mini" type="primary" :loading="isStagesLoading" @click="updatePipeDefBranch">{{
+          $t('general.Confirm')
+        }}</el-button>
+      </div>
     </template>
     <template v-else-if="settingStatus === 'unSupported'">
       <div class="text-center text-h6 mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
@@ -124,7 +128,6 @@ export default {
           this.stagesData[idx].has_default_branch = has_default_branch
         })
       }
-      this.updatePipeDefBranch()
     },
     async updatePipeDefBranch() {
       const sendData = { detail: { stages: this.stagesData } }
