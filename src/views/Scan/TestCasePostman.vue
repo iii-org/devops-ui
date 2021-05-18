@@ -5,22 +5,20 @@
         <router-link :to="{ name: 'postman' }">
           <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
         </router-link>
-        <div class="text-center">
-          <div class="mb-2">
-            <span class="text-body-1 font-weight-bold mb-1">{{ selectedProject.display }}</span>
-            <el-tag class="mr-2" size="small" type="primary">
-              <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}
-            </el-tag>
-            <el-link
-              type="primary"
-              target="_blank"
-              style="font-size: 16px"
-              :underline="false"
-              :href="testCaseInfos.commit_url"
-            >
-              #{{ testCaseInfos.commit_id }}
-            </el-link>
-          </div>
+        <div>
+          <el-tag size="small" type="primary">
+            <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}
+          </el-tag>
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :underline="false"
+            :href="testCaseInfos.commit_url"
+          >
+            #{{ testCaseInfos.commit_id }}
+          </el-link>
+          <span class="text-body-1 font-weight-bold mx-3">{{ selectedProject.display }}</span>
         </div>
         <el-input
           v-model="keyword"
@@ -54,6 +52,16 @@
             {{ $t('TestCase.Fail') }}
           </el-tag>
           <span class="tex-subtitle-2">{{ countRequestMsg('Fail') }}</span>
+          <template v-if="collectionList.length > 0">
+            <el-select
+              v-model="focusCollection"
+              :placeholder="$t('RuleMsg.PleaseSelect')"
+              size="mini"
+              style="width: 100px"
+            >
+              <el-option v-for="item in collectionList" :key="item" :label="item" :value="item" />
+            </el-select>
+          </template>
         </div>
       </div>
       <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedDataByChecked" border fit>
@@ -65,13 +73,6 @@
           min-width="70"
           location="testCasePostman"
         />
-        <!-- <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.testResult" :type="getTagType(scope.row.testResult)" effect="dark">
-              {{ $t(`TestCase.${scope.row.testResult}`) }}
-            </el-tag>
-          </template>
-        </el-table-column> -->
         <el-table-column
           align="center"
           :label="$t('TestCase.Method')"
@@ -115,13 +116,16 @@ import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'TestCasePostman',
+  components: { ElTableColumnTag },
   mixins: [MixinBasicTable],
-  component: { ElTableColumnTag },
   data() {
     return {
       testCaseInfos: {},
+      testCaseResults: {},
       togglePass: true,
-      toggleFail: true
+      toggleFail: true,
+      focusCollection: '',
+      collectionList: []
     }
   },
   computed: {
@@ -146,6 +150,9 @@ export default {
     },
     toggleFail() {
       this.listQuery.page = 1
+    },
+    focusCollection() {
+      this.handleFocusCollectionChange()
     }
   },
   methods: {
@@ -153,7 +160,11 @@ export default {
       const res = await getPostmanReport(this.$route.params.id)
       const { branch, commit_id, commit_url, start_time } = res.data
       this.testCaseInfos = { branch, commit_id, commit_url, start_time }
-      const testCases = this.formatData(res.data.report.json_file.executions)
+      this.testCaseResults = res.data.report.json_file
+      const isSingleCollections = Object.keys(this.testCaseResults).includes('assertions' || 'executions')
+      const testCases = isSingleCollections
+        ? this.formatData(this.testCaseResults.executions)
+        : this.handleMultiCollections(this.testCaseResults)
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
@@ -171,13 +182,17 @@ export default {
         return result
       })
     },
+    handleMultiCollections(data) {
+      this.collectionList = Object.keys(data)
+      this.focusCollection = this.collectionList[0]
+      return this.formatData(data[this.focusCollection].executions)
+    },
+    handleFocusCollectionChange() {
+      this.listData = this.formatData(this.testCaseResults[this.focusCollection].executions)
+    },
     getTagType(status) {
-      switch (status) {
-        case 'Fail':
-          return 'danger'
-        case 'Pass':
-          return 'success'
-      }
+      const mapping = { Fail: 'danger', Pass: 'success' }
+      return mapping[status]
     },
     countRequestMsg(testResult) {
       const filteredRequests = this.filteredData.filter(item => item.testResult === testResult)
