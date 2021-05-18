@@ -14,7 +14,11 @@ const getDefaultState = () => {
   return {
     list: [],
     total: 0,
-    selectedProject: { id: -1 }
+    selectedProject: { id: -1 },
+    kanbanVersionValue: '-1',
+    kanbanMemberValue: '-1',
+    kanbanFilterDimension: 'status',
+    kanbanFilterValue: []
   }
 }
 
@@ -29,6 +33,18 @@ const mutations = {
   },
   SET_SELECTED_PROJECT: (state, project) => {
     state.selectedProject = project
+  },
+  SET_KANBAN_VERSION_VALUE: (state, value) => {
+    state.kanbanVersionValue = value
+  },
+  SET_KANBAN_MEMBER_VALUE: (state, value) => {
+    state.kanbanMemberValue = value
+  },
+  SET_KANBAN_FILTER_DIMENSION: (state, value) => {
+    state.kanbanFilterDimension = value
+  },
+  SET_KANBAN_FILTER_VALUE: (state, value) => {
+    state.kanbanFilterValue = value
   }
 }
 
@@ -78,8 +94,7 @@ const actions = {
   },
   async editProject({ commit, dispatch }, { pId, data }) {
     try {
-      const res = await EP(pId, data)
-      return res
+      return await EP(pId, data)
     } catch (error) {
       console.error(error.toString())
     }
@@ -95,30 +110,44 @@ const actions = {
   },
   async getProjectIssueProgress({ commit }, pId) {
     try {
-      const res = await GPIP(pId)
-      return res
+      return await GPIP(pId)
     } catch (error) {
       console.error(error.toString())
     }
   },
   async getProjectIssueStatistics({ commit }, pId) {
     try {
-      const res = await GPIS(pId)
-      return res
+      return await GPIS(pId)
     } catch (error) {
       console.error(error.toString())
     }
   },
   async getProjectUserList({ commit }, pId) {
     try {
-      const res = await GPUL(pId)
-      return res
+      return await GPUL(pId)
     } catch (error) {
       console.error(error.toString())
     }
   },
   setSelectedProject({ commit }, project) {
     commit('SET_SELECTED_PROJECT', project)
+    commit('SET_KANBAN_VERSION_VALUE', '-1')
+    commit('SET_KANBAN_MEMBER_VALUE', '-1')
+    commit('SET_KANBAN_FILTER_DIMENSION', 'status')
+    commit('SET_KANBAN_FILTER_VALUE', [])
+  },
+  setKanbanVersionValue({ commit }, value) {
+    commit('SET_KANBAN_VERSION_VALUE', value)
+  },
+  setKanbanMemberValue({ commit }, value) {
+    commit('SET_KANBAN_MEMBER_VALUE', value)
+  },
+  setKanbanFilterDimension({ commit }, value) {
+    commit('SET_KANBAN_FILTER_DIMENSION', value)
+    commit('SET_KANBAN_FILTER_VALUE', [])
+  },
+  setKanbanFilterValue({ commit }, value) {
+    commit('SET_KANBAN_FILTER_VALUE', value)
   }
 }
 

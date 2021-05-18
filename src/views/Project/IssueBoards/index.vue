@@ -4,24 +4,24 @@
       <el-col :md="24" :lg="14">
         <project-list-selector />
         <el-select
-          v-if="filterDimension !== 'fixed_version'"
-          v-model="versionValue"
+          v-if="kanbanFilterDimension !== 'fixed_version'"
+          :value="kanbanVersionValue"
           :placeholder="$t('Version.SelectVersion')"
           :disabled="selectedProjectId === -1"
           class="mr-4"
           filterable
-          @change="updateData"
+          @change="updateVersionValue"
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
           <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-select
-          v-if="filterDimension !== 'assigned_to'"
-          v-model="memberValue"
+          v-if="kanbanFilterDimension !== 'assigned_to'"
+          :value="kanbanMemberValue"
           :placeholder="$t('Member.SelectMember')"
           :disabled="selectedProjectId === -1"
           filterable
-          @change="updateData"
+          @change="updateMemberValue"
         >
           <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
           <!--          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />-->
@@ -36,7 +36,7 @@
       <el-col :md="24" :lg="10" class="text-right">
         <el-form inline>
           <el-form-item label="篩選維度">
-            <el-select v-model="filterDimension" class="mr-4" filterable>
+            <el-select :value="kanbanFilterDimension" class="mr-4" filterable @change="setKanbanFilterDimension">
               <el-option
                 v-for="(item, idx) in filterDimensionOptions"
                 :key="idx"
@@ -47,12 +47,13 @@
           </el-form-item>
           <el-select-all
             ref="filterValue"
-            v-model="filterValue"
+            :value="kanbanFilterValue"
             filterable
             multiple
             collapse-tags
             :options="filterValueOptions"
             value-key="id"
+            @change="setKanbanFilterValue"
           />
         </el-form>
       </el-col>
@@ -65,14 +66,14 @@
         :status="status"
         :board-object="classObj"
         :list="classifyIssueList[classObj.id]"
-        :dimension="filterDimension"
+        :dimension="kanbanFilterDimension"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
         :header-text="getTranslateHeader(classObj.name)"
         :c-name="classObj.name"
         :class="{ [classObj.name.toLowerCase()]: true }"
-        :focus-version="String(versionValue)"
+        :focus-version="String(kanbanVersionValue)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
@@ -93,7 +94,8 @@
               >
                 <el-tag effect="dark" :type="getTagType(subItem.name)">{{
                   $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name
-                }}</el-tag>
+                }}
+                </el-tag>
                 <el-alert class="help_text" :closable="false">
                   拖曳到議題，可以將 {{ item.label }} 改變成
                   {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
@@ -133,8 +135,6 @@ export default {
       projectIssueList: [],
       classifyIssueList: {},
       group: 'mission',
-      versionValue: '-1',
-      memberValue: '-1',
       fixed_version: [],
       status: [],
       tracker: [],
@@ -143,7 +143,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'kanbanVersionValue', 'kanbanMemberValue', 'kanbanFilterDimension', 'kanbanFilterValue']),
     filterDimensionOptions() {
       return [
         { label: '議題狀態', value: 'status' },
@@ -153,37 +153,49 @@ export default {
       ]
     },
     filterValueOptions() {
-      // const result = [...new Set(this.projectIssueList.map((item) => (item[this.filterDimension])))]
-      // return result.map((item, idx) => ({ id: idx, label: item, value: item }))
-      return this[this.filterDimension].map((item, idx) => ({
+      return this[this.kanbanFilterDimension].map((item, idx) => ({
         id: idx,
         label: item.name,
         value: item
       }))
     },
     filterValueOnBoard() {
-      if (this.filterValue.length <= 0) {
-        return this[this.filterDimension].map(item => item)
+      if (this.kanbanFilterValue.length <= 0) {
+        return this[this.kanbanFilterDimension].map(item => item)
       }
-      return this.filterValue
+      return this.kanbanFilterValue
     }
   },
   watch: {
     selectedProjectId() {
       this.fetchData()
     },
-    filterDimension() {
-      this.$set(this.$data, 'filterValue', [])
-      this.$refs['filterValue'].selected = []
+    kanbanVersionValue() {
       this.resetClassifyIssue()
       this.classifyIssue()
+      this.updateData()
     },
-    filterValue: {
+    kanbanMemberValue(value) {
+      console.log('member', value)
+      this.resetClassifyIssue()
+      this.classifyIssue()
+      this.updateData()
+    },
+    kanbanFilterDimension: {
+      async handler() {
+        this.$refs['filterValue'].selected = []
+        await this.resetClassifyIssue()
+        await this.classifyIssue()
+        await this.updateData()
+      }
+    },
+    kanbanFilterValue: {
+      immediate: true,
       deep: true,
-      handler() {
-        // this.resetKanbanCard()
-        this.resetClassifyIssue()
-        this.classifyIssue()
+      async handler() {
+        await this.resetClassifyIssue()
+        await this.classifyIssue()
+        await this.updateData()
       }
     }
   },
@@ -192,13 +204,10 @@ export default {
     this.status = issueStatusRes.data
     const issueTrackerRes = await getIssueTracker()
     this.tracker = issueTrackerRes.data
-    // this.status.forEach((item) => {
-    //   this.classifyIssueList[item.name] = []
-    // })
     await this.fetchData()
   },
   methods: {
-    ...mapActions('projects', ['getProjectUserList']),
+    ...mapActions('projects', ['getProjectUserList', 'setKanbanMemberValue', 'setKanbanVersionValue', 'setKanbanFilterDimension', 'setKanbanFilterValue']),
     async fetchData() {
       this.isLoading = true
       await this.resetClassifyIssue()
@@ -212,20 +221,19 @@ export default {
       this.isLoading = false
       this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       await this.classifyIssue()
-      // this.relativeIssueList = await this.updateRelativeList()
-      // await this.resetKanbanCard()
+      await this.updateData()
     },
     checkInFilterValue(value) {
-      if (this.filterValue.length <= 0) return true
-      return this.filterValue.filter(item => item.id === value)
+      if (this.kanbanFilterValue.length <= 0) return true
+      return this.kanbanFilterValue.filter(item => item.id === value)
     },
     classifyIssue() {
       let issueList = this.projectIssueList
-      if (this.filterDimension !== 'status') {
+      if (this.kanbanFilterDimension !== 'status') {
         issueList = this.projectIssueList.filter(issue => issue.status.id !== 6)
       }
       issueList.forEach(issue => {
-        let dimensionName = issue[this.filterDimension].id
+        let dimensionName = issue[this.kanbanFilterDimension].id
         if (!dimensionName) {
           dimensionName = ''
         }
@@ -276,11 +284,11 @@ export default {
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
         this.isLoading = true
-        // const getUpdateDimension = this[this.filterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
-        await updateIssue(evt.event.added.element.id, { [this.filterDimension + '_id']: evt.boardObject.id })
+        // const getUpdateDimension = this[this.kanbanFilterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
+        await updateIssue(evt.event.added.element.id, { [this.kanbanFilterDimension + '_id']: evt.boardObject.id })
         this.projectIssueList.forEach(item => {
           if (item.id === evt.event.added.element.id) {
-            item[this.filterDimension] = evt.boardObject
+            item[this.kanbanFilterDimension] = evt.boardObject
           }
         })
         await this.updateData()
@@ -291,8 +299,6 @@ export default {
       const { id, value } = event
       this.isLoading = true
       const filterDimension = Object.keys(value)[0]
-      // const getUpdateDimension = this[filterDimension].find((item) => (item.id === value[filterDimension].id))
-      // console.log(id, getUpdateDimension)
       await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
       this.projectIssueList.forEach(item => {
         if (item.id === id) {
@@ -302,10 +308,17 @@ export default {
       await this.updateData()
       this.isLoading = false
     },
+    updateMemberValue(value) {
+      this.setKanbanMemberValue(value)
+      this.updateData()
+    },
+    updateVersionValue(value) {
+      this.setKanbanVersionValue(value)
+      this.updateData()
+    },
     updateData() {
       this.resetClassifyIssue()
       this.classifyIssue()
-      console.log(this.versionValue, this.memberValue)
       const versionOpt = {
         keys: ['fixed_version.id'],
         useExtendedSearch: true
@@ -314,11 +327,11 @@ export default {
         keys: ['assigned_to.id'],
         useExtendedSearch: true
       }
-      if (this.versionValue !== '-1') {
-        this.searchKanbanCard(this.versionValue, versionOpt)
+      if (this.kanbanVersionValue !== '-1' && this.kanbanFilterDimension !== 'fixed_version') {
+        this.searchKanbanCard(this.kanbanVersionValue, versionOpt)
       }
-      if (this.memberValue !== '-1') {
-        this.searchKanbanCard(this.memberValue, userOpt)
+      if (this.kanbanMemberValue !== '-1' && this.kanbanFilterDimension !== 'assigned_to') {
+        this.searchKanbanCard(this.kanbanMemberValue, userOpt)
       }
     },
     createRelativeList(list) {
@@ -386,7 +399,7 @@ export default {
   align-items: start;
 
   .kanban {
-    >>> .parent {
+    > > > .parent {
       font-size: 0.75em;
       margin: 0;
 
@@ -419,7 +432,7 @@ export default {
       }
     }
 
-    >>> &.active {
+    > > > &.active {
       .board-column-header {
         .header-bar {
           background: $active;
@@ -427,7 +440,7 @@ export default {
       }
     }
 
-    >>> &.assigned {
+    > > > &.assigned {
       .board-column-header {
         .header-bar {
           background: $assigned;
@@ -435,7 +448,7 @@ export default {
       }
     }
 
-    >>> &.solved {
+    > > > &.solved {
       .board-column-header {
         .header-bar {
           background: $solved;
@@ -443,7 +456,7 @@ export default {
       }
     }
 
-    >>> &.responded {
+    > > > &.responded {
       .board-column-header {
         .header-bar {
           background: $responded;
@@ -451,7 +464,7 @@ export default {
       }
     }
 
-    >>> &.finished {
+    > > > &.finished {
       .board-column-header {
         .header-bar {
           background: $finished;
@@ -459,7 +472,7 @@ export default {
       }
     }
 
-    >>> &.closed {
+    > > > &.closed {
       .board-column-header {
         .header-bar {
           background: $closed;
@@ -467,7 +480,7 @@ export default {
       }
     }
 
-    >>> &.feature {
+    > > > &.feature {
       .board-column-header {
         .header-bar {
           background: $feature;
@@ -475,7 +488,7 @@ export default {
       }
     }
 
-    >>> &.bug {
+    > > > &.bug {
       .board-column-header {
         .header-bar {
           background: $bug;
@@ -483,7 +496,7 @@ export default {
       }
     }
 
-    >>> &.document {
+    > > > &.document {
       .board-column-header {
         .header-bar {
           background: $document;
@@ -491,7 +504,7 @@ export default {
       }
     }
 
-    >>> &.research {
+    > > > &.research {
       .board-column-header {
         .header-bar {
           background: $research;
@@ -501,18 +514,22 @@ export default {
   }
 }
 
->>> .rightPanel-items {
+> > > .rightPanel-items {
   overflow-y: auto;
   height: 100%;
+
   .panel {
     padding: 30px 20px;
+
     .item {
       width: fit-content;
       cursor: move;
+
       .el-tag {
         font-size: 1.05em;
         margin: 3px;
       }
+
       .help_text {
         display: none;
       }
@@ -524,8 +541,10 @@ export default {
 .dragging {
   opacity: 0.25;
 }
+
 .draggingObject {
   width: 100%;
+
   .help_text {
     display: block !important;
     opacity: 1 !important;
