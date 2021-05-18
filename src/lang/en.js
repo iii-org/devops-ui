@@ -371,7 +371,8 @@ export default {
         NAME: 'Overview',
         Projects: 'Projects',
         Overdue: 'Overdue',
-        Not_Started: 'Not Started'
+        Not_Started: 'Not Started',
+        Started: 'Started'
       },
       ProjectMembers: {
         NAME: 'Project Members',

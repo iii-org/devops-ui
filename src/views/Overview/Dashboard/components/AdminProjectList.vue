@@ -31,7 +31,11 @@
             {{ `${scope.row.pm_user_name} (${scope.row.pm_user_login})` }}
           </template>
         </el-table-column>
-        <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')" />
+        <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')">
+          <template slot-scope="scope">
+            <project-status :name="scope.row.project_status" />
+          </template>
+        </el-table-column>
         <el-table-column sortable prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
         <el-table-column sortable prop="unclosed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.unclosed_issue_count')" />
         <el-table-column sortable prop="closed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.closed_issue_count')" />
@@ -58,9 +62,11 @@
 <script>
 import MixinBasicTable from '@/mixins/MixinBasicTable'
 import { getProjectListDetail } from '@/api/dashboard'
+import ProjectStatus from '@/views/Overview/Dashboard/components/widget/ProjectStatus'
 
 export default {
   name: 'AdminProjectList',
+  components: { ProjectStatus },
   mixins: [MixinBasicTable],
   props: {
     data: {

@@ -370,7 +370,8 @@ export default {
         NAME: '總覽',
         Projects: '專案數',
         Overdue: '已超時',
-        Not_Started: '未開始'
+        Not_Started: '未開始',
+        Started: '時限內'
       },
       ProjectMembers: {
         NAME: '專案成員',
