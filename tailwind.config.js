@@ -1,5 +1,5 @@
 module.exports = {
-  mode: 'jit',
+  mode: 'jit', // just-in-time mode: https://tailwindcss.com/docs/just-in-time-mode
   purge: {
     enabled: true,
     content: ['./public/**/*.html', './src/**/*.vue'],
