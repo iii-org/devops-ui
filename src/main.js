@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueShowdown from 'vue-showdown'
-import '@/assets/styles/tailwind.css'
+import '@/assets/tailwind.css'
 import 'normalize.css/normalize.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
