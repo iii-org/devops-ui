@@ -14,6 +14,8 @@
             :group="{ name: 'project', pull: 'clone', put: false }"
             :sort="false"
             :move="checkMove"
+            :multi-drag="true"
+            selected-class="sortable-selected"
           >
             <el-card
               v-for="project in filteredProjects"
@@ -168,7 +170,7 @@ export default {
     },
     addProjectPermission(user_id, project_id) {
       setProjectPermission({ user_id, project_id })
-        .then(res => {
+        .then(() => {
           this.$notify({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Updated'),
@@ -179,7 +181,7 @@ export default {
     },
     removeProjectPermission(user_id, project_id) {
       deleteProjectPermission({ user_id, project_id })
-        .then(res => {
+        .then(() => {
           this.$notify({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Deleted'),
@@ -195,9 +197,20 @@ export default {
       this.subAdminProjects[userIdx].projects.splice(projectIdx, 1)
     },
     checkMove(evt) {
-      const draggedId = evt.draggedContext.element.id
-      const qaProjects = evt.relatedContext.list.map(project => project.id)
-      if (qaProjects.includes(draggedId)) return false
+      const draggedContext = evt.draggedContext
+      if (Array.isArray(draggedContext)) {
+        let result = true
+        draggedContext.forEach((item) => {
+          const draggedId = item.element.id
+          const qaProjects = evt.relatedContext.list.map(project => project.id)
+          if (qaProjects.includes(draggedId)) result = result && false
+        })
+        return result
+      } else {
+        const draggedId = draggedContext.element.id
+        const qaProjects = evt.relatedContext.list.map(project => project.id)
+        if (qaProjects.includes(draggedId)) return false
+      }
     },
     getSetMode(evt) {
       if (evt.hasOwnProperty('added')) {
@@ -210,10 +223,28 @@ export default {
       const setMode = this.getSetMode(evt)
       if (setMode) {
         const { propName, method } = mapping[setMode]
-        const { id } = evt[propName].element
-        this[method](userId, id)
+        if (Array.isArray(evt[propName])) {
+          evt[propName].forEach((item) => {
+            const { id } = item.element
+            this[method](userId, id)
+          })
+        } else {
+          const { id } = evt[propName].element
+          this[method](userId, id)
+        }
       }
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/variables.scss';
+
+.sortable-selected {
+  >>>.el-card__body{
+    background-color: mix($menuActiveText, #FFFFFF, 20%);
+  }
+}
+
+</style>
