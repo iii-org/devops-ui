@@ -610,7 +610,8 @@ export default {
   },
   System: {
     Secrets: 'Secrets',
-    Registry: 'Registry'
+    Registry: 'Registry',
+    RedmineMail: 'Redmine Mail'
   },
   Git: {
     Branch: '分支',

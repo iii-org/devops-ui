@@ -615,7 +615,8 @@ export default {
   },
   System: {
     Secrets: 'Secrets',
-    Registry: 'Registry'
+    Registry: 'Registry',
+    RedmineMail: 'Redmine Mail'
   },
   PipeLines: {
     TestDetail: 'Test Detail'
