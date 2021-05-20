@@ -95,7 +95,7 @@ export default {
       ],
       redmineMailForm: defaultFormData(),
       redmineMailRules: {
-        deliveryMethod: [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
+        'delivery_method': [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
         'smtp_settings.address': [{ required: true, message: 'Please input address.', trigger: 'blur' }],
         'smtp_settings.port': [{ required: true, message: 'Please input port.', trigger: 'blur' }]
       }
