@@ -48,11 +48,7 @@
             <el-input v-model="redmineMailForm.smtp_settings.domain" class="form-input" />
           </el-form-item>
           <el-form-item label="password" prop="password">
-            <el-input
-              v-model="redmineMailForm.smtp_settings.password"
-              type="password"
-              class="form-input"
-            />
+            <el-input v-model="redmineMailForm.smtp_settings.password" class="form-input" show-password />
           </el-form-item>
         </el-form>
         <el-row class="mt-4">
@@ -90,10 +86,7 @@ export default {
   data() {
     return {
       labelPosition: 'top',
-      deliveryMethodOptions: [
-        { value: ':smtp', label: ':smtp' },
-        { value: ':semdmail', label: ':sendmail' }
-      ],
+      deliveryMethodOptions: [{ value: ':smtp', label: ':smtp' }, { value: ':semdmail', label: ':sendmail' }],
       authenticationOptions: [
         { value: 'nil', label: 'nil' },
         { value: 'plain', label: 'plain' },
@@ -103,8 +96,8 @@ export default {
       redmineMailForm: defaultFormData(),
       redmineMailRules: {
         deliveryMethod: [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
-        address: [{ required: true, message: 'Please input address.', trigger: 'blur' }],
-        port: [{ required: true, message: 'Please input port.', trigger: 'blur' }]
+        'smtp_settings.address': [{ required: true, message: 'Please input address.', trigger: 'blur' }],
+        'smtp_settings.port': [{ required: true, message: 'Please input port.', trigger: 'blur' }]
       }
     }
   },
