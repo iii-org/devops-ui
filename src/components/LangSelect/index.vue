@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" class="international" @command="handleSetLanguage">
     <div>
-      <i class="el-icon-location" />
+      <svg-icon icon-class="ion-language" />
     </div>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item :disabled="language === 'zh-TW'" command="zh-TW">
