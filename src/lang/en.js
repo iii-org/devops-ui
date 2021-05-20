@@ -577,8 +577,8 @@ export default {
   Postman: {
     Id: 'Id',
     Branch: 'Branch',
-    Success: 'Success',
-    Fail: 'Fail',
+    TestPass: 'Test Pass',
+    TestFail: 'Test Fail',
     StartTime: 'Start Time',
     SearchBranch: 'Search Branch',
     DevOps: 'DevOps',

@@ -572,8 +572,8 @@ export default {
   Postman: {
     Id: '編號',
     Branch: '分支',
-    Success: '成功',
-    Fail: '失敗',
+    TestPass: '測試通過',
+    TestFail: '測試失敗',
     StartTime: '開始時間',
     SearchBranch: '搜尋 分支',
     DevOps: 'DevOps',

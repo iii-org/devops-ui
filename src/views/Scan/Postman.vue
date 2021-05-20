@@ -27,8 +27,8 @@
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Postman.Success')" prop="success" min-width="100" />
-        <el-table-column align="center" :label="$t('Postman.Fail')" prop="failure" min-width="100" />
+        <el-table-column align="center" :label="$t('Postman.TestPass')" prop="success" min-width="100" />
+        <el-table-column align="center" :label="$t('Postman.TestFail')" prop="failure" min-width="100" />
         <el-table-column-time :label="$t('Postman.StartTime')" prop="run_at" />
         <el-table-column align="center" :label="$t('general.Actions')" width="120">
           <template slot-scope="scope">

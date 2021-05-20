@@ -5,20 +5,16 @@
         <router-link :to="{ name: 'postman' }">
           <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
         </router-link>
-        <div>
-          <el-tag size="small" type="primary">
-            <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}
-          </el-tag>
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :underline="false"
-            :href="testCaseInfos.commit_url"
-          >
-            #{{ testCaseInfos.commit_id }}
-          </el-link>
-          <span class="text-body-1 font-weight-bold mx-3">{{ selectedProject.display }}</span>
+        <div class="text-center">
+          <div class="text-body-1 font-weight-bold mb-2">{{ selectedProject.display }}</div>
+          <div>
+            <el-tag size="medium" type="primary" class="mr-2">
+              <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}
+            </el-tag>
+            <el-link type="primary" target="_blank" style="font-size: 16px" :href="testCaseInfos.commit_url">
+              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ testCaseInfos.commit_id }}
+            </el-link>
+          </div>
         </div>
         <el-input
           v-model="keyword"
@@ -52,16 +48,6 @@
             {{ $t('TestCase.Fail') }}
           </el-tag>
           <span class="tex-subtitle-2">{{ countRequestMsg('Fail') }}</span>
-          <template v-if="collectionList.length > 0">
-            <el-select
-              v-model="focusCollection"
-              :placeholder="$t('RuleMsg.PleaseSelect')"
-              size="mini"
-              style="width: 100px"
-            >
-              <el-option v-for="item in collectionList" :key="item" :label="item" :value="item" />
-            </el-select>
-          </template>
         </div>
       </div>
       <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedDataByChecked" border fit>
@@ -121,11 +107,8 @@ export default {
   data() {
     return {
       testCaseInfos: {},
-      testCaseResults: {},
       togglePass: true,
-      toggleFail: true,
-      focusCollection: '',
-      collectionList: []
+      toggleFail: true
     }
   },
   computed: {
@@ -150,21 +133,17 @@ export default {
     },
     toggleFail() {
       this.listQuery.page = 1
-    },
-    focusCollection() {
-      this.handleFocusCollectionChange()
     }
   },
   methods: {
     async fetchData() {
       const res = await getPostmanReport(this.$route.params.id)
-      const { branch, commit_id, commit_url, start_time } = res.data
+      const { branch, commit_id, commit_url, start_time, report } = res.data
       this.testCaseInfos = { branch, commit_id, commit_url, start_time }
-      this.testCaseResults = res.data.report.json_file
-      const isSingleCollections = Object.keys(this.testCaseResults).includes('assertions' || 'executions')
+      const isSingleCollections = Object.keys(report.json_file).includes('assertions' || 'executions')
       const testCases = isSingleCollections
-        ? this.formatData(this.testCaseResults.executions)
-        : this.handleMultiCollections(this.testCaseResults)
+        ? this.formatData(report.json_file.executions)
+        : this.handleMultiCollections(report.json_file)
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
@@ -182,13 +161,9 @@ export default {
         return result
       })
     },
-    handleMultiCollections(data) {
-      this.collectionList = Object.keys(data)
-      this.focusCollection = this.collectionList[0]
-      return this.formatData(data[this.focusCollection].executions)
-    },
-    handleFocusCollectionChange() {
-      this.listData = this.formatData(this.testCaseResults[this.focusCollection].executions)
+    handleMultiCollections(testCases) {
+      const flatCollections = Object.values(testCases).flatMap(i => i.executions)
+      return this.formatData(flatCollections)
     },
     getTagType(status) {
       const mapping = { Fail: 'danger', Pass: 'success' }
