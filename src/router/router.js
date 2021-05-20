@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { cloneDeep } from 'lodash'
 
 Vue.use(Router)
 
@@ -47,140 +46,6 @@ export const constantRoutes = [
     hidden: true
   }
 ]
-
-const mapChildren = (path) => {
-  const result = cloneDeep(path)
-  result.forEach((item) => {
-    if (item['name']) {
-      item['name'] = item['name'] + 'ByID'
-    }
-    item['hidden'] = true
-    if ('children' in item) {
-      item['children'] = mapChildren(item['children'])
-    }
-  })
-  return result
-}
-const project_children = [
-  {
-    path: 'overview',
-    name: 'Overview',
-    component: () => import('@/views/Project/Overview'),
-    meta: { title: 'projectOverview', roles: ['Project Manager', 'Administrator'] }
-  },
-  {
-    path: 'issue-boards',
-    name: 'issue-boards',
-    component: () => import('@/views/Project/IssueBoards'),
-    meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
-  },
-  {
-    path: 'issue',
-    component: parentBlank,
-    children: [
-      {
-        path: '',
-        name: 'issue-list',
-        component: () => import('@/views/Project/IssueList'),
-        meta: {
-          title: 'issueList',
-          roles: ['Project Manager', 'Engineer', 'Administrator']
-        }
-      },
-      {
-        path: ':issueId',
-        name: 'issue-detail',
-        hidden: true,
-        component: () => import('@/views/Project/IssueDetail'),
-        meta: {
-          title: 'Issue Detail',
-          roles: ['Project Manager', 'Engineer', 'Administrator']
-        }
-      }
-    ]
-  },
-  {
-    path: 'test-case',
-    component: parentBlank,
-    meta: {
-      title: 'createTest',
-      roles: ['Engineer', 'Project Manager', 'Administrator']
-    },
-    children: [
-      {
-        path: '',
-        name: 'test-case',
-        component: () => import('@/views/Project/TestCase/TestCase'),
-        hidden: true
-      },
-      {
-        path: 'test-item/:testCaseId',
-        name: 'test-item',
-        component: () => import('@/views/Project/TestCase/TestItem'),
-        hidden: true,
-        meta: {
-          title: 'testItem',
-          roles: ['Engineer', 'Project Manager', 'Administrator']
-        }
-      }
-    ]
-  },
-  // {
-  //   path: 'activity-log',
-  //   name: 'Activity Log',
-  //   component: () => import('@/views/Project/ActivityLog'),
-  //   meta: { title: 'Activity Log', roles: ['Project Manager', 'Administrator'] }
-  // },
-  {
-    path: 'wiki',
-    name: 'wiki-list',
-    component: () => import('@/views/Project/Wiki'),
-    meta: { title: 'wikiList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
-  },
-  {
-    path: 'file',
-    name: 'file-list',
-    component: () => import('@/views/Project/Files'),
-    meta: { title: 'fileList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
-  },
-  {
-    path: 'roadmap',
-    name: 'Project Roadmap',
-    component: () => import('@/views/Project/Roadmap'),
-    meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
-  },
-  {
-    path: 'release-version',
-    name: 'releaseVersion',
-    component: () => import('@/views/Project/ReleaseVersion'),
-    meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
-  },
-  {
-    path: 'settings',
-    component: parentBlank,
-    meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] },
-    children: [
-      {
-        path: '',
-        name: 'Project Settings',
-        hidden: true,
-        component: () => import('@/views/Project/Settings/index')
-      },
-      {
-        path: 'advance-branch-settings',
-        name: 'advance-branch-settings',
-        hidden: true,
-        component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
-        meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
-      }
-    ]
-  },
-  {
-    path: 'settings',
-    name: 'Project Settings',
-    component: () => import('@/views/Project/Settings/roles/QA'),
-    meta: { title: 'Project Settings', roles: ['QA'] }
-  }]
 
 export const asyncRoutes = [
   {
@@ -277,19 +142,124 @@ export const asyncRoutes = [
       roles: ['Project Manager', 'QA', 'Administrator', 'Engineer']
     },
     children: [
-      ...project_children,
       {
-        path: 'id/:projectId',
-        name: 'projectId',
-        component: () => import('@/layout/project'),
-        props: route => ({ id: route.params.projectId }),
+        path: 'overview',
+        name: 'Overview',
+        component: () => import('@/views/Project/Overview'),
+        meta: { title: 'projectOverview', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'issue-boards',
+        name: 'issue-boards',
+        component: () => import('@/views/Project/IssueBoards'),
+        meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+      },
+      {
+        path: 'issue',
+        component: parentBlank,
         children: [
           {
             path: '',
-            redirect: { name: 'OverviewByID' }
+            name: 'issue-list',
+            component: () => import('@/views/Project/IssueList'),
+            meta: {
+              title: 'issueList',
+              roles: ['Project Manager', 'Engineer', 'Administrator']
+            }
           },
-          ...mapChildren(project_children)
+          {
+            path: ':issueId',
+            name: 'issue-detail',
+            hidden: true,
+            component: () => import('@/views/Project/IssueDetail'),
+            meta: {
+              title: 'Issue Detail',
+              roles: ['Project Manager', 'Engineer', 'Administrator']
+            }
+          }
         ]
+      },
+      {
+        path: 'test-case',
+        component: parentBlank,
+        meta: {
+          title: 'createTest',
+          roles: ['Engineer', 'Project Manager', 'Administrator']
+        },
+        children: [
+          {
+            path: '',
+            name: 'test-case',
+            component: () => import('@/views/Project/TestCase/TestCase'),
+            hidden: true
+          },
+          {
+            path: 'test-item/:testCaseId',
+            name: 'test-item',
+            component: () => import('@/views/Project/TestCase/TestItem'),
+            hidden: true,
+            meta: {
+              title: 'testItem',
+              roles: ['Engineer', 'Project Manager', 'Administrator']
+            }
+          }
+        ]
+      },
+      // {
+      //   path: 'activity-log',
+      //   name: 'Activity Log',
+      //   component: () => import('@/views/Project/ActivityLog'),
+      //   meta: { title: 'Activity Log', roles: ['Project Manager', 'Administrator'] }
+      // },
+      {
+        path: 'wiki',
+        name: 'wiki-list',
+        component: () => import('@/views/Project/Wiki'),
+        meta: { title: 'wikiList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
+      },
+      {
+        path: 'file',
+        name: 'file-list',
+        component: () => import('@/views/Project/Files'),
+        meta: { title: 'fileList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
+      },
+      {
+        path: 'roadmap',
+        name: 'Project Roadmap',
+        component: () => import('@/views/Project/Roadmap'),
+        meta: { title: 'Project Roadmap', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: '/release-version',
+        name: 'releaseVersion',
+        component: () => import('@/views/Project/ReleaseVersion'),
+        meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
+      },
+      {
+        path: 'settings',
+        component: parentBlank,
+        meta: { title: 'Project Settings', roles: ['Project Manager', 'Administrator'] },
+        children: [
+          {
+            path: '',
+            name: 'Project Settings',
+            hidden: true,
+            component: () => import('@/views/Project/Settings/index')
+          },
+          {
+            path: 'advance-branch-settings',
+            name: 'advance-branch-settings',
+            hidden: true,
+            component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
+            meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
+          }
+        ]
+      },
+      {
+        path: 'settings',
+        name: 'Project Settings',
+        component: () => import('@/views/Project/Settings/roles/QA'),
+        meta: { title: 'Project Settings', roles: ['QA'] }
       }
     ]
   },
@@ -308,7 +278,7 @@ export const asyncRoutes = [
       {
         path: 'dev-branch',
         name: 'dev-branch',
-        component: () => import('@/views/Progress/DevBranch'),
+        component: () => import('@/views//Progress/DevBranch'),
         meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
