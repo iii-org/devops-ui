@@ -339,7 +339,8 @@ export default {
       priority_id: '@:Issue.Priority',
       status_id: '@:general.Status',
       tracker_id: '@:general.Type',
-      fixed_version_id: '@:Version.Version'
+      fixed_version_id: '@:Version.Version',
+      parent_id: '@:Issue.ParentIssue'
     }
   },
   Wiki: {

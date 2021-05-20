@@ -295,7 +295,7 @@ export default {
     AddBy: '由 {user} 於 {created_date} 新增',
     Author: '作者',
     CommentTime: '加註於',
-    ParentIssue: '子議題',
+    ParentIssue: '父議題',
     Active: '已開立',
     Assigned: '已分派',
     Closed: '已關閉',
@@ -339,7 +339,8 @@ export default {
       status_id: '@:general.Status',
       tracker_id: '@:general.Type',
       fixed_version_id: '@:Version.Version',
-      attachment: '@:Issue.Files'
+      attachment: '@:Issue.Files',
+      parent_id: '@:Issue.ParentIssue'
     }
   },
   Wiki: {

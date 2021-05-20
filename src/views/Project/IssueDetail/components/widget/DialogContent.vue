@@ -1,20 +1,18 @@
 <template>
   <el-row>
-    <el-row :span="24" type="flex" align="bottom" :justify="right|justifyRight">
-      <template v-if="note.notes.length>0">
-        <el-col v-if="right" class="time">
-          {{ note.created_on | formatTime }}
-        </el-col>
-        <el-col class="dialog" :class="{right:right}">
-          <div class="author" :class="{'text-right':right}">{{ note.user.name }}</div>
-          <div class="content">
-            <VueShowdown class="text" :markdown="note.notes" />
-          </div>
-        </el-col>
-        <el-col v-if="!right" class="time">
-          {{ note.created_on | formatTime }}
-        </el-col>
-      </template>
+    <el-row v-if="note.notes.length>0" :span="24" type="flex" align="bottom" :justify="right|justifyRight">
+      <el-col v-if="right" class="time">
+        {{ note.created_on | formatTime }}
+      </el-col>
+      <el-col class="dialog" :class="{right:right}">
+        <div class="author" :class="{'text-right':right}">{{ note.user.name }}</div>
+        <div class="content">
+          <viewer ref="viewer" class="text" :initial-value="note.notes" />
+        </div>
+      </el-col>
+      <el-col v-if="!right" class="time">
+        {{ note.created_on | formatTime }}
+      </el-col>
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
       <el-row v-for="(detail,index) in note.details" :key="index">
@@ -51,10 +49,15 @@
 <script>
 import dayjs from 'dayjs'
 import i18n from '@/lang'
+import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 
+import { Viewer } from '@toast-ui/vue-editor'
 export default {
   name: 'DialogContent',
   i18n,
+  components: {
+    Viewer
+  },
   filters: {
     justifyRight(value) {
       return (value) ? 'end' : 'start'
@@ -71,6 +74,16 @@ export default {
     right: {
       type: Boolean,
       default: false
+    }
+  },
+  watch: {
+    note: {
+      deep: true,
+      handler(value) {
+        this.$nextTick(() => {
+          if (value.notes.length > 0) { this.$refs['viewer'].invoke('setMarkdown', value.notes) }
+        })
+      }
     }
   },
   methods: {
