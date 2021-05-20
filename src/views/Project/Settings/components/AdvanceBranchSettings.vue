@@ -71,11 +71,11 @@ export default {
       keyword: '',
       searchKeys: ['branch'],
       testingToolNames: [],
-      formChange: false
+      isChanged: false
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (this.formChange) {
+    if (this.isChanged) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel'),
@@ -157,6 +157,7 @@ export default {
       this.isLoading = true
       try {
         await editPipelineBranch(this.selectedProjectRepositoryId, sendData)
+        this.isChanged = false
       } catch (err) {
         this.fetchPipelineBranch()
         this.$message({
@@ -169,7 +170,7 @@ export default {
       }
     },
     handleSelectAll(tool) {
-      this.formChange = true
+      this.isChanged = true
       const { selectedAll, name } = tool
       this.filteredData.forEach(i =>
         i.testing_tools.forEach(tool => {
@@ -201,7 +202,7 @@ export default {
     },
     checkAllSelect(tool, branch) {
       const { name, enable } = tool
-      this.formChange = true
+      this.isChanged = true
       const status = this.filteredData
         .flatMap(i => i.testing_tools)
         .filter(i => i.name === name)
@@ -253,7 +254,7 @@ export default {
     },
     handleReset() {
       this.testingToolNames = []
-      this.formChange = false
+      this.isChanged = false
       this.fetchPipelineBranch()
     }
   }
