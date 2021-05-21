@@ -11,10 +11,10 @@
           class="demo-ruleForm"
           :label-position="labelPosition"
         >
-          <el-form-item label="user_name" prop="userName">
+          <el-form-item label="user_name">
             <el-input v-model="redmineMailForm.smtp_settings.user_name" class="form-input" />
           </el-form-item>
-          <el-form-item label="delivery_method" prop="deliveryMethod">
+          <el-form-item label="delivery_method" prop="delivery_method">
             <el-select v-model="redmineMailForm.delivery_method" placeholder="請選擇">
               <el-option
                 v-for="item in deliveryMethodOptions"
@@ -24,11 +24,11 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="enable_starttls_auto" prop="enableStarttlsAuto">
+          <el-form-item label="enable_starttls_auto">
             <el-radio v-model="redmineMailForm.smtp_settings.enable_starttls_auto" :label="true">true</el-radio>
             <el-radio v-model="redmineMailForm.smtp_settings.enable_starttls_auto" :label="false">false</el-radio>
           </el-form-item>
-          <el-form-item label="authentication" prop="authentication">
+          <el-form-item label="authentication">
             <el-select v-model="redmineMailForm.smtp_settings.authentication" placeholder="請選擇">
               <el-option
                 v-for="item in authenticationOptions"
@@ -38,16 +38,16 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="address" prop="address">
+          <el-form-item label="address" prop="smtp_settings.address">
             <el-input v-model="redmineMailForm.smtp_settings.address" class="form-input" />
           </el-form-item>
-          <el-form-item label="port" prop="port">
+          <el-form-item label="port" prop="smtp_settings.port">
             <el-input v-model="redmineMailForm.smtp_settings.port" class="form-input" />
           </el-form-item>
-          <el-form-item label="domain" prop="domain">
+          <el-form-item label="domain">
             <el-input v-model="redmineMailForm.smtp_settings.domain" class="form-input" />
           </el-form-item>
-          <el-form-item label="password" prop="password">
+          <el-form-item label="password">
             <el-input v-model="redmineMailForm.smtp_settings.password" class="form-input" show-password />
           </el-form-item>
         </el-form>
@@ -95,7 +95,7 @@ export default {
       ],
       redmineMailForm: defaultFormData(),
       redmineMailRules: {
-        'delivery_method': [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
+        delivery_method: [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
         'smtp_settings.address': [{ required: true, message: 'Please input address.', trigger: 'blur' }],
         'smtp_settings.port': [{ required: true, message: 'Please input port.', trigger: 'blur' }]
       }
