@@ -1,63 +1,87 @@
 <template>
   <div class="app-container">
-    <el-card>
-      <div class="form">
-        <h3>{{ $t('System.RedmineMail') }}</h3>
-        <el-form
-          ref="redmineMailForm"
-          :model="redmineMailForm"
-          :rules="redmineMailRules"
-          label-width="100px"
-          class="demo-ruleForm"
-          :label-position="labelPosition"
-        >
-          <el-form-item label="user_name">
-            <el-input v-model="redmineMailForm.smtp_settings.user_name" class="form-input" />
-          </el-form-item>
-          <el-form-item label="delivery_method" prop="delivery_method">
-            <el-select v-model="redmineMailForm.delivery_method" placeholder="請選擇">
-              <el-option
-                v-for="item in deliveryMethodOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="enable_starttls_auto">
-            <el-radio v-model="redmineMailForm.smtp_settings.enable_starttls_auto" :label="true">true</el-radio>
-            <el-radio v-model="redmineMailForm.smtp_settings.enable_starttls_auto" :label="false">false</el-radio>
-          </el-form-item>
-          <el-form-item label="authentication">
-            <el-select v-model="redmineMailForm.smtp_settings.authentication" placeholder="請選擇">
-              <el-option
-                v-for="item in authenticationOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="address" prop="smtp_settings.address">
-            <el-input v-model="redmineMailForm.smtp_settings.address" class="form-input" />
-          </el-form-item>
-          <el-form-item label="port" prop="smtp_settings.port">
-            <el-input v-model="redmineMailForm.smtp_settings.port" class="form-input" />
-          </el-form-item>
-          <el-form-item label="domain">
-            <el-input v-model="redmineMailForm.smtp_settings.domain" class="form-input" />
-          </el-form-item>
-          <el-form-item label="password">
-            <el-input v-model="redmineMailForm.smtp_settings.password" class="form-input" show-password />
-          </el-form-item>
-        </el-form>
-        <el-row class="mt-4">
-          <el-col :span="8">
-            <el-button type="primary" @click="submitUpdateRedmineMail('redmineMailForm')">{{
-              $t('Profile.Save')
-            }}</el-button>
+    <el-card v-loading="isLoading">
+      <h3>{{ $t('System.RedmineMail') }}</h3>
+      <el-form
+        ref="redmineMailForm"
+        :model="redmineMailForm"
+        :rules="redmineMailRules"
+        label-width="100px"
+        class="demo-ruleForm"
+        label-position="top"
+      >
+        <el-row :gutter="10">
+          <el-col :span="24" :sm="12" :md="8" :lg="7">
+            <el-form-item label="User Name">
+              <el-input v-model="redmineMailForm.smtp_settings.user_name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="8" :lg="7">
+            <el-form-item label="Password">
+              <el-input v-model="redmineMailForm.smtp_settings.password" show-password />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="8" :lg="6">
+            <el-form-item label="Domain">
+              <el-input v-model="redmineMailForm.smtp_settings.domain" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="8" :lg="4">
+            <el-form-item label="Authentication">
+              <el-select
+                v-model="redmineMailForm.smtp_settings.authentication"
+                :placeholder="$t('RuleMsg.PleaseSelect')"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in authenticationOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="8" :lg="5">
+            <el-form-item label="Delivery Method" prop="delivery_method">
+              <el-select
+                v-model="redmineMailForm.delivery_method"
+                :placeholder="$t('RuleMsg.PleaseSelect')"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in deliveryMethodOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="8" :lg="7">
+            <el-form-item label="Address" prop="smtp_settings.address">
+              <el-input v-model="redmineMailForm.smtp_settings.address" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="6" :lg="2">
+            <el-form-item label="Port" prop="smtp_settings.port" :placeholder="$t('RuleMsg.PleaseInput')">
+              <el-input v-model="redmineMailForm.smtp_settings.port" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="Starttls Auto">
+              <el-radio-group v-model="redmineMailForm.smtp_settings.enable_starttls_auto">
+                <el-radio :label="true" border>Enable</el-radio>
+                <el-radio :label="false" border>Disable</el-radio>
+              </el-radio-group>
+            </el-form-item>
           </el-col>
         </el-row>
+      </el-form>
+      <div class="text-right">
+        <el-button type="primary" @click="submitUpdateRedmineMail">
+          {{ $t('general.Save') }}
+        </el-button>
       </div>
     </el-card>
   </div>
@@ -85,7 +109,6 @@ export default {
   mixins: [MixinElTable],
   data() {
     return {
-      labelPosition: 'top',
       deliveryMethodOptions: [{ value: ':smtp', label: ':smtp' }, { value: ':semdmail', label: ':sendmail' }],
       authenticationOptions: [
         { value: 'nil', label: 'nil' },
@@ -98,30 +121,38 @@ export default {
         delivery_method: [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
         'smtp_settings.address': [{ required: true, message: 'Please input address.', trigger: 'blur' }],
         'smtp_settings.port': [{ required: true, message: 'Please input port.', trigger: 'blur' }]
-      }
+      },
+      isLoading: false
     }
-  },
-  created() {
-    this.fetchData()
   },
   methods: {
     async fetchData() {
+      this.isLoading = true
       const res = await getUserRedmineMailProfile()
       this.redmineMailForm = res.data
+      this.isLoading = false
     },
-    submitUpdateRedmineMail(formName) {
-      this.$refs[formName].validate(async valid => {
-        if (valid) {
-          const data = { redmine_mail: this.redmineMailForm }
-          await editUserRedmineMailProfile(data)
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
+    submitUpdateRedmineMail() {
+      this.isLoading = true
+      this.$refs.redmineMailForm.validate(async valid => {
+        if (!valid) return
+        const data = { redmine_mail: this.redmineMailForm }
+        editUserRedmineMailProfile(data)
+          .then(() => {
+            this.$message({
+              message: this.$t('Notify.Updated'),
+              type: 'success'
+            })
           })
-        } else {
-          return false
-        }
+          .catch(err => {
+            this.$message({
+              message: err,
+              type: 'error'
+            })
+          })
+          .then(() => {
+            this.isLoading = false
+          })
       })
     }
   }

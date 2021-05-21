@@ -5,13 +5,12 @@
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>
       <el-input
-        id="input-search"
+        id="input-search-registry"
         v-model="searchData"
         :placeholder="$t('Maintenance.SearchRegistryName')"
         style="width: 250px"
-      >
-        <i slot="prefix" class="el-input__icon el-icon-search" />
-      </el-input>
+        prefix-icon="el-icon-search"
+      />
     </div>
     <el-divider />
     <div class="mb-5 text-right">
