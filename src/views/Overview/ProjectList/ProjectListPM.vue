@@ -210,9 +210,9 @@ export default {
     ])
   },
   methods: {
-    ...mapActions('projects', ['setSelectedProject', 'getPMProjectList']),
+    ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
     async fetchData() {
-      await this.getPMProjectList()
+      await this.getMyProjectList()
       return this.projectList
     },
     handleAdding() {

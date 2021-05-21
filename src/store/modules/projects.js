@@ -72,7 +72,7 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async getPMProjectList({ commit }) {
+  async getMyProjectList({ commit }) {
     try {
       const res = await QPL()
       const { data } = res
