@@ -227,6 +227,7 @@ export default {
     MediumSeverity: 'Medium Severity',
     LowSeverity: 'Low Severity',
     InfoSeverity: 'Info Severity',
+    BpSeverity: 'Best Practice',
     RunAt: 'Start Time',
     Report: 'Report',
     SearchCommitId: 'Search Commit ID'

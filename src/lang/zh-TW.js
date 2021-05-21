@@ -226,6 +226,7 @@ export default {
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
     InfoSeverity: '資訊',
+    BpSeverity: '最佳實作',
     RunAt: '開始時間',
     Report: '報告',
     SearchCommitId: '搜尋 Commit'
