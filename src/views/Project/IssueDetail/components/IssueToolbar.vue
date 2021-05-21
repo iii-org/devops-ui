@@ -11,7 +11,7 @@
     </el-col>
     <el-dialog :visible.sync="uploadDialogVisible" :title="$t('Issue.UploadFiles')" @close="handleUploadClose">
       <issue-file-uploader ref="IssueFileUploader" :issue-id="issueId" />
-      <el-button type="primary">{{ $t('general.Save') }}</el-button>
+      <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
     </el-dialog>
     <add-issue
       :save-data="saveIssue"
@@ -63,6 +63,7 @@ export default {
       uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : null
       this.$refs.IssueFileUploader.$refs.fileUploader.clearFiles()
       this.$refs.IssueFileUploader.uploadFileList = []
+      this.uploadDialogVisible = false
     },
     uploadFiles(sendForm, fileList) {
       this.isLoading = true

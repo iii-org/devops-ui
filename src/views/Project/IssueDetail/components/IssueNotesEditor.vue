@@ -15,11 +15,13 @@
 import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
+import '@toast-ui/editor/dist/i18n/zh-tw'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'IssueNotesEditor',
   components: {
-    editor: Editor
+    Editor
   },
   props: {
     height: {
@@ -27,10 +29,12 @@ export default {
       default: '100px'
     }
   },
-  data() {
-    return {
-      editorOptions: {
-        minHeight: '100px'
+  computed: {
+    ...mapGetters(['language']),
+    editorOptions() {
+      return {
+        minHeight: '100px',
+        language: this.language
       }
     }
   },
