@@ -64,7 +64,12 @@
       <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount" />
       <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.lowCount" />
       <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.infoCount" />
-      <el-table-column align="center" :label="$t('WebInspect.BpSeverity')" prop="stats.bpCount" />
+      <el-table-column align="center" :label="$t('WebInspect.BpSeverity')" prop="stats.bpCount">
+        <template slot-scope="scope">
+          <span v-if="scope.row.stats.bpCount">{{ scope.row.stats.bpCount }}</span>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
       <el-table-column-time :label="$t('WebInspect.RunAt')" prop="run_at" />
       <el-table-column align="center" :label="$t('WebInspect.Report')" min-width="100">
         <template slot-scope="scope">
@@ -155,7 +160,16 @@ export default {
       this.listLoading = true
       await getWebInspectStats(wiScanId).then(res => {
         const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
-        this.listData[idx].stats = res.data.severity_count
+        // res data from WI length is 6, while WIE is 7
+        if (res.data.severity_count.length === 7) {
+          this.listData[idx].stats = res.data.severity_count
+        } else {
+          this.listData[idx].stats.criticalCount = res.data.severity_count[4]
+          this.listData[idx].stats.highCount = res.data.severity_count[3]
+          this.listData[idx].stats.mediumCount = res.data.severity_count[2]
+          this.listData[idx].stats.lowCount = res.data.severity_count[1]
+          this.listData[idx].stats.infoCount = res.data.severity_count[0]
+        }
         this.listData[idx].stats.status = 'Complete'
       })
       this.listLoading = false
