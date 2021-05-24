@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="overflow: hidden;">
     <div class="clearfix">
       <div>
         <project-list-selector />
@@ -67,7 +67,7 @@
       highlight-current-row
       row-key="id"
       :tree-props="{ children: 'child' }"
-      height="60vh"
+      height="80vh"
       :row-class-name="getRowClass"
       @cell-click="handleClick"
     >

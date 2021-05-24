@@ -43,6 +43,10 @@ export default {
   },
   mounted() {
     this.adjustTable()
+    const self = this
+    window.onresize = () => {
+      self.adjustTable()
+    }
   },
   methods: {
     async loadData() {
