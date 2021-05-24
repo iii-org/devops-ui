@@ -22,7 +22,7 @@
           </el-col>
           <el-col :span="24" :sm="8" :xl="5">
             <el-form-item :label="$t('Project.ProjectOwner')" prop="owner_id">
-              <el-select v-model="form.owner_id" style="width: 100%">
+              <el-select v-model="form.owner_id" style="width: 100%" :disabled="disabledEditOwner">
                 <el-option v-for="item in assignedList" :key="item.id" :label="item.label" :value="item.id">
                   {{ item.label }}
                 </el-option>
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { getProjectAssignable } from '@/api/projects'
 import i18n from '@/lang'
 
@@ -147,8 +147,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userId', 'userRole']),
     assignedList() {
       return this.assignableList.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
+    },
+    disabledEditOwner() {
+      if (this.userRole === 'Administrator') return false
+      return this.userId !== this.editProjectObj.pm_user_id
     }
   },
   watch: {
