@@ -14,16 +14,15 @@
       <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
         <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />
-        <el-table-column align="center" label="Commit" width="130">
+        <el-table-column align="center" label="Commit" width="140">
           <template slot-scope="scope">
             <el-link
               type="primary"
               target="_blank"
               style="font-size: 16px"
-              :underline="false"
               :href="scope.row.commit_url"
             >
-              {{ scope.row.commit_id }}
+              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
             </el-link>
           </template>
         </el-table-column>
@@ -88,7 +87,7 @@ export default {
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
-      this.$router.push({ name: target, params: { id } })
+      this.$router.push({ name: target, params: { id }})
     }
   }
 }

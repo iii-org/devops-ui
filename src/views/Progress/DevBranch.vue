@@ -28,10 +28,9 @@
             type="primary"
             target="_blank"
             style="font-size: 16px"
-            :underline="false"
             :href="scope.row.commit_url"
           >
-            {{ scope.row.short_id }}
+            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.short_id }}
           </el-link>
         </template>
       </el-table-column>

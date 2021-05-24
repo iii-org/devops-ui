@@ -27,12 +27,11 @@
                 <el-link
                   class="ml-2"
                   type="primary"
-                  :underline="false"
                   style="font-size: 14px"
                   target="_blank"
                   :href="pod.commit_url"
                 >
-                  {{ pod.commit_id }}
+                  <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ pod.commit_id }}
                 </el-link>
               </div>
               <div>
