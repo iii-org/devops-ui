@@ -24,7 +24,18 @@
       height="100%"
     >
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" />
+      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id">
+        <template slot-scope="scope" width="140">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :href="scope.row.issue_link"
+          >
+            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('SonarQube.Bugs')">
         <template slot-scope="scope">
           <span>{{ scope.row.bugs }} ({{ convertRating(scope.row.reliability_rating) }})</span>
