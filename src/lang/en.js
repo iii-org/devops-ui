@@ -102,6 +102,7 @@ export default {
     Title: 'Title',
     Edit: 'Edit',
     Delete: 'Delete',
+    Remove: 'Remove',
     Actions: 'Actions',
     Type: 'Type',
     Status: 'Status',
@@ -439,7 +440,8 @@ export default {
     Phone: 'Phone',
     Role: 'Role',
     Account: 'Account',
-    SelectMember: 'Select Member'
+    SelectMember: 'Select Member',
+    confirmRemove: 'Are you sure to @:(general.Remove)?'
   },
   Plugin: {
     Manage: 'Manage Plugins',

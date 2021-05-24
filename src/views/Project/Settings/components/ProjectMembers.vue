@@ -24,11 +24,11 @@
       <el-table-column align="center" :label="$t('general.Actions')" width="140">
         <template slot-scope="scope">
           <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
+            :confirm-button-text="$t('general.Remove')"
             :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
-            title="Are you sure?"
+            :title="$t('Member.confirmRemove')"
             @onConfirm="handleDelete(scope.row.id)"
           >
             <el-button
@@ -38,7 +38,7 @@
               icon="el-icon-delete"
               :disabled="scope.row.id === userId"
             >
-              {{ $t('general.Delete') }}
+              {{ $t('general.Remove') }}
             </el-button>
           </el-popconfirm>
         </template>

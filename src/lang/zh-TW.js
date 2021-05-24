@@ -101,6 +101,7 @@ export default {
     Title: '標題',
     Edit: '編輯',
     Delete: '刪除',
+    Remove: '移除',
     Actions: '操作',
     Type: '種類',
     Status: '狀態',
@@ -439,7 +440,8 @@ export default {
     Phone: '電話',
     Role: '角色',
     Account: '帳號',
-    SelectMember: '選擇成員'
+    SelectMember: '選擇成員',
+    confirmRemove: '確定@:(general.Remove)嗎？'
   },
   Plugin: {
     Manage: '測試工具管理',
