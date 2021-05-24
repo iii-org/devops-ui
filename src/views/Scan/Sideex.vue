@@ -10,7 +10,7 @@
       />
     </div>
     <div class="text-right text-info" style="position: relative; top: 15px">
-      <span><i class="el-icon-warning" /></span>
+      <span><i class="el-icon-warning"/></span>
       <span>{{ $t('Sideex.promptMessage') }}</span>
     </div>
     <el-divider />
@@ -25,24 +25,14 @@
     >
       <el-table-column align="center" :label="$t('Log.testId')" prop="id" />
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id">
-        <template slot-scope="scope" width="140">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :href="scope.row.issue_link"
-          >
+      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" width="140">
+        <template slot-scope="scope">
+          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.issue_link">
             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag
-        prop="status"
-        :label="$t('general.Status')"
-        min-width="130"
-        location="sideex"
-      />
+      <el-table-column-tag prop="status" :label="$t('general.Status')" min-width="130" location="sideex" />
       <!-- <el-table-column align="center" :label="$t('general.Status')" min-width="130">
         <template slot-scope="scope">
           <el-tag
