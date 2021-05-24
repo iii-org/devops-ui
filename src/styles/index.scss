@@ -8,7 +8,6 @@
 @import './spacing.scss';
 @import './display.scss';
 @import './border.scss';
-@import './cursor.scss';
 
 body {
   height: 100%;
@@ -59,7 +58,7 @@ div:focus {
     visibility: hidden;
     display: block;
     font-size: 0;
-    content: " ";
+    content: ' ';
     clear: both;
     height: 0;
   }
