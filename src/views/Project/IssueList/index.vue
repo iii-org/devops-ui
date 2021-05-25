@@ -279,7 +279,6 @@ export default {
       })
     },
     updateData() {
-      console.log('updateData')
       this.resetFilterVersionTrackerData()
       const versionOpt = {
         keys: ['fixed_version.id'],

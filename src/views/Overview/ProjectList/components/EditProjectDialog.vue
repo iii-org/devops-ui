@@ -198,7 +198,6 @@ export default {
         }
       }
       this.editProject(sendData).then(res => {
-        console.log({ res })
         this.isLoading = false
         if (res.message === 'success') {
           this.$message({
