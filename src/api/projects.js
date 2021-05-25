@@ -44,6 +44,19 @@ export function getTestReport(reportId) {
   })
 }
 
+export function getProjectInfos(pId) {
+  return request({
+    url: `/project/${pId}`,
+    method: 'get'
+  })
+}
+export function updateProjectInfos(pId, data) {
+  return request({
+    url: `/project/${pId}`,
+    method: 'PATCH',
+    data
+  })
+}
 export function editProject(pId = '80', data = { name: '', disabled: false, description: '' }) {
   return request({
     url: `/project/${pId}`,
