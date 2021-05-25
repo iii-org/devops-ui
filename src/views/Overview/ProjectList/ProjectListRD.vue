@@ -25,7 +25,7 @@
         <template slot-scope="scope">
           <span style="color: #67c23a">{{ scope.row.display }}</span>
           <br>
-          <span>{{ scope.row.name }}</span>
+          <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120">
