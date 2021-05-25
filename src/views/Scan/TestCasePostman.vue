@@ -24,9 +24,7 @@
           prefix-icon="el-icon-search"
         />
       </div>
-
       <el-divider />
-
       <div class="d-flex justify-space-between align-center mb-3">
         <div class="text-info">{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</div>
         <div class="d-flex align-center">
@@ -52,7 +50,14 @@
           <span class="tex-subtitle-2">{{ countRequestMsg('Fail') }}</span>
         </div>
       </div>
-      <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedDataByChecked" border fit>
+      <el-table
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
+        :data="pagedDataByChecked"
+        :span-method="mergeCells"
+        border
+        fit
+      >
         <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="110" />
         <el-table-column align="center" :label="$t('general.Name')" prop="name" min-width="100" show-overflow-tooltip />
         <el-table-column
@@ -94,29 +99,16 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
-// import MixinBasicTable from '@/mixins/MixinBasicTable'
-import Pagination from '@/components/Pagination'
+import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 export default {
   name: 'TestCasePostman',
-  components: { Pagination },
-  // mixins: [MixinBasicTable],
+  mixins: [MixinBasicTable],
   data() {
     return {
       testCaseInfos: {},
       togglePass: true,
-      toggleFail: true,
-      titles: ['index', 'name', 'method', 'path', 'testResult', 'responseMsg'],
-      spanList: [],
-
-      listData: [],
-      listLoading: false,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      searchKeys: ['name'],
-      keyword: ''
+      toggleFail: true
     }
   },
   computed: {
@@ -133,28 +125,6 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return this.checkedData.slice(start, end)
-    },
-
-    selectedProjectId() {
-      return this.selectedProject.id
-    },
-    filteredData() {
-      const { listData, searchKeys } = this
-      const keyword = this.keyword.toLowerCase()
-      return listData.filter(data => {
-        let result = false
-        for (let i = 0; i < searchKeys.length; i++) {
-          const columnValue = data[searchKeys[i]].toLowerCase()
-          result = result || columnValue.includes(keyword)
-          if (result) break
-        }
-        return result
-      })
-    },
-    pagedData() {
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return this.filteredData.slice(start, end)
     }
   },
   watch: {
@@ -163,19 +133,7 @@ export default {
     },
     toggleFail() {
       this.listQuery.page = 1
-    },
-
-    selectedProjectId() {
-      this.fetchData()
-      this.listQuery.page = 1
-      this.keyword = ''
-    },
-    keyword() {
-      this.listQuery.page = 1
     }
-  },
-  mounted() {
-    this.fetchData()
   },
   methods: {
     async fetchData() {
@@ -186,7 +144,7 @@ export default {
       const testCases = isSingleCollection
         ? this.formatData(report.json_file.executions)
         : this.handleMultiCollections(report.json_file)
-      this.listData = testCases.length ? testCases : []
+      return testCases.length ? testCases : []
     },
     formatData(testCases) {
       return testCases.flatMap((testCase, idx) =>
@@ -212,9 +170,25 @@ export default {
       const mapping = { Fail: 'danger', Pass: 'success' }
       return mapping[status]
     },
-
-    onPagination(listQuery) {
-      this.listQuery = listQuery
+    mergeCells({ row, column, rowIndex, columnIndex }) {
+      const data = this.listData
+      const cellVal = row[column.property]
+      const noSortKeys = ['method', 'path', 'testResult', 'responseMsg']
+      if (cellVal && !noSortKeys.includes(column.property)) {
+        const prevRow = data[rowIndex - 1]
+        let nextRow = data[rowIndex + 1]
+        if (prevRow && prevRow[column.property] === cellVal) {
+          return { rowspan: 0, colspan: 0 }
+        } else {
+          let countRowspan = 1
+          while (nextRow && nextRow[column.property] === cellVal) {
+            nextRow = data[++countRowspan + rowIndex]
+          }
+          if (countRowspan > 1) {
+            return { rowspan: countRowspan, colspan: 1 }
+          }
+        }
+      }
     }
   }
 }
