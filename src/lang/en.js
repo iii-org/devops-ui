@@ -193,7 +193,7 @@ export default {
     TestMessage: 'Test Message',
     SearchName: 'Search Name',
     SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
-    Request: 'request | requests',
+    TestItem: '{count} Test Item | {count} Test Items',
     Pass: 'Pass',
     Fail: 'Fail',
     TestPass: 'Test Pass',

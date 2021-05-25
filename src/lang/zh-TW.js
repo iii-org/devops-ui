@@ -180,7 +180,7 @@ export default {
     TestMessage: '回傳訊息',
     SearchName: '搜尋名稱',
     SearchNameOrPathOrTestResult: '搜尋名稱或路徑或測試結果',
-    Request: '項次 | 項次',
+    TestItem: '{count} 測試項目',
     Pass: '通過',
     Fail: '失敗',
     TestPass: '測試通過',

@@ -24,7 +24,9 @@
           prefix-icon="el-icon-search"
         />
       </div>
+
       <el-divider />
+
       <div class="d-flex justify-space-between align-center mb-3">
         <div class="text-info">{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</div>
         <div class="d-flex align-center">
@@ -53,12 +55,6 @@
       <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedDataByChecked" border fit>
         <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="110" />
         <el-table-column align="center" :label="$t('general.Name')" prop="name" min-width="100" show-overflow-tooltip />
-        <el-table-column-tag
-          prop="testResult"
-          :label="$t('TestCase.TestResult')"
-          min-width="70"
-          location="testCasePostman"
-        />
         <el-table-column
           align="center"
           :label="$t('TestCase.Method')"
@@ -67,18 +63,19 @@
           prop="method"
         />
         <el-table-column align="center" :label="$t('TestCase.Path')" prop="path" min-width="120" />
-        <el-table-column header-align="center" :label="$t('TestCase.TestMessage')" min-width="150" prop="assertions">
+        <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
           <template slot-scope="scope">
-            <div v-for="(assertion, idx) in scope.row.assertions" :key="idx" class="d-flex justify-start my-1">
-              <el-tag size="mini" class="mr-2 mb-1" :type="getTagType(assertion.testResult)">
-                <svg-icon v-if="assertion.testResult === 'Pass'" icon-class="mdi-check" />
-                <svg-icon v-if="assertion.testResult === 'Fail'" icon-class="mdi-close" />
-                {{ $t(`TestCase.Test${assertion.testResult}`) }}
-              </el-tag>
-              <span class="flex-wrap tex-subtitle-2" :class="`text-${getTagType(assertion.testResult)}`">
-                {{ `${assertion.assertion}${assertion.error_message ? ', ' + assertion.error_message : ''}` }}
-              </span>
-            </div>
+            <el-tag size="mini" :type="getTagType(scope.row.testResult)">
+              <svg-icon :icon-class="scope.row.testResult === 'Pass' ? 'mdi-check' : 'mdi-close'" />
+              {{ $t(`TestCase.Test${scope.row.testResult}`) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" :label="$t('TestCase.TestMessage')" min-width="150" prop="responseMsg">
+          <template slot-scope="scope">
+            <span class="tex-subtitle-2" :class="`text-${getTagType(scope.row.testResult)}`">
+              {{ scope.row.responseMsg }}
+            </span>
           </template>
         </el-table-column>
       </el-table>
@@ -97,22 +94,33 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+// import MixinBasicTable from '@/mixins/MixinBasicTable'
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'TestCasePostman',
-  components: { ElTableColumnTag },
-  mixins: [MixinBasicTable],
+  components: { Pagination },
+  // mixins: [MixinBasicTable],
   data() {
     return {
       testCaseInfos: {},
       togglePass: true,
-      toggleFail: true
+      toggleFail: true,
+      titles: ['index', 'name', 'method', 'path', 'testResult', 'responseMsg'],
+      spanList: [],
+
+      listData: [],
+      listLoading: false,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      searchKeys: ['name'],
+      keyword: ''
     }
   },
   computed: {
-    ...mapGetters(['selectedProject']),
+    ...mapGetters(['selectedProject', 'userId']),
     checkedData() {
       const isPass = this.togglePass ? 'Pass' : null
       const isFail = this.toggleFail ? 'Fail' : null
@@ -125,6 +133,28 @@ export default {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       return this.checkedData.slice(start, end)
+    },
+
+    selectedProjectId() {
+      return this.selectedProject.id
+    },
+    filteredData() {
+      const { listData, searchKeys } = this
+      const keyword = this.keyword.toLowerCase()
+      return listData.filter(data => {
+        let result = false
+        for (let i = 0; i < searchKeys.length; i++) {
+          const columnValue = data[searchKeys[i]].toLowerCase()
+          result = result || columnValue.includes(keyword)
+          if (result) break
+        }
+        return result
+      })
+    },
+    pagedData() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit
+      return this.filteredData.slice(start, end)
     }
   },
   watch: {
@@ -133,52 +163,58 @@ export default {
     },
     toggleFail() {
       this.listQuery.page = 1
+    },
+
+    selectedProjectId() {
+      this.fetchData()
+      this.listQuery.page = 1
+      this.keyword = ''
+    },
+    keyword() {
+      this.listQuery.page = 1
     }
+  },
+  mounted() {
+    this.fetchData()
   },
   methods: {
     async fetchData() {
       const res = await getPostmanReport(this.$route.params.id)
       const { branch, commit_id, commit_url, start_time, report } = res.data
       this.testCaseInfos = { branch, commit_id, commit_url, start_time }
-      const isSingleCollections = Object.keys(report.json_file).includes('assertions' || 'executions')
-      const testCases = isSingleCollections
+      const isSingleCollection = Object.keys(report.json_file).includes('assertions' || 'executions')
+      const testCases = isSingleCollection
         ? this.formatData(report.json_file.executions)
         : this.handleMultiCollections(report.json_file)
-      return testCases.length ? testCases : []
+      this.listData = testCases.length ? testCases : []
     },
     formatData(testCases) {
-      return testCases.map((testCase, idx) => {
-        const result = testCase
-        result.index = idx + 1
-        result.assertions.forEach(assertion => {
-          if ('error_message' in assertion) {
-            assertion['testResult'] = 'Fail'
-          } else {
-            assertion['testResult'] = 'Pass'
-          }
-        })
-        result['testResult'] = result.assertions.every(assertion => assertion.testResult === 'Pass') ? 'Pass' : 'Fail'
-        return result
-      })
+      return testCases.flatMap((testCase, idx) =>
+        testCase.assertions.map(assertion => ({
+          index: idx + 1,
+          name: testCase.name,
+          method: testCase.method,
+          path: testCase.path,
+          testResult: assertion.hasOwnProperty('error_message') ? 'Fail' : 'Pass',
+          responseMsg: `${assertion.assertion}${assertion.error_message ? ', ' + assertion.error_message : ''}`
+        }))
+      )
     },
     handleMultiCollections(testCases) {
       const flatCollections = Object.values(testCases).flatMap(i => i.executions)
       return this.formatData(flatCollections)
     },
+    countRequestMsg(result) {
+      const length = this.listData.filter(item => item.testResult === result).length
+      return `${this.$tc('TestCase.TestItem', length, { count: length })}`
+    },
     getTagType(status) {
       const mapping = { Fail: 'danger', Pass: 'success' }
       return mapping[status]
     },
-    countRequestMsg(testResult) {
-      const filteredRequests = this.filteredData.filter(item => item.testResult === testResult)
-      const assertionResults = filteredRequests.flatMap(i => i.assertions).map(i => i.testResult)
-      const passCount = assertionResults.filter(i => i === 'Pass').length
-      const failCount = assertionResults.filter(i => i === 'Fail').length
-      const requestLength = filteredRequests.length
-      const result = `${requestLength} ${this.$tc('TestCase.Request', requestLength)}（${passCount} ${this.$t(
-        'TestCase.TestPass'
-      )}, ${failCount} ${this.$t('TestCase.TestFail')}）`
-      return result
+
+    onPagination(listQuery) {
+      this.listQuery = listQuery
     }
   }
 }
