@@ -34,21 +34,6 @@
         </template>
       </el-table-column>
       <el-table-column-time prop="next_d_time" :label="$t('Project.UpcomingDeadline')" />
-      <el-table-column align="center" :label="$t('Project.Branches')" width="120">
-        <template slot-scope="scope">
-          <router-link
-            v-if="scope.row.branch"
-            :to="{
-              name: 'branches',
-              params: { pId: scope.row.project_id, projectName: scope.row.name, bId: scope.row.repository_ids[0] }
-            }"
-            style="color: #409eff"
-          >
-            <span>{{ scope.row.branch }}</span>
-          </router-link>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
       <el-table-column align="center" :label="$t('Project.LastTest')" width="190">
         <template slot-scope="scope">
           <span v-if="scope.row.last_test_time === ''">No Test</span>

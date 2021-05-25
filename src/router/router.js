@@ -282,14 +282,6 @@ export const asyncRoutes = [
         meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
-        path: 'branches/:bId/:projectName',
-        name: 'branches',
-        props: true,
-        hidden: true,
-        component: () => import('@/views/Progress/BranchListRD'),
-        meta: { title: 'Branches', icon: 'tree', roles: ['Engineer'] }
-      },
-      {
         path: 'git-graph',
         name: 'git-graph',
         component: () => import('@/views/Progress/GitGraph'),

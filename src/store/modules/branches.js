@@ -1,4 +1,4 @@
-import { getBranchesByProject as GBBP, newBranch as NB, deleteBranch as DB, mergeBranch as MB } from '@/api/branches'
+import { getBranchesByProject as GBBP } from '@/api/branches'
 
 const getDefaultState = () => {
   return {
@@ -25,47 +25,6 @@ const actions = {
       const { data } = response
       commit('SET_LIST', data.branch_list)
       commit('SET_TOTAL', data.branch_list.length)
-    } catch (error) {
-      console.error(error.toString())
-    }
-  },
-  async newBranch({ commit, dispatch }, { rId, data }) {
-    try {
-      const response = await NB(rId, data)
-      await new Promise(resolve => {
-        setTimeout(() => {
-          dispatch('getBranchesByProject', rId)
-          resolve()
-        }, 1000)
-      })
-      return (response)
-    } catch (error) {
-      console.error(error.toString())
-      return (error)
-    }
-  },
-  async deleteBranch({ dispatch }, { rId, bName }) {
-    try {
-      const response = await DB(rId, bName)
-      await new Promise(resolve => {
-        setTimeout(() => {
-          dispatch('getBranchesByProject', rId)
-          resolve()
-        }, 1000)
-      })
-    } catch (error) {
-      console.error(error.toString())
-    }
-  },
-  async mergeBranch({ dispatch }, { rId, data }) {
-    try {
-      const response = await MB(rId, data)
-      await new Promise(resolve => {
-        setTimeout(async () => {
-          await dispatch('getBranchesByProject', rId)
-          resolve()
-        }, 1000)
-      })
     } catch (error) {
       console.error(error.toString())
     }
