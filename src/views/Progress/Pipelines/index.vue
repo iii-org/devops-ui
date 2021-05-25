@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" style="overflow: hidden;">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="overflow: hidden;">
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">

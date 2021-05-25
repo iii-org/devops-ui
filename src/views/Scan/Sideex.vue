@@ -1,5 +1,5 @@
 <template>
-  <el-row class="app-container">
+  <el-row class="app-container" style="overflow: hidden;">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
@@ -10,7 +10,7 @@
       />
     </div>
     <div class="text-right text-info" style="position: relative; top: 15px">
-      <span><i class="el-icon-warning"/></span>
+      <span><i class="el-icon-warning" /></span>
       <span>{{ $t('Sideex.promptMessage') }}</span>
     </div>
     <el-divider />

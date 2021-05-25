@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" style="overflow: hidden;">
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
@@ -88,7 +88,7 @@
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
         <div class="form__body">
-          <br />
+          <br>
           <template>
             <editor
               v-if="dialogVisible"

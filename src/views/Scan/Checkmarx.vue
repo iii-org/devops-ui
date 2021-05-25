@@ -1,5 +1,5 @@
 <template>
-  <el-row class="app-container">
+  <el-row class="app-container" style="overflow: hidden;">
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
