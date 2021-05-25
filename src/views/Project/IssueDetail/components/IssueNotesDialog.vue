@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-row ref="dialog" class="dialog_wrapper" :style="{height:height}">
-      <dialog-content v-for="(item,idx) in data" :key="idx" :note="item" :right="filterAuthor(item)" />
+      <dialog-content v-for="(item,idx) in data" :key="idx" :note="item" :right="filterAuthor(item)" @show-parent-issue="showParentIssue" />
     </el-row>
   </el-row>
 </template>
@@ -48,6 +48,9 @@ export default {
   methods: {
     filterAuthor(note) {
       return (note.user.id === this.userId)
+    },
+    showParentIssue(id) {
+      this.$emit('show-parent-issue', id)
     }
   }
 }

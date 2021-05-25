@@ -79,7 +79,7 @@
               <issue-notes-editor ref="IssueNotesEditor" height="125px" @change="onEditorChange" />
             </el-col>
             <el-col :span="24">
-              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" />
+              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" @show-parent-issue="onRelationIssueDialog" />
             </el-col>
           </el-row>
         </el-col>
