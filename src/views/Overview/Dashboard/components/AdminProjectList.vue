@@ -16,19 +16,23 @@
           clearable
         />
       </el-col>
-      <el-col v-if="listData.length>0" :span="12" class="text-right">
+      <el-col v-if="listData.length > 0" :span="12" class="text-right">
         {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
       </el-col>
     </el-row>
     <component :is="showShadow">
-      <el-table v-loading="listLoading" :data="pagedData" :row-class-name="tableRowClassName" cell-class-name="align-center"
-                header-cell-class-name="align-center"
-                @sort-change="onSortChange"
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :row-class-name="tableRowClassName"
+        cell-class-name="align-center"
+        header-cell-class-name="align-center"
+        @sort-change="onSortChange"
       >
         <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
-        <el-table-column sortable prop="pm_user_name" :label="$t('Dashboard.ADMIN.ProjectList.pm_user_name')">
+        <el-table-column sortable prop="owner_name" :label="$t('Dashboard.ADMIN.ProjectList.owner_name')">
           <template slot-scope="scope">
-            {{ `${scope.row.pm_user_name} (${scope.row.pm_user_login})` }}
+            {{ `${scope.row.owner_name} (${scope.row.owner_login})` }}
           </template>
         </el-table-column>
         <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')">
@@ -37,8 +41,16 @@
           </template>
         </el-table-column>
         <el-table-column sortable prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
-        <el-table-column sortable prop="unclosed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.unclosed_issue_count')" />
-        <el-table-column sortable prop="closed_issue_count" :label="$t('Dashboard.ADMIN.ProjectList.closed_issue_count')" />
+        <el-table-column
+          sortable
+          prop="unclosed_issue_count"
+          :label="$t('Dashboard.ADMIN.ProjectList.unclosed_issue_count')"
+        />
+        <el-table-column
+          sortable
+          prop="closed_issue_count"
+          :label="$t('Dashboard.ADMIN.ProjectList.closed_issue_count')"
+        />
         <el-table-column sortable prop="member_count" :label="$t('Dashboard.ADMIN.ProjectList.member_count')" />
         <el-table-column sortable prop="expired_day" :label="$t('Dashboard.ADMIN.ProjectList.expired_day')" />
         <el-table-column sortable prop="end_date" :label="$t('Dashboard.ADMIN.ProjectList.end_date')" />
@@ -71,7 +83,7 @@ export default {
   props: {
     data: {
       type: Function,
-      default: () => ([])
+      default: () => []
     },
     inDialog: {
       type: Boolean,
@@ -86,14 +98,14 @@ export default {
       },
       detailDialog: false,
       detailData: [],
-      searchKeys: ['project_name', 'pm_user_name'],
+      searchKeys: ['project_name', 'owner_name'],
       searchStatus: '',
       reload: 0
     }
   },
   computed: {
     showShadow() {
-      return (this.inDialog) ? 'el-card' : 'div'
+      return this.inDialog ? 'el-card' : 'div'
     }
   },
   watch: {
@@ -111,7 +123,7 @@ export default {
     },
     filterData(value) {
       if (value) {
-        this.listData = this.detailData.filter((item) => (item.project_status === value))
+        this.listData = this.detailData.filter(item => item.project_status === value)
       } else {
         this.listData = this.detailData
       }
@@ -127,7 +139,9 @@ export default {
           orderSign = 1
           break
       }
-      this.listData = this.listData.sort((a, b) => (a[prop] > b[prop]) ? orderSign : ((b[prop] > a[prop]) ? -1 * orderSign : 0))
+      this.listData = this.listData.sort((a, b) =>
+        a[prop] > b[prop] ? orderSign : b[prop] > a[prop] ? -1 * orderSign : 0
+      )
     },
     tableRowClassName({ row }) {
       if (row.project_status === 'Overdue') {
@@ -136,13 +150,8 @@ export default {
       return ''
     },
     getProjectListDetailData() {
-      return getProjectListDetail()
-        .then((res) => (Promise.resolve(res.data)))
+      return getProjectListDetail().then(res => Promise.resolve(res.data))
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

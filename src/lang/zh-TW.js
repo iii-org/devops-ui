@@ -140,7 +140,7 @@ export default {
     caution: '注意！',
     ok: '確定',
     project_name: '專案名稱',
-    pm_user_name: '專案經理',
+    owner_name: '專案經理',
     Department: '部門',
     UserTitle: '職稱',
     Back: '返回'
@@ -385,7 +385,7 @@ export default {
       ProjectMembers: {
         NAME: '專案成員',
         project_name: '@:general.project_name',
-        pm_user_name: '@:general.pm_user_name',
+        owner_name: '@:general.owner_name',
         member_count: '參與人數',
         start_date: '專案起始日',
         end_date: '專案結束日'
@@ -422,7 +422,7 @@ export default {
         unclosed_count: '尚待解決',
         project_count: '參與專案數',
         project_name: '@:general.project_name',
-        pm_user_name: '@:general.pm_user_name',
+        owner_name: '@:general.owner_name',
         project_status: '執行狀態',
         complete_percent: '完成百分比',
         unclosed_issue_count: '未解決問題數',
@@ -522,7 +522,7 @@ export default {
     SearchProjectNameOrId: '搜尋專案名稱或 ID',
     StartDate: '起始日',
     DueDate: '到期日',
-    ProjectOwner: '專案經理',
+    Owner: '專案經理',
     SelectProject: '請選擇專案',
     SelectTemplate: '請選擇範本'
   },

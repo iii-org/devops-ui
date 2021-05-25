@@ -141,7 +141,7 @@ export default {
     caution: 'Caution!',
     ok: 'OK',
     project_name: 'Project Name',
-    pm_user_name: 'Project Manager',
+    owner_name: 'Project Manager',
     Department: 'Department',
     UserTitle: 'Title',
     Back: 'Back'
@@ -385,7 +385,7 @@ export default {
       ProjectMembers: {
         NAME: 'Project Members',
         project_name: '@:general.project_name',
-        pm_user_name: '@:general.pm_user_name',
+        owner_name: '@:general.owner_name',
         member_count: 'members',
         start_date: 'start date',
         end_date: 'end date'
@@ -422,7 +422,7 @@ export default {
         unclosed_count: '# unsolved',
         project_count: '# projects',
         project_name: '@:general.project_name',
-        pm_user_name: '@:general.pm_user_name',
+        owner_name: '@:general.owner_name',
         project_status: 'Status',
         complete_percent: 'Progress',
         unclosed_issue_count: 'Unsolved',
@@ -524,7 +524,7 @@ export default {
     SearchProjectNameOrId: 'Search Project Name or ID',
     StartDate: 'Start Date',
     DueDate: 'Due Date',
-    ProjectOwner: 'Project Owner',
+    Owner: 'Project Owner',
     SelectProject: 'Select a project',
     SelectTemplate: 'Select a template'
   },

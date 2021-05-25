@@ -8,7 +8,7 @@
         {{ $t('Member.AddMember') }}
       </el-button>
       <div>
-        <span class="font-weight-bold mx-2">{{ $t('Project.ProjectOwner') }}</span>
+        <span class="font-weight-bold mx-2">{{ $t('Project.Owner') }}</span>
         <el-select v-model="owner_id" size="medium" :disabled="disabledEditOwner" @change="setProjectOwner">
           <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
             {{ user.label }}
@@ -87,10 +87,15 @@ export default {
     ...mapGetters(['userRole', 'userId']),
     disabledEditOwner() {
       if (this.userRole === 'Administrator') return false
-      return this.userId !== this.projectOwner
+      return this.userId !== this.owner_id
     },
     assignedList() {
       return this.listData.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
+    }
+  },
+  watch: {
+    selectedProjectId() {
+      this.fetchProjectOwner()
     }
   },
   mounted() {
@@ -103,15 +108,15 @@ export default {
     },
     async fetchProjectOwner() {
       const res = await getProjectInfos(this.selectedProjectId)
-      const { pm_user_id } = res.data
-      this.owner_id = pm_user_id
+      const { owner_id } = res.data
+      this.owner_id = owner_id
     },
     setProjectOwner() {
       this.listLoading = true
       updateProjectInfos(this.selectedProjectId, { owner_id: this.owner_id })
         .then(() => {
           this.$message({
-            message: this.$t('Notify.Updated'),
+            message: `${this.$t('Notify.Updated')} ${this.$t('Project.Owner')}`,
             type: 'success'
           })
         })

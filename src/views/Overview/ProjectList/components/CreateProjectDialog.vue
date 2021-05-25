@@ -46,7 +46,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="checkOwnerRequired" :span="24">
-            <el-form-item :label="$t('Project.ProjectOwner')" :prop="checkOwnerRequired ? 'owner_id' : ''">
+            <el-form-item :label="$t('Project.Owner')" :prop="checkOwnerRequired ? 'owner_id' : ''">
               <el-select v-model="form.owner_id" filterable style="width:100%">
                 <el-option
                   v-for="user in userList"

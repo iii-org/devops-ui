@@ -1,6 +1,13 @@
 <template>
   <el-col v-loading="loading">
-    <v-chart v-if="chartData.length>0" class="chart" :option="projectMembersOptions" autoresize theme="macarons" @click="onClickChart" />
+    <v-chart
+      v-if="chartData.length > 0"
+      class="chart"
+      :option="projectMembersOptions"
+      autoresize
+      theme="macarons"
+      @click="onClickChart"
+    />
     <no-data v-else />
     <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectMembers.NAME')" @close="closeHandler">
       <el-row type="flex" align="middle">
@@ -13,51 +20,33 @@
             clearable
           />
         </el-col>
-        <el-col v-if="listData.length>0" :span="12" class="text-right">
+        <el-col v-if="listData.length > 0" :span="12" class="text-right">
           {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
         </el-col>
       </el-row>
       <el-card>
-        <el-table v-if="listData.length>0" ref="tableData"
-                  :data="pagedData"
-                  :row-key="'project_id'"
-                  @row-click="rowClicked"
-                  @expand-change="loadMembers"
+        <el-table
+          v-if="listData.length > 0"
+          ref="tableData"
+          :data="pagedData"
+          :row-key="'project_id'"
+          @row-click="rowClicked"
+          @expand-change="loadMembers"
         >
           <el-table-column type="expand">
             <template slot-scope="props">
               <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.childrens" />
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')"
-            prop="project_name"
-            sortable
-          />
-          <el-table-column
-            :label="$t('Dashboard.ADMIN.ProjectMembers.pm_user_name')"
-            prop="pm_user_name"
-            sortable
-          >
+          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')" prop="project_name" sortable />
+          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.owner_name')" prop="owner_name" sortable>
             <template slot-scope="props">
-              {{ `${props.row.pm_user_name} (${props.row.pm_user_login})` }}
+              {{ `${props.row.owner_name} (${props.row.owner_login})` }}
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')"
-            prop="member_count"
-            sortable
-          />
-          <el-table-column
-            :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')"
-            prop="start_date"
-            sortable
-          />
-          <el-table-column
-            prop="end_date"
-            :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')"
-            sortable
-          />
+          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')" prop="member_count" sortable />
+          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')" prop="start_date" sortable />
+          <el-table-column prop="end_date" :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')" sortable />
         </el-table>
         <pagination
           :total="filteredData.length"
@@ -85,10 +74,7 @@ import NoData from './widget/NoData'
 
 require('echarts/theme/macarons') // echarts theme
 
-use([
-  CanvasRenderer,
-  PieChart
-])
+use([CanvasRenderer, PieChart])
 export default {
   name: 'AdminProjectMember',
   components: {
@@ -100,7 +86,7 @@ export default {
   props: {
     data: {
       type: Function,
-      default: () => ([])
+      default: () => []
     }
   },
   data() {
@@ -108,7 +94,7 @@ export default {
       loading: false,
       chartData: [],
       detailDialog: false,
-      searchKeys: ['project_name', 'pm_user_name'],
+      searchKeys: ['project_name', 'owner_name'],
       reload: 0
     }
   },
@@ -170,10 +156,9 @@ export default {
       }
     },
     async fetchData() {
-      return getProjectMembersDetail()
-        .then((res) => {
-          return Promise.resolve(res.data)
-        })
+      return getProjectMembersDetail().then(res => {
+        return Promise.resolve(res.data)
+      })
     },
     rowClicked(row) {
       this.$refs['tableData'].toggleRowExpansion(row)
@@ -182,7 +167,7 @@ export default {
       const _this = this
       row.loading = true
       getProjectMembersByProjectID(row.project_id)
-        .then((res) => {
+        .then(res => {
           row['childrens'] = res.data
         })
         .finally(() => {
@@ -196,7 +181,7 @@ export default {
     },
     closeHandler() {
       this.keyword = ''
-      this.pagedData.forEach((item) => {
+      this.pagedData.forEach(item => {
         this.$refs['tableData'].toggleRowExpansion(item, false)
       })
       this.listQuery.page = 1

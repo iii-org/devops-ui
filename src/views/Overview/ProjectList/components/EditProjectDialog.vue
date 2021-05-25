@@ -21,7 +21,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="8" :xl="5">
-            <el-form-item :label="$t('Project.ProjectOwner')" prop="owner_id">
+            <el-form-item :label="$t('Project.Owner')" prop="owner_id">
               <el-select v-model="form.owner_id" style="width: 100%" :disabled="disabledEditOwner">
                 <el-option v-for="item in assignedList" :key="item.id" :label="item.label" :value="item.id">
                   {{ item.label }}
@@ -153,7 +153,7 @@ export default {
     },
     disabledEditOwner() {
       if (this.userRole === 'Administrator') return false
-      return this.userId !== this.editProjectObj.pm_user_id
+      return this.userId !== this.editProjectObj.owner_id
     }
   },
   watch: {
@@ -163,7 +163,7 @@ export default {
         this.form[item] = this.editProjectObj[item] === 'None' ? '' : this.editProjectObj[item]
       })
       this.fetchProjectAssignableList(this.editProjectObj.id)
-      this.form.owner_id = this.editProjectObj.pm_user_id
+      this.form.owner_id = this.editProjectObj.owner_id
     }
   },
   methods: {
