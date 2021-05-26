@@ -150,7 +150,7 @@ export default {
       this.listLoading = true
       getWebInspectStatus(wiScanId).then(res => {
         const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
-        this.listData[idx].stats.status = res.data.status
+        this.$set(this.listData[idx].stats, 'status', res.data.status)
         if (res.data.status === 'Complete') this.fetchStats(wiScanId)
       })
       this.listLoading = false
@@ -161,13 +161,13 @@ export default {
         const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
         // res data from WI length is 6, while WIE is 7
         if (res.data.severity_count.length === 7) {
-          this.listData[idx].stats = res.data.severity_count
+          this.$set(this.listData[idx], 'stats', res.data.severity_count)
         } else {
-          this.listData[idx].stats.criticalCount = res.data.severity_count[4]
-          this.listData[idx].stats.highCount = res.data.severity_count[3]
-          this.listData[idx].stats.mediumCount = res.data.severity_count[2]
-          this.listData[idx].stats.lowCount = res.data.severity_count[1]
-          this.listData[idx].stats.infoCount = res.data.severity_count[0]
+          this.$set(this.listData[idx].stats, 'criticalCount', res.data.severity_count[4])
+          this.$set(this.listData[idx].stats, 'highCount', res.data.severity_count[3])
+          this.$set(this.listData[idx].stats, 'mediumCount', res.data.severity_count[2])
+          this.$set(this.listData[idx].stats, 'lowCount', res.data.severity_count[1])
+          this.$set(this.listData[idx].stats, 'infoCount', res.data.severity_count[0])
         }
         this.listData[idx].stats.status = 'Complete'
       })
