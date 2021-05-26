@@ -5,7 +5,7 @@
         {{ $t('ProgressPipelines.TestDetail') }}
       </span>
     </template>
-    <el-tabs v-model="activeStage" tab-position="left">
+    <el-tabs v-model="activeStage" tab-position="left" @tab-click="userClick">
       <el-tab-pane
         v-for="(stage, idx) in stages"
         :key="idx"
@@ -47,7 +47,8 @@
               lineHeight: 1,
               fontSize: '14px',
               height: '45vh',
-              overflow: 'auto'
+              overflow: 'auto',
+              'scroll-behavior': 'smooth'
             }"
             shadow="never"
           >
@@ -56,7 +57,6 @@
         </el-card>
       </el-tab-pane>
     </el-tabs>
-
     <span slot="footer">
       <el-button @click="handleClose">{{ $t('general.Close') }}</el-button>
     </span>
@@ -64,45 +64,202 @@
 </template>
 
 <script>
+import { io } from 'socket.io-client'
 import { mapGetters } from 'vuex'
+import { getPipelinesConfig, getCiPipelineId } from '@/api/cicd'
 
 export default {
-  name: 'TestDetail',
+  name: 'TestDetailSocket',
   props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false
-    },
-    theData: {
-      type: Array,
-      default: () => []
-    },
-    pipelinesExecRun: {
+    pipelineId: {
       type: Number,
       default: 0
     }
   },
   data() {
     return {
+      dialogVisible: false,
       stages: [],
       activeStage: '',
-      sid: ''
+      sid: '',
+      pipelinesExecRun: 0,
+      ciPipelineId: 0,
+      emitStages: [],
+      timer: null,
+      socket: io('/rancher/websocket/logs', {
+        // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      })
     }
   },
   computed: {
     ...mapGetters(['selectedProject'])
   },
   watch: {
-    theData: {
-      handler(val) {
-        this.stages = val.map(item => item)
-        this.activeStage = `1 ${this.stages[0].name}`
-      }
+    selectedProject() {
+      this.fetchCiPipelineId()
     }
   },
+  mounted() {
+    if (this.selectedProject.id === -1) return
+    this.fetchCiPipelineId()
+    this.setConnectStatusListener()
+    this.setLogMessageListener()
+  },
+  beforeDestroy() {
+    this.handleClose()
+  },
   methods: {
+    userClick(tab) {
+      this.emitPipeLog(tab)
+    },
+    emitPipeLog(tab) {
+      const index = Number(tab.index)
+      this.emitStages.push(index)
+      const stage = this.stages[index]
+      if (!stage.isLoading) return
+      const emitObj = {
+        pipelines_exec_run: this.pipelinesExecRun,
+        ci_pipeline_id: this.ciPipelineId,
+        stage_index: index + 1,
+        step_index: stage.steps[0].step_id,
+        sid: this.sid
+      }
+      // console.log('EMIT get_pipe_log ===>', emitObj)
+      this.socket.emit('get_pipe_log', emitObj)
+    },
+    setLogMessageListener() {
+      this.socket.on('pipeline_log', sioEvt => {
+        // console.log('EVENT pipeline_log ===>', sioEvt)
+        const { stage_index, step_index, data } = sioEvt
+        const stageIdx = stage_index - 1
+        if (data === '') {
+          this.stages[stageIdx].isLoading = false
+          this.moveToNextStage(stage_index)
+        } else {
+          this.setLogMessage(stageIdx, step_index, data)
+        }
+        this.scrollToBottom()
+      })
+    },
+    moveToNextStage(stage_index) {
+      if (stage_index < this.stages.length) {
+        const buildingStageIdx = this.getBuildingStageIdx()
+        // console.log(buildingStageIdx)
+        if (buildingStageIdx < 0) return
+        // if (userClick) {
+        // this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx, 1500)
+        // } else {
+        this.changeFocusTab(stage_index + 1, stage_index, 1500)
+        // }
+      }
+    },
+    setLogMessage(stageIdx, step_index, data) {
+      const target = this.stages[stageIdx].steps[step_index].message
+      const isHistoryMessage = target === data || target === 'Loading...'
+      if (isHistoryMessage) {
+        this.stages[stageIdx].steps[step_index].message = data
+      } else {
+        if (target.includes(data)) return
+        this.stages[stageIdx].steps[step_index].message = this.stages[stageIdx].steps[step_index].message.concat(data)
+      }
+    },
+    changeFocusTab(order, stageIdx, timeout = 0) {
+      if (order === 1 && stageIdx === 0) {
+        this.activeStage = `${order} ${this.stages[stageIdx].name}`
+        if (this.emitStages.includes(stageIdx)) return
+        this.emitPipeLog({ index: stageIdx })
+      } else {
+        setTimeout(() => {
+          this.activeStage = `${order} ${this.stages[stageIdx].name}`
+          if (this.emitStages.includes(stageIdx)) return
+          this.emitPipeLog({ index: stageIdx })
+        }, timeout)
+      }
+    },
+    async fetchStages() {
+      this.socket.connect()
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        this.stages = res.map(stage => ({
+          stage_id: stage.stage_id,
+          name: stage.name,
+          state: stage.state,
+          isLoading: true,
+          steps: stage.steps.map(step => ({
+            step_id: step.step_id,
+            state: step.state,
+            message: 'Loading...'
+          }))
+        }))
+        this.dialogVisible = true
+        this.setTimer()
+        const buildingStageIdx = this.getBuildingStageIdx()
+        if (buildingStageIdx < 0) {
+          this.changeFocusTab(1, 0)
+        } else {
+          this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    fetchCiPipelineId() {
+      getCiPipelineId(this.selectedProject.repository_id)
+        .then(res => {
+          this.ciPipelineId = res.data
+        })
+        .catch(err => console.error(err))
+    },
+    setConnectStatusListener() {
+      this.socket.on('connect', () => {
+        this.$notify({
+          title: this.$t('general.Success'),
+          message: 'WebSocket connect',
+          type: 'success'
+        })
+        this.sid = this.socket.id
+      })
+      // this.socket.on('disconnect', msg => {
+      //   this.$notify({
+      //     title: this.$t('general.Info'),
+      //     message: msg,
+      //     type: 'warning'
+      //   })
+      //   this.sid = this.socket.id
+      // })
+    },
+    async updateStagesState() {
+      const { repository_id } = this.selectedProject
+      try {
+        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        res.forEach((stage, idx) => {
+          this.stages[idx].state = stage.state
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    },
     handleClose() {
-      this.$emit('test-detail-visible', false)
+      this.socket.close()
+      this.clearTimer()
+      this.stages = []
+      this.emitStages = []
+      this.dialogVisible = false
+      this.activeStage = ''
+    },
+    setTimer() {
+      const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
+      if (isActive) this.timer = setInterval(() => this.updateStagesState(), 5000)
+    },
+    clearTimer() {
+      clearInterval(this.timer)
+      this.timer = null
+    },
+    getBuildingStageIdx() {
+      return this.stages.findIndex(item => item.state === 'Building')
     },
     getStateTagType(state) {
       switch (state) {
@@ -123,12 +280,13 @@ export default {
       }
     },
     getStateTagEffect(state) {
-      switch (state) {
-        case 'Building':
-          return 'light'
-        default:
-          return 'dark'
-      }
+      return state === 'Building' ? 'light' : 'dark'
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const target = this.$el.querySelector('.el-card__body').childNodes[2].childNodes[1]
+        target.scrollTop = target.scrollHeight
+      })
     }
   }
 }

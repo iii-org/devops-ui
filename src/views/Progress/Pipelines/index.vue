@@ -1,159 +1,191 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" style="overflow: hidden;">
-    <div class="d-flex justify-space-between">
-      <project-list-selector />
-      <el-input
-        v-model="searchData"
-        :placeholder="$t('ProgressPipelines.SearchCommitMessage')"
-        style="width: 250px"
-        prefix-icon="el-icon-search"
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+    <el-col>
+      <div class="d-flex justify-space-between">
+        <project-list-selector />
+        <el-input
+          v-model="keyword"
+          style="width: 250px"
+          prefix-icon="el-icon-search"
+          :placeholder="$t('ProgressPipelines.SearchCommitMessage')"
+        />
+      </div>
+      <el-divider />
+      <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+        <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
+        <el-table-column
+          :label="`${$t('ProgressPipelines.Status')} / ${$t('ProgressPipelines.TestItems')}`"
+          align="center"
+          width="170"
+        >
+          <template slot-scope="scope">
+            <el-tag
+              size="small"
+              :type="getTagType(scope.row.execution_state)"
+              :effect="getTagEffect(scope.row.execution_state)"
+            >
+              {{ scope.row.execution_state }}
+            </el-tag>
+            <div class="mt-2">
+              {{ `(${scope.row.status.success}/${scope.row.status.total})` }}
+              <i
+                class="el-icon-circle-check"
+                :class="scope.row.status.success === scope.row.status.total ? 'text-success' : ''"
+              />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="`${$t('ProgressPipelines.Branch')} / ${$t('ProgressPipelines.Commit')}`"
+          align="center"
+          width="160"
+        >
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.commit_branch }}
+            </div>
+            <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
+              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+            </el-link>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="`${$t('ProgressPipelines.CommitMessage')} / ${$t('ProgressPipelines.TransitioningMessage')}`"
+          min-width="300"
+          prop="commit_message"
+          header-align="center"
+        >
+          <template slot-scope="scope">
+            <div class="text-subtitle-2 font-weight-bold">{{ scope.row.commit_message }}</div>
+            <div>{{ scope.row.transitioning_message }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" width="140" />
+        <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">
+              {{ $t('general.Detail') }}
+            </el-button>
+            <el-button
+              v-if="isAllowStop(scope.row.execution_state)"
+              size="mini"
+              type="danger"
+              plain
+              icon="el-icon-circle-close"
+              @click="onActionClick(scope.row.id, 'stop')"
+            >
+              {{ $t('general.Stop') }}
+            </el-button>
+            <el-button
+              v-else
+              size="mini"
+              type="primary"
+              plain
+              icon="el-icon-refresh-left"
+              @click="onActionClick(scope.row.id, 'rerun')"
+            >
+              {{ $t('general.Rerun') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
       />
-    </div>
-    <el-divider />
-    <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
-    <el-table
-      v-loading="listLoading"
-      :data="pagedData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      height="100%"
-      :cell-style="{ height: rowHeight + 'px' }"
-    >
-      <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
-      <el-table-column :label="$t('ProgressPipelines.TestItems')" align="center" width="120">
-        <template slot-scope="scope">
-          {{ `(${scope.row.status.success}/${scope.row.status.total})` }}
-          <i
-            class="el-icon-circle-check"
-            :class="scope.row.status.success === scope.row.status.total ? 'text-success' : ''"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column-tag
-        prop="execution_state"
-        :label="$t('ProgressPipelines.Status')"
-        min-width="110"
-        size="medium"
-        element-class="el-tag"
-        loaction="pipelines"
-      />
-      <!-- <el-table-column :label="$t('ProgressPipelines.Status')" align="center" width="110">
-        <template slot-scope="scope">
-          <el-tag
-            class="el-tag"
-            :type="getStatusTagType(scope.row.execution_state)"
-            size="medium"
-            :effect="getStatusTagEffect(scope.row.execution_state)"
-          >
-            {{ scope.row.execution_state }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
-      <el-table-column :label="$t('ProgressPipelines.Commit')" align="center" min-width="180">
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :href="scope.row.commit_url"
-          >
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('ProgressPipelines.Branch')" align="center" min-width="130" prop="commit_branch" />
-      <el-table-column
-        :label="$t('ProgressPipelines.CommitMessage')"
-        align="center"
-        min-width="200"
-        prop="commit_message"
-      />
-      <el-table-column
-        :label="$t('ProgressPipelines.TransitioningMessage')"
-        align="center"
-        min-width="220"
-        prop="transitioning_message"
-      />
-      <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" />
-      <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">
-            {{ $t('general.Detail') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.execution_state === 'Waiting' || scope.row.execution_state === 'Building'"
-            size="mini"
-            type="danger"
-            plain
-            icon="el-icon-circle-close"
-            @click="onActionClick(scope.row.id, 'stop')"
-          >
-            {{ $t('general.Stop') }}
-          </el-button>
-          <el-button
-            v-else
-            size="mini"
-            type="primary"
-            icon="el-icon-refresh-left"
-            plain
-            @click="onActionClick(scope.row.id, 'rerun')"
-          >
-            {{ $t('general.Rerun') }}
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <test-detail
-      :dialog-visible.sync="testDetailVisible"
-      :the-data="detailData"
-      :pipelines-exec-run="pipelinesExecRun"
-      @test-detail-visible="emitTestDetailVisible"
-    />
+      <test-detail ref="testDetail" :pipeline-id="focusPipelineId" />
+    </el-col>
   </el-row>
 </template>
 
 <script>
-import { changePipelineByAction, getPipelines, getPipelinesLogs } from '@/api/cicd'
+import { mapGetters } from 'vuex'
+import { changePipelineByAction, getPipelines } from '@/api/cicd'
 import TestDetail from './components/TestDetail'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import ElTableColumnTag from '@/components/ElTableColumnTag'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'ProgressPipelines',
-  components: { ElTableColumnTime, TestDetail, ElTableColumnTag },
-  mixins: [MixinElTableWithAProject],
+  name: 'ProgressPipelinesSocket',
+  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination },
   data() {
     return {
       isLoading: false,
-      detailData: [],
-      testDetailVisible: false,
-      addDocumentDialogVisible: false,
       rowHeight: 90,
-      searchKey: 'commit_message',
-      pipelinesExecRun: 0,
       lastUpdateTime: '',
       timer: null,
-      logMessage: []
+      focusPipelineId: 0,
+      listData: [],
+      listLoading: false,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      searchKeys: ['commit_message'],
+      keyword: ''
+    }
+  },
+  computed: {
+    ...mapGetters(['selectedProject', 'selectedProjectId', 'userId']),
+    pagedData() {
+      const start = (this.listQuery.page - 1) * this.listQuery.limit
+      const end = start + this.listQuery.limit
+      return this.filteredData.slice(start, end)
+    },
+    filteredData() {
+      const { listData, searchKeys } = this
+      const keyword = this.keyword.toLowerCase()
+      return listData.filter(data => {
+        let result = false
+        for (let i = 0; i < searchKeys.length; i++) {
+          const columnValue = data[searchKeys[i]].toLowerCase()
+          result = result || columnValue.includes(keyword)
+          if (result) break
+        }
+        return result
+      })
+    }
+  },
+  watch: {
+    isActivePipeline(isActive) {
+      if (isActive) {
+        this.setTimer()
+      } else {
+        this.clearTimer()
+      }
+    },
+    selectedProject() {
+      this.loadData()
+      this.listQuery.page = 1
+      this.searchData = ''
+    },
+    keyword() {
+      this.listQuery.page = 1
     }
   },
   mounted() {
-    this.timer = setInterval(() => this.fetchData(), 10000)
+    this.loadData()
+    this.setTimer()
   },
   beforeDestroy() {
-    clearInterval(this.timer)
-    this.timer = null
+    this.clearTimer()
   },
   methods: {
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    async loadData() {
+      this.listLoading = true
+      this.listData = []
+      await this.fetchData()
+      this.listLoading = false
+    },
     async fetchData() {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
@@ -174,21 +206,12 @@ export default {
         console.error(error)
       }
     },
-    async loadData() {
-      this.listLoading = true
-      this.listData = []
-      await this.fetchData()
-      this.listLoading = false
-    },
     showNoProjectWarning() {
       this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.NoProject'),
         type: 'warning'
       })
-    },
-    emitTestDetailVisible(visible) {
-      this.testDetailVisible = visible
     },
     async onActionClick(id, action) {
       const { repository_id } = this.selectedProject
@@ -206,46 +229,34 @@ export default {
           return err
         })
     },
-    // getStatusTagType(status) {
-    //   switch (status) {
-    //     case 'Failed':
-    //       return 'danger'
-    //     case 'Finished':
-    //       return 'success'
-    //     case 'Aborted':
-    //       return 'warning'
-    //     case 'Waiting':
-    //       return 'slow'
-    //     case 'Building':
-    //       return 'success'
-    //     default:
-    //       return 'info'
-    //   }
-    // },
-    // getStatusTagEffect(status) {
-    //   switch (status) {
-    //     case 'Building':
-    //       return 'light'
-    //     default:
-    //       return 'dark'
-    //   }
-    // },
-    async onDetailsClick(id) {
-      this.isLoading = true
-      const { repository_id } = this.selectedProject
-      const params = {
-        repository_id,
-        pipelines_exec_run: id
+    getTagType(status) {
+      const mapping = {
+        Failed: 'danger',
+        Finished: 'success',
+        Aborted: 'warning',
+        Waiting: 'slow',
+        Building: 'success'
       }
-      try {
-        const res = await getPipelinesLogs(params)
-        this.pipelinesExecRun = id
-        this.detailData = res.data
-        this.emitTestDetailVisible(true)
-      } catch (error) {
-        console.error(error)
-      }
-      this.isLoading = false
+      return mapping[status] || 'info'
+    },
+    getTagEffect(status) {
+      const mapping = { Building: 'light' }
+      return mapping[status] || 'dark'
+    },
+    onDetailsClick(id) {
+      this.$refs.testDetail.pipelinesExecRun = id
+      this.$refs.testDetail.fetchStages()
+    },
+    isAllowStop(status) {
+      const allowStatus = ['Waiting', 'Building', 'Queueing']
+      return allowStatus.includes(status)
+    },
+    setTimer() {
+      this.timer = setInterval(() => this.fetchData(), 5000)
+    },
+    clearTimer() {
+      clearInterval(this.timer)
+      this.timer = null
     }
   }
 }
