@@ -409,10 +409,10 @@ export default {
         NAME: '功能測試結果',
         DETAIL: '專案測試品質',
         project_name: '@:general.project_name',
-        count: '測試個案數',
+        count: '累積測試次數',
         success: '成功',
         fail: '失敗',
-        total: '累積測試次數',
+        total: '測試個案數',
         run_at: '最近測試時間',
         rate: '通過率'
       },

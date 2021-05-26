@@ -34,10 +34,10 @@
           @row-click="rowClicked"
         >
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.project_name')" prop="project_name" sortable />
-          <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.count')" prop="count" sortable />
+          <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.total')" prop="total" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.success')" prop="success" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.fail')" prop="fail" sortable />
-          <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.total')" prop="total" sortable />
+          <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.count')" prop="count" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.run_at')" prop="run_at" sortable>
             <template slot-scope="scope">
               {{ formatTime(scope.row.run_at) }}

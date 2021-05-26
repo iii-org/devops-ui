@@ -409,10 +409,10 @@ export default {
         NAME: 'Test results (Quantity and Quality)',
         DETAIL: 'Test results (Latest)',
         project_name: '@:general.project_name',
-        count: 'Test cases',
+        count: 'Test counts',
         success: 'Success',
         fail: 'Fail',
-        total: 'Test counts',
+        total: 'Test cases',
         run_at: 'Last test',
         rate: 'Pass rate'
       },
