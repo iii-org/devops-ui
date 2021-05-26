@@ -191,7 +191,7 @@ export default {
     Path: 'Path',
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
-    SearchName: 'Search Name',
+    SearchName: 'Search Name, Test Message',
     SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
     TestItem: '{count} Test Item | {count} Test Items',
     Pass: 'Pass',

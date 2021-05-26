@@ -178,7 +178,7 @@ export default {
     Path: '路徑',
     TestResult: '測試結果',
     TestMessage: '回傳訊息',
-    SearchName: '搜尋名稱',
+    SearchName: '搜尋 名稱、回傳訊息',
     SearchNameOrPathOrTestResult: '搜尋名稱或路徑或測試結果',
     TestItem: '{count} 測試項目',
     Pass: '通過',

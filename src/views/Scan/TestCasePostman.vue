@@ -108,7 +108,8 @@ export default {
     return {
       testCaseInfos: {},
       togglePass: true,
-      toggleFail: true
+      toggleFail: true,
+      searchKeys: ['name', 'responseMsg']
     }
   },
   computed: {
@@ -171,7 +172,7 @@ export default {
       return mapping[status]
     },
     mergeCells({ row, column, rowIndex, columnIndex }) {
-      const data = this.listData
+      const data = this.pagedDataByChecked
       const cellVal = row[column.property]
       const noSortKeys = ['method', 'path', 'testResult', 'responseMsg']
       if (cellVal && !noSortKeys.includes(column.property)) {
