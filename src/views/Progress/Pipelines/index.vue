@@ -64,7 +64,14 @@
         <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" width="140" />
         <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row.id)">
+            <el-button
+              :loading="isLoadingDetails"
+              size="mini"
+              type="primary"
+              icon="el-icon-document"
+              plain
+              @click="onDetailsClick(scope.row.id)"
+            >
               {{ $t('general.Detail') }}
             </el-button>
             <el-button
@@ -98,7 +105,7 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <test-detail ref="testDetail" :pipeline-id="focusPipelineId" />
+      <test-detail ref="testDetail" :pipeline-id="focusPipelineId" @loaded="isLoadingDetails = false" />
     </el-col>
   </el-row>
 </template>
@@ -117,6 +124,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      isLoadingDetails: false,
       rowHeight: 90,
       lastUpdateTime: '',
       timer: null,
@@ -245,6 +253,7 @@ export default {
       return mapping[status] || 'dark'
     },
     onDetailsClick(id) {
+      this.isLoadingDetails = true
       this.$refs.testDetail.pipelinesExecRun = id
       this.$refs.testDetail.fetchStages()
     },
@@ -253,7 +262,7 @@ export default {
       return allowStatus.includes(status)
     },
     setTimer() {
-      this.timer = setInterval(() => this.fetchData(), 5000)
+      this.timer = setInterval(() => this.fetchData(), 10000)
     },
     clearTimer() {
       clearInterval(this.timer)
