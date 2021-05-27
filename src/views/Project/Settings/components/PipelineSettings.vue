@@ -70,23 +70,23 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProject']),
-    selectedProjectRepositoryId() {
-      return this.selectedProject.repository_id
+    selectedRepositoryId() {
+      return this.selectedProject.repository_ids[0]
     }
   },
   watch: {
     selectedProject() {
-      if (this.selectedProjectRepositoryId !== undefined) this.fetchPipeDefBranch()
+      if (this.selectedRepositoryId !== undefined) this.fetchPipeDefBranch()
     }
   },
   mounted() {
-    if (this.selectedProjectRepositoryId !== undefined) this.fetchPipeDefBranch()
+    if (this.selectedRepositoryId !== undefined) this.fetchPipeDefBranch()
   },
   methods: {
     async fetchPipeDefBranch() {
       this.isLoading = true
       try {
-        const res = await getPipelineDefaultBranch(this.selectedProjectRepositoryId)
+        const res = await getPipelineDefaultBranch(this.selectedRepositoryId)
         const hasStages = Object.keys(res.data).length > 0
         if (hasStages) {
           const { default_branch, stages } = res.data
@@ -133,7 +133,7 @@ export default {
       const sendData = { detail: { stages: this.stagesData } }
       this.isStagesLoading = true
       try {
-        await editPipelineDefaultBranch(this.selectedProjectRepositoryId, sendData)
+        await editPipelineDefaultBranch(this.selectedRepositoryId, sendData)
       } catch (err) {
         this.fetchPipeDefBranch()
         this.$notify({

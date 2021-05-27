@@ -150,6 +150,9 @@ export default {
         }
         return result
       })
+    },
+    selectedRepositoryId() {
+      return this.selectedProject.repository_ids[0]
     }
   },
   watch: {
@@ -191,9 +194,8 @@ export default {
         this.showNoProjectWarning()
         return []
       }
-      const rid = this.selectedProject.repository_id
       try {
-        const pipe = await getPipelines(rid)
+        const pipe = await getPipelines(this.selectedRepositoryId)
         this.lastUpdateTime = this.$dayjs(pipe.datetime)
           .utcOffset(16)
           .format('YYYY-MM-DD HH:mm:ss')
@@ -214,13 +216,12 @@ export default {
       })
     },
     async onActionClick(id, action) {
-      const { repository_id } = this.selectedProject
       const data = {
         pipelines_exec_run: id,
         action
       }
       this.listLoading = true
-      await changePipelineByAction(repository_id, data)
+      await changePipelineByAction(this.selectedRepositoryId, data)
         .then(_ => {
           this.loadData()
         })

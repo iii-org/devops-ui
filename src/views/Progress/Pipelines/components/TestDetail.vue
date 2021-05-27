@@ -94,7 +94,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProject'])
+    ...mapGetters(['selectedProject']),
+    selectedRepositoryId() {
+      return this.selectedProject.repository_ids[0]
+    }
   },
   watch: {
     selectedProject() {
@@ -180,9 +183,8 @@ export default {
     },
     async fetchStages() {
       this.socket.connect()
-      const { repository_id } = this.selectedProject
       try {
-        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        const res = await getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun })
         this.stages = res.map(stage => ({
           stage_id: stage.stage_id,
           name: stage.name,
@@ -207,7 +209,7 @@ export default {
       }
     },
     fetchCiPipelineId() {
-      getCiPipelineId(this.selectedProject.repository_id)
+      getCiPipelineId(this.selectedRepositoryId)
         .then(res => {
           this.ciPipelineId = res.data
         })
@@ -232,9 +234,8 @@ export default {
       // })
     },
     async updateStagesState() {
-      const { repository_id } = this.selectedProject
       try {
-        const res = await getPipelinesConfig(repository_id, { pipelines_exec_run: this.pipelinesExecRun })
+        const res = await getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun })
         res.forEach((stage, idx) => {
           this.stages[idx].state = stage.state
         })

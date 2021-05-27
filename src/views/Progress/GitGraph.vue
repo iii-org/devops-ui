@@ -48,8 +48,7 @@ export default {
           ? document.querySelector('#graph-container').children
           : []
         if (svgs && svgs.length > 0) [...svgs].forEach(_svg => _svg.remove())
-        const repository_id = this.selectedProject.repository_id
-        const res = await getGitGraphByRepo(repository_id)
+        const res = await getGitGraphByRepo(this.selectedRepositoryId)
         this.isNoData = !res.data.length
         this.createGraph(res.data)
       } catch (err) {

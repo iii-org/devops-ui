@@ -24,12 +24,7 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id">
         <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :href="scope.row.commit_url"
-          >
+          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.short_id }}
           </el-link>
         </template>
@@ -71,8 +66,7 @@ export default {
         this.showNoProjectWarning()
         return []
       }
-      const repository_id = this.selectedProject.repository_id
-      await this.getBranchesByProject(repository_id)
+      await this.getBranchesByProject(this.selectedRepositoryId)
       return this.branchList
     },
     onPagination(listQuery) {

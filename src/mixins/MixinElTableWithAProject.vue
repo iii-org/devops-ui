@@ -14,6 +14,9 @@ export default {
     ...mapGetters(['selectedProject']),
     selectedProjectId() {
       return this.selectedProject.id
+    },
+    selectedRepositoryId() {
+      return this.selectedProject.repository_ids[0]
     }
   },
   watch: {
@@ -25,4 +28,3 @@ export default {
   }
 }
 </script>
-

@@ -28,6 +28,9 @@ export default {
     ...mapGetters(['selectedProject', 'selectedProjectId']),
     issueCount() {
       return this.issues.length
+    },
+    selectedRepositoryId() {
+      return this.selectedProject.repository_ids[0]
     }
   },
   async created() {
@@ -35,7 +38,7 @@ export default {
       return
     }
     this.branches = []
-    const response = await getBranchesByProject(this.selectedProject.repository_id)
+    const response = await getBranchesByProject(this.selectedRepositoryId)
     const branches = response.data['branch_list']
     for (const branch of branches) {
       this.branches.push(branch.name)
@@ -125,12 +128,9 @@ export default {
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
-        <el-link
-          underline
-          type="primary"
-          @click="openIssueDialog(null)"
-        >
+        <span class="el-link">{{ $t('Release.issueCount') }}</span
+        >&nbsp;
+        <el-link underline type="primary" @click="openIssueDialog(null)">
           {{ $t('Release.issueCountLink', [issues.length]) }}
         </el-link>
       </el-col>
@@ -140,11 +140,7 @@ export default {
         <ul>
           <li v-for="(arr, cat) in issuesByCategory[0]" :key="cat">
             <span class="el-link">{{ cat }}</span> (
-            <el-link
-              underline
-              type="primary"
-              @click="openIssueDialog(cat)"
-            >
+            <el-link underline type="primary" @click="openIssueDialog(cat)">
               {{ $t('Release.issueCountLink', [arr.length]) }}
             </el-link>
             )
@@ -155,11 +151,7 @@ export default {
         <ul>
           <li v-for="(arr, cat) in issuesByCategory[1]" :key="cat">
             <span class="el-link">{{ cat }}</span> (
-            <el-link
-              underline
-              type="primary"
-              @click="openIssueDialog(cat)"
-            >
+            <el-link underline type="primary" @click="openIssueDialog(cat)">
               {{ $t('Release.issueCountLink', [arr.length]) }}
             </el-link>
             )
@@ -167,16 +159,12 @@ export default {
         </ul>
       </el-col>
     </el-row>
-    <br>
+    <br />
     <div style="font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
     <p>
       <el-form ref="form" :model="commitForm" inline>
         <el-form-item :label="$t('Release.releaseVersionName')">
-          <el-select
-            v-model="commitForm.mainVersion"
-            :placeholder="$t('Release.selectMainVersion')"
-            filterable
-          >
+          <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
             <el-option
               v-for="item in releaseVersionOptions"
               :key="item.value"
@@ -186,33 +174,17 @@ export default {
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('Git.Branch')">
-          <el-select
-            v-model="commitForm.branch"
-            filterable
-          >
-            <el-option
-              v-for="item in branches"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+          <el-select v-model="commitForm.branch" filterable>
+            <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
       </el-form>
       <el-form>
         <el-form-item>
-          <el-input v-model="commitForm.note"
-                    type="textarea"
-                    style="width: 60%;"
-                    :rows="6"
-          />
+          <el-input v-model="commitForm.note" type="textarea" style="width: 60%;" :rows="6" />
         </el-form-item>
         <el-form-item>
-          <el-button
-            v-loading.fullscreen.lock="fullscreenLoading"
-            type="success"
-            @click="release"
-          >
+          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
             <span class="el-icon-goods" />
             {{ $t('Release.startRelease') }}
           </el-button>
