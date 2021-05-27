@@ -1,13 +1,5 @@
 import request from '@/utils/request'
 
-export function getProjectList(userId, params) {
-  return request({
-    url: '/projects_by_user/' + userId,
-    method: 'get',
-    params
-  })
-}
-
 export function getActivityLog(activity_id) {
   return request({
     url: `/devops-ui/projects/activity/log/${activity_id}`,
@@ -15,7 +7,7 @@ export function getActivityLog(activity_id) {
   })
 }
 
-export function queryProjectList() {
+export function getMyProjectList() {
   return request({
     url: `/project/list`,
     method: 'get'

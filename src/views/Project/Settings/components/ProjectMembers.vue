@@ -9,7 +9,7 @@
       </el-button>
       <div>
         <span class="font-weight-bold mx-2">{{ $t('Project.Owner') }}</span>
-        <el-select v-model="owner_id" size="medium" :disabled="disabledEditOwner" @change="setProjectOwner">
+        <el-select v-model="selectedProject.owner_id" size="medium" :disabled="disabledEditOwner" @change="setProjectOwner">
           <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
             {{ user.label }}
           </el-option>
@@ -79,41 +79,27 @@ export default {
   data() {
     return {
       isLoading: false,
-      searchKeys: ['name', 'login'],
-      owner_id: null
+      searchKeys: ['name', 'login']
     }
   },
   computed: {
     ...mapGetters(['userRole', 'userId']),
     disabledEditOwner() {
       if (this.userRole === 'Administrator') return false
-      return this.userId !== this.owner_id
+      return this.userId !== this.selectedProject.owner_id
     },
     assignedList() {
       return this.listData.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
     }
-  },
-  watch: {
-    selectedProjectId() {
-      this.fetchProjectOwner()
-    }
-  },
-  mounted() {
-    this.fetchProjectOwner()
   },
   methods: {
     async fetchData() {
       const res = await getProjectUserList(this.selectedProjectId)
       return res.data.user_list
     },
-    async fetchProjectOwner() {
-      const res = await getProjectInfos(this.selectedProjectId)
-      const { owner_id } = res.data
-      this.owner_id = owner_id
-    },
     setProjectOwner() {
       this.listLoading = true
-      updateProjectInfos(this.selectedProjectId, { owner_id: this.owner_id })
+      updateProjectInfos(this.selectedProjectId, { owner_id: this.selectedProject.owner_id })
         .then(() => {
           this.$message({
             message: `${this.$t('Notify.Updated')} ${this.$t('Project.Owner')}`,

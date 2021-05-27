@@ -2,6 +2,8 @@ import { getInfo, login } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
+import User from '@/data/user'
+import { getMyProjectList } from '@/api/projects'
 
 const getDefaultState = () => {
   return {
@@ -64,55 +66,42 @@ const actions = {
   },
 
   // get e info
-  getInfo({ commit, state, dispatch }) {
-    return new Promise((resolve, reject) => {
-      const token = getToken()
-      const jwtContent = VueJwtDecode.decode(token)
-      if (!('identity' in jwtContent)) {
-        Promise.reject('userId not exist')
-      }
-      commit('SET_USER_ID', jwtContent['identity'].user_id)
-      commit('SET_TOKEN', token)
+  async getInfo({ commit, state, dispatch }) {
+    const token = getToken()
+    const jwtContent = VueJwtDecode.decode(token)
+    if (!('identity' in jwtContent)) {
+      Promise.reject('userId not exist')
+    }
+    commit('SET_USER_ID', jwtContent['identity'].user_id)
+    commit('SET_TOKEN', token)
 
-      getInfo(state.userId)
-        .then(response => {
-          const { data } = response
-          const { default_role, name } = data
-          if (!default_role) {
-            reject('role is not exist in user info')
-          }
-          commit('SET_USER_NAME', name)
+    const response = await getInfo(state.userId)
+    const user = new User(response.data)
+    if (!user.default_role_id) {
+      throw new Error('role is not exist in user info')
+    }
+    commit('SET_USER_NAME', user.name)
 
-          if (!default_role.name) {
-            reject('name is not exist in role')
-          }
-          data.project = data.project.sort(function(a, b) {
-            return a['id'] < b['id'] ? 1 : -1
-          })
-          dispatch('app/setRoleList', null, { root: true })
-          commit('SET_USER_ROLE', default_role.name)
-          commit('SET_USER_PROJECT', data.project)
-          if (data.project.length > 0) {
-            const projectstorage = data.project.filter(elm => {
-              if (String(elm.id) === localStorage.getItem('projectId')) {
-                return true
-              }
-            }
-            )
-            if (projectstorage.length === 1) {
-              commit('projects/SET_SELECTED_PROJECT', projectstorage[0], { root: true })
-            } else {
-              commit('projects/SET_SELECTED_PROJECT', data.project[0], { root: true })
-            }
-            // commit('projects/SET_PROJET_SELECTED_ID', data.project[0].id, { root: true })
-            // commit('projects/SET_PROJET_SELECTED', data.project[0], { root: true })
-          }
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
+    const res = await getMyProjectList()
+    const myProjects = res.data.project_list.sort(function (a, b) {
+      return a.id - b.id
     })
+
+    dispatch('app/setRoleList', null, { root: true })
+    commit('SET_USER_ROLE', user.default_role_name)
+    commit('SET_USER_PROJECT', myProjects)
+    if (myProjects.length > 0) {
+      const projectStorage = myProjects.filter(elm => {
+        if (String(elm.id) === localStorage.getItem('projectId')) {
+          return true
+        }
+      })
+      if (projectStorage.length === 1) {
+        commit('projects/SET_SELECTED_PROJECT', projectStorage[0], { root: true })
+      } else {
+        commit('projects/SET_SELECTED_PROJECT', myProjects[0], { root: true })
+      }
+    }
   },
 
   // user logout

@@ -17,8 +17,9 @@ function Project(project) {
   this.create_at = project.create_at
   this.update_at = project.update_at
 
-  this.pm_user_id = project.pm_user_id
-  this.pm_user_name = project.pm_user_name
+  this.creator_id = project.creator_id
+  this.owner_id = project.owner_id
+  this.owner_name = project.owner_name
   this.department = project.department
 
   this.redmine_url = project.redmine_url

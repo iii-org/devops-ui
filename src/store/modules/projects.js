@@ -1,14 +1,12 @@
 import {
-  getProjectList,
-  queryProjectList as QPL,
-  addNewProject as ANP,
-  editProject as EP,
-  deleteProject as DP,
-  getProjectIssueProgress as GPIP,
-  getProjectIssueStatistics as GPIS,
-  getProjectUserList as GPUL
+  getMyProjectList,
+  addNewProject,
+  editProject,
+  deleteProject,
+  getProjectIssueProgress,
+  getProjectIssueStatistics,
+  getProjectUserList
 } from '@/api/projects'
-import { getTagsId as GTID } from '@/api/tags'
 
 const getDefaultState = () => {
   return {
@@ -49,32 +47,9 @@ const mutations = {
 }
 
 const actions = {
-  async getRDProjectList({ commit, rootState }, params) {
-    try {
-      const response = await getProjectList(rootState.user.userId, params)
-      let { data } = response
-      data = data.sort(function(a, b) {
-        return a.id < b.id ? 1 : -1
-      })
-      const dataWithTag = await data.reduce(async (acc, cur) => {
-        const res = await acc
-        if (!cur.repository_ids || !cur.repository_ids[0]) {
-          res.push(cur)
-          return Promise.resolve(res)
-        }
-        const tags = await GTID(cur.repository_ids[0])
-        res.push({ ...cur, tags })
-        return Promise.resolve(res)
-      }, Promise.resolve([]))
-      commit('SET_LIST', dataWithTag)
-      commit('SET_TOTAL', dataWithTag.length)
-    } catch (error) {
-      console.error(error.toString())
-    }
-  },
   async getMyProjectList({ commit }) {
     try {
-      const res = await QPL()
+      const res = await getMyProjectList()
       const { data } = res
       commit('SET_LIST', data.project_list)
       commit('SET_TOTAL', data.project_list.length)
@@ -84,7 +59,7 @@ const actions = {
   },
   async addNewProject({ commit, dispatch }, data) {
     try {
-      const res = await ANP(data)
+      const res = await addNewProject(data)
       dispatch('user/getInfo', null, { root: true })
       return Promise.resolve(res)
     } catch (error) {
@@ -94,14 +69,14 @@ const actions = {
   },
   async editProject({ commit, dispatch }, { pId, data }) {
     try {
-      return await EP(pId, data)
+      return await editProject(pId, data)
     } catch (error) {
       console.error(error.toString())
     }
   },
   async deleteProject({ commit, dispatch }, pId) {
     try {
-      const res = await DP(pId)
+      const res = await deleteProject(pId)
       dispatch('user/getInfo', null, { root: true })
       return res
     } catch (error) {
@@ -110,21 +85,21 @@ const actions = {
   },
   async getProjectIssueProgress({ commit }, pId) {
     try {
-      return await GPIP(pId)
+      return await getProjectIssueProgress(pId)
     } catch (error) {
       console.error(error.toString())
     }
   },
   async getProjectIssueStatistics({ commit }, pId) {
     try {
-      return await GPIS(pId)
+      return await getProjectIssueStatistics(pId)
     } catch (error) {
       console.error(error.toString())
     }
   },
   async getProjectUserList({ commit }, pId) {
     try {
-      return await GPUL(pId)
+      return await getProjectUserList(pId)
     } catch (error) {
       console.error(error.toString())
     }
