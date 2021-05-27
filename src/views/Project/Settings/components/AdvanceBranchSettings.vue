@@ -93,8 +93,8 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProject']),
-    selectedProjectRepositoryId() {
-      return this.selectedProject.repository_id
+    selectedRepositoryId() {
+      return this.selectedProject.repository_ids[0]
     },
     filteredData() {
       const { listData, searchKeys } = this
@@ -117,7 +117,7 @@ export default {
     async fetchPipelineBranch() {
       this.isLoading = true
       try {
-        const res = await getPipelineBranch(this.selectedProjectRepositoryId)
+        const res = await getPipelineBranch(this.selectedRepositoryId)
         this.listData = Object.keys(res.data).map(key => {
           const { commit_message, commit_time, testing_tools } = res.data[key]
           return {
@@ -156,7 +156,7 @@ export default {
       }
       this.isLoading = true
       try {
-        await editPipelineBranch(this.selectedProjectRepositoryId, sendData)
+        await editPipelineBranch(this.selectedRepositoryId, sendData)
         this.isChanged = false
       } catch (err) {
         this.fetchPipelineBranch()
