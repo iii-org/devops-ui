@@ -14,6 +14,13 @@ export function getMyProjectList() {
   })
 }
 
+export function getMyProjectListSimple() {
+  return request({
+    url: `/project/list?simple=true`,
+    method: 'get'
+  })
+}
+
 export function addNewProject(data = { name: '', disabled: false, description: '' }) {
   return request({
     url: `/project`,
@@ -42,6 +49,7 @@ export function getProjectInfos(pId) {
     method: 'get'
   })
 }
+
 export function updateProjectInfos(pId, data) {
   return request({
     url: `/project/${pId}`,

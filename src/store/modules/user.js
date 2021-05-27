@@ -3,7 +3,7 @@ import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
 import User from '@/data/user'
-import { getMyProjectList } from '@/api/projects'
+import { getMyProjectListSimple } from '@/api/projects'
 
 const getDefaultState = () => {
   return {
@@ -82,7 +82,7 @@ const actions = {
     }
     commit('SET_USER_NAME', user.name)
 
-    const res = await getMyProjectList()
+    const res = await getMyProjectListSimple()
     const myProjects = res.data.project_list.sort(function (a, b) {
       return a.id - b.id
     })
@@ -105,7 +105,7 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit }) {
     localStorage.clear()
     removeToken()
     resetRouter()
