@@ -143,7 +143,7 @@ export default {
       this.userForm = data
       if (isNaN(data.default_role)) {
         // get role id from role object
-        const default_role = data.role ? data.role.id : data.default_role.id
+        const default_role = data.role ? data.role.id : data.default_role_id
         this.$set(this.userForm, 'default_role', default_role)
       }
     }
@@ -157,7 +157,7 @@ export default {
         { required: true, message: 'Please input password', trigger: 'blur' },
         {
           required: true,
-          pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/,
+          pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-'";:/?.\\>,<]{8,20}$/,
           message: 'Password is invalid.',
           trigger: 'blur'
         }
@@ -178,7 +178,7 @@ export default {
             { validator: this.checkRepeatPwd, trigger: 'blur' },
             {
               required: true,
-              pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/,
+              pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-'";:/?.\\>,<]{8,20}$/,
               message: 'Password is invalid.',
               trigger: 'blur'
             }

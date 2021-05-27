@@ -94,7 +94,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { deleteUser, getUser, getInfo } from '@/api/user'
+import { deleteUser, getUser, getUserInfo } from '@/api/user'
 import UserDialog from './components/UserDialog'
 import MixinAccountManageTable from '@/mixins/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
@@ -124,8 +124,8 @@ export default {
   methods: {
     async fetchData(page, per_page, search) {
       const allUser = await getUser(page, per_page, search)
-      this.listQuery = allUser.data.page
-      return allUser.data.user_list.filter(item => item.id !== this.userId)
+      this.listQuery = allUser.page
+      return allUser.user_list.filter(item => item.id !== this.userId)
     },
     emitAddUserDialogVisible(visible, refresh) {
       this.userDialogVisible = visible
@@ -147,8 +147,7 @@ export default {
         }
       } else {
         this.editUserId = user.id
-        const userData = await getInfo(this.editUserId)
-        this.editUserData = userData['data']
+        this.editUserData = await getUserInfo(this.editUserId)
       }
       this.dialogTitle = title
       this.userDialogVisible = true

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import User from '@/data/user'
 
 export function login(data) {
   return request({
@@ -8,11 +9,12 @@ export function login(data) {
   })
 }
 
-export function getInfo(userId) {
-  return request({
+export async function getUserInfo(userId) {
+  const res = await request({
     url: `/user/${userId}`,
     method: 'get'
   })
+  return new User(res.data)
 }
 
 export function logout() {
@@ -22,18 +24,19 @@ export function logout() {
   })
 }
 
-export function getAllUser() {
-  return request({
-    url: `/user/list`,
-    method: 'get'
-  })
-}
-
-export function getUser(page = 1, per_page = 10, search = '') {
-  return request({
+export async function getUser(page = 1, per_page = 10, search = '') {
+  const res = await request({
     url: `/user/list?page=${page}&per_page=${per_page}&search=${search}`,
     method: 'get'
   })
+  const userList = []
+  for (const user of res.data.user_list) {
+    userList.push(new User(user))
+  }
+  return {
+    page: res.data.page,
+    user_list: userList
+  }
 }
 
 export function updateUser(userId, data) {

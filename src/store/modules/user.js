@@ -1,8 +1,7 @@
-import { getInfo, login } from '@/api/user'
+import { getUserInfo, login } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
-import User from '@/data/user'
 import { getMyProjectListSimple } from '@/api/projects'
 
 const getDefaultState = () => {
@@ -75,15 +74,14 @@ const actions = {
     commit('SET_USER_ID', jwtContent['identity'].user_id)
     commit('SET_TOKEN', token)
 
-    const response = await getInfo(state.userId)
-    const user = new User(response.data)
+    const user = await getUserInfo(state.userId)
     if (!user.default_role_id) {
       throw new Error('role is not exist in user info')
     }
     commit('SET_USER_NAME', user.name)
 
-    const res = await getMyProjectListSimple()
-    const myProjects = res.data.project_list.sort(function (a, b) {
+    let myProjects = await getMyProjectListSimple()
+    myProjects = myProjects.sort(function (a, b) {
       return a.id - b.id
     })
 

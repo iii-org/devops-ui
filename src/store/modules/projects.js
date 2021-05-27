@@ -49,10 +49,9 @@ const mutations = {
 const actions = {
   async getMyProjectList({ commit }) {
     try {
-      const res = await getMyProjectList()
-      const { data } = res
-      commit('SET_LIST', data.project_list)
-      commit('SET_TOTAL', data.project_list.length)
+      const projects = await getMyProjectList()
+      commit('SET_LIST', projects)
+      commit('SET_TOTAL', projects.length)
     } catch (error) {
       console.error(error.toString())
     }

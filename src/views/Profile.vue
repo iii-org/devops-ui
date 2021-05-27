@@ -96,7 +96,7 @@
 
 <script>
 import store from '@/store'
-import { updateUser, getInfo, getK8SConfig } from '@/api/user'
+import { updateUser, getUserInfo, getK8SConfig } from '@/api/user'
 
 export default {
   name: 'Profile',
@@ -151,7 +151,7 @@ export default {
         userNewPwd: [
           {
             required: true,
-            pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-\'\";:/?.\\>,<]{8,20}$/,
+            pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-'";:/?.\\>,<]{8,20}$/,
             message: 'Password is invalid.',
             trigger: 'blur'
           },
@@ -176,13 +176,13 @@ export default {
   },
   async created() {
     this.userId = store.getters.userId
-    const userProfile = await getInfo(this.userId)
-    this.from_ad = userProfile.data.from_ad
-    this.userProfileForm.userName = userProfile.data.name
-    this.userProfileForm.userEmail = userProfile.data.email
-    this.userProfileForm.userPhone = userProfile.data.phone
-    this.userProfileForm.department = userProfile.data.department
-    this.userProfileForm.title = userProfile.data.title
+    const userProfile = await getUserInfo(this.userId)
+    this.from_ad = userProfile.from_ad
+    this.userProfileForm.userName = userProfile.name
+    this.userProfileForm.userEmail = userProfile.email
+    this.userProfileForm.userPhone = userProfile.phone
+    this.userProfileForm.department = userProfile.department
+    this.userProfileForm.title = userProfile.title
   },
   methods: {
     checkRepeatPwd(rule, value, callback) {

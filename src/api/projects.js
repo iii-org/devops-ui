@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import Project from '@/data/project'
 
 export function getActivityLog(activity_id) {
   return request({
@@ -7,18 +8,20 @@ export function getActivityLog(activity_id) {
   })
 }
 
-export function getMyProjectList() {
-  return request({
-    url: `/project/list`,
+export async function getMyProjectList(simple) {
+  const res = await request({
+    url: `/project/list${simple ? '?simple=true' : ''}`,
     method: 'get'
   })
+  const ret = []
+  for (const project of res.data.project_list) {
+    ret.push(new Project(project))
+  }
+  return ret
 }
 
-export function getMyProjectListSimple() {
-  return request({
-    url: `/project/list?simple=true`,
-    method: 'get'
-  })
+export async function getMyProjectListSimple() {
+  return await getMyProjectList(true)
 }
 
 export function addNewProject(data = { name: '', disabled: false, description: '' }) {

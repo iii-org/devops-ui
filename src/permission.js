@@ -26,7 +26,6 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done()
     } else {
       const hasRoles = store.getters.userRole
-      const hasId = store.getters.userId
       if (hasRoles) {
         next()
       } else {
@@ -38,6 +37,7 @@ router.beforeEach(async(to, from, next) => {
           router.addRoutes(accessRoutes)
           next({ ...to, replace: true })
         } catch (error) {
+          console.log(error)
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
