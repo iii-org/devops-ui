@@ -26,12 +26,18 @@ function Project(project) {
   this.repository_ids = project.repository_ids
   this.harbor_url = project.harbor_url
 
-  // Redmine fields
+  // PM project list fields
   this.updated_time = project.updated_time
   this.closed_count = project.closed_count
   this.overdue_count = project.overdue_count
   this.total_count = project.total_count
   this.project_status = project.project_status
+
+  // RD project list fields
+  this.issues = project.issues
+  this.next_d_time = project.next_d_time
+  this.last_test_time = project.last_test_time
+  this.last_test_result = project.last_test_result
 }
 
 export default Project
