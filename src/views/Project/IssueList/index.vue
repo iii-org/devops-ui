@@ -205,9 +205,9 @@ export default {
           data.assigned_to.name = ''
         }
         if (
-          this.searchData === '' ||
-          data.name.toLowerCase().includes(this.searchData.toLowerCase()) ||
-          data.assigned_to.name.toLowerCase().includes(this.searchData.toLowerCase())
+          this.keyword === '' ||
+          data.name.toLowerCase().includes(this.keyword.toLowerCase()) ||
+          data.assigned_to.name.toLowerCase().includes(this.keyword.toLowerCase())
         ) {
           return data
         }
@@ -264,7 +264,7 @@ export default {
         this.$set(this.tracker[idx], 'visible', true)
       })
       if (this.userRole === 'Engineer') {
-        this.searchData = this.userName
+        this.keyword = this.userName
       }
       return data
     },
