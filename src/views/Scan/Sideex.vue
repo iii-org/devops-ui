@@ -3,7 +3,7 @@
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         :placeholder="$t('Git.searchCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
@@ -105,7 +105,7 @@ export default {
   data() {
     return {
       confirmLoading: false,
-      searchKey: 'commit_id'
+      searchKeys: ['commit_id']
     }
   },
   methods: {

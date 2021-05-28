@@ -3,7 +3,7 @@
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         :placeholder="$t('CheckMarx.SearchScanId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
@@ -83,7 +83,7 @@ export default {
   mixins: [MixinElTableWithAProject],
   data() {
     return {
-      searchKey: 'scan_id'
+      searchKeys: ['scan_id']
     }
   },
   computed: {

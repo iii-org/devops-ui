@@ -9,7 +9,7 @@
         </el-button>
       </span>
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         prefix-icon="el-icon-search"
         :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
@@ -179,7 +179,7 @@ export default {
       dialogVisibleEdit: false,
       drawerTitle: '',
       wikiTitle: '',
-      searchKey: 'title',
+      searchKeys: ['title'],
       formRules: {
         wikiTitle: [
           { required: true, message: 'Please input name', trigger: 'change' },

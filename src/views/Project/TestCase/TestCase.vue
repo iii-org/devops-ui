@@ -8,7 +8,7 @@
           {{ $t('TestCase.AddTestCase') }}
         </el-button>
         <el-input
-          v-model="searchData"
+          v-model="keyword"
           :placeholder="$t('general.SearchName')"
           prefix-icon="el-icon-search"
           style="width: 250px"
@@ -278,7 +278,7 @@ export default {
       })
     },
     handleDetail(row) {
-      this.$router.push({ name: 'test-item', params: { testCaseId: row.id } })
+      this.$router.push({ name: 'test-item', params: { testCaseId: row.id }})
     }
   }
 }

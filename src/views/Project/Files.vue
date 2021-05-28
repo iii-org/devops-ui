@@ -8,7 +8,7 @@
         </el-button>
       </span>
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         prefix-icon="el-icon-search"
         :placeholder="$t('general.SearchName')"
         style="width: 250px; float: right"

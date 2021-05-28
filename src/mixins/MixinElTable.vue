@@ -28,7 +28,9 @@ export default {
       return listData.filter(data => {
         let result = false
         for (let i = 0; i < searchKeys.length; i++) {
-          const columnValue = data[searchKeys[i]].toLowerCase()
+          // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
+          const columnValue = typeof data[searchKeys[i]] === 'string'
+            ? data[searchKeys[i]].toLowerCase() : data[searchKeys[i]].toString()
           result = result || columnValue.includes(keyword)
           if (result) break
         }
@@ -51,9 +53,8 @@ export default {
   },
   mounted() {
     this.adjustTable()
-    const self = this
     window.onresize = () => {
-      self.adjustTable()
+      this.adjustTable()
     }
   },
   methods: {

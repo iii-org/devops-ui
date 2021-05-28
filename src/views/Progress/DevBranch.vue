@@ -3,7 +3,7 @@
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         :placeholder="$t('ProcessDevBranch.SearchBranch')"
         style="width: 250px"
         prefix-icon="el-icon-search"

@@ -7,7 +7,7 @@
         {{ $t('SonarQube.ViewReport') }}
       </el-button>
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         :placeholder="$t('Git.Branch')"
         style="width: 250px; float: right"
         prefix-icon="el-icon-search"
@@ -85,7 +85,7 @@ export default {
   mixins: [MixinElTableWithAProject],
   data() {
     return {
-      searchKey: 'branch',
+      searchKeys: ['branch'],
       sqLink: function() {
         return ''
       }

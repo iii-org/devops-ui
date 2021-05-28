@@ -3,7 +3,7 @@
     <div class="d-flex justify-space-between">
       <project-list-selector />
       <el-input
-        v-model="searchData"
+        v-model="keyword"
         class="mr-3"
         :placeholder="$t('WebInspect.SearchCommitId')"
         style="width: 250px"
@@ -108,7 +108,7 @@ export default {
   data() {
     return {
       confirmLoading: false,
-      searchKey: 'commit_id'
+      searchKeys: ['commit_id']
     }
   },
   watch: {

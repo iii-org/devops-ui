@@ -15,7 +15,7 @@
         <el-button icon="el-icon-s-operation" @click="filterVisible=!filterVisible" />
         <el-input
           id="input-search"
-          v-model="searchData"
+          v-model="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('Issue.SearchNameOrAssignee')"
           style="width: 250px; float: right"
