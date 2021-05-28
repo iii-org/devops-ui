@@ -1,10 +1,13 @@
 <template>
-  <el-dialog :visible="dialogVisible" width="95%" top="10vh" @close="handleClose">
+  <el-dialog :visible.sync="dialogVisible" width="95%" top="10vh" destroy-on-close @close="handleClose" @open="handleOpen">
     <template slot="title">
       <span class="font-weight-bold text-h6 ml-4">
-        {{ $t('ProgressPipelines.TestDetail') }}
+        {{ $t('ProgressPipelines.TestDetail') }}:
       </span>
+      {{ pipelineCommit }}
     </template>
+    <el-button v-if="autoPlay" type="danger" size="small" icon="el-icon-video-pause" @click="autoPlay=false">暫停自動切換進度</el-button>
+    <el-button v-else type="success" size="small" icon="el-icon-video-play" @click="autoPlay=true">啟動自動切換進度</el-button>
     <el-tabs v-model="activeStage" tab-position="left" @tab-click="userClick">
       <el-tab-pane
         v-for="(stage, idx) in stages"
@@ -74,6 +77,10 @@ export default {
     pipelineId: {
       type: Number,
       default: 0
+    },
+    pipelineCommit: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -90,7 +97,8 @@ export default {
         // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
-      })
+      }),
+      autoPlay: true
     }
   },
   computed: {
@@ -103,12 +111,6 @@ export default {
     selectedProject() {
       this.fetchCiPipelineId()
     }
-  },
-  mounted() {
-    if (this.selectedProject.id === -1) return
-    this.fetchCiPipelineId()
-    this.setConnectStatusListener()
-    this.setLogMessageListener()
   },
   beforeDestroy() {
     this.handleClose()
@@ -147,7 +149,8 @@ export default {
       })
     },
     moveToNextStage(stage_index) {
-      if (stage_index < this.stages.length) {
+      if (stage_index < this.stages.length && this.autoPlay) {
+        console.log(stage_index)
         const buildingStageIdx = this.getBuildingStageIdx()
         // console.log(buildingStageIdx)
         if (buildingStageIdx < 0) return
@@ -245,6 +248,12 @@ export default {
         console.error(error)
       }
     },
+    handleOpen() {
+      if (this.selectedProject.id === -1) return
+      this.fetchCiPipelineId()
+      this.setConnectStatusListener()
+      this.setLogMessageListener()
+    },
     handleClose() {
       this.socket.close()
       this.clearTimer()
@@ -252,6 +261,7 @@ export default {
       this.emitStages = []
       this.dialogVisible = false
       this.activeStage = ''
+      this.$emit('close')
     },
     setTimer() {
       const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
@@ -287,8 +297,10 @@ export default {
     },
     scrollToBottom() {
       this.$nextTick(() => {
-        const target = this.$el.querySelector('.el-card__body').childNodes[2].childNodes[1]
-        target.scrollTop = target.scrollHeight
+        if (this.autoPlay) {
+          const target = this.$el.querySelector('.el-card__body').childNodes[2].childNodes[1]
+          target.scrollTop = target.scrollHeight
+        }
       })
     }
   }

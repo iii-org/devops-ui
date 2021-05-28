@@ -46,7 +46,8 @@
               {{ scope.row.commit_branch }}
             </div>
             <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
-              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+              {{ scope.row.commit_id }}
             </el-link>
           </template>
         </el-table-column>
@@ -70,7 +71,7 @@
               type="primary"
               icon="el-icon-document"
               plain
-              @click="onDetailsClick(scope.row.id)"
+              @click="onDetailsClick(scope.row)"
             >
               {{ $t('general.Detail') }}
             </el-button>
@@ -105,7 +106,10 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <test-detail ref="testDetail" :pipeline-id="focusPipelineId" @loaded="isLoadingDetails = false" />
+      <test-detail ref="testDetail" :pipeline-id="focusPipeline.id" :pipeline-commit="focusPipeline.commit"
+                   @loaded="isLoadingDetails = false"
+                   @close="setTimer"
+      />
     </el-col>
   </el-row>
 </template>
@@ -128,7 +132,7 @@ export default {
       rowHeight: 90,
       lastUpdateTime: '',
       timer: null,
-      focusPipelineId: 0,
+      focusPipeline: { id: 0, commit: null },
       listData: [],
       listLoading: false,
       listQuery: {
@@ -252,10 +256,13 @@ export default {
       const mapping = { Building: 'light' }
       return mapping[status] || 'dark'
     },
-    onDetailsClick(id) {
+    onDetailsClick(row) {
       this.isLoadingDetails = true
-      this.$refs.testDetail.pipelinesExecRun = id
+      this.focusPipeline.id = row.id
+      this.focusPipeline.commit = row.commit_message
+      this.$refs.testDetail.pipelinesExecRun = row.id
       this.$refs.testDetail.fetchStages()
+      this.clearTimer()
     },
     isAllowStop(status) {
       const allowStatus = ['Waiting', 'Building', 'Queueing']
