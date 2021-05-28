@@ -14,30 +14,26 @@ export default {
       },
       searchKeys: ['name'],
       keyword: '',
-      timeoutId: -1
+      timeoutId: -1,
+      rowHeight: 53
     }
   },
   computed: {
-    // ...mapGetters(['selectedProject', 'userId']),
-    // selectedProjectId() {
-    //   return this.selectedProject.id
-    // },
     pagedData() {
       return this.listData
     }
   },
   watch: {
-    // selectedProjectId() {
-    //   this.loadData()
-    //   this.keyword = ''
-    // },
     keyword(val) {
       clearTimeout(this.timeoutId)
       this.timeoutId = window.setTimeout(() => this.loadData(1, 10, val), 1000)
     }
   },
   mounted() {
-    this.loadData()
+    this.resizeTable()
+    window.onresize = () => {
+      this.resizeTable()
+    }
   },
   beforeDestroy() {
     window.clearTimeout(this.timeoutId)
@@ -54,6 +50,38 @@ export default {
     onPagination(page, per_page, search) {
       const keyword = this.keyword ? this.keyword : search
       this.loadData(page.page, per_page, keyword)
+    },
+    adjustTable(forceRowNum) {
+      this.$nextTick(function() {
+        let siblingsHeight = 0
+        const $table = this.$el.getElementsByClassName('el-table')[0]
+        if (!$table) {
+          return // Component not ready yet, will be called after
+        }
+        const parentNode = $table.parentNode
+        const parentHeight = parentNode.clientHeight
+        for (const child of parentNode.children) {
+          if (child.className.match(/\bel-table\b/)) continue
+          siblingsHeight += child.clientHeight
+          const styles = window.getComputedStyle(child)
+          siblingsHeight += parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom'])
+        }
+        const eleTable = this.$el.getElementsByClassName('el-table')[0]
+        const tableHeight = parentHeight - siblingsHeight - 40 // parent paddings 40 px
+        const defaultRowHeight = 53 // FIXME: Detect real cell height
+        if (forceRowNum) {
+          this.listQuery.limit = forceRowNum
+          eleTable.style.maxHeight = null
+        } else {
+          this.listQuery.limit = Math.floor((tableHeight - defaultRowHeight) / this.rowHeight)
+          eleTable.style.maxHeight = `calc(100% - ${siblingsHeight}px - ${(tableHeight - defaultRowHeight) %
+            this.rowHeight}px + 20px)`
+        }
+      })
+    },
+    resizeTable() {
+      this.adjustTable()
+      this.timeoutId = window.setTimeout(() => this.loadData(1, this.listQuery.limit, ''), 100)
     }
   }
 }
