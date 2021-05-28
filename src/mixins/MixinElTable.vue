@@ -17,14 +17,22 @@ export default {
         limit: 10
       },
       rowHeight: 53, // If you can, detect the real thead cell height
-      searchKey: 'name',
-      searchData: ''
+      searchKeys: ['name'],
+      keyword: ''
     }
   },
   computed: {
     filteredData() {
-      return this.listData.filter(data => {
-        return this.searchData === '' || data[this.searchKey].toLowerCase().includes(this.searchData.toLowerCase())
+      const { listData, searchKeys } = this
+      const keyword = this.keyword.toLowerCase()
+      return listData.filter(data => {
+        let result = false
+        for (let i = 0; i < searchKeys.length; i++) {
+          const columnValue = data[searchKeys[i]].toLowerCase()
+          result = result || columnValue.includes(keyword)
+          if (result) break
+        }
+        return result
       })
     },
     pagedData() {
@@ -34,7 +42,7 @@ export default {
     }
   },
   watch: {
-    searchData() {
+    keyword() {
       this.listQuery.page = 1
     }
   },

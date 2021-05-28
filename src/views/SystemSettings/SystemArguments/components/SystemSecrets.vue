@@ -6,7 +6,7 @@
       </el-button>
       <el-input
         id="input-search-secret"
-        v-model="searchData"
+        v-model="keyword"
         :placeholder="$t('Maintenance.SearchSecretName')"
         style="width: 250px"
         prefix-icon="el-icon-search"
