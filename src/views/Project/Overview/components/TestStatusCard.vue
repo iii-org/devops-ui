@@ -190,6 +190,7 @@ export default {
     // },
 
     formatWebinspectResult(webinspectResult) {
+      console.log(webinspectResult)
       // const rowData = {
       //   '0': 3,
       //   '1': 2,
@@ -211,11 +212,11 @@ export default {
           // status: webinspectResult.status,
           runAt: webinspectResult.run_at,
           informationText: [
-            { status: 'Critical', count: webinspectResult['0'] },
-            { status: 'High Severity', count: webinspectResult['1'] },
-            { status: 'Medium Severity', count: webinspectResult['2'] },
-            { status: 'Low Severity', count: webinspectResult['3'] },
-            { status: 'Info Severity', count: webinspectResult['4'] }
+            { status: 'Critical', count: webinspectResult['criticalCount'] },
+            { status: 'High Severity', count: webinspectResult['highCount'] },
+            { status: 'Medium Severity', count: webinspectResult['mediumCount'] },
+            { status: 'Low Severity', count: webinspectResult['lowCount'] },
+            { status: 'Info Severity', count: webinspectResult['infoCount'] }
           ]
         })
       }
@@ -272,10 +273,10 @@ export default {
           Software: 'zap',
           runAt: zapResult.run_at,
           informationText: [
-            { status: 'Critical', count: zapResult['0'] },
-            { status: 'High Severity', count: zapResult['1'] },
-            { status: 'Medium Severity', count: zapResult['2'] },
-            { status: 'Low Severity', count: zapResult['3'] }
+            { status: 'Critical', count: zapResult.result['0'] },
+            { status: 'High Severity', count: zapResult.result['1'] },
+            { status: 'Medium Severity', count: zapResult.result['2'] },
+            { status: 'Low Severity', count: zapResult.result['3'] }
           ]
         })
       }
