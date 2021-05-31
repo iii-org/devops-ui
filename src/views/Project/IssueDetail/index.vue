@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-card>
+    <el-card v-loading="isLoading">
       <el-row slot="header">
         <el-row type="flex" align="bottom" justify="space-between">
           <el-row>
@@ -55,18 +55,20 @@
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
                         #{{ parent.id }} - {{ parent.subject }}
-                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }})</span>
+                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
                       </el-link>
                     </li>
                     <li v-if="children.length>0">子議題：
                       <ol>
                         <li v-for="child in children" :key="child.id">
                           <el-link @click="onRelationIssueDialog(child.id)">
+                            <status :name="child.status.name" size="mini" />
                             <template v-if="child.tracker">
                               <tracker :name="child.tracker.name" />
                             </template>
                             <template v-else>{{ $t('Issue.Issue') }}</template>
                             #{{ child.id }} - {{ child.subject }}
+                            <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                           </el-link>
                         </li>
                       </ol>
@@ -87,8 +89,8 @@
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
         </el-col>
       </el-row>
-      <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body>
-        <ProjectIssueDetail :props-issue-id="relationIssue.id" :is-in-dialog="true" />
+      <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body destroy-on-close>
+        <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" />
       </el-dialog>
     </el-card>
   </div>
@@ -220,18 +222,25 @@ export default {
       } else {
         this.editorHeight = '390px'
       }
+    },
+    propsIssueId() {
+      this.fetchIssueLink()
     }
   },
   async mounted() {
-    this.issueId = parseInt(this.$route.params.issueId)
-    if (this.propsIssueId) {
-      this.issueId = parseInt(this.propsIssueId)
-    }
-    await this.fetchIssue()
-    this.isLoading = false
+    await this.fetchIssueLink()
     this.$route.meta.title = this.$t('route.Issue Detail') + ':' + this.issueSubject
   },
   methods: {
+    async fetchIssueLink() {
+      this.isLoading = true
+      this.issueId = parseInt(this.$route.params.issueId)
+      if (this.propsIssueId) {
+        this.issueId = parseInt(this.propsIssueId)
+      }
+      await this.fetchIssue()
+      this.isLoading = false
+    },
     async fetchIssue() {
       const _this = this
       this.isLoading = true
@@ -401,8 +410,8 @@ export default {
       return false
     },
     onRelationIssueDialog(id) {
-      this.relationIssue.visible = true
-      this.relationIssue.id = id
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
     },
     onEditorChange() {
       // if (this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')) {

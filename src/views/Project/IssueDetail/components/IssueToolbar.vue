@@ -1,5 +1,5 @@
 <template>
-  <el-row type="flex" justify="space-between" align="middle">
+  <el-row type="flex" justify="space-between" align="middle" class="mb-5">
     <el-col>
       <el-button size="small" icon="el-icon-upload" type="success" @click="uploadDialogVisible=true">{{ $t('Issue.UploadFiles') }}</el-button>
       <el-button size="small" icon="el-icon-plus" type="warning" @click="addTopicDialogVisible=true">{{ $t('Issue.AddSubIssue') }}</el-button>

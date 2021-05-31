@@ -53,11 +53,11 @@
               <span class="ml-1">{{ element.assigned_to.name }}</span>
             </span>
           </el-tooltip>
-          <p v-if="element.parent_id" class="parent">
+          <p v-if="element.parent" class="parent">
             <i class="el-icon-caret-right" /> 父議題：
-            <status :name="element.parent_status.name" size="mini" />
-            <el-link type="primary" :underline="false" @click="handleClick(element.parent_id)">
-              {{ element.parent_name }}
+            <status :name="element.parent.status.name" size="mini" />
+            <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
+              {{ element.parent.subject }}
             </el-link>
           </p>
           <div v-if="element.children.length > 0" class="parent">
@@ -203,7 +203,7 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id } })
+      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement

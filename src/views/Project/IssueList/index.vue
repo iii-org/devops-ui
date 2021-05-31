@@ -74,14 +74,19 @@
       <el-table-column type="expand" class-name="informationExpand">
         <template slot-scope="scope">
           <ul>
-            <li v-if="scope.row.parent_id">
+            <li v-if="scope.row.parent">
               <b>父議題:</b>
               <el-link
                 class="font-weight-regular"
                 :style="{ 'font-size': '14px', cursor: 'pointer' }"
                 :underline="false"
-                @click="handleEdit(scope.row.parent_id)"
-              >#{{ scope.row.parent_id }}
+                @click="handleEdit(scope.row.parent.id)"
+              >
+                <status :name="scope.row.parent.status.name" size="mini" />
+                <tracker :name="scope.row.parent.tracker.name" />
+                #{{ scope.row.parent.id }} - {{ scope.row.parent.subject }}
+                <span v-if="Object.keys(scope.row.parent.assigned_to).length>1">
+                  ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }} - {{ scope.row.parent.assigned_to.login }})</span>
               </el-link>
             </li>
             <li v-if="scope.row.children.length">
@@ -98,7 +103,7 @@
                     <tracker :name="child.tracker.name" />
                     #{{ child.id }} - {{ child.name }}
                     <span v-if="Object.keys(child.assigned_to).length>1">
-                      ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }})</span>
+                      ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                   </el-link>
                 </li>
               </ol>
@@ -352,14 +357,14 @@ export default {
       return result
     },
     isParentIssue(row) {
-      return row.parent_id === null && row.children.length === 0
+      return row.parent === null && row.children.length === 0
     },
     handleAddNewIssue() {
       this.addTopicDialogVisible = true
       this.parentId = 0
     },
     hasRelationIssue(row) {
-      return !!row.parent_id || (row.children !== undefined && row.children.length > 0)
+      return !!row.parent || (row.children !== undefined && row.children.length > 0)
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible

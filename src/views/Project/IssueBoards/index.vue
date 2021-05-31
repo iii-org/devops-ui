@@ -241,18 +241,7 @@ export default {
           if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
             this.classifyIssueList[dimensionName] = []
           }
-          let parentDetail = {}
-          if (issue.parent_id) {
-            const parent = this.projectIssueList.find(item => item.id === issue.parent_id)
-            parentDetail = {
-              parent_name: parent.name,
-              parent_status: parent.status
-            }
-          }
-          this.classifyIssueList[dimensionName].push({
-            ...issue,
-            ...parentDetail
-          })
+          this.classifyIssueList[dimensionName].push(issue)
         }
       })
     },
