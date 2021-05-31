@@ -4,48 +4,13 @@
   data.searchKey: Indicates what key the search box filters. Default is "name".
   async methods.fetchData: The function to fetch list data. You must return the data array.
  */
-import Pagination from '@/components/Pagination'
+import MixinProjectListSelector from '@/mixins/MixinProjectListSelector'
 
 export default {
-  components: { Pagination },
+  mixins: [MixinProjectListSelector],
   data() {
     return {
-      listData: [],
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
-      rowHeight: 53, // If you can, detect the real thead cell height
-      searchKeys: ['name'],
-      keyword: ''
-    }
-  },
-  computed: {
-    filteredData() {
-      const { listData, searchKeys } = this
-      const keyword = this.keyword.toLowerCase()
-      return listData.filter(data => {
-        let result = false
-        for (let i = 0; i < searchKeys.length; i++) {
-          // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
-          const columnValue = typeof data[searchKeys[i]] === 'string'
-            ? data[searchKeys[i]].toLowerCase() : data[searchKeys[i]].toString()
-          result = result || columnValue.includes(keyword)
-          if (result) break
-        }
-        return result
-      })
-    },
-    pagedData() {
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return this.filteredData.slice(start, end)
-    }
-  },
-  watch: {
-    keyword() {
-      this.listQuery.page = 1
+      rowHeight: 53 // If you can, detect the real thead cell height
     }
   },
   created() {
@@ -58,17 +23,6 @@ export default {
     }
   },
   methods: {
-    async loadData() {
-      this.listLoading = true
-      this.listData = await this.fetchData()
-      this.listLoading = false
-    },
-    async fetchData() {
-      return []
-    },
-    async onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
     adjustTable(forceRowNum) {
       this.$nextTick(function() {
         let siblingsHeight = 0
