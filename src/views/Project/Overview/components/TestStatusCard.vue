@@ -190,7 +190,6 @@ export default {
     // },
 
     formatWebinspectResult(webinspectResult) {
-      console.log(webinspectResult)
       // const rowData = {
       //   '0': 3,
       //   '1': 2,

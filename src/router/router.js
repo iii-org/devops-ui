@@ -449,10 +449,25 @@ export const asyncRoutes = [
       },
       {
         path: 'web-inspect',
-        name: 'webinspect',
-        component: () => import('@/views/Scan/WebInspect'),
-        meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
+        component: parentBlank,
+        meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] },
+        children: [
+          {
+            path: '',
+            name: 'webinspect',
+            hidden: true,
+            component: () => import('@/views/Scan/WebInspect')
+          },
+          {
+            path: 'web-inspect/:id',
+            name: 'webinspect report',
+            component: () => import('@/views/Scan/WIEReportViewer'),
+            hidden: true,
+            meta: { title: 'webInspect report', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
+          }
+        ]
       },
+
       {
         path: 'zap',
         name: 'zap',
