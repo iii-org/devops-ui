@@ -13,7 +13,7 @@
           :placeholder="$t('RuleMsg.PleaseInput')"
         />
       </el-form>
-      <el-col v-else>{{ value }} <el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button></el-col>
+      <el-col v-else><div class="text-wrapper">{{ value }}</div><el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button></el-col>
     </el-col>
   </el-row>
 </template>
@@ -48,5 +48,7 @@ export default {
 </script>
 
 <style scoped>
-
+.text-wrapper {
+  white-space: pre-wrap;
+}
 </style>
