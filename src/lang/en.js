@@ -33,6 +33,7 @@ export default {
     checkMarx: 'CheckMarx',
     sonarQube: 'SonarQube',
     webInspect: 'WebInspect',
+    webInspectReport: 'Report',
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
 

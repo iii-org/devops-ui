@@ -76,6 +76,15 @@
           >
             <i class="el-icon-download" style="font-size: 16px" />
           </el-link>
+          <el-link
+            type="primary"
+            style="font-size: 16px"
+            :disabled="!scope.row.scan_id || scope.row.stats.status !== 'Complete'"
+            :underline="false"
+            @click="handleTestReportDetail(scope.row.scan_id)"
+          >
+            <i class="el-icon-document" style="font-size: 16px" />
+          </el-link>
         </template>
       </el-table-column>
     </el-table>
@@ -177,6 +186,9 @@ export default {
         document.body.appendChild(link)
         link.click()
       })
+    },
+    handleTestReportDetail(wiScanId) {
+      this.$router.push({ name: 'webInspectReport', params: { id: wiScanId } })
     },
     onPagination(listQuery) {
       this.listQuery = listQuery

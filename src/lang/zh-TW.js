@@ -33,6 +33,7 @@ export default {
     checkMarx: '白箱測試(CheckMarx)',
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
+    webInspectReport: '報告',
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
 
