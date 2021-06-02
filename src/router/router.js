@@ -155,7 +155,7 @@ export const asyncRoutes = [
         meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
       {
-        path: 'issue',
+        path: 'issues',
         component: parentBlank,
         children: [
           {
