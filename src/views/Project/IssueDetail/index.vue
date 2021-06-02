@@ -229,7 +229,6 @@ export default {
   },
   async mounted() {
     await this.fetchIssueLink()
-    this.$route.meta.title = this.$t('route.Issue Detail') + ':' + this.issueSubject
   },
   methods: {
     async fetchIssueLink() {
