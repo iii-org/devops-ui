@@ -73,7 +73,7 @@
     "svg-sprite-loader": "4.1.3",
     "svgo": "1.2.2",
     "vue-cli-plugin-tailwind": "~2.0.6",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "2.6.12"
   },
   "browserslist": [
     "> 1%",
