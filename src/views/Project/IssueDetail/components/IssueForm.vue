@@ -62,9 +62,15 @@
             style="width: 100%"
             clearable
             :placeholder="$t('RuleMsg.PleaseSelect')"
+            filterable
           >
-            <el-option v-for="item in dynamicAssigneeList" :key="item.value" :label="item.label" :value="item.value">
-              {{ item.label }}（{{ item.login }}）
+            <el-option v-for="item in dynamicAssigneeList"
+                       :key="item.login"
+                       :class="item.class"
+                       :label="item.label+' ('+item.login+')'"
+                       :value="item.value"
+            >
+              {{ item.label }} ({{ item.login }})
             </el-option>
           </el-select>
         </el-form-item>
@@ -140,7 +146,8 @@ export default {
     },
     form: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     }
   },
   data() {
@@ -173,7 +180,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'userId']),
     dynamicStatusList() {
       const listWithoutClosedOption = this.statusList.filter(item => item.label !== 'Closed')
       return this.isChildrenAllClosed() ? this.statusList : listWithoutClosedOption
@@ -217,11 +224,18 @@ export default {
           item => item.data
         )
 
-        this.assigneeList = assigneeList.user_list.map(item => ({
-          label: item.name,
-          login: item.login,
-          value: item.id
-        }))
+        this.assigneeList = [
+          {
+            label: this.$t('Issue.me'),
+            login: 'me',
+            value: this.userId,
+            class: 'bg-yellow-100'
+          }, ...assigneeList.user_list.map(item => ({
+            label: item.name,
+            login: item.login,
+            value: item.id
+          }))
+        ]
         this.versionList = versionList.versions.map(item => ({
           label: item.name,
           value: item.id,
@@ -241,6 +255,7 @@ export default {
     },
     createRelativeList(list) {
       const result = []
+
       function flatList(parent) {
         for (let i = 0; i < parent.length; i++) {
           result.push(parent[i])
@@ -248,6 +263,7 @@ export default {
           if (parent[i].children.length) flatList(children)
         }
       }
+
       flatList(list)
       return result
     },

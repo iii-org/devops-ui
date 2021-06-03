@@ -28,8 +28,8 @@
         <el-col :span="12">
           <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
             <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-              <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value">
-                {{ item.label }}{{ `（${item.login}）` }}
+              <el-option v-for="item in issueAssigneeList" :key="item.login" :label="item.label+' ('+item.login+')'" :value="item.value" :class="item.class">
+                {{ item.label }}{{ `(${item.login})` }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -196,6 +196,7 @@ import { fileExtension } from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
+import { mapGetters } from 'vuex'
 
 const getFormTemplate = () => ({
   subject: '',
@@ -270,6 +271,10 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters(['userId'])
+  },
+
   watch: {
     projectId() {
       this.fetchData()
@@ -318,9 +323,16 @@ export default {
         this.issuePriorityList = res[2].data.map(item => {
           return { label: item.name, value: item.id }
         })
-        this.issueAssigneeList = res[3].data.user_list.map(item => {
-          return { label: item.name, value: item.id, login: item.login }
-        })
+        this.issueAssigneeList = [
+          {
+            label: this.$t('Issue.me'),
+            login: 'me',
+            value: this.userId,
+            class: 'bg-yellow-100'
+          },
+          ...res[3].data.user_list.map(item => {
+            return { label: item.name, value: item.id, login: item.login }
+          })]
         this.issueVersionList = res[4].data.versions.map(item => {
           return { label: item.name, value: item.id, status: item.status }
         })

@@ -329,6 +329,7 @@ export default {
     priority: '@:Issue.Priority',
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
+    me: '<<Me>>',
     detail: {
       message: {
         set_to: '{user}: {action} {message} ({time})',

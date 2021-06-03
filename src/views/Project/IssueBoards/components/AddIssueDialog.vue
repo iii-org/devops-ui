@@ -11,8 +11,8 @@
         <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
       </el-form-item>
       <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id" :required="focusValue === 'Assigned'">
-        <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable>
-          <el-option v-for="item in assigned_to" :key="item.id" :label="item.name" :value="item.id" />
+        <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable filterable>
+          <el-option v-for="item in assigned_to" :key="item.login" :class="item.class" :label="item.name+' ('+item.login+')'" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
@@ -103,7 +103,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId', 'userId'])
   },
   watch: {
     selectedProjectId() {
@@ -135,7 +135,14 @@ export default {
         this.issuePriorityList = res[0].data.map(item => ({ label: item.name, value: item.id }))
         this.tracker = res[1].data
         this.status = res[2].data
-        this.assigned_to = res[3].data.user_list
+        this.assigned_to = [
+          {
+            name: this.$t('Issue.me'),
+            login: 'me',
+            id: this.userId,
+            class: 'bg-yellow-100'
+          },
+          ...res[3].data.user_list]
       })
     },
     isDisabledField(value) {
