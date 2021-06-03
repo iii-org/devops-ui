@@ -85,8 +85,10 @@
                 <status :name="scope.row.parent.status.name" size="mini" />
                 <tracker :name="scope.row.parent.tracker.name" />
                 #{{ scope.row.parent.id }} - {{ scope.row.parent.subject }}
-                <span v-if="Object.keys(scope.row.parent.assigned_to).length>1">
-                  ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }} - {{ scope.row.parent.assigned_to.login }})</span>
+                <span v-if="scope.row.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.parent.assigned_to).length>1">
+                  ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
+                  - {{ scope.row.parent.assigned_to.login }})
+                </span>
               </el-link>
             </li>
             <li v-if="scope.row.children.length">
@@ -102,7 +104,7 @@
                     <status :name="child.status.name" size="mini" />
                     <tracker :name="child.tracker.name" />
                     #{{ child.id }} - {{ child.name }}
-                    <span v-if="Object.keys(child.assigned_to).length>1">
+                    <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
                       ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                   </el-link>
                 </li>
