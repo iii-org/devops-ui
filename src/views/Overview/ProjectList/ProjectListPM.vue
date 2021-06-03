@@ -31,6 +31,7 @@
       </el-table-column>
       <el-table-column-tag
         prop="project_status"
+        translate-key="Project"
         :label="$t('Project.Status')"
         location="projectListPM"
         min-width="100"

@@ -379,9 +379,9 @@ export default {
       Overview: {
         NAME: '總覽',
         projects: '專案數',
-        overdue: '已超時',
-        not_started: '未開始',
-        in_progress: '進行中'
+        overdue: '@:Project.overdue',
+        not_started: '@:Project.not_started',
+        in_progress: '@:Project.in_progress'
       },
       ProjectMembers: {
         NAME: '專案成員',
@@ -525,7 +525,10 @@ export default {
     DueDate: '到期日',
     Owner: '專案經理',
     SelectProject: '請選擇專案',
-    SelectTemplate: '請選擇範本'
+    SelectTemplate: '請選擇範本',
+    overdue: '已超時',
+    not_started: '未開始',
+    in_progress: '進行中'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

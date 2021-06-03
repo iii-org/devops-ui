@@ -10,8 +10,9 @@ export const accountManage = {
 }
 
 export const projectListPM = {
-  '進行中': 'success',
-  '未開始': '',
+  in_progress: 'success',
+  not_started: 'info',
+  overdue: 'danger',
   default: ''
 }
 

@@ -379,9 +379,9 @@ export default {
       Overview: {
         NAME: 'Overview',
         projects: 'Projects',
-        overdue: 'Overdue',
-        not_started: 'Not Started',
-        in_progress: 'In Progress'
+        overdue: '@:Project.overdue',
+        not_started: '@:Project.not_started',
+        in_progress: '@:Project.in_progress'
       },
       ProjectMembers: {
         NAME: 'Project Members',
@@ -527,7 +527,10 @@ export default {
     DueDate: 'Due Date',
     Owner: 'Project Owner',
     SelectProject: 'Select a project',
-    SelectTemplate: 'Select a template'
+    SelectTemplate: 'Select a template',
+    overdue: 'Overdue',
+    not_started: 'Not Started',
+    in_progress: 'In Progress'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

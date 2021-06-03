@@ -8,7 +8,8 @@
         :size="size"
         :effect="getStatusTagEffect(scope.row[prop]) || effect"
       >
-        <span>{{ scope.row[prop] }}</span>
+        <span v-if="translateKey">{{ $t(translateKey + '.' + scope.row[prop]) }}</span>
+        <span v-else>{{ scope.row[prop] }}</span>
       </el-tag>
     </template>
   </el-table-column>
@@ -28,6 +29,10 @@ export default {
     location: {
       type: String,
       default: 'pipelines'
+    },
+    translateKey: {
+      type: String,
+      default: null
     },
     size: {
       type: String,
