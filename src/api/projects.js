@@ -270,3 +270,10 @@ export function editPipelineBranch(rId, data) {
     data
   })
 }
+
+export function getParticipateProject(user_id) {
+  return request({
+    url: `/projects_by_user/${user_id}`,
+    method: 'get'
+  })
+}

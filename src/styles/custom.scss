@@ -57,6 +57,17 @@
   padding-left: 22px;
 }
 
+// for AccountManage
+.account-manage-table > .el-table--enable-row-hover {
+  .el-table__body tr:hover > td:not(:last-child) {
+    background: #ede7c0;
+    color: #409eff;
+    font-size: 17px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+}
+
 // el-dialog
 .el-dialog__header {
   padding-left: 12px;

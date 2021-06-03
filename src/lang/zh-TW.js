@@ -102,6 +102,8 @@ export default {
     Title: '標題',
     Edit: '編輯',
     Delete: '刪除',
+    Participate: '參與專案',
+    ProjectId: '專案代碼',
     Remove: '移除',
     Actions: '操作',
     Type: '種類',

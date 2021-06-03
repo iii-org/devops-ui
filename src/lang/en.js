@@ -103,6 +103,8 @@ export default {
     Title: 'Title',
     Edit: 'Edit',
     Delete: 'Delete',
+    Participate: 'Participate',
+    ProjectId: 'Project ID',
     Remove: 'Remove',
     Actions: 'Actions',
     Type: 'Type',

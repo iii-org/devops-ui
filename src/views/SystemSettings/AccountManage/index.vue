@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="overflow: hidden;">
+  <div class="app-container account-manage-table" style="overflow: hidden;">
     <div class="clearfix">
       <!-- <project-list-selector /> -->
       <span class="newBtn">
@@ -24,6 +24,7 @@
       fit
       highlight-current-row
       height="100%"
+      @row-click="clickEvent"
     >
       <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
@@ -37,27 +38,11 @@
         size="small"
         location="accountManage"
       />
-      <!-- <el-table-column align="center" :label="$t('general.Status')" width="120">
+      <el-table-column align="center" :label="$t('general.Actions')" width="230">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'enable'" class="el-tag--circle" type="finish" size="small" effect="dark">
-            {{ scope.row.status }}
-          </el-tag>
-          <el-tag
-            v-else-if="scope.row.status === 'disable'"
-            class="el-tag--circle"
-            type="danger"
-            size="small"
-            effect="dark"
-          >
-            {{ scope.row.status }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
-      <el-table-column align="center" :label="$t('general.Actions')" width="210">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="showUserDialog(scope.row, 'Edit User')">
+          <el-button size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
             <i class="el-icon-edit" />
-            {{ $t('general.Edit') }}
+            {{ $t('general.Participate') }}
           </el-button>
           <el-popconfirm
             confirm-button-text="Delete"
@@ -89,6 +74,11 @@
       :dialog-visible="userDialogVisible"
       @add-user-visible="emitAddUserDialogVisible"
     />
+    <participate-dialog
+      :project-user-id="projectUserId"
+      :show-participate-dialog="showParticipateDialog"
+      @participate_dialog_visible="val => showParticipateDialog = val"
+    />
   </div>
 </template>
 
@@ -99,13 +89,15 @@ import UserDialog from './components/UserDialog'
 import MixinAccountManageTable from '@/mixins/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
+import ParticipateDialog from './components/ParticipateDialog'
 
 export default {
   name: 'AccountManage',
   components: {
     UserDialog,
     ElTableColumnTime,
-    ElTableColumnTag
+    ElTableColumnTag,
+    ParticipateDialog
   },
   mixins: [MixinAccountManageTable],
   data() {
@@ -115,7 +107,9 @@ export default {
       search: '',
       searchKeys: ['login', 'name'],
       editUserId: 0,
-      editUserData: {}
+      editUserData: {},
+      showParticipateDialog: false,
+      projectUserId: 0
     }
   },
   computed: {
@@ -165,6 +159,13 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    },
+    clickEvent(row, column) {
+      if (column.label !== this.$t('general.Actions')) this.showUserDialog(row, 'Edit User')
+    },
+    handleParticipateDialog(user_id) {
+      this.projectUserId = user_id
+      this.showParticipateDialog = true
     }
   }
 }

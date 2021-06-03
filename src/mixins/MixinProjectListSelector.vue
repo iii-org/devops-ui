@@ -22,6 +22,7 @@ export default {
     filteredData() {
       const { listData, searchKeys } = this
       const keyword = this.keyword.toLowerCase()
+      if (!listData) return
       return listData.filter(data => {
         let result = false
         for (let i = 0; i < searchKeys.length; i++) {
@@ -37,6 +38,7 @@ export default {
     pagedData() {
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
+      if (!this.filteredData) return
       return this.filteredData.slice(start, end)
     }
   },
