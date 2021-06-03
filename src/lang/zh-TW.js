@@ -378,10 +378,10 @@ export default {
       sync_date: '統計日期：{0}',
       Overview: {
         NAME: '總覽',
-        Projects: '專案數',
-        Overdue: '已超時',
-        Not_Started: '未開始',
-        Started: '時限內'
+        projects: '專案數',
+        overdue: '已超時',
+        not_started: '未開始',
+        in_progress: '進行中'
       },
       ProjectMembers: {
         NAME: '專案成員',

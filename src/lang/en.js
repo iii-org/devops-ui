@@ -378,10 +378,10 @@ export default {
       sync_date: 'created by: {0}',
       Overview: {
         NAME: 'Overview',
-        Projects: 'Projects',
-        Overdue: 'Overdue',
-        Not_Started: 'Not Started',
-        Started: 'Started'
+        projects: 'Projects',
+        overdue: 'Overdue',
+        not_started: 'Not Started',
+        in_progress: 'In Progress'
       },
       ProjectMembers: {
         NAME: 'Project Members',

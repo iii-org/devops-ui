@@ -109,9 +109,9 @@ import AdminOverview from '../components/AdminOverview'
 import AdminCommitLog from '../components/AdminCommitLog'
 
 const overview = {
-  Projects: { class: 'primary', database: '' },
-  Overdue: { class: 'danger', database: 'Overdue' },
-  Not_Started: { class: 'info', database: 'Not_Started' }
+  projects: { class: 'primary', database: '' },
+  overdue: { class: 'danger', database: 'overdue' },
+  not_started: { class: 'info', database: 'not_started' }
 }
 const commitLimit = 10
 const refreshCommitLog = 300000 // ms

@@ -16,11 +16,11 @@ export default {
   computed: {
     type() {
       switch (this.name) {
-        case 'Overdue':
+        case 'overdue':
           return 'danger'
-        case 'Not_Started':
+        case 'not_started':
           return 'info'
-        case 'Started':
+        case 'started':
           return 'success'
         default:
           return null
