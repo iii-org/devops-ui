@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
         <el-select v-model="issueForm.priority_id" style="width: 100%">
-          <el-option v-for="item in issuePriorityList" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in issuePriorityList" :key="item.value" :label="$t('Issue.'+item.label)" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('general.Type')" prop="tracker_id">
@@ -27,12 +27,12 @@
           style="width: 100%"
           :disabled="isDisabledField('tracker')"
         >
-          <el-option v-for="item in tracker" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('general.Status')" prop="status_id">
         <el-select v-model="issueForm.status_id" style="width: 100%" :disabled="isDisabledField('status')">
-          <el-option v-for="item in status" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('general.Description')" prop="description">
