@@ -22,7 +22,7 @@
         </span>
       </span>
       <el-select v-model="selectedItem" size="medium" @change="fillData">
-        <el-option v-for="item in selectList" :key="item.id" :label="$t('Issue.'+item.label)" :value="item.id" />
+        <el-option v-for="item in selectList" :key="item.id" :label="$t('Issue.' + item.label)" :value="item.id" />
       </el-select>
     </div>
     <div v-if="Object.keys(dataCollection).length === 0" class="d-flex justify-center align-center">
@@ -84,7 +84,7 @@ export default {
           label: key,
           data: statistics[key]
         }))
-        this.selectedItem = this.saveSelectedItem !== '' ? this.saveSelectedItem : this.selectList[0].id
+        this.selectedItem = this.saveSelectedItem !== '' ? this.saveSelectedItem : this.selectList[2].id
         this.fillData()
       } else {
         this.dataCollection = {}
