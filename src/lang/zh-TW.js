@@ -330,6 +330,8 @@ export default {
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
     me: '<<我自己>>',
+    ChildrenNotClosed: '子議題未關閉',
+    NoAssignee: '議題尚未指派',
     detail: {
       message: {
         set_to: '{user}: {action}，{message} ({time})',

@@ -33,10 +33,12 @@
             <el-option
               v-for="option in dynamicStatusList"
               :key="option.value"
-              :label="$t('Issue.' + option.label)"
+              :label="$t('Issue.' + option.label)+((option.message) ? option.message : '')"
               :value="option.value"
+              :disabled="option.disabled"
             >
               <status :name="option.label" />
+              {{ option.message }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -77,7 +79,7 @@
       </el-col>
       <el-col>
         <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-          <el-select v-model="form.priority_id" :disabled="childrenIssueList.length > 0" style="width: 100%">
+          <el-select v-model="form.priority_id" :disabled="childrenIssue > 0" style="width: 100%">
             <el-option
               v-for="option in priorityList"
               :key="option.value"
@@ -130,8 +132,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion, getProjectIssueList, getProjectIssueListByTree } from '@/api/projects'
+import { getIssueStatus, getIssueTracker, getIssuePriority, checkIssueClosable } from '@/api/issue'
+import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -148,6 +150,14 @@ export default {
       type: Object,
       default: () => {
       }
+    },
+    parentStatus: {
+      type: String,
+      default: null
+    },
+    childrenIssue: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -165,10 +175,10 @@ export default {
       priorityList: [],
 
       parentId: null,
-      parentIssue: {},
       relativeIssueList: [],
-      childrenIssueList: [],
       isLoading: false,
+      checkClosable: false,
+      dynamicStatusList: [],
 
       pickerOptions(startDate) {
         return {
@@ -181,12 +191,8 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId', 'userId']),
-    dynamicStatusList() {
-      const listWithoutClosedOption = this.statusList.filter(item => item.label !== 'Closed')
-      return this.isChildrenAllClosed() ? this.statusList : listWithoutClosedOption
-    },
     isParentIssueClosed() {
-      return Object.keys(this.parentIssue).length > 0 && this.parentIssue.status.name === 'Closed'
+      return this.parentStatus === 'Closed'
     },
     dynamicAssigneeList() {
       const hasInactiveAssignee =
@@ -205,6 +211,13 @@ export default {
       }
     }
   },
+  watch: {
+    issueId(value) {
+      if (value > 0) {
+        this.getClosable()
+      }
+    }
+  },
   mounted() {
     this.fetchData()
   },
@@ -216,11 +229,9 @@ export default {
         getProjectVersion(this.selectedProjectId),
         getIssueTracker(),
         getIssueStatus(),
-        getIssuePriority(),
-        getProjectIssueList(this.selectedProjectId),
-        getProjectIssueListByTree(this.selectedProjectId)
+        getIssuePriority()
       ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList, issueList, issueListByTree] = res.map(
+        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
           item => item.data
         )
 
@@ -244,32 +255,15 @@ export default {
         this.statusList = statusList.map(item => ({ label: item.name, value: item.id }))
         this.typeList = this.issueTypeList = typeList.map(item => ({ label: item.name, value: item.id }))
         this.priorityList = priorityList.map(item => ({ label: item.name, value: item.id }))
-        this.parentIssue = issueList.find(item => item.id === this.parentId) || {}
-        this.relativeIssueList = this.createRelativeList(issueListByTree)
-        this.updateChildrenList()
       })
       this.isLoading = false
     },
-    isChildrenAllClosed() {
-      return !this.childrenIssueList.length || this.childrenIssueList.every(item => item.status.name === 'Closed')
-    },
-    createRelativeList(list) {
-      const result = []
-
-      function flatList(parent) {
-        for (let i = 0; i < parent.length; i++) {
-          result.push(parent[i])
-          const children = parent[i].children
-          if (parent[i].children.length) flatList(children)
-        }
-      }
-
-      flatList(list)
-      return result
-    },
-    updateChildrenList() {
-      const idx = this.relativeIssueList.findIndex(item => item.id === this.issueId)
-      this.childrenIssueList = this.relativeIssueList[idx].children
+    async getClosable() {
+      await checkIssueClosable(this.issueId)
+        .then((res) => {
+          this.checkClosable = res.data
+        })
+      await this.getDynamicStatusList()
     },
     clearDueDate(val) {
       this.$nextTick(() => {
@@ -278,6 +272,16 @@ export default {
     },
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
+    },
+    getDynamicStatusList() {
+      const _this = this
+      this.dynamicStatusList = this.statusList.map((item) => {
+        if (!_this.checkClosable && item.label === 'Closed') {
+          item.disabled = true
+          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
+        }
+        return item
+      })
     }
   }
 }

@@ -331,6 +331,8 @@ export default {
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
     me: '<<Me>>',
+    ChildrenNotClosed: 'Children Issue are Not Closed',
+    NoAssignee: 'Issue need a Assignee',
     detail: {
       message: {
         set_to: '{user}: {action} {message} ({time})',

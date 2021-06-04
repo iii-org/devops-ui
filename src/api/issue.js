@@ -78,3 +78,5 @@ export function deleteIssueFile(file_id) {
     method: 'DELETE'
   })
 }
+
+export const checkIssueClosable = (issue_id) => request.get('/issues/' + issue_id + '/check_closable')

@@ -86,7 +86,7 @@
           </el-row>
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
-          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" @isLoading="showLoading" />
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent-status="parentStatus" :children-issue="children.length" @isLoading="showLoading" />
         </el-col>
       </el-row>
       <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body destroy-on-close>
@@ -153,7 +153,7 @@ export default {
         subject: '',
         fixed_version_id: '',
         tracker_id: -1,
-        status_id: 7,
+        status_id: 1,
         priority_id: 3,
         estimated_hours: 0,
         done_ratio: 0,
@@ -213,6 +213,10 @@ export default {
         children = this.children.length
       }
       return parent + children
+    },
+    parentStatus() {
+      if (Object.keys(this.parent).length <= 0) { return null }
+      return this.parent.status.name
     }
   },
   watch: {
@@ -334,6 +338,7 @@ export default {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
+      await this.$refs.IssueForm.getClosable()
       this.isLoading = false
     },
     handleBackPage() {
