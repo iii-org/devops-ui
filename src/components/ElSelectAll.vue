@@ -78,7 +78,7 @@ export default {
           this.mdoptionsList = [{
             key: 'all',
             value: 'all',
-            label: '全部'
+            label: this.$t('general.All')
           }, ...val]
         }
       }

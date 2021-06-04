@@ -256,6 +256,11 @@ export default {
     },
     handleClose() {
       this.socket.close()
+      this.socket = io('/rancher/websocket/logs', {
+        // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      })
       this.clearTimer()
       this.stages = []
       this.emitStages = []

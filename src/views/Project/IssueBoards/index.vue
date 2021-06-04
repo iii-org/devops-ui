@@ -161,7 +161,7 @@ export default {
     filterValueOptions() {
       return this[this.kanbanFilterDimension].map((item, idx) => ({
         id: idx,
-        label: item.name,
+        label: this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name,
         value: item
       }))
     },
@@ -226,10 +226,10 @@ export default {
       const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: '' }, ...versionsRes.data.versions]
 
       const userRes = await this.getProjectUserList(this.selectedProjectId)
-      this.assigned_to = [{ name: this.$t('Dashboard.Unassigned'), id: '' }, ...userRes.data.user_list]
+      this.assigned_to = [{ name: this.$t('Issue.Unassigned'), id: '' }, ...userRes.data.user_list]
       this.isLoading = false
       this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       await this.classifyIssue()

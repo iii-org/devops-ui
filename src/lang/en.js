@@ -148,7 +148,8 @@ export default {
     owner_name: 'Project Manager',
     Department: 'Department',
     UserTitle: 'Title',
-    Back: 'Back'
+    Back: 'Back',
+    All: 'All'
   },
   Notify: {
     Updated: 'update successful',
@@ -333,6 +334,8 @@ export default {
     me: '<<Me>>',
     ChildrenNotClosed: 'Children Issue are Not Closed',
     NoAssignee: 'Issue need a Assignee',
+    VersionUndecided: 'Version Undecided',
+    Unassigned: '@:Dashboard.Unassigned',
     detail: {
       message: {
         set_to: '{user}: {action} {message} ({time})',

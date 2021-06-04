@@ -147,7 +147,8 @@ export default {
     owner_name: '專案經理',
     Department: '部門',
     UserTitle: '職稱',
-    Back: '返回'
+    Back: '返回',
+    All: '全部'
   },
   Notify: {
     Updated: '已更新',
@@ -332,6 +333,8 @@ export default {
     me: '<<我自己>>',
     ChildrenNotClosed: '子議題未關閉',
     NoAssignee: '議題尚未指派',
+    VersionUndecided: '版本未定',
+    Unassigned: '@:Dashboard.Unassigned',
     detail: {
       message: {
         set_to: '{user}: {action}，{message} ({time})',
