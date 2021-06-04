@@ -35,7 +35,7 @@
       </el-col>
       <el-col :md="24" :lg="10" class="text-right">
         <el-form inline>
-          <el-form-item label="篩選維度">
+          <el-form-item :label="$t('Issue.FilterDimensions.label')">
             <el-select :value="kanbanFilterDimension" class="mr-4" filterable @change="setKanbanFilterDimension">
               <el-option
                 v-for="(item, idx) in filterDimensionOptions"
@@ -92,8 +92,8 @@
                 @dragstart="dragStart($event, { [item.value]: subItem })"
                 @dragend="dragEnd"
               >
-                <el-tag effect="dark" :type="getTagType(subItem.name)"
-                  >{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+                <el-tag effect="dark" :type="getTagType(subItem.name)">
+                  {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
                 </el-tag>
                 <el-alert class="help_text" :closable="false">
                   拖曳到議題，可以將 {{ item.label }} 改變成
@@ -117,6 +117,7 @@ import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import RightPanel from './components/RightPanel'
+import i18n from '@/lang'
 
 export default {
   name: 'IssueBoards',
@@ -151,10 +152,10 @@ export default {
     ]),
     filterDimensionOptions() {
       return [
-        { label: '議題狀態', value: 'status' },
-        { label: '議題類別', value: 'tracker' },
-        { label: '專案成員', value: 'assigned_to' },
-        { label: '專案版本', value: 'fixed_version' }
+        { label: i18n.t('Issue.FilterDimensions.status'), value: 'status' },
+        { label: i18n.t('Issue.FilterDimensions.tracker'), value: 'tracker' },
+        { label: i18n.t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to' },
+        { label: i18n.t('Issue.FilterDimensions.fixed_version'), value: 'fixed_version' }
       ]
     },
     filterValueOptions() {

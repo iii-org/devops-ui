@@ -348,6 +348,13 @@ export default {
       fixed_version_id: '@:Version.Version',
       attachment: '@:Issue.Files',
       parent_id: '@:Issue.ParentIssue'
+    },
+    FilterDimensions: {
+      label: '篩選維度',
+      status: '議題狀態',
+      tracker: '議題類別',
+      assigned_to: '專案成員',
+      fixed_version: '專案版本'
     }
   },
   Wiki: {

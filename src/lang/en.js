@@ -348,6 +348,13 @@ export default {
       tracker_id: '@:general.Type',
       fixed_version_id: '@:Version.Version',
       parent_id: '@:Issue.ParentIssue'
+    },
+    FilterDimensions: {
+      label: 'Filter Dimensions',
+      status: 'Status',
+      tracker: 'Type',
+      assigned_to: 'Assigned',
+      fixed_version: 'Version'
     }
   },
   Wiki: {
