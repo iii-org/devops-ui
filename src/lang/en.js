@@ -52,6 +52,7 @@ export default {
     'Project Activities': 'Project Activities',
 
     Setting: 'Setting',
+    'Participate Project': 'Participate In The Project',
     Members: 'Members',
     Versions: 'Versions',
 

@@ -51,6 +51,7 @@ export default {
     'Project Activities': '操作紀錄',
 
     Settings: '設定管理',
+    'Participate Project': '參與專案',
     Members: '成員管理',
     Versions: '版本設定',
 

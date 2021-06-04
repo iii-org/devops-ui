@@ -74,11 +74,6 @@
       :dialog-visible="userDialogVisible"
       @add-user-visible="emitAddUserDialogVisible"
     />
-    <participate-dialog
-      :project-user-id="projectUserId"
-      :show-participate-dialog="showParticipateDialog"
-      @participate_dialog_visible="val => showParticipateDialog = val"
-    />
   </div>
 </template>
 
@@ -89,15 +84,13 @@ import UserDialog from './components/UserDialog'
 import MixinAccountManageTable from '@/mixins/MixinAccountManageTable'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
-import ParticipateDialog from './components/ParticipateDialog'
 
 export default {
   name: 'AccountManage',
   components: {
     UserDialog,
     ElTableColumnTime,
-    ElTableColumnTag,
-    ParticipateDialog
+    ElTableColumnTag
   },
   mixins: [MixinAccountManageTable],
   data() {
@@ -107,9 +100,7 @@ export default {
       search: '',
       searchKeys: ['login', 'name'],
       editUserId: 0,
-      editUserData: {},
-      showParticipateDialog: false,
-      projectUserId: 0
+      editUserData: {}
     }
   },
   computed: {
@@ -164,8 +155,7 @@ export default {
       if (column.label !== this.$t('general.Actions')) this.showUserDialog(row, 'Edit User')
     },
     handleParticipateDialog(user_id) {
-      this.projectUserId = user_id
-      this.showParticipateDialog = true
+      this.$router.push({ name: 'ParticipateProject', params: { user_id }})
     }
   }
 }

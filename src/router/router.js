@@ -577,6 +577,13 @@ export const asyncRoutes = [
         meta: { title: 'Account Manage', roles: ['Administrator'] }
       },
       {
+        path: 'participate-project/:user_id',
+        name: 'ParticipateProject',
+        hidden: true,
+        component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+        meta: { title: 'Participate Project', roles: ['Administrator'] }
+      },
+      {
         path: 'system-activities',
         name: 'SystemActivities',
         component: () => import('@/views/SystemSettings/SystemActivities'),
