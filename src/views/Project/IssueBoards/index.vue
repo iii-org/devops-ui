@@ -92,9 +92,8 @@
                 @dragstart="dragStart($event, { [item.value]: subItem })"
                 @dragend="dragEnd"
               >
-                <el-tag effect="dark" :type="getTagType(subItem.name)">{{
-                  $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name
-                }}
+                <el-tag effect="dark" :type="getTagType(subItem.name)"
+                  >{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
                 </el-tag>
                 <el-alert class="help_text" :closable="false">
                   拖曳到議題，可以將 {{ item.label }} 改變成
@@ -143,7 +142,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'kanbanVersionValue', 'kanbanMemberValue', 'kanbanFilterDimension', 'kanbanFilterValue']),
+    ...mapGetters([
+      'selectedProjectId',
+      'kanbanVersionValue',
+      'kanbanMemberValue',
+      'kanbanFilterDimension',
+      'kanbanFilterValue'
+    ]),
     filterDimensionOptions() {
       return [
         { label: '議題狀態', value: 'status' },
@@ -207,7 +212,13 @@ export default {
     await this.fetchData()
   },
   methods: {
-    ...mapActions('projects', ['getProjectUserList', 'setKanbanMemberValue', 'setKanbanVersionValue', 'setKanbanFilterDimension', 'setKanbanFilterValue']),
+    ...mapActions('projects', [
+      'getProjectUserList',
+      'setKanbanMemberValue',
+      'setKanbanVersionValue',
+      'setKanbanFilterDimension',
+      'setKanbanFilterValue'
+    ]),
     async fetchData() {
       this.isLoading = true
       await this.resetClassifyIssue()
@@ -360,7 +371,7 @@ export default {
           return 'info'
         case 'Solved':
           return 'secondary'
-        case 'Responded':
+        case 'InProgress':
           return 'warning'
         case 'Finished':
           return 'success'
@@ -388,7 +399,7 @@ export default {
   align-items: start;
 
   .kanban {
-    > > > .parent {
+    >>> .parent {
       font-size: 0.75em;
       margin: 0;
 
@@ -408,8 +419,8 @@ export default {
         background: $solved;
       }
 
-      .Responded {
-        background: $responded;
+      >>> .inprogress {
+        background: $inProgress;
       }
 
       .Finished {
@@ -421,7 +432,7 @@ export default {
       }
     }
 
-    > > > &.active {
+    >>> &.active {
       .board-column-header {
         .header-bar {
           background: $active;
@@ -429,7 +440,7 @@ export default {
       }
     }
 
-    > > > &.assigned {
+    >>> &.assigned {
       .board-column-header {
         .header-bar {
           background: $assigned;
@@ -437,7 +448,7 @@ export default {
       }
     }
 
-    > > > &.solved {
+    >>> &.solved {
       .board-column-header {
         .header-bar {
           background: $solved;
@@ -445,15 +456,15 @@ export default {
       }
     }
 
-    > > > &.responded {
+    >>> &.inprogress {
       .board-column-header {
         .header-bar {
-          background: $responded;
+          background: $inProgress;
         }
       }
     }
 
-    > > > &.finished {
+    >>> &.finished {
       .board-column-header {
         .header-bar {
           background: $finished;
@@ -461,7 +472,7 @@ export default {
       }
     }
 
-    > > > &.closed {
+    >>> &.closed {
       .board-column-header {
         .header-bar {
           background: $closed;
@@ -469,7 +480,7 @@ export default {
       }
     }
 
-    > > > &.feature {
+    >>> &.feature {
       .board-column-header {
         .header-bar {
           background: $feature;
@@ -477,7 +488,7 @@ export default {
       }
     }
 
-    > > > &.bug {
+    >>> &.bug {
       .board-column-header {
         .header-bar {
           background: $bug;
@@ -485,7 +496,7 @@ export default {
       }
     }
 
-    > > > &.document {
+    >>> &.document {
       .board-column-header {
         .header-bar {
           background: $document;
@@ -493,7 +504,7 @@ export default {
       }
     }
 
-    > > > &.research {
+    >>> &.research {
       .board-column-header {
         .header-bar {
           background: $research;
@@ -503,7 +514,7 @@ export default {
   }
 }
 
-> > > .rightPanel-items {
+>>> .rightPanel-items {
   overflow-y: auto;
   height: 100%;
 

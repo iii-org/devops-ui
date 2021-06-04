@@ -307,7 +307,7 @@ export default {
     Assigned: 'Assigned',
     Closed: 'Closed',
     Solved: 'Solved',
-    Responded: 'Responded',
+    InProgress: 'In Progress',
     Finished: 'Finished',
     Unknown: 'Unknown',
     Low: 'Low',

@@ -1,10 +1,5 @@
 <template>
-  <el-tag
-    :type="getStatusTagType(name)"
-    effect="dark"
-    class="rounded-xl font-weight-bold"
-    :size="size"
-  >
+  <el-tag :type="getStatusTagType(name)" effect="dark" class="rounded-xl font-weight-bold" :size="size">
     {{ $t(`Issue.${name}`) }}
   </el-tag>
 </template>
@@ -33,7 +28,7 @@ export default {
           return 'info'
         case 'Solved':
           return 'secondary'
-        case 'Responded':
+        case 'InProgress':
           return 'warning'
         case 'Finished':
           return 'success'
@@ -47,9 +42,9 @@ export default {
 @import 'src/styles/variables.scss';
 
 .el-tag {
-&--secondary {
-   background-color: $secondary;
-   border-color: $secondary;
- }
+  &--secondary {
+    background-color: $secondary;
+    border-color: $secondary;
+  }
 }
 </style>
