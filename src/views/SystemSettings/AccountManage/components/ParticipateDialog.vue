@@ -17,7 +17,7 @@
       <el-table-column align="center" prop="name" :label="$t('general.ProjectId')" width="250" />
       <el-table-column align="center" prop="display" :label="$t('Project.Name')" width="420" />
       <el-table-column align="center" prop="owner_name" :label="$t('Project.Owner')" width="200" />
-      <el-table-column align="center" prop="start_date" :label="$t('Project.StratDate')" width="120" />
+      <el-table-column align="center" prop="start_date" :label="$t('Project.StartDate')" width="120" />
       <el-table-column align="center" prop="due_date" :label="$t('Project.DueDate')" width="120" />
       <el-table-column align="center" :label="$t('general.Actions')" width="140">
         <template slot-scope="scope">
