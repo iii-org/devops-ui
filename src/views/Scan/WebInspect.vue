@@ -116,7 +116,7 @@ export default {
     }
   },
   watch: {
-    listData: function() {
+    listData() {
       this.updateWebInspectScans()
     }
   },

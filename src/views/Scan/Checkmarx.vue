@@ -90,7 +90,7 @@ export default {
     ...mapGetters(['userRole'])
   },
   watch: {
-    listData: function() {
+    listData() {
       this.updateCheckMarxScansStatus(this.listData)
     }
   },

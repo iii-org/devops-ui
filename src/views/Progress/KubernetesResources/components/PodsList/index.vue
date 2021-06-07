@@ -11,7 +11,14 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit border>
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        height="calc(100vh - 300px)"
+        border
+        fit
+      >
         <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
           <template slot-scope="scope">
             <div>{{ scope.row.name }}</div>
@@ -117,12 +124,12 @@
 <script>
 import { deletePod, getPodList, getPodLog } from '@/api/kubernetes'
 import PodLog from './components/PodLog'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 
 export default {
   name: 'PodsList',
   components: { PodLog },
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
       dialogVisible: false,

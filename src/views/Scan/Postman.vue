@@ -11,17 +11,19 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
+      <el-table
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
+        :data="pagedData"
+        height="calc(100vh - 280px)"
+        border
+        fit
+      >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
         <el-table-column align="center" :label="$t('Postman.Branch')" prop="branch" min-width="120" />
         <el-table-column align="center" label="Commit" width="140">
           <template slot-scope="scope">
-            <el-link
-              type="primary"
-              target="_blank"
-              style="font-size: 16px"
-              :href="scope.row.commit_url"
-            >
+            <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
               <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
             </el-link>
           </template>
@@ -66,13 +68,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanResult } from '@/api/postman'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'Postman',
   components: { ElTableColumnTime },
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
       dialogVisible: false,
@@ -87,7 +89,7 @@ export default {
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
-      this.$router.push({ name: target, params: { id }})
+      this.$router.push({ name: target, params: { id } })
     }
   }
 }

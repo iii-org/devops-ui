@@ -150,7 +150,7 @@ const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true })
 
 export default {
   name: 'WIEViewer',
-  data: function() {
+  data() {
     return {
       activeName: '',
       isLoading: false,

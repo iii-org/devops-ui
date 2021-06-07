@@ -11,7 +11,14 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        height="calc(100vh - 300px)"
+        border
+        fit
+      >
         <el-table-column align="center" :label="$t('Activities.User')" prop="operator_name" />
         <el-table-column align="center" :label="$t('Activities.ActionType')" prop="action_type" />
         <el-table-column align="center" :label="$t('Activities.ActionParts')" prop="action_parts" min-width="200" />
@@ -31,13 +38,13 @@
 
 <script>
 import { getProjectActivities } from '@/api/activities'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'ProjectActivities',
   components: { ElTableColumnTime },
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
       dialogVisible: false,

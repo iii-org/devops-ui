@@ -11,7 +11,14 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit border>
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        height="calc(100vh - 300px)"
+        border
+        fit
+      >
         <el-table-column :label="$t('general.Name')" align="center" prop="name" min-width="200" />
         <el-table-column :label="$t('general.Actions')" align="center" width="180">
           <template slot-scope="scope">
@@ -45,11 +52,11 @@
 
 <script>
 import { deleteService, getServiceList } from '@/api/kubernetes'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 
 export default {
   name: 'ServiceList',
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   methods: {
     async fetchData() {
       this.listLoading = true

@@ -11,7 +11,14 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        height="calc(100vh - 300px)"
+        border
+        fit
+      >
         <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
           <template slot-scope="scope">
             <div class="font-weight-bold">{{ scope.row.name }}</div>
@@ -95,11 +102,11 @@
 
 <script>
 import { deleteConfigmap, getConfigmapList } from '@/api/kubernetes'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 
 export default {
   name: 'ConfigMapsList',
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
       editDialogVisible: false,

@@ -7,7 +7,7 @@ import { createRelease } from '@/api/release'
 export default {
   name: 'CreateRelease',
   components: { IssueListDialog },
-  data: function() {
+  data() {
     return {
       commitForm: {
         mainVersion: null,

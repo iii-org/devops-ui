@@ -11,7 +11,14 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        height="calc(100vh - 300px)"
+        border
+        fit
+      >
         <el-table-column :label="$t('general.Name')" align="center" prop="name" width="200" show-overflow-tooltip />
         <el-table-column label="hostname" align="center" prop="hostname" min-width="120" show-overflow-tooltip />
         <el-table-column label="IP" align="center" prop="ip" min-width="120" show-overflow-tooltip />
@@ -48,13 +55,13 @@
 
 <script>
 import { getIngressList } from '@/api/kubernetes'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'IngressList',
   components: { ElTableColumnTime },
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   methods: {
     async fetchData() {
       return (await getIngressList(this.selectedProjectId)).data

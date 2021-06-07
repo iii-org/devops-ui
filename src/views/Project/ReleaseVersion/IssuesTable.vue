@@ -150,7 +150,7 @@ export default {
     IssueNotesEditor: () => import('@/views/Project/IssueDetail/components/IssueNotesEditor')
   },
   mixins: [MixinElTableWithCheckbox],
-  data: function() {
+  data() {
     return {
       issues: [],
       closedIssueCount: 0,

@@ -10,7 +10,14 @@
         />
       </div>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        height="calc(100vh - 280px)"
+        border
+        fit
+      >
         <el-table-column :label="$t('general.Name')" :show-overflow-tooltip="true">
           <template slot-scope="scope">
             {{ scope.row.name }}
@@ -26,7 +33,7 @@
             <span>{{ scope.row.vulnerabilities }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Digest">
+        <el-table-column label="Digest" show-overflow-tooltip>
           <template slot-scope="scope">
             <span>{{ scope.row.digest }}</span>
           </template>
@@ -62,12 +69,13 @@
 
 <script>
 import { deleteProjectArtifact, getProjectArtifacts } from '@/api/harbor'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
+  name: 'ProjectArtifacts',
   components: { ElTableColumnTime },
-  mixins: [MixinBasicTableWithProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   methods: {
     async fetchData() {
       return (await getProjectArtifacts(this.$route.params.rName)).data
