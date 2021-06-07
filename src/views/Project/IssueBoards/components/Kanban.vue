@@ -6,7 +6,7 @@
         <el-col :span="3">
           <i class="el-icon-plus ml-4 mr-5 add-button" @click="showDialog = true" />
         </el-col>
-        <el-col :span="19" class="text-center">{{ headerText }}</el-col>
+        <el-col :span="19" class="text-center">{{ headerText }} <b>({{ list.length }})</b></el-col>
         <!--        <i class="el-icon-more header-icon" />-->
       </el-row>
     </div>
