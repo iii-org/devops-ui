@@ -3,10 +3,10 @@
     <el-row v-if="inDialog" type="flex" align="middle">
       <el-col :span="12">
         <el-select v-model="searchStatus" value-key="user_id">
-          <el-option label="全部" value="" />
-          <el-option label="已超時" value="overdue" />
-          <el-option label="時限內" value="in_progress" />
-          <el-option label="未開始" value="not_started" />
+          <el-option :label="$t('Dashboard.ADMIN.ProjectList.all')" value="" />
+          <el-option :label="$t('Dashboard.ADMIN.ProjectList.overdue')" value="overdue" />
+          <el-option :label="$t('Dashboard.ADMIN.ProjectList.in_progress')" value="in_progress" />
+          <el-option :label="$t('Dashboard.ADMIN.ProjectList.not_started')" value="not_started" />
         </el-select>
         <el-input v-model="keyword" style="width: 250px" :placeholder="$t('Project.SearchProjectName')" clearable />
       </el-col>

@@ -446,7 +446,11 @@ export default {
         closed_issue_count: 'Solved',
         member_count: 'Members',
         expired_day: 'Remains(day)',
-        end_date: 'Due date'
+        end_date: 'Due date',
+        all: 'All',
+        overdue: 'Overdue',
+        in_progress: 'In Progress',
+        not_started: 'Not Started'
       }
     }
   },

@@ -446,7 +446,11 @@ export default {
         closed_issue_count: '已解決問題數',
         member_count: '參與人數',
         expired_day: '到期天數',
-        end_date: '到期日'
+        end_date: '到期日',
+        all: '全部',
+        overdue: '已超時',
+        in_progress: '時限內',
+        not_started: '未開始'
       }
     }
   },
