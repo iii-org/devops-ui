@@ -17,7 +17,7 @@
                 filterable
                 @change="updateVersionValue"
               >
-                <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
+                <el-option v-for="item in fixedVersionOptions" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item v-if="kanbanFilterDimension !== 'assigned_to'" :label="$t('Member.Member')">
@@ -29,7 +29,7 @@
                 @change="updateMemberValue"
               >
                 <el-option
-                  v-for="item in assigned_to"
+                  v-for="item in assignedToOptions"
                   :key="item.id"
                   :label="(item.login)? item.name+'('+item.login+')' : item.name"
                   :value="item.id"
@@ -204,8 +204,8 @@ export default {
     },
     kanbanSearch() {
       const result = []
-      const version = this.fixed_version.find((item) => (item.id === this.kanbanVersionValue))
-      const member = this.assigned_to.find((item) => (item.id === this.kanbanMemberValue))
+      const version = this.fixedVersionOptions.find((item) => (item.id === this.kanbanVersionValue))
+      const member = this.assignedToOptions.find((item) => (item.id === this.kanbanMemberValue))
       if (version && this.kanbanFilterDimension !== 'fixed_version') {
         result.push(version.name)
       }
@@ -213,6 +213,12 @@ export default {
         result.push(member.name)
       }
       return result.join(', ')
+    },
+    fixedVersionOptions() {
+      return [{ name: this.$t('Dashboard.TotalVersion'), id: '-1' }, ...this.fixed_version]
+    },
+    assignedToOptions() {
+      return [{ name: this.$t('Dashboard.TotalMember'), id: '-1' }, ...this.assigned_to]
     }
   },
   watch: {
@@ -270,13 +276,11 @@ export default {
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
       this.fixed_version = [
-        { name: this.$t('Dashboard.TotalVersion'), id: '-1' },
         { name: this.$t('Issue.VersionUndecided'), id: '' },
         ...versionsRes.data.versions
       ]
       const userRes = await this.getProjectUserList(this.selectedProjectId)
       this.assigned_to = [
-        { name: this.$t('Dashboard.TotalMember'), id: '-1' },
         { name: this.$t('Issue.Unassigned'), id: '' },
         ...userRes.data.user_list
       ]
