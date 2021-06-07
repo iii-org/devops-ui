@@ -176,7 +176,7 @@ export default {
     PleaseInput: 'Please input',
     PleaseSelect: 'Please select',
     Invalid: ' Invalid',
-    Member: ' Member',
+    Member: ' @:Member.Member',
     Email: ' email',
     UserName: ' user name',
     Password: ' password',
@@ -305,6 +305,7 @@ export default {
     Author: 'Author',
     CommentTime: 'Comment Time',
     ParentIssue: 'Parent Issue',
+    ChildrenIssue: 'Children Issue',
     Active: 'Active',
     Assigned: 'Assigned',
     Closed: 'Closed',
@@ -336,6 +337,7 @@ export default {
     NoAssignee: 'Issue need a Assignee',
     VersionUndecided: 'Version Undecided',
     Unassigned: '@:Dashboard.Unassigned',
+    RelatedIssue: 'Related Issue',
     detail: {
       message: {
         set_to: '{user}: {action} {message} ({time})',
@@ -361,7 +363,10 @@ export default {
       tracker: 'Type',
       assigned_to: 'Assigned',
       fixed_version: 'Version'
-    }
+    },
+    Display: 'Display',
+    DragTip: 'Drag to issue, it can change {key} to {value}.',
+    GroupBy: 'Group by {filter}'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
@@ -455,6 +460,7 @@ export default {
     }
   },
   Member: {
+    Member: 'Member',
     Manage: 'Manage Project Members',
     AddMember: 'Add Member',
     Id: 'Id',

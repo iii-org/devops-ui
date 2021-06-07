@@ -40,6 +40,14 @@
         </div>
         <div>
           <span class="detail">
+            <priority :name="element.priority.name" size="mini" class="priority" />
+          </span>
+          <span class="detail">
+            <tracker :name="element.tracker.name" class="tracker" />
+          </span>
+        </div>
+        <div>
+          <span class="detail">
             <i class="el-icon-date" />
             <span class="ml-1">{{ element.due_date }}</span>
           </span>
@@ -53,19 +61,22 @@
               <span class="ml-1">{{ element.assigned_to.name }}</span>
             </span>
           </el-tooltip>
-          <p v-if="element.parent" class="parent">
-            <i class="el-icon-caret-right" /> 父議題：
-            <status :name="element.parent.status.name" size="mini" />
-            <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
-              {{ element.parent.subject }}
-            </el-link>
-          </p>
-          <div v-if="element.children.length > 0" class="parent">
-            <el-collapse>
-              <el-collapse-item>
-                <template #title>
-                  <i class="el-icon-caret-right" /> 子議題 ({{ element.children | lengthFilter }})
-                </template>
+        </div>
+        <div v-if="element.parent || element.children.length > 0" class="parent">
+          <el-collapse>
+            <el-collapse-item>
+              <template #title>
+                <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} ({{ element | lengthFilter }})
+              </template>
+              <div v-if="element.parent" class="parent">
+                <b>{{ $t('Issue.ParentIssue') }}：</b>
+                <status :name="element.parent.status.name" size="mini" />
+                <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
+                  {{ element.parent.subject }}
+                </el-link>
+              </div>
+              <div v-if="element.children.length > 0" class="parent">
+                <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                 <ol class="children_list">
                   <li v-for="(subElement, index) in element.children" :key="index">
                     <status :name="subElement.status.name" size="mini" />
@@ -74,9 +85,9 @@
                     </el-link>
                   </li>
                 </ol>
-              </el-collapse-item>
-            </el-collapse>
-          </div>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
         </div>
       </div>
     </draggable>
@@ -95,17 +106,25 @@
 import draggable from 'vuedraggable'
 import AddIssueDialog from './AddIssueDialog.vue'
 import Status from '@/components/Issue/Status'
+import Priority from '@/components/Issue/Priority'
+import Tracker from '@/components/Issue/Tracker'
 
 export default {
   name: 'Kanban',
   components: {
+    Tracker,
+    Priority,
     Status,
     draggable,
     AddIssueDialog
   },
   filters: {
     lengthFilter(value) {
-      return value.length
+      return value.children.length + ((value.parent) ? 1 : 0)
+    },
+    sortByPriority(value) {
+      const priorityCompare = (a, b) => (a.priority.id - b.priority.id)
+      return value.sort(priorityCompare)
     }
   },
   props: {
@@ -334,6 +353,9 @@ export default {
 
   .detail {
     font-size: 1em;
+    .tracker{
+      font-size:0.75em;
+    }
   }
 }
 

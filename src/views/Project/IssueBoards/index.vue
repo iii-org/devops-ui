@@ -10,9 +10,8 @@
           trigger="click"
         >
           <el-form>
-            <el-form-item>
+            <el-form-item v-if="kanbanFilterDimension !== 'fixed_version'" :label="$t('Version.Version')">
               <el-select
-                v-if="kanbanFilterDimension !== 'fixed_version'"
                 :value="kanbanVersionValue"
                 :placeholder="$t('Version.SelectVersion')"
                 :disabled="selectedProjectId === -1"
@@ -23,9 +22,8 @@
                 <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-if="kanbanFilterDimension !== 'assigned_to'" :label="$t('Member.Member')">
               <el-select
-                v-if="kanbanFilterDimension !== 'assigned_to'"
                 :value="kanbanMemberValue"
                 :placeholder="$t('Member.SelectMember')"
                 :disabled="selectedProjectId === -1"
@@ -61,7 +59,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('Issue.FilterDimensions.label')">
+            <el-form-item :label="$t('Issue.Display')">
               <el-select-all
                 ref="filterValue"
                 :value="kanbanFilterValue"
@@ -74,9 +72,12 @@
               />
             </el-form-item>
           </el-form>
-          <el-button slot="reference" type="text">以 <b>{{ kanbanFilter }}</b> 分組 ({{ kanbanFilterLength }}) <i
-            class="el-icon-arrow-down el-icon--right"
-          /></el-button>
+          <el-button slot="reference" type="text">
+            <i18n path="Issue.GroupBy">
+              <span place="limit">{{ changeLimit }}</span>
+              <b place="filter">{{ kanbanFilter }}</b>
+            </i18n>
+            ({{ kanbanFilterLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
       </el-col>
     </el-row>
@@ -119,8 +120,10 @@
                 {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
               </el-tag>
               <el-alert class="help_text" :closable="false">
-                拖曳到議題，可以將 {{ item.label }} 改變成
-                {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+                <i18n path="Issue.DragTip">
+                  <b place="key">{{ item.label }}</b>
+                  <b place="value">{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}</b>
+                </i18n>
               </el-alert>
             </div>
           </template>
@@ -139,7 +142,6 @@ import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import RightPanel from './components/RightPanel'
-import i18n from '@/lang'
 
 export default {
   name: 'IssueBoards',
@@ -174,10 +176,10 @@ export default {
     ]),
     filterDimensionOptions() {
       return [
-        { label: i18n.t('Issue.FilterDimensions.status'), value: 'status' },
-        { label: i18n.t('Issue.FilterDimensions.tracker'), value: 'tracker' },
-        { label: i18n.t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to' },
-        { label: i18n.t('Issue.FilterDimensions.fixed_version'), value: 'fixed_version' }
+        { label: this.$t('Issue.FilterDimensions.status'), value: 'status' },
+        { label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker' },
+        { label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to' },
+        { label: this.$t('Issue.FilterDimensions.fixed_version'), value: 'fixed_version' }
       ]
     },
     filterValueOptions() {
@@ -198,7 +200,7 @@ export default {
     },
     kanbanFilterLength() {
       if (this.filterValueOptions.length === this.kanbanFilterValue.length || this.kanbanFilterValue.length === 0) {
-        return 'All'
+        return this.$t('general.All')
       }
       return this.kanbanFilterValue.length
     },
@@ -206,10 +208,10 @@ export default {
       const result = []
       const version = this.fixed_version.find((item) => (item.id === this.kanbanVersionValue))
       const member = this.assigned_to.find((item) => (item.id === this.kanbanMemberValue))
-      if (version) {
+      if (version && this.kanbanFilterDimension !== 'fixed_version') {
         result.push(version.name)
       }
-      if (member) {
+      if (member && this.kanbanFilterDimension !== 'assigned_to') {
         result.push(member.name)
       }
       return result.join(', ')
@@ -367,9 +369,17 @@ export default {
       this.setKanbanVersionValue(value)
       this.updateData()
     },
+    sortIssue() {
+      const sortPriority = (a, b) => (a.priority.id - b.priority.id)
+      const sortDueDate = (a, b) => (a.due_date - b.due_date)
+      Object.keys(this.classifyIssueList).forEach((item) => {
+        this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortDueDate).sort(sortPriority))
+      })
+    },
     updateData() {
       this.resetClassifyIssue()
       this.classifyIssue()
+      this.sortIssue()
       const versionOpt = {
         keys: ['fixed_version.id'],
         useExtendedSearch: true

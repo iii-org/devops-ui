@@ -195,7 +195,7 @@ export default {
     PleaseInput: '請輸入',
     PleaseSelect: '請選擇',
     Invalid: '無效的',
-    Member: '成員',
+    Member: '@:Member.Member',
     Email: '信箱',
     UserName: '使用者名稱',
     Password: '密碼',
@@ -304,6 +304,7 @@ export default {
     Author: '作者',
     CommentTime: '加註於',
     ParentIssue: '父議題',
+    ChildrenIssue: '子議題',
     Active: '已開立',
     Assigned: '已分派',
     Closed: '已關閉',
@@ -335,6 +336,7 @@ export default {
     NoAssignee: '議題尚未指派',
     VersionUndecided: '版本未定',
     Unassigned: '@:Dashboard.Unassigned',
+    RelatedIssue: '關聯議題',
     detail: {
       message: {
         set_to: '{user}: {action}，{message} ({time})',
@@ -361,7 +363,10 @@ export default {
       tracker: '議題類別',
       assigned_to: '專案成員',
       fixed_version: '專案版本'
-    }
+    },
+    Display: '顯示',
+    DragTip: '拖曳到議題，可以將 {key} 改變成 {value}',
+    GroupBy: '以 {filter} 分組'
   },
   Wiki: {
     AddWiki: '新增Wiki',
@@ -455,6 +460,7 @@ export default {
     }
   },
   Member: {
+    Member: '成員',
     Manage: '專案成員管理',
     AddMember: '新增成員',
     Id: '成員編號',

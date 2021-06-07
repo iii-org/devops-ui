@@ -1,6 +1,7 @@
 <template>
   <el-tag
     :type="getPriorityTagType(name)"
+    :size="size"
   >
     {{ $t(`Issue.${name}`) }}
   </el-tag>
@@ -11,6 +12,10 @@ export default {
   name: 'Priority',
   props: {
     name: {
+      type: String,
+      default: ''
+    },
+    size: {
       type: String,
       default: ''
     }
