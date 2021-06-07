@@ -8,13 +8,7 @@
           <el-option label="時限內" value="in_progress" />
           <el-option label="未開始" value="not_started" />
         </el-select>
-        <el-input
-          v-model="keyword"
-          class="ob-search-input ob-shadow search-input"
-          style="width: 250px"
-          :placeholder="$t('Project.SearchProjectName')"
-          clearable
-        />
+        <el-input v-model="keyword" style="width: 250px" :placeholder="$t('Project.SearchProjectName')" clearable />
       </el-col>
       <el-col v-if="listData.length > 0" :span="12" class="text-right">
         {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
@@ -23,10 +17,11 @@
     <component :is="showShadow">
       <el-table
         v-loading="listLoading"
-        :data="pagedData"
+        :data="tableData"
         :row-class-name="tableRowClassName"
         cell-class-name="align-center"
         header-cell-class-name="align-center"
+        :height="tableHeight"
         @sort-change="onSortChange"
       >
         <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
@@ -65,21 +60,21 @@
         @pagination="onPagination"
       />
     </component>
-    <el-dialog v-if="!inDialog" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
+    <el-dialog v-if="!inDialog" :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')" top="3vh">
       <admin-project-list :data="getProjectListDetailData" :in-dialog="true" />
     </el-dialog>
   </el-row>
 </template>
 
 <script>
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import { getProjectListDetail } from '@/api/dashboard'
 import ProjectStatus from '@/views/Overview/Dashboard/components/widget/ProjectStatus'
 
 export default {
   name: 'AdminProjectList',
   components: { ProjectStatus },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   props: {
     data: {
       type: Function,
@@ -106,6 +101,12 @@ export default {
   computed: {
     showShadow() {
       return this.inDialog ? 'el-card' : 'div'
+    },
+    tableData() {
+      return this.inDialog ? this.pagedData : this.listData
+    },
+    tableHeight() {
+      return this.inDialog ? 'calc(100vh - 370px)' : '500px'
     }
   },
   watch: {
@@ -149,7 +150,7 @@ export default {
       }
       return ''
     },
-    getProjectListDetailData() {
+    async getProjectListDetailData() {
       return getProjectListDetail().then(res => Promise.resolve(res.data))
     }
   }

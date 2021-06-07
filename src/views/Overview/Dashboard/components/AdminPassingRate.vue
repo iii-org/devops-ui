@@ -9,7 +9,12 @@
       @click="onClickChart"
     />
     <no-data v-else />
-    <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.PassingRate.DETAIL')" @close="closeHandler">
+    <el-dialog
+      :visible.sync="detailDialog"
+      :title="$t('Dashboard.ADMIN.PassingRate.DETAIL')"
+      top="3vh"
+      @close="closeHandler"
+    >
       <el-row type="flex" align="middle">
         <el-col :span="12">
           <el-input
@@ -63,7 +68,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { ScatterChart } from 'echarts/charts'
 import { getPassingRateDetail } from '@/api/dashboard'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import NoData from './widget/NoData'
 
 require('echarts/theme/macarons') // echarts theme
@@ -75,7 +80,7 @@ export default {
     NoData,
     'v-chart': VChart
   },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   props: {
     data: {
       type: Function,
@@ -194,7 +199,7 @@ export default {
       return this.$dayjs(value).fromNow()
     },
     getSizeRate() {
-      const caseCount = this.chartData.map((row) => (row.value[2]))
+      const caseCount = this.chartData.map(row => row.value[2])
       const maxCount = Math.max(...caseCount)
       return this.maxCircleWidth / maxCount
     }

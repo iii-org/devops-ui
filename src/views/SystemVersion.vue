@@ -36,7 +36,12 @@ export default {
     }
   },
   created() {
-    const uiData = { source: 'UI', tag: process.env.VUE_APP_TAG, commitId: process.env.VUE_APP_COMMIT, commitTime: process.env.VUE_APP_DATE }
+    const uiData = {
+      source: 'UI',
+      tag: process.env.VUE_APP_TAG,
+      commitId: process.env.VUE_APP_COMMIT,
+      commitTime: process.env.VUE_APP_DATE
+    }
     this.list.push(uiData)
     this.fetchData()
   },

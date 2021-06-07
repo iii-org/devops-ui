@@ -1,8 +1,12 @@
 <template>
   <el-row>
-    <el-table v-if="listData.length>0" :data="pagedData">
-      <el-table-column v-for="(column, idx) in Object.keys(pagedData[0])" :key="idx" sortable :prop="column"
-                       :label="column"
+    <el-table v-if="listData.length > 0" :data="pagedData">
+      <el-table-column
+        v-for="(column, idx) in Object.keys(pagedData[0])"
+        :key="idx"
+        sortable
+        :prop="column"
+        :label="column"
       />
     </el-table>
     <pagination
@@ -17,11 +21,11 @@
 </template>
 
 <script>
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 
 export default {
   name: 'AdminIssueRankDetail',
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   props: {
     detail: {
       type: Object,
@@ -49,6 +53,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

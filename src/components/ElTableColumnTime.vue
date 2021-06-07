@@ -17,7 +17,7 @@ export default {
       default: 130
     },
     width: {
-      type: Number,
+      type: [String, Number],
       default: null
     }
   },
@@ -35,9 +35,9 @@ export default {
     relativeTime(dateTime) {
       return dateTime
         ? this.$dayjs(dateTime)
-          .utc()
-          .local()
-          .fromNow()
+            .utc()
+            .local()
+            .fromNow()
         : '-'
     }
   }

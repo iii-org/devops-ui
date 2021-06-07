@@ -1,7 +1,13 @@
 <template>
   <el-col v-loading="listLoading">
     <el-col>
-      <el-table :data="pagedData" cell-class-name="align-center" row-class-name="pointer" header-cell-class-name="align-center" @row-click="showUnclosedIssuesDetail">
+      <el-table
+        :data="listData"
+        cell-class-name="align-center"
+        row-class-name="cursor-pointer"
+        header-cell-class-name="align-center"
+        @row-click="showUnclosedIssuesDetail"
+      >
         <el-table-column prop="user_name" :label="$t('Dashboard.ADMIN.IssueRank.user_name')">
           <template slot-scope="scope">
             {{ `${scope.row.user_name} (${scope.row.user_login})` }}
@@ -11,8 +17,17 @@
         <el-table-column prop="project_count" :label="$t('Dashboard.ADMIN.IssueRank.project_count')" />
       </el-table>
     </el-col>
-    <el-dialog :visible.sync="unclosedIssuesDialog" :title="$t('Dashboard.ADMIN.IssueRank.DETAIL', [issueRankDetail['user_name']])" @close="closeHandler">
-      <admin-issue-rank-unclosed-issues :detail="issueRankDetail" :user="listData" @update-detail="updateUnclosedIssuesDetail" />
+    <el-dialog
+      :visible.sync="unclosedIssuesDialog"
+      :title="$t('Dashboard.ADMIN.IssueRank.DETAIL', [issueRankDetail['user_name']])"
+      top="3vh"
+      @close="closeHandler"
+    >
+      <admin-issue-rank-unclosed-issues
+        :detail="issueRankDetail"
+        :user="listData"
+        @update-detail="updateUnclosedIssuesDetail"
+      />
     </el-dialog>
     <!--    <el-dialog :visible.sync="involvedProjectsDialog" :title="issueRankDetail['user_name'] +' - 參與專案'" @close="closeHandler">-->
     <!--      <admin-issue-rank-involved-projects :detail="issueRankDetail" />-->
@@ -21,11 +36,8 @@
 </template>
 
 <script>
-import {
-  getInvolvedProjects,
-  getUnclosedIssues
-} from '@/api/dashboard'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { getInvolvedProjects, getUnclosedIssues } from '@/api/dashboard'
+import { BasicData } from '@/newMixins'
 import AdminIssueRankUnclosedIssues from './widget/AdminIssueRankUnclosedIssues'
 
 export default {
@@ -33,16 +45,15 @@ export default {
   components: {
     AdminIssueRankUnclosedIssues
   },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData],
   props: {
     data: {
       type: Function,
-      default: () => ([])
+      default: () => []
     }
   },
   data() {
     return {
-      detailData: [],
       issueRankDetail: {},
       involvedProjectsDialog: false,
       unclosedIssuesDialog: false,
@@ -67,35 +78,27 @@ export default {
       this.$set(this.issueRankDetail, 'unclosedIssues', this.getUnclosedIssuesData)
     },
     updateUnclosedIssuesDetail(id) {
-      this.issueRankDetail = this.listData.find((item) => (item.user_id === id))
+      this.issueRankDetail = this.listData.find(item => item.user_id === id)
       this.$set(this.issueRankDetail, 'unclosedIssues', this.getUnclosedIssuesData)
-    },
-    onClickChart(row) {
-      this.detailDialog = true
-      this.keyword = row.name
     },
     closeHandler() {
       this.keyword = ''
     },
-    getInvolvedProjectsData(id) {
-      return getInvolvedProjects(id)
-        .then((res) => {
-          return Promise.resolve(res.data)
-        })
-    },
     getUnclosedIssuesData(id) {
-      return getUnclosedIssues(id)
-        .then((res) => {
-          return Promise.resolve(res.data)
-        })
+      return getUnclosedIssues(id).then(res => {
+        return Promise.resolve(res.data)
+      })
     }
+
+    // onClickChart(row) {
+    //   this.detailDialog = true
+    //   this.keyword = row.name
+    // },
+    // getInvolvedProjectsData(id) {
+    //   return getInvolvedProjects(id).then(res => {
+    //     return Promise.resolve(res.data)
+    //   })
+    // },
   }
 }
 </script>
-
-<style lang="scss" scoped>
-// noinspection
->>>.pointer{
-  cursor: pointer;
-}
-</style>

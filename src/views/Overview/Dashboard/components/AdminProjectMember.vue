@@ -9,16 +9,15 @@
       @click="onClickChart"
     />
     <no-data v-else />
-    <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectMembers.NAME')" @close="closeHandler">
+    <el-dialog
+      :visible.sync="detailDialog"
+      :title="$t('Dashboard.ADMIN.ProjectMembers.NAME')"
+      top="3vh"
+      @close="closeHandler"
+    >
       <el-row type="flex" align="middle">
         <el-col :span="12">
-          <el-input
-            v-model="keyword"
-            class="ob-search-input ob-shadow search-input"
-            style="width: 250px"
-            :placeholder="$t('Project.SearchProjectName')"
-            clearable
-          />
+          <el-input v-model="keyword" style="width: 250px" :placeholder="$t('Project.SearchProjectName')" clearable />
         </el-col>
         <el-col v-if="listData.length > 0" :span="12" class="text-right">
           {{ $t('Dashboard.ADMIN.sync_date', [listData[0].sync_date]) }}
@@ -68,7 +67,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { getProjectMembersByProjectID, getProjectMembersDetail } from '@/api/dashboard'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import AdminMemberTable from './widget/AdminMemberTable'
 import NoData from './widget/NoData'
 
@@ -82,7 +81,7 @@ export default {
     AdminMemberTable,
     'v-chart': VChart
   },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   props: {
     data: {
       type: Function,
