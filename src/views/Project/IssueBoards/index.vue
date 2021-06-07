@@ -3,59 +3,81 @@
     <el-row>
       <el-col :md="24" :lg="14">
         <project-list-selector />
-        <el-select
-          v-if="kanbanFilterDimension !== 'fixed_version'"
-          :value="kanbanVersionValue"
-          :placeholder="$t('Version.SelectVersion')"
-          :disabled="selectedProjectId === -1"
-          class="mr-4"
-          filterable
-          @change="updateVersionValue"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-          <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
-        </el-select>
-        <el-select
-          v-if="kanbanFilterDimension !== 'assigned_to'"
-          :value="kanbanMemberValue"
-          :placeholder="$t('Member.SelectMember')"
-          :disabled="selectedProjectId === -1"
-          filterable
-          @change="updateMemberValue"
-        >
-          <el-option :key="-1" :label="$t('Dashboard.TotalMember')" :value="'-1'" />
-          <!--          <el-option :key="-2" :label="$t('Dashboard.Unassigned')" value="" />-->
-          <el-option
-            v-for="item in assigned_to"
-            :key="item.id"
-            :label="`${item.name}(${item.login})`"
-            :value="item.id"
-          />
-        </el-select>
       </el-col>
       <el-col :md="24" :lg="10" class="text-right">
-        <el-form inline>
-          <el-form-item :label="$t('Issue.FilterDimensions.label')">
-            <el-select :value="kanbanFilterDimension" class="mr-4" filterable @change="setKanbanFilterDimension">
-              <el-option
-                v-for="(item, idx) in filterDimensionOptions"
-                :key="idx"
-                :label="item.label"
-                :value="item.value"
+        <el-popover
+          placement="bottom"
+          trigger="click"
+        >
+          <el-form>
+            <el-form-item>
+              <el-select
+                v-if="kanbanFilterDimension !== 'fixed_version'"
+                :value="kanbanVersionValue"
+                :placeholder="$t('Version.SelectVersion')"
+                :disabled="selectedProjectId === -1"
+                class="mr-4"
+                filterable
+                @change="updateVersionValue"
+              >
+                <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-select
+                v-if="kanbanFilterDimension !== 'assigned_to'"
+                :value="kanbanMemberValue"
+                :placeholder="$t('Member.SelectMember')"
+                :disabled="selectedProjectId === -1"
+                filterable
+                @change="updateMemberValue"
+              >
+                <el-option
+                  v-for="item in assigned_to"
+                  :key="item.id"
+                  :label="(item.login)? item.name+'('+item.login+')' : item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <el-button slot="reference" type="text"> {{ kanbanSearch }} <i
+            class="el-icon-arrow-down el-icon--right"
+          /></el-button>
+        </el-popover>
+        <el-divider direction="vertical" />
+        <el-popover
+          placement="bottom"
+          trigger="click"
+        >
+          <el-form>
+            <el-form-item :label="$t('Issue.FilterDimensions.label')">
+              <el-select :value="kanbanFilterDimension" class="mr-4" filterable @change="setKanbanFilterDimension">
+                <el-option
+                  v-for="(item, idx) in filterDimensionOptions"
+                  :key="idx"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('Issue.FilterDimensions.label')">
+              <el-select-all
+                ref="filterValue"
+                :value="kanbanFilterValue"
+                filterable
+                multiple
+                collapse-tags
+                :options="filterValueOptions"
+                value-key="id"
+                @change="setKanbanFilterValue"
               />
-            </el-select>
-          </el-form-item>
-          <el-select-all
-            ref="filterValue"
-            :value="kanbanFilterValue"
-            filterable
-            multiple
-            collapse-tags
-            :options="filterValueOptions"
-            value-key="id"
-            @change="setKanbanFilterValue"
-          />
-        </el-form>
+            </el-form-item>
+          </el-form>
+          <el-button slot="reference" type="text">以 <b>{{ kanbanFilter }}</b> 分組 ({{ kanbanFilterLength }}) <i
+            class="el-icon-arrow-down el-icon--right"
+          /></el-button>
+        </el-popover>
       </el-col>
     </el-row>
     <el-divider />
@@ -78,33 +100,33 @@
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
       />
-      <right-panel ref="rightPanel" :click-not-close="true">
-        <el-row v-for="(item, idx) in filterDimensionOptions" :key="idx" class="panel">
-          <el-card>
-            <template slot="header">{{ item.label }}</template>
-            <template v-for="(subItem, index) in getFilterValueList(item.value)">
-              <div
-                v-if="subItem.status !== 'closed'"
-                :id="index"
-                :key="index"
-                draggable="true"
-                class="item"
-                @dragstart="dragStart($event, { [item.value]: subItem })"
-                @dragend="dragEnd"
-              >
-                <el-tag effect="dark" :type="getTagType(subItem.name)">
-                  {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
-                </el-tag>
-                <el-alert class="help_text" :closable="false">
-                  拖曳到議題，可以將 {{ item.label }} 改變成
-                  {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
-                </el-alert>
-              </div>
-            </template>
-          </el-card>
-        </el-row>
-      </right-panel>
     </el-col>
+    <right-panel ref="rightPanel" :click-not-close="true">
+      <el-row v-for="(item, idx) in filterDimensionOptions" :key="idx" class="panel">
+        <el-card>
+          <template slot="header">{{ item.label }}</template>
+          <template v-for="(subItem, index) in getFilterValueList(item.value)">
+            <div
+              v-if="subItem.status !== 'closed'"
+              :id="index"
+              :key="index"
+              draggable="true"
+              class="item"
+              @dragstart="dragStart($event, { [item.value]: subItem })"
+              @dragend="dragEnd"
+            >
+              <el-tag effect="dark" :type="getTagType(subItem.name)">
+                {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+              </el-tag>
+              <el-alert class="help_text" :closable="false">
+                拖曳到議題，可以將 {{ item.label }} 改變成
+                {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+              </el-alert>
+            </div>
+          </template>
+        </el-card>
+      </el-row>
+    </right-panel>
   </el-row>
 </template>
 
@@ -170,6 +192,27 @@ export default {
         return this[this.kanbanFilterDimension].map(item => item)
       }
       return this.kanbanFilterValue
+    },
+    kanbanFilter() {
+      return this.filterDimensionOptions.find((item) => (item.value === this.kanbanFilterDimension)).label
+    },
+    kanbanFilterLength() {
+      if (this.filterValueOptions.length === this.kanbanFilterValue.length || this.kanbanFilterValue.length === 0) {
+        return 'All'
+      }
+      return this.kanbanFilterValue.length
+    },
+    kanbanSearch() {
+      const result = []
+      const version = this.fixed_version.find((item) => (item.id === this.kanbanVersionValue))
+      const member = this.assigned_to.find((item) => (item.id === this.kanbanMemberValue))
+      if (version) {
+        result.push(version.name)
+      }
+      if (member) {
+        result.push(member.name)
+      }
+      return result.join(', ')
     }
   },
   watch: {
@@ -226,10 +269,17 @@ export default {
       const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
 
       const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: '' }, ...versionsRes.data.versions]
-
+      this.fixed_version = [
+        { name: this.$t('Dashboard.TotalVersion'), id: '-1' },
+        { name: this.$t('Issue.VersionUndecided'), id: '' },
+        ...versionsRes.data.versions
+      ]
       const userRes = await this.getProjectUserList(this.selectedProjectId)
-      this.assigned_to = [{ name: this.$t('Issue.Unassigned'), id: '' }, ...userRes.data.user_list]
+      this.assigned_to = [
+        { name: this.$t('Dashboard.TotalMember'), id: '-1' },
+        { name: this.$t('Issue.Unassigned'), id: '' },
+        ...userRes.data.user_list
+      ]
       this.isLoading = false
       this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       await this.classifyIssue()
@@ -393,14 +443,21 @@ export default {
 <style lang="scss" scoped>
 @import 'src/styles/variables.scss';
 
+.app-container {
+  overflow: hidden;
+}
+
 .board {
   display: flex;
   justify-content: start;
-  flex-wrap: wrap;
-  align-items: start;
+  flex-wrap: nowrap;
+  height: calc(100vh - 50px - 40px - 40px - 25px - 10px);
+  overflow-x: auto;
 
   .kanban {
-    >>> .parent {
+    flex: 0 0 280px;
+
+    > > > .parent {
       font-size: 0.75em;
       margin: 0;
 
@@ -420,7 +477,7 @@ export default {
         background: $solved;
       }
 
-      >>> .inprogress {
+      > > > .inprogress {
         background: $inProgress;
       }
 
@@ -433,7 +490,7 @@ export default {
       }
     }
 
-    >>> &.active {
+    > > > &.active {
       .board-column-header {
         .header-bar {
           background: $active;
@@ -441,7 +498,7 @@ export default {
       }
     }
 
-    >>> &.assigned {
+    > > > &.assigned {
       .board-column-header {
         .header-bar {
           background: $assigned;
@@ -449,7 +506,7 @@ export default {
       }
     }
 
-    >>> &.solved {
+    > > > &.solved {
       .board-column-header {
         .header-bar {
           background: $solved;
@@ -457,7 +514,7 @@ export default {
       }
     }
 
-    >>> &.inprogress {
+    > > > &.inprogress {
       .board-column-header {
         .header-bar {
           background: $inProgress;
@@ -465,7 +522,7 @@ export default {
       }
     }
 
-    >>> &.finished {
+    > > > &.finished {
       .board-column-header {
         .header-bar {
           background: $finished;
@@ -473,7 +530,7 @@ export default {
       }
     }
 
-    >>> &.closed {
+    > > > &.closed {
       .board-column-header {
         .header-bar {
           background: $closed;
@@ -481,7 +538,7 @@ export default {
       }
     }
 
-    >>> &.feature {
+    > > > &.feature {
       .board-column-header {
         .header-bar {
           background: $feature;
@@ -489,7 +546,7 @@ export default {
       }
     }
 
-    >>> &.bug {
+    > > > &.bug {
       .board-column-header {
         .header-bar {
           background: $bug;
@@ -497,7 +554,7 @@ export default {
       }
     }
 
-    >>> &.document {
+    > > > &.document {
       .board-column-header {
         .header-bar {
           background: $document;
@@ -505,7 +562,7 @@ export default {
       }
     }
 
-    >>> &.research {
+    > > > &.research {
       .board-column-header {
         .header-bar {
           background: $research;
@@ -515,7 +572,7 @@ export default {
   }
 }
 
->>> .rightPanel-items {
+> > > .rightPanel-items {
   overflow-y: auto;
   height: 100%;
 

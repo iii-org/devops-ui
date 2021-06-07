@@ -283,8 +283,6 @@ export default {
 <style lang="scss" scoped>
 .board-column {
   width: 280px;
-  // min-height: 100px;
-  // height: auto;
   overflow: hidden;
   background: #ffffff;
   border-radius: 3px;
@@ -311,8 +309,9 @@ export default {
 
   .board-column-content {
     overflow: hidden;
+    overflow-y: auto;
     border: 10px solid transparent;
-    height: 100%;
+    height: 90%;
 
     .board-item {
       cursor: pointer;
@@ -343,7 +342,7 @@ export default {
     margin: 0;
   }
 
-  >>> .el-collapse-item {
+  > > > .el-collapse-item {
     &__header {
       height: 2.5em;
     }
