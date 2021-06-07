@@ -4,7 +4,7 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="80%"
-    top="0"
+    top="3vh"
     @closed="onDialogClosed"
   >
     <el-row class="el-card">
@@ -12,7 +12,7 @@
         <el-row>
           <el-col :xs="24" :md="12">
             <el-input
-              v-model="searchValue"
+              v-model="keyword"
               size="medium"
               prefix-icon="el-icon-search"
               :style="{ width: '300px' }"
@@ -31,13 +31,12 @@
         <el-table
           v-if="dialogVisible"
           ref="userTable"
+          :data="pagedData"
           :element-loading-text="$t('Loading')"
+          height="100%"
+          highlight-current-row
           border
           fit
-          highlight-current-row
-          :data="pagedData"
-          height="100%"
-          :cell-style="{ height: rowHeight + 'px' }"
           @cell-click="handleClick"
         >
           <el-table-column width="55" type="first">
@@ -79,12 +78,12 @@
 <script>
 import { addProjectMember, getNotInProject } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import Fuse from 'fuse.js'
 
 export default {
   name: 'AddMemberDialog',
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       dialogVisible: false,
@@ -100,8 +99,7 @@ export default {
         page: 1,
         limit: 5
       },
-      inputVisible: false,
-      searchValue: ''
+      inputVisible: false
     }
   },
   computed: {
@@ -111,12 +109,12 @@ export default {
     },
     filteredData() {
       if (this.assignableUserList.length <= 0) return []
-      if (this.searchValue.length <= 0) return this.assignableUserList
+      if (this.keyword.length <= 0) return this.assignableUserList
       const fuse = new Fuse(this.assignableUserList, {
         includeScore: true,
         keys: ['name', 'login', 'department', 'title']
       })
-      const res = fuse.search('!' + this.searchValue)
+      const res = fuse.search('!' + this.keyword)
       return res.map(items => items.item)
     }
   },
@@ -134,7 +132,7 @@ export default {
     this.assignableUserList = await this.fetchData()
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       return getNotInProject(this.selectedProjectId)
         .then(res => {
           this.assignableUserList = res.data.user_list.map(user => ({

@@ -125,8 +125,7 @@
 
 <script>
 import { deleteHarborRepo, editHarborRepo, getHarborRepoList, getHarborRepoStorageSummary } from '@/api/harbor'
-import ProjectListSelector from '@/components/ProjectListSelector'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
@@ -138,8 +137,8 @@ const formTemplate = {
 
 export default {
   name: 'ResourceHarbor',
-  components: { ElTableColumnTime, ProjectListSelector },
-  mixins: [MixinBasicTable],
+  components: { ElTableColumnTime },
+  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector],
   data() {
     return {
       projectName: '',
@@ -213,21 +212,6 @@ export default {
       this.deleteResourceName = row.name
       this.placeholderText = 'Please Input ' + this.deleteResourceName
     },
-    // async handleDelete(idx, row) {
-    //   this.$confirm(`Are you sure to Delete ${row.name}?`, 'Delete', {
-    //     confirmButtonText: 'Delete',
-    //     cancelButtonText: 'Cancel',
-    //     type: 'error'
-    //   }).then(async () => {
-    //     await deleteHarborRepo(row.name)
-    //     this.$message({
-    //       title: this.$t('general.Success'),
-    //       message: this.$t('Notify.Deleted'),
-    //       type: 'success'
-    //     })
-    //     this.fetchData()
-    //   })
-    // },
     async handleDeleteModal() {
       if (this.deleteResourceName !== this.inputDelResourceName) {
         return this.$message({

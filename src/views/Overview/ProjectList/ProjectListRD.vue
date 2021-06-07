@@ -1,21 +1,15 @@
 <template>
   <div class="app-container">
     <div class="clearfix">
-      <!-- <span class="newBtn">
-        <el-button type="success" @click="handleAdding">
-            <i class="el-icon-plus" />
-            Add Project
-        </el-button>
-      </span> -->
       <el-input
         v-model="keyword"
-        prefix-icon="el-icon-search"
         :placeholder="$t('Project.SearchProjectNameOrId')"
         style="width: 250px; float: right"
+        prefix-icon="el-icon-search"
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" height="calc(100vh - 300px)" border fit>
       <el-table-column
         align="center"
         :label="$t('Project.NameIdentifier')"
@@ -114,17 +108,6 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Actions" align="center" width="250px">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
-            Edit
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            <i class="el-icon-delete" /> Delete
-          </el-button>
-        </template>
-      </el-table-column> -->
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -179,7 +162,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
@@ -204,7 +187,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       dialogVisible: false,
@@ -285,10 +268,5 @@ export default {
 <style lang="scss" scoped>
 .clearfix {
   clear: both;
-
-  .newBtn {
-    float: right;
-    padding-right: 6px;
-  }
 }
 </style>

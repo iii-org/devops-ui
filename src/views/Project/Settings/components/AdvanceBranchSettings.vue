@@ -27,10 +27,10 @@
         <el-button type="primary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
       </div>
       <el-table :data="filteredData" fit border>
-        <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" :width="150" />
-        <el-table-column :label="$t('general.Description')" align="center" prop="commit_message" />
-        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" :min-width="80" />
-        <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center">
+        <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" width="100" />
+        <el-table-column :label="$t('general.Description')" align="center" prop="commit_message" show-overflow-tooltip min-width="120" />
+        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" width="160" />
+        <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center" width="120">
           <template slot="header" slot-scope="scope">
             <div class="mb-2">{{ tool.name }}</div>
             <el-checkbox
@@ -53,22 +53,19 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { getPipelineBranch, editPipelineBranch } from '@/api/projects'
+import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
 
 export default {
   name: 'AdvanceBranchSettings',
   components: { ElTableColumnTime },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
       services: ['Web', 'Database'],
       dependenceKeys: ['Postman', 'WebInspect', 'ZAP', 'SideeX'],
-      listData: [],
       isLoading: false,
-      keyword: '',
       searchKeys: ['branch'],
       testingToolNames: [],
       isChanged: false
@@ -89,25 +86,6 @@ export default {
         })
     } else {
       next()
-    }
-  },
-  computed: {
-    ...mapGetters(['selectedProject']),
-    selectedRepositoryId() {
-      return this.selectedProject.repository_ids[0]
-    },
-    filteredData() {
-      const { listData, searchKeys } = this
-      const keyword = this.keyword.toLowerCase()
-      return listData.filter(data => {
-        let result = false
-        for (let i = 0; i < searchKeys.length; i++) {
-          const columnValue = data[searchKeys[i]].toLowerCase()
-          result = result || columnValue.includes(keyword)
-          if (result) break
-        }
-        return result
-      })
     }
   },
   mounted() {

@@ -15,7 +15,7 @@
     <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column
         :label="$t('Project.Name') + '/' + $t('Project.Identifier')"
-        :show-overflow-tooltip="true"
+        show-overflow-tooltip
         min-width="250"
       >
         <template slot-scope="scope">
@@ -34,24 +34,8 @@
         translate-key="Project"
         :label="$t('Project.Status')"
         location="projectListPM"
-        min-width="100"
+        min-width="120"
       />
-      <!-- <el-table-column align="center" :label="$t('Project.Status')" width="100">
-        <template slot-scope="scope">
-          <el-tag
-            v-if="scope.row.project_status === '進行中'"
-            class="el-tag--circle"
-            type="success"
-            size="medium"
-            effect="dark"
-          >
-            {{ scope.row.project_status }}
-          </el-tag>
-          <el-tag v-else class="el-tag--circle" type="none" size="medium" effect="dark">
-            {{ scope.row.project_status }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" :label="$t('Project.Progress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
@@ -173,7 +157,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 
@@ -190,13 +174,13 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
       editProject: {},
       deleteProject: { id: '', name: '' },
       searchKeys: ['display', 'name'],
-      rowHeight: 70
+      rowHeight: 74
     }
   },
   computed: {

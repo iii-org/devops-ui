@@ -67,15 +67,15 @@
 </template>
 
 <script>
-import { getProjectUserList, deleteProjectMember, getProjectInfos, updateProjectInfos } from '@/api/projects'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { getProjectUserList, deleteProjectMember, updateProjectInfos } from '@/api/projects'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import AddMemberDialog from './AddMemberDialog'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'ProjectMembers',
   components: { AddMemberDialog },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       isLoading: false,

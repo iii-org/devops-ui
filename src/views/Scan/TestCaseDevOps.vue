@@ -54,11 +54,11 @@
 
 <script>
 import { getPostmanReport } from '@/api/postman'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 
 export default {
   name: 'TestCaseDevOps',
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       dialogVisible: false

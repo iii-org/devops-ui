@@ -4,6 +4,7 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="50%"
+    top="3vh"
     @closed="onDialogClosed"
   >
     <el-form ref="versionForm" :model="form" :rules="formRules" label-position="top">
@@ -41,7 +42,7 @@
 
 <script>
 import { addProjectVersion, editProjectVersion } from '@/api/projects'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { mapGetters } from 'vuex'
 
 const formTemplate = () => ({
   name: '',
@@ -52,7 +53,6 @@ const formTemplate = () => ({
 
 export default {
   name: 'ModifyVersionDialog',
-  mixins: [MixinBasicTable],
   data() {
     return {
       dialogVisible: false,
@@ -68,6 +68,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['selectedProject']),
     dialogStatusText() {
       switch (this.dialogStatus) {
         case 1:
@@ -92,14 +93,14 @@ export default {
           const data = this.form
           this.btnConfirmLoading = true
           if (this.dialogStatus === 1) {
-            await addProjectVersion(this.selectedProjectId, { version: data })
+            await addProjectVersion(this.selectedProject.id, { version: data })
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Added'),
               type: 'success'
             })
           } else {
-            await editProjectVersion(this.selectedProjectId, this.form.id, { version: data })
+            await editProjectVersion(this.selectedProject.id, this.form.id, { version: data })
             this.$message({
               title: this.$t('general.Success'),
               message: this.$t('Notify.Updated'),

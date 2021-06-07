@@ -99,11 +99,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getPostmanReport } from '@/api/postman'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 
 export default {
   name: 'TestCasePostman',
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       testCaseInfos: {},

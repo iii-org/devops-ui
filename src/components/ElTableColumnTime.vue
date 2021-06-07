@@ -13,12 +13,12 @@ export default {
       default: i18n.t('general.LastUpdateTime')
     },
     minWidth: {
-      type: Number,
-      default: 130
+      type: String,
+      default: '130'
     },
     width: {
-      type: [String, Number],
-      default: null
+      type: String,
+      default: '130'
     }
   },
   methods: {
@@ -35,9 +35,9 @@ export default {
     relativeTime(dateTime) {
       return dateTime
         ? this.$dayjs(dateTime)
-            .utc()
-            .local()
-            .fromNow()
+          .utc()
+          .local()
+          .fromNow()
         : '-'
     }
   }

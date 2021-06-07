@@ -9,7 +9,7 @@
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" height="calc(100vh - 280px)" border fit>
       <el-table-column align="center" :label="$t('Activities.User')" min-width="100" prop="operator_name" />
       <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="150" prop="action_type" />
       <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="250" prop="action_parts" />
@@ -28,23 +28,17 @@
 
 <script>
 import { getAllActivities } from '@/api/activities'
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'SystemActivities',
   components: { ElTableColumnTime },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
       dialogVisible: false,
-      formData: {
-        // from_date: '2020-01-01',
-        // to_date: '2021-12-31',
-        // limit: 100,
-        // page: 0,
-        // actions: 'CREATE_USER, UPDATE_USER, DELETE_USER'
-      },
+      formData: {},
       searchKeys: ['operator_name', 'action_type', 'action_parts']
     }
   },

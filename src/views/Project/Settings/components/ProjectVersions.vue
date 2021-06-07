@@ -28,13 +28,6 @@
         size="mini"
         location="projectVersions"
       />
-      <!-- <el-table-column prop="status" align="center" :label="$t('general.Status')" width="90">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status" class="el-tag--circle" :type="getTagType(scope.row.status)" size="mini" effect="dark">
-            {{ scope.row.status }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column :label="$t('general.Actions')" align="center" width="210">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
@@ -59,7 +52,7 @@
 </template>
 
 <script>
-import MixinBasicTable from '@/mixins/MixinBasicTable'
+import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
@@ -68,7 +61,7 @@ import ModifyVersionDialog from './ModifyVersionDialog'
 export default {
   name: 'ProjectVersions',
   components: { ElTableColumnTime, ModifyVersionDialog, ElTableColumnTag },
-  mixins: [MixinBasicTable],
+  mixins: [BasicData, Pagination, SearchBar, Table],
   methods: {
     async fetchData() {
       const res = await getProjectVersion(this.selectedProjectId)
@@ -100,16 +93,6 @@ export default {
         await this.loadData()
       })
     }
-    // getTagType(status) {
-    //   switch (status) {
-    //     case 'open':
-    //       return 'success'
-    //     case 'closed':
-    //       return 'danger'
-    //     default:
-    //       return 'slow'
-    //   }
-    // }
   }
 }
 </script>
