@@ -102,6 +102,7 @@ export default {
   general: {
     Name: 'Name',
     Title: 'Title',
+    Add: 'Add',
     Edit: 'Edit',
     Delete: 'Delete',
     Participate: 'Participate',
@@ -340,10 +341,10 @@ export default {
     RelatedIssue: 'Related Issue',
     detail: {
       message: {
-        set_to: '{user}: {action} {message} ({time})',
-        from_to: 'from {0} set to {1} .',
-        to: 'set to {0}',
-        from: 'from {0} clean set.'
+        set_to: '{user}{action} ({time}) {message}',
+        Before: 'Before',
+        After: 'After',
+        Add: '@:general.Add'
       },
       assigned_to_id: '@:Issue.Assignee',
       subject: '@:general.Title',

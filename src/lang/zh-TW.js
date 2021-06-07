@@ -101,6 +101,7 @@ export default {
   general: {
     Name: '名稱',
     Title: '標題',
+    Add: '新增',
     Edit: '編輯',
     Delete: '刪除',
     Participate: '參與專案',
@@ -339,10 +340,10 @@ export default {
     RelatedIssue: '關聯議題',
     detail: {
       message: {
-        set_to: '{user}: {action}，{message} ({time})',
-        from_to: '從 {0} 設定成 {1} ',
-        to: '設定成 {0}',
-        from: '從 {0} 清除設定'
+        set_to: '{user}{action} ({time}) {message}',
+        Before: '原始值',
+        After: '變更後',
+        Add: '@:general.Add'
       },
       assigned_to_id: '@:Issue.Assignee',
       subject: '@:general.Title',

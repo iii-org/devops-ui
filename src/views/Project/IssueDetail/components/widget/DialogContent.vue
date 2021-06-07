@@ -15,53 +15,43 @@
       </el-col>
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
-      <el-row v-for="(detail,index) in note.details" :key="index">
-        <div class="el-divider el-divider--horizontal">
-          <i18n path="Issue.detail.message.set_to" tag="div" class="el-divider__text is-center">
-            <span slot="user">{{ note.user.name }}</span>
-            <b slot="action">{{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property)
-            }}</b>
-            <span slot="message">
-              <span v-if="detail.old_value&&detail.new_value">
-                <i18n path="Issue.detail.message.from_to">
-                  <el-link v-if="detail.name==='parent_id'" slot="0" @click="showParentIssue(detail.new_value.id)">
-                    {{ detail.old_value.subject }}
-                  </el-link>
-                  <b v-else slot="0">
-                    {{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}
-                  </b>
-                  <el-link v-if="detail.name==='parent_id'" slot="1" @click="showParentIssue(detail.new_value.id)">
-                    {{ detail.new_value.subject }}
-                  </el-link>
-                  <b v-else slot="1">
-                    {{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}
-                  </b>
-                </i18n>
-              </span>
-              <span v-else-if="detail.old_value">
-                <i18n path="Issue.detail.message.from">
-                  <el-link v-if="detail.name==='parent_id'" slot="0" @click="showParentIssue(detail.new_value.id)">
-                    {{ detail.old_value.subject }}
-                  </el-link>
-                  <b v-else slot="0">
-                    {{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}
-                  </b>
-                </i18n>
-              </span>
-              <span v-else>
-                <i18n path="Issue.detail.message.to">
-                  <el-link v-if="detail.name==='parent_id'" slot="0" @click="showParentIssue(detail.new_value.id)">
-                    {{ detail.new_value.subject }}
-                  </el-link>
-                  <b v-else slot="0">
-                    {{ ($te(getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}
-                  </b>
-                </i18n>
-              </span>
-            </span>
-            <span slot="time">{{ note.created_on | formatTime }}</span>
-          </i18n>
-        </div>
+      <el-row v-for="(detail,index) in note.details" :key="index" class="el-alert el-alert--info is-light detail">
+        <i class="el-alert__icon el-icon-info" />
+        <i18n path="Issue.detail.message.set_to" tag="div" class="el-alert__content">
+          <span slot="user" class="title">{{ note.user.name }}: </span>
+          <span slot="action" class="title">
+            <span v-if="detail.old_value&&detail.new_value">{{ $t('general.Edit') }}</span>
+            <span v-else-if="detail.old_value">{{ $t('general.Delete') }}</span>
+            <span v-else>{{ $t('general.Add') }}</span>
+            <b>{{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}</b>
+          </span>
+          <span slot="time">{{ note.created_on | formatTime }}</span>
+          <span slot="message">
+            <el-row>
+              <el-col v-if="detail.old_value" :span="12" class="value">
+                <p class="title">
+                  <b><i class="el-icon-caret-right" /> {{ $t('Issue.detail.message.Before') }}</b>
+                </p>
+                <el-link v-if="detail.name==='parent_id'" class="link" @click="showParentIssue(detail.new_value.id)">
+                  {{ detail.old_value.subject }}
+                </el-link>
+                <p v-else class="text-wrapper">{{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}</p>
+              </el-col>
+              <el-col v-if="detail.new_value" :span="12" class="value">
+                <p v-if="detail.old_value" class="title">
+                  <b><i class="el-icon-caret-right" /> {{ $t('Issue.detail.message.After') }}</b>
+                </p>
+                <p v-else>
+                  <b><i class="el-icon-caret-right" /> {{ $t('Issue.detail.message.Add') }}</b>
+                </p>
+                <el-link v-if="detail.name==='parent_id'" class="link" @click="showParentIssue(detail.new_value.id)">
+                  {{ detail.new_value.subject }}
+                </el-link>
+                <p v-else class="text-wrapper">{{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}</p>
+              </el-col>
+            </el-row>
+          </span>
+        </i18n>
       </el-row>
     </template>
   </el-row>
@@ -126,6 +116,27 @@ export default {
 
 <style lang="scss" scoped>
 @import "src/styles/variables";
+
+.detail{
+  font-size: 0.875em;
+  margin: 5px 0;
+  .title{
+    font-size: 1.1em;
+  }
+  .value{
+    .title{
+      font-size: 1em;
+    }
+    .link{
+      margin: 0 1.5em;
+    }
+    .text-wrapper {
+      margin: 1.5em;
+      white-space: pre-line;
+      font-size: 0.875em;
+    }
+  }
+}
 
 .dialog {
   width: fit-content;
