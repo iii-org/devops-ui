@@ -44,10 +44,10 @@
             </el-col>
             <el-col ref="IssueRelation">
               <el-collapse v-if="countRelationIssue>0">
-                <el-collapse-item :title="'關聯議題 ('+countRelationIssue+')'">
+                <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
                   <ul>
                     <li v-if="Object.keys(parent).length>0">
-                      父議題：
+                      {{ $t('Issue.ParentIssue') }}：
                       <el-link @click="onRelationIssueDialog(parent.id)">
                         <status :name="parent.status.name" size="mini" />
                         <template v-if="parent.tracker">
@@ -58,7 +58,7 @@
                         <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
                       </el-link>
                     </li>
-                    <li v-if="children.length>0">子議題：
+                    <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
                       <ol>
                         <li v-for="child in children" :key="child.id">
                           <el-link @click="onRelationIssueDialog(child.id)">
