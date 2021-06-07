@@ -84,7 +84,8 @@ export default {
           label: key,
           data: statistics[key]
         }))
-        this.selectedItem = this.saveSelectedItem !== '' ? this.saveSelectedItem : this.selectList[2].id
+        const defaultKeyIdx = this.selectList.findIndex(item => item.id === 'assigned_to')
+        this.selectedItem = this.saveSelectedItem !== '' ? this.saveSelectedItem : this.selectList[defaultKeyIdx].id
         this.fillData()
       } else {
         this.dataCollection = {}
