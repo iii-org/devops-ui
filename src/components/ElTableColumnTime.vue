@@ -15,6 +15,10 @@ export default {
     minWidth: {
       type: Number,
       default: 130
+    },
+    width: {
+      type: Number,
+      default: null
     }
   },
   methods: {

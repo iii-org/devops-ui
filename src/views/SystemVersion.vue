@@ -6,25 +6,20 @@
           {{ scope.row.source }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Version" width="180">
-        <template>
-          <span>V1.5.0</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Commit ID">
-        <template slot-scope="scope">
-          {{ scope.row.commitId }}
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="Version" prop="tag" width="180" />
+      <el-table-column label="Commit ID" prop="commitId" />
+      <el-table-column-time align="center" prop="commitTime" width="180" />
     </el-table>
   </div>
 </template>
 
 <script>
 import { getVersion } from '@/api/dashboard'
+import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'SystemVersion',
+  components: { ElTableColumnTime },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -41,7 +36,7 @@ export default {
     }
   },
   created() {
-    const uiData = { source: 'UI', commitId: process.env.VUE_APP_VERSION }
+    const uiData = { source: 'UI', tag: process.env.VUE_APP_TAG, commitId: process.env.VUE_APP_COMMIT, commitTime: process.env.VUE_APP_DATE }
     this.list.push(uiData)
     this.fetchData()
   },
