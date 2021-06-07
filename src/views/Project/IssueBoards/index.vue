@@ -1,10 +1,8 @@
 <template>
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-row>
-      <el-col :md="24" :lg="14">
-        <project-list-selector />
-      </el-col>
-      <el-col :md="24" :lg="10" class="text-right">
+      <project-list-selector />
+      <div class="text-right">
         <el-popover
           placement="bottom"
           trigger="click"
@@ -79,7 +77,7 @@
             </i18n>
             ({{ kanbanFilterLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
-      </el-col>
+      </div>
     </el-row>
     <el-divider />
     <el-col class="board">
