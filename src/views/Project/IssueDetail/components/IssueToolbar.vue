@@ -9,9 +9,11 @@
         <i class="el-icon-link" /> Redmine
       </el-link>
     </el-col>
-    <el-dialog :visible.sync="uploadDialogVisible" :title="$t('Issue.UploadFiles')" @close="handleUploadClose">
-      <issue-file-uploader ref="IssueFileUploader" :issue-id="issueId" />
-      <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+    <el-dialog :visible.sync="uploadDialogVisible" :title="$t('Issue.UploadFiles')" top="3vh" @close="handleUploadClose">
+      <issue-file-uploader ref="IssueFileUploader" class="mb-2" :issue-id="issueId" />
+      <div class="mt-2 text-right">
+        <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+      </div>
     </el-dialog>
     <add-issue
       :save-data="saveIssue"

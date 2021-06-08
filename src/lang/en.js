@@ -150,7 +150,8 @@ export default {
     Department: 'Department',
     UserTitle: 'Title',
     Back: 'Back',
-    All: 'All'
+    All: 'All',
+    Preview: 'Preview'
   },
   Notify: {
     Updated: 'update successful',

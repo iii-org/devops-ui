@@ -4,7 +4,7 @@
     <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
       <el-col :span="20">
         <a class="el-upload-list__item-name" @click="handleDownload(file)">
-          <i class="el-icon-document" />{{ file.filename }} ({{ file.created_on }})
+          <i class="el-icon-document" />{{ file.filename }} ({{ $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss') }})
         </a>
       </el-col>
       <el-col :span="4" class="text-right">
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
 
@@ -33,9 +34,12 @@ export default {
       isLoading: false
     }
   },
+  computed: {
+    ...mapGetters(['selectedProject'])
+  },
   methods: {
     async handleDownload(row) {
-      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
+      const res = await downloadProjectFile({ id: row.id, filename: row.filename, project_id: this.selectedProject.id })
       const url = window.URL.createObjectURL(new Blob([res]))
       const link = document.createElement('a')
       link.href = url

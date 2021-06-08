@@ -149,7 +149,8 @@ export default {
     Department: '部門',
     UserTitle: '職稱',
     Back: '返回',
-    All: '全部'
+    All: '全部',
+    Preview: '預覽'
   },
   Notify: {
     Updated: '已更新',

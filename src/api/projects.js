@@ -213,7 +213,7 @@ export function getProjectFileList(pId) {
 }
 
 // 下載檔案
-export function downloadProjectFile(params = { id: '', filename: '' }) {
+export function downloadProjectFile(params = { id: '', filename: '', project_id: '' }) {
   return request({
     url: `/download`,
     method: 'GET',
