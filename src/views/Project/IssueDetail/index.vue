@@ -86,7 +86,7 @@
           </el-row>
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
-          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent-status="parentStatus" :children-issue="children.length" @isLoading="showLoading" />
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :children-issue="children.length" @isLoading="showLoading" />
         </el-col>
       </el-row>
       <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body destroy-on-close>
@@ -148,6 +148,7 @@ export default {
       tracker: '',
       view: {},
       form: {
+        parent_id: null,
         project_id: 0,
         assigned_to_id: -1,
         subject: '',
@@ -213,10 +214,6 @@ export default {
         children = this.children.length
       }
       return parent + children
-    },
-    parentStatus() {
-      if (Object.keys(this.parent).length <= 0) { return null }
-      return this.parent.status.name
     }
   },
   watch: {
@@ -280,6 +277,7 @@ export default {
     },
     setFormData(data) {
       const {
+        parent,
         assigned_to,
         fixed_version,
         subject,
@@ -292,6 +290,7 @@ export default {
         due_date,
         description
       } = data
+      this.form.parent_id = parent ? parent.id : null
       this.form.project_id = this.selectedProjectId
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.subject = subject

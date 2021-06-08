@@ -370,7 +370,9 @@ export default {
     },
     Display: 'Display',
     DragTip: 'Drag to issue, it can change {key} to {value}.',
-    GroupBy: 'Group by {filter}'
+    GroupBy: 'Group by {filter}',
+    OriginalSetting: 'Original Setting',
+    Result: 'Result'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

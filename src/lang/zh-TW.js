@@ -370,7 +370,9 @@ export default {
     },
     Display: '顯示',
     DragTip: '拖曳到議題，可以將 {key} 改變成 {value}',
-    GroupBy: '以 {filter} 分組'
+    GroupBy: '以 {filter} 分組',
+    OriginalSetting: '原先設定',
+    Result: '搜尋結果'
   },
   Wiki: {
     AddWiki: '新增Wiki',

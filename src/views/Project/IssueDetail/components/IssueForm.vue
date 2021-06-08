@@ -21,18 +21,43 @@
             :remote-method="getSearchIssue"
             :loading="issueLoading"
           >
-            <el-option
-              v-for="item in issueList"
-              :key="item.id"
-              :label="'#' + item.id +' - '+item.name"
-              :value="item.id"
+            <el-option-group
+              v-for="group in issueList"
+              :key="group.label"
+              :label="group.label"
             >
-              <span style="float: left; width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
-                <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                <span v-html="highLight(item.name)" />
-              </span>
-              <span style="float: right; color: #8492a6; font-size: 13px" v-html="highLight(String(item.assigned_to.name))" />
-            </el-option>
+              <el-option
+                v-for="item in group.options"
+                :key="item.id"
+                :label="'#' + item.id +' - '+item.name"
+                :value="item.id"
+              >
+                <el-popover
+                  placement="left"
+                  width="250"
+                  trigger="hover"
+                >
+                  <el-card>
+                    <template slot="header">
+                      {{ item.name }}
+                    </template>
+                    <b>{{ $t('Issue.Description') }}:</b>
+                    <p>{{ item.description }}</p>
+                  </el-card>
+                  <div slot="reference">
+                    <span
+                      style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                    >
+                      <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                      <span v-html="highLight(item.name)" />
+                    </span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"
+                          v-html="highLight((item.assigned_to.name)?item.assigned_to.name:null)"
+                    />
+                  </div>
+                </el-popover>
+              </el-option>
+            </el-option-group>
           </el-select>
         </el-form-item>
       </el-col>
@@ -178,9 +203,9 @@ export default {
       default: () => {
       }
     },
-    parentStatus: {
-      type: String,
-      default: null
+    parent: {
+      type: Object,
+      default: () => ({})
     },
     childrenIssue: {
       type: Number,
@@ -188,14 +213,23 @@ export default {
     }
   },
   data() {
+    const validateParentId = (rule, value, callback) => {
+      console.log(value, this.issueId)
+      if (value === this.issueId) {
+        callback(new Error('The parent issue is the same issue.'))
+      } else {
+        callback()
+      }
+    }
     return {
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        parent_id: [{ validator: validateParentId, trigger: 'change' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
-      issueQuery: '',
+      issueQuery: null,
       issueLoading: false,
       issueList: [],
       assigneeList: [],
@@ -204,7 +238,6 @@ export default {
       statusList: [],
       priorityList: [],
 
-      parentId: null,
       relativeIssueList: [],
       isLoading: false,
       checkClosable: false,
@@ -222,7 +255,8 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'userId']),
     isParentIssueClosed() {
-      return this.parentStatus === 'Closed'
+      if (Object.keys(this.parent).length <= 0) return false
+      return this.parent.status.name === 'Closed'
     },
     dynamicAssigneeList() {
       const hasInactiveAssignee =
@@ -239,12 +273,28 @@ export default {
       } else {
         return this.assigneeList
       }
+    },
+    originalParentIssue() {
+      if (Object.keys(this.parent).length <= 0) return {}
+      return { label: this.$t('Issue.OriginalSetting'), options: [this.parent] }
     }
   },
   watch: {
     issueId(value) {
       if (value > 0) {
         this.getClosable()
+      }
+    },
+    parent: {
+      deep: true,
+      handler(value) {
+        this.issueList = [this.originalParentIssue]
+        this.form.parent_id = value
+      }
+    },
+    'form.parent_id'(value) {
+      if (!value && !this.issueQuery) {
+        this.issueList = [this.originalParentIssue]
       }
     }
   },
@@ -320,17 +370,19 @@ export default {
         this.issueList = []
         getProjectIssueList(this.selectedProjectId, { search: query, selection: true })
           .then((res) => {
-            this.issueList = res.data
+            this.issueList = [this.originalParentIssue, { label: this.$t('Issue.Result'), options: res.data }]
           })
           .finally(() => {
             this.issueLoading = false
           })
       } else {
-        this.issueQuery = ''
+        this.issueQuery = null
+        this.issueList = [this.originalParentIssue]
         this.issueLoading = false
       }
     },
     highLight: function(value) {
+      if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
       return value.replace(reg, function(str) {
