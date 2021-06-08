@@ -150,7 +150,8 @@ export default {
     UserTitle: '職稱',
     Back: '返回',
     All: '全部',
-    Preview: '預覽'
+    Preview: '預覽',
+    SelectAll: '全選'
   },
   Notify: {
     Updated: '已更新',

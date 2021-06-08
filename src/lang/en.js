@@ -151,7 +151,8 @@ export default {
     UserTitle: 'Title',
     Back: 'Back',
     All: 'All',
-    Preview: 'Preview'
+    Preview: 'Preview',
+    SelectAll: 'Select All'
   },
   Notify: {
     Updated: 'update successful',

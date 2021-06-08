@@ -46,7 +46,7 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="onToggleSelect">
-              全選
+              {{ $t('general.SelectAll') }}
             </el-button>
           </el-form-item>
           <el-form-item v-for="(item) in tracker" :key="item.id">
@@ -210,11 +210,14 @@ export default {
       return this.listFilterData.filter(data => {
         if (Object.keys(data.assigned_to).length <= 0) {
           data.assigned_to.name = ''
+          data.assigned_to.login = ''
         }
+        const keyword = this.keyword.toLowerCase()
         if (
           this.keyword === '' ||
-          data.name.toLowerCase().includes(this.keyword.toLowerCase()) ||
-          data.assigned_to.name.toLowerCase().includes(this.keyword.toLowerCase())
+          data.name.toLowerCase().includes(keyword) ||
+          data.assigned_to.name.toLowerCase().includes(keyword) ||
+          data.assigned_to.login.toLowerCase().includes(keyword)
         ) {
           return data
         }
