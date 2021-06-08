@@ -5,180 +5,157 @@
     :element-loading-text="$t('Loading')"
     :model="form"
     :rules="issueFormRules"
-    label-position="right"
-    label-width="20%"
+    label-position="top"
   >
-    <el-row :gutter="10">
-      <el-col>
-        <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
-          <el-select
-            v-model="form.parent_id"
-            style="width: 100%"
-            :placeholder="$t('RuleMsg.PleaseSelect')"
-            clearable
-            filterable
-            remote
-            :remote-method="getSearchIssue"
-            :loading="issueLoading"
+    <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
+      <el-select
+        v-model="form.parent_id"
+        style="width: 100%"
+        :placeholder="$t('RuleMsg.PleaseSelect')"
+        clearable
+        filterable
+        remote
+        :remote-method="getSearchIssue"
+        :loading="issueLoading"
+      >
+        <el-option-group
+          v-for="group in issueList"
+          :key="group.label"
+          :label="group.label"
+        >
+          <el-option
+            v-for="item in group.options"
+            :key="item.id"
+            :label="'#' + item.id +' - '+item.name"
+            :value="item.id"
           >
-            <el-option-group
-              v-for="group in issueList"
-              :key="group.label"
-              :label="group.label"
+            <el-popover
+              placement="left"
+              width="250"
+              trigger="hover"
             >
-              <el-option
-                v-for="item in group.options"
-                :key="item.id"
-                :label="'#' + item.id +' - '+item.name"
-                :value="item.id"
-              >
-                <el-popover
-                  placement="left"
-                  width="250"
-                  trigger="hover"
+              <el-card>
+                <template slot="header">
+                  {{ item.name }}
+                </template>
+                <b>{{ $t('Issue.Description') }}:</b>
+                <p>{{ item.description }}</p>
+              </el-card>
+              <div slot="reference">
+                <span
+                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
                 >
-                  <el-card>
-                    <template slot="header">
-                      {{ item.name }}
-                    </template>
-                    <b>{{ $t('Issue.Description') }}:</b>
-                    <p>{{ item.description }}</p>
-                  </el-card>
-                  <div slot="reference">
-                    <span
-                      style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                    >
-                      <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                      <span v-html="highLight(item.name)" />
-                    </span>
-                    <span style="float: right; color: #8492a6; font-size: 13px"
-                          v-html="highLight((item.assigned_to.name)?item.assigned_to.name:null)"
-                    />
-                  </div>
-                </el-popover>
-              </el-option>
-            </el-option-group>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-          <el-select
-            v-model="form.fixed_version_id"
-            style="width: 100%"
-            :placeholder="$t('RuleMsg.PleaseSelect')"
-            clearable
-          >
-            <el-option
-              v-for="item in versionList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-              :disabled="item.status !== 'open'"
-            />
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('general.Status')" prop="status_id">
-          <el-select v-model="form.status_id" :disabled="isParentIssueClosed" style="width: 100%">
-            <el-option
-              v-for="option in dynamicStatusList"
-              :key="option.value"
-              :label="$t('Issue.' + option.label)+((option.message) ? option.message : '')"
-              :value="option.value"
-              :disabled="option.disabled"
-            >
-              <status :name="option.label" />
-              {{ option.message }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('general.Type')" prop="tracker_id">
-          <el-select v-model="form.tracker_id" style="width: 100%">
-            <el-option
-              v-for="option in typeList"
-              :key="option.value"
-              :label="$t('Issue.' + option.label)"
-              :value="option.value"
-            >
-              <tracker :name="option.label" />
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-          <el-select
-            v-model="form.assigned_to_id"
-            style="width: 100%"
-            clearable
-            :placeholder="$t('RuleMsg.PleaseSelect')"
-            filterable
-          >
-            <el-option v-for="item in dynamicAssigneeList"
-                       :key="item.login"
-                       :class="item.class"
-                       :label="item.label+' ('+item.login+')'"
-                       :value="item.value"
-            >
-              {{ item.label }} ({{ item.login }})
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-          <el-select v-model="form.priority_id" :disabled="childrenIssue > 0" style="width: 100%">
-            <el-option
-              v-for="option in priorityList"
-              :key="option.value"
-              :label="$t('Issue.' + option.label)"
-              :value="option.value"
-            >
-              <priority :name="option.label" />
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
-          <el-input-number v-model="form.estimated_hours" :min="0" :max="100" style="width: 100%" />
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
-          <el-input-number v-model="form.done_ratio" :min="0" :max="100" style="width: 100%" />
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
-          <el-date-picker
-            v-model="form.start_date"
-            type="date"
-            value-format="yyyy-MM-dd"
-            :clearable="false"
-            style="width: 100%"
-            @change="checkDueDate(form.start_date)"
-          />
-        </el-form-item>
-      </el-col>
-      <el-col>
-        <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
-          <el-date-picker
-            v-model="form.due_date"
-            type="date"
-            value-format="yyyy-MM-dd"
-            style="width: 100%"
-            :placeholder="$t('RuleMsg.PleaseSelect')"
-            :picker-options="pickerOptions(form.start_date)"
-            @change="clearDueDate"
-          />
-        </el-form-item>
-      </el-col>
-    </el-row>
+                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                  <span v-html="highLight(item.name)" />
+                </span>
+                <span style="float: right; color: #8492a6; font-size: 13px"
+                      v-html="highLight((item.assigned_to.name)?item.assigned_to.name:null)"
+                />
+              </div>
+            </el-popover>
+          </el-option>
+        </el-option-group>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
+      <el-select
+        v-model="form.fixed_version_id"
+        style="width: 100%"
+        :placeholder="$t('RuleMsg.PleaseSelect')"
+        clearable
+      >
+        <el-option
+          v-for="item in versionList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="item.status !== 'open'"
+        />
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="$t('general.Status')" prop="status_id">
+      <el-select v-model="form.status_id" :disabled="isParentIssueClosed" style="width: 100%">
+        <el-option
+          v-for="option in dynamicStatusList"
+          :key="option.value"
+          :label="$t('Issue.' + option.label)+((option.message) ? option.message : '')"
+          :value="option.value"
+          :disabled="option.disabled"
+        >
+          <status :name="option.label" />
+          {{ option.message }}
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="$t('general.Type')" prop="tracker_id">
+      <el-select v-model="form.tracker_id" style="width: 100%">
+        <el-option
+          v-for="option in typeList"
+          :key="option.value"
+          :label="$t('Issue.' + option.label)"
+          :value="option.value"
+        >
+          <tracker :name="option.label" />
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+      <el-select
+        v-model="form.assigned_to_id"
+        style="width: 100%"
+        clearable
+        :placeholder="$t('RuleMsg.PleaseSelect')"
+        filterable
+      >
+        <el-option v-for="item in dynamicAssigneeList"
+                   :key="item.login"
+                   :class="item.class"
+                   :label="item.label+' ('+item.login+')'"
+                   :value="item.value"
+        >
+          {{ item.label }} ({{ item.login }})
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
+      <el-select v-model="form.priority_id" :disabled="childrenIssue > 0" style="width: 100%">
+        <el-option
+          v-for="option in priorityList"
+          :key="option.value"
+          :label="$t('Issue.' + option.label)"
+          :value="option.value"
+        >
+          <priority :name="option.label" />
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
+      <el-input-number v-model="form.estimated_hours" :min="0" :max="100" style="width: 100%" />
+    </el-form-item>
+    <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
+      <el-input-number v-model="form.done_ratio" :min="0" :max="100" style="width: 100%" />
+    </el-form-item>
+    <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
+      <el-date-picker
+        v-model="form.start_date"
+        type="date"
+        value-format="yyyy-MM-dd"
+        :clearable="false"
+        style="width: 100%"
+        @change="checkDueDate(form.start_date)"
+      />
+    </el-form-item>
+    <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
+      <el-date-picker
+        v-model="form.due_date"
+        type="date"
+        value-format="yyyy-MM-dd"
+        style="width: 100%"
+        :placeholder="$t('RuleMsg.PleaseSelect')"
+        :picker-options="pickerOptions(form.start_date)"
+        @change="clearDueDate"
+      />
+    </el-form-item>
   </el-form>
 </template>
 
@@ -392,3 +369,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+>>> .el-form-item{
+  margin-bottom: 10px;
+}
+</style>
