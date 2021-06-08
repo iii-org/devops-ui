@@ -10,7 +10,7 @@
       <el-form-item :label="$t('general.Title')" prop="subject">
         <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
       </el-form-item>
-      <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id" :required="focusValue === 'Assigned'">
+      <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
         <el-select v-model="issueForm.assigned_to_id" style="width: 100%" clearable filterable>
           <el-option v-for="item in assigned_to" :key="item.login" :class="item.class" :label="item.name+' ('+item.login+')'" :value="item.id" />
         </el-select>
@@ -93,7 +93,8 @@ export default {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
-        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }]
+        status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
+        assigned_to_id: [{ required: this.focusValue.name === 'Assigned', message: 'Please select assignee', trigger: 'blur' }]
       },
       issuePriorityList: [],
       tracker: [],
