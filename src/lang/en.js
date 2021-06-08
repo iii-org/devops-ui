@@ -341,7 +341,9 @@ export default {
     RelatedIssue: 'Related Issue',
     detail: {
       message: {
-        set_to: '{user}{action} ({time}) {message}',
+        set_to: '{creator} {message}',
+        creator: '{user}{action} ({time}) {detail}',
+        detail: 'Detail',
         Before: 'Before',
         After: 'After',
         Add: '@:general.Add'

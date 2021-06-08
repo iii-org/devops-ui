@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row :key="reload">
     <el-row v-if="note.notes.length>0" :span="24" type="flex" align="bottom" :justify="right|justifyRight">
       <el-col v-if="right" class="time">
         {{ note.created_on | formatTime }}
@@ -17,16 +17,19 @@
     <template v-if="note.hasOwnProperty('details')">
       <el-row v-for="(detail,index) in note.details" :key="index" class="el-alert el-alert--info is-light detail">
         <i class="el-alert__icon el-icon-info" />
-        <i18n path="Issue.detail.message.set_to" tag="div" class="el-alert__content">
-          <span slot="user" class="title">{{ note.user.name }}: </span>
-          <span slot="action" class="title">
-            <span v-if="detail.old_value&&detail.new_value">{{ $t('general.Edit') }}</span>
-            <span v-else-if="detail.old_value">{{ $t('general.Delete') }}</span>
-            <span v-else>{{ $t('general.Add') }}</span>
-            <b>{{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}</b>
-          </span>
-          <span slot="time">{{ note.created_on | formatTime }}</span>
-          <span slot="message">
+        <i18n path="Issue.detail.message.set_to" tag="el-row" class="el-alert__content">
+          <i18n slot="creator" path="Issue.detail.message.creator" tag="el-col">
+            <span slot="user" class="title">{{ note.user.name }}: </span>
+            <span slot="action" class="title">
+              <span v-if="detail.old_value&&detail.new_value">{{ $t('general.Edit') }}</span>
+              <span v-else-if="detail.old_value">{{ $t('general.Delete') }}</span>
+              <span v-else>{{ $t('general.Add') }}</span>
+              <b>{{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}</b>
+            </span>
+            <span slot="time">{{ note.created_on | formatTime }}</span>
+            <el-button slot="detail" size="mini" icon="el-icon-view" @click="toggleVisible(note)">{{ $t('Issue.detail.message.detail') }}</el-button>
+          </i18n>
+          <el-col v-if="note.detailVisible" slot="message">
             <el-row>
               <el-col v-if="detail.old_value" :span="12" class="value">
                 <p class="title">
@@ -50,7 +53,7 @@
                 <p v-else class="text-wrapper">{{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}</p>
               </el-col>
             </el-row>
-          </span>
+          </el-col>
         </i18n>
       </el-row>
     </template>
@@ -88,6 +91,11 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      reload: 0
+    }
+  },
   watch: {
     note: {
       deep: true,
@@ -109,6 +117,10 @@ export default {
     },
     showParentIssue(id) {
       this.$emit('show-parent-issue', id)
+    },
+    toggleVisible(note) {
+      note.detailVisible = !note.detailVisible
+      this.reload += 1
     }
   }
 }
@@ -120,6 +132,11 @@ export default {
 .detail{
   font-size: 0.875em;
   margin: 5px 0;
+
+  .el-alert__content{
+    width:90%;
+  }
+
   .title{
     font-size: 1.1em;
   }

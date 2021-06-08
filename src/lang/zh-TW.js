@@ -340,7 +340,9 @@ export default {
     RelatedIssue: '關聯議題',
     detail: {
       message: {
-        set_to: '{user}{action} ({time}) {message}',
+        set_to: '{creator} {message}',
+        creator: '{user}{action} ({time}) {detail}',
+        detail: '詳細資料',
         Before: '原始值',
         After: '變更後',
         Add: '@:general.Add'
