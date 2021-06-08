@@ -10,6 +10,33 @@
   >
     <el-row :gutter="10">
       <el-col>
+        <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
+          <el-select
+            v-model="form.parent_id"
+            style="width: 100%"
+            :placeholder="$t('RuleMsg.PleaseSelect')"
+            clearable
+            filterable
+            remote
+            :remote-method="getSearchIssue"
+            :loading="issueLoading"
+          >
+            <el-option
+              v-for="item in issueList"
+              :key="item.id"
+              :label="'#' + item.id +' - '+item.name"
+              :value="item.id"
+            >
+              <span style="float: left; width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">
+                <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                <span v-html="highLight(item.name)" />
+              </span>
+              <span style="float: right; color: #8492a6; font-size: 13px" v-html="highLight(String(item.assigned_to.name))" />
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col>
         <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
           <el-select
             v-model="form.fixed_version_id"
@@ -133,7 +160,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getIssueStatus, getIssueTracker, getIssuePriority, checkIssueClosable } from '@/api/issue'
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -168,6 +195,9 @@ export default {
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
+      issueQuery: '',
+      issueLoading: false,
+      issueList: [],
       assigneeList: [],
       versionList: [],
       typeList: [],
@@ -281,6 +311,30 @@ export default {
           item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
         }
         return item
+      })
+    },
+    getSearchIssue(query) {
+      if (query !== '') {
+        this.issueQuery = query
+        this.issueLoading = true
+        this.issueList = []
+        getProjectIssueList(this.selectedProjectId, { search: query, selection: true })
+          .then((res) => {
+            this.issueList = res.data
+          })
+          .finally(() => {
+            this.issueLoading = false
+          })
+      } else {
+        this.issueQuery = ''
+        this.issueLoading = false
+      }
+    },
+    highLight: function(value) {
+      if (!this.issueQuery) return value
+      const reg = new RegExp(this.issueQuery, 'gi')
+      return value.replace(reg, function(str) {
+        return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     }
   }
