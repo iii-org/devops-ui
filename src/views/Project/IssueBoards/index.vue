@@ -72,15 +72,15 @@
           </el-form>
           <el-button slot="reference" type="text">
             <i18n path="Issue.GroupBy">
-              <span place="limit">{{ changeLimit }}</span>
-              <b place="filter">{{ kanbanFilter }}</b>
+              <span slot="limit">{{ changeLimit }}</span>
+              <b slot="filter">{{ kanbanFilter }}</b>
             </i18n>
             ({{ kanbanFilterLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
       </div>
     </el-row>
     <el-divider />
-    <el-col class="board">
+    <el-col class="board" :class="{'is-panel':rightPanelVisible}">
       <Kanban
         v-for="(classObj, idx) in filterValueOnBoard"
         :key="idx"
@@ -100,7 +100,7 @@
         @update-drag="quickUpdateIssue"
       />
     </el-col>
-    <right-panel ref="rightPanel" :click-not-close="true">
+    <right-panel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
       <el-row v-for="(item, idx) in filterDimensionOptions" :key="idx" class="panel">
         <el-card>
           <template slot="header">{{ item.label }}</template>
@@ -161,7 +161,8 @@ export default {
       status: [],
       tracker: [],
       assigned_to: [],
-      relativeIssueList: []
+      relativeIssueList: [],
+      rightPanelVisible: false
     }
   },
   computed: {
@@ -447,6 +448,9 @@ export default {
         case 'Research':
           return 'research'
       }
+    },
+    handleRightPanelVisible(value) {
+      this.rightPanelVisible = value
     }
   }
 }
@@ -465,6 +469,10 @@ export default {
   flex-wrap: nowrap;
   height: calc(100vh - 50px - 40px - 40px - 25px - 10px);
   overflow-x: auto;
+
+  &.is-panel{
+    width: calc(100% - 260px);
+  }
 
   .kanban {
     flex: 0 0 280px;

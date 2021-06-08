@@ -2,7 +2,7 @@
   <div ref="rightPanel" :class="{show:show}" class="rightPanel-container">
     <div class="rightPanel-background" />
     <div class="rightPanel">
-      <div class="handle-button" :style="{'top':buttonTop+'px','background-color':'#85c1e9'}" @click="show=!show">
+      <div class="handle-button" :style="{'top':buttonTop+'px','background-color':'#85c1e9'}" @click="handleShow">
         <!--        <i :class="show?'el-icon-close':'el-icon-setting'" />-->
         <i v-if="show" class="el-icon-close" />
         <svg v-else style="margin: 5px;" viewBox="0 0 24 24">
@@ -45,11 +45,6 @@ export default {
       if (value && !this.clickNotClose) {
         this.addEventClick()
       }
-      // if (value) {
-      //   addClass(document.body, 'showRightPanel')
-      // } else {
-      //   removeClass(document.body, 'showRightPanel')
-      // }
     }
   },
   mounted() {
@@ -74,18 +69,14 @@ export default {
       const elx = this.$refs.rightPanel
       const body = document.querySelector('body')
       body.insertBefore(elx, body.firstChild)
+    },
+    handleShow() {
+      this.show = !this.show
+      this.$emit('visible', this.show)
     }
   }
 }
 </script>
-
-<style>
-.showRightPanel {
-  overflow: hidden;
-  position: relative;
-  width: calc(100% - 15px);
-}
-</style>
 
 <style lang="scss" scoped>
 //.rightPanel-background {
@@ -104,7 +95,7 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, .05);
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, .05);
   transition: all .25s cubic-bezier(.7, .3, .1, 1);
   transform: translate(100%);
   background: #fff;
