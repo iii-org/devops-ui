@@ -68,14 +68,14 @@
 
 <script>
 import { getProjectUserList, deleteProjectMember, updateProjectInfos } from '@/api/projects'
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import AddMemberDialog from './AddMemberDialog'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'ProjectMembers',
   components: { AddMemberDialog },
-  mixins: [BasicData, Pagination, SearchBar, Table],
+  mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
       isLoading: false,

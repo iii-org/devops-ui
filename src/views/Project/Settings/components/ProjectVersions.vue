@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
@@ -61,7 +61,7 @@ import ModifyVersionDialog from './ModifyVersionDialog'
 export default {
   name: 'ProjectVersions',
   components: { ElTableColumnTime, ModifyVersionDialog, ElTableColumnTag },
-  mixins: [BasicData, Pagination, SearchBar, Table],
+  mixins: [BasicData, Pagination, SearchBar],
   methods: {
     async fetchData() {
       const res = await getProjectVersion(this.selectedProjectId)
