@@ -79,4 +79,5 @@ export function deleteIssueFile(file_id) {
   })
 }
 
-export const checkIssueClosable = (issue_id) => request.get('/issues/' + issue_id + '/check_closable')
+export const getCheckIssueClosable = (issue_id) => request.get('/issues/' + issue_id + '/check_closable')
+export const getIssueFamily = (issue_id) => request.get('/issue/' + issue_id + '/family')

@@ -159,7 +159,8 @@ export default {
     Back: '返回',
     All: '全部',
     Preview: '預覽',
-    SelectAll: '全選'
+    SelectAll: '全選',
+    Search: '搜尋'
   },
   Notify: {
     Updated: '已更新',

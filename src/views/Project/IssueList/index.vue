@@ -8,23 +8,59 @@
           type="success"
           icon="el-icon-plus"
           :disabled="selectedProjectId === -1"
+          class="text-left"
           @click="handleQuickAddClose"
         >
           {{ $t('Issue.AddIssue') }}
         </el-button>
-        <el-button icon="el-icon-s-operation" @click="filterVisible=!filterVisible" />
-        <el-input
-          id="input-search"
-          v-model="keyword"
-          prefix-icon="el-icon-search"
-          :placeholder="$t('Issue.SearchNameOrAssignee')"
-          style="width: 250px; float: right"
-        />
+        <div class="text-right float-right w-1/4">
+          <el-popover
+            placement="bottom"
+            trigger="click"
+          >
+            <el-form>
+              <el-select
+                v-model="versionValue"
+                :placeholder="$t('Version.SelectVersion')"
+                :disabled="selectedProjectId === -1"
+                class="mr-4"
+                filterable
+              >
+                <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
+                <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+              <el-form-item>
+                <el-select-all
+                  ref="filterValue"
+                  :value="trackerValue"
+                  filterable
+                  multiple
+                  collapse-tags
+                  :options="tracker"
+                  value-key="value"
+                  @change="setTrackerValue"
+                />
+              </el-form-item>
+              <el-form-item>
+                <el-input
+                  id="input-search"
+                  v-model="keyword"
+                  prefix-icon="el-icon-search"
+                  :placeholder="$t('Issue.SearchNameOrAssignee')"
+                  style="width: 250px; float: right"
+                />
+              </el-form-item>
+            </el-form>
+            <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
+              <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          </el-popover>
+        </div>
       </div>
     </div>
     <el-divider />
     <quick-add-issue ref="quickAddIssue"
-                     :save-data="saveIssue" :project-id="selectedProjectId"
+                     :save-data="saveIssue"
+                     :project-id="selectedProjectId"
                      :visible.sync="quickAddTopicDialogVisible"
                      :tracker="tracker"
                      @add-issue="advancedAddIssue"
@@ -57,44 +93,46 @@
         </el-form>
       </el-col>
     </el-row>
+    <!-- TODO: data="pagedData" -->
     <el-table
       ref="issueList"
       v-loading="listLoading"
-      :data="pagedData"
+      :data="listFilterData"
       :element-loading-text="$t('Loading')"
       border
       fit
       highlight-current-row
       row-key="id"
       :tree-props="{ children: 'child' }"
-      height="80vh"
       :row-class-name="getRowClass"
       @cell-click="handleClick"
     >
       <el-table-column type="expand" class-name="informationExpand">
         <template slot-scope="scope">
           <ul>
-            <li v-if="scope.row.parent">
+            <li v-if="scope.row.relations.hasOwnProperty('parent')">
               <b>父議題:</b>
               <el-link
                 class="font-weight-regular"
                 :style="{ 'font-size': '14px', cursor: 'pointer' }"
                 :underline="false"
-                @click="handleEdit(scope.row.parent.id)"
+                @click="handleEdit(scope.row.relations.parent.id)"
               >
-                <status :name="scope.row.parent.status.name" size="mini" />
-                <tracker :name="scope.row.parent.tracker.name" />
-                #{{ scope.row.parent.id }} - {{ scope.row.parent.subject }}
-                <span v-if="scope.row.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.parent.assigned_to).length>1">
-                  ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
-                  - {{ scope.row.parent.assigned_to.login }})
+                <status :name="scope.row.relations.parent.status.name" size="mini" />
+                <tracker :name="scope.row.relations.parent.tracker.name" />
+                #{{ scope.row.relations.parent.id }} - {{ scope.row.relations.parent.name }}
+                <span
+                  v-if="scope.row.relations.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.relations.parent.assigned_to).length>1"
+                >
+                  ({{ $t('Issue.Assignee') }}: {{ scope.row.relations.parent.assigned_to.name }}
+                  - {{ scope.row.relations.parent.assigned_to.login }})
                 </span>
               </el-link>
             </li>
-            <li v-if="scope.row.children.length">
+            <li v-if="scope.row.relations.hasOwnProperty('children')">
               <b>子議題:</b>
               <ol>
-                <li v-for="child in scope.row.children" :key="child.id">
+                <li v-for="child in scope.row.relations.children" :key="child.id">
                   <el-link
                     class="font-weight-regular"
                     :style="{ 'font-size': '14px', cursor: 'pointer' }"
@@ -144,13 +182,22 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      :total="filteredData.length"
+    <!--TODO:mixin-->
+    <!--    <pagination-->
+    <!--      :total="filteredData.length"-->
+    <!--      :page="listQuery.page"-->
+    <!--      :limit="listQuery.limit"-->
+    <!--      :page-sizes="[listQuery.limit]"-->
+    <!--      :layout="'total, prev, pager, next'"-->
+    <!--      @pagination="onPagination"-->
+    <!--    />-->
+    <el-pagination
+      :total="pageInfo.total"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
+      @current-change="handleCurrentChange"
     />
     <add-issue
       :save-data="saveIssue"
@@ -166,26 +213,30 @@
 
 <script>
 import AddIssue from './components/AddIssue'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+// import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { mapGetters } from 'vuex'
-import { addIssue, getIssueTracker } from '@/api/issue'
-import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
+import { addIssue, getIssueFamily, getIssueTracker } from '@/api/issue'
+import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Fuse from 'fuse.js'
 import QuickAddIssue from './components/QuickAddIssue'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import ElSelectAll from '@/components/ElSelectAll'
 
 export default {
   name: 'ProjectIssues',
   components: {
+    ElSelectAll,
     AddIssue,
     QuickAddIssue,
     Priority,
     Status,
-    Tracker
+    Tracker,
+    ProjectListSelector
   },
-  mixins: [MixinElTableWithAProject],
+  // mixins: [MixinElTableWithAProject],
   data() {
     return {
       filterVisible: false,
@@ -197,34 +248,46 @@ export default {
       versionValue: '-1',
       fixed_version: [],
       tracker: [],
+      trackerValue: [],
       listFilterData: [],
       quickChangeDialogVisible: false,
       quickChangeForm: {},
       assigneeList: [],
-      form: {}
+      form: {},
+
+      // TODO: mixin
+      listData: [],
+      listLoading: false,
+      keyword: null,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      pageInfo: {
+        total: 0
+      }
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userName']),
-    filteredData() {
-      return this.listFilterData.filter(data => {
-        if (Object.keys(data.assigned_to).length <= 0) {
-          data.assigned_to.name = ''
-          data.assigned_to.login = ''
-        }
-        const keyword = this.keyword.toLowerCase()
-        if (
-          this.keyword === '' ||
-          data.name.toLowerCase().includes(keyword) ||
-          data.assigned_to.name.toLowerCase().includes(keyword) ||
-          data.assigned_to.login.toLowerCase().includes(keyword)
-        ) {
-          return data
-        }
-      })
+    // TODO: mixin
+    ...mapGetters(['selectedProjectId', 'userRole', 'userName']),
+    fixedVersionOptions() {
+      return [{ name: this.$t('Dashboard.TotalVersion'), id: '-1' }, ...this.fixed_version]
     },
-    trackerValue() {
-      return this.tracker.filter((item) => (item.visible === true))
+    listFilter() {
+      const result = []
+      const version = this.fixedVersionOptions.find((item) => (item.id === this.versionValue))
+      const tracker = this.trackerValue.length
+      if (version) {
+        result.push(version.name)
+      }
+      if (tracker && tracker !== this.tracker.length) {
+        result.push(this.$t('Issue.tracker') + '(' + tracker + ')')
+      }
+      if (this.keyword) {
+        result.push(this.$t('general.Search') + ':' + this.keyword)
+      }
+      return result.join(', ')
     }
   },
   watch: {
@@ -234,6 +297,7 @@ export default {
     listData: {
       deep: true,
       handler() {
+        console.log('update')
         this.updateData()
       }
     },
@@ -245,10 +309,17 @@ export default {
     },
     versionValue() {
       this.updateData()
+    },
+    keyword() {
+      this.listQuery.page = 1
+      this.loadData()
     }
   },
   mounted() {
-    this.adjustTable()
+    this.getSelectionList()
+    // TODO:mixin
+    this.loadData()
+    // this.adjustTable()
   },
   methods: {
     showNoProjectWarning() {
@@ -259,27 +330,54 @@ export default {
       })
       this.listLoading = false
     },
+    // TODO:mixin
+    async loadData() {
+      this.listLoading = true
+      this.listData = await this.fetchData()
+      this.listLoading = false
+      await this.getIssueFamily(this.listData)
+    },
     async fetchData() {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
       }
-      // TODO: 換成issue_list，不要使用tree的結構
-      const data = this.createRelativeList((await getProjectIssueListByTree(this.selectedProjectId)).data)
+      const listData = await getProjectIssueList(this.selectedProjectId, {
+        page: this.listQuery.page,
+        per_page: this.listQuery.limit,
+        search: this.keyword
+      })
+      const data = listData.data.issue_list
+      this.pageInfo = listData.data.page
+      return data
+    },
+    async getSelectionList() {
       const versionsRes = await getProjectVersion(this.selectedProjectId)
       this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
       const issueTrackerRes = await getIssueTracker()
-      this.tracker = issueTrackerRes.data
+      this.tracker = issueTrackerRes.data.map((item) => ({ value: item.id, label: this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name }))
       this.tracker.forEach((item, idx) => {
         this.$set(this.tracker[idx], 'visible', true)
       })
       if (this.userRole === 'Engineer') {
         this.keyword = this.userName
       }
-      return data
+    },
+    getIssueFamily() {
+      this.listData.forEach((item, idx) => {
+        this.$set(this.listData[idx], 'loadingRelation', true)
+        getIssueFamily(item.id)
+          .then((issue) => {
+            this.$set(this.listData[idx], 'relations', issue.data)
+          })
+          .finally(() => {
+            this.$set(this.listData[idx], 'loadingRelation', false)
+          })
+      })
     },
     resetFilterVersionTrackerData() {
       this.listFilterData = this.listData
+      console.log(this.listFilterData, this.listData)
     },
     onToggleSelect() {
       const select = this.tracker.filter((item) => (item.visible === true))
@@ -298,26 +396,28 @@ export default {
         keys: ['tracker.id'],
         useExtendedSearch: true
       }
-      if (this.versionValue !== '-1') {
-        this.searchIssueList(this.versionValue, versionOpt)
-      }
       if (this.trackerValue.length > 0) {
         this.searchIssueList(this.trackerValue, trackOpt)
       } else {
-        this.listFilterData = []
+        this.listFilterData = this.listData
+      }
+      if (this.versionValue !== '-1') {
+        this.searchIssueList(this.versionValue, versionOpt)
       }
     },
     searchIssueList(value, opt) {
       const fuse = new Fuse(this.listFilterData, opt)
       let search = `="${value}"`
       if (Array.isArray(value) && value.length >= 1) {
-        search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item.id}"` })) }
+        search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item}"` })) }
       }
       const res = fuse.search(search)
       this.listFilterData = res.map(items => items.item)
     },
     handleClick(row, column) {
-      if (column.type === 'expand' && this.hasRelationIssue(row)) {
+      if (column.type === 'expand' && this.isRelationIssueLoading(row)) {
+        this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      } else if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else {
         this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
@@ -346,21 +446,6 @@ export default {
           return error
         })
     },
-    // TODO: 換成issue_list，不要使用tree的結構，之後可以刪掉
-    createRelativeList(list) {
-      const result = []
-
-      function flatList(parent) {
-        for (let i = 0; i < parent.length; i++) {
-          result.push(parent[i])
-          const children = parent[i].children
-          if (parent[i].children.length) flatList(children)
-        }
-      }
-
-      flatList(list)
-      return result
-    },
     isParentIssue(row) {
       return row.parent === null && row.children.length === 0
     },
@@ -368,8 +453,11 @@ export default {
       this.addTopicDialogVisible = true
       this.parentId = 0
     },
+    isRelationIssueLoading(row) {
+      return !row.hasOwnProperty('loadingRelation') || row.loadingRelation
+    },
     hasRelationIssue(row) {
-      return !!row.parent || (row.children !== undefined && row.children.length > 0)
+      return row.relations && Object.keys(row.relations).length > 0
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
@@ -379,7 +467,9 @@ export default {
     },
     getRowClass({ row }) {
       const result = []
-      if (this.hasRelationIssue(row) === false) {
+      if (this.isRelationIssueLoading(row)) {
+        result.push('row-expend-loading')
+      } else if (this.hasRelationIssue(row) === false) {
         result.push('row-expand-cover')
       }
       result.push('cursor-pointer')
@@ -389,6 +479,15 @@ export default {
       this.addTopicDialogVisible = true
       this.parentId = 0
       this.form = form
+    },
+    // TODO:mixin
+    handleCurrentChange(val) {
+      // this.$emit('pagination', { page: val, limit: this.pageSize })
+      this.listQuery.page = val
+      this.loadData()
+    },
+    setTrackerValue(val) {
+      this.trackerValue = val
     }
   }
 }
@@ -403,6 +502,22 @@ export default {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+> > > .row-expend-loading .el-table__expand-column .cell {
+  padding: 0;
+
+  .el-table__expand-icon {
+    .el-icon-arrow-right {
+      animation: rotating 2s linear infinite;
+    }
+
+    .el-icon-arrow-right:before {
+      content: "\e6cf";
+      font-size: 1.25em;
+    }
+  }
+
 }
 
 > > > .context-menu {

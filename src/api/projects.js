@@ -171,12 +171,13 @@ export function deleteProjectVersion(pId, vId) {
   })
 }
 
-export function getProjectIssueList(pId) {
-  return request({
-    url: `/project/${pId}/issues`,
-    method: 'GET'
-  })
-}
+// export function getProjectIssueList(pId) {
+//   return request({
+//     url: `/project/${pId}/issues`,
+//     method: 'GET'
+//   })
+// }
+export const getProjectIssueList = (pId, params) => request.get('/project/' + pId + '/issues_list', { params: { ...params }})
 
 // 取得project內所有issue清單 [0.5 RoadMap_Detail]
 export function getProjectIssueListByVersion(pId, params) {
@@ -277,3 +278,4 @@ export function getParticipateProject(user_id) {
     method: 'get'
   })
 }
+

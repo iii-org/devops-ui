@@ -160,7 +160,8 @@ export default {
     Back: 'Back',
     All: 'All',
     Preview: 'Preview',
-    SelectAll: 'Select All'
+    SelectAll: 'Select All',
+    Search: 'Search'
   },
   Notify: {
     Updated: 'update successful',
