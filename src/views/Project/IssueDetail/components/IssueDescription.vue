@@ -1,7 +1,5 @@
 <template>
   <el-row>
-    {{ newValue }}
-    {{ oldValue }}
     <el-col>
       <el-row class="text-subtitle-2 mt-2 mb-3">
         {{ $t('Issue.Description') }}
@@ -13,7 +11,6 @@
           rows="4"
           style="width: 100%"
           :placeholder="$t('RuleMsg.PleaseInput')"
-          @keydown.esc.native="handleESC"
         />
       </el-form>
       <el-col v-else><div class="text-wrapper">{{ value }}</div><el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button></el-col>
@@ -33,8 +30,7 @@ export default {
   data() {
     return {
       edit: false,
-      newValue: this.value,
-      oldValue: null
+      newValue: this.value
     }
   },
   watch: {
@@ -50,13 +46,8 @@ export default {
   },
   mounted() {
     this.newValue = this.value
-    this.oldValue = this.value
   },
   methods: {
-    handleESC() {
-      this.edit = false
-      this.value = this.oldValue
-    }
   }
 }
 </script>

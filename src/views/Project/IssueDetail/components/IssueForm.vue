@@ -7,6 +7,7 @@
     :rules="issueFormRules"
     label-position="top"
   >
+    <!-- TODO: parent issue -->
     <!--    <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">-->
     <!--      {{ form.parent_id }}-->
     <!--      <el-select-->
@@ -162,7 +163,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getIssueStatus, getIssueTracker, getIssuePriority, checkIssueClosable } from '@/api/issue'
+import { getIssueStatus, getIssueTracker, getIssuePriority, getCheckIssueClosable } from '@/api/issue'
 import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
@@ -191,6 +192,7 @@ export default {
     }
   },
   data() {
+    // TODO: Parent Issue
     const validateParentId = (rule, value, callback) => {
       console.log(value, this.issueId)
       if (value === this.issueId) {
@@ -202,7 +204,8 @@ export default {
     return {
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        parent_id: [{ validator: validateParentId, trigger: 'change' }],
+        // TODO: Parent Issue
+        // parent_id: [{ validator: validateParentId, trigger: 'change' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
@@ -267,14 +270,16 @@ export default {
       deep: true,
       handler(value) {
         this.issueList = [this.originalParentIssue]
-        this.form.parent_id = value
-      }
-    },
-    'form.parent_id'(value) {
-      if (!value && !this.issueQuery) {
-        this.issueList = [this.originalParentIssue]
+        // TODO: Parent Issue
+        // this.form.parent_id = value
       }
     }
+    // TODO: Parent Issue
+    // 'form.parent_id'(value) {
+    //   if (!value && !this.issueQuery) {
+    //     this.issueList = [this.originalParentIssue]
+    //   }
+    // }
   },
   mounted() {
     this.fetchData()
@@ -317,7 +322,7 @@ export default {
       this.isLoading = false
     },
     async getClosable() {
-      await checkIssueClosable(this.issueId)
+      await getCheckIssueClosable(this.issueId)
         .then((res) => {
           this.checkClosable = res.data
         })
