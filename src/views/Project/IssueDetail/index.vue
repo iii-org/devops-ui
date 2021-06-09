@@ -148,6 +148,7 @@ export default {
       tracker: '',
       view: {},
       form: {
+        // TODO: Parent Issue
         // parent_id: null,
         project_id: 0,
         assigned_to_id: -1,
@@ -277,6 +278,7 @@ export default {
     },
     setFormData(data) {
       const {
+        // TODO: Parent Issue
         parent,
         assigned_to,
         fixed_version,
@@ -290,6 +292,7 @@ export default {
         due_date,
         description
       } = data
+      // TODO: Parent Issue
       // this.form.parent_id = parent ? parent.id : null
       this.form.project_id = this.selectedProjectId
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
