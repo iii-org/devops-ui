@@ -293,6 +293,8 @@ export default {
   watch: {
     selectedProjectId() {
       this.versionValue = '-1'
+      this.getSelectionList()
+      this.loadData()
     },
     listData: {
       deep: true,
