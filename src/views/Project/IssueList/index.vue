@@ -48,7 +48,7 @@
               <el-form-item :label="$t('Issue.priority')">
                 <el-select
                   v-model="filterValue.priority"
-                  :placeholder="$t('Issue.SelectType')"
+                  :placeholder="$t('Issue.SelectPriority')"
                   :disabled="selectedProjectId === -1"
                   filterable
                   clearable
@@ -127,34 +127,6 @@
                      :tracker="tracker"
                      @add-issue="advancedAddIssue"
     />
-    <el-row v-if="filterVisible" type="flex" :gutter="10">
-      <el-col>
-        <el-form inline label-position="left">
-          <el-form-item>
-            <el-select
-              v-model="versionValue"
-              :placeholder="$t('Version.SelectVersion')"
-              :disabled="selectedProjectId === -1"
-              class="mr-4"
-              filterable
-            >
-              <!--<el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />-->
-              <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="onToggleSelect">
-              {{ $t('general.SelectAll') }}
-            </el-button>
-          </el-form-item>
-          <el-form-item v-for="(item) in tracker" :key="item.id">
-            <el-checkbox v-model="item.visible">
-              <tracker :name="item.name" />
-            </el-checkbox>
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
     <!-- TODO: data="pagedData" -->
     <el-table
       ref="issueList"
@@ -300,7 +272,6 @@ export default {
   // mixins: [MixinElTableWithAProject],
   data() {
     return {
-      filterVisible: false,
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
@@ -447,7 +418,7 @@ export default {
         )
         this.fixed_version = [{ name: '版本未定', id: '' }, ...versionList.versions]
         const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
-        if (version) {
+        if (version.length > 0) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
           this.$set(this.originFilterValue, 'fixed_version', version[0].id)
         }
@@ -460,8 +431,8 @@ export default {
         this.status = statusList
         this.priority = priorityList
         if (this.userRole === 'Engineer') {
-          this.$set(this.filterValue, 'assigned_to', version[0].id)
-          this.$set(this.originFilterValue, 'assigned_to', version[0].id)
+          this.$set(this.filterValue, 'assigned_to', this.userId)
+          this.$set(this.originFilterValue, 'assigned_to', this.userId)
         }
       })
     },
@@ -484,13 +455,6 @@ export default {
     onChangeFilter() {
       this.listQuery.page = 1
       this.loadData()
-    },
-    onToggleSelect() {
-      const select = this.tracker.filter((item) => (item.visible === true))
-      const checker = select.length > 0
-      this.tracker.forEach((item, idx) => {
-        this.$set(this.tracker[idx], 'visible', !checker)
-      })
     },
     handleClick(row, column) {
       if (column.type === 'expand' && this.isRelationIssueLoading(row)) {
