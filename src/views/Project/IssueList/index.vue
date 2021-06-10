@@ -533,8 +533,9 @@ export default {
       this.loadData()
     },
     cleanFilter() {
-      this.filterValue = this.originFilterValue
+      this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
+      this.onChangeFilter()
     }
   }
 }
