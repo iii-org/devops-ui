@@ -49,7 +49,7 @@
                   <span v-html="highLight(item.name)" />
                 </span>
                 <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to.name)?item.assigned_to.name:null)"
+                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
                 />
               </div>
             </el-popover>
@@ -191,7 +191,6 @@ export default {
   },
   data() {
     const validateParentId = (rule, value, callback) => {
-      console.log(value, this.issueId)
       if (value === this.issueId) {
         callback(new Error('The parent issue is the same issue.'))
       } else {
@@ -264,9 +263,8 @@ export default {
     },
     parent: {
       deep: true,
-      handler(value) {
+      handler() {
         this.issueList = [this.originalParentIssue]
-        this.form.parent_id = value
       }
     },
     'form.parent_id'(value) {
@@ -371,6 +369,7 @@ export default {
 </script>
 
 <style scoped>
+/* noinspection CssUnusedSymbol */
 >>> .el-form-item{
   margin-bottom: 10px;
 }
