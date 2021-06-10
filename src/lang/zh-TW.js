@@ -46,6 +46,7 @@ export default {
     sideex: 'ＷEB 測試(Sideex)',
 
     'System Resource': '系統資源',
+    Kubernetes: 'Kubernetes',
     'Deployment List': 'Deployment 列表',
     'Pods List': 'Pods 列表',
     'Service List': 'Service 列表',
@@ -160,7 +161,8 @@ export default {
     All: '全部',
     Preview: '預覽',
     SelectAll: '全選',
-    Search: '搜尋'
+    Search: '搜尋',
+    Filter: '篩選'
   },
   Notify: {
     Updated: '已更新',
@@ -293,6 +295,7 @@ export default {
     Id: '議題編號 / 議題名稱',
     Assignee: '受分配者',
     Priority: '優先權',
+    Status: '@:general.Status',
     Estimate: '預估工時',
     DoneRatio: '完成比率',
     StartDate: '開始日期',
@@ -300,6 +303,8 @@ export default {
     Description: '議題描述',
     SelectDate: '選擇日期',
     SelectType: '選擇種類',
+    SelectPriority: '選擇@:Issue.Priority',
+    SelectStatus: '選擇@:general.Status',
     SearchNameOrAssignee: '搜尋名稱或受分配者',
     Save: '儲存',
     Notes: '處理紀錄 / 訊息回覆',
@@ -318,11 +323,10 @@ export default {
     ChildrenIssue: '子議題',
     Active: '已開立',
     Assigned: '已分派',
+    InProgress: '進行中',
+    Solved: '已解決',
     Verified: '已確認',
     Closed: '已關閉',
-    Solved: '已解決',
-    InProgress: '進行中',
-    Finished: '已驗證',
     Unknown: '狀態不明',
     Low: '低',
     Normal: '一般',
@@ -552,6 +556,7 @@ export default {
     Version: '版本',
     Status: '專案狀態',
     Progress: '專案工作進度',
+    UpdateTime: '更新時間',
     deleteProjectConfirmText:
       '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',
     PleaseType: '請輸入',
@@ -579,6 +584,7 @@ export default {
   },
   ProcessDevBranch: {
     Commit: 'Commit',
+    LastUpdateTime: '最後更新時間',
     Environment: '測試環境',
     SearchBranch: '搜尋分支',
     Branch: '分支',
@@ -592,6 +598,7 @@ export default {
     Branch: '分支',
     CommitMessage: '上傳訊息',
     TransitioningMessage: '處理訊息',
+    LastUpdateTime: '最後更新時間',
     SearchCommitMessage: '搜尋 上傳訊息',
     TestDetail: '測試細節'
   },
@@ -667,6 +674,9 @@ export default {
     Secrets: 'Secrets',
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail'
+  },
+  PipeLines: {
+    TestDetail: '測試細節'
   },
   Git: {
     Branch: '分支',

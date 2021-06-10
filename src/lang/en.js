@@ -161,7 +161,8 @@ export default {
     All: 'All',
     Preview: 'Preview',
     SelectAll: 'Select All',
-    Search: 'Search'
+    Search: 'Search',
+    Filter: 'Filter'
   },
   Notify: {
     Updated: 'update successful',
@@ -184,18 +185,6 @@ export default {
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!'
   },
-  RuleMsg: {
-    PleaseInput: 'Please input',
-    PleaseSelect: 'Please select',
-    Invalid: ' Invalid',
-    Member: ' @:Member.Member',
-    Email: ' email',
-    UserName: ' user name',
-    Password: ' password',
-    Description: ' description',
-    InputNewPwd: 'Please input new password',
-    InputRepeatPwd: 'Please input repeat password'
-  },
   TestCase: {
     Index: 'Requests',
     TestCase: 'Test Case',
@@ -215,6 +204,18 @@ export default {
     Fail: 'Fail',
     TestPass: 'Test Pass',
     TestFail: 'Test Fail'
+  },
+  RuleMsg: {
+    PleaseInput: 'Please input',
+    PleaseSelect: 'Please select',
+    Invalid: ' Invalid',
+    Member: ' @:Member.Member',
+    Email: ' email',
+    UserName: ' user name',
+    Password: ' password',
+    Description: ' description',
+    InputNewPwd: 'Please input new password',
+    InputRepeatPwd: 'Please input repeat password'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -294,6 +295,7 @@ export default {
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',
+    Status: '@:general.Status',
     Estimate: 'Estimate',
     DoneRatio: 'Done Ratio',
     StartDate: 'Start Date',
@@ -301,6 +303,8 @@ export default {
     Description: 'Issue Description',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
+    SelectPriority: 'Select @:Issue.Priority',
+    SelectStatus: 'Select @:general.Status',
     SearchNameOrAssignee: 'Search Name Or Assignee',
     Save: 'Save',
     Notes: 'Notes',
@@ -373,6 +377,7 @@ export default {
       status_id: '@:general.Status',
       tracker_id: '@:general.Type',
       fixed_version_id: '@:Version.Version',
+      attachment: '@:Issue.Files',
       parent_id: '@:Issue.ParentIssue'
     },
     FilterDimensions: {
@@ -556,8 +561,7 @@ export default {
       'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
-    IdRule:
-      'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
+    IdRule: 'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
     DisplayRule: 'Name cannot includes "<" or "&"',
     DescriptionRule: 'Description cannot includes "<" or "&"',
     WorkloadValue: 'Workload',
@@ -613,8 +617,7 @@ export default {
     Artifacts: 'Artifacts',
     EditResource: 'Edit Resource',
     Vulnerabilities: 'Vulnerabilities',
-    DeleteResourceConfirmText:
-      'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
+    DeleteResourceConfirmText: 'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     Storage: 'Storage',

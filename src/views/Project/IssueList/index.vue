@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="overflow: hidden;">
+  <div class="app-container" style="overflow: auto;">
     <div class="clearfix">
       <div>
         <project-list-selector />
@@ -13,47 +13,102 @@
         >
           {{ $t('Issue.AddIssue') }}
         </el-button>
-        <div class="text-right float-right w-1/4">
+        <div class="text-right float-right w-1/2">
           <el-popover
             placement="bottom"
             trigger="click"
           >
             <el-form>
-              <el-select
-                v-model="versionValue"
-                :placeholder="$t('Version.SelectVersion')"
-                :disabled="selectedProjectId === -1"
-                class="mr-4"
-                filterable
-              >
-                <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
-                <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
-              </el-select>
-              <el-form-item>
-                <el-select-all
-                  ref="filterValue"
-                  :value="trackerValue"
+              <el-form-item :label="$t('Version.Version')">
+                <el-select
+                  v-model="searchValue.fixed_version"
+                  :placeholder="$t('Version.SelectVersion')"
+                  :disabled="selectedProjectId === -1"
                   filterable
-                  multiple
-                  collapse-tags
-                  :options="tracker"
-                  value-key="value"
-                  @change="setTrackerValue"
-                />
+                  clearable
+                >
+                  <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
+                </el-select>
               </el-form-item>
-              <el-form-item>
-                <el-input
-                  id="input-search"
-                  v-model="keyword"
-                  prefix-icon="el-icon-search"
-                  :placeholder="$t('Issue.SearchNameOrAssignee')"
-                  style="width: 250px; float: right"
-                />
+              <el-form-item :label="$t('Issue.tracker')">
+                <el-select
+                  v-model="searchValue.tracker"
+                  :placeholder="$t('Issue.SelectType')"
+                  :disabled="selectedProjectId === -1"
+                  filterable
+                  clearable
+                >
+                  <el-option v-for="track in tracker" :key="track.id" :label="$t('Issue.'+track.name)"
+                             :value="track.id"
+                  >
+                    <tracker :name="track.name" />
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('Issue.priority')">
+                <el-select
+                  v-model="searchValue.priority"
+                  :placeholder="$t('Issue.SelectType')"
+                  :disabled="selectedProjectId === -1"
+                  filterable
+                  clearable
+                >
+                  <el-option v-for="item in priority" :key="item.id" :label="$t('Issue.'+item.name)"
+                             :value="item.id"
+                  >
+                    <Priority :name="item.name" />
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('general.Status')">
+                <el-select
+                  v-model="searchValue.status"
+                  :placeholder="$t('Issue.SelectStatus')"
+                  :disabled="selectedProjectId === -1"
+                  filterable
+                  clearable
+                >
+                  <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)"
+                             :value="item.id"
+                  >
+                    <Status :name="item.name" />
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('Issue.assigned_to')">
+                <el-select
+                  v-model="searchValue.assigned_to"
+                  :placeholder="$t('Member.SelectMember')"
+                  :disabled="selectedProjectId === -1"
+                  filterable
+                  clearable
+                >
+                  <el-option
+                    v-for="item in assigned_to"
+                    :key="item.id"
+                    :label="(item.login)? item.name+'('+item.login+')' : item.name"
+                    :value="item.id"
+                  />
+                </el-select>
               </el-form-item>
             </el-form>
             <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
               <i class="el-icon-arrow-down el-icon--right" /></el-button>
           </el-popover>
+          <el-divider direction="vertical" />
+          <el-input
+            v-if="searchVisible"
+            id="input-search"
+            v-model="keyword"
+            prefix-icon="el-icon-search"
+            :placeholder="$t('Issue.SearchNameOrAssignee')"
+            style="width: 250px;"
+            @blur="searchVisible=!searchVisible"
+            @change="onChangeFilter"
+          />
+          <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
+            {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+          </el-button>
         </div>
       </div>
     </div>
@@ -76,7 +131,7 @@
               class="mr-4"
               filterable
             >
-              <el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />
+              <!--<el-option :key="-1" :label="$t('Dashboard.TotalVersion')" :value="'-1'" />-->
               <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
@@ -97,12 +152,13 @@
     <el-table
       ref="issueList"
       v-loading="listLoading"
-      :data="listFilterData"
+      :data="listData"
       :element-loading-text="$t('Loading')"
       border
       fit
       highlight-current-row
       row-key="id"
+      height="75vh"
       :tree-props="{ children: 'child' }"
       :row-class-name="getRowClass"
       @cell-click="handleClick"
@@ -111,7 +167,7 @@
         <template slot-scope="scope">
           <ul>
             <li v-if="scope.row.relations.hasOwnProperty('parent')">
-              <b>父議題:</b>
+              <b>{{ $t('Issue.ParentIssue') }}:</b>
               <el-link
                 class="font-weight-regular"
                 :style="{ 'font-size': '14px', cursor: 'pointer' }"
@@ -130,7 +186,7 @@
               </el-link>
             </li>
             <li v-if="scope.row.relations.hasOwnProperty('children')">
-              <b>子議題:</b>
+              <b>{{ $t('Issue.ChildrenIssue') }}:</b>
               <ol>
                 <li v-for="child in scope.row.relations.children" :key="child.id">
                   <el-link
@@ -192,6 +248,7 @@
     <!--      @pagination="onPagination"-->
     <!--    />-->
     <el-pagination
+      v-loading="listLoading"
       :total="pageInfo.total"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -215,20 +272,17 @@
 import AddIssue from './components/AddIssue'
 // import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { mapGetters } from 'vuex'
-import { addIssue, getIssueFamily, getIssueTracker } from '@/api/issue'
-import { getProjectIssueList, getProjectVersion } from '@/api/projects'
+import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
+import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
-import Fuse from 'fuse.js'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import ElSelectAll from '@/components/ElSelectAll'
 
 export default {
   name: 'ProjectIssues',
   components: {
-    ElSelectAll,
     AddIssue,
     QuickAddIssue,
     Priority,
@@ -242,14 +296,16 @@ export default {
       filterVisible: false,
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
+      searchVisible: false,
       search: '',
       parentId: 0,
       parentName: '',
-      versionValue: '-1',
       fixed_version: [],
       tracker: [],
-      trackerValue: [],
-      listFilterData: [],
+      assigned_to: [],
+      status: [],
+      priority: [],
+      searchValue: {},
       quickChangeDialogVisible: false,
       quickChangeForm: {},
       assigneeList: [],
@@ -270,57 +326,36 @@ export default {
   },
   computed: {
     // TODO: mixin
-    ...mapGetters(['selectedProjectId', 'userRole', 'userName']),
-    fixedVersionOptions() {
-      return [{ name: this.$t('Dashboard.TotalVersion'), id: '-1' }, ...this.fixed_version]
-    },
+    ...mapGetters(['selectedProjectId', 'userRole', 'userId']),
     listFilter() {
       const result = []
-      const version = this.fixedVersionOptions.find((item) => (item.id === this.versionValue))
-      const tracker = this.trackerValue.length
-      if (version) {
-        result.push(version.name)
-      }
-      if (tracker && tracker !== this.tracker.length) {
-        result.push(this.$t('Issue.tracker') + '(' + tracker + ')')
-      }
-      if (this.keyword) {
-        result.push(this.$t('general.Search') + ':' + this.keyword)
-      }
-      return result.join(', ')
+      Object.keys(this.searchValue).forEach((item) => {
+        if (this.searchValue[item]) {
+          const value = this[item].find((search) => (search.id === this.searchValue[item]))
+          if (value) {
+            result.push((this.$te('Issue.' + value.name)) ? this.$t('Issue.' + value.name) : value.name)
+          }
+        }
+      })
+      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
     }
   },
   watch: {
     selectedProjectId() {
-      this.versionValue = '-1'
       this.getSelectionList()
       this.loadData()
     },
-    listData: {
+    searchValue: {
       deep: true,
       handler() {
-        console.log('update')
-        this.updateData()
+        this.onChangeFilter()
       }
-    },
-    trackerValue: {
-      deep: true,
-      handler() {
-        this.updateData()
-      }
-    },
-    versionValue() {
-      this.updateData()
-    },
-    keyword() {
-      this.listQuery.page = 1
-      this.loadData()
     }
   },
-  mounted() {
-    this.getSelectionList()
+  async mounted() {
+    await this.getSelectionList()
     // TODO:mixin
-    this.loadData()
+    await this.loadData()
     // this.adjustTable()
   },
   methods: {
@@ -332,10 +367,29 @@ export default {
       })
       this.listLoading = false
     },
+    getParams() {
+      const result = {
+        page: this.listQuery.page,
+        per_page: this.listQuery.limit,
+        selection: true
+      }
+      Object.keys(this.searchValue).forEach((item) => {
+        if (this.searchValue[item]) { result[item + '_id'] = this.searchValue[item] }
+      })
+      if (this.keyword) {
+        result['search'] = this.keyword
+      }
+      return result
+    },
     // TODO:mixin
     async loadData() {
       this.listLoading = true
-      this.listData = await this.fetchData()
+      try {
+        this.listData = await this.fetchData()
+        this.listLoading = false
+      } catch (e) {
+        // null
+      }
       this.listLoading = false
       await this.getIssueFamily(this.listData)
     },
@@ -344,42 +398,74 @@ export default {
         this.showNoProjectWarning()
         return []
       }
-      const listData = await getProjectIssueList(this.selectedProjectId, {
-        page: this.listQuery.page,
-        per_page: this.listQuery.limit,
-        search: this.keyword
-      })
-      const data = listData.data.issue_list
-      this.pageInfo = listData.data.page
+      let data
+      try {
+        // const params = await
+        const listData = await getProjectIssueList(this.selectedProjectId, this.getParams())
+        data = listData.data.issue_list
+        if (listData.data.hasOwnProperty('page')) {
+          this.pageInfo = listData.data.page
+        } else {
+          this.pageInfo = {
+            total: 0
+          }
+        }
+      } catch (e) {
+        // null
+      }
       return data
     },
+    sortByDueDate(a, b) {
+      return new Date(a.due_date) - new Date(b.due_date)
+    },
     async getSelectionList() {
-      const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version = [{ name: '版本未定', id: '' }, ...versionsRes.data.versions]
-      const issueTrackerRes = await getIssueTracker()
-      this.tracker = issueTrackerRes.data.map((item) => ({ value: item.id, label: this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name }))
-      this.tracker.forEach((item, idx) => {
-        this.$set(this.tracker[idx], 'visible', true)
+      await Promise.all([
+        getProjectUserList(this.selectedProjectId),
+        getProjectVersion(this.selectedProjectId),
+        getIssueTracker(),
+        getIssueStatus(),
+        getIssuePriority()
+      ]).then(res => {
+        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+          item => item.data
+        )
+        this.fixed_version = [{ name: '版本未定', id: '' }, ...versionList.versions]
+        const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
+        if (version) {
+          this.$set(this.searchValue, 'fixed_version', version[0].id)
+        }
+
+        this.tracker = typeList
+        this.assigned_to = [
+          { name: this.$t('Issue.Unassigned'), id: '' },
+          ...assigneeList.user_list
+        ]
+        this.status = statusList
+        this.priority = priorityList
+        if (this.userRole === 'Engineer') {
+          this.$set(this.searchValue, 'assigned_to', version[0].id)
+        }
       })
-      if (this.userRole === 'Engineer') {
-        this.keyword = this.userName
-      }
     },
     getIssueFamily() {
-      this.listData.forEach((item, idx) => {
-        this.$set(this.listData[idx], 'loadingRelation', true)
-        getIssueFamily(item.id)
-          .then((issue) => {
-            this.$set(this.listData[idx], 'relations', issue.data)
-          })
-          .finally(() => {
-            this.$set(this.listData[idx], 'loadingRelation', false)
-          })
-      })
+      if (this.listData) {
+        this.listData.forEach((item, idx) => {
+          try {
+            if (this.listData[idx]) { this.$set(this.listData[idx], 'loadingRelation', true) }
+            getIssueFamily(item.id)
+              .then((relations) => {
+                if (this.listData[idx]) { this.$set(this.listData[idx], 'relations', relations.data) }
+              }).catch(() => {})
+            if (this.listData[idx]) { this.$set(this.listData[idx], 'loadingRelation', false) }
+          } catch (e) {
+          //   null
+          }
+        })
+      }
     },
-    resetFilterVersionTrackerData() {
-      this.listFilterData = this.listData
-      console.log(this.listFilterData, this.listData)
+    onChangeFilter() {
+      this.listQuery.page = 1
+      this.loadData()
     },
     onToggleSelect() {
       const select = this.tracker.filter((item) => (item.visible === true))
@@ -387,34 +473,6 @@ export default {
       this.tracker.forEach((item, idx) => {
         this.$set(this.tracker[idx], 'visible', !checker)
       })
-    },
-    updateData() {
-      this.resetFilterVersionTrackerData()
-      const versionOpt = {
-        keys: ['fixed_version.id'],
-        useExtendedSearch: true
-      }
-      const trackOpt = {
-        keys: ['tracker.id'],
-        useExtendedSearch: true
-      }
-      if (this.trackerValue.length > 0) {
-        this.searchIssueList(this.trackerValue, trackOpt)
-      } else {
-        this.listFilterData = this.listData
-      }
-      if (this.versionValue !== '-1') {
-        this.searchIssueList(this.versionValue, versionOpt)
-      }
-    },
-    searchIssueList(value, opt) {
-      const fuse = new Fuse(this.listFilterData, opt)
-      let search = `="${value}"`
-      if (Array.isArray(value) && value.length >= 1) {
-        search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item}"` })) }
-      }
-      const res = fuse.search(search)
-      this.listFilterData = res.map(items => items.item)
     },
     handleClick(row, column) {
       if (column.type === 'expand' && this.isRelationIssueLoading(row)) {
@@ -464,9 +522,6 @@ export default {
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
     },
-    getFilterCount(name) {
-      return this.listFilterData.filter((item) => (item.tracker.name === name)).length
-    },
     getRowClass({ row }) {
       const result = []
       if (this.isRelationIssueLoading(row)) {
@@ -487,9 +542,6 @@ export default {
       // this.$emit('pagination', { page: val, limit: this.pageSize })
       this.listQuery.page = val
       this.loadData()
-    },
-    setTrackerValue(val) {
-      this.trackerValue = val
     }
   }
 }
