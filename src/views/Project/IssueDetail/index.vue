@@ -289,7 +289,7 @@ export default {
         due_date,
         description
       } = data
-      this.form.parent_id = parent ? parent.id : null
+      this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = this.selectedProjectId
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.subject = subject
