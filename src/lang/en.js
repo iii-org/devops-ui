@@ -306,6 +306,7 @@ export default {
     SelectPriority: 'Select @:Issue.Priority',
     SelectStatus: 'Select @:general.Status',
     SearchNameOrAssignee: 'Search Name Or Assignee',
+    CleanFilter: 'Clean Filter',
     Save: 'Save',
     Notes: 'Notes',
     AddComment: 'Add Comment',

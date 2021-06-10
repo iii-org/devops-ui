@@ -21,7 +21,7 @@
             <el-form>
               <el-form-item :label="$t('Version.Version')">
                 <el-select
-                  v-model="searchValue.fixed_version"
+                  v-model="filterValue.fixed_version"
                   :placeholder="$t('Version.SelectVersion')"
                   :disabled="selectedProjectId === -1"
                   filterable
@@ -32,7 +32,7 @@
               </el-form-item>
               <el-form-item :label="$t('Issue.tracker')">
                 <el-select
-                  v-model="searchValue.tracker"
+                  v-model="filterValue.tracker"
                   :placeholder="$t('Issue.SelectType')"
                   :disabled="selectedProjectId === -1"
                   filterable
@@ -47,7 +47,7 @@
               </el-form-item>
               <el-form-item :label="$t('Issue.priority')">
                 <el-select
-                  v-model="searchValue.priority"
+                  v-model="filterValue.priority"
                   :placeholder="$t('Issue.SelectType')"
                   :disabled="selectedProjectId === -1"
                   filterable
@@ -62,7 +62,7 @@
               </el-form-item>
               <el-form-item :label="$t('general.Status')">
                 <el-select
-                  v-model="searchValue.status"
+                  v-model="filterValue.status"
                   :placeholder="$t('Issue.SelectStatus')"
                   :disabled="selectedProjectId === -1"
                   filterable
@@ -77,7 +77,7 @@
               </el-form-item>
               <el-form-item :label="$t('Issue.assigned_to')">
                 <el-select
-                  v-model="searchValue.assigned_to"
+                  v-model="filterValue.assigned_to"
                   :placeholder="$t('Member.SelectMember')"
                   :disabled="selectedProjectId === -1"
                   filterable
@@ -103,12 +103,19 @@
             prefix-icon="el-icon-search"
             :placeholder="$t('Issue.SearchNameOrAssignee')"
             style="width: 250px;"
+            clearable
             @blur="searchVisible=!searchVisible"
             @change="onChangeFilter"
           />
           <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
             {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
           </el-button>
+          <template v-if="isFilterChanged">
+            <el-divider direction="vertical" />
+            <el-button size="small" icon="el-icon-close" @click="cleanFilter">
+              {{ $t('Issue.CleanFilter') }}
+            </el-button>
+          </template>
         </div>
       </div>
     </div>
@@ -305,7 +312,8 @@ export default {
       assigned_to: [],
       status: [],
       priority: [],
-      searchValue: {},
+      filterValue: {},
+      originFilterValue: {},
       quickChangeDialogVisible: false,
       quickChangeForm: {},
       assigneeList: [],
@@ -329,15 +337,23 @@ export default {
     ...mapGetters(['selectedProjectId', 'userRole', 'userId']),
     listFilter() {
       const result = []
-      Object.keys(this.searchValue).forEach((item) => {
-        if (this.searchValue[item]) {
-          const value = this[item].find((search) => (search.id === this.searchValue[item]))
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) {
+          const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
             result.push((this.$te('Issue.' + value.name)) ? this.$t('Issue.' + value.name) : value.name)
           }
         }
       })
       return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
+    },
+    isFilterChanged() {
+      for (const item of Object.keys(this.filterValue)) {
+        if (this.originFilterValue[item] !== this.filterValue[item]) {
+          return true
+        }
+      }
+      return !!this.keyword
     }
   },
   watch: {
@@ -345,7 +361,7 @@ export default {
       this.getSelectionList()
       this.loadData()
     },
-    searchValue: {
+    filterValue: {
       deep: true,
       handler() {
         this.onChangeFilter()
@@ -373,8 +389,8 @@ export default {
         per_page: this.listQuery.limit,
         selection: true
       }
-      Object.keys(this.searchValue).forEach((item) => {
-        if (this.searchValue[item]) { result[item + '_id'] = this.searchValue[item] }
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) { result[item + '_id'] = this.filterValue[item] }
       })
       if (this.keyword) {
         result['search'] = this.keyword
@@ -432,7 +448,8 @@ export default {
         this.fixed_version = [{ name: '版本未定', id: '' }, ...versionList.versions]
         const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
         if (version) {
-          this.$set(this.searchValue, 'fixed_version', version[0].id)
+          this.$set(this.filterValue, 'fixed_version', version[0].id)
+          this.$set(this.originFilterValue, 'fixed_version', version[0].id)
         }
 
         this.tracker = typeList
@@ -443,7 +460,8 @@ export default {
         this.status = statusList
         this.priority = priorityList
         if (this.userRole === 'Engineer') {
-          this.$set(this.searchValue, 'assigned_to', version[0].id)
+          this.$set(this.filterValue, 'assigned_to', version[0].id)
+          this.$set(this.originFilterValue, 'assigned_to', version[0].id)
         }
       })
     },
@@ -542,6 +560,10 @@ export default {
       // this.$emit('pagination', { page: val, limit: this.pageSize })
       this.listQuery.page = val
       this.loadData()
+    },
+    cleanFilter() {
+      this.filterValue = this.originFilterValue
+      this.keyword = null
     }
   }
 }
