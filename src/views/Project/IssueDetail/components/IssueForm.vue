@@ -7,58 +7,56 @@
     :rules="issueFormRules"
     label-position="top"
   >
-    <!-- TODO: parent issue -->
-    <!--    <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">-->
-    <!--      {{ form.parent_id }}-->
-    <!--      <el-select-->
-    <!--        v-model="form.parent_id"-->
-    <!--        style="width: 100%"-->
-    <!--        :placeholder="$t('RuleMsg.PleaseSelect')"-->
-    <!--        clearable-->
-    <!--        filterable-->
-    <!--        remote-->
-    <!--        :remote-method="getSearchIssue"-->
-    <!--        :loading="issueLoading"-->
-    <!--      >-->
-    <!--        <el-option-group-->
-    <!--          v-for="group in issueList"-->
-    <!--          :key="group.label"-->
-    <!--          :label="group.label"-->
-    <!--        >-->
-    <!--          <el-option-->
-    <!--            v-for="item in group.options"-->
-    <!--            :key="item.id"-->
-    <!--            :label="'#' + item.id +' - '+item.name"-->
-    <!--            :value="item.id"-->
-    <!--          >-->
-    <!--            <el-popover-->
-    <!--              placement="left"-->
-    <!--              width="250"-->
-    <!--              trigger="hover"-->
-    <!--            >-->
-    <!--              <el-card>-->
-    <!--                <template slot="header">-->
-    <!--                  {{ item.name }}-->
-    <!--                </template>-->
-    <!--                <b>{{ $t('Issue.Description') }}:</b>-->
-    <!--                <p>{{ item.description }}</p>-->
-    <!--              </el-card>-->
-    <!--              <div slot="reference">-->
-    <!--                <span-->
-    <!--                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "-->
-    <!--                >-->
-    <!--                  <b>#<span v-html="highLight(item.id.toString())" /></b> - -->
-    <!--                  <span v-html="highLight(item.name)" />-->
-    <!--                </span>-->
-    <!--                <span style="float: right; color: #8492a6; font-size: 13px"-->
-    <!--                      v-html="highLight((item.assigned_to.name)?item.assigned_to.name:null)"-->
-    <!--                />-->
-    <!--              </div>-->
-    <!--            </el-popover>-->
-    <!--          </el-option>-->
-    <!--        </el-option-group>-->
-    <!--      </el-select>-->
-    <!--    </el-form-item>-->
+    <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
+      <el-select
+        v-model="form.parent_id"
+        style="width: 100%"
+        :placeholder="$t('RuleMsg.PleaseSelect')"
+        clearable
+        filterable
+        remote
+        :remote-method="getSearchIssue"
+        :loading="issueLoading"
+      >
+        <el-option-group
+          v-for="group in issueList"
+          :key="group.label"
+          :label="group.label"
+        >
+          <el-option
+            v-for="item in group.options"
+            :key="item.id"
+            :label="'#' + item.id +' - '+item.name"
+            :value="item.id"
+          >
+            <el-popover
+              placement="left"
+              width="250"
+              trigger="hover"
+            >
+              <el-card>
+                <template slot="header">
+                  {{ item.name }}
+                </template>
+                <b>{{ $t('Issue.Description') }}:</b>
+                <p>{{ item.description }}</p>
+              </el-card>
+              <div slot="reference">
+                <span
+                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                >
+                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                  <span v-html="highLight(item.name)" />
+                </span>
+                <span style="float: right; color: #8492a6; font-size: 13px"
+                      v-html="highLight((item.assigned_to.name)?item.assigned_to.name:null)"
+                />
+              </div>
+            </el-popover>
+          </el-option>
+        </el-option-group>
+      </el-select>
+    </el-form-item>
     <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
       <el-select
         v-model="form.fixed_version_id"
@@ -192,7 +190,6 @@ export default {
     }
   },
   data() {
-    // TODO: Parent Issue
     const validateParentId = (rule, value, callback) => {
       console.log(value, this.issueId)
       if (value === this.issueId) {
@@ -204,8 +201,7 @@ export default {
     return {
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        // TODO: Parent Issue
-        // parent_id: [{ validator: validateParentId, trigger: 'change' }],
+        parent_id: [{ validator: validateParentId, trigger: 'change' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
@@ -270,16 +266,14 @@ export default {
       deep: true,
       handler(value) {
         this.issueList = [this.originalParentIssue]
-        // TODO: Parent Issue
-        // this.form.parent_id = value
+        this.form.parent_id = value
+      }
+    },
+    'form.parent_id'(value) {
+      if (!value && !this.issueQuery) {
+        this.issueList = [this.originalParentIssue]
       }
     }
-    // TODO: Parent Issue
-    // 'form.parent_id'(value) {
-    //   if (!value && !this.issueQuery) {
-    //     this.issueList = [this.originalParentIssue]
-    //   }
-    // }
   },
   mounted() {
     this.fetchData()
