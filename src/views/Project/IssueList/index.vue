@@ -259,6 +259,11 @@ import Tracker from '@/components/Issue/Tracker'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 
+/**
+ * @param row.relations  row maybe have parent or children issue
+ * @param data.issue_list get paged data from api
+ */
+
 export default {
   name: 'ProjectIssues',
   components: {
@@ -347,6 +352,7 @@ export default {
   },
   methods: {
     showNoProjectWarning() {
+      // noinspection JSCheckFunctionSignatures
       this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.NoProject'),
@@ -474,6 +480,7 @@ export default {
     async saveIssue(data) {
       return await addIssue(data)
         .then(res => {
+          // noinspection JSCheckFunctionSignatures
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Added'),
