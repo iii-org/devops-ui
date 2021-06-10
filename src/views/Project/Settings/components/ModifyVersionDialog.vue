@@ -11,7 +11,7 @@
       <el-form-item :label="$t('general.Name')" prop="name">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item :label="$t('Version.Duration')" prop="due_date">
+      <el-form-item :label="$t('Version.DueDate')" prop="due_date">
         <el-date-picker
           v-model="form.due_date"
           type="date"
