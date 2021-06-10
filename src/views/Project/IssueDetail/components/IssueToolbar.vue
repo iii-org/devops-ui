@@ -75,6 +75,7 @@ export default {
         .reduce(function(prev, curr) {
           return prev.then(() => {
             sendForm.delete('upload_file')
+            sendForm.append('upload_content_type', curr.raw.type)
             sendForm.append('upload_file', curr.raw, curr.raw.name)
             return updateIssue(issueId, sendForm)
           })
