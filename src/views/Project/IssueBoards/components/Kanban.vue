@@ -19,7 +19,7 @@
     >
       <div
         v-for="(element, idx) in list"
-        :key="element.id"
+        :key="element.id+issueReload"
         class="board-item"
         :style="{ cursor: 'move' }"
         @drop="drop($event, idx)"
@@ -52,6 +52,7 @@
             <span class="ml-1">{{ element.due_date }}</span>
           </span>
           <el-tooltip
+            v-if="element.assigned_to"
             :content="element.assigned_to.login"
             placement="right-start"
             :disabled="!element.assigned_to.login"
@@ -62,30 +63,32 @@
             </span>
           </el-tooltip>
         </div>
-        <div v-if="element.parent || element.children.length > 0" class="parent">
-          <el-collapse>
-            <el-collapse-item>
+        <div v-if="element.parent || element.children " class="parent">
+          <el-collapse v-model="element.show" @change="onCollapseChange(element)">
+            <el-collapse-item name="relation">
               <template #title>
-                <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} ({{ element | lengthFilter }})
+                <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
-              <div v-if="element.parent" class="parent">
-                <b>{{ $t('Issue.ParentIssue') }}：</b>
-                <status :name="element.parent.status.name" size="mini" />
-                <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
-                  {{ element.parent.name }}
-                </el-link>
-              </div>
-              <div v-if="element.children.length > 0" class="parent">
-                <b>{{ $t('Issue.ChildrenIssue') }}：</b>
-                <ol class="children_list">
-                  <li v-for="(subElement, index) in element.children" :key="index">
-                    <status :name="subElement.status.name" size="mini" />
-                    <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
-                      {{ subElement.name }}
-                    </el-link>
-                  </li>
-                </ol>
-              </div>
+              <template v-if="element.issue_relations">
+                <div v-if="element.issue_relations.hasOwnProperty('parent')" class="parent">
+                  <b>{{ $t('Issue.ParentIssue') }}：</b>
+                  <status :name="element.issue_relations.parent.status.name" size="mini" />
+                  <el-link type="primary" :underline="false" @click="handleClick(element.issue_relations.parent.id)">
+                    {{ element.issue_relations.parent.name }}
+                  </el-link>
+                </div>
+                <div v-if="element.issue_relations.hasOwnProperty('children')&&element.issue_relations.children.length > 0" class="parent">
+                  <b>{{ $t('Issue.ChildrenIssue') }}：</b>
+                  <ol class="children_list">
+                    <li v-for="(subElement, index) in element.issue_relations.children" :key="index">
+                      <status :name="subElement.status.name" size="mini" />
+                      <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
+                        {{ subElement.name }}
+                      </el-link>
+                    </li>
+                  </ol>
+                </div>
+              </template>
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -108,6 +111,7 @@ import AddIssueDialog from './AddIssueDialog.vue'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
+import { getCheckIssueClosable, getIssueFamily } from '@/api/issue'
 
 export default {
   name: 'Kanban',
@@ -120,7 +124,10 @@ export default {
   },
   filters: {
     lengthFilter(value) {
-      return value.children.length + ((value.parent) ? 1 : 0)
+      if (!value.issue_relations) return null
+      const parent = (value.issue_relations.hasOwnProperty('parent')) ? 1 : 0
+      const children = (value.issue_relations.hasOwnProperty('children')) ? value.issue_relations.children.length : 0
+      return '(' + (parent + children) + ')'
     },
     sortByPriority(value) {
       const priorityCompare = (a, b) => (a.priority.id - b.priority.id)
@@ -165,7 +172,8 @@ export default {
     return {
       showDialog: false,
       showAlert: false,
-      reload: 0
+      reload: 0,
+      issueReload: 0
     }
   },
   methods: {
@@ -211,8 +219,20 @@ export default {
       if (element.children.length <= 0) return true
       return element.children.map(issue => issue.status.id === 6).reduce((issue_status, all) => issue_status && all)
     },
+    async checkChildrenStatusByApi(element) {
+      this.check = true
+      let result = false
+      try {
+        result = await getCheckIssueClosable(element.id)
+        result = result.data
+        console.log(result)
+      } catch (e) {
+        console.log(e)
+      }
+      return result
+    },
     checkPriority(to, element) {
-      return element.children.length <= 0
+      return element.issue_relations.children.length <= 0
     },
     end(boardObject, event) {
       this.reload += 1
@@ -250,7 +270,7 @@ export default {
             )
           }
           if (toClassObj.id === 6) {
-            const checkChildrenStatus = this.checkChildrenStatus(element)
+            const checkChildrenStatus = this.checkChildrenStatusByApi(element)
             if (checkAssigned && checkChildrenStatus) {
               this.$emit('update-drag', {
                 id: this.list[idx].id,
@@ -295,6 +315,12 @@ export default {
       e.dataTransfer.dropEffect = 'copy'
       e.dataTransfer.clearData()
       e.preventDefault()
+    },
+    onCollapseChange(element) {
+      getIssueFamily(element.id)
+        .then((res) => {
+          this.$set(element, 'issue_relations', res.data)
+        })
     }
   }
 }
@@ -353,8 +379,9 @@ export default {
 
   .detail {
     font-size: 1em;
-    .tracker{
-      font-size:0.75em;
+
+    .tracker {
+      font-size: 0.75em;
     }
   }
 }

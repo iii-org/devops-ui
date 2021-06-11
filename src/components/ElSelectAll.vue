@@ -85,6 +85,7 @@ export default {
     }
   },
   mounted() {
+    this.selected = this.value
   },
   methods: {
     onChange(val) {

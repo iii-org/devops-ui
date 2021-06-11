@@ -72,7 +72,6 @@
           </el-form>
           <el-button slot="reference" type="text">
             <i18n path="Issue.GroupBy">
-              <span slot="limit">{{ changeLimit }}</span>
               <b slot="filter">{{ kanbanFilter }}</b>
             </i18n>
             ({{ kanbanFilterLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
@@ -119,8 +118,8 @@
               </el-tag>
               <el-alert class="help_text" :closable="false">
                 <i18n path="Issue.DragTip">
-                  <b place="key">{{ item.label }}</b>
-                  <b place="value">{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}</b>
+                  <b slot="key">{{ item.label }}</b>
+                  <b slot="value">{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}</b>
                 </i18n>
               </el-alert>
             </div>
@@ -136,8 +135,8 @@ import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
 import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
-import { getProjectIssueListByTree, getProjectVersion } from '@/api/projects'
+import { getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import { getProjectIssueList, getProjectIssueListByTree, getProjectUserList, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import RightPanel from './components/RightPanel'
 
@@ -253,14 +252,21 @@ export default {
         await this.classifyIssue()
         await this.updateData()
       }
+    },
+    projectIssueList: {
+      deep: true,
+      async handler() {
+        // this.isLoading = true
+        await this.resetClassifyIssue()
+        await this.classifyIssue()
+        await this.updateData()
+        // this.isLoading = false
+      }
     }
   },
   async created() {
-    const issueStatusRes = await getIssueStatus()
-    this.status = issueStatusRes.data
-    const issueTrackerRes = await getIssueTracker()
-    this.tracker = issueTrackerRes.data
-    await this.fetchData()
+    await this.loadSelectionList()
+    await this.loadData()
   },
   methods: {
     ...mapActions('projects', [
@@ -270,23 +276,24 @@ export default {
       'setKanbanFilterDimension',
       'setKanbanFilterValue'
     ]),
-    async fetchData() {
+    async loadData() {
       this.isLoading = true
-      await this.resetClassifyIssue()
-      const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
-
-      const versionsRes = await getProjectVersion(this.selectedProjectId)
-      this.fixed_version = [
-        { name: this.$t('Issue.VersionUndecided'), id: '' },
-        ...versionsRes.data.versions
-      ]
-      const userRes = await this.getProjectUserList(this.selectedProjectId)
-      this.assigned_to = [
-        { name: this.$t('Issue.Unassigned'), id: '' },
-        ...userRes.data.user_list
-      ]
+      try {
+        await this.fetchData()
+      } catch (e) {
+        // null
+      }
       this.isLoading = false
-      this.projectIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
+    },
+    async fetchData() {
+      await this.resetClassifyIssue()
+      this.projectIssueList = {}
+      this.syncLoadFilterData()
+      const isHasClosed = this.kanbanFilterValue.filter((item) => (item.hasOwnProperty('is_closed') && item.is_closed))
+      if (isHasClosed.length > 0) {
+        const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
+        this.relativeIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
+      }
       await this.classifyIssue()
       await this.updateData()
     },
@@ -310,6 +317,46 @@ export default {
           }
           this.classifyIssueList[dimensionName].push(issue)
         }
+      })
+    },
+    syncLoadFilterData() {
+      this.projectIssueList = []
+      for (const item of this.kanbanFilterValue) {
+        getProjectIssueList(this.selectedProjectId, { [this.kanbanFilterDimension + '_id']: item.id })
+          .then((res) => {
+            this.projectIssueList = [...this.projectIssueList, ... res.data]
+          })
+      }
+    },
+    async loadSelectionList() {
+      await Promise.all([
+        getProjectUserList(this.selectedProjectId),
+        getProjectVersion(this.selectedProjectId),
+        getIssueTracker(),
+        getIssueStatus(),
+        getIssuePriority()
+      ]).then(res => {
+        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+          item => item.data
+        )
+        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: '' }, ...versionList.versions]
+        // const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
+        // if (version.length > 0) {
+        //   this.$set(this.filterValue, 'fixed_version', version[0].id)
+        //   this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+        // }
+
+        this.tracker = typeList
+        this.assigned_to = [
+          ...assigneeList.user_list
+        ]
+        this.status = statusList
+        this.setKanbanFilterValue(this.status.filter((item) => (item.is_closed === false)))
+        this.priority = priorityList
+        // if (this.userRole === 'Engineer') {
+        //   this.$set(this.filterValue, 'assigned_to', this.userId)
+        //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
+        // }
       })
     },
     resetClassifyIssue() {
@@ -437,7 +484,7 @@ export default {
           return 'secondary'
         case 'InProgress':
           return 'warning'
-        case 'Finished':
+        case 'Verified':
           return 'success'
         case 'Feature':
           return 'feature'
@@ -497,11 +544,11 @@ export default {
         background: $solved;
       }
 
-      > > > .inprogress {
+      .InProgress {
         background: $inProgress;
       }
 
-      .Finished {
+      .Verified {
         background: $finished;
       }
 
@@ -542,7 +589,7 @@ export default {
       }
     }
 
-    > > > &.finished {
+    > > > &.verified {
       .board-column-header {
         .header-bar {
           background: $finished;
