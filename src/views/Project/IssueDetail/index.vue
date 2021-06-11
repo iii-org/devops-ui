@@ -332,11 +332,11 @@ export default {
       })
     },
     async handleUpdated() {
-      await this.fetchIssue()
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
       await this.$refs.IssueForm.getClosable()
+      await this.fetchIssue()
       this.isLoading = false
     },
     handleBackPage() {

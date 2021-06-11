@@ -334,7 +334,7 @@ export default {
   },
   watch: {
     selectedProjectId() {
-      this.getSelectionList()
+      this.loadSelectionList()
       this.loadData()
     },
     filterValue: {
@@ -345,7 +345,7 @@ export default {
     }
   },
   async mounted() {
-    await this.getSelectionList()
+    await this.loadSelectionList()
     // TODO:mixin
     await this.loadData()
     // this.adjustTable()
@@ -411,7 +411,7 @@ export default {
     sortByDueDate(a, b) {
       return new Date(a.due_date) - new Date(b.due_date)
     },
-    async getSelectionList() {
+    async loadSelectionList() {
       await Promise.all([
         getProjectUserList(this.selectedProjectId),
         getProjectVersion(this.selectedProjectId),
@@ -422,7 +422,7 @@ export default {
         const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
           item => item.data
         )
-        this.fixed_version = [{ name: '版本未定', id: '' }, ...versionList.versions]
+        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: '' }, ...versionList.versions]
         const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
         if (version.length > 0) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
