@@ -80,4 +80,4 @@ export function deleteIssueFile(file_id) {
 }
 
 export const getCheckIssueClosable = (issue_id) => request.get('/issues/' + issue_id + '/check_closable')
-export const getIssueFamily = (issue_id) => request.get('/issue/' + issue_id + '/family')
+export const getIssueFamily = (issue_id, config) => request.get('/issue/' + issue_id + '/family', config)

@@ -258,6 +258,7 @@ import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
+import axios from 'axios'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -305,7 +306,8 @@ export default {
       },
       pageInfo: {
         total: 0
-      }
+      },
+      lastIssueListCancelToken: null
     }
   },
   computed: {
@@ -367,7 +369,9 @@ export default {
         selection: true
       }
       Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) { result[item + '_id'] = this.filterValue[item] }
+        if (this.filterValue[item]) {
+          result[item + '_id'] = this.filterValue[item]
+        }
       })
       if (this.keyword) {
         result['search'] = this.keyword
@@ -384,7 +388,7 @@ export default {
         // null
       }
       this.listLoading = false
-      await this.getIssueFamily(this.listData)
+      await this.getIssueFamilyData(this.listData)
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -394,7 +398,13 @@ export default {
       let data
       try {
         // const params = await
-        const listData = await getProjectIssueList(this.selectedProjectId, this.getParams())
+        if (this.lastIssueListCancelToken && this.listLoading) {
+          this.lastIssueListCancelToken.cancel()
+          console.log('change filter')
+        }
+        const cancelTokenSource = axios.CancelToken.source()
+        const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })
+        this.lastIssueListCancelToken = cancelTokenSource
         data = listData.data.issue_list
         if (listData.data.hasOwnProperty('page')) {
           this.pageInfo = listData.data.page
@@ -442,18 +452,30 @@ export default {
         }
       })
     },
-    getIssueFamily() {
+    getIssueFamilyData() {
       if (this.listData) {
         this.listData.forEach((item, idx) => {
           try {
-            if (this.listData[idx]) { this.$set(this.listData[idx], 'loadingRelation', true) }
-            getIssueFamily(item.id)
+            if (this.listData[idx]) {
+              this.$set(this.listData[idx], 'loadingRelation', true)
+            }
+            const cancelTokenSource = axios.CancelToken.source()
+            getIssueFamily(item.id, { cancelToken: cancelTokenSource.token })
               .then((relations) => {
-                if (this.listData[idx]) { this.$set(this.listData[idx], 'relations', relations.data) }
-              }).catch(() => {})
-            if (this.listData[idx]) { this.$set(this.listData[idx], 'loadingRelation', false) }
+                if (this.listData[idx]) {
+                  this.$set(this.listData[idx], 'relations', relations.data)
+                }
+              }).catch(() => {
+              })
+            if (this.listLoading) {
+              cancelTokenSource.cancel()
+              console.log('change family')
+            }
+            if (this.listData[idx]) {
+              this.$set(this.listData[idx], 'loadingRelation', false)
+            }
           } catch (e) {
-          //   null
+            //   null
           }
         })
       }
