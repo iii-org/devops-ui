@@ -72,7 +72,7 @@
                 <b>{{ $t('Issue.ParentIssue') }}：</b>
                 <status :name="element.parent.status.name" size="mini" />
                 <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
-                  {{ element.parent.subject }}
+                  {{ element.parent.name }}
                 </el-link>
               </div>
               <div v-if="element.children.length > 0" class="parent">
