@@ -80,7 +80,7 @@
                 <ol class="children_list">
                   <li v-for="(subElement, index) in element.children" :key="index">
                     <status :name="subElement.status.name" size="mini" />
-                    <el-link type="primary" :underline="false" @click="handleClick(element.id)">
+                    <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                       {{ subElement.name }}
                     </el-link>
                   </li>
