@@ -51,10 +51,10 @@ export default {
       const issueStatusList = [
         { label: this.$t('Issue.Active'), color: '#409EFF', key: 'Active' },
         { label: this.$t('Issue.Assigned'), color: '#F56C6C', key: 'Assigned' },
-        { label: this.$t('Issue.Closed'), color: '#909399', key: 'Closed' },
-        { label: this.$t('Issue.Solved'), color: '#3ECBBC', key: 'Solved' },
         { label: this.$t('Issue.InProgress'), color: '#E6A23C', key: 'InProgress' },
-        { label: this.$t('Issue.Finished'), color: '#67C23A', key: 'Finished' }
+        { label: this.$t('Issue.Solved'), color: '#3ECBBC', key: 'Solved' },
+        { label: this.$t('Issue.Verified'), color: '#67C23A', key: 'Verified' },
+        { label: this.$t('Issue.Closed'), color: '#909399', key: 'Closed' }
         // { label: this.$t('Issue.Unknown'), color: 'red', key: 'Unknown' }
       ]
 
