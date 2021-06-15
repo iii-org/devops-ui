@@ -10,7 +10,7 @@ export default {
 
     testManagement: 'Test Management',
     testFile: 'Test File',
-    TestPlan: 'Test Plan',
+    testPlan: 'Test Plan',
 
     singleProject: 'Single Project',
     kanban: 'Issue Board',
@@ -185,6 +185,18 @@ export default {
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!'
   },
+  RuleMsg: {
+    PleaseInput: 'Please input',
+    PleaseSelect: 'Please select',
+    Invalid: ' Invalid',
+    Member: ' @:Member.Member',
+    Email: ' email',
+    UserName: ' user name',
+    Password: ' password',
+    Description: ' description',
+    InputNewPwd: 'Please input new password',
+    InputRepeatPwd: 'Please input repeat password'
+  },
   TestCase: {
     Index: 'Requests',
     TestCase: 'Test Case',
@@ -204,18 +216,6 @@ export default {
     Fail: 'Fail',
     TestPass: 'Test Pass',
     TestFail: 'Test Fail'
-  },
-  RuleMsg: {
-    PleaseInput: 'Please input',
-    PleaseSelect: 'Please select',
-    Invalid: ' Invalid',
-    Member: ' @:Member.Member',
-    Email: ' email',
-    UserName: ' user name',
-    Password: ' password',
-    Description: ' description',
-    InputNewPwd: 'Please input new password',
-    InputRepeatPwd: 'Please input repeat password'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -379,7 +379,8 @@ export default {
       tracker_id: '@:general.Type',
       fixed_version_id: '@:Version.Version',
       attachment: '@:Issue.Files',
-      parent_id: '@:Issue.ParentIssue'
+      parent_id: '@:Issue.ParentIssue',
+      relation: '@:Issue.RelatedIssue'
     },
     FilterDimensions: {
       label: 'Filter Dimensions',

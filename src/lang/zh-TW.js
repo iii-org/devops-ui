@@ -10,7 +10,7 @@ export default {
 
     testManagement: '測試管理',
     testFile: '測試檔案',
-    TestPlan: '測試計畫',
+    testPlan: '測試計畫',
 
     singleProject: '個別專案',
     kanban: '議題看板',
@@ -379,7 +379,8 @@ export default {
       tracker_id: '@:general.Type',
       fixed_version_id: '@:Version.Version',
       attachment: '@:Issue.Files',
-      parent_id: '@:Issue.ParentIssue'
+      parent_id: '@:Issue.ParentIssue',
+      relation: '@:Issue.RelatedIssue'
     },
     FilterDimensions: {
       label: '篩選維度',
