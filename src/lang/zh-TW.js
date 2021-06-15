@@ -489,6 +489,8 @@ export default {
   Member: {
     Member: '成員',
     Manage: '專案成員管理',
+    ProjectOwner: '專案經理',
+    ProjectMember: '專案成員',
     AddMember: '新增成員',
     Id: '成員編號',
     Phone: '電話',

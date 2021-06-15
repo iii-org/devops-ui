@@ -489,6 +489,8 @@ export default {
   Member: {
     Member: 'Member',
     Manage: 'Manage Project Members',
+    ProjectOwner: 'Project Owner',
+    ProjectMember: 'Project Member',
     AddMember: 'Add Member',
     Id: 'Id',
     Phone: 'Phone',

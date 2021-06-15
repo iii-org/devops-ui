@@ -9,7 +9,12 @@
       </el-button>
       <div>
         <span class="font-weight-bold mx-2">{{ $t('Project.Owner') }}</span>
-        <el-select v-model="selectedProject.owner_id" size="medium" :disabled="disabledEditOwner" @change="setProjectOwner">
+        <el-select
+          v-model="selectedProject.owner_id"
+          size="medium"
+          :disabled="disabledEditOwner"
+          @change="setProjectOwner"
+        >
           <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
             {{ user.label }}
           </el-option>
@@ -28,7 +33,11 @@
       <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
       <el-table-column align="center" prop="name" :label="$t('general.Name')" />
       <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
-      <el-table-column align="center" prop="role_name" :label="$t('Member.Role')" />
+      <el-table-column align="center" :label="$t('Member.Role')">
+        <template slot-scope="scope">
+          {{ scope.row.id === selectedProject.owner_id ? $t('Member.ProjectOwner') : $t('Member.ProjectMember') }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')" width="140">
         <template slot-scope="scope">
           <el-popconfirm
