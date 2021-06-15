@@ -141,49 +141,54 @@
       :tree-props="{ children: 'child' }"
       :row-class-name="getRowClass"
       @cell-click="handleClick"
+      @expand-change="getIssueFamilyData"
     >
       <el-table-column type="expand" class-name="informationExpand">
         <template slot-scope="scope">
-          <ul>
-            <li v-if="scope.row.relations.hasOwnProperty('parent')">
-              <b>{{ $t('Issue.ParentIssue') }}:</b>
-              <el-link
-                class="font-weight-regular"
-                :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                :underline="false"
-                @click="handleEdit(scope.row.relations.parent.id)"
-              >
-                <status :name="scope.row.relations.parent.status.name" size="mini" />
-                <tracker :name="scope.row.relations.parent.tracker.name" />
-                #{{ scope.row.relations.parent.id }} - {{ scope.row.relations.parent.name }}
-                <span
-                  v-if="scope.row.relations.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.relations.parent.assigned_to).length>1"
+          <el-col v-loading="scope.row.loadingRelation">
+            <ul>
+              <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
+                <b>{{ $t('Issue.ParentIssue') }}:</b>
+                <el-link
+                  class="font-weight-regular"
+                  :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                  :underline="false"
+                  @click="handleEdit(scope.row.parent.id)"
                 >
-                  ({{ $t('Issue.Assignee') }}: {{ scope.row.relations.parent.assigned_to.name }}
-                  - {{ scope.row.relations.parent.assigned_to.login }})
-                </span>
-              </el-link>
-            </li>
-            <li v-if="scope.row.relations.hasOwnProperty('children')">
-              <b>{{ $t('Issue.ChildrenIssue') }}:</b>
-              <ol>
-                <li v-for="child in scope.row.relations.children" :key="child.id">
-                  <el-link
-                    class="font-weight-regular"
-                    :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                    :underline="false"
-                    @click="handleEdit(child.id)"
+                  <status :name="scope.row.parent.status.name" size="mini" />
+                  <tracker :name="scope.row.parent.tracker.name" />
+                  #{{ scope.row.parent.id }} - {{ scope.row.parent.name }}
+                  <span
+                    v-if="scope.row.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.parent.assigned_to).length>1"
                   >
-                    <status :name="child.status.name" size="mini" />
-                    <tracker :name="child.tracker.name" />
-                    #{{ child.id }} - {{ child.name }}
-                    <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                      ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
-                  </el-link>
-                </li>
-              </ol>
-            </li>
-          </ul>
+                    ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
+                    - {{ scope.row.parent.assigned_to.login }})
+                  </span>
+                </el-link>
+              </li>
+              <li v-if="scope.row.hasOwnProperty('children')">
+                <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+                <ol>
+                  <template v-for="child in scope.row.children">
+                    <li v-if="Object.keys(child).length>0" :key="child.id">
+                      <el-link
+                        class="font-weight-regular"
+                        :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                        :underline="false"
+                        @click="handleEdit(child.id)"
+                      >
+                        <status :name="child.status.name" size="mini" />
+                        <tracker :name="child.tracker.name" />
+                        #{{ child.id }} - {{ child.name }}
+                        <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
+                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                      </el-link>
+                    </li>
+                  </template>
+                </ol>
+              </li>
+            </ul>
+          </el-col>
         </template>
       </el-table-column>
       <el-table-column :label="$t('general.Type')" width="130">
@@ -365,8 +370,7 @@ export default {
     getParams() {
       const result = {
         page: this.listQuery.page,
-        per_page: this.listQuery.limit,
-        selection: true
+        per_page: this.listQuery.limit
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
@@ -388,7 +392,6 @@ export default {
         // null
       }
       this.listLoading = false
-      await this.getIssueFamilyData(this.listData)
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -452,32 +455,18 @@ export default {
         }
       })
     },
-    getIssueFamilyData() {
-      if (this.listData) {
-        this.listData.forEach((item, idx) => {
-          try {
-            if (this.listData[idx]) {
-              this.$set(this.listData[idx], 'loadingRelation', true)
-            }
-            const cancelTokenSource = axios.CancelToken.source()
-            getIssueFamily(item.id, { cancelToken: cancelTokenSource.token })
-              .then((relations) => {
-                if (this.listData[idx]) {
-                  this.$set(this.listData[idx], 'relations', relations.data)
-                }
-              }).catch(() => {
-              })
-            if (this.listLoading) {
-              cancelTokenSource.cancel()
-              console.log('change family')
-            }
-            if (this.listData[idx]) {
-              this.$set(this.listData[idx], 'loadingRelation', false)
-            }
-          } catch (e) {
-            //   null
-          }
-        })
+    async getIssueFamilyData(row, expandedRows) {
+      if (expandedRows.find((item) => (item.id === row.id))) {
+        try {
+          await this.$set(row, 'loadingRelation', true)
+          const family = await getIssueFamily(row.id)
+          const data = family.data
+          if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
+          if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
+          await this.$set(row, 'loadingRelation', false)
+        } catch (e) {
+        //   null
+        }
       }
     },
     onChangeFilter() {
@@ -486,7 +475,7 @@ export default {
     },
     handleClick(row, column) {
       if (column.type === 'expand' && this.isRelationIssueLoading(row)) {
-        this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+        this.$refs['issueList'].toggleRowExpansion(row)
       } else if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else {
@@ -525,10 +514,13 @@ export default {
       this.parentId = 0
     },
     isRelationIssueLoading(row) {
-      return !row.hasOwnProperty('loadingRelation') || row.loadingRelation
+      if (row.family && !row.hasOwnProperty('loadingRelation')) {
+        this.$set(row, 'loadingRelation', false)
+      }
+      return row.loadingRelation
     },
     hasRelationIssue(row) {
-      return row.relations && Object.keys(row.relations).length > 0
+      return row.family
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
