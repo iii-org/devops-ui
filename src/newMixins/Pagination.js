@@ -12,6 +12,7 @@ export default {
   },
   computed: {
     pagedData() {
+      if (this.remote) { return [] }
       const start = (this.listQuery.page - 1) * this.listQuery.limit
       const end = start + this.listQuery.limit
       if (!this.filteredData) return

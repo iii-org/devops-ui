@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="overflow: auto;">
+  <div class="app-container">
     <div class="clearfix">
       <div>
         <project-list-selector />
@@ -127,7 +127,6 @@
                      :tracker="tracker"
                      @add-issue="advancedAddIssue"
     />
-    <!-- TODO: data="pagedData" -->
     <el-table
       ref="issueList"
       v-loading="listLoading"
@@ -137,7 +136,7 @@
       fit
       highlight-current-row
       row-key="id"
-      height="75vh"
+      height="60vh"
       :tree-props="{ children: 'child' }"
       :row-class-name="getRowClass"
       @cell-click="handleClick"
@@ -222,23 +221,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <!--TODO:mixin-->
-    <!--    <pagination-->
-    <!--      :total="filteredData.length"-->
-    <!--      :page="listQuery.page"-->
-    <!--      :limit="listQuery.limit"-->
-    <!--      :page-sizes="[listQuery.limit]"-->
-    <!--      :layout="'total, prev, pager, next'"-->
-    <!--      @pagination="onPagination"-->
-    <!--    />-->
-    <el-pagination
-      v-loading="listLoading"
+    <pagination
       :total="pageInfo.total"
       :page="listQuery.page"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
-      @current-change="handleCurrentChange"
+      @pagination="handleCurrentChange"
     />
     <add-issue
       :save-data="saveIssue"
@@ -264,6 +253,7 @@ import Tracker from '@/components/Issue/Tracker'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
+import { BasicData, Table, Pagination } from '@/newMixins'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -280,9 +270,11 @@ export default {
     Tracker,
     ProjectListSelector
   },
-  // mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Table, Pagination],
   data() {
     return {
+      remote: true,
+      rowHeight: 57,
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
@@ -301,15 +293,14 @@ export default {
       assigneeList: [],
       form: {},
 
-      // TODO: mixin
-      listData: [],
-      listLoading: false,
       keyword: null,
       listQuery: {
+        offset: 0,
         page: 1,
         limit: 10
       },
       pageInfo: {
+        offset: 0,
         total: 0
       },
       lastIssueListCancelToken: null
@@ -317,7 +308,7 @@ export default {
   },
   computed: {
     // TODO: mixin
-    ...mapGetters(['selectedProjectId', 'userRole', 'userId']),
+    ...mapGetters(['userRole', 'userId']),
     listFilter() {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
@@ -347,15 +338,14 @@ export default {
     filterValue: {
       deep: true,
       handler() {
+        this.listQuery.offset = 0
         this.onChangeFilter()
       }
     }
   },
-  async mounted() {
+  async created() {
     await this.loadSelectionList()
-    // TODO:mixin
     await this.loadData()
-    // this.adjustTable()
   },
   methods: {
     showNoProjectWarning() {
@@ -369,8 +359,8 @@ export default {
     },
     getParams() {
       const result = {
-        page: this.listQuery.page,
-        per_page: this.listQuery.limit
+        offset: this.listQuery.offset,
+        limit: this.listQuery.limit
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
@@ -381,17 +371,6 @@ export default {
         result['search'] = this.keyword
       }
       return result
-    },
-    // TODO:mixin
-    async loadData() {
-      this.listLoading = true
-      try {
-        this.listData = await this.fetchData()
-        this.listLoading = false
-      } catch (e) {
-        // null
-      }
-      this.listLoading = false
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -540,10 +519,9 @@ export default {
       this.parentId = 0
       this.form = form
     },
-    // TODO:mixin
     handleCurrentChange(val) {
-      // this.$emit('pagination', { page: val, limit: this.pageSize })
-      this.listQuery.page = val
+      this.listQuery.offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
+      this.listQuery.page = val.page
       this.loadData()
     },
     cleanFilter() {

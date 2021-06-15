@@ -4,13 +4,19 @@ export default {
       rowHeight: 53 // If you can, detect the real thread cell height
     }
   },
-  mounted() {
-    this.adjustTable()
+  async mounted() {
+    await this.initTableData()
     window.onresize = () => {
-      this.adjustTable()
+      this.initTableData()
     }
   },
   methods: {
+    async initTableData() {
+      if (this.remote) {
+        await this.loadData()
+      }
+      await this.adjustTable()
+    },
     adjustTable(forceRowNum) {
       this.$nextTick(function() {
         let siblingsHeight = 0

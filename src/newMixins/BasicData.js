@@ -3,6 +3,7 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      remote: false,
       listLoading: false,
       listData: []
     }
@@ -18,11 +19,14 @@ export default {
   },
   watch: {
     selectedProject() {
+      if (this.remote) {
+        this.adjustTable()
+      }
       this.loadData()
     }
   },
   created() {
-    this.loadData()
+    if (!this.remote) { this.loadData() }
   },
   methods: {
     async loadData() {
