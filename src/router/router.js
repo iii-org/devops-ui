@@ -600,6 +600,12 @@ export const asyncRoutes = [
         name: 'Sub Admin Projects',
         component: () => import('@/views/SystemSettings/SubAdminProjects'),
         meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
+      },
+      {
+        path: 'system-plugin-manage',
+        name: 'System Plugin Manage',
+        component: () => import('@/views/SystemSettings/SystemPluginManage'),
+        meta: { title: 'System Plugin Manage', roles: ['Administrator'] }
       }
     ]
   },

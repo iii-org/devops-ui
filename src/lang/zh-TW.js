@@ -70,13 +70,13 @@ export default {
     Admin: '系統設定',
     'Account Manage': '帳號管理',
     'System Activities': '系統紀錄',
-
+    'System Plugin Manage': '系統插件管理',
+    'Project Settings (QA)': '專案品控清單設置',
     'Dev Branch Test Result': '開發分支測試紀錄',
 
     Artifacts: '資源成品',
 
-    'System Arguments': '參數設定',
-    'Project Settings (QA)': '專案品控清單設置'
+    'System Arguments': '參數設定'
   },
   navbar: {
     logOut: '登出',
@@ -675,7 +675,9 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail'
+    RedmineMail: 'Redmine Mail',
+    AddPlugin: '新增插件',
+    AddParams: '新增參數'
   },
   PipeLines: {
     TestDetail: '測試細節'

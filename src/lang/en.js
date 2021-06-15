@@ -70,13 +70,13 @@ export default {
     Admin: 'System Settings',
     'Account Manage': 'Account Manage',
     'System Activities': 'System Activities',
-
+    'System Plugin Manage': 'System Plugin Manage',
+    'Project Settings (QA)': 'Project Settings (QA)',
     'Dev Branch Test Result': 'Dev Branch Test Result',
 
     Artifacts: 'Project Artifacts',
 
-    'System Arguments': 'System Arguments',
-    'Project Settings (QA)': 'Project Settings (QA)'
+    'System Arguments': 'System Arguments'
   },
   navbar: {
     logOut: 'Log Out',
@@ -675,7 +675,9 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail'
+    RedmineMail: 'Redmine Mail',
+    AddPlugin: 'Add Plugin',
+    AddParams: 'Add Params'
   },
   PipeLines: {
     TestDetail: 'Test Detail'
