@@ -1,6 +1,7 @@
 <template>
   <div :class="{'hidden':hidden}" class="pagination-container">
     <el-pagination
+      ref="pagination"
       :background="background"
       :current-page.sync="currentPage"
       :page-size.sync="pageSize"
@@ -71,17 +72,20 @@ export default {
       set(val) {
         this.$emit('update:limit', val)
       }
+    },
+    pageCount() {
+      return this.$refs['pagination'].pageCount
     }
   },
   methods: {
     handleSizeChange(val) {
-      this.$emit('pagination', { page: this.currentPage, limit: val })
+      this.$emit('pagination', { page: this.currentPage, limit: val, totalPage: this.pageCount })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
     },
     handleCurrentChange(val) {
-      this.$emit('pagination', { page: val, limit: this.pageSize })
+      this.$emit('pagination', { page: val, limit: this.pageSize, totalPage: this.pageCount })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }

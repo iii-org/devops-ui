@@ -307,7 +307,6 @@ export default {
     }
   },
   computed: {
-    // TODO: mixin
     ...mapGetters(['userRole', 'userId']),
     listFilter() {
       const result = []
@@ -520,7 +519,14 @@ export default {
       this.form = form
     },
     handleCurrentChange(val) {
-      this.listQuery.offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
+      const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
+      if (offset <= 0 || val.page === 1) {
+        this.listQuery.offset = 0
+      } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
+        this.listQuery.offset = this.pageInfo.total - val.limit
+      } else {
+        this.listQuery.offset = offset
+      }
       this.listQuery.page = val.page
       this.loadData()
     },
