@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row class="app-container">
     <el-col>
       <div class="d-flex justify-space-between">
         <project-list-selector />
@@ -12,7 +12,7 @@
       </div>
       <el-divider />
       <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table v-loading="isLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
           :label="`${$t('ProgressPipelines.Status')} / ${$t('ProgressPipelines.TestItems')}`"
@@ -22,8 +22,8 @@
           <template slot-scope="scope">
             <el-tag
               size="small"
-              :type="getTagType(scope.row.execution_state)"
-              :effect="getTagEffect(scope.row.execution_state)"
+              :type="mapStateType(scope.row.execution_state)"
+              :effect="mapStateEffect(scope.row.execution_state)"
             >
               {{ scope.row.execution_state }}
             </el-tag>
@@ -65,14 +65,7 @@
         <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" width="140" />
         <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
           <template slot-scope="scope">
-            <el-button
-              :loading="isLoadingDetails"
-              size="mini"
-              type="primary"
-              icon="el-icon-document"
-              plain
-              @click="onDetailsClick(scope.row)"
-            >
+            <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row)">
               {{ $t('general.Detail') }}
             </el-button>
             <el-button
@@ -106,9 +99,12 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <test-detail ref="testDetail" :pipeline-id="focusPipeline.id" :pipeline-commit="focusPipeline.commit"
-                   @loaded="isLoadingDetails = false"
-                   @close="setTimer"
+      <test-detail
+        ref="testDetail"
+        :pipeline-id="focusPipeline.id"
+        :pipeline-commit="focusPipeline.commit"
+        @loaded="isLoading = false"
+        @close="setTimer"
       />
     </el-col>
   </el-row>
@@ -128,13 +124,11 @@ export default {
   data() {
     return {
       isLoading: false,
-      isLoadingDetails: false,
       rowHeight: 90,
       lastUpdateTime: '',
       timer: null,
       focusPipeline: { id: 0, commit: null },
       listData: [],
-      listLoading: false,
       listQuery: {
         page: 1,
         limit: 10
@@ -168,13 +162,6 @@ export default {
     }
   },
   watch: {
-    isActivePipeline(isActive) {
-      if (isActive) {
-        this.setTimer()
-      } else {
-        this.clearTimer()
-      }
-    },
     selectedProject() {
       this.loadData()
       this.listQuery.page = 1
@@ -196,10 +183,10 @@ export default {
       this.listQuery = listQuery
     },
     async loadData() {
-      this.listLoading = true
+      this.isLoading = true
       this.listData = []
       await this.fetchData()
-      this.listLoading = false
+      this.isLoading = false
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -232,17 +219,17 @@ export default {
         pipelines_exec_run: id,
         action
       }
-      this.listLoading = true
+      this.isLoading = true
       await changePipelineByAction(this.selectedRepositoryId, data)
         .then(_ => {
           this.loadData()
         })
         .catch(err => {
-          this.listLoading = false
+          this.isLoading = false
           return err
         })
     },
-    getTagType(status) {
+    mapStateType(status) {
       const mapping = {
         Failed: 'danger',
         Finished: 'success',
@@ -252,12 +239,12 @@ export default {
       }
       return mapping[status] || 'info'
     },
-    getTagEffect(status) {
+    mapStateEffect(status) {
       const mapping = { Building: 'light' }
       return mapping[status] || 'dark'
     },
     onDetailsClick(row) {
-      this.isLoadingDetails = true
+      this.isLoading = true
       this.focusPipeline.id = row.id
       this.focusPipeline.commit = row.commit_message
       this.$refs.testDetail.pipelinesExecRun = row.id
