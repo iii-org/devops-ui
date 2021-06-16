@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
 // repositoryid
-export function getPipelines(repository_id) {
+export function getPipelines(repository_id, params) {
   return request({
     url: `/pipelines/${repository_id}/pipelines_exec`,
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 

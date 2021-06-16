@@ -1,13 +1,18 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" width="95%" top="10vh" destroy-on-close @close="handleClose" @open="handleOpen">
+  <el-dialog
+    :visible.sync="dialogVisible"
+    width="95%"
+    top="3vh"
+    destroy-on-close
+    @close="handleClose"
+    @open="handleOpen"
+  >
     <template slot="title">
-      <span class="font-weight-bold text-h6 ml-4">
-        {{ $t('ProgressPipelines.TestDetail') }}:
-      </span>
+      <span class="font-weight-bold text-h6 ml-4"> {{ $t('ProgressPipelines.TestDetail') }}: </span>
       {{ pipelineCommit }}
     </template>
-    <el-button v-if="autoPlay" type="danger" size="small" icon="el-icon-video-pause" @click="autoPlay=false">暫停自動切換進度</el-button>
-    <el-button v-else type="success" size="small" icon="el-icon-video-play" @click="autoPlay=true">啟動自動切換進度</el-button>
+    <el-button v-if="autoPlay" type="danger" size="small" icon="el-icon-video-pause" @click="autoPlay = false">暫停自動切換進度</el-button>
+    <el-button v-else type="success" size="small" icon="el-icon-video-play" @click="autoPlay = true">啟動自動切換進度</el-button>
     <el-tabs v-model="activeStage" tab-position="left" @tab-click="userClick">
       <el-tab-pane
         v-for="(stage, idx) in stages"
@@ -20,9 +25,9 @@
           <el-tag
             v-if="stage.state"
             class="el-tag ml-2"
-            :type="getStateTagType(stage.state)"
+            :type="mapStateType(stage.state)"
             size="mini"
-            :effect="getStateTagEffect(stage.state)"
+            :effect="mapStateEffect(stage.state)"
           >
             {{ stage.state }}
           </el-tag>
@@ -150,9 +155,7 @@ export default {
     },
     moveToNextStage(stage_index) {
       if (stage_index < this.stages.length && this.autoPlay) {
-        console.log(stage_index)
         const buildingStageIdx = this.getBuildingStageIdx()
-        // console.log(buildingStageIdx)
         if (buildingStageIdx < 0) return
         // if (userClick) {
         // this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx, 1500)
@@ -257,7 +260,7 @@ export default {
     handleClose() {
       this.socket.close()
       this.socket = io('/rancher/websocket/logs', {
-        // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+      // io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
       })
@@ -279,25 +282,18 @@ export default {
     getBuildingStageIdx() {
       return this.stages.findIndex(item => item.state === 'Building')
     },
-    getStateTagType(state) {
-      switch (state) {
-        case 'Failed':
-          return 'danger'
-        case 'Success':
-          return 'success'
-        case 'Aborted':
-          return 'warning'
-        case 'Waiting':
-          return 'slow'
-        case 'Building':
-          return 'success'
-        case 'Skipped':
-          return 'info'
-        default:
-          return 'info'
+    mapStateType(state) {
+      const mapping = {
+        Failed: 'danger',
+        Success: 'success',
+        Aborted: 'warning',
+        Waiting: 'slow',
+        Building: 'success',
+        Skipped: 'info'
       }
+      return mapping[state] || 'info'
     },
-    getStateTagEffect(state) {
+    mapStateEffect(state) {
       return state === 'Building' ? 'light' : 'dark'
     },
     scrollToBottom() {
