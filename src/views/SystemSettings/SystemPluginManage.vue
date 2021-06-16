@@ -189,7 +189,7 @@ export default {
       this.isDialogVisible = true
     },
     mapTypeName(id) {
-      const typeName = { 1: 'System', 2: 'Pipeline' }
+      const typeName = { 1: 'Plugin', 2: 'Pipeline' }
       return typeName[id]
     },
     handleClose() {
