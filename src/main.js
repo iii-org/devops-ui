@@ -45,7 +45,7 @@ Vue.use(VueShowdown, {
   }
 })
 Vue.use(VueGtag, {
-  config: { id: 'GTM-W2KLWN4' }
+  config: { id: process.env.VUE_APP_GTM_TAG }
 })
 
 // Filters
