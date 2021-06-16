@@ -31,6 +31,18 @@
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row.id)">
               {{ $t('general.Edit') }}
             </el-button>
+            <el-popconfirm
+              :confirm-button-text="$t('general.Remove')"
+              :cancel-button-text="$t('general.Cancel')"
+              icon="el-icon-info"
+              icon-color="red"
+              :title="$t('Member.confirmRemove')"
+              @onConfirm="handleDelete(scope.row.id)"
+            >
+              <el-button slot="reference" size="mini" type="danger" icon="el-icon-delete">
+                {{ $t('general.Remove') }}
+              </el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -114,7 +126,7 @@
 
 <script>
 import i18n from '@/lang'
-import { getPlugins, getPluginDetails, updatePlugin, addPlugin } from '@/api/systemPlugin'
+import { getPlugins, getPluginDetails, updatePlugin, addPlugin, deletePlugin } from '@/api/systemPlugin'
 import { BasicData, SearchBar, Pagination } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
@@ -192,11 +204,25 @@ export default {
         if (valid) {
           const sendData = Object.assign({}, this.form)
           sendData.parameter = this.form.parameter.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
-          this.isAddPlugin ? await addPlugin(this.form.id, sendData) : await updatePlugin(this.form.id, sendData)
+          this.isAddPlugin ? await addPlugin(sendData) : await updatePlugin(this.form.id, sendData)
           this.handleClose()
           this.loadData()
         }
       })
+    },
+    handleDelete(pluginId) {
+      this.isLoading = true
+      deletePlugin(pluginId).then(() => {
+        this.$message({
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+      }).catch(err => {
+        this.$message({
+          message: err,
+          type: 'error'
+        })
+      }).then(() => { this.isLoading = false })
     },
     addItem() {
       this.form.parameter.push({ key: '', value: '' })
