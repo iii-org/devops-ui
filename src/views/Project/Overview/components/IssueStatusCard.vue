@@ -36,6 +36,10 @@ export default {
   watch: {
     progressObj(val) {
       this.handleProgress(val)
+      console.log(val)
+    },
+    '$i18n.locale'() {
+      this.fillData(this.progressObj)
     }
   },
   methods: {
@@ -55,9 +59,7 @@ export default {
         { label: this.$t('Issue.Solved'), color: '#3ECBBC', key: 'Solved' },
         { label: this.$t('Issue.Verified'), color: '#67C23A', key: 'Verified' },
         { label: this.$t('Issue.Closed'), color: '#909399', key: 'Closed' }
-        // { label: this.$t('Issue.Unknown'), color: 'red', key: 'Unknown' }
       ]
-
       this.dataCollection = {
         color: issueStatusList.map(item => item.color),
         data: issueStatusList.map(status => ({
