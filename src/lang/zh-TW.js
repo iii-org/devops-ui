@@ -79,7 +79,8 @@ export default {
     'System Arguments': '參數設定',
 
     track: '追溯管理',
-    changeManagement: '變更管理'
+    changeManagement: '變更管理',
+    'Fail Management': '異常管理'
   },
   navbar: {
     logOut: '登出',

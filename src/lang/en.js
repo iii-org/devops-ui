@@ -79,7 +79,8 @@ export default {
     'System Arguments': 'System Arguments',
 
     track: 'Traceability Manage',
-    changeManagement: 'Change Management'
+    changeManagement: 'Change Management',
+    'Fail Management': 'Fail Management'
   },
   navbar: {
     logOut: 'Log Out',

@@ -170,7 +170,7 @@
                   icon="el-icon-info"
                   icon-color="red"
                   :title="$t('Issue.RemoveIssueRelation')"
-                  @onConfirm="removeIssueRelation(issueId)"
+                  @onConfirm="removeIssueRelation(scope.row.id)"
                 >
                   <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
                 </el-popconfirm>
@@ -432,7 +432,7 @@ export default {
         const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
           item => item.data
         )
-        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: '' }, ...versionList.versions]
+        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
         const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
         if (version.length > 0) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
@@ -441,7 +441,7 @@ export default {
 
         this.tracker = typeList
         this.assigned_to = [
-          { name: this.$t('Issue.Unassigned'), id: '' },
+          { name: this.$t('Issue.Unassigned'), id: 'null' },
           ...assigneeList.user_list
         ]
         this.status = statusList
