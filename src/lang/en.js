@@ -76,7 +76,10 @@ export default {
 
     Artifacts: 'Project Artifacts',
 
-    'System Arguments': 'System Arguments'
+    'System Arguments': 'System Arguments',
+
+    track: 'Traceability Manage',
+    changeManagement: 'Change Management'
   },
   navbar: {
     logOut: 'Log Out',
@@ -347,6 +350,7 @@ export default {
     AskDeleteIssue: 'Close work item/issue?',
     DeleteIssueReason: 'Please specify the reason for closure',
     Unlink: 'Unlink',
+    TestFile: '@:route.testFile',
     Files: 'Files',
     UploadFiles: 'Upload Files',
     DeleteFile: 'Are you sure to Delete File?',
@@ -485,7 +489,12 @@ export default {
         all: 'All',
         overdue: 'Overdue',
         in_progress: 'In Progress',
-        not_started: 'Not Started'
+        not_started: 'Not Started',
+        csv_download: 'Download CSV',
+        all_download: 'Download all',
+        organization: 'Organization',
+        project_start_date: 'Project start date',
+        project_due_date: 'Project due date'
       }
     }
   },
@@ -568,7 +577,8 @@ export default {
       'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
-    IdRule: 'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
+    IdRule:
+      'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
     DisplayRule: 'Name cannot includes "<" or "&"',
     DescriptionRule: 'Description cannot includes "<" or "&"',
     WorkloadValue: 'Workload',
@@ -624,7 +634,8 @@ export default {
     Artifacts: 'Artifacts',
     EditResource: 'Edit Resource',
     Vulnerabilities: 'Vulnerabilities',
-    DeleteResourceConfirmText: 'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
+    DeleteResourceConfirmText:
+      'This action can lead to data loss. To prevent accidental actions we ask you to confirm your intention.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     Storage: 'Storage',

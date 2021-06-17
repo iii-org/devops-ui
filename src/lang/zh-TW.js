@@ -76,7 +76,10 @@ export default {
 
     Artifacts: '資源成品',
 
-    'System Arguments': '參數設定'
+    'System Arguments': '參數設定',
+
+    track: '追溯管理',
+    changeManagement: '變更管理'
   },
   navbar: {
     logOut: '登出',
@@ -347,6 +350,7 @@ export default {
     AskDeleteIssue: '關閉工作項目/議題?',
     DeleteIssueReason: '請註明關閉原因',
     Unlink: '移除關聯',
+    TestFile: '@:route.testFile',
     Files: '附件',
     UploadFiles: '附件上傳',
     RemoveFile: '確認要刪除附件嗎?',
@@ -485,7 +489,12 @@ export default {
         all: '全部',
         overdue: '已超時',
         in_progress: '時限內',
-        not_started: '未開始'
+        not_started: '未開始',
+        csv_download: '下載CSV',
+        all_download: '全部下載',
+        organization: '組織',
+        project_start_date: '計畫起始日',
+        project_due_date: '計畫結束日'
       }
     }
   },

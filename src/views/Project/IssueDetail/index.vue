@@ -53,7 +53,7 @@
                           <tracker :name="parent.tracker.name" />
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
-                        #{{ parent.id }} - {{ parent.subject }}
+                        #{{ parent.id }} - {{ parent.name }}
                         <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
                       </el-link>
                       <div class="text-right">
@@ -79,7 +79,9 @@
                             </template>
                             <template v-else>{{ $t('Issue.Issue') }}</template>
                             #{{ child.id }} - {{ child.subject }}
-                            <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                            <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
+                              ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
+                              - {{ child.assigned_to.login }})</span>
                           </el-link>
                           <div class="text-right">
                             <el-popconfirm
@@ -365,20 +367,6 @@ export default {
     showLoading(status) {
       this.isLoading = status
     },
-    getCategoryTagType(category) {
-      switch (category) {
-        case 'Feature':
-          return 'point feature'
-        case 'Document':
-          return 'point document'
-        case 'Bug':
-          return 'point bug'
-        case 'Research':
-          return 'point research'
-        default:
-          return 'point feature'
-      }
-    },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
         if (valid) this.editIssue()
@@ -415,7 +403,6 @@ export default {
         })
     },
     removeIssueRelation(child_issue_id) {
-      console.log('remove')
       this.isLoading = true
       updateIssue(child_issue_id, { parent_id: '' })
         .then(() => {

@@ -164,6 +164,16 @@
                     - {{ scope.row.parent.assigned_to.login }})
                   </span>
                 </el-link>
+                <el-popconfirm
+                  :confirm-button-text="$t('general.Remove')"
+                  :cancel-button-text="$t('general.Cancel')"
+                  icon="el-icon-info"
+                  icon-color="red"
+                  :title="$t('Issue.RemoveIssueRelation')"
+                  @onConfirm="removeIssueRelation(issueId)"
+                >
+                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                </el-popconfirm>
               </li>
               <li v-if="scope.row.hasOwnProperty('children')">
                 <b>{{ $t('Issue.ChildrenIssue') }}:</b>
@@ -182,6 +192,16 @@
                         <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
                           ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                       </el-link>
+                      <el-popconfirm
+                        :confirm-button-text="$t('general.Remove')"
+                        :cancel-button-text="$t('general.Cancel')"
+                        icon="el-icon-info"
+                        icon-color="red"
+                        :title="$t('Issue.RemoveIssueRelation')"
+                        @onConfirm="removeIssueRelation(child.id)"
+                      >
+                        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                      </el-popconfirm>
                     </li>
                   </template>
                 </ol>
@@ -243,9 +263,8 @@
 
 <script>
 import AddIssue from './components/AddIssue'
-// import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { mapGetters } from 'vuex'
-import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
+import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
@@ -534,6 +553,22 @@ export default {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
       this.onChangeFilter()
+    },
+    removeIssueRelation(child_issue_id) {
+      this.isLoading = true
+      updateIssue(child_issue_id, { parent_id: '' })
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          this.handleUpdated()
+        })
+        .catch(err => {
+          console.error(err)
+          this.isLoading = false
+        })
     }
   }
 }
