@@ -8,9 +8,18 @@
         </a>
       </el-col>
       <el-col :span="4" class="text-right">
-        <el-button type="danger" size="mini" icon="el-icon-delete" :loading="isLoading" @click="deleteIssueFile(file)">
-          {{ $t('general.Delete') }}
-        </el-button>
+        <el-popconfirm
+          :confirm-button-text="$t('general.Delete')"
+          :cancel-button-text="$t('general.Cancel')"
+          icon="el-icon-info"
+          icon-color="red"
+          :title="$t('Issue.DeleteFile')"
+          @onConfirm="deleteIssueFile(file)"
+        >
+          <el-button type="danger" size="mini" icon="el-icon-delete" :loading="isLoading">
+            {{ $t('general.Delete') }}
+          </el-button>
+        </el-popconfirm>
       </el-col>
     </el-row>
   </el-row>

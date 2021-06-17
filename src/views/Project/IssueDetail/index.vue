@@ -56,6 +56,18 @@
                         #{{ parent.id }} - {{ parent.subject }}
                         <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
                       </el-link>
+                      <div class="text-right">
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Remove')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Issue.RemoveIssueRelation')"
+                          @onConfirm="removeIssueRelation(issueId)"
+                        >
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                        </el-popconfirm>
+                      </div>
                     </li>
                     <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
                       <ol>
@@ -69,6 +81,18 @@
                             #{{ child.id }} - {{ child.subject }}
                             <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                           </el-link>
+                          <div class="text-right">
+                            <el-popconfirm
+                              :confirm-button-text="$t('general.Remove')"
+                              :cancel-button-text="$t('general.Cancel')"
+                              icon="el-icon-info"
+                              icon-color="red"
+                              :title="$t('Issue.RemoveIssueRelation')"
+                              @onConfirm="removeIssueRelation(child.id)"
+                            >
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                            </el-popconfirm>
+                          </div>
                         </li>
                       </ol>
                     </li>
@@ -77,7 +101,7 @@
               </el-collapse>
             </el-col>
             <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
-              <issue-notes-editor ref="IssueNotesEditor" height="125px" @change="onEditorChange" />
+              <issue-notes-editor ref="IssueNotesEditor" height="125px" />
             </el-col>
             <el-col :span="24">
               <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" @show-parent-issue="onRelationIssueDialog" />
@@ -265,12 +289,8 @@ export default {
       this.files = attachments
       this.created_date = created_date
       this.journals = journals.reverse()
-      if (parent) {
-        this.parent = parent
-      }
-      if (children) {
-        this.children = children
-      }
+      this.parent = (parent) || []
+      this.children = (children) || []
       this.setFormData(data)
       this.view = data
     },
@@ -394,6 +414,23 @@ export default {
           this.isLoading = false
         })
     },
+    removeIssueRelation(child_issue_id) {
+      console.log('remove')
+      this.isLoading = true
+      updateIssue(child_issue_id, { parent_id: '' })
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          this.handleUpdated()
+        })
+        .catch(err => {
+          console.error(err)
+          this.isLoading = false
+        })
+    },
     hasUnsavedChanges() {
       const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''
       // const isFilesChanged = this.$refs.IssueFileUploader.uploadFileList.length > 0
@@ -414,18 +451,6 @@ export default {
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
-    },
-    onEditorChange() {
-      // if (this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')) {
-      //   this.editorHeight = this.editorCheckModeHeight
-      //   // this.dialogHeight = '200px'
-      // } else {
-      //   if (this.mode === 'view') {
-      //     this.editorHeight = '100px'
-      //   } else {
-      //     this.editorHeight = '350px'
-      //   }
-      // }
     },
     formatTime(value) {
       return dayjs(value).fromNow()
