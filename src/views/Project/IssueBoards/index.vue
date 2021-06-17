@@ -72,7 +72,7 @@
           </el-form>
           <el-button slot="reference" type="text">
             <i18n path="Issue.GroupBy">
-              <span slot="limit">{{ changeLimit }}</span>
+              <!-- <span slot="limit">{{ changeLimit }}</span> -->
               <b slot="filter">{{ kanbanFilter }}</b>
             </i18n>
             ({{ kanbanFilterLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
@@ -119,8 +119,12 @@
               </el-tag>
               <el-alert class="help_text" :closable="false">
                 <i18n path="Issue.DragTip">
-                  <b place="key">{{ item.label }}</b>
-                  <b place="value">{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}</b>
+                  <template slot="key">
+                    <b>{{ item.label }}</b>
+                  </template>
+                  <template slot="value">
+                    <b>{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}</b>
+                  </template>
                 </i18n>
               </el-alert>
             </div>
@@ -232,7 +236,6 @@ export default {
       this.updateData()
     },
     kanbanMemberValue(value) {
-      console.log('member', value)
       this.resetClassifyIssue()
       this.classifyIssue()
       this.updateData()
@@ -416,8 +419,6 @@ export default {
       e.effectAllowed = 'copy'
       e.target.classList.add('draggingObject')
       e.dataTransfer.setData('json', JSON.stringify(item))
-      // console.log('dragStart')
-      // console.log(e)
     },
     dragEnd(e) {
       e.target.classList.remove('draggingObject')

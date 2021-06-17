@@ -78,7 +78,7 @@
               <div v-if="element.children.length > 0" class="parent">
                 <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                 <ol class="children_list">
-                  <li v-for="(subElement, index) in element.children" :key="index">
+                  <li v-for="(subElement, index) in element.children" :key="index" class="my-1">
                     <status :name="subElement.status.name" size="mini" />
                     <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                       {{ subElement.name }}
