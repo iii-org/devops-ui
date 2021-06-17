@@ -37,7 +37,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Dashboard.Report')" align="center">
+      <!-- <el-table-column :label="$t('Dashboard.Report')" align="center">
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.report_id"
@@ -49,7 +49,7 @@
             @click="fetchTestReport(scope.row.report_id)"
           />
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
   </el-card>
 </template>
@@ -92,7 +92,6 @@ export default {
     handleTestRes(data) {
       const ret = []
       const rowData = data
-      // console.log('handleTestRes', rowData['postman'])
       ret[0] = this.formatPostmanResult(rowData['postman'])
       ret[1] = this.formatCheckmarxResult(rowData['checkmarx'])
       ret[2] = this.formatWebinspectResult(rowData['webinspect'])
@@ -102,8 +101,6 @@ export default {
       return ret
     },
     formatPostmanResult(postmanResult) {
-      // const rowData = { id: 144, passed: 0, failed: 0, total: 0, run_at: '2021-03-11 16:44:17.274099' }
-      // console.log('formatPostmanResult', postmanResult)
       const ret = {}
       if (Object.keys(postmanResult).length === 0) {
         Object.assign(ret, {
@@ -125,18 +122,6 @@ export default {
       return ret
     },
     formatCheckmarxResult(checkmarxResult) {
-      // const rowData = {
-      //   message: 'success',
-      //   status: 3,
-      //   highSeverity: 0,
-      //   mediumSeverity: 0,
-      //   lowSeverity: 0,
-      //   infoSeverity: 0,
-      //   statisticsCalculationDate: '2020-12-31T15:32:38.003',
-      //   run_at: '2020-12-31 07:31:15.116494',
-      //   report_id: 5556
-      // }
-      // console.log('formatCheckmarxResult', checkmarxResult)
       const ret = {}
       if (Object.keys(checkmarxResult).length === 0) {
         Object.assign(ret, {
@@ -168,37 +153,7 @@ export default {
       }
       return ret
     },
-
-    // getCheckmarxStatusText(statusCode) {
-    //   switch (statusCode) {
-    //     case -1:
-    //       return 'This project does not have any scan.'
-    //     case 1:
-    //       return 'The scan is not completed yet. It may take several hours to complete.'
-    //     case 2:
-    //       return 'Scan done, the system is generating a report. It may take several minutes to complete.'
-    //     case 3:
-    //       object['report_id'] = apiProjectData.test_results[i].report_id
-    //       return
-    //     case 4:
-    //       return 'The scan is canceled.'
-    //     case 5:
-    //       return 'The scan failed.'
-    //     case undefined:
-    //       return 'No data.'
-    //   }
-    // },
-
     formatWebinspectResult(webinspectResult) {
-      // const rowData = {
-      //   '0': 3,
-      //   '1': 2,
-      //   '2': 0,
-      //   '3': 0,
-      //   '4': 0,
-      //   status: 'Complete',
-      //   run_at: '2021-03-12 07:54:14.679501'
-      // }
       const ret = {}
       if (Object.keys(webinspectResult).length === 0) {
         Object.assign(ret, {
@@ -208,7 +163,6 @@ export default {
       } else {
         Object.assign(ret, {
           Software: 'webinspect',
-          // status: webinspectResult.status,
           runAt: webinspectResult.run_at,
           informationText: [
             { status: 'Critical', count: webinspectResult['criticalCount'] },
@@ -221,9 +175,9 @@ export default {
       }
       return ret
     },
-
     formatSonarqubeResult(sonarqubeResult) {
       const ret = {}
+      const runAtIdx = sonarqubeResult.findIndex(row => row.metric === 'run_at')
       if (Object.keys(sonarqubeResult).length === 0) {
         Object.assign(ret, {
           Software: 'sonarqube',
@@ -232,14 +186,12 @@ export default {
       } else {
         Object.assign(ret, {
           Software: 'sonarqube',
-          // status: webinspectResult.status,
-          runAt: sonarqubeResult.run_at,
-          informationText: sonarqubeResult.map(row => ({ status: row.metric, count: row.value }))
+          runAt: runAtIdx > -1 ? sonarqubeResult[runAtIdx].value : undefined,
+          informationText: sonarqubeResult.map(row => ({ status: row.metric, count: row.value })).filter(item => item.status !== 'run_at')
         })
       }
       return ret
     },
-
     formatSideexResult(sideexResult) {
       const ret = {}
       if (Object.keys(sideexResult).length === 0) {
@@ -259,7 +211,6 @@ export default {
       }
       return ret
     },
-
     formatZapResult(zapResult) {
       const ret = {}
       if (Object.keys(zapResult).length === 0) {
