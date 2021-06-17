@@ -47,7 +47,7 @@
                   <ul>
                     <li v-if="Object.keys(parent).length>0">
                       {{ $t('Issue.ParentIssue') }}：
-                      <el-link @click="onRelationIssueDialog(parent.id)">
+                      <el-link :underline="false" @click="onRelationIssueDialog(parent.id)">
                         <status :name="parent.status.name" size="mini" />
                         <template v-if="parent.tracker">
                           <tracker :name="parent.tracker.name" />
@@ -60,7 +60,7 @@
                     <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
                       <ol>
                         <li v-for="child in children" :key="child.id">
-                          <el-link @click="onRelationIssueDialog(child.id)">
+                          <el-link :underline="false" @click="onRelationIssueDialog(child.id)">
                             <status :name="child.status.name" size="mini" />
                             <template v-if="child.tracker">
                               <tracker :name="child.tracker.name" />
@@ -88,7 +88,7 @@
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :children-issue="children.length" @isLoading="showLoading" />
         </el-col>
       </el-row>
-      <el-dialog :visible.sync="relationIssue.visible" width="90%" append-to-body destroy-on-close>
+      <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close>
         <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" />
       </el-dialog>
     </el-card>

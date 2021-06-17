@@ -112,6 +112,7 @@ export default {
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
+      this.$emit('update-issue')
     }
   }
 }
