@@ -25,7 +25,7 @@
             }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column-time prop="create_at" width="180" />
+        <el-table-column-time prop="create_at" min-width="200" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row.id)">
@@ -164,7 +164,7 @@ export default {
   },
   computed: {
     dialogTitle() {
-      return this.isAddPlugin ? i18n.t('general.Add') + 'Plugins' : i18n.t('general.Add') + 'Plugins'
+      return this.isAddPlugin ? `${i18n.t('general.Add')} Plugins` : `${i18n.t('general.Edit')} Plugins` 
     }
   },
   methods: {
