@@ -92,7 +92,7 @@
         </el-table-column>
       </el-table>
       <pagination
-        :total="filteredData.length"
+        :total="listQuery.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
@@ -118,6 +118,16 @@ import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 
+const listQuery = () => ({
+  page: 1,
+  limit: 10,
+  total: 0,
+  start: 0,
+  first: 0,
+  next: 0,
+  last: 0
+})
+
 export default {
   name: 'ProgressPipelinesSocket',
   components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination },
@@ -129,10 +139,7 @@ export default {
       timer: null,
       focusPipeline: { id: 0, commit: null },
       listData: [],
-      listQuery: {
-        page: 1,
-        limit: 10
-      },
+      listQuery: listQuery(),
       searchKeys: ['commit_message'],
       keyword: ''
     }
@@ -164,6 +171,7 @@ export default {
   watch: {
     selectedProject() {
       this.loadData()
+      this.listQuery = listQuery()
       this.listQuery.page = 1
       this.searchData = ''
     },
@@ -180,28 +188,31 @@ export default {
   },
   methods: {
     onPagination(listQuery) {
-      this.listQuery = listQuery
+      const start = listQuery.page > this.listQuery.page ? this.listQuery.next : this.listQuery.first
+      this.loadData(10, start)
     },
-    async loadData() {
+    async loadData(limit, start) {
       this.isLoading = true
       this.listData = []
-      await this.fetchData()
+      await this.fetchData(limit, start)
       this.isLoading = false
     },
-    async fetchData() {
+    async fetchData(limit = 10, start = this.listQuery.start) {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
       }
       try {
-        const pipe = await getPipelines(this.selectedRepositoryId)
-        this.lastUpdateTime = this.$dayjs(pipe.datetime)
+        const res = await getPipelines(this.selectedRepositoryId, { limit, start })
+        this.lastUpdateTime = this.$dayjs(res.datetime)
           .utcOffset(16)
           .format('YYYY-MM-DD HH:mm:ss')
-        pipe.data.forEach((item, idx) => {
+        res.data.pipe_execs.forEach((item, idx) => {
           const result = { ...item }
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
           this.$set(this.listData, idx, result)
+          this.listQuery = res.data.pagination
+          this.listQuery.page = 1
         })
       } catch (error) {
         console.error(error)
@@ -261,6 +272,7 @@ export default {
     clearTimer() {
       clearInterval(this.timer)
       this.timer = null
+      this.listQuery = listQuery()
     }
   }
 }
