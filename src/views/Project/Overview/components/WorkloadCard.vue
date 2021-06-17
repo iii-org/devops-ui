@@ -37,6 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import HorizontalBar from './HorizontalBar.vue'
+import i18n from '@/lang'
 
 export default {
   name: 'WorkloadCard',
@@ -59,7 +60,29 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    chartData() {
+      const rowData = this.selectList.find(item => item.label === this.selectedItem).data
+      const keyMap = {
+        Unassigned: i18n.t('Issue.Unassigned'),
+        Normal: i18n.t('Issue.Normal'),
+        Immediate: i18n.t('Issue.Immediate'),
+        High: i18n.t('Issue.High'),
+        Low: i18n.t('Issue.Low'),
+        Epic: i18n.t('Issue.Epic'),
+        Audit: i18n.t('Issue.Audit'),
+        Feature: i18n.t('Issue.Feature'),
+        Bug: i18n.t('Issue.Bug'),
+        Issue: i18n.t('Issue.Issue'),
+        'Change Request': i18n.t('Issue.Change Request')
+      }
+      const newData = Object.keys(rowData).reduce((newData, key) => {
+        const newKey = keyMap[key] || key
+        newData[newKey] = rowData[key]
+        return newData
+      }, {})
+      return newData
+    }
   },
   watch: {
     statisticsObj(val) {
@@ -103,13 +126,11 @@ export default {
         { label: this.$t('Issue.Closed'), color: '#909399', key: 'Closed' }
         // { label: this.$t('Issue.Unknown'), color: 'red', key: 'Unknown' }
       ]
-      const chartData = this.selectList.find(item => item.label === this.selectedItem).data
-      const yAxis = Object.keys(chartData)
+      const yAxis = Object.keys(this.chartData)
       const seriesData = []
       issueStatusList.map(status =>
-        seriesData.push(yAxis.map(yAxisItem => chartData[yAxisItem]).map(item => item[status.key]))
+        seriesData.push(yAxis.map(yAxisItem => this.chartData[yAxisItem]).map(item => item[status.key]))
       )
-
       this.dataCollection = {
         legend: issueStatusList.map(status => status.label),
         yAxis,
