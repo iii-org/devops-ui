@@ -37,7 +37,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import HorizontalBar from './HorizontalBar.vue'
-import i18n from '@/lang'
 
 export default {
   name: 'WorkloadCard',
@@ -61,20 +60,23 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
+    selectedData() {
+      return this.selectList.find(item => item.label === this.selectedItem).data
+    },
     chartData() {
-      const rowData = this.selectList.find(item => item.label === this.selectedItem).data
+      const rowData = this.selectedData
       const keyMap = {
-        Unassigned: i18n.t('Issue.Unassigned'),
-        Normal: i18n.t('Issue.Normal'),
-        Immediate: i18n.t('Issue.Immediate'),
-        High: i18n.t('Issue.High'),
-        Low: i18n.t('Issue.Low'),
-        Epic: i18n.t('Issue.Epic'),
-        Audit: i18n.t('Issue.Audit'),
-        Feature: i18n.t('Issue.Feature'),
-        Bug: i18n.t('Issue.Bug'),
-        Issue: i18n.t('Issue.Issue'),
-        'Change Request': i18n.t('Issue.Change Request')
+        Unassigned: this.$t('Issue.Unassigned'),
+        Normal: this.$t('Issue.Normal'),
+        Immediate: this.$t('Issue.Immediate'),
+        High: this.$t('Issue.High'),
+        Low: this.$t('Issue.Low'),
+        Epic: this.$t('Issue.Epic'),
+        Audit: this.$t('Issue.Audit'),
+        Feature: this.$t('Issue.Feature'),
+        Bug: this.$t('Issue.Bug'),
+        Issue: this.$t('Issue.Issue'),
+        'Change Request': this.$t('Issue.Change Request')
       }
       const newData = Object.keys(rowData).reduce((newData, key) => {
         const newKey = keyMap[key] || key
@@ -82,6 +84,16 @@ export default {
         return newData
       }, {})
       return newData
+    },
+    issueStatusList() {
+      return [
+        { label: this.$t('Issue.Active'), color: '#409EFF', key: 'Active' },
+        { label: this.$t('Issue.Assigned'), color: '#F56C6C', key: 'Assigned' },
+        { label: this.$t('Issue.InProgress'), color: '#E6A23C', key: 'InProgress' },
+        { label: this.$t('Issue.Solved'), color: '#3ECBBC', key: 'Solved' },
+        { label: this.$t('Issue.Verified'), color: '#67C23A', key: 'Verified' },
+        { label: this.$t('Issue.Closed'), color: '#909399', key: 'Closed' }
+      ]
     }
   },
   watch: {
@@ -93,6 +105,9 @@ export default {
     },
     saveSelectedItem() {
       this.handleStatistics(this.statisticsObj)
+    },
+    '$i18n.locale'() {
+      this.fillData()
     }
   },
   mounted() {
@@ -117,24 +132,15 @@ export default {
       }
     },
     fillData() {
-      const issueStatusList = [
-        { label: this.$t('Issue.Active'), color: '#409EFF', key: 'Active' },
-        { label: this.$t('Issue.Assigned'), color: '#F56C6C', key: 'Assigned' },
-        { label: this.$t('Issue.InProgress'), color: '#E6A23C', key: 'InProgress' },
-        { label: this.$t('Issue.Solved'), color: '#3ECBBC', key: 'Solved' },
-        { label: this.$t('Issue.Verified'), color: '#67C23A', key: 'Verified' },
-        { label: this.$t('Issue.Closed'), color: '#909399', key: 'Closed' }
-        // { label: this.$t('Issue.Unknown'), color: 'red', key: 'Unknown' }
-      ]
       const yAxis = Object.keys(this.chartData)
       const seriesData = []
-      issueStatusList.map(status =>
+      this.issueStatusList.map(status =>
         seriesData.push(yAxis.map(yAxisItem => this.chartData[yAxisItem]).map(item => item[status.key]))
       )
       this.dataCollection = {
-        legend: issueStatusList.map(status => status.label),
+        legend: this.issueStatusList.map(status => status.label),
         yAxis,
-        series: issueStatusList.map((status, index) => ({
+        series: this.issueStatusList.map((status, index) => ({
           name: status.label,
           color: status.color,
           data: seriesData[index],
