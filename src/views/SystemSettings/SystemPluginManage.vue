@@ -153,7 +153,7 @@ export default {
       pluginOptions: [
         {
           value: 1,
-          label: 'System'
+          label: 'Plugin'
         },
         {
           value: 2,
