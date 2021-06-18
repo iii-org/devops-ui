@@ -332,11 +332,15 @@ export default {
     Solved: 'Solved',
     Verified: 'Verified',
     Closed: 'Closed',
+    Responded: 'Responded',
+    Finished: 'Finished',
     Unknown: 'Unknown',
     Low: 'Low',
     Normal: 'Normal',
     High: 'High',
     Immediate: 'Immediate',
+    Document: 'Document',
+    Research: 'Research',
     Epic: 'Epic',
     Audit: 'Audit',
     Feature: 'Feature',
@@ -388,7 +392,8 @@ export default {
       fixed_version_id: '@:Version.Version',
       attachment: '@:Issue.Files',
       parent_id: '@:Issue.ParentIssue',
-      relation: '@:Issue.RelatedIssue'
+      relation: '@:Issue.RelatedIssue',
+      attr: '@:Issue.DoneRatio'
     },
     FilterDimensions: {
       label: 'Filter Dimensions',

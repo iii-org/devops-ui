@@ -332,11 +332,15 @@ export default {
     Solved: '已解決',
     Verified: '已確認',
     Closed: '已關閉',
+    Responded: '已回應',
+    Finished: '已完成',
     Unknown: '狀態不明',
     Low: '低',
     Normal: '一般',
     High: '高',
     Immediate: '緊急',
+    Document: '文件',
+    Research: '研究',
     Epic: '需求規格',
     Audit: '合規需求',
     Feature: '功能設計',
@@ -388,7 +392,8 @@ export default {
       fixed_version_id: '@:Version.Version',
       attachment: '@:Issue.Files',
       parent_id: '@:Issue.ParentIssue',
-      relation: '@:Issue.RelatedIssue'
+      relation: '@:Issue.RelatedIssue',
+      attr: '@:Issue.DoneRatio'
     },
     FilterDimensions: {
       label: '篩選維度',
