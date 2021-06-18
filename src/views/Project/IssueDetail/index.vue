@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
 import {
   IssueForm,
@@ -225,7 +225,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['userProjectList', 'selectedProjectId']),
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
@@ -257,6 +257,7 @@ export default {
     await this.fetchIssueLink()
   },
   methods: {
+    ...mapActions('projects', ['setSelectedProject']),
     async fetchIssueLink() {
       this.isLoading = true
       this.issueId = parseInt(this.$route.params.issueId)
@@ -295,6 +296,13 @@ export default {
       this.children = (children) || []
       this.setFormData(data)
       this.view = data
+      if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
+        this.onProjectChange(data.project.id)
+      }
+    },
+    onProjectChange(value) {
+      localStorage.setItem('projectId', value)
+      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === value)[0])
     },
     setFormData(data) {
       const {
