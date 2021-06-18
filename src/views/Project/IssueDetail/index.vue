@@ -291,13 +291,14 @@ export default {
       this.files = attachments
       this.created_date = created_date
       this.journals = journals.reverse()
-      this.parent = (parent) || []
+      this.parent = (parent) || {}
       this.children = (children) || []
       this.setFormData(data)
       this.view = data
     },
     setFormData(data) {
       const {
+        project,
         parent,
         assigned_to,
         fixed_version,
@@ -312,7 +313,7 @@ export default {
         description
       } = data
       this.form.parent_id = parent ? parent.id : ''
-      this.form.project_id = this.selectedProjectId
+      this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
       this.form.subject = subject
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''

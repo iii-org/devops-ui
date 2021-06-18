@@ -217,7 +217,6 @@ export default {
       relativeIssueList: [],
       isLoading: false,
       checkClosable: false,
-      dynamicStatusList: [],
 
       pickerOptions(startDate) {
         return {
@@ -229,7 +228,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId']),
+    ...mapGetters(['userId']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -249,6 +248,16 @@ export default {
       } else {
         return this.assigneeList
       }
+    },
+    dynamicStatusList() {
+      const _this = this
+      return this.statusList.map((item) => {
+        if (!_this.checkClosable && item.label === 'Closed') {
+          item.disabled = true
+          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
+        }
+        return item
+      })
     },
     originalParentIssue() {
       if (Object.keys(this.parent).length <= 0) return {}
@@ -271,6 +280,9 @@ export default {
       if (!value && !this.issueQuery) {
         this.issueList = [this.originalParentIssue]
       }
+    },
+    'form.project_id'() {
+      this.fetchData()
     }
   },
   mounted() {
@@ -279,38 +291,40 @@ export default {
   methods: {
     async fetchData() {
       this.isLoading = true
-      await Promise.all([
-        getProjectAssignable(this.selectedProjectId),
-        getProjectVersion(this.selectedProjectId),
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
-      ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
-          item => item.data
-        )
+      if (this.form.project_id) {
+        await Promise.all([
+          getProjectAssignable(this.form.project_id),
+          getProjectVersion(this.form.project_id),
+          getIssueTracker(),
+          getIssueStatus(),
+          getIssuePriority()
+        ]).then(res => {
+          const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+            item => item.data
+          )
 
-        this.assigneeList = [
-          {
-            label: this.$t('Issue.me'),
-            login: 'me',
-            value: this.userId,
-            class: 'bg-yellow-100'
-          }, ...assigneeList.user_list.map(item => ({
+          this.assigneeList = [
+            {
+              label: this.$t('Issue.me'),
+              login: 'me',
+              value: this.userId,
+              class: 'bg-yellow-100'
+            }, ...assigneeList.user_list.map(item => ({
+              label: item.name,
+              login: item.login,
+              value: item.id
+            }))
+          ]
+          this.versionList = versionList.versions.map(item => ({
             label: item.name,
-            login: item.login,
-            value: item.id
+            value: item.id,
+            status: item.status
           }))
-        ]
-        this.versionList = versionList.versions.map(item => ({
-          label: item.name,
-          value: item.id,
-          status: item.status
-        }))
-        this.statusList = statusList.map(item => ({ label: item.name, value: item.id }))
-        this.typeList = this.issueTypeList = typeList.map(item => ({ label: item.name, value: item.id }))
-        this.priorityList = priorityList.map(item => ({ label: item.name, value: item.id }))
-      })
+          this.statusList = statusList.map(item => ({ label: item.name, value: item.id }))
+          this.typeList = this.issueTypeList = typeList.map(item => ({ label: item.name, value: item.id }))
+          this.priorityList = priorityList.map(item => ({ label: item.name, value: item.id }))
+        })
+      }
       this.isLoading = false
     },
     async getClosable() {
@@ -318,7 +332,6 @@ export default {
         .then((res) => {
           this.checkClosable = res.data
         })
-      await this.getDynamicStatusList()
     },
     clearDueDate(val) {
       this.$nextTick(() => {
@@ -328,22 +341,12 @@ export default {
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
     },
-    getDynamicStatusList() {
-      const _this = this
-      this.dynamicStatusList = this.statusList.map((item) => {
-        if (!_this.checkClosable && item.label === 'Closed') {
-          item.disabled = true
-          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
-        }
-        return item
-      })
-    },
     getSearchIssue(query) {
       if (query !== '') {
         this.issueQuery = query
         this.issueLoading = true
         this.issueList = []
-        getProjectIssueList(this.selectedProjectId, { search: query, selection: true })
+        getProjectIssueList(this.form.project_id, { search: query, selection: true })
           .then((res) => {
             this.issueList = [this.originalParentIssue, { label: this.$t('Issue.Result'), options: res.data }]
           })
