@@ -16,7 +16,7 @@
           :title="$t('Issue.DeleteFile')"
           @onConfirm="deleteIssueFile(file)"
         >
-          <el-button type="danger" size="mini" icon="el-icon-delete" :loading="isLoading">
+          <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" :loading="isLoading">
             {{ $t('general.Delete') }}
           </el-button>
         </el-popconfirm>

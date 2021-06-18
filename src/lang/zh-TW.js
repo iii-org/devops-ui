@@ -354,7 +354,7 @@ export default {
     TestFile: '@:route.testFile',
     Files: '附件',
     UploadFiles: '附件上傳',
-    RemoveFile: '確認要刪除附件嗎?',
+    DeleteFile: '確認要刪除附件嗎?',
     RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
     name: '議題名稱',
