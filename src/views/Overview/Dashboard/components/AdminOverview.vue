@@ -100,6 +100,7 @@ export default {
 
 > > > .table {
   font-size: 1.5em;
+  width:100%;
 
   .count {
     font-size: 2em;
