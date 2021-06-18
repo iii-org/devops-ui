@@ -310,7 +310,7 @@ export default {
     SelectPriority: '選擇@:Issue.Priority',
     SelectStatus: '選擇@:general.Status',
     CleanFilter: '清除篩選',
-    SearchNameOrAssignee: '搜尋名稱或受分配者',
+    SearchNameOrAssignee: '搜尋ID、名稱或受分配者',
     Save: '儲存',
     Notes: '處理紀錄 / 訊息回覆',
     AddComment: '新增備註',

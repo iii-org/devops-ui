@@ -309,7 +309,7 @@ export default {
     SelectType: 'Select Type',
     SelectPriority: 'Select @:Issue.Priority',
     SelectStatus: 'Select @:general.Status',
-    SearchNameOrAssignee: 'Search Name Or Assignee',
+    SearchNameOrAssignee: 'Search ID, Name Or Assignee',
     CleanFilter: 'Clean Filter',
     Save: 'Save',
     Notes: 'Notes',

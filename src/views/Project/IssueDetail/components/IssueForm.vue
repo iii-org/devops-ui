@@ -11,7 +11,7 @@
       <el-select
         v-model="form.parent_id"
         style="width: 100%"
-        :placeholder="$t('RuleMsg.PleaseSelect')"
+        :placeholder="$t('Issue.SearchNameOrAssignee')"
         clearable
         filterable
         remote
