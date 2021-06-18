@@ -15,7 +15,7 @@
     <div v-if="!selectedProjectId" class="d-flex justify-center align-center" style="height: 300px">
       <span>{{ $t('general.NoData') }}</span>
     </div>
-    <el-table v-else :data="testResultList" style="width: 100%" stripe>
+    <el-table v-else :data="testResultList" stripe fit>
       <el-table-column :label="$t('Dashboard.Software')" prop="Software" width="110">
         <template slot-scope="scope">
           <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(scope.row.Software)">
@@ -24,7 +24,7 @@
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="runAt" />
-      <el-table-column :label="$t('Dashboard.Brief')" prop="informationText" width="180">
+      <el-table-column :label="$t('Dashboard.Brief')" prop="informationText">
         <template slot-scope="scope">
           <div v-if="Object.keys(scope.row.informationText).length === 0">
             {{ $t('general.NoData') }}
