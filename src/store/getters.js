@@ -19,9 +19,9 @@ const getters = {
   userProjectList: state => state.user.userProjectList,
   selectedProjectId: state => state.projects.selectedProject.id,
   selectedProject: state => state.projects.selectedProject,
-  kanbanVersionValue: state => state.projects.kanbanVersionValue,
-  kanbanMemberValue: state => state.projects.kanbanMemberValue,
-  kanbanFilterDimension: state => state.projects.kanbanFilterDimension,
-  kanbanFilterValue: state => state.projects.kanbanFilterValue
+  kanbanFilter: state => state.projects.kanbanFilter,
+  kanbanGroupBy: state => state.projects.kanbanGroupBy,
+  kanbanDisplayClosed: state => state.projects.kanbanDisplayClosed,
+  kanbanKeyword: state => state.projects.kanbanKeyword
 }
 export default getters

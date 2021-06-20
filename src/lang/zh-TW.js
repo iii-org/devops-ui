@@ -303,10 +303,12 @@ export default {
     Description: '議題描述',
     SelectDate: '選擇日期',
     SelectType: '選擇種類',
+    SelectVersion: '@:Version.SelectVersion',
     SelectPriority: '選擇@:Issue.Priority',
     SelectStatus: '選擇@:general.Status',
+    SelectMember: '@:Member.SelectMember',
     CleanFilter: '清除篩選',
-    SearchNameOrAssignee: '搜尋名稱或受分配者',
+    SearchNameOrAssignee: '搜尋ID、名稱或受分配者',
     Save: '儲存',
     Notes: '處理紀錄 / 訊息回覆',
     AddComment: '新增備註',
@@ -359,6 +361,7 @@ export default {
     VersionUndecided: '版本未定',
     Unassigned: '@:Dashboard.Unassigned',
     RelatedIssue: '關聯議題',
+    DisplayClosedIssue: '顯示已關閉議題',
     detail: {
       message: {
         set_to: '{creator} {message}',
@@ -379,14 +382,17 @@ export default {
       tracker_id: '@:general.Type',
       fixed_version_id: '@:Version.Version',
       attachment: '@:Issue.Files',
-      parent_id: '@:Issue.ParentIssue'
+      parent_id: '@:Issue.ParentIssue',
+      relation: '@:Issue.RelatedIssue',
+      attr: '@:Issue.DoneRatio'
     },
     FilterDimensions: {
       label: '篩選維度',
       status: '議題狀態',
       tracker: '議題類別',
       assigned_to: '專案成員',
-      fixed_version: '專案版本'
+      fixed_version: '專案版本',
+      priority: '@:Issue.Priority'
     },
     Display: '顯示',
     DragTip: '拖曳到議題，可以將 {key} 改變成 {value}',

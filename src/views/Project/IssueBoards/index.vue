@@ -1,57 +1,57 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row class="app-container">
     <el-row>
       <project-list-selector />
+
       <div class="text-right">
+        <!--      <div class="text-right float-right w-1/2">-->
         <el-popover
           placement="bottom"
           trigger="click"
         >
-          <el-form>
-            <el-form-item v-if="kanbanFilterDimension !== 'fixed_version'" :label="$t('Version.Version')">
-              <el-select
-                :value="kanbanVersionValue"
-                :placeholder="$t('Version.SelectVersion')"
-                :disabled="selectedProjectId === -1"
-                class="mr-4"
-                filterable
-                @change="updateVersionValue"
-              >
-                <el-option v-for="item in fixedVersionOptions" :key="item.id" :label="item.name" :value="item.id" />
-              </el-select>
-            </el-form-item>
-            <el-form-item v-if="kanbanFilterDimension !== 'assigned_to'" :label="$t('Member.Member')">
-              <el-select
-                :value="kanbanMemberValue"
-                :placeholder="$t('Member.SelectMember')"
-                :disabled="selectedProjectId === -1"
-                filterable
-                @change="updateMemberValue"
-              >
-                <el-option
-                  v-for="item in assignedToOptions"
-                  :key="item.id"
-                  :label="(item.login)? item.name+'('+item.login+')' : item.name"
-                  :value="item.id"
-                />
-              </el-select>
+          <el-form v-loading="isLoading">
+            <template v-for="dimension in filterOptions">
+              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id" :label="dimension.label">
+                <el-select
+                  v-model="filterValue[dimension.value]"
+                  :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                  :disabled="selectedProjectId === -1"
+                  filterable
+                  clearable
+                  @change="onChangeFilter"
+                >
+                  <el-option v-for="item in $data[dimension.value]" :key="item.id"
+                             :label="$te('Issue.'+item.name)?$t('Issue.'+item.name):item.name"
+                             :value="item.id"
+                  >
+                    <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </template>
+            <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
+              <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
             </el-form-item>
           </el-form>
-          <el-button slot="reference" type="text"> {{ kanbanSearch }} <i
-            class="el-icon-arrow-down el-icon--right"
-          /></el-button>
+          <el-button slot="reference" :loading="isLoading" icon="el-icon-s-operation" type="text"> {{ listFilter }}
+            <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
         <el-divider direction="vertical" />
         <el-popover
           placement="bottom"
           trigger="click"
         >
-          <el-form>
+          <el-form v-loading="isLoading">
             <el-form-item :label="$t('Issue.FilterDimensions.label')">
-              <el-select :value="kanbanFilterDimension" class="mr-4" filterable @change="setKanbanFilterDimension">
+              <el-select
+                v-model="groupBy.dimension"
+                class="mr-4"
+                filterable
+                @change="onChangeGroupByDimension"
+              >
                 <el-option
-                  v-for="(item, idx) in filterDimensionOptions"
-                  :key="idx"
+                  v-for="item in filterOptions"
+                  :key="item.id"
                   :label="item.label"
                   :value="item.value"
                 />
@@ -59,48 +59,72 @@
             </el-form-item>
             <el-form-item :label="$t('Issue.Display')">
               <el-select-all
-                ref="filterValue"
-                :value="kanbanFilterValue"
+                ref="groupByValue"
+                :value="groupBy.value"
                 filterable
                 multiple
                 collapse-tags
-                :options="filterValueOptions"
+                :options="groupByOptions"
                 value-key="id"
-                @change="setKanbanFilterValue"
+                @change="onChangeGroupByValue"
               />
             </el-form-item>
           </el-form>
-          <el-button slot="reference" type="text">
+          <el-button slot="reference" :loading="isLoading" type="text">
             <i18n path="Issue.GroupBy">
-              <b slot="filter">{{ kanbanFilter }}</b>
+              <b slot="filter">{{ showSelectedGroupByName }}</b>
             </i18n>
-            ({{ kanbanFilterLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
+            ({{ showSelectedGroupByLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
+        <el-divider direction="vertical" />
+        <el-input
+          v-if="searchVisible"
+          id="input-search"
+          v-model="keyword"
+          prefix-icon="el-icon-search"
+          :placeholder="$t('Issue.SearchNameOrAssignee')"
+          style="width: 250px;"
+          clearable
+          :disabled="isLoading"
+          @blur="searchVisible=!searchVisible"
+          @change="onChangeFilter"
+        />
+        <el-button v-else type="text" :loading="isLoading" icon="el-icon-search" @click="searchVisible=!searchVisible">
+          {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+        </el-button>
+        <template v-if="isFilterChanged">
+          <el-divider direction="vertical" />
+          <el-button size="small" icon="el-icon-close" :loading="isLoading" @click="cleanFilter">
+            {{ $t('Issue.CleanFilter') }}
+          </el-button>
+        </template>
       </div>
     </el-row>
     <el-divider />
-    <el-col class="board" :class="{'is-panel':rightPanelVisible}">
+    <el-col v-loading="isLoading" :element-loading-text="$t('Loading')" class="board"
+            :class="{'is-panel':rightPanelVisible}"
+    >
       <Kanban
-        v-for="(classObj, idx) in filterValueOnBoard"
-        :key="idx"
+        v-for="classObj in groupByValueOnBoard"
+        :key="classObj.id"
         :status="status"
         :board-object="classObj"
         :list="classifyIssueList[classObj.id]"
-        :dimension="kanbanFilterDimension"
+        :dimension="groupBy.dimension"
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
         :header-text="getTranslateHeader(classObj.name)"
         :c-name="classObj.name"
         :class="{ [classObj.name.toLowerCase()]: true }"
-        :focus-version="String(kanbanVersionValue)"
+        :focus-version="String(kanbanFilter.version)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
       />
     </el-col>
     <right-panel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
-      <el-row v-for="(item, idx) in filterDimensionOptions" :key="idx" class="panel">
+      <el-row v-for="item in filterOptions" :key="item.id" class="panel">
         <el-card>
           <template slot="header">{{ item.label }}</template>
           <template v-for="(subItem, index) in getFilterValueList(item.value)">
@@ -113,7 +137,10 @@
               @dragstart="dragStart($event, { [item.value]: subItem })"
               @dragend="dragEnd"
             >
-              <el-tag effect="dark" :type="getTagType(subItem.name)">
+              <component :is="item.value" v-if="isRightPanelItemHasComponents(item.value)" :name="subItem.name"
+                         class="el-tag"
+              />
+              <el-tag v-else effect="dark">
                 {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
               </el-tag>
               <el-alert class="help_text" :closable="false">
@@ -132,13 +159,16 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Fuse from 'fuse.js'
 import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectIssueListByTree, getProjectUserList, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import RightPanel from './components/RightPanel'
+import Status from '@/components/Issue/Status'
+import Tracker from '@/components/Issue/Tracker'
+import Priority from '@/components/Issue/Priority'
+import axios from 'axios'
 
 export default {
   name: 'IssueBoards',
@@ -146,187 +176,228 @@ export default {
     RightPanel,
     ElSelectAll,
     Kanban,
-    ProjectListSelector
+    ProjectListSelector,
+    Status,
+    Tracker,
+    Priority
   },
   data() {
     return {
-      isLoading: true,
-      filterDimension: 'status',
-      filterValue: [],
+      isLoading: false,
+      groupBy: {
+        dimension: 'status',
+        value: []
+      },
+      filterValue: {},
+      originFilterValue: {},
+      displayClosed: false,
       projectIssueList: [],
+      projectIssueQueue: {},
       classifyIssueList: {},
       group: 'mission',
       fixed_version: [],
       status: [],
       tracker: [],
       assigned_to: [],
+      priority: [],
       relativeIssueList: [],
+
+      searchVisible: false,
+      keyword: null,
+
       rightPanelVisible: false
     }
   },
   computed: {
     ...mapGetters([
       'selectedProjectId',
-      'kanbanVersionValue',
-      'kanbanMemberValue',
-      'kanbanFilterDimension',
-      'kanbanFilterValue'
+      'kanbanFilter',
+      'kanbanGroupBy',
+      'kanbanDisplayClosed',
+      'kanbanKeyword'
     ]),
-    filterDimensionOptions() {
+    filterOptions() {
       return [
-        { label: this.$t('Issue.FilterDimensions.status'), value: 'status' },
-        { label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker' },
-        { label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to' },
-        { label: this.$t('Issue.FilterDimensions.fixed_version'), value: 'fixed_version' }
+        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }
       ]
     },
-    filterValueOptions() {
-      return this[this.kanbanFilterDimension].map((item, idx) => ({
+    groupByOptions() {
+      return this[this.groupBy.dimension].map((item, idx) => ({
         id: idx,
         label: this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name,
         value: item
       }))
     },
-    filterValueOnBoard() {
-      if (this.kanbanFilterValue.length <= 0) {
-        return this[this.kanbanFilterDimension].map(item => item)
+    groupByValueOnBoard() {
+      if (this.groupBy.value.length <= 0) {
+        return this[this.groupBy.dimension].map(item => item)
       }
-      return this.kanbanFilterValue
+      return this.groupBy.value
     },
-    kanbanFilter() {
-      return this.filterDimensionOptions.find((item) => (item.value === this.kanbanFilterDimension)).label
+    showSelectedGroupByName() {
+      return this.filterOptions.find((item) => (item.value === this.groupBy.dimension)).label
     },
-    kanbanFilterLength() {
-      if (this.filterValueOptions.length === this.kanbanFilterValue.length || this.kanbanFilterValue.length === 0) {
+    showSelectedGroupByLength() {
+      if (this.groupByOptions.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
         return this.$t('general.All')
       }
-      return this.kanbanFilterValue.length
+      return this.groupBy.value.length
     },
-    kanbanSearch() {
+    listFilter() {
       const result = []
-      const version = this.fixedVersionOptions.find((item) => (item.id === this.kanbanVersionValue))
-      const member = this.assignedToOptions.find((item) => (item.id === this.kanbanMemberValue))
-      if (version && this.kanbanFilterDimension !== 'fixed_version') {
-        result.push(version.name)
-      }
-      if (member && this.kanbanFilterDimension !== 'assigned_to') {
-        result.push(member.name)
-      }
-      return result.join(', ')
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) {
+          const value = this[item].find((search) => (search.id === this.filterValue[item]))
+          if (value) {
+            result.push((this.$te('Issue.' + value.name)) ? this.$t('Issue.' + value.name) : value.name)
+          }
+        }
+      })
+      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
     },
-    fixedVersionOptions() {
-      return [{ name: this.$t('Dashboard.TotalVersion'), id: '-1' }, ...this.fixed_version]
-    },
-    assignedToOptions() {
-      return [{ name: this.$t('Dashboard.TotalMember'), id: '-1' }, ...this.assigned_to]
+    isFilterChanged() {
+      for (const item of Object.keys(this.filterValue)) {
+        const checkFilterValue = this.filterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.originFilterValue[item] !== checkFilterValue[item]) {
+          return true
+        }
+      }
+      return !!this.keyword
     }
   },
   watch: {
-    selectedProjectId() {
-      this.fetchData()
+    async selectedProjectId() {
+      await this.loadSelectionList()
+      await this.loadData()
     },
-    kanbanVersionValue() {
-      this.resetClassifyIssue()
-      this.classifyIssue()
-      this.updateData()
-    },
-    kanbanMemberValue(value) {
-      console.log('member', value)
-      this.resetClassifyIssue()
-      this.classifyIssue()
-      this.updateData()
-    },
-    kanbanFilterDimension: {
-      async handler() {
-        this.$refs['filterValue'].selected = []
-        await this.resetClassifyIssue()
-        await this.classifyIssue()
-        await this.updateData()
-      }
-    },
-    kanbanFilterValue: {
-      immediate: true,
-      deep: true,
-      async handler() {
-        await this.resetClassifyIssue()
-        await this.classifyIssue()
-        await this.updateData()
-      }
-    },
-    projectIssueList: {
-      deep: true,
-      async handler() {
-        // this.isLoading = true
-        await this.resetClassifyIssue()
-        await this.classifyIssue()
-        await this.updateData()
-        // this.isLoading = false
+    isLoading(value) {
+      if (!value) {
+        this.classifyIssue()
       }
     }
   },
   async created() {
+    this.filterValue = this.kanbanFilter
+    this.groupBy = this.kanbanGroupBy
+    this.displayClosed = this.kanbanDisplayClosed
+    this.keyword = this.kanbanKeyword
     await this.loadSelectionList()
     await this.loadData()
   },
   methods: {
     ...mapActions('projects', [
       'getProjectUserList',
-      'setKanbanMemberValue',
-      'setKanbanVersionValue',
-      'setKanbanFilterDimension',
-      'setKanbanFilterValue'
+      'setKanbanFilter',
+      'setKanbanGroupByDimension',
+      'setKanbanGroupByValue',
+      'setKanbanDisplayClosed',
+      'setKanbanKeyword'
     ]),
     async loadData() {
-      this.isLoading = true
       try {
         await this.fetchData()
       } catch (e) {
         // null
       }
-      this.isLoading = false
     },
     async fetchData() {
       await this.resetClassifyIssue()
       this.projectIssueList = {}
-      this.syncLoadFilterData()
-      const isHasClosed = this.kanbanFilterValue.filter((item) => (item.hasOwnProperty('is_closed') && item.is_closed))
+      await this.syncLoadFilterData()
+      const isHasClosed = this.groupByValueOnBoard.filter((item) => (item.hasOwnProperty('is_closed') && item.is_closed))
       if (isHasClosed.length > 0) {
         const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
         this.relativeIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       }
-      await this.classifyIssue()
-      await this.updateData()
     },
     checkInFilterValue(value) {
-      if (this.kanbanFilterValue.length <= 0) return true
-      return this.kanbanFilterValue.filter(item => item.id === value)
+      if (this.groupBy.value.length <= 0) return true
+      return this.groupBy.value.find(item => item.id === value)
     },
     classifyIssue() {
-      let issueList = this.projectIssueList
-      if (this.kanbanFilterDimension !== 'status') {
-        issueList = this.projectIssueList.filter(issue => issue.status.id !== 6)
-      }
+      this.resetClassifyIssue()
+      const issueList = this.projectIssueList
       issueList.forEach(issue => {
-        let dimensionName = issue[this.kanbanFilterDimension].id
-        if (!dimensionName) {
-          dimensionName = ''
-        }
-        if (this.checkInFilterValue(dimensionName)) {
-          if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
-            this.classifyIssueList[dimensionName] = []
+        if (issue) {
+          let dimensionName = issue[this.groupBy.dimension].id
+          if (!dimensionName) {
+            dimensionName = ''
           }
-          this.classifyIssueList[dimensionName].push(issue)
+          if (this.checkInFilterValue(dimensionName)) {
+            if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
+              this.classifyIssueList[dimensionName] = []
+            }
+            this.classifyIssueList[dimensionName].push(issue)
+          }
         }
       })
+      this.sortIssue()
     },
-    syncLoadFilterData() {
-      this.projectIssueList = []
-      for (const item of this.kanbanFilterValue) {
-        getProjectIssueList(this.selectedProjectId, { [this.kanbanFilterDimension + '_id']: item.id })
-          .then((res) => {
-            this.projectIssueList = [...this.projectIssueList, ... res.data]
-          })
+    // TODO:display closed
+    getParams() {
+      const result = {}
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) {
+          result[item + '_id'] = this.filterValue[item]
+        }
+      })
+      if (this.keyword) {
+        result['search'] = this.keyword
       }
+      return result
+    },
+    async syncLoadFilterData() {
+      await this.cancelLoadFilterData()
+      this.projectIssueQueue = {}
+      this.projectIssueList = []
+      const getIssueList = []
+      this.isLoading = true
+      for (const item of this.groupByValueOnBoard) {
+        const CancelToken = axios.CancelToken.source()
+        getIssueList.push(getProjectIssueList(this.selectedProjectId,
+          { ...this.getParams(), [this.groupBy.dimension + '_id']: item.id },
+          CancelToken.token))
+        this.$set(this.projectIssueQueue, item.id, CancelToken)
+      }
+      await Promise.all(getIssueList)
+        .then((res) => {
+          const issueList = res.map(item => item.data)
+          const list = [].concat.apply([], issueList)
+          this.$set(this.$data, 'projectIssueList', list)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+        .finally(() => {
+          this.projectIssueQueue = {}
+          this.isLoading = false
+        })
+    },
+    cancelLoadFilterData() {
+      Object.values(this.projectIssueQueue).forEach((item) => {
+        item.cancel()
+      })
+    },
+    sortByDueDate(a, b) {
+      return new Date(a.due_date) - new Date(b.due_date)
     },
     async loadSelectionList() {
       await Promise.all([
@@ -339,19 +410,22 @@ export default {
         const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
           item => item.data
         )
-        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: '' }, ...versionList.versions]
-        // const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
-        // if (version.length > 0) {
-        //   this.$set(this.filterValue, 'fixed_version', version[0].id)
-        //   this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-        // }
+        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
+        const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
+        if (version.length > 0) {
+          if (Object.keys(this.kanbanFilter).length <= 0) {
+            this.$set(this.filterValue, 'fixed_version', version[0].id)
+          }
+          this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+        }
 
         this.tracker = typeList
         this.assigned_to = [
+          { name: this.$t('Issue.Unassigned'), id: 'null' },
           ...assigneeList.user_list
         ]
         this.status = statusList
-        this.setKanbanFilterValue(this.status.filter((item) => (item.is_closed === false)))
+        this.setGroupByUnclosedStatus()
         this.priority = priorityList
         // if (this.userRole === 'Engineer') {
         //   this.$set(this.filterValue, 'assigned_to', this.userId)
@@ -359,42 +433,33 @@ export default {
         // }
       })
     },
+    setGroupByUnclosedStatus() {
+      this.groupBy.value = (this.status.filter((item) => (item.is_closed === false)))
+    },
     resetClassifyIssue() {
       this.classifyIssueList = {}
     },
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
-    searchKanbanCard(value, opt) {
-      Object.keys(this.classifyIssueList).forEach(item => {
-        if (value === '') {
-          this.classifyIssueList[item] = this.classifyIssueList[item].filter(subItem => {
-            const findKey = opt['keys'][0].split('.')
-            const findName = findKey.reduce((total, current) => total[current], subItem)
-            return findName === undefined || findKey[0] === ''
-          })
-        } else {
-          const fuse = new Fuse(this.classifyIssueList[item], opt)
-          const res = fuse.search(`="${value}"`)
-          this.classifyIssueList[item] = res.map(items => items.item)
-        }
-      })
-    },
+    // TODO:update Issue
     async updateIssueBoard() {
       await this.fetchData()
-      await this.updateData()
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
         this.isLoading = true
-        // const getUpdateDimension = this[this.kanbanFilterDimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
-        await updateIssue(evt.event.added.element.id, { [this.kanbanFilterDimension + '_id']: evt.boardObject.id })
-        this.projectIssueList.forEach(item => {
-          if (item.id === evt.event.added.element.id) {
-            item[this.kanbanFilterDimension] = evt.boardObject
-          }
-        })
-        await this.updateData()
+        // const getUpdateDimension = this[this.groupBy.dimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
+        try {
+          await updateIssue(evt.event.added.element.id, { [this.groupBy.dimension + '_id']: evt.boardObject.id })
+          this.projectIssueList.forEach(item => {
+            if (item.id === evt.event.added.element.id) {
+              item[this.groupBy.dimension] = evt.boardObject
+            }
+          })
+        } catch (e) {
+          // error
+        }
         this.isLoading = false
       }
     },
@@ -402,48 +467,24 @@ export default {
       const { id, value } = event
       this.isLoading = true
       const filterDimension = Object.keys(value)[0]
-      await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
-      this.projectIssueList.forEach(item => {
-        if (item.id === id) {
-          item[filterDimension] = value[filterDimension]
-        }
-      })
-      await this.updateData()
+      try {
+        await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
+        this.projectIssueList.forEach(item => {
+          if (item.id === id) {
+            item[filterDimension] = value[filterDimension]
+          }
+        })
+      } catch (e) {
+        // error
+      }
       this.isLoading = false
-    },
-    updateMemberValue(value) {
-      this.setKanbanMemberValue(value)
-      this.updateData()
-    },
-    updateVersionValue(value) {
-      this.setKanbanVersionValue(value)
-      this.updateData()
     },
     sortIssue() {
       const sortPriority = (a, b) => (a.priority.id - b.priority.id)
-      const sortDueDate = (a, b) => (a.due_date - b.due_date)
+      const sortDueDate = (a, b) => (new Date(b.due_date) - new Date(a.due_date))
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortDueDate).sort(sortPriority))
       })
-    },
-    updateData() {
-      this.resetClassifyIssue()
-      this.classifyIssue()
-      this.sortIssue()
-      const versionOpt = {
-        keys: ['fixed_version.id'],
-        useExtendedSearch: true
-      }
-      const userOpt = {
-        keys: ['assigned_to.id'],
-        useExtendedSearch: true
-      }
-      if (this.kanbanVersionValue !== '-1' && this.kanbanFilterDimension !== 'fixed_version') {
-        this.searchKanbanCard(this.kanbanVersionValue, versionOpt)
-      }
-      if (this.kanbanMemberValue !== '-1' && this.kanbanFilterDimension !== 'assigned_to') {
-        this.searchKanbanCard(this.kanbanMemberValue, userOpt)
-      }
     },
     createRelativeList(list) {
       const result = []
@@ -463,8 +504,6 @@ export default {
       e.effectAllowed = 'copy'
       e.target.classList.add('draggingObject')
       e.dataTransfer.setData('json', JSON.stringify(item))
-      // console.log('dragStart')
-      // console.log(e)
     },
     dragEnd(e) {
       e.target.classList.remove('draggingObject')
@@ -472,32 +511,42 @@ export default {
     getFilterValueList(value) {
       return this[value]
     },
-    getTagType(name) {
-      switch (name) {
-        case 'Active':
-          return ''
-        case 'Assigned':
-          return 'danger'
-        case 'Closed':
-          return 'info'
-        case 'Solved':
-          return 'secondary'
-        case 'InProgress':
-          return 'warning'
-        case 'Verified':
-          return 'success'
-        case 'Feature':
-          return 'feature'
-        case 'Bug':
-          return 'bug'
-        case 'Document':
-          return 'document'
-        case 'Research':
-          return 'research'
-      }
+    isRightPanelItemHasComponents(name) {
+      return ['status', 'tracker'].includes(name)
     },
     handleRightPanelVisible(value) {
       this.rightPanelVisible = value
+    },
+    cleanFilter() {
+      this.filterValue = Object.assign({}, this.originFilterValue)
+      this.keyword = null
+      this.displayClosed = false
+      this.onChangeGroupByDimension('status')
+      this.onChangeFilter()
+    },
+    onChangeFilter() {
+      this.setKanbanFilter(this.filterValue)
+      this.setKanbanKeyword(this.keyword)
+      this.setKanbanDisplayClosed(this.displayClosed)
+      this.loadData()
+    },
+    onChangeGroupByDimension(value) {
+      this.$set(this.groupBy, 'dimension', value)
+      if (this.filterValue.hasOwnProperty(this.groupBy.dimension)) {
+        this.$delete(this.filterValue, this.groupBy.dimension)
+      }
+      if (this.groupBy.dimension === 'status') {
+        this.setGroupByUnclosedStatus()
+      } else {
+        this.$set(this.groupBy, 'value', [])
+      }
+      this.setKanbanGroupByDimension(this.groupBy.dimension)
+      this.loadData()
+    },
+    onChangeGroupByValue(value) {
+      this.$set(this.groupBy, 'value', value)
+      this.setKanbanGroupByValue(this.groupBy.value)
+      this.loadData()
     }
   }
 }
@@ -517,7 +566,7 @@ export default {
   height: calc(100vh - 50px - 40px - 40px - 25px - 10px);
   overflow-x: auto;
 
-  &.is-panel{
+  &.is-panel {
     width: calc(100% - 260px);
   }
 

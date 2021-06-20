@@ -13,10 +13,13 @@ const getDefaultState = () => {
     list: [],
     total: 0,
     selectedProject: { id: -1 },
-    kanbanVersionValue: '-1',
-    kanbanMemberValue: '-1',
-    kanbanFilterDimension: 'status',
-    kanbanFilterValue: []
+    kanbanFilter: {},
+    kanbanGroupBy: {
+      dimension: 'status',
+      value: []
+    },
+    kanbanDisplayClosed: false,
+    kanbanKeyword: null
   }
 }
 
@@ -32,17 +35,20 @@ const mutations = {
   SET_SELECTED_PROJECT: (state, project) => {
     state.selectedProject = project
   },
-  SET_KANBAN_VERSION_VALUE: (state, value) => {
-    state.kanbanVersionValue = value
+  SET_KANBAN_FILTER: (state, value) => {
+    state.kanbanFilter = value
   },
-  SET_KANBAN_MEMBER_VALUE: (state, value) => {
-    state.kanbanMemberValue = value
+  SET_KANBAN_GROUP_BY_DIMENSION: (state, value) => {
+    state.kanbanGroupBy.dimension = value
   },
-  SET_KANBAN_FILTER_DIMENSION: (state, value) => {
-    state.kanbanFilterDimension = value
+  SET_KANBAN_GROUP_BY_VALUE: (state, value) => {
+    state.kanbanGroupBy.value = value
   },
-  SET_KANBAN_FILTER_VALUE: (state, value) => {
-    state.kanbanFilterValue = value
+  SET_KANBAN_DISPLAY_CLOSED: (state, value) => {
+    state.kanbanDisplayClosed = value
+  },
+  SET_KANBAN_KEYWORD: (state, value) => {
+    state.kanbanKeyword = value
   }
 }
 
@@ -105,23 +111,25 @@ const actions = {
   },
   setSelectedProject({ commit }, project) {
     commit('SET_SELECTED_PROJECT', project)
-    commit('SET_KANBAN_VERSION_VALUE', '-1')
-    commit('SET_KANBAN_MEMBER_VALUE', '-1')
-    commit('SET_KANBAN_FILTER_DIMENSION', 'status')
-    commit('SET_KANBAN_FILTER_VALUE', [])
+    commit('SET_KANBAN_FILTER', {})
+    commit('SET_KANBAN_GROUP_BY_DIMENSION', 'status')
+    commit('SET_KANBAN_GROUP_BY_VALUE', [])
   },
-  setKanbanVersionValue({ commit }, value) {
-    commit('SET_KANBAN_VERSION_VALUE', value)
+  setKanbanFilter({ commit }, value) {
+    commit('SET_KANBAN_FILTER', value)
   },
-  setKanbanMemberValue({ commit }, value) {
-    commit('SET_KANBAN_MEMBER_VALUE', value)
+  setKanbanGroupByDimension({ commit }, value) {
+    commit('SET_KANBAN_GROUP_BY_DIMENSION', value)
+    commit('SET_KANBAN_GROUP_BY_VALUE', [])
   },
-  setKanbanFilterDimension({ commit }, value) {
-    commit('SET_KANBAN_FILTER_DIMENSION', value)
-    commit('SET_KANBAN_FILTER_VALUE', [])
+  setKanbanGroupByValue({ commit }, value) {
+    commit('SET_KANBAN_GROUP_BY_VALUE', value)
   },
-  setKanbanFilterValue({ commit }, value) {
-    commit('SET_KANBAN_FILTER_VALUE', value)
+  setKanbanDisplayClosed({ commit }, value) {
+    commit('SET_KANBAN_DISPLAY_CLOSED', value)
+  },
+  setKanbanKeyword({ commit }, value) {
+    commit('SET_KANBAN_KEYWORD', value)
   }
 }
 

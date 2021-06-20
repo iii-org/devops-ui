@@ -63,24 +63,24 @@
             </span>
           </el-tooltip>
         </div>
-        <div v-if="element.parent || element.children " class="parent">
+        <div v-if="element.family " class="parent">
           <el-collapse v-model="element.show" @change="onCollapseChange(element)">
             <el-collapse-item name="relation">
               <template #title>
                 <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
-              <template v-if="element.issue_relations">
-                <div v-if="element.issue_relations.hasOwnProperty('parent')" class="parent">
+              <template v-if="element.family">
+                <div v-if="element.hasOwnProperty('parent')" class="parent">
                   <b>{{ $t('Issue.ParentIssue') }}：</b>
-                  <status :name="element.issue_relations.parent.status.name" size="mini" />
-                  <el-link type="primary" :underline="false" @click="handleClick(element.issue_relations.parent.id)">
-                    {{ element.issue_relations.parent.name }}
+                  <status :name="element.parent.status.name" size="mini" />
+                  <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
+                    {{ element.parent.name }}
                   </el-link>
                 </div>
-                <div v-if="element.issue_relations.hasOwnProperty('children')&&element.issue_relations.children.length > 0" class="parent">
+                <div v-if="element.hasOwnProperty('children')&&element.children.length > 0" class="parent">
                   <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                   <ol class="children_list">
-                    <li v-for="(subElement, index) in element.issue_relations.children" :key="index">
+                    <li v-for="(subElement, index) in element.children" :key="index">
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
@@ -94,6 +94,7 @@
         </div>
       </div>
     </draggable>
+    <!-- TODO:focus-version -->
     <AddIssueDialog
       :dialog-visible="showDialog"
       :dimension="dimension"
@@ -124,9 +125,9 @@ export default {
   },
   filters: {
     lengthFilter(value) {
-      if (!value.issue_relations) return null
-      const parent = (value.issue_relations.hasOwnProperty('parent')) ? 1 : 0
-      const children = (value.issue_relations.hasOwnProperty('children')) ? value.issue_relations.children.length : 0
+      if (!value.hasOwnProperty('parent') && !value.hasOwnProperty('children')) return null
+      const parent = (value.hasOwnProperty('parent')) ? 1 : 0
+      const children = (value.hasOwnProperty('children')) ? value.children.length : 0
       return '(' + (parent + children) + ')'
     },
     sortByPriority(value) {
@@ -232,7 +233,7 @@ export default {
       return result
     },
     checkPriority(to, element) {
-      return element.issue_relations.children.length <= 0
+      return element.children.length <= 0
     },
     end(boardObject, event) {
       this.reload += 1
@@ -316,11 +317,14 @@ export default {
       e.dataTransfer.clearData()
       e.preventDefault()
     },
-    onCollapseChange(element) {
-      getIssueFamily(element.id)
-        .then((res) => {
-          this.$set(element, 'issue_relations', res.data)
-        })
+    async onCollapseChange(element) {
+      await this.$set(element, 'loadingRelation', true)
+      const family = await getIssueFamily(element.id)
+      const data = family.data
+      if (data.hasOwnProperty('parent')) { await this.$set(element, 'parent', data.parent) }
+      if (data.hasOwnProperty('children')) { await this.$set(element, 'children', data.children) }
+      this.issueReload += 1
+      await this.$set(element, 'loadingRelation', false)
     }
   }
 }
