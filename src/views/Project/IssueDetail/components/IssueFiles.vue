@@ -2,12 +2,19 @@
   <el-row class="el-upload-list">
     <div class="text-subtitle-2 mb-2">{{ $t('Issue.Files') }}</div>
     <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
-      <el-col :span="20">
+      <el-col :span="16">
         <a class="el-upload-list__item-name" @click="handleDownload(file)">
-          <i class="el-icon-document" />{{ file.filename }} ({{ $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss') }})
+          <i class="el-icon-document" />{{ file.filename }} ({{
+            $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
+          }})
         </a>
       </el-col>
-      <el-col :span="4" class="text-right">
+      <el-col :span="8" class="text-right">
+        <span v-if="file.content_type.includes('image')">
+          <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" @click="preview(file)">
+            {{ $t('general.Preview') }}
+          </el-button>
+        </span>
         <el-popconfirm
           :confirm-button-text="$t('general.Delete')"
           :cancel-button-text="$t('general.Cancel')"
@@ -22,6 +29,13 @@
         </el-popconfirm>
       </el-col>
     </el-row>
+    <el-dialog :title="image.filename" :visible.sync="dialogVisible" width="80%" top="3vh">
+      <img :src="image.src" style="width: 100%">
+      <span slot="footer">
+        <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
+        <el-button type="primary" @click="downloadImage">{{ $t('File.Download') }}</el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -40,7 +54,13 @@ export default {
   },
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      dialogVisible: false,
+      image: {
+        filename: '',
+        content_type: '',
+        src: ''
+      }
     }
   },
   computed: {
@@ -75,6 +95,23 @@ export default {
     removeFile(id) {
       const idx = this.issueFile.findIndex(item => item.id === id)
       this.issueFile.splice(idx, 1)
+    },
+    async preview(row) {
+      const { id, content_type, filename } = row
+      const res = await downloadProjectFile({ id, filename, project_id: this.selectedProject.id })
+      const base64String = btoa(String.fromCharCode(...new Uint8Array(res)))
+      this.image.content_type = content_type
+      this.image.filename = filename
+      this.image.src = `data:${content_type};base64, ${base64String}`
+      this.dialogVisible = true
+    },
+    downloadImage() {
+      const { src, filename } = this.image
+      const link = document.createElement('a')
+      link.href = src
+      link.setAttribute('download', filename)
+      document.body.appendChild(link)
+      link.click()
     }
   }
 }
