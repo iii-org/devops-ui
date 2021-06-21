@@ -328,7 +328,7 @@ export default {
         return 'success'
       } else if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'exception'
-      } else if (today - dueDate <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'warning'
       }
     },
@@ -337,7 +337,7 @@ export default {
       const today = new Date()
       if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'danger'
-      } else if (today - dueDate <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
         console.log(today - dueDate)
         return 'warning'
       }
@@ -350,6 +350,11 @@ export default {
       if (data.hasOwnProperty('children')) { await this.$set(element, 'children', data.children) }
       this.issueReload += 1
       await this.$set(element, 'loadingRelation', false)
+    },
+    differentInDays(a, b) {
+      const Difference_In_Time = a.getTime() - b.getTime()
+      console.log(Difference_In_Time / (1000 * 3600 * 24))
+      return Difference_In_Time / (1000 * 3600 * 24)
     }
   }
 }

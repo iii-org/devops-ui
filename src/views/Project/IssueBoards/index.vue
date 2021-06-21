@@ -381,7 +381,7 @@ export default {
         const CancelToken = axios.CancelToken.source()
         getIssueList.push(getProjectIssueList(this.selectedProjectId,
           { ...this.getParams(), [this.groupBy.dimension + '_id']: item.id },
-          CancelToken.token))
+          { cancelToken: CancelToken.token }))
         this.$set(this.projectIssueQueue, item.id, CancelToken)
       }
       await Promise.all(getIssueList)

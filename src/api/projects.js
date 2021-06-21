@@ -177,7 +177,7 @@ export function deleteProjectVersion(pId, vId) {
 //     method: 'GET'
 //   })
 // }
-export const getProjectIssueList = (pId, params, cancelToken) => request.get('/project/' + pId + '/issues_list', { params: { ...params }, cancelToken })
+export const getProjectIssueList = (pId, params, config) => request.get('/project/' + pId + '/issues_list', { params: { ...params }, ...config })
 
 // 取得project內所有issue清單 [0.5 RoadMap_Detail]
 export function getProjectIssueListByVersion(pId, params) {
