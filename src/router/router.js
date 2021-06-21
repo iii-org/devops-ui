@@ -103,7 +103,7 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'project-admin',
-    redirect: '/overview/dashboard',
+    redirect: '/overview/project-list',
     meta: {
       title: 'projectList',
       icon: 'el-icon-s-cooperation',
