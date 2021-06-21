@@ -1,121 +1,119 @@
 <template>
   <div class="app-container">
     <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" :body-style="{ 'min-height': '80vh' }">
-      <template v-if="!isLoading">
-        <el-row slot="header">
-          <el-row type="flex" align="bottom" justify="space-between">
-            <el-row>
-              <el-col class="text-h5 mr-3">
-                <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
-                           @click="handleBackPage"
-                >
-                  {{ $t('general.Back') }}
-                </el-button>
-                <template v-if="tracker">
-                  <tracker :name="tracker" />
-                </template>
-                <template v-else>{{ $t('Issue.Issue') }}</template>
-                #{{ issueId }} -
-                <IssueTitle ref="IssueTitle" v-model="form.subject" />
-                <span class="text-body-1 mr-3">
-                  {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
-                </span>
-              </el-col>
-            </el-row>
-            <el-col :span="6" class="text-right">
-              <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-              <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+      <el-row slot="header">
+        <el-row type="flex" align="bottom" justify="space-between">
+          <el-row>
+            <el-col class="text-h5 mr-3">
+              <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
+                         @click="handleBackPage"
+              >
+                {{ $t('general.Back') }}
+              </el-button>
+              <template v-if="tracker">
+                <tracker :name="tracker" />
+              </template>
+              <template v-else>{{ $t('Issue.Issue') }}</template>
+              #{{ issueId }} -
+              <IssueTitle ref="IssueTitle" v-model="form.subject" />
+              <span class="text-body-1 mr-3">
+                {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+              </span>
             </el-col>
           </el-row>
+          <el-col :span="6" class="text-right">
+            <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
+            <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+          </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col ref="mainIssueWrapper" :span="24" :md="16">
-            <el-col :span="24">
-              <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
-                            @update-issue="handleUpdated"
-              />
+      </el-row>
+      <el-row :gutter="20">
+        <el-col ref="mainIssueWrapper" :span="24" :md="16">
+          <el-col :span="24">
+            <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
+                          @update-issue="handleUpdated"
+            />
+          </el-col>
+          <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
+            <el-col ref="IssueDescription" :span="24" class="mb-3">
+              <issue-description v-model="form.description" />
             </el-col>
-            <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-              <el-col ref="IssueDescription" :span="24" class="mb-3">
-                <issue-description v-model="form.description" />
-              </el-col>
-              <el-col ref="IssueFiles">
-                <issue-files v-if="files.length>0" :issue-file.sync="files" />
-              </el-col>
-              <el-col ref="IssueRelation">
-                <el-collapse v-if="countRelationIssue>0">
-                  <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
-                    <ul>
-                      <li v-if="Object.keys(parent).length>0">
-                        {{ $t('Issue.ParentIssue') }}：
-                        <el-link :underline="false" @click="onRelationIssueDialog(parent.id)">
-                          <status :name="parent.status.name" size="mini" />
-                          <template v-if="parent.tracker">
-                            <tracker :name="parent.tracker.name" />
-                          </template>
-                          <template v-else>{{ $t('Issue.Issue') }}</template>
-                          #{{ parent.id }} - {{ parent.name }}
-                          <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
-                        </el-link>
-                        <div class="text-right">
-                          <el-popconfirm
-                            :confirm-button-text="$t('general.Remove')"
-                            :cancel-button-text="$t('general.Cancel')"
-                            icon="el-icon-info"
-                            icon-color="red"
-                            :title="$t('Issue.RemoveIssueRelation')"
-                            @onConfirm="removeIssueRelation(issueId)"
-                          >
-                            <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
-                          </el-popconfirm>
-                        </div>
-                      </li>
-                      <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
-                        <ol>
-                          <li v-for="child in children" :key="child.id">
-                            <el-link :underline="false" @click="onRelationIssueDialog(child.id)">
-                              <status :name="child.status.name" size="mini" />
-                              <template v-if="child.tracker">
-                                <tracker :name="child.tracker.name" />
-                              </template>
-                              <template v-else>{{ $t('Issue.Issue') }}</template>
-                              #{{ child.id }} - {{ child.subject }}
-                              <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
-                                ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
-                                - {{ child.assigned_to.login }})</span>
-                            </el-link>
-                            <div class="text-right">
-                              <el-popconfirm
-                                :confirm-button-text="$t('general.Remove')"
-                                :cancel-button-text="$t('general.Cancel')"
-                                icon="el-icon-info"
-                                icon-color="red"
-                                :title="$t('Issue.RemoveIssueRelation')"
-                                @onConfirm="removeIssueRelation(child.id)"
-                              >
-                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
-                              </el-popconfirm>
-                            </div>
-                          </li>
-                        </ol>
-                      </li>
-                    </ul>
-                  </el-collapse-item>
-                </el-collapse>
-              </el-col>
-              <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
-                <issue-notes-editor ref="IssueNotesEditor" height="125px" />
-              </el-col>
-              <el-col :span="24">
-                <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" @show-parent-issue="onRelationIssueDialog" />
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="24" :md="8" class="issueOptionHeight">
-            <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent.sync="parent" :children-issue="children.length" @isLoading="showLoading" />
-          </el-col>
-        </el-row>
-      </template>
+            <el-col ref="IssueFiles">
+              <issue-files v-if="files.length>0" :issue-file.sync="files" />
+            </el-col>
+            <el-col ref="IssueRelation">
+              <el-collapse v-if="countRelationIssue>0">
+                <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
+                  <ul>
+                    <li v-if="Object.keys(parent).length>0">
+                      {{ $t('Issue.ParentIssue') }}：
+                      <el-link :underline="false" @click="onRelationIssueDialog(parent.id)">
+                        <status :name="parent.status.name" size="mini" />
+                        <template v-if="parent.tracker">
+                          <tracker :name="parent.tracker.name" />
+                        </template>
+                        <template v-else>{{ $t('Issue.Issue') }}</template>
+                        #{{ parent.id }} - {{ parent.name }}
+                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
+                      </el-link>
+                      <div class="text-right">
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Remove')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Issue.RemoveIssueRelation')"
+                          @onConfirm="removeIssueRelation(issueId)"
+                        >
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                        </el-popconfirm>
+                      </div>
+                    </li>
+                    <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
+                      <ol>
+                        <li v-for="child in children" :key="child.id">
+                          <el-link :underline="false" @click="onRelationIssueDialog(child.id)">
+                            <status :name="child.status.name" size="mini" />
+                            <template v-if="child.tracker">
+                              <tracker :name="child.tracker.name" />
+                            </template>
+                            <template v-else>{{ $t('Issue.Issue') }}</template>
+                            #{{ child.id }} - {{ child.subject }}
+                            <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
+                              ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
+                              - {{ child.assigned_to.login }})</span>
+                          </el-link>
+                          <div class="text-right">
+                            <el-popconfirm
+                              :confirm-button-text="$t('general.Remove')"
+                              :cancel-button-text="$t('general.Cancel')"
+                              icon="el-icon-info"
+                              icon-color="red"
+                              :title="$t('Issue.RemoveIssueRelation')"
+                              @onConfirm="removeIssueRelation(child.id)"
+                            >
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                            </el-popconfirm>
+                          </div>
+                        </li>
+                      </ol>
+                    </li>
+                  </ul>
+                </el-collapse-item>
+              </el-collapse>
+            </el-col>
+            <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
+              <issue-notes-editor ref="IssueNotesEditor" height="125px" />
+            </el-col>
+            <el-col :span="24">
+              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" @show-parent-issue="onRelationIssueDialog" />
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="24" :md="8" class="issueOptionHeight">
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :children-issue="children.length" @isLoading="showLoading" />
+        </el-col>
+      </el-row>
       <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close>
         <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" />
       </el-dialog>
@@ -301,6 +299,7 @@ export default {
       if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
         this.onProjectChange(data.project.id)
       }
+      this.$refs.IssueForm.getClosable()
     },
     onProjectChange(value) {
       localStorage.setItem('projectId', value)
