@@ -112,7 +112,7 @@
             </el-row>
           </el-col>
           <el-col :span="24" :md="8" class="issueOptionHeight">
-            <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :children-issue="children.length" @isLoading="showLoading" />
+            <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent.sync="parent" :children-issue="children.length" @isLoading="showLoading" />
           </el-col>
         </el-row>
       </template>

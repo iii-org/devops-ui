@@ -338,7 +338,6 @@ export default {
       if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'danger'
       } else if (this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
-        console.log(today - dueDate)
         return 'warning'
       }
     },

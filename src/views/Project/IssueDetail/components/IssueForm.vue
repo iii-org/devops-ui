@@ -287,6 +287,7 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.issueList = [this.originalParentIssue]
   },
   methods: {
     async fetchData() {
