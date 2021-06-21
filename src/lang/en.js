@@ -307,9 +307,11 @@ export default {
     Description: 'Issue Description',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
+    SelectVersion: '@:Version.SelectVersion',
     SelectPriority: 'Select @:Issue.Priority',
     SelectStatus: 'Select @:general.Status',
     SearchNameOrAssignee: 'Search ID, Name Or Assignee',
+    SelectMember: '@:Member.SelectMember',
     CleanFilter: 'Clean Filter',
     Save: 'Save',
     Notes: 'Notes',
@@ -371,6 +373,7 @@ export default {
     VersionUndecided: 'Version Undecided',
     Unassigned: '@:Dashboard.Unassigned',
     RelatedIssue: 'Related Issue',
+    DisplayClosedIssue: 'Show Closed Issues',
     detail: {
       message: {
         set_to: '{creator} {message}',
@@ -400,7 +403,8 @@ export default {
       status: 'Status',
       tracker: 'Type',
       assigned_to: 'Assigned',
-      fixed_version: 'Version'
+      fixed_version: 'Version',
+      priority: '@:Issue.Priority'
     },
     Display: 'Display',
     DragTip: 'Drag to issue, it can change {key} to {value}.',

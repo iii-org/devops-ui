@@ -53,6 +53,9 @@ service.interceptors.response.use(
     return res
   },
   error => {
+    if (axios.isCancel(error)) {
+      return Promise.resolve({})
+    }
     const res = error.response.data
     let res_msg
     if (res.error && i18n.te(`errorMessage.${res.error.code}`)) {
