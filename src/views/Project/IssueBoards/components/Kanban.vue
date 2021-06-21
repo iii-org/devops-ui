@@ -326,18 +326,18 @@ export default {
       const today = new Date()
       if (element.done_ratio === 100) {
         return 'success'
-      } else if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (element.due_date && today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'exception'
-      } else if (this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (element.due_date && this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'warning'
       }
     },
     getDueDateClass(element) {
       const dueDate = new Date(element.due_date)
       const today = new Date()
-      if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      if (element.due_date && today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'danger'
-      } else if (this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (element.due_date && this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'warning'
       }
     },
