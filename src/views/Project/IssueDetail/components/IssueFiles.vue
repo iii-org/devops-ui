@@ -11,7 +11,7 @@
       </el-col>
       <el-col :span="8" class="text-right">
         <span v-if="file.content_type.includes('image')">
-          <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" @click="preview(file)">
+          <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" @click="handlePreview(file)">
             {{ $t('general.Preview') }}
           </el-button>
         </span>
@@ -75,6 +75,7 @@ export default {
       link.setAttribute('download', row.filename) // or any other extension
       document.body.appendChild(link)
       link.click()
+      link.remove()
     },
     deleteIssueFile(row) {
       this.isLoading = true
@@ -87,7 +88,12 @@ export default {
           })
           this.removeFile(row.id)
         })
-        .catch(err => console.err(err))
+        .catch(err => {
+          this.$message({
+            message: err,
+            type: 'error'
+          })
+        })
         .then(() => {
           this.isLoading = false
         })
@@ -96,14 +102,22 @@ export default {
       const idx = this.issueFile.findIndex(item => item.id === id)
       this.issueFile.splice(idx, 1)
     },
-    async preview(row) {
+    handlePreview(row) {
       const { id, content_type, filename } = row
-      const res = await downloadProjectFile({ id, filename, project_id: this.selectedProject.id })
-      const base64String = btoa(String.fromCharCode(...new Uint8Array(res)))
-      this.image.content_type = content_type
-      this.image.filename = filename
-      this.image.src = `data:${content_type};base64, ${base64String}`
-      this.dialogVisible = true
+      downloadProjectFile({ id, filename, project_id: this.selectedProject.id })
+        .then(res => {
+          const base64String = btoa(new Uint8Array(res).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+          this.image.content_type = content_type
+          this.image.filename = filename
+          this.image.src = `data:${content_type};base64, ${base64String}`
+          this.dialogVisible = true
+        })
+        .catch(err => {
+          this.$message({
+            message: err,
+            type: 'error'
+          })
+        })
     },
     downloadImage() {
       const { src, filename } = this.image
@@ -112,6 +126,7 @@ export default {
       link.setAttribute('download', filename)
       document.body.appendChild(link)
       link.click()
+      link.remove()
     }
   }
 }
