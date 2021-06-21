@@ -12,6 +12,7 @@ export function fileExtension() {
     'application/x-csh': '.csh',
     'text/css': '.css',
     'text/csv': '.csv',
+    'text/xml': '.xml',
     'application/msword': '.doc',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
     'application/vnd.ms-fontobject': '.eot',
