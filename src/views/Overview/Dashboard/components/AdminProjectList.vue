@@ -119,6 +119,7 @@ export default {
       this.listLoading = true
       const data = await this.data()
       this.listData = data
+      this.$emit('update', this.listData[0].sync_date)
       this.detailData = data
       this.listLoading = false
     },

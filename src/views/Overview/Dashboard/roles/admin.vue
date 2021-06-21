@@ -80,11 +80,11 @@
                   />
                 </svg>
               </el-col>
-              <el-col :span="12" class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [getSyncDate('projectList')]) }}
+              <el-col :span="12" class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [lastUpdate]) }}
               </el-col>
             </el-row>
           </div>
-          <admin-project-list ref="projectList" :data="getProjectListData" />
+          <admin-project-list ref="projectList" :data="getProjectListData" @update="getlastUpdate" />
         </el-card>
       </el-col>
     </el-row>
@@ -213,11 +213,8 @@ export default {
           return Promise.resolve(res.data)
         })
     },
-    getSyncDate(ref_name) {
-      if (this.$refs[ref_name] && this.$refs[ref_name].listData.length > 0) {
-        return this.$refs[ref_name].listData[0].sync_date
-      }
-      return null
+    getlastUpdate(value) {
+      this.lastUpdate = value
     },
     sleep(ms) {
       return new Promise((resolve) => (setTimeout(resolve, ms)))
