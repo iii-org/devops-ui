@@ -17,7 +17,7 @@ export default {
     issueList: '議題列表',
     createTest: '測試創建',
     testItem: '測試項目',
-    overview: '專案總覽',
+    overview: '總覽',
     wikiList: 'Wiki列表',
     fileList: '檔案列表',
 

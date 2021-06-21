@@ -1,7 +1,7 @@
 export default {
   route: {
     dashboard: 'Dashboard',
-    projectOverview: 'Overview',
+    projectOverview: 'Project Overview',
     projectList: 'Project List',
 
     planList: 'Plan List',

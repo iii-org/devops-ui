@@ -48,13 +48,13 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
+  // RD root
   {
-    // RD root
     path: '/',
     component: Layout,
     redirect: '/overview/dashboard',
     meta: {
-      title: 'projectOverview',
+      title: 'overview',
       icon: 'el-icon-s-cooperation',
       roles: ['Engineer']
     },
@@ -74,40 +74,41 @@ export const asyncRoutes = [
     ]
   },
 
-  // PM Root
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   name: 'project-pm',
-  //   redirect: '/project-list',
-  //   meta: {
-  //   //   title: 'projectList',
-  //   //   icon: 'el-icon-s-cooperation',
-  //     roles: ['Project Manager', Administrator']
-  //   },
-  //   children: [
-  //     {
-  //       path: 'project-list',
-  //       name: 'project-list-pm',
-  //       component: () => import('@/views/ProjectList/ProjectListPM'),
-  //       meta: {
-  //         title: 'projectList',
-  //         icon: 'list',
-  //         roles: ['Project Manager', Administrator']
-  //       }
-  //     }
-  //   ]
-  // },
-  // admin Root
+  // PM QA root
   {
     path: '/',
     component: Layout,
-    name: 'project-admin',
+    name: 'project-pm',
     redirect: '/overview/project-list',
     meta: {
       title: 'projectList',
       icon: 'el-icon-s-cooperation',
-      roles: ['Project Manager', 'QA', 'Administrator']
+      roles: ['Project Manager', 'QA']
+    },
+    children: [
+      {
+        path: 'overview/project-list',
+        name: 'project-list-pm',
+        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
+        meta: {
+          title: 'projectList',
+          icon: 'list',
+          roles: ['Project Manager', 'QA']
+        }
+      }
+    ]
+  },
+
+  // admin root
+  {
+    path: '/',
+    component: Layout,
+    name: 'project-admin',
+    redirect: '/overview/dashboard',
+    meta: {
+      title: 'overview',
+      icon: 'el-icon-s-cooperation',
+      roles: ['Administrator']
     },
     children: [
       {
@@ -127,11 +128,12 @@ export const asyncRoutes = [
         meta: {
           title: 'projectList',
           icon: 'list',
-          roles: ['Project Manager', 'QA', 'Administrator']
+          roles: ['Administrator']
         }
       }
     ]
   },
+  
   {
     path: '/project',
     component: Layout,
