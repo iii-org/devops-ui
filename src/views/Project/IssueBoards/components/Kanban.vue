@@ -230,7 +230,6 @@ export default {
       try {
         result = await getCheckIssueClosable(element.id)
         result = result.data
-        console.log(result)
       } catch (e) {
         console.log(e)
       }
@@ -258,7 +257,7 @@ export default {
         })
       }
     },
-    drop(e, idx) {
+    async drop(e, idx) {
       e.preventDefault()
       if (e.dataTransfer.getData('json')) {
         const data = JSON.parse(e.dataTransfer.getData('json'))
@@ -275,7 +274,7 @@ export default {
             )
           }
           if (toClassObj.id === 6) {
-            const checkChildrenStatus = this.checkChildrenStatusByApi(element)
+            const checkChildrenStatus = await this.checkChildrenStatusByApi(element)
             if (checkAssigned && checkChildrenStatus) {
               this.$emit('update-drag', {
                 id: this.list[idx].id,
@@ -352,7 +351,6 @@ export default {
     },
     differentInDays(a, b) {
       const Difference_In_Time = a.getTime() - b.getTime()
-      console.log(Difference_In_Time / (1000 * 3600 * 24))
       return Difference_In_Time / (1000 * 3600 * 24)
     }
   }
