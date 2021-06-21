@@ -20,9 +20,11 @@
                   clearable
                   @change="onChangeFilter"
                 >
-                  <el-option v-for="item in $data[dimension.value]" :key="item.id"
-                             :label="$te('Issue.'+item.name)?$t('Issue.'+item.name):item.name"
-                             :value="item.id"
+                  <el-option
+                    v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                    :key="item.id"
+                    :label="$te('Issue.'+item.name)?$t('Issue.'+item.name):item.name"
+                    :value="item.id"
                   >
                     <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
                   </el-option>
@@ -237,7 +239,8 @@ export default {
       ]
     },
     groupByOptions() {
-      return this[this.groupBy.dimension].map((item, idx) => ({
+      const dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+      return dimension.map((item, idx) => ({
         id: idx,
         label: this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name,
         value: item
@@ -287,6 +290,7 @@ export default {
     async selectedProjectId() {
       await this.loadSelectionList()
       await this.loadData()
+      await this.cleanFilter()
     },
     isLoading(value) {
       if (!value) {
@@ -322,6 +326,9 @@ export default {
       await this.resetClassifyIssue()
       this.projectIssueList = {}
       await this.syncLoadFilterData()
+      await this.getRelativeList()
+    },
+    async getRelativeList() {
       const isHasClosed = this.groupByValueOnBoard.filter((item) => (item.hasOwnProperty('is_closed') && item.is_closed))
       if (isHasClosed.length > 0) {
         const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
@@ -351,7 +358,6 @@ export default {
       })
       this.sortIssue()
     },
-    // TODO:display closed
     getParams() {
       const result = {}
       Object.keys(this.filterValue).forEach((item) => {
@@ -359,6 +365,9 @@ export default {
           result[item + '_id'] = this.filterValue[item]
         }
       })
+      if (!this.displayClosed && this.groupBy.dimension !== 'status') {
+        result['status_id'] = 'open'
+      }
       if (this.keyword) {
         result['search'] = this.keyword
       }
@@ -425,7 +434,7 @@ export default {
           ...assigneeList.user_list
         ]
         this.status = statusList
-        this.setGroupByUnclosedStatus()
+        this.setGroupByUnclosedStatus(false)
         this.priority = priorityList
         // if (this.userRole === 'Engineer') {
         //   this.$set(this.filterValue, 'assigned_to', this.userId)
@@ -433,8 +442,12 @@ export default {
         // }
       })
     },
-    setGroupByUnclosedStatus() {
-      this.groupBy.value = (this.status.filter((item) => (item.is_closed === false)))
+    setGroupByUnclosedStatus(check) {
+      if (check) {
+        this.$set(this.groupBy, 'value', this.status)
+      } else {
+        this.$set(this.groupBy, 'value', this.status.filter((item) => (item.is_closed === false)))
+      }
     },
     resetClassifyIssue() {
       this.classifyIssueList = {}
@@ -442,7 +455,6 @@ export default {
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
-    // TODO:update Issue
     async updateIssueBoard() {
       await this.fetchData()
     },
@@ -451,7 +463,8 @@ export default {
         this.isLoading = true
         // const getUpdateDimension = this[this.groupBy.dimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
         try {
-          await updateIssue(evt.event.added.element.id, { [this.groupBy.dimension + '_id']: evt.boardObject.id })
+          const res = await updateIssue(evt.event.added.element.id, { [this.groupBy.dimension + '_id']: evt.boardObject.id })
+          await this.updateRelationIssue(this.projectIssueList, res.data)
           this.projectIssueList.forEach(item => {
             if (item.id === evt.event.added.element.id) {
               item[this.groupBy.dimension] = evt.boardObject
@@ -461,7 +474,29 @@ export default {
           // error
         }
         this.isLoading = false
+        await this.getRelativeList()
       }
+    },
+    updateRelationIssue(list, updatedIssue) {
+      list.forEach((issue) => {
+        if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
+          this.$set(issue, 'parent', updatedIssue)
+        }
+        if (issue.hasOwnProperty('children')) {
+          issue.children.forEach((subIssue, idx) => {
+            if (subIssue.id === updatedIssue.id) {
+              this.$set(issue['children'], idx, updatedIssue)
+            }
+          })
+        }
+        if (issue.hasOwnProperty('relations')) {
+          issue.relations.forEach((subIssue, idx) => {
+            if (subIssue.id === updatedIssue.id) {
+              this.$set(issue['relations'], idx, updatedIssue)
+            }
+          })
+        }
+      })
     },
     async quickUpdateIssue(event) {
       const { id, value } = event
@@ -517,10 +552,15 @@ export default {
     handleRightPanelVisible(value) {
       this.rightPanelVisible = value
     },
+    filterClosedStatus(statusList) {
+      if (this.displayClosed) return statusList
+      return statusList.filter((item) => (item.is_closed === false))
+    },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
       this.displayClosed = false
+      this.setGroupByUnclosedStatus(this.displayClosed)
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
     },
@@ -528,6 +568,7 @@ export default {
       this.setKanbanFilter(this.filterValue)
       this.setKanbanKeyword(this.keyword)
       this.setKanbanDisplayClosed(this.displayClosed)
+      this.setGroupByUnclosedStatus(this.displayClosed)
       this.loadData()
     },
     onChangeGroupByDimension(value) {
@@ -536,9 +577,9 @@ export default {
         this.$delete(this.filterValue, this.groupBy.dimension)
       }
       if (this.groupBy.dimension === 'status') {
-        this.setGroupByUnclosedStatus()
+        this.setGroupByUnclosedStatus(false)
       } else {
-        this.$set(this.groupBy, 'value', [])
+        this.setGroupByUnclosedStatus(true)
       }
       this.setKanbanGroupByDimension(this.groupBy.dimension)
       this.loadData()

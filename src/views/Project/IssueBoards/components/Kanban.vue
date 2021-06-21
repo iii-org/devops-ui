@@ -39,17 +39,21 @@
           </div>
         </div>
         <div>
-          <span class="detail">
+          <span v-if="dimension !== 'status'" class="detail">
+            <status :name="element.status.name" size="mini" class="status" />
+          </span>
+          <span v-if="dimension !== 'priority'" class="detail">
             <priority :name="element.priority.name" size="mini" class="priority" />
           </span>
-          <span class="detail">
+          <span v-if="dimension !== 'tracker'" class="detail">
             <tracker :name="element.tracker.name" class="tracker" />
           </span>
         </div>
+        <el-progress v-if="element.done_ratio>0" :percentage="element.done_ratio" :status="getStatus(element)" />
         <div>
-          <span class="detail">
+          <span class="detail due_date">
             <i class="el-icon-date" />
-            <span class="ml-1">{{ element.due_date }}</span>
+            <span class="ml-1" :class="getDueDateClass(element)">{{ element.due_date }}</span>
           </span>
           <el-tooltip
             v-if="element.assigned_to"
@@ -317,6 +321,27 @@ export default {
       e.dataTransfer.clearData()
       e.preventDefault()
     },
+    getStatus(element) {
+      const dueDate = new Date(element.due_date)
+      const today = new Date()
+      if (element.done_ratio === 100) {
+        return 'success'
+      } else if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
+        return 'exception'
+      } else if (today - dueDate <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+        return 'warning'
+      }
+    },
+    getDueDateClass(element) {
+      const dueDate = new Date(element.due_date)
+      const today = new Date()
+      if (today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
+        return 'danger'
+      } else if (today - dueDate <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+        console.log(today - dueDate)
+        return 'warning'
+      }
+    },
     async onCollapseChange(element) {
       await this.$set(element, 'loadingRelation', true)
       const family = await getIssueFamily(element.id)
@@ -403,6 +428,16 @@ export default {
     &__content {
       padding-bottom: 0;
     }
+  }
+}
+.due_date{
+  .danger{
+    font-weight: 900;
+    color:#F56C6C;
+  }
+  .warning{
+    font-weight: 500;
+    color: #d27e00;
   }
 }
 
