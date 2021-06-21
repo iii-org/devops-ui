@@ -19,78 +19,27 @@
             trigger="click"
           >
             <el-form>
-              <el-form-item :label="$t('Version.Version')">
-                <el-select
-                  v-model="filterValue.fixed_version"
-                  :placeholder="$t('Version.SelectVersion')"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                  clearable
-                >
-                  <el-option v-for="item in fixed_version" :key="item.id" :label="item.name" :value="item.id" />
-                </el-select>
-              </el-form-item>
-              <el-form-item :label="$t('Issue.tracker')">
-                <el-select
-                  v-model="filterValue.tracker"
-                  :placeholder="$t('Issue.SelectType')"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                  clearable
-                >
-                  <el-option v-for="track in tracker" :key="track.id" :label="$t('Issue.'+track.name)"
-                             :value="track.id"
+              <template v-for="dimension in filterOptions">
+                <el-form-item :key="dimension.id" :label="dimension.label">
+                  <el-select
+                    v-model="filterValue[dimension.value]"
+                    :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                    :disabled="selectedProjectId === -1"
+                    filterable
+                    clearable
+                    @change="onChangeFilter"
                   >
-                    <tracker :name="track.name" />
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item :label="$t('Issue.priority')">
-                <el-select
-                  v-model="filterValue.priority"
-                  :placeholder="$t('Issue.SelectPriority')"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                  clearable
-                >
-                  <el-option v-for="item in priority" :key="item.id" :label="$t('Issue.'+item.name)"
-                             :value="item.id"
-                  >
-                    <Priority :name="item.name" />
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item :label="$t('general.Status')">
-                <el-select
-                  v-model="filterValue.status"
-                  :placeholder="$t('Issue.SelectStatus')"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                  clearable
-                >
-                  <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)"
-                             :value="item.id"
-                  >
-                    <Status :name="item.name" />
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item :label="$t('Issue.assigned_to')">
-                <el-select
-                  v-model="filterValue.assigned_to"
-                  :placeholder="$t('Member.SelectMember')"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                  clearable
-                >
-                  <el-option
-                    v-for="item in assigned_to"
-                    :key="item.id"
-                    :label="(item.login)? item.name+'('+item.login+')' : item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
+                    <el-option
+                      v-for="item in $data[dimension.value]"
+                      :key="item.id"
+                      :label="$te('Issue.'+item.name)?$t('Issue.'+item.name):item.name"
+                      :value="item.id"
+                    >
+                      <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </template>
             </el-form>
             <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
               <i class="el-icon-arrow-down el-icon--right" /></el-button>
@@ -263,7 +212,7 @@
 
 <script>
 import AddIssue from './components/AddIssue'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
@@ -326,7 +275,27 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId']),
+    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword']),
+    filterOptions() {
+      return [
+        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }
+      ]
+    },
     listFilter() {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
@@ -362,10 +331,13 @@ export default {
     }
   },
   async created() {
+    this.filterValue = this.issueListFilter
+    this.keyword = this.issueListKeyword
     await this.loadSelectionList()
     await this.loadData()
   },
   methods: {
+    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter']),
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
       this.$message({
@@ -468,6 +440,8 @@ export default {
     },
     onChangeFilter() {
       this.listQuery.page = 1
+      this.setIssueListFilter(this.filterValue)
+      this.setIssueListKeyword(this.keyword)
       this.loadData()
     },
     handleClick(row, column) {
@@ -502,9 +476,6 @@ export default {
         .catch(error => {
           return error
         })
-    },
-    isParentIssue(row) {
-      return row.parent === null && row.children.length === 0
     },
     handleAddNewIssue() {
       this.addTopicDialogVisible = true
@@ -552,6 +523,8 @@ export default {
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
+      this.setIssueListFilter(this.filterValue)
+      this.setIssueListKeyword(this.keyword)
       this.onChangeFilter()
     },
     removeIssueRelation(child_issue_id) {

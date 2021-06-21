@@ -19,7 +19,9 @@ const getDefaultState = () => {
       value: []
     },
     kanbanDisplayClosed: false,
-    kanbanKeyword: null
+    kanbanKeyword: null,
+    issueListFilter: {},
+    issueKeyword: null
   }
 }
 
@@ -49,6 +51,12 @@ const mutations = {
   },
   SET_KANBAN_KEYWORD: (state, value) => {
     state.kanbanKeyword = value
+  },
+  SET_ISSUE_LIST_FILTER: (state, value) => {
+    state.issueListFilter = value
+  },
+  SET_ISSUE_LIST_KEYWORD: (state, value) => {
+    state.issueListKeyword = value
   }
 }
 
@@ -130,6 +138,12 @@ const actions = {
   },
   setKanbanKeyword({ commit }, value) {
     commit('SET_KANBAN_KEYWORD', value)
+  },
+  setIssueListFilter({ commit }, value) {
+    commit('SET_ISSUE_LIST_FILTER', value)
+  },
+  setIssueListKeyword({ commit }, value) {
+    commit('SET_ISSUE_LIST_KEYWORD', value)
   }
 }
 
