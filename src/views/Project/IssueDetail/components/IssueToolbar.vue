@@ -1,15 +1,24 @@
 <template>
   <el-row type="flex" justify="space-between" align="middle" class="mb-5">
     <el-col>
-      <el-button size="small" icon="el-icon-upload" type="success" @click="uploadDialogVisible=true">{{ $t('Issue.UploadFiles') }}</el-button>
-      <el-button size="small" icon="el-icon-plus" type="warning" @click="addTopicDialogVisible=true">{{ $t('Issue.AddSubIssue') }}</el-button>
+      <el-button size="small" icon="el-icon-upload" type="success" @click="uploadDialogVisible = true">{{
+        $t('Issue.UploadFiles')
+      }}</el-button>
+      <el-button size="small" icon="el-icon-plus" type="warning" @click="addTopicDialogVisible = true">{{
+        $t('Issue.AddSubIssue')
+      }}</el-button>
     </el-col>
     <el-col class="text-right">
       <el-link :href="issueLink" target="_blank" type="primary" :underline="false">
         <i class="el-icon-link" /> Redmine
       </el-link>
     </el-col>
-    <el-dialog :visible.sync="uploadDialogVisible" :title="$t('Issue.UploadFiles')" top="3vh" @close="handleUploadClose">
+    <el-dialog
+      :visible.sync="uploadDialogVisible"
+      :title="$t('Issue.UploadFiles')"
+      top="3vh"
+      @close="handleUploadClose"
+    >
       <issue-file-uploader ref="IssueFileUploader" class="mb-2" :issue-id="issueId" />
       <div class="mt-2 text-right">
         <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
@@ -72,9 +81,10 @@ export default {
       // use one by one edit issue to upload file
       const { issueId } = this
       fileList
-        .reduce(function(prev, curr) {
+        .reduce((prev, curr) => {
           return prev.then(() => {
             sendForm.delete('upload_file')
+            sendForm.delete('upload_content_type')
             sendForm.append('upload_content_type', curr.raw.type)
             sendForm.append('upload_file', curr.raw, curr.raw.name)
             return updateIssue(issueId, sendForm)
@@ -118,6 +128,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
