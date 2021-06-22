@@ -29,7 +29,7 @@
         </el-popconfirm>
       </el-col>
     </el-row>
-    <el-dialog :title="image.filename" :visible.sync="dialogVisible" width="80%" top="3vh">
+    <el-dialog :title="image.filename" :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body>
       <img :src="image.src" style="width: 100%">
       <span slot="footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
