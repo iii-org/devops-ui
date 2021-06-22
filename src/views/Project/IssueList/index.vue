@@ -391,7 +391,7 @@ export default {
       return data
     },
     sortByDueDate(a, b) {
-      return new Date(a.due_date) - new Date(b.due_date)
+      return new Date(b.due_date) - new Date(a.due_date)
     },
     async loadSelectionList() {
       await Promise.all([
