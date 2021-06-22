@@ -10,7 +10,7 @@
         </a>
       </el-col>
       <el-col :span="8" class="text-right">
-        <span v-if="file.content_type.includes('image')">
+        <span v-if="isAllowPreview(file.content_type)">
           <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" @click="handlePreview(file)">
             {{ $t('general.Preview') }}
           </el-button>
@@ -127,6 +127,10 @@ export default {
       document.body.appendChild(link)
       link.click()
       link.remove()
+    },
+    isAllowPreview(content_type) {
+      if (content_type === null) return false
+      else return content_type.includes('image')
     }
   }
 }
