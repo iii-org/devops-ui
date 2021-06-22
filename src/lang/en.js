@@ -607,7 +607,8 @@ export default {
     SelectTemplate: 'Select a template',
     overdue: 'Overdue',
     not_started: 'Not Started',
-    in_progress: 'In Progress'
+    in_progress: 'In Progress',
+    closed: 'Closed'
   },
   ProcessDevBranch: {
     Commit: 'Commit',
@@ -664,6 +665,7 @@ export default {
     Branch: 'Branch',
     TestPass: 'Test Pass',
     TestFail: 'Test Fail',
+    TestTotal: 'Test total',
     StartTime: 'Start Time',
     SearchBranch: 'Search Branch',
     DevOps: 'DevOps',
@@ -729,6 +731,7 @@ export default {
   },
   Zap: {
     id: 'ID',
+    critical: 'Critical',
     high: 'High',
     medium: 'Medium',
     low: 'Low'
@@ -736,7 +739,9 @@ export default {
   Sideex: {
     promptMessage: 'The system provides the latest 5 reports to download.',
     suitesPassedRatio: 'Suites Passed',
-    casesPassedRatio: 'Cases Passed'
+    suitesPassedTotal: 'Suites Passed Total',
+    casesPassedRatio: 'Cases Passed',
+    casesPassedTotal: 'Cases Passed Total'
   },
   Release: {
     internalVersions: 'Internal versions',

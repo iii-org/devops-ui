@@ -606,7 +606,8 @@ export default {
     SelectTemplate: '請選擇範本',
     overdue: '已超時',
     not_started: '未開始',
-    in_progress: '進行中'
+    in_progress: '進行中',
+    closed: '已完成'
   },
   ProcessDevBranch: {
     Commit: 'Commit',
@@ -662,6 +663,7 @@ export default {
     Branch: '分支',
     TestPass: '測試通過',
     TestFail: '測試失敗',
+    TestTotal: '測試總計',
     StartTime: '開始時間',
     SearchBranch: '搜尋 分支',
     DevOps: 'DevOps',
@@ -727,6 +729,7 @@ export default {
   },
   Zap: {
     id: '編號',
+    critical: '嚴重',
     high: '高風險',
     medium: '中風險',
     low: '低風險'
@@ -734,7 +737,9 @@ export default {
   Sideex: {
     promptMessage: '本系統提供最新五份報表下載',
     suitesPassedRatio: '成功案例',
-    casesPassedRatio: '通過項目'
+    suitesPassedTotal: '成功案例總計',
+    casesPassedRatio: '通過項目',
+    casesPassedTotal: '通過項目總計'
   },
   Release: {
     internalVersions: '內部管控版號',
