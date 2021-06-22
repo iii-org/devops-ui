@@ -159,6 +159,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Fuse from 'fuse.js'
 import { Kanban } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
@@ -292,7 +293,7 @@ export default {
     },
     isLoading(value) {
       if (!value) {
-        this.classifyIssue()
+        this.updateData()
       }
     }
   },
@@ -324,6 +325,7 @@ export default {
       await this.resetClassifyIssue()
       this.projectIssueList = {}
       await this.syncLoadFilterData()
+      await this.updateData()
       await this.getRelativeList()
     },
     async getRelativeList() {
@@ -338,13 +340,12 @@ export default {
       return this.groupBy.value.find(item => item.id === value)
     },
     classifyIssue() {
-      this.resetClassifyIssue()
       const issueList = this.projectIssueList
       issueList.forEach(issue => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
           if (!dimensionName) {
-            dimensionName = ''
+            dimensionName = 'null'
           }
           if (this.checkInFilterValue(dimensionName)) {
             if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
@@ -453,8 +454,35 @@ export default {
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
+    searchKanbanCard(value, opt) {
+      Object.keys(this.classifyIssueList).forEach(item => {
+        if (value === 'null') {
+          this.classifyIssueList[item] = this.classifyIssueList[item].filter(subItem => {
+            const findKey = opt['keys'][0].split('.')
+            const findName = findKey.reduce((total, current) => total[current], subItem)
+            return findName === undefined && findKey[0] !== ''
+          })
+        } else {
+          const fuse = new Fuse(this.classifyIssueList[item], opt)
+          const res = fuse.search(`="${value}"`)
+          this.classifyIssueList[item] = res.map(items => items.item)
+        }
+      })
+    },
+    updateData() {
+      this.resetClassifyIssue()
+      this.classifyIssue()
+      Object.keys(this.filterValue).forEach((item) => {
+        const searchOpt = {
+          keys: [item + '.id'],
+          useExtendedSearch: true
+        }
+        this.searchKanbanCard(this.filterValue[item], searchOpt)
+      })
+    },
     async updateIssueBoard() {
       await this.fetchData()
+      await this.updateData()
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
