@@ -16,9 +16,9 @@
       />
     </div>
     <el-table :data="pagedData" border fit>
-      <el-table-column prop="name" :label="$t('general.Name')" show-overflow-tooltip />
+      <el-table-column prop="name" :label="$t('general.Name')" align="center" show-overflow-tooltip sortable min-width="100" />
       <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
-      <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" />
+      <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" min-width="120" />
       <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
       <el-table-column-tag
         prop="status"

@@ -1,3 +1,14 @@
+
+<template>
+  <el-table-column align="center" v-bind="$props">
+    <template slot-scope="scope">
+      <el-tooltip placement="top" :open-delay="200" :content="scope.row[prop] | UTCtoLocalTime">
+        <span>{{ scope.row[prop] | relativeTime }}</span>
+      </el-tooltip>
+    </template>
+  </el-table-column>
+</template>
+
 <script>
 import i18n from '@/lang'
 
@@ -19,6 +30,10 @@ export default {
     width: {
       type: String,
       default: '130'
+    },
+    sortable: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -43,13 +58,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <el-table-column align="center" v-bind="$props">
-    <template slot-scope="scope">
-      <el-tooltip placement="top" :open-delay="200" :content="scope.row[prop] | UTCtoLocalTime">
-        <span>{{ scope.row[prop] | relativeTime }}</span>
-      </el-tooltip>
-    </template>
-  </el-table-column>
-</template>

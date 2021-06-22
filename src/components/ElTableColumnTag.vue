@@ -53,6 +53,10 @@ export default {
     elementClass: {
       type: String,
       default: 'el-tag--circle'
+    },
+    sortable: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
