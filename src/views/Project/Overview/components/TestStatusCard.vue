@@ -88,7 +88,7 @@ export default {
       this.testResultList = this.handleTestRes(val)
     },
     '$i18n.locale'() {
-      this.handleTestRes(this.projectTestObj)
+      this.testResultList = this.handleTestRes(this.projectTestObj)
     }
   },
   methods: {
