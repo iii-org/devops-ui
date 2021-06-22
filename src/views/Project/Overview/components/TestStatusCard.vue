@@ -86,6 +86,9 @@ export default {
   watch: {
     projectTestObj(val) {
       this.testResultList = this.handleTestRes(val)
+    },
+    '$i18n.locale'() {
+      this.handleTestRes(this.projectTestObj)
     }
   },
   methods: {
@@ -113,9 +116,9 @@ export default {
           Software: 'postman',
           runAt: postmanResult.run_at,
           informationText: [
-            { status: 'passed', count: postmanResult['passed'] },
-            { status: 'failed', count: postmanResult['failed'] },
-            { status: 'total', count: postmanResult['total'] }
+            { status: this.$t('Postman.TestPass'), count: postmanResult['passed'] },
+            { status: this.$t('Postman.TestFail'), count: postmanResult['failed'] },
+            { status: this.$t('Postman.TestTotal'), count: postmanResult['total'] }
           ]
         })
       }
@@ -123,35 +126,44 @@ export default {
     },
     formatCheckmarxResult(checkmarxResult) {
       const ret = {}
-      if (Object.keys(checkmarxResult).length === 0) {
-        Object.assign(ret, {
-          Software: 'checkmarx',
-          report_id: '',
-          status: '',
-          runAt: '',
-          informationText: []
-        })
-      }
-      if (checkmarxResult.report_id === undefined) {
-        Object.assign(ret, {
-          Software: 'checkmarx',
-          runAt: '',
-          informationText: [{ status: checkmarxResult.message, count: '' }]
-        })
-      } else {
+      if (checkmarxResult.status === 3) {
         Object.assign(ret, {
           Software: 'checkmarx',
           report_id: checkmarxResult.report_id,
           runAt: checkmarxResult.run_at,
           informationText: [
-            { status: 'highSeverity', count: checkmarxResult['highSeverity'] },
-            { status: 'mediumSeverity', count: checkmarxResult['mediumSeverity'] },
-            { status: 'lowSeverity', count: checkmarxResult['lowSeverity'] },
-            { status: 'infoSeverity', count: checkmarxResult['infoSeverity'] }
+            { status: this.$t('CheckMarx.HighSeverity'), count: checkmarxResult['highSeverity'] },
+            { status: this.$t('CheckMarx.MediumSeverity'), count: checkmarxResult['mediumSeverity'] },
+            { status: this.$t('CheckMarx.LowSeverity'), count: checkmarxResult['lowSeverity'] },
+            { status: this.$t('CheckMarx.InfoSeverity'), count: checkmarxResult['infoSeverity'] }
           ]
+        })
+      } else if (checkmarxResult.status === -1) {
+        Object.assign(ret, {
+          Software: 'checkmarx',
+          report_id: checkmarxResult.report_id,
+          runAt: checkmarxResult.run_at,
+          informationText: []
+        })
+      } else {
+        Object.assign(ret, {
+          Software: 'checkmarx',
+          runAt: '',
+          informationText: [{ status: this.getCheckmarxStatusText(checkmarxResult.status), count: '' }]
         })
       }
       return ret
+    },
+    getCheckmarxStatusText(statusCode) {
+      const statusString = String(statusCode)
+      const mapText = {
+        '-1': this.$t('CheckMarx.noScan'),
+        '1': this.$t('CheckMarx.notCompletedScan'),
+        '2': this.$t('CheckMarx.generatingReportScan'),
+        '4': this.$t('CheckMarx.canceledScan'),
+        '5': this.$t('CheckMarx.failedScan')
+      }
+      return mapText[statusString]
     },
     formatWebinspectResult(webinspectResult) {
       const ret = {}
@@ -165,11 +177,12 @@ export default {
           Software: 'webinspect',
           runAt: webinspectResult.run_at,
           informationText: [
-            { status: 'Critical', count: webinspectResult['criticalCount'] },
-            { status: 'High Severity', count: webinspectResult['highCount'] },
-            { status: 'Medium Severity', count: webinspectResult['mediumCount'] },
-            { status: 'Low Severity', count: webinspectResult['lowCount'] },
-            { status: 'Info Severity', count: webinspectResult['infoCount'] }
+            { status: this.$t('WebInspect.BpSeverity'), count: webinspectResult['bpCount'] },
+            { status: this.$t('WebInspect.Critical'), count: webinspectResult['criticalCount'] },
+            { status: this.$t('WebInspect.HighSeverity'), count: webinspectResult['highCount'] },
+            { status: this.$t('WebInspect.MediumSeverity'), count: webinspectResult['mediumCount'] },
+            { status: this.$t('WebInspect.LowSeverity'), count: webinspectResult['lowCount'] },
+            { status: this.$t('WebInspect.InfoSeverity'), count: webinspectResult['infoCount'] }
           ]
         })
       }
@@ -177,6 +190,9 @@ export default {
     },
     formatSonarqubeResult(sonarqubeResult) {
       const ret = {}
+      const informationArr = sonarqubeResult
+        .map(row => ({ status: row.metric, count: row.value }))
+        .filter(item => item.status !== 'run_at')
       const runAtIdx = sonarqubeResult.findIndex(row => row.metric === 'run_at')
       if (Object.keys(sonarqubeResult).length === 0) {
         Object.assign(ret, {
@@ -187,7 +203,7 @@ export default {
         Object.assign(ret, {
           Software: 'sonarqube',
           runAt: runAtIdx > -1 ? sonarqubeResult[runAtIdx].value : undefined,
-          informationText: sonarqubeResult.map(row => ({ status: row.metric, count: row.value })).filter(item => item.status !== 'run_at')
+          informationText: informationArr.map(row => ({ status: this.$t(`SonarQube.${row.status}`), count: row.count }))
         })
       }
       return ret
@@ -203,10 +219,12 @@ export default {
         Object.assign(ret, {
           Software: 'sideex',
           runAt: sideexResult.run_at,
-          informationText: Object.keys(sideexResult.result).map(key => ({
-            status: key,
-            count: sideexResult.result[key]
-          }))
+          informationText: [
+            { status: this.$t('Sideex.suitesPassedRatio'), count: sideexResult.result['suitesPassed'] },
+            { status: this.$t('Sideex.suitesPassedTotal'), count: sideexResult.result['suitesTotal'] },
+            { status: this.$t('Sideex.casesPassedRatio'), count: sideexResult.result['casesPassed'] },
+            { status: this.$t('Sideex.casesPassedTotal'), count: sideexResult.result['casesTotal'] }
+          ]
         })
       }
       return ret
@@ -223,10 +241,10 @@ export default {
           Software: 'zap',
           runAt: zapResult.run_at,
           informationText: [
-            { status: 'Critical', count: zapResult.result['0'] },
-            { status: 'High Severity', count: zapResult.result['1'] },
-            { status: 'Medium Severity', count: zapResult.result['2'] },
-            { status: 'Low Severity', count: zapResult.result['3'] }
+            { status: this.$t('Zap.critical'), count: zapResult.result['0'] },
+            { status: this.$t('Zap.high'), count: zapResult.result['1'] },
+            { status: this.$t('Zap.medium'), count: zapResult.result['2'] },
+            { status: this.$t('Zap.low'), count: zapResult.result['3'] }
           ]
         })
       }
@@ -241,6 +259,7 @@ export default {
         link.setAttribute('download', 'checkmarx_Report.pdf')
         document.body.appendChild(link)
         link.click()
+        link.remove()
       })
       this.isDisabled = false
     },

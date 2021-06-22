@@ -239,7 +239,12 @@ export default {
     InfoSeverity: '資訊',
     RunAt: '開始時間',
     Report: '報告',
-    SearchScanId: '搜尋 測試編號'
+    SearchScanId: '搜尋 測試編號',
+    noScan: '目前沒有任何掃描。',
+    notCompletedScan: '掃描尚未完成，可能需要數小時來完成。',
+    generatingReportScan: '掃描已完成，正在產生報告，可能需要數分鐘來完成。',
+    canceledScan: '掃描取消。',
+    failedScan: '掃描失敗。'
   },
   WebInspect: {
     ScanId: '測試編號',
@@ -719,7 +724,19 @@ export default {
     Vulnerabilities: '安全漏洞',
     CodeSmells: '程式異味',
     Duplicates: '重複程式碼',
-    Coverage: '覆蓋率'
+    Coverage: '覆蓋率',
+    code_smells: '代碼異味',
+    sqale_index: '技術債務',
+    vulnerabilities: '漏洞',
+    duplicated_lines_density: '重複行數(%)',
+    bugs: '程式錯誤',
+    coverage: '覆蓋率',
+    reliability_rating: '可靠性評分',
+    duplicated_blocks: '重複程式碼',
+    sqale_rating: '可維護性等級',
+    security_rating: '安全等級',
+    security_hotspots: '安全熱點',
+    alert_status: '品質狀態'
   },
   Log: {
     info: '資訊',

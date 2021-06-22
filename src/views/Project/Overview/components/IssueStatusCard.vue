@@ -36,7 +36,6 @@ export default {
   watch: {
     progressObj(val) {
       this.handleProgress(val)
-      console.log(val)
     },
     '$i18n.locale'() {
       this.fillData(this.progressObj)

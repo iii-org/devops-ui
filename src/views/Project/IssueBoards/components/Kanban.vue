@@ -231,7 +231,7 @@ export default {
         result = await getCheckIssueClosable(element.id)
         result = result.data
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
       return result
     },

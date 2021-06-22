@@ -372,7 +372,6 @@ export default {
         // const params = await
         if (this.lastIssueListCancelToken && this.listLoading) {
           this.lastIssueListCancelToken.cancel()
-          console.log('change filter')
         }
         const cancelTokenSource = axios.CancelToken.source()
         const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })

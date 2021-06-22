@@ -9,7 +9,7 @@ import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueI18n)
 Vue.use(VueClipboard)
-// console.log(elementZhLocale)
+
 const messages = {
   'en': {
     ...enLocale,

@@ -31,7 +31,6 @@ const actions = {
   async addFile({ commit }, { rId, data }) {
     try {
       const response = await AF(rId, data)
-      // console.log(response)
     } catch (error) {
       console.error(error.toString())
     }

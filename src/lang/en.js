@@ -239,7 +239,12 @@ export default {
     InfoSeverity: 'Info Severity',
     RunAt: 'Start Time',
     Report: 'Report',
-    SearchScanId: 'Search Scan ID'
+    SearchScanId: 'Search Scan ID',
+    noScan: 'This project does not have any scan.',
+    notCompletedScan: 'The scan is not completed yet. It may take several hours to complete.',
+    generatingReportScan: 'Scan done, the system is generating a report. It may take several minutes to complete.',
+    canceledScan: 'The scan is canceled.',
+    failedScan: 'The scan failed.'
   },
   WebInspect: {
     ScanId: 'Scan ID',
@@ -721,7 +726,19 @@ export default {
     Vulnerabilities: 'Vulnerabilities',
     CodeSmells: 'Code Smells',
     Duplicates: 'Duplicates',
-    Coverage: 'Coverage'
+    Coverage: 'Coverage',
+    code_smells: 'Code Smells',
+    sqale_index: 'Technical Debt',
+    vulnerabilities: 'Vulnerabilities',
+    duplicated_lines_density: 'Duplicated lines (%)',
+    bugs: 'Bugs',
+    coverage: 'Coverage',
+    reliability_rating: 'Reliability Rating',
+    duplicated_blocks: 'Duplicated blocks',
+    sqale_rating: 'Maintainability Rating',
+    security_rating: 'Security Rating',
+    security_hotspots: 'Security Hotspots',
+    alert_status: 'Quality Gate Status'
   },
   Log: {
     info: 'Info',

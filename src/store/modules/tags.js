@@ -15,21 +15,20 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async newTag({ dispatch }, {rId, data}) {
-      try {
-        const response = await NT(rId, data)
-        await new Promise(resolve =>{
-            setTimeout(async ()=>{
-              await dispatch('getBranchesByProject', rId)
-              resolve()
-            }, 1000)
-          })
-        // console.log(response)
-        return (response)
-      } catch (error) {
-        console.error(error.toString())
-        return (error)
-      }
+  async newTag({ dispatch }, { rId, data }) {
+    try {
+      const response = await NT(rId, data)
+      await new Promise(resolve => {
+        setTimeout(async () => {
+          await dispatch('getBranchesByProject', rId)
+          resolve()
+        }, 1000)
+      })
+      return (response)
+    } catch (error) {
+      console.error(error.toString())
+      return (error)
+    }
   }
 }
 

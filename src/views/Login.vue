@@ -99,25 +99,21 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            // console.log('success login')
-
             this.loading = false
           }).then(async() => {
             await this.$store.dispatch('user/getInfo')
-            // console.log('redirect:', this.redirect)
             this.$router.push({ path: this.redirect || '/' })
             this.$router.go(0)
             // resolve()
           }).catch(e => {
-            // console.log(e)
+            console.error(e)
             if (e.message === 'Request failed with status code 401') {
-              // console.log(e)
+              console.error(e)
             }
           }).finally(() => {
             this.loading = false
           })
         } else {
-          // console.log('error submit!!')
           return false
         }
       })

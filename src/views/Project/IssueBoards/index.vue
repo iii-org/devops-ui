@@ -392,7 +392,7 @@ export default {
           this.$set(this.$data, 'projectIssueList', list)
         })
         .catch((e) => {
-          console.log(e)
+          console.error(e)
         })
         .finally(() => {
           this.projectIssueQueue = {}

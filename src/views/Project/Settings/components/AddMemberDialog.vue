@@ -200,7 +200,7 @@ export default {
               this.fetchData()
               this.$emit('update')
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
             .then(() => {
               this.btnConfirmLoading = false
               this.dialogVisible = false
