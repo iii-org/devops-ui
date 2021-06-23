@@ -588,8 +588,9 @@ export default {
     TemplateName: '開發範本名稱',
     TemplateDescription: '開發範本敘述',
     Version: '版本',
-    Status: '專案狀態',
-    Progress: '專案工作進度',
+    IssueStatus: '議題狀態',
+    IssueProgress: '議題執行進度',
+    IssueUpdate: '議題更新',
     UpdateTime: '更新時間',
     deleteProjectConfirmText:
       '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',

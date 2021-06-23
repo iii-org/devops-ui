@@ -27,7 +27,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="status" :label="$t('general.Status')" size="medium" location="zap" min-width="130" />
+      <el-table-column-tag prop="status" size="medium" location="zap" min-width="130" />
       <!-- <el-table-column align="center" :label="$t('general.Status')" min-width="130">
         <template slot-scope="scope">
           <el-tag

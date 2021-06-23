@@ -32,11 +32,11 @@
       <el-table-column-tag
         prop="project_status"
         translate-key="Project"
-        :label="$t('Project.Status')"
+        :label="$t('Project.IssueStatus')"
         location="projectListPM"
         min-width="120"
       />
-      <el-table-column align="center" :label="$t('Project.Progress')" width="140">
+      <el-table-column align="center" :label="$t('Project.IssueProgress')" width="140">
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
           <br>
@@ -48,7 +48,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column-time prop="updated_time" :label="$t('general.LastUpdateTime')" />
+      <el-table-column-time prop="updated_time" :label="$t('Project.IssueUpdate')" />
       <el-table-column v-if="userRole !== 'QA'" align="center" label="GitLab" width="110">
         <template slot-scope="scope">
           <el-popover

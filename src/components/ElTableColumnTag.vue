@@ -44,7 +44,7 @@ export default {
     },
     label: {
       type: String,
-      default: i18n.t('Project.Status')
+      default: i18n.t('general.Status')
     },
     minWidth: {
       type: String,

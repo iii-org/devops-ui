@@ -33,7 +33,6 @@
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
       <el-table-column-tag
         prop="status"
-        :label="$t('general.Status')"
         min-width="120"
         size="small"
         location="accountManage"
