@@ -1,18 +1,9 @@
 <template>
-  <el-dialog
-    :visible.sync="dialogVisible"
-    width="95%"
-    top="3vh"
-    destroy-on-close
-    @close="handleClose"
-    @open="handleOpen"
-  >
+  <el-dialog :visible.sync="dialogVisible" width="95%" top="3vh" @close="handleClose">
     <template slot="title">
-      <span class="font-weight-bold text-h6 ml-4"> {{ $t('ProgressPipelines.TestDetail') }}: </span>
-      {{ pipelineCommit }}
+      <span class="font-weight-bold text-h6 mx-4"> {{ $t('ProgressPipelines.TestDetail') }}</span>
+      <span> {{ pipelineInfos.commitMessage }} </span>
     </template>
-    <el-button v-if="autoPlay" type="danger" size="small" icon="el-icon-video-pause" @click="autoPlay = false">暫停自動切換進度</el-button>
-    <el-button v-else type="success" size="small" icon="el-icon-video-play" @click="autoPlay = true">啟動自動切換進度</el-button>
     <el-tabs v-model="activeStage" tab-position="left" @tab-click="userClick">
       <el-tab-pane
         v-for="(stage, idx) in stages"
@@ -47,6 +38,7 @@
           </div>
           <el-card
             v-for="(step, stepIdx) in stage.steps"
+            :id="'preWindow' + idx"
             :key="stepIdx"
             class="mb-2"
             :body-style="{
@@ -79,13 +71,9 @@ import { getPipelinesConfig, getCiPipelineId } from '@/api/cicd'
 export default {
   name: 'TestDetailSocket',
   props: {
-    pipelineId: {
-      type: Number,
-      default: 0
-    },
-    pipelineCommit: {
-      type: String,
-      default: null
+    pipelineInfos: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -99,11 +87,10 @@ export default {
       emitStages: [],
       timer: null,
       socket: io('/rancher/websocket/logs', {
-        // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+      // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
-      }),
-      autoPlay: true
+      })
     }
   },
   computed: {
@@ -116,6 +103,12 @@ export default {
     selectedProject() {
       this.fetchCiPipelineId()
     }
+  },
+  mounted() {
+    if (this.selectedProject.id === -1) return
+    this.fetchCiPipelineId()
+    this.setConnectStatusListener()
+    this.setLogMessageListener()
   },
   beforeDestroy() {
     this.handleClose()
@@ -150,19 +143,19 @@ export default {
         } else {
           this.setLogMessage(stageIdx, step_index, data)
         }
-        this.scrollToBottom()
+        this.scrollToBottom(stageIdx)
       })
     },
     moveToNextStage(stage_index) {
-      if (stage_index < this.stages.length && this.autoPlay) {
+      if (stage_index < this.stages.length) {
         const buildingStageIdx = this.getBuildingStageIdx()
         if (buildingStageIdx < 0) return
         // if (userClick) {
-        // this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx, 1500)
+        //   this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx, 1500)
         // } else {
         this.changeFocusTab(stage_index + 1, stage_index, 1500)
-        // }
       }
+      // }
     },
     setLogMessage(stageIdx, step_index, data) {
       const target = this.stages[stageIdx].steps[step_index].message
@@ -251,25 +244,13 @@ export default {
         console.error(error)
       }
     },
-    handleOpen() {
-      if (this.selectedProject.id === -1) return
-      this.fetchCiPipelineId()
-      this.setConnectStatusListener()
-      this.setLogMessageListener()
-    },
     handleClose() {
       this.socket.close()
-      this.socket = io('/rancher/websocket/logs', {
-      // io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
-        reconnectionAttempts: 5,
-        transports: ['websocket']
-      })
       this.clearTimer()
       this.stages = []
       this.emitStages = []
       this.dialogVisible = false
       this.activeStage = ''
-      this.$emit('close')
     },
     setTimer() {
       const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
@@ -296,12 +277,10 @@ export default {
     mapStateEffect(state) {
       return state === 'Building' ? 'light' : 'dark'
     },
-    scrollToBottom() {
+    scrollToBottom(stageIdx) {
       this.$nextTick(() => {
-        if (this.autoPlay) {
-          const target = this.$el.querySelector('.el-card__body').childNodes[2].childNodes[1]
-          target.scrollTop = target.scrollHeight
-        }
+        const target = this.$el.querySelector(`#preWindow${stageIdx}`).childNodes[1]
+        target.scrollTop = target.scrollHeight
       })
     }
   }

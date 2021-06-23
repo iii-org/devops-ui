@@ -92,20 +92,14 @@
         </el-table-column>
       </el-table>
       <pagination
-        :total="listQuery.total"
+        :total="filteredData.length"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <test-detail
-        ref="testDetail"
-        :pipeline-id="focusPipeline.id"
-        :pipeline-commit="focusPipeline.commit"
-        @loaded="isLoading = false"
-        @close="setTimer"
-      />
+      <test-detail ref="testDetail" :pipeline-infos="focusPipeline" @loaded="isLoading = false" />
     </el-col>
   </el-row>
 </template>
@@ -137,7 +131,10 @@ export default {
       rowHeight: 90,
       lastUpdateTime: '',
       timer: null,
-      focusPipeline: { id: 0, commit: null },
+      focusPipeline: {
+        id: null,
+        commitMessage: ''
+      },
       listData: [],
       listQuery: listQuery(),
       searchKeys: ['commit_message'],
@@ -255,12 +252,12 @@ export default {
       return mapping[status] || 'dark'
     },
     onDetailsClick(row) {
+      const { id, commit_message } = row
       this.isLoading = true
-      this.focusPipeline.id = row.id
-      this.focusPipeline.commit = row.commit_message
-      this.$refs.testDetail.pipelinesExecRun = row.id
+      this.focusPipeline.id = id
+      this.focusPipeline.commitMessage = commit_message
+      this.$refs.testDetail.pipelinesExecRun = id
       this.$refs.testDetail.fetchStages()
-      this.clearTimer()
     },
     isAllowStop(status) {
       const allowStatus = ['Waiting', 'Building', 'Queueing']
