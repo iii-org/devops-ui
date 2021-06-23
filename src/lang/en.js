@@ -381,6 +381,9 @@ export default {
     Unassigned: '@:Dashboard.Unassigned',
     RelatedIssue: 'Related Issue',
     DisplayClosedIssue: 'Show Closed Issues',
+    open: '@:Version.Open',
+    locked: '@:Version.Locked',
+    closed: '@:Version.Closed',
     detail: {
       message: {
         set_to: '{creator} {message}',

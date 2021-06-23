@@ -381,6 +381,9 @@ export default {
     Unassigned: '@:Dashboard.Unassigned',
     RelatedIssue: '關聯議題',
     DisplayClosedIssue: '顯示已關閉議題',
+    open: '@:Version.Open',
+    locked: '@:Version.Locked',
+    closed: '@:Version.Closed',
     detail: {
       message: {
         set_to: '{creator} {message}',

@@ -9,7 +9,9 @@
         >
           <el-form v-loading="isLoading">
             <template v-for="dimension in filterOptions">
-              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id" :label="$t('Issue.'+dimension.value)">
+              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id"
+                            :label="$t('Issue.'+dimension.value)"
+              >
                 <el-select
                   v-model="filterValue[dimension.value]"
                   :placeholder="$t('Issue.Select'+dimension.placeholder)"
@@ -21,7 +23,7 @@
                   <el-option
                     v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
                     :key="item.id"
-                    :label="$te('Issue.'+item.name)?$t('Issue.'+item.name):item.name"
+                    :label="getSelectionLabel(item)"
                     :value="item.id"
                   >
                     <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -266,7 +268,7 @@ export default {
         if (this.filterValue[item]) {
           const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
-            result.push((this.$te('Issue.' + value.name)) ? this.$t('Issue.' + value.name) : value.name)
+            result.push(this.getSelectionLabel(value))
           }
         }
       })
@@ -419,7 +421,7 @@ export default {
           item => item.data
         )
         this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
-        const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
+        const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
         if (version.length > 0) {
           if (Object.keys(this.kanbanFilter).length <= 0) {
             this.$set(this.filterValue, 'fixed_version', version[0].id)
@@ -571,6 +573,14 @@ export default {
     },
     getFilterValueList(value) {
       return this[value]
+    },
+    getSelectionLabel(item) {
+      const visibleStatus = ['closed', 'locked']
+      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+      }
+      return result
     },
     isRightPanelItemHasComponents(name) {
       return ['status', 'tracker'].includes(name)

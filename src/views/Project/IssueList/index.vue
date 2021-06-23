@@ -32,7 +32,7 @@
                     <el-option
                       v-for="item in $data[dimension.value]"
                       :key="item.id"
-                      :label="$te('Issue.'+item.name)?$t('Issue.'+item.name):item.name"
+                      :label="getSelectionLabel(item)"
                       :value="item.id"
                     >
                       <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -302,7 +302,7 @@ export default {
         if (this.filterValue[item]) {
           const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
-            result.push((this.$te('Issue.' + value.name)) ? this.$t('Issue.' + value.name) : value.name)
+            result.push(this.getSelectionLabel(value))
           }
         }
       })
@@ -422,6 +422,14 @@ export default {
           this.$set(this.originFilterValue, 'assigned_to', this.userId)
         }
       })
+    },
+    getSelectionLabel(item) {
+      const visibleStatus = ['closed', 'locked']
+      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+      }
+      return result
     },
     async getIssueFamilyData(row, expandedRows) {
       if (expandedRows.find((item) => (item.id === row.id))) {

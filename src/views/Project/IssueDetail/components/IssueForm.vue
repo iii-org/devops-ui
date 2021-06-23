@@ -58,7 +58,7 @@
         </el-option-group>
       </el-select>
     </el-form-item>
-    <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
+    <el-form-item :label="$t('Issue.fixed_version')" prop="fixed_version_id">
       <el-select
         v-model="form.fixed_version_id"
         style="width: 100%"
@@ -68,13 +68,13 @@
         <el-option
           v-for="item in fixed_version"
           :key="item.id"
-          :label="item.name"
+          :label="getSelectionLabel(item)"
           :value="item.id"
           :disabled="item.status !== 'open'"
         />
       </el-select>
     </el-form-item>
-    <el-form-item :label="$t('general.Status')" prop="status_id">
+    <el-form-item :label="$t('Issue.status')" prop="status_id">
       <el-select v-model="form.status_id" :disabled="isParentIssueClosed" style="width: 100%">
         <el-option
           v-for="option in dynamicStatusList"
@@ -88,7 +88,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item :label="$t('general.Type')" prop="tracker_id">
+    <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
       <el-select v-model="form.tracker_id" style="width: 100%">
         <el-option
           v-for="option in tracker"
@@ -100,7 +100,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+    <el-form-item :label="$t('Issue.assigned_to')" prop="assigned_to_id">
       <el-select
         v-model="form.assigned_to_id"
         style="width: 100%"
@@ -118,7 +118,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
+    <el-form-item :label="$t('Issue.priority')" prop="priority_id">
       <el-select v-model="form.priority_id" :disabled="childrenIssue > 0" style="width: 100%">
         <el-option
           v-for="option in priority"
@@ -345,6 +345,14 @@ export default {
         }
         return item
       })
+    },
+    getSelectionLabel(item) {
+      const visibleStatus = ['closed', 'locked']
+      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+      }
+      return result
     },
     async getSearchIssue(query) {
       const params = {
