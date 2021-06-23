@@ -589,8 +589,8 @@ export default {
     TemplateDescription: 'Template Description',
     Version: 'Version',
     IssueStatus: 'Issue Status',
-    IssueProgress: 'Issue Progress',
-    IssueUpdate: 'Issue Update',
+    IssueProgress: 'Progress',
+    IssueUpdate: 'Last Updated',
     Progress: 'Progress',
     UpdateTime: 'Update Time',
     deleteProjectConfirmText:
