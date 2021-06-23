@@ -20,8 +20,8 @@
       >
         <el-option-group
           v-for="group in issueList"
-          :key="group.label"
-          :label="group.label"
+          :key="group.name"
+          :label="group.name"
         >
           <el-option
             v-for="item in group.options"
@@ -36,7 +36,8 @@
             >
               <el-card>
                 <template slot="header">
-                  {{ item.name }}
+                  <tracker :name="item.tracker.name" />
+                  #{{ item.id }} - {{ item.name }}
                 </template>
                 <b>{{ $t('Issue.Description') }}:</b>
                 <p>{{ item.description }}</p>
@@ -65,10 +66,10 @@
         clearable
       >
         <el-option
-          v-for="item in versionList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="item in fixed_version"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
           :disabled="item.status !== 'open'"
         />
       </el-select>
@@ -77,12 +78,12 @@
       <el-select v-model="form.status_id" :disabled="isParentIssueClosed" style="width: 100%">
         <el-option
           v-for="option in dynamicStatusList"
-          :key="option.value"
-          :label="$t('Issue.' + option.label)+((option.message) ? option.message : '')"
-          :value="option.value"
+          :key="option.id"
+          :label="$t('Issue.' + option.name)+((option.message) ? option.message : '')"
+          :value="option.id"
           :disabled="option.disabled"
         >
-          <status :name="option.label" />
+          <status :name="option.name" />
           {{ option.message }}
         </el-option>
       </el-select>
@@ -90,12 +91,12 @@
     <el-form-item :label="$t('general.Type')" prop="tracker_id">
       <el-select v-model="form.tracker_id" style="width: 100%">
         <el-option
-          v-for="option in typeList"
-          :key="option.value"
-          :label="$t('Issue.' + option.label)"
-          :value="option.value"
+          v-for="option in tracker"
+          :key="option.id"
+          :label="$t('Issue.' + option.name)"
+          :value="option.id"
         >
-          <tracker :name="option.label" />
+          <tracker :name="option.name" />
         </el-option>
       </el-select>
     </el-form-item>
@@ -110,22 +111,22 @@
         <el-option v-for="item in dynamicAssigneeList"
                    :key="item.login"
                    :class="item.class"
-                   :label="item.label+' ('+item.login+')'"
-                   :value="item.value"
+                   :label="item.name+' ('+item.login+')'"
+                   :value="item.id"
         >
-          {{ item.label }} ({{ item.login }})
+          {{ item.name }} ({{ item.login }})
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
       <el-select v-model="form.priority_id" :disabled="childrenIssue > 0" style="width: 100%">
         <el-option
-          v-for="option in priorityList"
-          :key="option.value"
-          :label="$t('Issue.' + option.label)"
-          :value="option.value"
+          v-for="option in priority"
+          :key="option.id"
+          :label="$t('Issue.' + option.name)"
+          :value="option.id"
         >
-          <priority :name="option.label" />
+          <priority :name="option.name" />
         </el-option>
       </el-select>
     </el-form-item>
@@ -187,6 +188,10 @@ export default {
     childrenIssue: {
       type: Number,
       default: 0
+    },
+    relations: {
+      type: Array,
+      default: () => ([])
     }
   },
   data() {
@@ -208,15 +213,16 @@ export default {
       issueQuery: null,
       issueLoading: false,
       issueList: [],
-      assigneeList: [],
-      versionList: [],
-      typeList: [],
-      statusList: [],
-      priorityList: [],
+      assigned_to: [],
+      fixed_version: [],
+      tracker: [],
+      status: [],
+      priority: [],
 
       relativeIssueList: [],
       isLoading: false,
       checkClosable: false,
+      dynamicStatusList: [],
 
       pickerOptions(startDate) {
         return {
@@ -236,32 +242,22 @@ export default {
     dynamicAssigneeList() {
       const hasInactiveAssignee =
         this.form.assigned_to_id !== '' &&
-        this.assigneeList.findIndex(item => item.value === this.form.assigned_to_id) === -1
+        this.assigned_to.findIndex(item => item.id === this.form.assigned_to_id) === -1
       if (hasInactiveAssignee) {
         const inactiveAssignee = {
-          label: `Disabled User (${this.form.assigned_to_id})`,
-          value: this.form.assigned_to_id
+          name: `Disabled User (${this.form.assigned_to_id})`,
+          id: this.form.assigned_to_id
         }
-        const result = Object.assign([], this.assigneeList)
+        const result = Object.assign([], this.assigned_to)
         result.push(inactiveAssignee)
         return result
       } else {
-        return this.assigneeList
+        return this.assigned_to
       }
-    },
-    dynamicStatusList() {
-      const _this = this
-      return this.statusList.map((item) => {
-        if (!_this.checkClosable && item.label === 'Closed') {
-          item.disabled = true
-          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
-        }
-        return item
-      })
     },
     originalParentIssue() {
       if (Object.keys(this.parent).length <= 0) return {}
-      return { label: this.$t('Issue.OriginalSetting'), options: [this.parent] }
+      return { name: this.$t('Issue.OriginalSetting'), options: [this.parent] }
     }
   },
   watch: {
@@ -273,12 +269,12 @@ export default {
     parent: {
       deep: true,
       handler() {
-        this.issueList = [this.originalParentIssue]
+        this.getSearchIssue()
       }
     },
     'form.parent_id'(value) {
       if (!value && !this.issueQuery) {
-        this.issueList = [this.originalParentIssue]
+        this.getSearchIssue()
       }
     },
     'form.project_id'() {
@@ -287,7 +283,9 @@ export default {
   },
   mounted() {
     this.fetchData()
-    this.issueList = [this.originalParentIssue]
+    if (this.form.project_id > 0) {
+      this.getSearchIssue()
+    }
   },
   methods: {
     async fetchData() {
@@ -300,31 +298,26 @@ export default {
           getIssueStatus(),
           getIssuePriority()
         ]).then(res => {
-          const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+          const [assigned_to, fixed_version, tracker, status, priority] = res.map(
             item => item.data
           )
 
-          this.assigneeList = [
+          this.assigned_to = [
             {
-              label: this.$t('Issue.me'),
+              name: this.$t('Issue.me'),
               login: 'me',
-              value: this.userId,
+              id: this.userId,
               class: 'bg-yellow-100'
-            }, ...assigneeList.user_list.map(item => ({
-              label: item.name,
-              login: item.login,
-              value: item.id
-            }))
+            }, ...assigned_to.user_list
           ]
-          this.versionList = versionList.versions.map(item => ({
-            label: item.name,
-            value: item.id,
-            status: item.status
-          }))
-          this.statusList = statusList.map(item => ({ label: item.name, value: item.id }))
-          this.typeList = this.issueTypeList = typeList.map(item => ({ label: item.name, value: item.id }))
-          this.priorityList = priorityList.map(item => ({ label: item.name, value: item.id }))
+          this.fixed_version = fixed_version.versions
+          this.status = status
+          this.tracker = tracker
+          this.priority = priority
         })
+      }
+      if (this.issueId > 0) {
+        await this.getClosable()
       }
       this.isLoading = false
     },
@@ -333,6 +326,7 @@ export default {
         .then((res) => {
           this.checkClosable = res.data
         })
+      await this.getDynamicStatusList()
     },
     clearDueDate(val) {
       this.$nextTick(() => {
@@ -342,29 +336,45 @@ export default {
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
     },
-    getSearchIssue(query) {
-      if (query !== '') {
+    getDynamicStatusList() {
+      const _this = this
+      this.dynamicStatusList = this.status.map((item) => {
+        if (!_this.checkClosable && item.is_closed === true) {
+          item.disabled = true
+          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
+        }
+        return item
+      })
+    },
+    async getSearchIssue(query) {
+      const params = {
+        selection: true
+      }
+      this.issueList = []
+      if (query !== '' && query) {
+        params['search'] = query
         this.issueQuery = query
         this.issueLoading = true
-        this.issueList = []
-        getProjectIssueList(this.form.project_id, { search: query, selection: true })
-          .then((res) => {
-            this.issueList = [this.originalParentIssue, { label: this.$t('Issue.Result'), options: res.data }]
-          })
-          .finally(() => {
-            this.issueLoading = false
-          })
       } else {
+        params['offset'] = 0
+        params['limit'] = 5
         this.issueQuery = null
-        this.issueList = [this.originalParentIssue]
-        this.issueLoading = false
       }
+      const res = await getProjectIssueList(this.form.project_id, params)
+      let queryList = res.data.issue_list
+      let key = 'Issue.LastResult'
+      if (this.issueQuery) {
+        queryList = res.data
+        key = 'Issue.Result'
+      }
+      this.issueList = [this.originalParentIssue, { name: this.$t(key), options: queryList }]
+      this.issueLoading = false
     },
-    highLight: function(value) {
+    highLight: function (value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function(str) {
+      return value.replace(reg, function (str) {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     }
@@ -374,7 +384,7 @@ export default {
 
 <style scoped>
 /* noinspection CssUnusedSymbol */
->>> .el-form-item{
+>>> .el-form-item {
   margin-bottom: 10px;
 }
 </style>

@@ -6,7 +6,6 @@ export default {
 
     planList: 'Plan List',
     issueTracking: 'Issue Tracking',
-    issueTrackChart: 'Issue Track Chart',
 
     testManagement: 'Test Management',
     testFile: 'Test File',
@@ -79,6 +78,7 @@ export default {
     'System Arguments': 'System Arguments',
 
     track: 'Traceability Manage',
+    traceabilityMatrix: 'Traceability Matrix',
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management'
   },
@@ -415,7 +415,8 @@ export default {
     DragTip: 'Drag to issue, it can change {key} to {value}.',
     GroupBy: 'Group by {filter}',
     OriginalSetting: 'Original Setting',
-    Result: 'Result'
+    Result: 'Result',
+    LastResult: 'Recently Result'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

@@ -6,7 +6,6 @@ export default {
 
     planList: '工作規劃',
     issueTracking: '議題追蹤',
-    issueTrackChart: '需求追溯表',
 
     testManagement: '測試管理',
     testFile: '測試檔案',
@@ -17,7 +16,7 @@ export default {
     issueList: '議題列表',
     createTest: '測試創建',
     testItem: '測試項目',
-    overview: '總覽',
+    overview: '專案總覽',
     wikiList: 'Wiki列表',
     fileList: '檔案列表',
 
@@ -79,6 +78,7 @@ export default {
     'System Arguments': '參數設定',
 
     track: '追溯管理',
+    traceabilityMatrix: '需求追溯表',
     changeManagement: '變更管理',
     'Fail Management': '異常管理'
   },
@@ -415,7 +415,8 @@ export default {
     DragTip: '拖曳到議題，可以將 {key} 改變成 {value}',
     GroupBy: '以 {filter} 分組',
     OriginalSetting: '原先設定',
-    Result: '搜尋結果'
+    Result: '搜尋結果',
+    LastResult: '近期'
   },
   Wiki: {
     AddWiki: '新增Wiki',

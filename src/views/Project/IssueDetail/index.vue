@@ -16,7 +16,7 @@
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
               <IssueTitle ref="IssueTitle" v-model="form.subject" />
-              <span class="text-body-1 mr-3">
+              <span v-if="!isLoading" class="text-body-1 mr-3">
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
             </el-col>
@@ -409,6 +409,8 @@ export default {
         })
         .catch(err => {
           console.error(err)
+        })
+        .finally(() => {
           this.isLoading = false
         })
     },
@@ -425,6 +427,8 @@ export default {
         })
         .catch(err => {
           console.error(err)
+        })
+        .finally(() => {
           this.isLoading = false
         })
     },
