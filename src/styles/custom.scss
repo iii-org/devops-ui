@@ -28,6 +28,20 @@
   }
 }
 
+.el-table .el-button--success {
+  i {
+    color: $success;
+  }
+  &:hover {
+    color: #ffffff !important;
+    border: 1px solid $success;
+    background: $success !important;
+    i {
+      color: #fff;
+    }
+  }
+}
+
 .el-table .el-button--danger {
   i {
     color: #f56c6c;

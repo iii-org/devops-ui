@@ -189,6 +189,18 @@ export default {
     LoadFail: '讀取失敗，請洽您的系統管理員。',
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？'
   },
+  RuleMsg: {
+    PleaseInput: '請輸入',
+    PleaseSelect: '請選擇',
+    Invalid: '無效的',
+    Member: '@:Member.Member',
+    Email: '信箱',
+    UserName: '使用者名稱',
+    Password: '密碼',
+    Description: '敘述',
+    InputNewPwd: '請輸入新密碼',
+    InputRepeatPwd: '請再次輸入密碼'
+  },
   TestCase: {
     Index: '項次',
     TestCase: '測試案例',
@@ -208,18 +220,6 @@ export default {
     Fail: '失敗',
     TestPass: '測試通過',
     TestFail: '測試失敗'
-  },
-  RuleMsg: {
-    PleaseInput: '請輸入',
-    PleaseSelect: '請選擇',
-    Invalid: '無效的',
-    Member: '@:Member.Member',
-    Email: '信箱',
-    UserName: '使用者名稱',
-    Password: '密碼',
-    Description: '敘述',
-    InputNewPwd: '請輸入新密碼',
-    InputRepeatPwd: '請再次輸入密碼'
   },
   TestItem: {
     TestItem: '測試項目',
@@ -611,6 +611,7 @@ export default {
     SearchIdentifier: '搜尋ID',
     SearchProjectName: '搜尋專案名稱',
     SearchProjectNameOrId: '搜尋專案名稱或 ID',
+    SearchProjectNameOrManagerOrOrganization: '搜尋專案名稱、經理或組織',
     StartDate: '起始日',
     DueDate: '到期日',
     Owner: '專案經理',

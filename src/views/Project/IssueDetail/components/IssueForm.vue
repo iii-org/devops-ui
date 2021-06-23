@@ -134,7 +134,7 @@
       <el-input-number v-model="form.estimated_hours" :min="0" :max="100" style="width: 100%" />
     </el-form-item>
     <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
-      <el-input-number v-model="form.done_ratio" :min="0" :max="100" style="width: 100%" />
+      <el-input-number v-model="form.done_ratio" :min="0" :max="100" :disabled="childrenIssue > 0" style="width: 100%" />
     </el-form-item>
     <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
       <el-date-picker

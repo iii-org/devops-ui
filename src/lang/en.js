@@ -189,6 +189,18 @@ export default {
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!'
   },
+  RuleMsg: {
+    PleaseInput: 'Please input',
+    PleaseSelect: 'Please select',
+    Invalid: ' Invalid',
+    Member: ' @:Member.Member',
+    Email: ' email',
+    UserName: ' user name',
+    Password: ' password',
+    Description: ' description',
+    InputNewPwd: 'Please input new password',
+    InputRepeatPwd: 'Please input repeat password'
+  },
   TestCase: {
     Index: 'Requests',
     TestCase: 'Test Case',
@@ -208,18 +220,6 @@ export default {
     Fail: 'Fail',
     TestPass: 'Test Pass',
     TestFail: 'Test Fail'
-  },
-  RuleMsg: {
-    PleaseInput: 'Please input',
-    PleaseSelect: 'Please select',
-    Invalid: ' Invalid',
-    Member: ' @:Member.Member',
-    Email: ' email',
-    UserName: ' user name',
-    Password: ' password',
-    Description: ' description',
-    InputNewPwd: 'Please input new password',
-    InputRepeatPwd: 'Please input repeat password'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -613,6 +613,7 @@ export default {
     SearchIdentifier: 'Please Input Project Identifier',
     SearchProjectName: 'Search Project Name',
     SearchProjectNameOrId: 'Search Project Name or ID',
+    SearchProjectNameOrManagerOrOrganization: 'Search Project Name, Manager or Organization',
     StartDate: 'Start Date',
     DueDate: 'Due Date',
     Owner: 'Project Owner',

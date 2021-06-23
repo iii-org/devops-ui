@@ -389,9 +389,6 @@ export default {
       }
       return data
     },
-    sortByDueDate(a, b) {
-      return new Date(b.due_date) - new Date(a.due_date)
-    },
     async loadSelectionList() {
       await Promise.all([
         getProjectUserList(this.selectedProjectId),
@@ -404,12 +401,6 @@ export default {
           item => item.data
         )
         this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
-        // const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status === 'open'))
-        // if (version.length > 0) {
-        //   this.$set(this.filterValue, 'fixed_version', version[0].id)
-        //   this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-        // }
-
         this.tracker = typeList
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
