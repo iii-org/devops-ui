@@ -189,18 +189,6 @@ export default {
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!'
   },
-  RuleMsg: {
-    PleaseInput: 'Please input',
-    PleaseSelect: 'Please select',
-    Invalid: ' Invalid',
-    Member: ' @:Member.Member',
-    Email: ' email',
-    UserName: ' user name',
-    Password: ' password',
-    Description: ' description',
-    InputNewPwd: 'Please input new password',
-    InputRepeatPwd: 'Please input repeat password'
-  },
   TestCase: {
     Index: 'Requests',
     TestCase: 'Test Case',
@@ -220,6 +208,18 @@ export default {
     Fail: 'Fail',
     TestPass: 'Test Pass',
     TestFail: 'Test Fail'
+  },
+  RuleMsg: {
+    PleaseInput: 'Please input',
+    PleaseSelect: 'Please select',
+    Invalid: ' Invalid',
+    Member: ' @:Member.Member',
+    Email: ' email',
+    UserName: ' user name',
+    Password: ' password',
+    Description: ' description',
+    InputNewPwd: 'Please input new password',
+    InputRepeatPwd: 'Please input repeat password'
   },
   TestItem: {
     TestItem: 'Test Item',
@@ -315,9 +315,9 @@ export default {
     SelectVersion: '@:Version.SelectVersion',
     SelectPriority: 'Select @:Issue.Priority',
     SelectStatus: 'Select @:general.Status',
-    SearchNameOrAssignee: 'Search ID, Name Or Assignee',
     SelectMember: '@:Member.SelectMember',
     CleanFilter: 'Clean Filter',
+    SearchNameOrAssignee: 'Search ID, Name Or Assignee',
     Save: 'Save',
     Notes: 'Notes',
     AddComment: 'Add Comment',
@@ -369,9 +369,11 @@ export default {
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
     name: 'Name',
+    status: '@:general.Status',
     priority: '@:Issue.Priority',
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
+    fixed_version: '@:Version.Version',
     me: '<<Me>>',
     ChildrenNotClosed: 'Children Issue are Not Closed',
     NoAssignee: 'Issue need a Assignee',

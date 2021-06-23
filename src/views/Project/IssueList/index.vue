@@ -20,7 +20,7 @@
           >
             <el-form>
               <template v-for="dimension in filterOptions">
-                <el-form-item :key="dimension.id" :label="dimension.label">
+                <el-form-item :key="dimension.id" :label="$t('Issue.'+dimension.value)">
                   <el-select
                     v-model="filterValue[dimension.value]"
                     :placeholder="$t('Issue.Select'+dimension.placeholder)"

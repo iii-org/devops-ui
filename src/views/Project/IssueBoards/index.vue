@@ -9,7 +9,7 @@
         >
           <el-form v-loading="isLoading">
             <template v-for="dimension in filterOptions">
-              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id" :label="dimension.label">
+              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id" :label="$t('Issue.'+dimension.value)">
                 <el-select
                   v-model="filterValue[dimension.value]"
                   :placeholder="$t('Issue.Select'+dimension.placeholder)"
