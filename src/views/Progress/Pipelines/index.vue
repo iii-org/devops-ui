@@ -12,7 +12,7 @@
       </div>
       <el-divider />
       <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
-      <el-table v-loading="isLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
           :label="`${$t('ProgressPipelines.Status')} / ${$t('ProgressPipelines.TestItems')}`"
@@ -92,7 +92,7 @@
         </el-table-column>
       </el-table>
       <pagination
-        :total="filteredData.length"
+        :total="listQuery.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
@@ -167,10 +167,9 @@ export default {
   },
   watch: {
     selectedProject() {
-      this.loadData()
       this.listQuery = listQuery()
-      this.listQuery.page = 1
       this.searchData = ''
+      this.loadData()
     },
     keyword() {
       this.listQuery.page = 1
@@ -178,15 +177,15 @@ export default {
   },
   mounted() {
     this.loadData()
-    this.setTimer()
   },
   beforeDestroy() {
     this.clearTimer()
   },
   methods: {
     onPagination(listQuery) {
-      const start = listQuery.page > this.listQuery.page ? this.listQuery.next : this.listQuery.first
-      this.loadData(10, start)
+      const { first, limit } = this.listQuery
+      const startId = first - (listQuery.page - 1) * limit
+      this.loadData(10, startId)
     },
     async loadData(limit, start) {
       this.isLoading = true
@@ -269,7 +268,6 @@ export default {
     clearTimer() {
       clearInterval(this.timer)
       this.timer = null
-      this.listQuery = listQuery()
     }
   }
 }
