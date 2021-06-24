@@ -82,6 +82,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       uploadDialogVisible: false,
       addTopicDialogVisible: false
     }
@@ -158,6 +159,7 @@ export default {
     },
     loadingUpdate(value) {
       this.isLoading = value
+      this.$emit('is-loading', value)
     }
   }
 }

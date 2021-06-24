@@ -35,8 +35,8 @@
             />
           </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-            <el-col :span="24" class="mb-3">
-              <issue-description ref="IssueDescription" v-model="form.description" />
+            <el-col ref="IssueDescription" :span="24" class="mb-3">
+              <issue-description v-model="form.description" />
             </el-col>
             <el-col ref="IssueFiles">
               <issue-files v-if="files.length>0" :issue-file.sync="files" />
