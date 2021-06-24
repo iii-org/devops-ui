@@ -1,46 +1,46 @@
 <template>
-  <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <div v-if="!isLoading" class="d-flex justify-between align-center mb-2">
+  <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="px-5 h-full overflow-auto">
+    <div v-if="!isLoading" class="d-flex justify-between align-center my-5">
       <h3>「{{ selectedProject.display }}」{{ $t('WebInspect.TestReport') }}</h3>
       <span>{{ $t('WebInspect.RunAt') }}：{{ runAt }}</span>
       <el-button icon="el-icon-download" @click="handleDownload">
         {{ $t('WebInspect.DownloadReport') }} (.xml)
       </el-button>
     </div>
-    <el-row>
-      <el-col :span="24">
-        <div v-for="issue in groupByIssueSeverity" :key="issue.id" class="mb-5">
-          <div class="bg-blue-500 text-white p-2 font-small font-semibold" :type="mapSeverity('type', issue.severity)">
-            {{ mapSeverity('name', issue.severity) + ' Issues' }}
-          </div>
 
-          <div class="p-2 mb-3 bg-gray-200  text-xl font-medium">
+    <el-row :gutters="12">
+      <el-col v-for="issue in groupByIssueSeverity" :key="issue.id" class="mb-8" :span="24">
+        <div class="sticky top-0">
+          <div class="bg-blue-500 text-white p-3 font-small font-semibold" :type="mapSeverity('type', issue.severity)">
+            {{ mapSeverity('name', issue.severity) + ' Issue' }}
+          </div>
+          <div class="p-3 bg-gray-200  text-xl font-medium z-0">
             {{ issue.name }}
           </div>
+        </div>
 
-          <div class="px-4">
-            <div class="text-xl font-semibold">Request：</div>
-            <pre class="code-block">{{ issue.request }}</pre>
+        <div class="p-6 bg-white shadow rounded">
+          <div class="text-xl font-semibold">Request：</div>
+          <pre class="w-full whitespace-pre-wrap text-sm break-words">{{ issue.request }}</pre>
 
-            <div class="text-xl font-semibold">Response：</div>
-            <pre class="code-block">{{ issue.response }}</pre>
+          <div class="text-xl font-semibold">Response：</div>
+          <pre class="w-full whitespace-pre-wrap text-sm break-words">{{ issue.response }}</pre>
 
-            <div
-              v-for="(ReportSection, ReportSectionIdx) in issue.reportSection"
-              :key="issue.id + ReportSectionIdx"
-              class="mb-2"
-            >
-              <div class="text-lg font-semibold underline">{{ ReportSection.Name }}</div>
-              <div v-html="ReportSection.SectionText" />
-            </div>
+          <div
+            v-for="(ReportSection, ReportSectionIdx) in issue.reportSection"
+            :key="issue.id + ReportSectionIdx"
+            class="mb-2"
+          >
+            <div class="text-lg font-semibold underline">{{ ReportSection.Name }}</div>
+            <div v-html="ReportSection.SectionText" />
+          </div>
 
-            <div class="text-lg font-semibold underline mb-3">Classifications</div>
-            <div v-for="(classification, clIdx) in issue.classifications" :key="clIdx" class="mb-2">
-              <div class="text-base font-semibold">{{ classification._ }}</div>
-              <el-link type="primary" :href="classification.href" target="blank">
-                {{ classification.href }}
-              </el-link>
-            </div>
+          <div class="text-lg font-semibold underline mb-3">Classifications</div>
+          <div v-for="(classification, clIdx) in issue.classifications" :key="clIdx" class="mb-2">
+            <div class="text-base font-semibold">{{ classification._ }}</div>
+            <a class="text-blue-400 hover:text-blue-300 underline" :href="classification.href" target="blank">
+              {{ classification.href }}
+            </a>
           </div>
         </div>
       </el-col>
@@ -151,11 +151,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.code-block {
-  width: 100%;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-</style>
