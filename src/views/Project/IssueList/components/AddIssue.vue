@@ -1,191 +1,173 @@
 <template>
-  <el-dialog
-    :title="$t('Issue.AddIssue')"
-    :visible="dialogVisible"
-    width="50%"
-    top="5px"
-    :close-on-click-modal="false"
-    destroy-on-close
-    append-to-body
-    @close="handleClose"
-  >
-    <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
-      <el-row>
-        <el-row v-if="parentId !== 0">
-          <el-col :md="12" :span="24">
-            <el-form-item>
-              <div style="font-weight: bold">{{ $t('Issue.ParentIssue') }} : {{ parentName }}</div>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
+  <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
+    <el-row>
+      <el-row v-if="parentId !== 0">
         <el-col :md="12" :span="24">
-          <el-form-item :label="$t('general.Title')" prop="subject">
-            <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
-            <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-              <el-option v-for="item in issueAssigneeList" :key="item.value" :label="item.label" :value="item.value">
-                {{ item.label }}{{ `（${item.login}）` }}
-              </el-option>
-            </el-select>
+          <el-form-item>
+            <div style="font-weight: bold">{{ $t('Issue.ParentIssue') }} : {{ parentName }}</div>
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-row>
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
-            <el-select id="input-version" v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
-              <el-option
-                v-for="item in issueVersionList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                :disabled="item.status !== 'open'"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('general.Title')" prop="subject">
+          <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
+        </el-form-item>
+      </el-col>
 
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('general.Type')" prop="tracker_id">
-            <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-              <el-option v-for="item in issueTypeList" :key="item.value" :label="$t('Issue.'+item.label)" :value="item.value">
-                <tracker :name="item.label" />
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('general.Status')" prop="status_id">
-            <el-select v-model="issueForm.status_id" style="width: 100%">
-              <el-option v-for="item in issueStatusList" :key="item.value" :label="$t('Issue.'+item.label)" :value="item.value">
-                <status :name="item.label" />
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+          <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
+            <el-option v-for="item in assigned_to" :key="item.id" :label="item.name" :value="item.id" :class="item.class">
+              {{ item.name }}{{ `（${item.login}）` }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
 
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-            <el-select v-model="issueForm.priority_id" style="width: 100%">
-              <el-option v-for="item in issuePriorityList" :key="item.value" :label="$t('Issue.'+item.label)" :value="item.value">
-                <priority :name="item.label" />
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
-            <el-input-number
-              id="input-estimate"
-              v-model="issueForm.estimated_hours"
-              label="please input hours"
-              style="width: 100%"
+    <el-row>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
+          <el-select id="input-version" v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
+            <el-option
+              v-for="item in fixed_version"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+              :disabled="item.status !== 'open'"
             />
-          </el-form-item>
-        </el-col>
+          </el-select>
+        </el-form-item>
+      </el-col>
 
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
-            <el-input-number
-              id="input-done-ratio"
-              v-model="issueForm.done_ratio"
-              label="please input numbers"
-              :min="0"
-              :max="100"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('general.Type')" prop="tracker_id">
+          <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
+            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+              <tracker :name="item.name" />
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('general.Status')" prop="status_id">
+          <el-select v-model="issueForm.status_id" style="width: 100%">
+            <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+              <status :name="item.name" />
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
 
-      <el-row>
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
-            <el-date-picker
-              id="input-start-date"
-              v-model="issueForm.start_date"
-              type="date"
-              :placeholder="$t('Issue.SelectDate')"
-              style="width: 100%"
-              value-format="yyyy-MM-dd"
-              @change="checkDueDate"
-            />
-          </el-form-item>
-        </el-col>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
+          <el-select v-model="issueForm.priority_id" style="width: 100%">
+            <el-option v-for="item in priority" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+              <priority :name="item.name" />
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
 
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
-            <el-date-picker
-              id="input-end-date"
-              v-model="issueForm.due_date"
-              type="date"
-              :placeholder="$t('Issue.SelectDate')"
-              style="width: 100%"
-              value-format="yyyy-MM-dd"
-              :picker-options="pickerOptions(issueForm.start_date)"
-              @change="clearDueDate"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
+    <el-row>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
+          <el-input-number
+            id="input-estimate"
+            v-model="issueForm.estimated_hours"
+            label="please input hours"
+            style="width: 100%"
+          />
+        </el-form-item>
+      </el-col>
 
-      <el-row>
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('File.Upload')" prop="upload">
-            <el-upload
-              id="input-upload"
-              ref="upload"
-              class="upload-file2"
-              drag
-              action=""
-              :auto-upload="false"
-              :limit="1"
-              :on-exceed="handleExceed"
-              :on-change="handleChange"
-            >
-              <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
-              <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
-            </el-upload>
-          </el-form-item>
-        </el-col>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
+          <el-input-number
+            id="input-done-ratio"
+            v-model="issueForm.done_ratio"
+            label="please input numbers"
+            :min="0"
+            :max="100"
+            style="width: 100%"
+          />
+        </el-form-item>
+      </el-col>
+    </el-row>
 
-        <el-col :md="12" :span="24">
-          <el-form-item :label="$t('general.Description')" prop="description">
-            <el-input
-              id="input-description"
-              v-model="issueForm.description"
-              type="textarea"
-              :placeholder="$t('general.PleaseInput')"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+    <el-row>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
+          <el-date-picker
+            id="input-start-date"
+            v-model="issueForm.start_date"
+            type="date"
+            :placeholder="$t('Issue.SelectDate')"
+            style="width: 100%"
+            value-format="yyyy-MM-dd"
+            @change="checkDueDate"
+          />
+        </el-form-item>
+      </el-col>
 
-    <span slot="footer" class="dialog-footer">
-      <el-button id="dialog-btn-cancel" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-      <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleSave">
-        {{ $t('general.Confirm') }}
-      </el-button>
-    </span>
-  </el-dialog>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
+          <el-date-picker
+            id="input-end-date"
+            v-model="issueForm.due_date"
+            type="date"
+            :placeholder="$t('Issue.SelectDate')"
+            style="width: 100%"
+            value-format="yyyy-MM-dd"
+            :picker-options="pickerOptions(issueForm.start_date)"
+            @change="clearDueDate"
+          />
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('File.Upload')" prop="upload">
+          <el-upload
+            id="input-upload"
+            ref="upload"
+            class="upload-file2"
+            drag
+            action=""
+            :auto-upload="false"
+            :limit="1"
+            :on-exceed="handleExceed"
+            :on-change="handleChange"
+          >
+            <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
+            <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
+          </el-upload>
+        </el-form-item>
+      </el-col>
+
+      <el-col :md="12" :span="24">
+        <el-form-item :label="$t('general.Description')" prop="description">
+          <el-input
+            id="input-description"
+            v-model="issueForm.description"
+            type="textarea"
+            :placeholder="$t('general.PleaseInput')"
+          />
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
-import { getProjectUserList, getProjectVersion } from '@/api/projects'
+import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -235,16 +217,20 @@ export default {
       type: Function,
       default: () => {
       }
+    },
+    importFrom: {
+      type: String,
+      default: 'issueList'
     }
   },
 
   data() {
     return {
-      issueStatusList: [],
-      issueTypeList: [],
-      issuePriorityList: [],
-      issueAssigneeList: [],
-      issueVersionList: [],
+      status: [],
+      tracker: [],
+      priority: [],
+      assigned_to: [],
+      fixed_version: [],
       issueForm: getFormTemplate(),
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
@@ -266,26 +252,39 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userId'])
+    ...mapGetters(['userId', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter'])
   },
 
   watch: {
     projectId() {
       this.fetchData()
     },
-    dialogVisible() {
-      this.LoadingConfirm = false
+    LoadingConfirm(value) {
+      this.$emit('loading', value)
     },
-    'issueForm.assigned_to_id'(val) {
-      if (val === '') this.issueForm.status_id = 1
-      else if (val !== '') this.issueForm.status_id = 2
+    'issueForm.assigned_to_id'() {
+      this.checkStatus()
     },
     prefill: {
       deep: true,
-      handler(val) {
-        Object.keys(val).forEach((item) => {
-          this.$set(this.issueForm, item, val[item])
-        })
+      handler() {
+        this.setFilterValue()
+      }
+    },
+    kanbanFilter: {
+      deep: true,
+      handler() {
+        if (this.importFrom === 'kanban') {
+          this.setFilterValue()
+        }
+      }
+    },
+    issueListFilter: {
+      deep: true,
+      handler() {
+        if (this.importFrom === 'issueList') {
+          this.setFilterValue()
+        }
       }
     }
   },
@@ -293,43 +292,57 @@ export default {
   mounted() {
     this.fetchData()
     this.extension = fileExtension()
-    Object.keys(this.prefill).forEach((item) => {
-      this.issueForm[item] = this.prefill[item]
-    })
+    this.setFilterValue()
   },
 
   methods: {
-    fetchData() {
-      Promise.all([
-        getIssueStatus(),
-        getIssueTracker(),
-        getIssuePriority(),
-        getProjectUserList(this.projectId),
-        getProjectVersion(this.projectId)
-      ]).then(res => {
-        this.issueStatusList = res[0].data.map(item => {
-          return { label: item.name, value: item.id }
+    async fetchData() {
+      this.isLoading = true
+      if (this.projectId) {
+        await Promise.all([
+          getProjectAssignable(this.projectId),
+          getProjectVersion(this.projectId),
+          getIssueTracker(),
+          getIssueStatus(),
+          getIssuePriority()
+        ]).then(res => {
+          const [assigned_to, fixed_version, tracker, status, priority] = res.map(
+            item => item.data
+          )
+
+          this.assigned_to = [
+            {
+              name: this.$t('Issue.me'),
+              login: 'me',
+              id: this.userId,
+              class: 'bg-yellow-100'
+            }, ...assigned_to.user_list
+          ]
+          this.fixed_version = fixed_version.versions
+          this.status = status
+          this.tracker = tracker
+          this.priority = priority
         })
-        this.issueTypeList = res[1].data.map(item => {
-          return { label: item.name, value: item.id }
-        })
-        this.issuePriorityList = res[2].data.map(item => {
-          return { label: item.name, value: item.id }
-        })
-        this.issueAssigneeList = [
-          {
-            label: this.$t('Issue.me'),
-            login: 'me',
-            value: this.userId,
-            class: 'bg-yellow-100'
-          },
-          ...res[3].data.user_list.map(item => {
-            return { label: item.name, value: item.id, login: item.login }
-          })]
-        this.issueVersionList = res[4].data.versions.map(item => {
-          return { label: item.name, value: item.id, status: item.status }
-        })
+      }
+      if (this.issueId > 0) {
+        await this.getClosable()
+      }
+      this.isLoading = false
+    },
+    setFilterValue() {
+      const getFilter = this.importFrom + 'Filter'
+      Object.keys(this[getFilter]).forEach((item) => {
+        if (this[getFilter][item] !== 'null') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
       })
+      let checkQuickAddIssueForm = ['tracker_id', 'subject']
+      if (this.importFrom === 'kanban') {
+        checkQuickAddIssueForm = ['tracker_id', 'subject', 'assigned_to_id']
+        checkQuickAddIssueForm.push(this.kanbanGroupBy.dimension + '_id')
+      }
+      checkQuickAddIssueForm.forEach((item) => {
+        this.issueForm[item] = this.prefill[item]
+      })
+      this.checkStatus()
     },
     handleClose() {
       if (this.dialogVisible) {
@@ -395,6 +408,9 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
+    },
+    checkStatus() {
+      if (this.issueForm.assigned_to_id === '' && this.issueForm.status_id > 1) this.issueForm.status_id = 1
     },
     clearDueDate(dueDate) {
       if (dueDate === null) this.issueForm.due_date = ''

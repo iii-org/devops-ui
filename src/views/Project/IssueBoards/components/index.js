@@ -1,4 +1,4 @@
 import Kanban from './Kanban'
-import AddIssueDialog from './AddIssueDialog'
-
-export { Kanban, AddIssueDialog }
+import QuickAddIssueOnBoard from './QuickAddIssueOnBoard'
+import RightPanel from './RightPanel'
+export { Kanban, QuickAddIssueOnBoard, RightPanel }

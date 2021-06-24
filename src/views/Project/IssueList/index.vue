@@ -198,20 +198,10 @@
       :layout="'total, prev, pager, next'"
       @pagination="handleCurrentChange"
     />
-    <add-issue
-      :save-data="saveIssue"
-      :dialog-visible.sync="addTopicDialogVisible"
-      :project-id="selectedProjectId"
-      :parent-id="parentId"
-      :parent-name="parentName"
-      :prefill="form"
-      @add-topic-visible="emitAddTopicDialogVisible"
-    />
   </div>
 </template>
 
 <script>
-import AddIssue from './components/AddIssue'
 import { mapActions, mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
@@ -231,7 +221,6 @@ import { BasicData, Table, Pagination } from '@/newMixins'
 export default {
   name: 'ProjectIssues',
   components: {
-    AddIssue,
     QuickAddIssue,
     Priority,
     Status,

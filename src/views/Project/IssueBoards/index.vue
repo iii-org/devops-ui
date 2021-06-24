@@ -119,7 +119,7 @@
         :header-text="getTranslateHeader(classObj.name)"
         :c-name="classObj.name"
         :class="{ [classObj.name.toLowerCase()]: true }"
-        :focus-version="String(kanbanFilter.version)"
+        :add-issue="saveIssue"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
@@ -162,12 +162,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
-import { Kanban } from './components'
+import { Kanban, RightPanel } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import { addIssue, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectIssueListByTree, getProjectUserList, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
-import RightPanel from './components/RightPanel'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
@@ -406,9 +405,6 @@ export default {
         item.cancel()
       })
     },
-    sortByDueDate(a, b) {
-      return new Date(a.due_date) - new Date(b.due_date)
-    },
     async loadSelectionList() {
       await Promise.all([
         getProjectUserList(this.selectedProjectId),
@@ -421,7 +417,7 @@ export default {
           item => item.data
         )
         this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
-        const version = this.fixed_version.sort(this.sortByDueDate).filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
+        const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
         if (version.length > 0) {
           if (Object.keys(this.kanbanFilter).length <= 0) {
             this.$set(this.filterValue, 'fixed_version', version[0].id)
@@ -542,11 +538,29 @@ export default {
       }
       this.isLoading = false
     },
+    async saveIssue(data) {
+      return await addIssue(data)
+        .then(res => {
+          // noinspection JSCheckFunctionSignatures
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Added'),
+            type: 'success'
+          })
+          this.loadData()
+          this.addTopicDialogVisible = false
+          this.$refs['quickAddIssue'].form.subject = ''
+          return res
+        })
+        .catch(error => {
+          return error
+        })
+    },
     sortIssue() {
-      const sortPriority = (a, b) => (a.priority.id - b.priority.id)
-      const sortDueDate = (a, b) => (new Date(b.due_date) - new Date(a.due_date))
+      // const sortPriority = (a, b) => (a.priority.id - b.priority.id)
+      const sortUpdateOn = (a, b) => (new Date(b.updated_on) - new Date(a.updated_on))
       Object.keys(this.classifyIssueList).forEach((item) => {
-        this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortDueDate).sort(sortPriority))
+        this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
       })
     },
     createRelativeList(list) {

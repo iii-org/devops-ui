@@ -3,10 +3,7 @@
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="d-flex">
-        <el-col :span="3">
-          <i class="el-icon-plus ml-4 mr-5 add-button" @click="showDialog = true" />
-        </el-col>
-        <el-col :span="19" class="text-center">{{ headerText }} <b>({{ list.length }})</b></el-col>
+        <el-col class="text-center">{{ headerText }} <b>({{ list.length }})</b></el-col>
         <!--        <i class="el-icon-more header-icon" />-->
       </el-row>
     </div>
@@ -15,12 +12,13 @@
       v-bind="$attrs"
       :class="['board-column-content', cName]"
       :move="checkRelatives"
+      :draggable="'.item'"
       @change="end(boardObject, $event)"
     >
       <div
         v-for="(element, idx) in list"
         :key="element.id+issueReload"
-        class="board-item"
+        class="board-item item"
         :style="{ cursor: 'move' }"
         @drop="drop($event, idx)"
         @dragover="allowDrop($event, idx)"
@@ -97,35 +95,30 @@
           </el-collapse>
         </div>
       </div>
+      <div slot="header">
+        <div class="title board-item" @click="showDialog = !showDialog"><i class="el-icon-plus ml-4 mr-5 add-button" /> {{ $t('Issue.AddIssue') }}</div>
+        <QuickAddIssueOnBoard v-if="showDialog" class="board-item" :save-data="addIssue" :board-object="boardObject" @after-add="showDialog = !showDialog" />
+      </div>
     </draggable>
-    <!-- TODO:focus-version -->
-    <AddIssueDialog
-      :dialog-visible="showDialog"
-      :dimension="dimension"
-      :focus-value="boardObject"
-      :focus-version="focusVersion"
-      @close="showDialog = false"
-      @update="updateBoard"
-    />
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
-import AddIssueDialog from './AddIssueDialog.vue'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import { getCheckIssueClosable, getIssueFamily } from '@/api/issue'
+import QuickAddIssueOnBoard from './QuickAddIssueOnBoard'
 
 export default {
   name: 'Kanban',
   components: {
+    QuickAddIssueOnBoard,
     Tracker,
     Priority,
     Status,
-    draggable,
-    AddIssueDialog
+    draggable
   },
   filters: {
     lengthFilter(value) {
@@ -133,10 +126,6 @@ export default {
       const parent = (value.hasOwnProperty('parent')) ? 1 : 0
       const children = (value.hasOwnProperty('children')) ? value.children.length : 0
       return '(' + (parent + children) + ')'
-    },
-    sortByPriority(value) {
-      const priorityCompare = (a, b) => (a.priority.id - b.priority.id)
-      return value.sort(priorityCompare)
     }
   },
   props: {
@@ -164,13 +153,13 @@ export default {
       type: String,
       default: ''
     },
-    focusVersion: {
-      type: String,
-      default: ''
-    },
     status: {
       type: Array,
       default: () => []
+    },
+    addIssue: {
+      type: Function,
+      default: () => {}
     }
   },
   data() {
@@ -364,6 +353,7 @@ export default {
   border-radius: 3px;
   border: 1px solid #e7e7e7;
   margin: 0 5px 20px 5px;
+  padding-bottom: 20px;
 
   .board-column-header {
     height: 50px;
@@ -387,7 +377,7 @@ export default {
     overflow: hidden;
     overflow-y: auto;
     border: 10px solid transparent;
-    height: 90%;
+    height: 95%;
 
     .board-item {
       cursor: pointer;

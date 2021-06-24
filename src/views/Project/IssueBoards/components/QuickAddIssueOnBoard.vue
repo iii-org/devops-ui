@@ -1,28 +1,50 @@
 <template>
-  <el-row v-show="visible">
-    <el-form ref="issueForm" inline :model="form" :rules="formRules">
-      <el-form-item prop="tracker_id">
-        <el-select
-          v-model="form.tracker_id"
-          :placeholder="$t('Issue.SelectType')"
-        >
-          <el-option
-            v-for="option in tracker"
-            :key="option.login" :label="$t('Issue.'+option.name)"
-            :value="option.id"
+  <el-row>
+    <el-col>
+      <el-form ref="issueForm" :model="form" :rules="formRules">
+        <el-form-item prop="tracker_id">
+          <el-select
+            v-model="form.tracker_id"
+            :placeholder="$t('Issue.SelectType')"
+            style="width: 100%"
           >
-            <tracker :name="option.name" />
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item prop="subject">
-        <el-input v-model="form.subject" :placeholder="$t('Issue.name')" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        <el-button @click="advancedAddIssue">》進階設定</el-button>
-      </el-form-item>
-    </el-form>
+            <el-option
+              v-for="option in tracker"
+              :key="option.id"
+              :label="$t('Issue.' + option.name)"
+              :value="option.id"
+            >
+              <tracker :name="option.name" />
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="subject">
+          <el-input v-model="form.subject" :placeholder="$t('Issue.name')" />
+        </el-form-item>
+        <el-form-item prop="assigned_to_id">
+          <el-select
+            v-model="form.assigned_to_id"
+            style="width: 100%"
+            clearable
+            :placeholder="$t('Issue.SelectMember')"
+            filterable
+          >
+            <el-option v-for="item in assigned_to"
+                       :key="item.login"
+                       :class="item.class"
+                       :label="item.name+' ('+item.login+')'"
+                       :value="item.id"
+            >
+              {{ item.name }} ({{ item.login }})
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+          <el-button @click="advancedAddIssue">》進階設定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-col>
     <el-dialog
       :title="$t('Issue.AddIssue')"
       :visible.sync="addTopicDialogVisible"
@@ -38,6 +60,7 @@
                 :parent-id="parentId"
                 :prefill="form"
                 :save-data="saveData"
+                import-from="kanban"
                 @loading="loadingUpdate"
                 @add-topic-visible="handleCloseDialog"
       />
@@ -55,12 +78,13 @@
 
 <script>
 import Tracker from '@/components/Issue/Tracker'
+import { getProjectAssignable } from '@/api/projects'
 import { getIssueTracker } from '@/api/issue'
 import { mapGetters } from 'vuex'
-import AddIssue from './AddIssue'
+import AddIssue from '@/views/Project/IssueList/components/AddIssue'
 
 export default {
-  name: 'QuickAddIssue',
+  name: 'QuickAddIssueOnBoard',
   components: { AddIssue, Tracker },
 
   props: {
@@ -76,12 +100,25 @@ export default {
       type: Function,
       default: () => {
       }
+    },
+    boardObject: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
+    const validateAssignedTo = (rule, value, callback) => {
+      if ((!value || value === '') && (this.form.status_id >= 2)) {
+        console.log(value, this.form.status_id)
+        callback(new Error('This Status need a assignee.'))
+      } else {
+        callback()
+      }
+    }
     return {
       addTopicDialogVisible: false,
       LoadingConfirm: false,
+      assigned_to: [],
       tracker: [],
       parentId: 0,
       form: {
@@ -94,15 +131,28 @@ export default {
       advancedForm: {},
       formRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }]
+        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+        assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }]
       }
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'issueListFilter'])
+    ...mapGetters(['selectedProjectId', 'userId', 'kanbanGroupBy', 'kanbanFilter'])
   },
   watch: {
-    issueListFilter: {
+    boardObject: {
+      deep: true,
+      handler() {
+        this.setFilterValue()
+      }
+    },
+    kanbanGroupBy: {
+      deep: true,
+      handler() {
+        this.setFilterValue()
+      }
+    },
+    kanbanFilter: {
       deep: true,
       handler() {
         this.setFilterValue()
@@ -116,11 +166,20 @@ export default {
   methods: {
     async fetchSelection() {
       await Promise.all([
+        getProjectAssignable(this.selectedProjectId),
         getIssueTracker()
       ]).then(res => {
-        const [tracker] = res.map(
+        const [assigned_to, tracker] = res.map(
           item => item.data
         )
+        this.assigned_to = [
+          {
+            name: this.$t('Issue.me'),
+            login: 'me',
+            id: this.userId,
+            class: 'bg-yellow-100'
+          }, ...assigned_to.user_list
+        ]
         this.tracker = tracker
       })
     },
@@ -134,8 +193,9 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.issueListFilter[item] !== 'null') { this.$set(this.form, item + '_id', this.issueListFilter[item]) }
+        if (this.kanbanFilter[item] !== 'null') { this.$set(this.form, item + '_id', this.kanbanFilter[item]) }
       })
+      this.$set(this.form, this.kanbanGroupBy.dimension + '_id', this.boardObject.id)
     },
     handleSave() {
       this.$refs['issueForm'].validate(async valid => {
@@ -148,7 +208,7 @@ export default {
 
           // because have file need upload so use formData object
           const form = new FormData()
-          form.append('project_id', this.projectId)
+          form.append('project_id', this.selectedProjectId)
           // if (this.parentId) form.append('parent_id', this.parentId)
           Object.keys(data).forEach(objKey => {
             form.append(objKey, data[objKey])
@@ -160,6 +220,7 @@ export default {
           await this.saveData(form)
           this.LoadingConfirm = false
           this.setFilterValue()
+          this.$emit('after-add')
         } else {
           return false
         }
@@ -179,6 +240,7 @@ export default {
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
       this.setFilterValue()
+      this.$emit('after-add')
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true
@@ -193,4 +255,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .board-item {
+    cursor: pointer;
+    width: 95%;
+    margin: 5px auto;
+    background-color: #fff;
+    text-align: left;
+    line-height: 20px;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    border: 1px solid #e9e9e9;
+    box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
 </style>

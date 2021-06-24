@@ -25,14 +25,35 @@
         <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
       </div>
     </el-dialog>
-    <add-issue
-      :save-data="saveIssue"
-      :dialog-visible.sync="addTopicDialogVisible"
-      :project-id="selectedProjectId"
-      :parent-id="issueId"
-      :parent-name="issueName"
-      @add-topic-visible="emitAddTopicDialogVisible"
-    />
+    <el-dialog
+      :title="$t('Issue.AddIssue')"
+      :visible.sync="addTopicDialogVisible"
+      width="50%"
+      top="5px"
+      :close-on-click-modal="false"
+      destroy-on-close
+      append-to-body
+      @close="handleClose"
+    >
+      <add-issue
+        ref="AddIssue"
+        :save-data="saveIssue"
+        :dialog-visible.sync="addTopicDialogVisible"
+        :project-id="selectedProjectId"
+        :parent-id="issueId"
+        :parent-name="issueName"
+        @loading="loadingUpdate"
+        @add-topic-visible="emitAddTopicDialogVisible"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
+        <el-button id="dialog-btn-confirm" :loading="isLoading" type="primary"
+                   @click="handleAdvancedSave"
+        >
+          {{ $t('general.Confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </el-row>
 </template>
 
@@ -123,7 +144,20 @@ export default {
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
-      this.$emit('update-issue')
+    },
+    handleClose() {
+      this.$emit('close-dialog', false)
+    },
+    handleAdvancedClose() {
+      this.$refs['AddIssue'].handleClose()
+      this.setFilterValue()
+    },
+    handleAdvancedSave() {
+      this.$refs['AddIssue'].handleSave()
+      this.setFilterValue()
+    },
+    loadingUpdate(value) {
+      this.isLoading = value
     }
   }
 }
