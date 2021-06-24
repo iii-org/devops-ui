@@ -290,6 +290,10 @@ export default {
     async selectedProjectId() {
       await this.loadSelectionList()
       await this.loadData()
+      this.filterValue = this.kanbanFilter
+      this.groupBy = this.kanbanGroupBy
+      this.displayClosed = this.kanbanDisplayClosed
+      this.keyword = this.kanbanKeyword
       await this.cleanFilter()
     },
     isLoading(value) {
@@ -423,6 +427,9 @@ export default {
             this.$set(this.filterValue, 'fixed_version', version[0].id)
           }
           this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+        } else {
+          this.$delete(this.filterValue, 'fixed_version')
+          this.$delete(this.originFilterValue, 'fixed_version')
         }
 
         this.tracker = typeList
