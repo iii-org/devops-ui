@@ -109,7 +109,6 @@ export default {
   data() {
     const validateAssignedTo = (rule, value, callback) => {
       if ((!value || value === '') && (this.form.status_id >= 2)) {
-        console.log(value, this.form.status_id)
         callback(new Error('This Status need a assignee.'))
       } else {
         callback()

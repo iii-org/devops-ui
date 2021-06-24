@@ -225,6 +225,13 @@ export default {
   },
 
   data() {
+    const validateAssignedTo = (rule, value, callback) => {
+      if ((!value || value === '') && (this.issueForm.status_id >= 2)) {
+        callback(new Error('This Status need a assignee.'))
+      } else {
+        callback()
+      }
+    }
     return {
       status: [],
       tracker: [],
@@ -234,6 +241,7 @@ export default {
       issueForm: getFormTemplate(),
       issueFormRules: {
         subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
@@ -261,9 +269,6 @@ export default {
     },
     LoadingConfirm(value) {
       this.$emit('loading', value)
-    },
-    'issueForm.assigned_to_id'() {
-      this.checkStatus()
     },
     prefill: {
       deep: true,
@@ -342,7 +347,6 @@ export default {
       checkQuickAddIssueForm.forEach((item) => {
         this.issueForm[item] = this.prefill[item]
       })
-      this.checkStatus()
     },
     handleClose() {
       if (this.dialogVisible) {
@@ -408,9 +412,6 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
-    },
-    checkStatus() {
-      if (this.issueForm.assigned_to_id === '' && this.issueForm.status_id > 1) this.issueForm.status_id = 1
     },
     clearDueDate(dueDate) {
       if (dueDate === null) this.issueForm.due_date = ''
