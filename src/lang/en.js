@@ -424,7 +424,8 @@ export default {
     GroupBy: 'Group by {filter}',
     OriginalSetting: 'Original Setting',
     Result: 'Result',
-    LastResult: 'Recently Result'
+    LastResult: 'Recently Result',
+    NotExist: 'Data Not Exists'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

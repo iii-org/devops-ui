@@ -1,6 +1,6 @@
 <template>
   <el-row :key="reload">
-    <el-row v-if="note.notes.length>0" :span="24" type="flex" align="bottom" :justify="right|justifyRight">
+    <el-row v-if="note.notes" :span="24" type="flex" align="bottom" :justify="right|justifyRight">
       <el-col v-if="right" class="time">
         {{ note.created_on | formatTime }}
       </el-col>
@@ -35,9 +35,10 @@
                 <p class="title">
                   <b><i class="el-icon-caret-right" /> {{ $t('Issue.detail.message.Before') }}</b>
                 </p>
-                <el-link v-if="detail.name==='parent_id'" class="link" @click="showParentIssue(detail.new_value.id)">
-                  {{ detail.old_value.subject }}
+                <el-link v-if="detail.name==='parent_id'&&detail.old_value.id" class="link" @click="showParentIssue(detail.old_value.id)">
+                  {{ detail.old_value.name }}
                 </el-link>
+                <p v-else-if="detail.old_value.id===null" class="text-wrapper"><i><s>{{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}</s></i></p>
                 <p v-else class="text-wrapper">{{ ($te('Issue.' + getValueName(detail.old_value))) ? $t('Issue.' + getValueName(detail.old_value)) : getValueName(detail.old_value) }}</p>
               </el-col>
               <el-col v-if="detail.new_value" :span="12" class="value">
@@ -47,9 +48,10 @@
                 <p v-else>
                   <b><i class="el-icon-caret-right" /> {{ $t('Issue.detail.message.Add') }}</b>
                 </p>
-                <el-link v-if="detail.name==='parent_id'" class="link" @click="showParentIssue(detail.new_value.id)">
-                  {{ detail.new_value.subject }}
+                <el-link v-if="detail.name==='parent_id'&&detail.new_value.id" class="link" @click="showParentIssue(detail.new_value.id)">
+                  {{ detail.new_value.name }}
                 </el-link>
+                <p v-else-if="detail.new_value.id===null" class="text-wrapper"><i><s>{{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}</s></i></p>
                 <p v-else class="text-wrapper">{{ ($te('Issue.' + getValueName(detail.new_value))) ? $t('Issue.' + getValueName(detail.new_value)) : getValueName(detail.new_value) }}</p>
               </el-col>
             </el-row>
@@ -101,7 +103,7 @@ export default {
       deep: true,
       handler(value) {
         this.$nextTick(() => {
-          if (value.notes.length > 0) {
+          if (value.notes) {
             this.$refs['viewer'].invoke('setMarkdown', value.notes)
           }
         })

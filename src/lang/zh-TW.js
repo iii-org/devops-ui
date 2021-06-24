@@ -424,7 +424,8 @@ export default {
     GroupBy: '以 {filter} 分組',
     OriginalSetting: '原先設定',
     Result: '搜尋結果',
-    LastResult: '近期'
+    LastResult: '近期',
+    NotExist: '資料不存在'
   },
   Wiki: {
     AddWiki: '新增Wiki',
