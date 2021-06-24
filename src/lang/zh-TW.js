@@ -384,6 +384,7 @@ export default {
     open: '@:Version.Open',
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',
+    ResetESCTip: '按下Ctrl+ESC (Mac:Command+ESC) 重置輸入內容',
     detail: {
       message: {
         set_to: '{creator} {message}',

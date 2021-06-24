@@ -384,6 +384,7 @@ export default {
     open: '@:Version.Open',
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',
+    ResetESCTip: 'Press Ctrl+ESC (Mac:Command+ESC) to Rest Input Content',
     detail: {
       message: {
         set_to: '{creator} {message}',

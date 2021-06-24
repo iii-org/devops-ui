@@ -7,6 +7,8 @@
         type="text"
         :placeholder="$t('general.Title')"
         class="el-input__inner text-h5"
+        @keydown.meta.esc="cancelInput"
+        @keydown.ctrl.esc="cancelInput"
       >
     </span>
   </span>
@@ -30,12 +32,18 @@ export default {
   data() {
     return {
       edit: false,
-      newValue: this.value
+      newValue: this.value,
+      oldValue: null,
+      initTag: false
     }
   },
   watch: {
     value(newVal) {
       this.newValue = newVal
+      if (!this.initTag) {
+        this.oldValue = newVal
+        this.initTag = true
+      }
     },
     newValue(value) {
       this.$emit('input', value)
@@ -43,6 +51,15 @@ export default {
   },
   mounted() {
     this.newValue = this.value
+    if (!this.initTag) {
+      this.oldValue = this.value
+    }
+  },
+  methods: {
+    cancelInput() {
+      this.newValue = this.oldValue
+      this.edit = false
+    }
   }
 }
 </script>

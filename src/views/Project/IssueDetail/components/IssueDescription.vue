@@ -5,13 +5,17 @@
         {{ $t('Issue.Description') }}
       </el-row>
       <el-form v-if="edit">
-        <el-input
-          v-model="newValue"
-          type="textarea"
-          rows="4"
-          style="width: 100%"
-          :placeholder="$t('RuleMsg.PleaseInput')"
-        />
+        <el-form-item :label="$t('Issue.ResetESCTip')">
+          <el-input
+            v-model="newValue"
+            type="textarea"
+            rows="4"
+            style="width: 100%"
+            :placeholder="$t('RuleMsg.PleaseInput')"
+            @keydown.ctrl.esc.native="cancelInput"
+            @keydown.meta.esc.native="cancelInput"
+          />
+        </el-form-item>
       </el-form>
       <el-col v-else><div class="text-wrapper">{{ value }}</div><el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button></el-col>
     </el-col>
@@ -30,14 +34,17 @@ export default {
   data() {
     return {
       edit: false,
-      newValue: this.value
+      newValue: this.value,
+      oldValue: null,
+      initTag: false
     }
   },
   watch: {
     value(newVal) {
       this.newValue = newVal
-      if (!this.oldValue) {
-        this.oldValue = this.value
+      if (!this.initTag) {
+        this.oldValue = newVal
+        this.initTag = true
       }
     },
     newValue(value) {
@@ -46,8 +53,16 @@ export default {
   },
   mounted() {
     this.newValue = this.value
+    if (!this.initTag) {
+      this.oldValue = this.value
+      this.initTag = true
+    }
   },
   methods: {
+    cancelInput() {
+      this.newValue = this.oldValue
+      this.edit = false
+    }
   }
 }
 </script>
