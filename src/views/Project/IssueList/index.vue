@@ -231,7 +231,6 @@ export default {
   data() {
     return {
       remote: true,
-      rowHeight: 57,
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
@@ -299,7 +298,11 @@ export default {
     },
     isFilterChanged() {
       for (const item of Object.keys(this.filterValue)) {
-        if (this.originFilterValue[item] !== this.filterValue[item]) {
+        const checkFilterValue = this.filterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.originFilterValue[item] !== checkFilterValue[item]) {
           return true
         }
       }
@@ -309,11 +312,12 @@ export default {
   watch: {
     selectedProjectId() {
       this.loadSelectionList()
-      this.loadData()
+      this.initTableData()
     },
     filterValue: {
       deep: true,
       handler() {
+        this.listQuery.page = 1
         this.listQuery.offset = 0
         this.onChangeFilter()
       }
@@ -323,7 +327,7 @@ export default {
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
     await this.loadSelectionList()
-    await this.loadData()
+    // await this.initTableData()
   },
   methods: {
     ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter']),
@@ -426,10 +430,9 @@ export default {
       }
     },
     onChangeFilter() {
-      this.listQuery.page = 1
       this.setIssueListFilter(this.filterValue)
       this.setIssueListKeyword(this.keyword)
-      this.loadData()
+      this.initTableData()
     },
     handleClick(row, column) {
       if (column.type === 'expand' && this.isRelationIssueLoading(row)) {
@@ -510,8 +513,6 @@ export default {
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
-      this.setIssueListFilter(this.filterValue)
-      this.setIssueListKeyword(this.keyword)
       this.onChangeFilter()
     },
     removeIssueRelation(child_issue_id) {
