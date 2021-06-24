@@ -54,7 +54,8 @@
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
                         #{{ parent.id }} - {{ parent.name }}
-                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login }})</span>
+                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login
+                        }})</span>
                       </el-link>
                       <div class="text-right">
                         <el-popconfirm
@@ -65,7 +66,9 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(issueId)"
                         >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                            {{ $t('Issue.Unlink') }}
+                          </el-button>
                         </el-popconfirm>
                       </div>
                     </li>
@@ -92,7 +95,9 @@
                               :title="$t('Issue.RemoveIssueRelation')"
                               @onConfirm="removeIssueRelation(child.id)"
                             >
-                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                                {{ $t('Issue.Unlink') }}
+                              </el-button>
                             </el-popconfirm>
                           </div>
                         </li>
@@ -106,16 +111,22 @@
               <issue-notes-editor ref="IssueNotesEditor" height="125px" />
             </el-col>
             <el-col :span="24">
-              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals" @show-parent-issue="onRelationIssueDialog" />
+              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals"
+                                  @show-parent-issue="onRelationIssueDialog"
+              />
             </el-col>
           </el-row>
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
-          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :children-issue="children.length" @isLoading="showLoading" />
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent"
+                      :children-issue="children.length" @isLoading="showLoading"
+          />
         </el-col>
       </el-row>
       <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close>
-        <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="showLoading" @delete="handleRelationDelete" />
+        <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="showLoading"
+                            @delete="handleRelationDelete"
+        />
       </el-dialog>
     </el-card>
   </div>
@@ -299,7 +310,9 @@ export default {
       if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
         this.onProjectChange(data.project.id)
       }
-      this.$refs.IssueForm.getClosable()
+      if (this.$refs.IssueForm) {
+        this.$refs.IssueForm.getClosable()
+      }
     },
     onProjectChange(value) {
       localStorage.setItem('projectId', value)
@@ -344,26 +357,25 @@ export default {
         confirmButtonClass: 'el-button--danger'
       }).then(async () => {
         this.isLoading = true
-        await deleteIssue(this.issueId)
-          .then(() => {
-            this.$message({
-              title: this.$t('general.Success'),
-              message: this.$t('Notify.Deleted'),
-              type: 'success'
-            })
-            if (this.isInDialog) {
-              this.$emit('delete')
-            } else {
-              this.$router.push(this.formObj)
-            }
+        try {
+          await deleteIssue(this.issueId)
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Deleted'),
+            type: 'success'
           })
-          .catch(err => {
-            this.$message({
-              title: this.$t('general.Error'),
-              message: err,
-              type: 'error'
-            })
+          if (this.isInDialog) {
+            this.$emit('delete')
+          } else {
+            this.$router.push(this.formObj)
+          }
+        } catch (err) {
+          this.$message({
+            title: this.$t('general.Error'),
+            message: err,
+            type: 'error'
           })
+        }
         this.isLoading = false
       })
     },
@@ -371,7 +383,6 @@ export default {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
-      await this.$refs.IssueForm.getClosable()
       await this.fetchIssue()
       this.isLoading = false
     },
