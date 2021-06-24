@@ -9,146 +9,40 @@
     </div>
     <el-row>
       <el-col :span="24">
-        <el-tabs v-model="activeName">
-          <template v-for="(session, sessionIdx) in jsonData">
-            <el-tab-pane :key="session.requestId" :label="`${sessionIdx + 1}`" :name="`Session ${sessionIdx + 1}`">
-              <template slot="title">
-                <div>
-                  <span class="text-h6 mx-3">Session {{ sessionIdx + 1 }}</span>
-                  <span class="text-subtitle-2"># {{ session.requestId }}</span>
-                </div>
-              </template>
-              <div class="p-5">
-                <!-- <el-row>
-                  <el-col :span="12"><span class="font-weight-bold">URL：</span>{{ session.URL }}</el-col>
-                  <el-col :span="12"><span class="font-weight-bold">Scheme：</span>{{ session.Scheme }}</el-col>
-                  <el-col :span="12"><span class="font-weight-bold">Host：</span>{{ session.Host }}</el-col>
-                  <el-col :span="12"><span class="font-weight-bold">Port：</span>{{ session.Port }}</el-col>
-                  <el-col :span="12">
-                    <span :span="12" class="font-weight-bold">AttackParamDescriptor：</span>
-                    {{ session.AttackParamDescriptor || '-' }}
-                  </el-col>
-                </el-row> -->
+        <div v-for="issue in groupByIssueSeverity" :key="issue.id" class="mb-5">
+          <div class="bg-blue-500 text-white p-2 font-small font-semibold" :type="mapSeverity('type', issue.severity)">
+            {{ mapSeverity('name', issue.severity) + ' Issues' }}
+          </div>
 
-                <!-- Issues -->
-                <!-- <div class="text-h5 font-weight-bold">Issues</div> -->
-                <div v-for="issue in session.Issues" :key="issue.id">
-                  <div
-                    class="bg-blue-500 text-white p-2 font-small font-weight-bold"
-                    :type="mapSeverity('type', issue.Severity)"
-                  >
-                    {{ mapSeverity('name', issue.Severity) + ' Issues' }}
-                  </div>
-                  <div class="bg-gray-200 p-2">
-                    <span class="text-h5 font-medium mr-2">{{ issue.Name }}</span>
-                  </div>
+          <div class="p-2 mb-3 bg-gray-200  text-xl font-medium">
+            {{ issue.name }}
+          </div>
 
-                  <!-- <div class="text-subtitle-2"># {{ issue.id }}</div> -->
-                  <!-- <div><span class="text-subtitle-1 font-weight-bold">CheckTypeID：</span>{{ issue.CheckTypeID }}</div> -->
-                  <!-- <div><span class="text-subtitle-1 font-weight-bold">EngineType：</span>{{ issue.EngineType }}</div>
-                  <div>
-                    <span class="text-subtitle-1 font-weight-bold">AttackHTTPRequest：</span>
-                    {{ issue.AttackHTTPRequest }}
-                  </div>
-                  <div>
-                    <span class="text-subtitle-1 font-weight-bold">VulnerabilityID：</span>{{ issue.VulnerabilityID }}
-                  </div> -->
+          <div class="px-4">
+            <div class="text-xl font-semibold">Request：</div>
+            <pre class="code-block">{{ issue.request }}</pre>
 
-                  <!-- ReportSection -->
-                  <div
-                    v-for="(ReportSection, ReportSectionIdx) in issue.ReportSection"
-                    :key="issue.id + ReportSectionIdx"
-                    class="mb-2"
-                  >
-                    <div class="text-subtitle-1 font-weight-bold text-blue-600">{{ ReportSection.Name }}</div>
-                    <div v-html="ReportSection.SectionText" />
-                  </div>
+            <div class="text-xl font-semibold">Response：</div>
+            <pre class="code-block">{{ issue.response }}</pre>
 
-                  <!-- Classification -->
-                  <div class="text-subtitle-1 font-weight-bold text-blue-600">Classification</div>
-                  <div
-                    v-for="(classification, clIdx) in issue.Classifications.Classification"
-                    :key="clIdx"
-                    class="mb-2"
-                  >
-                    <div class="text-subtitle-2 font-weight-bold">{{ classification._ }}</div>
-                    <el-link type="primary" :href="classification.href" target="blank">{{
-                      classification.href
-                    }}</el-link>
-                    <!-- <div>kind：{{ classification.kind }}</div> -->
-                    <!-- <div>identifier：{{ classification.identifier }}</div> -->
-                  </div>
+            <div
+              v-for="(ReportSection, ReportSectionIdx) in issue.reportSection"
+              :key="issue.id + ReportSectionIdx"
+              class="mb-2"
+            >
+              <div class="text-lg font-semibold underline">{{ ReportSection.Name }}</div>
+              <div v-html="ReportSection.SectionText" />
+            </div>
 
-                  <el-divider />
-                </div>
-
-                <!-- RawRequest -->
-
-                <div class="text-h5 font-weight-bold">Request</div>
-                <!-- <div class="text-subtitle-2"># {{ session.RawRequest.id }}</div> -->
-                <pre class="code-block">{{ formatRawData(session.RawRequest._) }}</pre>
-                <el-divider />
-
-                <!-- RawResponse -->
-                <div class="text-h5 font-weight-bold">Response</div>
-                <pre class="code-block">{{ formatRawData(session.RawResponse) }}</pre>
-                <el-divider />
-
-                <!-- Request -->
-                <!-- <div class="text-h5 font-weight-bold">Request</div>
-                <ul>
-                  <template v-for="(requestVal, requestKey) in session.Request">
-                    <li v-if="requestKey === 'Headers'" :key="requestKey">
-                      <span class="font-weight-bold">{{ requestKey }}：</span>
-                      <ul>
-                        <li v-for="headerItem in requestVal.Header" :key="headerItem.Name">
-                          {{ headerItem.Name }}：{{ headerItem.Value }}
-                        </li>
-                      </ul>
-                    </li>
-                    <li v-else-if="requestKey === 'Cookies'" :key="requestKey">
-                      <span class="font-weight-bold">{{ requestKey }}：</span>
-                      <ul>
-                        <li v-for="headerItem in requestVal.Header" :key="headerItem.Name">
-                          {{ headerItem.Name }}：{{ headerItem.Value }}
-                        </li>
-                      </ul>
-                    </li>
-                    <li v-else :key="requestKey">
-                      <span class="font-weight-bold">{{ requestKey }}：</span>
-                      {{ requestVal }}
-                    </li>
-                  </template>
-                </ul>
-                <el-divider /> -->
-
-                <!-- Response -->
-                <!-- <div class="text-h5 font-weight-bold">Response</div>
-                <ul>
-                  <template v-for="(responseVal, responseKey) in session.Response">
-                    <li v-if="responseKey === 'Headers'" :key="responseKey">
-                      <span class="font-weight-bold">{{ responseKey }}：</span>
-                      <ol>
-                        <li v-for="headerItem in responseVal.Header" :key="headerItem.Name">
-                          {{ headerItem.Name }}：{{ headerItem.Value }}
-                        </li>
-                      </ol>
-                    </li>
-                    <li v-else-if="responseKey === 'ResponseBody'" :key="responseKey">
-                      <span class="font-weight-bold">ResponseBody：</span>
-                      <pre v-text="responseVal" />
-                    </li>
-
-                    <li v-else :key="responseKey">
-                      <span class="font-weight-bold">{{ responseKey }}：</span>
-                      {{ responseVal }}
-                    </li>
-                  </template>
-                </ul> -->
-              </div>
-            </el-tab-pane>
-          </template>
-        </el-tabs>
+            <div class="text-lg font-semibold underline mb-3">Classifications</div>
+            <div v-for="(classification, clIdx) in issue.classifications" :key="clIdx" class="mb-2">
+              <div class="text-base font-semibold">{{ classification._ }}</div>
+              <el-link type="primary" :href="classification.href" target="blank">
+                {{ classification.href }}
+              </el-link>
+            </div>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -172,7 +66,21 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProject'])
+    ...mapGetters(['selectedProject']),
+    groupByIssueSeverity() {
+      const result = this.jsonData.flatMap(item =>
+        item.Issues.flatMap(issue => ({
+          id: issue.id,
+          severity: Number(issue.Severity),
+          name: issue.Name,
+          request: item.RawRequest._,
+          response: item.RawResponse,
+          reportSection: issue.ReportSection,
+          classifications: issue.Classifications.Classification
+        }))
+      )
+      return result.sort((a, b) => a.severity - b.severity)
+    }
   },
   mounted() {
     this.fetchData()
@@ -220,9 +128,7 @@ export default {
       link.href = URL.createObjectURL(blob)
       link.click()
       URL.revokeObjectURL(blob)
-    },
-    formatRawData(data) {
-      return data
+      link.remove()
     },
     mapSeverity(key, status) {
       const mapping = {
