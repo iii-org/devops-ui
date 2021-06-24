@@ -96,7 +96,7 @@
         </div>
       </div>
       <div slot="header">
-        <div class="title board-item" @click="showDialog = !showDialog"><i class="el-icon-plus ml-4 mr-5 add-button" /> {{ $t('Issue.AddIssue') }}</div>
+        <div class="title board-item noSelect" @click="showDialog = !showDialog"><i class="el-icon-plus ml-4 mr-5 add-button" /> {{ $t('Issue.AddIssue') }}</div>
         <QuickAddIssueOnBoard v-if="showDialog" class="board-item" :save-data="addIssue" :board-object="boardObject" @after-add="showDialog = !showDialog" />
       </div>
     </draggable>
@@ -438,5 +438,15 @@ export default {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
   height: auto !important;
+}
+
+.noSelect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 </style>
