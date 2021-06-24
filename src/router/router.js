@@ -461,7 +461,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Scan/WebInspect')
           },
           {
-            path: 'report/:id',
+            path: 'report/:scan_id',
             name: 'webInspectReport',
             component: () => import('@/views/Scan/WIEReportViewer'),
             hidden: true,

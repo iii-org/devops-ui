@@ -46,7 +46,7 @@
           <el-tag
             v-if="scope.row.stats.status"
             class="el-tag--circle"
-            :type="getStatusTagType(scope.row.stats.status)"
+            :type="mapStatusTagType(scope.row.stats.status)"
             effect="dark"
           >
             {{ scope.row.stats.status }}
@@ -81,7 +81,7 @@
             style="font-size: 16px"
             :disabled="!scope.row.scan_id || scope.row.stats.status !== 'Complete'"
             :underline="false"
-            @click="handleTestReportDetail(scope.row.scan_id)"
+            @click="handleTestReportDetail(scope.row)"
           >
             <i class="el-icon-document" style="font-size: 16px" />
           </el-link>
@@ -187,25 +187,21 @@ export default {
         link.click()
       })
     },
-    handleTestReportDetail(wiScanId) {
-      this.$router.push({ name: 'webInspectReport', params: { id: wiScanId } })
+    handleTestReportDetail(row) {
+      const { scan_id, run_at } = row
+      this.$router.push({ name: 'webInspectReport', params: { scan_id, run_at }})
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    getStatusTagType(status) {
-      switch (status) {
-        case 'Complete':
-          return 'success'
-        case 'Running':
-          return 'slow'
-        case 'NotRunning':
-          return 'warning'
-        case 'Interrupted':
-          return 'danger'
-        default:
-          return 'slow'
+    mapStatusTagType(status) {
+      const mapKey = {
+        Complete: 'success',
+        Running: 'slow',
+        NotRunning: 'warning',
+        Interrupted: 'danger'
       }
+      return mapKey[status] || 'slow'
     }
   }
 }

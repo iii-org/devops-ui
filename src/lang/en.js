@@ -259,6 +259,8 @@ export default {
     BpSeverity: 'Best Practice',
     RunAt: 'Start Time',
     Report: 'Report',
+    TestReport: 'Test Report',
+    DownloadReport: 'Download Report',
     SearchCommitId: 'Search Commit ID'
   },
   TestValue: {

@@ -1,7 +1,11 @@
 <template>
   <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <div v-if="!isLoading" class="d-flex justify-between align-center mb-2">
-      <el-button icon="el-icon-download" @click="handleDownload">下載報告 (.xml)</el-button>
+      <h3>「{{ selectedProject.display }}」{{ $t('WebInspect.TestReport') }}</h3>
+      <span>{{ $t('WebInspect.RunAt') }}：{{ runAt }}</span>
+      <el-button icon="el-icon-download" @click="handleDownload">
+        {{ $t('WebInspect.DownloadReport') }} (.xml)
+      </el-button>
     </div>
     <el-row>
       <el-col :span="24">
@@ -29,11 +33,14 @@
                 <!-- Issues -->
                 <!-- <div class="text-h5 font-weight-bold">Issues</div> -->
                 <div v-for="issue in session.Issues" :key="issue.id">
+                  <div
+                    class="bg-blue-500 text-white p-2 font-small font-weight-bold"
+                    :type="mapSeverity('type', issue.Severity)"
+                  >
+                    {{ mapSeverity('name', issue.Severity) + ' Issues' }}
+                  </div>
                   <div class="bg-gray-200 p-2">
                     <span class="text-h5 font-medium mr-2">{{ issue.Name }}</span>
-                    <el-tag :type="mapSeverity('type', issue.Severity)" size="small">{{
-                      mapSeverity('name', issue.Severity)
-                    }}</el-tag>
                   </div>
 
                   <!-- <div class="text-subtitle-2"># {{ issue.id }}</div> -->
@@ -48,7 +55,11 @@
                   </div> -->
 
                   <!-- ReportSection -->
-                  <div v-for="ReportSection in issue.ReportSection" :key="ReportSection.Name" class="mb-2">
+                  <div
+                    v-for="(ReportSection, ReportSectionIdx) in issue.ReportSection"
+                    :key="issue.id + ReportSectionIdx"
+                    class="mb-2"
+                  >
                     <div class="text-subtitle-1 font-weight-bold text-blue-600">{{ ReportSection.Name }}</div>
                     <div v-html="ReportSection.SectionText" />
                   </div>
@@ -75,12 +86,12 @@
 
                 <div class="text-h5 font-weight-bold">Request</div>
                 <!-- <div class="text-subtitle-2"># {{ session.RawRequest.id }}</div> -->
-                <pre>{{ formatRawData(session.RawRequest._) }}</pre>
+                <pre class="code-block">{{ formatRawData(session.RawRequest._) }}</pre>
                 <el-divider />
 
                 <!-- RawResponse -->
                 <div class="text-h5 font-weight-bold">Response</div>
-                <pre>{{ formatRawData(session.RawResponse) }}</pre>
+                <pre class="code-block">{{ formatRawData(session.RawResponse) }}</pre>
                 <el-divider />
 
                 <!-- Request -->
@@ -146,6 +157,7 @@
 <script>
 import { getWebInspectReport } from '@/api/webInspect'
 import xml2js from 'xml2js'
+import { mapGetters } from 'vuex'
 const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true })
 
 export default {
@@ -153,10 +165,14 @@ export default {
   data() {
     return {
       activeName: '',
+      runAt: null,
       isLoading: false,
       xmlData: '',
-      jsonData: {}
+      jsonData: []
     }
+  },
+  computed: {
+    ...mapGetters(['selectedProject'])
   },
   mounted() {
     this.fetchData()
@@ -164,7 +180,8 @@ export default {
   methods: {
     fetchData() {
       this.isLoading = true
-      getWebInspectReport(this.$route.params.id).then(res => {
+      this.runAt = this.UTCtoLocalTime(this.$route.params.run_at)
+      getWebInspectReport(this.$route.params.scan_id).then(res => {
         this.xmlData = res
         this.$nextTick(() => this.parseXml())
       })
@@ -178,7 +195,7 @@ export default {
           this.isLoading = false
         })
         .catch(function(err) {
-          console.log(err)
+          console.error(err)
         })
     },
     formatter(data) {
@@ -216,7 +233,23 @@ export default {
         4: { type: 'danger', name: 'Critical' }
       }
       return mapping[status][key]
+    },
+    UTCtoLocalTime(dateTime) {
+      if (!dateTime) return '-'
+      const localTime = this.$dayjs
+        .utc(dateTime)
+        .local()
+        .format('YYYY-MM-DD HH:mm:ss')
+      return localTime
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.code-block {
+  width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+</style>

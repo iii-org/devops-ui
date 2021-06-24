@@ -259,6 +259,8 @@ export default {
     BpSeverity: '最佳實作',
     RunAt: '開始時間',
     Report: '報告',
+    TestReport: '測試報告',
+    DownloadReport: '下載報告',
     SearchCommitId: '搜尋 Commit'
   },
   TestValue: {
