@@ -99,7 +99,7 @@ export default {
   transition: all .25s cubic-bezier(.7, .3, .1, 1);
   transform: translate(100%);
   background: #fff;
-  z-index: 2045;
+  z-index: 1000;
 }
 .show {
   transition: all .3s cubic-bezier(.7, .3, .1, 1);
