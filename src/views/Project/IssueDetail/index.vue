@@ -31,7 +31,7 @@
         <el-col ref="mainIssueWrapper" :span="24" :md="16">
           <el-col :span="24">
             <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
-                          @update-issue="handleUpdated"
+                          @update-issue="showLoading"
             />
           </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
@@ -115,7 +115,7 @@
         </el-col>
       </el-row>
       <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close>
-        <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" />
+        <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="showLoading" @delete="handleRelationDelete" />
       </el-dialog>
     </el-card>
   </div>
@@ -351,7 +351,11 @@ export default {
               message: this.$t('Notify.Deleted'),
               type: 'success'
             })
-            this.$router.push(this.formObj)
+            if (this.isInDialog) {
+              this.$emit('delete')
+            } else {
+              this.$router.push(this.formObj)
+            }
           })
           .catch(err => {
             this.$message({
@@ -375,7 +379,9 @@ export default {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
+      console.log(status)
       this.isLoading = status
+      this.handleUpdated()
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
@@ -406,6 +412,7 @@ export default {
             type: 'success'
           })
           this.handleUpdated()
+          this.$emit('update')
         })
         .catch(err => {
           console.error(err)
@@ -449,9 +456,17 @@ export default {
       }
       return false
     },
+    handleRelationDelete() {
+      this.handleUpdated()
+      this.onCloseRelationIssueDialog()
+    },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
+    },
+    onCloseRelationIssueDialog() {
+      this.$set(this.relationIssue, 'visible', false)
+      this.$set(this.relationIssue, 'id', null)
     },
     formatTime(value) {
       return dayjs(value).fromNow()

@@ -10,15 +10,15 @@
       </el-row>
 
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('general.Title')" prop="subject">
+        <el-form-item :label="$t('Issue.name')" prop="subject">
           <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
         </el-form-item>
       </el-col>
 
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.Assignee')" prop="assigned_to_id">
+        <el-form-item :label="$t('Issue.assigned_to')" prop="assigned_to_id">
           <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-            <el-option v-for="item in assigned_to" :key="item.id" :label="item.name" :value="item.id" :class="item.class">
+            <el-option v-for="item in assigned_to" :key="item.login" :label="item.name" :value="item.id" :class="item.class">
               {{ item.name }}{{ `（${item.login}）` }}
             </el-option>
           </el-select>
@@ -28,7 +28,7 @@
 
     <el-row>
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Version.Version')" prop="fixed_version_id">
+        <el-form-item :label="$t('Issue.fixed_version')" prop="fixed_version_id">
           <el-select id="input-version" v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
             <el-option
               v-for="item in fixed_version"
@@ -42,7 +42,7 @@
       </el-col>
 
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('general.Type')" prop="tracker_id">
+        <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
           <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
             <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
               <tracker :name="item.name" />
@@ -53,7 +53,7 @@
     </el-row>
     <el-row>
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('general.Status')" prop="status_id">
+        <el-form-item :label="$t('Issue.status')" prop="status_id">
           <el-select v-model="issueForm.status_id" style="width: 100%">
             <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
               <status :name="item.name" />

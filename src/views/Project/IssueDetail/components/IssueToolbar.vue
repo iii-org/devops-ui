@@ -119,7 +119,7 @@ export default {
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
-          this.$emit('update-issue')
+          this.$emit('update-issue', this.isLoading)
         })
         .catch(err => {
           console.error(err)
@@ -159,7 +159,7 @@ export default {
     },
     loadingUpdate(value) {
       this.isLoading = value
-      this.$emit('is-loading', value)
+      this.$emit('update-issue', value)
     }
   }
 }
