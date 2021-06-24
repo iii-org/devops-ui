@@ -1,63 +1,13 @@
 import request from '@/utils/request'
 
-// repositoryid
-export function getPipelines(repository_id, params) {
-  return request({
-    url: `/pipelines/${repository_id}/pipelines_exec`,
-    method: 'get',
-    params
-  })
-}
+export const getPipelines = (repository_id, params, config) => request.get(`/pipelines/${repository_id}/pipelines_exec`, { params, ...config })
+export const changePipelineByAction = (repository_id, data) => request.post(`/pipelines/${repository_id}/pipelines_exec/action`, data)
 
-export function changePipelineByAction(repository_id, data) {
-  return request({
-    url: `/pipelines/${repository_id}/pipelines_exec/action`,
-    method: 'post',
-    data
-  })
-}
-
-export function getPipeline(id) {
-  return request({
-    url: `/pipelines`,
-    method: 'get'
-  })
-}
-
-export function getStages(id) {
-  return request({
-    url: `/cicd/pipelines/${id}/stages`,
-    method: 'get'
-  })
-}
+export const getPipeline = () => request.get(`/pipelines`)
+export const getStages = (id) => request.get(`/cicd/pipelines/${id}/stages`)
 
 // CI/CD 詳細記錄 [測試詳細記錄]
-export function getPipelinesLogs(params) {
-  return request({
-    url: `/pipelines/logs`,
-    method: 'get',
-    params
-  })
-}
-
-export function getPipelinesPhase(rId, bName) {
-  return request({
-    url: `/pipelines/${rId}/branch/${bName}/phase_yaml`,
-    method: 'get'
-  })
-}
-
-export function getPipelinesConfig(rId, params) {
-  return request({
-    url: `/pipelines/${rId}/config`,
-    method: 'get',
-    params
-  })
-}
-
-export function getCiPipelineId(rId) {
-  return request({
-    url: `/git_repo_id_to_ci_pipe_id/${rId}`,
-    method: 'get'
-  })
-}
+export const getPipelinesLogs = (params) => request.get(`/pipelines/logs`, { params })
+export const getPipelinesPhase = (rId, bName) => request.get(`/pipelines/${rId}/branch/${bName}/phase_yaml`)
+export const getPipelinesConfig = (rId, params) => request.get(`/pipelines/${rId}/config`, { params })
+export const getCiPipelineId = (rId) => request.get(`/git_repo_id_to_ci_pipe_id/${rId}`)

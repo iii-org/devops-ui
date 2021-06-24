@@ -12,7 +12,7 @@
       </div>
       <el-divider />
       <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
-      <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit>
+      <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" border fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
           :label="`${$t('ProgressPipelines.Status')} / ${$t('ProgressPipelines.TestItems')}`"
@@ -111,6 +111,7 @@ import TestDetail from './components/TestDetail'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
+import { CancelRequest } from '@/newMixins'
 
 const listQuery = () => ({
   page: 1,
@@ -125,9 +126,11 @@ const listQuery = () => ({
 export default {
   name: 'ProgressPipelinesSocket',
   components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination },
+  mixins: [CancelRequest],
   data() {
     return {
       isLoading: false,
+      isUpdating: false,
       rowHeight: 90,
       lastUpdateTime: '',
       timer: null,
@@ -143,11 +146,6 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProject', 'selectedProjectId', 'userId']),
-    pagedData() {
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return this.filteredData.slice(start, end)
-    },
     filteredData() {
       const { listData, searchKeys } = this
       const keyword = this.keyword.toLowerCase()
@@ -169,6 +167,7 @@ export default {
     selectedProject() {
       this.listQuery = listQuery()
       this.searchData = ''
+      this.clearTimer()
       this.loadData()
     },
     keyword() {
@@ -183,35 +182,36 @@ export default {
   },
   methods: {
     onPagination(listQuery) {
+      this.clearTimer()
       const { first, limit } = this.listQuery
       const startId = first - (listQuery.page - 1) * limit
+      this.listQuery.start = startId
       this.loadData(10, startId)
     },
-    async loadData(limit, start) {
+    async loadData(limit, startId) {
       this.isLoading = true
-      this.listData = []
-      await this.fetchData(limit, start)
-      this.isLoading = false
+      await this.fetchData(limit, startId)
     },
-    async fetchData(limit = 10, start = this.listQuery.start) {
+    async fetchData(limit = 10, startId = this.listQuery.start) {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
       }
+      if (this.isUpdating) this.cancelRequest()
+      this.isUpdating = true
       try {
-        const res = await getPipelines(this.selectedRepositoryId, { limit, start })
-        this.lastUpdateTime = this.$dayjs(res.datetime)
-          .utcOffset(16)
+        const res = await getPipelines(this.selectedRepositoryId, { limit, start: startId }, { cancelToken: this.cancelToken })
+        this.lastUpdateTime = this.$dayjs()
+          .utc(res.datetime)
           .format('YYYY-MM-DD HH:mm:ss')
-        res.data.pipe_execs.forEach((item, idx) => {
-          const result = { ...item }
-          if (result.execution_state === 'Success') result.execution_state = 'Finished'
-          this.$set(this.listData, idx, result)
-          this.listQuery = res.data.pagination
-          this.listQuery.page = 1
-        })
+        this.updatePipeExecs(res.data)
+        this.listQuery = res.data.pagination
+        this.listQuery.page = 1
+        this.isLoading = false
+        this.isUpdating = false
+        this.setTimer()
       } catch (error) {
-        console.error(error)
+        console.error('error ========>', error)
       }
     },
     showNoProjectWarning() {
@@ -220,6 +220,17 @@ export default {
         message: this.$t('Notify.NoProject'),
         type: 'warning'
       })
+    },
+    updatePipeExecs(resData) {
+      if (resData.pipe_execs.length > 0) {
+        this.listData = resData.pipe_execs.map(item => {
+          const result = { ...item }
+          if (result.execution_state === 'Success') result.execution_state = 'Finished'
+          return result
+        })
+      } else {
+        this.listData = []
+      }
     },
     async onActionClick(id, action) {
       const data = {
@@ -263,10 +274,10 @@ export default {
       return allowStatus.includes(status)
     },
     setTimer() {
-      this.timer = setInterval(() => this.fetchData(), 10000)
+      this.timer = setTimeout(() => this.fetchData(), 10000)
     },
     clearTimer() {
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
       this.timer = null
     }
   }

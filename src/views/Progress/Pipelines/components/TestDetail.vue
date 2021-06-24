@@ -217,14 +217,14 @@ export default {
         .catch(err => console.error(err))
     },
     setConnectStatusListener() {
-      this.socket.on('connect', () => {
-        this.$notify({
-          title: this.$t('general.Success'),
-          message: 'WebSocket connect',
-          type: 'success'
-        })
-        this.sid = this.socket.id
-      })
+      // this.socket.on('connect', () => {
+      //   this.$notify({
+      //     title: this.$t('general.Success'),
+      //     message: 'WebSocket connect',
+      //     type: 'success'
+      //   })
+      //   this.sid = this.socket.id
+      // })
       // this.socket.on('disconnect', msg => {
       //   this.$notify({
       //     title: this.$t('general.Info'),

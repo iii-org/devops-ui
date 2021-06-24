@@ -3,5 +3,6 @@ import ProjectSelector from './ProjectSelector.js'
 import SearchBar from './SearchBar.js'
 import Pagination from './Pagination.js'
 import Table from './Table.js'
+import CancelRequest from './CancelRequest.js'
 
-export { BasicData, ProjectSelector, SearchBar, Pagination, Table }
+export { BasicData, ProjectSelector, SearchBar, Pagination, Table, CancelRequest }

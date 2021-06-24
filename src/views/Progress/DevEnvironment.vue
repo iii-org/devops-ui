@@ -213,8 +213,8 @@ export default {
     async fetchData() {
       const res = await getEnvironmentList(this.selectedProjectId)
       const result = this.formatEnvironments(res.data)
-      this.lastUpdateTime = this.$dayjs(res.datetime)
-        .utcOffset(16)
+      this.lastUpdateTime = this.$dayjs()
+        .utc(res.datetime)
         .format('YYYY-MM-DD HH:mm:ss')
       result.forEach((item, idx) => {
         const result = { ...item }
