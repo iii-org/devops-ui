@@ -151,11 +151,9 @@ export default {
     },
     handleAdvancedClose() {
       this.$refs['AddIssue'].handleClose()
-      this.setFilterValue()
     },
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
-      this.setFilterValue()
     },
     loadingUpdate(value) {
       this.isLoading = value

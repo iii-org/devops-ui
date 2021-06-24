@@ -38,6 +38,7 @@
                 :parent-id="parentId"
                 :prefill="form"
                 :save-data="saveData"
+                import-from="issueList"
                 @loading="loadingUpdate"
                 @add-topic-visible="handleCloseDialog"
       />

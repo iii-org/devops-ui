@@ -220,7 +220,7 @@ export default {
     },
     importFrom: {
       type: String,
-      default: 'issueList'
+      default: null
     }
   },
 
@@ -273,7 +273,9 @@ export default {
     prefill: {
       deep: true,
       handler() {
-        this.setFilterValue()
+        if (['issueList', 'kanban'].includes(this.importFrom)) {
+          this.setFilterValue()
+        }
       }
     },
     kanbanFilter: {
@@ -297,7 +299,9 @@ export default {
   mounted() {
     this.fetchData()
     this.extension = fileExtension()
-    this.setFilterValue()
+    if (['issueList', 'kanban'].includes(this.importFrom)) {
+      this.setFilterValue()
+    }
   },
 
   methods: {
