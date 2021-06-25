@@ -56,11 +56,9 @@
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
                         #{{ parent.id }} - {{ parent.name }}
-                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{
-                          $t('Issue.Assignee')
-                        }}:{{ parent.assigned_to.name }} - {{
-                          parent.assigned_to.login
-                        }})</span>
+                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">
+                          ({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }}
+                          - {{ parent.assigned_to.login }})</span>
                       </el-link>
                       <div class="text-right">
                         <el-popconfirm
