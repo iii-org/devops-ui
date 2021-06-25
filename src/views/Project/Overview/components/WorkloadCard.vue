@@ -76,7 +76,10 @@ export default {
         Feature: this.$t('Issue.Feature'),
         Bug: this.$t('Issue.Bug'),
         Issue: this.$t('Issue.Issue'),
-        'Change Request': this.$t('Issue.Change Request')
+        'Change Request': this.$t('Issue.Change Request'),
+        Risk: this.$t('Issue.Risk'),
+        'Test Plan': this.$t('Issue.Test Plan'),
+        'Fail Management': this.$t('Issue.Fail Management')
       }
       const newData = Object.keys(rowData).reduce((newData, key) => {
         const newKey = keyMap[key] || key
