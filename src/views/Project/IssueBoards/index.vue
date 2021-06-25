@@ -438,7 +438,6 @@ export default {
           ...assigneeList.user_list
         ]
         this.status = statusList
-        this.setGroupByUnclosedStatus(false)
         this.priority = priorityList
         // if (this.userRole === 'Engineer') {
         //   this.$set(this.filterValue, 'assigned_to', this.userId)
@@ -617,7 +616,6 @@ export default {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
       this.displayClosed = false
-      this.setGroupByUnclosedStatus(this.displayClosed)
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
     },
@@ -625,18 +623,12 @@ export default {
       this.setKanbanFilter(this.filterValue)
       this.setKanbanKeyword(this.keyword)
       this.setKanbanDisplayClosed(this.displayClosed)
-      this.setGroupByUnclosedStatus(this.displayClosed)
       this.loadData()
     },
     onChangeGroupByDimension(value) {
       this.$set(this.groupBy, 'dimension', value)
       if (this.filterValue.hasOwnProperty(this.groupBy.dimension)) {
         this.$delete(this.filterValue, this.groupBy.dimension)
-      }
-      if (this.groupBy.dimension === 'status') {
-        this.setGroupByUnclosedStatus(false)
-      } else {
-        this.setGroupByUnclosedStatus(true)
       }
       this.setKanbanGroupByDimension(this.groupBy.dimension)
       this.loadData()
