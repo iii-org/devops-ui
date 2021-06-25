@@ -84,7 +84,7 @@
               :prop="'parameter.' + paramIdx + '.key'"
               :rules="[{ required: true, message: $t('general.PleaseInput') + 'key', trigger: 'blur' }]"
             >
-              <el-input v-model="form.parameter[paramIdx].key" placeholder="key" />
+              <el-input v-model="form.parameter[paramIdx].key" placeholder="key" :disabled="!isAddPlugin" />
             </el-form-item>
           </el-col>
           <el-col :span="15">
@@ -164,7 +164,7 @@ export default {
   },
   computed: {
     dialogTitle() {
-      return this.isAddPlugin ? `${i18n.t('general.Add')} Plugins` : `${i18n.t('general.Edit')} Plugins` 
+      return this.isAddPlugin ? `${i18n.t('general.Add')} Plugins` : `${i18n.t('general.Edit')} Plugins`
     }
   },
   methods: {
@@ -181,10 +181,16 @@ export default {
       this.isLoading = true
       const res = await getPluginDetails(pluginId)
       const { name, disabled, id, parameter, type_id } = res.data
-      Object.assign(this.form, { name, disabled, id, parameter: Object.entries(parameter).map(item => ({
-        key: item[0],
-        value: item[1]
-      })), type_id })
+      Object.assign(this.form, {
+        name,
+        disabled,
+        id,
+        parameter: Object.entries(parameter).map(item => ({
+          key: item[0],
+          value: item[1]
+        })),
+        type_id
+      })
       this.isLoading = false
       this.isDialogVisible = true
     },
@@ -203,7 +209,10 @@ export default {
       this.$refs['form'].validate(async valid => {
         if (valid) {
           const sendData = Object.assign({}, this.form)
-          sendData.parameter = this.form.parameter.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
+          sendData.parameter = this.form.parameter.reduce(
+            (result, cur) => Object.assign(result, { [cur.key]: cur.value }),
+            {}
+          )
           this.isAddPlugin ? await addPlugin(sendData) : await updatePlugin(this.form.id, sendData)
           this.handleClose()
           this.loadData()
@@ -212,24 +221,31 @@ export default {
     },
     handleDelete(pluginId) {
       this.isLoading = true
-      deletePlugin(pluginId).then(() => {
-        this.$message({
-          message: this.$t('Notify.Deleted'),
-          type: 'success'
+      deletePlugin(pluginId)
+        .then(() => {
+          this.$message({
+            message: this.$t('Notify.Deleted'),
+            type: 'success'
+          })
         })
-      }).catch(err => {
-        this.$message({
-          message: err,
-          type: 'error'
+        .catch(err => {
+          this.$message({
+            message: err,
+            type: 'error'
+          })
         })
-      }).then(() => { this.isLoading = false })
+        .then(() => {
+          this.isLoading = false
+        })
     },
     addItem() {
       this.form.parameter.push({ key: '', value: '' })
     },
     removeItem(item) {
       const index = this.form.parameter.indexOf(item)
-      if (index !== -1) { this.form.parameter.splice(index, 1) }
+      if (index !== -1) {
+        this.form.parameter.splice(index, 1)
+      }
     }
   }
 }
