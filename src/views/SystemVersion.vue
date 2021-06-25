@@ -49,7 +49,12 @@ export default {
     fetchData() {
       this.listLoading = true
       getVersion().then(response => {
-        const apiData = { source: 'API', commitId: response.data.git_commit_id }
+        const apiData = {
+          source: 'API',
+          tag: response.data.git_tag,
+          commitId: response.data.git_commit_id,
+          commitTime: response.data.git_date
+        }
         this.list.push(apiData)
       })
     }
