@@ -20,7 +20,13 @@
           >
             <el-form>
               <template v-for="dimension in filterOptions">
-                <el-form-item :key="dimension.id" :label="$t('Issue.'+dimension.value)">
+                <el-form-item :key="dimension.id">
+                  <div slot="label">
+                    {{ $t('Issue.'+dimension.value) }}
+                    <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+                      <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                    </el-tag>
+                  </div>
                   <el-select
                     v-model="filterValue[dimension.value]"
                     :placeholder="$t('Issue.Select'+dimension.placeholder)"
@@ -234,6 +240,7 @@ export default {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
+      fixed_version_closed: false,
       search: '',
       parentId: 0,
       parentName: '',
@@ -263,7 +270,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword']),
+    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'fixedVersionShowClosed']),
     filterOptions() {
       return [
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
@@ -320,15 +327,20 @@ export default {
         this.backToFirstPage()
         this.onChangeFilter()
       }
+    },
+    fixed_version_closed(value) {
+      this.setFixedVersionShowClosed(value)
+      this.loadVersionList(value)
     }
   },
   async created() {
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
+    this.fixed_version_closed = this.fixedVersionShowClosed
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter']),
+    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed']),
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
       this.$message({
@@ -380,18 +392,24 @@ export default {
       }
       return data
     },
+    async loadVersionList(status) {
+      let params = { status: 'open,locked' }
+      if (status) {
+        params = { status: 'open,locked,closed' }
+      }
+      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
+    },
     async loadSelectionList() {
       await Promise.all([
         getProjectUserList(this.selectedProjectId),
-        getProjectVersion(this.selectedProjectId),
         getIssueTracker(),
         getIssueStatus(),
         getIssuePriority()
       ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList, typeList, statusList, priorityList] = res.map(
           item => item.data
         )
-        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
         this.tracker = typeList
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
@@ -404,6 +422,7 @@ export default {
           this.$set(this.originFilterValue, 'assigned_to', this.userId)
         }
       })
+      await this.loadVersionList(this.fixed_version_closed)
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']

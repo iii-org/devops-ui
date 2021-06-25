@@ -383,6 +383,7 @@ export default {
     Unassigned: '@:Dashboard.Unassigned',
     RelatedIssue: 'Related Issue',
     DisplayClosedIssue: 'Show Closed Issues',
+    DisplayClosedVersion: 'Show Closed Versions',
     open: '@:Version.Open',
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',

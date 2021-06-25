@@ -59,7 +59,6 @@ export default {
       }
       this.initTag = true
     }
-    this.edit = true
   },
   methods: {
     cancelInput() {

@@ -33,7 +33,7 @@
             <el-option
               v-for="item in fixed_version"
               :key="item.id"
-              :label="item.name"
+              :label="getSelectionLabel(item)"
               :value="item.id"
               :disabled="item.status !== 'open'"
             />
@@ -310,7 +310,7 @@ export default {
       if (this.projectId) {
         await Promise.all([
           getProjectAssignable(this.projectId),
-          getProjectVersion(this.projectId),
+          getProjectVersion(this.projectId, { status: 'open,locked' }),
           getIssueTracker(),
           getIssueStatus(),
           getIssuePriority()
@@ -416,6 +416,14 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
+    },
+    getSelectionLabel(item) {
+      const visibleStatus = ['closed', 'locked']
+      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+      }
+      return result
     },
     clearDueDate(dueDate) {
       if (dueDate === null) this.issueForm.due_date = ''

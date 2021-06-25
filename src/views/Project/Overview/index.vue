@@ -10,7 +10,12 @@
         clearable
         @clear="clearSelectedVersion"
       >
-        <el-option v-for="version in versionList" :key="version.id" :label="version.name" :value="version.id" />
+        <el-option
+          v-for="item in versionList"
+          :key="item.id"
+          :label="getSelectionLabel(item)"
+          :value="item.id"
+        />
       </el-select>
     </div>
     <el-divider />
@@ -117,7 +122,7 @@ export default {
       this.isLoadingVersion = false
       const hasVersion = res.data.versions.length > 0
       if (hasVersion) {
-        this.versionList = res.data.versions.map(version => ({ id: version.id, name: version.name }))
+        this.versionList = res.data.versions
       } else {
         this.clearSelectedVersion()
         this.versionList = []
@@ -138,6 +143,14 @@ export default {
     },
     handleSelectedItem(val) {
       this.saveSelectedItem = val
+    },
+    getSelectionLabel(item) {
+      const visibleStatus = ['closed', 'locked']
+      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+      }
+      return result
     }
   }
 }

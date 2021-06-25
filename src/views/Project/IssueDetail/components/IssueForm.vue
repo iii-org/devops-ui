@@ -293,12 +293,11 @@ export default {
       if (this.form.project_id) {
         await Promise.all([
           getProjectAssignable(this.form.project_id),
-          getProjectVersion(this.form.project_id),
           getIssueTracker(),
           getIssueStatus(),
           getIssuePriority()
         ]).then(res => {
-          const [assigned_to, fixed_version, tracker, status, priority] = res.map(
+          const [assigned_to, tracker, status, priority] = res.map(
             item => item.data
           )
 
@@ -310,16 +309,24 @@ export default {
               class: 'bg-yellow-100'
             }, ...assigned_to.user_list
           ]
-          this.fixed_version = fixed_version.versions
           this.status = status
           this.tracker = tracker
           this.priority = priority
         })
+        await this.loadVersionList()
       }
       if (this.issueId > 0) {
         await this.getClosable()
       }
       this.isLoading = false
+    },
+    async loadVersionList() {
+      const params = { status: 'open,locked' }
+      if (this.form.fixed_version_id) {
+        params['force_id'] = this.form.fixed_version_id
+      }
+      const versionList = await getProjectVersion(this.form.project_id, params)
+      this.fixed_version = versionList.data.versions
     },
     async getClosable() {
       await getCheckIssueClosable(this.issueId)

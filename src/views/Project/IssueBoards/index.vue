@@ -9,9 +9,13 @@
         >
           <el-form v-loading="isLoading">
             <template v-for="dimension in filterOptions">
-              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id"
-                            :label="$t('Issue.'+dimension.value)"
-              >
+              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id">
+                <div slot="label">
+                  {{ $t('Issue.'+dimension.value) }}
+                  <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+                    <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                  </el-tag>
+                </div>
                 <el-select
                   v-model="filterValue[dimension.value]"
                   :placeholder="$t('Issue.Select'+dimension.placeholder)"
@@ -193,6 +197,7 @@ export default {
       filterValue: {},
       originFilterValue: {},
       displayClosed: false,
+      fixed_version_closed: false,
       projectIssueList: [],
       projectIssueQueue: {},
       classifyIssueList: {},
@@ -216,7 +221,8 @@ export default {
       'kanbanFilter',
       'kanbanGroupBy',
       'kanbanDisplayClosed',
-      'kanbanKeyword'
+      'kanbanKeyword',
+      'fixedVersionShowClosed'
     ]),
     filterOptions() {
       return [
@@ -300,6 +306,10 @@ export default {
       if (!value) {
         this.updateData()
       }
+    },
+    fixed_version_closed(value) {
+      this.setFixedVersionShowClosed(value)
+      this.loadVersionList(value)
     }
   },
   async created() {
@@ -307,6 +317,7 @@ export default {
     this.groupBy = this.kanbanGroupBy
     this.displayClosed = this.kanbanDisplayClosed
     this.keyword = this.kanbanKeyword
+    this.fixed_version_closed = this.fixedVersionShowClosed
     await this.loadSelectionList()
     await this.loadData()
   },
@@ -317,7 +328,8 @@ export default {
       'setKanbanGroupByDimension',
       'setKanbanGroupByValue',
       'setKanbanDisplayClosed',
-      'setKanbanKeyword'
+      'setKanbanKeyword',
+      'setFixedVersionShowClosed'
     ]),
     async loadData() {
       try {
@@ -409,28 +421,34 @@ export default {
         item.cancel()
       })
     },
+    async loadVersionList(status) {
+      let params = { status: 'open,locked' }
+      if (status) {
+        params = { status: 'open,locked,closed' }
+      }
+      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
+      const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
+      if (version.length > 0) {
+        if (Object.keys(this.kanbanFilter).length <= 0) {
+          this.$set(this.filterValue, 'fixed_version', version[0].id)
+        }
+        this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+      } else {
+        this.$delete(this.filterValue, 'fixed_version')
+        this.$delete(this.originFilterValue, 'fixed_version')
+      }
+    },
     async loadSelectionList() {
       await Promise.all([
         getProjectUserList(this.selectedProjectId),
-        getProjectVersion(this.selectedProjectId),
         getIssueTracker(),
         getIssueStatus(),
         getIssuePriority()
       ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList, typeList, statusList, priorityList] = res.map(
           item => item.data
         )
-        this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
-        const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
-        if (version.length > 0) {
-          if (Object.keys(this.kanbanFilter).length <= 0) {
-            this.$set(this.filterValue, 'fixed_version', version[0].id)
-          }
-          this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-        } else {
-          this.$delete(this.filterValue, 'fixed_version')
-          this.$delete(this.originFilterValue, 'fixed_version')
-        }
 
         this.tracker = typeList
         this.assigned_to = [
@@ -444,6 +462,7 @@ export default {
         //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
         // }
       })
+      await this.loadVersionList(this.fixed_version_closed)
     },
     setGroupByUnclosedStatus(check) {
       if (check) {

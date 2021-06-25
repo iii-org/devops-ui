@@ -383,6 +383,7 @@ export default {
     Unassigned: '@:Dashboard.Unassigned',
     RelatedIssue: '關聯議題',
     DisplayClosedIssue: '顯示已關閉議題',
+    DisplayClosedVersion: '顯示關閉@:Version.Version',
     open: '@:Version.Open',
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',

@@ -24,6 +24,7 @@ const getters = {
   kanbanDisplayClosed: state => state.projects.kanbanDisplayClosed,
   kanbanKeyword: state => state.projects.kanbanKeyword,
   issueListFilter: state => state.projects.issueListFilter,
-  issueListKeyword: state => state.projects.issueListKeyword
+  issueListKeyword: state => state.projects.issueListKeyword,
+  fixedVersionShowClosed: state => state.projects.fixedVersionShowClosed
 }
 export default getters

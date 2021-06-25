@@ -21,7 +21,8 @@ const getDefaultState = () => {
     kanbanDisplayClosed: false,
     kanbanKeyword: null,
     issueListFilter: {},
-    issueKeyword: null
+    issueKeyword: null,
+    fixedVersionShowClosed: false
   }
 }
 
@@ -57,6 +58,9 @@ const mutations = {
   },
   SET_ISSUE_LIST_KEYWORD: (state, value) => {
     state.issueListKeyword = value
+  },
+  SET_FIXED_VERSION_SHOW_CLOSED: (state, value) => {
+    state.fixedVersionShowClosed = value
   }
 }
 
@@ -144,6 +148,9 @@ const actions = {
   },
   setIssueListKeyword({ commit }, value) {
     commit('SET_ISSUE_LIST_KEYWORD', value)
+  },
+  setFixedVersionShowClosed({ commit }, value) {
+    commit('SET_FIXED_VERSION_SHOW_CLOSED', value)
   }
 }
 
