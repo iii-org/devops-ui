@@ -317,8 +317,7 @@ export default {
     filterValue: {
       deep: true,
       handler() {
-        this.listQuery.page = 1
-        this.listQuery.offset = 0
+        this.backToFirstPage()
         this.onChangeFilter()
       }
     }
@@ -327,7 +326,6 @@ export default {
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
     await this.loadSelectionList()
-    // await this.initTableData()
   },
   methods: {
     ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter']),
@@ -458,6 +456,7 @@ export default {
             message: this.$t('Notify.Added'),
             type: 'success'
           })
+          this.backToFirstPage()
           this.loadData()
           this.addTopicDialogVisible = false
           this.$refs['quickAddIssue'].form.subject = ''
@@ -514,6 +513,10 @@ export default {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
       this.onChangeFilter()
+    },
+    backToFirstPage() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
     },
     removeIssueRelation(child_issue_id) {
       this.isLoading = true

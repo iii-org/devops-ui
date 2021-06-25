@@ -17,7 +17,7 @@
               #{{ issueId }} -
               <IssueTitle ref="IssueTitle" v-model="form.subject" />
               <span v-if="!isLoading" class="text-body-1 mr-3">
-                {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
+                {{ $t('Issue.AddBy', {user: author, created_date: formatTime(created_date)}) }}
               </span>
             </el-col>
           </el-row>
@@ -30,8 +30,10 @@
       <el-row :gutter="20">
         <el-col ref="mainIssueWrapper" :span="24" :md="16">
           <el-col :span="24">
-            <IssueToolbar :issue-link="issue_link" :issue-id="issueId" :issue-name="issueSubject"
-                          @update-issue="showLoading"
+            <IssueToolbar :issue-link="issue_link"
+                          :issue-id="issueId"
+                          :issue-name="issueSubject"
+                          @is-loading="showLoading"
             />
           </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
@@ -54,7 +56,10 @@
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
                         #{{ parent.id }} - {{ parent.name }}
-                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }} - {{ parent.assigned_to.login
+                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">({{
+                          $t('Issue.Assignee')
+                        }}:{{ parent.assigned_to.name }} - {{
+                          parent.assigned_to.login
                         }})</span>
                       </el-link>
                       <div class="text-right">
@@ -119,7 +124,7 @@
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent"
-                      :children-issue="children.length" @isLoading="showLoading"
+                      :children-issue="children.length"
           />
         </el-col>
       </el-row>
@@ -279,20 +284,21 @@ export default {
       this.isLoading = false
     },
     async fetchIssue() {
-      const _this = this
       this.isLoading = true
-      return getIssue(this.issueId)
-        .then(res => {
-          _this.initIssueDetails(res.data)
+      let data = {}
+      try {
+        const issue = await getIssue(this.issueId)
+        data = issue.data
+        this.initIssueDetails(data)
+      } catch (e) {
+        this.$router.push(this.formObj)
+        this.$message({
+          message: this.$t('Issue.RemovedIssue'),
+          type: 'warning'
         })
-        .catch(() => {
-          this.$router.push(this.formObj)
-          this.$message({
-            message: this.$t('Issue.RemovedIssue'),
-            type: 'warning'
-          })
-          this.isLoading = false
-        })
+      }
+      this.isLoading = false
+      return data
     },
     initIssueDetails(data) {
       const { issue_link, author, attachments, created_date, journals, subject, tracker, parent, children } = data
@@ -390,7 +396,6 @@ export default {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
-      console.log(status)
       this.isLoading = status
       this.handleUpdated()
     },
@@ -408,47 +413,38 @@ export default {
       // })
       const sendForm = new FormData()
       Object.keys(sendData).forEach(objKey => {
-        sendForm.append(objKey, sendData[objKey])
+        if (sendData[objKey]) {
+          sendForm.append(objKey, sendData[objKey])
+        }
       })
       this.updateIssueForm(sendForm)
     },
-    updateIssueForm(sendForm) {
+    async updateIssueForm(sendForm) {
       this.isLoading = true
       const { issueId } = this
-      updateIssue(issueId, sendForm)
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.handleUpdated()
-          this.$emit('update')
-        })
-        .catch(err => {
-          console.error(err)
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
+      try {
+        await updateIssue(issueId, sendForm)
+        await this.handleUpdated()
+        this.$emit('update')
+      } catch (e) {
+        console.error(e)
+      }
+      this.isLoading = false
     },
-    removeIssueRelation(child_issue_id) {
+    async removeIssueRelation(child_issue_id) {
       this.isLoading = true
-      updateIssue(child_issue_id, { parent_id: '' })
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.handleUpdated()
+      try {
+        await updateIssue(child_issue_id, { parent_id: '' })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
-        .catch(err => {
-          console.error(err)
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
+        await this.handleUpdated()
+      } catch (err) {
+        console.error(err)
+      }
+      this.isLoading = false
     },
     hasUnsavedChanges() {
       const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''

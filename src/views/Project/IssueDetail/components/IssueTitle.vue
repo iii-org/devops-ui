@@ -52,8 +52,14 @@ export default {
   mounted() {
     this.newValue = this.value
     if (!this.initTag) {
-      this.oldValue = this.value
+      if (this.value) {
+        this.oldValue = this.value
+      } else {
+        this.oldValue = null
+      }
+      this.initTag = true
     }
+    this.edit = true
   },
   methods: {
     cancelInput() {

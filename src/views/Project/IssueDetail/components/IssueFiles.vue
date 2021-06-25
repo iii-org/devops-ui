@@ -30,7 +30,7 @@
       </el-col>
     </el-row>
     <el-dialog :title="image.filename" :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body>
-      <img :src="image.src" style="width: 100%">
+      <img :src="image.src" style="width: 100%" alt="image.filename">
       <span slot="footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
         <el-button type="primary" @click="downloadImage">{{ $t('File.Download') }}</el-button>
