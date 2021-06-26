@@ -645,6 +645,8 @@ export default {
         this.$delete(this.filterValue, this.groupBy.dimension)
       }
       this.setKanbanGroupByDimension(this.groupBy.dimension)
+      this.$set(this.groupBy, 'value', [])
+      this.$refs['groupByValue'].selected = []
       this.loadData()
     },
     onChangeGroupByValue(value) {
