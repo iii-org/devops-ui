@@ -295,11 +295,6 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.loadSelectionList()
-      await this.loadData()
-      this.filterValue = this.kanbanFilter
-      this.groupBy = this.kanbanGroupBy
-      this.displayClosed = this.kanbanDisplayClosed
-      this.keyword = this.kanbanKeyword
       await this.cleanFilter()
     },
     isLoading(value) {
@@ -430,7 +425,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
       const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
-        if (Object.keys(this.kanbanFilter).length <= 0) {
+        if (Object.keys(this.kanbanFilter).length <= 0 && this.kanbanGroupBy.dimension !== 'fixed_version') {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
         }
         this.$set(this.originFilterValue, 'fixed_version', version[0].id)
