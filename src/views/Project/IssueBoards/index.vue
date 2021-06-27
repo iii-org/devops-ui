@@ -27,7 +27,7 @@
                   <el-option
                     v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
                     :key="item.id"
-                    :label="getSelectionLabel(item)"
+                    :label="item.name"
                     :value="item.id"
                   >
                     <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -273,7 +273,7 @@ export default {
         if (this.filterValue[item]) {
           const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
-            result.push(this.getSelectionLabel(value))
+            result.push(value.name)
           }
         }
       })
@@ -353,6 +353,11 @@ export default {
     },
     classifyIssue() {
       const issueList = this.projectIssueList
+      this.groupByValueOnBoard.forEach((dimension) => {
+        if (!this.classifyIssueList.hasOwnProperty(dimension.id)) {
+          this.classifyIssueList[dimension.id] = []
+        }
+      })
       issueList.forEach(issue => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
@@ -360,9 +365,6 @@ export default {
             dimensionName = 'null'
           }
           if (this.checkInFilterValue(dimensionName)) {
-            if (!this.classifyIssueList.hasOwnProperty(dimensionName)) {
-              this.classifyIssueList[dimensionName] = []
-            }
             this.classifyIssueList[dimensionName].push(issue)
           }
         }
@@ -421,8 +423,12 @@ export default {
       if (status) {
         params = { status: 'open,locked,closed' }
       }
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
+      let versionList = await getProjectVersion(this.selectedProjectId, params)
+      versionList = versionList.data.versions.map((item) => {
+        item.name = this.getSelectionLabel(item)
+        return item
+      })
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
         if (Object.keys(this.kanbanFilter).length <= 0 && this.kanbanGroupBy.dimension !== 'fixed_version') {
@@ -518,6 +524,7 @@ export default {
           // error
         }
         this.isLoading = false
+        await this.updateData()
         await this.getRelativeList()
       }
     },

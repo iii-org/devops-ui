@@ -27,9 +27,9 @@
               <b>{{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}</b>
             </span>
             <span slot="time">{{ note.created_on | formatTime }}</span>
-            <el-button slot="detail" size="mini" icon="el-icon-view" @click="toggleVisible(note)">{{ $t('Issue.detail.message.detail') }}</el-button>
+            <el-button slot="detail" size="mini" icon="el-icon-view" @click="toggleVisible(detail)">{{ $t('Issue.detail.message.detail') }}</el-button>
           </i18n>
-          <el-col v-if="note.detailVisible" slot="message">
+          <el-col v-if="detail.detailVisible" slot="message">
             <el-row>
               <el-col v-if="detail.old_value" :span="12" class="value">
                 <p class="title">
@@ -120,8 +120,8 @@ export default {
     showParentIssue(id) {
       this.$emit('show-parent-issue', id)
     },
-    toggleVisible(note) {
-      note.detailVisible = !note.detailVisible
+    toggleVisible(detail) {
+      detail.detailVisible = !detail.detailVisible
       this.reload += 1
     }
   }
