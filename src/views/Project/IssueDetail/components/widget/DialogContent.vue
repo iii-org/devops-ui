@@ -161,6 +161,7 @@ export default {
   width: fit-content;
   display: inline;
   margin: 0 10px;
+  max-width: 75%;
 
   .author {
     margin-top: 10px;
@@ -176,6 +177,7 @@ export default {
     > > > .text {
       p {
         margin: 5px;
+        overflow-wrap: break-word;
       }
     }
   }
