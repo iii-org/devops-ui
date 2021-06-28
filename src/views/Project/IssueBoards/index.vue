@@ -218,6 +218,7 @@ export default {
   computed: {
     ...mapGetters([
       'selectedProjectId',
+      'initKanban',
       'kanbanFilter',
       'kanbanGroupBy',
       'kanbanDisplayClosed',
@@ -315,11 +316,13 @@ export default {
     this.keyword = this.kanbanKeyword
     this.fixed_version_closed = this.fixedVersionShowClosed
     await this.loadSelectionList()
+    this.setInitKanban(true)
     await this.loadData()
   },
   methods: {
     ...mapActions('projects', [
       'getProjectUserList',
+      'setInitKanban',
       'setKanbanFilter',
       'setKanbanGroupByDimension',
       'setKanbanGroupByValue',
@@ -374,14 +377,14 @@ export default {
     },
     getParams() {
       const result = {}
+      if (!this.displayClosed && this.groupBy.dimension !== 'status') {
+        result['status_id'] = 'open'
+      }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           result[item + '_id'] = this.filterValue[item]
         }
       })
-      if (!this.displayClosed && this.groupBy.dimension !== 'status') {
-        result['status_id'] = 'open'
-      }
       if (this.keyword) {
         result['search'] = this.keyword
       }
@@ -432,7 +435,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
-        if (Object.keys(this.kanbanFilter).length <= 0 && this.kanbanGroupBy.dimension !== 'fixed_version') {
+        if (!this.initKanban) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
         }
         this.$set(this.originFilterValue, 'fixed_version', version[0].id)

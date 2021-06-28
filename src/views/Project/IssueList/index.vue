@@ -36,7 +36,7 @@
                     @change="onChangeFilter"
                   >
                     <el-option
-                      v-for="item in $data[dimension.value]"
+                      v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
                       :key="item.id"
                       :label="getSelectionLabel(item)"
                       :value="item.id"
@@ -46,6 +46,9 @@
                   </el-select>
                 </el-form-item>
               </template>
+              <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
+                <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
+              </el-form-item>
             </el-form>
             <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
               <i class="el-icon-arrow-down el-icon--right" /></el-button>
@@ -242,6 +245,7 @@ export default {
       addTopicDialogVisible: false,
       searchVisible: false,
       fixed_version_closed: false,
+      displayClosed: false,
       search: '',
       parentId: 0,
       parentName: '',
@@ -271,7 +275,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed', 'fixedVersionShowClosed']),
     filterOptions() {
       return [
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
@@ -338,10 +342,11 @@ export default {
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
     this.fixed_version_closed = this.fixedVersionShowClosed
+    this.displayClosed = this.issueListDisplayClosed
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed']),
+    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed', 'setIssueListDisplayClosed']),
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
       this.$message({
@@ -355,6 +360,9 @@ export default {
       const result = {
         offset: this.listQuery.offset,
         limit: this.listQuery.limit
+      }
+      if (!this.displayClosed) {
+        result['status_id'] = 'open'
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
@@ -447,9 +455,14 @@ export default {
         }
       }
     },
+    filterClosedStatus(statusList) {
+      if (this.displayClosed) return statusList
+      return statusList.filter((item) => (item.is_closed === false))
+    },
     onChangeFilter() {
       this.setIssueListFilter(this.filterValue)
       this.setIssueListKeyword(this.keyword)
+      this.setIssueListDisplayClosed(this.displayClosed)
       this.initTableData()
     },
     handleClick(row, column) {
@@ -535,6 +548,7 @@ export default {
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = null
+      this.displayClosed = false
       this.onChangeFilter()
     },
     backToFirstPage() {
