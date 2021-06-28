@@ -411,9 +411,7 @@ export default {
       // })
       const sendForm = new FormData()
       Object.keys(sendData).forEach(objKey => {
-        if (sendData[objKey]) {
-          sendForm.append(objKey, sendData[objKey])
-        }
+        sendForm.append(objKey, sendData[objKey])
       })
       this.updateIssueForm(sendForm)
     },

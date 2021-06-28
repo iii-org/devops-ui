@@ -27,7 +27,7 @@
                   <el-option
                     v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
                     :key="item.id"
-                    :label="item.name"
+                    :label="getSelectionLabel(item)"
                     :value="item.id"
                   >
                     <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -274,7 +274,7 @@ export default {
         if (this.filterValue[item]) {
           const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
-            result.push(value.name)
+            result.push(this.getSelectionLabel(value))
           }
         }
       })
