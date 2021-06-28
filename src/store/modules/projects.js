@@ -21,7 +21,10 @@ const getDefaultState = () => {
     initKanban: false,
     kanbanDisplayClosed: false,
     kanbanKeyword: null,
+    initIssueList: false,
     issueListFilter: {},
+    issueListListQuery: {},
+    issueListPageInfo: {},
     issueKeyword: null,
     issueListDisplayClosed: false,
     fixedVersionShowClosed: false
@@ -58,11 +61,20 @@ const mutations = {
   SET_INIT_KANBAN(state, value) {
     state.initKanban = value
   },
+  SET_INIT_ISSUE_LIST(state, value) {
+    state.initIssueList = value
+  },
   SET_ISSUE_LIST_FILTER: (state, value) => {
     state.issueListFilter = value
   },
   SET_ISSUE_LIST_KEYWORD: (state, value) => {
     state.issueListKeyword = value
+  },
+  SET_ISSUE_LIST_LIST_QUERY: (state, value) => {
+    state.issueListListQuery = value
+  },
+  SET_ISSUE_LIST_PAGE_INFO: (state, value) => {
+    state.issueListPageInfo = value
   },
   SET_FIXED_VERSION_SHOW_CLOSED: (state, value) => {
     state.fixedVersionShowClosed = value
@@ -159,6 +171,15 @@ const actions = {
   },
   setIssueListKeyword({ commit }, value) {
     commit('SET_ISSUE_LIST_KEYWORD', value)
+  },
+  setIssueListListQuery({ commit }, value) {
+    commit('SET_ISSUE_LIST_LIST_QUERY', value)
+  },
+  setIssueListPageInfo({ commit }, value) {
+    commit('SET_ISSUE_LIST_PAGE_INFO', value)
+  },
+  setInitIssueList({ commit }, value) {
+    commit('SET_INIT_ISSUE_LIST', value)
   },
   setIssueListDisplayClosed({ commit }, value) {
     commit('SET_ISSUE_LIST_DISPLAY_CLOSED', value)

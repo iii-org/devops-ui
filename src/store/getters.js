@@ -24,8 +24,11 @@ const getters = {
   kanbanDisplayClosed: state => state.projects.kanbanDisplayClosed,
   kanbanKeyword: state => state.projects.kanbanKeyword,
   initKanban: state => state.projects.initKanban,
+  initIssueList: state => state.projects.initIssueList,
   issueListFilter: state => state.projects.issueListFilter,
   issueListKeyword: state => state.projects.issueListKeyword,
+  issueListListQuery: state => state.projects.issueListListQuery,
+  issueListPageInfo: state => state.projects.issueListPageInfo,
   issueListDisplayClosed: state => state.projects.issueListDisplayClosed,
   fixedVersionShowClosed: state => state.projects.fixedVersionShowClosed
 }

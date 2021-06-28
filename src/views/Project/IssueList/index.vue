@@ -276,7 +276,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed',
+      'issueListListQuery', 'issueListPageInfo', 'initIssueList', 'fixedVersionShowClosed']),
     filterOptions() {
       return [
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
@@ -330,6 +331,7 @@ export default {
     filterValue: {
       deep: true,
       handler() {
+        // TODO: RememberPageProblem
         this.backToFirstPage()
         this.onChangeFilter()
       }
@@ -340,6 +342,13 @@ export default {
     }
   },
   async created() {
+    // TODO: RememberPageProblem
+    // if (Object.keys(this.issueListListQuery).length > 0) {
+    //   this.listQuery = this.issueListListQuery
+    // }
+    // if (Object.keys(this.issueListPageInfo).length > 0) {
+    //   this.pageInfo = this.issueListPageInfo
+    // }
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
     this.fixed_version_closed = this.fixedVersionShowClosed
@@ -347,7 +356,8 @@ export default {
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed', 'setIssueListDisplayClosed']),
+    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed',
+      'setIssueListDisplayClosed', 'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
       this.$message({
@@ -397,6 +407,9 @@ export default {
             total: 0
           }
         }
+        // TODO: RememberPageProblem
+        // await this.setIssueListListQuery(this.listQuery)
+        // await this.setIssueListPageInfo(this.pageInfo)
       } catch (e) {
         // null
       }
@@ -534,7 +547,7 @@ export default {
     async handleCurrentChange(val) {
       this.listLoading = true
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
-      console.log(this.pageInfo.offset, '+', '(', val.page, '-', this.listQuery.page, ')*', val.limit, ')')
+      // console.log(this.pageInfo.offset, '+', '(', val.page, '-', this.listQuery.page, ')*', val.limit, ')')
       if (offset <= 0 || val.page === 1) {
         this.listQuery.offset = 0
       } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {

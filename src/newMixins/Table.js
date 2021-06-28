@@ -14,7 +14,7 @@ export default {
 
     window.onresize = () => {
       this.resizeTime = new Date()
-      if (this.timeout === false) {
+      if (!this.timeout) {
         this.timeout = true
         setTimeout(this.afterResize, this.delta)
       }
