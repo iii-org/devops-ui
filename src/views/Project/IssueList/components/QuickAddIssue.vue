@@ -135,7 +135,7 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.issueListFilter[item] !== 'null') { this.$set(this.form, item + '_id', this.issueListFilter[item]) }
+        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) { this.$set(this.form, item + '_id', this.issueListFilter[item]) }
       })
     },
     handleSave() {

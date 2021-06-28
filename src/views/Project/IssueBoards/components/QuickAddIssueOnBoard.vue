@@ -192,9 +192,11 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.kanbanFilter[item] !== 'null') { this.$set(this.form, item + '_id', this.kanbanFilter[item]) }
+        if (this.kanbanFilter[item] !== 'null' && !!(this.kanbanFilter[item]) && this.kanbanFilter[item] !== '') { this.$set(this.form, item + '_id', this.kanbanFilter[item]) }
       })
-      this.$set(this.form, this.kanbanGroupBy.dimension + '_id', this.boardObject.id)
+      if (this.boardObject.id !== 'null' && !!(this.boardObject.id) && this.boardObject.id !== '') {
+        this.$set(this.form, this.kanbanGroupBy.dimension + '_id', this.boardObject.id)
+      }
     },
     handleSave() {
       this.$refs['issueForm'].validate(async valid => {

@@ -341,7 +341,7 @@ export default {
     setFilterValue() {
       const getFilter = this.importFrom + 'Filter'
       Object.keys(this[getFilter]).forEach((item) => {
-        if (this[getFilter][item] !== 'null') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
+        if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
       })
       let checkQuickAddIssueForm = ['tracker_id', 'subject']
       if (this.importFrom === 'kanban') {
