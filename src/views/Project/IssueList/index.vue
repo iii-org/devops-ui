@@ -18,7 +18,7 @@
             placement="bottom"
             trigger="click"
           >
-            <el-form>
+            <el-form v-loading="listLoading">
               <template v-for="dimension in filterOptions">
                 <el-form-item :key="dimension.id">
                   <div slot="label">
@@ -85,129 +85,130 @@
                      :tracker="tracker"
                      @add-issue="advancedAddIssue"
     />
-    <el-table
-      ref="issueList"
-      v-loading="listLoading"
-      :data="listData"
-      :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
-      row-key="id"
-      height="60vh"
-      :tree-props="{ children: 'child' }"
-      :row-class-name="getRowClass"
-      @cell-click="handleClick"
-      @expand-change="getIssueFamilyData"
+    <el-row v-loading="listLoading"
+            :element-loading-text="$t('Loading')"
     >
-      <el-table-column type="expand" class-name="informationExpand">
-        <template slot-scope="scope">
-          <el-col v-loading="scope.row.loadingRelation">
-            <ul>
-              <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
-                <b>{{ $t('Issue.ParentIssue') }}:</b>
-                <el-link
-                  class="font-weight-regular"
-                  :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                  :underline="false"
-                  @click="handleEdit(scope.row.parent.id)"
-                >
-                  <status :name="scope.row.parent.status.name" size="mini" />
-                  <tracker :name="scope.row.parent.tracker.name" />
-                  #{{ scope.row.parent.id }} - {{ scope.row.parent.name }}
-                  <span
-                    v-if="scope.row.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.parent.assigned_to).length>1"
+      <el-table
+        ref="issueList"
+        :data="listData"
+        border
+        fit
+        highlight-current-row
+        row-key="id"
+        height="60vh"
+        :tree-props="{ children: 'child' }"
+        :row-class-name="getRowClass"
+        @cell-click="handleClick"
+        @expand-change="getIssueFamilyData"
+      >
+        <el-table-column type="expand" class-name="informationExpand">
+          <template slot-scope="scope">
+            <el-col v-loading="scope.row.loadingRelation">
+              <ul>
+                <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
+                  <b>{{ $t('Issue.ParentIssue') }}:</b>
+                  <el-link
+                    class="font-weight-regular"
+                    :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                    :underline="false"
+                    @click="handleEdit(scope.row.parent.id)"
                   >
-                    ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
-                    - {{ scope.row.parent.assigned_to.login }})
-                  </span>
-                </el-link>
-                <el-popconfirm
-                  :confirm-button-text="$t('general.Remove')"
-                  :cancel-button-text="$t('general.Cancel')"
-                  icon="el-icon-info"
-                  icon-color="red"
-                  :title="$t('Issue.RemoveIssueRelation')"
-                  @onConfirm="removeIssueRelation(scope.row.id)"
-                >
-                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
-                </el-popconfirm>
-              </li>
-              <li v-if="scope.row.hasOwnProperty('children')">
-                <b>{{ $t('Issue.ChildrenIssue') }}:</b>
-                <ol>
-                  <template v-for="child in scope.row.children">
-                    <li v-if="Object.keys(child).length>0" :key="child.id">
-                      <el-link
-                        class="font-weight-regular my-1"
-                        :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                        :underline="false"
-                        @click="handleEdit(child.id)"
-                      >
-                        <status :name="child.status.name" size="mini" />
-                        <tracker :name="child.tracker.name" />
-                        #{{ child.id }} - {{ child.name }}
-                        <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
-                      </el-link>
-                      <el-popconfirm
-                        :confirm-button-text="$t('general.Remove')"
-                        :cancel-button-text="$t('general.Cancel')"
-                        icon="el-icon-info"
-                        icon-color="red"
-                        :title="$t('Issue.RemoveIssueRelation')"
-                        @onConfirm="removeIssueRelation(child.id)"
-                      >
-                        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
-                      </el-popconfirm>
-                    </li>
-                  </template>
-                </ol>
-              </li>
-            </ul>
-          </el-col>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Type')" width="130">
-        <template slot-scope="scope">
-          <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
-        <template slot-scope="scope">
-          <span class="text-success mr-2">#{{ scope.row.id }}</span>
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
-        <template slot-scope="scope">
-          <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Status')" width="150">
-        <template slot-scope="scope">
-          <status
-            v-if="scope.row.status.name"
-            :name="scope.row.status.name"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
-        <template slot-scope="scope">
-          <span>{{ scope.row.assigned_to.name }}</span>
-          <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      v-loading="listLoading"
-      :total="pageInfo.total"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="handleCurrentChange"
-    />
+                    <status :name="scope.row.parent.status.name" size="mini" />
+                    <tracker :name="scope.row.parent.tracker.name" />
+                    #{{ scope.row.parent.id }} - {{ scope.row.parent.name }}
+                    <span
+                      v-if="scope.row.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.parent.assigned_to).length>1"
+                    >
+                      ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
+                      - {{ scope.row.parent.assigned_to.login }})
+                    </span>
+                  </el-link>
+                  <el-popconfirm
+                    :confirm-button-text="$t('general.Remove')"
+                    :cancel-button-text="$t('general.Cancel')"
+                    icon="el-icon-info"
+                    icon-color="red"
+                    :title="$t('Issue.RemoveIssueRelation')"
+                    @onConfirm="removeIssueRelation(scope.row.id)"
+                  >
+                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                  </el-popconfirm>
+                </li>
+                <li v-if="scope.row.hasOwnProperty('children')">
+                  <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+                  <ol>
+                    <template v-for="child in scope.row.children">
+                      <li v-if="Object.keys(child).length>0" :key="child.id">
+                        <el-link
+                          class="font-weight-regular my-1"
+                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                          :underline="false"
+                          @click="handleEdit(child.id)"
+                        >
+                          <status :name="child.status.name" size="mini" />
+                          <tracker :name="child.tracker.name" />
+                          #{{ child.id }} - {{ child.name }}
+                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                        </el-link>
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Remove')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Issue.RemoveIssueRelation')"
+                          @onConfirm="removeIssueRelation(child.id)"
+                        >
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                        </el-popconfirm>
+                      </li>
+                    </template>
+                  </ol>
+                </li>
+              </ul>
+            </el-col>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('general.Type')" width="130">
+          <template slot-scope="scope">
+            <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span class="text-success mr-2">#{{ scope.row.id }}</span>
+            {{ scope.row.name }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
+          <template slot-scope="scope">
+            <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Status')" width="150">
+          <template slot-scope="scope">
+            <status
+              v-if="scope.row.status.name"
+              :name="scope.row.status.name"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
+          <template slot-scope="scope">
+            <span>{{ scope.row.assigned_to.name }}</span>
+            <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        :total="pageInfo.total"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="handleCurrentChange"
+      />
+    </el-row>
   </div>
 </template>
 
