@@ -65,8 +65,12 @@ export default {
         } else {
           this.listQuery.limit = Math.floor(tableHeight / this.rowHeight)
         }
-
-        this.listQuery.page = Math.ceil(this.listQuery.offset / this.listQuery.limit)
+        const nowPage = Math.ceil(this.listQuery.offset / this.listQuery.limit)
+        if (nowPage <= 0) {
+          this.listQuery.page = 1
+        } else {
+          this.listQuery.page = Math.ceil(this.listQuery.offset / this.listQuery.limit)
+        }
       })
     },
     adjustTable(forceRowNum) {

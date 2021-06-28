@@ -197,6 +197,7 @@
       </el-table-column>
     </el-table>
     <pagination
+      v-loading="listLoading"
       :total="pageInfo.total"
       :page="listQuery.page"
       :limit="listQuery.limit"
@@ -516,8 +517,10 @@ export default {
       this.parentId = 0
       this.form = form
     },
-    handleCurrentChange(val) {
+    async handleCurrentChange(val) {
+      this.listLoading = true
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
+      console.log(this.pageInfo.offset, '+', '(', val.page, '-', this.listQuery.page, ')*', val.limit, ')')
       if (offset <= 0 || val.page === 1) {
         this.listQuery.offset = 0
       } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
@@ -526,7 +529,8 @@ export default {
         this.listQuery.offset = offset
       }
       this.listQuery.page = val.page
-      this.loadData()
+      await this.loadData()
+      this.listLoading = false
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
@@ -538,7 +542,7 @@ export default {
       this.listQuery.offset = 0
     },
     removeIssueRelation(child_issue_id) {
-      this.isLoading = true
+      this.listLoading = true
       updateIssue(child_issue_id, { parent_id: '' })
         .then(() => {
           this.$message({
@@ -550,7 +554,7 @@ export default {
         })
         .catch(err => {
           console.error(err)
-          this.isLoading = false
+          this.listLoading = false
         })
     }
   }
