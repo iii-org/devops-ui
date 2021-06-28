@@ -254,7 +254,8 @@ export default {
     },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        return this[this.groupBy.dimension].map(item => item)
+        const value = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+        return value.map(item => item)
       }
       return this.groupBy.value
     },
@@ -389,7 +390,6 @@ export default {
     async syncLoadFilterData() {
       await this.cancelLoadFilterData()
       this.projectIssueQueue = {}
-      this.projectIssueList = []
       const getIssueList = []
       this.isLoading = true
       for (const item of this.groupByValueOnBoard) {
@@ -399,6 +399,7 @@ export default {
           { cancelToken: CancelToken.token }))
         this.$set(this.projectIssueQueue, item.id, CancelToken)
       }
+      this.projectIssueList = []
       await Promise.all(getIssueList)
         .then((res) => {
           const issueList = res.map(item => item.data)

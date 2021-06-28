@@ -368,7 +368,7 @@ export default {
           // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
           Object.keys(data).map(item => {
-            if (data[item] === '') delete data[item]
+            if (data[item] === '' || data[item] === 'null' || !data[item]) delete data[item]
           })
 
           // because have file need upload so use formData object

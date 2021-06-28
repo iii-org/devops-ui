@@ -95,6 +95,7 @@ export default {
     1005: 'Project id {project_id} does not exist in redmine.',
     1006: 'Unable to delete the version.',
     1011: 'Project owner role must be PM.',
+    1012: 'You cannot change version {fixed_version} that status is {fixed_version_status}.',
     2001: 'User id {user_id} not found.',
     2002: 'User name {name} is not legal. The user name may only contain a-z, A-Z, 0-9, dot, dash, underline, and the heading and trailing character should be alphanumeric and should be 2 to 60 characters long.',
     2003: 'Password is not legal. You can only use a-z, A-Z, 0-9, !@#$%^&*()_+|{}[]``~-=\'";:/?.>,<, and should contain at least an upper case alphabet, a lower case alphabet, and a digit, and is 8 to 20 characters long.',
