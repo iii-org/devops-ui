@@ -27,7 +27,7 @@
                   <el-option
                     v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
                     :key="item.id"
-                    :label="getSelectionLabel(item)"
+                    :label="getTranslateHeader(item.name)"
                     :value="item.id"
                   >
                     <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -147,12 +147,12 @@
                          class="el-tag"
               />
               <el-tag v-else effect="dark">
-                {{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}
+                {{ getTranslateHeader(subItem.name) }}
               </el-tag>
               <el-alert class="help_text" :closable="false">
                 <i18n path="Issue.DragTip">
                   <b slot="key">{{ item.label }}</b>
-                  <b slot="value">{{ $te(`Issue.${subItem.name}`) ? $t(`Issue.${subItem.name}`) : subItem.name }}</b>
+                  <b slot="value">{{ getTranslateHeader(subItem.name) }}</b>
                 </i18n>
               </el-alert>
             </div>
@@ -248,7 +248,7 @@ export default {
       const dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
       return dimension.map((item, idx) => ({
         id: idx,
-        label: this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name,
+        label: this.getTranslateHeader(item.name),
         value: item
       }))
     },
@@ -274,7 +274,7 @@ export default {
         if (this.filterValue[item]) {
           const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
-            result.push(this.getSelectionLabel(value))
+            result.push(this.getTranslateHeader(value.name))
           }
         }
       })
@@ -618,9 +618,9 @@ export default {
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.getTranslateHeader(item.name)
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+        result += ' (' + (this.getTranslateHeader(item.status)) + ')'
       }
       return result
     },
