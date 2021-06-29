@@ -297,7 +297,10 @@ export default {
     Open: 'Open',
     Closed: 'Closed',
     Locked: 'Locked',
-    EndDate: 'EndDate'
+    EndDate: 'EndDate',
+    open: 'Open',
+    closed: 'Closed',
+    locked: 'Locked'
   },
   Issue: {
     AddIssue: 'Add Issue',

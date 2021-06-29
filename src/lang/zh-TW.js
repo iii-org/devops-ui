@@ -112,6 +112,10 @@ export default {
     9003: '發生未被預期的資料庫錯誤：{message}',
     9999: '發生未知錯誤。'
   },
+  errorDetail: {
+    locked: '鎖定',
+    closed: '關閉'
+  },
   general: {
     Name: '名稱',
     Title: '標題',
@@ -297,7 +301,10 @@ export default {
     Open: '開啟',
     Closed: '關閉',
     Locked: '鎖定',
-    EndDate: '結束日期'
+    EndDate: '結束日期',
+    open: '開啟',
+    closed: '關閉',
+    locked: '鎖定'
   },
   Issue: {
     AddIssue: '新增議題',

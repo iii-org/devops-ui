@@ -62,7 +62,7 @@ service.interceptors.response.use(
       const details = {}
       if (res.error.details) {
         for (const key in res.error.details) {
-          details[key] = JSON.stringify(res.error.details[key])
+          details[key] = i18n.te(`errorDetail.${res.error.details[key]}`) ? i18n.t(`errorDetail.${res.error.details[key]}`) : res.error.details[key]
         }
       }
       res_msg = i18n.t(`errorMessage.${res.error.code}`, details)
