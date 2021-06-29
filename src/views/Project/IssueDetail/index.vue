@@ -126,7 +126,7 @@
           />
         </el-col>
       </el-row>
-      <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close>
+      <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close :before-close="handleRelationIssueDialogBeforeClose">
         <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="showLoading"
                             @delete="handleRelationDelete"
         />
@@ -462,6 +462,22 @@ export default {
     handleRelationDelete() {
       this.handleUpdated()
       this.onCloseRelationIssueDialog()
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      if (this.$refs.children.hasUnsavedChanges()) {
+        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            done()
+          })
+          .catch(() => {
+          })
+      } else {
+        done()
+      }
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
