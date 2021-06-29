@@ -11,25 +11,16 @@
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%">
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" min-width="160" prop="name" />
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="200" prop="name" />
       <el-table-column align="center" :label="$t('general.Description')" min-width="160" prop="last_commit_message" />
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Environment')" min-width="200">
-        <template slot-scope="scope">
-          <div v-for="(item, index) in formatEnvironment(scope.row.env_url)" :key="index">
-            <el-link type="primary" target="_blank" style="font-size: 16px" :underline="false" :href="item.url">
-              {{ item.service }} ({{ item.port }})
-            </el-link>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" min-width="100" prop="short_id">
+      <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" width="120" prop="short_id">
         <template slot-scope="scope">
           <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.short_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-time prop="last_commit_time" :label="$t('general.LastUpdateTime')" />
+      <el-table-column-time prop="last_commit_time" width="170" :label="$t('general.LastUpdateTime')" />
     </el-table>
     <pagination
       :total="filteredData.length"
