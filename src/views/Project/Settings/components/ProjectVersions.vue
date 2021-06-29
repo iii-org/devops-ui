@@ -30,6 +30,7 @@
       <el-table-column-tag
         prop="status"
         translate-key="Version"
+        :label="$t('general.Status')"
         element-class="el-tag--circle"
         min-width="90"
         size="mini"
