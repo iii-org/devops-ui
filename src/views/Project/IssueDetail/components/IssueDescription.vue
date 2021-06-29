@@ -41,7 +41,7 @@ export default {
   watch: {
     value(newVal) {
       this.newValue = newVal
-      if (!this.initTag && this.value) {
+      if (!this.initTag) {
         this.oldValue = newVal
         this.initTag = true
       }
@@ -52,9 +52,8 @@ export default {
   },
   mounted() {
     this.newValue = this.value
-    if (!this.initTag && this.value) {
+    if (!this.initTag) {
       this.oldValue = this.value
-      console.log(this.value)
       this.initTag = true
     }
   },
