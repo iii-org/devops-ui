@@ -8,7 +8,6 @@
         :placeholder="$t('general.Title')"
         class="el-input__inner text-h5"
         @keydown.meta.esc="cancelInput"
-        @keydown.ctrl.esc="cancelInput"
       >
     </span>
   </span>
@@ -40,7 +39,7 @@ export default {
   watch: {
     value(newVal) {
       this.newValue = newVal
-      if (!this.initTag) {
+      if (!this.initTag && this.value) {
         this.oldValue = newVal
         this.initTag = true
       }
@@ -51,12 +50,8 @@ export default {
   },
   mounted() {
     this.newValue = this.value
-    if (!this.initTag) {
-      if (this.value) {
-        this.oldValue = this.value
-      } else {
-        this.oldValue = null
-      }
+    if (!this.initTag && this.value) {
+      this.oldValue = this.value
       this.initTag = true
     }
   },

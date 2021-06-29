@@ -395,7 +395,7 @@ export default {
     open: '@:Version.Open',
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',
-    ResetESCTip: '按下Ctrl+ESC (Mac:Command+ESC) 重置輸入內容',
+    ResetESCTip: '按下Windows+ESC (Mac:Command+ESC) 重置並關閉輸入欄位',
     detail: {
       message: {
         set_to: '{creator} {message}',

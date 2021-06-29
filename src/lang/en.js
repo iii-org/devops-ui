@@ -391,7 +391,7 @@ export default {
     open: '@:Version.Open',
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',
-    ResetESCTip: 'Press Ctrl+ESC (Mac:Command+ESC) to Rest Input Content',
+    ResetESCTip: 'Press Windows+ESC (Mac:Command+ESC) to Rest and Close Description Input area.',
     detail: {
       message: {
         set_to: '{creator} {message}',

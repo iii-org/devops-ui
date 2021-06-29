@@ -12,7 +12,6 @@
             rows="4"
             style="width: 100%"
             :placeholder="$t('RuleMsg.PleaseInput')"
-            @keydown.ctrl.esc.native="cancelInput"
             @keydown.meta.esc.native="cancelInput"
           />
         </el-form-item>
@@ -42,7 +41,7 @@ export default {
   watch: {
     value(newVal) {
       this.newValue = newVal
-      if (!this.initTag) {
+      if (!this.initTag && this.value) {
         this.oldValue = newVal
         this.initTag = true
       }
@@ -53,12 +52,9 @@ export default {
   },
   mounted() {
     this.newValue = this.value
-    if (!this.initTag) {
-      if (this.value) {
-        this.oldValue = this.value
-      } else {
-        this.oldValue = null
-      }
+    if (!this.initTag && this.value) {
+      this.oldValue = this.value
+      console.log(this.value)
       this.initTag = true
     }
   },
