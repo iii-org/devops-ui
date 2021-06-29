@@ -35,8 +35,7 @@ export default {
   data() {
     return {
       edit: false,
-      newValue: this.value,
-      initTag: false
+      newValue: this.value
     }
   },
   watch: {

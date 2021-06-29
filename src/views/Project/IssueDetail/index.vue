@@ -387,8 +387,6 @@ export default {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
-      this.$refs.IssueTitle.initTag = false
-      this.$refs.IssueDescription.initTag = false
       await this.fetchIssue()
       this.isLoading = false
     },
