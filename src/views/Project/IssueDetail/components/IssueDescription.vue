@@ -28,23 +28,21 @@ export default {
     value: {
       type: String,
       default: null
+    },
+    oldValue: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       edit: false,
-      newValue: this.value,
-      oldValue: null,
-      initTag: false
+      newValue: this.value
     }
   },
   watch: {
     value(newVal) {
       this.newValue = newVal
-      if (!this.initTag) {
-        this.oldValue = newVal
-        this.initTag = true
-      }
     },
     newValue(value) {
       this.$emit('input', value)
@@ -52,10 +50,6 @@ export default {
   },
   mounted() {
     this.newValue = this.value
-    if (!this.initTag) {
-      this.oldValue = this.value
-      this.initTag = true
-    }
   },
   methods: {
     cancelInput() {
