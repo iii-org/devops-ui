@@ -25,12 +25,12 @@
                   <el-table :data="workList[version.id]" style="width: 100%" border stripe>
                     <el-table-column label="Work List">
                       <template slot-scope="scope">
-                        <div class="d-flex justify-space-between">
+                        <div>
                           <el-tag
                             v-if="scope.row.priorityName"
                             :type="getPriorityType(scope.row.priorityName)"
-                            size="medium"
-                            effect="dark"
+                            size="small"
+                            effect="light"
                           >
                             {{ scope.row.priorityName }}
                           </el-tag>
@@ -150,24 +150,19 @@ export default {
         issues.push(new Issue(issue_data))
       }
       this.$set(this.workList, versionId, issues)
-
       const resStatistics = await getProjectIssueStatistics(this.selectedProjectId, { fixed_version_id: versionId })
       const idx = this.versionList.findIndex(item => item.id === versionId)
       this.versionList[idx].workLoadData = resStatistics.data
-
       this.contentLoading = false
     },
     getPriorityType(priority) {
-      switch (priority) {
-        case 'Immediate':
-          return 'danger'
-        case 'High':
-          return 'warning'
-        case 'Normal':
-          return 'success'
-        default:
-          return 'slow'
+      const priorityMap = {
+        Immediate: 'danger',
+        High: 'warning',
+        Normal: 'success',
+        Low: 'success'
       }
+      return priorityMap[priority] || 'slow'
     }
   }
 }

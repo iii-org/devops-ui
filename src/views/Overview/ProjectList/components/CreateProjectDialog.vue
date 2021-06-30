@@ -141,22 +141,6 @@
           </el-col>
         </div>
       </el-row>
-      <!-- <el-row :gutter="10">
-        <el-col :span="24">
-          <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
-          <el-form-item prop="disabled">
-            <el-switch
-              v-model="form.disabled"
-              :active-value="false"
-              :inactive-value="true"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              :active-text="$t('general.Enable')"
-              :inactive-text="$t('general.Disable')"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>

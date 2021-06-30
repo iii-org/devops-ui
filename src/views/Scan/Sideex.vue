@@ -10,7 +10,7 @@
       />
     </div>
     <div class="text-right text-info" style="position: relative; top: 15px">
-      <span><i class="el-icon-warning"/></span>
+      <span><i class="el-icon-warning" /></span>
       <span>{{ $t('Sideex.promptMessage') }}</span>
     </div>
     <el-divider />
@@ -33,18 +33,6 @@
         </template>
       </el-table-column>
       <el-table-column-tag prop="status" min-width="130" location="sideex" />
-      <!-- <el-table-column align="center" :label="$t('general.Status')" min-width="130">
-        <template slot-scope="scope">
-          <el-tag
-            v-if="scope.row.status"
-            class="el-tag--circle"
-            :type="getStatusTagType(scope.row.status)"
-            effect="dark"
-          >
-            {{ scope.row.status }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">
@@ -121,24 +109,8 @@ export default {
       sortedScans.sort((a, b) => new Date(b.run_at) - new Date(a.run_at))
       return sortedScans
     },
-    // getStatusTagType(status) {
-    //   switch (status) {
-    //     case 'Finished':
-    //       return 'success'
-    //     case 'Scanning':
-    //       return 'slow'
-    //     case 'Aborted':
-    //       return 'info'
-    //     case 'Failed':
-    //       return 'danger'
-    //     default:
-    //       return 'slow'
-    //   }
-    // },
     durationText(start, end) {
-      if (end == null) {
-        return ''
-      }
+      if (end == null) return ''
       const s = this.$dayjs.utc(start).unix()
       const e = this.$dayjs.utc(end).unix()
       return this.$dayjs.duration(e - s, 'seconds').humanize()

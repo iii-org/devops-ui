@@ -24,13 +24,7 @@
                   <svg-icon class="mr-1" icon-class="mdi-branch" />
                   {{ pod.branch }}
                 </span>
-                <el-link
-                  class="ml-2"
-                  type="primary"
-                  style="font-size: 14px"
-                  target="_blank"
-                  :href="pod.commit_url"
-                >
+                <el-link class="ml-2" type="primary" style="font-size: 14px" target="_blank" :href="pod.commit_url">
                   <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ pod.commit_id }}
                 </el-link>
               </div>
@@ -74,7 +68,7 @@
                   <el-card
                     :body-style="{
                       padding: '10px',
-                      'background-color': getCardBgc(item.type)
+                      'background-color': getCardBackgroundColor(item.type)
                     }"
                     shadow="never"
                   >
@@ -233,32 +227,22 @@ export default {
       this.btnLoading = false
     },
     getStateType(state) {
-      switch (state) {
-        case 'pending':
-          return 'slow'
-        case 'running':
-          return 'success'
-        case 'succeeded':
-          return 'success'
-        case 'failed':
-          return 'danger'
-        case 'unknown':
-          return 'warning'
-        default:
-          return 'slow'
+      const stateMap = {
+        pending: 'slow',
+        running: 'success',
+        succeeded: 'success',
+        failed: 'danger',
+        unknown: 'warning'
       }
+      return stateMap[state] || 'slow'
     },
     getContainerType(type) {
-      switch (type) {
-        case 'db-server':
-          return 'db-server'
-        case 'db-gui':
-          return 'db-gui'
-        case 'web-server':
-          return 'web-server'
-        default:
-          return ''
+      const typeMap = {
+        'db-server': 'db-server',
+        'db-gui': 'db-gui',
+        'web-server': 'web-server'
       }
+      return typeMap[type] || ''
     },
     copyUrl(id) {
       const target = document.getElementById(id)
@@ -280,17 +264,13 @@ export default {
       }
       this.btnLoading = false
     },
-    getCardBgc(type) {
-      switch (type) {
-        case 'db-server':
-          return '#d1edc4'
-        case 'db-gui':
-          return '#f8e3c5'
-        case 'web-server':
-          return '#cce7f8'
-        default:
-          return '#f9fafc'
+    getCardBackgroundColor(type) {
+      const colorMap = {
+        'db-server': '#d1edc4',
+        'db-gui': '#f8e3c5',
+        'web-server': '#cce7f8'
       }
+      return colorMap[type] || '#f9fafc'
     },
     formatEnvironments(pods) {
       const result = pods.map(pod => ({

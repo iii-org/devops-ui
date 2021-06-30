@@ -175,20 +175,14 @@ export default {
       this.podLogDialogVisible = visible
     },
     getStateType(state) {
-      switch (state) {
-        case 'pending':
-          return 'slow'
-        case 'running':
-          return 'success'
-        case 'succeeded':
-          return 'success'
-        case 'failed':
-          return 'danger'
-        case 'unknown':
-          return 'warning'
-        default:
-          return 'slow'
+      const mapStateType = {
+        pending: 'slow',
+        running: 'success',
+        succeeded: 'success',
+        failed: 'danger',
+        unknown: 'warning'
       }
+      return mapStateType[state] || 'slow'
     }
   }
 }

@@ -1,15 +1,22 @@
 <template>
   <div class="app-container">
-    <div class="clearfix">
+    <div class="text-right">
       <el-input
         v-model="keyword"
         :placeholder="$t('Project.SearchProjectNameOrId')"
-        style="width: 250px; float: right"
+        style="width: 250px"
         prefix-icon="el-icon-search"
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" height="calc(100vh - 300px)" border fit>
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      height="calc(100vh - 300px)"
+      border
+      fit
+    >
       <el-table-column
         align="center"
         :label="$t('Project.NameIdentifier')"
@@ -17,16 +24,11 @@
         min-width="200"
       >
         <template slot-scope="scope">
-          <span style="color: #67c23a">{{ scope.row.display }}</span>
-          <br>
-          <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
+          <div style="color: #67c23a">{{ scope.row.display }}</div>
+          <div style="color: #949494; font-size: small;">#{{ scope.row.name }}</div>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120">
-        <template slot-scope="scope">
-          {{ scope.row.issues }}
-        </template>
-      </el-table-column>
+      <el-table-column align="center" :label="$t('Project.WorkloadValue')" width="120" prop="issues" />
       <el-table-column-time prop="next_d_time" :label="$t('Project.UpcomingDeadline')" />
       <el-table-column align="center" :label="$t('Project.LastTest')" width="190">
         <template slot-scope="scope">
@@ -40,7 +42,6 @@
         <template slot-scope="scope">
           <el-tag class="el-tag--circle" :type="returnTagType(scope.row)" size="large" effect="dark">
             <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
-            <i v-else-if="returnTagType(scope.row) === 'danger'" class="el-icon-error" />
             <i v-else class="el-icon-error" />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
@@ -117,46 +118,6 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <router-view />
-    <el-dialog
-      :title="`${dialogStatusText} Project`"
-      :visible.sync="dialogVisible"
-      width="50%"
-      @closed="onDialogClosed"
-    >
-      <el-form ref="thisForm" :model="form" label-position="top">
-        <el-form-item label="Project Name" prop="name">
-          <el-input v-model="form.name" />
-        </el-form-item>
-        <el-form-item label="Project Code" prop="code">
-          <el-input v-model="form.code" />
-        </el-form-item>
-        <el-form-item label="Project Owner" prop="owner">
-          <el-input v-model="form.owner" />
-        </el-form-item>
-        <el-col :span="11">
-          <el-form-item label="Project Amount" prop="amount">
-            <el-input v-model="form.amount" type="number" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="2">&nbsp;</el-col>
-        <el-col :span="11">
-          <el-form-item label="Human Resource/Month" prop="ppm">
-            <el-input v-model="form.ppm" type="number" />
-          </el-form-item>
-        </el-col>
-        <el-form-item label="Description" prop="desc">
-          <el-input v-model="form.desc" type="textarea" />
-        </el-form-item>
-        <el-form-item label="Status" prop="status">
-          <el-switch v-model="form.status" />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="confirmLoading" @click="handleConfirm">Confirm</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -165,66 +126,23 @@ import { mapActions, mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
-const formTemplate = {
-  name: '',
-  code: '',
-  amount: 0,
-  ppm: 0,
-  status: false,
-  desc: ''
-}
-
 export default {
   name: 'ProjectListRD',
   components: { ElTableColumnTime },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
-      dialogVisible: false,
-      dialogStatus: 1,
-      form: formTemplate,
-      confirmLoading: false,
       keywords: ['display', 'name']
     }
   },
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal']),
-    dialogStatusText() {
-      switch (this.dialogStatus) {
-        case 1:
-          return 'Add'
-        case 2:
-          return 'Edit'
-        default:
-          return 'Null'
-      }
-    }
+    ...mapGetters(['projectList', 'projectListTotal'])
   },
   methods: {
     ...mapActions(['projects/getMyProjectList']),
     async fetchData() {
       await this['projects/getMyProjectList']()
       return this.projectList
-    },
-    handleEdit(idx, row) {
-      this.dialogVisible = true
-      this.dialogStatus = 2
-      this.form = Object.assign({}, this.form, row)
-    },
-    handleDelete() {},
-    handleAdding() {
-      this.dialogVisible = true
-      this.dialogStatus = 1
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
@@ -234,22 +152,7 @@ export default {
     testResults(row) {
       const { success, total } = row.last_test_result
       if (!success || !total) return 'No Test'
-      return success + ' / ' + total
-    },
-    returnLatestTag(row) {
-      const { tags } = row
-      if (!tags || tags.length === 0) return 'No Tag'
-      return tags[0].name
-    },
-    onDialogClosed() {
-      this.$nextTick(() => {
-        this.$refs['thisForm'].resetFields()
-        this.form = formTemplate
-      })
-    },
-    handleConfirm() {
-      //   this.dialogVisible = false
-      // console.log(this.form)
+      return `${success} / ${total}`
     },
     copyUrl(id) {
       const target = document.getElementById(id)
@@ -264,9 +167,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.clearfix {
-  clear: both;
-}
-</style>

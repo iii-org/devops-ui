@@ -3,12 +3,12 @@
     <template slot-scope="scope">
       <el-tag
         v-if="scope.row[prop]"
-        :type="handleType(scope.row[prop] || 'default')"
+        :type="handleType(scope.row[prop])"
         :class="elementClass"
         :size="size"
-        :effect="getStatusTagEffect(scope.row[prop]) || effect"
+        :effect="getTagEffect(scope.row[prop])"
       >
-        <span v-if="translateKey">{{ $t(translateKey + '.' + scope.row[prop]) }}</span>
+        <span v-if="translateKey">{{ $t(`${translateKey}.${scope.row[prop]}`) }}</span>
         <span v-else>{{ scope.row[prop] }}</span>
       </el-tag>
     </template>
@@ -61,15 +61,11 @@ export default {
   },
   methods: {
     handleType(prop) {
-      return elementTagType[this.location][prop]
+      return elementTagType[this.location][prop] || 'default'
     },
-    getStatusTagEffect(status) {
-      switch (status) {
-        case 'Building':
-          return 'light'
-        default:
-          return 'dark'
-      }
+    getTagEffect(status) {
+      const tagMap = { Building: 'light' }
+      return tagMap[status] || 'dark'
     }
   }
 }
