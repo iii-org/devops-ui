@@ -147,7 +147,7 @@ export default {
       return this.$dayjs.duration(e - s, 'seconds').humanize()
     },
     showFullLog(log) {
-      const wnd = window.open('about:blank', '', '_blank')
+      const wnd = window.open(' ')
       wnd.document.write(log)
     }
   }

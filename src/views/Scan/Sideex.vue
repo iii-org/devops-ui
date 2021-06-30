@@ -10,7 +10,7 @@
       />
     </div>
     <div class="text-right text-info" style="position: relative; top: 15px">
-      <span><i class="el-icon-warning" /></span>
+      <span><i class="el-icon-warning"/></span>
       <span>{{ $t('Sideex.promptMessage') }}</span>
     </div>
     <el-divider />
@@ -148,7 +148,7 @@ export default {
       this.showFullLog(res.data)
     },
     showFullLog(log) {
-      const wnd = window.open('about:blank', '', '_blank')
+      const wnd = window.open(' ')
       wnd.document.write(log)
     }
   }
