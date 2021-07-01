@@ -12,6 +12,11 @@
         @nodeClick="editNode"
       />
     </el-card>
+    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close :before-close="handleRelationIssueDialogBeforeClose">
+      <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="initChart"
+                          @delete="handleRelationDelete"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -19,10 +24,11 @@
 import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
+import ProjectIssueDetail from '@/views/Project/IssueDetail'
 
 export default {
   name: 'IssueMatrix',
-  components: { VueMermaid },
+  components: { VueMermaid, ProjectIssueDetail },
   props: {
     row: {
       type: Object,
@@ -48,7 +54,11 @@ export default {
       },
       data: [],
       accessedIssueId: [],
-      testFilesResult: []
+      testFilesResult: [],
+      relationIssue: {
+        visible: false,
+        id: null
+      }
     }
   },
   computed: {
@@ -157,7 +167,34 @@ export default {
       }
     },
     editNode(nodeId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
+      this.onRelationIssueDialog(nodeId)
+    },
+    handleRelationDelete() {
+      this.onCloseRelationIssueDialog()
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
+    },
+    onCloseRelationIssueDialog() {
+      this.$set(this.relationIssue, 'visible', false)
+      this.$set(this.relationIssue, 'id', null)
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      if (this.$refs.children.hasUnsavedChanges()) {
+        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            done()
+          })
+          .catch(() => {
+          })
+      } else {
+        done()
+      }
     }
   }
 }
