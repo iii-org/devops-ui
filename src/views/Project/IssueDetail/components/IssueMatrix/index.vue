@@ -156,18 +156,8 @@ export default {
         return result
       }
     },
-    getName(id, list, translate) {
-      if (!list) return null
-      const find = list.find((item) => (item.id === id))
-      return (find) ? ((translate) ? this.$t(translate + find.name) : find.name) : null
-    },
     editNode(nodeId) {
-      if (typeof nodeId === 'number') {
-        this.$router.push({ name: 'issue-detail', params: { issueId: nodeId.toString() }})
-      } else {
-        const software_name = nodeId.split('.')[0]
-        this.$router.push({ name: software_name.toLowerCase() })
-      }
+      this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
     }
   }
 }
