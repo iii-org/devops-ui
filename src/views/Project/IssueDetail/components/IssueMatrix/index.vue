@@ -171,6 +171,7 @@ export default {
     },
     handleRelationDelete() {
       this.onCloseRelationIssueDialog()
+      this.initChart()
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
