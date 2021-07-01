@@ -80,6 +80,8 @@ import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { getCheckIssueClosable, updateIssue } from '@/api/issue'
 import { getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
+// TODO:row.project.id
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ContextMenu',
@@ -129,6 +131,8 @@ export default {
     }
   },
   computed: {
+    // TODO:row.project.id
+    ...mapGetters(['selectedProjectId']),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -174,7 +178,8 @@ export default {
       if (this.row.fixed_version_id) {
         params['force_id'] = this.row.fixed_version_id
       }
-      const versionList = await getProjectVersion(this.row.project.id, params)
+      // TODO:row.project.id
+      const versionList = await getProjectVersion(this.selectedProjectId, params)
       this.fixed_version = versionList.data.versions
     },
     getDynamicStatusList() {
