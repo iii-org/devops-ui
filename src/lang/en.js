@@ -58,7 +58,7 @@ export default {
     Activities: 'Activities',
     'Project Activities': 'Project Activities',
 
-    Setting: 'Setting',
+    Settings: 'Settings',
     'Participate Project': 'Participate In The Project',
     Members: 'Members',
     Versions: 'Versions',
@@ -167,7 +167,8 @@ export default {
     Preview: 'Preview',
     SelectAll: 'Select All',
     Search: 'Search',
-    Filter: 'Filter'
+    Filter: 'Filter',
+    Settings: '{name} Setting'
   },
   Notify: {
     Updated: 'update successful',

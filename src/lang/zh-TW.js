@@ -171,7 +171,8 @@ export default {
     Preview: '預覽',
     SelectAll: '全選',
     Search: '搜尋',
-    Filter: '篩選'
+    Filter: '篩選',
+    Settings: '設定{name}'
   },
   Notify: {
     Updated: '已更新',

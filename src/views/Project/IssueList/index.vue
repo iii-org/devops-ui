@@ -98,6 +98,7 @@
         height="60vh"
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
+        @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
         @expand-change="getIssueFamilyData"
       >
@@ -112,6 +113,7 @@
                     :style="{ 'font-size': '14px', cursor: 'pointer' }"
                     :underline="false"
                     @click="handleEdit(scope.row.parent.id)"
+                    @contextmenu.native="handleContextMenu(scope.row.parent,'',$event)"
                   >
                     <status :name="scope.row.parent.status.name" size="mini" />
                     <tracker :name="scope.row.parent.tracker.name" />
@@ -144,6 +146,7 @@
                           :style="{ 'font-size': '14px', cursor: 'pointer' }"
                           :underline="false"
                           @click="handleEdit(child.id)"
+                          @contextmenu.native="handleContextMenu(child, '', $event)"
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
@@ -209,6 +212,14 @@
         @pagination="handleCurrentChange"
       />
     </el-row>
+    <ContextMenu
+      ref="contextmenu"
+      :visible="contextMenu.visible"
+      :row="contextMenu.row"
+      :filter-column-options="filterOptions"
+      :selection-options="contextOptions"
+      @update="loadData"
+    />
   </div>
 </template>
 
@@ -223,6 +234,7 @@ import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/newMixins'
+import ContextMenu from '@/views/Project/IssueList/components/ContextMenu'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -232,6 +244,7 @@ import { BasicData, Table, Pagination } from '@/newMixins'
 export default {
   name: 'ProjectIssues',
   components: {
+    ContextMenu,
     QuickAddIssue,
     Priority,
     Status,
@@ -247,6 +260,12 @@ export default {
       searchVisible: false,
       fixed_version_closed: false,
       displayClosed: false,
+      contextMenu: {
+        row: { fixed_version: { id: 'null' }, assigned_to: { id: 'null' }},
+        visible: false,
+        left: 0,
+        top: 0
+      },
       search: '',
       parentId: 0,
       parentName: '',
@@ -297,6 +316,13 @@ export default {
           tag: true
         }
       ]
+    },
+    contextOptions() {
+      const result = {}
+      this.filterOptions.forEach((item) => {
+        result[item.value] = this[item.value]
+      })
+      return result
     },
     listFilter() {
       const result = []
@@ -463,6 +489,7 @@ export default {
           const data = family.data
           if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
           if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
+          if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
           await this.$set(row, 'loadingRelation', false)
         } catch (e) {
         //   null
@@ -536,7 +563,7 @@ export default {
       } else if (this.hasRelationIssue(row) === false) {
         result.push('row-expand-cover')
       }
-      result.push('cursor-pointer')
+      result.push('context-menu')
       return result.join(' ')
     },
     advancedAddIssue(form) {
@@ -584,6 +611,34 @@ export default {
           console.error(err)
           this.listLoading = false
         })
+    },
+    handleContextMenu(row, column, event) {
+      this.$refs.contextmenu.$refs.contextmenu.show()
+      const eventX = event.pageX
+      const eventY = event.pageY
+      const contextmenuPosition = {
+        top: eventY,
+        left: eventX
+      }
+      const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
+      const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
+      if (contextmenuHeight + eventY >= window.innerHeight) {
+        contextmenuPosition.top -= contextmenuHeight
+      }
+      if (contextmenuWidth + eventX >= window.innerWidth) {
+        contextmenuPosition.left -= contextmenuWidth
+      }
+      this.contextMenu.top = contextmenuPosition.top
+      this.contextMenu.left = contextmenuPosition.left
+      this.contextMenu.row = row
+      this.contextMenu.visible = true
+      this.$refs.contextmenu.$refs.contextmenu.show({ top: this.contextMenu.top, left: this.contextMenu.left })
+      event.preventDefault()
+      document.addEventListener('click', this.hideContextMenu)
+    },
+    hideContextMenu() {
+      this.contextMenu.visible = false
+      document.removeEventListener('click', this.hideContextMenu)
     }
   }
 }
