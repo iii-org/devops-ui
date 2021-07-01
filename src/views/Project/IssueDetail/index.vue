@@ -127,7 +127,11 @@
         </el-col>
       </el-row>
       <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close :before-close="handleRelationIssueDialogBeforeClose">
-        <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="showLoading"
+        <ProjectIssueDetail v-if="relationIssue.visible"
+                            ref="children"
+                            :props-issue-id="relationIssue.id"
+                            :is-in-dialog="true"
+                            @update="showLoading"
                             @delete="handleRelationDelete"
         />
       </el-dialog>

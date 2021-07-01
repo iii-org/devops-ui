@@ -60,9 +60,10 @@
       width="80%"
       top="20px"
       append-to-body
+      destroy-on-close
       :title="'議題關聯圖(#'+row.id+' - '+ row.name+')'"
     >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="selectionOptions['tracker']" :status="selectionOptions['status']" />
+      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="selectionOptions['tracker']" :status="selectionOptions['status']" @update-issue="handleUpdateIssue" />
     </el-dialog>
   </div>
 </template>
@@ -260,6 +261,9 @@ export default {
       }
       if (!this.row[column.value].id) return item.id === 'null'
       return this.row[column.value].id === item.id
+    },
+    handleUpdateIssue() {
+      this.$emit('update')
     }
   }
 }

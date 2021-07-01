@@ -13,8 +13,12 @@
       />
     </el-card>
     <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close :before-close="handleRelationIssueDialogBeforeClose">
-      <ProjectIssueDetail ref="children" :props-issue-id="relationIssue.id" :is-in-dialog="true" @update="initChart"
-                          @delete="handleRelationDelete"
+      <ProjectIssueDetail v-if="relationIssue.visible"
+                          ref="children"
+                          :props-issue-id="relationIssue.id"
+                          :is-in-dialog="true"
+                          @update="handleRelationUpdate"
+                          @delete="handleRelationUpdate"
       />
     </el-dialog>
   </div>
@@ -169,9 +173,10 @@ export default {
     editNode(nodeId) {
       this.onRelationIssueDialog(nodeId)
     },
-    handleRelationDelete() {
+    handleRelationUpdate() {
       this.onCloseRelationIssueDialog()
       this.initChart()
+      this.$emit('update-issue')
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
