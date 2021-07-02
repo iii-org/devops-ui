@@ -52,6 +52,15 @@ export const webInspect = {
   default: 'slow'
 }
 
+export const checkMarx = {
+  New: 'info',
+  Queued: 'slow',
+  Scanning: 'slow',
+  Failed: 'danger',
+  Finished: 'success',
+  default: 'slow'
+}
+
 export const zap = {
   Finished: 'success',
   Scanning: 'slow',

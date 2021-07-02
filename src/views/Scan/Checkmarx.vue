@@ -32,13 +32,13 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag :label="$t('CheckMarx.Status')" prop="status" min-width="130" />
+      <el-table-column-tag :label="$t('CheckMarx.Status')" translate-key="CheckMarx" location="checkMarx" prop="status" min-width="130" />
       <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
       <el-table-column :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
       <el-table-column :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
       <el-table-column :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
       <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
-      <el-table-column :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
+      <el-table-column :label="$t('CheckMarx.Report')" prop="report_ready" width="100">
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -49,6 +49,7 @@
             icon="el-icon-download"
             @click="fetchTestReport(scope.row)"
           />
+          <div class="text-sm">{{ scope.row.report_ready? '':$t('CheckMarx.InProcess') }}</div>
         </template>
       </el-table-column>
     </el-table>
@@ -134,16 +135,13 @@ export default {
         const { reportId } = res.data
         const idx = this.listData.findIndex(item => item.scan_id === scanId)
         this.listData[idx].report_id = reportId
-        console.log('registerCheckMarxReport', this.listData[idx])
         if (reportId > 0) this.fetchReportStatus(reportId)
       })
       this.listLoading = false
     },
     fetchReportStatus(reportId) {
-      console.log('fetchReportStatus', reportId)
       this.listLoading = true
       getCheckMarxReportStatus(reportId).then(res => {
-        console.log('getCheckMarxReportStatus', res)
         const idx = this.listData.findIndex(item => item.report_id === reportId)
         if (res.data.id === 1) {
           this.listData[idx].report_ready = false
@@ -180,10 +178,6 @@ export default {
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel')
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: this.$t('Checkmarx.registryReport')
-        })
         this.registerReport(scan_id) 
       })
     }
