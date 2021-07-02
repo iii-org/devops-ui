@@ -49,7 +49,7 @@
               </el-row>
             </el-collapse-item>
           </el-collapse>
-          <div v-else class="text-center ma-7">
+          <div v-else class="text-center m-7">
             <span>{{ $t('general.NoData') }}</span>
           </div>
         </el-card>

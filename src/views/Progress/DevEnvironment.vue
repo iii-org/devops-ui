@@ -53,12 +53,11 @@
                 </el-popconfirm>
               </div>
             </div>
-            <el-row :gutter="10">
+            <el-row :gutter="20">
               <el-col
                 v-for="(data, type, idx) in pod.pods"
                 :key="type + idx"
-                class="ma-1"
-                :class="data.length > 1 ? 'border border-light pa-3 rounded' : ''"
+                :class="data.length > 1 ? 'm-1 border border-gray-500 p-3 rounded' : 'm-1'"
                 :sm="12"
                 :md="8"
                 :lg="6"
@@ -83,8 +82,7 @@
                         <el-card
                           v-for="(container, containerIdx) in item.containers"
                           :key="container.name + containerIdx"
-                          class="border border-light rounded-lg"
-                          :body-style="{ padding: '10px' }"
+                          class="border border-gray-500 rounded-lg"
                           shadow="hover"
                         >
                           <div class="text-right">
