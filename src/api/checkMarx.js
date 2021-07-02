@@ -1,44 +1,8 @@
 import request from '@/utils/request'
 
-export function getCheckMarxScans(project_id) {
-  return request({
-    url: `/checkmarx/scans/${project_id}`,
-    method: 'get'
-  })
-}
-
-export function getCheckMarxScanStatus(scan_id) {
-  return request({
-    url: `/checkmarx/scan_status/${scan_id}`,
-    method: 'get'
-  })
-}
-
-export function getCheckMarxScanStats(scan_id) {
-  return request({
-    url: `/checkmarx/scan_stats/${scan_id}`,
-    method: 'get'
-  })
-}
-
-export function registerCheckMarxReport(scan_id) {
-  return request({
-    url: `/checkmarx/report/${scan_id}`,
-    method: 'post'
-  })
-}
-
-export function getCheckMarxReportStatus(report_id) {
-  return request({
-    url: `/checkmarx/report_status/${report_id}`,
-    method: 'get'
-  })
-}
-
-export function getCheckMarxReport(report_id) {
-  return request({
-    url: `/checkmarx/report/${report_id}`,
-    responseType: 'blob',
-    method: 'get'
-  })
-}
+export const getCheckMarxScans = (project_id) => request.get(`/checkmarx/scans/${project_id}`)
+export const getCheckMarxScanStatus = (scan_id) => request.get(`/checkmarx/scan_status/${scan_id}`)
+export const getCheckMarxScanStats = (scan_id) => request.get(`/checkmarx/scan_stats/${scan_id}`)
+export const registerCheckMarxReport = (scan_id) => request.post(`/checkmarx/report/${scan_id}`)
+export const getCheckMarxReportStatus = (report_id) => request.get(`/checkmarx/report_status/${report_id}`)
+export const getCheckMarxReport = (report_id) => request.get(`/checkmarx/report/${report_id}`, { responseType: 'blob' })

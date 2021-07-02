@@ -246,7 +246,10 @@ export default {
     notCompletedScan: 'The scan is not completed yet. It may take several hours to complete.',
     generatingReportScan: 'Scan done, the system is generating a report. It may take several minutes to complete.',
     canceledScan: 'The scan is canceled.',
-    failedScan: 'The scan failed.'
+    failedScan: 'The scan failed.',
+    generatingReport: 'Generating Report. Please wait.',
+    registryReport: 'The report no longer exists, regenerate report?',
+    registryReportTip: 'It might takes 3-5 minutes to regenerate report, please refresh page later.'
   },
   WebInspect: {
     ScanId: 'Scan ID',

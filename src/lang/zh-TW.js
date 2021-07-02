@@ -250,7 +250,10 @@ export default {
     notCompletedScan: '掃描尚未完成，可能需要數小時來完成。',
     generatingReportScan: '掃描已完成，正在產生報告，可能需要數分鐘來完成。',
     canceledScan: '掃描取消。',
-    failedScan: '掃描失敗。'
+    failedScan: '掃描失敗。',
+    generatingReport: '重新產生報告中，請稍候！',
+    registryReport: '報告已不存在，是否需要重新產生？',
+    registryReportTip: '報告產生需要 3-5 分鐘不等，請稍後再進頁面下載，或重整頁面。'
   },
   WebInspect: {
     ScanId: '測試編號',

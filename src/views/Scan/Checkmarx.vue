@@ -1,6 +1,6 @@
 <template>
-  <el-row class="app-container" style="overflow: hidden;">
-    <div class="d-flex justify-space-between">
+  <el-row class="app-container">
+    <div class="flex justify-between">
       <project-list-selector />
       <el-input
         v-model="keyword"
@@ -10,36 +10,35 @@
       />
     </div>
     <el-divider />
+    <div class="text-right mb-2">
+      <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{ $t('general.Refresh') }}</el-button>
+    </div>
     <el-table
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
-      border
-      fit
-      highlight-current-row
       :data="pagedData"
+      fit
+      border
       height="100%"
+      :cell-style="{ 'text-align': 'center' }"
+      :header-cell-style="{ 'text-align': 'center' }"
     >
-      <el-table-column align="center" :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
-      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" width="140">
+      <el-table-column :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
+      <el-table-column :label="$t('Git.Branch')" prop="branch" />
+      <el-table-column :label="$t('Git.Commit')" width="140">
         <template slot-scope="scope">
-          <el-link
-            type="primary"
-            target="_blank"
-            style="font-size: 16px"
-            :href="scope.row.commit_url"
-          >
+          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('CheckMarx.Status')" prop="status" width="100" />
-      <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-      <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
+      <el-table-column-tag :label="$t('CheckMarx.Status')" prop="status" min-width="130" />
+      <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
+      <el-table-column :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
+      <el-table-column :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
+      <el-table-column :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
       <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
-      <el-table-column align="center" :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
+      <el-table-column :label="$t('CheckMarx.Report')" prop="report_ready" max-width="90">
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -48,7 +47,7 @@
             :disabled="!scope.row.report_ready"
             :underline="false"
             icon="el-icon-download"
-            @click="fetchTestReport(scope.row.report_id, scope.row.scan_id)"
+            @click="fetchTestReport(scope.row)"
           />
         </template>
       </el-table-column>
@@ -65,7 +64,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import {
   getCheckMarxReport,
   getCheckMarxReportStatus,
@@ -75,19 +73,16 @@ import {
   registerCheckMarxReport
 } from '@/api/checkMarx'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { ElTableColumnTime, ElTableColumnTag } from '@/components'
 
 export default {
   name: 'ScanCheckmarx',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, ElTableColumnTag },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
       searchKeys: ['scan_id']
     }
-  },
-  computed: {
-    ...mapGetters(['userRole'])
   },
   watch: {
     listData() {
@@ -96,20 +91,19 @@ export default {
   },
   methods: {
     async fetchData() {
-      if (this.selectedProjectId === -1) {
-        return []
-      }
+      if (this.selectedProjectId === -1) return []
       const res = await getCheckMarxScans(this.selectedProjectId)
       return res.data
     },
     async updateCheckMarxScansStatus(listData) {
       listData.forEach(item => {
-        if (item.status === null) {
-          this.fetchScanStatus(item.scan_id)
+        const { status, scan_id, report_id, report_ready } = item
+        if (status === null) {
+          this.fetchScanStatus(scan_id)
           return
         }
-        if (item.report_id && item.report_id > 0 && !item.report_ready) {
-          this.fetchReportStatus(item.report_id)
+        if (report_id && report_id > 0 && !report_ready) {
+          this.fetchReportStatus(report_id)
         }
       })
     },
@@ -137,26 +131,32 @@ export default {
     registerReport(scanId) {
       this.listLoading = true
       registerCheckMarxReport(scanId).then(res => {
+        const { reportId } = res.data
         const idx = this.listData.findIndex(item => item.scan_id === scanId)
-        this.listData[idx].reportId = res.data.reportId
-        if (res.data.reportId > 0) {
-          this.fetchReportStatus(res.data.reportId)
-        }
+        this.listData[idx].report_id = reportId
+        console.log('registerCheckMarxReport', this.listData[idx])
+        if (reportId > 0) this.fetchReportStatus(reportId)
       })
       this.listLoading = false
     },
     fetchReportStatus(reportId) {
+      console.log('fetchReportStatus', reportId)
       this.listLoading = true
       getCheckMarxReportStatus(reportId).then(res => {
+        console.log('getCheckMarxReportStatus', res)
         const idx = this.listData.findIndex(item => item.report_id === reportId)
+        if (res.data.id === 1) {
+          this.listData[idx].report_ready = false
+        }
         if (res.data.id === 2) {
           this.listData[idx].report_ready = true
         }
       })
       this.listLoading = false
     },
-    fetchTestReport(reportId, scanId) {
-      getCheckMarxReport(reportId)
+    fetchTestReport(row) {
+      const { report_id, scan_id } = row
+      getCheckMarxReport(report_id)
         .then(res => {
           const url = window.URL.createObjectURL(new Blob([res]))
           const link = document.createElement('a')
@@ -164,11 +164,28 @@ export default {
           link.setAttribute('download', 'checkmarx_Report.pdf')
           document.body.appendChild(link)
           link.click()
+          link.remove()
         })
         .catch(_ => {
-          this.registerReport(scanId)
-          this.loadData()
+          this.confirmRegistryReport(scan_id)
         })
+    },
+    confirmRegistryReport(scan_id) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: this.$t('general.caution'),
+        type: 'warning',
+        message: h('p', null, [h('div', { style: 'font-size: large' }, this.$t('CheckMarx.registryReport')), h('div', { style: 'color: red' }, this.$t('CheckMarx.registryReportTip'))]),
+        showCancelButton: true,
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel')
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: this.$t('Checkmarx.registryReport')
+        })
+        this.registerReport(scan_id) 
+      })
     }
   }
 }
