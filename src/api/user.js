@@ -71,3 +71,5 @@ export function getK8SConfig(userId) {
 
 export const getRoleList = () => request.get('/user/role/list')
 export const getUserListByFilter = (params) => request.get('/user/list', { params: params })
+
+export const getUserIssueList = (userId, params) => request.get(`/user/${userId}/issues`, { params: params })

@@ -64,8 +64,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getProjectVersion,
   getProjectIssueProgress,
-  getProjectIssueListByVersion,
-  getProjectIssueStatistics
+  getProjectIssueStatistics, getProjectIssueList
 } from '@/api/projects'
 
 import WorkloadCard from '@/views/Project/Overview/components/WorkloadCard'
@@ -142,7 +141,7 @@ export default {
     },
     async fetchDetails(versionId) {
       this.contentLoading = true
-      const resProjectIssue = await getProjectIssueListByVersion(this.selectedProjectId, {
+      const resProjectIssue = await getProjectIssueList(this.selectedProjectId, {
         fixed_version_id: versionId
       })
       const issues = []

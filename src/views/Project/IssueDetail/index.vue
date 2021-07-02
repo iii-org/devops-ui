@@ -15,7 +15,7 @@
               </template>
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
-              <IssueTitle ref="IssueTitle" v-model="form.subject" :old-value="originForm.subject" />
+              <IssueTitle ref="IssueTitle" v-model="form.subject" :old-value="originForm.subject" :issue-id="issueId" />
               <span v-if="!isLoading" class="text-body-1 mr-3">
                 {{ $t('Issue.AddBy', {user: author, created_date: formatTime(created_date)}) }}
               </span>
@@ -38,7 +38,7 @@
           </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
             <el-col :span="24" class="mb-3">
-              <issue-description ref="IssueDescription" v-model="form.description" :old-value="originForm.description" />
+              <issue-description ref="IssueDescription" v-model="form.description" :old-value="originForm.description" :issue-id="issueId" />
             </el-col>
             <el-col ref="IssueFiles">
               <issue-files v-if="files.length>0" :issue-file.sync="files" />

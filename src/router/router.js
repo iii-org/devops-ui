@@ -79,13 +79,23 @@ export const asyncRoutes = [
     path: '/',
     component: Layout,
     name: 'project-pm',
-    redirect: '/overview/project-list',
+    redirect: '/overview/dashboard',
     meta: {
       title: 'projectList',
       icon: 'el-icon-s-cooperation',
       roles: ['Project Manager', 'QA']
     },
     children: [
+      {
+        path: 'overview/dashboard',
+        name: 'dashboard-pm',
+        component: () => import('@/views/Overview/Dashboard/roles/issueList'),
+        meta: {
+          title: 'dashboard',
+          icon: 'list',
+          roles: ['Project Manager', 'QA']
+        }
+      },
       {
         path: 'overview/project-list',
         name: 'project-list-pm',
@@ -133,7 +143,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  
+
   {
     path: '/project',
     component: Layout,

@@ -32,6 +32,10 @@ export default {
     oldValue: {
       type: String,
       default: null
+    },
+    issueId: {
+      type: [String, Number],
+      default: null
     }
   },
   data() {
@@ -47,22 +51,20 @@ export default {
     newValue(value) {
       this.$emit('input', value)
     },
-    oldValue(value) {
-      if (!value || value === '') {
-        this.edit = true
-      }
+    oldValue() {
+      this.edit = !this.issueId
     }
   },
   mounted() {
     this.newValue = this.value
-    if (!this.oldValue || this.oldValue === '') {
+    if (!this.issueId || !this.oldValue || this.oldValue === '') {
       this.edit = true
     }
   },
   methods: {
     cancelInput() {
       this.newValue = this.oldValue
-      this.edit = !!(!this.oldValue || this.oldValue === '')
+      this.edit = !this.issueId
     }
   }
 }

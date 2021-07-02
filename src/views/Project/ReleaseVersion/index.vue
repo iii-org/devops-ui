@@ -44,7 +44,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getProjectIssueListByVersion, getProjectVersion } from '@/api/projects'
+import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import IssuesTable from './IssuesTable'
 import CreateRelease from './CreateRelease'
@@ -142,7 +142,7 @@ export default {
       this.hasOpenIssue = false
       for (const vId of this.releaseVersions) {
         const params = { fixed_version_id: vId }
-        const res = await getProjectIssueListByVersion(this.selectedProjectId, params)
+        const res = await getProjectIssueList(this.selectedProjectId, params)
         for (const issueJson of res.data) {
           const issue = new Issue(issueJson)
           this.allIssues.push(issue)
