@@ -1,7 +1,7 @@
 <template>
   <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-col>
-      <div class="d-flex justify-space-between">
+      <div class="flex justify-between">
         <project-list-selector />
         <el-input
           v-model="searchData"
@@ -18,7 +18,7 @@
 
         <el-col v-for="pod in filteredData" :key="pod.branch + pod.commit_id" :span="24">
           <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
-            <div class="d-flex justify-space-between mb-2">
+            <div class="flex justify-between mb-2">
               <div>
                 <span class="text-h6 font-weight-bold">
                   <svg-icon class="mr-1" icon-class="mdi-branch" />
@@ -127,7 +127,7 @@
                                     {{ service.url }}
                                   </span>
                                 </p>
-                                <div class="d-flex justify-center">
+                                <div class="flex justify-center">
                                   <el-button
                                     icon="el-icon-copy-document"
                                     circle

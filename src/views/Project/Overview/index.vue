@@ -1,6 +1,6 @@
 <template>
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <div class="d-flex justify-start">
+    <div class="flex justify-start">
       <project-list-selector />
       <el-select
         v-model="selectedVersion"

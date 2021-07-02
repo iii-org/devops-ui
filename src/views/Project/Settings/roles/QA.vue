@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="d-flex">
+    <div class="flex">
       <ProjectListSelector />
     </div>
     <el-divider />

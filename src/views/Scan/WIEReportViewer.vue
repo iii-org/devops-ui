@@ -1,7 +1,7 @@
 <template>
   <div id="wie-report-header" v-loading="isLoading" :element-loading-text="$t('Loading')" class="px-5 h-full overflow-auto">
     <el-backtop target="#wie-report-header" />
-    <div v-if="!isLoading" class="d-flex justify-between align-center my-5">
+    <div v-if="!isLoading" class="flex justify-between align-center my-5">
       <h3>「{{ selectedProject.display }}」{{ $t('WebInspect.TestReport') }}</h3>
       <span>{{ $t('WebInspect.RunAt') }}：{{ runAt }}</span>
       <el-button icon="el-icon-download" @click="handleDownload">

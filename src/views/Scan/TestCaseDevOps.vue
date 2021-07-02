@@ -1,7 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="d-flex">
+      <div class="flex">
         <el-input
           v-model="keyword"
           :placeholder="$t('TestCase.SearchNameOrPathOrTestResult')"

@@ -11,7 +11,7 @@
         :name="`${idx + 1} ${stage.name}`"
         :disabled="!stage.state"
       >
-        <div slot="label" class="d-flex justify-space-between align-center">
+        <div slot="label" class="flex justify-between align-center">
           <span class="text-right">{{ idx + 1 }} {{ stage.name }}</span>
           <el-tag
             v-if="stage.state"

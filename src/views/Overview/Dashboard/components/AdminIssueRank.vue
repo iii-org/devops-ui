@@ -84,10 +84,9 @@ export default {
     closeHandler() {
       this.keyword = ''
     },
-    getUnclosedIssuesData(id) {
-      return getUnclosedIssues(id).then(res => {
-        return Promise.resolve(res.data)
-      })
+    async getUnclosedIssuesData(id) {
+      const res = await getUnclosedIssues(id)
+      return await Promise.resolve(res.data)
     }
 
     // onClickChart(row) {

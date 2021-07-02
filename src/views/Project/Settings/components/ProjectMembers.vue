@@ -3,7 +3,7 @@
     <template slot="title">
       <span class="text-subtitle-1 font-weight-bold">{{ $t('Member.Manage') }}</span>
     </template>
-    <div class="d-flex justify-space-between mb-4">
+    <div class="flex justify-between mb-4">
       <el-button type="success" size="medium" icon="el-icon-plus" @click="showDialog">
         {{ $t('Member.AddMember') }}
       </el-button>

@@ -1,6 +1,6 @@
 <template>
   <el-row class="app-container" style="overflow: hidden;">
-    <div class="d-flex justify-space-between">
+    <div class="flex justify-between">
       <project-list-selector />
       <el-input
         v-model="keyword"

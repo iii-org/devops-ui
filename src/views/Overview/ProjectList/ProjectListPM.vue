@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="d-flex justify-space-between">
+    <div class="flex justify-between">
       <el-button type="success" icon="el-icon-plus" @click="handleAdding">
         {{ $t('Project.AddProject') }}
       </el-button>
@@ -62,7 +62,7 @@
             <p :id="`copy-${scope.$index}`" class="text-center">
               <span class="text-subtitle-1 font-weight-bold">{{ scope.row.git_url }}</span>
             </p>
-            <div class="d-flex justify-center">
+            <div class="flex justify-center">
               <el-button
                 class="mr-2"
                 icon="el-icon-copy-document"

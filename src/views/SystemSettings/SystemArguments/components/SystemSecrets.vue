@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="d-flex justify-space-between">
+    <div class="flex justify-between">
       <el-button id="btn-add-secret" type="success" @click="dialogVisible = true">
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
       </el-button>

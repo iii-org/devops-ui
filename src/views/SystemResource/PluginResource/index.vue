@@ -15,7 +15,7 @@
             :shadow="hasDetail(item.title) ? 'always' : 'never'"
             @click.native="showDetail(item.title)"
           >
-            <div slot="header" class="d-flex justify-space-between align-center" style="height: 24px">
+            <div slot="header" class="flex justify-between align-center" style="height: 24px">
               <strong>{{ item.title }}{{ item.quota }}</strong>
             </div>
             <div v-if="selectedProjectId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>

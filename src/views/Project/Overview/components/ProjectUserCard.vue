@@ -1,9 +1,9 @@
 <template>
   <el-card class="mb-3" shadow="hover">
-    <div slot="header" class="d-flex align-center" :style="{ height: '30px' }">
+    <div slot="header" class="flex align-center" :style="{ height: '30px' }">
       <span class="font-weight-bold">{{ $t('Dashboard.ProjectUsers') }}</span>
     </div>
-    <div v-if="!selectedProjectId" class="d-flex justify-center align-center" style="height: 300px">
+    <div v-if="!selectedProjectId" class="flex justify-center align-center" style="height: 300px">
       <span>{{ $t('general.NoData') }}</span>
     </div>
     <el-table v-else :data="userList" style="width: 100%" stripe>

@@ -1,6 +1,6 @@
 <template>
   <el-card class="mb-3" shadow="hover">
-    <div slot="header" class="d-flex justify-space-between align-center" :style="{ height: '30px' }">
+    <div slot="header" class="flex justify-between align-center" :style="{ height: '30px' }">
       <span class="font-weight-bold">
         {{ $t('Dashboard.Workload') }}
         <span v-if="!saveSelectedItem" @click="showFullIssuePriority">
@@ -25,7 +25,7 @@
         <el-option v-for="item in selectList" :key="item.id" :label="$t('Issue.' + item.label)" :value="item.id" />
       </el-select>
     </div>
-    <div v-if="Object.keys(dataCollection).length === 0" class="d-flex justify-center align-center">
+    <div v-if="Object.keys(dataCollection).length === 0" class="flex justify-center align-center">
       <span>{{ $t('general.NoData') }}</span>
     </div>
     <div v-else>

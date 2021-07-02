@@ -72,7 +72,7 @@
                 class="mb-2 cursor-pointer"
                 shadow="hover"
               >
-                <div class="d-flex justify-space-between">
+                <div class="flex justify-between">
                   <span class="text-subtitle-2">{{ project.name }}</span>
                   <i
                     class="el-icon-close cursor-pointer text-subtitle-2"

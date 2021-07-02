@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="d-flex justify-space-between">
+    <div class="flex justify-between">
       <el-button id="btn-add-registry" type="success" @click="dialogVisible = true">
         <i class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>

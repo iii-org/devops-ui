@@ -1,7 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="d-flex justify-space-between">
+      <div class="flex justify-between">
         <project-list-selector />
         <el-input
           v-model="keyword"
@@ -69,7 +69,7 @@
         </el-table-column>
         <el-table-column :label="$t('general.Actions')" align="center" width="180">
           <template slot-scope="scope">
-            <div class="d-flex align-center">
+            <div class="flex align-center">
               <div>
                 <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
                   <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">

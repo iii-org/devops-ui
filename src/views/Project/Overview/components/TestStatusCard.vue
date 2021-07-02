@@ -1,6 +1,6 @@
 <template>
   <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" class="mb-3" shadow="hover">
-    <div slot="header" class="d-flex justify-space-between align-center" :style="{ height: '30px' }">
+    <div slot="header" class="flex justify-between align-center" :style="{ height: '30px' }">
       <span class="font-weight-bold">{{ $t('Dashboard.TestStatus') }}</span>
       <el-button
         type="text"
@@ -12,7 +12,7 @@
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
-    <div v-if="!selectedProjectId" class="d-flex justify-center align-center" style="height: 300px">
+    <div v-if="!selectedProjectId" class="flex justify-center align-center" style="height: 300px">
       <span>{{ $t('general.NoData') }}</span>
     </div>
     <el-table v-else :data="testResultList" stripe fit>

@@ -73,7 +73,7 @@
         </el-col>
         <el-col :xs="24" :sm="18" :md="20">
           <el-form-item :label="$t('Project.TemplateName')">
-            <div slot="label" class="d-flex mb-2 align-center">
+            <div slot="label" class="flex align-center mb-2">
               <span class="mr-3">{{ $t('Project.TemplateName') }}</span>
               <el-radio-group v-model="focusSources" size="mini">
                 <el-radio-button label="Public Templates">Public</el-radio-button>

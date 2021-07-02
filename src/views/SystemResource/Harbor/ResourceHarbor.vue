@@ -1,7 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="d-flex justify-space-between">
+      <div class="flex justify-between">
         <project-list-selector />
         <el-input
           v-model="keyword"

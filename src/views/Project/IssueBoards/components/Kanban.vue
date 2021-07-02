@@ -2,7 +2,7 @@
   <div :key="reload" class="board-column">
     <div class="board-column-header">
       <div class="header-bar" />
-      <el-row class="d-flex">
+      <el-row class="flex">
         <el-col class="text-center">{{ headerText }} <b>({{ list.length }})</b></el-col>
         <!--        <i class="el-icon-more header-icon" />-->
       </el-row>

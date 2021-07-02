@@ -4,7 +4,7 @@
       <span class="text-subtitle-1 font-weight-bold mr-3">{{ $t('Plugin.Manage') }}</span>
     </template>
     <template v-if="settingStatus === 'Active'">
-      <div class="d-flex justify-space-between align-center mb-1">
+      <div class="flex justify-between align-center mb-1">
         <div>
           <span class="text-subtitle-2 mr-2">{{ $t('Git.Branch') }}：</span>
           <span class="text-subtitle-1 font-weight-bold">{{ branch }}</span>
