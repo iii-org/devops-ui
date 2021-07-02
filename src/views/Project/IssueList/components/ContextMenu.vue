@@ -210,7 +210,7 @@ export default {
         const getSettingRelationIssue = this.$refs['settingRelationIssue']
         const updateApi = []
         if (getSettingRelationIssue.target === 'Parent') {
-          updateApi.push(updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.parent_id }))
+          updateApi.push(updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id }))
         } else if (getSettingRelationIssue.target === 'Children') {
           getSettingRelationIssue.children['append'].forEach((item) => {
             updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
