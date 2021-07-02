@@ -101,6 +101,7 @@
         @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
         @expand-change="getIssueFamilyData"
+        @sort-change="handleSortChange"
       >
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
@@ -172,23 +173,23 @@
             </el-col>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Type')" width="130">
+        <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
           <template slot-scope="scope">
             <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip>
+        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
             {{ scope.row.name }}
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Priority')" width="150">
+        <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
           <template slot-scope="scope">
             <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Status')" width="150">
+        <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
           <template slot-scope="scope">
             <status
               v-if="scope.row.status.name"
@@ -196,7 +197,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180">
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" sortable="custom">
           <template slot-scope="scope">
             <span>{{ scope.row.assigned_to.name }}</span>
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
@@ -267,6 +268,7 @@ export default {
         top: 0
       },
       search: '',
+      sort: '',
       parentId: 0,
       parentName: '',
       fixed_version: [],
@@ -397,6 +399,9 @@ export default {
       const result = {
         offset: this.listQuery.offset,
         limit: this.listQuery.limit
+      }
+      if (this.sort) {
+        result['sort'] = this.sort
       }
       if (!this.displayClosed) {
         result['status_id'] = 'open'
@@ -555,6 +560,25 @@ export default {
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+    },
+    handleSortChange({ prop, order }) {
+      const orderBy = this.checkOrder(order)
+      if (orderBy) {
+        this.sort = prop + ':' + orderBy
+      } else {
+        this.sort = orderBy
+      }
+      this.loadData()
+    },
+    checkOrder(order) {
+      switch (order) {
+        case 'descending':
+          return 'desc'
+        case 'ascending':
+          return 'asc'
+        case null:
+          return false
+      }
     },
     getRowClass({ row }) {
       const result = []
