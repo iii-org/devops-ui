@@ -10,6 +10,7 @@
                             @click="onUpdate(column.value+'_id', item.id)"
           >
             <i v-if="getContextMenuCurrentValue(column, item)" class="el-icon-check" />
+            <i v-if="item.id==='null'" class="el-icon-circle-close" />
             {{ getSelectionLabel(item) }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
@@ -81,7 +82,6 @@ import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { getCheckIssueClosable, updateIssue } from '@/api/issue'
 import { getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
-// TODO:row.project.id
 import { mapGetters } from 'vuex'
 
 export default {
@@ -132,8 +132,7 @@ export default {
     }
   },
   computed: {
-    // TODO:row.project.id
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['fixedVersionShowClosed']),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -146,7 +145,6 @@ export default {
     row: {
       deep: true,
       async handler() {
-        console.log('ya')
         await this.initOptions()
         if (Object.keys(this.row).length > 2) {
           await this.getClosable()
@@ -175,13 +173,15 @@ export default {
       await this.getDynamicStatusList()
     },
     async loadVersionList() {
-      const params = { status: 'open,locked' }
-      if (this.row.fixed_version_id) {
-        params['force_id'] = this.row.fixed_version_id
+      let params = { status: 'open,locked' }
+      if (this.row.fixed_version.id) {
+        params['force_id'] = this.row.fixed_version.id
       }
-      // TODO:row.project.id
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
-      this.fixed_version = versionList.data.versions
+      if (this.fixedVersionShowClosed) {
+        params = { status: 'open,locked,closed' }
+      }
+      const versionList = await getProjectVersion(this.row.project.id, params)
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     getDynamicStatusList() {
       const _this = this
@@ -190,6 +190,10 @@ export default {
         if (!_this.checkClosable && item.is_closed === true) {
           item.disabled = true
           item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
+        }
+        if ((!_this.row.assigned_to.id || _this.row.assigned_to.id === '' || _this.row.assigned_to.id === 'null') && item.id > 1) {
+          item.disabled = true
+          item.message = '(' + this.$t('Issue.NoAssignee') + ')'
         }
         return item
       })

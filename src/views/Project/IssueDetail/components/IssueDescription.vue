@@ -46,15 +46,23 @@ export default {
     },
     newValue(value) {
       this.$emit('input', value)
+    },
+    oldValue(value) {
+      if (!value || value === '') {
+        this.edit = true
+      }
     }
   },
   mounted() {
     this.newValue = this.value
+    if (!this.oldValue || this.oldValue === '') {
+      this.edit = true
+    }
   },
   methods: {
     cancelInput() {
       this.newValue = this.oldValue
-      this.edit = false
+      this.edit = !!(!this.oldValue || this.oldValue === '')
     }
   }
 }
