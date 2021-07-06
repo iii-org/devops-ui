@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="overflow: hidden;">
+  <div class="app-container">
     <div class="clearfix">
       <project-list-selector />
       <span class="newBtn">
@@ -11,7 +11,7 @@
         v-model="keyword"
         prefix-icon="el-icon-search"
         :placeholder="$t('general.SearchName')"
-        style="width: 250px; float: right"
+        style="width: 300px; float: right"
       />
     </div>
     <el-divider />
@@ -54,7 +54,7 @@
             size="mini"
             type="primary"
             icon="el-icon-download"
-            @click="handleDownload(scope.$index, scope.row)"
+            @click="handleDownload(scope.row)"
           >
             {{ $t('File.Download') }}
           </el-button>
@@ -65,7 +65,7 @@
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(scope.$index, scope.row)"
+            @onConfirm="handleDelete(scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <i class="el-icon-delete" /> {{ $t('general.Delete') }}
@@ -145,7 +145,7 @@ import {
   getProjectVersion,
   uploadProjectFile
 } from '@/api/projects'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = {
@@ -157,7 +157,7 @@ const formTemplate = {
 export default {
   name: 'ProjectFiles',
   components: { ElTableColumnTime },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector],
   data() {
     return {
       dialogVisible: false,
@@ -173,7 +173,8 @@ export default {
       uploadFileList: [],
       loadingInstance: '',
       extension: {},
-      isDownloading: false
+      isDownloading: false,
+      searchKeys: ['filename']
     }
   },
   mounted() {
@@ -216,18 +217,18 @@ export default {
         type: 'warning'
       })
     },
-    async handleDownload(idx, row) {
+    async handleDownload(row) {
       this.isDownloading = true
-      const res = await downloadProjectFile({ id: row.id, filename: row.filename })
+      const res = await downloadProjectFile({ id: row.id, filename: row.filename, project_id: this.selectedProjectId })
       const url = window.URL.createObjectURL(new Blob([res]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', row.filename) // or any other extension
+      link.setAttribute('download', row.filename)
       document.body.appendChild(link)
       link.click()
       this.isDownloading = false
     },
-    async handleDelete(idx, row) {
+    async handleDelete(row) {
       this.listLoading = true
       try {
         await deleteProjectFile(row.id)
