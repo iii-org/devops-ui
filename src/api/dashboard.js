@@ -1,33 +1,9 @@
 import request from '@/utils/request'
 
-export function getRdDashboardIssuesPriority(user_id) {
-  return request({
-    url: `/dashboard_issues_priority/${user_id}`,
-    method: 'get'
-  })
-}
-
-export function getRdDashboardIssuesProject(issue_id) {
-  return request({
-    url: `/dashboard_issues_project/${issue_id}`,
-    method: 'get'
-  })
-}
-
-export function getRdDashboardIssuesType(issue_id) {
-  return request({
-    url: `/dashboard_issues_type/${issue_id}`,
-    method: 'get'
-  })
-}
-
-export function getVersion() {
-  return request({
-    url: `/system_git_commit_id`,
-    method: 'get'
-  })
-}
-
+export const getRdDashboardIssuesPriority = (user_id) => request.get(`/dashboard_issues_priority/${user_id}`)
+export const getRdDashboardIssuesProject = (issue_id) => request.get(`/dashboard_issues_project/${issue_id}`)
+export const getRdDashboardIssuesType = (issue_id) => request.get(`/dashboard_issues_type/${issue_id}`)
+export const getVersion = () => request.get(`/system_git_commit_id`)
 export const getProjectOverview = () => request.get('/dashboard/project_overview')
 export const getProjectMembers = () => request.get('/dashboard/project_members_count')
 export const getProjectMembersDetail = () => request.get('/dashboard/project_members_detail')

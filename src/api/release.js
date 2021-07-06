@@ -1,9 +1,3 @@
 import request from '@/utils/request'
 
-export function createRelease(project_id, data) {
-  return request({
-    url: `/project/${project_id}/releases`,
-    method: 'post',
-    data
-  })
-}
+export const createRelease = (project_id, data) => request.post(`/project/${project_id}/releases`, data)

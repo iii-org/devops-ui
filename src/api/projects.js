@@ -7,7 +7,7 @@ export const addNewProject = (data = { name: '', disabled: false, description: '
 export const getProjectTest = (pId) => request.get(`/project/${pId}/test_summary`)
 export const getProjectInfos = (pId) => request.get(`/project/${pId}`)
 export const updateProjectInfos = (pId, data) => request.patch(`/project/${pId}`, data)
-export const editProject = (pId, data = { name: '', disabled: false, description: '' }) => request.put(`/project/${pId}`.data)
+export const editProject = (pId, data = { name: '', disabled: false, description: '' }) => request.put(`/project/${pId}`, data)
 export const deleteProject = (pId) => request.delete(`/project/${pId}`)
 export const getProjectAssignable = (pId) => request.get(`/project/${pId}/user/list?exclude=0`) // exclude=0 : 輸出參與此project的使用者列表
 export const getNotInProject = (pId) => request.get(`/project/${pId}/user/list?exclude=1`) // exclude=1 : 輸出無參與此project的使用者列表

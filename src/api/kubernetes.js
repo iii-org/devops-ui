@@ -1,167 +1,40 @@
 import request from '@/utils/request'
 
 // secret
-export function getSecretList(project_id) {
-  return request({
-    url: `/project/${project_id}/resource/secrets`,
-    method: 'get'
-  })
-}
-
-export function addSecret(project_id, secret_name) {
-  return request({
-    url: `/project/${project_id}/resource/secret/${secret_name}`,
-    method: 'post'
-  })
-}
-
-export function updateSecretList(project_id, secret_name, data) {
-  return request({
-    url: `/project/${project_id}/resource/secrets/${secret_name}`,
-    method: 'put',
-    data
-  })
-}
-
-export function getSecret(project_id, secret_name) {
-  return request({
-    url: `/project/${project_id}/resource/secrets/${secret_name}`,
-    method: 'get'
-  })
-}
-
-export function deleteSecret(project_id, secret_name) {
-  return request({
-    url: `/project/${project_id}/resource/secrets/${secret_name}`,
-    method: 'delete'
-  })
-}
+export const getSecretList = (project_id) => request.get(`/project/${project_id}/resource/secrets`)
+export const addSecret = (project_id, secret_name) => request.post(`/project/${project_id}/resource/secret/${secret_name}`)
+export const updateSecretList = (project_id, secret_name, data) => request.put(`/project/${project_id}/resource/secrets/${secret_name}`, data)
+export const getSecret = (project_id, secret_name) => request.get(`/project/${project_id}/resource/secrets/${secret_name}`)
+export const deleteSecret = (project_id, secret_name) => request.delete(`/project/${project_id}/resource/secrets/${secret_name}`)
 
 // config map
-export function getConfigmapList(project_id) {
-  return request({
-    url: `/project/${project_id}/resource/configmaps`,
-    method: 'get'
-  })
-}
-
-export function deleteConfigmap(project_id, config_map_name) {
-  return request({
-    url: `/project/${project_id}/resource/configmaps/${config_map_name}`,
-    method: 'delete'
-  })
-}
-
-export function updateConfigmapList(project_id, config_map_name, data) {
-  return request({
-    url: `/project/${project_id}/resource/configmaps/${config_map_name}`,
-    method: 'put',
-    data
-  })
-}
+export const getConfigmapList = (project_id) => request.get(`/project/${project_id}/resource/configmaps`)
+export const deleteConfigmap = (project_id, config_map_name) => request.delete(`/project/${project_id}/resource/configmaps/${config_map_name}`)
+export const updateConfigmapList = (project_id, config_map_name, data) => request.put(`/project/${project_id}/resource/configmaps/${config_map_name}`, data)
 
 // pod
-export function getPodList(project_id) {
-  return request({
-    url: `/project/${project_id}/resource/pods`,
-    method: 'get'
-  })
-}
-
-export function getPodLog(project_id, pod_name, params) {
-  return request({
-    url: `/project/${project_id}/resource/pods/${pod_name}/log`,
-    method: 'get',
-    params
-  })
-}
-
-export function deletePod(project_id, pod_name) {
-  return request({
-    url: `/project/${project_id}/resource/pods/${pod_name}`,
-    method: 'delete'
-  })
-}
+export const getPodList = (project_id) => request.get(`/project/${project_id}/resource/pods`)
+export const getPodLog = (project_id, pod_name, params) => request.get(`/project/${project_id}/resource/pods/${pod_name}/log`, { params })
+export const deletePod = (project_id, pod_name) => request.delete(`/project/${project_id}/resource/pods/${pod_name}`)
 
 // service
-export function getServiceList(project_id) {
-  return request({
-    url: `/project/${project_id}/resource/services`,
-    method: 'get'
-  })
-}
+export const getServiceList = (project_id) => request.get(`/project/${project_id}/resource/services`)
 
-export function deleteService(project_id, service_name) {
-  return request({
-    url: `/project/${project_id}/resource/services/${service_name}`,
-    method: 'delete'
-  })
-}
+export const deleteService = (project_id, service_name) => request.delete(`/project/${project_id}/resource/services/${service_name}`)
 
 // deployment
-export function getDeploymentList(project_id) {
-  return request({
-    url: `project/${project_id}/resource/deployments`,
-    method: 'get'
-  })
-}
-
-export function deleteDeployment(project_id, deployment_name) {
-  return request({
-    url: `/project/${project_id}/resource/deployments/${deployment_name}`,
-    method: 'delete'
-  })
-}
-
-export function updateDeployment(project_id, deployment_name) {
-  return request({
-    url: `/project/${project_id}/resource/deployments/${deployment_name}`,
-    method: 'put'
-  })
-}
+export const getDeploymentList = (project_id) => request.get(`project/${project_id}/resource/deployments`)
+export const deleteDeployment = (project_id, deployment_name) => request.delete(`/project/${project_id}/resource/deployments/${deployment_name}`)
+export const updateDeployment = (project_id, deployment_name) => request.put(`/project/${project_id}/resource/deployments/${deployment_name}`)
 
 // ingresses
-export function getIngressList(project_id) {
-  return request({
-    url: `/project/${project_id}/resource/ingresses`,
-    method: 'get'
-  })
-}
+export const getIngressList = (project_id) => request.get(`/project/${project_id}/resource/ingresses`)
 
 // project usage
-export function getProjectUsage(project_id) {
-  return request({
-    url: `/project/${project_id}/resource`,
-    method: 'get'
-  })
-}
-
-export function setProjectUsageLimit(project_id, data) {
-  return request({
-    url: `/project/${project_id}/resource`,
-    method: 'put',
-    data
-  })
-}
+export const getProjectUsage = (project_id) => request.get(`/project/${project_id}/resource`)
+export const setProjectUsageLimit = (project_id, data) => request.put(`/project/${project_id}/resource`)
 
 // environment
-export function getEnvironmentList(pId) {
-  return request({
-    url: `/project/${pId}/environments`,
-    method: 'get'
-  })
-}
-
-export function redeployEnvironmentByBranchName(pId, brachName) {
-  return request({
-    url: `/project/${pId}/environments/branch/${brachName}`,
-    method: 'put'
-  })
-}
-
-export function deleteEnvironmentByBranchName(pId, brachName) {
-  return request({
-    url: `/project/${pId}/environments/branch/${brachName}`,
-    method: 'delete'
-  })
-}
+export const getEnvironmentList = (pId) => request.get(`/project/${pId}/environments`)
+export const redeployEnvironmentByBranchName = (pId, brachName) => request.put(`/project/${pId}/environments/branch/${brachName}`)
+export const deleteEnvironmentByBranchName = (pId, brachName) => request.delete(`/project/${pId}/environments/branch/${brachName}`)

@@ -1,9 +1,3 @@
 import request from '@/utils/request'
 
-export function getCommitListByBranch(rId, params) {
-  return request({
-    url: 'repositories/' + rId + '/commits',
-    method: 'get',
-    params
-  })
-}
+export const getCommitListByBranch = (rId, params) => request.get('repositories/' + rId + '/commits', { params })

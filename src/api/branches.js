@@ -1,8 +1,3 @@
 import request from '@/utils/request'
 
-export function getBranchesByProject(rId) {
-  return request({
-    url: '/repositories/' + rId + '/branches',
-    method: 'get'
-  })
-}
+export const getBranchesByProject = (rId) => request.get('/repositories/' + rId + '/branches')

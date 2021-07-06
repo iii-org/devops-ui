@@ -1,30 +1,6 @@
 import request from '@/utils/request'
 
-export function getWikiList(project_id) {
-  return request({
-    url: `/project/${project_id}/wiki`,
-    method: 'get'
-  })
-}
-
-export function getWikiDetail(project_id, wiki_title) {
-  return request({
-    url: `/project/${project_id}/wiki/${wiki_title}`,
-    method: 'get'
-  })
-}
-
-export function putWikiDetail(project_id, wiki_title, data = { wiki_text: '' }) {
-  return request({
-    url: `/project/${project_id}/wiki/${wiki_title}`,
-    method: 'put',
-    data
-  })
-}
-
-export function deleteWiki(project_id, wiki_title) {
-  return request({
-    url: `/project/${project_id}/wiki/${wiki_title}`,
-    method: 'delete'
-  })
-}
+export const getWikiList = (project_id) => request.get(`/project/${project_id}/wiki`)
+export const getWikiDetail = (project_id, wiki_title) => request.get(`/project/${project_id}/wiki/${wiki_title}`)
+export const putWikiDetail = (project_id, wiki_title, data = { wiki_text: '' }) => request.put(`/project/${project_id}/wiki/${wiki_title}`, data)
+export const deleteWiki = (project_id, wiki_title) => request.delete(`/project/${project_id}/wiki/${wiki_title}`)

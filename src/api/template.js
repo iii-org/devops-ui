@@ -1,23 +1,5 @@
 import request from '@/utils/request'
 
-export function getTemplateList(params) {
-  return request({
-    url: '/template_list',
-    method: 'get',
-    params
-  })
-}
-
-export function getTemplateParams(git_project_id) {
-  return request({
-    url: `/template/${git_project_id}`,
-    method: 'get'
-  })
-}
-
-export function getTemplateParamsByVersion(git_project_id, version) {
-  return request({
-    url: `/template/${git_project_id}?tag_name=${version}`,
-    method: 'get'
-  })
-}
+export const getTemplateList = (params) => request.get('/template_list', { params })
+export const getTemplateParams = (git_project_id) => request.get(`/template/${git_project_id}`)
+export const getTemplateParamsByVersion = (git_project_id, version) => request.get(`/template/${git_project_id}?tag_name=${version}`)

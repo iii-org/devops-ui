@@ -1,8 +1,3 @@
 import request from '@/utils/request'
 
-export function getZapScans(project_id) {
-  return request({
-    url: `/project/${project_id}/zap`,
-    method: 'get'
-  })
-}
+export const getZapScans = (project_id) => request.get(`/project/${project_id}/zap`)
