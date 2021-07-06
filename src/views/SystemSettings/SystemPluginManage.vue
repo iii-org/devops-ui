@@ -170,7 +170,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getPlugins()
-      return res.data.plugin_list
+      return res.data
     },
     async handleAdd() {
       this.isAddPlugin = true
