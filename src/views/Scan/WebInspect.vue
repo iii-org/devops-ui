@@ -18,7 +18,6 @@
       fit
       highlight-current-row
       :data="pagedData"
-      height="100%"
     >
       <el-table-column
         align="center"
@@ -35,12 +34,6 @@
           </el-link>
         </template>
       </el-table-column>
-      <!-- <el-table-column-tag
-        prop="stats.status"
-        size="medium"
-        min-width="130"
-        location="webInspect"
-      /> -->
       <el-table-column align="center" :label="$t('WebInspect.Status')" prop="stats.status" min-width="130">
         <template slot-scope="scope">
           <el-tag
@@ -65,17 +58,8 @@
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('WebInspect.RunAt')" prop="run_at" />
-      <el-table-column align="center" :label="$t('WebInspect.Report')" min-width="100">
+      <el-table-column align="center" :label="$t('WebInspect.Report')">
         <template slot-scope="scope">
-          <el-link
-            type="primary"
-            style="font-size: 16px"
-            :disabled="!scope.row.scan_id || scope.row.stats.status !== 'Complete'"
-            :underline="false"
-            @click="fetchTestReport(scope.row.scan_id)"
-          >
-            <i class="el-icon-download" style="font-size: 16px" />
-          </el-link>
           <el-link
             type="primary"
             style="font-size: 16px"
@@ -100,10 +84,9 @@
 </template>
 
 <script>
-import { getWebInspectReport, getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
+import { getWebInspectScans, getWebInspectStats, getWebInspectStatus } from '@/api/webInspect'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-// import ElTableColumnTag from '@/components/ElTableColumnTag'
 
 export default {
   name: 'ScanWebInspect',
@@ -176,16 +159,6 @@ export default {
         this.listData[idx].stats.status = 'Complete'
       })
       this.listLoading = false
-    },
-    fetchTestReport(wiScanId) {
-      getWebInspectReport(wiScanId).then(res => {
-        const url = window.URL.createObjectURL(new Blob([res]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'WebInspect_Report.xml')
-        document.body.appendChild(link)
-        link.click()
-      })
     },
     handleTestReportDetail(row) {
       const { scan_id, run_at } = row
