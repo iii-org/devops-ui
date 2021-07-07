@@ -10,7 +10,7 @@
           <el-collapse v-if="versionList.length" v-model="activeNames" accordion @change="onCollapseChange">
             <el-collapse-item v-for="version in versionList" :key="version.id" :name="version.id">
               <template slot="title">
-                <div class="flex align-center">
+                <div class="flex items-center">
                   <el-tag class="el-tag--circle mr-5" effect="dark" :type="getVersionTagType(version)" size="small">
                     {{ version.name }}
                   </el-tag>

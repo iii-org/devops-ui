@@ -3,9 +3,9 @@
     <el-col>
       <el-table
         :data="listData"
-        cell-class-name="align-center"
+        cell-class-name="items-center"
         row-class-name="cursor-pointer"
-        header-cell-class-name="align-center"
+        header-cell-class-name="items-center"
         @row-click="showUnclosedIssuesDetail"
       >
         <el-table-column prop="user_name" :label="$t('Dashboard.ADMIN.IssueRank.user_name')">

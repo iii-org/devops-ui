@@ -2,7 +2,7 @@
   <el-row class="app-container">
     <el-col>
       <project-list-selector />
-      <div class="flex justify-between align-center">
+      <div class="flex justify-between items-center">
         <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
         <el-button type="success" icon="el-icon-plus" @click="handleAdding">
           {{ $t('TestCase.AddTestCase') }}

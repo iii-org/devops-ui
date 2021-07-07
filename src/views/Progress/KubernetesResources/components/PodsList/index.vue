@@ -69,7 +69,7 @@
         </el-table-column>
         <el-table-column :label="$t('general.Actions')" align="center" width="180">
           <template slot-scope="scope">
-            <div class="flex align-center">
+            <div class="flex items-center">
               <div>
                 <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
                   <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">

@@ -19,8 +19,8 @@
         v-loading="listLoading"
         :data="tableData"
         :row-class-name="tableRowClassName"
-        cell-class-name="align-center"
-        header-cell-class-name="align-center"
+        cell-class-name="items-center"
+        header-cell-class-name="items-center"
         :height="tableHeight"
         @sort-change="onSortChange"
       >

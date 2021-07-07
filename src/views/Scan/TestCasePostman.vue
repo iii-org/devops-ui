@@ -1,7 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="flex justify-between align-center">
+      <div class="flex justify-between items-center">
         <router-link :to="{ name: 'postman' }">
           <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
         </router-link>
@@ -25,9 +25,9 @@
         />
       </div>
       <el-divider />
-      <div class="flex justify-between align-center mb-3">
+      <div class="flex justify-between items-center mb-3">
         <div class="text-info">{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</div>
-        <div class="flex align-center">
+        <div class="flex items-center">
           <el-tag
             size="small"
             class="cursor-pointer mr-2"

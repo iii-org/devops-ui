@@ -18,9 +18,9 @@
           <el-col :span="24" :sm="12" :xl="9">
             <el-form-item :label="$t('Project.Identifier')" prop="name">
               <el-input v-model="form.name" :maxlength="30" show-word-limit />
-              <div style="word-break: keep-all;margin-top: 5px;">
+              <span class="font-sm">
                 {{ $t('Project.IdRule') }}
-              </div>
+              </span>
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
@@ -73,7 +73,7 @@
         </el-col>
         <el-col :xs="24" :sm="18" :md="20">
           <el-form-item :label="$t('Project.TemplateName')">
-            <div slot="label" class="flex align-center mb-2">
+            <div slot="label" class="flex items-center mb-2">
               <span class="mr-3">{{ $t('Project.TemplateName') }}</span>
               <el-radio-group v-model="focusSources" size="mini">
                 <el-radio-button label="Public Templates">Public</el-radio-button>

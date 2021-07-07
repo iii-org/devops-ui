@@ -265,7 +265,7 @@ export default {
   }
 }
 
-> > > .align-center {
+> > > .items-center {
   text-align: center;
 }
 

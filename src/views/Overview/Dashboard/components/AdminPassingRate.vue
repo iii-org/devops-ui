@@ -34,8 +34,8 @@
           ref="tableData"
           :data="pagedData"
           row-key="project_id"
-          cell-class-name="align-center"
-          header-cell-class-name="align-center"
+          cell-class-name="items-center"
+          header-cell-class-name="items-center"
           @row-click="rowClicked"
         >
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.project_name')" prop="project_name" sortable />
