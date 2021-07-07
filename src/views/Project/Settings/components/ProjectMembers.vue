@@ -1,14 +1,14 @@
 <template>
   <el-collapse-item v-loading="listLoading" name="ProjectMembers">
     <template slot="title">
-      <span class="text-subtitle-1 font-weight-bold">{{ $t('Member.Manage') }}</span>
+      <span class="font-base font-bold">{{ $t('Member.Manage') }}</span>
     </template>
     <div class="flex justify-between mb-4">
       <el-button type="success" size="medium" icon="el-icon-plus" @click="showDialog">
         {{ $t('Member.AddMember') }}
       </el-button>
       <div>
-        <span class="font-weight-bold mx-2">{{ $t('Project.Owner') }}</span>
+        <span class="font-bold mx-2">{{ $t('Project.Owner') }}</span>
         <el-select
           v-model="selectedProject.owner_id"
           size="medium"

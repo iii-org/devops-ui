@@ -7,7 +7,7 @@
       <el-col :xs="24" :sm="24" :md="10">
         <el-card class="overview">
           <template slot="header">
-            <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
+            <span class="font-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
           </template>
           <admin-overview :data="getProjectOverviewData" />
         </el-card>
@@ -15,7 +15,7 @@
       <el-col :xs="24" :sm="24" :md="7">
         <el-card>
           <div slot="header" class="pointer" @click="$refs['projectMember'].detailDialog=true">
-            <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
+            <span class="font-bold">{{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
               <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
                    style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
@@ -31,7 +31,7 @@
       <el-col :xs="24" :sm="24" :md="7">
         <el-card>
           <template slot="header">
-            <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }}
+            <span class="font-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }}
             </span>
           </template>
           <admin-commit-log :data="getGitCommitLogData" />
@@ -42,7 +42,7 @@
       <el-col :xs="24" :sm="24" :md="10">
         <el-card>
           <template slot="header">
-            <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
+            <span class="font-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
           </template>
           <admin-issue-rank :data="getIssueRankData" />
         </el-card>
@@ -50,7 +50,7 @@
       <el-col :xs="24" :sm="24" :md="14">
         <el-card>
           <div slot="header" class="pointer" @click="$refs['passingRate'].detailDialog=true">
-            <span class="font-weight-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
+            <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
               <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
                    style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"
@@ -69,7 +69,7 @@
         <el-card>
           <div slot="header" class="pointer" @click="$refs['projectList'].detailDialog=true">
             <el-row type="flex" align="center" class="no-margin">
-              <el-col :span="12" class="font-weight-bold">{{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
+              <el-col :span="12" class="font-bold">{{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="1em" height="1em"
                      style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
                      preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"

@@ -21,8 +21,8 @@
       >
         <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
           <template slot-scope="scope">
-            <div class="font-weight-bold">{{ scope.row.name }}</div>
-            <div class="text-caption">
+            <div class="font-bold">{{ scope.row.name }}</div>
+            <div class="text-xs">
               Keys：<span v-for="(key, keyIdx) in scope.row.keys" :key="keyIdx">
                 {{ key }}
                 <span v-if="keyIdx !== scope.row.keys.length - 1">/</span>

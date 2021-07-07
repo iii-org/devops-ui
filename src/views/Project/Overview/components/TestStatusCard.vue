@@ -31,8 +31,8 @@
           </div>
           <div v-else>
             <div v-for="item in scope.row.informationText" :key="item.status">
-              <span class="text-subtitle-2">{{ item.status }}</span>
-              <span class="text-subtitle-1 font-weight-bold">{{ item.count }}</span>
+              <span class="text-sm">{{ item.status }}</span>
+              <span class="font-base font-bold">{{ item.count }}</span>
             </div>
           </div>
         </template>

@@ -6,13 +6,13 @@
           <div slot="header">
             <span style="font-size: 25px; padding-bottom: 10px">{{ $t('TestCase.TestCase') }}</span>
           </div>
-          <div class="text-subtitle-1 font-weight-bold mb-1">{{ $t('general.Name') }}</div>
+          <div class="font-base font-bold mb-1">{{ $t('general.Name') }}</div>
           <div class="mb-4">{{ testCase.name }}</div>
 
-          <div class="text-subtitle-1 font-weight-bold mb-1">{{ $t('TestCase.Method') }}</div>
+          <div class="font-base font-bold mb-1">{{ $t('TestCase.Method') }}</div>
           <div class="mb-4">{{ testCase.data.method }}</div>
 
-          <div class="text-subtitle-1 font-weight-bold mb-1">{{ $t('TestCase.Path') }}</div>
+          <div class="font-base font-bold mb-1">{{ $t('TestCase.Path') }}</div>
           <div class="mb-4">{{ testCase.data.url }}</div>
         </el-card>
       </el-col>
@@ -291,7 +291,7 @@ export default {
     return {
       activeName: 'testItem',
       testCaseId: 0,
-      testCase: { name: '', data: { method: '', url: '' } },
+      testCase: { name: '', data: { method: '', url: '' }},
       testItemList: [],
       testItemDialogVisible: false,
       selectTestItem: '',

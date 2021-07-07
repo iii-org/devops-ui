@@ -1,13 +1,13 @@
 <template>
   <el-collapse-item v-loading="isLoading" :element-loading-text="$t('Loading')" name="PluginSettings">
     <template slot="title">
-      <span class="text-subtitle-1 font-weight-bold mr-3">{{ $t('Plugin.Manage') }}</span>
+      <span class="font-base font-bold mr-3">{{ $t('Plugin.Manage') }}</span>
     </template>
     <template v-if="settingStatus === 'Active'">
       <div class="flex justify-between align-center mb-1">
         <div>
-          <span class="text-subtitle-2 mr-2">{{ $t('Git.Branch') }}：</span>
-          <span class="text-subtitle-1 font-weight-bold">{{ branch }}</span>
+          <span class="text-sm mr-2">{{ $t('Git.Branch') }}：</span>
+          <span class="font-base font-bold">{{ branch }}</span>
         </div>
         <el-button type="text" size="medium" @click="handleClick">
           {{ $t('route.advanceBranchSettings') }}
@@ -42,11 +42,11 @@
       </div>
     </template>
     <template v-else-if="settingStatus === 'unSupported'">
-      <div class="text-center text-h6 mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
-      <div class="text-center text-danger font-weight-bold">{{ $t('Plugin.CustomRecommendWarning') }}</div>
+      <div class="text-center text-lg font-medium mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
+      <div class="text-center text-danger font-bold">{{ $t('Plugin.CustomRecommendWarning') }}</div>
     </template>
     <template v-else-if="settingStatus === 'error'">
-      <div class="text-center text-h6">{{ $t('Notify.LoadFail') }}</div>
+      <div class="text-center text-lg font-medium">{{ $t('Notify.LoadFail') }}</div>
     </template>
   </el-collapse-item>
 </template>
@@ -130,7 +130,7 @@ export default {
       }
     },
     async updatePipeDefBranch() {
-      const sendData = { detail: { stages: this.stagesData } }
+      const sendData = { detail: { stages: this.stagesData }}
       this.isStagesLoading = true
       try {
         await editPipelineDefaultBranch(this.selectedRepositoryId, sendData)

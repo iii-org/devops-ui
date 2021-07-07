@@ -58,7 +58,7 @@
             :close-delay="50"
           >
             <p :id="`copy-${scope.$index}`" class="text-center">
-              <span class="text-subtitle-1 font-weight-bold">{{ scope.row.git_url }}</span>
+              <span class="font-base font-bold">{{ scope.row.git_url }}</span>
             </p>
             <div class="flex justify-center">
               <el-button

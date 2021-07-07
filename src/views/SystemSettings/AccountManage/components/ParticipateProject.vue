@@ -1,6 +1,6 @@
 <template>
   <el-row class="app-container">
-    <el-col class="text-h5 mr-3">
+    <el-col class="text-xl mr-3">
       <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
         {{ $t('general.Back') }}
       </el-button>

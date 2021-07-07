@@ -21,8 +21,8 @@
       >
         <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
           <template slot-scope="scope">
-            <div class="font-weight-bold">{{ scope.row.name }}</div>
-            <div class="text-caption">
+            <div class="font-bold">{{ scope.row.name }}</div>
+            <div class="text-xs">
               Keys：<span v-for="(key, keyIdx) in scope.row.keys" :key="keyIdx">
                 {{ key }}
                 <span v-if="keyIdx !== scope.row.keys.length - 1">/</span>
@@ -71,7 +71,7 @@
         width="80%"
         @close="closeEditDialog"
       >
-        <div class="text-subtitle-1 font-weight-bold">Config Map Name</div>
+        <div class="font-base font-bold">Config Map Name</div>
         <div>{{ configMapName }}</div>
         <el-row
           v-for="(configMap, configMapIdx) in configMapData"
@@ -81,11 +81,11 @@
           class="mt-3"
         >
           <el-col :span="6">
-            <div class="text-subtitle-1 font-weight-bold">key {{ configMapIdx + 1 }}</div>
+            <div class="font-base font-bold">key {{ configMapIdx + 1 }}</div>
             <div>{{ configMapData[configMapIdx].key }}</div>
           </el-col>
           <el-col :span="18">
-            <div class="text-subtitle-1 font-weight-bold">value {{ configMapIdx + 1 }}</div>
+            <div class="font-base font-bold">value {{ configMapIdx + 1 }}</div>
             <div>{{ configMapData[configMapIdx].value }}</div>
           </el-col>
         </el-row>

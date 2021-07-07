@@ -6,7 +6,7 @@
         v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 0}"
         type="text"
         :placeholder="$t('general.Title')"
-        class="el-input__inner text-h5"
+        class="el-input__inner text-xl"
         @keydown.meta.esc="cancelInput"
       >
     </span>

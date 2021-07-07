@@ -251,3 +251,15 @@
     }
   }
 }
+
+.text- {
+  &success {
+    color: $success;
+  }
+  &danger {
+    color: $danger;
+  }
+  &info {
+    color: $info;
+  }
+}

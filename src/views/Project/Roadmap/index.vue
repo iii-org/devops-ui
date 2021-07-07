@@ -17,7 +17,7 @@
                   <div class="mr-7" style="width: 700px">
                     <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
                   </div>
-                  <div class="text-h6">{{ version.close }}／{{ version.total_issue }}</div>
+                  <div class="text-lg font-medium">{{ version.close }}／{{ version.total_issue }}</div>
                 </div>
               </template>
               <el-row v-loading="contentLoading" :gutter="12">
@@ -35,7 +35,7 @@
                             {{ scope.row.priorityName }}
                           </el-tag>
                           <div>
-                            <span class="font-weight-bold mr-2">[{{ scope.row.trackerName }}]</span>
+                            <span class="font-bold mr-2">[{{ scope.row.trackerName }}]</span>
                             <span>{{ scope.row.name }} </span>
                           </div>
                         </div>

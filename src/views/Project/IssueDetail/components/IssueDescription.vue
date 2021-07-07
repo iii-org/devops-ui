@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col>
-      <el-row class="text-subtitle-2 mt-2 mb-3">
+      <el-row class="text-sm mt-2 mb-3">
         {{ $t('Issue.Description') }}
       </el-row>
       <el-form v-if="edit">

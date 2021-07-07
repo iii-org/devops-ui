@@ -1,6 +1,6 @@
 <template>
   <el-row class="el-upload-list">
-    <div class="text-subtitle-2 mb-2">{{ $t('Issue.Files') }}</div>
+    <div class="text-sm mb-2">{{ $t('Issue.Files') }}</div>
     <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
       <el-col :span="16">
         <a class="el-upload-list__item-name" @click="handleDownload(file)">

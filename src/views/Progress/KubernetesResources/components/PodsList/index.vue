@@ -22,7 +22,7 @@
         <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
           <template slot-scope="scope">
             <div>{{ scope.row.name }}</div>
-            <div class="text-body-2 my-1">
+            <div class="text-sm my-1">
               <i class="el-icon-time" />
               <el-tooltip placement="bottom" :content="scope.row.created_time | UTCtoLocalTime">
                 <span>{{ scope.row.created_time | relativeTime }}</span>
@@ -47,14 +47,14 @@
                 </div>
                 <i class="el-icon-time" />
                 <el-tooltip placement="top" :content="container.time | UTCtoLocalTime">
-                  <span class="text-body-2">{{ container.time | relativeTime }}</span>
+                  <span class="text-sm">{{ container.time | relativeTime }}</span>
                 </el-tooltip>
                 <div class="ml-3 my-1">
-                  <i class="el-icon-box" /> <span class="text-h6 "> {{ container.name }}</span>
+                  <i class="el-icon-box" /> <span class="text-lg font-medium "> {{ container.name }}</span>
                 </div>
                 <div class=" ml-3 my-1">
                   <i class="el-icon-refresh-right" />
-                  <span class="font-weight-regular">Restarts：{{ container.restart }}</span>
+                  <span>Restarts：{{ container.restart }}</span>
                 </div>
               </div>
             </div>

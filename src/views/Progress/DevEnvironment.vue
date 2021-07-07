@@ -12,7 +12,7 @@
       </div>
       <el-divider />
       <el-row v-if="filteredData.length > 0" :gutter="10">
-        <el-col class="text-right text-body-1 mb-2 text-info">
+        <el-col class="text-right text-base mb-2 text-info">
           {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
         </el-col>
 
@@ -20,7 +20,7 @@
           <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
             <div class="flex justify-between mb-2">
               <div>
-                <span class="text-h6 font-weight-bold">
+                <span class="text-lg font-medium">
                   <svg-icon class="mr-1" icon-class="mdi-branch" />
                   {{ pod.branch }}
                 </span>
@@ -57,7 +57,7 @@
               <el-col
                 v-for="(data, type, idx) in pod.pods"
                 :key="type + idx"
-                :class="data.length > 1 ? 'm-1 border border-gray-500 p-3 rounded' : 'm-1'"
+                :class="data.length > 1 ? 'm-1 pod-border p-3 rounded' : 'm-1'"
                 :sm="12"
                 :md="8"
                 :lg="6"
@@ -72,9 +72,9 @@
                     shadow="never"
                   >
                     <div class="mb-2 ml-2">
-                      <svg-icon class="mr-1 text-caption" icon-class="k8s-pod" />
-                      <span class="text-caption">{{ $t('ProcessDevEnvironment.Pod') }}</span>
-                      <div class="text-caption font-weight-bold">{{ item.name }}</div>
+                      <svg-icon class="mr-1 text-xs" icon-class="k8s-pod" />
+                      <span class="text-xs">{{ $t('ProcessDevEnvironment.Pod') }}</span>
+                      <div class="text-xs font-bold">{{ item.name }}</div>
                     </div>
 
                     <el-row :gutter="10">
@@ -82,7 +82,7 @@
                         <el-card
                           v-for="(container, containerIdx) in item.containers"
                           :key="container.name + containerIdx"
-                          class="border border-gray-500 rounded-lg"
+                          class="pod-border"
                           shadow="hover"
                         >
                           <div class="text-right">
@@ -97,20 +97,20 @@
                           </div>
 
                           <div class="mb-2">
-                            <svg-icon class="mr-1 text-caption" icon-class="mdi-inbox" />
-                            <span class="text-caption">{{ $t('ProcessDevEnvironment.Container') }}</span>
-                            <div class="font-weight-bold ml-5">{{ container.name }}</div>
+                            <svg-icon class="mr-1 text-xs" icon-class="mdi-inbox" />
+                            <span class="text-xs">{{ $t('ProcessDevEnvironment.Container') }}</span>
+                            <div class="font-bold ml-5">{{ container.name }}</div>
                           </div>
 
                           <div class="mb-2">
-                            <svg-icon class="mr-1 text-caption" icon-class="mdi-clock-outline" />
-                            <span class="text-caption mr-1">{{ $t('general.StartTime') }}</span>
-                            <div class="font-weight-bold ml-5">{{ container.start_time | relativeTime }}</div>
+                            <svg-icon class="mr-1 text-xs" icon-class="mdi-clock-outline" />
+                            <span class="text-xs mr-1">{{ $t('general.StartTime') }}</span>
+                            <div class="font-bold ml-5">{{ container.start_time | relativeTime }}</div>
                           </div>
 
                           <div v-for="(servicePM, servicePMIdx) in container.services" :key="servicePMIdx">
-                            <svg-icon class="mr-1 text-caption" icon-class="mdi-family-tree" />
-                            <span class="text-caption">{{ $t('ProcessDevEnvironment.Services') }}</span>
+                            <svg-icon class="mr-1 text-xs" icon-class="mdi-family-tree" />
+                            <span class="text-xs">{{ $t('ProcessDevEnvironment.Services') }}</span>
                             <div v-for="(service, serviceIdx) in servicePM.services" :key="serviceIdx" class="ml-5">
                               <el-popover
                                 v-if="service.type === 'db-server'"
@@ -121,7 +121,7 @@
                                 :close-delay="50"
                               >
                                 <p :id="`copy-${serviceIdx}`" class="text-center">
-                                  <span class="text-subtitle-1 font-weight-bold">
+                                  <span class="font-base font-bold">
                                     {{ service.url }}
                                   </span>
                                 </p>
@@ -305,3 +305,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.pod-border{
+  border: 1px solid #bbb;
+}
+</style>

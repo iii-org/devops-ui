@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-subtitle-2 mt-2 mb-3">{{ $t('Issue.Notes') }}</div>
+    <div class="text-sm mt-2 mb-3">{{ $t('Issue.Notes') }}</div>
     <editor
       ref="mdEditor"
       initial-edit-type="wysiwyg"

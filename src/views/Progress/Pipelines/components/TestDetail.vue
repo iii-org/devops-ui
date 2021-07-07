@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" width="95%" top="3vh" @close="handleClose">
     <template slot="title">
-      <span class="font-weight-bold text-h6 mx-4"> {{ $t('ProgressPipelines.TestDetail') }}</span>
+      <span class="text-lg font-medium mx-4"> {{ $t('ProgressPipelines.TestDetail') }}</span>
       <span> {{ pipelineInfos.commitMessage }} </span>
     </template>
     <el-tabs v-model="activeStage" tab-position="left" @tab-click="userClick">
@@ -30,11 +30,11 @@
             lineHeight: 2
           }"
         >
-          <div class="text-h6 mb-3">
+          <div class="text-lg font-medium mb-3">
             <i class="el-icon-tickets mr-2" />
             <span class="mr-3">{{ stage.name }}</span>
-            <i v-if="stage.isLoading" class="el-icon-loading font-weight-bold" style="color: #F89F03" />
-            <i v-else class="el-icon-check font-weight-bold" style="color: #72C040" />
+            <i v-if="stage.isLoading" class="el-icon-loading font-bold" style="color: #F89F03" />
+            <i v-else class="el-icon-check font-bold" style="color: #72C040" />
           </div>
           <el-card
             v-for="(step, stepIdx) in stage.steps"

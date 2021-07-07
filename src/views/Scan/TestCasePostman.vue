@@ -6,7 +6,7 @@
           <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
         </router-link>
         <div class="text-center">
-          <div class="text-body-1 font-weight-bold mb-2">{{ selectedProject.display }}</div>
+          <div class="text-base font-bold mb-2">{{ selectedProject.display }}</div>
           <div>
             <el-tag size="medium" type="primary" class="mr-2">
               <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}

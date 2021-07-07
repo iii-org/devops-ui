@@ -11,7 +11,7 @@
         />
       </div>
       <el-divider />
-      <div class="text-right text-body-1 mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+      <div class="text-right text-base mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
       <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" border fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
@@ -58,7 +58,7 @@
           header-align="center"
         >
           <template slot-scope="scope">
-            <div class="text-subtitle-2 font-weight-bold">{{ scope.row.commit_message }}</div>
+            <div class="text-sm font-bold">{{ scope.row.commit_message }}</div>
             <div>{{ scope.row.transitioning_message }}</div>
           </template>
         </el-table-column>

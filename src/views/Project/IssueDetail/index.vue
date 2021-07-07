@@ -4,7 +4,7 @@
       <el-row slot="header">
         <el-row type="flex" align="bottom" justify="space-between">
           <el-row>
-            <el-col class="text-h5 mr-3">
+            <el-col class="text-xl mr-3">
               <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
                          @click="handleBackPage"
               >
@@ -16,7 +16,7 @@
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
               <IssueTitle ref="IssueTitle" v-model="form.subject" :old-value="originForm.subject" :issue-id="issueId" />
-              <span v-if="!isLoading" class="text-body-1 mr-3">
+              <span v-if="!isLoading" class="text-base mr-3">
                 {{ $t('Issue.AddBy', {user: author, created_date: formatTime(created_date)}) }}
               </span>
             </el-col>

@@ -1,5 +1,5 @@
 <template>
-  <el-tag :type="getStatusTagType(name)" effect="dark" class="rounded-xl font-weight-bold" :size="size">
+  <el-tag :type="getStatusTagType(name)" effect="dark" class="rounded-xl font-bold" :size="size">
     {{ $t(`Issue.${name}`) }}
   </el-tag>
 </template>
