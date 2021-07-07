@@ -17,7 +17,6 @@ export const getProjectUserList = (pId) => request.get(`/project/${pId}/user/lis
 export const getProjectVersion = (pId, params) => request.get(`/project/${pId}/version/list`, { params })
 export const getProjectIssueListByTree = (pId) => request.get(`/project/${pId}/issues_by_tree`)
 export const getProjectIssueListByStatus = (pId) => request.get(`/project/${pId}/issues_by_status`)
-export const getProjectIssueListByDate = (pId) => request.get(`/project/${pId}/issues_by_date`)
 export const addProjectVersion = (pId, data = { name: '', due_date: '', description: '', status: '' }) => request.post(`/project/${pId}/version`, data)
 export const editProjectVersion = (pId, vId, data = { name: '', due_date: '', description: '', status: '' }) => request.put(`/project/${pId}/version/${vId}`, data)
 export const deleteProjectVersion = (pId, vId) => request.delete(`/project/${pId}/version/${vId}`)

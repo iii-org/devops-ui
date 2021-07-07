@@ -1,27 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import getters from './getters'
-import app from './modules/app'
-import settings from './modules/settings'
-import user from './modules/user'
-import projects from './modules/projects'
-import branches from './modules/branches'
-import commitList from './modules/commitList'
-import permission from './modules/permission'
 
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
-  modules: {
-    app,
-    settings,
-    user,
-    projects,
-    branches,
-    commitList,
-    permission
-  },
-  getters
-})
+const modulesFiles = require.context('./modules', true, /\.js$/)
 
-export default store
+const modules = modulesFiles.keys().reduce((modules, modulePath) => {
+  const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, '$1')
+  const value = modulesFiles(modulePath)
+  modules[moduleName] = value.default
+  return modules
+}, {})
+
+export default new Vuex.Store({ modules, getters })
