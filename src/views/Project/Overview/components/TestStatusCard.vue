@@ -1,7 +1,10 @@
 <template>
   <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" class="mb-3" shadow="never">
-    <div slot="header" class="flex justify-between items-center" :style="{ height: '30px' }">
-      <span class="font-semibold">{{ $t('Dashboard.TestStatus') }}</span>
+    <div class="flex justify-between mb-2">
+      <span class="font-semibold">
+        <i class="el-icon-circle-check" />
+        {{ $t('Dashboard.TestStatus') }}
+      </span>
       <el-button
         type="text"
         icon="el-icon-refresh"
@@ -12,58 +15,42 @@
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
-    <div v-if="!selectedProjectId" class="flex justify-center items-center" style="height: 300px">
+    <div v-if="!selectedProjectId" class="flex justify-center items-center">
       <span>{{ $t('general.NoData') }}</span>
     </div>
-    <el-table v-else :data="testResultList" stripe fit>
-      <el-table-column :label="$t('Dashboard.Software')" prop="Software" width="110">
-        <template slot-scope="scope">
-          <el-link type="primary" :underline="false" style="font-size: 16px" @click="handleClick(scope.row.Software)">
-            {{ scope.row.Software }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column-time :label="$t('general.RunAt')" prop="runAt" />
-      <el-table-column :label="$t('Dashboard.Brief')" prop="informationText">
-        <template slot-scope="scope">
-          <div v-if="Object.keys(scope.row.informationText).length === 0">
-            {{ $t('general.NoData') }}
+    <el-row v-else :gutter="10">
+      <el-col v-for="result in testResultList" :key="result.Software" class="mb-2" :span="12">
+        <el-card>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xl text-blue-600 font-semibold capitalize">{{ result.Software }}</span>
+            <i class="el-icon-right cursor-pointer" @click="handleClick(result.Software)" />
           </div>
-          <div v-else>
-            <div v-for="item in scope.row.informationText" :key="item.status">
+          <el-tooltip placement="right" :open-delay="200" :content="result.runAt | UTCtoLocalTime">
+            <span class="text-sm">
+              <svg-icon class="mr-1" icon-class="mdi-clock-outline" />
+              <span>{{ result.runAt | relativeTime }}</span>
+            </span>
+          </el-tooltip>
+          <div class="mt-3">
+            <span v-if="Object.keys(result.informationText).length === 0" class="text-gray-400">
+              {{ $t('general.NoData') }}
+            </span>
+            <div v-for="item in result.informationText" :key="item.status" class="flex justify-between mb-1">
               <span class="text-sm">{{ item.status }}</span>
               <span class="font-base font-bold">{{ item.count }}</span>
             </div>
           </div>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column :label="$t('Dashboard.Report')" align="center">
-        <template slot-scope="scope">
-          <el-link
-            v-if="scope.row.report_id"
-            type="primary"
-            target="_blank"
-            :underline="false"
-            icon="el-icon-download"
-            :disabled="isDisabled"
-            @click="fetchTestReport(scope.row.report_id)"
-          />
-        </template>
-      </el-table-column> -->
-    </el-table>
+        </el-card>
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { getTestReport } from '@/api/projects'
-import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 export default {
   name: 'TestStatusCard',
-  components: {
-    ElTableColumnTime
-  },
   props: {
     isLoading: {
       type: Boolean,
@@ -76,8 +63,7 @@ export default {
   },
   data() {
     return {
-      testResultList: [],
-      isDisabled: false
+      testResultList: []
     }
   },
   computed: {
@@ -249,19 +235,6 @@ export default {
         })
       }
       return ret
-    },
-    async fetchTestReport(reportId) {
-      this.isDisabled = true
-      await getTestReport(reportId).then(res => {
-        const url = window.URL.createObjectURL(new Blob([res]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'checkmarx_Report.pdf')
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-      })
-      this.isDisabled = false
     },
     handleClick(target) {
       this.$router.push({ name: target })

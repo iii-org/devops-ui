@@ -1,7 +1,8 @@
 <template>
   <el-card class="mb-3" shadow="never">
-    <div slot="header" class="flex items-center" :style="{ height: '30px' }">
-      <span class="font-semibold">{{ $t('Dashboard.IssueTrackingStatus') }}</span>
+    <div class="font-semibold mb-5">
+      <i class="el-icon-pie-chart" />
+      {{ $t('Dashboard.IssueTrackingStatus') }}
     </div>
     <div v-if="Object.keys(dataCollection).length === 0" class="flex justify-center items-center">
       <span>{{ $t('general.NoData') }}</span>

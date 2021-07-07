@@ -1,27 +1,12 @@
 <template>
   <el-card class="mb-3" shadow="never">
-    <div slot="header" class="flex justify-between items-center" :style="{ height: '30px' }">
-      <span class="font-semibold">
-        {{ $t('Dashboard.Workload') }}
-        <span v-if="!saveSelectedItem" @click="showFullIssuePriority">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            focusable="false"
-            width="1em"
-            height="1em"
-            style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
-            preserveAspectRatio="xMidYMid meet"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7z"
-              fill="#626262"
-            />
-          </svg>
-        </span>
-      </span>
-      <el-select v-model="selectedItem" size="medium" @change="fillData">
+    <div class="flex justify-between font-semibold mb-2">
+      <div>
+        <i class="el-icon-data-analysis" />
+        <span>{{ $t('Dashboard.Workload') }} </span>
+        <i v-if="!saveSelectedItem" class="el-icon-zoom-in cursor-pointer ml-3" @click="showFullIssuePriority" />
+      </div>
+      <el-select v-model="selectedItem" size="small" @change="fillData">
         <el-option v-for="item in selectList" :key="item.id" :label="$t('Issue.' + item.label)" :value="item.id" />
       </el-select>
     </div>

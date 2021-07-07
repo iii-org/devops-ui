@@ -1,7 +1,8 @@
 <template>
   <el-card class="mb-3" shadow="never">
-    <div slot="header" class="flex items-center" :style="{ height: '30px' }">
-      <span class="font-semibold">{{ $t('Dashboard.ProjectUsers') }}</span>
+    <div class="font-semibold mb-2">
+      <i class="el-icon-user" />
+      {{ $t('Dashboard.ProjectUsers') }}
     </div>
     <div v-if="!selectedProjectId" class="flex justify-center items-center" style="height: 300px">
       <span>{{ $t('general.NoData') }}</span>

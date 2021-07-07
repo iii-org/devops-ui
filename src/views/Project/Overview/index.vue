@@ -1,53 +1,48 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <div>
+  <el-row id="project-overview" v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="10">
+    <el-backtop target="#project-overview" />
+    <div class="flex">
       <project-list-selector />
       <el-select
         v-model="selectedVersion"
+        class="mr-8"
         :loading="isLoadingVersion"
         :disabled="isLoading"
         :placeholder="$t('Version.SelectVersion')"
         clearable
         @clear="clearSelectedVersion"
       >
-        <el-option
-          v-for="item in versionList"
-          :key="item.id"
-          :label="getSelectionLabel(item)"
-          :value="item.id"
-        />
+        <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
       </el-select>
+      <ProjectInfoBar />
     </div>
     <el-divider />
-    <el-row :gutter="10">
-      <ProjectInfoBar />
-      <el-col :xs="24" :md="12">
-        <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
-      </el-col>
-      <el-col :xs="24" :md="12">
-        <WorkloadCard
-          ref="issuePriority"
-          :statistics-obj="statisticsObj"
-          class="cursor-point"
-          @emitSelectedItem="handleSelectedItem"
-          @showFullIssuePriority="showFullIssuePriority"
-        />
-      </el-col>
-    </el-row>
-    <el-row :gutter="10">
-      <el-col :xs="24" :md="12">
-        <ProjectUserCard ref="projectUserList" :user-list="userList" />
-      </el-col>
-      <el-col :xs="24" :md="12">
-        <TestStatusCard
-          ref="testStatus"
-          :is-loading="isProjectTestList"
-          :project-test-obj="projectTestObj"
-          @update="updateProjectTestList"
-        />
-      </el-col>
-    </el-row>
-    <el-dialog :visible.sync="fullIssuePriority" class="fullscreen" top="5vh">
+    <el-col :xs="24" :md="12">
+      <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
+    </el-col>
+
+    <el-col :xs="24" :md="12">
+      <WorkloadCard
+        ref="issuePriority"
+        :statistics-obj="statisticsObj"
+        @emitSelectedItem="handleSelectedItem"
+        @showFullIssuePriority="showFullIssuePriority"
+      />
+    </el-col>
+
+    <el-col :xs="24" :md="12">
+      <ProjectUserCard ref="projectUserList" :user-list="userList" />
+    </el-col>
+
+    <el-col :xs="24" :md="12">
+      <TestStatusCard
+        ref="testStatus"
+        :is-loading="isProjectTestList"
+        :project-test-obj="projectTestObj"
+        @update="updateProjectTestList"
+      />
+    </el-col>
+    <el-dialog :visible.sync="fullIssuePriority" top="5vh" width="90%">
       <WorkloadCard :key="reload" :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
     </el-dialog>
   </el-row>
@@ -159,12 +154,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.fullscreen > .el-dialog {
-  width: 90%;
-}
-.cursor-point {
-  cursor: pointer;
-}
-</style>
