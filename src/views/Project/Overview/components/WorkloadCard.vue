@@ -1,7 +1,7 @@
 <template>
-  <el-card class="mb-3" shadow="hover">
+  <el-card class="mb-3" shadow="never">
     <div slot="header" class="flex justify-between align-center" :style="{ height: '30px' }">
-      <span class="font-weight-bold">
+      <span class="font-semibold">
         {{ $t('Dashboard.Workload') }}
         <span v-if="!saveSelectedItem" @click="showFullIssuePriority">
           <svg

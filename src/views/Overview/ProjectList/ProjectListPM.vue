@@ -26,7 +26,7 @@
             {{ scope.row.display }}
           </template>
           <br>
-          <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
+          <span class="text-sm text-gray-400">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column-tag

@@ -1,7 +1,7 @@
 <template>
-  <el-card class="mb-3" shadow="hover">
+  <el-card class="mb-3" shadow="never">
     <div slot="header" class="flex align-center" :style="{ height: '30px' }">
-      <span class="font-weight-bold">{{ $t('Dashboard.IssueTrackingStatus') }}</span>
+      <span class="font-semibold">{{ $t('Dashboard.IssueTrackingStatus') }}</span>
     </div>
     <div v-if="Object.keys(dataCollection).length === 0" class="flex justify-center align-center">
       <span>{{ $t('general.NoData') }}</span>

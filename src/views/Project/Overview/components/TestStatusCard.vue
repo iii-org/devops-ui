@@ -1,7 +1,7 @@
 <template>
-  <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" class="mb-3" shadow="hover">
+  <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" class="mb-3" shadow="never">
     <div slot="header" class="flex justify-between align-center" :style="{ height: '30px' }">
-      <span class="font-weight-bold">{{ $t('Dashboard.TestStatus') }}</span>
+      <span class="font-semibold">{{ $t('Dashboard.TestStatus') }}</span>
       <el-button
         type="text"
         icon="el-icon-refresh"

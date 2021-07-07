@@ -1,6 +1,6 @@
 <template>
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <div class="flex justify-start">
+    <div>
       <project-list-selector />
       <el-select
         v-model="selectedVersion"
@@ -20,6 +20,7 @@
     </div>
     <el-divider />
     <el-row :gutter="10">
+      <ProjectInfoBar />
       <el-col :xs="24" :md="12">
         <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
       </el-col>
@@ -56,11 +57,11 @@
 import { mapGetters, mapActions } from 'vuex'
 import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard } from './components'
+import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard, ProjectInfoBar } from './components'
 
 export default {
   name: 'ProjectOverview',
-  components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard },
+  components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard, ProjectInfoBar },
   data() {
     return {
       versionList: [],
@@ -78,7 +79,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'selectedProjectId'])
+    ...mapGetters(['userProjectList', 'selectedProject']),
+    selectedProjectId() {
+      return this.selectedProject.id
+    }
   },
   watch: {
     selectedProjectId() {
@@ -146,7 +150,7 @@ export default {
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
       }
