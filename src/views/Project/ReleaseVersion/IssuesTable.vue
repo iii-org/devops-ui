@@ -137,12 +137,23 @@
         <el-button type="danger" @click="handleCloseIssue()">{{ $t('Issue.CloseIssue') }}</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="showClosedChildrenIssueWarning" :title="$t('Issue.ChildrenNotClosed')" @close="handleClick">
+      <div v-for="item in notClosedChildrenIssueList" :key="item.id">
+        <span>#{{ item.id }}</span>
+        <span>-{{ item.name }}</span>
+      </div>
+      <div style="color: red; margin-top: 20px;">{{ $t('Issue.ChildrenNotClosedWarning') }}</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClick">{{ $t('general.ok') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
 import { updateIssue } from '@/api/issue'
+import { getCheckIssueClosable } from '@/api/issue'
 
 export default {
   name: 'IssuesTable',
@@ -166,7 +177,9 @@ export default {
       batchMoveToVersion: null,
       fullScreenLoading: false,
       closedIdex: '',
-      closedRow: {}
+      closedRow: {},
+      notClosedChildrenIssueList: [],
+      showClosedChildrenIssueWarning: false
     }
   },
   computed: {
@@ -248,11 +261,26 @@ export default {
       this.closedRow = row
       this.showFormDialog = true
     },
-    handleCloseIssue() {
+    async handleCloseIssue() {
+      const isChildrenIssueClosed = await this.isChildrenIssueClosed()
+      if (!isChildrenIssueClosed) return
       const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
       const sendForm = new FormData()
       sendForm.append('notes', notes)
       this.updateIssueForm(sendForm)
+    },
+    async isChildrenIssueClosed(index) {
+      const res = await getCheckIssueClosable(this.closedRow.id || this.listData[index].id)
+      if (!res.data) {
+        this.showFormDialog = false
+        this.notClosedChildrenIssueList.push(this.listData[index] || this.closedRow)
+      }
+      if (this.notClosedChildrenIssueList.length > 0 && !this.showClosedChildrenIssueWarning) this.showClosedChildrenIssueWarning = true
+      return res.data
+    },
+    handleClick() {
+      this.showClosedChildrenIssueWarning = false
+      this.notClosedChildrenIssueList = []
     },
     updateIssueForm(sendForm) {
       this.isLoading = true
@@ -302,6 +330,7 @@ export default {
       this.listLoading = true
       const indexes = this.selectedIndexes
       for (const index of indexes) {
+        await this.isChildrenIssueClosed(index)
         await this.listData[index].close()
       }
       this.multipleSelection = []
