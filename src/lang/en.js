@@ -829,7 +829,8 @@ export default {
     releaseDone: 'Done releasing version {0}.',
     startPackageVersion: 'Start Package Version',
     stopPackageVersion: 'Stop Package Version',
-    checkIssue: 'Check Issues'
+    checkIssue: 'Check Issues',
+    packageVersionSettings: 'Package Version Settings'
   },
   SystemVersion: {
     Source: 'Source',

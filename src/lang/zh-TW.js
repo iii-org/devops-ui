@@ -830,7 +830,8 @@ export default {
     releaseDone: '版本 {0} 包版成功。',
     startPackageVersion: '包版作業',
     stopPackageVersion: '取消包版',
-    checkIssue: '檢查議題'
+    checkIssue: '檢查議題',
+    packageVersionSettings: '包版作業設定-'
   },
   SystemVersion: {
     Source: '系統模組',

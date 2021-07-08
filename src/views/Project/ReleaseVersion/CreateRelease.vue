@@ -1,96 +1,108 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-col :span="24">
-        <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
-        <el-link underline type="primary" @click="openIssueDialog(null)">
-          {{ $t('Release.issueCountLink', [issues.length]) }}
-        </el-link>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6">
-        <ul>
-          <li v-for="(arr, cat) in issuesByCategory[0]" :key="cat">
-            <span class="el-link">{{ cat }}</span> (
-            <el-link underline type="primary" @click="openIssueDialog(cat)">
-              {{ $t('Release.issueCountLink', [arr.length]) }}
-            </el-link>
-            )
-          </li>
-        </ul>
-      </el-col>
-      <el-col :span="6">
-        <ul>
-          <li v-for="(arr, cat) in issuesByCategory[1]" :key="cat">
-            <span class="el-link">{{ cat }}</span> (
-            <el-link underline type="primary" @click="openIssueDialog(cat)">
-              {{ $t('Release.issueCountLink', [arr.length]) }}
-            </el-link>
-            )
-          </li>
-        </ul>
-      </el-col>
-    </el-row>
+    <el-card>
+      <el-row>
+        <el-col :span="24">
+          <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
+          <el-link underline type="primary" @click="openIssueDialog(null)">
+            {{ $t('Release.issueCountLink', [issues.length]) }}
+          </el-link>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <ul>
+            <li v-for="(arr, cat) in issuesByCategory[0]" :key="cat">
+              <span class="el-link">{{ cat }}</span> (
+              <el-link underline type="primary" @click="openIssueDialog(cat)">
+                {{ $t('Release.issueCountLink', [arr.length]) }}
+              </el-link>
+              )
+            </li>
+          </ul>
+        </el-col>
+        <el-col :span="6">
+          <ul>
+            <li v-for="(arr, cat) in issuesByCategory[1]" :key="cat">
+              <span class="el-link">{{ cat }}</span> (
+              <el-link underline type="primary" @click="openIssueDialog(cat)">
+                {{ $t('Release.issueCountLink', [arr.length]) }}
+              </el-link>
+              )
+            </li>
+          </ul>
+        </el-col>
+      </el-row>
+    </el-card>
     <br>
-    <div style="font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
-    <p>
-      <el-form ref="form" :model="commitForm" inline>
-        <el-form-item :label="$t('Release.releaseVersionName')">
-          <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
-            <el-option
-              v-for="item in releaseVersionOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('Git.Branch')">
-          <el-select v-model="commitForm.branch" filterable @change="handleSelectedRepoName(commitForm.branch)">
-            <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item style="font-size: 20px; color: #606206;">
-          Harbor:
-          <span v-if="showHarborTag" style="line-height: 40px;">
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
-            {{ repoArtifactName }}
-          </span>
-          <span v-else>
-            <span style="color: red; margin-right: 30px;">
-              <i class="el-icon-warning" />
-              <span>{{ $t('Issue.NoImage') }}</span>
-            </span>
-            <span>
-              <el-popconfirm
-                :confirm-button-text="$t('Issue.DetermineContinue')"
-                :cancel-button-text="$t('general.Cancel')"
-                :title="$t('Issue.NoImageWarning')"
-                icon="el-icon-info"
-                icon-color="red"
-                @onConfirm="handleConfirm"
-              >
-                <el-button slot="reference" type="success">{{ $t('Issue.NextStep') }}</el-button>
-              </el-popconfirm>
-              <el-button type="danger" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
-            </span>
-          </span>
-        </el-form-item>
-      </el-form>
-      <el-form v-if="isConfirmPackageVersion || showHarborTag">
-        <el-form-item>
-          <el-input v-model="commitForm.note" type="textarea" style="width: 60%;" :rows="6" />
-        </el-form-item>
-        <el-form-item>
-          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
-            <span class="el-icon-goods" />
-            {{ $t('Release.startRelease') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </p>
-    <issue-list-dialog ref="issueDialog" />
+    <div style="font-weight: bold; display: flex; justify-content: center; margin-bottom: 20px;">{{ $t('Release.packageVersionSettings') }}</div>
+    <el-row style="display: flex">
+      <el-col :span="9" style="margin-right: 20px;">
+        <div style="margin-bottom: 10px; font-weight: bold;">{{ $t('Release.releaseVersionName') }}/{{ $t('Git.Branch') }}/{{ $t('PodsList.Image') }}</div>
+        <el-card>
+          <el-form ref="form" :model="commitForm">
+            <el-form-item :label="$t('Release.releaseVersionName')">
+              <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
+                <el-option
+                  v-for="item in releaseVersionOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="$t('Git.Branch')">
+              <el-select v-model="commitForm.branch" filterable @change="handleSelectedRepoName(commitForm.branch)">
+                <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              {{ $t('PodsList.Image') }}:
+              <span v-if="showHarborTag" style="line-height: 40px; color: #606206;">
+                <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+                {{ repoArtifactName }}
+              </span>
+              <span v-else>
+                <span style="color: red; margin-right: 30px;">
+                  <i class="el-icon-warning" />
+                  <span>{{ $t('Issue.NoImage') }}</span>
+                </span>
+                <div style="margin-top: 85px;">
+                  <el-popconfirm
+                    :confirm-button-text="$t('Issue.DetermineContinue')"
+                    :cancel-button-text="$t('general.Cancel')"
+                    :title="$t('Issue.NoImageWarning')"
+                    icon="el-icon-info"
+                    icon-color="red"
+                    @onConfirm="handleConfirm"
+                  >
+                    <el-button slot="reference" type="success">{{ $t('Issue.NextStep') }}</el-button>
+                  </el-popconfirm>
+                  <el-button type="danger" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
+                </div>
+              </span>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-col>
+      <el-col v-if="isConfirmPackageVersion || showHarborTag" :span="15">
+        <div style="margin-bottom: 10px; font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
+        <el-card>
+          <el-form>
+            <el-form-item>
+              <el-input v-model="commitForm.note" type="textarea" style="width: 100%;" :rows="9" />
+            </el-form-item>
+            <el-form-item>
+              <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
+                <span class="el-icon-goods" />
+                {{ $t('Release.startRelease') }}
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-col>
+      <issue-list-dialog ref="issueDialog" />
+    </el-row>
   </div>
 </template>
 
@@ -123,7 +135,9 @@ export default {
       showHarborTag: null,
       selectedRepo: '',
       commitId: '',
-      isConfirmPackageVersion: false
+      isConfirmPackageVersion: false,
+      branchesData: [],
+      listLoading: false
     }
   },
   computed: {
@@ -142,6 +156,7 @@ export default {
     'commitForm.branch': {
       handler(val) {
         if (val && val !== this.$t('Loading')) {
+          this.setCommitId(val)
           this.handleSelectedRepoName(val)
         }
       },
@@ -159,13 +174,13 @@ export default {
       const timeB = Date.parse(itemB.last_commit_time)
       return timeB - timeA
     })
-    const branches = response.data['branch_list']
-    this.commitId = response.data.short_id
-    for (const branch of branches) {
+    this.branchesData = response.data['branch_list']
+    this.commitId = this.branchesData[0].short_id
+    for (const branch of this.branchesData) {
       this.branches.push(branch.name)
     }
-    if (branches.length > 0) {
-      this.commitForm.branch = branches[0].name
+    if (this.branchesData.length > 0) {
+      this.commitForm.branch = this.branchesData[0].name
     }
   },
   methods: {
@@ -270,6 +285,10 @@ export default {
     },
     handleConfirm() {
       this.isConfirmPackageVersion = true
+    },
+    setCommitId(name) {
+      const branchIndex = this.branchesData.findIndex(item => item.name === name)
+      this.commitId = this.branchesData[branchIndex].short_id
     }
   }
 }
