@@ -76,6 +76,7 @@ export default {
     Artifacts: '資源成品',
 
     'System Arguments': '參數設定',
+    'System Version': '@:navbar.versions',
 
     track: '追溯管理',
     traceabilityMatrix: '需求追溯表',
@@ -809,6 +810,11 @@ export default {
     selectMoveToVersion: '請選擇版本',
     batchMoveDialogHint: '將批次搬移 {0} 個議題',
     releaseDone: '版本 {0} 包版成功。'
+  },
+  SystemVersion: {
+    Source: '系統模組',
+    Version: '@:Version.Version',
+    CommitID: '程式提交編號'
   },
   LoadingText: {
     createRedmine: '建立Redmine專案中...',

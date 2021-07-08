@@ -76,6 +76,7 @@ export default {
     Artifacts: 'Project Artifacts',
 
     'System Arguments': 'System Arguments',
+    'System Version': 'System @:navbar.versions',
 
     track: 'Traceability Manage',
     traceabilityMatrix: 'Traceability Matrix',
@@ -808,6 +809,11 @@ export default {
     selectMoveToVersion: 'Please select version',
     batchMoveDialogHint: 'Will batch move {0} issues',
     releaseDone: 'Done releasing version {0}.'
+  },
+  SystemVersion: {
+    Source: 'Source',
+    Version: '@:Version.Version',
+    CommitID: 'Commit ID'
   },
   LoadingText: {
     createRedmine: 'Adding a Redmine project...',

@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <el-table :data="list" :element-loading-text="$t('Loading')" border fit highlight-current-row>
-      <el-table-column align="center" label="Source" width="180">
+      <el-table-column align="center" :label="$t('SystemVersion.Source')" width="180">
         <template slot-scope="scope">
           {{ scope.row.source }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Version" prop="tag" width="180" />
-      <el-table-column label="Commit ID" prop="commitId" />
+      <el-table-column align="center" :label="$t('SystemVersion.Version')" prop="tag" width="180" />
+      <el-table-column :label="$t('SystemVersion.CommitID')" prop="commitId" />
       <el-table-column-time align="center" prop="commitTime" width="180" />
     </el-table>
   </div>

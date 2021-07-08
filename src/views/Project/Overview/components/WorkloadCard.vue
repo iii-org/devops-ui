@@ -64,14 +64,15 @@ export default {
         'Change Request': this.$t('Issue.Change Request'),
         Risk: this.$t('Issue.Risk'),
         'Test Plan': this.$t('Issue.Test Plan'),
-        'Fail Management': this.$t('Issue.Fail Management')
+        'Fail Management': this.$t('Issue.Fail Management'),
+        Research: this.$t('Issue.Research'),
+        Document: this.$t('Issue.Document')
       }
-      const newData = Object.keys(rowData).reduce((newData, key) => {
+      return Object.keys(rowData).reduce((newData, key) => {
         const newKey = keyMap[key] || key
         newData[newKey] = rowData[key]
         return newData
       }, {})
-      return newData
     },
     issueStatusList() {
       return [
