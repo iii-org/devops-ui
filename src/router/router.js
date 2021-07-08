@@ -25,69 +25,59 @@ export const asyncRoutes = [
   // RD root
   {
     path: '/',
-    component: Layout,
-    redirect: '/overview/dashboard',
+    redirect: { name: 'my-works' },
     meta: {
-      title: 'overview',
-      icon: 'el-icon-s-cooperation',
-      roles: ['Engineer']
+      roles: ['Project Manager', 'Engineer']
     },
-    children: [
-      {
-        path: 'overview/dashboard',
-        name: 'dashboard-rd',
-        component: () => import('@/views/Overview/Dashboard'),
-        meta: { title: 'dashboard', icon: 'dashboard', roles: ['Engineer'] }
-      },
-      {
-        path: 'overview/project-list',
-        name: 'project-list-rd',
-        component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
-        meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
-      }
-    ]
+    hidden: true
   },
-
   // PM QA root
   {
     path: '/',
-    component: Layout,
-    name: 'project-pm',
-    redirect: '/overview/project-list',
+    name: 'project-qa',
+    redirect: { name: 'project-list-pm' },
     meta: {
-      title: 'projectList',
-      icon: 'el-icon-s-cooperation',
-      roles: ['Project Manager', 'QA']
+      roles: ['QA']
     },
-    children: [
-      {
-        path: 'overview/project-list',
-        name: 'project-list-pm',
-        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
-        meta: {
-          title: 'projectList',
-          icon: 'list',
-          roles: ['Project Manager', 'QA']
-        }
-      }
-    ]
+    hidden: true
   },
-
   // admin root
   {
     path: '/',
-    component: Layout,
-    name: 'project-admin',
-    redirect: '/overview/dashboard',
+    redirect: { name: 'dashboard-admin' },
     meta: {
-      title: 'overview',
-      icon: 'el-icon-s-cooperation',
       roles: ['Administrator']
     },
+    hidden: true
+  },
+
+  // menu
+  {
+    path: '/my-work',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'my-works',
+        component: () => import('@/views/MyWork'),
+        meta: {
+          title: 'myWork',
+          icon: 'el-icon-s-home',
+          roles: ['Project Manager', 'Engineer']
+        }
+      }
+    ],
+    meta: {
+      roles: ['Project Manager', 'Engineer']
+    }
+  },
+  {
+    path: '/overview',
+    component: Layout,
     children: [
       {
         path: 'overview/dashboard',
-        name: 'dashboard',
+        name: 'dashboard-admin',
         component: () => import('@/views/Overview/Dashboard/roles/admin'),
         meta: {
           title: 'dashboard',
@@ -102,12 +92,22 @@ export const asyncRoutes = [
         meta: {
           title: 'projectList',
           icon: 'list',
-          roles: ['Administrator']
+          roles: ['Project Manager', 'QA', 'Administrator']
         }
+      },
+      {
+        path: 'overview/project-list',
+        name: 'project-list-rd',
+        component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
+        meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
       }
-    ]
+    ],
+    meta: {
+      title: 'overview',
+      icon: 'el-icon-data-analysis',
+      roles: ['Project Manager', 'QA', 'Administrator', 'Engineer']
+    }
   },
-
   {
     path: '/project',
     component: Layout,

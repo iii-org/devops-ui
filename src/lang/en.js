@@ -1,5 +1,6 @@
 export default {
   route: {
+    myWork: 'My Works',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
@@ -310,6 +311,10 @@ export default {
     open: 'Open',
     closed: 'Closed',
     locked: 'Locked'
+  },
+  MyWork: {
+    AssignedToMe: 'Assigned to me',
+    ReportedIssue: 'Reported Issue'
   },
   Issue: {
     AddIssue: 'Add Issue',

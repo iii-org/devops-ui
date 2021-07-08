@@ -1,5 +1,6 @@
 export default {
   route: {
+    myWork: '我的工作',
     dashboard: '儀表板',
     projectOverview: '專案總覽',
     projectList: '專案列表',
@@ -314,6 +315,10 @@ export default {
     open: '開啟',
     closed: '關閉',
     locked: '鎖定'
+  },
+  MyWork: {
+    AssignedToMe: '指派給我',
+    ReportedIssue: '由我回報'
   },
   Issue: {
     AddIssue: '新增議題',
