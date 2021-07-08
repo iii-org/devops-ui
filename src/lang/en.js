@@ -401,6 +401,15 @@ export default {
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',
     ResetESCTip: 'Press Windows+ESC (Mac:Command+ESC) to Rest and Close Description Input area.',
+    ChildrenNotClosedWarning: 'There are still sub-topics of this topic that have not been dealt with. Please enter the topic to confirm and close before moving.',
+    ReversionRecord: 'Reversion Record',
+    NoImage: 'No Image',
+    PackageVersionTime: 'Package Version Time',
+    SourceCode: 'Source Code',
+    IssueList: 'Issue List',
+    DetermineContinue: 'Determine To Continue',
+    NoImageWarning: 'There is no image file. Do you want to continue package version or press "Cancel" to give up?',
+    NextStep: 'Next Step>',
     detail: {
       message: {
         set_to: '{creator} {message}',
@@ -808,7 +817,10 @@ export default {
     futureVersion: 'Future version',
     selectMoveToVersion: 'Please select version',
     batchMoveDialogHint: 'Will batch move {0} issues',
-    releaseDone: 'Done releasing version {0}.'
+    releaseDone: 'Done releasing version {0}.',
+    startPackageVersion: 'Start Package Version',
+    stopPackageVersion: 'Stop Package Version',
+    checkIssue: 'Check Issues'
   },
   SystemVersion: {
     Source: 'Source',

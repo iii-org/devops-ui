@@ -1,15 +1,20 @@
 <template>
   <div class="app-container">
     <p class="clearfix">
-      <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
+      <!-- <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
         {{ $t('Project.Name') }}
-      </b>
+      </b> -->
+      <el-button type="success" @click="showProjectVersionSelector">
+        <span class="el-icon-goods" />
+        <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
+        <span v-else>{{ $t('Release.startPackageVersion') }}</span>
+      </el-button>
       <project-list-selector />
     </p>
-    <p>
-      <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
-        {{ $t('Release.internalVersions') }}
-      </b>
+    <p v-if="isProjectVersionSelectorShowed">
+      <!-- <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
+        {{ $t('Release.issueVersions') }}
+      </b> -->
 
       <el-select
         id="release_versions"
@@ -24,21 +29,28 @@
       <span class="newBtn">
         <el-button
           v-loading.fullscreen.lock="fullscreenLoading"
-          type="success"
+          :type="releaseVersions.length === 0 ? 'info' : 'primary'"
           :disabled="releaseVersions.length === 0"
           @click="writeNote"
         >
           <span class="el-icon-edit" />
-          {{ $t('Release.writeNote') }}
+          {{ $t('Release.checkIssue') }}
         </el-button>
       </span>
     </p>
+    <div v-if="isProjectVersionSelectorShowed" style="color: #f56c6c; font-size: 13px;">
+      <div>{{ $t('Release.openIssueHint') }}</div>
+    </div>
     <el-divider />
-    <span v-if="state === STATE_INIT" style="color: #f56c6c;">
-      {{ $t('Release.openIssueHint') }}
-    </span>
+    <div v-if="state === STATE_INIT">
+      <release-table />
+    </div>
     <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
-    <create-release v-show="state === STATE_CREATE_RELEASE" ref="createRelease" />
+    <create-release
+      v-show="state === STATE_CREATE_RELEASE"
+      ref="createRelease"
+      @initialState="reset"
+    />
   </div>
 </template>
 
@@ -46,8 +58,9 @@
 import { mapGetters } from 'vuex'
 import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import IssuesTable from './IssuesTable'
-import CreateRelease from './CreateRelease'
+import IssuesTable from '@/views/Project/ReleaseVersion/IssuesTable'
+import CreateRelease from '@/views/Project/ReleaseVersion/CreateRelease'
+import ReleaseTable from '@/views/Project/ReleaseVersion/ReleaseTable'
 import Issue from '@/data/issue.js'
 
 const STATE_INIT = 0
@@ -56,7 +69,7 @@ const STATE_CREATE_RELEASE = 2
 
 export default {
   name: 'ReleaseVersion',
-  components: { CreateRelease, IssuesTable, ProjectListSelector },
+  components: { CreateRelease, IssuesTable, ProjectListSelector, ReleaseTable },
   data() {
     return {
       state: STATE_INIT,
@@ -67,6 +80,7 @@ export default {
       projectVersions: [],
       projectVersionOptions: [],
       releaseVersions: [],
+      isProjectVersionSelectorShowed: false,
       STATE_INIT: STATE_INIT,
       STATE_SHOW_OPEN_ISSUES: STATE_SHOW_OPEN_ISSUES,
       STATE_CREATE_RELEASE: STATE_CREATE_RELEASE
@@ -80,6 +94,11 @@ export default {
       this.state = STATE_INIT
       this.releaseVersions = []
       this.loadData()
+    },
+    releaseVersions(val) {
+      if (val.length === 0) {
+        this.state = STATE_INIT
+      }
     }
   },
   created() {
@@ -143,6 +162,7 @@ export default {
       for (const vId of this.releaseVersions) {
         const params = { fixed_version_id: vId }
         const res = await getProjectIssueList(this.selectedProjectId, params)
+        // if (res.data.length === 0) this.checkHarborImage()
         for (const issueJson of res.data) {
           const issue = new Issue(issueJson)
           this.allIssues.push(issue)
@@ -173,6 +193,10 @@ export default {
       this.state = STATE_INIT
       this.releaseVersions = []
       this.init()
+    },
+    showProjectVersionSelector() {
+      this.reset()
+      this.isProjectVersionSelectorShowed = !this.isProjectVersionSelectorShowed
     }
   }
 }

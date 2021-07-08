@@ -1,8 +1,105 @@
+<template>
+  <div class="app-container">
+    <el-row>
+      <el-col :span="24">
+        <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
+        <el-link underline type="primary" @click="openIssueDialog(null)">
+          {{ $t('Release.issueCountLink', [issues.length]) }}
+        </el-link>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="6">
+        <ul>
+          <li v-for="(arr, cat) in issuesByCategory[0]" :key="cat">
+            <span class="el-link">{{ cat }}</span> (
+            <el-link underline type="primary" @click="openIssueDialog(cat)">
+              {{ $t('Release.issueCountLink', [arr.length]) }}
+            </el-link>
+            )
+          </li>
+        </ul>
+      </el-col>
+      <el-col :span="6">
+        <ul>
+          <li v-for="(arr, cat) in issuesByCategory[1]" :key="cat">
+            <span class="el-link">{{ cat }}</span> (
+            <el-link underline type="primary" @click="openIssueDialog(cat)">
+              {{ $t('Release.issueCountLink', [arr.length]) }}
+            </el-link>
+            )
+          </li>
+        </ul>
+      </el-col>
+    </el-row>
+    <br>
+    <div style="font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
+    <p>
+      <el-form ref="form" :model="commitForm" inline>
+        <el-form-item :label="$t('Release.releaseVersionName')">
+          <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
+            <el-option
+              v-for="item in releaseVersionOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('Git.Branch')">
+          <el-select v-model="commitForm.branch" filterable @change="handleSelectedRepoName(commitForm.branch)">
+            <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item style="font-size: 20px; color: #606206;">
+          Harbor:
+          <span v-if="showHarborTag" style="line-height: 40px;">
+            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+            {{ repoArtifactName }}
+          </span>
+          <span v-else>
+            <span style="color: red; margin-right: 30px;">
+              <i class="el-icon-warning" />
+              <span>{{ $t('Issue.NoImage') }}</span>
+            </span>
+            <span>
+              <el-popconfirm
+                :confirm-button-text="$t('Issue.DetermineContinue')"
+                :cancel-button-text="$t('general.Cancel')"
+                :title="$t('Issue.NoImageWarning')"
+                icon="el-icon-info"
+                icon-color="red"
+                @onConfirm="handleConfirm"
+              >
+                <el-button slot="reference" type="success">{{ $t('Issue.NextStep') }}</el-button>
+              </el-popconfirm>
+              <el-button type="danger" @click="handleCancel">{{ $t('general.Cancel') }}</el-button>
+            </span>
+          </span>
+        </el-form-item>
+      </el-form>
+      <el-form v-if="isConfirmPackageVersion || showHarborTag">
+        <el-form-item>
+          <el-input v-model="commitForm.note" type="textarea" style="width: 60%;" :rows="6" />
+        </el-form-item>
+        <el-form-item>
+          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
+            <span class="el-icon-goods" />
+            {{ $t('Release.startRelease') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </p>
+    <issue-list-dialog ref="issueDialog" />
+  </div>
+</template>
+
 <script>
 import IssueListDialog from './IssueListDialog'
 import { mapGetters } from 'vuex'
 import { getBranchesByProject } from '@/api/branches'
 import { createRelease } from '@/api/release'
+import { getHarborRepoList, getProjectArtifacts, getRepoArtifacts } from '@/api/harbor'
 
 export default {
   name: 'CreateRelease',
@@ -21,7 +118,12 @@ export default {
       releaseVersions: [],
       releaseVersionOptions: [],
       branches: [],
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      repoArtifact: {},
+      showHarborTag: null,
+      selectedRepo: '',
+      commitId: '',
+      isConfirmPackageVersion: false
     }
   },
   computed: {
@@ -31,6 +133,19 @@ export default {
     },
     selectedRepositoryId() {
       return this.selectedProject.repository_ids[0]
+    },
+    repoArtifactName() {
+      return this.repoArtifact.data ? this.repoArtifact.data[0].name : '-'
+    }
+  },
+  watch: {
+    'commitForm.branch': {
+      handler(val) {
+        if (val && val !== this.$t('Loading')) {
+          this.handleSelectedRepoName(val)
+        }
+      },
+      immediate: true
     }
   },
   async created() {
@@ -39,7 +154,13 @@ export default {
     }
     this.branches = []
     const response = await getBranchesByProject(this.selectedRepositoryId)
+    response.data.branch_list.sort((itemA, itemB) => {
+      const timeA = Date.parse(itemA.last_commit_time)
+      const timeB = Date.parse(itemB.last_commit_time)
+      return timeB - timeA
+    })
     const branches = response.data['branch_list']
+    this.commitId = response.data.short_id
     for (const branch of branches) {
       this.branches.push(branch.name)
     }
@@ -98,7 +219,9 @@ export default {
         main: this.commitForm.mainVersion,
         versions: this.releaseVersions,
         branch: this.commitForm.branch,
-        description: this.commitForm.note
+        note: this.commitForm.note,
+        commit: this.commitId,
+        forced: true
       }
       try {
         await createRelease(this.selectedProjectId, params)
@@ -119,81 +242,38 @@ export default {
       })
       this.fullscreenLoading = false
       this.$parent.reset()
+    },
+    async checkHarborImage() {
+      const projectArifact = await getProjectArtifacts(this.selectedRepo)
+      this.repoArtifact = await getRepoArtifacts(this.selectedRepo, projectArifact.data[0].name)
+      if (this.repoArtifact.data && this.repoArtifact.data.length > 0) this.showHarborTag = true
+    },
+    async handleSelectedRepoName(repo) {
+      const harborData = await getHarborRepoList(this.selectedProjectId)
+      this.checkSelectedRepoName(harborData.data, repo)
+    },
+    checkSelectedRepoName(harborData, repo) {
+      if (!harborData) return
+      const repoNameArray = harborData.map(item => item.name.split('/')[1])
+      const repoNameIndex = repoNameArray.findIndex(repoName => repoName === repo)
+      if (repoNameIndex === -1) {
+        this.repoArtifact = {}
+        this.showHarborTag = false
+      } else {
+        this.selectedRepo = harborData[repoNameIndex].name
+        this.checkHarborImage()
+      }
+    },
+    handleCancel() {
+      this.$emit('initialState')
+      this.isConfirmPackageVersion = false
+    },
+    handleConfirm() {
+      this.isConfirmPackageVersion = true
     }
   }
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <el-row>
-      <el-col :span="24">
-        <span class="el-link">{{ $t('Release.issueCount') }}</span
-        >&nbsp;
-        <el-link underline type="primary" @click="openIssueDialog(null)">
-          {{ $t('Release.issueCountLink', [issues.length]) }}
-        </el-link>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="6">
-        <ul>
-          <li v-for="(arr, cat) in issuesByCategory[0]" :key="cat">
-            <span class="el-link">{{ cat }}</span> (
-            <el-link underline type="primary" @click="openIssueDialog(cat)">
-              {{ $t('Release.issueCountLink', [arr.length]) }}
-            </el-link>
-            )
-          </li>
-        </ul>
-      </el-col>
-      <el-col :span="6">
-        <ul>
-          <li v-for="(arr, cat) in issuesByCategory[1]" :key="cat">
-            <span class="el-link">{{ cat }}</span> (
-            <el-link underline type="primary" @click="openIssueDialog(cat)">
-              {{ $t('Release.issueCountLink', [arr.length]) }}
-            </el-link>
-            )
-          </li>
-        </ul>
-      </el-col>
-    </el-row>
-    <br />
-    <div style="font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
-    <p>
-      <el-form ref="form" :model="commitForm" inline>
-        <el-form-item :label="$t('Release.releaseVersionName')">
-          <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
-            <el-option
-              v-for="item in releaseVersionOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('Git.Branch')">
-          <el-select v-model="commitForm.branch" filterable>
-            <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <el-form>
-        <el-form-item>
-          <el-input v-model="commitForm.note" type="textarea" style="width: 60%;" :rows="6" />
-        </el-form-item>
-        <el-form-item>
-          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
-            <span class="el-icon-goods" />
-            {{ $t('Release.startRelease') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </p>
-    <issue-list-dialog ref="issueDialog" />
-  </div>
-</template>
 
 <style scoped>
 .el-link {

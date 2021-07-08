@@ -201,9 +201,30 @@ export const asyncRoutes = [
       },
       {
         path: '/release-version',
-        name: 'releaseVersion',
-        component: () => import('@/views/Project/ReleaseVersion'),
-        meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] }
+        redirect: '/release-version',
+        component: parentBlank,
+        meta: { title: 'releaseVersion', roles: ['Project Manager', 'Administrator'] },
+        children: [
+          {
+            path: '',
+            name: 'release-version',
+            component: () => import('@/views/Project/ReleaseVersion'),
+            meta: {
+              title: 'releaseVersion', roles: ['Project Manager', 'Administrator']
+            }
+          },
+          {
+            path: '/release-version/:issueTag',
+            name: 'closed-issue-list',
+            hidden: true,
+            component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
+            meta: {
+              title: 'Issue Detail',
+              roles: ['QA', 'Administrator'],
+              rolePage: false
+            }
+          }
+        ]
       },
       {
         path: 'settings',

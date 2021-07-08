@@ -405,6 +405,15 @@ export default {
     locked: '@:Version.Locked',
     closed: '@:Version.Closed',
     ResetESCTip: '按下Windows+ESC (Mac:Command+ESC) 重置並關閉輸入欄位',
+    ChildrenNotClosedWarning: '本議題尚有子議題未處理，請進入該議題確認與關閉後再進行搬移',
+    ReversionRecord: '轉版紀錄',
+    NoImage: '沒有映像檔',
+    PackageVersionTime: '包版時間',
+    SourceCode: '原始碼',
+    IssueList: '議題清單',
+    DetermineContinue: '確定繼續',
+    NoImageWarning: '沒有映像檔，是否繼續包版，或是按“取消”放棄?',
+    NextStep: '下一步>',
     detail: {
       message: {
         set_to: '{creator} {message}',
@@ -809,7 +818,10 @@ export default {
     futureVersion: '未來版本',
     selectMoveToVersion: '請選擇版本',
     batchMoveDialogHint: '將批次搬移 {0} 個議題',
-    releaseDone: '版本 {0} 包版成功。'
+    releaseDone: '版本 {0} 包版成功。',
+    startPackageVersion: '包版作業',
+    stopPackageVersion: '取消包版',
+    checkIssue: '檢查議題'
   },
   SystemVersion: {
     Source: '系統模組',
