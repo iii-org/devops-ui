@@ -263,9 +263,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-//> > > .el-tabs__header {
-//  display: none;
-//}
+> > > .el-tabs__header {
+  display: none;
+}
 
 .dashboard-card {
   .item {
