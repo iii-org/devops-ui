@@ -59,7 +59,11 @@
                   @click="copyUrl(`copy-${scope.$index}`)"
                 />
               </div>
-              <el-link slot="reference" type="primary" :underline="false">Image</el-link>
+              <span slot="reference">
+                <el-link style="font-size: 22px" :underline="false">
+                  <svg-icon icon-class="harbor" />
+                </el-link>
+              </span>
             </el-popover>
             <span v-else>{{ $t('Issue.NoImage') }}</span>
           </template>
