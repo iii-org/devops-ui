@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <el-card>
-      <el-row>
-        <el-col :span="24">
-          <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
-          <el-link underline type="primary" @click="openIssueDialog(null)">
-            {{ $t('Release.issueCountLink', [issues.length]) }}
-          </el-link>
-        </el-col>
-      </el-row>
+    <el-row style="margin-bottom: 10px;">
+      <el-col :span="24">
+        <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
+        <el-link underline type="primary" @click="openIssueDialog(null)">
+          {{ $t('Release.issueCountLink', [issues.length]) }}
+        </el-link>
+      </el-col>
+    </el-row>
+    <el-card shadow="hover">
       <el-row>
         <el-col :span="6">
           <ul>
@@ -35,11 +35,11 @@
       </el-row>
     </el-card>
     <br>
-    <div style="font-weight: bold; display: flex; justify-content: center; margin-bottom: 20px;">{{ $t('Release.packageVersionSettings') }}</div>
+    <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px;">{{ $t('Release.packageVersionSettings') }}</div>
     <el-row style="display: flex">
       <el-col :span="9" style="margin-right: 20px;">
-        <div style="margin-bottom: 10px; font-weight: bold;">{{ $t('Release.releaseVersionName') }}/{{ $t('Git.Branch') }}/{{ $t('PodsList.Image') }}</div>
-        <el-card>
+        <el-card shadow="hover" style="height: 350px;">
+          <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseVersionName') }}/{{ $t('Git.Branch') }}/{{ $t('PodsList.Image') }}</div>
           <el-form ref="form" :model="commitForm">
             <el-form-item :label="$t('Release.releaseVersionName')">
               <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
@@ -86,8 +86,8 @@
         </el-card>
       </el-col>
       <el-col v-if="isConfirmPackageVersion || showHarborTag" :span="15">
-        <div style="margin-bottom: 10px; font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
-        <el-card>
+        <el-card shadow="hover" style="height: 350px;">
+          <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
           <el-form>
             <el-form-item>
               <el-input v-model="commitForm.note" type="textarea" style="width: 100%;" :rows="9" />
