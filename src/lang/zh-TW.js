@@ -452,7 +452,11 @@ export default {
     OriginalSetting: '原先設定',
     Result: '搜尋結果',
     LastResult: '近期',
-    NotExist: '資料不存在'
+    NotExist: '資料不存在',
+    TraceabilityMatrix: '議題關聯圖',
+    CheckChildrenIssueStatus: '檢核子議題關聯狀態',
+    OriginalParentIssue: '原@:Issue.ParentIssue',
+    NoParentIssue: '未設定@:Issue.ParentIssue'
   },
   Wiki: {
     AddWiki: '新增Wiki',

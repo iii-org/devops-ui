@@ -27,7 +27,7 @@
         <contextmenu-item divider />
         <contextmenu-item @click="toggleRelationDialog('Parent')">{{ $t('Issue.ParentIssue') }}</contextmenu-item>
         <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('Issue.ChildrenIssue') }}</contextmenu-item>
-        <contextmenu-item @click="toggleIssueMatrixDialog">議題關聯圖</contextmenu-item>
+        <contextmenu-item @click="toggleIssueMatrixDialog">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog
@@ -62,9 +62,9 @@
       top="20px"
       append-to-body
       destroy-on-close
-      :title="'議題關聯圖(#'+row.id+' - '+ row.name+')'"
+      :title="$t('Issue.TraceabilityMatrix')+'(#'+row.id+' - '+ row.name+')'"
     >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="selectionOptions['tracker']" :status="selectionOptions['status']" @update-issue="handleUpdateIssue" />
+      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="tracker" :status="status" @update-issue="handleUpdateIssue" />
     </el-dialog>
   </div>
 </template>
@@ -79,8 +79,8 @@ import {
 import 'v-contextmenu/dist/index.css'
 import SettingRelationIssue from './SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
-import { getCheckIssueClosable, updateIssue } from '@/api/issue'
-import { getProjectVersion } from '@/api/projects'
+import { getCheckIssueClosable, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
 
@@ -145,19 +145,27 @@ export default {
     row: {
       deep: true,
       async handler() {
-        await this.initOptions()
+        if (Object.keys(this.row).length > 2 && this.selectionOptions['assigned_to']) {
+          await this.initOptions()
+          await this.loadProjectSelectionList(this.fixedVersionShowClosed)
+        } else {
+          await this.loadSelectionList()
+        }
         if (Object.keys(this.row).length > 2) {
           await this.getClosable()
-          await this.loadVersionList()
         }
       }
     }
   },
   async mounted() {
-    await this.initOptions()
+    if (Object.keys(this.row).length > 2 && Object.keys(this.selectionOptions).length > 0) {
+      await this.initOptions()
+      await this.loadProjectSelectionList(this.fixedVersionShowClosed)
+    } else {
+      await this.loadSelectionList()
+    }
     if (Object.keys(this.row).length > 2) {
       await this.getClosable()
-      await this.loadVersionList()
     }
   },
   methods: {
@@ -167,25 +175,58 @@ export default {
         this[item] = option[item]
       })
     },
+    async loadSelectionList() {
+      await Promise.all([
+        getIssueTracker(),
+        getIssueStatus(),
+        getIssuePriority()
+      ]).then(res => {
+        const [typeList, statusList, priorityList] = res.map(
+          item => item.data
+        )
+        this.tracker = typeList
+        this.status = statusList
+        this.priority = priorityList
+      })
+      await this.loadProjectSelectionList(this.fixedVersionShowClosed, true)
+    },
+    async loadProjectSelectionList(status, user) {
+      let params = { status: 'open,locked' }
+      if (status) {
+        params = { status: 'open,locked,closed' }
+      }
+      if (this.row.project && this.row.project.id !== '') {
+        const getAPI = [getProjectVersion(this.row.project.id, params)]
+        if (user) {
+          getAPI.push(getProjectUserList(this.row.project.id))
+        }
+        await Promise.all(getAPI).then(res => {
+          const [versionList, assigneeList] = res.map(
+            item => item.data
+          )
+          this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
+          if (user) {
+            this.assigned_to = [
+              { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
+              ...assigneeList.user_list
+            ]
+          }
+        })
+      }
+    },
     async getClosable() {
       const closable = await getCheckIssueClosable(this.row.id)
       this.$set(this, 'checkClosable', closable.data)
       await this.getDynamicStatusList()
     },
-    async loadVersionList() {
-      let params = { status: 'open,locked' }
-      if (this.row.fixed_version.id) {
-        params['force_id'] = this.row.fixed_version.id
-      }
-      if (this.fixedVersionShowClosed) {
-        params = { status: 'open,locked,closed' }
-      }
-      const versionList = await getProjectVersion(this.row.project.id, params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
-    },
     getDynamicStatusList() {
       const _this = this
-      const option = cloneDeep(this.selectionOptions)
+      let option
+      if (this.selectionOptions['status']) {
+        option = cloneDeep(this.selectionOptions)
+      } else {
+        option = cloneDeep({ status: this.status })
+      }
       this.status = option['status'].map((item) => {
         if (!_this.checkClosable && item.is_closed === true) {
           item.disabled = true
@@ -277,7 +318,7 @@ export default {
 @import 'src/styles/variables.scss';
 .menu-title{
   background: #d2d2d2;
-  max-width:125px;
+  max-width:150px;
   height: 25px;
   line-height: 1.25;
   padding: 3px 3px 3px 5px;

@@ -135,9 +135,10 @@ export default {
             }
           }
         }
+        const checkIssueName = issue_name.replace(/"/g, '&quot;')
         const point = {
           id: issue_id,
-          text: '"#' + issue_id + '-' + issue_name + '<br/>(' + vueInstance.$t('Issue.' + issue_status) + ')"',
+          text: '"#' + issue_id + '-' + checkIssueName + '<br/>(' + vueInstance.$t('Issue.' + issue_status) + ')"',
           link: link,
           group: vueInstance.$t('Issue.' + group),
           next: children_id,

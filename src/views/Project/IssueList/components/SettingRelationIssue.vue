@@ -122,13 +122,13 @@
       </el-select>
     </el-form-item>
     <el-alert v-if="children['append'].length>0||children['remove'].length>0">
-      <h3>檢核子議題關聯</h3>
+      <h3>{{ $t('Issue.CheckChildrenIssueStatus') }}</h3>
       <div v-if="children['append'].length>0">
-        新增子議題關聯:
+        {{ $t('general.Add') }}:
         <ul>
           <li v-for="item in children['append']" :key="item">
             <template v-if="issueFamily[item]">
-              <b><tracker :name="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}</b> (原父議題：
+              <b><tracker :name="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}</b> ({{ $t('Issue.OriginalParentIssue') }}:
               <template v-if="issueFamily[item].hasOwnProperty('parent')">
                 <tracker :name="issueFamily[item].parent.tracker.name" />
                 #{{ issueFamily[item].parent.id }} - {{ issueFamily[item].parent.name }}
@@ -136,13 +136,13 @@
                   ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].parent.assigned_to.name }} - {{ issueFamily[item].parent.assigned_to.login }})</span>
               </template>
               <template v-else>
-                未設定父議題
+                {{ $t('Issue.NoParentIssue') }}
               </template>)
             </template>
           </li>
         </ul>
       </div>
-      <div v-if="children['remove'].length>0">刪除子議題關聯:
+      <div v-if="children['remove'].length>0">{{ $t('general.Delete') }}:
         <ul>
           <li v-for="item in children['remove']" :key="item">
             <s>
@@ -293,7 +293,8 @@ export default {
     },
     async getSearchIssue(query) {
       const params = {
-        selection: true
+        selection: true,
+        status: 'open'
       }
       this.issueList = []
       if (query !== '' && query) {
@@ -305,7 +306,7 @@ export default {
         params['limit'] = 5
         this.issueQuery = null
       }
-      const res = await getProjectIssueList(this.selectedProjectId, params)
+      const res = await getProjectIssueList(this.row.project.id, params)
       let queryList = res.data.issue_list
       let key = 'Issue.LastResult'
       if (this.issueQuery) {

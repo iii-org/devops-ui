@@ -448,7 +448,11 @@ export default {
     OriginalSetting: 'Original Setting',
     Result: 'Result',
     LastResult: 'Recently Result',
-    NotExist: 'Data Not Exists'
+    NotExist: 'Data Not Exists',
+    TraceabilityMatrix: 'Traceability Matrix',
+    CheckChildrenIssueStatus: 'Check Children Issue Status',
+    OriginalParentIssue: 'Original @:Issue.ParentIssue',
+    NoParentIssue: 'No @:Issue.ParentIssue'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
