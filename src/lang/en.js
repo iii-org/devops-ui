@@ -1,6 +1,6 @@
 export default {
   route: {
-    myWork: 'My Works',
+    myWork: 'My Work',
     dashboard: 'Dashboard',
     projectOverview: 'Project Overview',
     projectList: 'Project List',
