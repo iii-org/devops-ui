@@ -114,6 +114,24 @@ export default {
     this.handleClose()
   },
   methods: {
+    setConnectStatusListener() {
+      // this.socket.on('connect', () => {
+      //   this.$notify({
+      //     title: this.$t('general.Success'),
+      //     message: 'WebSocket connect',
+      //     type: 'success'
+      //   })
+      //   this.sid = this.socket.id
+      // })
+      // this.socket.on('disconnect', msg => {
+      //   this.$notify({
+      //     title: this.$t('general.Info'),
+      //     message: msg,
+      //     type: 'warning'
+      //   })
+      //   this.sid = this.socket.id
+      // })
+    },
     userClick(tab) {
       this.emitPipeLog(tab)
     },
@@ -196,13 +214,13 @@ export default {
           }))
         }))
         this.dialogVisible = true
-        this.setTimer()
         const buildingStageIdx = this.getBuildingStageIdx()
         if (buildingStageIdx < 0) {
           this.changeFocusTab(1, 0)
         } else {
           this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx)
         }
+        this.setTimer()
       } catch (error) {
         console.error(error)
       } finally {
@@ -216,30 +234,13 @@ export default {
         })
         .catch(err => console.error(err))
     },
-    setConnectStatusListener() {
-      // this.socket.on('connect', () => {
-      //   this.$notify({
-      //     title: this.$t('general.Success'),
-      //     message: 'WebSocket connect',
-      //     type: 'success'
-      //   })
-      //   this.sid = this.socket.id
-      // })
-      // this.socket.on('disconnect', msg => {
-      //   this.$notify({
-      //     title: this.$t('general.Info'),
-      //     message: msg,
-      //     type: 'warning'
-      //   })
-      //   this.sid = this.socket.id
-      // })
-    },
     async updateStagesState() {
       try {
         const res = await getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun })
         res.forEach((stage, idx) => {
           this.stages[idx].state = stage.state
         })
+        this.setTimer()
       } catch (error) {
         console.error(error)
       }
@@ -254,10 +255,10 @@ export default {
     },
     setTimer() {
       const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
-      if (isActive) this.timer = setInterval(() => this.updateStagesState(), 5000)
+      if (isActive) this.timer = setTimeout(() => this.updateStagesState(), 1000)
     },
     clearTimer() {
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
       this.timer = null
     },
     getBuildingStageIdx() {
