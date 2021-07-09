@@ -322,7 +322,7 @@ export default {
           this.assigned_to = [
             {
               name: this.$t('Issue.me'),
-              login: 'me',
+              login: '-Me-',
               id: this.userId,
               class: 'bg-yellow-100'
             }, ...assigned_to.user_list
