@@ -36,8 +36,9 @@
                   >
                     <el-option
                       v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
-                      :key="item.id"
+                      :key="(dimension.value==='assigned_to')? item.login: item.id"
                       :label="getSelectionLabel(item)"
+                      :class="{[item.class]:item.class}"
                       :value="item.id"
                     >
                       <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -464,6 +465,12 @@ export default {
         this.tracker = typeList
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
+          {
+            name: this.$t('Issue.me'),
+            login: '-Me-',
+            id: this.userId,
+            class: 'bg-yellow-100'
+          },
           ...assigneeList.user_list
         ]
         this.status = statusList
@@ -480,6 +487,9 @@ export default {
       let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+      }
+      if (item.hasOwnProperty('login')) {
+        result += ' (' + (item.login) + ')'
       }
       return result
     },

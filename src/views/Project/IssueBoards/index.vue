@@ -26,8 +26,9 @@
                 >
                   <el-option
                     v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
-                    :key="item.id"
-                    :label="getTranslateHeader(item.name)"
+                    :key="(dimension.value==='assigned_to')? item.login: item.id"
+                    :label="getSelectionLabel(item)"
+                    :class="{[item.class]:item.class}"
                     :value="item.id"
                   >
                     <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -218,6 +219,7 @@ export default {
   computed: {
     ...mapGetters([
       'selectedProjectId',
+      'userId',
       'initKanban',
       'kanbanFilter',
       'kanbanGroupBy',
@@ -246,7 +248,8 @@ export default {
       ]
     },
     groupByOptions() {
-      const dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+      let dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+      dimension = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(dimension) : dimension
       return dimension.map((item, idx) => ({
         id: idx,
         label: this.getTranslateHeader(item.name),
@@ -255,10 +258,11 @@ export default {
     },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        const value = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+        let value = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+        value = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(value) : value
         return value.map(item => item)
       }
-      return this.groupBy.value
+      return (this.groupBy.dimension === 'assigned_to') ? this.filterMe(this.groupBy.value) : this.groupBy.value
     },
     showSelectedGroupByName() {
       return this.filterOptions.find((item) => (item.value === this.groupBy.dimension)).label
@@ -458,6 +462,12 @@ export default {
         this.tracker = typeList
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
+          {
+            name: this.$t('Issue.me'),
+            login: '-Me-',
+            id: this.userId,
+            class: 'bg-yellow-100'
+          },
           ...assigneeList.user_list
         ]
         this.status = statusList
@@ -625,6 +635,9 @@ export default {
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.getTranslateHeader(item.status)) + ')'
       }
+      if (item.hasOwnProperty('login')) {
+        result += ' (' + (item.login) + ')'
+      }
       return result
     },
     isRightPanelItemHasComponents(name) {
@@ -636,6 +649,9 @@ export default {
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
       return statusList.filter((item) => (item.is_closed === false))
+    },
+    filterMe(userList) {
+      return userList.filter((item) => (item.login !== '-Me-'))
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
