@@ -279,7 +279,7 @@ export default {
         if (this.filterValue[item]) {
           const value = this[item].find((search) => (search.id === this.filterValue[item]))
           if (value) {
-            result.push(this.getTranslateHeader(value.name))
+            result.push(this.getSelectionLabel(value))
           }
         }
       })
@@ -432,10 +432,7 @@ export default {
         params = { status: 'open,locked,closed' }
       }
       let versionList = await getProjectVersion(this.selectedProjectId, params)
-      versionList = versionList.data.versions.map((item) => {
-        item.name = this.getSelectionLabel(item)
-        return item
-      })
+      versionList = versionList.data.versions
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
