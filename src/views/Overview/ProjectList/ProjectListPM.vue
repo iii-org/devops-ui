@@ -12,7 +12,18 @@
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :default-sort="{prop: 'starred', order: 'descending'}" :element-loading-text="$t('Loading')" border fit>
+      <el-table-column
+        width="60"
+        align="center"
+        prop="starred"
+        sortable
+      >
+        <template slot-scope="scope">
+          <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
+          <i v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+        </template>
+      </el-table-column>
       <el-table-column
         :label="$t('Project.Name') + '/' + $t('Project.Identifier')"
         show-overflow-tooltip
@@ -160,6 +171,7 @@ import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './c
 import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
+import { deleteStarProject, postStarProject } from '@/api/projects'
 
 export default {
   name: 'ProjectListPM',
@@ -243,6 +255,25 @@ export default {
         return false
       } else {
         if (owner_id !== this.userId) return true
+      }
+    },
+    async setStar(id, star) {
+      if (star) {
+        await postStarProject(id)
+        await this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      } else {
+        await deleteStarProject(id)
+        await this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
       }
     }
   }

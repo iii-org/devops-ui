@@ -13,10 +13,22 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
+      :default-sort="{prop: 'starred', order: 'descending'}"
       height="calc(100vh - 300px)"
       border
       fit
     >
+      <el-table-column
+        width="60"
+        align="center"
+        prop="starred"
+        sortable
+      >
+        <template slot-scope="scope">
+          <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
+          <i v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         :label="$t('Project.NameIdentifier')"
@@ -125,6 +137,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
+import { deleteStarProject, postStarProject } from '@/api/projects'
 
 export default {
   name: 'ProjectListRD',
@@ -163,6 +176,25 @@ export default {
         message: this.$t('Notify.Copied'),
         type: 'success'
       })
+    },
+    async setStar(id, star) {
+      if (star) {
+        await postStarProject(id)
+        await this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      } else {
+        await deleteStarProject(id)
+        await this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      }
     }
   }
 }

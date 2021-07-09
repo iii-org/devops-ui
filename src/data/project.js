@@ -16,6 +16,7 @@ function Project(project) {
   this.due_date = project.due_date
   this.create_at = project.create_at
   this.update_at = project.update_at
+  this.starred = project.starred
 
   this.creator_id = project.creator_id
   this.owner_id = project.owner_id
