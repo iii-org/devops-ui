@@ -11,6 +11,9 @@
       />
     </div>
     <el-divider />
+    <div class="text-right mb-2">
+      <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{ $t('general.Refresh') }}</el-button>
+    </div>
     <el-table
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
