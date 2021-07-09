@@ -85,7 +85,7 @@
           </el-form>
         </el-card>
       </el-col>
-      <el-col v-if="isConfirmPackageVersion || showHarborTag" :span="15">
+      <el-col :span="15">
         <el-card shadow="hover" style="height: 350px;">
           <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
           <el-form>
@@ -93,7 +93,11 @@
               <el-input v-model="commitForm.note" type="textarea" style="width: 100%;" :rows="9" />
             </el-form-item>
             <el-form-item>
-              <el-button v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
+              <el-button v-if="isConfirmPackageVersion || showHarborTag" v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
+                <span class="el-icon-goods" />
+                {{ $t('Release.startRelease') }}
+              </el-button>
+              <el-button v-else v-loading.fullscreen.lock="fullscreenLoading" type="info" disabled>
                 <span class="el-icon-goods" />
                 {{ $t('Release.startRelease') }}
               </el-button>

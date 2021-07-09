@@ -1,9 +1,6 @@
 <template>
   <div class="app-container">
     <p class="clearfix">
-      <!-- <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
-        {{ $t('Project.Name') }}
-      </b> -->
       <el-button type="success" @click="showProjectVersionSelector">
         <span class="el-icon-goods" />
         <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
@@ -12,10 +9,6 @@
       <project-list-selector />
     </p>
     <p v-if="isProjectVersionSelectorShowed">
-      <!-- <b style="float: left; vertical-align: middle; padding: 10px 0; margin-right: 10px;">
-        {{ $t('Release.issueVersions') }}
-      </b> -->
-
       <el-select
         id="release_versions"
         v-model="releaseVersions"

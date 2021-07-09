@@ -1,7 +1,8 @@
 <template>
   <div class="app-container">
+    <!-- <el-card v-loading="listLoading"> -->
     <div class="d-flex justify-space-between" style="margin-bottom: 20px;">
-      <div style="color: black; line-height: 40px;">{{ $t('Issue.ReversionRecord') }}</div>
+      <div style="color: black; line-height: 40px;">{{ $t('Issue.PackageRecord') }}</div>
       <el-input
         v-model="keyword"
         style="width: 250px"
@@ -9,7 +10,6 @@
         prefix-icon="el-icon-search"
       />
     </div>
-    <!-- <el-card v-loading="listLoading"> -->
     <el-card>
       <el-table
         ref="issueList"
@@ -29,7 +29,14 @@
         <el-table-column :label="$t('Version.Version')" prop="tag_name" sortable width="90" />
         <el-table-column :label="$t('Issue.SourceCode')" sortable width="230">
           <template slot-scope="scope">
-            <el-link type="primary" :underline="false" :href="scope.row.git_url" target="_blank">{{ scope.row.branch }} / {{ scope.row.commit }}</el-link>
+            <el-link type="primary" :underline="false" :href="scope.row.git_url" target="_blank">
+              <span>
+                <svg-icon class="mr-1" icon-class="mdi-branch" />{{ scope.row.branch }}
+              </span>
+              <span>
+                <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit }}
+              </span>
+            </el-link>
           </template>
         </el-table-column>
         <el-table-column :label="$t('Issue.IssueList')" sortable>
@@ -83,11 +90,11 @@
 
 <script>
 import { getReleaseVersion } from '@/api/release'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 
 export default {
   name: 'ReleaseTable',
-  mixins: [MixinElTableWithAProject],
+  mixins: [MixinBasicTableWithProject],
   data() {
     return {
       listLoading: false,
@@ -123,3 +130,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.el-link {
+  font-size: 16px;
+}
+</style>

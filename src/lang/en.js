@@ -407,7 +407,7 @@ export default {
     closed: '@:Version.Closed',
     ResetESCTip: 'Press Windows+ESC (Mac:Command+ESC) to Rest and Close Description Input area.',
     ChildrenNotClosedWarning: 'There are still sub-topics of this topic that have not been dealt with. Please enter the topic to confirm and close before moving.',
-    ReversionRecord: 'Reversion Record',
+    PackageRecord: 'Package Record',
     NoImage: 'No Image',
     PackageVersionTime: 'Package Version Time',
     SourceCode: 'Source Code',
