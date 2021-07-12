@@ -1,21 +1,17 @@
 <template>
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" style="overflow: hidden;">
-    <div class="clearfix">
-      <project-list-selector />
-      <span class="newBtn">
-        <el-button type="success" :disabled="selectedProjectId === -1" @click="handleAdding">
-          <i class="el-icon-plus" />
-          {{ $t('Wiki.AddWiki') }}
-        </el-button>
-      </span>
+    <project-list-selector>
+      <el-button slot="button" type="success" :disabled="selectedProjectId === -1" @click="handleAdding">
+        <i class="el-icon-plus" />
+        {{ $t('Wiki.AddWiki') }}
+      </el-button>
       <el-input
         v-model="keyword"
         prefix-icon="el-icon-search"
         :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
       />
-    </div>
-
+    </project-list-selector>
     <el-divider />
     <!-- <div class="filter-container">
       <el-button class="filter-item" type="primary" @click="dialogVisible = true">

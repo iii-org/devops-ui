@@ -1,82 +1,77 @@
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <div>
-        <project-list-selector />
-        <el-button
-          id="btn-add-issue"
-          type="success"
-          icon="el-icon-plus"
-          :disabled="selectedProjectId === -1"
-          @click="handleQuickAddClose"
-        >
-          {{ $t('Issue.AddIssue') }}
-        </el-button>
-        <div class="text-right float-right w-1/2">
-          <el-popover
-            placement="bottom"
-            trigger="click"
-          >
-            <el-form v-loading="listLoading">
-              <template v-for="dimension in filterOptions">
-                <el-form-item :key="dimension.id">
-                  <div slot="label">
-                    {{ $t('Issue.'+dimension.value) }}
-                    <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
-                      <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
-                    </el-tag>
-                  </div>
-                  <el-select
-                    v-model="filterValue[dimension.value]"
-                    :placeholder="$t('Issue.Select'+dimension.placeholder)"
-                    :disabled="selectedProjectId === -1"
-                    filterable
-                    clearable
-                    @change="onChangeFilter"
-                  >
-                    <el-option
-                      v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
-                      :key="(dimension.value==='assigned_to')? item.login: item.id"
-                      :label="getSelectionLabel(item)"
-                      :class="{[item.class]:item.class}"
-                      :value="item.id"
-                    >
-                      <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </template>
-              <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
-                <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
-              </el-form-item>
-            </el-form>
-            <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-              <i class="el-icon-arrow-down el-icon--right" /></el-button>
-          </el-popover>
-          <el-divider direction="vertical" />
-          <el-input
-            v-if="searchVisible"
-            id="input-search"
-            v-model="keyword"
-            prefix-icon="el-icon-search"
-            :placeholder="$t('Issue.SearchNameOrAssignee')"
-            style="width: 250px;"
-            clearable
-            @blur="searchVisible=!searchVisible"
-            @change="onChangeFilter"
-          />
-          <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-            {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
-          </el-button>
-          <template v-if="isFilterChanged">
-            <el-divider direction="vertical" />
-            <el-button size="small" icon="el-icon-close" @click="cleanFilter">
-              {{ $t('Issue.CleanFilter') }}
-            </el-button>
+    <project-list-selector>
+      <el-button id="btn-add-issue"
+                 slot="button"
+                 type="success"
+                 icon="el-icon-plus"
+                 :disabled="selectedProjectId === -1"
+                 @click="handleQuickAddClose"
+      >
+        {{ $t('Issue.AddIssue') }}
+      </el-button>
+      <el-popover
+        placement="bottom"
+        trigger="click"
+      >
+        <el-form v-loading="listLoading">
+          <template v-for="dimension in filterOptions">
+            <el-form-item :key="dimension.id">
+              <div slot="label">
+                {{ $t('Issue.'+dimension.value) }}
+                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                </el-tag>
+              </div>
+              <el-select
+                v-model="filterValue[dimension.value]"
+                :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                :disabled="selectedProjectId === -1"
+                filterable
+                clearable
+                @change="onChangeFilter"
+              >
+                <el-option
+                  v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                  :key="(dimension.value==='assigned_to')? item.login: item.id"
+                  :label="getSelectionLabel(item)"
+                  :class="{[item.class]:item.class}"
+                  :value="item.id"
+                >
+                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
+                </el-option>
+              </el-select>
+            </el-form-item>
           </template>
-        </div>
-      </div>
-    </div>
+          <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
+            <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
+          </el-form-item>
+        </el-form>
+        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
+          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+      </el-popover>
+      <el-divider direction="vertical" />
+      <el-input
+        v-if="searchVisible"
+        id="input-search"
+        v-model="keyword"
+        prefix-icon="el-icon-search"
+        :placeholder="$t('Issue.SearchNameOrAssignee')"
+        style="width: 250px;"
+        clearable
+        @blur="searchVisible=!searchVisible"
+        @change="onChangeFilter"
+      />
+      <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
+        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+      </el-button>
+      <template v-if="isFilterChanged">
+        <el-divider direction="vertical" />
+        <el-button size="small" icon="el-icon-close" @click="cleanFilter">
+          {{ $t('Issue.CleanFilter') }}
+        </el-button>
+      </template>
+    </project-list-selector>
     <el-divider />
     <quick-add-issue ref="quickAddIssue"
                      :save-data="saveIssue"

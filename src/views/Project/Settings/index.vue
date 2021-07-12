@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="flex">
-      <ProjectListSelector />
-    </div>
+    <ProjectListSelector />
     <el-divider />
     <el-row :gutter="10">
       <el-col class="mb-4" :sm="24" :md="14" :lg="15">

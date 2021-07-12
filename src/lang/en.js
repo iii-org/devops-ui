@@ -617,6 +617,7 @@ export default {
   },
   Project: {
     Project: ' Project',
+    Starred: 'Star Project',
     AddProject: 'Add Project',
     EditProject: 'Edit Project',
     NameIdentifier: 'Name / Identifier',

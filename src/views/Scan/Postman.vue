@@ -1,15 +1,14 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="flex justify-between">
-        <project-list-selector />
+      <project-list-selector>
         <el-input
           v-model="keyword"
           :placeholder="$t('Postman.SearchBranch')"
           style="width: 250px"
           prefix-icon="el-icon-search"
         />
-      </div>
+      </project-list-selector>
       <el-divider />
       <el-table
         v-loading="listLoading"
@@ -89,7 +88,7 @@ export default {
       return (await getPostmanResult(this.selectedProjectId)).data
     },
     handleClick(target, id) {
-      this.$router.push({ name: target, params: { id } })
+      this.$router.push({ name: target, params: { id }})
     }
   }
 }

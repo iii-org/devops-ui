@@ -1,19 +1,17 @@
 <template>
   <el-row class="app-container" style="overflow: hidden;">
-    <div class="flex justify-between">
-      <project-list-selector />
+    <project-list-selector>
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
-    </div>
-    <div class="text-right text-info" style="position: relative; top: 15px">
-      <span><i class="el-icon-warning" /></span>
-      <span>{{ $t('Sideex.promptMessage') }}</span>
-    </div>
+    </project-list-selector>
     <el-divider />
+    <p class="text-right text-info">
+      <i class="el-icon-warning" />{{ $t('Sideex.promptMessage') }}
+    </p>
     <el-table
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"

@@ -1,19 +1,16 @@
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <project-list-selector />
-      <span class="newBtn">
-        <el-button type="success" :disabled="selectedProjectId === -1" icon="el-icon-plus" @click="handleAdding">
-          {{ $t('File.AddFile') }}
-        </el-button>
-      </span>
+    <project-list-selector>
+      <el-button slot="button" type="success" :disabled="selectedProjectId === -1" icon="el-icon-plus" @click="handleAdding">
+        {{ $t('File.AddFile') }}
+      </el-button>
       <el-input
         v-model="keyword"
         prefix-icon="el-icon-search"
         :placeholder="$t('general.SearchName')"
         style="width: 300px; float: right"
       />
-    </div>
+    </project-list-selector>
     <el-divider />
     <el-table
       v-loading="listLoading"

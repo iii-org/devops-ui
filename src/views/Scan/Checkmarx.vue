@@ -1,14 +1,13 @@
 <template>
   <el-row class="app-container">
-    <div class="flex justify-between">
-      <project-list-selector />
+    <project-list-selector>
       <el-input
         v-model="keyword"
         :placeholder="$t('CheckMarx.SearchScanId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
       />
-    </div>
+    </project-list-selector>
     <el-divider />
     <div class="text-right mb-2">
       <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{ $t('general.Refresh') }}</el-button>
@@ -178,7 +177,7 @@ export default {
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel')
       }).then(() => {
-        this.registerReport(scan_id) 
+        this.registerReport(scan_id)
       })
     }
   }

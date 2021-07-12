@@ -1,8 +1,6 @@
 <template>
   <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <div class="flex">
-      <project-list-selector />
-    </div>
+    <project-list-selector />
     <el-divider />
     <el-card class="box-card">
       <div class="cardBody">

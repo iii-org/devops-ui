@@ -1,11 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <el-row>
-        <el-col>
-          <project-list-selector />
-        </el-col>
-      </el-row>
+      <project-list-selector />
       <el-divider />
       <el-row :gutter="12">
         <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
@@ -63,18 +59,18 @@ const formatChartData = item => {
     result.push({
       value: formatValue(item.title, item.used.value),
       name: `Usage (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' } }
+      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
     })
   } else {
     result.push({
       value: formatValue(item.title, handleLeftQuota(item)),
       name: `Left Quota (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' } }
+      itemStyle: { color: '#3ECBBC', emphasis: { color: '#3ECBBC' }}
     })
     result.push({
       value: formatValue(item.title, item.used.value),
       name: `Usage (${getValueUnit(item.title)})`,
-      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' } }
+      itemStyle: { color: '#E85656', emphasis: { color: '#E85656' }}
     })
   }
   return result

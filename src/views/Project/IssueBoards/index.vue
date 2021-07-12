@@ -1,8 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-row>
-      <project-list-selector />
-      <div class="text-right">
+      <project-list-selector>
         <el-popover
           placement="bottom"
           trigger="click"
@@ -105,7 +104,7 @@
             {{ $t('Issue.CleanFilter') }}
           </el-button>
         </template>
-      </div>
+      </project-list-selector>
     </el-row>
     <el-divider />
     <el-col v-loading="isLoading" :element-loading-text="$t('Loading')" class="board"

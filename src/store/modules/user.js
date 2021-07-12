@@ -2,15 +2,13 @@ import { getUserInfo, login } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router/router'
 import VueJwtDecode from 'vue-jwt-decode'
-import { getMyProjectListSimple } from '@/api/projects'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     userId: 0,
     userRole: '',
-    userName: '',
-    userProjectList: []
+    userName: ''
   }
 }
 
@@ -31,9 +29,6 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
-  },
-  SET_USER_PROJECT: (state, userProjectList) => {
-    state.userProjectList = userProjectList
   }
 }
 
@@ -64,7 +59,7 @@ const actions = {
   },
 
   // get e info
-  async getInfo({ commit, state, dispatch }) {
+  async getInfo({ commit, state, dispatch, rootState }) {
     const token = getToken()
     const jwtContent = VueJwtDecode.decode(token)
     if (!('identity' in jwtContent)) {
@@ -79,22 +74,17 @@ const actions = {
     }
     commit('SET_USER_NAME', user.name)
 
-    let myProjects = await getMyProjectListSimple()
-    myProjects = myProjects.sort(function (a, b) {
-      return a.id - b.id
-    })
-
+    await dispatch('projects/getMyProjectOptions', null, { root: true })
     dispatch('app/setRoleList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
-    commit('SET_USER_PROJECT', myProjects)
+    let myProjects = rootState.projects.options
+    myProjects = myProjects
+      .sort((a, b) => (a.id - b.id))
+      .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
     if (myProjects.length > 0) {
-      const projectStorage = myProjects.filter(elm => {
-        if (String(elm.id) === localStorage.getItem('projectId')) {
-          return true
-        }
-      })
-      if (projectStorage.length === 1) {
-        commit('projects/SET_SELECTED_PROJECT', projectStorage[0], { root: true })
+      const projectStorage = myProjects.find(elm => String(elm.id) === localStorage.getItem('projectId'))
+      if (projectStorage) {
+        commit('projects/SET_SELECTED_PROJECT', projectStorage, { root: true })
       } else {
         commit('projects/SET_SELECTED_PROJECT', myProjects[0], { root: true })
       }

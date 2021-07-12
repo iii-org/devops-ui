@@ -1,13 +1,12 @@
 <template>
   <div class="app-container">
-    <p class="clearfix">
-      <el-button type="success" @click="showProjectVersionSelector">
+    <project-list-selector>
+      <el-button slot="button" type="success" @click="showProjectVersionSelector">
         <span class="el-icon-goods" />
         <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
         <span v-else>{{ $t('Release.startPackageVersion') }}</span>
       </el-button>
-      <project-list-selector />
-    </p>
+    </project-list-selector>
     <p v-if="isProjectVersionSelectorShowed">
       <el-select
         id="release_versions"
@@ -196,7 +195,4 @@ export default {
 </script>
 
 <style scoped>
-.clearfix {
-  clear: both;
-}
 </style>

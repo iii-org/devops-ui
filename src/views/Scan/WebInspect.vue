@@ -1,7 +1,6 @@
 <template>
   <el-row class="app-container" style="overflow: hidden;">
-    <div class="flex justify-between">
-      <project-list-selector />
+    <project-list-selector>
       <el-input
         v-model="keyword"
         class="mr-3"
@@ -9,7 +8,7 @@
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
-    </div>
+    </project-list-selector>
     <el-divider />
     <div class="text-right mb-2">
       <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{ $t('general.Refresh') }}</el-button>

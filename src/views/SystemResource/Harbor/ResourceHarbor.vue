@@ -1,15 +1,14 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <div class="flex justify-between">
-        <project-list-selector />
+      <project-list-selector>
         <el-input
           v-model="keyword"
           :placeholder="$t('general.SearchName')"
           prefix-icon="el-icon-search"
           style="width: 250px"
         />
-      </div>
+      </project-list-selector>
       <el-divider />
       <el-card shadow="never" class="mb-1">
         <el-row :gutter="24">

@@ -621,6 +621,7 @@ export default {
   },
   Project: {
     Project: '專案',
+    Starred: '重點專案',
     AddProject: '新增專案',
     EditProject: '修改專案',
     NameIdentifier: '專案名稱/ID',

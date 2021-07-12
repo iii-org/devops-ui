@@ -1,8 +1,7 @@
 <template>
   <div class="app-container" style="overflow: hidden;">
-    <div class="clearfix">
-      <project-list-selector />
-      <el-button type="success" @click="openSonarQube">
+    <project-list-selector>
+      <el-button slot="button" type="success" @click="openSonarQube">
         <svg-icon icon-class="PhArrowSquareOutFill" />
         {{ $t('SonarQube.ViewReport') }}
       </el-button>
@@ -12,7 +11,7 @@
         style="width: 250px; float: right"
         prefix-icon="el-icon-search"
       />
-    </div>
+    </project-list-selector>
     <el-divider />
     <el-table
       v-loading="listLoading"
@@ -24,8 +23,8 @@
       height="100%"
     >
       <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id">
-        <template slot-scope="scope" width="140">
+      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" width="140">
+        <template slot-scope="scope">
           <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.issue_link">
             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
           </el-link>

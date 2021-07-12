@@ -1,15 +1,14 @@
 <template>
   <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-col>
-      <div class="flex justify-between">
-        <project-list-selector />
+      <project-list-selector>
         <el-input
           v-model="searchData"
           style="width: 250px"
           prefix-icon="el-icon-search"
           :placeholder="$t('general.SearchBranch')"
         />
-      </div>
+      </project-list-selector>
       <el-divider />
       <el-row v-if="filteredData.length > 0" :gutter="10">
         <el-col class="text-right text-base mb-2 text-info">

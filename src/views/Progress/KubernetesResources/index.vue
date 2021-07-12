@@ -1,11 +1,7 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <el-row>
-        <el-col>
-          <project-list-selector />
-        </el-col>
-      </el-row>
+      <project-list-selector />
       <el-divider />
       <el-row :gutter="12">
         <el-col v-for="item in listData" :key="item.title" :md="12" :lg="8" :xl="6">

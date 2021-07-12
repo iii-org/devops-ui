@@ -11,6 +11,7 @@ import {
 const getDefaultState = () => {
   return {
     list: [],
+    options: [],
     total: 0,
     selectedProject: { id: -1 },
     kanbanFilter: {},
@@ -36,6 +37,9 @@ const state = getDefaultState()
 const mutations = {
   SET_LIST: (state, list) => {
     state.list = list
+  },
+  SET_OPTIONS: (state, list) => {
+    state.options = list
   },
   SET_TOTAL: (state, total) => {
     state.total = total
@@ -87,9 +91,23 @@ const mutations = {
 const actions = {
   async getMyProjectList({ commit }) {
     try {
-      const projects = await getMyProjectList()
+      let projects = await getMyProjectList()
+      projects = projects.sort(function (a, b) {
+        return a.id - b.id
+      })
       commit('SET_LIST', projects)
       commit('SET_TOTAL', projects.length)
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async getMyProjectOptions({ commit }) {
+    try {
+      let projects = await getMyProjectList(true)
+      projects = projects.sort(function (a, b) {
+        return a.id - b.id
+      })
+      commit('SET_OPTIONS', projects)
     } catch (error) {
       console.error(error.toString())
     }

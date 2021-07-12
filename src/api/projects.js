@@ -2,7 +2,6 @@ import request from '@/utils/request'
 import Project from '@/data/project'
 
 export const getActivityLog = (activity_id) => request.get(`/devops-ui/projects/activity/log/${activity_id}`)
-export const getMyProjectListSimple = async () => await getMyProjectList(true)
 export const postStarProject = (project_id) => request.post(`/project/${project_id}/star`)
 export const deleteStarProject = (project_id) => request.delete(`/project/${project_id}/star`)
 export const addNewProject = (data = { name: '', disabled: false, description: '' }) => request.post(`/project`, data)

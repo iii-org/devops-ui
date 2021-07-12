@@ -1,21 +1,31 @@
 <template>
   <el-row id="project-overview" v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="10">
     <el-backtop target="#project-overview" />
-    <div class="flex">
-      <project-list-selector />
+    <project-list-selector>
       <el-select
+        v-show="filterVisible"
+        ref="selectVersion"
         v-model="selectedVersion"
-        class="mr-8"
         :loading="isLoadingVersion"
         :disabled="isLoading"
         :placeholder="$t('Version.SelectVersion')"
         clearable
+        filterable
         @clear="clearSelectedVersion"
+        @change="onBlurSelectedVersion"
       >
         <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
       </el-select>
-      <ProjectInfoBar />
-    </div>
+      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" @click="onFilterSelection"> {{ listFilter }}
+        <i class="el-icon-arrow-down el-icon--right" />
+      </el-button>
+      <template v-if="selectedVersion!==null">
+        <el-divider direction="vertical" />
+        <el-button size="small" icon="el-icon-close" @click="clearSelectedVersion">
+          {{ $t('Issue.CleanFilter') }}
+        </el-button>
+      </template>
+    </project-list-selector>
     <el-divider />
     <el-col :xs="24" :md="12">
       <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
@@ -52,14 +62,15 @@
 import { mapGetters, mapActions } from 'vuex'
 import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard, ProjectInfoBar } from './components'
+import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard } from './components'
 
 export default {
   name: 'ProjectOverview',
-  components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard, ProjectInfoBar },
+  components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard },
   data() {
     return {
       versionList: [],
+      filterVisible: false,
       selectedVersion: null,
       isLoading: false,
       isLoadingVersion: false,
@@ -77,6 +88,10 @@ export default {
     ...mapGetters(['userProjectList', 'selectedProject']),
     selectedProjectId() {
       return this.selectedProject.id
+    },
+    listFilter() {
+      if (!this.selectedVersion || this.selectedVersion === '') return this.$t('general.Filter')
+      return this.$t('general.Filter') + ':' + this.getSelectionLabel(this.versionList.find((item) => (item.id === this.selectedVersion)))
     }
   },
   watch: {
@@ -126,6 +141,16 @@ export default {
         this.clearSelectedVersion()
         this.versionList = []
       }
+    },
+    onFilterSelection() {
+      this.filterVisible = true
+      this.$nextTick(() => {
+        this.$refs['selectVersion'].$refs['reference'].$el.children[0].focus()
+        this.$refs['selectVersion'].toggleMenu()
+      })
+    },
+    onBlurSelectedVersion() {
+      this.filterVisible = false
     },
     clearSelectedVersion() {
       this.selectedVersion = null

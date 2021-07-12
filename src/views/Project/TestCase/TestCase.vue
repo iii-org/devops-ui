@@ -1,10 +1,9 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector />
-      <div class="flex justify-between items-center">
+      <project-list-selector>
         <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
-        <el-button type="success" icon="el-icon-plus" @click="handleAdding">
+        <el-button slot="button" type="success" icon="el-icon-plus" @click="handleAdding">
           {{ $t('TestCase.AddTestCase') }}
         </el-button>
         <el-input
@@ -13,7 +12,7 @@
           prefix-icon="el-icon-search"
           style="width: 250px"
         />
-      </div>
+      </project-list-selector>
       <el-divider />
       <el-table
         v-loading="listLoading"
