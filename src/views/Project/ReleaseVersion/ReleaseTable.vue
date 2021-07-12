@@ -1,18 +1,9 @@
 <template>
-  <div class="app-container">
-    <!-- <el-card v-loading="listLoading"> -->
-    <div class="d-flex justify-space-between" style="margin-bottom: 20px;">
-      <div style="color: black; line-height: 40px;">{{ $t('Issue.PackageRecord') }}</div>
-      <el-input
-        v-model="keyword"
-        style="width: 250px"
-        :placeholder="$t('Project.SearchProjectNameOrId')"
-        prefix-icon="el-icon-search"
-      />
-    </div>
-    <el-card>
+  <div>
+    <el-row>
       <el-table
         ref="issueList"
+        style="width: 100vw"
         :data="pagedData"
         border
         fit
@@ -26,7 +17,7 @@
             {{ formatTime(scope.row.create_at) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Version.Version')" prop="tag_name" sortable width="90" />
+        <el-table-column :label="$t('Version.Version')" prop="tag_name" sortable width="120" />
         <el-table-column :label="$t('Issue.SourceCode')" sortable width="230">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" :href="scope.row.git_url" target="_blank">
@@ -84,22 +75,37 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-    </el-card>
+    </el-row>
   </div>
 </template>
 
 <script>
 import { getReleaseVersion } from '@/api/release'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
 
 export default {
   name: 'ReleaseTable',
-  mixins: [MixinElTableWithAProject],
+  mixins: [MixinBasicTableWithProject],
+  model: {
+    prop: 'keyword',
+    event: 'changed'
+  },
+  props: {
+    keywords: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       listLoading: false,
       searchKeys: ['commit', 'tag_name'],
       activeNames: []
+    }
+  },
+  watch: {
+    keywords(val) {
+      this.keyword = val
     }
   },
   methods: {

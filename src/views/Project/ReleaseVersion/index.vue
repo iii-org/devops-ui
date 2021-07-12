@@ -1,12 +1,23 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
-      <el-button slot="button" type="success" @click="showProjectVersionSelector">
-        <span class="el-icon-goods" />
-        <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
-        <span v-else>{{ $t('Release.startPackageVersion') }}</span>
-      </el-button>
-    </project-list-selector>
+    <el-row>
+      <el-col :span="16">
+        <el-button type="success" @click="showProjectVersionSelector">
+          <span class="el-icon-goods" />
+          <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
+          <span v-else>{{ $t('Release.startPackageVersion') }}</span>
+        </el-button>
+        <project-list-selector />
+      </el-col>
+      <el-col :span="8">
+        <el-input
+          v-model="keywords"
+          style="width: 250px; float: right;"
+          :placeholder="$t('Project.SearchProjectNameOrId')"
+          prefix-icon="el-icon-search"
+        />
+      </el-col>
+    </el-row>
     <p v-if="isProjectVersionSelectorShowed">
       <el-select
         id="release_versions"
@@ -35,7 +46,7 @@
     </div>
     <el-divider />
     <div v-if="state === STATE_INIT">
-      <release-table />
+      <release-table :keywords="keywords" />
     </div>
     <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
     <create-release
@@ -75,7 +86,8 @@ export default {
       isProjectVersionSelectorShowed: false,
       STATE_INIT: STATE_INIT,
       STATE_SHOW_OPEN_ISSUES: STATE_SHOW_OPEN_ISSUES,
-      STATE_CREATE_RELEASE: STATE_CREATE_RELEASE
+      STATE_CREATE_RELEASE: STATE_CREATE_RELEASE,
+      keywords: ''
     }
   },
   computed: {
@@ -195,4 +207,7 @@ export default {
 </script>
 
 <style scoped>
+.clearfix {
+  clear: both;
+}
 </style>

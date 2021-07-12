@@ -2,17 +2,9 @@
   <div class="app-container">
     <div class="clearfix">
       <div>
-        <!-- <project-list-selector /> -->
-        <!-- <el-button
-          id="btn-add-issue"
-          type="success"
-          icon="el-icon-plus"
-          :disabled="selectedProjectId === -1"
-          class="text-left"
-          @click="handleQuickAddClose"
-        >
-          {{ $t('Issue.AddIssue') }}
-        </el-button> -->
+        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+          {{ $t('general.Back') }}
+        </el-button>
         <div class="text-right float-right w-1/2">
           <el-popover
             placement="bottom"
@@ -50,8 +42,9 @@
                 <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
               </el-form-item>
             </el-form>
-            <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-              <i class="el-icon-arrow-down el-icon--right" /></el-button>
+            <el-button slot="reference" icon="el-icon-s-operation" type="text" disabled style="color: #409eff;"> {{ listFilter }}
+              <!-- <i class="el-icon-arrow-down el-icon--right" /> -->
+            </el-button>
           </el-popover>
           <el-divider direction="vertical" />
           <el-input
@@ -68,12 +61,6 @@
           <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
             {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
           </el-button>
-          <template v-if="isFilterChanged">
-            <el-divider direction="vertical" />
-            <el-button size="small" icon="el-icon-close" @click="cleanFilter">
-              {{ $t('Issue.CleanFilter') }}
-            </el-button>
-          </template>
         </div>
       </div>
     </div>
@@ -110,6 +97,7 @@
                 <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
                   <b>{{ $t('Issue.ParentIssue') }}:</b>
                   <el-link
+                    class="font-weight-regular"
                     :style="{ 'font-size': '14px', cursor: 'pointer' }"
                     :underline="false"
                     @click="handleEdit(scope.row.parent.id)"
@@ -142,7 +130,7 @@
                     <template v-for="child in scope.row.children">
                       <li v-if="Object.keys(child).length>0" :key="child.id">
                         <el-link
-                          class="my-1"
+                          class="font-weight-regular my-1"
                           :style="{ 'font-size': '14px', cursor: 'pointer' }"
                           :underline="false"
                           @click="handleEdit(child.id)"
@@ -174,7 +162,7 @@
                     <template v-for="child in scope.row.relations">
                       <li v-if="Object.keys(child).length>0" :key="child.id">
                         <el-link
-                          class="my-1"
+                          class="font-weight-regular my-1"
                           :style="{ 'font-size': '14px', cursor: 'pointer' }"
                           :underline="false"
                           @click="handleEdit(child.id)"
@@ -367,18 +355,6 @@ export default {
         }
       })
       return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
-    },
-    isFilterChanged() {
-      for (const item of Object.keys(this.filterValue)) {
-        const checkFilterValue = this.filterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.originFilterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      return !!this.keyword
     }
   },
   watch: {
@@ -397,6 +373,15 @@ export default {
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
+    },
+    fixed_version: {
+      handler(value) {
+        if (value && value.length > 0) {
+          this.getFixedVersionClosed()
+          this.onChangeFilter()
+        }
+      },
+      immediate: true
     }
   },
   async created() {
@@ -407,15 +392,26 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    this.filterValue = this.issueListFilter
+    // this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
     this.fixed_version_closed = this.fixedVersionShowClosed
     this.displayClosed = this.issueListDisplayClosed
+    // this.displayClosed = true
     await this.loadSelectionList()
   },
   methods: {
     ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed',
       'setIssueListDisplayClosed', 'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
+    handleBackPage() {
+      this.$router.push({ name: 'release-version' })
+    },
+    getFixedVersionClosed() {
+      const fixed_version = this.fixed_version.filter(item => item.name === this.$route.params.issueTag)[0].id
+      this.filterValue = {
+        fixed_version,
+        status: 6
+      }
+    },
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
       this.$message({
@@ -459,7 +455,6 @@ export default {
         }
         const cancelTokenSource = axios.CancelToken.source()
         const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })
-        // console.log(listData)
         this.lastIssueListCancelToken = cancelTokenSource
         data = listData.data.issue_list
         if (listData.data.hasOwnProperty('page')) {
@@ -589,9 +584,9 @@ export default {
     hasRelationIssue(row) {
       return row.family
     },
-    // handleQuickAddClose() {
-    //   this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
-    // },
+    handleQuickAddClose() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+    },
     handleSortChange({ prop, order }) {
       const orderBy = this.checkOrder(order)
       if (orderBy) {
@@ -629,7 +624,6 @@ export default {
     async handleCurrentChange(val) {
       this.listLoading = true
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
-      // console.log(this.pageInfo.offset, '+', '(', val.page, '-', this.listQuery.page, ')*', val.limit, ')')
       if (offset <= 0 || val.page === 1) {
         this.listQuery.offset = 0
       } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
@@ -640,12 +634,6 @@ export default {
       this.listQuery.page = val.page
       await this.loadData()
       this.listLoading = false
-    },
-    cleanFilter() {
-      this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keyword = null
-      this.displayClosed = false
-      this.onChangeFilter()
     },
     backToFirstPage() {
       this.listQuery.page = 1
