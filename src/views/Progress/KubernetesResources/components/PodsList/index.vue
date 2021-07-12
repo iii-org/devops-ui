@@ -50,7 +50,7 @@
                   <span class="text-sm">{{ container.time | relativeTime }}</span>
                 </el-tooltip>
                 <div class="ml-3 my-1">
-                  <i class="el-icon-box" /> <span class="text-lg font-medium "> {{ container.name }}</span>
+                  <i class="el-icon-box" /> <span class="text-title"> {{ container.name }}</span>
                 </div>
                 <div class=" ml-3 my-1">
                   <i class="el-icon-refresh-right" />

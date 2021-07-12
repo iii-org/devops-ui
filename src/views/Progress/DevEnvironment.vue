@@ -20,7 +20,7 @@
           <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
             <div class="flex justify-between mb-2">
               <div>
-                <span class="text-lg font-medium">
+                <span class="text-title">
                   <svg-icon class="mr-1" icon-class="mdi-branch" />
                   {{ pod.branch }}
                 </span>
@@ -121,7 +121,7 @@
                                 :close-delay="50"
                               >
                                 <p :id="`copy-${serviceIdx}`" class="text-center">
-                                  <span class="font-base font-bold">
+                                  <span class="text-title">
                                     {{ service.url }}
                                   </span>
                                 </p>

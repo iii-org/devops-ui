@@ -8,7 +8,7 @@
           </router-link>
         </el-col>
         <el-col :span="16">
-          <span class="text-lg font-medium">{{ selectedProject.display }}</span>
+          <span class="text-title">{{ selectedProject.display }}</span>
         </el-col>
         <el-col :span="6" class="text-right">
           <el-input

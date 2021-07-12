@@ -71,7 +71,7 @@
         width="80%"
         @close="closeEditDialog"
       >
-        <div class="font-base font-bold">Config Map Name</div>
+        <div class="text-title">Config Map Name</div>
         <div>{{ configMapName }}</div>
         <el-row
           v-for="(configMap, configMapIdx) in configMapData"
@@ -81,11 +81,11 @@
           class="mt-3"
         >
           <el-col :span="6">
-            <div class="font-base font-bold">key {{ configMapIdx + 1 }}</div>
+            <div class="text-title">key {{ configMapIdx + 1 }}</div>
             <div>{{ configMapData[configMapIdx].key }}</div>
           </el-col>
           <el-col :span="18">
-            <div class="font-base font-bold">value {{ configMapIdx + 1 }}</div>
+            <div class="text-title">value {{ configMapIdx + 1 }}</div>
             <div>{{ configMapData[configMapIdx].value }}</div>
           </el-col>
         </el-row>

@@ -17,7 +17,7 @@
                   <div class="mr-7" style="width: 700px">
                     <el-progress :percentage="getProgressPercentage(version)" :status="version.type" />
                   </div>
-                  <div class="text-lg font-medium">{{ version.close }}／{{ version.total_issue }}</div>
+                  <div class="text-title">{{ version.close }}／{{ version.total_issue }}</div>
                 </div>
               </template>
               <el-row v-loading="contentLoading" :gutter="12">

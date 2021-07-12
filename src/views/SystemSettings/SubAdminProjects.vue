@@ -2,7 +2,7 @@
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="20">
     <el-col :span="11" :xs="7" :sm="5">
       <el-row :gutter="10" class="text-center">
-        <el-col :span="24" class="text-lg font-medium mb-5">
+        <el-col :span="24" class="text-title mb-5">
           {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
         </el-col>
         <el-col :span="24" class="mb-2">
@@ -55,7 +55,7 @@
         <el-col v-for="user in subAdminProjects" :key="user.id" :span="24" :sm="12" :lg="8" :xl="6" class="mb-2">
           <el-card :style="{ 'border-top': `5px solid ${user.color}` }">
             <div class="text-center mb-1">
-              <span class="text-lg font-medium">{{ user.name }}</span>
+              <span class="text-title">{{ user.name }}</span>
               <span class="text-sm">({{ user.login }})</span>
             </div>
             <draggable

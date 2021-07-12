@@ -1,13 +1,13 @@
 <template>
   <el-collapse-item v-loading="isLoading" :element-loading-text="$t('Loading')" name="PluginSettings">
     <template slot="title">
-      <span class="font-base font-bold mr-3">{{ $t('Plugin.Manage') }}</span>
+      <span class="text-title mr-3">{{ $t('Plugin.Manage') }}</span>
     </template>
     <template v-if="settingStatus === 'Active'">
       <div class="flex justify-between items-center mb-1">
         <div>
           <span class="text-sm mr-2">{{ $t('Git.Branch') }}：</span>
-          <span class="font-base font-bold">{{ branch }}</span>
+          <span class="text-title">{{ branch }}</span>
         </div>
         <el-button type="text" size="medium" @click="handleClick">
           {{ $t('route.advanceBranchSettings') }}
@@ -42,11 +42,11 @@
       </div>
     </template>
     <template v-else-if="settingStatus === 'unSupported'">
-      <div class="text-center text-lg font-medium mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
+      <div class="text-center text-title mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
       <div class="text-center text-danger font-bold">{{ $t('Plugin.CustomRecommendWarning') }}</div>
     </template>
     <template v-else-if="settingStatus === 'error'">
-      <div class="text-center text-lg font-medium">{{ $t('Notify.LoadFail') }}</div>
+      <div class="text-center text-title">{{ $t('Notify.LoadFail') }}</div>
     </template>
   </el-collapse-item>
 </template>

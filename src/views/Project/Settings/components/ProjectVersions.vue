@@ -1,7 +1,7 @@
 <template>
   <el-collapse-item v-loading="listLoading" name="ProjectVersions">
     <template slot="title">
-      <span class="font-base font-bold">{{ $t('Version.Manage') }}</span>
+      <span class="text-title">{{ $t('Version.Manage') }}</span>
     </template>
     <div class="flex justify-between mb-4">
       <el-button type="success" size="small" icon="el-icon-plus" @click="handleAdding">

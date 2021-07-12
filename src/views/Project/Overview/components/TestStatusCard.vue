@@ -37,7 +37,7 @@
             </span>
             <div v-for="item in result.informationText" :key="item.status" class="flex justify-between mb-1">
               <span class="text-sm">{{ item.status }}</span>
-              <span class="font-base font-bold">{{ item.count }}</span>
+              <span class="text-title">{{ item.count }}</span>
             </div>
           </div>
         </el-card>

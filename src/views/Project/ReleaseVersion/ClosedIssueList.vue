@@ -110,7 +110,6 @@
                 <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
                   <b>{{ $t('Issue.ParentIssue') }}:</b>
                   <el-link
-                    class="font-weight-regular"
                     :style="{ 'font-size': '14px', cursor: 'pointer' }"
                     :underline="false"
                     @click="handleEdit(scope.row.parent.id)"
@@ -143,7 +142,7 @@
                     <template v-for="child in scope.row.children">
                       <li v-if="Object.keys(child).length>0" :key="child.id">
                         <el-link
-                          class="font-weight-regular my-1"
+                          class="my-1"
                           :style="{ 'font-size': '14px', cursor: 'pointer' }"
                           :underline="false"
                           @click="handleEdit(child.id)"
@@ -175,7 +174,7 @@
                     <template v-for="child in scope.row.relations">
                       <li v-if="Object.keys(child).length>0" :key="child.id">
                         <el-link
-                          class="font-weight-regular my-1"
+                          class="my-1"
                           :style="{ 'font-size': '14px', cursor: 'pointer' }"
                           :underline="false"
                           @click="handleEdit(child.id)"

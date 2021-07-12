@@ -7,7 +7,7 @@
     <div>
       <el-popover class="mr-3" placement="top" width="400" trigger="hover" :open-delay="300" :close-delay="50">
         <p class="text-center">
-          <span class="font-base font-bold">{{ selectedProject.git_url }}</span>
+          <span class="text-title">{{ selectedProject.git_url }}</span>
         </p>
         <div class="flex justify-center">
           <el-button
