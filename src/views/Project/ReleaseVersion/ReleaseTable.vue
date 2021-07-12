@@ -81,11 +81,11 @@
 
 <script>
 import { getReleaseVersion } from '@/api/release'
-import MixinBasicTableWithProject from '@/mixins/MixinBasicTableWithProject'
+import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 export default {
   name: 'ReleaseTable',
-  mixins: [MixinBasicTableWithProject],
+  mixins: [MixinElTableWithAProject],
   model: {
     prop: 'keyword',
     event: 'changed'

@@ -2,12 +2,13 @@
   <div class="app-container">
     <el-row>
       <el-col :span="16">
-        <el-button type="success" @click="showProjectVersionSelector">
-          <span class="el-icon-goods" />
-          <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
-          <span v-else>{{ $t('Release.startPackageVersion') }}</span>
-        </el-button>
-        <project-list-selector />
+        <project-list-selector>
+          <el-button slot="button" type="success" @click="showProjectVersionSelector">
+            <span class="el-icon-goods" />
+            <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
+            <span v-else>{{ $t('Release.startPackageVersion') }}</span>
+          </el-button>
+        </project-list-selector>
       </el-col>
       <el-col :span="8">
         <el-input
@@ -205,9 +206,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.clearfix {
-  clear: both;
-}
-</style>
