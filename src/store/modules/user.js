@@ -77,10 +77,7 @@ const actions = {
     await dispatch('projects/getMyProjectOptions', null, { root: true })
     dispatch('app/setRoleList', null, { root: true })
     commit('SET_USER_ROLE', user.default_role_name)
-    let myProjects = rootState.projects.options
-    myProjects = myProjects
-      .sort((a, b) => (a.id - b.id))
-      .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
+    const myProjects = rootState.projects.options
     if (myProjects.length > 0) {
       const projectStorage = myProjects.find(elm => String(elm.id) === localStorage.getItem('projectId'))
       if (projectStorage) {

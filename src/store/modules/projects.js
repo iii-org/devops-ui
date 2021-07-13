@@ -92,9 +92,8 @@ const actions = {
   async getMyProjectList({ commit }) {
     try {
       let projects = await getMyProjectList()
-      projects = projects.sort(function (a, b) {
-        return a.id - b.id
-      })
+      projects = projects.sort((a, b) => (-(new Date(a.updated_time) - new Date(b.updated_time))))
+        .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
       commit('SET_LIST', projects)
       commit('SET_TOTAL', projects.length)
     } catch (error) {
@@ -104,9 +103,8 @@ const actions = {
   async getMyProjectOptions({ commit }) {
     try {
       let projects = await getMyProjectList(true)
-      projects = projects.sort(function (a, b) {
-        return a.id - b.id
-      })
+      projects = projects.sort((a, b) => (a.id - b.id))
+        .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
       commit('SET_OPTIONS', projects)
     } catch (error) {
       console.error(error.toString())
