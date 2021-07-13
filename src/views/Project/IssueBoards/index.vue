@@ -127,6 +127,7 @@
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
+        @contextmenu="handleContextMenu"
       />
     </el-col>
     <right-panel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
@@ -160,6 +161,14 @@
         </el-card>
       </el-row>
     </right-panel>
+    <ContextMenu
+      ref="contextmenu"
+      :visible="contextMenu.visible"
+      :row="contextMenu.row"
+      :filter-column-options="filterOptions"
+      :selection-options="contextOptions"
+      @update="loadData"
+    />
   </el-row>
 </template>
 
@@ -175,6 +184,7 @@ import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
+import ContextMenu from '@/views/Project/IssueList/components/ContextMenu'
 
 export default {
   name: 'IssueBoards',
@@ -185,7 +195,8 @@ export default {
     ProjectListSelector,
     Status,
     Tracker,
-    Priority
+    Priority,
+    ContextMenu
   },
   data() {
     return {
@@ -212,7 +223,14 @@ export default {
       searchVisible: false,
       keyword: null,
 
-      rightPanelVisible: false
+      rightPanelVisible: false,
+
+      contextMenu: {
+        row: { fixed_version: { id: 'null' }, assigned_to: { id: 'null' }},
+        visible: false,
+        left: 0,
+        top: 0
+      }
     }
   },
   computed: {
@@ -245,6 +263,13 @@ export default {
           tag: true
         }
       ]
+    },
+    contextOptions() {
+      const result = {}
+      this.filterOptions.forEach((item) => {
+        result[item.value] = this[item.value]
+      })
+      return result
     },
     groupByOptions() {
       let dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
@@ -676,6 +701,40 @@ export default {
       this.$set(this.groupBy, 'value', value)
       this.setKanbanGroupByValue(this.groupBy.value)
       this.loadData()
+    },
+    handleContextMenu({ row, column, event }) {
+      console.log(row, column, event)
+      event.preventDefault()
+      const eventX = event.pageX
+      const eventY = event.pageY
+      this.$refs.contextmenu.$refs.contextmenu.show()
+      this.$nextTick(() => {
+        const contextmenuPosition = {
+          top: eventY,
+          left: eventX
+        }
+        const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
+        const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
+        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
+          this.handleContextMenu({ row, column, event })
+        }
+        if (contextmenuHeight + eventY >= window.innerHeight) {
+          contextmenuPosition.top -= contextmenuHeight
+        }
+        if (contextmenuWidth + eventX >= window.innerWidth) {
+          contextmenuPosition.left -= contextmenuWidth
+        }
+        this.contextMenu.top = contextmenuPosition.top
+        this.contextMenu.left = contextmenuPosition.left
+        this.contextMenu.row = row
+        this.contextMenu.visible = true
+        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+        document.addEventListener('click', this.hideContextMenu)
+      })
+    },
+    hideContextMenu() {
+      this.contextMenu.visible = false
+      document.removeEventListener('click', this.hideContextMenu)
     }
   }
 }

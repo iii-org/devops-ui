@@ -4,9 +4,9 @@
       <template v-if="Object.keys(row).length>2">
         <contextmenu-item class="menu-title">{{ row.name }}</contextmenu-item>
         <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label">
-          <contextmenu-item v-for="item in $data[column.value]" :key="item.id"
+          <contextmenu-item v-for="item in $data[column.value]" :key="getId(column.value,item)"
                             :disabled="item.disabled||getContextMenuCurrentValue(column, item)"
-                            :class="{current:getContextMenuCurrentValue(column, item)}"
+                            :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"
                             @click="onUpdate(column.value+'_id', item.id)"
           >
             <i v-if="getContextMenuCurrentValue(column, item)" class="el-icon-check" />
@@ -45,7 +45,8 @@
             >
               {{ $t('general.Back') }}
             </el-button>
-            <span class="text-title">{{ $t('general.Settings', {name:$t('Issue.'+relationDialog.target+'Issue')}) }}</span>
+            <span class="text-title">{{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') })
+            }}</span>
           </el-col>
           <el-col :xs="24" :md="8" class="text-right">
             <el-button type="primary" @click="onSaveCheckRelationIssue">
@@ -54,7 +55,9 @@
           </el-col>
         </el-row>
       </div>
-      <SettingRelationIssue v-if="relationDialog.visible" ref="settingRelationIssue" :row.sync="row" :target.sync="relationDialog.target" />
+      <SettingRelationIssue v-if="relationDialog.visible" ref="settingRelationIssue" :row.sync="row"
+                            :target.sync="relationDialog.target"
+      />
     </el-dialog>
     <el-dialog
       :visible.sync="issueMatrixDialog.visible"
@@ -64,7 +67,9 @@
       destroy-on-close
       :title="$t('Issue.TraceabilityMatrix')+'(#'+row.id+' - '+ row.name+')'"
     >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="tracker" :status="status" @update-issue="handleUpdateIssue" />
+      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="tracker" :status="status"
+                   @update-issue="handleUpdateIssue"
+      />
     </el-dialog>
   </div>
 </template>
@@ -219,6 +224,10 @@ export default {
       this.$set(this, 'checkClosable', closable.data)
       await this.getDynamicStatusList()
     },
+    getId(option, item) {
+      if (option === 'assigned_to') return item.login
+      return item.id
+    },
     getDynamicStatusList() {
       const _this = this
       let option
@@ -316,19 +325,21 @@ export default {
 
 <style lang="scss" scoped>
 @import 'src/styles/variables.scss';
-.menu-title{
+
+.menu-title {
   background: #d2d2d2;
-  max-width:150px;
+  max-width: 150px;
   height: 25px;
   line-height: 1.25;
   padding: 3px 3px 3px 5px;
-  margin:0;
+  margin: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
-.current{
-  color:$success !important;
+
+.current {
+  color: $success !important;
   font-weight: 700;
 }
 </style>

@@ -23,47 +23,49 @@
         @drop="drop($event, idx)"
         @dragover="allowDrop($event, idx)"
       >
-        <div class="pb-4">
-          <div>
-            <el-link
-              class="cursor-pointer"
-              type="primary"
-              :underline="false"
-              style="font-size: 16px"
-              @click="handleClick(element.id)"
-            >
-              {{ element.name }}
-            </el-link>
+        <div @contextmenu="handleContextMenu(element, '', $event)">
+          <div class="pb-4">
+            <div>
+              <el-link
+                class="cursor-pointer"
+                type="primary"
+                :underline="false"
+                style="font-size: 16px"
+                @click="handleClick(element.id)"
+              >
+                {{ element.name }}
+              </el-link>
+            </div>
           </div>
-        </div>
-        <div>
-          <span v-if="dimension !== 'status'" class="detail">
-            <status :name="element.status.name" size="mini" class="status" />
-          </span>
-          <span v-if="dimension !== 'priority'" class="detail">
-            <priority :name="element.priority.name" size="mini" class="priority" />
-          </span>
-          <span v-if="dimension !== 'tracker'" class="detail">
-            <tracker :name="element.tracker.name" class="tracker" />
-          </span>
-        </div>
-        <el-progress v-if="element.done_ratio>0" :percentage="element.done_ratio" :status="getStatus(element)" />
-        <div>
-          <span class="detail due_date">
-            <i class="el-icon-date" />
-            <span class="ml-1" :class="getDueDateClass(element)">{{ element.due_date }}</span>
-          </span>
-          <el-tooltip
-            v-if="element.assigned_to"
-            :content="element.assigned_to.login"
-            placement="right-start"
-            :disabled="!element.assigned_to.login"
-          >
-            <span class="ml-1 detail">
-              <i class="el-icon-user-solid" />
-              <span class="ml-1">{{ element.assigned_to.name }}</span>
+          <div>
+            <span v-if="dimension !== 'status'" class="detail">
+              <status :name="element.status.name" size="mini" class="status" />
             </span>
-          </el-tooltip>
+            <span v-if="dimension !== 'priority'" class="detail">
+              <priority :name="element.priority.name" size="mini" class="priority" />
+            </span>
+            <span v-if="dimension !== 'tracker'" class="detail">
+              <tracker :name="element.tracker.name" class="tracker" />
+            </span>
+          </div>
+          <el-progress v-if="element.done_ratio>0" :percentage="element.done_ratio" :status="getStatus(element)" />
+          <div>
+            <span class="detail due_date">
+              <i class="el-icon-date" />
+              <span class="ml-1" :class="getDueDateClass(element)">{{ element.due_date }}</span>
+            </span>
+            <el-tooltip
+              v-if="element.assigned_to"
+              :content="element.assigned_to.login"
+              placement="right-start"
+              :disabled="!element.assigned_to.login"
+            >
+              <span class="ml-1 detail">
+                <i class="el-icon-user-solid" />
+                <span class="ml-1">{{ element.assigned_to.name }}</span>
+              </span>
+            </el-tooltip>
+          </div>
         </div>
         <div v-if="element.family " class="parent">
           <el-collapse v-model="element.show" @change="onCollapseChange(element)">
@@ -72,7 +74,7 @@
                 <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
               <template v-if="element.family">
-                <div v-if="element.hasOwnProperty('parent')" class="parent">
+                <div v-if="element.hasOwnProperty('parent')" class="parent" @contextmenu="handleContextMenu(element.parent, '', $event)">
                   <b>{{ $t('Issue.ParentIssue') }}：</b>
                   <status :name="element.parent.status.name" size="mini" />
                   <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
@@ -82,7 +84,7 @@
                 <div v-if="element.hasOwnProperty('children')&&element.children.length > 0" class="parent">
                   <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                   <ol class="children_list">
-                    <li v-for="(subElement, index) in element.children" :key="index">
+                    <li v-for="(subElement, index) in element.children" :key="index" @contextmenu="handleContextMenu(subElement, '', $event)">
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
@@ -96,7 +98,7 @@
         </div>
       </div>
       <div slot="header">
-        <div class="title board-item noSelect" @click="showDialog = !showDialog"><i class="el-icon-plus ml-4 mr-5 add-button" /> {{ $t('Issue.AddIssue') }}</div>
+        <div class="title board-item select-none" @click="showDialog = !showDialog"><i class="el-icon-plus ml-4 mr-5 add-button" /> {{ $t('Issue.AddIssue') }}</div>
         <QuickAddIssueOnBoard v-if="showDialog" class="board-item" :save-data="addIssue" :board-object="boardObject" @after-add="showDialog = !showDialog" />
       </div>
     </draggable>
@@ -341,6 +343,10 @@ export default {
     differentInDays(a, b) {
       const Difference_In_Time = a.getTime() - b.getTime()
       return Difference_In_Time / (1000 * 3600 * 24)
+    },
+    handleContextMenu(row, context, event) {
+      console.log(row, context, event)
+      this.$emit('contextmenu', { row, context, event })
     }
   }
 }
@@ -438,15 +444,5 @@ export default {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
   height: auto !important;
-}
-
-.noSelect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
 }
 </style>
