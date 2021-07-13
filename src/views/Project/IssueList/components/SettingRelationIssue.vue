@@ -167,6 +167,7 @@ import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
+import axios from 'axios'
 
 export default {
   name: 'SettingRelationIssue',
@@ -213,7 +214,8 @@ export default {
       issueLoading: false,
       issueList: [],
       loadingRelation: {},
-      issueFamily: {}
+      issueFamily: {},
+      cancelToken: null
     }
   },
   computed: {
@@ -306,16 +308,22 @@ export default {
         params['limit'] = 5
         this.issueQuery = null
       }
-      const res = await getProjectIssueList(this.row.project.id, params)
-      let queryList = res.data.issue_list
-      let key = 'Issue.LastResult'
-      if (this.issueQuery) {
-        queryList = res.data
-        key = 'Issue.Result'
+      if (this.cancelToken) {
+        this.cancelToken.cancel()
+      }
+      const CancelToken = axios.CancelToken.source()
+      this.cancelToken = CancelToken
+      const res = await getProjectIssueList(this.row.project.id, params, { cancelToken: CancelToken.token })
+      let queryList = res.data
+      let key = 'Issue.Result'
+      if (!this.issueQuery) {
+        queryList = res.data.issue_list
+        key = 'Issue.LastResult'
       }
       const original = this.originalIssue()
       this.issueList = [original, { name: this.$t(key), options: queryList }]
       this.issueLoading = false
+      this.cancelToken = null
     },
     highLight: function (value) {
       if (!value) return ''

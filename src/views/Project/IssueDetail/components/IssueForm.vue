@@ -167,6 +167,7 @@ import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
+import axios from 'axios'
 
 export default {
   name: 'IssueForm',
@@ -223,6 +224,8 @@ export default {
       isLoading: false,
       checkClosable: false,
       dynamicStatusList: [],
+
+      cancelToken: null,
 
       pickerOptions(startDate) {
         return {
@@ -363,7 +366,8 @@ export default {
     },
     async getSearchIssue(query) {
       const params = {
-        selection: true
+        selection: true,
+        status_id: 'open'
       }
       this.issueList = []
       if (query !== '' && query) {
@@ -375,15 +379,21 @@ export default {
         params['limit'] = 5
         this.issueQuery = null
       }
-      const res = await getProjectIssueList(this.form.project_id, params)
-      let queryList = res.data.issue_list
-      let key = 'Issue.LastResult'
-      if (this.issueQuery) {
-        queryList = res.data
-        key = 'Issue.Result'
+      if (this.cancelToken) {
+        this.cancelToken.cancel()
+      }
+      const CancelToken = axios.CancelToken.source()
+      this.cancelToken = CancelToken
+      const res = await getProjectIssueList(this.form.project_id, params, { cancelToken: CancelToken.token })
+      let queryList = res.data
+      let key = 'Issue.Result'
+      if (!this.issueQuery) {
+        queryList = res.data.issue_list
+        key = 'Issue.LastResult'
       }
       this.issueList = [this.originalParentIssue, { name: this.$t(key), options: queryList }]
       this.issueLoading = false
+      this.cancelToken = null
     },
     highLight: function (value) {
       if (!value) return ''
