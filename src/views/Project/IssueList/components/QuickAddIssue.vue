@@ -160,7 +160,9 @@ export default {
           this.LoadingConfirm = true
           await this.saveData(form)
           this.LoadingConfirm = false
+          const tracker_id = data.tracker_id
           this.setFilterValue()
+          this.form.tracker_id = tracker_id
         } else {
           return false
         }

@@ -457,7 +457,9 @@ export default {
     TraceabilityMatrix: 'Traceability Matrix',
     CheckChildrenIssueStatus: 'Check Children Issue Status',
     OriginalParentIssue: 'Original @:Issue.ParentIssue',
-    NoParentIssue: 'No @:Issue.ParentIssue'
+    NoParentIssue: 'No @:Issue.ParentIssue',
+    Clone: 'Clone',
+    CloneIssue: '@:Issue.Clone @:Issue.Issue'
   },
   Wiki: {
     AddWiki: 'Add Wiki',

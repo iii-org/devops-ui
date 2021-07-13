@@ -273,9 +273,7 @@ export default {
     prefill: {
       deep: true,
       handler() {
-        if (['issueList', 'kanban'].includes(this.importFrom)) {
-          this.setFilterValue()
-        }
+        this.setFilterValue()
       }
     },
     kanbanFilter: {
@@ -299,9 +297,7 @@ export default {
   mounted() {
     this.fetchData()
     this.extension = fileExtension()
-    if (['issueList', 'kanban'].includes(this.importFrom)) {
-      this.setFilterValue()
-    }
+    this.setFilterValue()
   },
 
   methods: {
@@ -339,18 +335,24 @@ export default {
       this.isLoading = false
     },
     setFilterValue() {
-      const getFilter = this.importFrom + 'Filter'
-      Object.keys(this[getFilter]).forEach((item) => {
-        if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
-      })
-      let checkQuickAddIssueForm = ['tracker_id', 'subject']
-      if (this.importFrom === 'kanban') {
-        checkQuickAddIssueForm = ['tracker_id', 'subject', 'assigned_to_id']
-        checkQuickAddIssueForm.push(this.kanbanGroupBy.dimension + '_id')
+      if (this.importFrom) {
+        const getFilter = this.importFrom + 'Filter'
+        Object.keys(this[getFilter]).forEach((item) => {
+          if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
+        })
+        let checkQuickAddIssueForm = ['tracker_id', 'subject']
+        if (this.importFrom === 'kanban') {
+          checkQuickAddIssueForm = ['tracker_id', 'subject', 'assigned_to_id']
+          checkQuickAddIssueForm.push(this.kanbanGroupBy.dimension + '_id')
+        }
+        checkQuickAddIssueForm.forEach((item) => {
+          this.issueForm[item] = this.prefill[item]
+        })
+      } else {
+        Object.keys(this.prefill).forEach((item) => {
+          this.issueForm[item] = this.prefill[item]
+        })
       }
-      checkQuickAddIssueForm.forEach((item) => {
-        this.issueForm[item] = this.prefill[item]
-      })
     },
     handleClose() {
       if (this.dialogVisible) {

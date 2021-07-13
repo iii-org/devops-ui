@@ -28,6 +28,8 @@
         <contextmenu-item @click="toggleRelationDialog('Parent')">{{ $t('Issue.ParentIssue') }}</contextmenu-item>
         <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('Issue.ChildrenIssue') }}</contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
+        <contextmenu-item divider />
+        <contextmenu-item @click="advancedAddIssue">{{ $t('Issue.CloneIssue') }}</contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog
@@ -71,6 +73,33 @@
                    @update-issue="handleUpdateIssue"
       />
     </el-dialog>
+    <el-dialog
+      v-if="row.project"
+      :title="$t('Issue.AddIssue')"
+      :visible.sync="addTopicDialogVisible"
+      width="50%"
+      top="5px"
+      :close-on-click-modal="false"
+      destroy-on-close
+      append-to-body
+    >
+      <AddIssue v-if="addTopicDialogVisible"
+                ref="AddIssue"
+                :project-id="row.project.id"
+                :prefill="form"
+                :save-data="saveIssue"
+                @loading="loadingUpdate"
+                @add-topic-visible="handleCloseDialog"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
+        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary"
+                   @click="handleAdvancedSave"
+        >
+          {{ $t('general.Confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -84,14 +113,23 @@ import {
 import 'v-contextmenu/dist/index.css'
 import SettingRelationIssue from './SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
-import { getCheckIssueClosable, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import {
+  addIssue,
+  getCheckIssueClosable,
+  getIssuePriority,
+  getIssueStatus,
+  getIssueTracker,
+  updateIssue
+} from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
+import AddIssue from '@/views/Project/IssueList/components/AddIssue'
 
 export default {
   name: 'ContextMenu',
   components: {
+    AddIssue,
     SettingRelationIssue,
     IssueMatrix,
     Contextmenu,
@@ -133,7 +171,11 @@ export default {
       assigned_to: [],
       priority: [],
       tracker: [],
-      fixed_version: []
+      fixed_version: [],
+      addTopicDialogVisible: false,
+      LoadingConfirm: false,
+      form: {},
+      originForm: {}
     }
   },
   computed: {
@@ -318,6 +360,73 @@ export default {
     },
     handleUpdateIssue() {
       this.$emit('update')
+    },
+    handleAdvancedClose() {
+      this.$refs['AddIssue'].handleClose()
+    },
+    handleAdvancedSave() {
+      this.$refs['AddIssue'].handleSave()
+    },
+    handleCloseDialog() {
+      this.addTopicDialogVisible = false
+    },
+    setFormData(data) {
+      const {
+        project,
+        parent,
+        assigned_to,
+        fixed_version,
+        name,
+        tracker,
+        status,
+        priority,
+        estimated_hours,
+        done_ratio,
+        start_date,
+        due_date,
+        description
+      } = data
+      this.form.parent_id = parent ? parent.id : ''
+      this.form.project_id = project ? project.id : ''
+      this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
+      this.form.subject = name + '(' + this.$t('Issue.Clone') + ')'
+      this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
+      this.form.tracker_id = tracker.id
+      this.form.status_id = status.id
+      this.form.priority_id = priority.id
+      this.form.estimated_hours = estimated_hours
+      this.form.done_ratio = done_ratio
+      this.form.start_date = start_date === null ? '' : start_date
+      this.form.due_date = due_date === null ? '' : due_date
+      this.form.description = description === null ? '' : description
+      this.originForm = Object.assign({}, this.form)
+    },
+    advancedAddIssue() {
+      this.setFormData(this.row)
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+    },
+    loadingUpdate(value) {
+      this.LoadingConfirm = value
+    },
+    async saveIssue(data) {
+      return await addIssue(data)
+        .then(res => {
+          // noinspection JSCheckFunctionSignatures
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Added'),
+            type: 'success'
+          })
+          this.LoadingConfirm = false
+          this.addTopicDialogVisible = false
+          this.$emit('update')
+          this.$refs['AddIssue'].form.subject = ''
+          return res
+        })
+        .catch(error => {
+          return error
+        })
     }
   }
 }

@@ -461,7 +461,9 @@ export default {
     TraceabilityMatrix: '議題關聯圖',
     CheckChildrenIssueStatus: '檢核子議題關聯狀態',
     OriginalParentIssue: '原@:Issue.ParentIssue',
-    NoParentIssue: '未設定@:Issue.ParentIssue'
+    NoParentIssue: '未設定@:Issue.ParentIssue',
+    Clone: '複製',
+    CloneIssue: '@:Issue.Clone@:Issue.Issue'
   },
   Wiki: {
     AddWiki: '新增Wiki',
