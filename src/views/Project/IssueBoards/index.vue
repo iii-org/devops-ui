@@ -692,7 +692,7 @@ export default {
   display: flex;
   justify-content: start;
   flex-wrap: nowrap;
-  height: calc(100vh - 50px - 40px - 40px - 25px - 10px);
+  height: calc(100vh - 70px - 40px - 40px - 25px - 10px);
   overflow-x: auto;
 
   &.is-panel {
@@ -701,6 +701,7 @@ export default {
 
   .kanban {
     flex: 0 0 280px;
+    margin-bottom: 0;
 
     > > > .parent {
       font-size: 0.75em;
