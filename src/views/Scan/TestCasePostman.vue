@@ -2,9 +2,9 @@
   <el-row class="app-container">
     <el-col>
       <div class="flex justify-between items-center">
-        <router-link :to="{ name: 'postman' }">
-          <svg-icon icon-class="system-uicons-exit-left" class="mr-2" />{{ $t('general.Exit') }}
-        </router-link>
+        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title" @click="handleBack">
+          {{ $t('general.Back') }}
+        </el-button>
         <div class="text-center">
           <div class="text-title mb-2">{{ selectedProject.display }}</div>
           <div>
@@ -165,7 +165,7 @@ export default {
     },
     countRequestMsg(result) {
       const length = this.listData.filter(item => item.testResult === result).length
-      return `${this.$tc('TestCase.TestItem', length, { count: length })}`
+      return this.$tc('TestCase.TestItem', length, { count: length })
     },
     getTagType(status) {
       const mapping = { Fail: 'danger', Pass: 'success' }
@@ -190,6 +190,9 @@ export default {
           }
         }
       }
+    },
+    handleBack() {
+      this.$router.push({ name: 'postman' })
     }
   }
 }

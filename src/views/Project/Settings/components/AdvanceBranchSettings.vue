@@ -3,9 +3,9 @@
     <el-col>
       <el-row :gutter="10" type="flex" align="middle">
         <el-col :span="2">
-          <router-link :to="{ name: 'Project Settings' }">
-            <svg-icon icon-class="system-uicons-exit-left" />{{ $t('general.Exit') }}
-          </router-link>
+          <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title" @click="handleBack">
+            {{ $t('general.Back') }}
+          </el-button>
         </el-col>
         <el-col :span="16">
           <span class="text-title">{{ selectedProject.display }}</span>
@@ -28,7 +28,13 @@
       </div>
       <el-table :data="filteredData" fit border>
         <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" width="100" />
-        <el-table-column :label="$t('general.Description')" align="center" prop="commit_message" show-overflow-tooltip min-width="120" />
+        <el-table-column
+          :label="$t('general.Description')"
+          align="center"
+          prop="commit_message"
+          show-overflow-tooltip
+          min-width="120"
+        />
         <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" width="160" />
         <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center" width="120">
           <template slot="header" slot-scope="scope">
@@ -234,6 +240,9 @@ export default {
       this.testingToolNames = []
       this.isChanged = false
       this.fetchPipelineBranch()
+    },
+    handleBack() {
+      this.$route.push({ name: 'Project Settings' })
     }
   }
 }
