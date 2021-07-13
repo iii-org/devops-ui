@@ -345,7 +345,6 @@ export default {
       return Difference_In_Time / (1000 * 3600 * 24)
     },
     handleContextMenu(row, context, event) {
-      console.log(row, context, event)
       this.$emit('contextmenu', { row, context, event })
     }
   }

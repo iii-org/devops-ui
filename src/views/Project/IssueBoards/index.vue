@@ -703,7 +703,6 @@ export default {
       this.loadData()
     },
     handleContextMenu({ row, column, event }) {
-      console.log(row, column, event)
       event.preventDefault()
       const eventX = event.pageX
       const eventY = event.pageY
