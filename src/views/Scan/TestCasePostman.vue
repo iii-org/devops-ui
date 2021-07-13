@@ -55,6 +55,7 @@
         :element-loading-text="$t('Loading')"
         :data="pagedDataByChecked"
         :span-method="mergeCells"
+        height="50vh"
         border
         fit
       >
