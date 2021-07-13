@@ -12,12 +12,11 @@
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :default-sort="{prop: 'starred', order: 'descending'}" :element-loading-text="$t('Loading')" border fit>
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
       <el-table-column
         width="60"
         align="center"
         prop="starred"
-        sortable
       >
         <template slot-scope="scope">
           <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />

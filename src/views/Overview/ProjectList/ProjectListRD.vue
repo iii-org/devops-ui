@@ -13,7 +13,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      :default-sort="{prop: 'starred', order: 'descending'}"
       height="calc(100vh - 300px)"
       border
       fit
@@ -22,7 +21,6 @@
         width="60"
         align="center"
         prop="starred"
-        sortable
       >
         <template slot-scope="scope">
           <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
