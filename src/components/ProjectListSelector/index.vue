@@ -13,15 +13,16 @@
         </el-col>
         <el-col>
           <el-select
-            v-show="selectVisible"
             ref="selectProject"
             v-model="projectValue"
             :placeholder="$t('Project.SelectProject')"
-            style="width: 100%"
             filterable
+            class="project"
+            :clearable="clearable"
             @blur="selectVisible=false"
             @change="setChange"
           >
+            <template slot="prefix"><i class="el-icon-s-cooperation el-input__icon" /></template>
             <el-option-group
               v-for="group in categoryProjectList"
               :key="group.label"
@@ -35,23 +36,6 @@
               />
             </el-option-group>
           </el-select>
-          <div v-show="!selectVisible" class="project">
-            <el-row type="flex" justify="space-between" align="middle">
-              <el-col class="h-full p-3" @click.native="onProjectSelection">
-                <el-row type="flex" justify="space-between">
-                  <el-col class="truncate">
-                    <i class="el-icon-s-cooperation" /> {{ projectInformation.display }}
-                  </el-col>
-                  <div class="w-min">
-                    <i class="el-icon-arrow-down" />
-                  </div>
-                </el-row>
-              </el-col>
-              <template v-if="clearable&&projectValue!==''">
-                <div class="clear-btn" @click="projectValue=''"><i class="el-icon-circle-close" /></div>
-              </template>
-            </el-row>
-          </div>
         </el-col>
         <el-col v-if="projectValue!==''" class="more">
           <el-popover placement="right">
@@ -153,13 +137,6 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectOptions']),
-    onProjectSelection() {
-      this.selectVisible = true
-      this.$nextTick(() => {
-        this.$refs['selectProject'].setSoftFocus()
-        this.$refs['selectProject'].toggleMenu()
-      })
-    },
     setChange(value) {
       if (this.keepSelection) {
         if (value || value !== '') {
@@ -216,42 +193,60 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.star{
+.star {
   @apply align-middle p-2 min-w-max max-w-max;
-  .star-content{
+  .star-content {
     @apply align-middle inline-block cursor-pointer;
-    .star-on{
+    .star-on {
       @apply text-yellow-500 text-xl rounded-md;
     }
-    .star-off{
+
+    .star-off {
       @apply text-xl text-gray-400;
     }
   }
 }
-.project{
-  @apply bg-gray-200 rounded-md font-semibold cursor-pointer;
-  .clear-btn{
+
+.project {
+  @apply w-full;
+  > > > .el-input {
+    input {
+      @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate min-w-300;
+    }
+    .el-input__prefix{
+      @apply text-lg text-black;
+    }
+    .el-select__caret {
+      color:#000000;
+    }
+  }
+
+  .clear-btn {
     @apply w-min h-full py-2 px-2 bg-gray-400 text-white rounded-md mr-2;
   }
 }
-.more{
+
+.more {
   @apply align-middle p-2 min-w-max max-w-max;
-  .more-btn{
+  .more-btn {
     @apply align-middle cursor-pointer p-3 bg-gray-300 rounded-md;
   }
 }
-.more-popover{
+
+.more-popover {
   @apply align-middle;
-  .item{
+  .item {
     @apply inline-block mr-3;
   }
-  .gitlab{
+
+  .gitlab {
     @apply p-1 bg-gray-200 rounded-md px-2 mr-2 align-middle;
-    .sub-item{
+    .sub-item {
       @apply inline-block
     }
   }
-  .project-name{
+
+  .project-name {
     @apply text-sm text-gray-400;
   }
 }
