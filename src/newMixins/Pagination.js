@@ -5,8 +5,10 @@ export default {
   data() {
     return {
       listQuery: {
-        page: 1,
-        limit: 10
+        offset: 0,
+        limit: 10,
+        total: 0,
+        page: 1
       }
     }
   },

@@ -243,6 +243,13 @@ export const asyncRoutes = [
             hidden: true,
             component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
             meta: { title: 'advanceBranchSettings', roles: ['Project Manager', 'Administrator'] }
+          },
+          {
+            path: 'issue-transfer/:userId',
+            name: 'Issue Transfer',
+            hidden: true,
+            component: () => import('@/views/Project/Settings/components/ProjectIssueTransfer'),
+            meta: { title: 'Issue Transfer', roles: ['Project Manager', 'Administrator'] }
           }
         ]
       },

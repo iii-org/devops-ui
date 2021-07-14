@@ -25,6 +25,7 @@ export default {
     'Project Roadmap': 'Project Roadmap',
     advanceBranchSettings: 'Advance Branch Settings',
     'Project Settings': 'Project Settings',
+    'Issue Transfer': 'Issue Transfer',
 
     devProgress: 'Develop Progress',
     devBranch: 'Git Branches',
@@ -170,7 +171,8 @@ export default {
     SelectAll: 'Select All',
     Search: 'Search',
     Filter: 'Filter',
-    Settings: '{name} Setting'
+    Settings: '{name} Setting',
+    Transfer: 'Transfer'
   },
   Notify: {
     Updated: 'update successful',
@@ -459,7 +461,9 @@ export default {
     OriginalParentIssue: 'Original @:Issue.ParentIssue',
     NoParentIssue: 'No @:Issue.ParentIssue',
     Clone: 'Clone',
-    CloneIssue: '@:Issue.Clone @:Issue.Issue'
+    CloneIssue: '@:Issue.Clone @:Issue.Issue',
+    batchTransfer: 'Batch Transfer',
+    batchClose: 'Batch Close'
   },
   Wiki: {
     AddWiki: 'Add Wiki',
@@ -568,7 +572,10 @@ export default {
     Role: 'Role',
     Account: 'Account',
     SelectMember: 'Select Member',
-    confirmRemove: 'Are you sure to @:(general.Remove)?'
+    confirmRemove: 'Are you sure to @:(general.Remove)?',
+    TransferIssue: 'Transfer Issue  〉',
+    ConfirmTransfer: '{userRole}  ({userName}) has {unClosedIssueCount} unclosed issues. For the integrity of this project, please transfer or close issues before remove this member.',
+    ConfirmRemoveMember: 'Are you sure to @:(general.Remove) {userRole}（{userName}）？'
   },
   Plugin: {
     Manage: 'Manage Plugins',

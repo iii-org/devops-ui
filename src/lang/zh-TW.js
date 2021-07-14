@@ -25,6 +25,7 @@ export default {
     'Project Roadmap': '專案藍圖',
     advanceBranchSettings: '進階分支設定',
     'Project Settings': '專案設定',
+    'Issue Transfer': '議題轉移',
 
     devProgress: '開發進度',
     devBranch: '開發分支',
@@ -174,7 +175,8 @@ export default {
     SelectAll: '全選',
     Search: '搜尋',
     Filter: '篩選',
-    Settings: '設定{name}'
+    Settings: '設定{name}',
+    Transfer: '移轉'
   },
   Notify: {
     Updated: '已更新',
@@ -417,7 +419,7 @@ export default {
     SourceCode: '原始碼',
     IssueList: '議題清單',
     DetermineContinue: '確定繼續',
-    NoImageWarning: '沒有映像檔，是否繼續包版，或是按“取消”放棄?',
+    NoImageWarning: '沒有映像檔，是否繼續包版，或是按"取消"放棄?',
     NextStep: '下一步>',
     detail: {
       message: {
@@ -463,7 +465,9 @@ export default {
     OriginalParentIssue: '原@:Issue.ParentIssue',
     NoParentIssue: '未設定@:Issue.ParentIssue',
     Clone: '複製',
-    CloneIssue: '@:Issue.Clone@:Issue.Issue'
+    CloneIssue: '@:Issue.Clone@:Issue.Issue',
+    batchTransfer: '批次移轉',
+    batchClose: '批次關閉'
   },
   Wiki: {
     AddWiki: '新增Wiki',
@@ -572,7 +576,10 @@ export default {
     Role: '角色',
     Account: '帳號',
     SelectMember: '選擇成員',
-    confirmRemove: '確定@:(general.Remove)嗎？'
+    confirmRemove: '確定@:(general.Remove)嗎？',
+    TransferIssue: '進行議題處理  〉',
+    ConfirmTransfer: '{userRole} ({userName}）仍有 {unClosedIssueCount} 項議題未完成，為確保專案執行之完整度，請先將議題移轉或關閉，再執行成員移除作業。',
+    ConfirmRemoveMember: '確認@:(general.Remove) {userRole}（{userName}）嗎？'
   },
   Plugin: {
     Manage: '測試工具管理',

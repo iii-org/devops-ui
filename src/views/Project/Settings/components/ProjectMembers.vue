@@ -35,29 +35,20 @@
       <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
       <el-table-column align="center" :label="$t('Member.Role')">
         <template slot-scope="scope">
-          {{ scope.row.id === selectedProject.owner_id ? $t('Member.ProjectOwner') : $t('Member.ProjectMember') }}
+          {{ getRoleName(scope.row.id) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="140">
+      <el-table-column align="center" :label="$t('general.Actions')" width="190">
         <template slot-scope="scope">
-          <el-popconfirm
-            :confirm-button-text="$t('general.Remove')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Member.confirmRemove')"
-            @onConfirm="handleDelete(scope.row.id)"
+          <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+          <el-button
+            type="danger"
+            size="mini"
+            :disabled="scope.row.id === userId"
+            @click="handleDeleteClick(scope.row)"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              :disabled="scope.row.id === userId"
-            >
-              {{ $t('general.Remove') }}
-            </el-button>
-          </el-popconfirm>
+            {{ $t('general.Remove') }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -76,10 +67,11 @@
 </template>
 
 <script>
-import { getProjectUserList, deleteProjectMember, updateProjectInfos } from '@/api/projects'
-import { BasicData, Pagination, SearchBar } from '@/newMixins'
-import AddMemberDialog from './AddMemberDialog'
 import { mapGetters } from 'vuex'
+import { BasicData, Pagination, SearchBar } from '@/newMixins'
+import { getUserIssueList } from '@/api/user'
+import { getProjectUserList, deleteProjectMember, updateProjectInfos } from '@/api/projects'
+import AddMemberDialog from './AddMemberDialog'
 
 export default {
   name: 'ProjectMembers',
@@ -87,8 +79,8 @@ export default {
   mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
-      isLoading: false,
-      searchKeys: ['name', 'login']
+      searchKeys: ['name', 'login'],
+      unClosedIssueCount: 0
     }
   },
   computed: {
@@ -142,6 +134,70 @@ export default {
         console.error(error)
         this.listLoading = false
       }
+    },
+    getRoleName(id) {
+      const isProjectOwner = id === this.selectedProject.owner_id
+      return isProjectOwner ? this.$t('Member.ProjectOwner') : this.$t('Member.ProjectMember')
+    },
+    async handleDeleteClick(row) {
+      this.listLoading = true
+      await this.fetchIssueByUser(row)
+      this.listLoading = false
+      const hasUnclosedIssue = this.unClosedIssueCount > 0
+      hasUnclosedIssue ? this.showConfirmTransferDialog(row) : this.showConfirmRemoveMemberDialog(row)
+    },
+    handleIssueClick(row) {
+      const { id, name } = row
+      this.$router.push({ name: 'Issue Transfer', params: { userId: id, userName: name }})
+    },
+    showConfirmTransferDialog(row) {
+      const { id, name } = row
+      this.$confirm(
+        this.$t('Member.ConfirmTransfer', {
+          userRole: this.getRoleName(id),
+          userName: name,
+          unClosedIssueCount: this.unClosedIssueCount
+        }),
+        this.$t('general.caution'),
+        {
+          confirmButtonText: this.$t('Member.TransferIssue'),
+          type: 'warning',
+          showCancelButton: false
+        }
+      )
+        .then(() => {
+          this.handleIssueClick(row)
+        })
+        .catch(() => {})
+    },
+    showConfirmRemoveMemberDialog(row) {
+      const { id, name } = row
+      this.$confirm(
+        this.$t('Member.ConfirmRemoveMember', { userRole: this.getRoleName(id), userName: name }),
+        this.$t('general.caution'),
+        {
+          confirmButtonText: this.$t('general.Remove'),
+          confirmButtonClass: 'el-button--danger',
+          type: 'error',
+          showCancelButton: false
+        }
+      )
+        .then(() => {
+          this.handleDelete(id)
+        })
+        .catch(() => {})
+    },
+    async fetchIssueByUser(row) {
+      const { id } = row
+      const params = {
+        offset: 0,
+        from: 'assigned_to_id',
+        status_id: 'open',
+        project_id: this.selectedProjectId
+      }
+      await getUserIssueList(id, params).then(res => {
+        this.unClosedIssueCount = res.data.length
+      })
     }
   }
 }
