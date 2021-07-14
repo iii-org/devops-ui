@@ -38,8 +38,12 @@
           {{ getRoleName(scope.row.id) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="190">
+      <el-table-column align="center" :label="$t('general.Actions')" width="390">
         <template slot-scope="scope">
+          <el-button v-show="userRole === 'Administrator' || userRole === 'QA'" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+            <i class="el-icon-edit" />
+            {{ $t('general.Participate') }}
+          </el-button>
           <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
           <el-button
             type="danger"
@@ -198,6 +202,9 @@ export default {
       await getUserIssueList(id, params).then(res => {
         this.unClosedIssueCount = res.data.length
       })
+    },
+    handleParticipateDialog(user_id) {
+      this.$router.push({ name: 'ParticipateProject', params: { user_id }})
     }
   }
 }
