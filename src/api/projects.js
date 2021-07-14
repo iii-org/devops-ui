@@ -35,6 +35,9 @@ export const getParticipateProject = (user_id) => request.get(`/projects_by_user
 export const downloadProjectFile = (params = { id: '', filename: '', project_id: '' }) => request.get(`/download`, { params, responseType: 'arraybuffer' })
 export const uploadProjectFile = (pId, data) => request.post(`/project/${pId}/file`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
 export const getMyProjectList = async (simple, params) => {
+  if (!params) {
+    params = {}
+  }
   if (simple) {
     params['simple'] = true
   }
