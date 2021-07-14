@@ -34,8 +34,11 @@ export const editPipelineBranch = (rId, data) => request.put(`/project/${rId}/pi
 export const getParticipateProject = (user_id) => request.get(`/projects_by_user/${user_id}`)
 export const downloadProjectFile = (params = { id: '', filename: '', project_id: '' }) => request.get(`/download`, { params, responseType: 'arraybuffer' })
 export const uploadProjectFile = (pId, data) => request.post(`/project/${pId}/file`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
-export const getMyProjectList = async (simple) => {
-  const res = await request.get(`/project/list${simple ? '?simple=true' : ''}`)
+export const getMyProjectList = async (simple, params) => {
+  if (simple) {
+    params['simple'] = true
+  }
+  const res = await request.get('/project/list', { params: params })
   const ret = []
   for (const project of res.data.project_list) {
     ret.push(new Project(project))
