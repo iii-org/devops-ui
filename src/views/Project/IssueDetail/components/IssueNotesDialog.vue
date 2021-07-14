@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import DialogContent from '@/views/Project/IssueDetail/components/widget/DialogContent'
+import DialogContent from './widget/DialogContent'
 import { mapGetters } from 'vuex'
 
 export default {

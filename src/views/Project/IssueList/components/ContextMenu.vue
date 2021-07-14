@@ -3,7 +3,9 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(row).length>2">
         <contextmenu-item class="menu-title">{{ row.name }}</contextmenu-item>
-        <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label">
+        <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label"
+                             :disabled="(column.value==='priority')?(row.has_children): false"
+        >
           <contextmenu-item v-for="item in $data[column.value]" :key="getId(column.value,item)"
                             :disabled="item.disabled||getContextMenuCurrentValue(column, item)"
                             :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"

@@ -2,7 +2,7 @@
   <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
     <el-row>
       <el-row v-if="parentId !== 0">
-        <el-col :md="12" :span="24">
+        <el-col :span="24">
           <el-form-item>
             <div style="font-weight: bold">{{ $t('Issue.ParentIssue') }} : {{ parentName }}</div>
           </el-form-item>

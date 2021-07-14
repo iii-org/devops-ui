@@ -67,7 +67,7 @@
             </el-tooltip>
           </div>
         </div>
-        <div v-if="element.family " class="parent">
+        <div v-if="element.family" class="parent">
           <el-collapse v-model="element.show" @change="onCollapseChange(element)">
             <el-collapse-item name="relation">
               <template #title>

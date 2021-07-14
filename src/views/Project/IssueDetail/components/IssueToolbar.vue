@@ -58,9 +58,9 @@
 </template>
 
 <script>
-import IssueFileUploader from '@/views/Project/IssueDetail/components/IssueFileUploader'
+import IssueFileUploader from './IssueFileUploader'
 import { addIssue, updateIssue } from '@/api/issue'
-import AddIssue from '@/views/Project/IssueList/components/AddIssue'
+import AddIssue from '../../IssueList/components/AddIssue'
 import { mapGetters } from 'vuex'
 
 export default {
