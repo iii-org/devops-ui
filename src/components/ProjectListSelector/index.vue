@@ -211,7 +211,7 @@ export default {
   @apply w-full;
   > > > .el-input {
     input {
-      @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate min-w-300;
+      @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate;
     }
     .el-input__prefix{
       @apply text-lg text-black;
