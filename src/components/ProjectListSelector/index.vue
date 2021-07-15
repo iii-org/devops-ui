@@ -1,6 +1,6 @@
 <template>
   <el-row type="flex" justify="space-between" align="middle">
-    <el-col :span="12" class="align-middle">
+    <el-col :span="10" class="align-middle">
       <el-row type="flex" justify="start" align="middle">
         <el-col class="star">
           <div v-if="projectValue===''" />
@@ -71,13 +71,17 @@
             </div>
           </el-popover>
         </el-col>
+      </el-row>
+    </el-col>
+    <el-col>
+      <el-row type="flex" justify="space-between" align="middle">
         <el-col class="min-w-max max-w-max">
           <slot name="button" />
         </el-col>
+        <el-col class="align-middle text-right">
+          <slot />
+        </el-col>
       </el-row>
-    </el-col>
-    <el-col class="align-middle text-right">
-      <slot />
     </el-col>
   </el-row>
 </template>
@@ -229,7 +233,7 @@ export default {
 .more {
   @apply align-middle p-2 min-w-max max-w-max;
   .more-btn {
-    @apply align-middle cursor-pointer p-3 bg-gray-300 rounded-md;
+    @apply align-middle cursor-pointer p-2 bg-gray-300 rounded-md;
   }
 }
 

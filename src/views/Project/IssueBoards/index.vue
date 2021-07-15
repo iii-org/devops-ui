@@ -310,12 +310,12 @@ export default {
       return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
     },
     isFilterChanged() {
-      for (const item of Object.keys(this.filterValue)) {
-        const checkFilterValue = this.filterValue
+      for (const item of Object.keys(this.originFilterValue)) {
+        const checkFilterValue = this.originFilterValue
         if (checkFilterValue[item] === '') {
           delete checkFilterValue[item]
         }
-        if (this.originFilterValue[item] !== checkFilterValue[item]) {
+        if (this.filterValue[item] !== checkFilterValue[item]) {
           return true
         }
       }
