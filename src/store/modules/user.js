@@ -33,7 +33,6 @@ const mutations = {
 }
 
 const actions = {
-  // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
@@ -45,11 +44,9 @@ const actions = {
           if (!('identity' in jwtContent)) {
             Promise.reject('userId not exist')
           }
-
           commit('SET_USER_ID', jwtContent['identity'].user_id)
           commit('SET_TOKEN', token)
           setToken(token)
-
           resolve()
         })
         .catch(error => {
@@ -58,7 +55,6 @@ const actions = {
     })
   },
 
-  // get e info
   async getInfo({ commit, state, dispatch, rootState }) {
     const token = getToken()
     const jwtContent = VueJwtDecode.decode(token)
@@ -88,7 +84,6 @@ const actions = {
     }
   },
 
-  // user logout
   logout({ commit }) {
     localStorage.clear()
     removeToken()
@@ -96,10 +91,9 @@ const actions = {
     commit('RESET_STATE')
   },
 
-  // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
-      removeToken() // must remove  token  first
+      removeToken() // must remove token first
       commit('RESET_STATE')
       resolve()
     })

@@ -10,6 +10,7 @@ export const getK8SConfig = (userId) => request.get(`/user/${userId}/config`)
 export const getRoleList = () => request.get('/user/role/list')
 export const getUserListByFilter = (params) => request.get('/user/list', { params })
 export const getUserIssueList = (userId, params) => request.get(`/user/${userId}/issues`, { params })
+export const getRoutes = () => request.get(`/router`)
 export const getUserInfo = async (userId) => {
   const res = await request.get(`/user/${userId}`)
   return new User(res.data)
