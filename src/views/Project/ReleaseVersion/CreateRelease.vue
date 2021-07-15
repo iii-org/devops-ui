@@ -60,7 +60,7 @@
               {{ $t('PodsList.Image') }}:
               <span v-if="showHarborTag" style="line-height: 40px; color: #606206;">
                 <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
-                {{ repoArtifactName }}
+                {{ commitId }}
               </span>
               <span v-else>
                 <span style="color: red; margin-right: 30px;">
@@ -165,29 +165,37 @@ export default {
         }
       },
       immediate: true
+    },
+    selectedProject: {
+      handler(val) {
+        this.getBranchesData()
+      }
     }
   },
   async created() {
     if (this.selectedProjectId < 0) {
       return
     }
-    this.branches = []
-    const response = await getBranchesByProject(this.selectedRepositoryId)
-    response.data.branch_list.sort((itemA, itemB) => {
-      const timeA = Date.parse(itemA.last_commit_time)
-      const timeB = Date.parse(itemB.last_commit_time)
-      return timeB - timeA
-    })
-    this.branchesData = response.data['branch_list']
-    this.commitId = this.branchesData[0].short_id
-    for (const branch of this.branchesData) {
-      this.branches.push(branch.name)
-    }
-    if (this.branchesData.length > 0) {
-      this.commitForm.branch = this.branchesData[0].name
-    }
+    this.getBranchesData()
   },
   methods: {
+    async getBranchesData() {
+      this.branches = []
+      const response = await getBranchesByProject(this.selectedRepositoryId)
+      response.data.branch_list.sort((itemA, itemB) => {
+        const timeA = Date.parse(itemA.last_commit_time)
+        const timeB = Date.parse(itemB.last_commit_time)
+        return timeB - timeA
+      })
+      this.branchesData = response.data['branch_list']
+      this.commitId = this.branchesData[0].short_id
+      for (const branch of this.branchesData) {
+        this.branches.push(branch.name)
+      }
+      if (this.branchesData.length > 0) {
+        this.commitForm.branch = this.branchesData[0].name
+      }
+    },
     setIssues(issues) {
       this.issues = issues
       this.issuesByCategory = [{}, {}]

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="div-container">
     <el-row>
       <el-table
         ref="issueList"
@@ -81,11 +81,11 @@
 
 <script>
 import { getReleaseVersion } from '@/api/release'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Pagination, SearchBar } from '@/newMixins'
 
 export default {
   name: 'ReleaseTable',
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Pagination, SearchBar],
   model: {
     prop: 'keyword',
     event: 'changed'
@@ -110,8 +110,8 @@ export default {
   },
   methods: {
     async fetchData() {
-      const res = await getReleaseVersion(this.selectedProjectId)
-      return res.data.plugin_list
+      const res = await getReleaseVersion(this.selectedProject.id)
+      return res.data.releases
     },
     formatTime(value) {
       const time = value.split('.')[0]

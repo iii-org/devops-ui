@@ -278,7 +278,7 @@ export default {
       addTopicDialogVisible: false,
       searchVisible: false,
       fixed_version_closed: false,
-      displayClosed: false,
+      displayClosed: true,
       contextMenu: {
         row: { fixed_version: { id: 'null' }, assigned_to: { id: 'null' }},
         visible: false,
@@ -358,18 +358,18 @@ export default {
     }
   },
   watch: {
-    selectedProjectId() {
-      this.loadSelectionList()
-      this.initTableData()
-    },
-    filterValue: {
-      deep: true,
-      handler() {
-        // TODO: RememberPageProblem
-        this.backToFirstPage()
-        this.onChangeFilter()
-      }
-    },
+    // selectedProjectId() {
+    //   this.loadSelectionList()
+    //   this.initTableData()
+    // },
+    // filterValue: {
+    //   deep: true,
+    //   handler() {
+    //     // TODO: RememberPageProblem
+    //     this.backToFirstPage()
+    //     this.onChangeFilter()
+    //   }
+    // },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
@@ -392,9 +392,9 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    // this.filterValue = this.issueListFilter
+    this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
-    this.fixed_version_closed = this.fixedVersionShowClosed
+    this.fixed_version_closed = true
     this.displayClosed = this.issueListDisplayClosed
     // this.displayClosed = true
     await this.loadSelectionList()
@@ -429,9 +429,9 @@ export default {
       if (this.sort) {
         result['sort'] = this.sort
       }
-      if (!this.displayClosed) {
-        result['status_id'] = 'open'
-      }
+      // if (!this.displayClosed) {
+      //   result['status_id'] = 'open'
+      // }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           result[item + '_id'] = this.filterValue[item]
@@ -454,6 +454,7 @@ export default {
           this.lastIssueListCancelToken.cancel()
         }
         const cancelTokenSource = axios.CancelToken.source()
+        if (!this.getParams().fixed_version_id) return
         const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })
         this.lastIssueListCancelToken = cancelTokenSource
         data = listData.data.issue_list
@@ -475,7 +476,7 @@ export default {
     async loadVersionList(status) {
       let params = { status: 'open,locked' }
       if (status) {
-        params = { status: 'open,locked,closed' }
+        params = { status: 'closed' }
       }
       const versionList = await getProjectVersion(this.selectedProjectId, params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]

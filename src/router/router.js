@@ -220,7 +220,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
             meta: {
               title: 'Issue Detail',
-              roles: ['QA', 'Administrator'],
+              roles: ['Project Manager', 'Administrator'],
               rolePage: false
             }
           }
