@@ -67,7 +67,7 @@
                   <i class="el-icon-warning" />
                   <span>{{ $t('Issue.NoImage') }}</span>
                 </span>
-                <div style="margin-top: 85px;">
+                <div style="margin-top: 55px;">
                   <el-popconfirm
                     :confirm-button-text="$t('Issue.DetermineContinue')"
                     :cancel-button-text="$t('general.Cancel')"
