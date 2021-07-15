@@ -248,7 +248,7 @@ export const asyncRoutes = [
             path: 'issue-transfer/:userId',
             name: 'Issue Transfer',
             hidden: true,
-            component: () => import('@/views/Project/Settings/components/ProjectIssueTransfer'),
+            component: () => import('@/views/Project/Settings/ProjectIssueTransfer'),
             meta: { title: 'Issue Transfer', roles: ['Project Manager', 'Administrator'] }
           }
         ]
