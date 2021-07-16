@@ -27,31 +27,32 @@
       </template>
     </project-list-selector>
     <el-divider />
-    <el-col :xs="24" :md="12">
-      <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
-    </el-col>
-
-    <el-col :xs="24" :md="12">
-      <WorkloadCard
-        ref="issuePriority"
-        :statistics-obj="statisticsObj"
-        @emitSelectedItem="handleSelectedItem"
-        @showFullIssuePriority="showFullIssuePriority"
-      />
-    </el-col>
-
-    <el-col :xs="24" :md="12">
-      <ProjectUserCard ref="projectUserList" :user-list="userList" />
-    </el-col>
-
-    <el-col :xs="24" :md="12">
-      <TestStatusCard
-        ref="testStatus"
-        :is-loading="isProjectTestList"
-        :project-test-obj="projectTestObj"
-        @update="updateProjectTestList"
-      />
-    </el-col>
+    <el-row :gutter="10">
+      <el-col :xs="24" :md="12">
+        <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
+      </el-col>
+      <el-col :xs="24" :md="12">
+        <WorkloadCard
+          ref="issuePriority"
+          :statistics-obj="statisticsObj"
+          @emitSelectedItem="handleSelectedItem"
+          @showFullIssuePriority="showFullIssuePriority"
+        />
+      </el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :xs="24" :md="12">
+        <ProjectUserCard ref="projectUserList" :user-list="userList" />
+      </el-col>
+      <el-col :xs="24" :md="12">
+        <TestStatusCard
+          ref="testStatus"
+          :is-loading="isProjectTestList"
+          :project-test-obj="projectTestObj"
+          @update="updateProjectTestList"
+        />
+      </el-col>
+    </el-row>
     <el-dialog :visible.sync="fullIssuePriority" top="5vh" width="90%">
       <WorkloadCard :key="reload" :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
     </el-dialog>
