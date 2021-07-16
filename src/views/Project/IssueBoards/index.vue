@@ -514,6 +514,9 @@ export default {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
     searchKanbanCard(value, opt) {
+      if (!value || value === '') {
+        return true
+      }
       Object.keys(this.classifyIssueList).forEach(item => {
         if (value === 'null') {
           this.classifyIssueList[item] = this.classifyIssueList[item].filter(subItem => {
