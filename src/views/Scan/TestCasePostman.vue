@@ -193,7 +193,7 @@ export default {
       }
     },
     handleBack() {
-      this.$router.push({ name: 'postman' })
+      this.$router.push({ name: 'postman-test' })
     }
   }
 }

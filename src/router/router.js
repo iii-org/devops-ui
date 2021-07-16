@@ -396,6 +396,7 @@ export const asyncRoutes = [
     path: '/scan',
     component: Layout,
     name: 'scan',
+    alwaysShow: true,
     meta: {
       title: 'autoTesting',
       icon: 'el-icon-circle-check',
@@ -406,6 +407,7 @@ export const asyncRoutes = [
       {
         path: 'postman',
         component: parentBlank,
+        name: 'postman',
         meta: {
           title: 'postman',
           roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
@@ -413,7 +415,7 @@ export const asyncRoutes = [
         children: [
           {
             path: '',
-            name: 'postman',
+            name: 'postman-test',
             hidden: true,
             component: () => import('@/views/Scan/Postman')
           },
@@ -447,12 +449,13 @@ export const asyncRoutes = [
       },
       {
         path: 'web-inspect',
+        name: 'webinspect',
         component: parentBlank,
         meta: { title: 'webInspect', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] },
         children: [
           {
             path: '',
-            name: 'webinspect',
+            name: 'webinspect-test',
             hidden: true,
             component: () => import('@/views/Scan/WebInspect')
           },
@@ -465,7 +468,6 @@ export const asyncRoutes = [
           }
         ]
       },
-
       {
         path: 'zap',
         name: 'zap',
