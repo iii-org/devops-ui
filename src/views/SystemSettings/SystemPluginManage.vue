@@ -2,7 +2,7 @@
   <el-row v-loading="isLoading" class="app-container">
     <el-col>
       <el-row type="flex" justify="space-between">
-        <el-button type="success" icon="el-icon-plus" @click="handleAdd">{{ $t('System.AddPlugin') }}</el-button>
+        <el-button type="success" icon="el-icon-plus" @click="handleAddClick">{{ $t('System.AddPlugin') }}</el-button>
         <el-input
           v-model="keyword"
           :placeholder="$t('general.SearchName')"
@@ -13,11 +13,6 @@
       <el-divider />
       <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
         <el-table-column :label="$t('general.Name')" align="center" prop="name" />
-        <el-table-column :label="$t('general.Type')" align="center" prop="type_id">
-          <template slot-scope="scope">
-            {{ mapTypeName(scope.row.type_id) }}
-          </template>
-        </el-table-column>
         <el-table-column :label="$t('general.Status')" align="center" prop="disabled">
           <template slot-scope="scope">
             <el-tag :type="scope.row.disabled ? 'danger' : 'success'">{{
@@ -28,7 +23,7 @@
         <el-table-column-time prop="create_at" min-width="200" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row.id)">
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
               {{ $t('general.Edit') }}
             </el-button>
             <el-popconfirm
@@ -37,7 +32,7 @@
               icon="el-icon-info"
               icon-color="red"
               :title="$t('Member.confirmRemove')"
-              @onConfirm="handleDelete(scope.row.id)"
+              @onConfirm="handleDelete(scope.row.name)"
             >
               <el-button slot="reference" size="mini" type="danger" icon="el-icon-delete">
                 {{ $t('general.Remove') }}
@@ -56,44 +51,39 @@
       />
     </el-col>
 
-    <el-dialog :title="dialogTitle" :visible.sync="isDialogVisible" width="50%" top="3vh" @close="handleClose">
+    <el-dialog :title="dialogTitle" :visible.sync="isDialogVisible" width="70vw" top="3vh" @close="handleClose">
       <el-form ref="form" :model="form" :rules="formRules" label-position="top">
         <el-row :gutter="12">
-          <el-col :span="18">
+          <el-col :span="8">
             <el-form-item :label="$t('general.Name')" prop="name">
               <el-input v-model="form.name" :placeholder="$t('general.PleaseInput') + $t('general.Name')" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item :label="$t('general.Type')">
-              <el-select v-model="form.type_id" :disabled="!isAddPlugin">
-                <el-option
-                  v-for="option in pluginOptions"
-                  :key="option.value"
-                  :label="option.label"
-                  :value="option.value"
-                />
-              </el-select>
+          <el-col :span="4">
+            <el-form-item :label="$t('general.Disable')" prop="disabled">
+              <el-switch v-model="form.disabled" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-for="(param, paramIdx) in form.parameter" :key="paramIdx" :gutter="12">
-          <el-col :span="6">
+        <el-row v-for="(param, paramIdx) in form.arguments" :key="paramIdx" :gutter="12">
+          <el-col :span="24" class="text-title">{{ param.title }}</el-col>
+          <el-col :span="8">
             <el-form-item
               :label="`key ${paramIdx + 1} `"
-              :prop="'parameter.' + paramIdx + '.key'"
+              :prop="'arguments.' + paramIdx + '.key'"
               :rules="[{ required: true, message: $t('general.PleaseInput') + 'key', trigger: 'blur' }]"
             >
-              <el-input v-model="form.parameter[paramIdx].key" placeholder="key" :disabled="!isAddPlugin" />
+              <el-input v-model="form.arguments[paramIdx].key" placeholder="key" :disabled="!isAddPlugin" />
             </el-form-item>
           </el-col>
-          <el-col :span="15">
+          <el-col :span="13">
             <el-form-item
+              class="text-gray-500"
               :label="`value ${paramIdx + 1} `"
-              :prop="'parameter.' + paramIdx + '.value'"
+              :prop="'arguments.' + paramIdx + '.value'"
               :rules="[{ required: true, message: $t('general.PleaseInput') + 'value', trigger: 'blur' }]"
             >
-              <el-input v-model="form.parameter[paramIdx].value" show-password placeholder="value" />
+              <el-input v-model="form.arguments[paramIdx].value" show-password placeholder="value" />
             </el-form-item>
           </el-col>
           <el-col :span="3" style="padding-top: 45px">
@@ -107,13 +97,6 @@
             {{ $t('System.AddParams') }}
           </el-button>
         </div>
-        <el-row>
-          <el-col>
-            <el-form-item :label="$t('general.Disable')" prop="disabled">
-              <el-switch v-model="form.disabled" />
-            </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -132,9 +115,8 @@ import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = () => ({
   name: '',
-  type_id: 1,
   disabled: false,
-  parameter: [{ key: '', value: '' }]
+  arguments: [{ key: '', title: '', type: '', value: '' }]
 })
 
 export default {
@@ -149,17 +131,7 @@ export default {
       form: formTemplate(),
       formRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
-      },
-      pluginOptions: [
-        {
-          value: 1,
-          label: 'Plugin'
-        },
-        {
-          value: 2,
-          label: 'Pipeline'
-        }
-      ]
+      }
     }
   },
   computed: {
@@ -172,56 +144,44 @@ export default {
       const res = await getPlugins()
       return res.data
     },
-    async handleAdd() {
+    async handleAddClick() {
       this.isAddPlugin = true
       this.isDialogVisible = true
     },
-    async handleEdit(pluginId) {
+    async handleEditClick(pluginName) {
       this.isAddPlugin = false
       this.isLoading = true
-      const res = await getPluginDetails(pluginId)
-      const { name, disabled, id, parameter, type_id } = res.data
-      Object.assign(this.form, {
-        name,
-        disabled,
-        id,
-        parameter: Object.entries(parameter).map(item => ({
-          key: item[0],
-          value: item[1]
-        })),
-        type_id
-      })
+      const res = await getPluginDetails(pluginName)
+      const { name, disabled } = res.data
+      Object.assign(this.form, { name, disabled, arguments: res.data.arguments })
       this.isLoading = false
       this.isDialogVisible = true
     },
-    mapTypeName(id) {
-      const typeName = { 1: 'Plugin', 2: 'Pipeline' }
-      return typeName[id]
-    },
     handleClose() {
-      this.isDialogVisible = false
       this.$nextTick(() => {
         this.$refs['form'].resetFields()
         this.form = formTemplate()
       })
+      this.isDialogVisible = false
     },
-    async handleConfirm() {
+    handleConfirm() {
       this.$refs['form'].validate(async valid => {
         if (valid) {
           const sendData = Object.assign({}, this.form)
-          sendData.parameter = this.form.parameter.reduce(
+          delete sendData.name
+          sendData.arguments = this.form.arguments.reduce(
             (result, cur) => Object.assign(result, { [cur.key]: cur.value }),
             {}
           )
-          this.isAddPlugin ? await addPlugin(sendData) : await updatePlugin(this.form.id, sendData)
+          await this.isAddPlugin ? await addPlugin(this.form.name, sendData) : await updatePlugin(this.form.name, sendData)
           this.handleClose()
           this.loadData()
         }
       })
     },
-    handleDelete(pluginId) {
+    handleDelete(pluginName) {
       this.isLoading = true
-      deletePlugin(pluginId)
+      deletePlugin(pluginName)
         .then(() => {
           this.$message({
             message: this.$t('Notify.Deleted'),
@@ -235,16 +195,17 @@ export default {
           })
         })
         .then(() => {
+          this.loadData()
           this.isLoading = false
         })
     },
     addItem() {
-      this.form.parameter.push({ key: '', value: '' })
+      this.form.arguments.push({ key: '', title: '', type: '', value: '' })
     },
     removeItem(item) {
-      const index = this.form.parameter.indexOf(item)
+      const index = this.form.arguments.indexOf(item)
       if (index !== -1) {
-        this.form.parameter.splice(index, 1)
+        this.form.arguments.splice(index, 1)
       }
     }
   }
