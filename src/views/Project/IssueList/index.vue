@@ -370,6 +370,7 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
+    this.cleanFilter()
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
     this.fixed_version_closed = this.fixedVersionShowClosed
