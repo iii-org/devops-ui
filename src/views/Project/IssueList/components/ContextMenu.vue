@@ -31,7 +31,7 @@
         <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('Issue.ChildrenIssue') }}</contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
         <contextmenu-item divider />
-        <contextmenu-item @click="advancedAddIssue">{{ $t('Issue.CloneIssue') }}</contextmenu-item>
+        <contextmenu-item @click="advancedAddIssue">{{ $t('Issue.CopyIssue') }}</contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog
