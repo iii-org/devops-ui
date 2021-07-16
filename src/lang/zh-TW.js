@@ -464,8 +464,8 @@ export default {
     CheckChildrenIssueStatus: '檢核子議題關聯狀態',
     OriginalParentIssue: '原@:Issue.ParentIssue',
     NoParentIssue: '未設定@:Issue.ParentIssue',
-    Clone: '複製',
-    CloneIssue: '@:Issue.Clone@:Issue.Issue',
+    Copy: '副本',
+    CopyIssue: '@:Issue.Issue@:Issue.Copy',
     batchTransfer: '批次移轉',
     batchClose: '批次關閉'
   },

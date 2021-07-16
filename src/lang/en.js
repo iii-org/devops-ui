@@ -460,8 +460,8 @@ export default {
     CheckChildrenIssueStatus: 'Check Children Issue Status',
     OriginalParentIssue: 'Original @:Issue.ParentIssue',
     NoParentIssue: 'No @:Issue.ParentIssue',
-    Clone: 'Clone',
-    CloneIssue: '@:Issue.Clone @:Issue.Issue',
+    Copy: 'Copy',
+    CopyIssue: '@:Issue.Copy @:Issue.Issue',
     batchTransfer: 'Batch Transfer',
     batchClose: 'Batch Close'
   },

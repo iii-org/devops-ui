@@ -391,7 +391,7 @@ export default {
       this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.subject = name + '(' + this.$t('Issue.Clone') + ')'
+      this.form.subject = name + '(' + this.$t('Issue.Copy') + ')'
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
