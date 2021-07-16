@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-row style="margin-bottom: 10px;">
+    <el-row class="mb-2">
       <el-col :span="24">
         <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
         <el-link underline type="primary" @click="openIssueDialog(null)">
@@ -35,11 +35,11 @@
       </el-row>
     </el-card>
     <br>
-    <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px;">{{ $t('Release.packageVersionSettings') }}</div>
-    <el-row style="display: flex">
-      <el-col :span="9" style="margin-right: 20px;">
+    <div class="font-bold text-lg mb-2">{{ $t('Release.packageVersionSettings') }}</div>
+    <el-row class="flex">
+      <el-col :span="9" class="mr-4">
         <el-card shadow="hover" style="height: 400px;">
-          <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseVersionName') }}/{{ $t('Git.Branch') }}/{{ $t('PodsList.Image') }}</div>
+          <div class="mb-4 font-bold">{{ $t('Release.releaseVersionName') }}/{{ $t('Git.Branch') }}/{{ $t('PodsList.Image') }}</div>
           <el-form ref="form" :model="commitForm">
             <el-form-item :label="$t('Release.releaseVersionName')">
               <el-select v-model="commitForm.mainVersion" :placeholder="$t('Release.selectMainVersion')" filterable>
@@ -64,12 +64,12 @@
             </el-form-item>
             <el-form-item>
               {{ $t('PodsList.Image') }}:
-              <span v-if="showHarborTag" style="line-height: 40px; color: #606206;">
+              <span v-if="showHarborTag" class="black-normal" style="line-height: 40px;">
                 <svg-icon icon-class="ion-git-commit-outline" />
                 {{ repoArtifactName }}
               </span>
               <span v-else>
-                <span style="color: red; margin-right: 30px;">
+                <span class="text-red-warning mr-3">
                   <i class="el-icon-warning" />
                   <span>{{ $t('Issue.NoImage') }}</span>
                 </span>
@@ -93,10 +93,10 @@
       </el-col>
       <el-col :span="15">
         <el-card shadow="hover" style="height: 400px;">
-          <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
+          <div class="mb-4 font-bold">{{ $t('Release.releaseNote') }}</div>
           <el-form>
             <el-form-item>
-              <el-input v-model="commitForm.note" type="textarea" style="width: 100%;" :rows="11" />
+              <el-input v-model="commitForm.note" class="w-full" type="textarea" :rows="11" />
             </el-form-item>
             <el-form-item>
               <el-button v-if="isConfirmPackageVersion || showHarborTag" v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">

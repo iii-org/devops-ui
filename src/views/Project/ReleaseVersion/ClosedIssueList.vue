@@ -97,8 +97,7 @@
                 <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
                   <b>{{ $t('Issue.ParentIssue') }}:</b>
                   <el-link
-                    class="font-weight-regular"
-                    :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                    class="font-weight-regular text-lg cursor-pointer"
                     :underline="false"
                     @click="handleEdit(scope.row.parent.id)"
                     @contextmenu.native="handleContextMenu(scope.row.parent,'',$event)"

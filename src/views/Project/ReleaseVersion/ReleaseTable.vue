@@ -3,7 +3,7 @@
     <el-row>
       <el-table
         ref="issueList"
-        style="width: 100vw"
+        class="w-screen"
         :data="pagedData"
         border
         fit
@@ -58,7 +58,7 @@
                 />
               </div>
               <span slot="reference">
-                <el-link style="font-size: 22px" :underline="false">
+                <el-link class="text-xl" :underline="false">
                   <svg-icon icon-class="harbor" />
                 </el-link>
               </span>

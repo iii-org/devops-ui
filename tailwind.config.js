@@ -22,6 +22,14 @@ module.exports = {
       'min': 'min-content',
       'max': 'max-content'
     },
+    colors: {
+      red: {
+        warning: '#f56c6c'
+      },
+      black: {
+        normal: '#606206'
+      }
+    },
     extend: {}
   },
   variants: {
