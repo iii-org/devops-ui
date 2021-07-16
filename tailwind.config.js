@@ -1,5 +1,3 @@
-const defaultColors = require('tailwindcss/colors')
-
 module.exports = {
   mode: 'jit', // just-in-time mode: https://tailwindcss.com/docs/just-in-time-mode
   purge: {
@@ -16,25 +14,22 @@ module.exports = {
   theme: {
     minWidth: {
       '0': '0',
-      '300': '300px',
       '1/4': '25%',
       '1/2': '50%',
       '3/4': '75%',
-      'full': '100%',
-      'min': 'min-content',
-      'max': 'max-content'
+      'full': '100%'
     },
-    colors: {
-      ...defaultColors,
-      ...{ red: {
-        warning: '#f56c6c'
+    extend: {
+      minWidth: {
+        '300': '300px'
       },
-      black: {
-        normal: '#606206'
+      colors: {
+        danger: '#f56c6c',
+        custom: {
+          black: '#606206'
+        }
       }
-      }
-    },
-    extend: {}
+    }
   },
   variants: {
     extend: {}
