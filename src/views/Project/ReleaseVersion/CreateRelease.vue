@@ -38,7 +38,7 @@
     <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px;">{{ $t('Release.packageVersionSettings') }}</div>
     <el-row style="display: flex">
       <el-col :span="9" style="margin-right: 20px;">
-        <el-card shadow="hover" style="height: 350px;">
+        <el-card shadow="hover" style="height: 400px;">
           <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseVersionName') }}/{{ $t('Git.Branch') }}/{{ $t('PodsList.Image') }}</div>
           <el-form ref="form" :model="commitForm">
             <el-form-item :label="$t('Release.releaseVersionName')">
@@ -56,18 +56,24 @@
                 <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
               </el-select>
             </el-form-item>
+            <el-form-item :label="$t('Git.Commit')">
+              <div>
+                <svg-icon icon-class="ion-git-commit-outline" />
+                {{ commitId }}
+              </div>
+            </el-form-item>
             <el-form-item>
               {{ $t('PodsList.Image') }}:
               <span v-if="showHarborTag" style="line-height: 40px; color: #606206;">
-                <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
-                {{ commitId }}
+                <svg-icon icon-class="ion-git-commit-outline" />
+                {{ repoArtifactName }}
               </span>
               <span v-else>
                 <span style="color: red; margin-right: 30px;">
                   <i class="el-icon-warning" />
                   <span>{{ $t('Issue.NoImage') }}</span>
                 </span>
-                <div style="margin-top: 55px;">
+                <div style="margin-top: 35px;">
                   <el-popconfirm
                     :confirm-button-text="$t('Issue.DetermineContinue')"
                     :cancel-button-text="$t('general.Cancel')"
@@ -86,11 +92,11 @@
         </el-card>
       </el-col>
       <el-col :span="15">
-        <el-card shadow="hover" style="height: 350px;">
+        <el-card shadow="hover" style="height: 400px;">
           <div style="margin-bottom: 20px; font-weight: bold;">{{ $t('Release.releaseNote') }}</div>
           <el-form>
             <el-form-item>
-              <el-input v-model="commitForm.note" type="textarea" style="width: 100%;" :rows="9" />
+              <el-input v-model="commitForm.note" type="textarea" style="width: 100%;" :rows="11" />
             </el-form-item>
             <el-form-item>
               <el-button v-if="isConfirmPackageVersion || showHarborTag" v-loading.fullscreen.lock="fullscreenLoading" type="success" @click="release">
@@ -115,7 +121,7 @@ import IssueListDialog from './IssueListDialog'
 import { mapGetters } from 'vuex'
 import { getBranchesByProject } from '@/api/branches'
 import { createRelease } from '@/api/release'
-import { getHarborRepoList, getProjectArtifacts, getRepoArtifacts } from '@/api/harbor'
+import { getHarborRepoList, getRepoArtifacts } from '@/api/harbor'
 
 export default {
   name: 'CreateRelease',
@@ -271,9 +277,9 @@ export default {
       this.$parent.reset()
     },
     async checkHarborImage() {
-      const projectArifact = await getProjectArtifacts(this.selectedRepo)
-      this.repoArtifact = await getRepoArtifacts(this.selectedRepo, projectArifact.data[0].name)
+      this.repoArtifact = await getRepoArtifacts(this.selectedRepo, this.commitId)
       if (this.repoArtifact.data && this.repoArtifact.data.length > 0) this.showHarborTag = true
+      else this.showHarborTag = false
     },
     async handleSelectedRepoName(repo) {
       const harborData = await getHarborRepoList(this.selectedProjectId)

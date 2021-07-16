@@ -14,7 +14,7 @@
         <el-table-column :label="$t('TestCase.Index')" type="index" sortable width="100" />
         <el-table-column :label="$t('Issue.PackageVersionTime')" sortable width="300">
           <template slot-scope="scope">
-            {{ formatTime(scope.row.create_at) }}
+            {{ UTCtoLocalTime(scope.row.create_at) }}
           </template>
         </el-table-column>
         <el-table-column :label="$t('Version.Version')" prop="tag_name" sortable width="120" />
@@ -82,6 +82,7 @@
 <script>
 import { getReleaseVersion } from '@/api/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
+import { UTCtoLocalTime } from '@/filters/index'
 
 export default {
   name: 'ReleaseTable',
@@ -132,6 +133,9 @@ export default {
         message: this.$t('Notify.Copied'),
         type: 'success'
       })
+    },
+    UTCtoLocalTime(time) {
+      return UTCtoLocalTime(time)
     }
   }
 }
