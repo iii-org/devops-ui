@@ -64,12 +64,12 @@
             </el-form-item>
             <el-form-item>
               {{ $t('PodsList.Image') }}:
-              <span v-if="showHarborTag" class="black-normal" style="line-height: 40px;">
+              <span v-if="showHarborTag" class="custom-black" style="line-height: 40px;">
                 <svg-icon icon-class="ion-git-commit-outline" />
                 {{ repoArtifactName }}
               </span>
               <span v-else>
-                <span class="text-red-warning mr-3">
+                <span class="text-danger mr-3">
                   <i class="el-icon-warning" />
                   <span>{{ $t('Issue.NoImage') }}</span>
                 </span>

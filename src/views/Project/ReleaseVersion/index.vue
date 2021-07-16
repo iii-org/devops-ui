@@ -42,7 +42,7 @@
         </el-button>
       </span>
     </p>
-    <div v-if="isProjectVersionSelectorShowed" class="text-sm text-red-warning">
+    <div v-if="isProjectVersionSelectorShowed" class="text-sm text-danger">
       <div>{{ $t('Release.openIssueHint') }}</div>
     </div>
     <el-divider />
