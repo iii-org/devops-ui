@@ -1,3 +1,5 @@
+const defaultColors = require('tailwindcss/colors')
+
 module.exports = {
   mode: 'jit', // just-in-time mode: https://tailwindcss.com/docs/just-in-time-mode
   purge: {
@@ -23,11 +25,13 @@ module.exports = {
       'max': 'max-content'
     },
     colors: {
-      red: {
+      ...defaultColors,
+      ...{ red: {
         warning: '#f56c6c'
       },
       black: {
         normal: '#606206'
+      }
       }
     },
     extend: {}
