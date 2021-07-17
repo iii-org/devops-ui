@@ -206,6 +206,7 @@ export default {
           errorMsg.push(h('li', [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]))
           this.showErrorAlert(errorMsg)
         }
+        return checkPriority
       }
     },
     checkAssigned(to, element) {
@@ -226,8 +227,8 @@ export default {
       }
       return result
     },
-    checkPriority(to, element) {
-      return element.children.length <= 0
+    checkPriority(element) {
+      return !element.has_children
     },
     end(boardObject, event) {
       this.reload += 1
