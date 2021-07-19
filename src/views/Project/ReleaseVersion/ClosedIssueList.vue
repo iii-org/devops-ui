@@ -543,7 +543,7 @@ export default {
       } else if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+        this.$router.push({ name: 'issue-detail', params: { issueId: row.id, disableButton: true }})
       }
     },
     handleEdit(id) {

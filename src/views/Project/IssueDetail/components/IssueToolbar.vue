@@ -1,10 +1,10 @@
 <template>
   <el-row type="flex" justify="space-between" align="middle" class="mb-5">
     <el-col>
-      <el-button size="small" icon="el-icon-upload" type="success" @click="uploadDialogVisible = true">{{
+      <el-button size="small" icon="el-icon-upload" :type="isButtonDisabled ? 'info' : 'success'" :disabled="isButtonDisabled" @click="uploadDialogVisible = true">{{
         $t('Issue.UploadFiles')
       }}</el-button>
-      <el-button size="small" icon="el-icon-plus" type="warning" @click="addTopicDialogVisible = true">{{
+      <el-button size="small" icon="el-icon-plus" :type="isButtonDisabled ? 'info' : 'warning'" :disabled="isButtonDisabled" @click="addTopicDialogVisible = true">{{
         $t('Issue.AddSubIssue')
       }}</el-button>
     </el-col>
@@ -78,6 +78,10 @@ export default {
     issueName: {
       type: [String, Number],
       default: null
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
