@@ -85,7 +85,6 @@
         height="60vh"
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
-        @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
         @expand-change="getIssueFamilyData"
         @sort-change="handleSortChange"
@@ -100,7 +99,6 @@
                     class="font-weight-regular text-lg cursor-pointer"
                     :underline="false"
                     @click="handleEdit(scope.row.parent.id)"
-                    @contextmenu.native="handleContextMenu(scope.row.parent,'',$event)"
                   >
                     <status :name="scope.row.parent.status.name" size="mini" />
                     <tracker :name="scope.row.parent.tracker.name" />
@@ -133,7 +131,6 @@
                           :style="{ 'font-size': '14px', cursor: 'pointer' }"
                           :underline="false"
                           @click="handleEdit(child.id)"
-                          @contextmenu.native="handleContextMenu(child, '', $event)"
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
@@ -655,35 +652,35 @@ export default {
           this.listLoading = false
         })
     },
-    handleContextMenu(row, column, event) {
-      event.preventDefault()
-      const eventX = event.pageX
-      const eventY = event.pageY
-      this.$refs.contextmenu.$refs.contextmenu.show()
-      this.$nextTick(() => {
-        const contextmenuPosition = {
-          top: eventY,
-          left: eventX
-        }
-        const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
-        const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
-        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
-          this.handleContextMenu(row, column, event)
-        }
-        if (contextmenuHeight + eventY >= window.innerHeight) {
-          contextmenuPosition.top -= contextmenuHeight
-        }
-        if (contextmenuWidth + eventX >= window.innerWidth) {
-          contextmenuPosition.left -= contextmenuWidth
-        }
-        this.contextMenu.top = contextmenuPosition.top
-        this.contextMenu.left = contextmenuPosition.left
-        this.contextMenu.row = row
-        this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
-        document.addEventListener('click', this.hideContextMenu)
-      })
-    },
+    // handleContextMenu(row, column, event) {
+    //   event.preventDefault()
+    //   const eventX = event.pageX
+    //   const eventY = event.pageY
+    //   this.$refs.contextmenu.$refs.contextmenu.show()
+    //   this.$nextTick(() => {
+    //     const contextmenuPosition = {
+    //       top: eventY,
+    //       left: eventX
+    //     }
+    //     const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
+    //     const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
+    //     if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
+    //       this.handleContextMenu(row, column, event)
+    //     }
+    //     if (contextmenuHeight + eventY >= window.innerHeight) {
+    //       contextmenuPosition.top -= contextmenuHeight
+    //     }
+    //     if (contextmenuWidth + eventX >= window.innerWidth) {
+    //       contextmenuPosition.left -= contextmenuWidth
+    //     }
+    //     this.contextMenu.top = contextmenuPosition.top
+    //     this.contextMenu.left = contextmenuPosition.left
+    //     this.contextMenu.row = row
+    //     this.contextMenu.visible = true
+    //     this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+    //     document.addEventListener('click', this.hideContextMenu)
+    //   })
+    // },
     hideContextMenu() {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
