@@ -56,8 +56,19 @@
         <el-table-column :label="$t('Issue.id')" prop="id" align="center" width="75" />
         <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
         <el-table-column :label="$t('Project.Version')" align="center" prop="versionName" />
-        <el-table-column :label="$t('general.Type')" align="center" prop="trackerName" />
-        <el-table-column :label="$t('general.Status')" align="center" prop="statusName" />
+        <el-table-column :label="$t('general.Type')" width="130" sortable="custom">
+          <template slot-scope="scope">
+            <tracker v-if="scope.row.trackerName" :name="scope.row.trackerName" />
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Status')" width="150" sortable="custom">
+          <template slot-scope="scope">
+            <status
+              v-if="scope.row.statusName"
+              :name="scope.row.statusName"
+            />
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('Issue.Assignee')" align="center" prop="assigneeName" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
@@ -154,11 +165,15 @@
 import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
 import { updateIssue } from '@/api/issue'
 import { getCheckIssueClosable } from '@/api/issue'
+import Status from '@/components/Issue/Status'
+import Tracker from '@/components/Issue/Tracker'
 
 export default {
   name: 'IssuesTable',
   components: {
-    IssueNotesEditor: () => import('@/views/Project/IssueDetail/components/IssueNotesEditor')
+    IssueNotesEditor: () => import('@/views/Project/IssueDetail/components/IssueNotesEditor'),
+    Status,
+    Tracker
   },
   mixins: [MixinElTableWithCheckbox],
   data() {

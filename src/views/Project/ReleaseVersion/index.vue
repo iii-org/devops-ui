@@ -1,22 +1,20 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-col :span="16">
+      <el-col>
         <project-list-selector>
           <el-button slot="button" type="success" @click="showProjectVersionSelector">
             <span class="el-icon-goods" />
             <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
             <span v-else>{{ $t('Release.startPackageVersion') }}</span>
           </el-button>
+          <el-input
+            v-model="keywords"
+            style="width: 250px; float: right;"
+            :placeholder="$t('Project.SearchProjectNameOrId')"
+            prefix-icon="el-icon-search"
+          />
         </project-list-selector>
-      </el-col>
-      <el-col :span="8">
-        <el-input
-          v-model="keywords"
-          style="width: 250px; float: right;"
-          :placeholder="$t('Project.SearchProjectNameOrId')"
-          prefix-icon="el-icon-search"
-        />
       </el-col>
     </el-row>
     <p v-if="isProjectVersionSelectorShowed">
