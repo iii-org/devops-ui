@@ -370,7 +370,7 @@ export default {
     //   }
     // },
     fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
+      // this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
     },
     fixed_version: {
@@ -391,10 +391,10 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    this.filterValue = this.issueListFilter
-    this.keyword = this.issueListKeyword
+    // this.filterValue = this.issueListFilter
+    // this.keyword = this.issueListKeyword
     this.fixed_version_closed = true
-    this.displayClosed = this.issueListDisplayClosed
+    // this.displayClosed = this.issueListDisplayClosed
     // this.displayClosed = true
     await this.loadSelectionList()
   },
@@ -497,10 +497,10 @@ export default {
         ]
         this.status = statusList
         this.priority = priorityList
-        if (this.userRole === 'Engineer') {
-          this.$set(this.filterValue, 'assigned_to', this.userId)
-          this.$set(this.originFilterValue, 'assigned_to', this.userId)
-        }
+        // if (this.userRole === 'Engineer') {
+        //   this.$set(this.filterValue, 'assigned_to', this.userId)
+        //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
+        // }
       })
       await this.loadVersionList(this.fixed_version_closed)
     },
@@ -532,9 +532,9 @@ export default {
       return statusList.filter((item) => (item.is_closed === false))
     },
     onChangeFilter() {
-      this.setIssueListFilter(this.filterValue)
-      this.setIssueListKeyword(this.keyword)
-      this.setIssueListDisplayClosed(this.displayClosed)
+      // this.setIssueListFilter(this.filterValue)
+      // this.setIssueListKeyword(this.keyword)
+      // this.setIssueListDisplayClosed(this.displayClosed)
       this.initTableData()
     },
     handleClick(row, column) {
