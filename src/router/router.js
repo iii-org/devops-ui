@@ -443,8 +443,8 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: 'checkmarx',
         name: 'checkmarx',
+        path: 'checkmarx',
         component: () => import('@/views/Scan/Checkmarx'),
         meta: { title: 'checkMarx', roles: ['Engineer', 'Project Manager', 'QA', 'Administrator'] }
       },

@@ -1,5 +1,6 @@
 export default {
-  'description': 'description',
-  'argument key1': { title: 'title', placeholder: 'placeholder' },
-  'argument key2': { title: 'title', placeholder: 'placeholder' }
+  'description': 'Sonarqube source code scan',
+  'arguments': {
+    'sonar-url': { title: 'Server URL', placeholder: 'The server URL of Sonarqube.' }
+  }
 }

@@ -1,5 +1,6 @@
 export default {
-  'description': 'description',
-  'argument key1': { title: '標題', placeholder: '提示文字' },
-  'argument key2': { title: '標題', placeholder: '提示文字' }
+  'description': 'Sonarqube 原始碼掃描',
+  'arguments': {
+    'sonar-url': { title: '伺服器位址', placeholder: 'Sonarqube 伺服器的 URL' }
+  }
 }
