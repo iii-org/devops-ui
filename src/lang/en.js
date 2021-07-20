@@ -1,3 +1,11 @@
+const langFiles = require.context('./plugins', true, /\en.js$/)
+const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
+  const name = langPath.replace(/^\.\/(.*)\/(.*)/, '$1')
+  const value = langFiles(langPath)
+  plugins[name] = value.default
+  return plugins
+}, {})
+
 export default {
   route: {
     myWork: 'My Work',
@@ -853,5 +861,6 @@ export default {
     createHarbor: 'Linking to Harbor resources...',
     integrationProject: 'Start integrating project resources...',
     loadingTemplateText: 'Update latest templates'
-  }
+  },
+  Plugins: { ...asyncLangs }
 }

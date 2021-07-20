@@ -51,7 +51,7 @@
       />
     </el-col>
 
-    <el-dialog :title="dialogTitle" :visible.sync="isDialogVisible" width="70vw" top="3vh" @close="handleClose">
+    <el-dialog v-if="isDialogVisible" :title="dialogTitle" :visible.sync="isDialogVisible" width="50vw" top="3vh" destroy-on-close @close="handleClose">
       <el-form ref="form" :model="form" :rules="formRules" label-position="top">
         <el-row :gutter="12">
           <el-col :span="8">
@@ -66,24 +66,14 @@
           </el-col>
         </el-row>
         <el-row v-for="(param, paramIdx) in form.arguments" :key="paramIdx" :gutter="12">
-          <el-col :span="24" class="text-title">{{ param.title }}</el-col>
-          <el-col :span="8">
-            <el-form-item
-              :label="`key ${paramIdx + 1} `"
-              :prop="'arguments.' + paramIdx + '.key'"
-              :rules="[{ required: true, message: $t('general.PleaseInput') + 'key', trigger: 'blur' }]"
-            >
-              <el-input v-model="form.arguments[paramIdx].key" placeholder="key" :disabled="!isAddPlugin" />
-            </el-form-item>
-          </el-col>
           <el-col :span="13">
             <el-form-item
               class="text-gray-500"
-              :label="`value ${paramIdx + 1} `"
+              :label="$t(`Plugins.${form.name}.${param.key}.title`)"
               :prop="'arguments.' + paramIdx + '.value'"
-              :rules="[{ required: true, message: $t('general.PleaseInput') + 'value', trigger: 'blur' }]"
+              :rules="[{ required: true, message: $t(`Plugins.${form.name}.${param.key}.placeholder`), trigger: 'blur' }]"
             >
-              <el-input v-model="form.arguments[paramIdx].value" show-password placeholder="value" />
+              <el-input v-model="form.arguments[paramIdx].value" show-password :placeholder="$t(`Plugins.${form.name}.${param.key}.placeholder`)" />
             </el-form-item>
           </el-col>
           <el-col :span="3" style="padding-top: 45px">
@@ -158,10 +148,10 @@ export default {
       this.isDialogVisible = true
     },
     handleClose() {
-      this.$nextTick(() => {
-        this.$refs['form'].resetFields()
-        this.form = formTemplate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['form'].resetFields()
+      //   this.form = formTemplate()
+      // })
       this.isDialogVisible = false
     },
     handleConfirm() {

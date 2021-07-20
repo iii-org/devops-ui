@@ -1,3 +1,11 @@
+const langFiles = require.context('./plugins', true, /\zh-TW.js$/)
+const asyncLangs = langFiles.keys().reduce((plugins, langPath) => {
+  const name = langPath.replace(/^\.\/(.*)\/(.*)/, '$1')
+  const value = langFiles(langPath)
+  plugins[name] = value.default
+  return plugins
+}, {})
+
 export default {
   route: {
     myWork: '我的工作',
@@ -854,5 +862,6 @@ export default {
     createHarbor: '連結Harbor資源...',
     integrationProject: '開始整合專案資源...',
     loadingTemplateText: '更新所有範本最新資訊中'
-  }
+  },
+  Plugins: { ...asyncLangs }
 }
