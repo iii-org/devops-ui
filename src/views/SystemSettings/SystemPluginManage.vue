@@ -28,7 +28,7 @@
             <el-button size="mini" @click="handleActiveClick(scope.row)">
               <div class="flex items-center">
                 <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-                <span :class="scope.row.disabled ? 'text-success' : 'text-danger'">
+                <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
                   {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
                 </span>
               </div>
@@ -206,6 +206,6 @@ export default {
 
 <style lang="scss" scoped>
 .dot {
-  @apply rounded-full w-2 h-2 mr-2;
+  @apply rounded-full w-2 h-2;
 }
 </style>

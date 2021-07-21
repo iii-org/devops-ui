@@ -1,6 +1,6 @@
 <template>
   <el-button
-    v-if="showUpdateButton"
+    v-if="true"
     size="mini"
     type="warning"
     plain
