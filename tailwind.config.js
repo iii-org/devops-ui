@@ -17,12 +17,30 @@ module.exports = {
         '300': '300px'
       },
       colors: {
-        danger: '#f56c6c',
-        success: '#67C23A',
         custom: {
           black: '#606206'
-        }
-      }
+        },
+        success: '#67c23a',
+        danger: '#f56c6c',
+        warning: '#e6a23c',
+        slow: '#56b1e8',
+        light: '#c1c3c5',
+        info: '#606260',
+        secondary: '#3ecbbc',
+        active: '#409eff',
+        assigned: '#f56c6c',
+        closed: '#909399',
+        solved: '#3ecbbc',
+        inProgress: '#e6a23c',
+        finished: '#67c23a',
+        feature: '#66d7ff',
+        document: '#5388ff',
+        bug: '#fea859',
+        research: '#a0da2c'
+      },
+      backgroundColor: theme => ({
+        ...theme('colors')
+      })
     }
   },
   variants: {

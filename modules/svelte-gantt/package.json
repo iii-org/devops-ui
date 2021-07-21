@@ -25,7 +25,6 @@
   "types": "types/index.d.ts",
   "main": "index.js",
   "dependencies": {
-    "moment": "^2.22.2",
-    "node-sass": "^6.0.1"
+    "moment": "^2.22.2"
   }
 }
