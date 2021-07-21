@@ -851,7 +851,8 @@ export default {
   SystemVersion: {
     Source: 'Source',
     Version: '@:Version.Version',
-    CommitID: 'Commit ID'
+    CommitID: 'Commit ID',
+    hasUpdate: 'New version is available.'
   },
   LoadingText: {
     createRedmine: 'Adding a Redmine project...',

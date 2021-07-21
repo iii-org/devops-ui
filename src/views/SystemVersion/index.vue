@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    <VersionUpdater />
     <el-table :data="list" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('SystemVersion.Source')" width="180">
         <template slot-scope="scope">
@@ -17,11 +16,10 @@
 <script>
 import { getVersion } from '@/api/dashboard'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import VersionUpdater from './components/VersionUpdater.vue'
 
 export default {
   name: 'SystemVersion',
-  components: { ElTableColumnTime, VersionUpdater },
+  components: { ElTableColumnTime },
   filters: {
     statusFilter(status) {
       const statusMap = {

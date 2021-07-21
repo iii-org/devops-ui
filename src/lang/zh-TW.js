@@ -852,7 +852,8 @@ export default {
   SystemVersion: {
     Source: '系統模組',
     Version: '@:Version.Version',
-    CommitID: '程式提交編號'
+    CommitID: '程式提交編號',
+    hasUpdate: '有新版本'
   },
   LoadingText: {
     createRedmine: '建立Redmine專案中...',
