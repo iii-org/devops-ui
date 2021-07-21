@@ -772,9 +772,7 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail',
-    AddPlugin: '新增插件',
-    AddParams: '新增參數'
+    RedmineMail: 'Redmine Mail'
   },
   PipeLines: {
     TestDetail: '測試細節'

@@ -771,9 +771,7 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail',
-    AddPlugin: 'Add Plugin',
-    AddParams: 'Add Params'
+    RedmineMail: 'Redmine Mail'
   },
   PipeLines: {
     TestDetail: 'Test Detail'

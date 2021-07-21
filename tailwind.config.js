@@ -18,6 +18,7 @@ module.exports = {
       },
       colors: {
         danger: '#f56c6c',
+        success: '#67C23A',
         custom: {
           black: '#606206'
         }
