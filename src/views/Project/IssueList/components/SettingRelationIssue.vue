@@ -317,7 +317,11 @@ export default {
       let queryList = res.data
       let key = 'Issue.Result'
       if (!this.issueQuery) {
-        queryList = res.data.issue_list
+        if (queryList && queryList.hasOwnProperty('issue_list')) {
+          queryList = res.data.issue_list
+        } else {
+          queryList = []
+        }
         key = 'Issue.LastResult'
       }
       const original = this.originalIssue()
