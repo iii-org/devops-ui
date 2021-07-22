@@ -311,6 +311,8 @@ export default {
     Version: 'Version',
     SelectVersion: 'Select Version',
     Id: 'Id',
+    closed: 'Closed',
+    open: 'Open',
     Open: 'Open',
     Locked: 'Locked',
     EndDate: 'EndDate'
@@ -320,6 +322,7 @@ export default {
     ReportedIssue: 'Reported Issue'
   },
   Issue: {
+    status: '@:general.Status',
     AddIssue: 'Add Issue',
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
