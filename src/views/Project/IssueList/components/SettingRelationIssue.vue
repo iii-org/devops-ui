@@ -296,7 +296,7 @@ export default {
     async getSearchIssue(query) {
       const params = {
         selection: true,
-        status: 'open'
+        status_id: 'open'
       }
       this.issueList = []
       if (query !== '' && query) {

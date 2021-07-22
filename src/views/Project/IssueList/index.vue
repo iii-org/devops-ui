@@ -162,6 +162,39 @@
                     </template>
                   </ol>
                 </li>
+                <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">
+                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
+                  <ol>
+                    <template v-for="child in scope.row.relations">
+                      <li v-if="Object.keys(child).length>0" :key="child.id">
+                        <el-link
+                          class="font-weight-regular my-1"
+                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                          :underline="false"
+                          @click="handleEdit(child.id)"
+                        >
+                          <status :name="child.status.name" size="mini" />
+                          <tracker :name="child.tracker.name" />
+                          #{{ child.id }} - {{ child.name }}
+                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{
+                              child.assigned_to.login
+                            }})</span>
+                        </el-link>
+                        <!--                        <el-popconfirm-->
+                        <!--                          :confirm-button-text="$t('general.Remove')"-->
+                        <!--                          :cancel-button-text="$t('general.Cancel')"-->
+                        <!--                          icon="el-icon-info"-->
+                        <!--                          icon-color="red"-->
+                        <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
+                        <!--                          @onConfirm="removeIssueRelation(child.id)"-->
+                        <!--                        >-->
+                        <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>-->
+                        <!--                        </el-popconfirm>-->
+                      </li>
+                    </template>
+                  </ol>
+                </li>
               </ul>
             </el-col>
           </template>
@@ -219,7 +252,14 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import {
+  addIssue,
+  getIssueFamily,
+  getIssuePriority,
+  getIssueStatus,
+  getIssueTracker,
+  updateIssue
+} from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
@@ -228,7 +268,7 @@ import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/newMixins'
-import ContextMenu from '@/views/Project/IssueList/components/ContextMenu'
+import ContextMenu from './components/ContextMenu'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -286,7 +326,8 @@ export default {
         offset: 0,
         total: 0
       },
-      lastIssueListCancelToken: null
+      lastIssueListCancelToken: null,
+      expandedRow: []
     }
   },
   computed: {
@@ -431,6 +472,12 @@ export default {
             total: 0
           }
         }
+        if (this.expandedRow.length > 0) {
+          for (const row of this.expandedRow) {
+            const getIssue = data.find((item) => (item.id === row.id))
+            await this.getIssueFamilyData(getIssue, this.expandedRow)
+          }
+        }
         // TODO: RememberPageProblem
         // await this.setIssueListListQuery(this.listQuery)
         // await this.setIssueListPageInfo(this.pageInfo)
@@ -489,6 +536,7 @@ export default {
       return result
     },
     async getIssueFamilyData(row, expandedRows) {
+      this.expandedRow = expandedRows
       if (expandedRows.find((item) => (item.id === row.id))) {
         try {
           await this.$set(row, 'loadingRelation', true)
@@ -499,9 +547,11 @@ export default {
           if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
           await this.$set(row, 'loadingRelation', false)
         } catch (e) {
-        //   null
+          //   null
+          return Promise.resolve()
         }
       }
+      return Promise.resolve()
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
@@ -631,7 +681,7 @@ export default {
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
-          this.handleUpdated()
+          this.initTableData()
         })
         .catch(err => {
           console.error(err)
