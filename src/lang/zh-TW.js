@@ -409,7 +409,6 @@ export default {
     DisplayClosedVersion: '顯示關閉@:Version.Version',
     open: '@:Version.Open',
     locked: '@:Version.Locked',
-    closed: '@:Version.Closed',
     ResetESCTip: '按下Windows+ESC (Mac:Command+ESC) 重置並關閉輸入欄位',
     ChildrenNotClosedWarning: '本議題尚有子議題未處理，請進入該議題確認與關閉後再進行搬移',
     PackageRecord: '包版紀錄',

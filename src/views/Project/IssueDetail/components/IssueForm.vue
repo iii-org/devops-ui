@@ -74,7 +74,7 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item :label="$t('general.status')" prop="status_id">
+    <el-form-item :label="$t('general.Status')" prop="status_id">
       <el-select v-model="form.status_id" :disabled="isParentIssueClosed" style="width: 100%">
         <el-option
           v-for="option in dynamicStatusList"

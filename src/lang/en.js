@@ -405,7 +405,6 @@ export default {
     DisplayClosedVersion: 'Show Closed Versions',
     open: '@:Version.Open',
     locked: '@:Version.Locked',
-    closed: '@:Version.Closed',
     ResetESCTip: 'Press Windows+ESC (Mac:Command+ESC) to Rest and Close Description Input area.',
     ChildrenNotClosedWarning: 'There are still sub-topics of this topic that have not been dealt with. Please enter the topic to confirm and close before moving.',
     PackageRecord: 'Package Record',
