@@ -112,9 +112,9 @@ export default {
       deliveryMethodOptions: [{ value: ':smtp', label: ':smtp' }, { value: ':semdmail', label: ':sendmail' }],
       authenticationOptions: [
         { value: 'nil', label: 'nil' },
-        { value: 'plain', label: 'plain' },
-        { value: 'login', label: 'login' },
-        { value: 'cram_md5', label: 'cram_md5' }
+        { value: ':plain', label: ':plain' },
+        { value: ':login', label: ':login' },
+        { value: ':cram_md5', label: ':cram_md5' }
       ],
       redmineMailForm: defaultFormData(),
       redmineMailRules: {
