@@ -29,6 +29,8 @@ const getters = {
   issueListListQuery: state => state.projects.issueListListQuery,
   issueListPageInfo: state => state.projects.issueListPageInfo,
   issueListDisplayClosed: state => state.projects.issueListDisplayClosed,
-  fixedVersionShowClosed: state => state.projects.fixedVersionShowClosed
+  fixedVersionShowClosed: state => state.projects.fixedVersionShowClosed,
+  hasSystemUpdate: state => state.settings.hasSystemUpdate,
+  updateVersionName: state => state.settings.updateVersionName
 }
 export default getters

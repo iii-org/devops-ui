@@ -2,7 +2,6 @@
   <el-row class="app-container">
     <el-row type="flex" class="flex-wrap" :gutter="10">
       <el-col class="text-right">
-        <VersionChecker />
         <span class="text-sm ml-3">*本表每小時更新一次</span>
       </el-col>
       <el-col :xs="24" :sm="24" :md="10">
@@ -87,8 +86,7 @@ import {
   AdminIssueRank,
   AdminPassingRate,
   AdminOverview,
-  AdminCommitLog,
-  VersionChecker
+  AdminCommitLog
 } from '../components'
 import { UTCtoLocalTime } from '@/filters'
 
@@ -107,8 +105,7 @@ export default {
     AdminIssueRank,
     AdminProjectMember,
     AdminProjectList,
-    AdminPassingRate,
-    VersionChecker
+    AdminPassingRate
   },
   data() {
     return {

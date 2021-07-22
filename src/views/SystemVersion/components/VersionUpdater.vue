@@ -1,17 +1,17 @@
 <template>
-  <div class="flex justify-between items-center bg-gray-600 text-white py-3 px-4 rounded mb-5">
+  <div v-if="showUpdater" class="flex justify-between items-center bg-gray-600 text-white py-3 px-4 rounded mb-5">
     <div class="flex items-center">
       <span class="dot relative" />
       <span class="dot absolute animate-ping" />
-      <span class="text-title ml-3">新版本通知</span>
+      <span class="text-title ml-3">{{ `${notifyTitle}（${updateVersionName}）` }}</span>
     </div>
     <el-button size="mini" type="success" plain @click="updateVersion">立即更新</el-button>
   </div>
 </template>
 
 <script>
-import { getDevopsVersion, updateDevopsVersion } from '@/api/devopsVersion'
-import { mapGetters } from 'vuex'
+import { updateDevopsVersion } from '@/api/devopsVersion'
+import { mapActions, mapGetters } from 'vuex'
 import { Loading } from 'element-ui'
 
 export default {
@@ -19,29 +19,34 @@ export default {
   data() {
     return {
       loadingInstance: null,
-      hover: false,
-      hasUpdate: false
+      timer: null
     }
   },
   computed: {
-    ...mapGetters(['userRole']),
+    ...mapGetters(['userRole', 'hasSystemUpdate', 'updateVersionName']),
     showUpdater() {
-      return this.userRole === 'Administrator' && this.hasUpdate
+      return this.userRole === 'Administrator' && this.hasSystemUpdate
+    },
+    notifyTitle() {
+      return this.updateVersionName === 'develop' ? '開發版/Develop' : '新版本通知'
     }
   },
   mounted() {
-    this.checkApiVersion()
+    if (this.userRole === 'Administrator') this.checkApiVersion()
+  },
+  beforeDestroy() {
+    this.clearTimer()
   },
   methods: {
-    async checkApiVersion() {
-      const res = await getDevopsVersion()
-      const { has_update } = res.data
-      this.hasUpdate = has_update 
-    },
-    async updateVersion() {
+    ...mapActions('settings', ['checkApiVersion']),
+    updateVersion() {
       this.showLoading()
-      // const res = updateDevopsVersion()
-      this.hideLoading()
+      updateDevopsVersion()
+        .then(() => this.handleUpdate())
+        .catch(err => {
+          console.error(err)
+          this.loadingInstance.close()
+        })
     },
     showLoading() {
       this.loadingInstance = Loading.service({
@@ -51,14 +56,32 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       })
     },
-    hideLoading() {
-      setTimeout(() => {
+    async handleUpdate() {
+      const res = await this.checkApiVersion()
+      const hasUpdate = res.data.has_update
+      if (hasUpdate) {
+        this.timer = setTimeout(() => {
+          updateDevopsVersion()
+            .then(() => this.handleUpdate())
+            .catch(err => {
+              this.loadingInstance.close()
+              this.$message({
+                message: '更新失敗',
+                type: 'error'
+              })
+              console.error(err)
+            })
+        }, 5000)
+      } else {
         this.loadingInstance.close()
-      }, 2000)
+      }
+    },
+    clearTimer() {
+      clearTimeout(this.timer)
+      this.timer = null
     }
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
