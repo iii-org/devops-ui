@@ -48,7 +48,7 @@
         />
         <el-table-column sortable prop="member_count" :label="$t('Dashboard.ADMIN.ProjectList.member_count')" />
         <el-table-column sortable prop="expired_day" :label="$t('Dashboard.ADMIN.ProjectList.expired_day')" />
-        <el-table-column sortable prop="end_date" :label="$t('Dashboard.ADMIN.ProjectList.end_date')" />
+        <el-table-column sortable prop="end_date" :label="$t('general.DueDate')" />
       </el-table>
       <pagination
         v-if="inDialog"

@@ -11,7 +11,7 @@
       <el-form-item :label="$t('general.Name')" prop="name">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item :label="$t('Version.DueDate')" prop="due_date">
+      <el-form-item :label="$t('general.DueDate')" prop="due_date">
         <el-date-picker
           v-model="form.due_date"
           type="date"
@@ -23,7 +23,7 @@
       <el-form-item :label="$t('general.Status')" prop="status">
         <el-radio-group v-model="form.status">
           <el-radio :label="'open'">{{ $t('Version.Open') }}</el-radio>
-          <el-radio :label="'closed'">{{ $t('Version.Closed') }}</el-radio>
+          <el-radio :label="'closed'">{{ $t('general.Close') }}</el-radio>
           <el-radio :label="'locked'">{{ $t('Version.Locked') }}</el-radio>
         </el-radio-group>
       </el-form-item>

@@ -25,7 +25,7 @@
         min-width="100"
       />
       <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
-      <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" min-width="120" />
+      <el-table-column prop="due_date" align="center" :label="$t('general.DueDate')" min-width="120" />
       <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
       <el-table-column-tag
         prop="status"

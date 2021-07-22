@@ -184,7 +184,8 @@ export default {
     Search: '搜尋',
     Filter: '篩選',
     Settings: '設定{name}',
-    Transfer: '移轉'
+    Transfer: '移轉',
+    DueDate: '到期日'
   },
   Notify: {
     Updated: '已更新',
@@ -208,7 +209,6 @@ export default {
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？'
   },
   RuleMsg: {
-    PleaseInput: '請輸入',
     PleaseSelect: '請選擇',
     Invalid: '無效的',
     Member: '@:Member.Member',
@@ -250,7 +250,6 @@ export default {
     ScanId: '測試編號',
     Branch: '分支',
     Commit: 'Commit',
-    Status: '狀態',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
     LowSeverity: '低風險',
@@ -275,7 +274,6 @@ export default {
     ScanId: '測試編號',
     Branch: '分支',
     Commit: 'Commit',
-    Status: '狀態',
     Critical: '嚴重',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
@@ -317,14 +315,9 @@ export default {
     Version: '版本',
     SelectVersion: '選擇版本',
     Id: '版本編號',
-    DueDate: '到期日',
     Open: '開啟',
-    Closed: '關閉',
     Locked: '鎖定',
-    EndDate: '結束日期',
-    open: '開啟',
-    closed: '關閉',
-    locked: '鎖定'
+    EndDate: '結束日期'
   },
   MyWork: {
     AssignedToMe: '指派給我',
@@ -338,7 +331,6 @@ export default {
     Id: '議題編號 / 議題名稱',
     Assignee: '受分配者',
     Priority: '優先權',
-    Status: '@:general.Status',
     Estimate: '預估工時',
     DoneRatio: '完成比率',
     StartDate: '開始日期',
@@ -403,7 +395,6 @@ export default {
     RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
     name: '議題名稱',
-    status: '@:general.Status',
     priority: '@:Issue.Priority',
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
@@ -560,7 +551,6 @@ export default {
         closed_issue_count: '已解決問題數',
         member_count: '參與人數',
         expired_day: '到期天數',
-        end_date: '到期日',
         all: '全部',
         overdue: '已超時',
         in_progress: '時限內',
@@ -610,8 +600,6 @@ export default {
     Password: '密碼',
     RepeatPassword: '重新輸入密碼',
     IsEnable: '是否啟用',
-    Disable: '停用',
-    Enable: '啟用',
     SearchAccount: '搜尋帳號或名稱',
     Role: '角色',
     Source: '帳號來源',
@@ -671,7 +659,6 @@ export default {
     SearchProjectNameOrId: '搜尋專案名稱或 ID',
     SearchProjectNameOrManagerOrOrganization: '搜尋專案名稱、經理或組織',
     StartDate: '起始日',
-    DueDate: '到期日',
     Owner: '專案經理',
     SelectProject: '請選擇專案',
     SelectTemplate: '請選擇範本',
@@ -685,13 +672,11 @@ export default {
     LastUpdateTime: '最後更新時間',
     Environment: '測試環境',
     SearchBranch: '搜尋分支',
-    Branch: '分支',
-    Status: '狀態'
+    Branch: '分支'
   },
   ProgressPipelines: {
     Id: '項次',
     TestItems: '測試項目',
-    Status: '狀態',
     Commit: 'Commit',
     Branch: '分支',
     CommitMessage: '上傳訊息',
@@ -703,7 +688,6 @@ export default {
   ProcessDevEnvironment: {
     Branch: '分支',
     Deployment: '環境',
-    State: '狀態',
     Container: '容器',
     Image: '映像檔',
     Services: '服務',
@@ -750,7 +734,6 @@ export default {
   Maintenance: {
     AddSecret: '新增 Secret',
     SecretName: 'Secret 名稱',
-    Status: '狀態',
     SearchSecretName: '搜尋 Secret 名稱',
     AddRegistry: '新增 Registry',
     RegistryName: 'Registry 名稱',
@@ -803,7 +786,6 @@ export default {
     alert_status: '品質狀態'
   },
   Log: {
-    info: '資訊',
     duration: '消耗時間',
     fullLog: '報表',
     testId: '測試編號'

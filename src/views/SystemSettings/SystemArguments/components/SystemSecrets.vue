@@ -21,7 +21,7 @@
     <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
       <el-table-column-tag
         prop="status"
-        :label="$t('Maintenance.Status')"
+        :label="$t('general.Status')"
         min-width="85"
         size="midium"
         location="systemSecrets"

@@ -64,7 +64,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="12" :md="6" :lg="2">
-            <el-form-item label="Port" prop="smtp_settings.port" :placeholder="$t('RuleMsg.PleaseInput')">
+            <el-form-item label="Port" prop="smtp_settings.port" :placeholder="$t('general.PleaseInput')">
               <el-input v-model="redmineMailForm.smtp_settings.port" />
             </el-form-item>
           </el-col>

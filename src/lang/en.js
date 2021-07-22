@@ -246,7 +246,6 @@ export default {
     ScanId: 'Scan ID',
     Branch: 'Branch',
     Commit: 'Commit',
-    Status: 'Status',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
     LowSeverity: 'Low Severity',
@@ -271,7 +270,6 @@ export default {
     ScanId: 'Scan ID',
     Branch: 'Branch',
     Commit: 'Commit',
-    Status: 'Status',
     Critical: 'Critical',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
@@ -313,14 +311,9 @@ export default {
     Version: 'Version',
     SelectVersion: 'Select Version',
     Id: 'Id',
-    DueDate: 'Due Date',
     Open: 'Open',
-    Closed: 'Closed',
     Locked: 'Locked',
-    EndDate: 'EndDate',
-    open: 'Open',
-    closed: 'Closed',
-    locked: 'Locked'
+    EndDate: 'EndDate'
   },
   MyWork: {
     AssignedToMe: 'Assigned to me',
@@ -334,7 +327,6 @@ export default {
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',
-    Status: '@:general.Status',
     Estimate: 'Estimate',
     DoneRatio: 'Done Ratio',
     StartDate: 'Start Date',
@@ -399,7 +391,6 @@ export default {
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
     name: 'Name',
-    status: '@:general.Status',
     priority: '@:Issue.Priority',
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
@@ -556,7 +547,6 @@ export default {
         closed_issue_count: 'Solved',
         member_count: 'Members',
         expired_day: 'Remains(day)',
-        end_date: 'Due date',
         all: 'All',
         overdue: 'Overdue',
         in_progress: 'In Progress',
@@ -606,8 +596,6 @@ export default {
     Password: 'Password',
     RepeatPassword: 'Repeat Password',
     IsEnable: 'Is Enable',
-    Disable: 'Disable',
-    Enable: 'Enable',
     SearchAccount: 'Search Account or Name',
     Role: 'Role',
     Source: 'Source',
@@ -669,7 +657,6 @@ export default {
     SearchProjectNameOrId: 'Search Project Name or ID',
     SearchProjectNameOrManagerOrOrganization: 'Search Project Name, Manager or Organization',
     StartDate: 'Start Date',
-    DueDate: 'Due Date',
     Owner: 'Project Owner',
     SelectProject: 'Select a project',
     SelectTemplate: 'Select a template',
@@ -683,13 +670,11 @@ export default {
     LastUpdateTime: 'Last Update Time',
     Environment: 'Environment',
     SearchBranch: 'Search Branch',
-    Branch: 'Branch',
-    Status: 'Status'
+    Branch: 'Branch'
   },
   ProgressPipelines: {
     Id: 'Id',
     TestItems: 'Test Items',
-    Status: 'Status',
     Commit: 'Commit',
     Branch: 'Branch',
     CommitMessage: 'Commit Message',
@@ -701,7 +686,6 @@ export default {
   ProcessDevEnvironment: {
     Branch: 'Branch',
     Deployment: 'Deployment',
-    State: 'State',
     Container: 'Container',
     Image: 'Image',
     Services: 'Services',
@@ -749,7 +733,6 @@ export default {
   Maintenance: {
     AddSecret: 'Add Secret',
     SecretName: 'Secret Name',
-    Status: 'Status',
     SearchSecretName: 'Search Secret Name',
     AddRegistry: 'Add Registry',
     RegistryName: 'Registry Name',
@@ -802,7 +785,6 @@ export default {
     alert_status: 'Quality Gate Status'
   },
   Log: {
-    info: 'Info',
     duration: 'Duration',
     fullLog: 'Report',
     testId: 'Test ID'

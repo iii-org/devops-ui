@@ -35,7 +35,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
-            <el-form-item :label="$t('Project.DueDate')" prop="due_date">
+            <el-form-item :label="$t('general.DueDate')" prop="due_date">
               <el-date-picker
                 v-model="form.due_date"
                 type="date"

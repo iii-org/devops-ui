@@ -60,8 +60,8 @@
           inactive-value="disable"
           active-color="#13ce66"
           inactive-color="#ff4949"
-          :active-text="$t('User.Enable')"
-          :inactive-text="$t('User.Disable')"
+          :active-text="$t('general.Enable')"
+          :inactive-text="$t('general.Disable')"
         />
       </el-form-item>
     </el-form>

@@ -24,7 +24,7 @@
       <el-table-column align="center" prop="display" :label="$t('Project.Name')" width="500" />
       <el-table-column align="center" prop="owner_name" :label="$t('Project.Owner')" />
       <el-table-column align="center" prop="start_date" :label="$t('Project.StartDate')" />
-      <el-table-column align="center" prop="due_date" :label="$t('Project.DueDate')" />
+      <el-table-column align="center" prop="due_date" :label="$t('general.DueDate')" />
       <el-table-column align="center" :label="$t('general.Actions')">
         <template slot-scope="scope">
           <el-popconfirm

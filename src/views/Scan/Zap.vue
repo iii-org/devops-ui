@@ -45,7 +45,7 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Log.info')">
+      <el-table-column align="center" :label="$t('general.Info')">
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
           <span v-else>-</span>

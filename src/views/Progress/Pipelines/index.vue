@@ -14,7 +14,7 @@
       <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" border fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
-          :label="`${$t('ProgressPipelines.Status')} / ${$t('ProgressPipelines.TestItems')}`"
+          :label="`${$t('general.Status')} / ${$t('ProgressPipelines.TestItems')}`"
           align="center"
           width="170"
         >

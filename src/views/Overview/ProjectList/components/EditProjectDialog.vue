@@ -41,7 +41,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="8" :xl="3">
-            <el-form-item :label="$t('Project.DueDate')" prop="due_date">
+            <el-form-item :label="$t('general.DueDate')" prop="due_date">
               <el-date-picker
                 v-model="form.due_date"
                 type="date"
@@ -56,7 +56,7 @@
               <el-input
                 v-model="form.description"
                 type="textarea"
-                :placeholder="$t('RuleMsg.PleaseInput') + $t('RuleMsg.Description')"
+                :placeholder="$t('general.PleaseInput') + $t('RuleMsg.Description')"
               />
             </el-form-item>
           </el-col>

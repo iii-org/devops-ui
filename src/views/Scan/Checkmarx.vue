@@ -31,7 +31,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag :label="$t('CheckMarx.Status')" translate-key="CheckMarx" location="checkMarx" prop="status" min-width="130" />
+      <el-table-column-tag :label="$t('general.Status')" translate-key="CheckMarx" location="checkMarx" prop="status" min-width="130" />
       <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
       <el-table-column :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
       <el-table-column :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />

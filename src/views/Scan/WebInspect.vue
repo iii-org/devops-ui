@@ -36,7 +36,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Status')" prop="stats.status" min-width="130">
+      <el-table-column align="center" :label="$t('general.Status')" prop="stats.status" min-width="130">
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.stats.status"
