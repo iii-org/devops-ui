@@ -18,10 +18,10 @@
           <el-col :span="24" :sm="12" :xl="9">
             <el-form-item :label="$t('Project.Identifier')" prop="name">
               <el-input v-model="form.name" :maxlength="30" show-word-limit />
-              <span class="font-sm">
-                {{ $t('Project.IdRule') }}
-              </span>
             </el-form-item>
+            <span class="font-sm">
+              {{ $t('Project.IdRule') }}
+            </span>
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
             <el-form-item :label="$t('Project.StartDate')" prop="start_date">
