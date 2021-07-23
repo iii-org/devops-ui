@@ -242,7 +242,7 @@ export default {
       this.fetchPipelineBranch()
     },
     handleBack() {
-      this.$route.push({ name: 'Project Settings' })
+      this.$router.push({ name: 'Project Settings' })
     }
   }
 }
