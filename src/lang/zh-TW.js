@@ -853,5 +853,5 @@ export default {
     integrationProject: '開始整合專案資源...',
     loadingTemplateText: '更新所有範本最新資訊中'
   },
-  Plugins: { ...asyncLangs }
+  Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

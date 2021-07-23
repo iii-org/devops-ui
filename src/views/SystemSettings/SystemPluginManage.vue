@@ -24,7 +24,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="create_at" min-width="220" />
+        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="update_at" width="200" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
@@ -59,12 +59,13 @@
             <div v-if="pluginName">{{ $t(`Plugins.${pluginName}.description`) }}</div>
           </div>
           <div>
-            <!-- <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button> -->
             <el-popconfirm
+              v-if="isRemovable"
               :confirm-button-text="$t('general.Remove')"
               :cancel-button-text="$t('general.Cancel')"
               icon="el-icon-info"
               icon-color="red"
+              class="mr-3"
               :title="$t('Member.confirmRemove')"
               @onConfirm="handleDelete(pluginName)"
             >
@@ -72,7 +73,8 @@
                 {{ $t('general.Remove') }}
               </el-button>
             </el-popconfirm>
-            <el-button class="ml-4" type="primary" size="mini" @click="handleConfirm">
+            <el-button size="mini" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+            <el-button type="primary" size="mini" @click="handleConfirm">
               {{ $t('general.Save') }}
             </el-button>
           </div>
@@ -94,6 +96,12 @@
               v-model="form.arguments[argIdx].value"
               :placeholder="$t(`Plugins.${pluginName}.arguments.${arg.key}.placeholder`)"
             />
+            <el-input
+              v-if="arg.type === 'password'"
+              v-model="form.arguments[argIdx].value"
+              :placeholder="$t(`Plugins.${pluginName}.arguments.${arg.key}.placeholder`)"
+              show-password
+            />
             <el-select
               v-if="arg.type === 'select'"
               v-model="form.arguments[argIdx].value"
@@ -109,7 +117,7 @@
           </el-form-item>
         </template>
       </el-form>
-      <div v-else>No data</div>
+      <div v-else>{{ $t('Plugins.NoArguments') }}</div>
     </el-dialog>
   </el-row>
 </template>
@@ -133,7 +141,8 @@ export default {
       isLoading: false,
       isDialogVisible: false,
       pluginName: '',
-      form: formTemplate()
+      form: formTemplate(),
+      isRemovable: false
     }
   },
   computed: {

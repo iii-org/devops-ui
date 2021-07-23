@@ -853,5 +853,5 @@ export default {
     integrationProject: 'Start integrating project resources...',
     loadingTemplateText: 'Update latest templates'
   },
-  Plugins: { ...asyncLangs }
+  Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
