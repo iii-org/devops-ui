@@ -5,7 +5,7 @@
       <span class="dot absolute animate-ping" />
       <span class="text-title ml-3">{{ `${notifyTitle}（${updateVersionName}）` }}</span>
     </div>
-    <el-button size="mini" type="success" plain @click="updateVersion">立即更新</el-button>
+    <el-button size="mini" type="success" plain @click="updateVersion">{{ $t('SystemVersion.UpdateNow') }}</el-button>
   </div>
 </template>
 
@@ -28,7 +28,7 @@ export default {
       return this.userRole === 'Administrator' && this.hasSystemUpdate
     },
     notifyTitle() {
-      return this.updateVersionName === 'develop' ? '開發版/Develop' : '新版本通知'
+      return this.updateVersionName === 'develop' ? this.$t('SystemVersion.Develop') : this.$t('SystemVersion.NewVersion')
     }
   },
   mounted() {
@@ -51,7 +51,7 @@ export default {
     showLoading() {
       this.loadingInstance = Loading.service({
         lock: true,
-        text: '更新中',
+        text: this.$t('Updating'),
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
@@ -66,7 +66,7 @@ export default {
             .catch(err => {
               this.loadingInstance.close()
               this.$message({
-                message: '更新失敗',
+                message: this.$t('SystemVersion.UpdateFailed'),
                 type: 'error'
               })
               console.error(err)

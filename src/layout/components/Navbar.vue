@@ -5,10 +5,10 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <lang-select class="right-menu-item hover-effect" />
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <VersionChecker />
+      <lang-select class="right-menu-item hover-effect ml-3" />
+      <el-dropdown class="right-menu-item hover-effect mr-5" trigger="click">
         <div>
-          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
           {{ userName }}
           <i class="el-icon-caret-bottom" />
         </div>
@@ -39,12 +39,14 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import LangSelect from '@/components/LangSelect'
+import VersionChecker from '@/components/VersionChecker'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
-    LangSelect
+    LangSelect,
+    VersionChecker
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'userName'])
@@ -101,38 +103,12 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
-
       &.hover-effect {
         cursor: pointer;
         transition: background 0.3s;
 
         &:hover {
           background: rgba(0, 0, 0, 0.025);
-        }
-      }
-    }
-
-    .avatar-container {
-      margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
         }
       }
     }
