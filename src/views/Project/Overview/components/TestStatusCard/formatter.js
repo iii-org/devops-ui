@@ -29,7 +29,8 @@ const getCheckmarxStatusText = (status) => {
     '1': i18n.t('CheckMarx.notCompletedScan'),
     '2': i18n.t('CheckMarx.generatingReportScan'),
     '4': i18n.t('CheckMarx.canceledScan'),
-    '5': i18n.t('CheckMarx.failedScan')
+    '5': i18n.t('CheckMarx.failedScan'),
+    '6': i18n.t('CheckMarx.removedScan')
   }
   return mapText[statusString]
 }
