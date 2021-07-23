@@ -12,6 +12,11 @@
       <el-divider />
       <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
         <el-table-column :label="$t('general.Name')" align="center" prop="name" />
+        <el-table-column :label="$t('general.Description')" align="center">
+          <template slot-scope="scope">
+            {{ $t(`Plugins.${scope.row.name}.description`) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('general.Status')" align="center" prop="disabled" width="120">
           <template slot-scope="scope">
             <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
@@ -19,8 +24,8 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column-time prop="create_at" min-width="220" />
-        <el-table-column :label="$t('general.Actions')" align="center">
+        <el-table-column-time prop="update_at" min-width="220" />
+        <el-table-column :label="$t('general.Actions')" align="center" width="210">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
               {{ $t('general.Edit') }}
