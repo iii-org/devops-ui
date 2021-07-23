@@ -24,8 +24,8 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column-time prop="update_at" min-width="220" />
-        <el-table-column :label="$t('general.Actions')" align="center" width="210">
+        <el-table-column-time :label="$t('general.LastUpdateTime')" prop="create_at" min-width="220" />
+        <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
               {{ $t('general.Edit') }}

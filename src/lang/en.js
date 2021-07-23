@@ -180,7 +180,9 @@ export default {
     Search: 'Search',
     Filter: 'Filter',
     Settings: '{name} Setting',
-    Transfer: 'Transfer'
+    Transfer: 'Transfer',
+    DueDate: 'Due Date',
+    Branch: 'Branch'
   },
   Notify: {
     Updated: 'update successful',
@@ -222,7 +224,7 @@ export default {
     EditTestCase: 'Edit Test Case',
     Id: 'Id',
     Type: 'Type',
-    Description: 'Description',
+    Description: '@:general.Description',
     Method: 'Method',
     Path: 'Path',
     TestResult: 'Test Result',
@@ -244,7 +246,7 @@ export default {
   },
   CheckMarx: {
     ScanId: 'Scan ID',
-    Branch: 'Branch',
+    Branch: '@:general.Branch',
     Commit: 'Commit',
     HighSeverity: 'High Severity',
     MediumSeverity: 'Medium Severity',
@@ -269,7 +271,7 @@ export default {
   },
   WebInspect: {
     ScanId: 'Scan ID',
-    Branch: 'Branch',
+    Branch: '@:general.Branch',
     Commit: 'Commit',
     Critical: 'Critical',
     HighSeverity: 'High Severity',
@@ -673,13 +675,13 @@ export default {
     LastUpdateTime: 'Last Update Time',
     Environment: 'Environment',
     SearchBranch: 'Search Branch',
-    Branch: 'Branch'
+    Branch: '@:general.Branch'
   },
   ProgressPipelines: {
     Id: 'Id',
     TestItems: 'Test Items',
     Commit: 'Commit',
-    Branch: 'Branch',
+    Branch: '@:general.Branch',
     CommitMessage: 'Commit Message',
     TransitioningMessage: 'Transitioning Message',
     LastUpdateTime: 'Last Update Time',
@@ -687,7 +689,7 @@ export default {
     TestDetail: 'Test Detail'
   },
   ProcessDevEnvironment: {
-    Branch: 'Branch',
+    Branch: '@:general.Branch',
     Deployment: 'Deployment',
     Container: 'Container',
     Image: 'Image',
@@ -717,7 +719,7 @@ export default {
   },
   Postman: {
     Id: 'Id',
-    Branch: 'Branch',
+    Branch: '@:general.Branch',
     TestPass: 'Test Pass',
     TestFail: 'Test Fail',
     TestTotal: 'Test total',
@@ -763,7 +765,7 @@ export default {
     TestDetail: 'Test Detail'
   },
   Git: {
-    Branch: 'Branch',
+    Branch: '@:general.Branch',
     Commit: 'Commit',
     searchCommitId: 'Search Commit ID'
   },

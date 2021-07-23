@@ -185,7 +185,8 @@ export default {
     Filter: '篩選',
     Settings: '設定{name}',
     Transfer: '移轉',
-    DueDate: '到期日'
+    DueDate: '到期日',
+    Branch: '分支'
   },
   Notify: {
     Updated: '已更新',
@@ -215,7 +216,7 @@ export default {
     Email: '信箱',
     UserName: '使用者名稱',
     Password: '密碼',
-    Description: '敘述',
+    Description: '描述',
     InputNewPwd: '請輸入新密碼',
     InputRepeatPwd: '請再次輸入密碼'
   },
@@ -226,7 +227,7 @@ export default {
     EditTestCase: '編輯測試案例',
     Id: '測試編號',
     Type: '類型',
-    Description: '描述',
+    Description: '@:general.Description',
     Method: '方法',
     Path: '路徑',
     TestResult: '測試結果',
@@ -248,7 +249,7 @@ export default {
   },
   CheckMarx: {
     ScanId: '測試編號',
-    Branch: '分支',
+    Branch: '@:general.Branch',
     Commit: 'Commit',
     HighSeverity: '高風險',
     MediumSeverity: '中風險',
@@ -273,7 +274,7 @@ export default {
   },
   WebInspect: {
     ScanId: '測試編號',
-    Branch: '分支',
+    Branch: '@:general.Branch',
     Commit: 'Commit',
     Critical: '嚴重',
     HighSeverity: '高風險',
@@ -675,13 +676,13 @@ export default {
     LastUpdateTime: '最後更新時間',
     Environment: '測試環境',
     SearchBranch: '搜尋分支',
-    Branch: '分支'
+    Branch: '@:general.Branch'
   },
   ProgressPipelines: {
     Id: '項次',
     TestItems: '測試項目',
     Commit: 'Commit',
-    Branch: '分支',
+    Branch: '@:general.Branch',
     CommitMessage: '上傳訊息',
     TransitioningMessage: '處理訊息',
     LastUpdateTime: '最後更新時間',
@@ -689,7 +690,7 @@ export default {
     TestDetail: '測試細節'
   },
   ProcessDevEnvironment: {
-    Branch: '分支',
+    Branch: '@:general.Branch',
     Deployment: '環境',
     Container: '容器',
     Image: '映像檔',
@@ -718,7 +719,7 @@ export default {
   },
   Postman: {
     Id: '編號',
-    Branch: '分支',
+    Branch: '@:general.Branch',
     TestPass: '測試通過',
     TestFail: '測試失敗',
     TestTotal: '測試總計',
@@ -764,7 +765,7 @@ export default {
     TestDetail: '測試細節'
   },
   Git: {
-    Branch: '分支',
+    Branch: '@:general.Branch',
     Commit: 'Commit',
     searchCommitId: '搜尋 Commit'
   },
