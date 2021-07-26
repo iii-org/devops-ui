@@ -224,6 +224,10 @@ export default {
     displayClosed: {
       type: Boolean,
       default: false
+    },
+    keywords: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -271,6 +275,9 @@ export default {
     }
   },
   watch: {
+    keywords(val) {
+      this.loadData()
+    },
     projectId() {
       this.backToFirstPage()
       this.loadData()
@@ -324,8 +331,8 @@ export default {
           result[item + '_id'] = this.filterValue[item]
         }
       })
-      if (this.keyword) {
-        result['search'] = this.keyword
+      if (this.keywords) {
+        result['search'] = this.keywords
       }
       return result
     },

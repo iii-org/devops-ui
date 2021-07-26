@@ -42,7 +42,7 @@
       <el-input
         v-if="searchVisible"
         id="input-search"
-        v-model="keyword"
+        v-model="keywords"
         prefix-icon="el-icon-search"
         :placeholder="$t('Issue.SearchNameOrAssignee')"
         style="width: 250px;"
@@ -50,7 +50,7 @@
         @blur="searchVisible=!searchVisible"
       />
       <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+        {{ $t('general.Search') + ((keywords) ? ': ' + keywords : '') }}
       </el-button>
       <template v-if="isFilterChanged">
         <el-divider direction="vertical" />
@@ -78,6 +78,7 @@
         <issue-list :ref="card.id" :project-id="project_id" :filter-options="filterOptions"
                     :display-closed="displayClosed"
                     :filter-value="filterValue" :from="card.id"
+                    :keywords="keywords"
         />
       </el-tab-pane>
     </el-tabs>
@@ -114,7 +115,7 @@ export default {
       priority: [],
       filterValue: {},
       originFilterValue: {},
-      keyword: null
+      keywords: null
     }
   },
   computed: {
@@ -175,7 +176,7 @@ export default {
           return true
         }
       }
-      return !!this.keyword
+      return !!this.keywords
     }
   },
   watch: {
@@ -244,7 +245,7 @@ export default {
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keyword = null
+      this.keywords = null
       this.displayClosed = false
     },
     isRequireProjectId(name) {
