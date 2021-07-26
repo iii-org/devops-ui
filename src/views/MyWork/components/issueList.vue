@@ -46,7 +46,9 @@
                     :title="$t('Issue.RemoveIssueRelation')"
                     @onConfirm="removeIssueRelation(scope.row.id)"
                   >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink')
+                    }}
+                    </el-button>
                   </el-popconfirm>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('children')">
@@ -64,7 +66,8 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login
+                            }})</span>
                         </el-link>
                         <el-popconfirm
                           :confirm-button-text="$t('general.Remove')"
@@ -74,45 +77,49 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(child.id)"
                         >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                            {{ $t('Issue.Unlink') }}
+                          </el-button>
                         </el-popconfirm>
                       </li>
                     </template>
                   </ol>
                 </li>
-                <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">
-                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
-                  <ol>
-                    <template v-for="child in scope.row.relations">
-                      <li v-if="Object.keys(child).length>0" :key="child.id">
-                        <el-link
-                          class="font-weight-regular my-1"
-                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                          :underline="false"
-                          @click="handleEdit(child.id)"
-                        >
-                          <status :name="child.status.name" size="mini" />
-                          <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - {{ child.name }}
-                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{
-                              child.assigned_to.login
-                            }})</span>
-                        </el-link>
-                        <!--                        <el-popconfirm-->
-                        <!--                          :confirm-button-text="$t('general.Remove')"-->
-                        <!--                          :cancel-button-text="$t('general.Cancel')"-->
-                        <!--                          icon="el-icon-info"-->
-                        <!--                          icon-color="red"-->
-                        <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
-                        <!--                          @onConfirm="removeIssueRelation(child.id)"-->
-                        <!--                        >-->
-                        <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>-->
-                        <!--                        </el-popconfirm>-->
-                      </li>
-                    </template>
-                  </ol>
-                </li>
+                <!--                <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">-->
+                <!--                  <b>{{ $t('Issue.RelatedIssue') }}:</b>-->
+                <!--                  <ol>-->
+                <!--                    <template v-for="child in scope.row.relations">-->
+                <!--                      <li v-if="Object.keys(child).length>0" :key="child.id">-->
+                <!--                        <el-link-->
+                <!--                          class="font-weight-regular my-1"-->
+                <!--                          :style="{ 'font-size': '14px', cursor: 'pointer' }"-->
+                <!--                          :underline="false"-->
+                <!--                          @click="handleEdit(child.id)"-->
+                <!--                        >-->
+                <!--                          <status :name="child.status.name" size="mini" />-->
+                <!--                          <tracker :name="child.tracker.name" />-->
+                <!--                          #{{ child.id }} - {{ child.name }}-->
+                <!--                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">-->
+                <!--                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{-->
+                <!--                              child.assigned_to.login-->
+                <!--                            }})</span>-->
+                <!--                        </el-link>-->
+                <!--                        <el-popconfirm-->
+                <!--                          :confirm-button-text="$t('general.Remove')"-->
+                <!--                          :cancel-button-text="$t('general.Cancel')"-->
+                <!--                          icon="el-icon-info"-->
+                <!--                          icon-color="red"-->
+                <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
+                <!--                          @onConfirm="removeIssueRelation(child.id)"-->
+                <!--                        >-->
+                <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">-->
+                <!--                            {{ $t('Issue.Unlink') }}-->
+                <!--                          </el-button>-->
+                <!--                        </el-popconfirm>-->
+                <!--                      </li>-->
+                <!--                    </template>-->
+                <!--                  </ol>-->
+                <!--                </li>-->
               </ul>
             </el-col>
           </template>
@@ -122,7 +129,9 @@
             <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Project.Name')" min-width="150" show-overflow-tooltip prop="project" sortable="custom">
+        <el-table-column :label="$t('Project.Name')" min-width="150" show-overflow-tooltip prop="project"
+                         sortable="custom"
+        >
           <template slot-scope="scope">
             {{ scope.row.project.display }}
           </template>
@@ -146,14 +155,18 @@
             />
           </template>
         </el-table-column>
-        <el-table-column v-if="from==='author_id'" align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" sortable="custom" show-overflow-tooltip>
-          <template slot-scope="scope">
+        <el-table-column v-if="from==='author_id'" align="center" :label="$t('Issue.Assignee')" min-width="180"
+                         prop="assigned_to" sortable="custom" show-overflow-tooltip
+        >
+          <template v-if="scope.row.assigned_to" slot-scope="scope">
             <span>{{ scope.row.assigned_to.name }}</span>
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
         </el-table-column>
-        <el-table-column v-if="from==='assigned_to_id'" align="center" :label="$t('Issue.Author')" min-width="180" prop="author" sortable="custom" show-overflow-tooltip>
-          <template slot-scope="scope">
+        <el-table-column v-if="from==='assigned_to_id'" align="center" :label="$t('Issue.Author')" min-width="180"
+                         prop="author" sortable="custom" show-overflow-tooltip
+        >
+          <template v-if="scope.row.author" slot-scope="scope">
             <span>{{ scope.row.author.name }}</span>
             <span v-if="scope.row.author.login">({{ scope.row.author.login }})</span>
           </template>
@@ -215,7 +228,8 @@ export default {
     },
     filterValue: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     },
     projectId: {
       type: [String, Number],
@@ -275,7 +289,7 @@ export default {
     }
   },
   watch: {
-    keywords(val) {
+    keywords() {
       this.loadData()
     },
     projectId() {
@@ -385,9 +399,15 @@ export default {
           await this.$set(row, 'loadingRelation', true)
           const family = await getIssueFamily(row.id)
           const data = family.data
-          if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
-          if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
-          if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
+          if (data.hasOwnProperty('parent')) {
+            await this.$set(row, 'parent', data.parent)
+          }
+          if (data.hasOwnProperty('children')) {
+            await this.$set(row, 'children', data.children)
+          }
+          if (data.hasOwnProperty('relations')) {
+            await this.$set(row, 'relations', data.relations)
+          }
           await this.$set(row, 'loadingRelation', false)
         } catch (e) {
           //   null
@@ -539,7 +559,10 @@ export default {
         this.contextMenu.left = contextmenuPosition.left
         this.contextMenu.row = row
         this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+        this.$refs.contextmenu.$refs.contextmenu.style = {
+          top: this.contextMenu.top + 'px',
+          left: this.contextMenu.left + 'px'
+        }
         document.addEventListener('click', this.hideContextMenu)
       })
     },
