@@ -25,7 +25,7 @@ export default {
   computed: {
     ...mapGetters(['userRole', 'hasSystemUpdate', 'updateVersionName']),
     showUpdater() {
-      return this.userRole === 'Administrator' && this.hasSystemUpdate
+      return this.userRole === 'Administrator' && (this.updateVersionName === 'develop' || this.hasSystemUpdate)
     },
     notifyTitle() {
       return this.updateVersionName === 'develop' ? this.$t('SystemVersion.Develop') : this.$t('SystemVersion.NewVersion')
