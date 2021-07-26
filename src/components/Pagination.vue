@@ -11,7 +11,9 @@
       v-bind="$attrs"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-    />
+    >
+      <slot />
+    </el-pagination>
   </div>
 </template>
 
@@ -41,7 +43,7 @@ export default {
     },
     layout: {
       type: String,
-      default: 'total, sizes, prev, pager, next, jumper'
+      default: 'total, slot, sizes, prev, pager, next, jumper'
     },
     background: {
       type: Boolean,

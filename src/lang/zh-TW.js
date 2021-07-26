@@ -186,7 +186,8 @@ export default {
     Settings: '設定{name}',
     Transfer: '移轉',
     DueDate: '到期日',
-    Branch: '分支'
+    Branch: '分支',
+    Total: '共'
   },
   Notify: {
     Updated: '已更新',

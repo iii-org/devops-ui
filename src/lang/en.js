@@ -182,7 +182,8 @@ export default {
     Settings: '{name} Setting',
     Transfer: 'Transfer',
     DueDate: 'Due Date',
-    Branch: 'Branch'
+    Branch: 'Branch',
+    Total: 'Total'
   },
   Notify: {
     Updated: 'update successful',

@@ -90,9 +90,11 @@
         :limit="listQuery.limit"
         :total="checkedData.length"
         :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :layout="'slot, prev, pager, next'"
         @pagination="onPagination"
-      />
+      >
+        <span class="el-pagination__total">{{ `${$t('general.Total')} ${testRequestCount} ${$t('TestCase.Index')} (${checkedData.length} ${$t('TestCase.TestResult')})` }}</span>
+      </pagination>
     </el-col>
   </el-row>
 </template>
@@ -110,7 +112,8 @@ export default {
       testCaseInfos: {},
       togglePass: true,
       toggleFail: true,
-      searchKeys: ['name', 'responseMsg']
+      searchKeys: ['name', 'responseMsg'],
+      testRequestCount: null
     }
   },
   computed: {
@@ -149,6 +152,7 @@ export default {
       return testCases.length ? testCases : []
     },
     formatData(testCases) {
+      this.testRequestCount = testCases.length
       return testCases.flatMap((testCase, idx) =>
         testCase.assertions.map(assertion => ({
           index: idx + 1,
