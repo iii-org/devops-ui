@@ -154,7 +154,7 @@ import {
   getTestCaseType,
   updateTestCase
 } from '@/api/testCase'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 
 const formTemplate = {
   name: '',
@@ -178,7 +178,7 @@ export default {
       return statusMap[status]
     }
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
       dialogVisible: false,
