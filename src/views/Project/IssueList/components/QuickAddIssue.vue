@@ -135,7 +135,9 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) { this.$set(this.form, item + '_id', this.issueListFilter[item]) }
+        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) {
+          this.$set(this.form, item + '_id', this.issueListFilter[item])
+        }
       })
     },
     handleSave() {
@@ -180,8 +182,10 @@ export default {
       this.setFilterValue()
     },
     handleAdvancedSave() {
-      this.$refs['AddIssue'].handleSave()
-      this.setFilterValue()
+      const result = this.$refs['AddIssue'].handleSave()
+      if (result) {
+        this.setFilterValue()
+      }
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true

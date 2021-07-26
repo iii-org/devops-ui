@@ -18,7 +18,9 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.assigned_to')" prop="assigned_to_id">
           <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-            <el-option v-for="item in assigned_to" :key="item.login" :label="item.name" :value="item.id" :class="item.class">
+            <el-option v-for="item in assigned_to" :key="item.login" :label="item.name" :value="item.id"
+                       :class="item.class"
+            >
               {{ item.name }}{{ `（${item.login}）` }}
             </el-option>
           </el-select>
@@ -338,7 +340,9 @@ export default {
       if (this.importFrom) {
         const getFilter = this.importFrom + 'Filter'
         Object.keys(this[getFilter]).forEach((item) => {
-          if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
+          if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') {
+            this.$set(this.issueForm, item + '_id', this[getFilter][item])
+          }
         })
         let checkQuickAddIssueForm = ['tracker_id', 'subject']
         if (this.importFrom === 'kanban') {
@@ -365,6 +369,7 @@ export default {
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
+      let result = false
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
           // deep copy & remove field with empty value
@@ -387,11 +392,13 @@ export default {
           this.LoadingConfirm = true
           await this.saveData(form)
           this.LoadingConfirm = false
+          result = true
           this.handleClose()
         } else {
           return false
         }
       })
+      return result
     },
     handleExceed() {
       this.$message({

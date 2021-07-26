@@ -313,7 +313,6 @@ export default {
       originFilterValue: {},
       quickChangeDialogVisible: false,
       quickChangeForm: {},
-      assigneeList: [],
       form: {},
 
       keyword: null,
