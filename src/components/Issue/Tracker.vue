@@ -1,6 +1,6 @@
 <template>
   <span>
-    <span v-if="name" :class="getCategoryTagType(name)" />
+    <span v-if="name" :class="`point ${mapTagType(name)}`" />
     {{ $t(`Issue.${name}`) }}
   </span>
 </template>
@@ -15,19 +15,21 @@ export default {
     }
   },
   methods: {
-    getCategoryTagType(category) {
-      switch (category) {
-        case 'Feature':
-          return 'point feature'
-        case 'Document':
-          return 'point document'
-        case 'Bug':
-          return 'point bug'
-        case 'Research':
-          return 'point research'
-        default:
-          return 'point feature'
+    mapTagType(category) {
+      const map = {
+        Document: 'bg-document',
+        Research: 'bg-research',
+        Epic: 'bg-epic',
+        Audit: 'bg-audit',
+        Feature: 'bg-feature',
+        Bug: 'bg-bug',
+        Issue: 'bg-issue',
+        'Change Request': 'bg-changeRequest',
+        Risk: 'bg-risk',
+        'Test Plan': 'bg-testPlan',
+        'Fail Management': 'bg-failManagement'
       }
+      return map[category] || 'bg-feature'
     }
   }
 }
@@ -37,22 +39,6 @@ export default {
 @import 'src/styles/variables.scss';
 
 .point {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 5px;
-  display: inline-block;
-  &.feature {
-    background: $feature;
-  }
-  &.document {
-    background: $document;
-  }
-  &.bug {
-    background: $bug;
-  }
-  &.research {
-    background: $research;
-  }
+  @apply w-2.5 h-2.5 mr-1 rounded-lg inline-block;
 }
 </style>

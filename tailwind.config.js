@@ -33,10 +33,17 @@ module.exports = {
         solved: '#3ecbbc',
         inProgress: '#e6a23c',
         finished: '#67c23a',
-        feature: '#66d7ff',
-        document: '#5388ff',
-        bug: '#fea859',
-        research: '#a0da2c'
+        document: '#005f73',
+        research: '#0a9396',
+        epic: '#409EEF',
+        audit: '#A0DA2C',
+        feature: '#82DDF0',
+        bug: '#E84855',
+        issue: '#5296A5',
+        changeRequest: '#A06CD5',
+        risk: '#FCD7AD',
+        testPlan: '#A57548',
+        failManagement: '#FF7033'
       },
       backgroundColor: theme => ({
         ...theme('colors')
