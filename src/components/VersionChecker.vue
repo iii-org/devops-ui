@@ -27,9 +27,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'hasSystemUpdate']),
+    ...mapGetters(['userRole', 'hasSystemUpdate', 'updateVersionName']),
     showUpdateButton() {
-      return this.userRole === 'Administrator' && this.hasSystemUpdate && this.$route.name !== 'SystemVersion'
+      return this.userRole === 'Administrator' && this.hasSystemUpdate && this.$route.name !== 'SystemVersion' && this.updateVersionName !== 'develop'
     }
   },
   mounted() {
