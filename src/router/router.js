@@ -155,32 +155,32 @@ export const asyncRoutes = [
           }
         ]
       },
-      {
-        path: 'test-case',
-        component: parentBlank,
-        meta: {
-          title: 'createTest',
-          roles: ['Engineer', 'Project Manager', 'Administrator']
-        },
-        children: [
-          {
-            path: '',
-            name: 'test-case',
-            component: () => import('@/views/Project/TestCase/TestCase'),
-            hidden: true
-          },
-          {
-            path: 'test-item/:testCaseId',
-            name: 'test-item',
-            component: () => import('@/views/Project/TestCase/TestItem'),
-            hidden: true,
-            meta: {
-              title: 'testItem',
-              roles: ['Engineer', 'Project Manager', 'Administrator']
-            }
-          }
-        ]
-      },
+      // {
+      //   path: 'test-case',
+      //   component: parentBlank,
+      //   meta: {
+      //     title: 'createTest',
+      //     roles: ['Engineer', 'Project Manager', 'Administrator']
+      //   },
+      //   children: [
+      //     {
+      //       path: '',
+      //       name: 'test-case',
+      //       component: () => import('@/views/Project/TestCase/TestCase'),
+      //       hidden: true
+      //     },
+      //     {
+      //       path: 'test-item/:testCaseId',
+      //       name: 'test-item',
+      //       component: () => import('@/views/Project/TestCase/TestItem'),
+      //       hidden: true,
+      //       meta: {
+      //         title: 'testItem',
+      //         roles: ['Engineer', 'Project Manager', 'Administrator']
+      //       }
+      //     }
+      //   ]
+      // },
       {
         path: 'wiki',
         name: 'wiki-list',
@@ -210,7 +210,8 @@ export const asyncRoutes = [
             name: 'release-version',
             component: () => import('@/views/Project/ReleaseVersion'),
             meta: {
-              title: 'releaseVersion', roles: ['Project Manager', 'Administrator']
+              title: 'releaseVersion',
+              roles: ['Project Manager', 'Administrator']
             }
           },
           {
@@ -649,6 +650,26 @@ export const asyncRoutes = [
           icon: 'user',
           noCache: true,
           roles: ['Engineer', 'Project Manager', 'QA', 'Administrator']
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/lab',
+    component: Layout,
+    meta: {
+      roles: ['Project Manager', 'Administrator', 'Engineer']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/Lab'),
+        name: 'lab',
+        meta: {
+          title: 'lab',
+          icon: 'el-icon-odometer',
+          roles: ['Project Manager', 'Administrator', 'Engineer']
         }
       }
     ]
