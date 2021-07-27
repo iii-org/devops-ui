@@ -71,9 +71,9 @@
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
-      <span v-show="hasSelectedProject">
+      <span v-show="hasSelectedIssue">
         <el-divider direction="vertical" />
-        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedProjectList)">{{
+        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedIssueList)">{{
           $t('Dashboard.ADMIN.ProjectList.csv_download')
         }}</el-button>
       </span>
@@ -157,9 +157,7 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{
-                              child.assigned_to.login
-                            }})</span>
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                         </el-link>
                         <el-popconfirm
                           :confirm-button-text="$t('general.Remove')"
@@ -169,9 +167,7 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(child.id)"
                         >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                            {{ $t('Issue.Unlink') }}
-                          </el-button>
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
                         </el-popconfirm>
                       </li>
                     </template>
@@ -240,9 +236,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
-                         sortable="custom" show-overflow-tooltip
-        >
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to" sortable="custom" show-overflow-tooltip>
           <template slot-scope="scope">
             <span>{{ scope.row.assigned_to.name }}</span>
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
@@ -334,7 +328,6 @@ export default {
       originFilterValue: {},
       quickChangeDialogVisible: false,
       quickChangeForm: {},
-      assigneeList: [],
       form: {},
 
       keyword: null,
@@ -349,7 +342,7 @@ export default {
       },
       lastIssueListCancelToken: null,
       expandedRow: [],
-      selectedProjectList: [],
+      selectedIssueList: [],
       csvColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to']
     }
   },
@@ -407,10 +400,9 @@ export default {
       }
       return !!this.keyword
     },
-    hasSelectedProject() {
-      return this.selectedProjectList.length > 0
+    hasSelectedIssue() {
+      return this.selectedIssueList.length > 0
     }
-
   },
   watch: {
     selectedProjectId() {
@@ -569,15 +561,9 @@ export default {
           await this.$set(row, 'loadingRelation', true)
           const family = await getIssueFamily(row.id)
           const data = family.data
-          if (data.hasOwnProperty('parent')) {
-            await this.$set(row, 'parent', data.parent)
-          }
-          if (data.hasOwnProperty('children')) {
-            await this.$set(row, 'children', data.children)
-          }
-          if (data.hasOwnProperty('relations')) {
-            await this.$set(row, 'relations', data.relations)
-          }
+          if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
+          if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
+          if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
           await this.$set(row, 'loadingRelation', false)
         } catch (e) {
           //   null
@@ -774,10 +760,7 @@ export default {
         this.contextMenu.left = contextmenuPosition.left
         this.contextMenu.row = row
         this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = {
-          top: this.contextMenu.top + 'px',
-          left: this.contextMenu.left + 'px'
-        }
+        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
         document.addEventListener('click', this.hideContextMenu)
       })
     },
@@ -786,10 +769,10 @@ export default {
       document.removeEventListener('click', this.hideContextMenu)
     },
     handleSelectionChange(list) {
-      this.selectedProjectList = list
+      this.selectedIssueList = list
     },
-    downloadCsv(selectedProjectList) {
-      const selectedColumn = this.handleCsvSelectedColumn(selectedProjectList)
+    downloadCsv(selectedIssueList) {
+      const selectedColumn = this.handleCsvSelectedColumn(selectedIssueList)
       const translateTable = this.handleCsvTranslateTable(selectedColumn)
       const jsonToCsvParser = new Parser()
       const attr = 'data:text/csv;charset=utf-8,'
@@ -804,9 +787,9 @@ export default {
       a.download = filename
       a.click()
     },
-    handleCsvSelectedColumn(selectedProjectList) {
+    handleCsvSelectedColumn(selectedIssueList) {
       const selectedColumn = []
-      selectedProjectList.forEach(item => {
+      selectedIssueList.forEach(item => {
         const targetObject = {}
         this.csvColumnSelected.map(itemSelected => {
           if (itemSelected === 'status') {

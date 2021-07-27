@@ -18,9 +18,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.assigned_to')" prop="assigned_to_id">
           <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-            <el-option v-for="item in assigned_to" :key="item.login" :label="item.name" :value="item.id"
-                       :class="item.class"
-            >
+            <el-option v-for="item in assigned_to" :key="item.login" :label="item.name" :value="item.id" :class="item.class">
               {{ item.name }}{{ `（${item.login}）` }}
             </el-option>
           </el-select>

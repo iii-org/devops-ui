@@ -18,7 +18,7 @@
           <template v-for="dimension in filterOptions">
             <el-form-item :key="dimension.id">
               <div slot="label">
-                {{ $t('Issue.'+dimension.value) }}
+                {{ $t('Issue.' + dimension.value) }}
                 <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
                   <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
                 </el-tag>
@@ -128,7 +128,10 @@
                     :title="$t('Issue.RemoveIssueRelation')"
                     @onConfirm="removeIssueRelation(scope.row.id)"
                   >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{
+                      $t('Issue.Unlink')
+                    }}
+                    </el-button>
                   </el-popconfirm>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('children')">
@@ -181,16 +184,18 @@
                               child.assigned_to.login
                             }})</span>
                         </el-link>
-                        <!--                        <el-popconfirm-->
-                        <!--                          :confirm-button-text="$t('general.Remove')"-->
-                        <!--                          :cancel-button-text="$t('general.Cancel')"-->
-                        <!--                          icon="el-icon-info"-->
-                        <!--                          icon-color="red"-->
-                        <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
-                        <!--                          @onConfirm="removeIssueRelation(child.id)"-->
-                        <!--                        >-->
-                        <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>-->
-                        <!--                        </el-popconfirm>-->
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Remove')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Issue.RemoveIssueRelation')"
+                          @onConfirm="removeRelationIssue(child.relation_id)"
+                        >
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                            {{ $t('Issue.Unlink') }}
+                          </el-button>
+                        </el-popconfirm>
                       </li>
                     </template>
                   </ol>
@@ -253,7 +258,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import {
-  addIssue,
+  addIssue, deleteIssueRelation,
   getIssueFamily,
   getIssuePriority,
   getIssueStatus,
@@ -635,11 +640,25 @@ export default {
       const result = []
       if (this.isRelationIssueLoading(row)) {
         result.push('row-expend-loading')
-      } else if (this.hasRelationIssue(row) === false) {
+      } else if (!this.hasRelationIssue(row)) {
         result.push('row-expand-cover')
+        const getTableRef = this.$refs['issueList']
+        if (getTableRef) {
+          const getExpanded = this.expandedRow
+          if (Array.isArray(getExpanded) && getExpanded.length > 0) {
+            const getRow = getExpanded.find((item) => item.id === row.id)
+            if (getRow) {
+              this.toggleExpandedRows(getRow, getExpanded)
+              getTableRef.toggleRowExpansion(getRow, getExpanded)
+            }
+          }
+        }
       }
       result.push('context-menu')
       return result.join(' ')
+    },
+    toggleExpandedRows(row, expandedRows) {
+      this.expandedRow = expandedRows
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -671,21 +690,35 @@ export default {
       this.listQuery.page = 1
       this.listQuery.offset = 0
     },
-    removeIssueRelation(child_issue_id) {
+    async removeIssueRelation(child_issue_id) {
       this.listLoading = true
-      updateIssue(child_issue_id, { parent_id: '' })
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.initTableData()
+      try {
+        await updateIssue(child_issue_id, { parent_id: '' })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
-        .catch(err => {
-          console.error(err)
-          this.listLoading = false
+        await this.initTableData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
+    },
+    async removeRelationIssue(relation_id) {
+      this.listLoading = true
+      try {
+        await deleteIssueRelation(relation_id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
+        await this.initTableData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
     },
     handleContextMenu(row, column, event) {
       event.preventDefault()

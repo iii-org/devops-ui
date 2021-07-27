@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        <el-button @click="advancedAddIssue">》進階設定</el-button>
+        <el-button @click="advancedAddIssue">{{ $t('general.AdvancedSettings') }}</el-button>
       </el-form-item>
     </el-form>
     <el-dialog
@@ -135,7 +135,9 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) { this.$set(this.form, item + '_id', this.issueListFilter[item]) }
+        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) {
+          this.$set(this.form, item + '_id', this.issueListFilter[item])
+        }
       })
     },
     handleSave() {
@@ -180,8 +182,10 @@ export default {
       this.setFilterValue()
     },
     handleAdvancedSave() {
-      this.$refs['AddIssue'].handleSave()
-      this.setFilterValue()
+      const result = this.$refs['AddIssue'].handleSave()
+      if (result) {
+        this.setFilterValue()
+      }
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true

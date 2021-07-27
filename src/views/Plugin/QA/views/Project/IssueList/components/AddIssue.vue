@@ -53,7 +53,7 @@
     </el-row>
     <el-row>
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.status')" prop="status_id">
+        <el-form-item :label="$t('general.Status')" prop="status_id">
           <el-select v-model="issueForm.status_id" style="width: 100%">
             <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
               <status :name="item.name" />
@@ -338,7 +338,9 @@ export default {
       if (this.importFrom) {
         const getFilter = this.importFrom + 'Filter'
         Object.keys(this[getFilter]).forEach((item) => {
-          if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') { this.$set(this.issueForm, item + '_id', this[getFilter][item]) }
+          if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') {
+            this.$set(this.issueForm, item + '_id', this[getFilter][item])
+          }
         })
         let checkQuickAddIssueForm = ['tracker_id', 'subject']
         if (this.importFrom === 'kanban') {
@@ -365,6 +367,7 @@ export default {
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
+      let result = false
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
           // deep copy & remove field with empty value
@@ -387,11 +390,13 @@ export default {
           this.LoadingConfirm = true
           await this.saveData(form)
           this.LoadingConfirm = false
+          result = true
           this.handleClose()
         } else {
           return false
         }
       })
+      return result
     },
     handleExceed() {
       this.$message({
