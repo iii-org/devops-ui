@@ -39,7 +39,7 @@ export const getMyProjectList = async (simple, params) => {
     params = {}
   }
   if (simple) {
-    params['simple'] = true
+    params['simple'] = simple
   }
   const res = await request.get('/project/list', { params: params })
   const ret = []
