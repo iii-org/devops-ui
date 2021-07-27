@@ -849,8 +849,8 @@ export default {
     Develop: 'Develop',
     NewVersion: 'New Version',
     UpdateFailed: 'Update Failed',
-    DeploymentName: 'DeploymentName',
-    DeploymentUuid: 'DeploymentUuid'
+    DeploymentName: 'Deployment Name',
+    DeploymentUuid: 'Deployment UUID'
 
   },
   LoadingText: {
