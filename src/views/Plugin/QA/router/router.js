@@ -123,7 +123,7 @@ export const asyncRoutes = [
         meta: { title: 'milestone', roles: ['QA', 'Administrator'] }
       },
       {
-        path: 'issue',
+        path: 'issues',
         redirect: '/project/issue',
         component: parentBlank,
         meta: {
