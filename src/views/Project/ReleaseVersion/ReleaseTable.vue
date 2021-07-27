@@ -11,7 +11,7 @@
         row-key="id"
         :tree-props="{ children: 'child' }"
       >
-        <el-table-column :label="$t('TestCase.Index')" type="index" sortable width="100" />
+        <el-table-column :label="$t('TestCase.Index')" type="index" sortable width="120" />
         <el-table-column :label="$t('Issue.PackageVersionTime')" sortable width="300">
           <template slot-scope="scope">
             {{ UTCtoLocalTime(scope.row.create_at) }}
