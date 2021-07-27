@@ -13,7 +13,7 @@ export default {
     projectOverview: '專案總覽',
     projectList: '專案列表',
 
-    planList: '工作規劃',
+    milestone: '工作規劃',
     issueTracking: '議題追蹤',
 
     testManagement: '測試管理',
@@ -26,7 +26,7 @@ export default {
     createTest: '測試創建',
     testItem: '測試項目',
     overview: '專案總覽',
-    wikiList: 'Wiki列表',
+    wikiList: '備忘記事',
     fileList: '檔案列表',
 
     'Activity Log': '議題異動紀錄',
@@ -475,7 +475,7 @@ export default {
     batchClose: '批次關閉'
   },
   Wiki: {
-    AddWiki: '新增Wiki',
+    AddWiki: '新增記事',
     Title: '標題',
     Content: '內容',
     SearchTitle: '搜尋標題',
@@ -761,7 +761,9 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail'
+    RedmineMail: 'Redmine Mail',
+    AddPlugin: '新增插件',
+    AddParams: '新增參數'
   },
   PipeLines: {
     TestDetail: '測試細節'
@@ -854,6 +856,11 @@ export default {
     createHarbor: '連結Harbor資源...',
     integrationProject: '開始整合專案資源...',
     loadingTemplateText: '更新所有範本最新資訊中'
+  },
+  TrackManagement: {
+    description: '變更內容(議題描述)',
+    relations: '原始需求/議題',
+    assigned_to: '受分派者'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

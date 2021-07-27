@@ -17,6 +17,7 @@ export default {
         let result = false
         for (let i = 0; i < searchKeys.length; i++) {
           // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
+          if (data[searchKeys[i]] === null) data[searchKeys[i]] = ''
           const columnValue =
             typeof data[searchKeys[i]] === 'string' ? data[searchKeys[i]].toLowerCase() : data[searchKeys[i]].toString()
           result = result || columnValue.includes(keyword)

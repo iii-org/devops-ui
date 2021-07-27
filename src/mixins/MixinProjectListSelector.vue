@@ -26,6 +26,7 @@ export default {
       return listData.filter(data => {
         let result = false
         for (let i = 0; i < searchKeys.length; i++) {
+          if (data[searchKeys[i]] === null) data[searchKeys[i]] = ''
           // distinguish string and number, string to lowercase while number to string, and only Checkmarx uses number
           const columnValue = typeof data[searchKeys[i]] === 'string'
             ? data[searchKeys[i]].toLowerCase() : data[searchKeys[i]].toString()
@@ -48,9 +49,9 @@ export default {
     }
   },
   methods: {
-    async loadData() {
+    async loadData(date) {
       this.listLoading = true
-      this.listData = await this.fetchData()
+      this.listData = await this.fetchData(date)
       this.listLoading = false
     },
     async fetchData() {

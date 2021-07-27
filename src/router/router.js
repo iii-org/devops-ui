@@ -22,7 +22,7 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
-  // RD root
+  // RD PM root
   {
     path: '/',
     redirect: { name: 'my-works' },
@@ -31,16 +31,7 @@ export const asyncRoutes = [
     },
     hidden: true
   },
-  // PM QA root
-  {
-    path: '/',
-    name: 'project-qa',
-    redirect: { name: 'project-list-pm' },
-    meta: {
-      roles: ['QA']
-    },
-    hidden: true
-  },
+  //  QA root
   // admin root
   {
     path: '/',
@@ -68,6 +59,7 @@ export const asyncRoutes = [
       }
     ],
     meta: {
+      title: 'myWork',
       roles: ['Project Manager', 'Engineer']
     }
   },
@@ -92,7 +84,7 @@ export const asyncRoutes = [
         meta: {
           title: 'projectList',
           icon: 'list',
-          roles: ['Project Manager', 'QA', 'Administrator']
+          roles: ['Project Manager', 'Administrator']
         }
       },
       {
@@ -105,7 +97,7 @@ export const asyncRoutes = [
     meta: {
       title: 'overview',
       icon: 'el-icon-data-analysis',
-      roles: ['Project Manager', 'QA', 'Administrator', 'Engineer']
+      roles: ['Project Manager', 'Administrator', 'Engineer']
     }
   },
   {
@@ -115,7 +107,7 @@ export const asyncRoutes = [
     meta: {
       title: 'singleProject',
       icon: 'el-icon-data-analysis',
-      roles: ['Project Manager', 'QA', 'Administrator', 'Engineer']
+      roles: ['Project Manager', 'Administrator', 'Engineer']
     },
     children: [
       {
@@ -130,59 +122,59 @@ export const asyncRoutes = [
         component: () => import('@/views/Project/IssueBoards'),
         meta: { title: 'kanban', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
-      {
-        path: 'issues',
-        component: parentBlank,
-        children: [
-          {
-            path: '',
-            name: 'issue-list',
-            component: () => import('@/views/Project/IssueList'),
-            meta: {
-              title: 'issueList',
-              roles: ['Project Manager', 'Engineer', 'Administrator']
-            }
-          },
-          {
-            path: ':issueId',
-            name: 'issue-detail',
-            hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
-            meta: {
-              title: 'Issue Detail',
-              roles: ['Project Manager', 'Engineer', 'Administrator']
-            }
-          }
-        ]
-      },
       // {
-      //   path: 'test-case',
+      //   path: 'issues',
       //   component: parentBlank,
-      //   meta: {
-      //     title: 'createTest',
-      //     roles: ['Engineer', 'Project Manager', 'Administrator']
-      //   },
       //   children: [
       //     {
       //       path: '',
-      //       name: 'test-case',
-      //       component: () => import('@/views/Project/TestCase/TestCase'),
-      //       hidden: true
+      //       name: 'issue-list',
+      //       component: () => import('@/views/Project/IssueList'),
+      //       meta: {
+      //         title: 'issueList',
+      //         roles: ['Project Manager', 'Engineer', 'Administrator']
+      //       }
       //     },
       //     {
-      //       path: 'test-item/:testCaseId',
-      //       name: 'test-item',
-      //       component: () => import('@/views/Project/TestCase/TestItem'),
+      //       path: ':issueId',
+      //       name: 'issue-detail',
       //       hidden: true,
+      //       component: () => import('@/views/Project/IssueDetail'),
       //       meta: {
-      //         title: 'testItem',
-      //         roles: ['Engineer', 'Project Manager', 'Administrator']
+      //         title: 'Issue Detail',
+      //         roles: ['Project Manager', 'Engineer', 'Administrator']
       //       }
       //     }
       //   ]
       // },
+      // {
+      //     path: 'test-case',
+      //     component: parentBlank,
+      //     meta: {
+      //         title: 'createTest',
+      //         roles: ['Engineer', 'Project Manager', 'Administrator']
+      //     },
+      //     children: [
+      //         {
+      //             path: '',
+      //             name: 'test-case',
+      //             component: () => import('@/views/Project/TestCase/TestCase'),
+      //             hidden: true
+      //         },
+      //         {
+      //             path: 'test-item/:testCaseId',
+      //             name: 'test-item',
+      //             component: () => import('@/views/Project/TestCase/TestItem'),
+      //             hidden: true,
+      //             meta: {
+      //                 title: 'testItem',
+      //                 roles: ['Engineer', 'Project Manager', 'Administrator']
+      //             }
+      //         }
+      //     ]
+      // },
       {
-        path: 'wiki',
+        path: 'notes',
         name: 'wiki-list',
         component: () => import('@/views/Project/Wiki'),
         meta: { title: 'wikiList', roles: ['Project Manager', 'Engineer', 'Administrator'] }
@@ -210,8 +202,7 @@ export const asyncRoutes = [
             name: 'release-version',
             component: () => import('@/views/Project/ReleaseVersion'),
             meta: {
-              title: 'releaseVersion',
-              roles: ['Project Manager', 'Administrator']
+              title: 'releaseVersion', roles: ['Project Manager', 'Administrator']
             }
           },
           {
@@ -253,12 +244,6 @@ export const asyncRoutes = [
             meta: { title: 'Issue Transfer', roles: ['Project Manager', 'Administrator'] }
           }
         ]
-      },
-      {
-        path: 'settings',
-        name: 'Project Settings',
-        component: () => import('@/views/Project/Settings/roles/QA'),
-        meta: { title: 'Project Settings', roles: ['QA'] }
       }
     ]
   },
@@ -554,14 +539,14 @@ export const asyncRoutes = [
     meta: {
       title: 'Activities',
       icon: 'el-icon-s-order',
-      roles: ['Project Manager', 'QA', 'Administrator']
+      roles: ['Project Manager', 'Administrator']
     },
     children: [
       {
         path: 'project-activities',
         name: 'ProjectActivities',
         component: () => import('@/views/Activities/ProjectActivities'),
-        meta: { title: 'Project Activities', roles: ['Project Manager', 'QA', 'Administrator'] }
+        meta: { title: 'Project Activities', roles: ['Project Manager', 'Administrator'] }
       }
     ]
   },

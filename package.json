@@ -26,6 +26,7 @@
     "fuse.js": "^6.4.3",
     "jquery": "^3.5.1",
     "js-cookie": "2.2.0",
+    "json2csv": "^5.0.6",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.21",
     "mermaid": "^8.11.0",

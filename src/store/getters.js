@@ -13,6 +13,8 @@ const getters = {
   projectListTotal: state => state.projects.total,
   branchesByProject: state => state.branches.list,
   branchesTotalNumByProject: state => state.branches.total,
+  fileListByBranch: state => state.fileList.list,
+  fileListTotalByBranch: state => state.fileList.total,
   commitListByBranch: state => state.commitList.list,
   commitListTotalByBranch: state => state.commitList.total,
   userProjectList: state => state.projects.options,
@@ -30,6 +32,7 @@ const getters = {
   issueListPageInfo: state => state.projects.issueListPageInfo,
   issueListDisplayClosed: state => state.projects.issueListDisplayClosed,
   fixedVersionShowClosed: state => state.projects.fixedVersionShowClosed,
+  test_filename: state => state.qa.test_filename,
   hasSystemUpdate: state => state.settings.hasSystemUpdate,
   updateVersionName: state => state.settings.updateVersionName
 }

@@ -273,7 +273,7 @@ export default {
     async handleAdding() {
       this.dialogVisible = true
       this.drawerTitle = 'Add'
-      this.wikiContent = '# WIKI'
+      this.wikiContent = '# ' + this.$t('Wiki.Title')
       this.form.wikiTitle = ''
     },
     async handleConfirmAdd() {

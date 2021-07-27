@@ -13,7 +13,7 @@ export default {
     projectOverview: 'Project Overview',
     projectList: 'Project List',
 
-    planList: 'Plan List',
+    milestone: 'milestone',
     issueTracking: 'Issue Tracking',
 
     testManagement: 'Test Management',
@@ -26,7 +26,7 @@ export default {
     createTest: 'Create Test',
     testItem: 'Test Item',
     overview: 'Overview',
-    wikiList: 'Wiki List',
+    wikiList: 'Notes',
     fileList: 'File List',
 
     'Activity Log': 'Activity Log',
@@ -854,6 +854,11 @@ export default {
     createHarbor: 'Linking to Harbor resources...',
     integrationProject: 'Start integrating project resources...',
     loadingTemplateText: 'Update latest templates'
+  },
+  TrackManagement: {
+    description: 'Change content(Issue description)',
+    relations: 'Original demand/Issues',
+    assigned_to: 'Assignee'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
