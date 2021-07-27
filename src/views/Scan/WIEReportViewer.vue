@@ -3,7 +3,7 @@
     id="wie-report-header" v-loading="isLoading" :element-loading-text="$t('Loading')"
     class="px-5 h-full overflow-x-hidden overflow-y-auto"
   >
-    <div class="drawer w-1/4" :class="isShowDrawer ? '' : 'drawer-close'">
+    <!-- <div class="drawer w-1/4" :class="isShowDrawer ? '' : 'drawer-close'">
       <span class="button" @click="showDrawer">
         <el-icon :class="isShowDrawer ? 'el-icon-close' : 'el-icon-tickets'" />
       </span>
@@ -14,7 +14,7 @@
           <div class="hover:underline py-1 leading-snug" @click="toIssue(issue.id)"> {{ issue.name }}</div>
         </div>
       </div>
-    </div>
+    </div> -->
     <el-backtop target="#wie-report-header" />
     <div v-if="!isLoading" class="flex justify-between items-center my-5">
       <h3>「{{ selectedProject.display }}」{{ $t('WebInspect.TestReport') }}</h3>
