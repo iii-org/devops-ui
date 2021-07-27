@@ -11,7 +11,7 @@
             type="textarea"
             rows="4"
             style="width: 100%"
-            :placeholder="$t('RuleMsg.PleaseInput')"
+            :placeholder="$t('general.PleaseInput')"
             @keydown.meta.esc.native="cancelInput"
           />
         </el-form-item>

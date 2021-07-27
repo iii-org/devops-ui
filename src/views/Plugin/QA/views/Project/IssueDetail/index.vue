@@ -22,15 +22,16 @@
             </el-col>
           </el-row>
           <el-col :span="6" class="text-right">
-            <el-button size="medium" type="danger" plain @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-            <el-button size="medium" type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
+            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'danger'" plain :disabled="isButtonDisabled" @click="handleDelete">{{ $t('general.Delete') }}</el-button>
+            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'primary'" :disabled="isButtonDisabled" @click="handleSave">{{ $t('general.Save') }}</el-button>
           </el-col>
         </el-row>
       </el-row>
       <el-row :gutter="20">
         <el-col ref="mainIssueWrapper" :span="24" :md="16">
           <el-col :span="24">
-            <IssueToolbar :issue-link="issue_link"
+            <IssueToolbar :is-button-disabled="isButtonDisabled"
+                          :issue-link="issue_link"
                           :issue-id="issueId"
                           :issue-name="issueSubject"
                           :issue-tracker="formTrackerName"
@@ -78,7 +79,7 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(issueId)"
                         >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                          <el-button slot="reference" :type="isButtonDisabled ? 'info' : 'danger'" :disabled="isButtonDisabled" size="mini" icon="el-icon-remove">
                             {{ $t('Issue.Unlink') }}
                           </el-button>
                         </el-popconfirm>
@@ -332,6 +333,9 @@ export default {
       const getTrackerName = this.$refs['IssueForm'].tracker.find(item => item.id === this.form.tracker_id)
       if (!getTrackerName) return null
       return getTrackerName.name
+    },
+    isButtonDisabled() {
+      return this.$route.params.disableButton
     }
   },
   watch: {
@@ -402,8 +406,7 @@ export default {
           this.$set(data, 'test_files', test_files.data)
         }
         this.initIssueDetails(data)
-      } catch
-      (e) {
+      } catch (e) {
         this.$router.push(this.formObj)
         this.$message({
           message: this.$t('Issue.RemovedIssue'),
@@ -524,7 +527,6 @@ export default {
       this.test_files = []
       this.relations = []
       if (!this.issueId) {
-        console.log('get', issue_id)
         this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()

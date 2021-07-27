@@ -58,6 +58,65 @@
         </el-option-group>
       </el-select>
     </el-form-item>
+    <el-form-item prop="relation_ids">
+      <template slot="label">{{ $t('Issue.RelatedIssue') }}
+        <el-tag v-if="getTrackerFilter.name" icon="el-icon-s-operation">
+          <el-checkbox v-model="isRecommendRelation" /> &nbsp;{{ $t('general.Filter') }}:
+          {{ $t('Issue.' + getTrackerFilter.name) }}
+        </el-tag>
+      </template>
+      <el-select
+        v-model="form.relation_ids"
+        style="width: 100%"
+        :placeholder="$t('Issue.SearchNameOrAssignee')"
+        clearable
+        filterable
+        remote
+        multiple
+        :remote-method="getSearchRelationIssue"
+        :loading="issueLoading"
+        @focus="getSearchRelationIssue()"
+      >
+        <el-option-group
+          v-for="group in relationIssueList"
+          :key="group.name"
+          :label="group.name"
+        >
+          <el-option
+            v-for="item in group.options"
+            :key="item.id"
+            :label="'#' + item.id +' - '+item.name"
+            :value="item.id"
+          >
+            <el-popover
+              placement="left"
+              width="250"
+              trigger="hover"
+            >
+              <el-card>
+                <template slot="header">
+                  <tracker :name="item.tracker.name" />
+                  #{{ item.id }} - {{ item.name }}
+                </template>
+                <b>{{ $t('Issue.Description') }}:</b>
+                <p>{{ item.description }}</p>
+              </el-card>
+              <div slot="reference">
+                <span
+                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                >
+                  <b>#<span v-html="highLight((item.id)? item.id.toString(): '')" /></b> -
+                  <span v-html="highLight(item.name)" />
+                </span>
+                <span style="float: right; color: #8492a6; font-size: 13px"
+                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                />
+              </div>
+            </el-popover>
+          </el-option>
+        </el-option-group>
+      </el-select>
+    </el-form-item>
     <el-form-item :label="$t('Issue.fixed_version')" prop="fixed_version_id">
       <el-select
         v-model="form.fixed_version_id"
@@ -134,7 +193,9 @@
       <el-input-number v-model="form.estimated_hours" :min="0" :max="100" style="width: 100%" />
     </el-form-item>
     <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
-      <el-input-number v-model="form.done_ratio" :min="0" :max="100" :disabled="childrenIssue > 0" style="width: 100%" />
+      <el-input-number v-model="form.done_ratio" :min="0" :max="100" :disabled="childrenIssue > 0"
+                       style="width: 100%"
+      />
     </el-form-item>
     <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
       <el-date-picker
@@ -168,6 +229,8 @@ import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import axios from 'axios'
+
+const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
 export default {
   name: 'IssueForm',
@@ -214,6 +277,7 @@ export default {
       issueQuery: null,
       issueLoading: false,
       issueList: [],
+      relationIssueList: [],
       assigned_to: [],
       fixed_version: [],
       tracker: [],
@@ -222,6 +286,7 @@ export default {
 
       relativeIssueList: [],
       isLoading: false,
+      isRecommendRelation: true,
       checkClosable: false,
       dynamicStatusList: [],
 
@@ -261,6 +326,20 @@ export default {
     originalParentIssue() {
       if (Object.keys(this.parent).length <= 0) return {}
       return { name: this.$t('Issue.OriginalSetting'), options: [this.parent] }
+    },
+    originalRelationIssue() {
+      if (Object.keys(this.relations).length <= 0) return {}
+      return { name: this.$t('Issue.OriginalSetting'), options: this.relations }
+    },
+    getTrackerFilter() {
+      if (this.tracker.length < 0) return { id: null, name: null }
+      if (!this.form.tracker_id) return this.getObjectByName(this.tracker, 'Test Plan')
+      if (!this.getObjectById(this.tracker, this.form.tracker_id)) return { id: null, name: null }
+      const getFilter = this.getObjectByName(this.tracker, relationIssueFilter[this.getObjectById(this.tracker, this.form.tracker_id).name])
+      if (!getFilter) {
+        return { id: null, name: null }
+      }
+      return getFilter
     }
   },
   watch: {
@@ -280,14 +359,19 @@ export default {
         this.getSearchIssue()
       }
     },
-    'form.project_id'() {
+    'form.project_id'(value) {
       this.fetchData()
+      if (value > 0) {
+        this.getSearchIssue()
+        this.getSearchRelationIssue()
+      }
     }
   },
   mounted() {
     this.fetchData()
     if (this.form.project_id > 0) {
       this.getSearchIssue()
+      this.getSearchRelationIssue()
     }
   },
   methods: {
@@ -320,6 +404,8 @@ export default {
       }
       if (this.issueId > 0) {
         await this.getClosable()
+      } else {
+        this.$set(this.$data, 'dynamicStatusList', this.status)
       }
       this.isLoading = false
     },
@@ -332,10 +418,16 @@ export default {
       this.fixed_version = versionList.data.versions
     },
     async getClosable() {
-      await getCheckIssueClosable(this.issueId)
-        .then((res) => {
-          this.checkClosable = res.data
-        })
+      try {
+        if (this.issueId) {
+          const checkClosable = await getCheckIssueClosable(this.issueId)
+          this.checkClosable = checkClosable.data
+        } else {
+          this.checkClosable = true
+        }
+      } catch (e) {
+        // log
+      }
       await this.getDynamicStatusList()
     },
     clearDueDate(val) {
@@ -399,11 +491,55 @@ export default {
       this.issueLoading = false
       this.cancelToken = null
     },
-    highLight: function (value) {
+    async getSearchRelationIssue(query) {
+      const params = {
+        selection: true,
+        status_id: 'open'
+      }
+      if (this.isRecommendRelation && this.getTrackerFilter.id) {
+        params['tracker_id'] = this.getTrackerFilter.id
+      }
+      this.relationIssueList = []
+      if (query !== '' && query) {
+        params['search'] = query
+        this.issueQuery = query
+        this.issueLoading = true
+      } else {
+        params['offset'] = 0
+        params['limit'] = 5
+        this.issueQuery = null
+      }
+      if (this.cancelToken) {
+        this.cancelToken.cancel()
+      }
+      const CancelToken = axios.CancelToken.source()
+      this.cancelToken = CancelToken
+      const res = await getProjectIssueList(this.form.project_id, params, { cancelToken: CancelToken.token })
+      let queryList = res.data
+      let key = 'Issue.Result'
+      if (!this.issueQuery) {
+        if (queryList && queryList.hasOwnProperty('issue_list')) {
+          queryList = res.data.issue_list
+        } else {
+          queryList = []
+        }
+        key = 'Issue.LastResult'
+      }
+      this.relationIssueList = [this.originalRelationIssue, { name: this.$t(key), options: queryList }]
+      this.issueLoading = false
+      this.cancelToken = null
+    },
+    getObjectById(list, id) {
+      return list.find((item) => (item.id === id))
+    },
+    getObjectByName(list, name) {
+      return list.find((item) => (item.name === name))
+    },
+    highLight: function(value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function (str) {
+      return value.replace(reg, function(str) {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     }

@@ -26,7 +26,7 @@ export default {
     createTest: 'Create Test',
     testItem: 'Test Item',
     overview: 'Overview',
-    wikiList: 'Notes',
+    wikiList: 'Wiki',
     fileList: 'File List',
 
     'Activity Log': 'Activity Log',

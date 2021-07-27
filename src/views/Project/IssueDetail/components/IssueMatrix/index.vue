@@ -108,7 +108,7 @@ export default {
       const result = []
       this.getPaintFamily = async function (issue_id, issue_name, issue_status, group) {
         vueInstance.chartProgress.total += 1
-        let family = await getIssueFamily(issue_id, { relation: true })
+        let family = await getIssueFamily(issue_id)
         family = family.data
         const children_id = []
         const link = []

@@ -107,6 +107,37 @@
                         </li>
                       </ol>
                     </li>
+                    <li v-if="relations.length>0">{{ $t('Issue.RelatedIssue') }}
+                      <ol>
+                        <template v-for="child in relations">
+                          <li :key="child.id">
+                            <el-link :underline="false" @click="onRelationIssueDialog(child.id)">
+                              <status :name="child.status.name" size="mini" />
+                              <template v-if="child.tracker">
+                                <tracker :name="child.tracker.name" />
+                              </template>
+                              <template v-else>{{ $t('Issue.Issue') }}</template>
+                              #{{ child.id }} - {{ (child.subject) ? child.subject : child.name }}
+                              <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
+                                ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
+                                - {{ child.assigned_to.login }})</span>
+                            </el-link>
+                            <el-popconfirm
+                              :confirm-button-text="$t('general.Remove')"
+                              :cancel-button-text="$t('general.Cancel')"
+                              icon="el-icon-info"
+                              icon-color="red"
+                              :title="$t('Issue.RemoveIssueRelation')"
+                              @onConfirm="removeRelationIssue(child.relation_id)"
+                            >
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                                {{ $t('Issue.Unlink') }}
+                              </el-button>
+                            </el-popconfirm>
+                          </li>
+                        </template>
+                      </ol>
+                    </li>
                   </ul>
                 </el-collapse-item>
               </el-collapse>
@@ -142,7 +173,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getIssue, updateIssue, deleteIssue } from '@/api/issue'
+import { getIssue, updateIssue, deleteIssue, putIssueRelation, deleteIssueRelation } from '@/api/issue'
 import {
   IssueForm,
   IssueNotesDialog,
@@ -194,7 +225,7 @@ export default {
       form: {
         parent_id: null,
         project_id: 0,
-        assigned_to_id: -1,
+        assigned_to_id: '',
         subject: '',
         fixed_version_id: '',
         tracker_id: -1,
@@ -218,7 +249,8 @@ export default {
       relationIssue: {
         visible: false,
         id: null
-      }
+      },
+      relations: []
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -251,13 +283,23 @@ export default {
     countRelationIssue() {
       let parent = 0
       let children = 0
+      let relations = 0
       if (this.parent && Object.keys(this.parent).length > 0) {
         parent = 1
       }
       if (this.children !== undefined) {
         children = this.children.length
       }
-      return parent + children
+      if (this.relations !== undefined) {
+        relations = this.relations.length
+      }
+      return parent + children + relations
+    },
+    formTrackerName() {
+      if (!this.form.tracker_id || !this.$refs['IssueForm']) return null
+      const getTrackerName = this.$refs['IssueForm'].tracker.find(item => item.id === this.form.tracker_id)
+      if (!getTrackerName) return null
+      return getTrackerName.name
     },
     isButtonDisabled() {
       return this.$route.params.disableButton
@@ -295,6 +337,27 @@ export default {
       try {
         const issue = await getIssue(this.issueId)
         data = issue.data
+        if (data.hasOwnProperty('relations')) {
+          const res_api = []
+          for (const item of data.relations) {
+            let getIssueId
+            if (data.id === item.issue_id) {
+              getIssueId = item.issue_to_id
+            } else {
+              getIssueId = item.issue_id
+            }
+            res_api.push(await getIssue(getIssueId))
+          }
+          const relation_issue = await Promise.all(res_api)
+          relation_issue.forEach((issue, idx) => {
+            this.$set(data.relations, idx, {
+              relation_id: data.relations[idx].id,
+              ...data.relations[idx],
+              ...issue.data,
+              name: issue.data.subject
+            })
+          })
+        }
         this.initIssueDetails(data)
       } catch (e) {
         this.$router.push(this.formObj)
@@ -307,14 +370,30 @@ export default {
       return data
     },
     initIssueDetails(data) {
-      const { issue_link, author, attachments, created_date, journals, subject, tracker, parent, children } = data
+      const {
+        issue_link,
+        author,
+        attachments,
+        created_date,
+        journals,
+        subject,
+        tracker,
+        parent,
+        children,
+        relations
+      } = data
       this.issue_link = issue_link
       this.issueSubject = subject
       this.author = author.name
       this.tracker = tracker.name
       this.files = attachments
       this.created_date = created_date
-      this.journals = journals.reverse()
+      if (journals) {
+        this.journals = journals.reverse()
+      } else {
+        this.journals = []
+      }
+      this.relations = relations || []
       this.parent = (parent) || {}
       this.children = (children) || []
       this.setFormData(data)
@@ -359,6 +438,7 @@ export default {
       this.form.start_date = start_date === null ? '' : start_date
       this.form.due_date = due_date === null ? '' : due_date
       this.form.description = description === null ? '' : description
+      this.form.relation_ids = (this.relations.length > 0) ? this.relations.map((item) => (item.id)) : []
       this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {
@@ -395,6 +475,7 @@ export default {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
+      this.relations = []
       await this.fetchIssue()
       this.isLoading = false
     },
@@ -428,6 +509,19 @@ export default {
       const { issueId } = this
       try {
         await updateIssue(issueId, sendForm)
+        const issue_id = this.issueId
+        if (this.form.relation_ids) {
+          const data = {
+            'issue_id': issue_id,
+            'issue_to_ids': this.form.relation_ids
+          }
+          await putIssueRelation(data)
+        }
+        await this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
         await this.handleUpdated()
         this.$emit('update')
       } catch (e) {
@@ -449,6 +543,21 @@ export default {
         console.error(err)
       }
       this.isLoading = false
+    },
+    async removeRelationIssue(relation_id) {
+      this.listLoading = true
+      try {
+        await deleteIssueRelation(relation_id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.handleUpdated()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
     },
     hasUnsavedChanges() {
       const isNotesChanged = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown') !== ''

@@ -84,6 +84,10 @@ export default {
       type: [String, Number],
       default: null
     },
+    issueTracker: {
+      type: String,
+      default: null
+    },
     isButtonDisabled: {
       type: Boolean,
       default: false

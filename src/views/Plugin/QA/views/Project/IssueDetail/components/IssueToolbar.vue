@@ -2,8 +2,8 @@
   <el-row type="flex" justify="space-between" align="middle" class="mb-5">
     <el-col>
       <template v-if="issueId">
-        <el-button size="small" icon="el-icon-upload" type="success" @click="uploadDialogVisible=true">{{ $t('Issue.UploadFiles') }}</el-button>
-        <el-button size="small" icon="el-icon-plus" type="warning" @click="addTopicDialogVisible=true">{{ $t('Issue.AddSubIssue') }}</el-button>
+        <el-button size="small" icon="el-icon-upload" :type="isButtonDisabled ? 'info' : 'success'" :disabled="isButtonDisabled" @click="uploadDialogVisible = true">{{ $t('Issue.UploadFiles') }}</el-button>
+        <el-button size="small" icon="el-icon-plus" :type="isButtonDisabled ? 'info' : 'warning'" :disabled="isButtonDisabled" @click="addTopicDialogVisible = true">{{ $t('Issue.AddSubIssue') }}</el-button>
       </template>
       <el-button v-if="issueTracker==='Test Plan'" size="small" type="primary" icon="el-icon-upload" @click="handleCollectionDialog">管理測試檔案</el-button>
     </el-col>
@@ -20,8 +20,13 @@
       @close="handleUploadClose"
     >
       <issue-file-uploader ref="IssueFileUploader" class="mb-2" :issue-id="issueId" />
-      <div class="mt-2 text-right">
-        <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+      <div class="mt-2 flex justify-between">
+        <div class="text-xs" style="line-height: 40px;">
+          *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
+        </div>
+        <div>
+          <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+        </div>
       </div>
     </el-dialog>
     <el-dialog
@@ -81,13 +86,18 @@ export default {
     issueTracker: {
       type: String,
       default: null
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       isLoading: false,
       uploadDialogVisible: false,
-      addTopicDialogVisible: false
+      addTopicDialogVisible: false,
+      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
     }
   },
   computed: {
