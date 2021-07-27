@@ -111,7 +111,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.end_date')" width="80">
+      <el-table-column :label="$t('general.DueDate')" width="80">
         <template slot-scope="scope">
           {{ calculateDays(scope.row.due_date, scope.row.start_date) }}
         </template>
@@ -332,8 +332,9 @@ export default {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
-      if (this.userRole === 'QA' || this.userRole === 'Administrator') this.$router.push({ name: 'Project Settings QA' })
-      else this.$router.push({ name: 'Project Settings' })
+      // if (this.userRole === 'QA' || this.userRole === 'Administrator') this.$router.push({ name: 'Project Settings QA' })
+      // else this.$router.push({ name: 'Project Settings' })
+      this.$router.push({ name: 'Project Settings' })
     },
     async setStar(id, star) {
       if (star) {

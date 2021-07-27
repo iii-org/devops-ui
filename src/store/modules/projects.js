@@ -89,9 +89,9 @@ const mutations = {
 }
 
 const actions = {
-  async getMyProjectList({ commit }) {
+  async getMyProjectList({ commit }, params) {
     try {
-      let projects = await getMyProjectList()
+      let projects = await getMyProjectList(true, params)
       projects = projects.sort((a, b) => (-(new Date(a.updated_time) - new Date(b.updated_time))))
         .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
       commit('SET_LIST', projects)

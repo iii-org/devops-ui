@@ -674,7 +674,10 @@ export default {
     overdue: '已超時',
     not_started: '未開始',
     in_progress: '進行中',
-    closed: '已完成'
+    closed: '已完成',
+    ProjectPeriod: '專案期間',
+    ProjectOwner: '@:general.owner_name',
+    DueDate: '@:general.DueDate'
   },
   ProcessDevBranch: {
     Commit: 'Commit',

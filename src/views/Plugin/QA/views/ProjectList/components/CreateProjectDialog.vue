@@ -18,10 +18,10 @@
           <el-col :span="24" :sm="12" :xl="9">
             <el-form-item :label="$t('Project.Identifier')" prop="name">
               <el-input v-model="form.name" :maxlength="30" show-word-limit />
-              <div style="word-break: keep-all;margin-top: 5px;">
-                {{ $t('Project.IdRule') }}
-              </div>
             </el-form-item>
+            <span class="font-sm">
+              {{ $t('Project.IdRule') }}
+            </span>
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
             <el-form-item :label="$t('Project.StartDate')" prop="start_date">
@@ -35,7 +35,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="12" :xl="3">
-            <el-form-item :label="$t('Project.DueDate')" prop="due_date">
+            <el-form-item :label="$t('general.DueDate')" prop="due_date">
               <el-date-picker
                 v-model="form.due_date"
                 type="date"
@@ -46,9 +46,14 @@
             </el-form-item>
           </el-col>
           <el-col v-if="checkOwnerRequired" :span="24">
-            <el-form-item :label="$t('Project.ProjectOwner')" :prop="(checkOwnerRequired)?'owner_id':''">
+            <el-form-item :label="$t('Project.Owner')" :prop="checkOwnerRequired ? 'owner_id' : ''">
               <el-select v-model="form.owner_id" filterable style="width:100%">
-                <el-option v-for="user in userList" :key="user.id" :value="user.id" :label="user.name+' ('+user.login+')'" />
+                <el-option
+                  v-for="user in userList"
+                  :key="user.id"
+                  :value="user.id"
+                  :label="user.name + ' (' + user.login + ')'"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -59,7 +64,7 @@
           </el-col>
         </el-col>
       </el-row>
-      <el-row v-loading="isLoadingTemplate" :gutter="10">
+      <el-row class="loading-template" :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">
             {{ $t('Project.Template') }}
@@ -68,20 +73,35 @@
         </el-col>
         <el-col :xs="24" :sm="18" :md="20">
           <el-form-item :label="$t('Project.TemplateName')">
+            <div slot="label" class="flex items-center mb-2">
+              <span class="mr-3">{{ $t('Project.TemplateName') }}</span>
+              <el-radio-group v-model="focusSources" size="mini">
+                <el-radio-button label="Public Templates">Public</el-radio-button>
+                <el-radio-button label="Local Templates">Local</el-radio-button>
+              </el-radio-group>
+            </div>
             <el-select
               v-model="form.template_id"
-              placeholder="Please select template"
+              :placeholder="$t('Project.SelectTemplate')"
               style="width:100%"
               clearable
               filterable
               @change="handleTemplateSelect"
             >
-              <el-option v-for="item in templateList" :key="item.id" :label="item.display" :value="item.id" />
+              <el-option
+                v-for="item in activeTemplateList"
+                :key="item.id"
+                :label="item.display || item.name"
+                :value="item.id"
+              />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :xs="24" :sm="6" :md="4">
           <el-form-item :label="$t('Project.Version')">
+            <div slot="label" class="mb-2">
+              <span>{{ $t('Project.Version') }}</span>
+            </div>
             <el-select
               v-model="form.tag_name"
               style="width:100%"
@@ -95,7 +115,7 @@
           </el-form-item>
         </el-col>
         <el-col v-if="focusTemplate.description" :span="24">
-          <el-form-item label="Template Description">
+          <el-form-item :label="$t('Project.TemplateDescription')">
             <p v-html="focusTemplate.description" />
           </el-form-item>
         </el-col>
@@ -121,22 +141,6 @@
           </el-col>
         </div>
       </el-row>
-      <!-- <el-row :gutter="10">
-        <el-col :span="24">
-          <el-divider content-position="left">{{ $t('general.Active') }}</el-divider>
-          <el-form-item prop="disabled">
-            <el-switch
-              v-model="form.disabled"
-              :active-value="false"
-              :inactive-value="true"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              :active-text="$t('general.Enable')"
-              :inactive-text="$t('general.Disable')"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
@@ -147,6 +151,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import i18n from '@/lang'
 import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
@@ -165,38 +170,62 @@ const formTemplate = () => ({
 })
 
 export default {
-  name: '',
-  data: () => ({
-    showDialog: false,
-    isLoading: false,
-    form: formTemplate(),
-    rules: {
-      name: [
-        { required: true, message: 'Project Identifier is required', trigger: 'blur' },
-        {
-          required: true,
-          pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-          message: 'Identifier is invalid.',
-          trigger: 'blur'
+  name: 'CreateDialog',
+  data() {
+    return {
+      showDialog: false,
+      isLoading: false,
+      form: formTemplate(),
+      rules: {
+        name: [
+          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
+            message: 'Identifier is invalid.',
+            trigger: 'blur'
+          }
+        ],
+        display: [
+          { required: true, message: 'Project Name is required', trigger: 'blur' },
+          {
+            required: true,
+            pattern: /^((?!<|&).)*$/,
+            message: i18n.t('Project.DisplayRule'),
+            trigger: 'blur'
+          }
+        ],
+        start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
+        due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
+        owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }],
+        description: [
+          {
+            pattern: /^((?!<|&).)*$/,
+            message: i18n.t('Project.DescriptionRule'),
+            trigger: 'blur'
+          }
+        ]
+      },
+      userList: [],
+      templateList: [],
+      focusTemplate: {},
+      isLoadingTemplate: false,
+      isClickUpdateTemplate: false,
+      pickerOptions(startDate) {
+        return {
+          disabledDate(time) {
+            return time.getTime() < new Date(startDate).getTime()
+          }
         }
-      ],
-      display: [{ required: true, message: 'Project Name is required', trigger: 'blur' }],
-      start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-      due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
-      owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }]
-    },
-    userList: [],
-    templateList: [],
-    focusTemplate: {},
-    isLoadingTemplate: false,
-    pickerOptions(startDate) {
-      return {
-        disabledDate(time) {
-          return time.getTime() < new Date(startDate).getTime()
-        }
-      }
+      },
+      loadingText: ['createRedmine', 'createGitLab', 'createHarbor', 'integrationProject'],
+      loadingTemplateText: ['', '.', '..', '...'],
+      loadingInstance: {},
+      templateLoadingInstance: {},
+      timeout: '',
+      focusSources: 'Public Templates'
     }
-  }),
+  },
   computed: {
     ...mapGetters(['userRole']),
     versionList() {
@@ -204,6 +233,53 @@ export default {
     },
     checkOwnerRequired() {
       return this.userRole === 'QA' || this.userRole === 'Administrator'
+    },
+    activeTemplateList() {
+      if (this.templateList.length === 0) return []
+      const idx = this.templateList.findIndex(item => item.source === this.focusSources)
+      return this.templateList[idx].options
+    }
+  },
+  watch: {
+    isLoading(val) {
+      if (val) {
+        this.loadingInstance = this.$loading({
+          text: this.$t('Loading'),
+          lock: true,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          customClass: 'project-dialog-loading'
+        })
+        this.loadingText.map((text, index) => {
+          this.timeout = setTimeout(() => this.openFullLoading(text), 3000 * index)
+        })
+      } else {
+        clearTimeout(this.timeout)
+        this.openFullLoading()
+      }
+    },
+    isClickUpdateTemplate(val) {
+      if (val) {
+        const text = this.$t('LoadingText.loadingTemplateText')
+        this.templateLoadingInstance = this.$loading({
+          text,
+          spinner: 'el-icon-loading',
+          background: 'rgba(255, 255, 255, 0.9)',
+          target: '.loading-template',
+          customClass: 'project-dialog-template-loading'
+        })
+        // set 60secs for loading to show different words
+        for (let sec = 1; sec < 60; sec++) {
+          const templateText = `${text}${this.loadingTemplateText[sec % 4]}`
+          this.timeout = setTimeout(() => this.openTemplateFullLoading(templateText), 1000 * sec)
+        }
+      } else {
+        clearTimeout(this.timeout)
+        this.openTemplateFullLoading()
+      }
+    },
+    focusSources(val) {
+      this.clearFocusTemplate()
     }
   },
   mounted() {
@@ -216,11 +292,13 @@ export default {
         const userList = await getUserListByFilter({ role_ids: 3 }) // pm
         this.userList = userList.data.user_list
       }
+      if (isForceUpdate) this.isClickUpdateTemplate = true
       this.isLoadingTemplate = true
       await getTemplateList({ force_update: isForceUpdate }).then(res => {
         this.templateList = res.data
       })
       this.isLoadingTemplate = false
+      this.isClickUpdateTemplate = false
     },
     onDialogClosed() {
       this.showDialog = false
@@ -238,7 +316,6 @@ export default {
         this.addNewProject(sendData)
           .then(() => {
             this.$message({
-              title: this.$t('general.Success'),
               message: this.$t('Notify.Created'),
               type: 'success'
             })
@@ -246,12 +323,26 @@ export default {
             this.$emit('update')
           })
           .catch(err => {
-            console.log(err)
+            this.$message({
+              message: err,
+              type: 'error'
+            })
           })
           .then(() => {
             this.isLoading = false
           })
       })
+    },
+    openFullLoading(loadingText) {
+      // handle i18n log warning when loadingText is undefined
+      const text = loadingText ? this.$t(`LoadingText.${loadingText}`) : this.$t('LoadingText.integrationProject')
+      if (loadingText) this.loadingInstance.setText(text)
+      // set loading text every 3 second
+      else this.loadingInstance.close() // if loadingText is undefined, close the instance
+    },
+    openTemplateFullLoading(loadingText) {
+      if (loadingText) this.templateLoadingInstance.setText(loadingText)
+      else this.templateLoadingInstance.close()
     },
     handleSendData() {
       const result = Object.assign({}, this.form)
@@ -268,14 +359,15 @@ export default {
       return result
     },
     clearFocusTemplate() {
+      this.form.template_id = ''
       this.form.tag_name = ''
       this.focusTemplate = {}
       this.form.argumentsForm = []
     },
     handleTemplateSelect() {
       if (this.form.template_id !== '') {
-        const idx = this.templateList.findIndex(item => item.id === this.form.template_id)
-        this.focusTemplate = this.templateList[idx]
+        const idx = this.activeTemplateList.findIndex(item => item.id === this.form.template_id)
+        this.focusTemplate = this.activeTemplateList[idx]
         this.form.tag_name = this.versionList[0] ? this.versionList[0].name : ''
         this.handleVersionSelect()
       } else {

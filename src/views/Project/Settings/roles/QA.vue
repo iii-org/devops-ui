@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="flex">
-      <ProjectListSelector />
-    </div>
+    <ProjectListSelector />
     <el-divider />
     <el-row v-if="selectedProjectId !== -1" :gutter="10">
       <el-col class="mb-4" :xs="24">
