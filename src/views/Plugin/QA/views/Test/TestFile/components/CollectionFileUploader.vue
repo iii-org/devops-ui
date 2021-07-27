@@ -25,12 +25,18 @@ export default {
   name: 'CollectionFileUploader',
   data() {
     return {
+      isLoading: false,
       software_name: [],
       uploadFileList: []
     }
   },
   computed: {
     ...mapGetters(['selectedProjectId'])
+  },
+  watch: {
+    isLoading(value) {
+      this.$emit('loading', value)
+    }
   },
   mounted() {
     this.extension = fileExtension()
@@ -56,6 +62,7 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
+      this.$emit('upload-file-length', fileList.length)
     },
     handleUpload() {
       const sendForm = new FormData()
@@ -63,7 +70,7 @@ export default {
       uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : null
       this.resetUpload()
     },
-    resetUpload(){
+    resetUpload() {
       this.$refs.fileUploader.clearFiles()
       this.uploadFileList = []
     },
@@ -85,10 +92,11 @@ export default {
             message: this.$t('Notify.Updated'),
             type: 'success'
           })
-          this.$emit('update-issue')
+          this.$emit('update')
         })
         .catch(err => {
           console.error(err)
+          this.resetUpload()
           this.isLoading = false
         })
     }

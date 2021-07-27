@@ -176,7 +176,9 @@
       append-to-body
       destroy-on-close
     >
-      <CollectionFileUploader ref="collectionFileUpload" />
+      <CollectionFileUploader ref="collectionFileUpload" @update="loadData" @loading="uploadLoading"
+                              @upload-file-length="updateFileLength"
+      />
       <template slot="footer">
         <el-button v-if="hasUploadFile" type="primary"
                    @click="uploadCollection"
@@ -234,6 +236,7 @@ export default {
       },
       relatedPlanDialogVisible: false,
       uploadDialogVisible: false,
+      hasUploadFile: false,
       expandedRow: []
     }
   },
@@ -246,10 +249,6 @@ export default {
     },
     softwareValue() {
       return this.software.filter((item) => (item.visible === true))
-    },
-    hasUploadFile() {
-      if (!this.$refs['collectionFileUpload']) return false
-      return !this.$refs['collectionFileUpload'].uploadFileList.length > 0
     }
   },
   watch: {
@@ -305,21 +304,20 @@ export default {
       this.toggleDialogVisible('relatedPlan')
       this.selectedCollection = collection
     },
-    deleteTestFile(software_name, file_name) {
-      this.isLoading = true
-      deleteTestFile(this.selectedProjectId, software_name, file_name)
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Deleted'),
-            type: 'success'
-          })
-          this.loadData()
+    async deleteTestFile(software_name, file_name) {
+      this.listLoading = true
+      try {
+        await deleteTestFile(this.selectedProjectId, software_name, file_name)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
         })
-        .catch(err => console.err(err))
-        .then(() => {
-          this.isLoading = false
-        })
+        await this.loadData()
+      } catch (err) {
+        console.err(err)
+      }
+      this.listLoading = false
     },
     toggleDialogVisible(value) {
       this[value + 'DialogVisible'] = !this[value + 'DialogVisible']
@@ -397,10 +395,12 @@ export default {
       }
     },
     uploadCollection() {
+      this.hasUploadFile = false
       this.$refs['collectionFileUpload'].handleUpload()
       this.uploadDialogVisible = false
     },
     closeUploadCollection() {
+      this.hasUploadFile = false
       this.$refs['collectionFileUpload'].resetUpload()
       this.uploadDialogVisible = false
     },
@@ -465,6 +465,12 @@ export default {
     },
     toggleExpandedRows(row, expandedRows) {
       this.expandedRow = expandedRows
+    },
+    updateFileLength(value) {
+      this.hasUploadFile = value > 0
+    },
+    uploadLoading(value) {
+      this.listLoading = value
     }
   }
 }
