@@ -92,6 +92,17 @@
                     </li>
                   </ol>
                 </div>
+                <div v-if="element.hasOwnProperty('relations')&&element.relations.length > 0" class="parent">
+                  <b>{{ $t('Issue.RelatedIssue') }}：</b>
+                  <ol class="children_list">
+                    <li v-for="(subElement, index) in element.relations" :key="index" @contextmenu="handleContextMenu(subElement, '', $event)">
+                      <status :name="subElement.status.name" size="mini" />
+                      <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
+                        {{ subElement.name }}
+                      </el-link>
+                    </li>
+                  </ol>
+                </div>
               </template>
             </el-collapse-item>
           </el-collapse>
@@ -124,10 +135,11 @@ export default {
   },
   filters: {
     lengthFilter(value) {
-      if (!value.hasOwnProperty('parent') && !value.hasOwnProperty('children')) return null
+      if (!value.hasOwnProperty('parent') && !value.hasOwnProperty('children') && !value.hasOwnProperty('relations')) return null
       const parent = (value.hasOwnProperty('parent')) ? 1 : 0
       const children = (value.hasOwnProperty('children')) ? value.children.length : 0
-      return '(' + (parent + children) + ')'
+      const relations = (value.hasOwnProperty('relations')) ? value.relations.length : 0
+      return '(' + (parent + children + relations) + ')'
     }
   },
   props: {
@@ -338,6 +350,7 @@ export default {
       const data = family.data
       if (data.hasOwnProperty('parent')) { await this.$set(element, 'parent', data.parent) }
       if (data.hasOwnProperty('children')) { await this.$set(element, 'children', data.children) }
+      if (data.hasOwnProperty('relations')) { await this.$set(element, 'relations', data.relations) }
       this.issueReload += 1
       await this.$set(element, 'loadingRelation', false)
     },

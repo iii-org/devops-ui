@@ -60,7 +60,7 @@ const actions = {
     // views Plugin
     let accessedRoutes
     const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
-    let result = [...asyncRoutes]
+    let result = asyncRoutes
     for (const path of req.keys()) {
       const context = req(path).default || await req(path)
       //combine menu by same name

@@ -66,8 +66,7 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login
-                            }})</span>
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
                         </el-link>
                         <el-popconfirm
                           :confirm-button-text="$t('general.Remove')"
@@ -77,6 +76,37 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(child.id)"
                         >
+                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                        </el-popconfirm>
+                      </li>
+                    </template>
+                  </ol>
+                </li>
+                <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">
+                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
+                  <ol>
+                    <template v-for="child in scope.row.relations">
+                      <li v-if="Object.keys(child).length>0" :key="child.id">
+                        <el-link
+                          class="font-weight-regular my-1"
+                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                          :underline="false"
+                          @click="handleEdit(child.id)"
+                        >
+                          <status :name="child.status.name" size="mini" />
+                          <tracker :name="child.tracker.name" />
+                          #{{ child.id }} - {{ child.name }}
+                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                        </el-link>
+                        <el-popconfirm
+                          :confirm-button-text="$t('general.Remove')"
+                          :cancel-button-text="$t('general.Cancel')"
+                          icon="el-icon-info"
+                          icon-color="red"
+                          :title="$t('Issue.RemoveIssueRelation')"
+                          @onConfirm="removeRelationIssue(child.relation_id)"
+                        >
                           <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                             {{ $t('Issue.Unlink') }}
                           </el-button>
@@ -85,41 +115,6 @@
                     </template>
                   </ol>
                 </li>
-                <!--                <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">-->
-                <!--                  <b>{{ $t('Issue.RelatedIssue') }}:</b>-->
-                <!--                  <ol>-->
-                <!--                    <template v-for="child in scope.row.relations">-->
-                <!--                      <li v-if="Object.keys(child).length>0" :key="child.id">-->
-                <!--                        <el-link-->
-                <!--                          class="font-weight-regular my-1"-->
-                <!--                          :style="{ 'font-size': '14px', cursor: 'pointer' }"-->
-                <!--                          :underline="false"-->
-                <!--                          @click="handleEdit(child.id)"-->
-                <!--                        >-->
-                <!--                          <status :name="child.status.name" size="mini" />-->
-                <!--                          <tracker :name="child.tracker.name" />-->
-                <!--                          #{{ child.id }} - {{ child.name }}-->
-                <!--                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">-->
-                <!--                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{-->
-                <!--                              child.assigned_to.login-->
-                <!--                            }})</span>-->
-                <!--                        </el-link>-->
-                <!--                        <el-popconfirm-->
-                <!--                          :confirm-button-text="$t('general.Remove')"-->
-                <!--                          :cancel-button-text="$t('general.Cancel')"-->
-                <!--                          icon="el-icon-info"-->
-                <!--                          icon-color="red"-->
-                <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
-                <!--                          @onConfirm="removeIssueRelation(child.id)"-->
-                <!--                        >-->
-                <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">-->
-                <!--                            {{ $t('Issue.Unlink') }}-->
-                <!--                          </el-button>-->
-                <!--                        </el-popconfirm>-->
-                <!--                      </li>-->
-                <!--                    </template>-->
-                <!--                  </ol>-->
-                <!--                </li>-->
               </ul>
             </el-col>
           </template>
@@ -194,7 +189,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
+import { addIssue, deleteIssueRelation, getIssueFamily, updateIssue } from '@/api/issue'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
@@ -261,7 +256,6 @@ export default {
       parentName: '',
       quickChangeDialogVisible: false,
       quickChangeForm: {},
-      assigneeList: [],
       form: {},
 
       keyword: null,
@@ -399,15 +393,9 @@ export default {
           await this.$set(row, 'loadingRelation', true)
           const family = await getIssueFamily(row.id)
           const data = family.data
-          if (data.hasOwnProperty('parent')) {
-            await this.$set(row, 'parent', data.parent)
-          }
-          if (data.hasOwnProperty('children')) {
-            await this.$set(row, 'children', data.children)
-          }
-          if (data.hasOwnProperty('relations')) {
-            await this.$set(row, 'relations', data.relations)
-          }
+          if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
+          if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
+          if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
           await this.$set(row, 'loadingRelation', false)
         } catch (e) {
           //   null
@@ -485,11 +473,25 @@ export default {
       const result = []
       if (this.isRelationIssueLoading(row)) {
         result.push('row-expend-loading')
-      } else if (this.hasRelationIssue(row) === false) {
+      } else if (!this.hasRelationIssue(row)) {
         result.push('row-expand-cover')
+        const getTableRef = this.$refs['issueList']
+        if (getTableRef) {
+          const getExpanded = this.expandedRow
+          if (Array.isArray(getExpanded) && getExpanded.length > 0) {
+            const getRow = getExpanded.find((item) => item.id === row.id)
+            if (getRow) {
+              this.toggleExpandedRows(getRow, getExpanded)
+              getTableRef.toggleRowExpansion(getRow, getExpanded)
+            }
+          }
+        }
       }
       result.push('context-menu')
       return result.join(' ')
+    },
+    toggleExpandedRows(row, expandedRows) {
+      this.expandedRow = expandedRows
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -518,21 +520,35 @@ export default {
       this.listQuery.page = 1
       this.listQuery.offset = 0
     },
-    removeIssueRelation(child_issue_id) {
+    async removeIssueRelation(child_issue_id) {
       this.listLoading = true
-      updateIssue(child_issue_id, { parent_id: '' })
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.handleUpdated()
+      try {
+        await updateIssue(child_issue_id, { parent_id: '' })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
-        .catch(err => {
-          console.error(err)
-          this.listLoading = false
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
+    },
+    async removeRelationIssue(relation_id) {
+      this.listLoading = true
+      try {
+        await deleteIssueRelation(relation_id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
     },
     handleContextMenu(row, column, event) {
       event.preventDefault()

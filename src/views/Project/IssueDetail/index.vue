@@ -17,13 +17,19 @@
               #{{ issueId }} -
               <IssueTitle ref="IssueTitle" v-model="form.subject" :old-value="originForm.subject" :issue-id="issueId" />
               <span v-if="!isLoading" class="text-base mr-3">
-                {{ $t('Issue.AddBy', {user: author, created_date: formatTime(created_date)}) }}
+                {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
             </el-col>
           </el-row>
           <el-col :span="6" class="text-right">
-            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'danger'" plain :disabled="isButtonDisabled" @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'primary'" :disabled="isButtonDisabled" @click="handleSave">{{ $t('general.Save') }}</el-button>
+            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'danger'" plain :disabled="isButtonDisabled"
+                       @click="handleDelete"
+            >{{ $t('general.Delete') }}
+            </el-button>
+            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'primary'" :disabled="isButtonDisabled"
+                       @click="handleSave"
+            >{{ $t('general.Save') }}
+            </el-button>
           </el-col>
         </el-row>
       </el-row>
@@ -39,7 +45,9 @@
           </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
             <el-col :span="24" class="mb-3">
-              <issue-description ref="IssueDescription" v-model="form.description" :old-value="originForm.description" :issue-id="issueId" />
+              <issue-description ref="IssueDescription" v-model="form.description" :old-value="originForm.description"
+                                 :issue-id="issueId"
+              />
             </el-col>
             <el-col ref="IssueFiles">
               <issue-files v-if="files.length>0" :issue-file.sync="files" />
@@ -70,7 +78,9 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(issueId)"
                         >
-                          <el-button slot="reference" :type="isButtonDisabled ? 'info' : 'danger'" :disabled="isButtonDisabled" size="mini" icon="el-icon-remove">
+                          <el-button slot="reference" :type="isButtonDisabled ? 'info' : 'danger'"
+                                     :disabled="isButtonDisabled" size="mini" icon="el-icon-remove"
+                          >
                             {{ $t('Issue.Unlink') }}
                           </el-button>
                         </el-popconfirm>
@@ -122,18 +132,20 @@
                                 ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
                                 - {{ child.assigned_to.login }})</span>
                             </el-link>
-                            <el-popconfirm
-                              :confirm-button-text="$t('general.Remove')"
-                              :cancel-button-text="$t('general.Cancel')"
-                              icon="el-icon-info"
-                              icon-color="red"
-                              :title="$t('Issue.RemoveIssueRelation')"
-                              @onConfirm="removeRelationIssue(child.relation_id)"
-                            >
-                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                                {{ $t('Issue.Unlink') }}
-                              </el-button>
-                            </el-popconfirm>
+                            <div class="text-right">
+                              <el-popconfirm
+                                :confirm-button-text="$t('general.Remove')"
+                                :cancel-button-text="$t('general.Cancel')"
+                                icon="el-icon-info"
+                                icon-color="red"
+                                :title="$t('Issue.RemoveIssueRelation')"
+                                @onConfirm="removeRelationIssue(child.relation_id)"
+                              >
+                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                                  {{ $t('Issue.Unlink') }}
+                                </el-button>
+                              </el-popconfirm>
+                            </div>
                           </li>
                         </template>
                       </ol>
@@ -158,7 +170,9 @@
           />
         </el-col>
       </el-row>
-      <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close :before-close="handleRelationIssueDialogBeforeClose">
+      <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
+                 :before-close="handleRelationIssueDialogBeforeClose"
+      >
         <ProjectIssueDetail v-if="relationIssue.visible"
                             ref="children"
                             :props-issue-id="relationIssue.id"
