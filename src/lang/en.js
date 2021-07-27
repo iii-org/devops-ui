@@ -114,9 +114,9 @@ export default {
     2005: 'The username or e-mail is already used.',
     2006: 'The user {user_id} is already in project {project_id}.',
     2007: 'This user is project owner in the project.',
-    3001: "The user doesn't have permission for this operation.",
+    3001: 'The user doesn\'t have permission for this operation.',
     3002: 'You need to be in the project for this operation.',
-    3003: "You are not permitted to access another user's data.",
+    3003: 'You are not permitted to access another user\'s data.',
     4001: 'Issue not found.',
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
@@ -399,7 +399,7 @@ export default {
     Files: 'Files',
     UploadFiles: 'Upload Files',
     DeleteFile: 'Are you sure to Delete File?',
-    RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
+    RemovedIssue: 'The issue you were trying to edit doesn\'t exist or has been removed.',
     id: 'ID',
     name: 'Name',
     priority: '@:Issue.Priority',
@@ -473,6 +473,17 @@ export default {
     CopyIssue: '@:Issue.Copy @:Issue.Issue',
     batchTransfer: 'Batch Transfer',
     batchClose: 'Batch Close'
+  },
+  Test: {
+    TestPlan: {
+      no: '項次',
+      name: '測試名稱',
+      relations: '測試目的',
+      software_name: '測試軟體',
+      file_name: '測試檔案',
+      test_result: '測試結果',
+      branch: '分支'
+    }
   },
   Wiki: {
     AddWiki: 'Add Wiki',

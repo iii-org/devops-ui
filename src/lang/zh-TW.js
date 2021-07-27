@@ -477,6 +477,17 @@ export default {
     batchTransfer: '批次移轉',
     batchClose: '批次關閉'
   },
+  Test: {
+    TestPlan: {
+      no: 'No',
+      name: 'Test Plan',
+      relations: 'Purpose',
+      software_name: 'Tool',
+      file_name: 'Test File',
+      test_result: 'Test Result',
+      branch: 'Branch'
+    }
+  },
   Wiki: {
     AddWiki: '新增記事',
     Title: '標題',
