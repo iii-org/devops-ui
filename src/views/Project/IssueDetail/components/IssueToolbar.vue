@@ -21,8 +21,13 @@
       @close="handleUploadClose"
     >
       <issue-file-uploader ref="IssueFileUploader" class="mb-2" :issue-id="issueId" />
-      <div class="mt-2 text-right">
-        <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+      <div class="mt-2 flex justify-between">
+        <div class="text-xs" style="line-height: 40px;">
+          *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
+        </div>
+        <div>
+          <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+        </div>
       </div>
     </el-dialog>
     <el-dialog
@@ -88,7 +93,8 @@ export default {
     return {
       isLoading: false,
       uploadDialogVisible: false,
-      addTopicDialogVisible: false
+      addTopicDialogVisible: false,
+      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
     }
   },
   computed: {

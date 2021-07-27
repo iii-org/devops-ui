@@ -306,7 +306,10 @@ export default {
     UploadBtn: 'Select File',
     InputName: 'Enter Name or Use Upload File Name',
     File: 'File',
-    UploadAndSave: 'Upload File and Save'
+    UploadAndSave: 'Upload File and Save',
+    MaxFileSize: 'Max file size',
+    AllowedFileTypes: 'Allowed file types',
+    UploadWarning: 'A file name cannot contain any of'
   },
   Version: {
     Manage: 'Manage Project Versions',

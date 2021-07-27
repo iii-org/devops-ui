@@ -309,7 +309,10 @@ export default {
     UploadBtn: '選擇檔案',
     InputName: '請輸入，若未輸入預設為上傳檔案名稱',
     File: '檔案',
-    UploadAndSave: '上傳檔案並儲存'
+    UploadAndSave: '上傳檔案並儲存',
+    MaxFileSize: '檔案大小限制',
+    AllowedFileTypes: '檔案類型支援',
+    UploadWarning: '檔案名稱請勿包含特殊字元'
   },
   Version: {
     Manage: '專案版本管理',

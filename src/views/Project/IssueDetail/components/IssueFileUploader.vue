@@ -3,7 +3,11 @@
     <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
       <div>
         <el-button size="small" type="success" class="mb-2">{{ $t('File.UploadBtn') }}</el-button>
-        <div>{{ $t('File.SelectFileOrDragHere') }}</div>
+        <div class="mb-2">{{ $t('File.SelectFileOrDragHere') }}</div>
+        <div class="text-xs text-gray-400">
+          <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+          <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+        </div>
       </div>
     </el-upload>
   </div>
@@ -15,7 +19,9 @@ export default {
   name: 'IssueFileUploader',
   data() {
     return {
-      uploadFileList: []
+      uploadFileList: [],
+      fileSizeLimit: '5MB',
+      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
     }
   },
   mounted() {
