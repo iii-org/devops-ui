@@ -6,12 +6,12 @@
         trigger="click"
       >
         <el-form v-loading="listLoading">
-          <el-form-item label="結束日期範圍">
-            <el-date-picker
-              v-model="dateRange"
-              type="daterange"
-            />
-          </el-form-item>
+          <!--          <el-form-item label="結束日期範圍">-->
+          <!--            <el-date-picker-->
+          <!--              v-model="dateRange"-->
+          <!--              type="daterange"-->
+          <!--            />-->
+          <!--          </el-form-item>-->
           <template v-for="dimension in filterOptions">
             <el-form-item :key="dimension.id">
               <div slot="label">
@@ -86,7 +86,9 @@
             <div id="gantt" />
             <div class="toolbar">
               <el-radio-group v-model="period" type="button">
-                <el-radio-button v-for="periodItem in periodOptions" :key="periodItem.period" :label="periodItem.period" :class="periodItem.class">
+                <el-radio-button v-for="periodItem in periodOptions" :key="periodItem.period" :label="periodItem.period"
+                                 :class="periodItem.class"
+                >
                   {{ periodItem.name }}
                 </el-radio-button>
               </el-radio-group>
@@ -757,6 +759,12 @@ $max_height: calc(100vh - 50px - 20px - 50px - 50px - 20px);
 
             .sg-task-reflected {
               display: none;
+            }
+
+            .sg-table {
+              .add-task {
+                display: none;
+              }
             }
 
             .sg-task {
