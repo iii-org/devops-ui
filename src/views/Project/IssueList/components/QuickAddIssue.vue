@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        <el-button @click="advancedAddIssue">》進階設定</el-button>
+        <el-button @click="advancedAddIssue">{{ $t('general.AdvancedSettings') }}</el-button>
       </el-form-item>
     </el-form>
     <el-dialog

@@ -187,7 +187,8 @@ export default {
     Transfer: '移轉',
     DueDate: '到期日',
     Branch: '分支',
-    Total: '共'
+    Total: '共',
+    AdvancedSettings: '》進階設定'
   },
   Notify: {
     Updated: '已更新',
@@ -845,7 +846,7 @@ export default {
     Develop: '開發版',
     NewVersion: '新版本通知',
     UpdateFailed: '更新失敗'
-    
+
   },
   LoadingText: {
     createRedmine: '建立Redmine專案中...',

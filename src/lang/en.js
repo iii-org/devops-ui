@@ -183,7 +183,8 @@ export default {
     Transfer: 'Transfer',
     DueDate: 'Due Date',
     Branch: 'Branch',
-    Total: 'Total'
+    Total: 'Total',
+    AdvancedSettings: '》Advanced Settings'
   },
   Notify: {
     Updated: 'update successful',
