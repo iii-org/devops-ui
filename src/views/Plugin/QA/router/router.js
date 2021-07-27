@@ -161,7 +161,7 @@ export const asyncRoutes = [
         meta: {
           title: 'changeManagement',
           roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
-          appendRoot: { path: 'issue', position: 'after' }
+          appendRoot: { path: 'issues', position: 'after' }
         }
       },
       {

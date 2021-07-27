@@ -57,30 +57,30 @@ const actions = {
     const disabledPluginRoutes = (await getRoutes()).data.map(route => {
       if (route.disabled) return route.name
     })
-    return new Promise(async resolve => {
-      // views Plugin
-      let accessedRoutes
-      const req = require.context('@/views/Plugin', true, /router.(js)$/, 'lazy')
-      let result = [...asyncRoutes]
-      for (const path of req.keys()) {
-        const context = req(path).default || await req(path)
-        //combine menu by same name
-        const pluginItem = context.asyncRoutes
-        pluginItem.forEach((item, pluginIndex) => {
-          const mainItem = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
-          if (mainItem.includes(item.path)) {
-            const mainIndex = mainItem.findIndex((menu) => (menu === item.path))
-            if (result[mainIndex].hasOwnProperty('children') && context.asyncRoutes[pluginIndex] && context.asyncRoutes[pluginIndex].hasOwnProperty('children')) {
-              const pluginChildren = context.asyncRoutes[pluginIndex].children
-              pluginChildren.forEach((subItem, subIdx) => {
-                const mainSubItem = result[mainIndex].children.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
-                appendRouter(pluginChildren, result[mainIndex].children, subItem, subIdx, mainSubItem)
-              })
-            }
+    // views Plugin
+    let accessedRoutes
+    const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
+    let result = [...asyncRoutes]
+    for (const path of req.keys()) {
+      const context = req(path).default || await req(path)
+      //combine menu by same name
+      const pluginItem = context.asyncRoutes
+      pluginItem.forEach((item, pluginIndex) => {
+        const mainItem = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
+        if (mainItem.includes(item.path)) {
+          const mainIndex = mainItem.findIndex((menu) => (menu === item.path))
+          if (result[mainIndex].hasOwnProperty('children') && context.asyncRoutes[pluginIndex] && context.asyncRoutes[pluginIndex].hasOwnProperty('children')) {
+            const pluginChildren = context.asyncRoutes[pluginIndex].children
+            pluginChildren.forEach((subItem, subIdx) => {
+              const mainSubItem = result[mainIndex].children.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
+              appendRouter(pluginChildren, result[mainIndex].children, subItem, subIdx, mainSubItem)
+            })
           }
-          appendRouter(context.asyncRoutes, result, item, pluginIndex, mainItem)
-        })
-      }
+        }
+        appendRouter(context.asyncRoutes, result, item, pluginIndex, mainItem)
+      })
+    }
+    return new Promise(async resolve => {
       if (roles.includes('admin')) {
         accessedRoutes = result || []
       } else {
