@@ -51,7 +51,7 @@
       />
     </el-col>
 
-    <el-dialog :visible.sync="isDialogVisible" width="40vw" :show-close="false" @close="handleClose">
+    <el-dialog :visible.sync="isDialogVisible" width="50vw" :show-close="false" @close="handleClose">
       <span slot="title">
         <div class="flex items-center justify-between">
           <div>

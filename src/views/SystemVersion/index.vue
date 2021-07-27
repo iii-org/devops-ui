@@ -2,8 +2,16 @@
   <div class="app-container">
     <VersionUpdater />
     <div class="flex justify-between items-center bg-gray-600 text-white py-3 px-4 rounded mb-5">
-      <div class="text-title">{{ $t('SystemVersion.DeploymentName') }}：<span class="select-all">{{ deployment_name }}</span></div>
-      <div class="text-title">{{ $t('SystemVersion.DeploymentUuid') }}：<span class="select-all">{{ deployment_uuid }}</span></div>
+      <div class="text-title">
+        <span>{{ $t('SystemVersion.DeploymentName') }}：
+        </span>
+        <span class="select-all">{{ deployment_name }}</span>
+      </div>
+      <div class="text-title">
+        <span>{{ $t('SystemVersion.DeploymentUuid') }}：
+        </span>
+        <span class="select-all">{{ deployment_uuid }}</span>
+      </div>
     </div>
     <el-table :data="list" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('SystemVersion.Source')" width="180">
@@ -69,9 +77,9 @@ export default {
         this.list.push(apiData)
       })
     },
-    fetchVersionInfo () {
-      getDevopsApiServerVersion().then(res => { 
-        const { deployment_name, deployment_uuid } = res.data 
+    fetchVersionInfo() {
+      getDevopsApiServerVersion().then(res => {
+        const { deployment_name, deployment_uuid } = res.data
         this.deployment_name = deployment_name
         this.deployment_uuid = deployment_uuid
       })
