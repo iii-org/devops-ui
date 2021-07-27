@@ -19,20 +19,16 @@ export default {
   },
   methods: {
     getStatusTagType(status) {
-      switch (status) {
-        case 'Active':
-          return ''
-        case 'Assigned':
-          return 'danger'
-        case 'Closed':
-          return 'info'
-        case 'Solved':
-          return 'secondary'
-        case 'InProgress':
-          return 'warning'
-        case 'Finished':
-          return 'success'
+      const map = {
+        Active: 'primary',
+        Assigned: 'danger',
+        Closed: 'info',
+        Solved: 'secondary',
+        InProgress: 'warning',
+        Finished: 'success',
+        Verified: 'success'
       }
+      return map[status] || 'primary'
     }
   }
 }
