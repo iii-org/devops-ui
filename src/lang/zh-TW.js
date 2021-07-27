@@ -850,7 +850,9 @@ export default {
     UpdateNow: '立即更新',
     Develop: '開發版',
     NewVersion: '新版本通知',
-    UpdateFailed: '更新失敗'
+    UpdateFailed: '更新失敗',
+    DeploymentName: '部署名稱',
+    DeploymentUuid: '部署 UUID'
 
   },
   LoadingText: {

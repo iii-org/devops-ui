@@ -2,8 +2,8 @@
   <div class="app-container">
     <VersionUpdater />
     <div class="flex justify-between items-center bg-gray-600 text-white py-3 px-4 rounded mb-5">
-      <div class="text-title">Deployment Name：<span class="select-all">{{ deployment_name }}</span></div>
-      <div class="text-title">Deployment UUID：<span class="select-all">{{ deployment_uuid }}</span></div>
+      <div class="text-title">{{ $t('SystemVersion.DeploymentName') }}：<span class="select-all">{{ deployment_name }}</span></div>
+      <div class="text-title">{{ $t('SystemVersion.DeploymentUuid') }}：<span class="select-all">{{ deployment_uuid }}</span></div>
     </div>
     <el-table :data="list" :element-loading-text="$t('Loading')" border fit highlight-current-row>
       <el-table-column align="center" :label="$t('SystemVersion.Source')" width="180">
