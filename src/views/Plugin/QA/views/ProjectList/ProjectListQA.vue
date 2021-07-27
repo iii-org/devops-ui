@@ -13,8 +13,8 @@
             type="daterange"
             align="right"
             range-separator="~"
-            :start-placeholder="$t('Issue.StartDate')"
-            :end-placeholder="$t('Issue.EndDate')"
+            :start-placeholder="getThisYear[0]"
+            :end-placeholder="getThisYear[1]"
             value-format="yyyy-MM-dd"
             @change="handleDatePicked"
           />
