@@ -9,8 +9,13 @@
           <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
         </div>
       </div>
-      <div v-show="uploadFileList.length > 0" slot="tip">
-        <el-divider>{{ $t('Issue.UploadSuccess') }}</el-divider>
+      <div slot="tip">
+        <div class="text-xs" style="line-height: 40px;">
+          *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
+        </div>
+        <div v-show="uploadFileList.length > 0">
+          <el-divider>{{ $t('Issue.UploadSuccess') }}</el-divider>
+        </div>
       </div>
     </el-upload>
   </div>
@@ -24,7 +29,8 @@ export default {
     return {
       uploadFileList: [],
       fileSizeLimit: '5MB',
-      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
+      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
     }
   },
   mounted() {
