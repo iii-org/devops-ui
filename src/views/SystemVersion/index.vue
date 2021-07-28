@@ -3,13 +3,11 @@
     <VersionUpdater />
     <div class="flex justify-between items-center bg-gray-600 text-white py-3 px-4 rounded mb-5">
       <div class="text-title">
-        <span>{{ $t('SystemVersion.DeploymentName') }}：
-        </span>
+        <span>{{ $t('SystemVersion.DeploymentName') }}： </span>
         <span class="select-all">{{ deployment_name }}</span>
       </div>
       <div class="text-title">
-        <span>{{ $t('SystemVersion.DeploymentUuid') }}：
-        </span>
+        <span>{{ $t('SystemVersion.DeploymentUuid') }}： </span>
         <span class="select-all">{{ deployment_uuid }}</span>
       </div>
     </div>

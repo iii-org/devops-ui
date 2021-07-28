@@ -28,7 +28,9 @@ export default {
       return this.userRole === 'Administrator' && (this.updateVersionName === 'develop' || this.hasSystemUpdate)
     },
     notifyTitle() {
-      return this.updateVersionName === 'develop' ? this.$t('SystemVersion.Develop') : this.$t('SystemVersion.NewVersion')
+      return this.updateVersionName === 'develop'
+        ? this.$t('SystemVersion.Develop')
+        : this.$t('SystemVersion.NewVersion')
     }
   },
   mounted() {
@@ -74,6 +76,11 @@ export default {
         }, 5000)
       } else {
         this.loadingInstance.close()
+        this.$message({
+          message: this.$t('SystemVersion.UpdatedNotify'),
+          type: 'success',
+          duration: 12000
+        })
       }
     },
     clearTimer() {
