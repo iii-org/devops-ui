@@ -421,22 +421,21 @@ export default {
     onRelationIssueDialog(id) {
       this.$router.push({ name: 'test-plan-detail', params: { issueId: id }})
     },
-    removeTestPlanRelation(project_id, file_relation, file_name) {
+    async removeTestPlanRelation(project_id, file_relation, file_name) {
       this.listLoading = true
-      const id = file_relation.find((item) => (item.file_name === file_name)).id
-      deleteTestPlanWithTestFile(project_id, id)
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.loadData()
+      try {
+        const id = file_relation.find((item) => (item.file_name === file_name)).id
+        await deleteTestPlanWithTestFile(project_id, id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
-        .catch(err => {
-          console.error(err)
-          this.listLoading = false
-        })
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
     },
     toResultList(row) {
       this.$router.push({ name: row.software_name.toLowerCase() })

@@ -97,8 +97,8 @@ export default {
         .catch(err => {
           console.error(err)
           this.resetUpload()
-          this.isLoading = false
         })
+      this.isLoading = false
     }
   }
 }

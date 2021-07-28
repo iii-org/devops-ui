@@ -252,6 +252,10 @@ export default {
 <style lang="scss" scoped>
 @import 'src/styles/variables.scss';
 
+> > > .el-dialog__header {
+  display: none;
+}
+
 > > > .el-dialog__body {
   padding-top: 0;
 }
