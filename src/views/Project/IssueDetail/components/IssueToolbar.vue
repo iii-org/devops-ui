@@ -18,7 +18,6 @@
       :title="$t('Issue.UploadFiles')"
       top="3vh"
       append-to-body
-      @close="handleUploadClose"
     >
       <issue-file-uploader ref="IssueFileUploader" class="mb-2" :issue-id="issueId" />
       <div class="mt-2 flex justify-between">

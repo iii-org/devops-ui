@@ -72,8 +72,8 @@ export default {
   height: 200px;
 }
 
->>> .el-divider__text {
-  color: #1c7b8c;
-  letter-spacing: 5px;
-}
+// >>> .el-divider__text {
+//   color: #1c7b8c;
+//   letter-spacing: 5px;
+// }
 </style>

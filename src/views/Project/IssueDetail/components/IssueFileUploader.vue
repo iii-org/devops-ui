@@ -35,16 +35,18 @@ export default {
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
-        this.$refs.fileUploader.clearFiles()
-        this.uploadFileList.length = []
+        fileList.splice(fileList.length - 1, 1)
+        // this.$refs.fileUploader.clearFiles()
+        // this.uploadFileList.length = []
       } else if (file.size / 1024 > 20480) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit'),
           type: 'warning'
         })
-        this.$refs.fileUploader.clearFiles()
-        this.uploadFileList.length = []
+        fileList.splice(fileList.length - 1, 1)
+        // this.$refs.fileUploader.clearFiles()
+        // this.uploadFileList.length = []
       } else {
         this.uploadFileList = fileList
       }

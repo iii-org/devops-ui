@@ -345,7 +345,7 @@ export default {
       await this.fetchIssue()
       this.isLoading = false
     },
-    async fetchIssue() {
+    async fetchIssue(isOnlyUpload) {
       this.isLoading = true
       let data = {}
       try {
@@ -372,7 +372,8 @@ export default {
             })
           })
         }
-        this.initIssueDetails(data)
+        if (isOnlyUpload) this.initUploadFiles(data)
+        else this.initIssueDetails(data)
       } catch (e) {
         this.$router.push(this.formObj)
         this.$message({
@@ -382,6 +383,10 @@ export default {
       }
       this.isLoading = false
       return data
+    },
+    initUploadFiles(data) {
+      const { attachments } = data
+      this.files = attachments
     },
     initIssueDetails(data) {
       const {
@@ -493,12 +498,16 @@ export default {
       await this.fetchIssue()
       this.isLoading = false
     },
+    async handleUploadUpdated() {
+      await this.fetchIssue(true)
+      this.isLoading = false
+    },
     handleBackPage() {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
       this.isLoading = status
-      this.handleUpdated()
+      this.handleUploadUpdated()
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
