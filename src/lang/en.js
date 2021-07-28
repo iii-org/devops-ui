@@ -865,8 +865,9 @@ export default {
     NewVersion: 'New Version',
     UpdateFailed: 'Update Failed',
     DeploymentName: 'Deployment Name',
-    DeploymentUuid: 'Deployment UUID'
-
+    DeploymentUuid: 'Deployment UUID',
+    ReloadSystem: 'Reload System',
+    UpdatedNotify: 'Please reload this page after a few minutes to check if the update is complete.'
   },
   LoadingText: {
     createRedmine: 'Adding a Redmine project...',

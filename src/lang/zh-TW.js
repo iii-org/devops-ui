@@ -867,8 +867,9 @@ export default {
     NewVersion: '新版本通知',
     UpdateFailed: '更新失敗',
     DeploymentName: '部署名稱',
-    DeploymentUuid: '部署 UUID'
-
+    DeploymentUuid: '部署 UUID',
+    ReloadSystem: '刷新系統',
+    UpdatedNotify: '請於數分鐘後重新整理頁面，檢查系統是否完成更新。'
   },
   LoadingText: {
     createRedmine: '建立Redmine專案中...',
