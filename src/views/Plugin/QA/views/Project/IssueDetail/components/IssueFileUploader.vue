@@ -9,6 +9,9 @@
           <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
         </div>
       </div>
+      <div v-show="uploadFileList.length > 0" slot="tip">
+        <el-divider>{{ $t('Issue.UploadSuccess') }}</el-divider>
+      </div>
     </el-upload>
   </div>
 </template>
@@ -48,7 +51,8 @@ export default {
       } else {
         this.uploadFileList = fileList
       }
-    } }
+    }
+  }
 }
 </script>
 
@@ -59,5 +63,10 @@ export default {
   justify-content: center;
   align-items: center;
   height: 200px;
+}
+
+>>> .el-divider__text {
+  color: #1c7b8c;
+  letter-spacing: 5px;
 }
 </style>

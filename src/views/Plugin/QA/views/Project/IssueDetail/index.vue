@@ -374,7 +374,7 @@ export default {
       }
       this.isLoading = false
     },
-    async fetchIssue() {
+    async fetchIssue(isOnlyUpload) {
       this.isLoading = true
       let data = {}
       try {
@@ -405,7 +405,8 @@ export default {
           const test_files = await getTestFileByTestPlan(this.selectedProjectId, this.issueId)
           this.$set(data, 'test_files', test_files.data)
         }
-        this.initIssueDetails(data)
+        if (isOnlyUpload) this.initUploadFiles(data)
+        else this.initIssueDetails(data)
       } catch (e) {
         this.$router.push(this.formObj)
         this.$message({
@@ -415,6 +416,10 @@ export default {
       }
       this.isLoading = false
       return data
+    },
+    initUploadFiles(data) {
+      const { attachments } = data
+      this.files = attachments
     },
     initIssueDetails(data) {
       const {
@@ -534,12 +539,16 @@ export default {
       }
       this.isLoading = false
     },
+    async handleUploadUpdated() {
+      await this.fetchIssue(true)
+      this.isLoading = false
+    },
     handleBackPage() {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
       this.isLoading = status
-      this.handleUpdated()
+      this.handleUploadUpdated()
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
@@ -710,7 +719,7 @@ export default {
           this.$refs['IssueFiles'].$el.getBoundingClientRect().height -
           this.$refs['IssueRelation'].$el.getBoundingClientRect().height
         if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (this.$refs['mainIssue'].$children[3].$children[0].$options.name === 'IssueNotesEditor') {
+          if (this.$refs['mainIssue'].$children[3].$children[0].$options && this.$refs['mainIssue'].$children[3].$children[0].$options.name === 'IssueNotesEditor') {
             this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
             this.scrollClass = 'issueHeightEditor'
           }

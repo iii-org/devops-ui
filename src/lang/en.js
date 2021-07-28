@@ -472,7 +472,8 @@ export default {
     Copy: 'Copy',
     CopyIssue: '@:Issue.Copy @:Issue.Issue',
     batchTransfer: 'Batch Transfer',
-    batchClose: 'Batch Close'
+    batchClose: 'Batch Close',
+    UploadSuccess: 'Upload Success'
   },
   Test: {
     TestPlan: {
@@ -685,7 +686,7 @@ export default {
     not_started: 'Not Started',
     in_progress: 'In Progress',
     closed: 'Closed',
-    ProjectPeriod: 'Project Period',
+    ProjectPeriod: 'Project Period(due date)',
     ProjectOwner: '@:general.owner_name',
     DueDate: '@:general.DueDate'
   },

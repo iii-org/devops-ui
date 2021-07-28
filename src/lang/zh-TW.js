@@ -475,7 +475,8 @@ export default {
     Copy: '副本',
     CopyIssue: '@:Issue.Issue@:Issue.Copy',
     batchTransfer: '批次移轉',
-    batchClose: '批次關閉'
+    batchClose: '批次關閉',
+    UploadSuccess: '上傳成功'
   },
   Test: {
     TestPlan: {
@@ -686,7 +687,7 @@ export default {
     not_started: '未開始',
     in_progress: '進行中',
     closed: '已完成',
-    ProjectPeriod: '專案期間',
+    ProjectPeriod: '專案期間(結束日)',
     ProjectOwner: '@:general.owner_name',
     DueDate: '@:general.DueDate'
   },
