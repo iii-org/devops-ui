@@ -9,14 +9,14 @@
           <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
         </div>
       </div>
-      <div slot="tip">
+      <!-- <div slot="tip">
         <div class="text-xs" style="line-height: 40px;">
           *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
         </div>
         <div v-show="uploadFileList.length > 0">
           <el-divider>{{ $t('Issue.UploadSuccess') }}</el-divider>
         </div>
-      </div>
+      </div> -->
     </el-upload>
   </div>
 </template>
@@ -29,8 +29,7 @@ export default {
     return {
       uploadFileList: [],
       fileSizeLimit: '5MB',
-      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
-      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
+      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
     }
   },
   mounted() {
@@ -44,16 +43,18 @@ export default {
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
-        this.$refs.fileUploader.clearFiles()
-        this.uploadFileList.length = []
+        fileList.splice(fileList.length - 1, 1)
+        // this.$refs.fileUploader.clearFiles()
+        // this.uploadFileList.length = []
       } else if (file.size / 1024 > 20480) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit'),
           type: 'warning'
         })
-        this.$refs.fileUploader.clearFiles()
-        this.uploadFileList.length = []
+        fileList.splice(fileList.length - 1, 1)
+        // this.$refs.fileUploader.clearFiles()
+        // this.uploadFileList.length = []
       } else {
         this.uploadFileList = fileList
       }
