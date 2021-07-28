@@ -30,10 +30,12 @@ export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   return result
 }
 
-const appendRouter = (pluginRoutes, result, item, pluginIndex, mapByPath) => {
-  if (item.meta.appendRoot) {
-    let appendIndex = mapByPath.findIndex((menu) => (menu === item.meta.appendRoot.path))
-    if (item.meta.appendRoot.position === 'after') {
+const appendRouter = (menuItem, pluginRoutes, pluginIndex, result) => {
+  // pluginRoutes , root result,
+  const resultMapByPath = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
+  if (menuItem.meta.appendRoot) {
+    let appendIndex = resultMapByPath.findIndex((menu) => (menu === menuItem.meta.appendRoot.path))
+    if (menuItem.meta.appendRoot.position === 'after') {
       appendIndex = appendIndex + 1
     }
     result.splice(appendIndex, 0, pluginRoutes[pluginIndex])
@@ -65,19 +67,22 @@ const actions = {
       const context = req(path).default || await req(path)
       //combine menu by same name
       const pluginItem = context.asyncRoutes
-      pluginItem.forEach((item, pluginIndex) => {
+      pluginItem.forEach((item, pluginIndex) => { // plugin root
         const mainItem = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
-        if (mainItem.includes(item.path)) {
-          const mainIndex = mainItem.findIndex((menu) => (menu === item.path))
-          if (result[mainIndex].hasOwnProperty('children') && context.asyncRoutes[pluginIndex] && context.asyncRoutes[pluginIndex].hasOwnProperty('children')) {
-            const pluginChildren = context.asyncRoutes[pluginIndex].children
+        // devops root parent
+        if (mainItem.includes(item.path)) { // if same
+          const mainIndex = mainItem.findIndex((menu) => (menu === item.path)) // find devops root id
+          if (result[mainIndex].hasOwnProperty('children') && pluginItem[pluginIndex] && pluginItem[pluginIndex].hasOwnProperty('children')) {
+            // find children
+            const pluginChildren = pluginItem[pluginIndex].children
             pluginChildren.forEach((subItem, subIdx) => {
-              const mainSubItem = result[mainIndex].children.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
-              appendRouter(pluginChildren, result[mainIndex].children, subItem, subIdx, mainSubItem)
+              // devops root children index
+              appendRouter(subItem, pluginChildren, subIdx, result[mainIndex].children)
             })
           }
         }
-        appendRouter(context.asyncRoutes, result, item, pluginIndex, mainItem)
+        // root
+        appendRouter(item, pluginItem, pluginIndex, result)
       })
     }
     return new Promise(async resolve => {
