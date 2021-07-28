@@ -8,7 +8,7 @@
         icon="el-icon-plus"
         @click="handleUploadDialog"
       >
-        上傳測試集
+        {{ $t('Test.TestFile.UploadTestSet') }}
       </el-button>
       <!--        :disabled="selectedProjectId === -1"-->
       <el-button icon="el-icon-s-operation" @click="filterVisible=!filterVisible" />
@@ -78,9 +78,9 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column label="測試軟體" width="100" prop="software_name" />
-      <el-table-column label="檔案" prop="file_name" show-overflow-tooltip />
-      <el-table-column label="測試名稱" prop="name" show-overflow-tooltip />
+      <el-table-column :label="$t('Test.TestFile.TestSoftware')" width="150" prop="software_name" />
+      <el-table-column :label="$t('File.File')" prop="file_name" show-overflow-tooltip />
+      <el-table-column :label="$t('Test.TestFile.TestName')" prop="name" show-overflow-tooltip />
       <el-table-column
         :label="`${$t('ProgressPipelines.Branch')} / ${$t('ProgressPipelines.Commit')}`"
         align="center"
@@ -103,7 +103,7 @@
       <el-table-column
         :label="`${$t('ProgressPipelines.TestItems')}`"
         align="center"
-        width="100"
+        width="120"
       >
         <template slot-scope="scope">
           <el-link type="primary" @click="toResultList(scope.row)">
@@ -125,7 +125,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="310">
+      <el-table-column label="操作" width="350">
         <template slot-scope="scope">
           <el-button size="small" type="primary" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">編輯
           </el-button>

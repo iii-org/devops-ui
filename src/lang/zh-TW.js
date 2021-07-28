@@ -188,7 +188,10 @@ export default {
     DueDate: '到期日',
     Branch: '分支',
     Total: '共',
-    AdvancedSettings: '》進階設定'
+    AdvancedSettings: '》進階設定',
+    year: '年',
+    month: '月',
+    week: '週'
   },
   Notify: {
     Updated: '已更新',
@@ -480,13 +483,18 @@ export default {
   },
   Test: {
     TestPlan: {
-      no: 'No',
-      name: 'Test Plan',
-      relations: 'Purpose',
-      software_name: 'Tool',
-      file_name: 'Test File',
-      test_result: 'Test Result',
-      branch: 'Branch'
+      no: '項次',
+      name: '測試名稱',
+      relations: '測試目的',
+      software_name: '測試軟體',
+      file_name: '測試檔案',
+      test_result: '測試結果',
+      branch: '分支'
+    },
+    TestFile: {
+      UploadTestSet: '上傳測試集',
+      TestSoftware: '測試軟體',
+      TestName: '測試名稱'
     }
   },
   Wiki: {
@@ -882,6 +890,14 @@ export default {
     description: '變更內容(議題描述)',
     relations: '原始需求/議題',
     assigned_to: '受分派者'
+  },
+  Track: {
+    StartingPoint: '起始點',
+    DownloadExcel: '下載Excel總表',
+    DemandTraceability: '需求追溯'
+  },
+  ProjectRoadmap: {
+    DisplayRange: '顯示範圍'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -184,7 +184,10 @@ export default {
     DueDate: 'Due Date',
     Branch: 'Branch',
     Total: 'Total',
-    AdvancedSettings: '》Advanced Settings'
+    AdvancedSettings: '》Advanced Settings',
+    year: 'year',
+    month: 'month',
+    week: 'week'
   },
   Notify: {
     Updated: 'update successful',
@@ -477,13 +480,18 @@ export default {
   },
   Test: {
     TestPlan: {
-      no: '項次',
-      name: '測試名稱',
-      relations: '測試目的',
-      software_name: '測試軟體',
-      file_name: '測試檔案',
-      test_result: '測試結果',
-      branch: '分支'
+      no: 'No',
+      name: 'Test Plan',
+      relations: 'Purpose',
+      software_name: 'Tool',
+      file_name: 'Test File',
+      test_result: 'Test Result',
+      branch: 'Branch'
+    },
+    TestFile: {
+      UploadTestSet: 'Upload Test Set',
+      TestSoftware: 'Test Software',
+      TestName: 'Test Name'
     }
   },
   Wiki: {
@@ -880,6 +888,14 @@ export default {
     description: 'Change content(Issue description)',
     relations: 'Original demand/Issues',
     assigned_to: 'Assignee'
+  },
+  Track: {
+    StartingPoint: 'Starting Point',
+    DownloadExcel: 'Download the Excel summary sheet',
+    DemandTraceability: 'Demand Traceability'
+  },
+  ProjectRoadmap: {
+    DisplayRange: 'Display Range'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

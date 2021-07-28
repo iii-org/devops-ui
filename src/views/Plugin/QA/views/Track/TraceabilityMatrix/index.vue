@@ -55,11 +55,11 @@
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
                    :disabled="chartLoading"
-        > 起始點
+        > {{ $t('Track.StartingPoint') }}
           <i class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
-      <el-button icon="el-icon-download" @click="downloadCSVReport">下載Excel總表</el-button>
+      <el-button icon="el-icon-download" @click="downloadCSVReport">{{ $t('Track.DownloadExcel') }}</el-button>
     </project-list-selector>
     <el-divider />
     <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
@@ -68,8 +68,8 @@
     </el-alert>
     <el-card v-else>
       <template slot="header">
-        需求追溯
-        <template v-if="startPoint">（起始點：{{ startPoint }}）</template>
+        {{ $t('Track.DemandTraceability') }}
+        <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
       </template>
       <vue-mermaid
         :nodes="data"
