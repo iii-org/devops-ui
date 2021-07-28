@@ -153,7 +153,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getPlugins()
-      return res.data
+      return res.data.sort((a, b) => a.name < b.name ? -1 : 1)
     },
     async handleEditClick(pluginName) {
       this.isAddPlugin = false
