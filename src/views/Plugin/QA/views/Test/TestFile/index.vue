@@ -69,9 +69,7 @@
                     :title="$t('Issue.RemoveIssueRelation')"
                     @onConfirm="removeTestPlanRelation(plan.project.id,plan.test_files, scope.row.file_name)"
                   >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{
-                      $t('Issue.Unlink')
-                    }}
+                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}
                     </el-button>
                   </el-popconfirm>
                 </li>
@@ -89,7 +87,7 @@
         width="160"
       >
         <template slot-scope="scope">
-          <div v-if="scope.row.the_last_test_result">
+          <div v-if="scope.row.the_last_test_result&&Object.keys(scope.row.the_last_test_result).length>0">
             <div>
               {{ scope.row.the_last_test_result.branch }}
             </div>
@@ -109,19 +107,21 @@
       >
         <template slot-scope="scope">
           <el-link type="primary" @click="toResultList(scope.row)">
-            <div v-if="scope.row.the_last_test_result&&scope.row.software_name==='Postman'" class="mt-2">
-              {{
-                `${scope.row.the_last_test_result.success}/${scope.row.the_last_test_result.success + scope.row.the_last_test_result.failure}`
-              }}
-            </div>
-            <div
-              v-else-if="scope.row.the_last_test_result&&scope.row.software_name==='SideeX'&&scope.row.the_last_test_result.result"
-              class="mt-2"
-            >
-              {{
-                `${scope.row.the_last_test_result.result.casesPassed}/${scope.row.the_last_test_result.result.casesTotal}`
-              }}
-            </div>
+            <template v-if="scope.row.the_last_test_result&&Object.keys(scope.row.the_last_test_result).length>0">
+              <div v-if="scope.row.software_name==='Postman'" class="mt-2">
+                {{
+                  `${scope.row.the_last_test_result.success}/${scope.row.the_last_test_result.success + scope.row.the_last_test_result.failure}`
+                }}
+              </div>
+              <div
+                v-else-if="scope.row.software_name==='SideeX'&&scope.row.the_last_test_result.result"
+                class="mt-2"
+              >
+                {{
+                  `${scope.row.the_last_test_result.result.casesPassed}/${scope.row.the_last_test_result.result.casesTotal}`
+                }}
+              </div>
+            </template>
           </el-link>
         </template>
       </el-table-column>
@@ -176,7 +176,7 @@
       append-to-body
       destroy-on-close
     >
-      <CollectionFileUploader ref="collectionFileUpload" @update="loadData" @loading="uploadLoading"
+      <CollectionFileUploader ref="collectionFileUpload" @update="loadData"
                               @upload-file-length="updateFileLength"
       />
       <template slot="footer">
@@ -199,7 +199,7 @@ import { mapActions, mapGetters } from 'vuex'
 import Fuse from 'fuse.js'
 import {
   deleteTestFile, deleteTestPlanWithTestFile,
-  getTestFileList,
+  getTestFileList, postTestFile,
   postTestPlanWithTestFile
 } from '@/views/Plugin/QA/api/qa'
 import RelatedPlanDialog from '../TestFile/components/RelatedPlanDialog'
@@ -241,7 +241,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userName', 'test_filename']),
+    ...mapGetters(['selectedProjectId', 'userRole', 'userName', 'test_filename']),
     filteredData() {
       return this.listFilterSoftwareData.filter(data => {
         return this.keyword === '' || data[this.searchKey].toLowerCase().includes(this.keyword.toLowerCase())
@@ -396,7 +396,8 @@ export default {
     },
     uploadCollection() {
       this.hasUploadFile = false
-      this.$refs['collectionFileUpload'].handleUpload()
+      const fileList = this.$refs['collectionFileUpload'].handleUpload()
+      this.uploadFiles(fileList)
       this.uploadDialogVisible = false
     },
     closeUploadCollection() {
@@ -468,14 +469,43 @@ export default {
     updateFileLength(value) {
       this.hasUploadFile = value > 0
     },
-    uploadLoading(value) {
-      this.listLoading = value
+    async uploadFiles({ fileList, software_name }) {
+      this.listLoading = true
+      const _this = this
+      // use one by one edit issue to upload file
+      try {
+        const uploadApi = fileList.map(function(item) {
+          const sendForm = new FormData()
+          sendForm.delete('test_file')
+          sendForm.append('test_file', item.raw, item.raw.name)
+          return postTestFile(_this.selectedProjectId, software_name, sendForm)
+        })
+        await Promise.all(uploadApi)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+        this.$message({
+          title: this.$t('general.Error'),
+          message: err.message,
+          type: 'error'
+        })
+      }
+      this.listLoading = false
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+> > > .el-dialog__header {
+  display: none;
+}
+
 > > > .row-expand-cover .el-table__expand-column .cell {
   display: none;
 }

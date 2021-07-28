@@ -668,7 +668,6 @@ export default {
     async handleCurrentChange(val) {
       this.listLoading = true
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
-      // console.log(this.pageInfo.offset, '+', '(', val.page, '-', this.listQuery.page, ')*', val.limit, ')')
       if (offset <= 0 || val.page === 1) {
         this.listQuery.offset = 0
       } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {

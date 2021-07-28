@@ -18,28 +18,18 @@
 </template>
 <script>
 import { fileExtension } from '@/utils/extension'
-import { mapGetters } from 'vuex'
-import { postTestFile } from '@/views/Plugin/QA/api/qa'
 
 export default {
   name: 'CollectionFileUploader',
   data() {
     return {
-      isLoading: false,
       software_name: [],
       uploadFileList: []
     }
   },
-  computed: {
-    ...mapGetters(['selectedProjectId'])
-  },
-  watch: {
-    isLoading(value) {
-      this.$emit('loading', value)
-    }
-  },
   mounted() {
     this.extension = fileExtension()
+    this.resetUpload()
   },
   methods: {
     async handleChange(file, fileList) {
@@ -65,40 +55,12 @@ export default {
       this.$emit('upload-file-length', fileList.length)
     },
     handleUpload() {
-      const sendForm = new FormData()
       const uploadFileList = this.uploadFileList
-      uploadFileList.length > 0 ? this.uploadFiles(sendForm, uploadFileList) : null
-      this.resetUpload()
+      return uploadFileList.length > 0 ? { fileList: uploadFileList, software_name: this.software_name } : null
     },
     resetUpload() {
       this.$refs.fileUploader.clearFiles()
       this.uploadFileList = []
-    },
-    uploadFiles(sendForm, fileList) {
-      this.isLoading = true
-      // use one by one edit issue to upload file
-      const { selectedProjectId, software_name } = this
-      fileList
-        .reduce(function(prev, curr) {
-          return prev.then(() => {
-            sendForm.delete('test_file')
-            sendForm.append('test_file', curr.raw, curr.raw.name)
-            return postTestFile(selectedProjectId, software_name, sendForm)
-          })
-        }, Promise.resolve([]))
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.$emit('update')
-        })
-        .catch(err => {
-          console.error(err)
-          this.resetUpload()
-        })
-      this.isLoading = false
     }
   }
 }

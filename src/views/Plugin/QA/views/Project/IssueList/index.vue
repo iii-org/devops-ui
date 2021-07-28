@@ -71,6 +71,7 @@
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
+      <el-divider direction="vertical" />
       <span v-show="hasSelectedIssue">
         <el-divider direction="vertical" />
         <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedIssueList)">{{
