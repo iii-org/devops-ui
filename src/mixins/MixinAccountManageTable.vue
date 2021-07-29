@@ -47,9 +47,9 @@ export default {
     fetchData() {
       return []
     },
-    onPagination(page, per_page, search) {
+    onPagination(page, search) {
       const keyword = this.keyword ? this.keyword : search
-      this.loadData(page.page, per_page, keyword)
+      this.resizeTable(page.page, keyword)
     },
     adjustTable(forceRowNum) {
       this.$nextTick(function() {
@@ -79,9 +79,9 @@ export default {
         }
       })
     },
-    resizeTable() {
+    resizeTable(page, keyword) {
       this.adjustTable()
-      this.timeoutId = window.setTimeout(() => this.loadData(1, this.listQuery.limit, ''), 100)
+      this.timeoutId = window.setTimeout(() => this.loadData(page, this.listQuery.limit, keyword), 100)
     }
   }
 }
