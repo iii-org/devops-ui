@@ -151,7 +151,7 @@ export default {
       hasUnclosedIssue ? this.showConfirmTransferDialog(row) : this.showConfirmRemoveMemberDialog(row)
     },
     handleIssueClick(row) {
-      console.log(row)
+      // console.log(row)
       const { id, name } = row
       this.$router.push({ name: 'Issue Transfer', params: { userId: id, userName: name }})
     },

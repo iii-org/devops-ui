@@ -322,7 +322,7 @@ export default {
         })
         this.$emit('update')
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
     },
     async onUpdate(column, value) {
@@ -335,7 +335,7 @@ export default {
         })
         this.$emit('update')
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
     },
     toggleRelationDialog(target) {

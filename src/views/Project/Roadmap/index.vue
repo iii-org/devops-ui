@@ -24,7 +24,7 @@
                     <el-table-column :label="$t('Issue.List')">
                       <template slot-scope="scope">
                         <div>
-                          <priority v-if="scope.row.priorityName" :name="scope.row.priorityName" />
+                          <priority v-if="scope.row.priorityName" class="mr-2" :name="scope.row.priorityName" />
                           <tracker :name="scope.row.trackerName" />
                           <div class="mt-2">{{ scope.row.name }}</div>
                         </div>

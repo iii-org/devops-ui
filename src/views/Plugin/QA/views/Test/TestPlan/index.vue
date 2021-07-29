@@ -808,7 +808,7 @@ export default {
           if (exportColumn[column]['root']) {
             resultArray = exportColumn[column].column.map((subColumn) => this.confirmExist(item, subColumn))
             resultArray = resultArray.join(' - ')
-            console.log(resultArray)
+            // console.log(resultArray)
           }
           if (exportColumn[column]['children']) {
             const childrenSplit = exportColumn[column]['children'].split('.')
@@ -860,7 +860,7 @@ export default {
       data.forEach((item) => {
         const last_result = item.the_last_test_result
         if (item.software_name === 'Postman') {
-          console.log(item.software_name, last_result.success, last_result.failure)
+          // console.log(item.software_name, last_result.success, last_result.failure)
           if (last_result.hasOwnProperty('success') && last_result.hasOwnProperty('failure')) {
             result.push(last_result.success + '/' + (last_result.success + last_result.failure))
           } else {
@@ -891,7 +891,7 @@ export default {
     async downloadCsv(selectedTestPlan) {
       let result = await this.fetchDataCSV(selectedTestPlan)
       result = await this.dataCleanCSV(result)
-      console.log('fetch', result)
+      // console.log('fetch', result)
       await this.prepareCSV(result)
     }
   }

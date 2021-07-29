@@ -332,10 +332,10 @@ export default {
             console.error(err)
           })
       })
-    },
-    fetchCheckIssueClosable(issueId) {
-      getCheckIssueClosable(issueId).then(res => console.log(res.data))
     }
+    // fetchCheckIssueClosable(issueId) {
+    //   getCheckIssueClosable(issueId).then(res => console.log(res.data))
+    // }
   }
 }
 </script>

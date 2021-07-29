@@ -437,17 +437,17 @@ export default {
         // const params = await
         if (this.lastIssueListCancelToken && this.listLoading) {
           this.lastIssueListCancelToken.cancel()
-          console.log('change filter')
+          // console.log('change filter')
         }
         const cancelTokenSource = axios.CancelToken.source()
         this.lastIssueListCancelToken = cancelTokenSource
         this.tracker.forEach((tracker) => {
           const trackerParams = { ...this.getParams(), tracker_id: tracker.id }
-          console.log(trackerParams, this.tracker)
+          // console.log(trackerParams, this.tracker)
           apiList.push(getProjectIssueList(this.selectedProjectId, trackerParams, { cancelToken: cancelTokenSource.token }))
         })
         await Promise.all(apiList).then((res) => {
-          console.log(res)
+          // console.log(res)
           res.forEach((item) => {
             data = [...data, ...item.data]
           })
@@ -505,7 +505,7 @@ export default {
       })
     },
     updateData() {
-      console.log('updateData')
+      // console.log('updateData')
       this.resetFilterVersionTrackerData()
       const trackOpt = {
         keys: ['tracker.name'],
@@ -524,7 +524,7 @@ export default {
         search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item.name}"` })) }
       }
       const res = fuse.search(search)
-      console.log(res.map(items => items.item))
+      // console.log(res.map(items => items.item))
       this.listFilterTrackerData = res.map(items => items.item)
     },
     async getIssueFamilyData(row, expandedRows) {
