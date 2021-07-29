@@ -477,7 +477,8 @@ export default {
     CopyIssue: '@:Issue.Copy @:Issue.Issue',
     batchTransfer: 'Batch Transfer',
     batchClose: 'Batch Close',
-    UploadSuccess: 'Upload Success'
+    UploadSuccess: 'Upload Success',
+    List: 'Issue List'
   },
   Test: {
     TestPlan: {

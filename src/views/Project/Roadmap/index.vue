@@ -21,21 +21,12 @@
               <el-row v-loading="contentLoading" :gutter="12">
                 <el-col :span="8">
                   <el-table :data="workList[version.id]" style="width: 100%" border stripe>
-                    <el-table-column label="Work List">
+                    <el-table-column :label="$t('Issue.List')">
                       <template slot-scope="scope">
                         <div>
-                          <el-tag
-                            v-if="scope.row.priorityName"
-                            :type="getPriorityType(scope.row.priorityName)"
-                            size="small"
-                            effect="light"
-                          >
-                            {{ scope.row.priorityName }}
-                          </el-tag>
-                          <div>
-                            <span class="font-bold mr-2">[{{ scope.row.trackerName }}]</span>
-                            <span>{{ scope.row.name }} </span>
-                          </div>
+                          <priority v-if="scope.row.priorityName" :name="scope.row.priorityName" />
+                          <tracker :name="scope.row.trackerName" />
+                          <div class="mt-2">{{ scope.row.name }}</div>
                         </div>
                       </template>
                     </el-table-column>
@@ -62,17 +53,21 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getProjectVersion,
   getProjectIssueProgress,
-  getProjectIssueStatistics, getProjectIssueList
+  getProjectIssueStatistics,
+  getProjectIssueList
 } from '@/api/projects'
 
 import WorkloadCard from '@/views/Project/Overview/components/WorkloadCard'
 import Issue from '@/data/issue'
+import { Tracker, Priority } from '@/components/Issue'
 
 export default {
   name: 'ProjectRoadmap',
   components: {
     ProjectListSelector,
-    WorkloadCard
+    WorkloadCard,
+    Tracker,
+    Priority
   },
   data() {
     return {
@@ -151,15 +146,6 @@ export default {
       const idx = this.versionList.findIndex(item => item.id === versionId)
       this.versionList[idx].workLoadData = resStatistics.data
       this.contentLoading = false
-    },
-    getPriorityType(priority) {
-      const priorityMap = {
-        Immediate: 'danger',
-        High: 'warning',
-        Normal: 'success',
-        Low: 'success'
-      }
-      return priorityMap[priority] || 'slow'
     }
   }
 }

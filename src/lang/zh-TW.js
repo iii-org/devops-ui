@@ -480,7 +480,8 @@ export default {
     CopyIssue: '@:Issue.Issue@:Issue.Copy',
     batchTransfer: '批次移轉',
     batchClose: '批次關閉',
-    UploadSuccess: '上傳成功'
+    UploadSuccess: '上傳成功',
+    List: '議題清單'
   },
   Test: {
     TestPlan: {
