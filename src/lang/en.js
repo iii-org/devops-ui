@@ -208,7 +208,8 @@ export default {
     UnsupportedFileFormat: 'Unable to upload a file: This file type is not supported',
     FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)',
     LoadFail: 'Something went wrong, please contact your system administrator.',
-    UnSavedChanges: 'Do you really want to leave? you have unsaved changes!'
+    UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
+    confirmDelete: 'Are you sure to @:(general.Delete)?'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

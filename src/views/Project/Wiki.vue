@@ -42,11 +42,11 @@
             {{ $t('general.Edit') }}
           </el-button>
           <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
+            :confirm-button-text="$t('general.Delete')"
+            :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
-            title="Are you sure?"
+            :title="$t('general.confirmDelete')"
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
