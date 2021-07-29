@@ -74,7 +74,7 @@
       <el-col :span="24">
         <el-card v-loading="listLoading" :element-loading-text="$t('Loading')">
           <el-form>
-            <el-form-item label="顯示範圍">
+            <el-form-item :label="$t('ProjectRoadmap.DisplayRange')">
               <el-date-picker
                 v-model="chartDateRange"
                 type="daterange"
@@ -303,13 +303,13 @@ export default {
     periodOptions() {
       return [
         {
-          name: '週',
+          name: this.$t('general.week'),
           period: 'week',
           startOf: 'month',
           value: defaultSetting
         },
         {
-          name: '月',
+          name: this.$t('general.month'),
           period: 'month',
           startOf: 'year',
           value: {
@@ -326,7 +326,7 @@ export default {
           }
         },
         {
-          name: '年',
+          name: this.$t('general.year'),
           period: 'year',
           startOf: 'year',
           value: {
