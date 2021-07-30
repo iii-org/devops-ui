@@ -29,14 +29,16 @@
       </el-row>
       <el-row :gutter="20">
         <el-col ref="mainIssueWrapper" :span="24" :md="16">
-          <IssueToolbar :is-button-disabled="isButtonDisabled"
-                        :issue-link="issue_link"
-                        :issue-id="issueId"
-                        :issue-name="issueSubject"
-                        :issue-tracker="formTrackerName"
-                        @is-loading="showLoading"
-                        @related-collection="toggleDialogVisible"
-          />
+          <el-col :span="24">
+            <IssueToolbar :is-button-disabled="isButtonDisabled"
+                          :issue-link="issue_link"
+                          :issue-id="issueId"
+                          :issue-name="issueSubject"
+                          :issue-tracker="formTrackerName"
+                          @is-loading="showLoading"
+                          @related-collection="toggleDialogVisible"
+            />
+          </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
             <el-col :span="24" class="mb-3">
               <issue-description ref="IssueDescription" v-model="form.description" :old-value="originForm.description"

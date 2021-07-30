@@ -2,14 +2,14 @@
   <el-row class="el-upload-list">
     <div class="text-sm mb-2">{{ $t('Issue.Files') }}</div>
     <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
-      <el-col :span="16">
+      <el-col :span="14" :lg="16">
         <a class="el-upload-list__item-name" @click="handleDownload(file)">
           <i class="el-icon-document" />{{ file.filename }} ({{
             $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
           }})
         </a>
       </el-col>
-      <el-col :span="8" class="text-right">
+      <el-col :span="10" :lg="8" class="text-right">
         <span v-if="isAllowPreview(file.content_type)">
           <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" @click="handlePreview(file)">
             {{ $t('general.Preview') }}
