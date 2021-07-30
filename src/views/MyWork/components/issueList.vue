@@ -306,6 +306,9 @@ export default {
     },
     fixed_version_closed(value) {
       this.loadVersionList(value)
+    },
+    'pageInfo.total'(value){
+      this.$emit('total', value)
     }
   },
   async mounted() {

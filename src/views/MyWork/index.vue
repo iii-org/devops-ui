@@ -68,8 +68,7 @@
         >
           <h3 class="pb-2" :class="{'divider':activeDashboard===card.id}">
             <i v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}</h3>
-          <p v-if="$refs[card.id]" class="m-0 mb-2 text-right">{{ $refs[card.id][0].pageInfo.total }}</p>
-          <p v-else class="m-0 mb-2 text-right">0</p>
+          <p class="m-0 mb-2 text-right">{{ total[card.id] }}</p>
         </div>
       </el-col>
     </el-row>
@@ -79,6 +78,7 @@
                     :display-closed="displayClosed"
                     :filter-value="filterValue" :from="activeDashboard"
                     :keywords="keywords"
+                    @total="updateTotalCount(card.id, $event)"
         />
       </el-tab-pane>
     </el-tabs>
@@ -115,7 +115,8 @@ export default {
       priority: [],
       filterValue: {},
       originFilterValue: {},
-      keywords: null
+      keywords: null,
+      total: { 'assigned_to_id': 0, 'author_id': 0 }
     }
   },
   computed: {
@@ -251,6 +252,9 @@ export default {
     isRequireProjectId(name) {
       const column = ['fixed_version', 'assigned_to']
       return (column.includes(name) && (!this.project_id || (name === 'assigned_to' && this.activeDashboard === 'assigned_to_id')))
+    },
+    updateTotalCount(card_id, value) {
+      this.$set(this.total, card_id, value)
     }
   }
 }
