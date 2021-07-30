@@ -481,7 +481,8 @@ export default {
     batchTransfer: '批次移轉',
     batchClose: '批次關閉',
     UploadSuccess: '上傳成功',
-    List: '議題清單'
+    List: '議題清單',
+    TransferIssueTo: '準備將 {value} 項議題轉移給？'
   },
   Test: {
     TestPlan: {

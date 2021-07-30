@@ -117,6 +117,9 @@ export default {
     },
     updateListData() {
       this.$emit('updateListData')
+    },
+    handleEdit(issueId) {
+      this.$router.push({ name: 'issue-detail', params: { issueId }})
     }
   }
 }

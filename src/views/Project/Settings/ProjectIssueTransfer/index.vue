@@ -155,7 +155,7 @@
       <div slot="title" class="text-title">
         {{ $t('Issue.batchTransfer') }}
       </div>
-      <div class="text-base mb-2">準備將 {{ checkedIssueIds.length }} 項議題轉移給？</div>
+      <div class="text-base mb-2">{{ $t('Issue.TransferIssueTo', { value: checkedIssueIds.length }) }}</div>
       <el-select
         v-model="assigneeId"
         style="width: 100%"

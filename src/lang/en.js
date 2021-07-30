@@ -478,7 +478,8 @@ export default {
     batchTransfer: 'Batch Transfer',
     batchClose: 'Batch Close',
     UploadSuccess: 'Upload Success',
-    List: 'Issue List'
+    List: 'Issue List',
+    TransferIssueTo: 'Transfer {value} issues to？'
   },
   Test: {
     TestPlan: {
