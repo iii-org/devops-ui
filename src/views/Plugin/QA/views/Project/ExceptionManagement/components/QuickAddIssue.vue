@@ -5,6 +5,7 @@
         <el-select
           v-model="form.tracker_id"
           :placeholder="$t('Issue.SelectType')"
+          disabled
         >
           <el-option
             v-for="option in tracker"

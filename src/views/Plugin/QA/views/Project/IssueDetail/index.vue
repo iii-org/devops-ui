@@ -567,13 +567,14 @@ export default {
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
-        const propParentLength = Object.keys(this.parent).length
+        // const propParentLength = Object.keys(this.parent).length
         if (valid) {
-          const changeRequest = this.$refs.IssueForm.tracker.find((item) => (item.name === 'Change Request'))
-          if (this.form.tracker_id === changeRequest.id && propParentLength === 0) {
-            const message = '尚未設定本變更議之原由議題單(父議題），請先行設定後再存檔'
-            this.setWarningMessage(message)
-          } else if (this.form.subject && this.form.subject !== '') {
+          // const changeRequest = this.$refs.IssueForm.tracker.find((item) => (item.name === 'Change Request'))
+          // if (this.form.tracker_id === changeRequest.id && propParentLength === 0) {
+          //   const message = '尚未設定本變更議之原由議題單(父議題），請先行設定後再存檔'
+          //   this.setWarningMessage(message)
+          // } else
+          if (this.form.subject && this.form.subject !== '') {
             this.submitIssue()
           } else {
             const message = '請輸入標題'
