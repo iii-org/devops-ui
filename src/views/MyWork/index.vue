@@ -77,7 +77,7 @@
       <el-tab-pane v-for="card in dashboardCards" :key="card.id" :name="card.id" :label="card.name">
         <issue-list :ref="card.id" :project-id="project_id" :filter-options="filterOptions"
                     :display-closed="displayClosed"
-                    :filter-value="filterValue" :from="card.id"
+                    :filter-value="filterValue" :from="activeDashboard"
                     :keywords="keywords"
         />
       </el-tab-pane>

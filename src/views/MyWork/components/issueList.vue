@@ -283,7 +283,9 @@ export default {
     }
   },
   watch: {
-    keywords() {
+    keywords(val) {
+      // console.log(val)
+      this.keyword = val
       this.loadData()
     },
     projectId() {
@@ -339,9 +341,10 @@ export default {
           result[item + '_id'] = this.filterValue[item]
         }
       })
-      if (this.keywords) {
-        result['search'] = this.keywords
+      if (this.keyword) {
+        result['search'] = `${this.keyword} `
       }
+      // console.log(result)
       return result
     },
     async fetchData() {
@@ -357,8 +360,10 @@ export default {
         }
         const cancelTokenSource = axios.CancelToken.source()
         const listData = await getUserIssueList(this.userId, this.getParams(), { cancelToken: cancelTokenSource.token })
+        // console.log(listData)
         this.lastIssueListCancelToken = cancelTokenSource
-        data = listData.data.issue_list
+        if (listData.data && listData.data.issue_list.length > 0) data = listData.data.issue_list
+        // console.log(data)
         if (listData.data.hasOwnProperty('page')) {
           this.pageInfo = listData.data.page
         } else {
@@ -376,6 +381,8 @@ export default {
       } catch (e) {
         // null
       }
+      if (!data || data.length === 0) return
+      // console.log(data)
       return data
     },
     getSelectionLabel(item) {
@@ -501,7 +508,6 @@ export default {
     async handleCurrentChange(val) {
       this.listLoading = true
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
-      // console.log(this.pageInfo.offset, '+', '(', val.page, '-', this.listQuery.page, ')*', val.limit, ')')
       if (offset <= 0 || val.page === 1) {
         this.listQuery.offset = 0
       } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
