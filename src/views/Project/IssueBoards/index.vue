@@ -425,10 +425,10 @@ export default {
       this.isLoading = true
       for (const item of this.groupByValueOnBoard) {
         const CancelToken = axios.CancelToken.source()
+        this.$set(this.projectIssueQueue, item.id, CancelToken)
         getIssueList.push(getProjectIssueList(this.selectedProjectId,
           { ...this.getParams(), [this.groupBy.dimension + '_id']: item.id },
           { cancelToken: CancelToken.token }))
-        this.$set(this.projectIssueQueue, item.id, CancelToken)
       }
       this.projectIssueList = []
       await Promise.all(getIssueList)

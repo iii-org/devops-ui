@@ -482,8 +482,8 @@ export default {
           this.lastIssueListCancelToken.cancel()
         }
         const cancelTokenSource = axios.CancelToken.source()
-        const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })
         this.lastIssueListCancelToken = cancelTokenSource
+        const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })
         data = listData.data.issue_list
         if (listData.data.hasOwnProperty('page')) {
           this.pageInfo = listData.data.page
