@@ -68,10 +68,10 @@
               <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
                 <b>{{ $t('Issue.ParentIssue') }}:</b>
                 <el-link
-                  class="font-weight-regular"
                   :style="{ 'font-size': '14px', cursor: 'pointer' }"
                   :underline="false"
                   @click="handleEdit(scope.row.parent.id)"
+                  @contextmenu.native="handleContextMenu(scope.row.parent,'',$event)"
                 >
                   <status :name="scope.row.parent.status.name" size="mini" />
                   <tracker :name="scope.row.parent.tracker.name" />
@@ -83,6 +83,19 @@
                     - {{ scope.row.parent.assigned_to.login }})
                   </span>
                 </el-link>
+                <el-popconfirm
+                  :confirm-button-text="$t('general.Remove')"
+                  :cancel-button-text="$t('general.Cancel')"
+                  icon="el-icon-info"
+                  icon-color="red"
+                  :title="$t('Issue.RemoveIssueRelation')"
+                  @onConfirm="removeIssueRelation(scope.row.id)"
+                >
+                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{
+                    $t('Issue.Unlink')
+                  }}
+                  </el-button>
+                </el-popconfirm>
               </li>
               <li v-if="scope.row.hasOwnProperty('children')">
                 <b>{{ $t('Issue.ChildrenIssue') }}:</b>
@@ -90,7 +103,38 @@
                   <template v-for="child in scope.row.children">
                     <li v-if="Object.keys(child).length>0" :key="child.id">
                       <el-link
-                        class="font-weight-regular"
+                        :style="{ 'font-size': '14px', cursor: 'pointer' }"
+                        :underline="false"
+                        @click="handleEdit(child.id)"
+                        @contextmenu.native="handleContextMenu(child, '', $event)"
+                      >
+                        <status :name="child.status.name" size="mini" />
+                        <tracker :name="child.tracker.name" />
+                        #{{ child.id }} - {{ child.name }}
+                        <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
+                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                      </el-link>
+                      <el-popconfirm
+                        :confirm-button-text="$t('general.Remove')"
+                        :cancel-button-text="$t('general.Cancel')"
+                        icon="el-icon-info"
+                        icon-color="red"
+                        :title="$t('Issue.RemoveIssueRelation')"
+                        @onConfirm="removeIssueRelation(child.id)"
+                      >
+                        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
+                      </el-popconfirm>
+                    </li>
+                  </template>
+                </ol>
+              </li>
+              <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">
+                <b>{{ $t('Issue.RelatedIssue') }}:</b>
+                <ol>
+                  <template v-for="child in scope.row.relations">
+                    <li v-if="Object.keys(child).length>0" :key="child.id">
+                      <el-link
+                        class="font-weight-regular my-1"
                         :style="{ 'font-size': '14px', cursor: 'pointer' }"
                         :underline="false"
                         @click="handleEdit(child.id)"
@@ -99,8 +143,22 @@
                         <tracker :name="child.tracker.name" />
                         #{{ child.id }} - {{ child.name }}
                         <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
+                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{
+                            child.assigned_to.login
+                          }})</span>
                       </el-link>
+                      <el-popconfirm
+                        :confirm-button-text="$t('general.Remove')"
+                        :cancel-button-text="$t('general.Cancel')"
+                        icon="el-icon-info"
+                        icon-color="red"
+                        :title="$t('Issue.RemoveIssueRelation')"
+                        @onConfirm="removeRelationIssue(child.relation_id)"
+                      >
+                        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                          {{ $t('Issue.Unlink') }}
+                        </el-button>
+                      </el-popconfirm>
                     </li>
                   </template>
                 </ol>
@@ -160,7 +218,7 @@
 </template>
 
 <script>
-import { addIssue, getIssueTracker, getIssueFamily } from '@/api/issue'
+import { addIssue, getIssueTracker, getIssueFamily, updateIssue } from '@/api/issue'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
@@ -349,6 +407,55 @@ export default {
     },
     handleSelectionChange(list) {
       this.selectedProjectList = list
+    },
+    async removeIssueRelation(child_issue_id) {
+      console.log(child_issue_id)
+      this.listLoading = true
+      try {
+        await updateIssue(child_issue_id, { parent_id: '' })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
+    },
+    handleContextMenu(row, column, event) {
+      event.preventDefault()
+      const eventX = event.pageX
+      const eventY = event.pageY
+      this.$refs.contextmenu.$refs.contextmenu.show()
+      this.$nextTick(() => {
+        const contextmenuPosition = {
+          top: eventY,
+          left: eventX
+        }
+        const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
+        const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
+        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
+          this.handleContextMenu(row, column, event)
+        }
+        if (contextmenuHeight + eventY >= window.innerHeight) {
+          contextmenuPosition.top -= contextmenuHeight
+        }
+        if (contextmenuWidth + eventX >= window.innerWidth) {
+          contextmenuPosition.left -= contextmenuWidth
+        }
+        this.contextMenu.top = contextmenuPosition.top
+        this.contextMenu.left = contextmenuPosition.left
+        this.contextMenu.row = row
+        this.contextMenu.visible = true
+        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+        document.addEventListener('click', this.hideContextMenu)
+      })
+    },
+    hideContextMenu() {
+      this.contextMenu.visible = false
+      document.removeEventListener('click', this.hideContextMenu)
     },
     downloadCsv(selectedProjectList) {
       const selectedColumn = this.handleCsvSelectedColumn(selectedProjectList)
