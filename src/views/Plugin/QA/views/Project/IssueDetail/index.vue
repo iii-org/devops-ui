@@ -22,8 +22,14 @@
             </el-col>
           </el-row>
           <el-col :span="6" class="text-right">
-            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'danger'" plain :disabled="isButtonDisabled" @click="handleDelete">{{ $t('general.Delete') }}</el-button>
-            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'primary'" :disabled="isButtonDisabled" @click="handleSave">{{ $t('general.Save') }}</el-button>
+            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'danger'" plain :disabled="isButtonDisabled"
+                       @click="handleDelete"
+            >{{ $t('general.Delete') }}
+            </el-button>
+            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'primary'" :disabled="isButtonDisabled"
+                       @click="handleSave"
+            >{{ $t('general.Save') }}
+            </el-button>
           </el-col>
         </el-row>
       </el-row>
@@ -79,7 +85,9 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @onConfirm="removeIssueRelation(issueId)"
                         >
-                          <el-button slot="reference" :type="isButtonDisabled ? 'info' : 'danger'" :disabled="isButtonDisabled" size="mini" icon="el-icon-remove">
+                          <el-button slot="reference" :type="isButtonDisabled ? 'info' : 'danger'"
+                                     :disabled="isButtonDisabled" size="mini" icon="el-icon-remove"
+                          >
                             {{ $t('Issue.Unlink') }}
                           </el-button>
                         </el-popconfirm>
@@ -405,8 +413,11 @@ export default {
           const test_files = await getTestFileByTestPlan(this.selectedProjectId, this.issueId)
           this.$set(data, 'test_files', test_files.data)
         }
-        if (isOnlyUpload) this.initUploadFiles(data)
-        else this.initIssueDetails(data)
+        if (isOnlyUpload) {
+          this.initUploadFiles(data)
+        } else {
+          this.initIssueDetails(data)
+        }
       } catch (e) {
         this.$router.push(this.formObj)
         this.$message({
@@ -414,7 +425,6 @@ export default {
           type: 'warning'
         })
       }
-      this.isLoading = false
       return data
     },
     initUploadFiles(data) {
@@ -547,8 +557,13 @@ export default {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
-      this.isLoading = status
-      this.handleUploadUpdated()
+      if (status.hasOwnProperty('upload') && status.upload) {
+        this.isLoading = status.status
+        this.handleUploadUpdated()
+      } else {
+        this.isLoading = status
+        this.handleUpdated()
+      }
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {

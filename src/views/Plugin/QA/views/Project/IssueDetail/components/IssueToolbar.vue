@@ -48,7 +48,7 @@
         :project-id="selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
-        @loading="loadingUpdate"
+        @loading="loadingUpdate($event.value, false)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span slot="footer" class="dialog-footer">
@@ -114,32 +114,35 @@ export default {
       this.$refs.IssueFileUploader.uploadFileList = []
       this.uploadDialogVisible = false
     },
-    uploadFiles(sendForm, fileList) {
-      this.isLoading = true
+    async uploadFiles(sendForm, fileList) {
+      this.loadingUpdate(true, true)
       // use one by one edit issue to upload file
       const { issueId } = this
-      fileList
-        .reduce((prev, curr) => {
-          return prev.then(() => {
-            sendForm.delete('upload_file')
-            sendForm.delete('upload_content_type')
-            sendForm.append('upload_content_type', curr.raw.type)
-            sendForm.append('upload_file', curr.raw, curr.raw.name)
-            return updateIssue(issueId, sendForm)
-          })
-        }, Promise.resolve([]))
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.$emit('is-loading', this.isLoading)
+      // use one by one edit issue to upload file
+      try {
+        const uploadApi = fileList.map(function(item) {
+          const sendForm = new FormData()
+          sendForm.delete('upload_file')
+          sendForm.delete('upload_content_type')
+          sendForm.append('upload_content_type', item.raw.type)
+          sendForm.append('upload_file', item.raw, item.raw.name)
+          return updateIssue(issueId, sendForm)
         })
-        .catch(err => {
-          console.error(err)
-          this.isLoading = false
+        await Promise.all(uploadApi)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
+      } catch (err) {
+        console.error(err)
+        this.$message({
+          title: this.$t('general.Error'),
+          message: err.message,
+          type: 'error'
+        })
+      }
+      this.loadingUpdate(false, true)
     },
     async saveIssue(data) {
       return await addIssue(data)
@@ -173,9 +176,9 @@ export default {
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
     },
-    loadingUpdate(value) {
+    loadingUpdate(value, upload) {
       this.isLoading = value
-      this.$emit('is-loading', value)
+      this.$emit('is-loading', { status: value, upload: upload })
     }
   }
 }
