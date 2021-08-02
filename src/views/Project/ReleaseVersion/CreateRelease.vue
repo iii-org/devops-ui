@@ -52,15 +52,17 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('Git.Branch')">
-              <el-select v-model="commitForm.branch" filterable @change="handleSelectedRepoName(commitForm.branch)">
+              <el-select v-if="branches.length > 0" v-model="commitForm.branch" filterable @change="handleSelectedRepoName(commitForm.branch)">
                 <el-option v-for="item in branches" :key="item" :label="item" :value="item" />
               </el-select>
+              <div v-else>{{ $t('general.Nothing') }}</div>
             </el-form-item>
             <el-form-item :label="$t('Git.Commit')">
-              <div>
+              <div v-if="commitId">
                 <svg-icon icon-class="ion-git-commit-outline" />
                 {{ commitId }}
               </div>
+              <div v-else>{{ $t('general.Nothing') }}</div>
             </el-form-item>
             <el-form-item>
               {{ $t('PodsList.Image') }}:
@@ -250,12 +252,13 @@ export default {
       this.fullscreenLoading = true
       const params = {
         main: this.commitForm.mainVersion,
-        versions: this.releaseVersions,
-        branch: this.commitForm.branch,
-        note: this.commitForm.note,
-        commit: this.commitId,
+        versions: this.releaseVersions || null,
+        branch: this.commitForm.branch === '讀取中……' ? null : this.commitForm.branch,
+        note: this.commitForm.note || null,
+        commit: this.commitId || null,
         forced: true
       }
+
       try {
         await createRelease(this.selectedProjectId, params)
       } catch (e) {
