@@ -146,7 +146,14 @@
           >
             <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
             <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
+            <div class="text-xs text-gray-400 px-12">
+              <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+              <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+            </div>
           </el-upload>
+          <div class="text-xs">
+            *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
+          </div>
         </el-form-item>
       </el-col>
 
@@ -255,7 +262,10 @@ export default {
             return time.getTime() < new Date(startDate).getTime()
           }
         }
-      }
+      },
+      fileSizeLimit: '5MB',
+      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
     }
   },
 
