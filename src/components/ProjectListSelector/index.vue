@@ -141,6 +141,15 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectOptions']),
+    showNoProjectWarning() {
+      // noinspection JSCheckFunctionSignatures
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.NoProject'),
+        type: 'warning'
+      })
+      this.listLoading = false
+    },
     setChange(value) {
       if (this.keepSelection) {
         if (value || value !== '') {
@@ -175,13 +184,16 @@ export default {
       this.getCategoryProjectList()
     },
     getCategoryProjectList() {
-      const starred = this.projectOptions.filter((item) => (item.starred === true))
-      const projects = this.projectOptions.filter((item) => (item.starred === false))
+      if ((this.selectedProjectId === -1 || !this.selectedProjectId) && !this.clearable) {
+        this.showNoProjectWarning()
+        return []
+      }
+      const starred = this.projectOptions.filter((item) => (item.starred))
+      const projects = this.projectOptions.filter((item) => (!item.starred))
       this.categoryProjectList = [{
         label: this.$t('Project.Starred'),
         options: starred
-      },
-      { options: projects }]
+      }, { options: projects }]
     },
     copyUrl(text) {
       this.$copyText(text).then(
@@ -217,11 +229,13 @@ export default {
     input {
       @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate;
     }
-    .el-input__prefix{
+
+    .el-input__prefix {
       @apply text-lg text-black;
     }
+
     .el-select__caret {
-      color:#000000;
+      color: #000000;
     }
   }
 
