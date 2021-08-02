@@ -50,7 +50,7 @@ export default {
     checkMarx: 'CheckMarx',
     sonarQube: 'SonarQube',
     webInspect: 'WebInspect',
-    webInspectReport: 'Report',
+    webInspectReport: '@:general.Report',
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
 
@@ -91,7 +91,8 @@ export default {
     track: 'Traceability Manage',
     traceabilityMatrix: 'Traceability Matrix',
     changeManagement: 'Change Management',
-    'Fail Management': 'Fail Management'
+    'Fail Management': 'Fail Management',
+    testReport: 'Devops Test Report'
   },
   navbar: {
     logOut: 'Log Out',
@@ -187,7 +188,9 @@ export default {
     AdvancedSettings: '》Advanced Settings',
     year: 'year',
     month: 'month',
-    week: 'week'
+    week: 'week',
+    Report: 'Report',
+    Nothing: 'N/A'
   },
   Notify: {
     Updated: 'update successful',
@@ -259,7 +262,7 @@ export default {
     LowSeverity: 'Low Severity',
     InfoSeverity: 'Info Severity',
     RunAt: 'Start Time',
-    Report: 'Report',
+    Report: '@:general.Report',
     SearchScanId: 'Search Scan ID',
     noScan: 'This project does not have any scan.',
     notCompletedScan: 'The scan is not completed yet. It may take several hours to complete.',
@@ -286,7 +289,7 @@ export default {
     InfoSeverity: 'Info Severity',
     BpSeverity: 'Best Practice',
     RunAt: 'Start Time',
-    Report: 'Report',
+    Report: '@:general.Report',
     TestReport: 'Test Report',
     DownloadReport: 'Download Report',
     SearchCommitId: 'Search Commit ID'

@@ -50,7 +50,7 @@ export default {
     checkMarx: '白箱測試(CheckMarx)',
     sonarQube: '白箱測試(SonarQube)',
     webInspect: '黑箱測試(WebInspect)',
-    webInspectReport: '報告',
+    webInspectReport: '@:general.Report',
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
 
@@ -91,7 +91,8 @@ export default {
     track: '追溯管理',
     traceabilityMatrix: '需求追溯表',
     changeManagement: '變更管理',
-    'Fail Management': '異常管理'
+    'Fail Management': '異常管理',
+    testReport: 'Devops 測試報告'
   },
   navbar: {
     logOut: '登出',
@@ -191,7 +192,9 @@ export default {
     AdvancedSettings: '》進階設定',
     year: '年',
     month: '月',
-    week: '週'
+    week: '週',
+    Report: '報告',
+    Nothing: '無'
   },
   Notify: {
     Updated: '已更新',
@@ -262,7 +265,7 @@ export default {
     LowSeverity: '低風險',
     InfoSeverity: '資訊',
     RunAt: '開始時間',
-    Report: '報告',
+    Report: '@:general.Report',
     SearchScanId: '搜尋 測試編號',
     noScan: '目前沒有任何掃描。',
     notCompletedScan: '掃描尚未完成，可能需要數小時來完成。',
@@ -289,7 +292,7 @@ export default {
     InfoSeverity: '資訊',
     BpSeverity: '最佳實作',
     RunAt: '開始時間',
-    Report: '報告',
+    Report: '@:general.Report',
     TestReport: '測試報告',
     DownloadReport: '下載報告',
     SearchCommitId: '搜尋 Commit'

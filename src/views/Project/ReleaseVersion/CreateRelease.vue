@@ -196,12 +196,16 @@ export default {
         return timeB - timeA
       })
       this.branchesData = response.data['branch_list']
-      this.commitId = this.branchesData[0].short_id
       for (const branch of this.branchesData) {
         this.branches.push(branch.name)
       }
       if (this.branchesData.length > 0) {
+        this.commitId = this.branchesData[0].short_id
         this.commitForm.branch = this.branchesData[0].name
+      } else {
+        this.commitForm.mainVersion = null
+        this.commitForm.branch = this.$t('Loading')
+        this.commitId = ''
       }
     },
     setIssues(issues) {
@@ -253,12 +257,11 @@ export default {
       const params = {
         main: this.commitForm.mainVersion,
         versions: this.releaseVersions || null,
-        branch: this.commitForm.branch === '讀取中……' ? null : this.commitForm.branch,
+        branch: this.commitForm.branch === this.$t('Loading') ? null : this.commitForm.branch,
         note: this.commitForm.note || null,
         commit: this.commitId || null,
         forced: true
       }
-
       try {
         await createRelease(this.selectedProjectId, params)
       } catch (e) {
