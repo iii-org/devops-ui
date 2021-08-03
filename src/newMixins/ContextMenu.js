@@ -67,9 +67,16 @@ export default {
         this.contextMenu.left = contextmenuPosition.left
         this.contextMenu.row = row
         this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+        this.$refs.contextmenu.$refs.contextmenu.style = {
+          top: this.contextMenu.top + 'px',
+          left: this.contextMenu.left + 'px'
+        }
         document.addEventListener('click', this.hideContextMenu)
       })
+    },
+    hideContextMenu() {
+      this.contextMenu.visible = false
+      document.removeEventListener('click', this.hideContextMenu)
     }
   }
 }

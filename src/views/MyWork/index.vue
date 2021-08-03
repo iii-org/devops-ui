@@ -42,7 +42,7 @@
       <el-input
         v-if="searchVisible"
         id="input-search"
-        v-model="keywords"
+        v-model="keyword"
         prefix-icon="el-icon-search"
         :placeholder="$t('Issue.SearchNameOrAssignee')"
         style="width: 250px;"
@@ -50,7 +50,7 @@
         @blur="searchVisible=!searchVisible"
       />
       <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-        {{ $t('general.Search') + ((keywords) ? ': ' + keywords : '') }}
+        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
       </el-button>
       <template v-if="isFilterChanged">
         <el-divider direction="vertical" />
@@ -74,10 +74,10 @@
     </el-row>
     <el-tabs v-model="activeDashboard">
       <el-tab-pane v-for="card in dashboardCards" :key="card.id" :name="card.id" :label="card.name">
-        <issue-list :ref="card.id" :project-id="project_id" :filter-options="filterOptions"
-                    :display-closed="displayClosed"
-                    :filter-value="filterValue" :from="card.id"
-                    :keywords="keywords"
+        <issue-list :ref="card.id" :project-id="project_id"
+                    :display-closed-props="displayClosed"
+                    :filter-value-props="filterValue" :from="card.id"
+                    :keyword-props="keyword"
                     @total="updateTotalCount(card.id, $event)"
         />
       </el-tab-pane>
@@ -115,7 +115,7 @@ export default {
       priority: [],
       filterValue: {},
       originFilterValue: {},
-      keywords: null,
+      keyword: null,
       total: { 'assigned_to_id': 0, 'author_id': 0 }
     }
   },
@@ -177,7 +177,7 @@ export default {
           return true
         }
       }
-      return !!this.keywords
+      return !!this.keyword
     }
   },
   watch: {
@@ -246,7 +246,7 @@ export default {
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keywords = null
+      this.keyword = null
       this.displayClosed = false
     },
     isRequireProjectId(name) {

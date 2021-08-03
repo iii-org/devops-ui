@@ -20,13 +20,16 @@ export default {
   watch: {
     selectedProject() {
       if (this.remote) {
-        this.adjustTable()
+        this.initTableData()
+      } else {
+        this.loadData()
       }
-      this.loadData()
     }
   },
   created() {
-    if (!this.remote) { this.loadData() }
+    if (!this.remote) {
+      this.loadData()
+    }
   },
   methods: {
     async loadData() {
