@@ -66,6 +66,9 @@
             <span v-else>{{ $t('Issue.NoImage') }}</span>
           </template>
         </el-table-column>
+        <el-table-column align="center" :label="$t('general.Report')">
+          <i class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
+        </el-table-column>
       </el-table>
       <pagination
         :total="filteredData.length"
@@ -136,6 +139,9 @@ export default {
     },
     UTCtoLocalTime(time) {
       return UTCtoLocalTime(time)
+    },
+    handleToTestReport() {
+      this.$router.push({ name: 'TestReport' })
     }
   }
 }

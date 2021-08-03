@@ -903,5 +903,14 @@ export default {
   ProjectRoadmap: {
     DisplayRange: 'Display Range'
   },
+  TestReport: {
+    TestTime: 'Test Time',
+    Commit: 'Commit',
+    WhiteBoxTesting: 'White-box Testing(Source Code Scanning)',
+    BlackBoxTesting: 'Black-box Testing(Weakness Scanning)',
+    ApiScriptTesting: 'API Script Testing',
+    WebScriptTesting: 'Web Script Testing',
+    DetailReport: 'Detail Report'
+  },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

@@ -273,9 +273,24 @@ export const asyncRoutes = [
       },
       {
         path: 'pipelines',
-        name: 'Pipelines',
-        component: () => import('@/views/Progress/Pipelines'),
-        meta: { title: 'pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+        component: parentBlank,
+        meta: { title: 'pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] },
+        children: [
+          {
+            path: '',
+            name: 'Pipelines',
+            hidden: true,
+            component: () => import('@/views/Progress/Pipelines'),
+            meta: { title: 'pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+          },
+          {
+            path: 'test-report',
+            name: 'TestReport',
+            hidden: true,
+            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
+            meta: { title: 'testReport', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+          }
+        ]
       },
       {
         path: 'dev-environment',

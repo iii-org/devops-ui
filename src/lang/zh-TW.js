@@ -905,5 +905,14 @@ export default {
   ProjectRoadmap: {
     DisplayRange: '顯示範圍'
   },
+  TestReport: {
+    TestTime: '測試時間',
+    Commit: '提交碼',
+    WhiteBoxTesting: '白箱測試(原始碼掃描)',
+    BlackBoxTesting: '黑箱測試(弱點掃描)',
+    ApiScriptTesting: 'API腳本測試',
+    WebScriptTesting: '網頁腳本測試',
+    DetailReport: '詳細報告'
+  },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

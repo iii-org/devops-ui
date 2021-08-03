@@ -89,6 +89,9 @@
             </el-button>
           </template>
         </el-table-column>
+        <el-table-column align="center" :label="$t('general.Report')">
+          <i class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
+        </el-table-column>
       </el-table>
       <pagination
         :total="listQuery.total"
@@ -278,6 +281,9 @@ export default {
     clearTimer() {
       clearTimeout(this.timer)
       this.timer = null
+    },
+    handleToTestReport() {
+      this.$router.push({ name: 'TestReport' })
     }
   }
 }
