@@ -8,14 +8,14 @@
         <span>{{ $t('route.testReport') }}</span>
       </span>
       <span class="text-base ml-20">
-        <span class="ml-10 inline">{{ $t('TestReport.TestTime') }}: {{ timeNow }}</sp>
-          <span class="ml-10 inline">
-            {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
-            {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
-            {{ commitId }}
-          </span>
+        <span class="ml-10 inline">{{ $t('TestReport.TestTime') }}: {{ timeNow }}</span>
+        <span class="ml-10 inline">
+          {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
+          {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+          {{ commitId }}
         </span>
-      </span></div>
+      </span>
+    </div>
     <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
     <ToolBar>
       <span slot="toolName">SonarQube</span>
