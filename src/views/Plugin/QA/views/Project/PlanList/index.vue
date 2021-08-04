@@ -289,7 +289,7 @@
 <script>
 import AddIssue from './components/AddIssue'
 import { mapGetters } from 'vuex'
-import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
@@ -331,10 +331,7 @@ export default {
       trackerSelectAll: true,
       listFilterTrackerData: [],
       fixed_version: [],
-      tracker: [],
       assigned_to: [],
-      status: [],
-      priority: [],
       filterValue: {},
       originFilterValue: {},
       quickChangeDialogVisible: false,
@@ -352,7 +349,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId']),
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority']),
     filteredData() {
       return this.listFilterTrackerData
     },
@@ -476,12 +473,9 @@ export default {
     async loadSelectionList() {
       return await Promise.all([
         getProjectUserList(this.selectedProjectId),
-        getProjectVersion(this.selectedProjectId),
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
+        getProjectVersion(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList, versionList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList, versionList] = res.map(
           item => item.data
         )
         this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
@@ -490,19 +484,18 @@ export default {
         //   this.$set(this.filterValue, 'fixed_version', version[0].id)
         //   this.$set(this.originFilterValue, 'fixed_version', version[0].id)
         // }
-
-        this.tracker = typeList.filter((item) => (['Epic', 'Audit', 'Feature'].includes(item.name)))
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           ...assigneeList.user_list
         ]
-        this.status = statusList
-        this.priority = priorityList
         if (this.userRole === 'Engineer') {
           this.$set(this.filterValue, 'assigned_to', this.userId)
           this.$set(this.originFilterValue, 'assigned_to', this.userId)
         }
       })
+    },
+    getOptionsData(option_name) {
+      return this[option_name]
     },
     updateData() {
       // console.log('updateData')

@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'ImportIssue',
   components: {},
@@ -36,10 +38,6 @@ export default {
     visible: {
       type: Boolean,
       default: false
-    },
-    tracker: {
-      type: Array,
-      default: () => ([])
     },
     projectId: {
       type: Number,
@@ -406,6 +404,9 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapGetters(['tracker'])
   },
   methods: {
     handleClose() {

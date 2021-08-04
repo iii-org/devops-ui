@@ -8,7 +8,7 @@
           disabled
         >
           <el-option
-            v-for="option in tracker"
+            v-for="option in trackerList"
             :key="option.login" :label="$t('Issue.'+option.name)"
             :value="option.id"
           >
@@ -21,7 +21,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        <el-button @click="advancedAddIssue">》進階設定</el-button>
+        <el-button @click="advancedAddIssue">{{ $t('general.AdvancedSettings') }}</el-button>
       </el-form-item>
     </el-form>
     <el-dialog
@@ -83,7 +83,6 @@ export default {
     return {
       addTopicDialogVisible: false,
       LoadingConfirm: false,
-      tracker: [],
       parentId: 0,
       form: {
         tracker_id: 9,
@@ -100,7 +99,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'issueListFilter'])
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'issueListFilter']),
+    trackerList() {
+      return this.tracker.filter(item => item.name === 'Fail Management')
+    }
   },
   watch: {
     issueListFilter: {
@@ -112,23 +114,8 @@ export default {
   },
   mounted() {
     this.setFilterValue()
-    this.fetchSelection()
   },
   methods: {
-    async fetchSelection() {
-      this.tracker = [{
-        id: 9,
-        name: 'Fail Management'
-      }]
-      // await Promise.all([
-      //   getIssueTracker()
-      // ]).then(res => {
-      //   const [tracker] = res.map(
-      //     item => item.data
-      //   )
-      //   this.tracker = tracker
-      // })
-    },
     setFilterValue() {
       this.form = {
         tracker_id: 9,
@@ -184,8 +171,10 @@ export default {
       this.setFilterValue()
     },
     handleAdvancedSave() {
-      this.$refs['AddIssue'].handleSave()
-      this.setFilterValue()
+      const result = this.$refs['AddIssue'].handleSave()
+      if (result) {
+        this.setFilterValue()
+      }
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true

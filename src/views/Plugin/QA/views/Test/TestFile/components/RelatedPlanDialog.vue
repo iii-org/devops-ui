@@ -105,7 +105,6 @@ import { mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import Fuse from 'fuse.js'
 import IssueTitle from '../components/widget/IssueTitle'
-import { getIssueTracker } from '@/api/issue'
 import { getTestPlanList } from '@/views/Plugin/QA/api/qa'
 
 export default {
@@ -122,7 +121,6 @@ export default {
     return {
       selectedList: [],
       selectedIssue: { append: [], remove: [], merge: [] },
-      tracker: [],
       trackerValue: 'Test Plan',
       search: [],
       isLoading: false,
@@ -140,7 +138,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProject']),
+    ...mapGetters(['selectedProject', 'tracker']),
     selectedProjectId() {
       return this.selectedProject.id
     },
@@ -176,8 +174,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      const issueTrackerRes = await getIssueTracker()
-      this.tracker = issueTrackerRes.data
       return getTestPlanList(this.selectedProjectId)
         .then(res => {
           return Promise.resolve(res.data)

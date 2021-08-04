@@ -32,7 +32,7 @@
                 @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
                   :key="(dimension.value==='assigned_to')? item.login: item.id"
                   :label="getSelectionLabel(item)"
                   :class="{[item.class]:item.class}"
@@ -293,6 +293,9 @@ export default {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
+
+      assigned_to: [],
+      fixed_version: [],
 
       form: {},
 

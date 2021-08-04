@@ -5,9 +5,10 @@
         <el-select
           v-model="form.tracker_id"
           :placeholder="$t('Issue.SelectType')"
+          disabled
         >
           <el-option
-            v-for="option in tracker"
+            v-for="option in trackerList"
             :key="option.login" :label="$t('Issue.'+option.name)"
             :value="option.id"
           >
@@ -82,7 +83,6 @@ export default {
     return {
       addTopicDialogVisible: false,
       LoadingConfirm: false,
-      tracker: [],
       parentId: 0,
       form: {
         tracker_id: 8,
@@ -99,7 +99,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'issueListFilter'])
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'issueListFilter']),
+    trackerList() {
+      return this.tracker.filter(item => item.name === 'Test Plan')
+    }
   },
   watch: {
     issueListFilter: {
@@ -111,23 +114,8 @@ export default {
   },
   mounted() {
     this.setFilterValue()
-    this.fetchSelection()
   },
   methods: {
-    async fetchSelection() {
-      this.tracker = [{
-        id: 8,
-        name: 'Test Plan'
-      }]
-      // await Promise.all([
-      //   getIssueTracker()
-      // ]).then(res => {
-      //   const [tracker] = res.map(
-      //     item => item.data
-      //   )
-      //   this.tracker = tracker
-      // })
-    },
     setFilterValue() {
       this.form = {
         tracker_id: 8,

@@ -10,9 +10,6 @@ import {
   addIssue,
   deleteIssueRelation,
   getIssueFamily,
-  getIssuePriority,
-  getIssueStatus,
-  getIssueTracker,
   updateIssue
 } from '@/api/issue'
 
@@ -35,11 +32,6 @@ export default {
       sort: '',
       parentId: 0,
       parentName: '',
-      fixed_version: [],
-      tracker: [],
-      assigned_to: [],
-      status: [],
-      priority: [],
 
       filterValue: {},
       originFilterValue: {},
@@ -62,7 +54,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
     refTable() {
       return this.$refs['issueList']
     },
@@ -191,6 +183,9 @@ export default {
       this.lastIssueListCancelToken = null
       return data
     },
+    getOptionsData(option_name) {
+      return this[option_name]
+    },
     async loadVersionList(status) {
       let params = { status: 'open,locked' }
       if (status) {
@@ -201,15 +196,11 @@ export default {
     },
     async loadSelectionList() {
       await Promise.all([
-        getProjectUserList(this.selectedProjectId),
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
+        getProjectUserList(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList] = res.map(
           item => item.data
         )
-        this.tracker = typeList
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           {
@@ -220,8 +211,6 @@ export default {
           },
           ...assigneeList.user_list
         ]
-        this.status = statusList
-        this.priority = priorityList
         if (this.userRole === 'Engineer') {
           this.$set(this.filterValue, 'assigned_to', this.userId)
           this.$set(this.originFilterValue, 'assigned_to', this.userId)

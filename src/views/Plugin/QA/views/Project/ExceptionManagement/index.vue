@@ -33,7 +33,7 @@
                 @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
                   :key="(dimension.value==='assigned_to')? item.login: item.id"
                   :label="getSelectionLabel(item)"
                   :class="{[item.class]:item.class}"
@@ -272,17 +272,12 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { mapActions, mapGetters } from 'vuex'
 import { ContextMenu, IssueList, Table } from '@/newMixins'
 import { Parser } from 'json2csv'
 import { csvTranslate } from '@/utils/csvTableTranslate'
-import {
-  getIssueTracker,
-  getIssueStatus,
-  getIssuePriority
-} from '@/api/issue'
 import { getProjectUserList } from '@/api/projects'
 
 /**
@@ -305,10 +300,9 @@ export default {
 
       tracker_id: null,
 
-      tracker: [{
-        id: 9,
-        name: 'Fail Management'
-      }],
+      assigned_to: [],
+      fixed_version: [],
+
       form: {},
 
       csvColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
@@ -316,7 +310,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
     refTable() {
       return this.$refs['issueList']
     },
@@ -341,6 +335,9 @@ export default {
     },
     hasSelectedFail() {
       return this.selectedFailList.length > 0
+    },
+    trackerList() {
+      return this.tracker.filter(item => item.name === 'Fail Management')
     }
   },
   watch: {
@@ -360,18 +357,26 @@ export default {
       this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
     },
+    trackerList(value) {
+      this.tracker_id = value[0].id
+    },
     tracker_id() {
       this.initTableData()
     }
   },
   async created() {
     this.fixed_version_closed = this.fixedVersionShowClosed
+    this.tracker_id = this.trackerList[0].id
     await this.loadSelectionList()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     onChangeFilter() {
       this.initTableData()
+    },
+    getOptionsData(option_name) {
+      if (option_name === 'tracker') return this.trackerList
+      return this[option_name]
     },
     getParams() {
       const result = {
@@ -397,16 +402,11 @@ export default {
     },
     async loadSelectionList() {
       await Promise.all([
-        getProjectUserList(this.selectedProjectId),
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
+        getProjectUserList(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList] = res.map(
           item => item.data
         )
-        this.tracker = typeList
-        this.tracker_id = typeList.find((item) => (item.name === 'Fail Management')).id
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           {
@@ -417,8 +417,6 @@ export default {
           },
           ...assigneeList.user_list
         ]
-        this.status = statusList
-        this.priority = priorityList
         if (this.userRole === 'Engineer') {
           this.$set(this.filterValue, 'assigned_to', this.userId)
           this.$set(this.originFilterValue, 'assigned_to', this.userId)

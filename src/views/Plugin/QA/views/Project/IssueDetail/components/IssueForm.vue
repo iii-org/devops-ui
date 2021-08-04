@@ -228,7 +228,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getIssueStatus, getIssueTracker, getIssuePriority, getCheckIssueClosable } from '@/api/issue'
+import { getCheckIssueClosable } from '@/api/issue'
 import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
@@ -291,9 +291,6 @@ export default {
       relationIssueList: [],
       assigned_to: [],
       fixed_version: [],
-      tracker: [],
-      status: [],
-      priority: [],
 
       relativeIssueList: [],
       isLoading: false,
@@ -313,7 +310,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -390,12 +387,9 @@ export default {
       this.isLoading = true
       if (this.form.project_id) {
         await Promise.all([
-          getProjectAssignable(this.form.project_id),
-          getIssueTracker(),
-          getIssueStatus(),
-          getIssuePriority()
+          getProjectAssignable(this.form.project_id)
         ]).then(res => {
-          const [assigned_to, tracker, status, priority] = res.map(
+          const [assigned_to] = res.map(
             item => item.data
           )
 
@@ -407,9 +401,6 @@ export default {
               class: 'bg-yellow-100'
             }, ...assigned_to.user_list
           ]
-          this.status = status
-          this.tracker = tracker
-          this.priority = priority
         })
         await this.loadVersionList()
       }

@@ -6,7 +6,7 @@
         <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label"
                              :disabled="(column.value==='priority')?(row.has_children): false"
         >
-          <contextmenu-item v-for="item in $data[column.value]" :key="getId(column.value,item)"
+          <contextmenu-item v-for="item in getOptionsData(column.value)" :key="getId(column.value,item)"
                             :disabled="item.disabled||getContextMenuCurrentValue(column, item)"
                             :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"
                             @click="onUpdate(column.value+'_id', item.id)"
@@ -49,8 +49,9 @@
             >
               {{ $t('general.Back') }}
             </el-button>
-            <span class="text-title">{{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') })
-            }}</span>
+            <span class="text-title">
+              {{ $t('general.Settings', { name: $t('Issue.' + relationDialog.target + 'Issue') }) }}
+            </span>
           </el-col>
           <el-col :xs="24" :md="8" class="text-right">
             <el-button type="primary" @click="onSaveCheckRelationIssue">
@@ -113,14 +114,11 @@ import {
   ContextmenuSubmenu
 } from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
-import SettingRelationIssue from './SettingRelationIssue'
+import SettingRelationIssue from '../../views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import {
   addIssue,
   getCheckIssueClosable,
-  getIssuePriority,
-  getIssueStatus,
-  getIssueTracker,
   updateIssue
 } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
@@ -169,10 +167,7 @@ export default {
         visible: false
       },
       checkClosable: false,
-      status: [],
       assigned_to: [],
-      priority: [],
-      tracker: [],
       fixed_version: [],
       addTopicDialogVisible: false,
       LoadingConfirm: false,
@@ -181,7 +176,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['fixedVersionShowClosed']),
+    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed']),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -224,19 +219,11 @@ export default {
         this[item] = option[item]
       })
     },
+    getOptionsData(option_name) {
+      if (option_name === 'status') return this.getDynamicStatusList()
+      return this[option_name]
+    },
     async loadSelectionList() {
-      await Promise.all([
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
-      ]).then(res => {
-        const [typeList, statusList, priorityList] = res.map(
-          item => item.data
-        )
-        this.tracker = typeList
-        this.status = statusList
-        this.priority = priorityList
-      })
       await this.loadProjectSelectionList(this.fixedVersionShowClosed, true)
     },
     async loadProjectSelectionList(status, user) {
@@ -266,7 +253,6 @@ export default {
     async getClosable() {
       const closable = await getCheckIssueClosable(this.row.id)
       this.$set(this, 'checkClosable', closable.data)
-      await this.getDynamicStatusList()
     },
     getId(option, item) {
       if (option === 'assigned_to') return item.login
@@ -280,7 +266,7 @@ export default {
       } else {
         option = cloneDeep({ status: this.status })
       }
-      this.status = option['status'].map((item) => {
+      return option['status'].map((item) => {
         if (!_this.checkClosable && item.is_closed === true) {
           item.disabled = true
           item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
@@ -435,7 +421,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import '../../styles/variables';
 
 .menu-title {
   background: #d2d2d2;

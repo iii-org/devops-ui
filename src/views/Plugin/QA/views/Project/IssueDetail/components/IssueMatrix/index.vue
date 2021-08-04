@@ -37,14 +37,6 @@ export default {
     row: {
       type: Object,
       default: () => ({})
-    },
-    tracker: {
-      type: Array,
-      default: () => ([])
-    },
-    status: {
-      type: Array,
-      default: () => ([])
     }
   },
   data() {
@@ -66,7 +58,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'tracker', 'status']),
     getPercentProgress() {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
     }

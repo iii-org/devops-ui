@@ -21,7 +21,7 @@
                 clearable
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
                   :key="item.id"
                   :label="getSelectionLabel(item)"
                   :value="item.id"
@@ -87,7 +87,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
 
@@ -109,10 +108,7 @@ export default {
       project_id: null,
       activeDashboard: 'assigned_to_id',
       fixed_version: [],
-      tracker: [],
       assigned_to: [],
-      status: [],
-      priority: [],
       filterValue: {},
       originFilterValue: {},
       keyword: null,
@@ -120,7 +116,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'projectList', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed',
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'projectList', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed',
       'issueListListQuery', 'issueListPageInfo', 'initIssueList', 'fixedVersionShowClosed']),
     dashboardCards() {
       return [
@@ -150,7 +146,8 @@ export default {
     },
     contextOptions() {
       const result = {}
-      this.filterOptions.forEach((item) => {
+      const getOptions = ['assigned_to', 'fixed_version']
+      getOptions.forEach((item) => {
         result[item.value] = this[item.value]
       })
       return result
@@ -195,23 +192,10 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['getMyProjectList']),
+    getOptionsData(option_name) {
+      return this[option_name]
+    },
     async loadSelectionList() {
-      await Promise.all([
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
-      ]).then(res => {
-        const [typeList, statusList, priorityList] = res.map(
-          item => item.data
-        )
-        this.tracker = typeList
-        this.status = statusList
-        this.priority = priorityList
-        if (this.userRole === 'Engineer') {
-          this.$set(this.filterValue, 'assigned_to', this.userId)
-          this.$set(this.originFilterValue, 'assigned_to', this.userId)
-        }
-      })
       await this.loadProjectSelectionList(this.fixed_version_closed)
     },
     async loadProjectSelectionList(status) {

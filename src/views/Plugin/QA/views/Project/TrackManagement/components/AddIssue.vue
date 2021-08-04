@@ -44,7 +44,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
           <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+            <el-option v-for="item in trackerList" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
               <tracker :name="item.name" />
             </el-option>
           </el-select>
@@ -146,7 +146,14 @@
           >
             <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
             <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
+            <div class="text-xs text-gray-400 px-12">
+              <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+              <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+            </div>
           </el-upload>
+          <div class="text-xs">
+            *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
+          </div>
         </el-form-item>
       </el-col>
 
@@ -166,7 +173,6 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getIssueStatus, getIssuePriority } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
@@ -233,9 +239,6 @@ export default {
       }
     }
     return {
-      status: [],
-      tracker: [],
-      priority: [],
       assigned_to: [],
       fixed_version: [],
       issueForm: getFormTemplate(),
@@ -255,12 +258,18 @@ export default {
             return time.getTime() < new Date(startDate).getTime()
           }
         }
-      }
+      },
+      fileSizeLimit: '5MB',
+      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      specialSymbols: '\ / : * ? " < > | # { } % ~ &'
     }
   },
 
   computed: {
-    ...mapGetters(['userId', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter'])
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter']),
+    trackerList() {
+      return this.tracker.filter(item => item.name === 'Change Request')
+    }
   },
 
   watch: {
@@ -306,11 +315,9 @@ export default {
       if (this.projectId) {
         await Promise.all([
           getProjectAssignable(this.projectId),
-          getProjectVersion(this.projectId, { status: 'open,locked' }),
-          getIssueStatus(),
-          getIssuePriority()
+          getProjectVersion(this.projectId, { status: 'open,locked' })
         ]).then(res => {
-          const [assigned_to, fixed_version, status, priority] = res.map(
+          const [assigned_to, fixed_version] = res.map(
             item => item.data
           )
 
@@ -323,12 +330,6 @@ export default {
             }, ...assigned_to.user_list
           ]
           this.fixed_version = fixed_version.versions
-          this.status = status
-          this.tracker = [{
-            id: 6,
-            name: 'Change Request'
-          }]
-          this.priority = priority
         })
       }
       if (this.issueId > 0) {
@@ -367,6 +368,7 @@ export default {
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
+      let result = false
       this.$refs['issueForm'].validate(async valid => {
         if (valid) {
           // deep copy & remove field with empty value
@@ -389,11 +391,13 @@ export default {
           this.LoadingConfirm = true
           await this.saveData(form)
           this.LoadingConfirm = false
+          result = true
           this.handleClose()
         } else {
           return false
         }
       })
+      return result
     },
     handleExceed() {
       this.$message({

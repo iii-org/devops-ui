@@ -17,44 +17,47 @@
         remote
         :remote-method="getSearchIssue"
         :loading="issueLoading"
+        @focus="getSearchIssue()"
       >
         <el-option-group
           v-for="group in issueList"
           :key="group.name"
           :label="group.name"
         >
-          <el-option
-            v-for="item in group.options"
-            :key="item.id"
-            :label="'#' + item.id +' - '+item.name"
-            :value="item.id"
-          >
-            <el-popover
-              placement="left"
-              width="250"
-              trigger="hover"
+          <template v-for="item in group.options">
+            <el-option
+              v-if="!form.relation_ids.includes(item.id)&&item.id!==issueId"
+              :key="item.id"
+              :label="'#' + item.id +' - '+item.name"
+              :value="item.id"
             >
-              <el-card>
-                <template slot="header">
-                  <tracker :name="item.tracker.name" />
-                  #{{ item.id }} - {{ item.name }}
-                </template>
-                <b>{{ $t('Issue.Description') }}:</b>
-                <p>{{ item.description }}</p>
-              </el-card>
-              <div slot="reference">
-                <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                  <span v-html="highLight(item.name)" />
-                </span>
-                <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                />
-              </div>
-            </el-popover>
-          </el-option>
+              <el-popover
+                placement="left"
+                width="250"
+                trigger="hover"
+              >
+                <el-card>
+                  <template slot="header">
+                    <tracker :name="item.tracker.name" />
+                    #{{ item.id }} - {{ item.name }}
+                  </template>
+                  <b>{{ $t('Issue.Description') }}:</b>
+                  <p>{{ item.description }}</p>
+                </el-card>
+                <div slot="reference">
+                  <span
+                    style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                  >
+                    <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                    <span v-html="highLight(item.name)" />
+                  </span>
+                  <span style="float: right; color: #8492a6; font-size: 13px"
+                        v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                  />
+                </div>
+              </el-popover>
+            </el-option>
+          </template>
         </el-option-group>
       </el-select>
     </el-form-item>
@@ -82,38 +85,40 @@
           :key="group.name"
           :label="group.name"
         >
-          <el-option
-            v-for="item in group.options"
-            :key="item.id"
-            :label="'#' + item.id +' - '+item.name"
-            :value="item.id"
-          >
-            <el-popover
-              placement="left"
-              width="250"
-              trigger="hover"
+          <template v-for="item in group.options">
+            <el-option
+              v-if="item.id !== form.parent_id&&item.id!==issueId"
+              :key="item.id"
+              :label="'#' + item.id +' - '+item.name"
+              :value="item.id"
             >
-              <el-card>
-                <template slot="header">
-                  <tracker :name="item.tracker.name" />
-                  #{{ item.id }} - {{ item.name }}
-                </template>
-                <b>{{ $t('Issue.Description') }}:</b>
-                <p>{{ item.description }}</p>
-              </el-card>
-              <div slot="reference">
-                <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                >
-                  <b>#<span v-html="highLight((item.id)? item.id.toString(): '')" /></b> -
-                  <span v-html="highLight(item.name)" />
-                </span>
-                <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                />
-              </div>
-            </el-popover>
-          </el-option>
+              <el-popover
+                placement="left"
+                width="250"
+                trigger="hover"
+              >
+                <el-card>
+                  <template slot="header">
+                    <tracker :name="item.tracker.name" />
+                    #{{ item.id }} - {{ item.name }}
+                  </template>
+                  <b>{{ $t('Issue.Description') }}:</b>
+                  <p>{{ item.description }}</p>
+                </el-card>
+                <div slot="reference">
+                  <span
+                    style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                  >
+                    <b>#<span v-html="highLight((item.id)? item.id.toString(): '')" /></b> -
+                    <span v-html="highLight(item.name)" />
+                  </span>
+                  <span style="float: right; color: #8492a6; font-size: 13px"
+                        v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                  />
+                </div>
+              </el-popover>
+            </el-option>
+          </template>
         </el-option-group>
       </el-select>
     </el-form-item>
@@ -223,7 +228,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getIssueStatus, getIssueTracker, getIssuePriority, getCheckIssueClosable } from '@/api/issue'
+import { getCheckIssueClosable } from '@/api/issue'
 import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
@@ -280,9 +285,6 @@ export default {
       relationIssueList: [],
       assigned_to: [],
       fixed_version: [],
-      tracker: [],
-      status: [],
-      priority: [],
 
       relativeIssueList: [],
       isLoading: false,
@@ -302,7 +304,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -379,12 +381,9 @@ export default {
       this.isLoading = true
       if (this.form.project_id) {
         await Promise.all([
-          getProjectAssignable(this.form.project_id),
-          getIssueTracker(),
-          getIssueStatus(),
-          getIssuePriority()
+          getProjectAssignable(this.form.project_id)
         ]).then(res => {
-          const [assigned_to, tracker, status, priority] = res.map(
+          const [assigned_to] = res.map(
             item => item.data
           )
 
@@ -396,9 +395,6 @@ export default {
               class: 'bg-yellow-100'
             }, ...assigned_to.user_list
           ]
-          this.status = status
-          this.tracker = tracker
-          this.priority = priority
         })
         await this.loadVersionList()
       }

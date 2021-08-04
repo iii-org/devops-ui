@@ -14,7 +14,7 @@
               :disabled="selectedProjectId === -1"
               filterable
             >
-              <el-option v-for="track in tracker" :key="track.id" :label="$t('Issue.'+track.name)"
+              <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
                          :value="track.id"
               >
                 <tracker :name="track.name" />
@@ -84,7 +84,7 @@
 <script>
 import VueMermaid from './components/vue-mermaid'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { getIssueFamily, getIssueTracker } from '@/api/issue'
+import { getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
@@ -119,7 +119,6 @@ export default {
     return {
       filterValue: { tracker_id: null, issue_id: [] },
       nowFilterValue: { tracker_id: null, issue_id: [] },
-      tracker: [],
       issueList: [],
       issueLoading: false,
       chartLoading: false,
@@ -133,7 +132,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'tracker']),
     startPoint() {
       if (this.nowFilterValue.issue_id.length <= 0) {
         return null
@@ -146,6 +145,9 @@ export default {
     },
     getPercentProgress() {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
+    },
+    trackerList() {
+      return this.tracker.filter((item) => (QATracker.map((tracker_item) => (tracker_item.name)).includes(item.name)))
     }
   },
   watch: {
@@ -162,15 +164,10 @@ export default {
   },
   methods: {
     async initChart() {
-      await this.getSelectionList()
-      this.$set(this.filterValue, 'tracker_id', this.tracker[0].id)
+      this.$set(this.filterValue, 'tracker_id', this.trackerList[0].id)
       await this.getSearchIssue()
       this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
       await this.onPaintChart()
-    },
-    async getSelectionList() {
-      const tracker = await getIssueTracker()
-      this.tracker = tracker.data.filter((item) => (QATracker.map((tracker_item) => (tracker_item.name)).includes(item.name)))
     },
     async getSearchIssue(query) {
       let querySearch = {}
@@ -198,7 +195,7 @@ export default {
     async onPaintChart() {
       this.chartLoading = true
       this.nowFilterValue = Object.assign({}, this.filterValue)
-      this.nowFilterValue = Object.assign(this.nowFilterValue, { tracker: this.tracker, issueList: this.issueList })
+      this.nowFilterValue = Object.assign(this.nowFilterValue, { tracker: this.trackerList, issueList: this.issueList })
       const trackerName = this.getName(this.nowFilterValue.tracker_id, this.nowFilterValue.tracker)
       this.accessedIssueId = []
       this.data = []

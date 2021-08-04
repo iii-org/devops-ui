@@ -1,12 +1,13 @@
 <template>
   <div class="app-container">
     <project-list-selector>
-      <el-button id="btn-add-issue"
-                 slot="button"
-                 type="success"
-                 icon="el-icon-plus"
-                 :disabled="selectedProjectId === -1"
-                 @click="handleQuickAddClose"
+      <el-button
+        id="btn-add-issue"
+        slot="button"
+        type="success"
+        icon="el-icon-plus"
+        :disabled="selectedProjectId === -1"
+        @click="handleQuickAddClose"
       >
         {{ $t('Issue.AddIssue') }}
       </el-button>
@@ -32,7 +33,7 @@
                 @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
                   :key="(dimension.value==='assigned_to')? item.login: item.id"
                   :label="getSelectionLabel(item)"
                   :class="{[item.class]:item.class}"
@@ -73,12 +74,13 @@
       </template>
     </project-list-selector>
     <el-divider />
-    <quick-add-issue ref="quickAddIssue"
-                     :save-data="saveIssue"
-                     :project-id="selectedProjectId"
-                     :visible.sync="quickAddTopicDialogVisible"
-                     :tracker="tracker"
-                     @add-issue="advancedAddIssue"
+    <quick-add-issue
+      ref="quickAddIssue"
+      :save-data="saveIssue"
+      :project-id="selectedProjectId"
+      :visible.sync="quickAddTopicDialogVisible"
+      :tracker="tracker"
+      @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
             :element-loading-text="$t('Loading')"
@@ -278,10 +280,12 @@ export default {
   mixins: [IssueList, Table, ContextMenu],
   data() {
     return {
-      remote: true,
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
+
+      assigned_to: [],
+      fixed_version: [],
 
       form: {}
     }

@@ -7,6 +7,7 @@ import {
   getProjectIssueStatistics,
   getProjectUserList
 } from '@/api/projects'
+import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
 
 const getDefaultState = () => {
   return {
@@ -14,6 +15,11 @@ const getDefaultState = () => {
     options: [],
     total: 0,
     selectedProject: { id: -1 },
+
+    tracker: [],
+    status: [],
+    priority:[],
+
     kanbanFilter: {},
     kanbanGroupBy: {
       dimension: 'status',
@@ -46,6 +52,11 @@ const mutations = {
   },
   SET_SELECTED_PROJECT: (state, project) => {
     state.selectedProject = project
+  },
+  SET_SELECTION_OPTIONS: (state, list) => {
+    state.tracker = list[0]
+    state.status = list[1]
+    state.priority = list[2]
   },
   SET_KANBAN_FILTER: (state, value) => {
     state.kanbanFilter = value
@@ -111,6 +122,11 @@ const actions = {
       console.error(error.toString())
     }
   },
+  async getSelectionOptions({commit}){
+    let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()])
+    commit('SET_SELECTION_OPTIONS', selections.map((item)=>(item.data)))
+  }
+  ,
   async addNewProject({ commit, dispatch }, data) {
     try {
       const res = await addNewProject(data)

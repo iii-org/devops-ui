@@ -79,7 +79,6 @@
 <script>
 import Tracker from '@/components/Issue/Tracker'
 import { getProjectAssignable } from '@/api/projects'
-import { getIssueTracker } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import AddIssue from '@/views/Project/IssueList/components/AddIssue'
 
@@ -118,7 +117,6 @@ export default {
       addTopicDialogVisible: false,
       LoadingConfirm: false,
       assigned_to: [],
-      tracker: [],
       parentId: 0,
       form: {
         tracker_id: null,
@@ -136,7 +134,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'kanbanGroupBy', 'kanbanFilter'])
+    ...mapGetters(['selectedProjectId', 'userId', 'kanbanGroupBy', 'kanbanFilter', 'tracker'])
   },
   watch: {
     boardObject: {
@@ -165,10 +163,9 @@ export default {
   methods: {
     async fetchSelection() {
       await Promise.all([
-        getProjectAssignable(this.selectedProjectId),
-        getIssueTracker()
+        getProjectAssignable(this.selectedProjectId)
       ]).then(res => {
-        const [assigned_to, tracker] = res.map(
+        const [assigned_to] = res.map(
           item => item.data
         )
         this.assigned_to = [
@@ -179,7 +176,6 @@ export default {
             class: 'bg-yellow-100'
           }, ...assigned_to.user_list
         ]
-        this.tracker = tracker
       })
     },
     setFilterValue() {

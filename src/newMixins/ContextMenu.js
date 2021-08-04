@@ -1,4 +1,4 @@
-import ContextMenu from '@/views/Project/IssueList/components/ContextMenu'
+import ContextMenu from '@/components/Issue/ContextMenu'
 
 export default {
   components: { ContextMenu },
@@ -15,8 +15,9 @@ export default {
   computed: {
     contextOptions() {
       const result = {}
-      this.filterOptions.forEach((item) => {
-        result[item.value] = this[item.value]
+      const getOptions = ['assigned_to', 'fixed_version']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
       })
       return result
     },

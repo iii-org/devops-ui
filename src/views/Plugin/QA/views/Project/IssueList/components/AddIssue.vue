@@ -173,7 +173,6 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getIssueStatus, getIssueTracker, getIssuePriority } from '@/api/issue'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 import { fileExtension } from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
@@ -240,9 +239,6 @@ export default {
       }
     }
     return {
-      status: [],
-      tracker: [],
-      priority: [],
       assigned_to: [],
       fixed_version: [],
       issueForm: getFormTemplate(),
@@ -270,7 +266,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userId', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter'])
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter'])
   },
 
   watch: {
@@ -316,12 +312,9 @@ export default {
       if (this.projectId) {
         await Promise.all([
           getProjectAssignable(this.projectId),
-          getProjectVersion(this.projectId, { status: 'open,locked' }),
-          getIssueTracker(),
-          getIssueStatus(),
-          getIssuePriority()
+          getProjectVersion(this.projectId, { status: 'open,locked' })
         ]).then(res => {
-          const [assigned_to, fixed_version, tracker, status, priority] = res.map(
+          const [assigned_to, fixed_version] = res.map(
             item => item.data
           )
 
@@ -334,9 +327,6 @@ export default {
             }, ...assigned_to.user_list
           ]
           this.fixed_version = fixed_version.versions
-          this.status = status
-          this.tracker = tracker
-          this.priority = priority
         })
       }
       if (this.issueId > 0) {

@@ -56,7 +56,6 @@
 
 <script>
 import Tracker from '@/components/Issue/Tracker'
-import { getIssueTracker } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import AddIssue from './AddIssue'
 
@@ -83,7 +82,6 @@ export default {
     return {
       addTopicDialogVisible: false,
       LoadingConfirm: false,
-      tracker: [],
       parentId: 0,
       form: {
         tracker_id: null,
@@ -100,7 +98,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'issueListFilter'])
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'issueListFilter'])
   },
   watch: {
     issueListFilter: {
@@ -112,19 +110,8 @@ export default {
   },
   mounted() {
     this.setFilterValue()
-    this.fetchSelection()
   },
   methods: {
-    async fetchSelection() {
-      await Promise.all([
-        getIssueTracker()
-      ]).then(res => {
-        const [tracker] = res.map(
-          item => item.data
-        )
-        this.tracker = tracker
-      })
-    },
     setFilterValue() {
       this.form = {
         tracker_id: null,

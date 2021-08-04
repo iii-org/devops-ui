@@ -24,7 +24,7 @@
                   @change="onChangeFilter"
                 >
                   <el-option
-                    v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                    v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
                     :key="(dimension.value==='assigned_to')? item.login: item.id"
                     :label="getSelectionLabel(item)"
                     :class="{[item.class]:item.class}"
@@ -177,14 +177,14 @@ import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
 import { Kanban, RightPanel } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { addIssue, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
+import { addIssue, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectIssueListByTree, getProjectUserList, getProjectVersion } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
-import ContextMenu from '@/views/Project/IssueList/components/ContextMenu'
+import ContextMenu from '@/components/Issue/ContextMenu'
 
 export default {
   name: 'IssueBoards',
@@ -214,10 +214,8 @@ export default {
       classifyIssueList: {},
       group: 'mission',
       fixed_version: [],
-      status: [],
-      tracker: [],
       assigned_to: [],
-      priority: [],
+
       relativeIssueList: [],
 
       searchVisible: false,
@@ -237,6 +235,9 @@ export default {
     ...mapGetters([
       'selectedProjectId',
       'userId',
+      'tracker',
+      'status',
+      'priority',
       'initKanban',
       'kanbanFilter',
       'kanbanGroupBy',
@@ -471,16 +472,11 @@ export default {
     },
     async loadSelectionList() {
       await Promise.all([
-        getProjectUserList(this.selectedProjectId),
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
+        getProjectUserList(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList] = res.map(
           item => item.data
         )
-
-        this.tracker = typeList
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           {
@@ -491,14 +487,15 @@ export default {
           },
           ...assigneeList.user_list
         ]
-        this.status = statusList
-        this.priority = priorityList
         // if (this.userRole === 'Engineer') {
         //   this.$set(this.filterValue, 'assigned_to', this.userId)
         //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
         // }
       })
       await this.loadVersionList(this.fixed_version_closed)
+    },
+    getOptionsData(option_name) {
+      return this[option_name]
     },
     setGroupByUnclosedStatus(check) {
       if (check) {

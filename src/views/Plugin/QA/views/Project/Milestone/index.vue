@@ -29,7 +29,7 @@
                 @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus($data[dimension.value]):$data[dimension.value]"
+                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
                   :key="(dimension.value==='assigned_to')? item.login: item.id"
                   :label="getSelectionLabel(item)"
                   :class="{[item.class]:item.class}"
@@ -151,7 +151,7 @@ import {
   getProjectVersion, getProjectIssueList, getProjectUserList
 } from '@/api/projects'
 import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
-import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
+import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
 import AddIssue from '@/views/Project/IssueList/components/AddIssue'
 import Status from '@/components/Issue/Status'
@@ -210,7 +210,6 @@ export default {
       fixed_version_closed: false,
       displayClosed: false,
       fixed_version: [],
-      tracker: [],
       assigned_to: [],
       status: [],
       priority: [],
@@ -262,7 +261,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'selectedProject', 'fixedVersionShowClosed']),
+    ...mapGetters(['userId', 'selectedProject', 'tracker', 'fixedVersionShowClosed']),
     selectedProjectId() {
       return this.selectedProject.id
     },
@@ -495,15 +494,11 @@ export default {
     },
     async loadSelectionList() {
       await Promise.all([
-        getProjectUserList(this.selectedProjectId),
-        getIssueTracker(),
-        getIssueStatus(),
-        getIssuePriority()
+        getProjectUserList(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList, typeList, statusList, priorityList] = res.map(
+        const [assigneeList] = res.map(
           item => item.data
         )
-        this.tracker = typeList
         const epic = this.tracker.find(item => item.name === 'Epic')
         if (epic) {
           this.$set(this.filterValue, 'tracker', epic.id)
@@ -519,10 +514,11 @@ export default {
           },
           ...assigneeList.user_list
         ]
-        this.status = statusList
-        this.priority = priorityList
       })
       await this.loadVersionList(this.fixed_version_closed)
+    },
+    getOptionsData(option_name) {
+      return this[option_name]
     },
     parseRowFormat(issue, issueList) {
       return {
