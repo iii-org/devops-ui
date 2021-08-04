@@ -310,7 +310,7 @@ export default {
       this.$router.push({ name: 'Pipelines' })
     },
     downloadPdf() {
-      this.$pdf(this.$refs.pdfPage, 'Devops_test_report')
+      this.$pdf(this.$refs.pdfPage, 'DevOps_test_report')
     }
   }
 }

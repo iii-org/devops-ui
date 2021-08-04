@@ -92,7 +92,7 @@ export default {
     traceabilityMatrix: 'Traceability Matrix',
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management',
-    testReport: 'Devops Test Report'
+    testReport: 'DevOps Test Report'
   },
   navbar: {
     logOut: 'Log Out',

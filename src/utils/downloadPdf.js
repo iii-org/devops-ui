@@ -1,7 +1,7 @@
 /**
  * Download pdf by selecting dom and converting to canvas, and can be used like this.$pdf(dom, file_info) in components
  * @param dom - dom selected in components
- * @param file_info - including title and pdf file name
+ * @param file_name - pdf file name
  */
 
 import Vue from 'vue'
@@ -22,10 +22,10 @@ PDF.install = function(Vue, options) {
 
       const time = new Date()
       const timeNow = time.toLocaleDateString()
-      const fileName = `${file_name}_${timeNow}`
+      const entireFileName = `${file_name}_${timeNow}`
 
       doc.addImage(jpeg, 'JPEG', 0, 0, PdfWidth, PdfHeight)
-      doc.save(fileName)
+      doc.save(entireFileName)
     })
   }
 }

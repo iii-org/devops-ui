@@ -92,7 +92,7 @@ export default {
     traceabilityMatrix: '需求追溯表',
     changeManagement: '變更管理',
     'Fail Management': '異常管理',
-    testReport: 'Devops 測試報告'
+    testReport: 'DevOps 測試報告'
   },
   navbar: {
     logOut: '登出',
