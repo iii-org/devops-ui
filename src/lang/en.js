@@ -912,7 +912,8 @@ export default {
     BlackBoxTesting: 'Black-box Testing(Weakness Scanning)',
     ApiScriptTesting: 'API Script Testing',
     WebScriptTesting: 'Web Script Testing',
-    DetailReport: 'Detail Report'
+    DetailReport: 'Detail Report',
+    DownloadPdf: 'Download PDF'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

@@ -914,7 +914,8 @@ export default {
     BlackBoxTesting: '黑箱測試(弱點掃描)',
     ApiScriptTesting: 'API腳本測試',
     WebScriptTesting: '網頁腳本測試',
-    DetailReport: '詳細報告'
+    DetailReport: '詳細報告',
+    DownloadPdf: '下載 PDF'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }
