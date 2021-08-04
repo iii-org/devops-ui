@@ -249,7 +249,7 @@ import QuickAddIssue from '@/views/Project/IssueList/components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/newMixins'
-import ContextMenu from '@/views/Project/IssueList/components/ContextMenu'
+import ContextMenu from '@/components/Issue/ContextMenu'
 
 /**
  * @param row.relations  row maybe have parent or children issue
