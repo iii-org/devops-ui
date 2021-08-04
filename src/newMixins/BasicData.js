@@ -18,17 +18,17 @@ export default {
     }
   },
   watch: {
-    selectedProject() {
+    async selectedProject() {
       if (this.remote) {
-        this.initTableData()
+        await this.initTableData()
       } else {
-        this.loadData()
+        await this.loadData()
       }
     }
   },
-  created() {
+  async created() {
     if (!this.remote) {
-      this.loadData()
+      await this.loadData()
     }
   },
   methods: {

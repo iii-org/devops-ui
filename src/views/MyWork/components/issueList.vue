@@ -186,7 +186,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="initTableData"
+      @update="loadData"
     />
   </div>
 </template>
@@ -251,17 +251,18 @@ export default {
     }
   },
   watch: {
-    keyword() {
-      this.initTableData()
+    async keyword() {
+      await this.onChangeFilter()
     },
-    projectId() {
-      this.backToFirstPage()
-      this.initTableData()
+    async projectId() {
+      await this.onChangeFilter()
     },
     filterValueProps: {
       deep: true,
-      handler(value) {
+      immediate: false,
+      async handler(value) {
         this.filterValue = value
+        await this.onChangeFilter()
       }
     },
     displayClosedProps(value) {
@@ -270,17 +271,8 @@ export default {
     keywordProps(value) {
       this.keyword = value
     },
-    filterValue: {
-      deep: true,
-      handler() {
-        // TODO: RememberPageProblem
-        this.backToFirstPage()
-        this.onChangeFilter()
-      }
-    },
-    displayClosed() {
-      this.backToFirstPage()
-      this.onChangeFilter()
+    async displayClosed() {
+      await this.onChangeFilter()
     },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
@@ -291,13 +283,10 @@ export default {
     }
   },
   async mounted() {
-    await this.initTableData()
+    await this.loadData()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
-    async initTableData() {
-      await this.loadData()
-    },
     getParams() {
       const result = {
         offset: this.listQuery.offset,

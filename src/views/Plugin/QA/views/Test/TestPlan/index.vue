@@ -272,7 +272,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { ContextMenu, IssueList, Table } from '@/newMixins'
+import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { Parser } from 'json2csv'
 import { getTestPlanDetail } from '../../../api/qa'
 import { getIssue } from '@/api/issue'
@@ -289,7 +289,7 @@ export default {
     QuickAddIssue,
     ProjectListSelector
   },
-  mixins: [IssueList, Table, ContextMenu],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -338,18 +338,6 @@ export default {
     }
   },
   watch: {
-    selectedProjectId() {
-      this.loadSelectionList()
-      this.initTableData()
-    },
-    filterValue: {
-      deep: true,
-      handler() {
-        // TODO: RememberPageProblem
-        this.backToFirstPage()
-        this.onChangeFilter()
-      }
-    },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
@@ -358,7 +346,7 @@ export default {
       this.tracker_id = value[0].id
     },
     tracker_id() {
-      this.initTableData()
+      this.loadData()
     }
   },
   async created() {
@@ -368,9 +356,6 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
-    onChangeFilter() {
-      this.initTableData()
-    },
     getOptionsData(option_name) {
       if (option_name === 'tracker') return this.trackerList
       return this[option_name]

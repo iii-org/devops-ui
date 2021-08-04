@@ -109,15 +109,7 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.loadSelectionList()
-      await this.initTableData()
-    },
-    filterValue: {
-      deep: true,
-      async handler() {
-        // TODO: RememberPageProblem
-        await this.backToFirstPage()
-        await this.onChangeFilter()
-      }
+      await this.cleanFilter()
     },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
@@ -127,7 +119,8 @@ export default {
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     async onChangeFilter() {
-      await this.initTableData()
+      await this.backToFirstPage()
+      await this.loadData()
     },
     getParams() {
       const result = {
@@ -395,7 +388,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.initTableData()
+        await this.loadData()
       } catch (err) {
         console.error(err)
       }
@@ -410,7 +403,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.initTableData()
+        await this.loadData()
       } catch (err) {
         console.error(err)
       }

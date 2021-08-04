@@ -380,14 +380,7 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.loadSelectionList()
-      await this.loadData()
-    },
-    filterValue: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.onChangeFilter()
-      }
+      await this.cleanFilter()
     },
     trackerValue: {
       deep: true,

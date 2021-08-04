@@ -264,7 +264,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { ContextMenu, IssueList, Table } from '@/newMixins'
+import { Table, IssueList, ContextMenu } from '@/newMixins'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -277,7 +277,7 @@ export default {
     QuickAddIssue,
     ProjectListSelector
   },
-  mixins: [IssueList, Table, ContextMenu],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -295,20 +295,6 @@ export default {
       'issueListListQuery', 'issueListPageInfo', 'initIssueList', 'fixedVersionShowClosed']),
     refTable() {
       return this.$refs['issueList']
-    }
-  },
-  watch: {
-    async selectedProjectId() {
-      await this.loadSelectionList()
-      await this.initTableData()
-    },
-    filterValue: {
-      deep: true,
-      async handler() {
-        // TODO: RememberPageProblem
-        await this.backToFirstPage()
-        await this.onChangeFilter()
-      }
     }
   },
   async created() {
@@ -353,7 +339,8 @@ export default {
       await this.setIssueListFilter(this.filterValue)
       await this.setIssueListKeyword(this.keyword)
       await this.setIssueListDisplayClosed(this.displayClosed)
-      await this.initTableData()
+      await this.backToFirstPage()
+      await this.loadData()
     }
   }
 }
