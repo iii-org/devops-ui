@@ -186,7 +186,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="loadData"
+      @update="initTableData"
     />
   </div>
 </template>
@@ -252,11 +252,11 @@ export default {
   },
   watch: {
     keyword() {
-      this.loadData()
+      this.initTableData()
     },
     projectId() {
       this.backToFirstPage()
-      this.loadData()
+      this.initTableData()
     },
     filterValueProps: {
       deep: true,
@@ -291,12 +291,12 @@ export default {
     }
   },
   async mounted() {
-    await this.loadData()
+    await this.initTableData()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
-    onChangeFilter() {
-      this.loadData()
+    async initTableData() {
+      await this.loadData()
     },
     getParams() {
       const result = {

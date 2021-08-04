@@ -294,16 +294,16 @@ export default {
     }
   },
   watch: {
-    selectedProjectId() {
-      this.loadSelectionList()
-      this.initTableData()
+    async selectedProjectId() {
+      await this.loadSelectionList()
+      await this.initTableData()
     },
     filterValue: {
       deep: true,
-      handler() {
+      async handler() {
         // TODO: RememberPageProblem
-        this.backToFirstPage()
-        this.onChangeFilter()
+        await this.backToFirstPage()
+        await this.onChangeFilter()
       }
     }
   },
@@ -345,11 +345,11 @@ export default {
       }
       return result
     },
-    onChangeFilter() {
-      this.setIssueListFilter(this.filterValue)
-      this.setIssueListKeyword(this.keyword)
-      this.setIssueListDisplayClosed(this.displayClosed)
-      this.initTableData()
+    async onChangeFilter() {
+      await this.setIssueListFilter(this.filterValue)
+      await this.setIssueListKeyword(this.keyword)
+      await this.setIssueListDisplayClosed(this.displayClosed)
+      await this.initTableData()
     }
   }
 }

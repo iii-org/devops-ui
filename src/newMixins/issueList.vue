@@ -115,16 +115,16 @@ export default {
     }
   },
   watch: {
-    selectedProjectId() {
-      this.loadSelectionList()
-      this.initTableData()
+    async selectedProjectId() {
+      await this.loadSelectionList()
+      await this.initTableData()
     },
     filterValue: {
       deep: true,
-      handler() {
+      async handler() {
         // TODO: RememberPageProblem
-        this.backToFirstPage()
-        this.onChangeFilter()
+        await this.backToFirstPage()
+        await this.onChangeFilter()
       }
     },
     fixed_version_closed(value) {
@@ -134,8 +134,8 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
-    onChangeFilter() {
-      this.initTableData()
+    async onChangeFilter() {
+      await this.initTableData()
     },
     getParams() {
       const result = {
