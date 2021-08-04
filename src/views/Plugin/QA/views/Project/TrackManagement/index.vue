@@ -231,7 +231,6 @@
           </template>
         </el-table-column>
         <el-table-column :label="$t('TrackManagement.description')" prop="description" width="200" />
-        <el-table-column :label="$t('TrackManagement.relations')" prop="relations" width="150" />
         <el-table-column align="center" :label="$t('general.Status')" width="150">
           <template slot-scope="scope">
             <status
@@ -243,9 +242,9 @@
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
                          sortable="custom" show-overflow-tooltip
         >
-          <template v-if="scope.row.author" slot-scope="scope">
-            <span>{{ scope.row.author.name }}</span>
-            <span v-if="scope.row.author.login">({{ scope.row.author.login }})</span>
+          <template v-if="scope.row.assigned_to" slot-scope="scope">
+            <span>{{ scope.row.assigned_to.name }}</span>
+            <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
         </el-table-column>
       </el-table>
