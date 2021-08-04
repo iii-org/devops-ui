@@ -190,7 +190,9 @@ export default {
     month: 'month',
     week: 'week',
     Report: 'Report',
-    Nothing: 'N/A'
+    Nothing: 'N/A',
+    ScrollToTop: 'Scroll to Top',
+    ScrollToBottom: 'Scroll to Bottom'
   },
   Notify: {
     Updated: 'update successful',

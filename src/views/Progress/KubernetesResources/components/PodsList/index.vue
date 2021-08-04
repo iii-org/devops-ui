@@ -15,14 +15,13 @@
         :data="pagedData"
         :element-loading-text="$t('Loading')"
         height="calc(100vh - 300px)"
-        border
         fit
       >
         <el-table-column :label="$t('PodsList.Pods')" align="center" prop="name">
           <template slot-scope="scope">
             <div>{{ scope.row.name }}</div>
             <div class="text-sm my-1">
-              <i class="el-icon-time" />
+              <em class="el-icon-time" />
               <el-tooltip placement="bottom" :content="scope.row.created_time | UTCtoLocalTime">
                 <span>{{ scope.row.created_time | relativeTime }}</span>
               </el-tooltip>
@@ -44,15 +43,15 @@
                     {{ container.state }}
                   </el-tag>
                 </div>
-                <i class="el-icon-time" />
+                <em class="el-icon-time" />
                 <el-tooltip placement="top" :content="container.time | UTCtoLocalTime">
                   <span class="text-sm">{{ container.time | relativeTime }}</span>
                 </el-tooltip>
                 <div class="ml-3 my-1">
-                  <i class="el-icon-box" /> <span class="text-title"> {{ container.name }}</span>
+                  <em class="el-icon-box" /> <span class="text-title"> {{ container.name }}</span>
                 </div>
                 <div class=" ml-3 my-1">
-                  <i class="el-icon-refresh-right" />
+                  <em class="el-icon-refresh-right" />
                   <span>Restarts：{{ container.restart }}</span>
                 </div>
               </div>
@@ -76,12 +75,7 @@
                   </el-button>
                 </div>
               </div>
-
               <div>
-                <!-- <el-button size="mini" type="primary" @click="handleEdit(scope.row.name)">
-              <i class="el-icon-edit" />
-              {{ $t('general.Edit') }}
-            </el-button> -->
                 <el-popconfirm
                   confirm-button-text="Delete"
                   cancel-button-text="Cancel"
@@ -91,7 +85,7 @@
                   @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
                 >
                   <el-button slot="reference" size="mini" type="danger">
-                    <i class="el-icon-delete" />
+                    <em class="el-icon-delete" />
                     {{ $t('general.Delete') }}
                   </el-button>
                 </el-popconfirm>
@@ -109,19 +103,16 @@
         @pagination="onPagination"
       />
       <pod-log
-        :is-loading="listLoading"
-        :dialog-visible.sync="podLogDialogVisible"
-        :log-message="logData"
+        ref="podLogDialog"
+        :pod-name="focusPodName"
         :container-name="focusContainerName"
-        @hideDialog="showPodLogDialog(false)"
-        @refresh="handleLogClick(focusPodName, focusContainerName)"
       />
     </el-col>
   </el-row>
 </template>
 
 <script>
-import { deletePod, getPodList, getPodLog } from '@/api/kubernetes'
+import { deletePod, getPodList } from '@/api/kubernetes'
 import PodLog from './components/PodLog'
 import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 
@@ -131,9 +122,6 @@ export default {
   mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
   data() {
     return {
-      dialogVisible: false,
-      podLogDialogVisible: false,
-      logData: '',
       focusPodName: '',
       focusContainerName: ''
     }
@@ -152,23 +140,11 @@ export default {
       }
       this.listLoading = false
     },
-    handleLogClick(pName, cName) {
-      this.listLoading = true
-      this.focusPodName = pName
-      this.focusContainerName = cName
-      getPodLog(this.selectedProjectId, pName, {
-        container_name: cName
-      })
-        .then(res => {
-          this.logData = res.data
-          this.showPodLogDialog(true)
-        })
-        .catch(err => {
-          console.error(err)
-        })
-        .then(() => {
-          this.listLoading = false
-        })
+    handleLogClick(podName, containerName) {
+      this.focusPodName = podName
+      this.focusContainerName = containerName
+      this.$refs.podLogDialog.dialogVisible = true
+      this.$refs.podLogDialog.fetchData(podName, containerName)
     },
     showPodLogDialog(visible) {
       this.podLogDialogVisible = visible

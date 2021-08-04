@@ -194,7 +194,9 @@ export default {
     month: '月',
     week: '週',
     Report: '報告',
-    Nothing: '無'
+    Nothing: '無',
+    ScrollToTop: '滾動到頂部',
+    ScrollToBottom: '滾動到底部'
   },
   Notify: {
     Updated: '已更新',
