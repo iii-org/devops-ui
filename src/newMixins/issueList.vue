@@ -1,14 +1,12 @@
 <script>
-import { Priority, Status, Tracker } from '@/components/Issue'
+import { ExpandSection, Priority, Status, Tracker } from '@/components/Issue'
 import { BasicData, Pagination } from '@/newMixins/index'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
 import {
   addIssue,
-  deleteIssueRelation,
-  getIssueFamily,
-  updateIssue
+  getIssueFamily
 } from '@/api/issue'
 
 export default {
@@ -16,7 +14,8 @@ export default {
   components: {
     Priority,
     Status,
-    Tracker
+    Tracker,
+    ExpandSection
   },
   mixins: [BasicData, Pagination],
   data() {
@@ -224,7 +223,7 @@ export default {
       this.expandedRow = expandedRows
       if (expandedRows.find((item) => (item.id === row.id))) {
         try {
-          await this.$set(row, 'loadingRelation', true)
+          await this.$set(row, 'isLoadingFamily', true)
           const family = await getIssueFamily(row.id)
           const data = family.data
           if (data.hasOwnProperty('parent')) {
@@ -236,7 +235,7 @@ export default {
           if (data.hasOwnProperty('relations')) {
             await this.$set(row, 'relations', data.relations)
           }
-          await this.$set(row, 'loadingRelation', false)
+          await this.$set(row, 'isLoadingFamily', false)
         } catch (e) {
           //   null
           return Promise.resolve()
@@ -287,10 +286,10 @@ export default {
       this.parentId = 0
     },
     isRelationIssueLoading(row) {
-      if (row.family && !row.hasOwnProperty('loadingRelation')) {
-        this.$set(row, 'loadingRelation', false)
+      if (row.family && !row.hasOwnProperty('isLoadingFamily')) {
+        this.$set(row, 'isLoadingFamily', false)
       }
-      return row.loadingRelation
+      return row.isLoadingFamily
     },
     hasRelationIssue(row) {
       return row.family
@@ -376,36 +375,6 @@ export default {
     backToFirstPage() {
       this.listQuery.page = 1
       this.listQuery.offset = 0
-    },
-    async removeIssueRelation(child_issue_id) {
-      this.listLoading = true
-      try {
-        await updateIssue(child_issue_id, { parent_id: '' })
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        await this.loadData()
-      } catch (err) {
-        console.error(err)
-      }
-      this.listLoading = false
-    },
-    async removeRelationIssue(relation_id) {
-      this.listLoading = true
-      try {
-        await deleteIssueRelation(relation_id)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
-        await this.loadData()
-      } catch (err) {
-        console.error(err)
-      }
-      this.listLoading = false
     },
     handleSelectionChange(list) {
       this.selectedIssueList = list
