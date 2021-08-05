@@ -255,11 +255,11 @@ export default {
       ]).then(res => {
         const [sonarQubeData, checkMarxData, zapData, webInspectData, postmanData, sideexData] = res
         this.handleSonarQubeData(sonarQubeData.data.history)
-        this.handleLatestData(checkMarxData.data, 'checkMarxData')
-        this.handleLatestData(zapData.data, 'zapData')
-        this.handleLatestData(webInspectData.data, 'webInspectData')
-        this.handleLatestData(postmanData.data, 'postmanData')
-        this.handleLatestData(sideexData.data, 'sideexData')
+        this.getLatestData(checkMarxData.data, 'checkMarxData')
+        this.getLatestData(zapData.data, 'zapData')
+        this.getLatestData(webInspectData.data, 'webInspectData')
+        this.getLatestData(postmanData.data, 'postmanData')
+        this.getLatestData(sideexData.data, 'sideexData')
         this.listLoading = false
       })
     },
@@ -270,33 +270,33 @@ export default {
         row['date'] = key
         ret.push(row)
       }
-      this.handleLatestData(ret, 'sonarQubeData')
+      this.getLatestData(ret, 'sonarQubeData')
     },
-    handleLatestData(data, param) {
-      let timeParam = ''
-      switch (param) {
+    getLatestData(data, dataName) {
+      let timeKey = ''
+      switch (dataName) {
         case 'sonarQubeData':
-          timeParam = 'date'
+          timeKey = 'date'
           break
         case 'checkMarxData':
-          timeParam = 'datetime'
+          timeKey = 'datetime'
           break
         case 'zapData':
-          timeParam = 'run_at'
+          timeKey = 'run_at'
           break
         case 'webInspectData':
-          timeParam = 'run_at'
+          timeKey = 'run_at'
           break
         case 'postmanData':
-          timeParam = 'run_at'
+          timeKey = 'run_at'
           break
         case 'sideexData':
-          timeParam = 'run_at'
+          timeKey = 'run_at'
       }
       data.sort((a, b) => {
-        return Date.parse(b[timeParam]) - Date.parse(a[timeParam])
+        return Date.parse(b[timeKey]) - Date.parse(a[timeKey])
       })
-      this[param] = [data[0]]
+      this[dataName] = [data[0]]
     },
     convertRating(rating) {
       const r = parseInt(rating)
