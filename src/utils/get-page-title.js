@@ -1,13 +1,17 @@
 import defaultSettings from '@/settings'
 import i18n from '@/lang'
 
-const title = defaultSettings.title || 'Vue Admin Template'
+const appTitle = defaultSettings.title || 'III DevOps'
 
 export default function getPageTitle(key) {
-  const hasKey = i18n.te(`route.${key}`)
-  if (hasKey) {
-    const pageName = i18n.t(`route.${key}`)
-    return `${pageName} - ${title}`
+  const title = []
+  const hasKey = i18n.te(`route.${key.title}`)
+  if (key.hasOwnProperty('subject') && key.subject) {
+    title.push(`${key.subject}`)
   }
-  return `${title}`
+  if (hasKey) {
+    title.push(i18n.t(`route.${key.title}`))
+  }
+  title.push(appTitle)
+  return title.join(' - ')
 }

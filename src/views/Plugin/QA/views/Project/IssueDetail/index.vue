@@ -223,6 +223,7 @@ import {
   getTestFileByTestPlan,
   putTestPlanWithTestFile
 } from '@/views/Plugin/QA/api/qa'
+import getPageTitle from '@/utils/get-page-title'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -388,6 +389,8 @@ export default {
       try {
         const issue = await getIssue(this.issueId)
         data = issue.data
+        this.$route.meta.subject = `[${this.$t('Issue.' + data.tracker.name)}] #${data.id} - ${data.subject} @ ${data.project.name}`
+        document.title = getPageTitle(this.$route.meta)
         if (data.hasOwnProperty('relations')) {
           const res_api = []
           for (const item of data.relations) {

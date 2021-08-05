@@ -132,7 +132,7 @@ export const asyncRoutes = [
       //       component: () => import('@/views/Project/IssueList'),
       //       meta: {
       //         title: 'issueList',
-      //         roles: ['Project Manager', 'Engineer', 'Administrator']
+      //         roles: ['Project Manager', 'Engineer', 'Administrator'],
       //       }
       //     },
       //     {
@@ -142,7 +142,9 @@ export const asyncRoutes = [
       //       component: () => import('@/views/Project/IssueDetail'),
       //       meta: {
       //         title: 'Issue Detail',
-      //         roles: ['Project Manager', 'Engineer', 'Administrator']
+      //         roles: ['Project Manager', 'Engineer', 'Administrator'],
+      //         rolePage: false,
+      //         subject: '',
       //       }
       //     }
       //   ]

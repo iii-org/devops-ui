@@ -158,7 +158,8 @@ export const asyncRoutes = [
             meta: {
               title: 'Issue Detail',
               roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
-              rolePage: false
+              rolePage: false,
+              subject: ''
             }
           }
         ]
