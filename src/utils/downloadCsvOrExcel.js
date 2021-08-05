@@ -17,7 +17,6 @@ function s2ab(s) {
  * @param {String} sheetName - sheet name, optional
  */
 function sheet2blob(sheet, filename_extension, sheetName) {
-  console.log(sheet)
   sheetName = sheetName || 'sheet1'
   var workbook = {
     SheetNames: [sheetName],
@@ -43,7 +42,6 @@ function sheet2blob(sheet, filename_extension, sheetName) {
  * @param {String} filename_extension - file name extension, required
  */
 function openDownloadDialog(sheet, filename, filename_extension) {
-  console.log(url)
   let url = sheet2blob(sheet, filename_extension)
   if (typeof url === 'object' && url instanceof Blob) {
     url = URL.createObjectURL(url) // 建立blob地址
