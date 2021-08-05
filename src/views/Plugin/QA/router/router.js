@@ -124,7 +124,7 @@ export const asyncRoutes = [
       },
       {
         path: 'issues',
-        redirect: '/project/issue',
+        redirect: '/project/issues',
         component: parentBlank,
         meta: {
           title: 'issueList',
