@@ -27,7 +27,6 @@
     "html2canvas": "^1.1.5",
     "jquery": "^3.5.1",
     "js-cookie": "2.2.0",
-    "json2csv": "^5.0.6",
     "jspdf": "^2.3.1",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.21",
@@ -54,6 +53,7 @@
     "vue-showdown": "^2.4.1",
     "vuedraggable": "git+https://github.com/divinespear/Vue.Draggable.git",
     "vuex": "3.1.0",
+    "xlsx": "^0.17.0",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {

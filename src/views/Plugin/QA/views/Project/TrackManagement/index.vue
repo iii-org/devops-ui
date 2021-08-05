@@ -273,9 +273,9 @@ import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { mapActions, mapGetters } from 'vuex'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
-import { Parser } from 'json2csv'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
+import XLSX from 'xlsx'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -412,18 +412,8 @@ export default {
     downloadCsv(selectedTrackList) {
       const selectedColumn = this.handleCsvSelectedColumn(selectedTrackList)
       const translateTable = this.handleCsvTranslateTable(selectedColumn)
-      const jsonToCsvParser = new Parser()
-      const attr = 'data:text/csv;charset=utf-8,'
-      const csvContent = `${attr} ${jsonToCsvParser.parse(translateTable)}`
-      const encodeUri = encodeURI(csvContent)
-      const time = new Date()
-      const timeNow = time.toLocaleDateString()
-      const a = document.createElement('a')
-      const url = encodeUri
-      const filename = `changes_${timeNow}.csv`
-      a.href = url
-      a.download = filename
-      a.click()
+      const worksheet = XLSX.utils.json_to_sheet(translateTable)
+      this.$csv(worksheet, 'changes')
     },
     handleCsvSelectedColumn(selectedTrackList) {
       const selectedColumn = []

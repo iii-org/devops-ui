@@ -22,6 +22,7 @@ import utc from 'dayjs/plugin/utc'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/zh-tw'
 import './utils/downloadPdf'
+import './utils/downloadCsvOrExcel'
 
 dayjs.extend(relativeTime)
 dayjs.extend(utc)

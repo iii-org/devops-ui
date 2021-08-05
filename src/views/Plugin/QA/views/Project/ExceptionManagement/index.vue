@@ -276,9 +276,9 @@ import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
-import { Parser } from 'json2csv'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
+import XLSX from 'xlsx'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -415,18 +415,8 @@ export default {
     downloadCsv(selectedFailList) {
       const selectedColumn = this.handleCsvSelectedColumn(selectedFailList)
       const translateTable = this.handleCsvTranslateTable(selectedColumn)
-      const jsonToCsvParser = new Parser()
-      const attr = 'data:text/csv;charset=utf-8,'
-      const csvContent = `${attr} ${jsonToCsvParser.parse(translateTable)}`
-      const encodeUri = encodeURI(csvContent)
-      const time = new Date()
-      const timeNow = time.toLocaleDateString()
-      const a = document.createElement('a')
-      const url = encodeUri
-      const filename = `exception_${timeNow}.csv`
-      a.href = url
-      a.download = filename
-      a.click()
+      const worksheet = XLSX.utils.json_to_sheet(translateTable)
+      this.$csv(worksheet, 'exception')
     },
     handleCsvSelectedColumn(selectedFailList) {
       const selectedColumn = []

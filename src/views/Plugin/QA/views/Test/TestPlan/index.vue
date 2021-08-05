@@ -273,10 +273,10 @@ import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
-import { Parser } from 'json2csv'
 import { getTestPlanDetail } from '../../../api/qa'
 import { getIssue } from '@/api/issue'
 import { getProjectUserList } from '@/api/projects'
+import XLSX from 'xlsx'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -524,18 +524,8 @@ export default {
       return result
     },
     prepareCSV(result) {
-      const jsonToCSVParser = new Parser()
-      const attr = 'data:text/csv;charset=utf-8,'
-      const csvContent = `${attr} ${jsonToCSVParser.parse(result)}`
-      const encodeUri = encodeURI(csvContent)
-      const time = new Date()
-      const timeNow = time.toLocaleDateString()
-      const a = document.createElement('a')
-      const url = encodeUri
-      const filename = `testplan_${timeNow}.csv`
-      a.href = url
-      a.download = filename
-      a.click()
+      const worksheet = XLSX.utils.json_to_sheet(result)
+      this.$csv(worksheet, 'testplan')
     },
     async downloadCsv(selectedTestPlan) {
       let result = await this.fetchDataCSV(selectedTestPlan)

@@ -21,6 +21,12 @@
         <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="downloadPdf">
           {{ $t('TestReport.DownloadPdf') }}
         </el-button>
+        <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="getSheet('excel')">
+          下載 Excel
+        </el-button>
+        <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="getSheet('csv')">
+          下載 Csv
+        </el-button>
       </div>
     </div>
     <div ref="pdfPage">
@@ -40,12 +46,14 @@
             <span slot="toolName">SonarQube</span>
           </ToolBar>
           <el-table
+            ref="tableSonarQube"
             v-loading="listLoading"
             :element-loading-text="$t('Loading')"
             :data="sonarQubeData"
             border
             fit
           >
+            <el-table-column align="center" :label="$t('DevOps.Tools')">SonarQube</el-table-column>
             <el-table-column align="center" :label="$t('SonarQube.Bugs')">
               <template slot-scope="scope">
                 <span>{{ scope.row.bugs }} ({{ convertRating(scope.row.reliability_rating) }})</span>
@@ -76,6 +84,7 @@
             <span slot="toolName">CheckMarx</span>
           </ToolBar>
           <el-table
+            ref="tableCheckMarx"
             v-loading="listLoading"
             class="mb-10"
             :element-loading-text="$t('Loading')"
@@ -83,6 +92,7 @@
             border
             fit
           >
+            <el-table-column align="center" :label="$t('DevOps.Tools')">CheckMarx</el-table-column>
             <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
             <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
             <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
@@ -93,12 +103,14 @@
             <span slot="toolName">OWASP ZAP</span>
           </ToolBar>
           <el-table
+            ref="tableZAP"
             v-loading="listLoading"
             :element-loading-text="$t('Loading')"
             :data="zapData"
             border
             fit
           >
+            <el-table-column align="center" :label="$t('DevOps.Tools')">OWASP ZAP</el-table-column>
             <el-table-column align="center" :label="$t('Zap.high')">
               <template slot-scope="scope">
                 <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
@@ -128,6 +140,7 @@
             <span slot="toolName">WebInspect</span>
           </ToolBar>
           <el-table
+            ref="tableWebInspect"
             v-loading="listLoading"
             class="mb-10"
             :element-loading-text="$t('Loading')"
@@ -135,6 +148,7 @@
             border
             fit
           >
+            <el-table-column align="center" :label="$t('DevOps.Tools')">WebInspect</el-table-column>
             <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.criticalCount" />
             <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.highCount" />
             <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount" />
@@ -152,6 +166,7 @@
             <span slot="toolName">Postman</span>
           </ToolBar>
           <el-table
+            ref="tablePostman"
             v-loading="listLoading"
             class="mb-10"
             :element-loading-text="$t('Loading')"
@@ -159,6 +174,7 @@
             border
             fit
           >
+            <el-table-column align="center" :label="$t('DevOps.Tools')">Postman</el-table-column>
             <el-table-column align="center" :label="$t('Postman.TestPass')" prop="success" min-width="100" />
             <el-table-column align="center" :label="$t('Postman.TestFail')" prop="failure" min-width="100" />
           </el-table>
@@ -167,12 +183,14 @@
             <span slot="toolName">Sideex</span>
           </ToolBar>
           <el-table
+            ref="tableSideex"
             v-loading="listLoading"
             :element-loading-text="$t('Loading')"
             :data="sideexData"
             border
             fit
           >
+            <el-table-column align="center" :label="$t('DevOps.Tools')">Sideex</el-table-column>
             <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
               <template slot-scope="scope">
                 <span v-if="Object.keys(scope.row.result).length > 0">
@@ -206,6 +224,7 @@ import { getZapScans } from '@/api/zap'
 import { getPostmanResult } from '@/api/postman'
 import { getSideexScans } from '@/api/sideex'
 import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
+import XLSX from 'xlsx'
 
 export default {
   name: 'TestReport',
@@ -218,7 +237,8 @@ export default {
       zapData: [],
       webInspectData: [],
       postmanData: [],
-      sideexData: []
+      sideexData: [],
+      downloadFileName: 'DevOps_test_report'
     }
   },
   computed: {
@@ -310,7 +330,36 @@ export default {
       this.$router.push({ name: 'Pipelines' })
     },
     downloadPdf() {
-      this.$pdf(this.$refs.pdfPage, 'DevOps_test_report')
+      this.$pdf(this.$refs.pdfPage, this.downloadFileName)
+    },
+    getSheet(filename_extension) {
+      // table dom
+      const tableSonarQube = this.$refs.tableSonarQube.$el.cloneNode(true)
+      const tableCheckMarx = this.$refs.tableCheckMarx.$el.cloneNode(true)
+      const tableZAP = this.$refs.tableZAP.$el.cloneNode(true)
+      const tableWebInspect = this.$refs.tableWebInspect.$el.cloneNode(true)
+      const tablePostman = this.$refs.tablePostman.$el.cloneNode(true)
+      const tableSideex = this.$refs.tableSideex.$el.cloneNode(true)
+
+      // create a new div and append all the table dom on it
+      const newDiv = document.createElement('div')
+
+      newDiv.appendChild(tableSonarQube).appendChild(tableCheckMarx)
+        .appendChild(tableZAP).appendChild(tableWebInspect)
+        .appendChild(tablePostman).appendChild(tableSideex)
+
+      // use XLSX to transform a sheet from tables
+      const sheet = XLSX.utils.table_to_sheet(newDiv)
+      this.download(sheet, filename_extension)
+    },
+    download(sheet, filename_extension) {
+      switch (filename_extension) {
+        case 'csv':
+          this.$csv(sheet, this.downloadFileName)
+          break
+        case 'excel':
+          this.$excel(sheet, this.downloadFileName)
+      }
     }
   }
 }

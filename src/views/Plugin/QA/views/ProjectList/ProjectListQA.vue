@@ -162,10 +162,10 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
-import { Parser } from 'json2csv'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { deleteStarProject, postStarProject } from '@/api/projects'
+import XLSX from 'xlsx'
 
 export default {
   name: 'ProjectListQA',
@@ -289,18 +289,8 @@ export default {
         })
         translateTable.push(chineseCsv)
       })
-      const jsonToCsvParser = new Parser()
-      const attr = 'data:text/csv;charset=utf-8,'
-      const csvContent = `${attr} ${jsonToCsvParser.parse(translateTable)}`
-      const encodeUri = encodeURI(csvContent)
-      const time = new Date()
-      const timeNow = time.toLocaleDateString()
-      const a = document.createElement('a')
-      const url = encodeUri
-      const filename = `projectlist_${timeNow}.csv`
-      a.href = url
-      a.download = filename
-      a.click()
+      const worksheet = XLSX.utils.json_to_sheet(translateTable)
+      this.$csv(worksheet, 'projectlist')
     },
     handleReserve(row) {
       return row.id
