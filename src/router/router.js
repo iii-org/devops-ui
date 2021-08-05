@@ -252,7 +252,7 @@ export const asyncRoutes = [
     path: '/progress',
     component: Layout,
     name: 'progress',
-    redirect: '/progress/git-graph',
+    redirect: '/progress/dev-environment',
     meta: {
       title: 'devProgress',
       icon: 'el-icon-odometer',
@@ -265,12 +265,12 @@ export const asyncRoutes = [
         component: () => import('@/views//Progress/DevBranch'),
         meta: { title: 'devBranch', roles: ['Project Manager', 'Administrator', 'Engineer'] }
       },
-      {
-        path: 'git-graph',
-        name: 'git-graph',
-        component: () => import('@/views/Progress/GitGraph'),
-        meta: { title: 'gitGraph', roles: ['Project Manager', 'Administrator', 'Engineer'] }
-      },
+      // {
+      //   path: 'git-graph',
+      //   name: 'git-graph',
+      //   component: () => import('@/views/Progress/GitGraph'),
+      //   meta: { title: 'gitGraph', roles: ['Project Manager', 'Administrator', 'Engineer'] }
+      // },
       {
         path: 'pipelines',
         component: parentBlank,
