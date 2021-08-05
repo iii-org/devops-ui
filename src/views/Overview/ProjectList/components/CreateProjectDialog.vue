@@ -190,7 +190,7 @@ export default {
           { required: true, message: 'Project Name is required', trigger: 'blur' },
           {
             required: true,
-            pattern: /^((?!<|&).)*$/,
+            pattern: /^[^<&]+$/,
             message: i18n.t('Project.DisplayRule'),
             trigger: 'blur'
           }
@@ -200,7 +200,7 @@ export default {
         owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }],
         description: [
           {
-            pattern: /^((?!<|&).)*$/,
+            pattern: /^[^<&]+$/,
             message: i18n.t('Project.DescriptionRule'),
             trigger: 'blur'
           }

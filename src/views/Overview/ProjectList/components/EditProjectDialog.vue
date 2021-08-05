@@ -130,7 +130,7 @@ export default {
         owner_id: [{ required: true, message: 'Project Owner is required', trigger: 'blur' }],
         description: [
           {
-            pattern: /^((?!<|&).)*$/,
+            pattern: /^[^<&]+$/,
             message: i18n.t('Project.DescriptionRule'),
             trigger: 'blur'
           }
