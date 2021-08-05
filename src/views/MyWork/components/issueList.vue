@@ -6,7 +6,6 @@
       <el-table
         ref="issueList"
         :data="listData"
-        border
         highlight-current-row
         row-key="id"
         :tree-props="{ children: 'child' }"

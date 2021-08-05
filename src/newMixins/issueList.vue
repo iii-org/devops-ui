@@ -1,7 +1,5 @@
 <script>
-import Priority from '@/components/Issue/Priority'
-import Status from '@/components/Issue/Status'
-import Tracker from '@/components/Issue/Tracker'
+import { Priority, Status, Tracker } from '@/components/Issue'
 import { BasicData, Pagination } from '@/newMixins/index'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'

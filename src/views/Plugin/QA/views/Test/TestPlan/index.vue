@@ -94,7 +94,6 @@
       <el-table
         ref="issueList"
         :data="listData"
-        border
         fit
         highlight-current-row
         row-key="id"
