@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogVisible" width="90%" top="3vh" @close="handleClose">
+  <el-dialog :visible="dialogVisible" width="90%" top="3vh" :close-on-click-modal="false" @close="handleClose">
     <span slot="title">
       <span class="text-title">{{ containerName }}</span>
     </span>
@@ -27,9 +27,11 @@
 <script>
 import { getPodLog } from '@/api/kubernetes'
 import { mapGetters } from 'vuex'
+import { CancelRequest } from '@/newMixins'
 
 export default {
   name: 'PodLog',
+  mixins: [CancelRequest],
   props: {
     podName: {
       type: String,
@@ -43,7 +45,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      isLoading: false,
+      isUpdating: false,
       logData: '',
       timer: null
     }
@@ -53,28 +55,31 @@ export default {
   },
   methods: {
     async fetchData(podName, containerName) {
-      this.isLoading = true
-      await this.updateData(podName, containerName)
-      this.timer = setInterval(() => this.updateData(podName, containerName), 5000)
-      this.isLoading = false
-    },
-    async updateData(podName, containerName) {
-      return getPodLog(this.selectedProjectId, podName, {
-        container_name: containerName
-      })
-        .then(res => {
-          if (res.data === this.logData) return 
+      if (this.isUpdating) this.cancelRequest()
+      this.isUpdating = true
+      try {
+        const res = await getPodLog(this.selectedProjectId, podName, { container_name: containerName }, { cancelToken: this.cancelToken })
+        if (res.data !== this.logData) {
           this.logData = res.data
           this.scrollTo('bottom')
-        })
-        .catch(err => {
-          console.error(err)
-        })
+        }
+        this.isUpdating = false
+        this.setTimer(podName, containerName)
+      } catch (error) {
+        console.error(error)
+      }
     },
     handleClose() {
       this.logData = ''
+      this.isUpdating = false
       this.dialogVisible = false
-      clearInterval(this.timer)
+      this.clearTimer()
+    },
+    setTimer(podName, containerName) {
+      this.timer = setTimeout(() => this.fetchData(podName, containerName), 5000)
+    },
+    clearTimer() {
+      clearTimeout(this.timer)
       this.timer = null
     },
     scrollTo(target) {

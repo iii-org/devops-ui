@@ -14,7 +14,7 @@ export const updateConfigmapList = (project_id, config_map_name, data) => reques
 
 // pod
 export const getPodList = (project_id) => request.get(`/project/${project_id}/resource/pods`)
-export const getPodLog = (project_id, pod_name, params) => request.get(`/project/${project_id}/resource/pods/${pod_name}/log`, { params })
+export const getPodLog = (project_id, pod_name, params, config) => request.get(`/project/${project_id}/resource/pods/${pod_name}/log`, { params, ...config })
 export const deletePod = (project_id, pod_name) => request.delete(`/project/${project_id}/resource/pods/${pod_name}`)
 
 // service

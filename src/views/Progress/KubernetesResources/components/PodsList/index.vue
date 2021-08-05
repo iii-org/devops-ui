@@ -143,8 +143,8 @@ export default {
     handleLogClick(podName, containerName) {
       this.focusPodName = podName
       this.focusContainerName = containerName
-      this.$refs.podLogDialog.dialogVisible = true
       this.$refs.podLogDialog.fetchData(podName, containerName)
+      this.$refs.podLogDialog.dialogVisible = true
     },
     showPodLogDialog(visible) {
       this.podLogDialogVisible = visible
