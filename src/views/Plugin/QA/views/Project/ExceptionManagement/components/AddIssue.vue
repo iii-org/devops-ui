@@ -18,8 +18,12 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.assigned_to')" prop="assigned_to_id">
           <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
-            <el-option v-for="item in assigned_to" :key="item.login" :label="item.name" :value="item.id"
-                       :class="item.class"
+            <el-option
+              v-for="item in assigned_to"
+              :key="item.login"
+              :label="item.name"
+              :value="item.id"
+              :class="item.class"
             >
               {{ item.name }}{{ `（${item.login}）` }}
             </el-option>
@@ -46,7 +50,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
           <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-            <el-option v-for="item in trackerList" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+            <el-option v-for="item in trackerList" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
               <tracker :name="item.name" />
             </el-option>
           </el-select>
@@ -57,7 +61,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.status')" prop="status_id">
           <el-select v-model="issueForm.status_id" style="width: 100%">
-            <el-option v-for="item in status" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+            <el-option v-for="item in status" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
               <status :name="item.name" />
             </el-option>
           </el-select>
@@ -67,7 +71,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
           <el-select v-model="issueForm.priority_id" style="width: 100%">
-            <el-option v-for="item in priority" :key="item.id" :label="$t('Issue.'+item.name)" :value="item.id">
+            <el-option v-for="item in priority" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
               <priority :name="item.name" />
             </el-option>
           </el-select>
@@ -136,9 +140,8 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('File.Upload')" prop="upload">
           <el-upload
-            id="input-upload"
+            
             ref="upload"
-            class="upload-file2"
             drag
             action=""
             :auto-upload="false"
@@ -146,16 +149,16 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
-            <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
-            <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
-            <div class="text-xs text-gray-400 px-12">
-              <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
-              <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+            <div>
+              <el-button size="small" type="success" class="mb-2">{{ $t('File.ChooseFile') }}</el-button>
+              <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
+              <div class="text-xs text-gray-400 px-12">
+                <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+                <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+              </div>
             </div>
           </el-upload>
-          <div class="text-xs">
-            *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
-          </div>
+          <div class="mt-2 text-xs">*{{ $t('File.UploadWarning') }}: {{ specialSymbols }}</div>
         </el-form-item>
       </el-col>
 
@@ -223,8 +226,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {
-      }
+      default: () => {}
     },
     importFrom: {
       type: String,
@@ -234,7 +236,7 @@ export default {
 
   data() {
     const validateAssignedTo = (rule, value, callback) => {
-      if ((!value || value === '') && (this.issueForm.status_id >= 2)) {
+      if ((!value || value === '') && this.issueForm.status_id >= 2) {
         callback(new Error('This Status need a assignee.'))
       } else {
         callback()
@@ -319,17 +321,15 @@ export default {
           getProjectAssignable(this.projectId),
           getProjectVersion(this.projectId, { status: 'open,locked' })
         ]).then(res => {
-          const [assigned_to, fixed_version] = res.map(
-            item => item.data
-          )
-
+          const [assigned_to, fixed_version] = res.map(item => item.data)
           this.assigned_to = [
             {
               name: this.$t('Issue.me'),
               login: '-Me-',
               id: this.userId,
               class: 'bg-yellow-100'
-            }, ...assigned_to.user_list
+            },
+            ...assigned_to.user_list
           ]
           this.fixed_version = fixed_version.versions
         })
@@ -342,8 +342,8 @@ export default {
     setFilterValue() {
       if (this.importFrom) {
         const getFilter = this.importFrom + 'Filter'
-        Object.keys(this[getFilter]).forEach((item) => {
-          if (this[getFilter][item] !== 'null' && !!(this[getFilter][item]) && this[getFilter][item] !== '') {
+        Object.keys(this[getFilter]).forEach(item => {
+          if (this[getFilter][item] !== 'null' && !!this[getFilter][item] && this[getFilter][item] !== '') {
             this.$set(this.issueForm, item + '_id', this[getFilter][item])
           }
         })
@@ -352,11 +352,11 @@ export default {
           checkQuickAddIssueForm = ['tracker_id', 'subject', 'assigned_to_id']
           checkQuickAddIssueForm.push(this.kanbanGroupBy.dimension + '_id')
         }
-        checkQuickAddIssueForm.forEach((item) => {
+        checkQuickAddIssueForm.forEach(item => {
           this.issueForm[item] = this.prefill[item]
         })
       } else {
-        Object.keys(this.prefill).forEach((item) => {
+        Object.keys(this.prefill).forEach(item => {
           this.issueForm[item] = this.prefill[item]
         })
       }
@@ -431,7 +431,7 @@ export default {
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
       }
@@ -449,23 +449,6 @@ export default {
 </script>
 
 <style lang="scss">
-.el-upload-dragger {
-  height: 50px;
-}
-
-.el-upload__text {
-  margin-top: 18px;
-}
-
-.uploadBtn {
-  font-size: 13px;
-  padding: 5px 11px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 2px;
-  display: inline-block;
-}
-
 .custom-list {
   .el-row {
     font-size: 0;

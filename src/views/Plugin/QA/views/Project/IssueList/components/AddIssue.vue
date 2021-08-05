@@ -134,9 +134,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('File.Upload')" prop="upload">
           <el-upload
-            id="input-upload"
             ref="upload"
-            class="upload-file2"
             drag
             action=""
             :auto-upload="false"
@@ -144,14 +142,16 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
-            <div class="uploadBtn el-button--primary">{{ $t('File.UploadBtn') }}</div>
-            <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
-            <div class="text-xs text-gray-400 px-12">
-              <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
-              <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+            <div>
+              <el-button size="small" type="success" class="mb-2">{{ $t('File.ChooseFile') }}</el-button>
+              <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
+              <div class="text-xs text-gray-400 px-12">
+                <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+                <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+              </div>
             </div>
           </el-upload>
-          <div class="text-xs">
+          <div class="text-xs mt-2">
             *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
           </div>
         </el-form-item>
@@ -444,23 +444,6 @@ export default {
 </script>
 
 <style lang="scss">
-.el-upload-dragger {
-  height: 50px;
-}
-
-.el-upload__text {
-  margin-top: 18px;
-}
-
-.uploadBtn {
-  font-size: 13px;
-  padding: 5px 11px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 2px;
-  display: inline-block;
-}
-
 .custom-list {
   .el-row {
     font-size: 0;

@@ -1,7 +1,13 @@
 <template>
   <div class="app-container">
     <project-list-selector>
-      <el-button slot="button" type="success" :disabled="selectedProjectId === -1" icon="el-icon-plus" @click="handleAdding">
+      <el-button
+        slot="button"
+        type="success"
+        :disabled="selectedProjectId === -1"
+        icon="el-icon-plus"
+        @click="handleAdding"
+      >
         {{ $t('File.AddFile') }}
       </el-button>
       <el-input
@@ -84,7 +90,6 @@
         <el-form-item :label="$t('File.Upload')" prop="upload">
           <el-upload
             ref="upload"
-            class="upload-file"
             drag
             action=""
             :auto-upload="false"
@@ -92,8 +97,10 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
-            <em class="el-icon-upload" />
-            <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
+            <div>
+              <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
+              <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
+            </div>
           </el-upload>
         </el-form-item>
 
@@ -297,12 +304,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.el-upload-dragger {
-  height: 140px;
-  .el-icon-upload {
-    margin: 10px 0 16px;
-  }
-}
-</style>

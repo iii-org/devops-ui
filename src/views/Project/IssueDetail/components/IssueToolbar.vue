@@ -19,8 +19,8 @@
       top="3vh"
       append-to-body
     >
-      <issue-file-uploader ref="IssueFileUploader" class="mb-2" :issue-id="issueId" />
-      <div class="mt-2 flex justify-between">
+      <issue-file-uploader ref="IssueFileUploader" :issue-id="issueId" />
+      <div class="flex justify-between mt-2">
         <div class="text-xs" style="line-height: 40px;">
           *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
         </div>
@@ -175,5 +175,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>

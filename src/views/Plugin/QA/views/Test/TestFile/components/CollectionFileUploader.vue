@@ -9,8 +9,8 @@
       </el-form-item>
       <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
         <div>
-          <el-button size="small" type="success" class="mb-2">{{ $t('File.UploadBtn') }}</el-button>
-          <div>{{ $t('File.SelectFileOrDragHere') }}</div>
+          <el-button size="small" type="success" class="mb-2">{{ $t('File.ChooseFile') }}</el-button>
+          <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
         </div>
       </el-upload>
     </el-form>
@@ -65,13 +65,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-> > > .el-upload-dragger {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-}
-</style>

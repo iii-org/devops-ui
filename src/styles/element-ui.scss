@@ -5,7 +5,7 @@
 }
 
 .el-upload {
-  input[type="file"] {
+  input[type='file'] {
     display: none !important;
   }
 }
@@ -13,7 +13,6 @@
 .el-upload__input {
   display: none;
 }
-
 
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
@@ -24,21 +23,34 @@
 }
 
 // refine element ui upload
-.upload-container {
-  .el-upload {
-    width: 100%;
+.el-upload,
+.el-upload-dragger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 150px;
+}
 
-    .el-upload-dragger {
-      width: 100%;
-      height: 200px;
-    }
-  }
+.el-upload-list__item {
+  margin: 2px 0 3px;
+  padding: 10px 7px;
+  border-radius: 2px;
+  border: solid 1px #e9e9e9;
+}
+
+.el-upload-list__item .el-icon-close {
+  color: #e85656;
+  font-size: 14px;
+  top: 15px;
+  right: 7px;
+  display: block;
 }
 
 // dropdown
 .el-dropdown-menu {
   a {
-    display: block
+    display: block;
   }
 }
 

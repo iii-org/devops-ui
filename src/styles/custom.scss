@@ -184,41 +184,6 @@
   color: #3ecbbc;
 }
 
-// el-upload
-.el-upload,
-.el-upload-dragger {
-  width: 100%;
-}
-
-.upload-file2 .el-upload-dragger {
-  height: auto;
-  padding: 13px 0;
-}
-
-.upload-file2 .el-icon-close:before {
-  content: '\E6D7';
-  padding-right: 5px;
-}
-
-.upload-file2 .el-icon-close:after {
-  content: '移除';
-}
-
-.el-upload-list__item {
-  margin: 2px 0 3px;
-  padding: 10px 7px;
-  border-radius: 2px;
-  border: solid 1px #e9e9e9;
-}
-
-.el-upload-list__item .el-icon-close {
-  color: #e85656;
-  font-size: 14px;
-  top: 15px;
-  right: 7px;
-  display: block;
-}
-
 .project-dialog-loading {
   .el-loading-spinner {
     i {
