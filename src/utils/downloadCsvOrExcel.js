@@ -1,3 +1,10 @@
+/**
+ * Download Excel or Csv by using xlsx.js to transform json to sheet or table to sheet, and then transform the sheet to Excel or Csv finally
+ * Use XLSX.utils.json_to_sheet(json) to transform json to sheet, while XLSX.utils.table_to_sheet(dom) to transform table dom to sheet
+ * Use this.$csv(sheet, filename) to download csv
+ * Use this.$excel(sheet, filename) to download excel
+ */
+
 import Vue from 'vue'
 import XLSX from 'xlsx'
 
