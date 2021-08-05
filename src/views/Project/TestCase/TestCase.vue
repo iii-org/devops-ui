@@ -2,7 +2,6 @@
   <el-row class="app-container">
     <el-col>
       <project-list-selector>
-        <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
         <el-button slot="button" type="success" icon="el-icon-plus" @click="handleAdding">
           {{ $t('TestCase.AddTestCase') }}
         </el-button>
@@ -39,12 +38,6 @@
             <el-button size="mini" type="primary" plain icon="el-icon-document" @click="handleDetail(scope.row)">
               {{ $t('TestItem.TestItem') }}
             </el-button>
-            <!-- <el-button
-              v-if="userRole === 'Engineer'"
-              size="mini"
-              type="primary"
-              @click="handleEdit(scope.row)"
-            > -->
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
               {{ $t('general.Edit') }}
             </el-button>
@@ -56,7 +49,6 @@
               title="Are you sure?"
               @onConfirm="handleDelete(scope.row)"
             >
-              <!-- <el-button v-if="userRole === 'Engineer'" slot="reference" size="mini" type="danger"> -->
               <el-button slot="reference" size="mini" type="danger" icon="el-icon-delete">
                 {{ $t('general.Delete') }}
               </el-button>
@@ -120,11 +112,6 @@
                 <el-input v-model="testCaseForm.url" />
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="24">
-              <el-form-item :label="$t('Issue.Issue')" prop="issue_id">
-                <el-input v-model="testCaseForm.issue_id" />
-              </el-form-item>
-            </el-col> -->
             <el-col :span="24">
               <el-form-item :label="$t('TestCase.Description')" prop="description">
                 <el-input v-model="testCaseForm.description" />
@@ -160,7 +147,6 @@ const formTemplate = {
   name: '',
   method_id: '',
   type_id: '',
-  // issue_id: '',
   url: '',
   description: ''
 }

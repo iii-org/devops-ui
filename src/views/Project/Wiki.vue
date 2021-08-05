@@ -2,7 +2,7 @@
   <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" style="overflow: hidden;">
     <project-list-selector>
       <el-button slot="button" type="success" :disabled="selectedProjectId === -1" @click="handleAdding">
-        <i class="el-icon-plus" />
+        <em class="el-icon-plus" />
         {{ $t('Wiki.AddWiki') }}
       </el-button>
       <el-input
@@ -13,11 +13,6 @@
       />
     </project-list-selector>
     <el-divider />
-    <!-- <div class="filter-container">
-      <el-button class="filter-item" type="primary" @click="dialogVisible = true">
-        Edit
-      </el-button>
-    </div> -->
     <el-table
       v-loading="listLoading"
       :data="pagedData"
@@ -34,11 +29,11 @@
       <el-table-column align="center" :label="$t('general.Actions')" width="300">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
-            <i class="el-icon-document" />
+            <em class="el-icon-document" />
             {{ $t('Wiki.Content') }}
           </el-button>
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-            <i class="el-icon-edit" />
+            <em class="el-icon-edit" />
             {{ $t('general.Edit') }}
           </el-button>
           <el-popconfirm
@@ -50,7 +45,7 @@
             @onConfirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
         </template>
@@ -77,9 +72,7 @@
       <div class="container">
         <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules" label-position="top">
           <el-form-item ref="wikiTitle" label="Title" prop="wikiTitle">
-            <!-- <div class="form__title"> -->
             <el-input v-model="form.wikiTitle" placeholder="Please Input Title" />
-            <!-- </div> -->
           </el-form-item>
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
@@ -313,11 +306,6 @@ export default {
 
 .clearfix {
   clear: both;
-
-  .newBtn {
-    float: right;
-    padding-right: 6px;
-  }
 }
 
 .wiki {

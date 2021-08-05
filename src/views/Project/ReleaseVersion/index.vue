@@ -28,7 +28,7 @@
         <el-option v-for="item in projectVersionOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
 
-      <span class="newBtn">
+      <span>
         <el-button
           v-loading.fullscreen.lock="fullscreenLoading"
           :type="releaseVersions.length === 0 ? 'info' : 'primary'"

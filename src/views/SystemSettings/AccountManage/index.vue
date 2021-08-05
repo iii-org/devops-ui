@@ -1,13 +1,10 @@
 <template>
   <div class="app-container account-manage-table" style="overflow: hidden;">
-    <div class="clearfix">
-      <!-- <project-list-selector /> -->
-      <span class="newBtn">
-        <el-button type="success" style="float: right; margin-bottom: 5px" @click="showUserDialog('', 'Add User')">
-          <i class="el-icon-plus" />
-          {{ $t('User.AddUser') }}
-        </el-button>
-      </span>
+    <div class="flex justify-between">
+      <el-button type="success" @click="showUserDialog('', 'Add User')">
+        <em class="el-icon-plus" />
+        {{ $t('User.AddUser') }}
+      </el-button>
       <el-input
         v-model="keyword"
         prefix-icon="el-icon-search"
@@ -40,7 +37,7 @@
       <el-table-column align="center" :label="$t('general.Actions')" width="230">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
-            <i class="el-icon-edit" />
+            <em class="el-icon-edit" />
             {{ $t('general.Participate') }}
           </el-button>
           <el-popconfirm
@@ -52,7 +49,7 @@
             @onConfirm="handleDelete(scope.row.id)"
           >
             <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
         </template>

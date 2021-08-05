@@ -20,10 +20,9 @@
         <el-tabs v-model="activeName" type="border-card">
           <el-tab-pane :label="$t('TestItem.TestItem')" name="testItem">
             <div>
-              <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
-              <span class="newBtn">
+              <span>
                 <el-button type="success" @click="handleTestItemAdding">
-                  <i class="el-icon-plus" />
+                  <em class="el-icon-plus" />
                   {{ $t('TestItem.AddTestItem') }}
                 </el-button>
               </span>
@@ -33,7 +32,7 @@
                 :placeholder="$t('general.SearchName')"
                 style="width: 250px; float: right"
               >
-                <i slot="prefix" class="el-input__icon el-icon-search" />
+                <em slot="prefix" class="el-input__icon el-icon-search" />
               </el-input>
             </div>
             <el-table
@@ -59,11 +58,10 @@
                   {{ scope.row.is_passed }}
                 </template>
               </el-table-column>
-              <!-- <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200"> -->
               <el-table-column :label="$t('general.Actions')" align="center" width="200">
                 <template slot-scope="scope">
                   <el-button size="mini" type="primary" @click="handleTestItemEdit(scope.$index, scope.row)">
-                    <i class="el-icon-edit" />
+                    <em class="el-icon-edit" />
                     {{ $t('general.Edit') }}
                   </el-button>
                   <el-popconfirm
@@ -75,7 +73,7 @@
                     @onConfirm="handleTestItemDelete(scope.$index, scope.row)"
                   >
                     <el-button slot="reference" size="mini" type="danger">
-                      <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                      <em class="el-icon-delete" /> {{ $t('general.Delete') }}
                     </el-button>
                   </el-popconfirm>
                 </template>
@@ -95,20 +93,17 @@
               <el-select v-model="selectTestItem" :placeholder="$t('TestValue.SelectTestItem')">
                 <el-option v-for="item in testItemList" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
-              <!-- <span v-if="userRole === 'Engineer'" class="newBtn"> -->
-              <span class="newBtn">
-                <el-button type="success" @click="handleTestValueAdding">
-                  <i class="el-icon-plus" />
-                  {{ $t('TestValue.AddTestValue') }}
-                </el-button>
-              </span>
+              <el-button type="success" @click="handleTestValueAdding">
+                <em class="el-icon-plus" />
+                {{ $t('TestValue.AddTestValue') }}
+              </el-button>
               <el-input
                 v-model="testValueSearchData"
                 class="ob-search-input ob-shadow search-input mr-3"
                 :placeholder="$t('TestValue.SearchValue')"
                 style="width: 250px; float: right"
               >
-                <i slot="prefix" class="el-input__icon el-icon-search" />
+                <em slot="prefix" class="el-input__icon el-icon-search" />
               </el-input>
             </div>
             <el-table
@@ -139,11 +134,10 @@
                   {{ scope.row.value }}
                 </template>
               </el-table-column>
-              <!-- <el-table-column v-if="userRole === 'Engineer'" :label="$t('general.Actions')" align="center" width="200"> -->
               <el-table-column :label="$t('general.Actions')" align="center" width="200">
                 <template slot-scope="scope">
                   <el-button size="mini" type="primary" @click="handleTestValueEdit(scope.$index, scope.row)">
-                    <i class="el-icon-edit" />
+                    <em class="el-icon-edit" />
                     {{ $t('general.Edit') }}
                   </el-button>
                   <el-popconfirm
@@ -155,7 +149,7 @@
                     @onConfirm="handleTestValueDelete(scope.$index, scope.row)"
                   >
                     <el-button slot="reference" size="mini" type="danger">
-                      <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+                      <em class="el-icon-delete" /> {{ $t('general.Delete') }}
                     </el-button>
                   </el-popconfirm>
                 </template>
@@ -260,7 +254,6 @@ import {
   getTestValueLocation
 } from '@/api/testValue'
 import { getTestCaseById } from '@/api/testCase'
-import MixinElTable from '@/mixins/MixinElTable'
 
 const testItemFormTemplate = {
   name: '',
@@ -457,7 +450,6 @@ export default {
         } else if (this.activeName === 'testItem') {
           this.$refs['testItemForm'].resetFields()
         }
-        // this.$refs['testValueForm'].resetFields()
         this.testItemForm = testItemFormTemplate
         this.testValueForm = testValueFormTemplate
       })

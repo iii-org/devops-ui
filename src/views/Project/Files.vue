@@ -31,12 +31,6 @@
           {{ scope.row.filename }}
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Description" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.description }}</span>
-        </template>
-      </el-table-column>
-      -->
       <el-table-column align="center" :label="$t('general.Creator')" min-width="100">
         <template slot-scope="scope">
           {{ scope.row.author.name }}
@@ -57,15 +51,15 @@
           </el-button>
 
           <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
+            :confirm-button-text="$t('general.Delete')"
+            :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
-            title="Are you sure?"
+            :title="$t('Notify.confirmDelete')"
             @onConfirm="handleDelete(scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
-              <i class="el-icon-delete" /> {{ $t('general.Delete') }}
+              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
         </template>
@@ -98,7 +92,7 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
-            <i class="el-icon-upload" />
+            <em class="el-icon-upload" />
             <div class="el-upload__text">{{ $t('File.SelectFileOrDragHere') }}</div>
           </el-upload>
         </el-form-item>
@@ -106,10 +100,6 @@
         <el-form-item :label="$t('general.Name')" prop="name">
           <el-input v-model="fileForm.name" :placeholder="$t('File.InputName')" />
         </el-form-item>
-
-        <!-- <el-form-item :label="$t('general.Description')" prop="description">
-          <el-input v-model="fileForm.description" type="textarea" />
-        </el-form-item> -->
 
         <el-form-item :label="$t('Version.Version')" prop="version">
           <el-select
@@ -309,26 +299,10 @@ export default {
 </script>
 
 <style lang="scss">
-.newBtn {
-  float: right;
-  padding-right: 6px;
-}
-.line {
-  text-align: center;
-}
 .el-upload-dragger {
   height: 140px;
   .el-icon-upload {
     margin: 10px 0 16px;
   }
-}
-</style>
-
-<style lang="scss" scoped>
-.upload-file >>> .el-upload-dragger {
-  height: 100px;
-}
-.el-upload__text {
-  margin-top: 0;
 }
 </style>
