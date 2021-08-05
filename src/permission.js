@@ -1,7 +1,7 @@
 import router from './router/router'
 import store from './store'
 import { Message } from 'element-ui'
-import NProgress from 'nprogress' 
+import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
@@ -12,7 +12,7 @@ const whiteList = ['/login']
 
 router.beforeEach(async(to, from, next) => {
   NProgress.start()
-  document.title = getPageTitle(to.meta.title)
+  document.title = getPageTitle(to.meta)
   const hasToken = getToken()
 
   if (hasToken) {
