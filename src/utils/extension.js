@@ -1,5 +1,5 @@
 export function fileExtension() {
-  const extension = {
+  return {
     'audio/aac': '.aac',
     'application/x-abiword': '.abw',
     'application/x-freearc': '.arc',
@@ -27,7 +27,8 @@ export function fileExtension() {
     'text/javascript': '.js',
     'application/json': '.json',
     'application/ld+json': '.jsonld',
-    'audio/midi audio/x-midi': '.midi',
+    'audio/midi': '.mid',
+    'audio/x-midi': '.midi',
     'audio/mpeg': '.mp3',
     'video/mpeg': '.mpeg',
     'application/vnd.apple.installer+xml': '.mpkg',
@@ -73,5 +74,4 @@ export function fileExtension() {
     'audio/3gpp2': '.3g2',
     'application/x-7z-compressed': '.7z'
   }
-  return extension
 }
