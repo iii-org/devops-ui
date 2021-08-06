@@ -1,5 +1,5 @@
 /**
- * Download pdf by selecting dom and converting to canvas, and can be used like this.$pdf(dom, file_info) in components
+ *! Download pdf by selecting dom and converting to canvas, and can be used like this.$pdf(dom, file_info) to download pdf
  * @param dom - dom selected in components
  * @param file_name - pdf file name
  */
