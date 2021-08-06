@@ -162,6 +162,7 @@ import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
+import { ExpandSection } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -172,7 +173,8 @@ export default {
   name: 'ProjectIssues',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    ExpandSection
   },
   mixins: [Table, IssueList, ContextMenu],
   data() {

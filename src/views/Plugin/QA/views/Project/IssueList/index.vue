@@ -171,6 +171,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import XLSX from 'xlsx'
+import { ExpandSection } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -182,6 +183,7 @@ export default {
   components: {
     QuickAddIssue,
     ProjectListSelector
+    ExpandSection
   },
   mixins: [Table, IssueList, ContextMenu],
   data() {

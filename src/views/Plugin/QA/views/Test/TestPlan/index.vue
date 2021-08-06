@@ -174,6 +174,7 @@ import { getTestPlanDetail } from '../../../api/qa'
 import { getIssue } from '@/api/issue'
 import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'
+import { ExpandSection } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -184,7 +185,8 @@ export default {
   name: 'TestPlan',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    ExpandSection
   },
   mixins: [Table, IssueList, ContextMenu],
   data() {

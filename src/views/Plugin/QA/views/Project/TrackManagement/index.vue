@@ -173,6 +173,7 @@ import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'
+import { ExpandSection } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -183,7 +184,8 @@ export default {
   name: 'TrackManagement',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    ExpandSection
   },
   mixins: [Table, IssueList, ContextMenu],
   data() {
