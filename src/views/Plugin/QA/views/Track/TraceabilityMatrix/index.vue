@@ -60,6 +60,7 @@
       </el-popover>
       <el-divider direction="vertical" />
       <el-button icon="el-icon-download" @click="downloadCSVReport">{{ $t('Track.DownloadExcel') }}</el-button>
+      <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button>
     </project-list-selector>
     <el-divider />
     <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
@@ -67,16 +68,18 @@
       <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
     </el-alert>
     <el-card v-else>
-      <template slot="header">
-        {{ $t('Track.DemandTraceability') }}
-        <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
-      </template>
-      <vue-mermaid
-        :nodes="data"
-        type="graph LR"
-        :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
-        @nodeClick="editNode"
-      />
+      <div ref="matrix">
+        <template slot="header">
+          {{ $t('Track.DemandTraceability') }}
+          <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
+        </template>
+        <vue-mermaid
+          :nodes="data"
+          type="graph LR"
+          :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
+          @nodeClick="editNode"
+        />
+      </div>
     </el-card>
   </div>
 </template>
@@ -376,6 +379,9 @@ export default {
 
       document.body.appendChild(link)
       link.click()
+    },
+    downloadPdf() {
+      this.$pdf(this.$refs.matrix, 'Traceability_Matrix')
     }
   }
 }
