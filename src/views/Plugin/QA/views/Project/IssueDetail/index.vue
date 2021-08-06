@@ -160,7 +160,7 @@
               </el-collapse>
             </el-col>
             <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
-              <issue-notes-editor ref="IssueNotesEditor" height="125px" />
+              <issue-notes-editor ref="IssueNotesEditor" />
             </el-col>
             <el-col :span="24">
               <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals"

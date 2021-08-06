@@ -5,7 +5,7 @@
       ref="mdEditor"
       initial-edit-type="wysiwyg"
       :options="editorOptions"
-      :height="height"
+      height="auto"
       @change="onChange"
     />
   </div>
@@ -22,12 +22,6 @@ export default {
   name: 'IssueNotesEditor',
   components: {
     Editor
-  },
-  props: {
-    height: {
-      type: String,
-      default: '100px'
-    }
   },
   computed: {
     ...mapGetters(['language']),
