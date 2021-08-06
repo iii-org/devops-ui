@@ -182,7 +182,7 @@ export default {
   name: 'ProjectIssues',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
     ExpandSection
   },
   mixins: [Table, IssueList, ContextMenu],
