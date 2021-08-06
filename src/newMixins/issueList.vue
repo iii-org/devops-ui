@@ -4,10 +4,7 @@ import { BasicData, Pagination } from '@/newMixins/index'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import {
-  addIssue,
-  getIssueFamily
-} from '@/api/issue'
+import { addIssue, getIssueFamily } from '@/api/issue'
 
 export default {
   name: 'ProjectIssues',

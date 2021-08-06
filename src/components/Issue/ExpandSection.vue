@@ -1,6 +1,6 @@
 <template>
   <el-row v-if="issue.family" v-loading="issue.hasOwnProperty('isLoadingFamily')&&issue.isLoadingFamily">
-    <div v-if="issue.isLoadingFamily" class="p-5" />
+    <div v-if="issue.hasOwnProperty('isLoadingFamily') && issue.isLoadingFamily" class="p-5" />
     <ul v-else>
       <li v-if="issue.hasOwnProperty('parent') && Object.keys(issue.parent).length > 0">
         <b>{{ $t('Issue.ParentIssue') }}:</b>
@@ -36,7 +36,7 @@
           </el-button>
         </el-popconfirm>
       </li>
-      <li v-if="issue.hasOwnProperty('children')">
+      <li v-if="issue.hasOwnProperty('children') && scope.row.children.length>0">
         <b>{{ $t('Issue.ChildrenIssue') }}:</b>
         <ol>
           <template v-for="child in issue.children">
@@ -70,7 +70,7 @@
           </template>
         </ol>
       </li>
-      <li v-if="issue.hasOwnProperty('relations')">
+      <li v-if="issue.hasOwnProperty('relations') && scope.row.relations.length>0">
         <b>{{ $t('Issue.RelatedIssue') }}:</b>
         <ol>
           <template v-for="child in issue.relations">
