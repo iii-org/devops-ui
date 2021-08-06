@@ -17,7 +17,9 @@
       >
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
-            <ExpandSection :issue="scope.row" @updateListData="loadData" />
+            <template v-if="scope.row.family">
+              <ExpandSection :issue="scope.row" @updateListData="loadData" />
+            </template>
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
