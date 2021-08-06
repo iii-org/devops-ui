@@ -18,7 +18,7 @@
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
             {{ scope.row }}
-            <ExpandSection :issue="scope.row" @updateListData="loadData" />
+<!--            <ExpandSection :issue="scope.row" @updateListData="loadData" />-->
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
