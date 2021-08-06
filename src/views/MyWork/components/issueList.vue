@@ -17,9 +17,7 @@
       >
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
-            <template v-if="scope.row.family">
-              <ExpandSection :issue="scope.row" @updateListData="loadData" />
-            </template>
+            <ExpandSection :issue="scope.row" @updateListData="loadData" />
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
@@ -93,7 +91,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { IssueList, ContextMenu, ExpandSection } from '@/newMixins'
+import { IssueList, ContextMenu } from '@/newMixins'
+import { ExpandSection } from '@/components/Issue'
 import { getUserIssueList } from '@/api/user'
 
 /**
@@ -103,7 +102,8 @@ import { getUserIssueList } from '@/api/user'
 
 export default {
   name: 'ProjectIssues',
-  mixins: [IssueList, ContextMenu, ExpandSection],
+  components: { ExpandSection },
+  mixins: [IssueList, ContextMenu],
   props: {
     from: {
       type: String,
