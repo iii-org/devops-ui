@@ -11,7 +11,7 @@ export default {
   components: {
     Priority,
     Status,
-    Tracker,
+    Tracker
   },
   mixins: [BasicData, Pagination],
   data() {

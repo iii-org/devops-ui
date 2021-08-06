@@ -5,6 +5,7 @@ import Pagination from './Pagination.js'
 import Table from './Table.js'
 import CancelRequest from './CancelRequest.js'
 import ContextMenu from './ContextMenu'
-import IssueList from './issueList'
+import IssueList from './IssueList'
+import IssueExpand from './IssueExpand'
 
-export { BasicData, ProjectSelector, SearchBar, Pagination, Table, CancelRequest, ContextMenu, IssueList }
+export { BasicData, ProjectSelector, SearchBar, Pagination, Table, CancelRequest, ContextMenu, IssueList, IssueExpand }
