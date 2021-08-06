@@ -1,5 +1,6 @@
 <template>
-  <el-row v-if="issue.family" v-loading="issue.hasOwnProperty('isLoadingFamily')&&issue.isLoadingFamily">
+  <el-row v-loading="issue.hasOwnProperty('isLoadingFamily')&&issue.isLoadingFamily">
+    {{ issue }}
     <div v-if="issue.hasOwnProperty('isLoadingFamily') && issue.isLoadingFamily" class="p-5" />
     <ul v-else>
       <li v-if="issue.hasOwnProperty('parent') && Object.keys(issue.parent).length > 0">
@@ -166,7 +167,7 @@ export default {
       this.$emit('updateListData')
     },
     handleEdit(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      this.$router.push({ name: 'issue-detail', params: { issueId } })
     }
   }
 }
