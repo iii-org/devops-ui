@@ -31,7 +31,7 @@
     </div>
     <div ref="pdfPage">
       <el-card>
-        <div class="h-28 text-center text-2xl bg-gray-300 clearfix" style="line-height: 50px;">{{ $t('route.testReport') }}</div>
+        <div class="text-center text-2xl bg-gray-300 clearfix" style="line-height: 50px;">{{ $t('route.testReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10">
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
@@ -332,7 +332,7 @@ export default {
     downloadPdf() {
       this.$pdf(this.$refs.pdfPage, this.downloadFileName)
     },
-    getSheet(filename_extension) {
+    async getSheet(filename_extension) {
       // table dom
       const tableSonarQube = this.$refs.tableSonarQube.$el.cloneNode(true)
       const tableCheckMarx = this.$refs.tableCheckMarx.$el.cloneNode(true)
@@ -350,7 +350,7 @@ export default {
 
       // use XLSX to transform a sheet from tables
       const sheet = XLSX.utils.table_to_sheet(newDiv)
-      this.download(sheet, filename_extension)
+      await this.download(sheet, filename_extension)
     },
     download(sheet, filename_extension) {
       switch (filename_extension) {
