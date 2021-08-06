@@ -6,8 +6,8 @@
         <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label"
                              :disabled="(column.value==='priority')?(row.has_children): false"
         >
-          <contextmenu-item v-for="item in getOptionsData(column.value)" :key="getId(column.value,item)"
-                            :disabled="item.disabled||getContextMenuCurrentValue(column, item)"
+          <contextmenu-item v-for="item in getOptionsData(column.value, row.has_children)" :key="getId(column.value,item)"
+                            :disabled="item.disabled || getContextMenuCurrentValue(column, item)"
                             :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"
                             @click="onUpdate(column.value+'_id', item.id)"
           >
@@ -219,8 +219,8 @@ export default {
         this[item] = option[item]
       })
     },
-    getOptionsData(option_name) {
-      if (option_name === 'status') return this.getDynamicStatusList()
+    getOptionsData(option_name, has_children) {
+      if (option_name === 'status') return this.getDynamicStatusList(has_children)
       return this[option_name]
     },
     async loadSelectionList() {
@@ -258,7 +258,7 @@ export default {
       if (option === 'assigned_to') return item.login
       return item.id
     },
-    getDynamicStatusList() {
+    getDynamicStatusList(has_children) {
       const _this = this
       let option
       if (this.selectionOptions['status']) {
@@ -267,7 +267,7 @@ export default {
         option = cloneDeep({ status: this.status })
       }
       return option['status'].map((item) => {
-        if (!_this.checkClosable && item.is_closed === true) {
+        if (!_this.checkClosable && item.is_closed === true && has_children) {
           item.disabled = true
           item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
         }
