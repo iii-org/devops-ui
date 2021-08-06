@@ -44,7 +44,7 @@ function sheet2blob(sheet, filename_extension, sheetName) {
 }
 
 /**
- * @param {Object} url - url from function sheet2blob(), required
+ * @param {Object} sheet - sheet transformed by XLSX plugin, required
  * @param {String} filename - file name, required
  * @param {String} filename_extension - file name extension, required
  */
