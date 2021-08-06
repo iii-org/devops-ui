@@ -370,7 +370,7 @@ export default {
     AddParameter: 'Add Parameter',
     Length: 'Length',
     Limit: 'Limit',
-    AddBy: 'Added by {user}',
+    AddBy: 'Added {created_date} by {user}',
     Author: 'Author',
     CommentTime: 'Comment Time',
     ParentIssue: 'Parent Issue',
