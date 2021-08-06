@@ -1,5 +1,5 @@
 <script>
-import { ExpandSection, Priority, Status, Tracker } from '@/components/Issue'
+import { Priority, Status, Tracker } from '@/components/Issue'
 import { BasicData, Pagination } from '@/newMixins/index'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
@@ -12,7 +12,6 @@ export default {
     Priority,
     Status,
     Tracker,
-    ExpandSection
   },
   mixins: [BasicData, Pagination],
   data() {

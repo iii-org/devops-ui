@@ -93,7 +93,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { IssueList, ContextMenu } from '@/newMixins'
+import { IssueList, ContextMenu, ExpandSection } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
 
 /**
@@ -103,7 +103,7 @@ import { getUserIssueList } from '@/api/user'
 
 export default {
   name: 'ProjectIssues',
-  mixins: [IssueList, ContextMenu],
+  mixins: [IssueList, ContextMenu, ExpandSection],
   props: {
     from: {
       type: String,
