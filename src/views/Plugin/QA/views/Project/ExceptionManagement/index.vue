@@ -110,7 +110,7 @@
         <el-table-column type="selection" reserve-selection width="55" />
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
-            <IssueExpand :issue="scope.row" />
+            <IssueExpand :issue="scope.row" @update-list="loadData" />
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">

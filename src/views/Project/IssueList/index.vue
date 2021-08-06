@@ -267,7 +267,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import { Table, IssueList, ContextMenu } from '@/newMixins'
+import IssueExpand from '@/components/Issue/IssueExpand'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -278,9 +279,10 @@ export default {
   name: 'ProjectIssues',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    IssueExpand
   },
-  mixins: [Table, IssueList, ContextMenu, IssueExpand],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,

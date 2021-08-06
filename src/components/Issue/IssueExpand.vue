@@ -103,21 +103,68 @@
         </ol>
       </li>
     </ul>
+    <ContextMenu
+      ref="contextmenu"
+      :visible="contextMenu.visible"
+      :row="contextMenu.row"
+      :filter-column-options="filterOptions"
+      :selection-options="contextOptions"
+      @update="loadData"
+    />
   </el-row>
 </template>
 
 <script>
-import { ContextMenu, IssueExpand } from '@/newMixins'
+import { ContextMenu } from '@/newMixins'
 import { Status, Tracker } from '@/components/Issue'
+import { deleteIssueRelation, updateIssue } from '@/api/issue'
 
 export default {
   name: 'IssueExpand',
   components: { Tracker, Status },
-  mixins: [ContextMenu, IssueExpand],
+  mixins: [ContextMenu],
   props: {
     issue: {
       type: Object,
       default: () => ({})
+    }
+  },
+  methods: {
+    async removeIssueRelation(childIssueId) {
+      this.listLoading = true
+      try {
+        await updateIssue(childIssueId, { parent_id: '' })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
+    },
+    async removeRelationIssue(relation_id) {
+      this.listLoading = true
+      try {
+        await deleteIssueRelation(relation_id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+        await this.loadData()
+      } catch (err) {
+        console.error(err)
+      }
+      this.listLoading = false
+    },
+    loadData() {
+      this.$emit('update-list')
+    },
+    handleEdit(issueId) {
+      this.$router.push({ name: 'issue-detail', params: { issueId }})
     }
   }
 }
