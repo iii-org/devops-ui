@@ -17,6 +17,7 @@
       >
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
+            {{ scope.row }}
             <ExpandSection :issue="scope.row" @updateListData="loadData" />
           </template>
         </el-table-column>
