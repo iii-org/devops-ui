@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build:stage
 
 FROM nginx:1.19
 COPY --from=build-stage /app/dist /usr/share/nginx/html
