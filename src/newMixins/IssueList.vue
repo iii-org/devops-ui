@@ -281,12 +281,6 @@ export default {
       this.addTopicDialogVisible = true
       this.parentId = 0
     },
-    isRelationIssueLoading(row) {
-      if (row.family && !row.hasOwnProperty('isLoadingFamily')) {
-        this.$set(row, 'isLoadingFamily', false)
-      }
-      return row.isLoadingFamily
-    },
     hasRelationIssue(row) {
       return row.family
     },
@@ -314,10 +308,8 @@ export default {
     },
     getRowClass({ row }) {
       const result = []
-      if (this.isRelationIssueLoading(row)) {
-        result.push('row-expend-loading')
-      } else if (!this.hasRelationIssue(row)) {
-        result.push('row-expand-cover')
+      if (!this.hasRelationIssue(row)) {
+        result.push('hide-expand-icon')
         const getRefTable = this.refTable
         if (getRefTable) {
           this.checkRowExpended(getRefTable, row)
@@ -380,7 +372,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-> > > .row-expand-cover .el-table__expand-column .cell {
+> > > .hide-expand-icon .el-table__expand-column .cell {
   display: none;
 }
 
