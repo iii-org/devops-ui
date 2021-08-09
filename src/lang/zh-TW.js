@@ -427,6 +427,7 @@ export default {
     DisplayClosedIssue: '顯示已關閉議題',
     DisplayClosedVersion: '顯示關閉@:Version.Version',
     open: '@:Version.Open',
+    closed: '@:Version.closed',
     locked: '@:Version.Locked',
     ResetESCTip: '按下Windows+ESC (Mac:Command+ESC) 重置並關閉輸入欄位',
     ChildrenNotClosedWarning: '本議題尚有子議題未處理，請進入該議題確認與關閉後再進行搬移',
