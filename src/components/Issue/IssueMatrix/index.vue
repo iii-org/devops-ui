@@ -28,7 +28,7 @@
 import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
-import ProjectIssueDetail from './'
+import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 
 export default {
   name: 'IssueMatrix',

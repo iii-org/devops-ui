@@ -80,7 +80,7 @@
 import Tracker from '@/components/Issue/Tracker'
 import { getProjectAssignable } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import AddIssue from '@/views/Project/IssueList/components/AddIssue'
+import { AddIssue } from '@/components/Issue'
 
 export default {
   name: 'QuickAddIssueOnBoard',

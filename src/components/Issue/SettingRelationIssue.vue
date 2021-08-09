@@ -16,38 +16,40 @@
           :key="group.name"
           :label="group.name"
         >
-          <el-option
-            v-for="item in group.options"
-            :key="item.id"
-            :label="'#' + item.id +' - '+item.name"
-            :value="item.id"
-          >
-            <el-popover
-              placement="left"
-              width="250"
-              trigger="hover"
+          <template v-for="item in group.options">
+            <el-option
+              v-if="item.id!==row.id"
+              :key="item.id"
+              :label="'#' + item.id +' - '+item.name"
+              :value="item.id"
             >
-              <el-card>
-                <template slot="header">
-                  <tracker :name="item.tracker.name" />
-                  #{{ item.id }} - {{ item.name }}
-                </template>
-                <b>{{ $t('Issue.Description') }}:</b>
-                <p>{{ item.description }}</p>
-              </el-card>
-              <div slot="reference">
-                <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                  <span v-html="highLight(item.name)" />
-                </span>
-                <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                />
-              </div>
-            </el-popover>
-          </el-option>
+              <el-popover
+                placement="left"
+                width="250"
+                trigger="hover"
+              >
+                <el-card>
+                  <template slot="header">
+                    <tracker :name="item.tracker.name" />
+                    #{{ item.id }} - {{ item.name }}
+                  </template>
+                  <b>{{ $t('Issue.Description') }}:</b>
+                  <p>{{ item.description }}</p>
+                </el-card>
+                <div slot="reference">
+                  <span
+                    style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                  >
+                    <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                    <span v-html="highLight(item.name)" />
+                  </span>
+                  <span style="float: right; color: #8492a6; font-size: 13px"
+                        v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                  />
+                </div>
+              </el-popover>
+            </el-option>
+          </template>
         </el-option-group>
       </el-select>
     </el-form-item>
@@ -86,38 +88,40 @@
           :key="group.name"
           :label="group.name"
         >
-          <el-option
-            v-for="item in group.options"
-            :key="item.id"
-            :label="'#' + item.id +' - '+item.name"
-            :value="item.id"
-          >
-            <el-popover
-              placement="left"
-              width="250"
-              trigger="hover"
+          <template v-for="item in group.options">
+            <el-option
+              v-if="item.id!==row.id"
+              :key="item.id"
+              :label="'#' + item.id +' - '+item.name"
+              :value="item.id"
             >
-              <el-card>
-                <template slot="header">
-                  <tracker :name="item.tracker.name" />
-                  #{{ item.id }} - {{ item.name }}
-                </template>
-                <b>{{ $t('Issue.Description') }}:</b>
-                <p>{{ item.description }}</p>
-              </el-card>
-              <div slot="reference">
-                <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                  <span v-html="highLight(item.name)" />
-                </span>
-                <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                />
-              </div>
-            </el-popover>
-          </el-option>
+              <el-popover
+                placement="left"
+                width="250"
+                trigger="hover"
+              >
+                <el-card>
+                  <template slot="header">
+                    <tracker :name="item.tracker.name" />
+                    #{{ item.id }} - {{ item.name }}
+                  </template>
+                  <b>{{ $t('Issue.Description') }}:</b>
+                  <p>{{ item.description }}</p>
+                </el-card>
+                <div slot="reference">
+                  <span
+                    style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                  >
+                    <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                    <span v-html="highLight(item.name)" />
+                  </span>
+                  <span style="float: right; color: #8492a6; font-size: 13px"
+                        v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                  />
+                </div>
+              </el-popover>
+            </el-option>
+          </template>
         </el-option-group>
       </el-select>
     </el-form-item>
@@ -128,16 +132,24 @@
         <ul>
           <li v-for="item in children['append']" :key="item">
             <template v-if="issueFamily[item]">
-              <b><tracker :name="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}</b> ({{ $t('Issue.OriginalParentIssue') }}:
+              <b>
+                <tracker :name="issueFamily[item].tracker.name" />
+                #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}</b>
+              ({{ $t('Issue.OriginalParentIssue') }}:
               <template v-if="issueFamily[item].hasOwnProperty('parent')">
                 <tracker :name="issueFamily[item].parent.tracker.name" />
                 #{{ issueFamily[item].parent.id }} - {{ issueFamily[item].parent.name }}
-                <span v-if="issueFamily[item].parent.hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].parent.assigned_to).length>1">
-                  ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].parent.assigned_to.name }} - {{ issueFamily[item].parent.assigned_to.login }})</span>
+                <span
+                  v-if="issueFamily[item].parent.hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].parent.assigned_to).length>1"
+                >
+                  ({{ $t('Issue.Assignee') }}:
+                  {{ issueFamily[item].parent.assigned_to.name }} - {{ issueFamily[item].parent.assigned_to.login }})
+                </span>
               </template>
               <template v-else>
                 {{ $t('Issue.NoParentIssue') }}
-              </template>)
+              </template>
+              )
             </template>
           </li>
         </ul>
@@ -149,8 +161,11 @@
               <template v-if="issueFamily[item]">
                 <tracker :name="issueFamily[item].tracker.name" />
                 #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}
-                <span v-if="issueFamily[item].hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].assigned_to).length>1">
-                  ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].assigned_to.name }} - {{ issueFamily[item].assigned_to.login }})</span>
+                <span
+                  v-if="issueFamily[item].hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].assigned_to).length>1"
+                >
+                  ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].assigned_to.name
+                  }} - {{ issueFamily[item].assigned_to.login }})</span>
               </template>
             </s>
           </li>
@@ -225,7 +240,9 @@ export default {
     issueFamily: {
       deep: true,
       handler(value) {
-        if (Object.keys(value).length <= 1) { this.getSearchIssue() }
+        if (Object.keys(value).length <= 1) {
+          this.getSearchIssue()
+        }
       }
     },
     'form.children_id': {
@@ -329,11 +346,11 @@ export default {
       this.issueLoading = false
       this.cancelToken = null
     },
-    highLight: function (value) {
+    highLight: function(value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function (str) {
+      return value.replace(reg, function(str) {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     }

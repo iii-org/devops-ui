@@ -115,7 +115,6 @@
                      :save-data="saveIssue"
                      :project-id="selectedProjectId"
                      :visible.sync="quickAddTopicDialogVisible"
-                     :tracker="tracker"
                      @add-issue="advancedAddIssue"
     />
     <el-row class="mb-2.5" :gutter="10">
@@ -183,9 +182,8 @@
                   :title="$t('Issue.RemoveIssueRelation')"
                   @onConfirm="removeIssueRelation(scope.row.id)"
                 >
-                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{
-                    $t('Issue.Unlink')
-                  }}
+                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                    {{ $t('Issue.Unlink') }}
                   </el-button>
                 </el-popconfirm>
               </li>
@@ -267,35 +265,22 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-    <add-issue
-      :save-data="saveIssue"
-      :dialog-visible.sync="addTopicDialogVisible"
-      :project-id="selectedProjectId"
-      :parent-id="parentId"
-      :parent-name="parentName"
-      :prefill="form"
-      @add-topic-visible="emitAddTopicDialogVisible"
-    />
     <ImportIssue
       :save-data="saveIssue"
       :visible.sync="importIssueVisible"
       :project-id="selectedProjectId"
-      :tracker="tracker"
       @close-dialog="handleImportClose"
     />
   </div>
 </template>
 
 <script>
-import AddIssue from './components/AddIssue'
 import { mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import Status from '@/components/Issue/Status'
-import Priority from '@/components/Issue/Priority'
-import Tracker from '@/components/Issue/Tracker'
+import { Status, Priority, Tracker } from '@/components/Issue'
 import Fuse from 'fuse.js'
-import QuickAddIssue from './components/QuickAddIssue'
+import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import ImportIssue from './components/ImportIssue'
 import axios from 'axios'
@@ -310,7 +295,6 @@ export default {
   name: 'PlanList',
   components: {
     ImportIssue,
-    AddIssue,
     QuickAddIssue,
     Priority,
     Status,
