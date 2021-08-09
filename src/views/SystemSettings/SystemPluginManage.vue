@@ -10,7 +10,7 @@
         />
       </el-row>
       <el-divider />
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
         <el-table-column :label="$t('general.Name')" align="center" prop="name" />
         <el-table-column :label="$t('general.Description')" align="center">
           <template slot-scope="scope">
@@ -153,7 +153,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getPlugins()
-      return res.data.sort((a, b) => a.name < b.name ? -1 : 1)
+      return res.data.sort((a, b) => (a.name < b.name ? -1 : 1))
     },
     async handleEditClick(pluginName) {
       this.isAddPlugin = false

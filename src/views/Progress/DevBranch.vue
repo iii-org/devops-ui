@@ -9,7 +9,7 @@
       />
     </project-list-selector>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit height="100%">
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit height="100%">
       <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="200" prop="name" />
       <el-table-column align="center" :label="$t('general.Description')" min-width="160" prop="last_commit_message" />
       <el-table-column align="center" :label="$t('ProcessDevBranch.Commit')" width="120" prop="short_id">
@@ -61,18 +61,6 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
-    },
-    formatEnvironment(env) {
-      const serviceArray = Object.keys(env)
-      const environmentArray = []
-      serviceArray.forEach(function(item) {
-        const detailArray = env[item]
-        const serviceName = Object.keys(env[item])
-        detailArray[serviceName].forEach(function(item) {
-          environmentArray.push({ service: serviceName[0], port: item.port, url: item.url })
-        })
-      })
-      return environmentArray
     },
     showNoProjectWarning() {
       this.$message({

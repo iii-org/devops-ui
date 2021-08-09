@@ -1,11 +1,9 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <div>
-        <el-button type="success" icon="el-icon-plus" @click="handleAdding">
-          {{ $t('Project.AddProject') }}
-        </el-button>
-      </div>
+      <el-button type="success" icon="el-icon-plus" @click="handleAdding">
+        {{ $t('Project.AddProject') }}
+      </el-button>
       <div>
         <el-popover>
           <el-date-picker
@@ -19,7 +17,7 @@
             @change="handleDatePicked"
           />
           <el-button slot="reference" icon="el-icon-date" type="text">
-            {{ $t('Project.ProjectPeriod') }}<i class="el-icon-arrow-down el-icon--right" />
+            {{ $t('Project.ProjectPeriod') }}<em class="el-icon-arrow-down el-icon--right" />
           </el-button>
         </el-popover>
         <el-divider direction="vertical" />
@@ -30,10 +28,10 @@
           prefix-icon="el-icon-search"
           :placeholder="$t('Project.SearchProjectNameOrManagerOrOrganization')"
           style="width: 250px;"
-          @blur="searchVisible=!searchVisible"
+          @blur="searchVisible = !searchVisible"
         />
-        <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-          {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+        <el-button v-else type="text" icon="el-icon-search" @click="searchVisible = !searchVisible">
+          {{ $t('general.Search') + (keyword ? ': ' + keyword : '') }}
         </el-button>
         <template v-if="keyword !== ''">
           <el-divider direction="vertical" />
@@ -56,21 +54,20 @@
       :element-loading-text="$t('Loading')"
       :row-key="handleReserve"
       :cell-style="{ height: rowHeight + 'px' }"
-      border
       fit
       highlight-current-row
       height="100%"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" reserve-selection width="55" />
-      <el-table-column
-        width="60"
-        align="center"
-        prop="starred"
-      >
+      <el-table-column width="60" align="center" prop="starred">
         <template slot-scope="scope">
-          <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
-          <i v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+          <em
+            v-if="scope.row.starred"
+            class="el-icon-star-on text-yellow-500 text-2xl"
+            @click="setStar(scope.row.id, false)"
+          />
+          <em v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
         </template>
       </el-table-column>
       <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.organization')" prop="department" width="150" />
@@ -95,8 +92,10 @@
       </el-table-column>
       <el-table-column :label="$t('general.owner_name')" width="90">
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false"
-                   @click="handleParticipateDialog(scope.row.owner_id, scope.row.owner_name)"
+          <el-link
+            type="primary"
+            :underline="false"
+            @click="handleParticipateDialog(scope.row.owner_id, scope.row.owner_name)"
           >
             {{ scope.row.owner_name }}
           </el-link>
@@ -138,6 +137,9 @@
           </el-button>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -195,14 +197,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userId',
-      'userRole',
-      'projectList',
-      'projectListTotal',
-      'userProjectList',
-      'selectedProjectId'
-    ]),
+    ...mapGetters(['userId', 'userRole', 'projectList', 'projectListTotal', 'userProjectList', 'selectedProjectId']),
     hasSelectedProject() {
       return this.selectedProjectList.length > 0
     },
@@ -322,8 +317,6 @@ export default {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
-      // if (this.userRole === 'QA' || this.userRole === 'Administrator') this.$router.push({ name: 'Project Settings QA' })
-      // else this.$router.push({ name: 'Project Settings' })
       this.$router.push({ name: 'Project Settings' })
     },
     async setStar(id, star) {

@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="flex justify-between">
       <el-button id="btn-add-secret" type="success" @click="dialogVisible = true">
-        <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
+        <em class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
       </el-button>
       <el-input
         id="input-search-secret"
@@ -18,7 +18,7 @@
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" fit height="100%">
       <el-table-column-tag
         prop="status"
         :label="$t('general.Status')"
@@ -26,16 +26,6 @@
         size="midium"
         location="systemSecrets"
       />
-      <!-- <el-table-column align="center" :label="$t('Maintenance.Status')" min-width="85">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'Active'" class="el-tag--circle" type="success" size="medium" effect="dark">{{
-            scope.row.status
-          }}</el-tag>
-          <el-tag v-else-if="scope.row.status === 'Removing'" class="el-tag--circle" type="warning" size="medium" effect="dark">{{
-            scope.row.status
-          }}</el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" :label="$t('Maintenance.SecretName')" prop="name" min-width="150" />
       <el-table-column label="Keys" prop="keys" min-width="250" />
       <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
@@ -56,7 +46,7 @@
               type="danger"
               :disabled="scope.row.status === 'Removing'"
             >
-              <i class="el-icon-delete" />
+              <em class="el-icon-delete" />
               {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
@@ -100,7 +90,7 @@
                 placeholder="value"
                 :type="formData.data[index].showValue ? 'text' : 'password'"
               >
-                <i
+                <em
                   slot="suffix"
                   class="el-input__icon el-icon-view"
                   @click="formData.data[index].showValue = !formData.data[index].showValue"
@@ -121,7 +111,7 @@
           </el-col>
         </el-row>
         <el-button id="btn-add-secret-item" type="success" size="small" @click="addItem">
-          <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
+          <em class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
         </el-button>
       </el-form>
       <span slot="footer" class="dialog-footer">

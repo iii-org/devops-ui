@@ -11,7 +11,7 @@
         <span class="select-all">{{ deployment_uuid }}</span>
       </div>
     </div>
-    <el-table :data="list" :element-loading-text="$t('Loading')" border fit highlight-current-row>
+    <el-table :data="list" :element-loading-text="$t('Loading')" fit highlight-current-row>
       <el-table-column align="center" :label="$t('SystemVersion.Source')" width="180">
         <template slot-scope="scope">
           {{ scope.row.source }}

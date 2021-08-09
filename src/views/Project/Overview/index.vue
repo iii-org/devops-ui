@@ -17,7 +17,7 @@
         <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
       </el-select>
       <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" @click="onFilterSelection"> {{ listFilter }}
-        <i class="el-icon-arrow-down el-icon--right" />
+        <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
       <template v-if="selectedVersion!==null">
         <el-divider direction="vertical" />

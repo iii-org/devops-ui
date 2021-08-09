@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="flex justify-between">
       <el-button id="btn-add-registry" type="success" @click="dialogVisible = true">
-        <i class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
+        <em class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>
       <el-input
         id="input-search-registry"
@@ -18,7 +18,7 @@
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
-    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" border fit height="100%">
+    <el-table v-loading="listLoading" :element-loading-text="$t('Loading')" :data="pagedData" fit height="100%">
       <el-table-column-tag
         prop="status"
         :label="$t('general.Status')"
@@ -26,14 +26,6 @@
         size="midium"
         location="systemRegistry"
       />
-      <!-- <el-table-column align="center" :label="$t('general.Status')" min-width="85">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'Active'" class="el-tag--circle" type="success" size="medium" effect="dark">{{ scope.row.status }}</el-tag>
-          <el-tag v-else-if="scope.row.status === 'Removing'" class="el-tag--circle" type="warning" size="medium" effect="dark">{{
-            scope.row.status
-          }}</el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column align="center" :label="$t('Maintenance.RegistryName')" prop="name" min-width="150" />
       <el-table-column label="Registries" prop="registries" min-width="250" />
       <el-table-column-time prop="created" :label="$t('general.CreateTime')" />
@@ -54,7 +46,7 @@
               type="danger"
               :disabled="scope.row.status === 'Removing'"
             >
-              <i class="el-icon-delete" />
+              <em class="el-icon-delete" />
               {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
@@ -89,7 +81,7 @@
         </el-form-item>
         <el-form-item :label="$t('Maintenance.Password')" prop="password">
           <el-input id="input-password" v-model="formData.password" :type="showPassword ? 'text' : 'password'">
-            <i slot="suffix" class="el-input__icon el-icon-view" @click="showPassword = !showPassword" />
+            <em slot="suffix" class="el-input__icon el-icon-view" @click="showPassword = !showPassword" />
           </el-input>
         </el-form-item>
       </el-form>

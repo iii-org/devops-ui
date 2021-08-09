@@ -20,7 +20,7 @@
               </template>
               <el-row v-loading="contentLoading" :gutter="12">
                 <el-col :span="8">
-                  <el-table :data="workList[version.id]" style="width: 100%" border stripe>
+                  <el-table :data="workList[version.id]" style="width: 100%" stripe>
                     <el-table-column :label="$t('Issue.List')">
                       <template slot-scope="scope">
                         <div>

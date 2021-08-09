@@ -23,7 +23,7 @@
         :placeholder="$t('general.SearchName')"
       />
     </div>
-    <el-table :data="pagedData" border fit>
+    <el-table :data="pagedData" fit>
       <el-table-column align="center" prop="id" :label="$t('Member.Id')" />
       <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
       <el-table-column align="center" :label="$t('general.Name')">

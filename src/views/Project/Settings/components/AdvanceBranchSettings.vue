@@ -26,7 +26,7 @@
         <el-button size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
         <el-button type="primary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
       </div>
-      <el-table :data="filteredData" fit border>
+      <el-table :data="filteredData" fit>
         <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" width="100" />
         <el-table-column
           :label="$t('general.Description')"
@@ -157,8 +157,8 @@ export default {
       this.isChanged = true
       const { selectedAll, name } = tool
       this.filteredData.forEach(i =>
-        i.testing_tools.forEach(tool => {
-          if (tool.name === name) tool.enable = selectedAll
+        i.testing_tools.forEach(testingTool => {
+          if (testingTool.name === name) testingTool.enable = selectedAll
         })
       )
       if (this.dependenceKeys.includes(name)) this.selectAllService(selectedAll)

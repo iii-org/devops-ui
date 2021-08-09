@@ -35,8 +35,6 @@ export default {
       })
       return this.commitListByBranch.data || []
     },
-    handlePull() {
-    },
     handleMerge(index, row) {
       this.mergeDialogVisible = true
       this.selectedBranch = row.branch_name
@@ -53,9 +51,13 @@ export default {
       {{ projectName }}
     </h3>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData"
-              :element-loading-text="$t('Loading')" border fit
-              highlight-current-row height="100%"
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      fit
+      highlight-current-row
+      height="100%"
     >
       <el-table-column label="Author" :show-overflow-tooltip="true">
         <template slot-scope="scope">
@@ -77,11 +79,6 @@ export default {
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Action" :show-overflow-tooltip="true" align="center">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handlePull(scope)">Pull</el-button>
-        </template>
-      </el-table-column> -->
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -92,8 +89,4 @@ export default {
       @pagination="onPagination"
     />
   </div>
-
 </template>
-
-<style lang="css" scoped>
-</style>

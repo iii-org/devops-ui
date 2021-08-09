@@ -27,7 +27,7 @@
           </el-col>
         </el-row>
       </el-card>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
+      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
         <el-table-column :label="$t('general.Name')" show-overflow-tooltip min-width="150">
           <template slot-scope="scope">
             <el-link
@@ -60,11 +60,11 @@
         <el-table-column :label="$t('general.Actions')" align="center" show-overflow-tooltip width="200">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
-              <i class="el-icon-edit" />
+              <em class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button>
             <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-              <i class="el-icon-delete" />
+              <em class="el-icon-delete" />
               {{ $t('general.Delete') }}
             </el-button>
           </template>

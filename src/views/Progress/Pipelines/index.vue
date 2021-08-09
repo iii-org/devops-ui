@@ -11,7 +11,7 @@
       </project-list-selector>
       <el-divider />
       <div class="text-right text-base mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
-      <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" border fit>
+      <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
           :label="`${$t('general.Status')} / ${$t('ProgressPipelines.TestItems')}`"
@@ -28,7 +28,7 @@
             </el-tag>
             <div class="mt-2">
               {{ `(${scope.row.status.success}/${scope.row.status.total})` }}
-              <i
+              <em
                 class="el-icon-circle-check"
                 :class="scope.row.status.success === scope.row.status.total ? 'text-success' : ''"
               />
@@ -90,7 +90,7 @@
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
-          <i class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
+          <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
         </el-table-column>
       </el-table>
       <pagination
@@ -153,8 +153,8 @@ export default {
       const keyword = this.keyword.toLowerCase()
       return listData.filter(data => {
         let result = false
-        for (let i = 0; i < searchKeys.length; i++) {
-          const columnValue = data[searchKeys[i]].toLowerCase()
+        for (const key of searchKeys) {
+          const columnValue = data[key].toLowerCase()
           result = result || columnValue.includes(keyword)
           if (result) break
         }
@@ -183,11 +183,11 @@ export default {
     this.clearTimer()
   },
   methods: {
-    onPagination(listQuery) {
+    onPagination(query) {
       this.clearTimer()
       const { first, limit } = this.listQuery
-      const startId = first - (listQuery.page - 1) * limit
-      this.listQuery.start = startId
+      const startId = first - (query.page - 1) * limit
+      this.query.start = startId
       this.loadData(10, startId)
     },
     async loadData(limit, startId) {
@@ -202,7 +202,11 @@ export default {
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
       try {
-        const res = await getPipelines(this.selectedRepositoryId, { limit, start: startId }, { cancelToken: this.cancelToken })
+        const res = await getPipelines(
+          this.selectedRepositoryId,
+          { limit, start: startId },
+          { cancelToken: this.cancelToken }
+        )
         this.lastUpdateTime = this.$dayjs()
           .utc(res.datetime)
           .format('YYYY-MM-DD HH:mm:ss')

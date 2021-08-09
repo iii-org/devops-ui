@@ -12,15 +12,15 @@
       />
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" border fit>
-      <el-table-column
-        width="60"
-        align="center"
-        prop="starred"
-      >
+    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
+      <el-table-column width="60" align="center" prop="starred">
         <template slot-scope="scope">
-          <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
-          <i v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+          <em
+            v-if="scope.row.starred"
+            class="el-icon-star-on text-yellow-500 text-2xl"
+            @click="setStar(scope.row.id, false)"
+          />
+          <em v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
         </template>
       </el-table-column>
       <el-table-column
@@ -143,6 +143,9 @@
           </el-button>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"

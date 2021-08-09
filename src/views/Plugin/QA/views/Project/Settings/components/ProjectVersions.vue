@@ -15,7 +15,7 @@
         :placeholder="$t('general.SearchName')"
       />
     </div>
-    <el-table :data="pagedData" border fit>
+    <el-table :data="pagedData" fit>
       <el-table-column prop="name" :label="$t('general.Name')" show-overflow-tooltip />
       <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
       <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" />
