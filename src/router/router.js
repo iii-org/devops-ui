@@ -286,7 +286,7 @@ export const asyncRoutes = [
             meta: { title: 'pipelines', roles: ['Project Manager', 'Administrator', 'Engineer'] }
           },
           {
-            path: 'test-report',
+            path: 'test-report/:commitId',
             name: 'TestReport',
             hidden: true,
             component: () => import('@/views/Progress/Pipelines/components/TestReport'),

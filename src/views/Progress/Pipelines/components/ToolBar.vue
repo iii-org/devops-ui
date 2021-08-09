@@ -5,10 +5,11 @@
       <slot name="toolName" />
     </div>
     <div>
-      <el-link>
+      <slot name="link" />
+      <!-- <el-link>
         <i class="el-icon-tickets cursor-pointer" :underline="false" />
         {{ $t('TestReport.DetailReport') }}
-      </el-link>
+      </el-link> -->
     </div>
   </div>
 </template>

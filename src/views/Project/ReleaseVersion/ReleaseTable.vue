@@ -66,7 +66,9 @@
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
-          <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
+          <template slot-scope="scope">
+            <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit)" />
+          </template>
         </el-table-column>
       </el-table>
       <pagination
@@ -139,8 +141,9 @@ export default {
     UTCtoLocalTime(time) {
       return UTCtoLocalTime(time)
     },
-    handleToTestReport() {
-      this.$router.push({ name: 'TestReport' })
+    handleToTestReport(commitId) {
+      console.log(commitId)
+      this.$router.push({ name: 'TestReport', params: { commitId }})
     }
   }
 }

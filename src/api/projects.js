@@ -6,6 +6,7 @@ export const postStarProject = (project_id) => request.post(`/project/${project_
 export const deleteStarProject = (project_id) => request.delete(`/project/${project_id}/star`)
 export const addNewProject = (data = { name: '', disabled: false, description: '' }) => request.post(`/project`, data)
 export const getProjectTest = (pId) => request.get(`/project/${pId}/test_summary`)
+export const getProjectCommitTestSummary = (pId, commit_id) => request.get(`/project/${pId}/test_summary/${commit_id}`)
 export const getProjectInfos = (pId) => request.get(`/project/${pId}`)
 export const updateProjectInfos = (pId, data) => request.patch(`/project/${pId}`, data)
 export const editProject = (pId, data = { name: '', disabled: false, description: '' }) => request.put(`/project/${pId}`, data)

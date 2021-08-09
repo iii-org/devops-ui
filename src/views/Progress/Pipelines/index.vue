@@ -90,7 +90,9 @@
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
-          <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
+          <template slot-scope="scope">
+            <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit_id)" />
+          </template>
         </el-table-column>
       </el-table>
       <pagination
@@ -286,8 +288,8 @@ export default {
       clearTimeout(this.timer)
       this.timer = null
     },
-    handleToTestReport() {
-      this.$router.push({ name: 'TestReport' })
+    handleToTestReport(commitId) {
+      this.$router.push({ name: 'TestReport', params: { commitId }})
     }
   }
 }

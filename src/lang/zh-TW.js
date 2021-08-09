@@ -915,7 +915,10 @@ export default {
     ApiScriptTesting: 'API腳本測試',
     WebScriptTesting: '網頁腳本測試',
     DetailReport: '詳細報告',
-    DownloadPdf: '下載 PDF'
+    DownloadPdf: '下載 PDF',
+    DownloadCsv: '下載 CSV',
+    DownloadExcel: '下載 EXCEL',
+    Item: '項'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

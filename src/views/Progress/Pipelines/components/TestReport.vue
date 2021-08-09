@@ -9,23 +9,15 @@
           <span>{{ $t('route.testReport') }}</span>
         </span>
       </div>
-      <!-- <span class="text-base ml-20">
-        <span class="ml-10 inline">{{ $t('TestReport.TestTime') }}: {{ timeNow }}</span>
-        <span class="ml-10 inline">
-          {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
-          {{ branch }} /<svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
-          {{ commitId }}
-        </span>
-      </span> -->
       <div>
         <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="downloadPdf">
           {{ $t('TestReport.DownloadPdf') }}
         </el-button>
         <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="getSheet('excel')">
-          下載 Excel
+          {{ $t('TestReport.DownloadExcel') }}
         </el-button>
         <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="getSheet('csv')">
-          下載 Csv
+          {{ $t('TestReport.DownloadCsv') }}
         </el-button>
       </div>
     </div>
@@ -44,6 +36,10 @@
           <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">SonarQube</span>
+            <el-link slot="link" @click="openSonarQube">
+              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              {{ $t('TestReport.DetailReport') }}
+            </el-link>
           </ToolBar>
           <el-table
             ref="tableSonarQube"
@@ -82,6 +78,10 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">CheckMarx</span>
+            <el-link slot="link" @click="openCheckMarx">
+              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              {{ $t('TestReport.DetailReport') }}
+            </el-link>
           </ToolBar>
           <el-table
             ref="tableCheckMarx"
@@ -101,6 +101,10 @@
           <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">OWASP ZAP</span>
+            <el-link slot="link" @click="openZap">
+              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              {{ $t('TestReport.DetailReport') }}
+            </el-link>
           </ToolBar>
           <el-table
             ref="tableZAP"
@@ -113,31 +117,35 @@
             <el-table-column align="center" :label="$t('DevOps.Tools')">OWASP ZAP</el-table-column>
             <el-table-column align="center" :label="$t('Zap.high')">
               <template slot-scope="scope">
-                <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
+                <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column align="center" :label="$t('Zap.medium')">
               <template slot-scope="scope">
-                <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['2'] }}</span>
+                <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['2'] }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column align="center" :label="$t('Zap.low')">
               <template slot-scope="scope">
-                <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['1'] }}</span>
+                <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['1'] }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column align="center" :label="$t('general.Info')">
               <template slot-scope="scope">
-                <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
+                <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
           </el-table>
           <ToolBar>
             <span slot="toolName">WebInspect</span>
+            <el-link slot="link" @click="openWebInspect">
+              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              {{ $t('TestReport.DetailReport') }}
+            </el-link>
           </ToolBar>
           <el-table
             ref="tableWebInspect"
@@ -164,6 +172,10 @@
           <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">Postman</span>
+            <el-link slot="link" @click="openPostman">
+              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              {{ $t('TestReport.DetailReport') }}
+            </el-link>
           </ToolBar>
           <el-table
             ref="tablePostman"
@@ -181,6 +193,10 @@
           <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">Sideex</span>
+            <el-link v-if="showSideexReport" slot="link" @click="openSideex">
+              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              {{ $t('TestReport.DetailReport') }}
+            </el-link>
           </ToolBar>
           <el-table
             ref="tableSideex"
@@ -194,7 +210,7 @@
             <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
               <template slot-scope="scope">
                 <span v-if="Object.keys(scope.row.result).length > 0">
-                  {{ scope.row.result.suitesPassed }}/{{ scope.row.result.suitesTotal }}
+                  {{ scope.row.result.suitesPassed }} {{ $t('TestReport.Item') }} /{{ scope.row.result.suitesTotal }} {{ $t('TestReport.Item') }}
                 </span>
                 <span v-else>-</span>
               </template>
@@ -202,7 +218,7 @@
             <el-table-column align="center" :label="$t('Sideex.casesPassedRatio')">
               <template slot-scope="scope">
                 <span v-if="Object.keys(scope.row.result).length > 0">
-                  {{ scope.row.result.casesPassed }}/{{ scope.row.result.casesTotal }}
+                  {{ scope.row.result.casesPassed }} {{ $t('TestReport.Item') }} /{{ scope.row.result.casesTotal }} {{ $t('TestReport.Item') }}
                 </span>
                 <span v-else>-</span>
               </template>
@@ -217,12 +233,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
-import { getSonarQubeData } from '@/api/sonarQube'
-import { getCheckMarxScans } from '@/api/checkMarx'
-import { getWebInspectScans } from '@/api/webInspect'
-import { getZapScans } from '@/api/zap'
-import { getPostmanResult } from '@/api/postman'
-import { getSideexScans } from '@/api/sideex'
+import { getCheckMarxReport, registerCheckMarxReport } from '@/api/checkMarx'
+import { getSideexReport } from '@/api/sideex'
+import { getProjectCommitTestSummary } from '@/api/projects'
 import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 import XLSX from 'xlsx'
 
@@ -238,7 +251,10 @@ export default {
       webInspectData: [],
       postmanData: [],
       sideexData: [],
-      downloadFileName: 'DevOps_test_report'
+      sonarQubeLink: '',
+      downloadFileName: 'DevOps_test_report',
+      dataName: ['sonarQubeData', 'checkMarxData', 'zapData', 'webInspectData', 'postmanData', 'sideexData'],
+      dataTimeArr: []
     }
   },
   computed: {
@@ -246,17 +262,17 @@ export default {
     selectedProjectId() {
       return this.selectedProject.id
     },
-    selectedProjectName() {
-      return this.selectedProject.name
-    },
     timeNow() {
-      return this.sonarQubeData && this.sonarQubeData.length > 0 ? UTCtoLocalTime(this.sonarQubeData[0].date) : '-'
+      return UTCtoLocalTime(this.dataTimeArr[0])
     },
     branch() {
       return this.sonarQubeData && this.sonarQubeData.length > 0 ? this.sonarQubeData[0].branch : '-'
     },
     commitId() {
-      return this.sonarQubeData && this.sonarQubeData.length > 0 ? this.sonarQubeData[0].commit_id : '-'
+      return this.$route.params.commitId
+    },
+    showSideexReport() {
+      return this.sideexData[0] ? this.sideexData[0].status === 'Finished' && this.sideexData[0].has_report : false
     }
   },
   created() {
@@ -265,58 +281,82 @@ export default {
   methods: {
     async loadTestReport() {
       this.listLoading = true
-      await Promise.all([
-        getSonarQubeData(this.selectedProjectName),
-        getCheckMarxScans(this.selectedProjectId),
-        getZapScans(this.selectedProjectId),
-        getWebInspectScans(this.selectedProjectName),
-        getPostmanResult(this.selectedProjectId),
-        getSideexScans(this.selectedProjectId)
-      ]).then(res => {
-        const [sonarQubeData, checkMarxData, zapData, webInspectData, postmanData, sideexData] = res
-        this.handleSonarQubeData(sonarQubeData.data.history)
-        this.getLatestData(checkMarxData.data, 'checkMarxData')
-        this.getLatestData(zapData.data, 'zapData')
-        this.getLatestData(webInspectData.data, 'webInspectData')
-        this.getLatestData(postmanData.data, 'postmanData')
-        this.getLatestData(sideexData.data, 'sideexData')
-        this.listLoading = false
-      })
+      const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
+      this.sonarQubeData = this.handleSonarQubeData(res.data.sonarqube.history)
+      this.sonarQubeLink = res.data.sonarqube.link
+      this.checkMarxData.push(res.data.checkmarx)
+      this.zapData.push(res.data.zap)
+      this.webInspectData.push(res.data.webinspect)
+      this.postmanData.push(res.data.postman)
+      this.sideexData.push(res.data.sideex)
+      this.getDataTime()
+      this.listLoading = false
     },
     handleSonarQubeData(data) {
       const ret = []
       for (const key in data) {
         const row = data[key]
-        row['date'] = key
+        row['run_at'] = key
         ret.push(row)
       }
-      this.getLatestData(ret, 'sonarQubeData')
+      return ret
     },
-    getLatestData(data, dataName) {
-      let timeKey = ''
-      switch (dataName) {
-        case 'sonarQubeData':
-          timeKey = 'date'
-          break
-        case 'checkMarxData':
-          timeKey = 'datetime'
-          break
-        case 'zapData':
-          timeKey = 'run_at'
-          break
-        case 'webInspectData':
-          timeKey = 'run_at'
-          break
-        case 'postmanData':
-          timeKey = 'run_at'
-          break
-        case 'sideexData':
-          timeKey = 'run_at'
-      }
-      data.sort((a, b) => {
-        return Date.parse(b[timeKey]) - Date.parse(a[timeKey])
+    getDataTime() {
+      const dataTimeArr = []
+      this.dataName.map(item => {
+        item === 'sonarQubeData' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
       })
-      this[dataName] = [data[0]]
+      dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
+      this.dataTimeArr = dataTimeArr
+    },
+    getSonarQubeTime(time) {
+      const currentDate = new Date()
+      const offset = -(currentDate.getTimezoneOffset() / 60)
+      const givenDate = new Date(time)
+      let hours = givenDate.getUTCHours()
+      hours -= offset
+      givenDate.setHours(hours)
+      return givenDate
+    },
+    openSonarQube() {
+      window.open(this.sonarQubeLink)
+    },
+    async openCheckMarx() {
+      const { report_id, scan_id } = this.checkMarxData[0]
+      await getCheckMarxReport(report_id)
+        .then(res => {
+          const url = window.URL.createObjectURL(new Blob([res]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'checkmarx_Report.pdf')
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        })
+        .catch(_ => {
+          this.confirmRegistryReport(scan_id)
+        })
+    },
+    openZap() {
+      const { full_log } = this.zapData[0]
+      this.showFullLog(full_log)
+    },
+    openWebInspect() {
+      const { scan_id, run_at } = this.webInspectData[0]
+      this.$router.push({ name: 'webinspect-report', params: { scan_id, run_at }})
+    },
+    openPostman() {
+      const { id } = this.postmanData[0]
+      this.$router.push({ name: 'postman-test-case', params: { id }})
+    },
+    async openSideex() {
+      const { id } = this.sideexData[0]
+      const res = await getSideexReport(id)
+      this.showFullLog(res.data)
+    },
+    showFullLog(log) {
+      const wnd = window.open(' ')
+      wnd.document.write(log)
     },
     convertRating(rating) {
       const r = parseInt(rating)
@@ -326,11 +366,34 @@ export default {
         return '-'
       }
     },
-    handleBackPage() {
-      this.$router.push({ name: 'Pipelines' })
+    confirmRegistryReport(scan_id) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: this.$t('general.caution'),
+        type: 'warning',
+        message: h('p', null, [h('div', { style: 'font-size: large' }, this.$t('CheckMarx.registryReport')), h('div', { style: 'color: red' }, this.$t('CheckMarx.registryReportTip'))]),
+        showCancelButton: true,
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel')
+      }).then(() => {
+        this.registerReport(scan_id)
+      })
     },
-    downloadPdf() {
-      this.$pdf(this.$refs.pdfPage, this.downloadFileName)
+    async registerReport(scanId) {
+      this.listLoading = true
+      await registerCheckMarxReport(scanId).then(res => {
+        const { reportId } = res.data
+        const idx = this.listData.findIndex(item => item.scan_id === scanId)
+        this.listData[idx].report_id = reportId
+        if (reportId > 0) this.fetchReportStatus(reportId)
+      })
+      this.listLoading = false
+    },
+    handleBackPage() {
+      this.$router.go(-1)
+    },
+    async downloadPdf() {
+      await this.$pdf(this.$refs.pdfPage, this.downloadFileName)
     },
     async getSheet(filename_extension) {
       // table dom
@@ -352,13 +415,13 @@ export default {
       const sheet = XLSX.utils.table_to_sheet(newDiv)
       await this.download(sheet, filename_extension)
     },
-    download(sheet, filename_extension) {
+    async download(sheet, filename_extension) {
       switch (filename_extension) {
         case 'csv':
-          this.$csv(sheet, this.downloadFileName)
+          await this.$csv(sheet, this.downloadFileName)
           break
         case 'excel':
-          this.$excel(sheet, this.downloadFileName)
+          await this.$excel(sheet, this.downloadFileName)
       }
     }
   }

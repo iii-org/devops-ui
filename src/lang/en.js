@@ -913,7 +913,10 @@ export default {
     ApiScriptTesting: 'API Script Testing',
     WebScriptTesting: 'Web Script Testing',
     DetailReport: 'Detail Report',
-    DownloadPdf: 'Download PDF'
+    DownloadPdf: 'Download PDF',
+    DownloadCsv: 'Download CSV',
+    DownloadExcel: 'Download EXCEL',
+    Item: 'items'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
