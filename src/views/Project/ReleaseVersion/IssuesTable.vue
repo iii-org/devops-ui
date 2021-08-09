@@ -46,7 +46,6 @@
         ref="theTable"
         v-loading="listLoading"
         :element-loading-text="$t('Loading')"
-        border
         fit
         highlight-current-row
         :data="pagedData"
@@ -163,8 +162,7 @@
 
 <script>
 import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
-import { updateIssue } from '@/api/issue'
-import { getCheckIssueClosable } from '@/api/issue'
+import { updateIssue, getCheckIssueClosable } from '@/api/issue'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 

@@ -5,7 +5,8 @@
         {{ $t('general.Back') }}
       </el-button>
       <span class="ml-2 text-xl">
-        <span>{{ $t('Issue.FilterDimensions.assigned_to') }}</span>:
+        <span> {{ $t('Issue.FilterDimensions.assigned_to') }} </span>
+        :
         <span>{{ projectMember }}</span>
       </span>
     </div>
@@ -14,13 +15,11 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       height="100%"
       :cell-style="{ height: rowHeight + 'px' }"
       fit
       highlight-current-row
     >
-      <!-- <el-table-column align="center" prop="name" :label="$t('general.ProjectId')" width="250" /> -->
       <el-table-column align="center" prop="display" :label="$t('Project.Name')" width="500" />
       <el-table-column align="center" prop="owner_name" :label="$t('Project.Owner')" />
       <el-table-column align="center" prop="start_date" :label="$t('Project.StartDate')" />
@@ -35,13 +34,7 @@
             :title="$t('Member.confirmRemove')"
             @onConfirm="handleDelete(scope.row.id)"
           >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              :disabled="isDisabled"
-            >
+            <el-button slot="reference" size="mini" type="danger" icon="el-icon-delete" :disabled="isDisabled">
               {{ $t('general.Remove') }}
             </el-button>
           </el-popconfirm>

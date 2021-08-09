@@ -38,7 +38,6 @@
             <el-table
               :data="testItemPagedData"
               :element-loading-text="$t('Loading')"
-              border
               fit
               highlight-current-row
               class="mt-2"
@@ -109,7 +108,6 @@
             <el-table
               :data="testValuePagedData"
               :element-loading-text="$t('Loading')"
-              border
               fit
               highlight-current-row
               class="mt-2"

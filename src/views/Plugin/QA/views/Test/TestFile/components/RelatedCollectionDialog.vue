@@ -38,7 +38,6 @@
         <el-table
           ref="collectionTable"
           :element-loading-text="$t('Loading')"
-          border
           fit
           highlight-current-row
           :data="pagedData"

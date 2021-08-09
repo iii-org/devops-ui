@@ -43,7 +43,6 @@
               </el-form-item>
             </el-form>
             <el-button slot="reference" icon="el-icon-s-operation" type="text" disabled style="color: #409eff;"> {{ listFilter }}
-              <!-- <i class="el-icon-arrow-down el-icon--right" /> -->
             </el-button>
           </el-popover>
           <el-divider direction="vertical" />
@@ -78,7 +77,6 @@
       <el-table
         ref="issueList"
         :data="listData"
-        border
         fit
         highlight-current-row
         row-key="id"
@@ -94,7 +92,7 @@
             <el-col v-loading="scope.row.loadingRelation">
               <ul>
                 <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
-                  <b>{{ $t('Issue.ParentIssue') }}:</b>
+                  <strong>{{ $t('Issue.ParentIssue') }}:</strong>
                   <el-link
                     class="font-weight-regular text-lg cursor-pointer"
                     :underline="false"
@@ -122,7 +120,7 @@
                   </el-popconfirm>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('children')">
-                  <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+                  <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
                   <ol>
                     <template v-for="child in scope.row.children">
                       <li v-if="Object.keys(child).length>0" :key="child.id">
@@ -153,7 +151,7 @@
                   </ol>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">
-                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
+                  <strong>{{ $t('Issue.RelatedIssue') }}:</strong>
                   <ol>
                     <template v-for="child in scope.row.relations">
                       <li v-if="Object.keys(child).length>0" :key="child.id">
@@ -690,17 +688,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-> > > .row-expand-cover .el-table__expand-column .cell {
+>>> .row-expand-cover .el-table__expand-column .cell {
   display: none;
 }
 
-> > > .el-table__expanded-cell {
+>>> .el-table__expanded-cell {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
-> > > .row-expend-loading .el-table__expand-column .cell {
+>>> .row-expend-loading .el-table__expand-column .cell {
   padding: 0;
 
   .el-table__expand-icon {
@@ -716,7 +714,7 @@ export default {
 
 }
 
-> > > .context-menu {
+>>> .context-menu {
   cursor: context-menu;
 }
 </style>

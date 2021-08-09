@@ -14,7 +14,6 @@
       :data="pagedData"
       :element-loading-text="$t('Loading')"
       height="calc(100vh - 300px)"
-      border
       fit
     >
       <el-table-column
@@ -23,8 +22,8 @@
         prop="starred"
       >
         <template slot-scope="scope">
-          <i v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
-          <i v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+          <em v-if="scope.row.starred" class="el-icon-star-on text-yellow-500 text-2xl" @click="setStar(scope.row.id, false)" />
+          <em v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
         </template>
       </el-table-column>
       <el-table-column
@@ -51,8 +50,8 @@
       <el-table-column align="center" :label="$t('Project.LastTestResult')" width="170">
         <template slot-scope="scope">
           <el-tag class="el-tag--circle" :type="returnTagType(scope.row)" size="large" effect="dark">
-            <i v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
-            <i v-else class="el-icon-error" />
+            <em v-if="returnTagType(scope.row) === 'success'" class="el-icon-success" />
+            <em v-else class="el-icon-error" />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
         </template>

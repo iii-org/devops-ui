@@ -17,7 +17,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       fit
       highlight-current-row
       height="100%"

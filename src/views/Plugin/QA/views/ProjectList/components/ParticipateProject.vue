@@ -14,7 +14,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       height="100%"
       :cell-style="{ height: rowHeight + 'px' }"
       fit

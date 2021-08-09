@@ -45,14 +45,7 @@
           </el-button>
         </div>
       </div>
-      <el-table
-        ref="dataTable"
-        v-loading="listLoading"
-        :data="filteredData"
-        fit
-        border
-        @row-contextmenu="handleContextMenu"
-      >
+      <el-table ref="dataTable" v-loading="listLoading" :data="filteredData" fit @row-contextmenu="handleContextMenu">
         <el-table-column width="55">
           <template slot="header" slot-scope="scope">
             <el-checkbox v-model="isCheckedAllIssuesByPage" @change="handleSinglePageChange" />
@@ -148,7 +141,7 @@
 import { mapGetters } from 'vuex'
 import { getUserIssueList } from '@/api/user'
 import { getProjectAssignable } from '@/api/projects'
-import { updateIssue, getCheckIssueClosable } from '@/api/issue'
+import { updateIssue } from '@/api/issue'
 import { BasicData, Pagination, ContextMenu, SearchBar } from '@/newMixins'
 import { Priority, Status, Tracker } from '@/components/Issue'
 
@@ -333,9 +326,6 @@ export default {
           })
       })
     }
-    // fetchCheckIssueClosable(issueId) {
-    //   getCheckIssueClosable(issueId).then(res => console.log(res.data))
-    // }
   }
 }
 </script>

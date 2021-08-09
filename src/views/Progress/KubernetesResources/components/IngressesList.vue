@@ -15,7 +15,6 @@
         :data="pagedData"
         :element-loading-text="$t('Loading')"
         height="calc(100vh - 300px)"
-        border
         fit
       >
         <el-table-column :label="$t('general.Name')" align="center" prop="name" width="200" show-overflow-tooltip />

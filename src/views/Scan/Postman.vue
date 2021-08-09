@@ -15,7 +15,6 @@
         :element-loading-text="$t('Loading')"
         :data="pagedData"
         height="calc(100vh - 280px)"
-        border
         fit
       >
         <el-table-column align="center" :label="$t('Postman.Id')" prop="id" width="100" />
@@ -32,15 +31,6 @@
         <el-table-column-time :label="$t('Postman.StartTime')" prop="run_at" />
         <el-table-column align="center" :label="$t('general.Actions')" width="120">
           <template slot-scope="scope">
-            <!-- <el-button
-              :id="`btn-devops-${scope.$index}`"
-              size="mini"
-              type="primary"
-              plain
-              @click="handleClick('devops-test-case', scope.row.id)"
-            >
-              {{ $t('Postman.DevOps') }}
-            </el-button> -->
             <el-button
               :id="`btn-postman-${scope.$index}`"
               size="mini"

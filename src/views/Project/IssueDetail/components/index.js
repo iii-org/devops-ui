@@ -1,4 +1,4 @@
-import IssueNotes from './IssueNotes'
+
 import IssueFiles from './IssueFiles'
 import IssueForm from './IssueForm'
 import IssueNotesDialog from './IssueNotesDialog'
@@ -9,6 +9,6 @@ import IssueTitle from './IssueTitle'
 import IssueToolbar from './IssueToolbar'
 
 export {
-  IssueNotes, IssueFiles, IssueForm, IssueNotesDialog, IssueNotesEditor, IssueFileUploader,
+  IssueFiles, IssueForm, IssueNotesDialog, IssueNotesEditor, IssueFileUploader,
   IssueDescription, IssueTitle, IssueToolbar
 }

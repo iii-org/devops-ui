@@ -15,7 +15,6 @@
         :data="pagedData"
         :element-loading-text="$t('Loading')"
         height="calc(100vh - 300px)"
-        border
         fit
       >
         <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
@@ -49,7 +48,7 @@
               @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
             >
               <el-button slot="reference" size="mini" type="danger">
-                <i class="el-icon-delete" />
+                <em class="el-icon-delete" />
                 {{ $t('general.Delete') }}
               </el-button>
             </el-popconfirm>

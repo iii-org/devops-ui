@@ -5,7 +5,6 @@
         ref="issueList"
         class="w-screen"
         :data="pagedData"
-        border
         fit
         highlight-current-row
         row-key="id"
@@ -67,7 +66,7 @@
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
-          <i class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
+          <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport" />
         </el-table-column>
       </el-table>
       <pagination

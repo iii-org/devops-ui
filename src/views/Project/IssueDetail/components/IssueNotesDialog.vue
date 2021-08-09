@@ -11,7 +11,7 @@ import DialogContent from './widget/DialogContent'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'IssueNotes',
+  name: 'IssueNotesDialog',
   components: { DialogContent },
   props: {
     data: {

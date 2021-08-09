@@ -86,7 +86,7 @@
           </el-form-item>
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          <em class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
       <el-input
@@ -142,7 +142,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       fit
       highlight-current-row
       row-key="id"
@@ -157,7 +156,7 @@
           <el-col v-loading="scope.row.loadingRelation">
             <ul>
               <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
-                <b>{{ $t('Issue.ParentIssue') }}:</b>
+                <strong>{{ $t('Issue.ParentIssue') }}:</strong>
                 <el-link
                   class="font-weight-regular"
                   :style="{ 'font-size': '14px', cursor: 'pointer' }"
@@ -188,7 +187,7 @@
                 </el-popconfirm>
               </li>
               <li v-if="scope.row.hasOwnProperty('children')">
-                <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+                <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
                 <ol>
                   <template v-for="child in scope.row.children">
                     <li v-if="Object.keys(child).length>0" :key="child.id">
@@ -278,9 +277,8 @@
 import { mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import { Status, Priority, Tracker } from '@/components/Issue'
+import { Status, Priority, Tracker, QuickAddIssue } from '@/components/Issue'
 import Fuse from 'fuse.js'
-import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import ImportIssue from './components/ImportIssue'
 import axios from 'axios'
@@ -631,17 +629,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-> > > .row-expand-cover .el-table__expand-column .cell {
+>>> .row-expand-cover .el-table__expand-column .cell {
   display: none;
 }
 
-> > > .el-table__expanded-cell {
+>>> .el-table__expanded-cell {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
-> > > .row-expend-loading .el-table__expand-column .cell {
+>>> .row-expend-loading .el-table__expand-column .cell {
   padding: 0;
 
   .el-table__expand-icon {
@@ -657,7 +655,7 @@ export default {
 
 }
 
-> > > .context-menu {
+>>> .context-menu {
   cursor: context-menu;
 }
 </style>

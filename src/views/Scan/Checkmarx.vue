@@ -10,14 +10,15 @@
     </project-list-selector>
     <el-divider />
     <div class="text-right mb-2">
-      <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{ $t('general.Refresh') }}</el-button>
+      <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{
+        $t('general.Refresh')
+      }}</el-button>
     </div>
     <el-table
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
       :data="pagedData"
       fit
-      border
       height="100%"
       :cell-style="{ 'text-align': 'center' }"
       :header-cell-style="{ 'text-align': 'center' }"
@@ -31,7 +32,13 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag :label="$t('general.Status')" translate-key="CheckMarx" location="checkMarx" prop="status" min-width="130" />
+      <el-table-column-tag
+        :label="$t('general.Status')"
+        translate-key="CheckMarx"
+        location="checkMarx"
+        prop="status"
+        min-width="130"
+      />
       <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
       <el-table-column :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
       <el-table-column :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
@@ -48,7 +55,7 @@
             icon="el-icon-download"
             @click="fetchTestReport(scope.row)"
           />
-          <div class="text-sm">{{ scope.row.report_ready? '':$t('CheckMarx.InProcess') }}</div>
+          <div class="text-sm">{{ scope.row.report_ready ? '' : $t('CheckMarx.InProcess') }}</div>
         </template>
       </el-table-column>
     </el-table>
@@ -172,7 +179,10 @@ export default {
       this.$msgbox({
         title: this.$t('general.caution'),
         type: 'warning',
-        message: h('p', null, [h('div', { style: 'font-size: large' }, this.$t('CheckMarx.registryReport')), h('div', { style: 'color: red' }, this.$t('CheckMarx.registryReportTip'))]),
+        message: h('p', null, [
+          h('div', { style: 'font-size: large' }, this.$t('CheckMarx.registryReport')),
+          h('div', { style: 'color: red' }, this.$t('CheckMarx.registryReportTip'))
+        ]),
         showCancelButton: true,
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel')

@@ -19,7 +19,6 @@
       :data="pagedData"
       height="60vh"
       fit
-      border
     >
       <el-table-column
         align="center"

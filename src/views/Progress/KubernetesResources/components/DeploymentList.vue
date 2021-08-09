@@ -15,7 +15,6 @@
         :data="pagedData"
         :element-loading-text="$t('Loading')"
         height="calc(100vh - 300px)"
-        border
         fit
       >
         <el-table-column :label="$t('DeploymentList.DeployName')" align="center" prop="name" min-width="200" />

@@ -19,7 +19,6 @@
         :data="pagedData"
         :header-cell-style="{ 'text-align': 'center' }"
         :cell-style="{ 'text-align': 'center' }"
-        border
         fit
       >
         <el-table-column :label="$t('TestCase.Id')" width="110" prop="id" />

@@ -10,7 +10,6 @@
       >
         {{ $t('Test.TestFile.UploadTestSet') }}
       </el-button>
-      <!--        :disabled="selectedProjectId === -1"-->
       <el-button icon="el-icon-s-operation" @click="filterVisible=!filterVisible" />
       <el-input
         id="input-search"
@@ -35,7 +34,6 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      border
       fit
       highlight-current-row
       row-key="file_name"
@@ -502,15 +500,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-> > > .el-dialog__header {
+>>> .el-dialog__header {
   display: none;
 }
 
-> > > .row-expand-cover .el-table__expand-column .cell {
+>>> .row-expand-cover .el-table__expand-column .cell {
   display: none;
 }
 
-> > > .el-table__expanded-cell {
+>>> .el-table__expanded-cell {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;

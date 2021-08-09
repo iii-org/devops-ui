@@ -13,7 +13,6 @@
       <el-table
         v-loading="listLoading"
         :element-loading-text="$t('Loading')"
-        border
         fit
         highlight-current-row
         :data="pagedData"

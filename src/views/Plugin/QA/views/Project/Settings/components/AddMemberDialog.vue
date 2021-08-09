@@ -35,7 +35,6 @@
           :element-loading-text="$t('Loading')"
           height="100%"
           highlight-current-row
-          border
           fit
           @cell-click="handleClick"
         >
@@ -66,7 +65,7 @@
         </el-col>
         <el-col :xs="16" :md="22" class="scroll-x">
           <el-tag v-for="(item, idx) in selectedUser" :key="idx" class="item" closable @close="onRemoveMember(item)">
-            <b>{{ idx + 1 }}</b>
+            <strong>{{ idx + 1 }}</strong>
             .{{ item.name }}
           </el-tag>
         </el-col>
