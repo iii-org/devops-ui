@@ -93,10 +93,30 @@
             fit
           >
             <el-table-column align="center" :label="$t('DevOps.Tools')">CheckMarx</el-table-column>
-            <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-            <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-            <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-            <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
+            <el-table-column align="center" :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.highSeverity }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.mediumSeverity }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.lowSeverity }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.infoSeverity }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
           </el-table>
           <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
           <ToolBar>
@@ -157,14 +177,39 @@
             fit
           >
             <el-table-column align="center" :label="$t('DevOps.Tools')">WebInspect</el-table-column>
-            <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.criticalCount" />
-            <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.highCount" />
-            <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount" />
-            <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.lowCount" />
-            <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.infoCount" />
+            <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.criticalCount">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.criticalCount }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.highCount">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.highCount }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.mediumCount }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.lowCount">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.lowCount }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.infoCount">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.infoCount }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
             <el-table-column align="center" :label="$t('WebInspect.BpSeverity')" prop="stats.bpCount">
               <template slot-scope="scope">
-                <span v-if="scope.row.stats.bpCount">{{ scope.row.stats.bpCount }}</span>
+                <span v-if="scope.row && scope.row.stats">{{ scope.row.stats.bpCount }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
@@ -187,8 +232,18 @@
             fit
           >
             <el-table-column align="center" :label="$t('DevOps.Tools')">Postman</el-table-column>
-            <el-table-column align="center" :label="$t('Postman.TestPass')" prop="success" min-width="100" />
-            <el-table-column align="center" :label="$t('Postman.TestFail')" prop="failure" min-width="100" />
+            <el-table-column align="center" :label="$t('Postman.TestPass')" prop="success" min-width="100">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.success">{{ scope.row.success }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('Postman.TestFail')" prop="failure" min-width="100">
+              <template slot-scope="scope">
+                <span v-if="scope.row && scope.row.failure">{{ scope.row.failure }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
           </el-table>
           <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
           <ToolBar>
@@ -209,7 +264,7 @@
             <el-table-column align="center" :label="$t('DevOps.Tools')">Sideex</el-table-column>
             <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
               <template slot-scope="scope">
-                <span v-if="Object.keys(scope.row.result).length > 0">
+                <span v-if="scope.row && scope.row.result">
                   {{ scope.row.result.suitesPassed }} {{ $t('TestReport.Item') }} /{{ scope.row.result.suitesTotal }} {{ $t('TestReport.Item') }}
                 </span>
                 <span v-else>-</span>
@@ -217,7 +272,7 @@
             </el-table-column>
             <el-table-column align="center" :label="$t('Sideex.casesPassedRatio')">
               <template slot-scope="scope">
-                <span v-if="Object.keys(scope.row.result).length > 0">
+                <span v-if="scope.row && scope.row.result">
                   {{ scope.row.result.casesPassed }} {{ $t('TestReport.Item') }} /{{ scope.row.result.casesTotal }} {{ $t('TestReport.Item') }}
                 </span>
                 <span v-else>-</span>
