@@ -142,7 +142,6 @@ export default {
       return UTCtoLocalTime(time)
     },
     handleToTestReport(commitId) {
-      console.log(commitId)
       this.$router.push({ name: 'TestReport', params: { commitId }})
     }
   }
