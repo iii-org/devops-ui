@@ -37,7 +37,7 @@
           <ToolBar>
             <span slot="toolName">SonarQube</span>
             <el-link slot="link" @click="openSonarQube">
-              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              <i class="el-icon-position cursor-pointer" :underline="false" />
               {{ $t('TestReport.DetailReport') }}
             </el-link>
           </ToolBar>
@@ -78,10 +78,13 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">CheckMarx</span>
-            <el-link slot="link" @click="openCheckMarx">
+            <el-button slot="link" type="text" icon="el-icon-download" @click="openCheckMarx">
+              {{ $t('TestReport.DetailReport') }}
+            </el-button>
+            <!-- <el-link slot="link" @click="openCheckMarx">
               <i class="el-icon-tickets cursor-pointer" :underline="false" />
               {{ $t('TestReport.DetailReport') }}
-            </el-link>
+            </el-link> -->
           </ToolBar>
           <el-table
             ref="tableCheckMarx"
@@ -122,7 +125,7 @@
           <ToolBar>
             <span slot="toolName">OWASP ZAP</span>
             <el-link slot="link" @click="openZap">
-              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              <i class="el-icon-position cursor-pointer" :underline="false" />
               {{ $t('TestReport.DetailReport') }}
             </el-link>
           </ToolBar>
@@ -249,7 +252,7 @@
           <ToolBar>
             <span slot="toolName">Sideex</span>
             <el-link v-if="showSideexReport" slot="link" @click="openSideex">
-              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+              <i class="el-icon-position cursor-pointer" :underline="false" />
               {{ $t('TestReport.DetailReport') }}
             </el-link>
           </ToolBar>
