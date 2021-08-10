@@ -36,10 +36,9 @@
           <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">SonarQube</span>
-            <el-link slot="link" @click="openSonarQube">
-              <i class="el-icon-position cursor-pointer" :underline="false" />
+            <el-button slot="link" type="text" icon="el-icon-position" :disabled="!sonarQubeLink" @click="openSonarQube">
               {{ $t('TestReport.DetailReport') }}
-            </el-link>
+            </el-button>
           </ToolBar>
           <el-table
             ref="tableSonarQube"
@@ -78,13 +77,9 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">CheckMarx</span>
-            <el-button slot="link" type="text" icon="el-icon-download" @click="openCheckMarx">
+            <el-button slot="link" type="text" icon="el-icon-download" :disabled="!checkMarxData" @click="openCheckMarx">
               {{ $t('TestReport.DetailReport') }}
             </el-button>
-            <!-- <el-link slot="link" @click="openCheckMarx">
-              <i class="el-icon-tickets cursor-pointer" :underline="false" />
-              {{ $t('TestReport.DetailReport') }}
-            </el-link> -->
           </ToolBar>
           <el-table
             ref="tableCheckMarx"
@@ -124,10 +119,9 @@
           <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">OWASP ZAP</span>
-            <el-link slot="link" @click="openZap">
-              <i class="el-icon-position cursor-pointer" :underline="false" />
+            <el-button slot="link" type="text" icon="el-icon-position" :disabled="!zapData" @click="openZap">
               {{ $t('TestReport.DetailReport') }}
-            </el-link>
+            </el-button>
           </ToolBar>
           <el-table
             ref="tableZAP"
@@ -165,10 +159,9 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">WebInspect</span>
-            <el-link slot="link" @click="openWebInspect">
-              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+            <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="!webInspectData" @click="openWebInspect">
               {{ $t('TestReport.DetailReport') }}
-            </el-link>
+            </el-button>
           </ToolBar>
           <el-table
             ref="tableWebInspect"
@@ -220,10 +213,9 @@
           <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">Postman</span>
-            <el-link slot="link" @click="openPostman">
-              <i class="el-icon-tickets cursor-pointer" :underline="false" />
+            <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="!postmanData" @click="openPostman">
               {{ $t('TestReport.DetailReport') }}
-            </el-link>
+            </el-button>
           </ToolBar>
           <el-table
             ref="tablePostman"
@@ -251,10 +243,9 @@
           <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">Sideex</span>
-            <el-link v-if="showSideexReport" slot="link" @click="openSideex">
-              <i class="el-icon-position cursor-pointer" :underline="false" />
+            <el-button slot="link" type="text" icon="el-icon-position" :disabled="!showSideexReport" @click="openSideex">
               {{ $t('TestReport.DetailReport') }}
-            </el-link>
+            </el-button>
           </ToolBar>
           <el-table
             ref="tableSideex"
