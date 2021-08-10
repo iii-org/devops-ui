@@ -330,16 +330,21 @@ export default {
   methods: {
     async loadTestReport() {
       this.listLoading = true
-      const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
-      this.sonarQubeData = this.handleSonarQubeData(res.data.sonarqube.history)
-      this.sonarQubeLink = res.data.sonarqube.link
-      this.checkMarxData.push(res.data.checkmarx)
-      this.zapData.push(res.data.zap)
-      this.webInspectData.push(res.data.webinspect)
-      this.postmanData.push(res.data.postman)
-      this.sideexData.push(res.data.sideex)
-      this.getDataTime()
-      this.listLoading = false
+      try {
+        const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
+        this.sonarQubeData = this.handleSonarQubeData(res.data.sonarqube.history)
+        this.sonarQubeLink = res.data.sonarqube.link
+        this.checkMarxData.push(res.data.checkmarx)
+        this.zapData.push(res.data.zap)
+        this.webInspectData.push(res.data.webinspect)
+        this.postmanData.push(res.data.postman)
+        this.sideexData.push(res.data.sideex)
+        this.getDataTime()
+        this.listLoading = false
+      } catch (error) {
+        console.log(error)
+        this.listLoading = false
+      }
     },
     handleSonarQubeData(data) {
       const ret = []
@@ -353,7 +358,7 @@ export default {
     getDataTime() {
       const dataTimeArr = []
       this.dataName.map(item => {
-        item === 'sonarQubeData' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
+        if (this[item][0]) item === 'sonarQubeData' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
       })
       dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
       this.dataTimeArr = dataTimeArr
