@@ -1,7 +1,6 @@
 import { deleteIssueRelation, updateIssue } from '@/api/issue'
 
 export default {
-  name: 'ExpandSection',
   methods: {
     async removeIssueRelation(childIssueId) {
       this.listLoading = true
