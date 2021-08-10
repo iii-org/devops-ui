@@ -89,7 +89,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      searchKeys: ['name', 'login']
+      searchKeys: ['name', 'login', 'department']
     }
   },
   computed: {

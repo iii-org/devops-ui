@@ -83,7 +83,7 @@ export default {
   mixins: [BasicData, Pagination, SearchBar],
   data() {
     return {
-      searchKeys: ['name', 'login'],
+      searchKeys: ['name', 'login', 'department'],
       unClosedIssueCount: 0
     }
   },
