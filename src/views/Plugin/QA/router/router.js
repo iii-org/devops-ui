@@ -60,7 +60,7 @@ export const asyncRoutes = [
         meta: {
           title: 'issueList',
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
-          appendRoot: { path: 'issue-boards', position: 'after' }
+          appendRoot: { path: 'issue-boards', position: 'after', replace: true }
         },
         children: [
           {
@@ -134,7 +134,7 @@ export const asyncRoutes = [
             meta: { title: 'Issue Transfer', roles: ['Administrator', 'QA', 'Project Manager'] }
           }
         ]
-      }, 
+      },
       {
         path: 'participate-project/:user_id',
         name: 'ParticipateProject',
@@ -147,17 +147,17 @@ export const asyncRoutes = [
   {
     path: '/traceability-matrix',
     component: Layout,
-    redirect: '/traceability-matrix',
+    redirect: { name: 'TraceMatrix' },
     meta: {
       title: 'track',
       icon: 'el-icon-s-marketing',
-      meta: { title: 'track', roles: ['Administrator', 'QA'] },
+      roles: ['QA', 'Administrator'],
       appendRoot: { path: '/scan', position: 'after' }
     },
     children: [
       {
         path: '',
-        name: 'traceability-matrix',
+        name: 'TraceMatrix',
         component: () => import('../views/Track/TraceabilityMatrix'),
         meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA'] }
       }
