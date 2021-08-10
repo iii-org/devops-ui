@@ -61,13 +61,7 @@
             </el-col>
             <el-col ref="IssueRelation">
               <el-collapse v-if="countRelationIssue>0">
-                <el-collapse-item>
-                  <div slot="title">
-                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
-                    <el-button size="mini" type="primary" @click="toggleIssueMatrixDialog">
-                      {{ $t('Issue.TraceabilityMatrix') }}
-                    </el-button>
-                  </div>
+                <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
                   <ul>
                     <li v-if="Object.keys(parent).length>0">
                       {{ $t('Issue.ParentIssue') }}：
@@ -145,20 +139,18 @@
                                 ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
                                 - {{ child.assigned_to.login }})</span>
                             </el-link>
-                            <div class="text-right">
-                              <el-popconfirm
-                                :confirm-button-text="$t('general.Remove')"
-                                :cancel-button-text="$t('general.Cancel')"
-                                icon="el-icon-info"
-                                icon-color="red"
-                                :title="$t('Issue.RemoveIssueRelation')"
-                                @onConfirm="removeRelationIssue(child.relation_id)"
-                              >
-                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                                  {{ $t('Issue.Unlink') }}
-                                </el-button>
-                              </el-popconfirm>
-                            </div>
+                            <el-popconfirm
+                              :confirm-button-text="$t('general.Remove')"
+                              :cancel-button-text="$t('general.Cancel')"
+                              icon="el-icon-info"
+                              icon-color="red"
+                              :title="$t('Issue.RemoveIssueRelation')"
+                              @onConfirm="removeRelationIssue(child.relation_id)"
+                            >
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                                {{ $t('Issue.Unlink') }}
+                              </el-button>
+                            </el-popconfirm>
                           </li>
                         </template>
                       </ol>
@@ -207,16 +199,6 @@
                                @close-dialog="toggleDialogVisible"
       />
     </el-dialog>
-    <el-dialog
-      :visible.sync="issueMatrixDialog.visible"
-      width="80%"
-      top="20px"
-      append-to-body
-      destroy-on-close
-      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"
-    >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
-    </el-dialog>
   </div>
 </template>
 
@@ -242,7 +224,6 @@ import {
   putTestPlanWithTestFile
 } from '@/views/Plugin/QA/api/qa'
 import getPageTitle from '@/utils/get-page-title'
-import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -257,7 +238,6 @@ export default {
     IssueNotesEditor,
     IssueToolbar,
     IssueFiles,
-    IssueMatrix,
     RelatedCollectionDialog
   },
   props: {
@@ -275,11 +255,7 @@ export default {
       mode: 'view',
       originForm: {},
       isLoading: false,
-      issueMatrixDialog: {
-        visible: false
-      },
       issue_link: '',
-      issue: {},
       issueId: null,
       issueSubject: '',
       author: '',
@@ -472,7 +448,6 @@ export default {
         test_files,
         relations
       } = data
-      this.issue = data
       this.issue_link = issue_link
       this.issueSubject = subject
       this.author = author.name
@@ -774,9 +749,6 @@ export default {
           }
         }
       })
-    },
-    toggleIssueMatrixDialog() {
-      this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
     },
     toggleDialogVisible(value) {
       this[value + 'DialogVisible'] = !this[value + 'DialogVisible']

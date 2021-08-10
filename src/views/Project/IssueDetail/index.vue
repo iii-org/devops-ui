@@ -54,13 +54,7 @@
             </el-col>
             <el-col ref="IssueRelation">
               <el-collapse v-if="countRelationIssue>0">
-                <el-collapse-item>
-                  <div slot="title">
-                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
-                    <el-button size="mini" type="primary" @click="toggleIssueMatrixDialog">
-                      {{ $t('Issue.TraceabilityMatrix') }}
-                    </el-button>
-                  </div>
+                <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
                   <ul>
                     <li v-if="Object.keys(parent).length>0">
                       {{ $t('Issue.ParentIssue') }}：
@@ -171,7 +165,7 @@
           </el-row>
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
-          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :relations="relations"
+          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent"
                       :children-issue="children.length"
           />
         </el-col>
@@ -186,16 +180,6 @@
                             @update="showLoading"
                             @delete="handleRelationDelete"
         />
-      </el-dialog>
-      <el-dialog
-        :visible.sync="issueMatrixDialog.visible"
-        width="80%"
-        top="20px"
-        append-to-body
-        destroy-on-close
-        :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"
-      >
-        <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
       </el-dialog>
     </el-card>
   </div>
@@ -217,7 +201,6 @@ import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import getPageTitle from '@/utils/get-page-title'
-import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -230,8 +213,7 @@ export default {
     IssueNotesDialog,
     IssueNotesEditor,
     IssueToolbar,
-    IssueFiles,
-    IssueMatrix
+    IssueFiles
   },
   props: {
     propsIssueId: {
@@ -248,11 +230,7 @@ export default {
       mode: 'view',
       originForm: {},
       isLoading: false,
-      issueMatrixDialog: {
-        visible: false
-      },
       issue_link: '',
-      issue: {},
       issueId: null,
       issueSubject: '',
       author: '',
@@ -409,6 +387,7 @@ export default {
           type: 'warning'
         })
       }
+      this.isLoading = false
       return data
     },
     initUploadFiles(data) {
@@ -428,7 +407,6 @@ export default {
         children,
         relations
       } = data
-      this.issue = data
       this.issue_link = issue_link
       this.issueSubject = subject
       this.author = author.name
@@ -665,7 +643,7 @@ export default {
           this.$refs['IssueFiles'].$el.getBoundingClientRect().height -
           this.$refs['IssueRelation'].$el.getBoundingClientRect().height
         if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (this.$refs['mainIssue'].$children[3].$children[0].$options && this.$refs['mainIssue'].$children[3].$children[0].$options.name === 'IssueNotesEditor') {
+          if (this.$refs['mainIssue'].$children[3].$children[0].$options.name === 'IssueNotesEditor') {
             this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
             this.scrollClass = 'issueHeightEditor'
           }
@@ -676,9 +654,6 @@ export default {
           }
         }
       })
-    },
-    toggleIssueMatrixDialog() {
-      this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
     }
   }
 }
