@@ -31,10 +31,10 @@
           }"
         >
           <div class="text-title mb-3">
-            <i class="el-icon-tickets mr-2" />
+            <em class="el-icon-tickets mr-2" />
             <span class="mr-3">{{ stage.name }}</span>
-            <i v-if="stage.isLoading" class="el-icon-loading font-bold" style="color: #F89F03" />
-            <i v-else class="el-icon-check font-bold" style="color: #72C040" />
+            <em v-if="stage.isLoading" class="el-icon-loading font-bold" style="color: #F89F03" />
+            <em v-else class="el-icon-check font-bold" style="color: #72C040" />
           </div>
           <el-card
             v-for="(step, stepIdx) in stage.steps"
@@ -73,7 +73,7 @@ export default {
   props: {
     pipelineInfos: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -107,31 +107,12 @@ export default {
   mounted() {
     if (this.selectedProject.id === -1) return
     this.fetchCiPipelineId()
-    this.setConnectStatusListener()
     this.setLogMessageListener()
   },
   beforeDestroy() {
     this.handleClose()
   },
   methods: {
-    setConnectStatusListener() {
-      // this.socket.on('connect', () => {
-      //   this.$notify({
-      //     title: this.$t('general.Success'),
-      //     message: 'WebSocket connect',
-      //     type: 'success'
-      //   })
-      //   this.sid = this.socket.id
-      // })
-      // this.socket.on('disconnect', msg => {
-      //   this.$notify({
-      //     title: this.$t('general.Info'),
-      //     message: msg,
-      //     type: 'warning'
-      //   })
-      //   this.sid = this.socket.id
-      // })
-    },
     userClick(tab) {
       this.emitPipeLog(tab)
     },
@@ -147,12 +128,10 @@ export default {
         step_index: stage.steps[0].step_id,
         sid: this.sid
       }
-      // console.log('EMIT get_pipe_log ===>', emitObj)
       this.socket.emit('get_pipe_log', emitObj)
     },
     setLogMessageListener() {
       this.socket.on('pipeline_log', sioEvt => {
-        // console.log('EVENT pipeline_log ===>', sioEvt)
         const { stage_index, step_index, data } = sioEvt
         const stageIdx = stage_index - 1
         if (data === '') {
@@ -168,12 +147,8 @@ export default {
       if (stage_index < this.stages.length) {
         const buildingStageIdx = this.getBuildingStageIdx()
         if (buildingStageIdx < 0) return
-        // if (userClick) {
-        //   this.changeFocusTab(buildingStageIdx + 1, buildingStageIdx, 1500)
-        // } else {
         this.changeFocusTab(stage_index + 1, stage_index, 1500)
       }
-      // }
     },
     setLogMessage(stageIdx, step_index, data) {
       const target = this.stages[stageIdx].steps[step_index].message
@@ -234,16 +209,13 @@ export default {
         })
         .catch(err => console.error(err))
     },
-    async updateStagesState() {
-      try {
-        const res = await getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun })
+    updateStagesState() {
+      getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun }).then(res => {
         res.forEach((stage, idx) => {
           this.stages[idx].state = stage.state
         })
         this.setTimer()
-      } catch (error) {
-        console.error(error)
-      }
+      }).catch(() => ({}))
     },
     handleClose() {
       this.socket.close()

@@ -196,31 +196,26 @@ export default {
       this.isLoading = true
       await this.fetchData(limit, startId)
     },
-    async fetchData(limit = 10, startId = this.listQuery.start) {
+    fetchData(limit = 10, startId = this.listQuery.start) {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
       }
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
-      try {
-        const res = await getPipelines(
-          this.selectedRepositoryId,
-          { limit, start: startId },
-          { cancelToken: this.cancelToken }
-        )
-        this.lastUpdateTime = this.$dayjs()
-          .utc(res.datetime)
-          .format('YYYY-MM-DD HH:mm:ss')
-        this.updatePipeExecs(res.data)
-        this.listQuery = res.data.pagination
-        this.listQuery.page = 1
-        this.isLoading = false
-        this.isUpdating = false
-        this.setTimer()
-      } catch (error) {
-        console.error('error ========>', error)
-      }
+      getPipelines(this.selectedRepositoryId, { limit, start: startId }, { cancelToken: this.cancelToken })
+        .then(res => {
+          this.lastUpdateTime = this.$dayjs()
+            .utc(res.datetime)
+            .format('YYYY-MM-DD HH:mm:ss')
+          this.updatePipeExecs(res.data)
+          this.listQuery = res.data.pagination
+          this.listQuery.page = 1
+          this.setTimer()
+          this.isLoading = false
+          this.isUpdating = false
+        })
+        .catch(() => {})
     },
     showNoProjectWarning() {
       this.$message({
