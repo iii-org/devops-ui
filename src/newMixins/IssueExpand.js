@@ -2,12 +2,6 @@ import { deleteIssueRelation, updateIssue } from '@/api/issue'
 
 export default {
   name: 'ExpandSection',
-  props: {
-    issue: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   methods: {
     async removeIssueRelation(childIssueId) {
       this.listLoading = true

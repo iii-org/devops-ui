@@ -518,7 +518,7 @@ export default {
       await this.updateData()
     },
     handleClick(row, column) {
-      if (column.type === 'expand') {
+      if (column.type === 'expand' && this.isRelationIssueLoading(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
       } else if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.$refs['issueList'].toggleRowExpansion(row)
@@ -558,6 +558,12 @@ export default {
       this.addTopicDialogVisible = true
       this.parentId = 0
     },
+    isRelationIssueLoading(row) {
+      if (row.family && !row.hasOwnProperty('loadingRelation')) {
+        this.$set(row, 'loadingRelation', false)
+      }
+      return row.loadingRelation
+    },
     hasRelationIssue(row) {
       return row.family
     },
@@ -572,7 +578,9 @@ export default {
     },
     getRowClass({ row }) {
       const result = []
-      if (this.hasRelationIssue(row) === false) {
+      if (this.isRelationIssueLoading(row)) {
+        result.push('row-expend-loading')
+      } else if (this.hasRelationIssue(row) === false) {
         result.push('row-expand-cover')
       }
       result.push('cursor-pointer')

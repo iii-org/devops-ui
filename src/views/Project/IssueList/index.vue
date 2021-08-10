@@ -79,7 +79,6 @@
       :save-data="saveIssue"
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
-      :tracker="tracker"
       @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
@@ -234,7 +233,8 @@
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to.id"
-                         sortable="custom" show-overflow-tooltip>
+                         sortable="custom" show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span>{{ scope.row.assigned_to.name }}</span>
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
@@ -263,9 +263,9 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import { QuickAddIssue } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
