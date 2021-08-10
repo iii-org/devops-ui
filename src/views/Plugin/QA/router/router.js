@@ -1,50 +1,7 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-
-Vue.use(Router)
-
 import Layout from '@/layout'
 import parentBlank from '@/layout/components/parentBlank'
 
-export const constantRoutes = [
-  {
-    path: '/login',
-    component: () => import('@/views/Login'),
-    hidden: true
-  },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    name: '404',
-    hidden: true
-  }
-]
-
 export const asyncRoutes = [
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   name: 'dashboard-admin',
-  //   redirect: '/dashboard',
-  //   meta: {
-  //     title: 'projectList',
-  //     icon: 'el-icon-s-cooperation',
-  //     roles: ['Administrator']
-  //   },
-  //   children: [
-  //     {
-  //       path: '/dashboard',
-  //       name: 'dashboard',
-  //       component: () => import('../views/Dashboard/roles/QA'),
-  //       meta: {
-  //         title: 'dashboard',
-  //         icon: 'dashboard',
-  //         roles: ['Administrator']
-  //       }
-  //     }
-  //   ]
-  // },
   {
     path: '/',
     component: Layout,
@@ -94,7 +51,7 @@ export const asyncRoutes = [
         path: 'milestone',
         name: 'milestone',
         component: () => import('../views/Project/Milestone'),
-        meta: { title: 'milestone', roles: ['QA', 'Administrator'] }
+        meta: { title: 'milestone', roles: ['Administrator', 'QA'] }
       },
       {
         path: 'issues',
@@ -102,7 +59,7 @@ export const asyncRoutes = [
         component: parentBlank,
         meta: {
           title: 'issueList',
-          roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
           appendRoot: { path: 'issue-boards', position: 'after' }
         },
         children: [
@@ -121,7 +78,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/IssueList'),
             meta: {
               title: 'issueList',
-              roles: ['Project Manager', 'Engineer', 'Administrator']
+              roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
           {
@@ -131,7 +88,7 @@ export const asyncRoutes = [
             component: () => import('../views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
-              roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
               rolePage: false,
               subject: ''
             }
@@ -144,7 +101,7 @@ export const asyncRoutes = [
         component: () => import('../views/Project/TrackManagement'),
         meta: {
           title: 'changeManagement',
-          roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
           appendRoot: { path: 'issues', position: 'after' }
         }
       },
@@ -154,7 +111,7 @@ export const asyncRoutes = [
         component: () => import('../views/Project/ExceptionManagement'),
         meta: {
           title: 'Fail Management',
-          roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
           appendRoot: { path: 'track', position: 'after' }
         }
       },
@@ -174,16 +131,16 @@ export const asyncRoutes = [
             name: 'Issue Transfer',
             hidden: true,
             component: () => import('@/views/Project/Settings/components/ProjectIssueTransfer'),
-            meta: { title: 'Issue Transfer', roles: ['QA', 'Project Manager', 'Administrator'] }
+            meta: { title: 'Issue Transfer', roles: ['Administrator', 'QA', 'Project Manager'] }
           }
         ]
-      },
+      }, 
       {
         path: 'participate-project/:user_id',
         name: 'ParticipateProject',
         hidden: true,
         component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
-        meta: { title: 'Participate Project', roles: ['QA', 'Administrator'] }
+        meta: { title: 'Participate Project', roles: ['Administrator', 'QA'] }
       }
     ]
   },
@@ -194,7 +151,7 @@ export const asyncRoutes = [
     meta: {
       title: 'track',
       icon: 'el-icon-s-marketing',
-      meta: { title: 'track', roles: ['QA', 'Administrator'] },
+      meta: { title: 'track', roles: ['Administrator', 'QA'] },
       appendRoot: { path: '/scan', position: 'after' }
     },
     children: [
@@ -202,7 +159,7 @@ export const asyncRoutes = [
         path: '',
         name: 'traceability-matrix',
         component: () => import('../views/Track/TraceabilityMatrix'),
-        meta: { title: 'traceabilityMatrix', roles: ['QA', 'Administrator'] }
+        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA'] }
       }
     ]
   },
@@ -214,7 +171,7 @@ export const asyncRoutes = [
     meta: {
       title: 'testManagement',
       icon: 'el-icon-finished',
-      roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+      roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
       appendRoot: { path: '/scan', position: 'before' }
     },
     children: [
@@ -224,7 +181,7 @@ export const asyncRoutes = [
         component: () => import('../views/Test/TestFile'),
         meta: {
           title: 'testFile',
-          roles: ['Project Manager', 'Engineer', 'QA', 'Administrator']
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         }
       },
       {
@@ -232,7 +189,7 @@ export const asyncRoutes = [
         redirect: '/test/test-plan',
         component: parentBlank,
         meta: {
-          roles: ['Project Manager', 'Engineer', 'QA', 'Administrator']
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         },
         children: [
           {
@@ -240,7 +197,7 @@ export const asyncRoutes = [
             name: 'test-plan',
             component: () => import('../views/Test/TestPlan'),
             meta: {
-              title: 'testPlan', roles: ['Project Manager', 'Engineer', 'QA', 'Administrator']
+              title: 'testPlan', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
             }
           },
           {
@@ -250,7 +207,7 @@ export const asyncRoutes = [
             component: () => import('../views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
-              roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
               rolePage: false
             }
           },
@@ -261,7 +218,7 @@ export const asyncRoutes = [
             component: () => import('../views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
-              roles: ['Project Manager', 'Engineer', 'QA', 'Administrator'],
+              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
               rolePage: false
             }
           }
@@ -270,18 +227,3 @@ export const asyncRoutes = [
     ]
   }
 ]
-
-const createRouter = () =>
-  new Router({
-    scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes
-  })
-
-const router = createRouter()
-
-export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher
-}
-
-export default router

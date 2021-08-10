@@ -25,7 +25,7 @@ export function filterAsyncRoutes(routes, roles) {
 export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   const result = accessedRoutes.map(item => item)
   const idx = result.findIndex(item => item.name === 'scan')
-  result[idx].children = result[idx].children.filter((item) => !disabledPluginRoutes.includes(item.name))
+  result[idx].children = result[idx].children.filter(item => !disabledPluginRoutes.includes(item.name))
   if (result[idx].children.length === 0) result.splice(idx, 1)
   return result
 }
@@ -43,14 +43,14 @@ const appendRouter = (menuItem, pluginRoutes, pluginIndex, result) => {
 }
 
 const state = {
-  routes: [],
-  addRoutes: []
+  addRoutes: [],
+  routes: []
 }
 
 const mutations = {
-  SET_ROUTES: (state, routes) => {
-    state.addRoutes = routes
-    state.routes = constantRoutes.concat(routes)
+  SET_ROUTES: (states, routes) => {
+    states.addRoutes = routes
+    states.routes = constantRoutes.concat(routes)
   }
 }
 
@@ -61,17 +61,17 @@ const actions = {
     })
     // views Plugin
     let accessedRoutes
-    const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
     let result = asyncRoutes
+    const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
     for (const path of req.keys()) {
-      const context = req(path).default || await req(path)
-      //combine menu by same name
+      const context = req(path).default || (await req(path))
+        //combine menu by same name
       const pluginItem = context.asyncRoutes
       pluginItem.forEach((item, pluginIndex) => { // plugin root
-        const mainItem = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
+        const mainItems = result.map((mainItem) => ((mainItem.hasOwnProperty('path')) ? mainItem.path : undefined))
         // devops root parent
-        if (mainItem.includes(item.path)) { // if same
-          const mainIndex = mainItem.findIndex((menu) => (menu === item.path)) // find devops root id
+        if (mainItems.includes(item.path)) { // if same
+          const mainIndex = mainItems.findIndex((menu) => (menu === item.path)) // find devops root id
           if (result[mainIndex].hasOwnProperty('children') && pluginItem[pluginIndex] && pluginItem[pluginIndex].hasOwnProperty('children')) {
             // find children
             const pluginChildren = pluginItem[pluginIndex].children
