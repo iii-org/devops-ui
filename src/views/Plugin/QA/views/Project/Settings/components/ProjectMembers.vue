@@ -24,7 +24,6 @@
       />
     </div>
     <el-table :data="pagedData" fit>
-      <el-table-column align="center" prop="id" :label="$t('Member.Id')" />
       <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
       <el-table-column align="center" :label="$t('general.Name')">
         <template slot-scope="scope">
@@ -33,6 +32,7 @@
           </el-link>
         </template>
       </el-table-column>
+      <el-table-column align="center" prop="department" :label="$t('general.Department')" width="300" />
       <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
       <el-table-column align="center" prop="role_name" :label="$t('Member.Role')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="300">

@@ -29,9 +29,9 @@
       />
     </div>
     <el-table :data="pagedData" fit>
-      <el-table-column align="center" prop="id" :label="$t('Member.Id')" />
       <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
       <el-table-column align="center" prop="name" :label="$t('general.Name')" />
+      <el-table-column align="center" prop="department" :label="$t('general.Department')" width="300" />
       <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
       <el-table-column align="center" :label="$t('Member.Role')">
         <template slot-scope="scope">
