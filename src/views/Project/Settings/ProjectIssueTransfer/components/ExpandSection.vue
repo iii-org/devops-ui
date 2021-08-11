@@ -78,7 +78,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="loadData"
+      @update="updateListData"
     />
   </el-row>
 </template>
