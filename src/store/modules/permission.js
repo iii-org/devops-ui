@@ -31,10 +31,10 @@ export function filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes) {
   return result
 }
 
-const appendRouter = (menuItem, result, resultMapByPath) => {
+const appendRouter = (menuItem, result) => {
   // pluginRoutes , root result,
   if (menuItem.meta.appendRoot) {
-    let appendIndex = resultMapByPath.findIndex((menu) => (menu === menuItem.meta.appendRoot.path))
+    let appendIndex = result.findIndex((menu) => (menu.path === menuItem.meta.appendRoot.path))
     if (menuItem.meta.appendRoot.position === 'after') {
       appendIndex = appendIndex + 1
     }
@@ -71,35 +71,23 @@ const actions = {
       const context = req(path).default || (await req(path))
       //combine menu by same name
       const pluginItem = context.asyncRoutes
-      const mainItems = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
 
-      const hasSameInRoot = []
-      const appendToRoot = []
-
-      pluginItem.forEach((item) => { // plugin root
+      const mainItemsPath = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
+      pluginItem.forEach((item, pluginIndex) => { // plugin root
         // devops root parent
-        if (mainItems.includes(item.path)) { // if same
-          hasSameInRoot.push(item)
-        } else {
-          appendToRoot.push(item)
+        if (mainItemsPath.includes(item.path)) { // if same
+          const resultIndex = result.findIndex((menu) => (menu.path === item.path)) // find devops root id
+          console.log(item.path, resultIndex)
+          if (result[resultIndex].hasOwnProperty('children') && pluginItem[pluginIndex] && pluginItem[pluginIndex].hasOwnProperty('children')) {
+            // find children
+            const pluginChildren = pluginItem[pluginIndex].children
+            pluginChildren.forEach((subItem) => {
+              // devops root children index
+              appendRouter(subItem, result[resultIndex].children)
+            })
+          }
         }
-      })
-
-      hasSameInRoot.forEach((item, pluginIndex) => {
-        const mainIndex = mainItems.findIndex((menu) => (menu === item.path)) // find devops root id
-        if (result[mainIndex].hasOwnProperty('children') && hasSameInRoot[pluginIndex] && hasSameInRoot[pluginIndex].hasOwnProperty('children')) {
-          // find children
-          const pluginChildren = hasSameInRoot[pluginIndex].children
-          pluginChildren.forEach((subItem) => {
-            // devops root children index
-            const childrenItem = result[mainIndex].children.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
-            appendRouter(subItem, result[mainIndex].children, childrenItem)
-          })
-        }
-      })
-
-      appendToRoot.forEach((item) => {
-        appendRouter(item, result, mainItems)
+        appendRouter(item, result)
       })
     }
     return new Promise(async resolve => {
