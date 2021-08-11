@@ -64,7 +64,7 @@
 <script>
 import IssueFileUploader from './IssueFileUploader'
 import { addIssue, updateIssue } from '@/api/issue'
-import { AddIssue } from '@/components/Issue'
+import AddIssue from '../../IssueList/components/AddIssue'
 import { mapGetters } from 'vuex'
 
 export default {

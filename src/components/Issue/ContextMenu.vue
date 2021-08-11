@@ -6,8 +6,7 @@
         <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label"
                              :disabled="(column.value==='priority')?(row.has_children): false"
         >
-          <contextmenu-item v-for="item in getOptionsData(column.value, row.has_children)"
-                            :key="getId(column.value,item)"
+          <contextmenu-item v-for="item in getOptionsData(column.value, row.has_children)" :key="getId(column.value,item)"
                             :disabled="item.disabled || getContextMenuCurrentValue(column, item)"
                             :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"
                             @click="onUpdate(column.value+'_id', item.id)"
@@ -115,6 +114,8 @@ import {
   ContextmenuSubmenu
 } from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
+import SettingRelationIssue from '../../views/Project/IssueList/components/SettingRelationIssue'
+import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import {
   addIssue,
   getCheckIssueClosable,
@@ -123,10 +124,7 @@ import {
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
-
-import AddIssue from './AddIssue'
-import SettingRelationIssue from './SettingRelationIssue'
-import IssueMatrix from './IssueMatrix'
+import AddIssue from '@/views/Project/IssueList/components/AddIssue'
 
 export default {
   name: 'ContextMenu',

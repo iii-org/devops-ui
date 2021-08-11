@@ -86,7 +86,7 @@
       :save-data="saveIssue"
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
-      tracker-name="Change Request"
+      :tracker="tracker"
       @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
@@ -271,12 +271,12 @@
 </template>
 
 <script>
+import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { mapActions, mapGetters } from 'vuex'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
-import { QuickAddIssue } from '@/components/Issue'
 import XLSX from 'xlsx'
 
 /**

@@ -153,7 +153,10 @@ import {
 import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
-import { AddIssue, Status, Priority, Tracker } from '@/components/Issue'
+import AddIssue from '@/views/Project/IssueList/components/AddIssue'
+import Status from '@/components/Issue/Status'
+import Priority from '@/components/Issue/Priority'
+import Tracker from '@/components/Issue/Tracker'
 import ProjectIssueDetail from '../IssueDetail'
 
 const currentStart = moment().startOf('year')

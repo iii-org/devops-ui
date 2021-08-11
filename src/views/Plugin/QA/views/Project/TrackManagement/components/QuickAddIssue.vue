@@ -5,7 +5,7 @@
         <el-select
           v-model="form.tracker_id"
           :placeholder="$t('Issue.SelectType')"
-          :disabled="hasSetTracker"
+          disabled
         >
           <el-option
             v-for="option in trackerList"
@@ -40,7 +40,6 @@
                 :prefill="form"
                 :save-data="saveData"
                 import-from="issueList"
-                :tracker-list="trackerList"
                 @loading="loadingUpdate"
                 @add-topic-visible="handleCloseDialog"
       />
@@ -78,10 +77,6 @@ export default {
       type: Function,
       default: () => {
       }
-    },
-    trackerName: {
-      type: String,
-      default: null
     }
   },
   data() {
@@ -90,7 +85,7 @@ export default {
       LoadingConfirm: false,
       parentId: 0,
       form: {
-        tracker_id: 8,
+        tracker_id: 6,
         subject: null,
         assigned_to_id: null,
         status_id: 1,
@@ -105,12 +100,8 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'issueListFilter']),
-    hasSetTracker() {
-      return !!this.trackerName
-    },
     trackerList() {
-      if (this.hasSetTracker) return this.tracker.filter(item => item.name === this.trackerName)
-      return this.tracker
+      return this.tracker.filter(item => item.name === 'Change Request')
     }
   },
   watch: {
@@ -123,25 +114,19 @@ export default {
   },
   mounted() {
     this.setFilterValue()
-    this.form.tracker_id = this.trackerList[0].id
   },
   methods: {
     setFilterValue() {
       this.form = {
-        tracker_id: null,
+        tracker_id: 6,
         subject: null,
         assigned_to_id: null,
         status_id: 1,
         priority_id: 3
       }
-      if (this.hasSetTracker) {
-        this.form.tracker_id = this.trackerList[0].id
-      }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) {
-          this.$set(this.form, item + '_id', this.issueListFilter[item])
-        }
+        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) { this.$set(this.form, item + '_id', this.issueListFilter[item]) }
       })
     },
     handleSave() {
@@ -172,7 +157,8 @@ export default {
         } else {
           return false
         }
-      })
+      }
+      )
     },
     handleClose() {
       this.$emit('close-dialog', false)

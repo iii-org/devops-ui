@@ -86,7 +86,7 @@
       :save-data="saveIssue"
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
-      tracker-name="Fail Management"
+      :tracker="tracker"
       @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
@@ -275,7 +275,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue } from '@/components/Issue'
+import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import { csvTranslate } from '@/utils/csvTableTranslate'

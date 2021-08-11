@@ -277,8 +277,9 @@
 import { mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import { Status, Priority, Tracker, QuickAddIssue } from '@/components/Issue'
+import { Status, Priority, Tracker } from '@/components/Issue'
 import Fuse from 'fuse.js'
+import QuickAddIssue from '@/components/Issue/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import ImportIssue from './components/ImportIssue'
 import axios from 'axios'
@@ -629,17 +630,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
->>> .row-expand-cover .el-table__expand-column .cell {
+> > > .row-expand-cover .el-table__expand-column .cell {
   display: none;
 }
 
->>> .el-table__expanded-cell {
+> > > .el-table__expanded-cell {
   font-size: 0.875em;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
->>> .row-expend-loading .el-table__expand-column .cell {
+> > > .row-expend-loading .el-table__expand-column .cell {
   padding: 0;
 
   .el-table__expand-icon {
@@ -655,7 +656,7 @@ export default {
 
 }
 
->>> .context-menu {
+> > > .context-menu {
   cursor: context-menu;
 }
 </style>
