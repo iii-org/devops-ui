@@ -919,5 +919,16 @@ export default {
     DownloadExcel: 'Download EXCEL',
     Item: 'items'
   },
+  ProjectSettings: {
+    GeneralSettings: 'General Settings',
+    NotifySettings: 'Notify Settings',
+    IssueReminderFeature: 'Issue Reminder Feature',
+    Index: 'Index',
+    NotificationConditions: 'Notification Conditions',
+    Days: 'Days',
+    Status: '@:general.Status',
+    Actions: '@:general.Actions',
+    NotYetEnabled: 'Not Yet Enabled'
+  },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

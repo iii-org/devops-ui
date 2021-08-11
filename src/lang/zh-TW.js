@@ -921,5 +921,16 @@ export default {
     DownloadExcel: '下載 EXCEL',
     Item: '項'
   },
+  ProjectSettings: {
+    GeneralSettings: '一般設定',
+    NotifySettings: '通知設定',
+    IssueReminderFeature: '議題提醒功能',
+    Index: '項次',
+    NotificationConditions: '通知條件',
+    Days: '天數',
+    Status: '@:general.Status',
+    Actions: '@:general.Actions',
+    NotYetEnabled: '尚未啟用'
+  },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

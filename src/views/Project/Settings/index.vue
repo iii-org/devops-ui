@@ -2,31 +2,75 @@
   <div class="app-container">
     <ProjectListSelector />
     <el-divider />
-    <el-row :gutter="10">
-      <el-col class="mb-4" :sm="24" :md="14" :lg="15">
-        <el-card shadow="never">
-          <el-collapse v-model="activeNames">
-            <ProjectVersions />
-          </el-collapse>
-        </el-card>
-      </el-col>
-      <el-col class="mb-4" :sm="24" :md="10" :lg="9">
-        <el-card shadow="never">
-          <el-collapse v-model="activeNames">
-            <PipelineSettings />
-          </el-collapse>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row :gutter="10">
-      <el-col class="mb-4" :xs="24">
-        <el-card shadow="never">
-          <el-collapse v-model="activeNames">
-            <ProjectMembers />
-          </el-collapse>
-        </el-card>
-      </el-col>
-    </el-row>
+    <el-tabs v-model="tabActiveName" type="border-card" @tab-click="handleTabClick">
+      <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
+        <el-row :gutter="10">
+          <el-col class="mb-4" :sm="24" :md="14" :lg="15">
+            <el-card shadow="never">
+              <el-collapse v-model="activeNames">
+                <ProjectVersions />
+              </el-collapse>
+            </el-card>
+          </el-col>
+          <el-col class="mb-4" :sm="24" :md="10" :lg="9">
+            <el-card shadow="never">
+              <el-collapse v-model="activeNames">
+                <PipelineSettings />
+              </el-collapse>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col class="mb-4" :xs="24">
+            <el-card shadow="never">
+              <el-collapse v-model="activeNames">
+                <ProjectMembers />
+              </el-collapse>
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings">
+        <div class="flex justify-between mt-3">
+          <div class="font-medium text-lg">{{ $t('ProjectSettings.IssueReminderFeature') }}</div>
+          <div>
+            <el-switch
+              v-model="isToggle"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              :active-text="$t('general.Enable')"
+              :inactive-text="$t('general.Disable')"
+            />
+          </div>
+        </div>
+        <el-divider />
+        <el-table
+          v-if="isToggle"
+          v-loading="listLoading"
+          :element-loading-text="$t('Loading')"
+          :data="tableData"
+          border
+          fit
+        >
+          <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
+          <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')" prop="condition" />
+          <el-table-column align="center" :label="$t('ProjectSettings.Days')" prop="day" />
+          <el-table-column align="center" :label="$t('ProjectSettings.Status')">
+            <template slot-scope="scope">
+              <div v-if="scope.row.isEnabled" class="font-medium">{{ $t('general.Enable') }}</div>
+              <div v-else style="color: red;">{{ $t('general.Disable') }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
+            <template slot-scope="scope">
+              <el-button v-if="scope.row.isEnabled" type="danger" size="mini" plain>{{ $t('general.Disable') }}</el-button>
+              <el-button v-else type="primary" size="mini" plain>{{ $t('general.Enable') }}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div v-else class="text-center">{{ $t('ProjectSettings.NotYetEnabled') }}</div>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -41,7 +85,22 @@ export default {
   mixins: [MixinElTableWithAProject],
   data() {
     return {
-      activeNames: []
+      activeNames: [],
+      tabActiveName: 'generalSettings',
+      isToggle: true,
+      listLoading: false,
+      tableData: [
+        {
+          condition: '到期日前 3 天通知',
+          day: 7,
+          isEnabled: true
+        },
+        {
+          condition: '議題連續為異動達 10 天以上',
+          day: 30,
+          isEnabled: false
+        }
+      ]
     }
   },
   watch: {
@@ -69,7 +128,15 @@ export default {
         this.showNoProjectWarning()
         return []
       }
+    },
+    handleTabClick(tab, event) {
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+>>> .el-tabs__item .is-active {
+  background: black;
+}
+</style>
