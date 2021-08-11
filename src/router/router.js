@@ -41,6 +41,9 @@ export const asyncRoutes = [
   {
     path: '/my-work',
     component: Layout,
+    meta: {
+      roles: ['Project Manager', 'Engineer']
+    },
     children: [
       {
         path: '',
@@ -52,11 +55,7 @@ export const asyncRoutes = [
           roles: ['Project Manager', 'Engineer']
         }
       }
-    ],
-    meta: {
-      title: 'myWork',
-      roles: ['Project Manager', 'Engineer']
-    }
+    ]
   },
   {
     path: '/overview',
@@ -120,13 +119,14 @@ export const asyncRoutes = [
       {
         path: 'issues',
         component: parentBlank,
+        meta: { title: 'issueList' },
         children: [
           {
             path: '',
             name: 'issue-list',
+            hidden: true,
             component: () => import('@/views/Project/IssueList'),
             meta: {
-              title: 'issueList',
               roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
@@ -149,7 +149,7 @@ export const asyncRoutes = [
         component: parentBlank,
         meta: {
           title: 'createTest',
-          roles: ['Administrator', 'Engineer', 'Project Manager']
+          roles: ['Administrator', 'Project Manager', 'Engineer']
         },
         children: [
           {
@@ -165,7 +165,7 @@ export const asyncRoutes = [
             hidden: true,
             meta: {
               title: 'testItem',
-              roles: ['Administrator', 'Engineer', 'Project Manager']
+              roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           }
         ]
@@ -198,8 +198,9 @@ export const asyncRoutes = [
             path: '',
             name: 'release-version',
             component: () => import('@/views/Project/ReleaseVersion'),
+            hidden: true,
             meta: {
-              title: 'releaseVersion', roles: ['Administrator', 'Project Manager']
+              roles: ['Administrator', 'Project Manager']
             }
           },
           {
@@ -292,7 +293,7 @@ export const asyncRoutes = [
             name: 'Pipelines',
             hidden: true,
             component: () => import('@/views/Progress/Pipelines'),
-            meta: { title: 'pipelines', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+            meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
           },
           {
             path: 'test-report/:commitId',
@@ -558,20 +559,18 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/activities',
+    path: '/project-activities',
     component: Layout,
-    name: 'Activities',
     redirect: { name: 'ProjectActivities' },
     meta: {
-      title: 'Activities',
       icon: 'el-icon-s-order',
       roles: ['Administrator', 'Project Manager']
     },
     children: [
       {
-        path: 'project-activities',
-        name: 'ProjectActivities',
+        path: '',
         component: () => import('@/views/Activities/ProjectActivities'),
+        name: 'ProjectActivities',
         meta: { title: 'Project Activities', roles: ['Administrator', 'Project Manager'] }
       }
     ]
