@@ -265,13 +265,14 @@ export default {
   },
   data() {
     const validateParentId = (rule, value, callback) => {
-      const changeRequest = this.tracker.find((item) => (item.name === 'Change Request'))
-      if (this.form.tracker_id === changeRequest.id && !value) {
-        this.$message({
-          type: 'warning',
-          message: '尚未設定本變更議題之原由議題單(父議題），請先行設定後再存檔'
-        })
-      } else if (value && this.issueId && value === this.issueId) {
+      // const changeRequest = this.tracker.find((item) => (item.name === 'Change Request'))
+      // if (this.form.tracker_id === changeRequest.id && !value) {
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '尚未設定本變更議題之原由議題單(父議題），請先行設定後再存檔'
+      //   })
+      // } else
+      if (value && this.issueId && value === this.issueId) {
         callback(new Error('The parent issue is the same issue.'))
       } else {
         callback()
