@@ -23,8 +23,6 @@ export default {
     singleProject: '個別專案',
     kanban: '議題看板',
     issueList: '議題列表',
-    createTest: '測試創建',
-    testItem: '測試項目',
     overview: '專案總覽',
     wikiList: '備忘記事',
     fileList: '檔案列表',
@@ -233,12 +231,6 @@ export default {
   },
   TestCase: {
     Index: '項次',
-    TestCase: '測試案例',
-    AddTestCase: '新增測試案例',
-    EditTestCase: '編輯測試案例',
-    Id: '測試編號',
-    Type: '類型',
-    Description: '@:general.Description',
     Method: '方法',
     Path: '路徑',
     TestResult: '測試結果',
@@ -247,16 +239,7 @@ export default {
     SearchNameOrPathOrTestResult: '搜尋名稱或路徑或測試結果',
     TestItem: '{count} 測試項目',
     Pass: '通過',
-    Fail: '失敗',
-    TestPass: '測試通過',
-    TestFail: '測試失敗'
-  },
-  TestItem: {
-    TestItem: '測試項目',
-    AddTestItem: '新增測試項目',
-    EditTestItem: '編輯測試項目',
-    Id: '編號',
-    IsPass: '是否通過?'
+    Fail: '失敗'
   },
   CheckMarx: {
     ScanId: '測試編號',

@@ -23,8 +23,6 @@ export default {
     singleProject: 'Single Project',
     kanban: 'Issue Board',
     issueList: 'Issue List',
-    createTest: 'Create Test',
-    testItem: 'Test Item',
     overview: 'Overview',
     wikiList: 'Wiki',
     fileList: 'File List',
@@ -230,12 +228,6 @@ export default {
   },
   TestCase: {
     Index: 'Requests',
-    TestCase: 'Test Case',
-    AddTestCase: 'Add Test Case',
-    EditTestCase: 'Edit Test Case',
-    Id: 'Id',
-    Type: 'Type',
-    Description: '@:general.Description',
     Method: 'Method',
     Path: 'Path',
     TestResult: 'Test Result',
@@ -244,16 +236,7 @@ export default {
     SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
     TestItem: '{count} Test Item | {count} Test Items',
     Pass: 'Pass',
-    Fail: 'Fail',
-    TestPass: 'Test Pass',
-    TestFail: 'Test Fail'
-  },
-  TestItem: {
-    TestItem: 'Test Item',
-    AddTestItem: 'Add Test Item',
-    EditTestItem: 'Edit Test Item',
-    Id: 'Id',
-    IsPass: 'Is Pass?'
+    Fail: 'Fail'
   },
   CheckMarx: {
     ScanId: 'Scan ID',

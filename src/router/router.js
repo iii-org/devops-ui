@@ -145,32 +145,6 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: 'test-case',
-        component: parentBlank,
-        meta: {
-          title: 'createTest',
-          roles: ['Administrator', 'Project Manager', 'Engineer']
-        },
-        children: [
-          {
-            path: '',
-            name: 'test-case',
-            component: () => import('@/views/Project/TestCase/TestCase'),
-            hidden: true
-          },
-          {
-            path: 'test-item/:testCaseId',
-            name: 'test-item',
-            component: () => import('@/views/Project/TestCase/TestItem'),
-            hidden: true,
-            meta: {
-              title: 'testItem',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
-          }
-        ]
-      },
-      {
         path: 'notes',
         name: 'wiki-list',
         component: () => import('@/views/Project/Wiki'),
