@@ -67,7 +67,7 @@
       <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
     </el-alert>
-    <el-card v-else>
+    <el-card>
       <div ref="matrix">
         <template slot="header">
           {{ $t('Track.DemandTraceability') }}
@@ -87,7 +87,7 @@
 <script>
 import VueMermaid from './components/vue-mermaid'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { getIssueFamily } from '@/api/issue'
+import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
@@ -199,85 +199,93 @@ export default {
       this.chartLoading = true
       this.nowFilterValue = Object.assign({}, this.filterValue)
       this.nowFilterValue = Object.assign(this.nowFilterValue, { tracker: this.trackerList, issueList: this.issueList })
-      const trackerName = this.getName(this.nowFilterValue.tracker_id, this.nowFilterValue.tracker)
       this.accessedIssueId = []
       this.data = []
       this.testFilesResult = []
       this.chartProgress.now = 0
       this.chartProgress.total = 0
       for (const item of this.nowFilterValue.issue_id) {
-        const network = new this.PaintNetwork(this, item)
-        await network.getPaintFamily(item,
-          this.getName(item, this.nowFilterValue.issueList),
-          trackerName
-        )
-        const result = await network.getResult()
-        this.$set(this.$data, 'data', [...this.data, ...result])
+        this.chartProgress.total += 1
+        const issue = await getIssue(item)
+        const network = new this.PaintNetwork(this, item, issue.data)
+        const family = await getIssueFamily(item)
+        this.chartProgress.now += 1
+        await network.getPaintFamily(issue.data, family.data)
+        await network.end()
       }
       this.chartLoading = false
     },
-    PaintNetwork(vueInstance, startPoint) {
-      const startNodeIndex = QATracker.findIndex((item) => (item.name === vueInstance.getName(vueInstance.nowFilterValue.tracker_id, vueInstance.nowFilterValue.tracker)))
-      const result = []
+    PaintNetwork(vueInstance, startPoint, rootIssue) {
+      const startNodeIndex = QATracker.findIndex((item) => (item.name === rootIssue.tracker.name))
 
-      this.getPaintFamily = async function(issue_id, issue_name, group, last_id) {
+      this.getIssueFamilyData = async function(issueList) {
+        const getIssueFamilyAPI = issueList.map(issue => {
+          vueInstance.accessedIssueId.push(issue.id)
+          return getIssueFamily(issue.id)
+        })
+        const response = await Promise.all(getIssueFamilyAPI)
+        return response.map(res => res.data)
+      }
+
+      this.getPaintFamily = async function(issue, issueFamily) {
         vueInstance.chartProgress.total += 1
-        const nowNode = QATracker.find((item) => (item.name === group))
-        const nowNodeIndex = QATracker.findIndex((item) => (item.name === group))
-        let family = await getIssueFamily(issue_id)
+        const nowNode = QATracker.find((item) => (item.name === issue.tracker.name))
+        const nowNodeIndex = QATracker.findIndex((item) => (item.name === issue.tracker.name))
         let children_id = []
-        const link = []
-        vueInstance.accessedIssueId.push(issue_id)
-        family = family.data
+        let link = []
         const findRelationTargets = await this.getRelationTargets(startNodeIndex, nowNodeIndex)
         for (const relationTarget of findRelationTargets) {
           const findRelation = nowNode.relation[relationTarget]
           if (findRelation) {
             if (findRelation['next'][0] === 'TestFile') {
-              children_id = await this.getPaintTestFile(issue_id)
+              children_id = await this.getPaintTestFile(issue.id)
+              link = ['-->']
+              vueInstance.chartProgress.now += 1
             } else {
-              const getFamilyList = await this.combineFamilyList(family, relationTarget)
-              for (const issue of getFamilyList) {
-                if (!vueInstance.accessedIssueId.includes(issue.id) && findRelation['next'].includes(issue.tracker.name)) {
-                  if (relationTarget === 'children') {
-                    await this.getPaintFamily(issue.id, issue.name, issue.tracker.name)
-                  } else {
-                    await this.getPaintFamily(issue.id, issue.name, issue.tracker.name, issue_id)
-                  }
+              const getFamilyList = await this.combineFamilyList(issue, issueFamily, relationTarget)
+              const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
+              for (const [index, subIssue] of getFamilyList.entries()) {
+                if (findRelation['next'].includes(subIssue.tracker.name)) {
+                  await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
                 }
-                if (!children_id.includes(issue.id) && relationTarget === 'children') {
-                  children_id.push(issue.id)
-                  if (issue.relation_type === 'relations') {
+                // !children_id.includes(issue.id) &&
+                if (subIssue.relation_type === 'children') {
+                  children_id.push(subIssue.id)
+                  link.push('-->')
+                } else if (subIssue.relation_type === 'relations') {
+                  const checkChartRelations = vueInstance.data.filter(item => item.next && item.next.includes(subIssue.id)).length <= 0
+                  if (checkChartRelations) {
+                    children_id.push(subIssue.id)
                     link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
-                  } else {
-                    link.push('-->')
                   }
                 }
+                vueInstance.chartProgress.now += 1
               }
             }
           }
         }
+        await this.paintNode(issue, children_id, link)
+      }
+      this.paintNode = function(issue, children, link) {
+        // TODO: issue subject or name?
+        const issueName = (issue.subject) ? issue.subject : issue.name
+        const checkIssueName = issueName.replace(/"/g, '&quot;')
         const point = {
-          id: issue_id,
-          text: '"#' + issue_id + '-' + issue_name + '"',
+          id: issue.id,
+          text: '"#' + issue.id + '-' + checkIssueName + '"',
           link: link,
-          group: vueInstance.$t('Issue.' + group),
-          next: children_id,
+          group: vueInstance.$t('Issue.' + issue.tracker.name),
+          next: children,
           editable: true
         }
-        if (link.length <= 0) {
+        if (issue.relation_type === 'parent') {
+          point['next'] = [issue.relation_id]
           point['link'] = ['-->']
         }
-        if (last_id) {
-          point['next'] = [last_id]
-        } else {
-          point['next'] = children_id
-        }
-        if (issue_id === startPoint) {
+        if (issue.id === startPoint) {
           point['style'] = 'fill:#ffafcc'
         }
-        result.push(point)
-        vueInstance.chartProgress.now += 1
+        vueInstance.data.push(point)
       }
       this.getPaintTestFile = async function(issue_id) {
         vueInstance.chartProgress.total += 1
@@ -287,7 +295,7 @@ export default {
         if (test.hasOwnProperty('test_files')) {
           test.test_files.forEach((item) => {
             if (!vueInstance.testFilesResult.includes(item.file_name)) {
-              result.push({
+              vueInstance.data.push({
                 id: item.file_name,
                 link: ['-->'],
                 text: '"' + item.file_name + '"',
@@ -305,7 +313,7 @@ export default {
                 const total = [item.the_last_test_result.result.casesPassed + '/' + (item.the_last_test_result.result.casesTotal)]
                 last_result = total + '<br/>' + item.the_last_test_result.branch + '<br/> ' + commit_icon + item.the_last_test_result.commit_id
               }
-              result.push({
+              vueInstance.data.push({
                 id: item.software_name + '.' + item.file_name + '_result',
                 link: ['-->'],
                 text: '"' + last_result + '"',
@@ -321,19 +329,25 @@ export default {
         return children
       }
 
-      this.combineFamilyList = function(family, relationTarget) {
+      this.combineFamilyList = function(issue, family, relationTarget) {
         let getFamilyList = []
         if (family.hasOwnProperty(relationTarget)) {
           if (!Array.isArray(family[relationTarget])) {
             family[relationTarget] = [family[relationTarget]]
           }
-          family[relationTarget] = family[relationTarget].map((item) => ({ ...item, relation_type: relationTarget }))
+          family[relationTarget] = this.formatFamilyList(issue, family[relationTarget], relationTarget)
           getFamilyList = getFamilyList.concat(family[relationTarget])
         }
         if (family.hasOwnProperty('relations')) {
+          family['relations'] = this.formatFamilyList(issue, family['relations'], 'relations')
           getFamilyList = getFamilyList.concat(family['relations'])
         }
+        getFamilyList = getFamilyList.filter(issue => !vueInstance.accessedIssueId.includes(issue.id))
         return getFamilyList
+      }
+
+      this.formatFamilyList = function(issue, family, relationTarget) {
+        return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
       }
 
       this.getRelationTargets = function(startNodeIndex, nowNodeIndex) {
@@ -346,8 +360,8 @@ export default {
         return findRelationTargets
       }
 
-      this.getResult = function() {
-        return result
+      this.end = function() {
+        vueInstance.chartProgress.now = vueInstance.chartProgress.total
       }
     },
     getName(id, list, translate) {
