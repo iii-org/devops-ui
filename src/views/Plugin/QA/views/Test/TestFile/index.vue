@@ -335,7 +335,6 @@ export default {
       })
     },
     updateData() {
-      console.log('updateData')
       this.resetFilterVersionSoftwareData()
       const softwareOpt = {
         keys: ['software_name'],

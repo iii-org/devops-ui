@@ -122,9 +122,23 @@ export const asyncRoutes = [
         children: [
           {
             path: '',
-            name: 'Project Settings',
+            component: parentBlank,
             hidden: true,
-            component: () => import('@/views/Project/Settings/roles/QA')
+            children: [
+              {
+                path: '',
+                name: 'Project Settings',
+                component: () => import('@/views/Project/Settings/roles/QA'),
+                meta: { roles: ['QA'] }
+              },
+              {
+                path: 'participate-project/:user_id',
+                name: 'ParticipateProject',
+                hidden: true,
+                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                meta: { title: 'Participate Project', roles: ['QA'] }
+              }
+            ]
           },
           {
             path: 'issue-transfer/:userId',
@@ -134,13 +148,6 @@ export const asyncRoutes = [
             meta: { title: 'Issue Transfer', roles: ['Administrator', 'QA', 'Project Manager'] }
           }
         ]
-      },
-      {
-        path: 'participate-project/:user_id',
-        name: 'ParticipateProject',
-        hidden: true,
-        component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
-        meta: { title: 'Participate Project', roles: ['Administrator', 'QA'] }
       }
     ]
   },

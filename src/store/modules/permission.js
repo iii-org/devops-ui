@@ -77,7 +77,6 @@ const actions = {
         // devops root parent
         if (mainItemsPath.includes(item.path)) { // if same
           const resultIndex = result.findIndex((menu) => (menu.path === item.path)) // find devops root id
-          console.log(item.path, resultIndex)
           if (result[resultIndex].hasOwnProperty('children') && pluginItem[pluginIndex] && pluginItem[pluginIndex].hasOwnProperty('children')) {
             // find children
             const pluginChildren = pluginItem[pluginIndex].children

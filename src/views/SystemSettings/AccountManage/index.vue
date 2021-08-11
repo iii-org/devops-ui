@@ -150,7 +150,7 @@ export default {
       if (column.label !== this.$t('general.Actions')) this.showUserDialog(row, 'Edit User')
     },
     handleParticipateDialog(user_id) {
-      this.$router.push({ name: 'ParticipateProject', params: { user_id }})
+      this.$router.push({ name: 'SystemParticipateProject', params: { user_id }})
     }
   }
 }

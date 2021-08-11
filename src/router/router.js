@@ -63,7 +63,7 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: 'overview/dashboard',
+        path: 'dashboard',
         name: 'dashboard-admin',
         component: () => import('@/views/Overview/Dashboard/roles/admin'),
         meta: {
@@ -73,7 +73,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'overview/project-list',
+        path: 'project-list',
         name: 'project-list-pm',
         component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
         meta: {
@@ -83,7 +83,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'overview/project-list',
+        path: 'project-list',
         name: 'project-list-rd',
         component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
         meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
@@ -222,9 +222,23 @@ export const asyncRoutes = [
         children: [
           {
             path: '',
-            name: 'Project Settings',
+            component: parentBlank,
             hidden: true,
-            component: () => import('@/views/Project/Settings/index')
+            children: [
+              {
+                path: '',
+                name: 'Project Settings',
+                component: () => import('@/views/Project/Settings/index'),
+                meta: { roles: ['Administrator', 'Project Manager'] }
+              },
+              {
+                path: 'participate-project/:user_id',
+                name: 'ParticipateProject',
+                hidden: true,
+                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                meta: { title: 'Participate Project', roles: ['Administrator', 'QA'] }
+              }
+            ]
           },
           {
             path: 'advance-branch-settings',
@@ -572,16 +586,30 @@ export const asyncRoutes = [
     children: [
       {
         path: 'account-manage',
-        name: 'AccountManage',
-        component: () => import('@/views/SystemSettings/AccountManage'),
-        meta: { title: 'Account Manage', roles: ['Administrator'] }
-      },
-      {
-        path: 'participate-project/:user_id',
-        name: 'ParticipateProject',
-        hidden: true,
-        component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
-        meta: { title: 'Participate Project', roles: ['Administrator', 'QA'] }
+        component: parentBlank,
+        meta: { title: 'Account Manage', roles: ['Administrator'] },
+        children: [
+          {
+            path: '',
+            component: parentBlank,
+            hidden: true,
+            children: [
+              {
+                path: '',
+                name: 'AccountManage',
+                component: () => import('@/views/SystemSettings/AccountManage'),
+                meta: { roles: ['Administrator'] }
+              },
+              {
+                path: 'participate-project/:user_id',
+                name: 'SystemParticipateProject',
+                hidden: true,
+                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                meta: { title: 'Participate Project', roles: ['Administrator'] }
+              }
+            ]
+          }
+        ]
       },
       {
         path: 'system-activities',
