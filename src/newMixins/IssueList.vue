@@ -246,10 +246,7 @@ export default {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.refTable.toggleRowExpansion(row)
       } else {
-        debugger
-        console.log(row.id)
         this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
-        debugger
       }
     },
     handleEdit(id) {

@@ -240,7 +240,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import { Status, Priority, Tracker, QuickAddIssue } from '@/components/Issue'
+import { Status, Priority, Tracker } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/newMixins'
@@ -255,7 +255,6 @@ export default {
   name: 'ClosedIssueList',
   components: {
     ContextMenu,
-    QuickAddIssue,
     Priority,
     Status,
     Tracker,
@@ -575,9 +574,6 @@ export default {
     },
     hasRelationIssue(row) {
       return row.family
-    },
-    handleQuickAddClose() {
-      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
     },
     handleSortChange({ prop, order }) {
       const orderBy = this.checkOrder(order)
