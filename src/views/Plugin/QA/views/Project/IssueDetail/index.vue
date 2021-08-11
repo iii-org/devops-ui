@@ -61,13 +61,14 @@
             </el-col>
             <el-col ref="IssueRelation">
               <el-collapse v-if="countRelationIssue>0">
-                <el-collapse-item>
-                  <div slot="title">
-                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
-                    <el-button size="mini" type="primary" @click="toggleIssueMatrixDialog">
-                      {{ $t('Issue.TraceabilityMatrix') }}
-                    </el-button>
-                  </div>
+                <!--                <el-collapse-item>-->
+                <!--                  <div slot="title">-->
+                <!--                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}-->
+                <!--                    <el-button size="mini" type="primary" @click="toggleIssueMatrixDialog">-->
+                <!--                      {{ $t('Issue.TraceabilityMatrix') }}-->
+                <!--                    </el-button>-->
+                <!--                  </div>-->
+                <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
                   <ul>
                     <li v-if="Object.keys(parent).length>0">
                       {{ $t('Issue.ParentIssue') }}：
