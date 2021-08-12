@@ -54,7 +54,12 @@
         >
           <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
           <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')" prop="condition" />
-          <el-table-column align="center" :label="$t('ProjectSettings.Days')" prop="day" />
+          <el-table-column align="center" :label="$t('ProjectSettings.Days')">
+            <template slot-scope="scope">
+              <input v-show="scope.row.isEnabled" v-model="scope.row.day" type="text" class="text-center">
+              <span v-show="!scope.row.isEnabled">{{ scope.row.day }}</span>
+            </template>
+          </el-table-column>
           <el-table-column align="center" :label="$t('ProjectSettings.Status')">
             <template slot-scope="scope">
               <div v-if="scope.row.isEnabled" class="font-medium">{{ $t('general.Enable') }}</div>
@@ -63,8 +68,8 @@
           </el-table-column>
           <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.isEnabled" type="danger" size="mini" plain>{{ $t('general.Disable') }}</el-button>
-              <el-button v-else type="primary" size="mini" plain>{{ $t('general.Enable') }}</el-button>
+              <el-button v-if="scope.row.isEnabled" type="danger" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Disable') }}</el-button>
+              <el-button v-else type="primary" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Enable') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -128,6 +133,9 @@ export default {
         this.showNoProjectWarning()
         return []
       }
+    },
+    toggleUsage(row) {
+      row.isEnabled = !row.isEnabled
     },
     handleTabClick(tab, event) {
     }
