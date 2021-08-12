@@ -24,7 +24,6 @@
       :element-loading-text="$t('Loading')"
       fit
       highlight-current-row
-      height="100%"
     >
       <el-table-column align="center" :label="$t('File.Id')" min-width="110">
         <template slot-scope="scope">
@@ -69,6 +68,9 @@
           </el-popconfirm>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"

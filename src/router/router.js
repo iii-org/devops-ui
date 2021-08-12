@@ -151,7 +151,7 @@ export const asyncRoutes = [
         meta: { title: 'wikiList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'file',
+        path: 'files',
         name: 'file-list',
         component: () => import('@/views/Project/Files'),
         meta: { title: 'fileList', roles: ['Administrator', 'Project Manager', 'Engineer'] }

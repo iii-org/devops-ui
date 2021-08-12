@@ -36,7 +36,7 @@
           </el-form-item>
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          <em class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
       <el-input
@@ -67,7 +67,7 @@
              @click="activeDashboard=card.id"
         >
           <h3 class="pb-2" :class="{'divider':activeDashboard===card.id}">
-            <i v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}</h3>
+            <em v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}</h3>
           <p class="m-0 mb-2 text-right">{{ total[card.id] }}</p>
         </div>
       </el-col>
@@ -91,7 +91,7 @@ import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
 
 export default {
-  name: 'Dashboard',
+  name: 'MyWork',
   components: {
     ProjectListSelector,
     issueList: () => import('./components/issueList'),

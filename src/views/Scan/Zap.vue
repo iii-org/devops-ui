@@ -65,10 +65,13 @@
             :underline="false"
             @click="showFullLog(scope.row.full_log)"
           >
-            <i class="el-icon-tickets" style="font-size: 16px" />
+            <em class="el-icon-tickets" style="font-size: 16px" />
           </el-link>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"

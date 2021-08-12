@@ -33,6 +33,7 @@ export default {
   },
   methods: {
     async loadData() {
+      if (this.selectedProjectId === -1) return
       this.listLoading = true
       this.listData = await this.fetchData()
       this.listLoading = false

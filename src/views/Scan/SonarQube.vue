@@ -55,6 +55,9 @@
         </template>
       </el-table-column>
       <el-table-column-time :label="$t('general.RunAt')" prop="date" />
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"

@@ -20,6 +20,9 @@
         </template>
       </el-table-column>
       <el-table-column-time prop="last_commit_time" width="170" :label="$t('general.LastUpdateTime')" />
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -52,22 +55,11 @@ export default {
   methods: {
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchData() {
-      if (this.selectedProjectId === -1) {
-        this.showNoProjectWarning()
-        return []
-      }
       await this.getBranchesByProject(this.selectedRepositoryId)
       return this.branchList
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
-    },
-    showNoProjectWarning() {
-      this.$message({
-        title: this.$t('general.Warning'),
-        message: this.$t('Notify.NoProject'),
-        type: 'warning'
-      })
     }
   }
 }

@@ -118,6 +118,9 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -177,7 +180,7 @@ export default {
     async setStar(id, star) {
       if (star) {
         await postStarProject(id)
-        await this.$message({
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
           type: 'success'
@@ -185,12 +188,12 @@ export default {
         await this.loadData()
       } else {
         await deleteStarProject(id)
-        await this.$message({
+        await this.loadData()
+        this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.loadData()
       }
     }
   }

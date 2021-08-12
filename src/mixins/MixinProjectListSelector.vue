@@ -50,6 +50,7 @@ export default {
   },
   methods: {
     async loadData(date) {
+      if (this.selectedProjectId === -1) return
       this.listLoading = true
       this.listData = await this.fetchData(date)
       this.listLoading = false

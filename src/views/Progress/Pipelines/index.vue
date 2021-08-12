@@ -94,6 +94,9 @@
             <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit_id)" />
           </template>
         </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
+        </template>
       </el-table>
       <pagination
         :total="listQuery.total"
@@ -136,7 +139,7 @@ export default {
       isLoading: false,
       isUpdating: false,
       rowHeight: 90,
-      lastUpdateTime: '',
+      lastUpdateTime: '-',
       timer: null,
       focusPipeline: {
         id: null,
@@ -193,14 +196,11 @@ export default {
       this.loadData(10, startId)
     },
     async loadData(limit, startId) {
+      if (this.selectedProjectId === -1) return
       this.isLoading = true
       await this.fetchData(limit, startId)
     },
     fetchData(limit = 10, startId = this.listQuery.start) {
-      if (this.selectedProjectId === -1) {
-        this.showNoProjectWarning()
-        return []
-      }
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
       getPipelines(this.selectedRepositoryId, { limit, start: startId }, { cancelToken: this.cancelToken })
@@ -216,13 +216,6 @@ export default {
           this.isUpdating = false
         })
         .catch(() => {})
-    },
-    showNoProjectWarning() {
-      this.$message({
-        title: this.$t('general.Warning'),
-        message: this.$t('Notify.NoProject'),
-        type: 'warning'
-      })
     },
     updatePipeExecs(resData) {
       if (resData.pipe_execs.length > 0) {

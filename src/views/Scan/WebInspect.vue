@@ -68,10 +68,13 @@
             :underline="false"
             @click="handleTestReportDetail(scope.row)"
           >
-            <i class="el-icon-document" style="font-size: 16px" />
+            <em class="el-icon-document" style="font-size: 16px" />
           </el-link>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"

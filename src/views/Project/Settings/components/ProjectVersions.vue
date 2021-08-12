@@ -87,7 +87,7 @@ export default {
       this.$refs.modifyVersionDialog.form = Object.assign({}, rowData)
     },
     async handleDelete(row) {
-      this.$confirm(`Are you sure to Delete Version ${row.name}?`, 'Delete', {
+      this.$confirm(this.$t('Version.ConfirmDelete', { version: row.name }), this.$t('general.Delete'), {
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
         type: 'error'

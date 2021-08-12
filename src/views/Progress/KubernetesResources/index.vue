@@ -1,9 +1,10 @@
 <template>
-  <el-row class="app-container">
+  <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-col>
       <project-list-selector />
       <el-divider />
       <el-row :gutter="12">
+        <el-empty v-if="listData.length < 1" :description="$t('general.NoData')" />
         <el-col v-for="item in listData" :key="item.title" :md="12" :lg="8" :xl="6">
           <el-card
             v-loading="listLoading"
@@ -32,7 +33,7 @@
 
 <script>
 import { getProjectUsage } from '@/api/kubernetes'
-import MixinElCardWithAProject from '@/mixins/MixinElCardWithAProject'
+import { BasicData, SearchBar, ProjectSelector } from '@/newMixins'
 import { formatChartDataResult, formateUsedQuota, getQuotaUnit, roundValue } from '@/utils/k8sResourceFormatter'
 import resourcePie from './components/resourcePie'
 
@@ -41,12 +42,9 @@ export default {
   components: {
     resourcePie
   },
-  mixins: [MixinElCardWithAProject],
+  mixins: [BasicData, SearchBar, ProjectSelector],
   methods: {
     async fetchData() {
-      if (this.selectedProjectId === -1) {
-        return []
-      }
       const res = await getProjectUsage(this.selectedProjectId)
       return this.handleChartData(res.data)
     },

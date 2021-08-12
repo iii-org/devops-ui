@@ -230,7 +230,7 @@ export default {
           if (data.hasOwnProperty('relations')) {
             await this.$set(row, 'relations', data.relations)
           }
-          await this.$set(row, 'isLoadingFamily', false)
+          this.$set(row, 'isLoadingFamily', false)
         } catch (e) {
           //   null
           return Promise.resolve()

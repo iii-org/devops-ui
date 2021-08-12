@@ -123,9 +123,9 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="350">
+      <el-table-column :label="$t('general.Actions')" width="350">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">編輯
+          <el-button size="small" type="primary" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">{{ $t('general.Edit') }}
           </el-button>
           <el-button size="small" type="success" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">新增計畫
           </el-button>
@@ -143,6 +143,9 @@
           </el-popconfirm>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -180,7 +183,7 @@
       <template slot="footer">
         <el-button v-if="hasUploadFile" type="primary"
                    @click="uploadCollection"
-        >上傳
+        >{{ $t('File.Upload') }}
         </el-button>
         <el-button v-else
                    @click="closeUploadCollection"
@@ -271,19 +274,7 @@ export default {
   },
   methods: {
     ...mapActions(['projects/getProjectList', 'qa/setFileName']),
-    showNoProjectWarning() {
-      this.$message({
-        title: this.$t('general.Warning'),
-        message: this.$t('Notify.NoProject'),
-        type: 'warning'
-      })
-      this.listLoading = false
-    },
     async fetchData() {
-      if (this.selectedProjectId === -1) {
-        this.showNoProjectWarning()
-        return []
-      }
       let data = await getTestFileList(this.selectedProjectId)
       data = data.data
       this.software = [

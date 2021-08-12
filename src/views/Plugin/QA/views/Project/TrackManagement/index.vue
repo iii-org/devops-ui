@@ -49,7 +49,7 @@
           </el-form-item>
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          <em class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
       <el-input
@@ -116,7 +116,7 @@
               <div v-if="scope.row.hasOwnProperty('isLoadingFamily') && scope.row.isLoadingFamily" class="p-5" />
               <ul v-else>
                 <li v-if="scope.row.hasOwnProperty('parent') && Object.keys(scope.row.parent).length > 0">
-                  <b>{{ $t('Issue.ParentIssue') }}:</b>
+                  <strong>{{ $t('Issue.ParentIssue') }}:</strong>
                   <el-link
                     :style="{ 'font-size': '14px', cursor: 'pointer' }"
                     :underline="false"
@@ -147,7 +147,7 @@
                   </el-popconfirm>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('children') && scope.row.children.length>0">
-                  <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+                  <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
                   <ol>
                     <template v-for="child in scope.row.children">
                       <li v-if="Object.keys(child).length > 0" :key="child.id">
@@ -181,7 +181,7 @@
                   </ol>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('relations') && scope.row.relations.length>0">
-                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
+                  <strong>{{ $t('Issue.RelatedIssue') }}:</strong>
                   <ol>
                     <template v-for="child in scope.row.relations">
                       <li v-if="Object.keys(child).length > 0" :key="child.id">

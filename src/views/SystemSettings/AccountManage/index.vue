@@ -40,11 +40,11 @@
             {{ $t('general.Participate') }}
           </el-button>
           <el-popconfirm
-            confirm-button-text="Delete"
-            cancel-button-text="Cancel"
+            :title="$t('Notify.confirmDelete')"
+            :confirm-button-text="$t('general.Delete')"
+            :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
-            title="Are you sure?"
             @onConfirm="handleDelete(scope.row.id)"
           >
             <el-button slot="reference" size="mini" type="danger">

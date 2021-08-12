@@ -19,7 +19,6 @@
       :element-loading-text="$t('Loading')"
       fit
       highlight-current-row
-      height="100%"
     >
       <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
       <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
@@ -48,7 +47,11 @@
             </el-button>
           </el-popconfirm>
         </template>
+
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
@@ -142,19 +145,19 @@
 
 <script>
 import { deleteWiki, getWikiDetail, getWikiList, putWikiDetail } from '@/api/wiki'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { BasicData, Table, Pagination, SearchBar, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import 'codemirror/lib/codemirror.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/vue-editor'
 
 export default {
-  name: 'ProjectWiki',
+  name: 'ProjectNotes',
   components: {
     ElTableColumnTime,
     editor: Editor
   },
-  mixins: [MixinElTableWithAProject],
+  mixins: [BasicData, Table, Pagination, SearchBar, ProjectSelector],
   data() {
     return {
       isLoading: false,
@@ -183,10 +186,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      if (this.selectedProjectId === -1) {
-        this.showNoProjectWarning()
-        return []
-      }
       return (await getWikiList(this.selectedProjectId)).data.wiki_pages
     },
     showNoProjectWarning() {

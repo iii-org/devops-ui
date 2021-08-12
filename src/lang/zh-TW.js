@@ -318,7 +318,8 @@ export default {
     open: '開啟',
     Open: '開啟',
     Locked: '鎖定',
-    EndDate: '結束日期'
+    EndDate: '結束日期',
+    ConfirmDelete: '確認@:(general.Delete)「{version}」嗎？'
   },
   MyWork: {
     AssignedToMe: '指派給我',

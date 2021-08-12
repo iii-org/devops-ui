@@ -3,7 +3,7 @@
     <el-col>
       <project-list-selector>
         <el-input
-          v-model="searchData"
+          v-model="keyword"
           style="width: 250px"
           prefix-icon="el-icon-search"
           :placeholder="$t('general.SearchBranch')"
@@ -38,15 +38,15 @@
                   {{ $t('general.Redeploy') }}
                 </el-button>
                 <el-popconfirm
-                  confirm-button-text="Delete"
-                  cancel-button-text="Cancel"
+                  :confirm-button-text="$t('general.Delete')"
+                  :cancel-button-text="$t('general.Cancel')"
                   icon="el-icon-info"
                   icon-color="red"
-                  title="Are you sure?"
+                  :title="$t('Notify.confirmDelete')"
                   @onConfirm="handleDelete(selectedProject.id, pod.branch)"
                 >
                   <el-button slot="reference" size="mini" type="danger" plain>
-                    <i class="el-icon-delete" />
+                    <em class="el-icon-delete" />
                     {{ $t('general.Delete') }}
                   </el-button>
                 </el-popconfirm>
@@ -171,7 +171,7 @@
         </el-col>
       </el-row>
       <div v-else class="text-center">
-        {{ $t('general.NoData') }}
+        <el-empty :description="$t('general.NoData')" />
       </div>
     </el-col>
   </el-row>
@@ -179,14 +179,14 @@
 
 <script>
 import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName } from '@/api/kubernetes'
-import MixinElCardWithAProject from '@/mixins/MixinElCardWithAProject'
+import { BasicData, SearchBar, ProjectSelector } from '@/newMixins'
 
 export default {
   name: 'ProgressDevEnvironment',
-  mixins: [MixinElCardWithAProject],
+  mixins: [BasicData, SearchBar, ProjectSelector],
   data() {
     return {
-      searchKey: 'branch',
+      searchKeys: ['branch'],
       btnLoading: false,
       timer: null,
       lastUpdateTime: '',

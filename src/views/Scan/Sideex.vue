@@ -10,7 +10,7 @@
     </project-list-selector>
     <el-divider />
     <p class="text-right text-info">
-      <i class="el-icon-warning" />{{ $t('Sideex.promptMessage') }}
+      <em class="el-icon-warning" />{{ $t('Sideex.promptMessage') }}
     </p>
     <el-table
       v-loading="listLoading"
@@ -61,10 +61,13 @@
             :underline="false"
             @click="fetchReportData(scope.row.id)"
           >
-            <i class="el-icon-tickets" style="font-size: 16px" />
+            <em class="el-icon-tickets" style="font-size: 16px" />
           </el-link>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"

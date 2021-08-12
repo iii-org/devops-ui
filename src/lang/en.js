@@ -315,7 +315,8 @@ export default {
     open: 'Open',
     Open: 'Open',
     Locked: 'Locked',
-    EndDate: 'EndDate'
+    EndDate: 'EndDate',
+    ConfirmDelete: 'Are you sure to @:(general.Delete) 「{version}」?'
   },
   MyWork: {
     AssignedToMe: 'Assigned to me',

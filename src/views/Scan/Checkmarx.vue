@@ -58,6 +58,9 @@
           <div class="text-sm">{{ scope.row.report_ready ? '' : $t('CheckMarx.InProcess') }}</div>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
