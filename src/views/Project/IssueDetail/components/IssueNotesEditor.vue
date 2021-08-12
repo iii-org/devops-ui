@@ -5,7 +5,7 @@
       ref="mdEditor"
       initial-edit-type="wysiwyg"
       :options="editorOptions"
-      height="100px"
+      height="auto"
       @change="onChange"
     />
   </div>
