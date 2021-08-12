@@ -30,7 +30,7 @@
 import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
-import ProjectIssueDetail from './'
+import ProjectIssueDetail from '../../'
 
 export default {
   name: 'IssueMatrix',
@@ -77,11 +77,11 @@ export default {
     async initChart() {
       await this.onPaintChart()
     },
-    highLight: function (value) {
+    highLight: function(value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function (str) {
+      return value.replace(reg, function(str) {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     },
@@ -99,13 +99,14 @@ export default {
       this.chartLoading = false
     },
     PaintNetwork(vueInstance, startPoint) {
+      const fetchingParent = {}
       this.getIssueFamilyData = async function(issueList) {
         const getIssueFamilyAPI = issueList.map(issue => {
           vueInstance.accessedIssueId.push(issue.id)
           return getIssueFamily(issue.id)
         })
         const response = await Promise.all(getIssueFamilyAPI)
-        return response.map(res => res.data)
+        return Promise.resolve(response.map(res => res.data))
       }
 
       this.getPaintFamily = async function(issue, issueFamily) {
@@ -120,15 +121,29 @@ export default {
             children_id.push(subIssue.id)
             link.push('-->')
           } else if (subIssue.relation_type === 'relations') {
-            const checkChartRelations = vueInstance.data.filter(item => item.next.includes(subIssue.id)).length <= 0
+            const checkChartRelations = vueInstance.data.filter(item => item.next.includes(subIssue.id) || item.id === issue.id).length <= 0
             if (checkChartRelations) {
               children_id.push(subIssue.id)
               link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
+            }
+          } else if (issue.relation_type === 'parent') {
+            const getParentIssue = vueInstance.data.find(item => item.id === subIssue.relation_id)
+            if (getParentIssue) {
+              const newNext = getParentIssue['next']
+              const newLink = getParentIssue['link']
+              newNext.push(subIssue.id)
+              newLink.push('-->')
+              vueInstance.$set(getParentIssue, 'next', newNext)
+              vueInstance.$set(getParentIssue, 'link', newLink)
+            } else {
+              if (!fetchingParent.hasOwnProperty(subIssue.id)) fetchingParent[subIssue.id] = []
+              fetchingParent[subIssue.id].push(subIssue.relation_id)
             }
           }
           vueInstance.chartProgress.now += 1
         }
         await this.paintNode(issue, children_id, link)
+        return Promise.resolve()
       }
 
       this.paintNode = function(issue, children, link) {
@@ -141,14 +156,11 @@ export default {
           next: children,
           editable: true
         }
-        if (issue.relation_type === 'parent') {
-          point['next'] = [issue.relation_id]
-          point['link'] = ['-->']
-        }
         if (issue.id === startPoint) {
           point['style'] = 'fill:#ffafcc'
         }
         vueInstance.data.push(point)
+        return Promise.resolve()
       }
 
       this.combineFamilyList = function(issue, family) {
@@ -171,11 +183,21 @@ export default {
           }
         })
         getFamilyList = getFamilyList.filter(issue => !vueInstance.accessedIssueId.includes(issue.id))
-        return getFamilyList
+        return Promise.resolve(getFamilyList)
       }
 
       this.end = function() {
+        Object.keys(fetchingParent).forEach((parent_id) => {
+          const getParentIssue = vueInstance.data.find(item => (item.id).toString() === parent_id)
+          if (getParentIssue) {
+            const link = []
+            for (let i = 0; i < fetchingParent[parent_id].length; i++) link.push('-->')
+            vueInstance.$set(getParentIssue, 'next', getParentIssue['next'].concat(fetchingParent[parent_id]))
+            vueInstance.$set(getParentIssue, 'link', getParentIssue['link'].concat(link))
+          }
+        })
         vueInstance.chartProgress.now = vueInstance.chartProgress.total
+        return Promise.resolve()
       }
     },
     editNode(nodeId) {

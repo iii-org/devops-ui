@@ -224,7 +224,7 @@ export default {
           return getIssueFamily(issue.id)
         })
         const response = await Promise.all(getIssueFamilyAPI)
-        return response.map(res => res.data)
+        return Promise.resolve(response.map(res => res.data))
       }
 
       this.getPaintFamily = async function(issue, issueFamily) {
@@ -265,7 +265,9 @@ export default {
           }
         }
         await this.paintNode(issue, children_id, link)
+        return Promise.resolve()
       }
+
       this.paintNode = function(issue, children, link) {
         // TODO: issue subject or name?
         const issueName = (issue.subject) ? issue.subject : issue.name
@@ -286,7 +288,9 @@ export default {
           point['style'] = 'fill:#ffafcc'
         }
         vueInstance.data.push(point)
+        return Promise.resolve()
       }
+
       this.getPaintTestFile = async function(issue_id) {
         vueInstance.chartProgress.total += 1
         let test = await getTestPlanDetail(vueInstance.selectedProjectId, issue_id)
@@ -326,7 +330,7 @@ export default {
           })
         }
         vueInstance.chartProgress.now += 1
-        return children
+        return Promise.resolve(children)
       }
 
       this.combineFamilyList = function(issue, family, relationTarget) {
@@ -343,7 +347,7 @@ export default {
           getFamilyList = getFamilyList.concat(family['relations'])
         }
         getFamilyList = getFamilyList.filter(issue => !vueInstance.accessedIssueId.includes(issue.id))
-        return getFamilyList
+        return Promise.resolve(getFamilyList)
       }
 
       this.formatFamilyList = function(issue, family, relationTarget) {
@@ -362,6 +366,7 @@ export default {
 
       this.end = function() {
         vueInstance.chartProgress.now = vueInstance.chartProgress.total
+        return Promise.resolve()
       }
     },
     getName(id, list, translate) {
