@@ -94,12 +94,12 @@ export default {
       const network = new this.PaintNetwork(this, this.row.id)
       const family = await getIssueFamily(this.row.id)
       this.chartProgress.now = 1
+      this.accessedIssueId.push(this.row.id)
       await network.getPaintFamily(this.row, family.data)
       await network.end()
       this.chartLoading = false
     },
     PaintNetwork(vueInstance, startPoint) {
-      const fetchingParent = {}
       this.getIssueFamilyData = async function(issueList) {
         const getIssueFamilyAPI = issueList.map(issue => {
           vueInstance.accessedIssueId.push(issue.id)
@@ -111,37 +111,30 @@ export default {
 
       this.getPaintFamily = async function(issue, issueFamily) {
         vueInstance.chartProgress.total += 1
-        const children_id = []
-        const link = []
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
           await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
-          if (subIssue.relation_type === 'children') {
-            children_id.push(subIssue.id)
-            link.push('-->')
-          } else if (subIssue.relation_type === 'relations') {
-            const checkChartRelations = vueInstance.data.filter(item => item.next.includes(subIssue.id) || item.id === issue.id).length <= 0
-            if (checkChartRelations) {
-              children_id.push(subIssue.id)
-              link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
-            }
-          } else if (issue.relation_type === 'parent') {
-            const getParentIssue = vueInstance.data.find(item => item.id === subIssue.relation_id)
-            if (getParentIssue) {
-              const newNext = getParentIssue['next']
-              const newLink = getParentIssue['link']
-              newNext.push(subIssue.id)
-              newLink.push('-->')
-              vueInstance.$set(getParentIssue, 'next', newNext)
-              vueInstance.$set(getParentIssue, 'link', newLink)
-            } else {
-              if (!fetchingParent.hasOwnProperty(subIssue.id)) fetchingParent[subIssue.id] = []
-              fetchingParent[subIssue.id].push(subIssue.relation_id)
-            }
-          }
           vueInstance.chartProgress.now += 1
         }
+        const link = []
+        let children = []
+        let relations = []
+        if (issueFamily['children']) {
+          children = issueFamily['children'].map(item => item.id)
+          for (let index = 0; index < children.length; index++) {
+            link.push('-->')
+          }
+        }
+        if (issueFamily['relations']) {
+          relations = issueFamily['relations']
+            .map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
+            .filter(item => item !== null)
+          for (let index = 0; index < relations.length; index++) {
+            link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
+          }
+        }
+        const children_id = children.concat(relations)
         await this.paintNode(issue, children_id, link)
         return Promise.resolve()
       }
@@ -173,11 +166,7 @@ export default {
           }
           family[relationType] = family[relationType]
             .filter(item => !(item.status_id === close && item.tracker_id === bug))
-            .map(item => ({
-              ...item,
-              relation_type: relationType,
-              relation_id: issue.id
-            }))
+          family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
           if (family.hasOwnProperty(relationType)) {
             getFamilyList = getFamilyList.concat(family[relationType])
           }
@@ -186,16 +175,21 @@ export default {
         return Promise.resolve(getFamilyList)
       }
 
+      this.formatFamilyList = function(issue, family, relationTarget) {
+        return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
+      }
+
+      this.filterAccessedIssue = function(family) {
+        return Promise.resolve(family.filter(issue => !vueInstance.accessedIssueId.includes(issue.id)))
+      }
+
+      this.checkUniqueRelationLine = function(subIssue_id, issue_id) {
+        return vueInstance.data.filter(item =>
+          (item.next.includes(subIssue_id) && item.id === issue_id) || item.next.includes(issue_id) && item.id === subIssue_id
+        ).length <= 0
+      }
+
       this.end = function() {
-        Object.keys(fetchingParent).forEach((parent_id) => {
-          const getParentIssue = vueInstance.data.find(item => (item.id).toString() === parent_id)
-          if (getParentIssue) {
-            const link = []
-            for (let i = 0; i < fetchingParent[parent_id].length; i++) link.push('-->')
-            vueInstance.$set(getParentIssue, 'next', getParentIssue['next'].concat(fetchingParent[parent_id]))
-            vueInstance.$set(getParentIssue, 'link', getParentIssue['link'].concat(link))
-          }
-        })
         vueInstance.chartProgress.now = vueInstance.chartProgress.total
         return Promise.resolve()
       }

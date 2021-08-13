@@ -249,18 +249,25 @@ export default {
                   await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
                 }
                 // !children_id.includes(issue.id) &&
-                if (subIssue.relation_type === 'children') {
-                  children_id.push(subIssue.id)
-                  link.push('-->')
-                } else if (subIssue.relation_type === 'relations') {
-                  const checkChartRelations = vueInstance.data.filter(item => item.next && item.next.includes(subIssue.id)).length <= 0
-                  if (checkChartRelations) {
-                    children_id.push(subIssue.id)
-                    link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
-                  }
-                }
                 vueInstance.chartProgress.now += 1
               }
+              let children = []
+              let relations = []
+              if (issueFamily['children']) {
+                children = issueFamily['children'].map(item => item.id)
+                for (let index = 0; index < children.length; index++) {
+                  link.push('-->')
+                }
+              }
+              if (issueFamily['relations']) {
+                relations = issueFamily['relations']
+                  .map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
+                  .filter(item => item !== null)
+                for (let index = 0; index < relations.length; index++) {
+                  link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
+                }
+              }
+              children_id = children.concat(relations)
             }
           }
         }
@@ -352,6 +359,16 @@ export default {
 
       this.formatFamilyList = function(issue, family, relationTarget) {
         return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
+      }
+
+      this.filterAccessedIssue = function(family) {
+        return Promise.resolve(family.filter(issue => !vueInstance.accessedIssueId.includes(issue.id)))
+      }
+
+      this.checkUniqueRelationLine = function(subIssue_id, issue_id) {
+        return vueInstance.data.filter(item =>
+          (item.next.includes(subIssue_id) && item.id === issue_id) || item.next.includes(issue_id) && item.id === subIssue_id
+        ).length <= 0
       }
 
       this.getRelationTargets = function(startNodeIndex, nowNodeIndex) {
