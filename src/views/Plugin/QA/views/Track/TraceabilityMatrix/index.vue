@@ -60,7 +60,9 @@
       </el-popover>
       <el-divider direction="vertical" />
       <el-button icon="el-icon-download" @click="downloadCSVReport">{{ $t('Track.DownloadExcel') }}</el-button>
-      <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button>
+      <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
+      <el-button icon="el-icon-download" @click="handleRotatePreview">旋轉90度預覽</el-button>
+      <el-button icon="el-icon-download" @click="handlePreview">預覽</el-button>
     </project-list-selector>
     <el-divider />
     <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
@@ -81,6 +83,13 @@
         />
       </div>
     </el-card>
+    <el-dialog :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
+      <div ref="rotateImage" />
+      <span slot="footer">
+        <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
+        <el-button type="primary" @click="downloadPdf">{{ $t('File.Download') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -92,6 +101,7 @@ import Tracker from '@/components/Issue/Tracker'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import { getTestPlanDetail, getTraceabilityMatrixReport } from '@/views/Plugin/QA/api/qa'
+import html2canvas from 'html2canvas'
 
 const QATracker = [
   {
@@ -131,7 +141,13 @@ export default {
       },
       data: [],
       accessedIssueId: [],
-      testFilesResult: []
+      testFilesResult: [],
+      dialogVisible: false,
+      image: {
+        filename: '',
+        content_type: '',
+        src: ''
+      }
     }
   },
   computed: {
@@ -417,7 +433,36 @@ export default {
       link.click()
     },
     downloadPdf() {
-      this.$pdf(this.$refs.matrix, 'Traceability_Matrix')
+      this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
+    },
+    handleRotatePreview() {
+      this.dialogVisible = true
+      html2canvas(this.$refs.matrix, { scale: 1.2 }).then(canvas => {
+        const rotCanvas = document.createElement('canvas')
+        rotCanvas.width = canvas.height
+        rotCanvas.height = canvas.width
+        const rctx = rotCanvas.getContext('2d')
+        rctx.translate(rotCanvas.width * 0.5, rotCanvas.height * 0.5)
+
+        // rotate -90° (CCW)
+        rctx.rotate(Math.PI * 0.5)
+
+        // draw image offset so center of image is on top of pivot
+        rctx.drawImage(canvas, -canvas.width * 0.5, -canvas.height * 0.5)
+        const data = rotCanvas.toDataURL('image/png', 1.0)
+        const image = new Image()
+        image.src = data
+        this.$refs.rotateImage.appendChild(image)
+      })
+    },
+    handlePreview() {
+      this.dialogVisible = true
+      html2canvas(this.$refs.matrix, { scale: 1.2 }).then(canvas => {
+        const data = canvas.toDataURL('image/png', 1.0)
+        const image = new Image()
+        image.src = data
+        this.$refs.rotateImage.appendChild(image)
+      })
     }
   }
 }
