@@ -17,7 +17,7 @@
             @change="handleDatePicked"
           />
           <el-button slot="reference" icon="el-icon-date" type="text">
-            {{ $t('Project.ProjectPeriod') }}:{{ getThisYear[0] }} ~ {{ getThisYear[1] }}<em class="el-icon-arrow-down el-icon--right" />
+            {{ $t('Project.ProjectPeriod') }}:{{ selectedDateNow[0] }} ~ {{ selectedDateNow[1] }}<em class="el-icon-arrow-down el-icon--right" />
           </el-button>
         </el-popover>
         <el-divider direction="vertical" />
@@ -215,6 +215,9 @@ export default {
     },
     getThisYear() {
       return [`${this.thisYear.getFullYear()}-01-01`, `${this.thisYear.getFullYear() + 1}-12-31`]
+    },
+    selectedDateNow() {
+      return this.selectedDate.length > 0 ? this.selectedDate : this.getThisYear
     }
   },
   methods: {
