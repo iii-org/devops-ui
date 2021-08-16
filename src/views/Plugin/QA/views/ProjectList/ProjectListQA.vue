@@ -101,6 +101,18 @@
           </el-link>
         </template>
       </el-table-column>
+      <el-table-column align="center" :label="$t('Project.IssueProgress')" width="140">
+        <template slot-scope="scope">
+          {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
+          <br>
+          <span class="status-bar-track">
+            <span
+              class="status-bar"
+              :style="`width: ${returnProgress(scope.row.closed_count, scope.row.total_count)}%`"
+            />
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.project_start_date')" prop="start_date" width="120" />
       <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.project_due_date')" prop="due_date" width="120" />
       <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.user_name')" width="90">
