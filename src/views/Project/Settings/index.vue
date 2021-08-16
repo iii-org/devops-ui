@@ -30,7 +30,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings" class="bg-gray-300">
+      <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings">
         <el-card class="mx-5">
           <div class="flex justify-between mt-3">
             <div class="font-medium text-lg">{{ $t('ProjectSettings.IssueReminderFeature') }}</div>
