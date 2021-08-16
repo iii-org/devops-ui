@@ -2,7 +2,7 @@
   <div class="app-container">
     <ProjectListSelector />
     <el-divider />
-    <el-tabs v-model="tabActiveName" type="border-card" @tab-click="handleTabClick">
+    <el-tabs v-model="tabActiveName" type="card" @tab-click="handleTabClick">
       <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
         <el-row :gutter="10">
           <el-col class="mb-4" :sm="24" :md="14" :lg="15">
@@ -30,50 +30,52 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings">
-        <div class="flex justify-between mt-3">
-          <div class="font-medium text-lg">{{ $t('ProjectSettings.IssueReminderFeature') }}</div>
-          <div>
-            <el-switch
-              v-model="isToggle"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              :active-text="$t('general.Enable')"
-              :inactive-text="$t('general.Disable')"
-            />
+      <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings" class="bg-gray-300">
+        <el-card class="mx-5">
+          <div class="flex justify-between mt-3">
+            <div class="font-medium text-lg">{{ $t('ProjectSettings.IssueReminderFeature') }}</div>
+            <div>
+              <el-switch
+                v-model="isToggle"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                :active-text="$t('general.Enable')"
+                :inactive-text="$t('general.Disable')"
+              />
+            </div>
           </div>
-        </div>
-        <el-divider />
-        <el-table
-          v-if="isToggle"
-          v-loading="listLoading"
-          :element-loading-text="$t('Loading')"
-          :data="tableData"
-          border
-          fit
-        >
-          <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
-          <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')" prop="condition" />
-          <el-table-column align="center" :label="$t('ProjectSettings.Days')">
-            <template slot-scope="scope">
-              <input v-show="scope.row.isEnabled" v-model="scope.row.day" type="text" class="text-center">
-              <span v-show="!scope.row.isEnabled">{{ scope.row.day }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" :label="$t('ProjectSettings.Status')">
-            <template slot-scope="scope">
-              <div v-if="scope.row.isEnabled" class="font-medium">{{ $t('general.Enable') }}</div>
-              <div v-else style="color: red;">{{ $t('general.Disable') }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
-            <template slot-scope="scope">
-              <el-button v-if="scope.row.isEnabled" type="danger" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Disable') }}</el-button>
-              <el-button v-else type="primary" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Enable') }}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div v-else class="text-center">{{ $t('ProjectSettings.NotYetEnabled') }}</div>
+          <el-divider />
+          <el-table
+            v-if="isToggle"
+            v-loading="listLoading"
+            :element-loading-text="$t('Loading')"
+            :data="tableData"
+            border
+            fit
+          >
+            <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
+            <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')" prop="condition" />
+            <el-table-column align="center" :label="$t('ProjectSettings.Days')">
+              <template slot-scope="scope">
+                <el-input v-show="scope.row.isEnabled" v-model="scope.row.day" type="text" />
+                <span v-show="!scope.row.isEnabled">{{ scope.row.day }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('ProjectSettings.Status')">
+              <template slot-scope="scope">
+                <div v-if="scope.row.isEnabled" class="font-medium">{{ $t('general.Enable') }}</div>
+                <div v-else style="color: red;">{{ $t('general.Disable') }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
+              <template slot-scope="scope">
+                <el-button v-if="scope.row.isEnabled" type="danger" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Disable') }}</el-button>
+                <el-button v-else type="primary" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Enable') }}</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div v-else class="text-center">{{ $t('ProjectSettings.NotYetEnabled') }}</div>
+        </el-card>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -83,6 +85,7 @@
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import { getAlertByProject } from '@/api/alert'
 
 export default {
   name: 'ProjectSettings',
@@ -132,6 +135,9 @@ export default {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
+      } else {
+        const res = await getAlertByProject(this.selectedProjectId)
+        // console.log(res)
       }
     },
     toggleUsage(row) {
@@ -144,7 +150,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
->>> .el-tabs__item .is-active {
-  background: black;
+>>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+  background: rgb(197, 200, 204);
+  color: rgb(62, 63, 65);
+  border-top: 5px solid rgb(62, 63, 65);
+  height: 45px;
+}
+
+>>> .el-tabs--card>.el-tabs__header .el-tabs__item {
+  background: rgb(62, 63, 65);
+  color: rgb(197, 200, 204);
+  border-radius: 5px;
+  width: 125%;
+  &:hover {
+    color: #409eff;
+  }
+}
+
+>>> .el-tabs__content {
+  background: rgb(197, 200, 204);
+  border-radius: 10px;
+}
+
+>>> .el-tabs__header {
+  margin: 0;
+}
+
+>>> .el-tab-pane {
+  margin: 15px;
+  background: rgb(197, 200, 204);
+}
+
+>>> .el-input__inner {
+  text-align: center;
 }
 </style>
