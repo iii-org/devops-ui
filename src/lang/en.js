@@ -912,7 +912,9 @@ export default {
     Days: 'Days',
     Status: '@:general.Status',
     Actions: '@:general.Actions',
-    NotYetEnabled: 'Not Yet Enabled'
+    NotYetEnabled: 'Not Yet Enabled',
+    Comming: '__?__ days notice before due date',
+    Unchange: 'The issue has not changed continuously for more than __?__ days'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

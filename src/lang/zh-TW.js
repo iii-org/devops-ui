@@ -914,7 +914,9 @@ export default {
     Days: '天數',
     Status: '@:general.Status',
     Actions: '@:general.Actions',
-    NotYetEnabled: '尚未啟用'
+    NotYetEnabled: '尚未啟用',
+    Comming: '到期日前__?__天通知',
+    Unchange: '議題連續未異動達__?__天以上'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

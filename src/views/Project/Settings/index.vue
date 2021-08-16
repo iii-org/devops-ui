@@ -2,7 +2,7 @@
   <div class="app-container">
     <ProjectListSelector />
     <el-divider />
-    <el-tabs v-model="tabActiveName" type="card" @tab-click="handleTabClick">
+    <el-tabs v-model="tabActiveName" type="card" @tab-click="handleTableClick">
       <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
         <el-row :gutter="10">
           <el-col class="mb-4" :sm="24" :md="14" :lg="15">
@@ -41,6 +41,7 @@
                 inactive-color="#ff4949"
                 :active-text="$t('general.Enable')"
                 :inactive-text="$t('general.Disable')"
+                @change="toggleSwitch"
               />
             </div>
           </div>
@@ -49,27 +50,32 @@
             v-if="isToggle"
             v-loading="listLoading"
             :element-loading-text="$t('Loading')"
-            :data="tableData"
+            :data="alertListData"
             border
             fit
           >
             <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
-            <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')" prop="condition" />
+            <el-table-column align="center" :label="$t('ProjectSettings.NotificationConditions')">
+              <template slot-scope="scope">
+                <span v-if="scope.row.condition === 'comming'">{{ $t('ProjectSettings.Comming') }}</span>
+                <span v-else>{{ $t('ProjectSettings.Unchange') }}</span>
+              </template>
+            </el-table-column>
             <el-table-column align="center" :label="$t('ProjectSettings.Days')">
               <template slot-scope="scope">
-                <el-input v-show="scope.row.isEnabled" v-model="scope.row.day" type="text" />
-                <span v-show="!scope.row.isEnabled">{{ scope.row.day }}</span>
+                <el-input v-show="!scope.row.disabled" v-model="scope.row.days" type="text" />
+                <span v-show="scope.row.disabled">{{ scope.row.days }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" :label="$t('ProjectSettings.Status')">
               <template slot-scope="scope">
-                <div v-if="scope.row.isEnabled" class="font-medium">{{ $t('general.Enable') }}</div>
+                <div v-if="!scope.row.disabled" class="font-medium">{{ $t('general.Enable') }}</div>
                 <div v-else style="color: red;">{{ $t('general.Disable') }}</div>
               </template>
             </el-table-column>
             <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.isEnabled" type="danger" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Disable') }}</el-button>
+                <el-button v-if="!scope.row.disabled" type="danger" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Disable') }}</el-button>
                 <el-button v-else type="primary" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Enable') }}</el-button>
               </template>
             </el-table-column>
@@ -85,7 +91,7 @@
 import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { getAlertByProject } from '@/api/alert'
+import { changeProjectAlertSettings, getAlertByProject } from '@/api/alert'
 
 export default {
   name: 'ProjectSettings',
@@ -95,20 +101,9 @@ export default {
     return {
       activeNames: [],
       tabActiveName: 'generalSettings',
-      isToggle: true,
+      isToggle: false,
       listLoading: false,
-      tableData: [
-        {
-          condition: '到期日前 3 天通知',
-          day: 7,
-          isEnabled: true
-        },
-        {
-          condition: '議題連續為異動達 10 天以上',
-          day: 30,
-          isEnabled: false
-        }
-      ]
+      alertListData: []
     }
   },
   watch: {
@@ -135,15 +130,39 @@ export default {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
+      }
+    },
+    async fetchProjectAlertData() {
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        return []
       } else {
+        this.listLoading = true
+        this.alertListData = []
         const res = await getAlertByProject(this.selectedProjectId)
-        // console.log(res)
+        this.alertListData = res.data.length !== 0 ? res.data.alert_list : []
+        this.listLoading = false
       }
     },
     toggleUsage(row) {
-      row.isEnabled = !row.isEnabled
+      row.disabled = !row.disabled
     },
-    handleTabClick(tab, event) {
+    async toggleSwitch(bool) {
+      const param = {}
+      param.enable = bool
+      this.listLoading = true
+      await changeProjectAlertSettings(this.selectedProjectId, param)
+        .then(_ => {
+          this.fetchProjectAlertData()
+        })
+        .catch(err => {
+          this.isLoading = false
+          return err
+        })
+    },
+    handleTableClick(tab) {
+      if (tab.index === '0' && tab.name === 'generalSettings') this.fetchData()
+      else if (tab.index === '1' && tab.name === 'notifySettings') this.fetchProjectAlertData()
     }
   }
 }
@@ -151,15 +170,15 @@ export default {
 
 <style lang="scss" scoped>
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-  background: rgb(197, 200, 204);
-  color: rgb(62, 63, 65);
-  border-top: 5px solid rgb(62, 63, 65);
+  background: #c5c8cc;
+  color: #3e3f41;
+  border-top: 5px solid #3e3f41;
   height: 45px;
 }
 
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item {
-  background: rgb(62, 63, 65);
-  color: rgb(197, 200, 204);
+  background: #3e3f41;
+  color: #c5c8cc;
   border-radius: 5px;
   width: 125%;
   &:hover {
@@ -168,7 +187,7 @@ export default {
 }
 
 >>> .el-tabs__content {
-  background: rgb(197, 200, 204);
+  background: #c5c8cc;
   border-radius: 10px;
 }
 
@@ -178,7 +197,7 @@ export default {
 
 >>> .el-tab-pane {
   margin: 15px;
-  background: rgb(197, 200, 204);
+  background: #c5c8cc;
 }
 
 >>> .el-input__inner {
