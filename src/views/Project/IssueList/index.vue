@@ -129,7 +129,7 @@
                     icon="el-icon-info"
                     icon-color="red"
                     :title="$t('Issue.RemoveIssueRelation')"
-                    @onConfirm="removeIssueRelation(scope.row.id)"
+                    @confirm="removeIssueRelation(scope.row.id)"
                   >
                     <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                       {{ $t('Issue.Unlink') }}
@@ -161,7 +161,7 @@
                           icon="el-icon-info"
                           icon-color="red"
                           :title="$t('Issue.RemoveIssueRelation')"
-                          @onConfirm="removeIssueRelation(child.id)"
+                          @confirm="removeIssueRelation(child.id)"
                         >
                           <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                             {{ $t('Issue.Unlink') }}
@@ -195,7 +195,7 @@
                           icon="el-icon-info"
                           icon-color="red"
                           :title="$t('Issue.RemoveIssueRelation')"
-                          @onConfirm="removeRelationIssue(child.relation_id)"
+                          @confirm="removeRelationIssue(child.relation_id)"
                         >
                           <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                             {{ $t('Issue.Unlink') }}

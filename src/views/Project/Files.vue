@@ -60,7 +60,7 @@
             icon="el-icon-info"
             icon-color="red"
             :title="$t('Notify.confirmDelete')"
-            @onConfirm="handleDelete(scope.row)"
+            @confirm="handleDelete(scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}
@@ -123,9 +123,8 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">{{
-          $t('general.Confirm')
-        }}</el-button>
+        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
+          {{ $t('general.Confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>

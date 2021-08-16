@@ -45,7 +45,7 @@
             :cancel-button-text="$t('general.Cancel')"
             icon="el-icon-info"
             icon-color="red"
-            @onConfirm="handleDelete(scope.row.id)"
+            @confirm="handleDelete(scope.row.id)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}

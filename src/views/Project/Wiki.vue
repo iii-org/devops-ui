@@ -40,7 +40,7 @@
             icon="el-icon-info"
             icon-color="red"
             :title="$t('Notify.confirmDelete')"
-            @onConfirm="handleDelete(scope.$index, scope.row)"
+            @confirm="handleDelete(scope.$index, scope.row)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}

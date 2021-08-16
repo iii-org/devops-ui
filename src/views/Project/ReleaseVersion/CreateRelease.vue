@@ -82,7 +82,7 @@
                     :title="$t('Issue.NoImageWarning')"
                     icon="el-icon-info"
                     icon-color="red"
-                    @onConfirm="handleConfirm"
+                    @confirm="handleConfirm"
                   >
                     <el-button slot="reference" type="success">{{ $t('Issue.NextStep') }}</el-button>
                   </el-popconfirm>

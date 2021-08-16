@@ -46,7 +46,7 @@
                     icon="el-icon-info"
                     icon-color="red"
                     :title="$t('Issue.RemoveIssueRelation')"
-                    @onConfirm="removeIssueRelation(scope.row.id)"
+                    @confirm="removeIssueRelation(scope.row.id)"
                   >
                     <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                       {{ $t('Issue.Unlink') }}
@@ -77,7 +77,7 @@
                           icon="el-icon-info"
                           icon-color="red"
                           :title="$t('Issue.RemoveIssueRelation')"
-                          @onConfirm="removeIssueRelation(child.id)"
+                          @confirm="removeIssueRelation(child.id)"
                         >
                           <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                             {{ $t('Issue.Unlink') }}
@@ -111,7 +111,7 @@
                           icon="el-icon-info"
                           icon-color="red"
                           :title="$t('Issue.RemoveIssueRelation')"
-                          @onConfirm="removeRelationIssue(child.relation_id)"
+                          @confirm="removeRelationIssue(child.relation_id)"
                         >
                           <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                             {{ $t('Issue.Unlink') }}
@@ -196,7 +196,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import { ContextMenu, IssueList } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
 
 /**
@@ -206,7 +206,7 @@ import { getUserIssueList } from '@/api/user'
 
 export default {
   name: 'ProjectIssues',
-  mixins: [IssueList, ContextMenu, IssueExpand],
+  mixins: [IssueList, ContextMenu],
   props: {
     from: {
       type: String,

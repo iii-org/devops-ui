@@ -67,7 +67,7 @@
               icon-color="red"
               class="mr-3"
               :title="$t('Member.confirmRemove')"
-              @onConfirm="handleDelete(pluginName)"
+              @confirm="handleDelete(pluginName)"
             >
               <el-button slot="reference" size="mini" type="danger">
                 {{ $t('general.Remove') }}

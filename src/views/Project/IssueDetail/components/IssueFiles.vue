@@ -21,7 +21,7 @@
           icon="el-icon-info"
           icon-color="red"
           :title="$t('Issue.DeleteFile')"
-          @onConfirm="deleteIssueFile(file)"
+          @confirm="deleteIssueFile(file)"
         >
           <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" :loading="isLoading">
             {{ $t('general.Delete') }}

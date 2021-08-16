@@ -125,7 +125,7 @@
               :cancel-button-text="$t('general.Cancel')"
               icon="el-icon-info"
               icon-color="red"
-              @onConfirm="onCloseClick(scope.row.id)"
+              @confirm="onCloseClick(scope.row.id)"
             >
               <el-button slot="reference" size="mini" type="danger" :disabled="!scope.row.is_closable">
                 {{ $t('general.Close') }}

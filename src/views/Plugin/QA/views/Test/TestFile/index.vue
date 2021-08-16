@@ -65,7 +65,7 @@
                     icon="el-icon-info"
                     icon-color="red"
                     :title="$t('Issue.RemoveIssueRelation')"
-                    @onConfirm="removeTestPlanRelation(plan.project.id,plan.test_files, scope.row.file_name)"
+                    @confirm="removeTestPlanRelation(plan.project.id,plan.test_files, scope.row.file_name)"
                   >
                     <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}
                     </el-button>
@@ -135,7 +135,7 @@
             icon="el-icon-info"
             icon-color="red"
             :title="$t('Issue.DeleteFile')"
-            @onConfirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
+            @confirm="deleteTestFile(scope.row.software_name, scope.row.file_name)"
           >
             <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete">
               {{ $t('general.Delete') }}

@@ -179,7 +179,7 @@
                   icon="el-icon-info"
                   icon-color="red"
                   :title="$t('Issue.RemoveIssueRelation')"
-                  @onConfirm="removeIssueRelation(scope.row.id)"
+                  @confirm="removeIssueRelation(scope.row.id)"
                 >
                   <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                     {{ $t('Issue.Unlink') }}
@@ -201,9 +201,8 @@
                         <tracker :name="child.tracker.name" />
                         #{{ child.id }} - {{ child.name }}
                         <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{
-                            child.assigned_to.login
-                          }})</span>
+                          ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
+                          - {{ child.assigned_to.login }})</span>
                       </el-link>
                       <el-popconfirm
                         :confirm-button-text="$t('general.Remove')"
@@ -211,7 +210,7 @@
                         icon="el-icon-info"
                         icon-color="red"
                         :title="$t('Issue.RemoveIssueRelation')"
-                        @onConfirm="removeIssueRelation(child.id)"
+                        @confirm="removeIssueRelation(child.id)"
                       >
                         <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
                           {{ $t('Issue.Unlink') }}

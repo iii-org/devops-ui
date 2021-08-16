@@ -27,7 +27,7 @@
             :title="batchCloseHint"
             :confirm-button-text="$t('general.Confirm')"
             :cancel-button-text="$t('general.Cancel')"
-            @onConfirm="batchClose"
+            @confirm="batchClose"
           >
             <el-button slot="reference" class="valign-middle" :disabled="noRowSelected">
               {{ $t('Release.batchClose') }}

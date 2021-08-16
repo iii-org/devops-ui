@@ -65,7 +65,7 @@
               icon="el-icon-info"
               icon-color="red"
               title="Are you sure?"
-              @onConfirm="handleDelete(selectedProjectId, scope.row.name)"
+              @confirm="handleDelete(selectedProjectId, scope.row.name)"
             >
               <el-button slot="reference" size="mini" type="danger">
                 <i class="el-icon-delete" />

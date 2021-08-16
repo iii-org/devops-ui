@@ -32,7 +32,7 @@
             icon="el-icon-info"
             icon-color="red"
             :title="$t('Member.confirmRemove')"
-            @onConfirm="handleDelete(scope.row.id)"
+            @confirm="handleDelete(scope.row.id)"
           >
             <el-button
               slot="reference"

@@ -43,7 +43,7 @@
                   icon="el-icon-info"
                   icon-color="red"
                   :title="$t('Notify.confirmDelete')"
-                  @onConfirm="handleDelete(selectedProject.id, pod.branch)"
+                  @confirm="handleDelete(selectedProject.id, pod.branch)"
                 >
                   <el-button slot="reference" size="mini" type="danger" plain>
                     <em class="el-icon-delete" />

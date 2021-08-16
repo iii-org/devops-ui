@@ -37,7 +37,7 @@
             icon="el-icon-info"
             icon-color="red"
             title="Are you sure?"
-            @onConfirm="handleDelete(scope.row.name)"
+            @confirm="handleDelete(scope.row.name)"
           >
             <el-button
               :id="`btn-delete-${scope.$index}`"
