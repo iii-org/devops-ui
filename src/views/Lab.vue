@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <project-list-selector class="mb-2" />
     <el-row :gutter="10" class="mb-3">
       <el-col :span="9">
         <el-input v-model="podName" size="small">
@@ -11,7 +12,7 @@
           <template slot="prepend">Container Name</template>
         </el-input>
       </el-col>
-      <el-col :span="5">
+      <el-col :span="5" class="text-right">
         <el-button type="primary" size="small" :disabled="isConnected" @click="initSocket">Connect</el-button>
         <el-button type="danger" size="small" :disabled="!isConnected" @click="disconnectSocket">Disconnect</el-button>
       </el-col>
@@ -27,6 +28,10 @@
     <div class="p-3 bg-black">
       <div ref="terminal" />
     </div>
+    <div class="mt-3">
+      Emit Data 
+      <pre>{{ emitData }}</pre>
+    </div>
   </div>
 </template>
 
@@ -34,20 +39,25 @@
 import 'xterm/css/xterm.css'
 import { io } from 'socket.io-client'
 import { Terminal } from 'xterm'
+import { mapGetters } from 'vuex'
+import { ProjectSelector } from '@/newMixins'
 
 export default {
   name: 'Lab',
+  mixins: [ProjectSelector],
   data() {
     return {
       socket: null,
       term: null,
-      podName: '',
+      podName: 'devopsdb-64db86bc58-vsw59',
       containerName: '',
       command: '',
-      isConnected: false
+      isConnected: false,
+      emitData: null
     }
   },
   computed: {
+    ...mapGetters(['selectedProject']),
     connectStatus() {
       return this.isConnected ? 'bg-success' : 'bg-danger'
     }
@@ -61,8 +71,8 @@ export default {
   methods: {
     initSocket() {
       this.socket =
-        io('/k8s/websocket/pod_exec', {
-        // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
+        // io('/k8s/websocket/pod_exec', {
+        io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
           reconnectionAttempts: 5,
           transports: ['websocket']
         })
@@ -74,13 +84,11 @@ export default {
     initTerm() {
       this.term = new Terminal({
         rendererType: 'canvas',
-        cursorBlink: true,
-        bellStyle: 'both'
+        cursorBlink: true
       })
       this.term.open(this.$refs.terminal)
       this.term.writeln('Connecting...')
-      this.term.write(`$ `)
-      // this.term.write(`root@${this.podName}:/# `)
+      this.term.write(`\r\n$ `)
       this.term.focus()
       this.setTermKeyListener()
     },
@@ -103,9 +111,10 @@ export default {
     setCmdResponseListener() {
       this.socket.on('get_cmd_response', sioEvt => {
         console.log('setCmdResponseListener', sioEvt)
-        this.term.writeln(sioEvt)
-        this.term.write(`$ `)
-        // this.term.write(`root@${this.podName}:/# `)
+        const { output } = sioEvt
+        let str = output || sioEvt
+        str = str.replace(/\n/g, '\r\n')
+        this.term.write(`${str}\r\n$ `)
       })
     },
     setTermKeyListener() {
@@ -124,11 +133,12 @@ export default {
     onEnter() {
       if (this.command === 'clear') {
         this.term.clear()
-        this.term.write('\r\n')
-        this.term.write('$ ')
-        // this.term.write(`root@${this.podName}:/# `)
+        this.term.write(`\r\n$ `)
+      }
+      if (this.command === '') {
+        this.term.write(`\r\n$ `)
       } else {
-        this.term.write('\r\n')
+        this.term.write(`\r\n`)
         this.emitCommand()
       }
       this.command = ''
@@ -144,19 +154,20 @@ export default {
     },
     emitCommand() {
       const emitObj = {
+        project_name: this.selectedProject.name,
         pod_name: this.podName,
         container_name: this.containerName,
         command: this.command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
+      this.emitData = emitObj
       console.log('emit', emitObj)
-      this.term.write(`$ `)
-      // this.term.write(`root@${this.podName}:/# `)
     },
     disconnectSocket() {
       this.socket.close()
       this.term.dispose()
       this.isConnected = false
+      this.emitData = null
     }
   }
 }
