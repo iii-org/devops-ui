@@ -190,7 +190,10 @@ export default {
     Report: 'Report',
     Nothing: 'N/A',
     ScrollToTop: 'Scroll to Top',
-    ScrollToBottom: 'Scroll to Bottom'
+    ScrollToBottom: 'Scroll to Bottom',
+    group: 'Group',
+    on: 'On',
+    off: 'Off'
   },
   Notify: {
     Updated: 'update successful',

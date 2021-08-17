@@ -69,12 +69,29 @@
       <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
     </el-alert>
+    <!--    <el-card>-->
+    <!--      <draggable-->
+    <!--        v-model="trackerMapList"-->
+    <!--        :draggable="'.item'"-->
+    <!--      >-->
+    <!--        <el-tag class="item" v-for="item in trackerMapList" :key="item">-->
+    <!--          {{ item }}-->
+    <!--        </el-tag>-->
+    <!--      </draggable>-->
+    <!--      {{ trackerMap }}-->
+    <!--    </el-card>-->
     <el-card>
+      {{ $t('general.group') }}:
+      <el-switch
+        v-model="group"
+        :active-text="$t('general.on')"
+        :inactive-text="$t('general.off')"
+      />
+      <template slot="header">
+        {{ $t('Track.DemandTraceability') }}
+        <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
+      </template>
       <div ref="matrix">
-        <template slot="header">
-          {{ $t('Track.DemandTraceability') }}
-          <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
-        </template>
         <vue-mermaid
           :nodes="data"
           type="graph LR"
@@ -100,47 +117,29 @@ import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import { getTestPlanDetail, getTraceabilityMatrixReport } from '@/views/Plugin/QA/api/qa'
+import { getTestFileByTestPlan, getTraceabilityMatrixReport } from '@/views/Plugin/QA/api/qa'
 import html2canvas from 'html2canvas'
-
-const QATracker = [
-  {
-    name: 'Epic',
-    relation: {
-      children: { target: 'children', next: ['Epic', 'Feature'] }
-    }
-  },
-  {
-    name: 'Feature',
-    relation: {
-      parent: { target: 'parent', next: ['Epic', 'Feature'] },
-      children: { target: 'children', next: ['Feature', 'Test Plan'] }
-    }
-  },
-  {
-    name: 'Test Plan',
-    relation: {
-      parent: { target: 'parent', next: ['Feature', 'Test Plan'] },
-      children: { next: ['TestFile'] }
-    }
-  }
-]
+import draggable from 'vuedraggable'
+import { camelCase } from 'lodash'
 
 export default {
-  components: { ProjectListSelector, Tracker, VueMermaid },
+  components: { ProjectListSelector, Tracker, VueMermaid, draggable },
   data() {
     return {
       filterValue: { tracker_id: null, issue_id: [] },
       nowFilterValue: { tracker_id: null, issue_id: [] },
+      trackerMapList: ['Epic', 'Feature', 'Test Plan'],
       issueList: [],
+      chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
       chartProgress: {
         now: 0,
         total: 0
       },
-      data: [],
+      group: false,
       accessedIssueId: [],
+      relationLine: {},
       testFilesResult: [],
       dialogVisible: false,
       image: {
@@ -166,16 +165,77 @@ export default {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
     },
     trackerList() {
-      return this.tracker.filter((item) => (QATracker.map((tracker_item) => (tracker_item.name)).includes(item.name)))
+      return this.tracker.filter((item) => (this.trackerMapList.includes(item.name)))
+    },
+    trackerMap() {
+      return this.trackerMapList.map((item, idx) => {
+        const result = {
+          name: item,
+          relation: {}
+        }
+        if (this.trackerMapList[idx - 1]) {
+          result['relation']['parent'] = [this.trackerMapList[idx - 1]]
+        }
+        if (this.trackerMapList[idx + 1]) {
+          result['relation']['children'] = [this.trackerMapList[idx + 1]]
+        }
+        if (item === 'Test Plan') {
+          if (!result['relation']['children']) {
+            result['relation']['children'] = []
+          }
+          result['relation']['children'].push('TestFile')
+        }
+        return result
+      })
+    },
+    data() {
+      const chartIssueList = this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
+      let testFileList = this.chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
+        .filter(issue => issue)
+      testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
+      testFileList = [].concat.apply([], testFileList)
+      return chartIssueList.concat(testFileList)
+    },
+    trackerColor() {
+      return {
+        success: '#67c23a',
+        danger: '#f56c6c',
+        warning: '#e6a23c',
+        slow: '#56b1e8',
+        light: '#c1c3c5',
+        info: '#606260',
+        primary: '#5388ff',
+        secondary: '#3ecbbc',
+        active: '#409eff',
+        assigned: '#f56c6c',
+        closed: '#909399',
+        solved: '#3ecbbc',
+        inProgress: '#e6a23c',
+        finished: '#67c23a',
+        document: '#005f73',
+        research: '#0a9396',
+        epic: '#409EEF',
+        audit: '#A0DA2C',
+        feature: '#82DDF0',
+        bug: '#E84855',
+        issue: '#5296A5',
+        changeRequest: '#A06CD5',
+        risk: '#FCD7AD',
+        testPlan: '#A57548',
+        failManagement: '#FF7033'
+      }
     }
   },
   watch: {
     selectedProjectId() {
       this.initChart()
     },
-    'filterValue.tracker_id'() {
+    async 'filterValue.tracker_id'() {
       this.filterValue.issue_id = []
-      this.getSearchIssue()
+      await this.getSearchIssue('', true)
+      this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
+      await this.onPaintChart()
+      await this.getSearchIssue()
     }
   },
   mounted() {
@@ -184,23 +244,32 @@ export default {
   methods: {
     async initChart() {
       this.$set(this.filterValue, 'tracker_id', this.trackerList[0].id)
-      await this.getSearchIssue()
+      await this.getSearchIssue('', true)
       this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
       await this.onPaintChart()
     },
-    async getSearchIssue(query) {
+    async getSearchIssue(query, init) {
       let querySearch = {}
+      let initQuery = {}
       this.issueList = []
       if (query !== '') {
         querySearch = { search: query }
         this.issueQuery = query
       }
+      if (init) {
+        initQuery = {
+          offset: 0,
+          limit: 1
+        }
+      }
       this.issueLoading = true
       const issueList = await getProjectIssueList(this.selectedProjectId, {
         tracker_id: this.filterValue.tracker_id,
-        selection: true, ...querySearch
+        selection: true,
+        ...querySearch,
+        ...initQuery
       })
-      this.issueList = issueList.data
+      this.issueList = (issueList.data.issue_list) ? issueList.data.issue_list : issueList.data
       this.issueLoading = false
     },
     highLight: function(value) {
@@ -211,31 +280,123 @@ export default {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     },
+    checkUniqueRelationLine(subIssue_id, issue_id) {
+      return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
+    },
+    formatChartData(issue, group) {
+      const issueName = (issue.subject) ? issue.subject : issue.name
+      const checkIssueName = issueName.replace(/"/g, '&quot;')
+      const link = []
+      let children = []
+      let relations = []
+      if (issue['children']) {
+        children = issue['children'].map(item => item.id)
+        for (let index = 0; index < children.length; index++) {
+          link.push('-->')
+        }
+      }
+      if (issue['relations']) {
+        relations = issue['relations'].map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
+          .filter(item => item !== null)
+        for (let index = 0; index < relations.length; index++) {
+          link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
+        }
+        this.relationLine[issue.id] = relations
+      }
+      children = children.concat(relations)
+      if (issue['test_files']) {
+        const test_files = issue['test_files'].map(item => item.file_name)
+        for (let index = 0; index < test_files.length; index++) {
+          link.push('-->')
+        }
+        children = children.concat(test_files)
+      }
+      const point = {
+        id: issue.id,
+        link: link,
+        next: children,
+        editable: true
+      }
+      if (group) {
+        point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
+        point['text'] = `"#${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
+      } else {
+        point['text'] = `"${this.$t('Issue.' + issue.tracker.name)} #${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
+        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]}`
+      }
+      if (this.nowFilterValue.issue_id.includes(issue.id)) {
+        point['edgeType'] = 'stadium'
+      }
+      return point
+    },
+    formatTestFile(test_file, group) {
+      const result = []
+      const file = {
+        id: test_file.file_name,
+        link: ['-->'],
+        next: [`${test_file.software_name}.${test_file.file_name}_result`],
+        editable: false
+      }
+      if (group) {
+        file['group'] = `${this.$t('Issue.TestFile')}`
+        file['text'] = `"${test_file.file_name}"`
+      } else {
+        file['text'] = `"${this.$t('Issue.TestFile')}<br/>${test_file.file_name}"`
+        // file['style'] = `fill:${fullConfig.theme.colors[issue.tracker.name.toLowerCase()]}`
+      }
+      result.push(file)
+      let last_result = null
+      // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
+      const commit_icon = 'Commit: '
+      if (test_file.software_name === 'Postman') {
+        const total = [test_file.the_last_test_result.success + '/' + (test_file.the_last_test_result.success + test_file.the_last_test_result.failure)]
+        last_result = total + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+      } else if (test_file.software_name === 'SideeX') {
+        const total = [test_file.the_last_test_result.result.casesPassed + '/' + (test_file.the_last_test_result.result.casesTotal)]
+        last_result = total + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+      }
+      const file_result = {
+        id: `${test_file.software_name}.${test_file.file_name}_result`,
+        link: ['-->'],
+        text: `"${last_result}"`,
+        editable: false
+      }
+      if (group) {
+        file_result['group'] = `${this.$t('TestCase.TestResult')}`
+        file_result['text'] = `"${last_result}"`
+      } else {
+        file_result['text'] = `"${this.$t('TestCase.TestResult')}<br/>${last_result}"`
+        // file_result['style'] = `fill:${fullConfig.theme.colors[issue.tracker.name.toLowerCase()]}`
+      }
+      result.push(file_result)
+      return result
+    },
     async onPaintChart() {
       this.chartLoading = true
       this.nowFilterValue = Object.assign({}, this.filterValue)
       this.nowFilterValue = Object.assign(this.nowFilterValue, { tracker: this.trackerList, issueList: this.issueList })
       this.accessedIssueId = []
-      this.data = []
+      this.chartIssueList = []
       this.testFilesResult = []
       this.chartProgress.now = 0
       this.chartProgress.total = 0
       for (const item of this.nowFilterValue.issue_id) {
         this.chartProgress.total += 1
         const issue = await getIssue(item)
-        const network = new this.PaintNetwork(this, item, issue.data)
+        const network = new this.PaintNetwork(this, issue.data)
         const family = await getIssueFamily(item)
         this.chartProgress.now += 1
+        this.accessedIssueId.push(item)
         await network.getPaintFamily(issue.data, family.data)
         await network.end()
       }
       this.chartLoading = false
     },
-    PaintNetwork(vueInstance, startPoint, rootIssue) {
-      const startNodeIndex = QATracker.findIndex((item) => (item.name === rootIssue.tracker.name))
+    PaintNetwork(vueInstance, rootIssue) {
+      const startNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === rootIssue.tracker.name))
 
-      this.getIssueFamilyData = async function(issueList) {
-        const getIssueFamilyAPI = issueList.map(issue => {
+      this.getIssueFamilyData = async function(chartIssueList) {
+        const getIssueFamilyAPI = chartIssueList.map(issue => {
           vueInstance.accessedIssueId.push(issue.id)
           return getIssueFamily(issue.id)
         })
@@ -245,131 +406,36 @@ export default {
 
       this.getPaintFamily = async function(issue, issueFamily) {
         vueInstance.chartProgress.total += 1
-        const nowNode = QATracker.find((item) => (item.name === issue.tracker.name))
-        const nowNodeIndex = QATracker.findIndex((item) => (item.name === issue.tracker.name))
-        let children_id = []
-        let link = []
-        const findRelationTargets = await this.getRelationTargets(startNodeIndex, nowNodeIndex)
-        for (const relationTarget of findRelationTargets) {
-          const findRelation = nowNode.relation[relationTarget]
-          if (findRelation) {
-            if (findRelation['next'][0] === 'TestFile') {
-              children_id = await this.getPaintTestFile(issue.id)
-              link = ['-->']
-              vueInstance.chartProgress.now += 1
-            } else {
-              const getFamilyList = await this.combineFamilyList(issue, issueFamily, relationTarget)
-              const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
-              for (const [index, subIssue] of getFamilyList.entries()) {
-                if (findRelation['next'].includes(subIssue.tracker.name)) {
-                  await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
-                }
-                // !children_id.includes(issue.id) &&
-                vueInstance.chartProgress.now += 1
-              }
-              let children = []
-              let relations = []
-              if (issueFamily['children']) {
-                children = issueFamily['children'].map(item => item.id)
-                for (let index = 0; index < children.length; index++) {
-                  link.push('-->')
-                }
-              }
-              if (issueFamily['relations']) {
-                relations = issueFamily['relations']
-                  .map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
-                  .filter(item => item !== null)
-                for (let index = 0; index < relations.length; index++) {
-                  link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
-                }
-              }
-              children_id = children.concat(relations)
-            }
+        const findRelationTargets = await this.getRelationTargets(issue)
+        if (findRelationTargets.includes('TestFile')) {
+          const test_files = await getTestFileByTestPlan(vueInstance.selectedProjectId, issue.id)
+          vueInstance.chartIssueList.push({ ...issue, ...issueFamily, test_files: test_files.data })
+        } else {
+          vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
+        }
+        const getFamilyList = await this.combineFamilyList(issue, issueFamily)
+        const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
+        for (const [index, subIssue] of getFamilyList.entries()) {
+          if (findRelationTargets.includes(subIssue.tracker.name)) {
+            await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
           }
+          vueInstance.chartProgress.now += 1
         }
-        await this.paintNode(issue, children_id, link)
-        return Promise.resolve()
+        return Promise.resolve(issue)
       }
 
-      this.paintNode = function(issue, children, link) {
-        // TODO: issue subject or name?
-        const issueName = (issue.subject) ? issue.subject : issue.name
-        const checkIssueName = issueName.replace(/"/g, '&quot;')
-        const point = {
-          id: issue.id,
-          text: '"#' + issue.id + '-' + checkIssueName + '"',
-          link: link,
-          group: vueInstance.$t('Issue.' + issue.tracker.name),
-          next: children,
-          editable: true
-        }
-        if (issue.relation_type === 'parent') {
-          point['next'] = [issue.relation_id]
-          point['link'] = ['-->']
-        }
-        if (issue.id === startPoint) {
-          point['style'] = 'fill:#ffafcc'
-        }
-        vueInstance.data.push(point)
-        return Promise.resolve()
-      }
-
-      this.getPaintTestFile = async function(issue_id) {
-        vueInstance.chartProgress.total += 1
-        let test = await getTestPlanDetail(vueInstance.selectedProjectId, issue_id)
-        test = test.data
-        const children = []
-        if (test.hasOwnProperty('test_files')) {
-          test.test_files.forEach((item) => {
-            if (!vueInstance.testFilesResult.includes(item.file_name)) {
-              vueInstance.data.push({
-                id: item.file_name,
-                link: ['-->'],
-                text: '"' + item.file_name + '"',
-                group: vueInstance.$t('Issue.TestFile'),
-                next: [item.software_name + '.' + item.file_name + '_result'],
-                editable: false
-              })
-              let last_result = null
-              // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
-              const commit_icon = 'Commit: '
-              if (item.software_name === 'Postman') {
-                const total = [item.the_last_test_result.success + '/' + (item.the_last_test_result.success + item.the_last_test_result.failure)]
-                last_result = total + '<br/>' + item.the_last_test_result.branch + '<br/> ' + commit_icon + item.the_last_test_result.commit_id
-              } else if (item.software_name === 'SideeX') {
-                const total = [item.the_last_test_result.result.casesPassed + '/' + (item.the_last_test_result.result.casesTotal)]
-                last_result = total + '<br/>' + item.the_last_test_result.branch + '<br/> ' + commit_icon + item.the_last_test_result.commit_id
-              }
-              vueInstance.data.push({
-                id: item.software_name + '.' + item.file_name + '_result',
-                link: ['-->'],
-                text: '"' + last_result + '"',
-                group: vueInstance.$t('TestCase.TestResult'),
-                editable: true
-              })
-              vueInstance.testFilesResult.push(item.file_name)
-            }
-            children.push(item.file_name)
-          })
-        }
-        vueInstance.chartProgress.now += 1
-        return Promise.resolve(children)
-      }
-
-      this.combineFamilyList = function(issue, family, relationTarget) {
+      this.combineFamilyList = function(issue, family) {
         let getFamilyList = []
-        if (family.hasOwnProperty(relationTarget)) {
-          if (!Array.isArray(family[relationTarget])) {
-            family[relationTarget] = [family[relationTarget]]
+        Object.keys(family).forEach((relationType) => {
+          if (!Array.isArray(family[relationType])) {
+            family[relationType] = [family[relationType]]
           }
-          family[relationTarget] = this.formatFamilyList(issue, family[relationTarget], relationTarget)
-          getFamilyList = getFamilyList.concat(family[relationTarget])
-        }
-        if (family.hasOwnProperty('relations')) {
-          family['relations'] = this.formatFamilyList(issue, family['relations'], 'relations')
-          getFamilyList = getFamilyList.concat(family['relations'])
-        }
-        getFamilyList = getFamilyList.filter(issue => !vueInstance.accessedIssueId.includes(issue.id))
+          family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
+          if (family.hasOwnProperty(relationType)) {
+            getFamilyList = getFamilyList.concat(family[relationType])
+          }
+        })
+        getFamilyList = getFamilyList.filter(item => !vueInstance.accessedIssueId.includes(item.id))
         return Promise.resolve(getFamilyList)
       }
 
@@ -377,24 +443,18 @@ export default {
         return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
       }
 
-      this.filterAccessedIssue = function(family) {
-        return Promise.resolve(family.filter(issue => !vueInstance.accessedIssueId.includes(issue.id)))
-      }
-
-      this.checkUniqueRelationLine = function(subIssue_id, issue_id) {
-        return vueInstance.data.filter(item =>
-          (item.next.includes(subIssue_id) && item.id === issue_id) || item.next.includes(issue_id) && item.id === subIssue_id
-        ).length <= 0
-      }
-
-      this.getRelationTargets = function(startNodeIndex, nowNodeIndex) {
+      this.getRelationTargets = function(issue) {
+        const nowNode = vueInstance.trackerMap.find((item) => (item.name === issue.tracker.name))
+        const nowNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === issue.tracker.name))
         let findRelationTargets = ['children']
         if (nowNodeIndex === startNodeIndex) {
           findRelationTargets = ['parent', 'children']
         } else if (nowNodeIndex < startNodeIndex) {
           findRelationTargets = ['parent']
         }
-        return findRelationTargets
+        let getTargetArray = findRelationTargets.map(target => nowNode.relation[target]).filter(target => target)
+        getTargetArray = [].concat.apply([], getTargetArray)
+        return [...getTargetArray, issue.tracker.name]
       }
 
       this.end = function() {
@@ -412,7 +472,7 @@ export default {
         const software_name = nodeId.split('.')[0]
         this.$router.push({ name: software_name.toLowerCase() })
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
+        this.$router.push({ name: 'issue-detail', params: { issueId: nodeId } })
       }
     },
     async downloadCSVReport() {

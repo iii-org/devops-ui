@@ -5,6 +5,12 @@
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
     <el-card>
+      {{ $t('general.group') }}:
+      <el-switch
+        v-model="group"
+        :active-text="$t('general.on')"
+        :inactive-text="$t('general.off')"
+      />
       <vue-mermaid
         :nodes="data"
         type="graph LR"
@@ -31,6 +37,7 @@ import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import ProjectIssueDetail from '../../'
+import { camelCase } from 'lodash'
 
 export default {
   name: 'IssueMatrix',
@@ -43,16 +50,16 @@ export default {
   },
   data() {
     return {
-      issueList: [],
+      chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
       chartProgress: {
         now: 0,
         total: 0
       },
-      data: [],
+      group: false,
       accessedIssueId: [],
-      testFilesResult: [],
+      relationLine: {},
       relationIssue: {
         visible: false,
         id: null
@@ -63,6 +70,38 @@ export default {
     ...mapGetters(['selectedProjectId', 'tracker', 'status']),
     getPercentProgress() {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
+    },
+    data() {
+      return this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
+    },
+    trackerColor() {
+      return {
+        success: '#67c23a',
+        danger: '#f56c6c',
+        warning: '#e6a23c',
+        slow: '#56b1e8',
+        light: '#c1c3c5',
+        info: '#606260',
+        primary: '#5388ff',
+        secondary: '#3ecbbc',
+        active: '#409eff',
+        assigned: '#f56c6c',
+        closed: '#909399',
+        solved: '#3ecbbc',
+        inProgress: '#e6a23c',
+        finished: '#67c23a',
+        document: '#005f73',
+        research: '#0a9396',
+        epic: '#409EEF',
+        audit: '#A0DA2C',
+        feature: '#82DDF0',
+        bug: '#E84855',
+        issue: '#5296A5',
+        changeRequest: '#A06CD5',
+        risk: '#FCD7AD',
+        testPlan: '#A57548',
+        failManagement: '#FF7033'
+      }
     }
   },
   watch: {
@@ -85,13 +124,54 @@ export default {
         return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
       })
     },
+    checkUniqueRelationLine(subIssue_id, issue_id) {
+      return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
+    },
+    formatChartData(issue, group) {
+      const issueName = (issue.subject) ? issue.subject : issue.name
+      const checkIssueName = issueName.replace(/"/g, '&quot;')
+      const link = []
+      let children = []
+      let relations = []
+      if (issue['children']) {
+        children = issue['children'].map(item => item.id)
+        for (let index = 0; index < children.length; index++) {
+          link.push('-->')
+        }
+      }
+      if (issue['relations']) {
+        relations = issue['relations'].map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
+          .filter(item => item !== null)
+        for (let index = 0; index < relations.length; index++) {
+          link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
+        }
+        this.relationLine[issue.id] = relations
+      }
+      children = children.concat(relations)
+      const point = {
+        id: issue.id,
+        link: link,
+        next: children,
+        editable: true
+      }
+      if (group) {
+        point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
+        point['text'] = `"#${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
+      } else {
+        point['text'] = `"${this.$t('Issue.' + issue.tracker.name)} #${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
+        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]}`
+      }
+      if (issue.id === this.row.id) {
+        point['edgeType'] = 'stadium'
+      }
+      return point
+    },
     async onPaintChart() {
       this.chartLoading = true
       this.accessedIssueId = []
-      this.data = []
-      this.testFilesResult = []
+      this.chartIssueList = []
       this.chartProgress.total = 1
-      const network = new this.PaintNetwork(this, this.row.id)
+      const network = new this.PaintNetwork(this)
       const family = await getIssueFamily(this.row.id)
       this.chartProgress.now = 1
       this.accessedIssueId.push(this.row.id)
@@ -99,10 +179,9 @@ export default {
       await network.end()
       this.chartLoading = false
     },
-    PaintNetwork(vueInstance, startPoint) {
-      const fetchingParent = {}
-      this.getIssueFamilyData = async function(issueList) {
-        const getIssueFamilyAPI = issueList.map(issue => {
+    PaintNetwork(vueInstance) {
+      this.getIssueFamilyData = async function(chartIssueList) {
+        const getIssueFamilyAPI = chartIssueList.map(issue => {
           vueInstance.accessedIssueId.push(issue.id)
           return getIssueFamily(issue.id)
         })
@@ -112,49 +191,14 @@ export default {
 
       this.getPaintFamily = async function(issue, issueFamily) {
         vueInstance.chartProgress.total += 1
+        vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
           await this.getPaintFamily(subIssue, getIssuesFamilyList[index])
           vueInstance.chartProgress.now += 1
         }
-        const link = []
-        let children = []
-        let relations = []
-        if (issueFamily['children']) {
-          children = issueFamily['children'].map(item => item.id)
-          for (let index = 0; index < children.length; index++) {
-            link.push('-->')
-          }
-        }
-        if (issueFamily['relations']) {
-          relations = issueFamily['relations']
-            .map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
-            .filter(item => item !== null)
-          for (let index = 0; index < relations.length; index++) {
-            link.push('-.' + vueInstance.$t('Issue.RelatedIssue') + '.-')
-          }
-        }
-        const children_id = children.concat(relations)
-        await this.paintNode(issue, children_id, link)
-        return Promise.resolve()
-      }
-
-      this.paintNode = function(issue, children, link) {
-        const checkIssueName = issue.name.replace(/"/g, '&quot;')
-        const point = {
-          id: issue.id,
-          text: '"#' + issue.id + '-' + checkIssueName + '<br/>(' + vueInstance.$t('Issue.' + issue.status.name) + ')"',
-          link: link,
-          group: vueInstance.$t('Issue.' + issue.tracker.name),
-          next: children,
-          editable: true
-        }
-        if (issue.id === startPoint) {
-          point['style'] = 'fill:#ffafcc'
-        }
-        vueInstance.data.push(point)
-        return Promise.resolve()
+        return Promise.resolve(issue)
       }
 
       this.combineFamilyList = function(issue, family) {
@@ -167,39 +211,20 @@ export default {
           }
           family[relationType] = family[relationType]
             .filter(item => !(item.status_id === close && item.tracker_id === bug))
-            .map(item => ({
-              ...item,
-              relation_type: relationType,
-              relation_id: issue.id
-            }))
+          family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
           if (family.hasOwnProperty(relationType)) {
             getFamilyList = getFamilyList.concat(family[relationType])
           }
         })
-        getFamilyList = getFamilyList.filter(issue => !vueInstance.accessedIssueId.includes(issue.id))
+        getFamilyList = getFamilyList.filter(item => !vueInstance.accessedIssueId.includes(item.id))
         return Promise.resolve(getFamilyList)
       }
 
-      this.filterAccessedIssue = function(family) {
-        return Promise.resolve(family.filter(issue => !vueInstance.accessedIssueId.includes(issue.id)))
-      }
-
-      this.checkUniqueRelationLine = function(subIssue_id, issue_id) {
-        return vueInstance.data.filter(item =>
-          (item.next.includes(subIssue_id) && item.id === issue_id) || item.next.includes(issue_id) && item.id === subIssue_id
-        ).length <= 0
+      this.formatFamilyList = function(issue, family, relationTarget) {
+        return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
       }
 
       this.end = function() {
-        Object.keys(fetchingParent).forEach((parent_id) => {
-          const getParentIssue = vueInstance.data.find(item => (item.id).toString() === parent_id)
-          if (getParentIssue) {
-            const link = []
-            for (let i = 0; i < fetchingParent[parent_id].length; i++) link.push('-->')
-            vueInstance.$set(getParentIssue, 'next', getParentIssue['next'].concat(fetchingParent[parent_id]))
-            vueInstance.$set(getParentIssue, 'link', getParentIssue['link'].concat(link))
-          }
-        })
         vueInstance.chartProgress.now = vueInstance.chartProgress.total
         return Promise.resolve()
       }

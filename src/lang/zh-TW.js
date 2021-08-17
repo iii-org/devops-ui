@@ -194,7 +194,10 @@ export default {
     Report: '報告',
     Nothing: '無',
     ScrollToTop: '滾動到頂部',
-    ScrollToBottom: '滾動到底部'
+    ScrollToBottom: '滾動到底部',
+    group: '群組',
+    on: '開',
+    off: '關'
   },
   Notify: {
     Updated: '已更新',
