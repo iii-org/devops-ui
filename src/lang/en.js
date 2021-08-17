@@ -914,7 +914,10 @@ export default {
     Actions: '@:general.Actions',
     NotYetEnabled: 'Not Yet Enabled',
     Comming: '__?__ days notice before due date',
-    Unchange: 'The issue has not changed continuously for more than __?__ days'
+    Unchange: 'The issue has not changed continuously for more than __?__ days',
+    EnableMessage: 'The reminder feature has been successfully turned on',
+    DisableMessage: 'The reminder feature has been successfully turned off',
+    SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

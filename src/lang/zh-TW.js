@@ -916,7 +916,10 @@ export default {
     Actions: '@:general.Actions',
     NotYetEnabled: '尚未啟用',
     Comming: '到期日前__?__天通知',
-    Unchange: '議題連續未異動達__?__天以上'
+    Unchange: '議題連續未異動達__?__天以上',
+    EnableMessage: '已成功啟用提醒功能',
+    DisableMessage: '已成功停用提醒功能',
+    SuccessUpdateAlertSettings: '通知設定已更新成功'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }
