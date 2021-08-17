@@ -109,7 +109,7 @@
         <el-table-column type="selection" reserve-selection width="55" />
         <el-table-column type="expand" class-name="informationExpand">
           <template slot-scope="scope">
-            <el-row v-if="scope.row.family"
+            <el-row v-if="hasRelationIssue(scope.row)"
                     v-loading="scope.row.hasOwnProperty('isLoadingFamily')&&scope.row.isLoadingFamily"
             >
               <div v-if="scope.row.hasOwnProperty('isLoadingFamily') && scope.row.isLoadingFamily" class="p-5" />
@@ -213,6 +213,53 @@
                     </template>
                   </ol>
                 </li>
+                <li v-if="scope.row.hasOwnProperty('test_files') && scope.row.test_files.length>0">
+                  <strong>{{ $t('Issue.TestFile') }}:</strong>
+                  <ol>
+                    <template v-for="child in scope.row.test_files">
+                      <li v-if="Object.keys(child).length > 0" :key="child.id">
+                        {{ child.software_name }} - {{ child.file_name }}
+                        <template v-if="child.the_last_test_result">
+                          ({{ child.the_last_test_result.branch }} -
+                          <el-link type="primary" target="_blank" style="font-size: 16px"
+                                   :href="child.the_last_test_result.commit_url"
+                          >
+                            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+                            {{ child.the_last_test_result.commit_id }}
+                          </el-link>
+                          -
+                          <Result :test-file="child" />
+                          )
+                        </template>
+                        <!--                        <el-link-->
+                        <!--                          :style="{ 'font-size': '14px', cursor: 'pointer' }"-->
+                        <!--                          :underline="false"-->
+                        <!--                          @click="handleEdit(child.id)"-->
+                        <!--                          @contextmenu.native="handleContextMenu(child, '', $event)"-->
+                        <!--                        >-->
+                        <!--                          <status :name="child.status.name" size="mini" />-->
+                        <!--                          <tracker :name="child.tracker.name" />-->
+                        <!--                          #{{ child.id }} - {{ child.name }}-->
+                        <!--                          <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">-->
+                        <!--                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})-->
+                        <!--                          </span>-->
+                        <!--                        </el-link>-->
+                        <!--                        <el-popconfirm-->
+                        <!--                          :confirm-button-text="$t('general.Remove')"-->
+                        <!--                          :cancel-button-text="$t('general.Cancel')"-->
+                        <!--                          icon="el-icon-info"-->
+                        <!--                          icon-color="red"-->
+                        <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
+                        <!--                          @confirm="removeRelationIssue(child.relation_id)"-->
+                        <!--                        >-->
+                        <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">-->
+                        <!--                            {{ $t('Issue.Unlink') }}-->
+                        <!--                          </el-button>-->
+                        <!--                        </el-popconfirm>-->
+                      </li>
+                    </template>
+                  </ol>
+                </li>
               </ul>
             </el-row>
           </template>
@@ -278,10 +325,11 @@ import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
-import { getTestPlanDetail } from '../../../api/qa'
-import { getIssue } from '@/api/issue'
+import { getTestFileByTestPlan } from '../../../api/qa'
+import { getIssue, getIssueFamily } from '@/api/issue'
 import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'
+import Result from '@/components/Test/Result'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -291,6 +339,7 @@ import XLSX from 'xlsx'
 export default {
   name: 'TestPlan',
   components: {
+    Result,
     QuickAddIssue,
     ProjectListSelector
   },
@@ -361,6 +410,13 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
+    async loadData() {
+      if (this.selectedProjectId === -1) return
+      this.listLoading = true
+      const listData = await this.fetchData()
+      this.listData = await this.getAllTestFiles(listData)
+      this.listLoading = false
+    },
     getOptionsData(option_name) {
       if (option_name === 'tracker') return this.trackerList
       return this[option_name]
@@ -414,18 +470,67 @@ export default {
     handleSelectionChange(list) {
       this.selectedTestPlan = list
     },
+    async getAllTestFiles(issueList) {
+      if (!issueList) return Promise.resolve(issueList)
+      const apiTestFile = []
+      for (const issue of issueList) {
+        apiTestFile.push(getTestFileByTestPlan(this.selectedProjectId, issue.id))
+      }
+      const result = await Promise.all(apiTestFile)
+      for (const [index, issue] of issueList.entries()) {
+        issue['test_files'] = result[index].data
+      }
+      return Promise.resolve(issueList)
+    },
+    hasRelationIssue(row) {
+      return row.family || (row.test_files && row.test_files.length > 0)
+    },
+    async getIssueFamilyData(row, expandedRows) {
+      this.expandedRow = expandedRows
+      if (expandedRows.find((item) => (item.id === row.id))) {
+        try {
+          await this.$set(row, 'isLoadingFamily', true)
+          const family = await getIssueFamily(row.id)
+          const data = family.data
+          if (data.hasOwnProperty('parent')) {
+            await this.$set(row, 'parent', data.parent)
+          }
+          if (data.hasOwnProperty('children')) {
+            await this.$set(row, 'children', data.children)
+          }
+          if (data.hasOwnProperty('relations')) {
+            await this.$set(row, 'relations', data.relations)
+          }
+          this.$set(row, 'isLoadingFamily', false)
+        } catch (e) {
+          //   null
+          return Promise.resolve()
+        }
+      }
+      return Promise.resolve()
+    },
     async fetchDataCSV(selectedTestPlan) {
       const apiRequest = []
+      const apiTestFile = []
       selectedTestPlan.forEach((item) => {
-        apiRequest.push(getTestPlanDetail(this.selectedProjectId, item.id))
+        apiRequest.push(getIssue(item.id))
+        apiTestFile.push(getTestFileByTestPlan(this.selectedProjectId, item.id))
       })
       const apiResult = await Promise.all(apiRequest)
+      const apiTestFileResult = await Promise.all(apiTestFile)
       const result = []
-      for (const item of apiResult) {
-        const data = item.data
+      for (const [index, item] of apiResult.entries()) {
+        let data = item.data
         const relationApiRequest = []
-        if (data.hasOwnProperty('relations')) {
-          data['relation_details'] = []
+        data['relationList'] = []
+        data.id = `#${data.id}`
+        if (data.parent) {
+          data.relationList = data.relationList.concat([data.parent])
+        }
+        if (data.children) {
+          data.relationList = data.relationList.concat(data.children)
+        }
+        if (data.relations) {
           for (const [idx, issue] of data.relations.entries()) {
             let getIssueId
             if (data.id === issue.issue_id) {
@@ -437,16 +542,30 @@ export default {
             relationApiRequest.push(getIssue(getIssueId))
           }
           const relationResult = await Promise.all(relationApiRequest)
-          data.relation_details = relationResult.map((subItem) => (subItem.data))
+          data.relationList = data.relationList.concat(relationResult.map((subItem) => (subItem.data)))
         }
-        result.push(data)
+        data = { ...data, test_files: apiTestFileResult[index].data }
+        if (data.relationList.length > 0) {
+          for (const subItem of data.relationList) {
+            data = {
+              ...data,
+              object_id: `#${subItem.id}`,
+              object_subject: subItem.subject,
+              object_tracker: this.$t('Issue.' + subItem.tracker.name)
+            }
+            result.push(data)
+          }
+        } else {
+          result.push(data)
+        }
       }
       return result
     },
+
     dataCleanCSV(fetchData) {
       const exportColumn = {
         name: { column: ['id', 'subject'], root: true },
-        relations: { column: ['id', 'subject'], children: 'relation_details' },
+        relations: { column: ['object_tracker', 'object_id', 'object_subject'], root: true },
         software_name: { column: ['software_name'], children: 'test_files' },
         file_name: { column: ['file_name'], children: 'test_files' },
         test_result: { column: ['the_last_test_result'], children: 'test_files' },
