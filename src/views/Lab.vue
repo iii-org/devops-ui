@@ -1,12 +1,19 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10" class="mb-3">
-      <el-col :span="12">
-        <el-input v-model="podName" size="small" />
+      <el-col :span="9">
+        <el-input v-model="podName" size="small">
+          <template slot="prepend">Pod Name</template>
+        </el-input>
       </el-col>
-      <el-col :span="12">
-        <el-button type="primary" size="small" @click="initSocket">Connect</el-button>
-        <el-button type="danger" size="small" @click="disconnectSocket">Disconnect</el-button>
+      <el-col :span="10">
+        <el-input v-model="containerName" label="Container Name" size="small">
+          <template slot="prepend">Container Name</template>
+        </el-input>
+      </el-col>
+      <el-col :span="5">
+        <el-button type="primary" size="small" :disabled="isConnected" @click="initSocket">Connect</el-button>
+        <el-button type="danger" size="small" :disabled="!isConnected" @click="disconnectSocket">Disconnect</el-button>
       </el-col>
     </el-row>
     <div class="flex justify-between mb-2">
@@ -14,7 +21,7 @@
       <div class="flex items-center">
         <span class="dot relative" :class="connectStatus" />
         <span class="dot absolute animate-ping" :class="connectStatus" />
-        <span class="text-title ml-3">{{ status }}</span>
+        <span class="text-title ml-3">{{ isConnected ?'Connected':'Disconnected' }}</span>
       </div>
     </div>
     <div class="p-3 bg-black">
@@ -35,31 +42,31 @@ export default {
       socket: null,
       term: null,
       podName: '',
-      containerName: [],
+      containerName: '',
       command: '',
-      status: 'Disconnected'
+      isConnected: false
     }
   },
   computed: {
     connectStatus() {
-      return this.status === 'Connected' ? 'bg-success' : 'bg-danger'
+      return this.isConnected ? 'bg-success' : 'bg-danger'
     }
   },
   // mounted() {
   //   this.initSocket()
   // },
   beforeDestroy() {
-    if (this.status === 'Connected') this.disconnectSocket()
+    if (this.isConnected) this.disconnectSocket()
   },
   methods: {
     initSocket() {
       this.socket =
-        // io('/k8s/websocket/pod_exec', {
-        io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
+        io('/k8s/websocket/pod_exec', {
+        // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
           reconnectionAttempts: 5,
           transports: ['websocket']
         })
-      this.status = 'Connected'
+      this.isConnected = true
       this.setConnectStatusListener()
       this.setCmdResponseListener()
       this.initTerm()
@@ -72,7 +79,8 @@ export default {
       })
       this.term.open(this.$refs.terminal)
       this.term.writeln('Connecting...')
-      this.term.write(`root@${this.podName}:/# `)
+      this.term.write(`$ `)
+      // this.term.write(`root@${this.podName}:/# `)
       this.term.focus()
       this.setTermKeyListener()
     },
@@ -137,17 +145,18 @@ export default {
     emitCommand() {
       const emitObj = {
         pod_name: this.podName,
-        container_name: 'python',
+        container_name: this.containerName,
         command: this.command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
       console.log('emit', emitObj)
-      this.term.write(`root@${this.podName}:/# `)
+      this.term.write(`$ `)
+      // this.term.write(`root@${this.podName}:/# `)
     },
     disconnectSocket() {
       this.socket.close()
       this.term.dispose()
-      this.status = 'Disconnected'
+      this.isConnected = false
     }
   }
 }
@@ -155,6 +164,6 @@ export default {
 
 <style lang="scss" scoped>
 .dot {
-  @apply rounded-full w-2 h-2 ;
+  @apply rounded-full w-2 h-2;
 }
 </style>
