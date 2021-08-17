@@ -633,6 +633,25 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/lab',
+    component: Layout,
+    redirect: { name: 'Lab' },
+    hidden: true,
+    meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/Lab'),
+        name: 'Lab',
+        meta: {
+          title: 'Lab',
+          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
+        }
+      }
+    ]
+  },
+
+  {
     path: '/SystemVersion',
     component: Layout,
     redirect: { name: 'SystemVersion' },

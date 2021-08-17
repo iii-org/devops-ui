@@ -36,6 +36,7 @@
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
     "postcss": "^7",
+    "remixicon": "^2.5.0",
     "socket.io-client": "^4.0.0",
     "svelte-gantt": "github:iii-org/svelte-gantt",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
@@ -54,7 +55,8 @@
     "vuedraggable": "git+https://github.com/divinespear/Vue.Draggable.git",
     "vuex": "3.1.0",
     "xlsx": "^0.17.0",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "xterm": "^4.13.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "3.6.0",
