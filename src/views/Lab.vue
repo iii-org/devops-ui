@@ -71,8 +71,8 @@ export default {
   methods: {
     initSocket() {
       this.socket =
-        // io('/k8s/websocket/pod_exec', {
-        io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
+        io('/k8s/websocket/pod_exec', {
+        // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
           reconnectionAttempts: 5,
           transports: ['websocket']
         })
