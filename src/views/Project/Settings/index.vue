@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector />
+    <ProjectListSelector :has-unsaved-changes="hasUnsavedChanges" @checkUnsavedChanges="checkUnsavedChanges" />
     <el-divider />
     <el-tabs v-model="tabActiveName" type="card" :before-leave="beforeTabsLeave" @tab-click="handleTableClick">
       <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
@@ -96,11 +96,12 @@
     <el-dialog
       :title="$t('general.Warning')"
       :visible.sync="dialogVisible"
-      top="30vh"
-      width="400px"
+      top="40vh"
+      width="420px"
+      destroy-on-close
     >
       <span>
-        <i class="el-icon-warning text-lg" style="color: #d97706;" />
+        <i class="el-icon-warning text-lg" style="color: #E6A23C;" />
         <span class="text-base">{{ $t('Notify.UnSavedChanges') }}</span>
       </span>
       <span slot="footer" class="dialog-footer">
@@ -135,7 +136,7 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if (this.hasUnsavedChanges()) {
+    if (this.hasUnsavedChanges) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel'),
@@ -151,9 +152,21 @@ export default {
       next()
     }
   },
+  computed: {
+    hasUnsavedChanges() {
+      return this.isTableDataChanged(0) || this.isTableDataChanged(1)
+    }
+  },
   watch: {
     activeNames(val) {
       localStorage.setItem('ProjectSettingsActiveNames', JSON.stringify(val))
+    },
+    selectedProjectId(val) {
+      if (this.hasUnsavedChanges) {
+        this.checkUnsavedChanges()
+      } else {
+        this.getProjectAlertData()
+      }
     }
   },
   mounted() {
@@ -261,7 +274,7 @@ export default {
     },
     checkUnsavedChanges() {
       if (this.isConfirmLeave) return
-      if (this.hasUnsavedChanges()) this.dialogVisible = true
+      if (this.hasUnsavedChanges) this.dialogVisible = true
     },
     handleConfirmLeave() {
       this.dialogVisible = false
@@ -270,10 +283,7 @@ export default {
       this.isConfirmLeave = true
     },
     beforeTabsLeave() {
-      return this.isConfirmLeave ? this.isConfirmLeave : !this.hasUnsavedChanges()
-    },
-    hasUnsavedChanges() {
-      return this.isTableDataChanged(0) || this.isTableDataChanged(1)
+      return this.isConfirmLeave ? this.isConfirmLeave : !this.hasUnsavedChanges
     },
     isTableDataChanged(index) {
       for (const key in this.alertListData[index]) {

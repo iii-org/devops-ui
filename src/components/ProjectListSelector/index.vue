@@ -19,6 +19,7 @@
             filterable
             class="project"
             :clearable="clearable"
+            @focus="checkUnsavedChanges"
             @blur="selectVisible=false"
             @change="setChange"
           >
@@ -98,6 +99,10 @@ export default {
       default: true
     },
     clearable: {
+      type: Boolean,
+      default: false
+    },
+    hasUnsavedChanges: {
       type: Boolean,
       default: false
     }
@@ -203,6 +208,14 @@ export default {
           type: 'success'
         })
       )
+    },
+    checkUnsavedChanges(event) {
+      if (this.hasUnsavedChanges) {
+        setTimeout(() => {
+          this.$refs.selectProject.blur()
+        }, 50)
+        this.$emit('checkUnsavedChanges')
+      }
     }
   }
 }

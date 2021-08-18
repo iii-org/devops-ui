@@ -116,6 +116,7 @@ export default {
     3001: 'The user doesn\'t have permission for this operation.',
     3002: 'You need to be in the project for this operation.',
     3003: 'You are not permitted to access another user\'s data.',
+    3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
