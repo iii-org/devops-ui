@@ -57,14 +57,21 @@
             </el-table-column>
             <el-table-column align="center" :label="$t('ProjectSettings.Status')">
               <template slot-scope="scope">
-                <div v-if="!scope.row.disabled" class="font-medium">{{ $t('general.Enable') }}</div>
-                <div v-else style="color: red;">{{ $t('general.Disable') }}</div>
+                <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
+                  {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column align="center" :label="$t('ProjectSettings.Actions')">
               <template slot-scope="scope">
-                <el-button v-if="!scope.row.disabled" type="danger" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Disable') }}</el-button>
-                <el-button v-else type="primary" size="mini" plain @click="toggleUsage(scope.row)">{{ $t('general.Enable') }}</el-button>
+                <el-button size="mini" @click="toggleUsage(scope.row)">
+                  <div class="flex items-center">
+                    <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
+                    <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
+                      {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+                    </span>
+                  </div>
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -72,6 +79,22 @@
         </el-card>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog
+      :title="$t('general.Warning')"
+      :visible.sync="dialogVisible"
+      top="40vh"
+      width="420px"
+      destroy-on-close
+    >
+      <span>
+        <i class="el-icon-warning text-lg" style="color: #E6A23C;" />
+        <span class="text-base">{{ $t('Notify.UnSavedChanges') }}</span>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="handleConfirmLeave">{{ $t('general.Confirm') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -79,7 +102,7 @@
 import { ProjectMembers } from '../components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { changeProjectAlertSettings, getAlertByProject } from '@/api/alert'
+import { changeProjectAlertSettings, getAlertSettingsByProject, updateAlertSettingsByProject } from '@/api/alert'
 
 export default {
   name: 'QA',
@@ -89,14 +112,47 @@ export default {
     return {
       activeNames: [],
       tabActiveName: 'generalSettings',
+      disableSave: false,
       isToggle: false,
       listLoading: false,
-      alertListData: []
+      alertListData: [],
+      originData: [],
+      dialogVisible: false,
+      isConfirmLeave: false
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.hasUnsavedChanges) {
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          next(false)
+        })
+    } else {
+      next()
+    }
+  },
+  computed: {
+    hasUnsavedChanges() {
+      return this.isTableDataChanged(0) || this.isTableDataChanged(1)
     }
   },
   watch: {
     activeNames(val) {
       localStorage.setItem('ProjectSettingsActiveNames', JSON.stringify(val))
+    },
+    selectedProjectId(val) {
+      if (this.hasUnsavedChanges) {
+        this.checkUnsavedChanges()
+      } else {
+        this.getProjectAlertData()
+      }
     }
   },
   mounted() {
@@ -120,17 +176,27 @@ export default {
         return []
       }
     },
+    getProjectAlertData() {
+      if (this.selectedProjectId === -1) this.showNoProjectWarning()
+      else this.fetchProjectAlertData()
+    },
     async fetchProjectAlertData() {
-      if (this.selectedProjectId === -1) {
-        this.showNoProjectWarning()
-        return []
-      } else {
-        this.listLoading = true
+      this.listLoading = true
+      const res = await getAlertSettingsByProject(this.selectedProjectId)
+      if (res.data.length === 0) {
+        this.isToggle = false
+        this.disableSave = true
         this.alertListData = []
-        const res = await getAlertByProject(this.selectedProjectId)
-        this.alertListData = res.data.length !== 0 ? res.data.alert_list : []
-        this.listLoading = false
+      } else {
+        this.isToggle = true
+        this.disableSave = false
+        this.alertListData = res.data.alert_list
+        this.setOriginData(res.data.alert_list)
       }
+      this.listLoading = false
+    },
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
@@ -141,16 +207,75 @@ export default {
       this.listLoading = true
       await changeProjectAlertSettings(this.selectedProjectId, param)
         .then(_ => {
-          this.fetchProjectAlertData()
+          this.getProjectAlertData()
+          this.showChangeMessage(bool)
         })
         .catch(err => {
-          this.isLoading = false
+          this.listLoading = false
           return err
         })
     },
+    showChangeMessage(bool) {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: bool ? this.$t('ProjectSettings.EnableMessage') : this.$t('ProjectSettings.DisableMessage'),
+        type: 'success'
+      })
+    },
+    showUpdateMessage() {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('ProjectSettings.SuccessUpdateAlertSettings'),
+        type: 'success'
+      })
+    },
     handleTableClick(tab) {
-      if (tab.index === '0' && tab.name === 'generalSettings') this.fetchData()
-      else if (tab.index === '1' && tab.name === 'notifySettings') this.fetchProjectAlertData()
+      if (tab.index === '0' && tab.name === 'generalSettings') {
+        this.fetchData()
+        this.checkUnsavedChanges()
+      } else if (tab.index === '1' && tab.name === 'notifySettings') {
+        this.getProjectAlertData()
+        this.isConfirmLeave = false
+      }
+    },
+    handleSave() {
+      this.handleUpdateAlertTable(0)
+      this.handleUpdateAlertTable(1)
+    },
+    async handleUpdateAlertTable(index) {
+      const alertId = this.alertListData[index].id
+      const params = {}
+      params.disabled = this.alertListData[index].disabled
+      params.days = this.alertListData[index].days
+      this.listLoading = true
+      await updateAlertSettingsByProject(alertId, params)
+        .then(_ => {
+          this.getProjectAlertData()
+          this.showUpdateMessage()
+        })
+        .catch(err => {
+          this.listLoading = false
+          return err
+        })
+    },
+    checkUnsavedChanges() {
+      if (this.isConfirmLeave) return
+      if (this.hasUnsavedChanges) this.dialogVisible = true
+    },
+    handleConfirmLeave() {
+      this.dialogVisible = false
+      this.fetchProjectAlertData()
+      this.tabActiveName = 'generalSettings'
+      this.isConfirmLeave = true
+    },
+    beforeTabsLeave() {
+      return this.isConfirmLeave ? this.isConfirmLeave : !this.hasUnsavedChanges
+    },
+    isTableDataChanged(index) {
+      for (const key in this.alertListData[index]) {
+        if (this.originData[index][key] !== this.alertListData[index][key]) return true
+      }
+      return false
     }
   }
 }
@@ -161,6 +286,7 @@ export default {
   background: #c5c8cc;
   color: #3e3f41;
   border-top: 5px solid #3e3f41;
+  border-bottom-color: #c5c8cc;
   height: 45px;
 }
 
@@ -176,7 +302,7 @@ export default {
 
 >>> .el-tabs__content {
   background: #c5c8cc;
-  border-radius: 10px;
+  border-radius: 3px;
 }
 
 >>> .el-tabs__header {
