@@ -416,7 +416,7 @@ export default {
       await this.loadVersionList(this.fixed_version_closed)
     },
     handleSelectionChange(list) {
-      this.selectedTrackList = list
+      this.selectedFailList = list
     },
     downloadCsv(selectedFailList) {
       const selectedColumn = this.handleCsvSelectedColumn(selectedFailList)
