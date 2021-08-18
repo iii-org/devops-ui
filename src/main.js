@@ -8,6 +8,7 @@ import 'remixicon/fonts/remixicon.css'
 import i18n, { getLanguage } from './lang'
 import VueGtag from 'vue-gtag'
 import '@/styles/index.scss'
+import permission from '@/directive/permission/index.js'
 
 import App from './App'
 import store from './store'
@@ -32,6 +33,7 @@ dayjs.extend(duration)
 dayjs.locale(getLanguage().toLowerCase())
 Vue.prototype.$dayjs = dayjs
 
+Vue.use(permission)
 Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
 Vue.use(VueShowdown, {
   options: {
