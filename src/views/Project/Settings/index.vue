@@ -40,6 +40,7 @@
                 active-color="#13ce66"
                 inactive-color="#ff4949"
                 class="mr-5"
+                :disabled="disableSwitch"
                 :active-text="$t('general.Enable')"
                 :inactive-text="$t('general.Disable')"
                 @change="toggleSwitch"
@@ -127,6 +128,7 @@ export default {
       activeNames: [],
       tabActiveName: 'generalSettings',
       disableSave: false,
+      disableSwitch: false,
       isToggle: false,
       listLoading: false,
       alertListData: [],
@@ -191,23 +193,35 @@ export default {
       }
     },
     getProjectAlertData() {
-      if (this.selectedProjectId === -1) this.showNoProjectWarning()
-      else this.fetchProjectAlertData()
+      if (this.selectedProjectId === -1) {
+        this.showNoProjectWarning()
+        this.setDisabledStatus()
+        this.disableSwitch = true
+      } else this.fetchProjectAlertData()
     },
     async fetchProjectAlertData() {
       this.listLoading = true
-      const res = await getAlertSettingsByProject(this.selectedProjectId)
-      if (res.data.length === 0) {
-        this.isToggle = false
-        this.disableSave = true
+      this.disableSwitch = false
+      try {
+        const res = await getAlertSettingsByProject(this.selectedProjectId)
+        if (res.data.length === 0) {
+          this.setDisabledStatus()
+        } else {
+          this.isToggle = true
+          this.disableSave = false
+          this.alertListData = res.data.alert_list
+          this.setOriginData(res.data.alert_list)
+        }
+      } catch (e) {
         this.alertListData = []
-      } else {
-        this.isToggle = true
-        this.disableSave = false
-        this.alertListData = res.data.alert_list
-        this.setOriginData(res.data.alert_list)
+        console.error(e)
       }
       this.listLoading = false
+    },
+    setDisabledStatus() {
+      this.isToggle = false
+      this.disableSave = true
+      this.alertListData = []
     },
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
@@ -257,8 +271,8 @@ export default {
       this.handleUpdateAlertTable(1)
     },
     async handleUpdateAlertTable(index) {
-      const alertId = this.alertListData[index].id
       const params = {}
+      const alertId = this.alertListData[index].id
       params.disabled = this.alertListData[index].disabled
       params.days = this.alertListData[index].days
       this.listLoading = true
