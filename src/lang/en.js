@@ -78,6 +78,7 @@ export default {
     'Account Manage': 'Account Manage',
     'System Activities': 'System Activities',
     'System Plugin Manage': 'System Plugin Manage',
+    'System Deploy Settings': 'System Deploy Settings',
     'Project Settings (QA)': 'Project Settings (QA)',
     'Dev Branch Test Result': 'Dev Branch Test Result',
 
@@ -194,7 +195,9 @@ export default {
     ScrollToBottom: 'Scroll to Bottom',
     group: 'Group',
     on: 'On',
-    off: 'Off'
+    off: 'Off',
+    Index: 'Index',
+    Account: 'Account'
   },
   Notify: {
     Updated: 'update successful',
@@ -911,7 +914,7 @@ export default {
     GeneralSettings: 'General Settings',
     NotifySettings: 'Notify Settings',
     IssueReminderFeature: 'Issue Reminder Feature',
-    Index: 'Index',
+    Index: '@:general.Index',
     NotificationConditions: 'Notification Conditions',
     Days: 'Days',
     Status: '@:general.Status',
@@ -922,6 +925,15 @@ export default {
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully'
+  },
+  SystemDeploySettings: {
+    RemoteDeploymentEnvironment: 'Remote Env.',
+    Index: '@:general.Index',
+    ClusterName: 'Cluster Name',
+    Account: '@:general.Account',
+    LastUpdateTime: 'Last Update Time',
+    Status: '@:general.Status',
+    Actions: '@:general.Actions'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

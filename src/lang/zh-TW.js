@@ -78,6 +78,7 @@ export default {
     'Account Manage': '帳號管理',
     'System Activities': '系統紀錄',
     'System Plugin Manage': '系統插件管理',
+    'System Deploy Settings': '佈署設定',
     'Project Settings (QA)': '專案品控清單設置',
     'Dev Branch Test Result': '開發分支測試紀錄',
 
@@ -198,7 +199,9 @@ export default {
     ScrollToBottom: '滾動到底部',
     group: '群組',
     on: '開',
-    off: '關'
+    off: '關',
+    Index: '項次',
+    Account: '帳號'
   },
   Notify: {
     Updated: '已更新',
@@ -234,7 +237,7 @@ export default {
     InputRepeatPwd: '請再次輸入密碼'
   },
   TestCase: {
-    Index: '項次',
+    Index: '@:general.Index',
     Method: '方法',
     Path: '路徑',
     TestResult: '測試結果',
@@ -480,7 +483,7 @@ export default {
   },
   Test: {
     TestPlan: {
-      no: '項次',
+      no: '@:general.Index',
       name: '測試名稱',
       relations: '測試目的',
       software_name: '測試軟體',
@@ -598,7 +601,7 @@ export default {
     Id: '成員編號',
     Phone: '電話',
     Role: '角色',
-    Account: '帳號',
+    Account: '@:general.Account',
     SelectMember: '選擇成員',
     confirmRemove: '確定@:(general.Remove)嗎？',
     TransferIssue: '進行議題處理  〉',
@@ -619,7 +622,7 @@ export default {
   User: {
     AddUser: '新增用戶',
     EditUser: '修改用戶',
-    Account: '帳號',
+    Account: '@:general.Account',
     Department: '@:general.Department',
     Title: '@:general.UserTitle',
     Phone: '電話',
@@ -704,7 +707,7 @@ export default {
     Branch: '@:general.Branch'
   },
   ProgressPipelines: {
-    Id: '項次',
+    Id: '@:general.Index',
     TestItems: '測試項目',
     Commit: 'Commit',
     Branch: '@:general.Branch',
@@ -913,7 +916,7 @@ export default {
     GeneralSettings: '一般設定',
     NotifySettings: '通知設定',
     IssueReminderFeature: '議題提醒功能',
-    Index: '項次',
+    Index: '@:general.Index',
     NotificationConditions: '通知條件',
     Days: '天數',
     Status: '@:general.Status',
@@ -924,6 +927,15 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功'
+  },
+  SystemDeploySettings: {
+    RemoteDeploymentEnvironment: '遠端佈署環境',
+    Index: '@:general.Index',
+    ClusterName: 'Cluster 名稱',
+    Account: '@:general.Account',
+    LastUpdateTime: '最後更新時間',
+    Status: '@:general.Status',
+    Actions: '@:general.Actions'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }
