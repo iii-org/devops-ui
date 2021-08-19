@@ -1,15 +1,11 @@
 <template>
   <el-card class="mb-3" shadow="never">
-    <div class="font-semibold mb-5">
-      <i class="el-icon-pie-chart" />
+    <div class="flex items-center font-semibold h-8">
+      <em class="el-icon-pie-chart mx-1" />
       {{ $t('Dashboard.IssueTrackingStatus') }}
     </div>
-    <div v-if="Object.keys(dataCollection).length === 0" class="flex justify-center items-center">
-      <span>{{ $t('general.NoData') }}</span>
-    </div>
-    <div v-else>
-      <Doughnut :chart-data="dataCollection" />
-    </div>
+    <el-empty v-if="Object.keys(dataCollection).length === 0" :description="$t('general.NoData')" :image-size="100" />
+    <doughnut v-else :chart-data="dataCollection" />
   </el-card>
 </template>
 
@@ -18,7 +14,7 @@ import { mapGetters } from 'vuex'
 import Doughnut from './Doughnut.vue'
 
 export default {
-  name: 'IssueStatusCard',
+  name: 'IssueTrackingStatusCard',
   components: { Doughnut },
   props: {
     progressObj: {
@@ -39,17 +35,13 @@ export default {
       this.handleProgress(val)
     },
     '$i18n.locale'() {
-      this.fillData(this.progressObj)
+      this.handleProgress(this.progressObj)
     }
   },
   methods: {
     handleProgress(progress) {
       const hasProgress = Object.keys(progress).length > 0
-      if (hasProgress) {
-        this.fillData(progress)
-      } else {
-        this.dataCollection = {}
-      }
+      hasProgress ? this.fillData(progress) : (this.dataCollection = {})
     },
     fillData(chartData) {
       const issueStatusList = [

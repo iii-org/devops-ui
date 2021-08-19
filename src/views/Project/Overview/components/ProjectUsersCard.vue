@@ -1,12 +1,10 @@
 <template>
   <el-card class="mb-3" shadow="never">
-    <div class="font-semibold mb-2">
-      <i class="el-icon-user" />
+    <div class="flex items-center font-semibold h-8">
+      <em class="el-icon-user mx-1" />
       {{ $t('Dashboard.ProjectUsers') }}
     </div>
-    <div v-if="!selectedProjectId" class="flex justify-center items-center" style="height: 300px">
-      <span>{{ $t('general.NoData') }}</span>
-    </div>
+    <el-empty v-if="userList.length === 0" :description="$t('general.NoData')" :image-size="100" />
     <el-table v-else :data="userList" style="width: 100%" stripe>
       <el-table-column prop="role_name" :label="$t('Project.Title')" />
       <el-table-column prop="name" :label="$t('general.Name')">
@@ -23,7 +21,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'ProjectUserCard',
+  name: 'ProjectUsersCard',
   props: {
     userList: {
       type: Array,

@@ -1,21 +1,17 @@
 <template>
   <el-card class="mb-3" shadow="never">
-    <div class="flex justify-between font-semibold mb-2">
+    <div class="flex justify-between items-center font-semibold">
       <div>
-        <i class="el-icon-data-analysis" />
-        <span>{{ $t('Dashboard.Workload') }} </span>
-        <i v-if="!saveSelectedItem" class="el-icon-zoom-in cursor-pointer ml-3" @click="showFullIssuePriority" />
+        <em class="el-icon-data-analysis mx-1" />
+        <span>{{ $t('Dashboard.Workload') }}</span>
+        <em v-if="!saveSelectedItem" class="el-icon-zoom-in cursor-pointer mx-2" @click="showFullIssuePriority" />
       </div>
       <el-select v-model="selectedItem" size="small" @change="fillData">
         <el-option v-for="item in selectList" :key="item.id" :label="$t('Issue.' + item.label)" :value="item.id" />
       </el-select>
     </div>
-    <div v-if="Object.keys(dataCollection).length === 0" class="flex justify-center items-center">
-      <span>{{ $t('general.NoData') }}</span>
-    </div>
-    <div v-else>
-      <HorizontalBar :chart-data="dataCollection" />
-    </div>
+    <el-empty v-if="Object.keys(dataCollection).length === 0" :description="$t('general.NoData')" :image-size="100" />
+    <HorizontalBar v-else :chart-data="dataCollection" />
   </el-card>
 </template>
 
@@ -96,7 +92,7 @@ export default {
       this.handleStatistics(this.statisticsObj)
     },
     '$i18n.locale'() {
-      this.fillData()
+      this.handleStatistics(this.statisticsObj)
     }
   },
   mounted() {

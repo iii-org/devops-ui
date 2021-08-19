@@ -29,7 +29,7 @@
     <el-divider />
     <el-row :gutter="10">
       <el-col :xs="24" :md="12">
-        <IssueStatusCard ref="issueStatus" :progress-obj="progressObj" />
+        <IssueTrackingStatusCard ref="issueStatus" :progress-obj="progressObj" />
       </el-col>
       <el-col :xs="24" :md="12">
         <WorkloadCard
@@ -42,7 +42,7 @@
     </el-row>
     <el-row :gutter="10">
       <el-col :xs="24" :md="12">
-        <ProjectUserCard ref="projectUserList" :user-list="userList" />
+        <ProjectUsersCard ref="projectUserList" :user-list="userList" />
       </el-col>
       <el-col :xs="24" :md="12">
         <TestStatusCard
@@ -63,11 +63,11 @@
 import { mapGetters, mapActions } from 'vuex'
 import { getProjectVersion, getProjectIssueProgress, getProjectIssueStatistics, getProjectTest } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard } from './components'
+import { IssueTrackingStatusCard, WorkloadCard, ProjectUsersCard, TestStatusCard } from './components'
 
 export default {
   name: 'ProjectOverview',
-  components: { ProjectListSelector, IssueStatusCard, WorkloadCard, ProjectUserCard, TestStatusCard },
+  components: { ProjectListSelector, IssueTrackingStatusCard, WorkloadCard, ProjectUsersCard, TestStatusCard },
   data() {
     return {
       versionList: [],

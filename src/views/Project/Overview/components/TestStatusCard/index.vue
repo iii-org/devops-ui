@@ -1,29 +1,27 @@
 <template>
   <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" class="mb-3" shadow="never">
-    <div class="flex justify-between mb-2">
-      <span class="font-semibold">
-        <i class="el-icon-circle-check" />
+    <div class="flex justify-between h-8">
+      <span class="flex items-center font-semibold">
+        <em class="el-icon-circle-check mx-1" />
         {{ $t('Dashboard.TestStatus') }}
       </span>
       <el-button
         type="text"
         icon="el-icon-refresh"
         size="mini"
-        :disabled="selectedProjectId === -1"
+        :disabled="Object.keys(projectTestObj).length === 0"
         @click="updateProjectTestList()"
       >
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
-    <div v-if="!selectedProjectId" class="flex justify-center items-center">
-      <span>{{ $t('general.NoData') }}</span>
-    </div>
-    <el-row v-else :gutter="10">
+    <el-empty v-if="Object.keys(projectTestObj).length === 0" :description="$t('general.NoData')" :image-size="100" />
+    <el-row v-else :gutter="10" class="mt-3">
       <el-col v-for="result in testResultList" :key="result.Software" class="mb-2" :span="12">
         <el-card>
           <div class="flex justify-between items-center mb-1">
             <span class="text-xl text-blue-600 font-semibold capitalize">{{ result.Software }}</span>
-            <i class="el-icon-right cursor-pointer" @click="handleClick(result.Software)" />
+            <em class="el-icon-right cursor-pointer" @click="handleClick(result.Software)" />
           </div>
           <el-tooltip placement="right" :open-delay="200" :content="result.runAt | UTCtoLocalTime">
             <span class="text-sm">
@@ -47,8 +45,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { postmanFormatter, checkmarxFormatter, webinspectFormatter, sonarqubeFormatter, sideexFormatter, zapFormatter } from './formatter'
+import {
+  postmanFormatter,
+  checkmarxFormatter,
+  webinspectFormatter,
+  sonarqubeFormatter,
+  sideexFormatter,
+  zapFormatter
+} from './formatter'
 
 export default {
   name: 'TestStatusCard',
@@ -66,9 +70,6 @@ export default {
     return {
       testResultList: []
     }
-  },
-  computed: {
-    ...mapGetters(['selectedProjectId'])
   },
   watch: {
     projectTestObj(val) {
