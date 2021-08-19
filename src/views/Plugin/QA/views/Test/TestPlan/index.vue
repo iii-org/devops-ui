@@ -545,17 +545,22 @@ export default {
           data.relationList = data.relationList.concat(relationResult.map((subItem) => (subItem.data)))
         }
         data = { ...data, test_files: apiTestFileResult[index].data }
+        let hasFeature = false
         if (data.relationList.length > 0) {
           for (const subItem of data.relationList) {
-            data = {
-              ...data,
-              object_id: `#${subItem.id}`,
-              object_subject: subItem.subject,
-              object_tracker: this.$t('Issue.' + subItem.tracker.name)
+            if (subItem.tracker.name === 'Feature') {
+              data = {
+                ...data,
+                object_id: `#${subItem.id}`,
+                object_subject: (subItem.subject) ? subItem.subject : subItem.name,
+                object_tracker: this.$t('Issue.' + subItem.tracker.name)
+              }
+              hasFeature = true
+              result.push(data)
             }
-            result.push(data)
           }
-        } else {
+        }
+        if (!hasFeature) {
           result.push(data)
         }
       }
@@ -577,9 +582,8 @@ export default {
         Object.keys(exportColumn).forEach((column) => {
           let resultArray
           if (exportColumn[column]['root']) {
-            resultArray = exportColumn[column].column.map((subColumn) => this.confirmExist(item, subColumn))
+            resultArray = this.formatColumns(exportColumn[column].column, item)
             resultArray = resultArray.join(' - ')
-            // console.log(resultArray)
           }
           if (exportColumn[column]['children']) {
             const childrenSplit = exportColumn[column]['children'].split('.')
@@ -589,9 +593,9 @@ export default {
             } else if (column === 'branch') {
               resultArray = this.getBranch(getChildrenData)
             } else if (Array.isArray(getChildrenData)) {
-              resultArray = getChildrenData.map((item) => exportColumn[column].column.map((subColumn) => this.confirmExist(item, subColumn))).map((check) => this.joinResult(check, ' - '))
+              resultArray = this.formatColumns(getChildrenData, item).map((check) => this.joinResult(check, ' - '))
             } else {
-              resultArray = exportColumn[column].column.map((subColumn) => this.confirmExist(getChildrenData, subColumn))
+              resultArray = this.formatColumns(exportColumn[column].column, getChildrenData)
             }
           }
           if (Array.isArray(resultArray)) {
@@ -602,6 +606,9 @@ export default {
         result.push(itemResult)
       })
       return result
+    },
+    formatColumns(column, checkDataset) {
+      return column.map((subColumn) => this.confirmExist(checkDataset, subColumn)).filter(subColumn => subColumn)
     },
     confirmExist(data, column) {
       if (!data) {
