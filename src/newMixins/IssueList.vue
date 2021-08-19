@@ -180,6 +180,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     async loadSelectionList() {
+      if (this.selectedProjectId === -1) return
       await Promise.all([
         getProjectUserList(this.selectedProjectId)
       ]).then(res => {

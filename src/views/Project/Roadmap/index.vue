@@ -38,9 +38,7 @@
               </el-row>
             </el-collapse-item>
           </el-collapse>
-          <div v-else class="text-center m-7">
-            <span>{{ $t('general.NoData') }}</span>
-          </div>
+          <el-empty v-else :description="$t('general.NoData')" />
         </el-card>
       </el-col>
     </el-row>
@@ -71,7 +69,7 @@ export default {
   },
   data() {
     return {
-      listLoading: true,
+      listLoading: false,
       contentLoading: false,
       workLoad: '',
       activeNames: '',
@@ -96,6 +94,7 @@ export default {
   },
   methods: {
     async fetchAll() {
+      if (this.selectedProjectId === -1) return
       this.listLoading = true
       const resVersion = await getProjectVersion(this.selectedProjectId)
       const { versions } = resVersion.data

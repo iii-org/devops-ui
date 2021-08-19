@@ -283,7 +283,7 @@ import XLSX from 'xlsx'
  */
 
 export default {
-  name: 'ProjectIssues',
+  name: 'QAProjectIssueList',
   components: {
     QuickAddIssue,
     ProjectListSelector

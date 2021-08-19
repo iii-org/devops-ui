@@ -70,6 +70,9 @@
             <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit)" />
           </template>
         </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
+        </template>
       </el-table>
       <pagination
         :total="filteredData.length"

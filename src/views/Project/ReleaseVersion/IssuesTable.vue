@@ -103,6 +103,9 @@
             </el-tooltip>
           </template>
         </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
+        </template>
       </el-table>
       <pagination
         :total="filteredData.length"

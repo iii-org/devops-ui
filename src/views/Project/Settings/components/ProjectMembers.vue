@@ -41,7 +41,7 @@
       <el-table-column align="center" :label="$t('general.Actions')" width="390">
         <template slot-scope="scope">
           <el-button v-show="userRole === 'Administrator' || userRole === 'QA'" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
-            <i class="el-icon-edit" />
+            <em class="el-icon-edit" />
             {{ $t('general.Participate') }}
           </el-button>
           <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
@@ -53,6 +53,9 @@
           >
             {{ $t('general.Remove') }}
           </el-button>
+        </template>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
         </template>
       </el-table-column>
     </el-table>

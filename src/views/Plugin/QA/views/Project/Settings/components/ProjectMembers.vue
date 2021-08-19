@@ -60,6 +60,9 @@
             </el-button>
           </el-popconfirm>
         </template>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
+        </template>
       </el-table-column>
     </el-table>
 

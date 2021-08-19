@@ -249,6 +249,9 @@
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
         </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
+        </template>
       </el-table>
       <pagination
         :total="pageInfo.total"
@@ -385,6 +388,7 @@ export default {
       return result
     },
     async loadSelectionList() {
+      if (this.selectedProjectId === -1) return
       await Promise.all([
         getProjectUserList(this.selectedProjectId)
       ]).then(res => {

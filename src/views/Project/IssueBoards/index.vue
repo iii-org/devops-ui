@@ -471,6 +471,7 @@ export default {
       }
     },
     async loadSelectionList() {
+      if (this.selectedProjectId === -1) return
       await Promise.all([
         getProjectUserList(this.selectedProjectId)
       ]).then(res => {

@@ -241,6 +241,9 @@
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
         </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" />
+        </template>
       </el-table>
       <pagination
         :total="pageInfo.total"
@@ -274,7 +277,7 @@ import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
  */
 
 export default {
-  name: 'ProjectIssues',
+  name: 'ProjectIssueList',
   components: {
     QuickAddIssue,
     ProjectListSelector

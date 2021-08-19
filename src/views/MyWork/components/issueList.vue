@@ -205,7 +205,7 @@ import { getUserIssueList } from '@/api/user'
  */
 
 export default {
-  name: 'ProjectIssues',
+  name: 'MyWorkProjectIssueList',
   mixins: [IssueList, ContextMenu],
   props: {
     from: {
