@@ -4,12 +4,12 @@
     <el-divider />
     <el-tabs v-model="tabActiveName" type="card">
       <el-tab-pane label="Cluster" name="cluster">
-        <el-card class="mx-5">
+        <el-card>
           <Cluster />
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="Registry" name="registry">
-        <el-card class="mx-5">
+        <el-card>
           <Registry />
         </el-card>
       </el-tab-pane>

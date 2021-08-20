@@ -10,8 +10,7 @@
         v-loading="listLoading"
         class="cursor-pointer"
         :element-loading-text="$t('Loading')"
-        :data="clusterData"
-        :row-key="id"
+        :data="listData"
         border
         fit
         @row-click="rowClicked"
@@ -53,45 +52,62 @@
         </el-table-column>
       </el-table>
     </template>
-    <template v-else />
+    <template v-else>
+      <div class="flex justify-between">
+        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+          {{ $t('general.Back') }}
+        </el-button>
+        <el-button type="success" @click="handleSave">{{ $t('general.Save') }}</el-button>
+      </div>
+      <el-divider />
+      <el-form ref="form" :model="form" label-width="120px" size="medium">
+        <el-row :gutter="10">
+          <el-col :span="24" :sm="13">
+            <el-form-item label="Cluster 名稱">
+              <el-input v-model="form.clusterName" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="24" class="mb-5">
+            <el-form-item :label="$t('general.Status')">
+              <el-radio-group v-model="form.disabled">
+                <el-radio :label="false">{{ $t('general.Enable') }}</el-radio>
+                <el-radio :label="true">{{ $t('general.Disable') }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="13">
+            <el-form-item label="KubeConfig File">
+              <IssueFileUploader ref="IssueFileUploader" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </template>
   </div>
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
 import { getDeployedHostsLists, getDeployedHostsByList } from '@/api/deploySettings'
+import { BasicData } from '@/newMixins'
 
 export default {
   name: 'Cluster',
+  components: { IssueFileUploader: () => import('@/views/Project/IssueDetail/components/IssueFileUploader') },
+  mixins: [BasicData],
   data() {
     return {
-      clusterData: [],
-      listLoading: false,
-      showAddClusterPage: false
+      showAddClusterPage: false,
+      form: {
+        clusterName: '',
+        disabled: false,
+        kubeConfigFile: ''
+      }
     }
-  },
-  computed: {
-    // ...mapGetters(['selectedProjectId'])
-  },
-  watch: {
-    // selectedProjectId(val) {
-    //   console.log(val)
-    //   if (val) this.fetchData()
-    // }
-  },
-  mounted() {
-    this.fetchData()
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
-      try {
-        const res = await getDeployedHostsLists()
-        this.clusterData = res.data.cluster
-      } catch (err) {
-        console.error(err)
-      }
-      this.listLoading = false
+      const res = await getDeployedHostsLists()
+      return res.data.cluster
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
@@ -103,11 +119,21 @@ export default {
       return this.$dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     },
     rowClicked(row) {
-      console.log(row)
+      this.setFormData(row)
+      this.showAddClusterPage = true
+    },
+    setFormData(rowData) {
+      const { name, disabled } = rowData
+      this.form.clusterName = name
+      this.form.disabled = disabled
     },
     addCluster() {
       this.showAddClusterPage = true
-    }
+    },
+    handleBackPage() {
+      this.showAddClusterPage = false
+    },
+    handleSave() {}
   }
 }
 </script>
