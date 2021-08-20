@@ -6,11 +6,12 @@
         slot="button"
         type="success"
         icon="el-icon-plus"
+        :disabled="selectedProjectId === -1"
         @click="handleUploadDialog"
       >
         {{ $t('Test.TestFile.UploadTestSet') }}
       </el-button>
-      <el-button icon="el-icon-s-operation" @click="filterVisible=!filterVisible" />
+      <el-button icon="el-icon-s-operation" @click="filterVisible = !filterVisible" />
       <el-input
         id="input-search"
         v-model="keyword"
@@ -23,7 +24,7 @@
     <el-row v-if="filterVisible" type="flex" :gutter="10">
       <el-col :span="16">
         <el-form inline label-position="left">
-          <el-form-item v-for="(item) in software" :key="item.id">
+          <el-form-item v-for="item in software" :key="item.id">
             <el-checkbox v-model="item.visible" :label="item.name" />
           </el-form-item>
         </el-form>
@@ -55,9 +56,9 @@
                     </template>
                     <template v-else>{{ $t('Issue.Issue') }}</template>
                     #{{ plan.id }} - {{ plan.name }}
-                    <span v-if="plan.assigned_to&&Object.keys(plan.assigned_to).length>0">
-                      ({{ $t('Issue.Assignee') }}:{{ plan.assigned_to.name }}
-                      - {{ plan.assigned_to.login }})</span>
+                    <span v-if="plan.assigned_to && Object.keys(plan.assigned_to).length > 0">
+                      ({{ $t('Issue.Assignee') }}:{{ plan.assigned_to.name }} - {{ plan.assigned_to.login }})
+                    </span>
                   </el-link>
                   <el-popconfirm
                     :confirm-button-text="$t('general.Remove')"
@@ -65,9 +66,10 @@
                     icon="el-icon-info"
                     icon-color="red"
                     :title="$t('Issue.RemoveIssueRelation')"
-                    @confirm="removeTestPlanRelation(plan.project.id,plan.test_files, scope.row.file_name)"
+                    @confirm="removeTestPlanRelation(plan.project.id, plan.test_files, scope.row.file_name)"
                   >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}
+                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                      {{ $t('Issue.Unlink') }}
                     </el-button>
                   </el-popconfirm>
                 </li>
@@ -85,12 +87,15 @@
         width="160"
       >
         <template slot-scope="scope">
-          <div v-if="scope.row.the_last_test_result&&Object.keys(scope.row.the_last_test_result).length>0">
+          <div v-if="scope.row.the_last_test_result && Object.keys(scope.row.the_last_test_result).length > 0">
             <div>
               {{ scope.row.the_last_test_result.branch }}
             </div>
-            <el-link type="primary" target="_blank" style="font-size: 16px"
-                     :href="scope.row.the_last_test_result.commit_url"
+            <el-link
+              type="primary"
+              target="_blank"
+              style="font-size: 16px"
+              :href="scope.row.the_last_test_result.commit_url"
             >
               <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
               {{ scope.row.the_last_test_result.commit_id }}
@@ -98,25 +103,24 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="`${$t('ProgressPipelines.TestItems')}`"
-        align="center"
-        width="120"
-      >
+      <el-table-column :label="`${$t('ProgressPipelines.TestItems')}`" align="center" width="120">
         <template slot-scope="scope">
           <el-link type="primary" @click="toResultList(scope.row)">
-            <template v-if="scope.row.the_last_test_result&&Object.keys(scope.row.the_last_test_result).length>0">
-              <div v-if="scope.row.software_name==='Postman'" class="mt-2">
+            <template v-if="scope.row.the_last_test_result && Object.keys(scope.row.the_last_test_result).length > 0">
+              <div v-if="scope.row.software_name === 'Postman'" class="mt-2">
                 {{
-                  `${scope.row.the_last_test_result.success}/${scope.row.the_last_test_result.success + scope.row.the_last_test_result.failure}`
+                  `${scope.row.the_last_test_result.success}/${scope.row.the_last_test_result.success +
+                    scope.row.the_last_test_result.failure}`
                 }}
               </div>
               <div
-                v-else-if="scope.row.software_name==='SideeX'&&scope.row.the_last_test_result.result"
+                v-else-if="scope.row.software_name === 'SideeX' && scope.row.the_last_test_result.result"
                 class="mt-2"
               >
                 {{
-                  `${scope.row.the_last_test_result.result.casesPassed}/${scope.row.the_last_test_result.result.casesTotal}`
+                  `${scope.row.the_last_test_result.result.casesPassed}/${
+                    scope.row.the_last_test_result.result.casesTotal
+                  }`
                 }}
               </div>
             </template>
@@ -125,9 +129,11 @@
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" width="350">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">{{ $t('general.Edit') }}
+          <el-button size="small" type="primary" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
+            {{ $t('general.Edit') }}
           </el-button>
-          <el-button size="small" type="success" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">新增計畫
+          <el-button size="small" type="success" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
+            新增計畫
           </el-button>
           <el-popconfirm
             :confirm-button-text="$t('general.Delete')"
@@ -164,8 +170,11 @@
       destroy-on-close
     >
       <div slot="title" class="hidden" />
-      <RelatedPlanDialog ref="relatedPlan" :collection="selectedCollection" @close-dialog="toggleDialogVisible"
-                         @save="saveCollectionRelation"
+      <RelatedPlanDialog
+        ref="relatedPlan"
+        :collection="selectedCollection"
+        @close-dialog="toggleDialogVisible"
+        @save="saveCollectionRelation"
       />
     </el-dialog>
     <el-dialog
@@ -177,18 +186,10 @@
       append-to-body
       destroy-on-close
     >
-      <CollectionFileUploader ref="collectionFileUpload" @update="loadData"
-                              @upload-file-length="updateFileLength"
-      />
+      <CollectionFileUploader ref="collectionFileUpload" @update="loadData" @upload-file-length="updateFileLength" />
       <template slot="footer">
-        <el-button v-if="hasUploadFile" type="primary"
-                   @click="uploadCollection"
-        >{{ $t('File.Upload') }}
-        </el-button>
-        <el-button v-else
-                   @click="closeUploadCollection"
-        >{{ $t('general.Close') }}
-        </el-button>
+        <el-button v-if="hasUploadFile" type="primary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
+        <el-button v-else @click="closeUploadCollection">{{ $t('general.Close') }} </el-button>
       </template>
     </el-dialog>
   </div>
@@ -199,8 +200,10 @@ import { ProjectSelector, BasicData, Pagination, SearchBar, Table } from '@/newM
 import { mapActions, mapGetters } from 'vuex'
 import Fuse from 'fuse.js'
 import {
-  deleteTestFile, deleteTestPlanWithTestFile,
-  getTestFileList, postTestFile,
+  deleteTestFile,
+  deleteTestPlanWithTestFile,
+  getTestFileList,
+  postTestFile,
   postTestPlanWithTestFile
 } from '@/views/Plugin/QA/api/qa'
 import RelatedPlanDialog from '../TestFile/components/RelatedPlanDialog'
@@ -209,7 +212,7 @@ import Tracker from '@/components/Issue/Tracker'
 import CollectionFileUploader from '../TestFile/components/CollectionFileUploader'
 
 export default {
-  name: 'TestPlan',
+  name: 'TestFile',
   components: {
     CollectionFileUploader,
     Tracker,
@@ -249,7 +252,7 @@ export default {
       })
     },
     softwareValue() {
-      return this.software.filter((item) => (item.visible === true))
+      return this.software.filter(item => item.visible === true)
     }
   },
   watch: {
@@ -277,10 +280,7 @@ export default {
     async fetchData() {
       let data = await getTestFileList(this.selectedProjectId)
       data = data.data
-      this.software = [
-        { 'id': 1, 'name': 'Postman' },
-        { 'id': 2, 'name': 'SideeX' }
-      ]
+      this.software = [{ id: 1, name: 'Postman' }, { id: 2, name: 'SideeX' }]
       this.software.forEach((item, idx) => {
         this.$set(this.software[idx], 'visible', true)
       })
@@ -319,7 +319,7 @@ export default {
       this.listFilterSoftwareData = this.listData
     },
     onToggleSelect() {
-      const select = this.software.filter((item) => (item.visible === true))
+      const select = this.software.filter(item => item.visible === true)
       const checker = select.length > 0
       this.software.forEach((item, idx) => {
         this.$set(this.software[idx], 'visible', !checker)
@@ -342,7 +342,7 @@ export default {
       const fuse = new Fuse(this.listData, opt)
       let search = `="${value}"`
       if (Array.isArray(value) && value.length >= 1) {
-        search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item.name}"` })) }
+        search = { $or: value.map(item => ({ $path: [opt['keys'][0]], $val: `="${item.name}"` })) }
       }
       const res = fuse.search(search)
       this.listFilterSoftwareData = res.map(items => items.item)
@@ -358,15 +358,15 @@ export default {
     },
     async saveCollectionRelation({ collection, test_plans }) {
       const apiRequest = []
-      test_plans.append.forEach((item) => {
+      test_plans.append.forEach(item => {
         const data = {
-          'issue_id': item,
-          'file_name': collection.file_name,
-          'software_name': collection.software_name
+          issue_id: item,
+          file_name: collection.file_name,
+          software_name: collection.software_name
         }
         apiRequest.push(postTestPlanWithTestFile(this.selectedProjectId, data))
       })
-      test_plans.remove.forEach((relation_id) => {
+      test_plans.remove.forEach(relation_id => {
         apiRequest.push(deleteTestPlanWithTestFile(this.selectedProjectId, relation_id))
       })
       if (apiRequest.length > 0) {
@@ -400,7 +400,7 @@ export default {
       this.uploadDialogVisible = !this.uploadDialogVisible
     },
     getFilterCount(name) {
-      return this.listData.filter((item) => (item.software.name === name)).length
+      return this.listData.filter(item => item.software.name === name).length
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -413,7 +413,7 @@ export default {
     async removeTestPlanRelation(project_id, file_relation, file_name) {
       this.listLoading = true
       try {
-        const id = file_relation.find((item) => (item.file_name === file_name)).id
+        const id = file_relation.find(item => item.file_name === file_name).id
         await deleteTestPlanWithTestFile(project_id, id)
         this.$message({
           title: this.$t('general.Success'),
@@ -430,7 +430,7 @@ export default {
       this.$router.push({ name: row.software_name.toLowerCase() })
     },
     hasTestPlans(row) {
-      return (row.hasOwnProperty('test_plans') && row.test_plans.length > 0)
+      return row.hasOwnProperty('test_plans') && row.test_plans.length > 0
     },
     getRowClass({ row }) {
       const result = []
@@ -440,7 +440,7 @@ export default {
         if (getTableRef) {
           const getExpanded = this.expandedRow
           if (Array.isArray(getExpanded) && getExpanded.length > 0) {
-            const getRow = getExpanded.find((item) => item.file_name === row.file_name)
+            const getRow = getExpanded.find(item => item.file_name === row.file_name)
             if (getRow) {
               this.toggleExpandedRows(getRow, getExpanded)
               getTableRef.toggleRowExpansion(getRow, getExpanded)

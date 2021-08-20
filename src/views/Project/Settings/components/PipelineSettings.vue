@@ -33,12 +33,12 @@
         </el-table-column>
       </el-table>
       <div class="text-right mt-3">
-        <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">{{
-          $t('general.Cancel')
-        }}</el-button>
-        <el-button size="mini" type="primary" :loading="isStagesLoading" @click="updatePipeDefBranch">{{
-          $t('general.Confirm')
-        }}</el-button>
+        <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">
+          {{ $t('general.Cancel') }}
+        </el-button>
+        <el-button size="mini" type="primary" :loading="isStagesLoading" @click="updatePipeDefBranch">
+          {{ $t('general.Confirm') }}
+        </el-button>
       </div>
     </template>
     <template v-else-if="settingStatus === 'unSupported'">
@@ -47,6 +47,9 @@
     </template>
     <template v-else-if="settingStatus === 'error'">
       <div class="text-center text-title">{{ $t('Notify.LoadFail') }}</div>
+    </template>
+    <template v-else>
+      <el-empty :description="$t('general.NoData')" :image-size="100" />
     </template>
   </el-collapse-item>
 </template>
@@ -76,14 +79,15 @@ export default {
   },
   watch: {
     selectedProject() {
-      if (this.selectedRepositoryId !== undefined) this.fetchPipeDefBranch()
+      this.fetchPipeDefBranch()
     }
   },
   mounted() {
-    if (this.selectedRepositoryId !== undefined) this.fetchPipeDefBranch()
+    this.fetchPipeDefBranch()
   },
   methods: {
     async fetchPipeDefBranch() {
+      if (this.selectedRepositoryId === -1) return
       this.isLoading = true
       try {
         const res = await getPipelineDefaultBranch(this.selectedRepositoryId)

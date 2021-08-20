@@ -53,6 +53,9 @@
           </el-popconfirm>
         </template>
       </el-table-column>
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="listQuery.total ? listQuery.total : 1"

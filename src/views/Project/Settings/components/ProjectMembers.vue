@@ -3,73 +3,74 @@
     <template slot="title">
       <span class="text-title">{{ $t('Member.Manage') }}</span>
     </template>
-    <div class="flex justify-between mb-4">
-      <el-button type="success" size="medium" icon="el-icon-plus" @click="showDialog">
-        {{ $t('Member.AddMember') }}
-      </el-button>
-      <div>
-        <span class="font-bold mx-2">{{ $t('Project.Owner') }}</span>
-        <el-select
-          v-model="selectedProject.owner_id"
-          size="medium"
-          :disabled="disabledEditOwner"
-          @change="setProjectOwner"
-        >
-          <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
-            {{ user.label }}
-          </el-option>
-        </el-select>
-      </div>
-      <el-input
-        v-model="keyword"
-        size="medium"
-        prefix-icon="el-icon-search"
-        :style="{ width: '140px' }"
-        :placeholder="$t('general.SearchName')"
-      />
-    </div>
-    <el-table :data="pagedData" fit>
-      <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
-      <el-table-column align="center" prop="name" :label="$t('general.Name')" />
-      <el-table-column align="center" prop="department" :label="$t('general.Department')" width="300" />
-      <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
-      <el-table-column align="center" :label="$t('Member.Role')">
-        <template slot-scope="scope">
-          {{ getRoleName(scope.row.id) }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="$t('general.Actions')" width="390">
-        <template slot-scope="scope">
-          <el-button v-show="userRole === 'Administrator' || userRole === 'QA'" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
-            <em class="el-icon-edit" />
-            {{ $t('general.Participate') }}
-          </el-button>
-          <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
-          <el-button
-            type="danger"
-            size="mini"
-            :disabled="scope.row.id === userId"
-            @click="handleDeleteClick(scope.row)"
+    <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
+    <template v-else>
+      <div class="flex justify-between mb-4">
+        <el-button type="success" size="medium" icon="el-icon-plus" @click="showDialog">
+          {{ $t('Member.AddMember') }}
+        </el-button>
+        <div>
+          <span class="font-bold mx-2">{{ $t('Project.Owner') }}</span>
+          <el-select
+            v-model="selectedProject.owner_id"
+            size="medium"
+            :disabled="disabledEditOwner"
+            @change="setProjectOwner"
           >
-            {{ $t('general.Remove') }}
-          </el-button>
-        </template>
+            <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
+              {{ user.label }}
+            </el-option>
+          </el-select>
+        </div>
+        <el-input
+          v-model="keyword"
+          size="medium"
+          prefix-icon="el-icon-search"
+          :style="{ width: '140px' }"
+          :placeholder="$t('general.SearchName')"
+        />
+      </div>
+      <el-table :data="pagedData" fit>
+        <el-table-column align="center" prop="login" :label="$t('Member.Account')" />
+        <el-table-column align="center" prop="name" :label="$t('general.Name')" />
+        <el-table-column align="center" prop="department" :label="$t('general.Department')" width="300" />
+        <el-table-column align="center" prop="phone" :label="$t('Member.Phone')" />
+        <el-table-column align="center" :label="$t('Member.Role')">
+          <template slot-scope="scope">
+            {{ getRoleName(scope.row.id) }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" :label="$t('general.Actions')" width="390">
+          <template slot-scope="scope">
+            <el-button v-show="userRole === 'Administrator' || userRole === 'QA'" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+              <em class="el-icon-edit" />
+              {{ $t('general.Participate') }}
+            </el-button>
+            <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button
+              type="danger"
+              size="mini"
+              :disabled="scope.row.id === userId"
+              @click="handleDeleteClick(scope.row)"
+            >
+              {{ $t('general.Remove') }}
+            </el-button>
+          </template>
+        </el-table-column>
         <template slot="empty">
           <el-empty :description="$t('general.NoData')" />
         </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-
-    <add-member-dialog ref="addMemberDialog" @update="loadData" />
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+      <add-member-dialog ref="addMemberDialog" @update="loadData" />
+    </template>
   </el-collapse-item>
 </template>
 

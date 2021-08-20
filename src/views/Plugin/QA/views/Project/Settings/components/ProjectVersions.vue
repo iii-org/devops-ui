@@ -3,51 +3,57 @@
     <template slot="title">
       <span class="text-subtitle-1 font-weight-bold">{{ $t('Version.Manage') }}</span>
     </template>
-    <div class="d-flex justify-space-between mb-4">
-      <el-button type="success" size="small" icon="el-icon-plus" @click="handleAdding">
-        {{ $t('Version.AddVersion') }}
-      </el-button>
-      <el-input
-        v-model="keyword"
-        size="small"
-        prefix-icon="el-icon-search"
-        :style="{ width: '130px' }"
-        :placeholder="$t('general.SearchName')"
-      />
-    </div>
-    <el-table :data="pagedData" fit>
-      <el-table-column prop="name" :label="$t('general.Name')" show-overflow-tooltip />
-      <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
-      <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" />
-      <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
-      <el-table-column-tag
-        prop="status"
-        :label="$t('general.Status')"
-        element-class="el-tag--circle"
-        min-width="90"
-        size="mini"
-        location="projectVersions"
-      />
-      <el-table-column :label="$t('general.Actions')" align="center" width="210">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
-            {{ $t('general.Edit') }}
-          </el-button>
-          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">
-            {{ $t('general.Delete') }}
-          </el-button>
+    <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
+    <template v-else>
+      <div class="d-flex justify-space-between mb-4">
+        <el-button type="success" size="small" icon="el-icon-plus" @click="handleAdding">
+          {{ $t('Version.AddVersion') }}
+        </el-button>
+        <el-input
+          v-model="keyword"
+          size="small"
+          prefix-icon="el-icon-search"
+          :style="{ width: '130px' }"
+          :placeholder="$t('general.SearchName')"
+        />
+      </div>
+      <el-table :data="pagedData" fit>
+        <el-table-column prop="name" :label="$t('general.Name')" show-overflow-tooltip />
+        <ElTableColumnTime prop="created_on" :label="$t('general.CreateTime')" />
+        <el-table-column prop="due_date" align="center" :label="$t('Version.DueDate')" />
+        <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
+        <el-table-column-tag
+          prop="status"
+          :label="$t('general.Status')"
+          element-class="el-tag--circle"
+          min-width="90"
+          size="mini"
+          location="projectVersions"
+        />
+        <el-table-column :label="$t('general.Actions')" align="center" width="210">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
+              {{ $t('general.Edit') }}
+            </el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">
+              {{ $t('general.Delete') }}
+            </el-button>
+          </template>
+        </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" :image-size="100" />
         </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="onPagination"
-    />
-    <modify-version-dialog ref="modifyVersionDialog" @update="loadData" />
+      </el-table>
+      <pagination
+        :total="filteredData.length"
+        :page="listQuery.page"
+        :limit="listQuery.limit"
+        :page-sizes="[listQuery.limit]"
+        :layout="'total, prev, pager, next'"
+        @pagination="onPagination"
+      />
+      <modify-version-dialog ref="modifyVersionDialog" @update="loadData" />
+    </template>
   </el-collapse-item>
 </template>
 
@@ -59,7 +65,7 @@ import { getProjectVersion, deleteProjectVersion } from '@/api/projects'
 import ModifyVersionDialog from './ModifyVersionDialog'
 
 export default {
-  name: 'ProjectVersions',
+  name: 'QAProjectVersions',
   components: { ElTableColumnTime, ModifyVersionDialog, ElTableColumnTag },
   mixins: [BasicData, Pagination, SearchBar, Table],
   methods: {

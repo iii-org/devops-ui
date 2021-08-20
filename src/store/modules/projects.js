@@ -14,7 +14,7 @@ const getDefaultState = () => {
     list: [],
     options: [],
     total: 0,
-    selectedProject: { id: -1 },
+    selectedProject: { id: -1, repository_ids: [-1] },
 
     tracker: [],
     status: [],

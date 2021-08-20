@@ -4,30 +4,33 @@
       <project-list-selector />
       <el-divider />
       <el-row :gutter="12">
-        <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
-          <el-card
-            v-loading="listLoading"
-            :class="{ 'mb-3': true, 'float-card': hasDetail(item.title) }"
-            :shadow="hasDetail(item.title) ? 'always' : 'never'"
-            @click.native="showDetail(item.title)"
-          >
-            <div slot="header" class="flex justify-between items-center" style="height: 24px">
-              <strong>{{ item.title }}{{ item.quota }}</strong>
-            </div>
-            <div v-if="selectedProjectId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
-            <div v-else>
-              <div>
-                <resource-pie :chart-data="item.data" />
+        <el-empty v-if="usageList.length ===0" :description="$t('general.NoData')" />
+        <template v-else>
+          <el-col v-for="item in usageList" :key="item.title" :lg="8" :xl="6">
+            <el-card
+              v-loading="listLoading"
+              :class="{ 'mb-3': true, 'float-card': hasDetail(item.title) }"
+              :shadow="hasDetail(item.title) ? 'always' : 'never'"
+              @click.native="showDetail(item.title)"
+            >
+              <div slot="header" class="flex justify-between items-center" style="height: 24px">
+                <strong>{{ item.title }}{{ item.quota }}</strong>
               </div>
-              <div
-                :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'"
-                :style="{ cursor: 'pointer' }"
-              >
-                {{ $t('ProjectResource.Details') }}
+              <div v-if="selectedProjectId === -1" style="text-align: center;">{{ $t('general.NoData') }}</div>
+              <div v-else>
+                <div>
+                  <resource-pie :chart-data="item.data" />
+                </div>
+                <div
+                  :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'"
+                  :style="{ cursor: 'pointer' }"
+                >
+                  {{ $t('ProjectResource.Details') }}
+                </div>
               </div>
-            </div>
-          </el-card>
-        </el-col>
+            </el-card>
+          </el-col>
+        </template>
       </el-row>
     </el-col>
   </el-row>

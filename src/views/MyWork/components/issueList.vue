@@ -172,6 +172,9 @@
             <span v-if="scope.row.author.login">({{ scope.row.author.login }})</span>
           </template>
         </el-table-column>
+        <template slot="empty">
+          <el-empty :description="$t('general.NoData')" :image-size="100" />
+        </template>
       </el-table>
       <pagination
         :total="pageInfo.total"

@@ -59,10 +59,10 @@
           <i class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
-      <el-button icon="el-icon-download" @click="downloadCSVReport">{{ $t('Track.DownloadExcel') }}</el-button>
+      <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="downloadCSVReport">{{ $t('Track.DownloadExcel') }}</el-button>
       <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
-      <el-button icon="el-icon-download" @click="handleRotatePreview">旋轉90度預覽</el-button>
-      <el-button icon="el-icon-download" @click="handlePreview">預覽</el-button>
+      <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="handleRotatePreview">旋轉90度預覽</el-button>
+      <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="handlePreview">預覽</el-button>
     </project-list-selector>
     <el-divider />
     <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
@@ -80,7 +80,8 @@
     <!--      </draggable>-->
     <!--      {{ trackerMap }}-->
     <!--    </el-card>-->
-    <el-card>
+    <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
+    <el-card v-else>
       {{ $t('general.group') }}:
       <el-switch
         v-model="group"
@@ -123,6 +124,7 @@ import draggable from 'vuedraggable'
 import { camelCase } from 'lodash'
 
 export default {
+  name: 'TraceabilityMatrix',
   components: { ProjectListSelector, Tracker, VueMermaid, draggable },
   data() {
     return {
@@ -243,6 +245,7 @@ export default {
   },
   methods: {
     async initChart() {
+      if (this.selectedProjectId === -1) return
       this.$set(this.filterValue, 'tracker_id', this.trackerList[0].id)
       await this.getSearchIssue('', true)
       this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
@@ -472,7 +475,7 @@ export default {
         const software_name = nodeId.split('.')[0]
         this.$router.push({ name: software_name.toLowerCase() })
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: nodeId } })
+        this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
       }
     },
     async downloadCSVReport() {

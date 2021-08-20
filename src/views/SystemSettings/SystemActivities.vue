@@ -20,6 +20,9 @@
       <el-table-column align="center" :label="$t('Activities.ActionType')" min-width="150" prop="action_type" />
       <el-table-column align="center" :label="$t('Activities.ActionParts')" min-width="250" prop="action_parts" />
       <el-table-column-time prop="act_at" :label="$t('Activities.ActAt')" />
+      <template slot="empty">
+        <el-empty :description="$t('general.NoData')" />
+      </template>
     </el-table>
     <pagination
       :total="filteredData.length"
