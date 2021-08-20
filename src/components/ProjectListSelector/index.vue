@@ -93,6 +93,10 @@ export default {
     hasUnsavedChanges: {
       type: Boolean,
       default: false
+    },
+    isConfirmLeave: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -195,6 +199,7 @@ export default {
       )
     },
     checkUnsavedChanges(event) {
+      if (this.isConfirmLeave) return
       if (this.hasUnsavedChanges) {
         setTimeout(() => {
           this.$refs.selectProject.blur()
