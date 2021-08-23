@@ -16,14 +16,21 @@
           />
         </el-form-item>
       </el-form>
-      <el-col v-else><div class="text-wrapper">{{ value }}</div><el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button></el-col>
+      <el-col v-else>
+        <Viewer :initial-value="value" />
+        <el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
+      </el-col>
     </el-col>
   </el-row>
 </template>
 
 <script>
+import '@toast-ui/editor/dist/toastui-editor-viewer.css'
+import { Viewer } from '@toast-ui/vue-editor'
+
 export default {
   name: 'IssueDescription',
+  components: { Viewer },
   props: {
     value: {
       type: String,
