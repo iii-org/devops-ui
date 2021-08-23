@@ -59,27 +59,64 @@
           <i class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
-      <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="downloadCSVReport">{{ $t('Track.DownloadExcel') }}</el-button>
-      <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
-      <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="handleRotatePreview">旋轉90度預覽</el-button>
-      <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="handlePreview">預覽</el-button>
+      <el-popover
+        placement="bottom"
+        trigger="click"
+      >
+        <el-form>
+          <el-form-item label="預設檢核條件">
+            <el-select
+              v-model="trackerMapTarget.id"
+              :disabled="selectedProjectId === -1"
+              filterable
+              @change="handleSetDefault"
+            >
+              <el-option v-for="trackOrder in trackerMapOptions" :key="trackOrder.id" :label="trackOrder.name"
+                         :value="trackOrder.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-button class="w-full" icon="el-icon-setting" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
+          </el-button>
+          <el-divider />
+          <el-form-item label="檢核條件" class="relation_settings">
+            <ol>
+              <li v-for="item in trackerMapTarget.order" :key="item">{{ $t(`Issue.${item}`) }}</li>
+            </ol>
+          </el-form-item>
+        </el-form>
+        <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
+                   :disabled="chartLoading"
+        > 追溯檢核
+          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+      </el-popover>
+      <el-divider direction="vertical" />
+      <el-popover
+        placement="bottom"
+        trigger="click"
+      >
+        <el-menu class="download">
+          <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
+            <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
+          </el-menu-item>
+          <!--<el-menu-item>-->
+          <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
+          <!--</el-menu-item>-->
+          <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
+            <em class="el-icon-download" />旋轉90度預覽
+          </el-menu-item>
+          <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
+            <em class="el-icon-download" />預覽
+          </el-menu-item>
+        </el-menu>
+        <el-button slot="reference" icon="el-icon-download">下載</el-button>
+      </el-popover>
     </project-list-selector>
     <el-divider />
     <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
       <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
     </el-alert>
-    <!--    <el-card>-->
-    <!--      <draggable-->
-    <!--        v-model="trackerMapList"-->
-    <!--        :draggable="'.item'"-->
-    <!--      >-->
-    <!--        <el-tag class="item" v-for="item in trackerMapList" :key="item">-->
-    <!--          {{ item }}-->
-    <!--        </el-tag>-->
-    <!--      </draggable>-->
-    <!--      {{ trackerMap }}-->
-    <!--    </el-card>-->
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
     <el-card v-else>
       {{ $t('general.group') }}:
@@ -108,6 +145,9 @@
         <el-button type="primary" @click="downloadPdf">{{ $t('File.Download') }}</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="追溯檢核" :visible.sync="settingDialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
+      <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
+    </el-dialog>
   </div>
 </template>
 
@@ -118,19 +158,25 @@ import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import { getTestFileByTestPlan, getTraceabilityMatrixReport } from '@/views/Plugin/QA/api/qa'
+import {
+  getTestFileByTestPlan,
+  getTraceabilityMatrixReport,
+  getTraceOrderList, patchTraceOrder
+} from '@/views/Plugin/QA/api/qa'
 import html2canvas from 'html2canvas'
-import draggable from 'vuedraggable'
-import { camelCase } from 'lodash'
+import { camelCase, cloneDeep } from 'lodash'
+import OrderListDialog from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/OrderListDialog'
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { ProjectListSelector, Tracker, VueMermaid, draggable },
+  components: { OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   data() {
     return {
       filterValue: { tracker_id: null, issue_id: [] },
       nowFilterValue: { tracker_id: null, issue_id: [] },
-      trackerMapList: ['Epic', 'Feature', 'Test Plan'],
+      trackerMapOptions: [],
+      trackerMapTarget: {},
+      trackerOrder: '',
       issueList: [],
       chartIssueList: [],
       issueLoading: false,
@@ -143,6 +189,7 @@ export default {
       accessedIssueId: [],
       relationLine: {},
       testFilesResult: [],
+      settingDialogVisible: false,
       dialogVisible: false,
       image: {
         filename: '',
@@ -154,32 +201,30 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'tracker']),
     startPoint() {
-      if (this.nowFilterValue.issue_id.length <= 0) {
+      if (!this.nowFilterValue.issueList || this.nowFilterValue.issueList.length <= 0) {
         return null
       }
-      const result = []
-      this.nowFilterValue.issue_id.forEach((item) => {
-        result.push(this.getName(this.nowFilterValue.tracker_id, this.nowFilterValue.tracker, 'Issue.') + '#' + item + '-' + this.getName(item, this.nowFilterValue.issueList))
-      })
-      return result.join(', ')
+      return this.nowFilterValue.issueList.map(issue => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.subject}`).join(', ')
     },
     getPercentProgress() {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
     },
     trackerList() {
-      return this.tracker.filter((item) => (this.trackerMapList.includes(item.name)))
+      if (!this.trackerMapTarget.order) return []
+      if (this.trackerMapTarget.order.length === 0) return this.tracker
+      return this.tracker.filter(item => (this.trackerMapTarget.order.includes(item.name)))
     },
     trackerMap() {
-      return this.trackerMapList.map((item, idx) => {
+      return this.trackerMapTarget.order.map((item, idx) => {
         const result = {
           name: item,
           relation: {}
         }
-        if (this.trackerMapList[idx - 1]) {
-          result['relation']['parent'] = [this.trackerMapList[idx - 1]]
+        if (this.trackerMapTarget.order[idx - 1]) {
+          result['relation']['parent'] = [this.trackerMapTarget.order[idx - 1]]
         }
-        if (this.trackerMapList[idx + 1]) {
-          result['relation']['children'] = [this.trackerMapList[idx + 1]]
+        if (this.trackerMapTarget.order[idx + 1]) {
+          result['relation']['children'] = [this.trackerMapTarget.order[idx + 1]]
         }
         if (item === 'Test Plan') {
           if (!result['relation']['children']) {
@@ -235,10 +280,21 @@ export default {
     async 'filterValue.tracker_id'() {
       this.filterValue.issue_id = []
       await this.getSearchIssue('', true)
-      this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
-      await this.onPaintChart()
+      if (this.issueList.length > 0) {
+        this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
+        await this.onPaintChart()
+      }
       await this.getSearchIssue()
+    },
+    trackerMapTarget: {
+      deep: true,
+      handler() {
+        this.initChart()
+      }
     }
+  },
+  created() {
+    this.getTrackerMapOptions()
   },
   mounted() {
     this.initChart()
@@ -246,10 +302,19 @@ export default {
   methods: {
     async initChart() {
       if (this.selectedProjectId === -1) return
-      this.$set(this.filterValue, 'tracker_id', this.trackerList[0].id)
-      await this.getSearchIssue('', true)
-      this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
-      await this.onPaintChart()
+      if (this.trackerMapTarget.order && this.trackerMapTarget.order.length > 0) {
+        this.$set(this.filterValue, 'tracker_id', this.trackerList[0].id)
+      }
+    },
+    async getTrackerMapOptions() {
+      const response = await getTraceOrderList(this.selectedProjectId)
+      this.trackerMapOptions = response.data.trace_order_list
+      const trackerOrder = this.trackerMapOptions.find(item => item.default)
+      if (trackerOrder) {
+        this.$set(this.$data, 'trackerMapTarget', cloneDeep(trackerOrder))
+      } else {
+        this.$set(this.$data, 'trackerMapTarget', {})
+      }
     },
     async getSearchIssue(query, init) {
       let querySearch = {}
@@ -286,6 +351,11 @@ export default {
     checkUniqueRelationLine(subIssue_id, issue_id) {
       return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
     },
+    checkNextRelation(subIssue_tracker, issue_tracker) {
+      const object = this.trackerMap.find(item => issue_tracker === item.name)
+      console.log(object.relation, object)
+      return [...object.relation.children, object.name].includes(subIssue_tracker)
+    },
     formatChartData(issue, group) {
       const issueName = (issue.subject) ? issue.subject : issue.name
       const checkIssueName = issueName.replace(/"/g, '&quot;')
@@ -299,7 +369,7 @@ export default {
         }
       }
       if (issue['relations']) {
-        relations = issue['relations'].map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
+        relations = issue['relations'].map(item => (this.checkNextRelation(item.tracker.name, issue.tracker.name) && this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
           .filter(item => item !== null)
         for (let index = 0; index < relations.length; index++) {
           link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
@@ -362,7 +432,7 @@ export default {
         id: `${test_file.software_name}.${test_file.file_name}_result`,
         link: ['-->'],
         text: `"${last_result}"`,
-        editable: false
+        editable: true
       }
       if (group) {
         file_result['group'] = `${this.$t('TestCase.TestResult')}`
@@ -377,15 +447,17 @@ export default {
     async onPaintChart() {
       this.chartLoading = true
       this.nowFilterValue = Object.assign({}, this.filterValue)
-      this.nowFilterValue = Object.assign(this.nowFilterValue, { tracker: this.trackerList, issueList: this.issueList })
       this.accessedIssueId = []
       this.chartIssueList = []
       this.testFilesResult = []
       this.chartProgress.now = 0
       this.chartProgress.total = 0
+      const issueList = []
+      this.chartIssueList = []
       for (const item of this.nowFilterValue.issue_id) {
         this.chartProgress.total += 1
         const issue = await getIssue(item)
+        issueList.push(issue.data)
         const network = new this.PaintNetwork(this, issue.data)
         const family = await getIssueFamily(item)
         this.chartProgress.now += 1
@@ -393,6 +465,7 @@ export default {
         await network.getPaintFamily(issue.data, family.data)
         await network.end()
       }
+      this.nowFilterValue = Object.assign(this.nowFilterValue, { issueList: issueList })
       this.chartLoading = false
     },
     PaintNetwork(vueInstance, rootIssue) {
@@ -449,6 +522,7 @@ export default {
       this.getRelationTargets = function(issue) {
         const nowNode = vueInstance.trackerMap.find((item) => (item.name === issue.tracker.name))
         const nowNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === issue.tracker.name))
+        if (!nowNode) return []
         let findRelationTargets = ['children']
         if (nowNodeIndex === startNodeIndex) {
           findRelationTargets = ['parent', 'children']
@@ -465,11 +539,6 @@ export default {
         return Promise.resolve()
       }
     },
-    getName(id, list, translate) {
-      if (!list) return null
-      const find = list.find((item) => (item.id === id))
-      return (find) ? ((translate) ? this.$t(translate + find.name) : find.name) : null
-    },
     editNode(nodeId) {
       if (isNaN(parseInt(nodeId))) {
         const software_name = nodeId.split('.')[0]
@@ -477,6 +546,19 @@ export default {
       } else {
         this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
       }
+    },
+    async handleSetDefault(id) {
+      try {
+        await patchTraceOrder(id, { default: true })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+      } catch (e) {
+        console.log(e)
+      }
+      await this.getTrackerMapOptions()
     },
     async downloadCSVReport() {
       const response = await getTraceabilityMatrixReport(this.selectedProjectId, { responseType: 'blob' })
@@ -531,6 +613,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.relation_settings {
+  > > > .el-form-item__content {
+    @apply clear-both;
+  }
+}
+
 .issue-select {
   > > > .el-tag {
     width: 100%;
@@ -547,6 +635,10 @@ export default {
   > > > .el-alert__content {
     width: 100%;
   }
+}
+
+.download {
+  @apply border-none;
 }
 
 > > > .el-card {
