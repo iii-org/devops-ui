@@ -4,6 +4,7 @@
       <el-button
         id="btn-add-issue"
         slot="button"
+        v-permission="['Administrator','Project Manager', 'Engineer']"
         type="success"
         icon="el-icon-plus"
         :disabled="selectedProjectId === -1"

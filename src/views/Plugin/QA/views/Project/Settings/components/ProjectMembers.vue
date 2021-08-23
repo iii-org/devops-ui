@@ -39,7 +39,7 @@
         <el-table-column align="center" prop="role_name" :label="$t('Member.Role')" />
         <el-table-column align="center" :label="$t('general.Actions')" width="300">
           <template slot-scope="scope">
-            <el-button v-show="userRole === 'Administrator' || userRole === 'QA'" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+            <el-button v-permission="['Administrator','QA']" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>

@@ -42,11 +42,11 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="390">
           <template slot-scope="scope">
-            <el-button v-show="userRole === 'Administrator' || userRole === 'QA'" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+            <el-button v-permission="['Administrator','QA']" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>
-            <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button v-permission="['Administrator','Project Manager']" type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
             <el-button
               type="danger"
               size="mini"
