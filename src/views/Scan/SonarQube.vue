@@ -1,7 +1,7 @@
 <template>
   <div class="app-container" style="overflow: hidden;">
     <project-list-selector>
-      <el-button slot="button" type="success" @click="openSonarQube">
+      <el-button slot="button" type="success" :disabled="selectedProjectId === -1" @click="openSonarQube">
         <svg-icon icon-class="PhArrowSquareOutFill" />
         {{ $t('SonarQube.ViewReport') }}
       </el-button>
