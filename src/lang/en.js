@@ -933,7 +933,10 @@ export default {
     Account: '@:general.Account',
     LastUpdateTime: 'Last Update Time',
     Status: '@:general.Status',
-    Actions: '@:general.Actions'
+    Actions: '@:general.Actions',
+    ImpressionFileRepo: 'Impression File Repository',
+    RegistryName: 'Registry Name',
+    KubeConfigTextareaHint: 'Please directly paste Kubenate config or use the above to upload the file and upload directly'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

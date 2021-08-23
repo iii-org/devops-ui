@@ -6,3 +6,5 @@ export const getDeployedHostsByList = (cluster_id) => request.get(`/deploy/clust
 
 // registry
 export const getRegistryHostsLists = () => request.get(`/harbor/registries`)
+export const addRegistryHosts = (data) => request.post(`/harbor/registries`, data)
+export const updateRegistryHostsById = (registry_id, data) => request.put(`/harbor/registries/${registry_id}`, data)

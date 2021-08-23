@@ -15,15 +15,15 @@
         fit
         @row-click="rowClicked"
       >
-        <el-table-column align="center" label="印象檔儲存庫" width="150" prop="name" />
-        <el-table-column align="center" label="URL" width="300">
+        <el-table-column align="center" :label="$t('SystemDeploySettings.ImpressionFileRepo')" prop="name" />
+        <el-table-column align="center" label="URL">
           <template slot-scope="scope">
             <el-link type="primary" target="_blank" :href="scope.row.url">
               {{ scope.row.url }}
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('SystemDeploySettings.Status')">
+        <el-table-column align="center" :label="$t('SystemDeploySettings.Status')" width="100">
           <template slot-scope="scope">
             <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
               {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
@@ -55,7 +55,7 @@
       <el-form ref="form" :model="form" label-width="120px" size="medium">
         <el-row :gutter="10">
           <el-col :span="24" :sm="13">
-            <el-form-item label="Registry 名稱">
+            <el-form-item :label="$t('SystemDeploySettings.RegistryName')">
               <el-input v-model="form.registryName" />
             </el-form-item>
           </el-col>
@@ -73,12 +73,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="13">
-            <el-form-item label="帳號">
+            <el-form-item :label="$t('general.Account')">
               <el-input v-model="form.account" />
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="13">
-            <el-form-item label="密碼">
+            <el-form-item :label="$t('general.Password')">
               <el-input v-model="form.password" show-password />
             </el-form-item>
           </el-col>
@@ -90,7 +90,7 @@
 
 <script>
 import { BasicData } from '@/newMixins'
-import { getRegistryHostsLists } from '@/api/deploySettings'
+import { getRegistryHostsLists, addRegistryHosts, updateRegistryHostsById } from '@/api/deploySettings'
 
 export default {
   name: 'Registry',
@@ -98,13 +98,16 @@ export default {
   data() {
     return {
       showAddRegistryPage: false,
+      updateStatus: 'UPDATE_PUT',
+      editingId: 1,
       form: {
         registryName: '',
         disabled: false,
         url: '',
-        account: 'xxxxxxx',
-        password: 'yyyyyyyy'
-      }
+        account: '',
+        password: ''
+      },
+      updatedFormData: {}
     }
   },
   methods: {
@@ -113,24 +116,80 @@ export default {
       console.log(res)
       return res.data
     },
+    async addRegistryHosts() {
+      try {
+        await addRegistryHosts(this.updatedFormData)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadData()
+      }
+    },
+    async updateRegistryHostsById() {
+      try {
+        await updateRegistryHostsById(this.editingId, this.updatedFormData)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadData()
+      }
+    },
     toggleUsage(row) {
       row.disabled = !row.disabled
     },
     addRegistry() {
+      this.form = {
+        registryName: '',
+        disabled: false,
+        url: '',
+        status: '',
+        account: '',
+        password: ''
+      }
+      this.updateStatus = 'UPDATE_POST'
       this.showAddRegistryPage = true
     },
     handleBackPage() {
       this.showAddRegistryPage = false
     },
     rowClicked(row) {
+      this.editingId = row.id
       this.setFormData(row)
+      this.updateStatus = 'UPDATE_PUT'
       this.showAddRegistryPage = true
     },
     setFormData(rowData) {
-      const { name, disabled, url } = rowData
+      const { name, disabled, url, credential, status, type, description, insecure } = rowData
       this.form.registryName = name
-      this.form.disabled = disabled
+      this.form.disabled = status === 'healthy'
+      // this.form.status = status === 'healthy'
       this.form.url = url
+      this.form.account = credential.access_key
+      this.form.password = credential.access_secret
+      this.form.type = type
+      this.form.description = description
+      this.form.insecure = insecure
+    },
+    getUpdateFormData() {
+      const formData = {}
+      formData.name = this.form.registryName
+      formData.type = this.form.type
+      formData.access_key = this.form.account
+      formData.access_secret = this.form.password
+      formData.login_server = this.form.url
+      formData.description = this.form.description
+      formData.insecure = this.form.insecure
+      this.updatedFormData = formData
+    },
+    handleSave() {
+      this.getUpdateFormData()
+      switch (this.updateStatus) {
+        case 'UPDATE_PUT':
+          this.updateRegistryHostsById()
+          break
+        case 'UPDATE_POST':
+          this.addRegistryHosts()
+      }
     }
   }
 }

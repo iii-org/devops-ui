@@ -201,7 +201,8 @@ export default {
     on: '開',
     off: '關',
     Index: '項次',
-    Account: '帳號'
+    Account: '帳號',
+    Password: '密碼'
   },
   Notify: {
     Updated: '已更新',
@@ -935,7 +936,10 @@ export default {
     Account: '@:general.Account',
     LastUpdateTime: '最後更新時間',
     Status: '@:general.Status',
-    Actions: '@:general.Actions'
+    Actions: '@:general.Actions',
+    ImpressionFileRepo: '印象檔儲存庫',
+    RegistryName: 'Registry 名稱',
+    KubeConfigTextareaHint: '請直接貼上 kubenate config 或使⽤上⽅上傳檔案，直接上傳'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }
