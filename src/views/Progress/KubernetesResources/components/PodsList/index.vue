@@ -65,11 +65,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Actions')" align="center" width="180">
+        <el-table-column :label="$t('general.Actions')" align="center" width="270">
           <template slot-scope="scope">
             <div class="flex items-center">
               <div>
                 <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
+                  <el-button size="mini" type="primary" @click="handleCommandClick(scope.row.name, container.name)">
+                    command
+                  </el-button>
                   <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">
                     log
                   </el-button>
@@ -139,6 +142,9 @@ export default {
         console.error(error)
       }
       this.listLoading = false
+    },
+    handleCommandClick(podName, containerName) {
+      this.$router.push({ name: 'Pod Execute Shell', query: { podName, containerName }})
     },
     handleLogClick(podName, containerName) {
       this.focusPodName = podName

@@ -310,13 +310,24 @@ export const asyncRoutes = [
           },
           {
             path: 'pods-list',
-            name: 'Pods List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/PodsList'),
-            meta: {
-              title: 'Pods List',
-              roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
+            component: parentBlank,
+            meta: { title: 'Pods List', roles: ['Administrator', 'Project Manager', 'Engineer'] },
+            children: [
+              {
+                path: '',
+                name: 'Pods List',
+                hidden: true,
+                component: () => import('@/views/Progress/KubernetesResources/components/PodsList')
+              },
+              {
+                path: 'pod-execute-shell',
+                name: 'Pod Execute Shell',
+                hidden: true,
+                component: () => import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
+                meta: { title: 'Pod Execute Shell', roles: ['Administrator', 'Project Manager', 'Engineer'] }
+              }
+            ]
           },
           {
             path: 'service-list',
@@ -637,26 +648,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
-  {
-    path: '/lab',
-    component: Layout,
-    redirect: { name: 'Lab' },
-    hidden: true,
-    meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/Lab'),
-        name: 'Lab',
-        meta: {
-          title: 'Lab',
-          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
-        }
-      }
-    ]
-  },
-
   {
     path: '/SystemVersion',
     component: Layout,

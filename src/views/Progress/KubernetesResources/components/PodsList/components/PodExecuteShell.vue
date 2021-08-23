@@ -1,36 +1,18 @@
 <template>
   <div class="app-container">
-    <project-list-selector class="mb-2" />
-    <el-row :gutter="10" class="mb-3">
-      <el-col :span="9">
-        <el-input v-model="podName" size="small">
-          <template slot="prepend">Pod Name</template>
-        </el-input>
-      </el-col>
-      <el-col :span="10">
-        <el-input v-model="containerName" label="Container Name" size="small">
-          <template slot="prepend">Container Name</template>
-        </el-input>
-      </el-col>
-      <el-col :span="5" class="text-right">
-        <el-button type="primary" size="small" :disabled="isConnected" @click="initSocket">Connect</el-button>
-        <el-button type="danger" size="small" :disabled="!isConnected" @click="disconnectSocket">Disconnect</el-button>
-      </el-col>
-    </el-row>
+    <el-button type="text" size="medium" icon="el-icon-arrow-left" @click="handleBackPage">
+      {{ $t('general.Back') }}
+    </el-button>
     <div class="flex justify-between mb-2">
-      <span class="text-title"><em class="ri-terminal-line mr-2" />{{ podName }}</span>
+      <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span>
       <div class="flex items-center">
         <span class="dot relative" :class="connectStatus" />
         <span class="dot absolute animate-ping" :class="connectStatus" />
-        <span class="text-title ml-3">{{ isConnected ?'Connected':'Disconnected' }}</span>
+        <span class="text-title ml-3">{{ isConnected ? 'Connected' : 'Disconnected' }}</span>
       </div>
     </div>
     <div class="p-3 bg-black">
       <div ref="terminal" />
-    </div>
-    <div class="mt-3">
-      Emit Data 
-      <pre>{{ emitData }}</pre>
     </div>
   </div>
 </template>
@@ -40,20 +22,18 @@ import 'xterm/css/xterm.css'
 import { io } from 'socket.io-client'
 import { Terminal } from 'xterm'
 import { mapGetters } from 'vuex'
-import { ProjectSelector } from '@/newMixins'
 
 export default {
-  name: 'Lab',
-  mixins: [ProjectSelector],
+  name: 'PodExecuteShell',
   data() {
     return {
       socket: null,
       term: null,
-      podName: 'devopsdb-64db86bc58-vsw59',
+      projectName: '',
+      podName: '',
       containerName: '',
       command: '',
-      isConnected: false,
-      emitData: null
+      isConnected: false
     }
   },
   computed: {
@@ -62,9 +42,11 @@ export default {
       return this.isConnected ? 'bg-success' : 'bg-danger'
     }
   },
-  // mounted() {
-  //   this.initSocket()
-  // },
+  mounted() {
+    this.initSocket()
+    this.containerName = this.$route.query.containerName
+    this.podName = this.$route.query.podName
+  },
   beforeDestroy() {
     if (this.isConnected) this.disconnectSocket()
   },
@@ -87,30 +69,30 @@ export default {
         cursorBlink: true
       })
       this.term.open(this.$refs.terminal)
-      this.term.writeln('Connecting...')
       this.term.write(`\r\n$ `)
       this.term.focus()
       this.setTermKeyListener()
     },
     setConnectStatusListener() {
-      this.socket.on('connect', () => {
-        this.$notify({
-          title: this.$t('general.Success'),
-          message: 'Pod cmd 已連線',
-          type: 'success'
-        })
-      })
-      this.socket.on('disconnect', msg => {
+      // this.socket.on('connect', () => {
+      //   this.isConnected = true
+      //   this.$notify({
+      //     title: this.$t('general.Success'),
+      //     message: 'Pod Execute is Connected',
+      //     type: 'success'
+      //   })
+      // })
+      this.socket.on('disconnect', (msg) => {
+        this.isConnected = false
         this.$notify({
           title: this.$t('general.Info'),
-          message: 'Pod cmd 連線中斷',
+          message: `Pod Execute is disconnected (${msg})`,
           type: 'warning'
         })
       })
     },
     setCmdResponseListener() {
       this.socket.on('get_cmd_response', sioEvt => {
-        console.log('setCmdResponseListener', sioEvt)
         const { output } = sioEvt
         let str = output || sioEvt
         str = str.replace(/\n/g, '\r\n')
@@ -134,8 +116,7 @@ export default {
       if (this.command === 'clear') {
         this.term.clear()
         this.term.write(`\r\n$ `)
-      }
-      if (this.command === '') {
+      } else if (this.command === '') {
         this.term.write(`\r\n$ `)
       } else {
         this.term.write(`\r\n`)
@@ -160,14 +141,15 @@ export default {
         command: this.command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
-      this.emitData = emitObj
       console.log('emit', emitObj)
     },
     disconnectSocket() {
       this.socket.close()
       this.term.dispose()
       this.isConnected = false
-      this.emitData = null
+    },
+    handleBackPage() {
+      this.$router.push({ name: 'Pods List' })
     }
   }
 }
