@@ -75,5 +75,7 @@ export default {
 </script>
 
 <style scoped>
-
+.item{
+  @apply cursor-move;
+}
 </style>

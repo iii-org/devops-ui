@@ -204,6 +204,7 @@ export default {
       if (!this.nowFilterValue.issueList || this.nowFilterValue.issueList.length <= 0) {
         return null
       }
+      console.log(this.nowFilterValue.issueList)
       return this.nowFilterValue.issueList.map(issue => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.subject}`).join(', ')
     },
     getPercentProgress() {

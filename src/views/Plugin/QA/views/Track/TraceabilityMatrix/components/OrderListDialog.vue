@@ -51,7 +51,7 @@
               {{ $t('general.Cancel') }}
             </el-button>
           </template>
-          <template v-else>
+          <template v-else-if="row.id !== -1">
             <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleEdit(row)">{{ $t('general.Edit') }}
             </el-button>
             <el-popconfirm :confirm-button-text="$t('general.Delete')"
