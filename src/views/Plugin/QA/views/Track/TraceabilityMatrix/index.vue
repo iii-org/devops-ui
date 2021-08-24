@@ -172,7 +172,7 @@
             </el-button>
           </el-form-item>
         </el-form>
-        <el-table :data="traceCheck">
+        <el-table :data="traceCheck" height="60vh" style="width: 100%">
           <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track" show-tooltip-when-overflow>
             <template v-if="row[track]" slot-scope="{row}">
               <el-link @click="onRelationIssueDialog(row[track].id)">
@@ -735,6 +735,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
 .relation_settings {
   > > > .el-form-item__content {
     @apply clear-both;
