@@ -15,6 +15,17 @@
         fit
         @row-click="rowClicked"
       >
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <ul v-if="scope.row.application">
+              <li v-for="(item, index) in scope.row.application" :key="index" class="mb-5">
+                <span class="mr-5">{{ item.project_name }}</span>
+                <span class="mr-5">{{ item.tag }}</span>
+                <span>{{ item.status }}</span>
+              </li>
+            </ul>
+          </template>
+        </el-table-column>
         <el-table-column align="center" :label="$t('SystemDeploySettings.ImpressionFileRepo')" prop="name" />
         <el-table-column align="center" label="URL">
           <template slot-scope="scope">
@@ -107,7 +118,18 @@ export default {
         account: '',
         password: ''
       },
-      updatedFormData: {}
+      updatedFormData: {},
+      originData: []
+    }
+  },
+  computed: {
+    isFormDataChanged() {
+      if (this.originData.length === 0) return false
+      for (const key in this.form) {
+        console.log(key)
+        if (this.originData[key] !== this.form[key]) return true
+      }
+      return false
     }
   },
   methods: {
@@ -138,6 +160,15 @@ export default {
       row.disabled = !row.disabled
     },
     addRegistry() {
+      this.initFormData()
+      this.updateStatus = 'UPDATE_POST'
+      this.showAddRegistryPage = true
+    },
+    handleBackPage() {
+      this.initFormData()
+      this.showAddRegistryPage = false
+    },
+    initFormData() {
       this.form = {
         registryName: '',
         disabled: false,
@@ -146,11 +177,6 @@ export default {
         account: '',
         password: ''
       }
-      this.updateStatus = 'UPDATE_POST'
-      this.showAddRegistryPage = true
-    },
-    handleBackPage() {
-      this.showAddRegistryPage = false
     },
     rowClicked(row) {
       this.editingId = row.id
@@ -169,6 +195,7 @@ export default {
       this.form.type = type
       this.form.description = description
       this.form.insecure = insecure
+      this.setOriginData(this.form)
     },
     getUpdateFormData() {
       const formData = {}
@@ -179,7 +206,7 @@ export default {
       formData.login_server = this.form.url
       formData.description = this.form.description
       formData.insecure = this.form.insecure
-      this.updatedFormData = formData
+      Object.assign(this.updatedFormData, formData)
     },
     handleSave() {
       this.getUpdateFormData()
@@ -190,6 +217,16 @@ export default {
         case 'UPDATE_POST':
           this.addRegistryHosts()
       }
+    },
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
+    },
+    isFormDataChanged() {
+      for (const key in this.form) {
+        console.log(key)
+        if (this.originData[key] !== this.form[key]) return true
+      }
+      return false
     }
   }
 }

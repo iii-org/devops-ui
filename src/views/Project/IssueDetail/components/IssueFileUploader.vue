@@ -2,7 +2,7 @@
   <div>
     <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
       <div>
-        <el-button size="small" type="success" :class="{disabled: disabled}">{{ $t('File.ChooseFile') }}</el-button>
+        <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
         <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
         <div class="text-xs text-gray-400">
           <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -24,15 +24,9 @@ export default {
       fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
     }
   },
-  prop: {
-    disabled: {
-      type: Boolean,
-      default: false
-    }
-  },
   watch: {
     uploadFileList(val) {
-      if (val.length > 0) this.$emit('hasFileList', true)
+      if (val.length > 0) this.$emit('hasFileList', val)
       else this.$emit('hasFileList', false)
     }
   },
@@ -73,10 +67,5 @@ export default {
   justify-content: center;
   align-items: center;
   height: 200px;
-}
-
-.disabled {
-  background: #909399;
-  border-color: #909399;
 }
 </style>
