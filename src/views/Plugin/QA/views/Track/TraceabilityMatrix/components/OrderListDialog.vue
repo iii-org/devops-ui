@@ -132,15 +132,7 @@ export default {
     },
     async handleSetDefault(row) {
       try {
-        let row_id = row.id
-        let row_default = row.default
-        if (row.id === -1) {
-          const getOrder = this.trackerMapOptions.find(item => item.default && item.id !== -1)
-          if (!getOrder) return false
-          row_id = getOrder.id
-          row_default = false
-        }
-        await patchTraceOrder(row_id, { default: row_default })
+        await patchTraceOrder(row.id, { default: row.default })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
