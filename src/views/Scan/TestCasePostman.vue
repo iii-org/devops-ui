@@ -73,7 +73,7 @@
           <template slot-scope="scope">
             <el-tag size="mini" :type="getTagType(scope.row.testResult)">
               <svg-icon :icon-class="scope.row.testResult === 'Pass' ? 'mdi-check' : 'mdi-close'" />
-              {{ $t(`TestCase.Test${scope.row.testResult}`) }}
+              {{ $t(`TestCase.${scope.row.testResult}`) }}
             </el-tag>
           </template>
         </el-table-column>

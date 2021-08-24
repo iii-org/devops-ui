@@ -3,7 +3,7 @@
     <project-list-selector>
       <el-input
         v-model="keyword"
-        :placeholder="$t('Git.searchCommitId')"
+        :placeholder="$t('CheckMarx.SearchScanId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       confirmLoading: false,
-      searchKeys: ['commit_id']
+      searchKeys: ['id']
     }
   },
   methods: {
