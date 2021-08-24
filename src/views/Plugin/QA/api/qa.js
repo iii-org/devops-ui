@@ -13,7 +13,8 @@ export const postTestPlanWithTestFile = (projectId, data) => request.post('/qual
 export const deleteTestPlanWithTestFile = (projectId, issueId, data) => request.delete('/quality/' + projectId + '/testplan_with_testfile/' + issueId, data)
 
 export const getTraceabilityMatrixReport = (projectId, config) => request.get(`/quality/${projectId}/report`, config)
-export const getTraceOrderList = (project_id) => request.get(`/project/${project_id}/trace_order`)
-export const postTraceOrder = (project_id, data) => request.post(`/project/${project_id}/trace_order`, data)
+export const getTraceOrderList = (params) => request.get(`/trace_order`, { params })
+export const postTraceOrder = (data) => request.post(`/trace_order`, data)
 export const patchTraceOrder = (trace_order_id, data) => request.patch(`/trace_order/${trace_order_id}`, data)
 export const deleteTraceOrder = (trace_order_id) => request.delete(`/trace_order/${trace_order_id}`)
+export const getTraceOrderExecute = (data) => request.patch(`/trace_order/execute`, data)

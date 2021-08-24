@@ -396,6 +396,7 @@ export default {
     DeleteIssueReason: 'Please specify the reason for closure',
     Unlink: 'Unlink',
     TestFile: '@:route.testFile',
+    TestResult: '@:TestCase.TestResult',
     Files: 'Files',
     UploadFiles: 'Upload Files',
     DeleteFile: 'Are you sure to Delete File?',

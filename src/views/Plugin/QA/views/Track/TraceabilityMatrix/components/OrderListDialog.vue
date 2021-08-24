@@ -106,7 +106,7 @@ export default {
   methods: {
     async handleAddOrderList() {
       try {
-        await postTraceOrder(this.selectedProjectId, this.trackerOrderForm)
+        await postTraceOrder({ ...this.trackerOrderForm, project_id: this.selectedProjectId })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Added'),
@@ -132,7 +132,11 @@ export default {
     },
     async handleSetDefault(row) {
       try {
-        await patchTraceOrder(row.id, { default: row.default })
+        const data = { default: row.default }
+        if (row.id === -1) {
+          data['project_id'] = this.selectedProjectId
+        }
+        await patchTraceOrder(row.id, data)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),

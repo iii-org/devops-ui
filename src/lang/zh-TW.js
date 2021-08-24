@@ -400,6 +400,7 @@ export default {
     DeleteIssueReason: '請註明關閉原因',
     Unlink: '移除關聯',
     TestFile: '@:route.testFile',
+    TestResult: '@:TestCase.TestResult',
     Files: '附件',
     UploadFiles: '附件上傳',
     DeleteFile: '確認要刪除附件嗎?',

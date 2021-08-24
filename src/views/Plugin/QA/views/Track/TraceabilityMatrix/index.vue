@@ -84,6 +84,8 @@
               <li v-for="item in trackerMapTarget.order" :key="item">{{ $t(`Issue.${item}`) }}</li>
             </ol>
           </el-form-item>
+          <el-button class="w-full" type="primary" icon="el-icon-check" @click="getTraceCheck">執行需求檢核
+          </el-button>
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
                    :disabled="chartLoading"
@@ -113,31 +115,70 @@
       </el-popover>
     </project-list-selector>
     <el-divider />
-    <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
-      <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
-      <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
-    </el-alert>
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
-    <el-card v-else>
-      {{ $t('general.group') }}:
-      <el-switch
-        v-model="group"
-        :active-text="$t('general.on')"
-        :inactive-text="$t('general.off')"
-      />
-      <template slot="header">
-        {{ $t('Track.DemandTraceability') }}
-        <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
-      </template>
-      <div ref="matrix">
-        <vue-mermaid
-          :nodes="data"
-          type="graph LR"
-          :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
-          @nodeClick="editNode"
+    <el-tabs v-else v-model="activeTab" type="border-card">
+      <el-tab-pane label="需求追溯圖" name="map">
+        <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
+          <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
+          <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
+        </el-alert>
+        {{ $t('general.group') }}:
+        <el-switch
+          v-model="group"
+          :active-text="$t('general.on')"
+          :inactive-text="$t('general.off')"
         />
-      </div>
-    </el-card>
+        <template slot="header">
+          {{ $t('Track.DemandTraceability') }}
+          <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
+        </template>
+        <div ref="matrix">
+          <vue-mermaid
+            :nodes="data"
+            type="graph LR"
+            :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
+            @nodeClick="editNode"
+          />
+        </div>
+      </el-tab-pane>
+      <el-tab-pane v-loading="listLoading" label="需求檢核" name="check" :element-loading-text="$t('Loading')">
+        <el-form inline>
+          <el-form-item label="預設檢核條件">
+            <el-select
+              v-model="trackerMapTarget.id"
+              :disabled="selectedProjectId === -1"
+              filterable
+              @change="handleSetDefault"
+            >
+              <el-option v-for="trackOrder in trackerMapOptions" :key="trackOrder.id" :label="trackOrder.name"
+                         :value="trackOrder.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button class="w-full" icon="el-icon-setting" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
+            </el-button>
+          </el-form-item>
+          <el-form-item label="檢核條件" class="relation_settings">
+            <div v-for="(item,idx) in trackerMapTarget.order" :key="item" class="item">{{ idx + 1 }}.
+              <el-tag>
+                <tracker :name="item" />
+              </el-tag>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-check" @click="getTraceCheck">執行需求檢核
+            </el-button>
+          </el-form-item>
+        </el-form>
+        <el-table :data="traceCheck">
+          <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track" />
+          <template slot="empty">
+            <el-empty :description="$t('general.NoData')" />
+          </template>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
     <el-dialog :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
       <div ref="rotateImage" />
       <span slot="footer">
@@ -160,7 +201,7 @@ import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import {
   getTestFileByTestPlan,
-  getTraceabilityMatrixReport,
+  getTraceabilityMatrixReport, getTraceOrderExecute,
   getTraceOrderList, patchTraceOrder
 } from '@/views/Plugin/QA/api/qa'
 import html2canvas from 'html2canvas'
@@ -172,15 +213,18 @@ export default {
   components: { OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   data() {
     return {
+      activeTab: 'map',
       filterValue: { tracker_id: null, issue_id: [] },
       nowFilterValue: { tracker_id: null, issue_id: [] },
       trackerMapOptions: [],
       trackerMapTarget: {},
       trackerOrder: '',
+      traceCheck: [],
       issueList: [],
       chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
+      listLoading: false,
       chartProgress: {
         now: 0,
         total: 0
@@ -234,6 +278,13 @@ export default {
         }
         return result
       })
+    },
+    traceCheckList() {
+      const result = cloneDeep(this.trackerMapTarget.order)
+      if (result.includes('Test Plan')) {
+        result.splice(result.indexOf('Test Plan') + 1, 0, 'TestFile', 'TestResult')
+      }
+      return result
     },
     data() {
       const chartIssueList = this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
@@ -313,7 +364,7 @@ export default {
       return Promise.resolve()
     },
     async getTrackerMapOptions() {
-      const response = await getTraceOrderList(this.selectedProjectId)
+      const response = await getTraceOrderList({ project_id: this.selectedProjectId })
       this.trackerMapOptions = response.data
       const trackerOrder = this.trackerMapOptions.find(item => item.default)
       if (trackerOrder) {
@@ -556,7 +607,11 @@ export default {
     },
     async handleSetDefault(id) {
       try {
-        await patchTraceOrder(id, { default: true })
+        const data = { default: true }
+        if (id === -1) {
+          data['project_id'] = this.selectedProjectId
+        }
+        await patchTraceOrder(id, data)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -566,6 +621,17 @@ export default {
         console.log(e)
       }
       await this.getTrackerMapOptions()
+    },
+    async getTraceCheck() {
+      this.listLoading = true
+      try {
+        this.activeTab = 'check'
+        const res = await getTraceOrderExecute({ project_id: this.selectedProjectId })
+        this.traceCheck = res.data
+      } catch (e) {
+        console.log(e)
+      }
+      this.listLoading = false
     },
     async downloadCSVReport() {
       const response = await getTraceabilityMatrixReport(this.selectedProjectId, { responseType: 'blob' })
@@ -624,6 +690,10 @@ export default {
   > > > .el-form-item__content {
     @apply clear-both;
   }
+
+  .item {
+    @apply mx-1 inline-block;
+  }
 }
 
 .issue-select {
@@ -648,8 +718,8 @@ export default {
   @apply border-none;
 }
 
-> > > .el-card {
-  .el-card__body {
+> > > .el-tab-pane {
+  .el-tab-pane__body {
     height: 100%;
     overflow-y: auto;
   }
