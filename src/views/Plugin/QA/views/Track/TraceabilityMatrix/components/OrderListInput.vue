@@ -76,6 +76,6 @@ export default {
 
 <style scoped>
 .item{
-  @apply cursor-move;
+  @apply cursor-move inline-block;
 }
 </style>
