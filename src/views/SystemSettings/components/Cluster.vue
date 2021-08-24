@@ -11,10 +11,22 @@
         class="cursor-pointer"
         :element-loading-text="$t('Loading')"
         :data="listData"
+        :tree-props="{children: 'application', hasChildren: 'hasChildren'}"
         border
         fit
         @row-click="rowClicked"
       >
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <ul v-if="scope.row.application">
+              <li v-for="(item, index) in scope.row.application" :key="index" class="mb-5">
+                <span class="mr-5">{{ item.project_name }}</span>
+                <span class="mr-5">{{ item.tag }}</span>
+                <span>{{ item.status }}</span>
+              </li>
+            </ul>
+          </template>
+        </el-table-column>
         <el-table-column type="index" align="center" :label="$t('SystemDeploySettings.Index')" width="100" />
         <el-table-column align="center" :label="$t('SystemDeploySettings.RemoteDeploymentEnvironment')" width="150" prop="name" />
         <el-table-column align="center" :label="$t('SystemDeploySettings.ClusterName')" prop="cluster_name" width="150" />
@@ -80,8 +92,7 @@
               <IssueFileUploader
                 ref="IssueFileUploader"
                 style="margin-bottom: 40px;"
-                :class="{disabled: hasKubeConfig}"
-                :disabled="hasKubeConfig"
+                :class="{disabled: disabled}"
                 @hasFileList="hasFileList"
               />
               <el-input
@@ -99,7 +110,7 @@
 </template>
 
 <script>
-import { getDeployedHostsLists, getDeployedHostsByList } from '@/api/deploySettings'
+import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploySettings'
 import { BasicData } from '@/newMixins'
 
 export default {
@@ -109,69 +120,88 @@ export default {
   data() {
     return {
       showAddClusterPage: false,
+      updateStatus: 'UPDATE_PUT',
       form: {
         clusterName: '',
         disabled: false,
         kubeConfigFile: ''
       },
-      deployedData: {
-        'cluster': {
-          'id': 10,
-          'name': 'Endpoint 74',
+      editingId: 1,
+      hasUploadfile: false,
+      updatedFormData: {},
+      originData: [],
+      deployedData: [
+        {
+          'id': 2,
+          'name': '74-clustrer-win',
           'disabled': false,
           'creator_id': 1,
-          'create_at': '2021-08-12 22:03:44.505271',
-          'update_at': '2021-08-12 22:03:44.505271'
-        },
-        'K8s_Config': {
-          'apiVersion': 'v1',
-          'kind': 'Config',
-          'clusters': [
+          'create_at': '2021-08-19 09:18:19.787067',
+          'update_at': '2021-08-19 09:18:19.787067',
+          'cluster_name': 'local',
+          'cluster_host': 'https://10.20.0.74:31443/k8s/clusters/local',
+          'cluster_user': 'local',
+          'application': [
             {
-              'name': 'local',
-              'cluster': {
-                'server': 'https://10.20.0.74:31443/k8s/clusters/local',
-                'certificate-authority-data': 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJoekNDQVM2Z0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGoKYkdsemRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdIaGNOTWpFdwpPREF6TURNeU1UUTNXaGNOTXpFd09EQXhNRE15TVRRM1dqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGpiR2x6CmRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdXVEFUQmdjcWhrak8KUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVRXZjhyaE5HSTFoNHBqVGYzRTVXRS9XVCtyM0R5cndxTkZzOUdycCswSwpPZEFuWXBWakZLcWtCSU55eGRLS041c0NBTHBzR005TzhBMzZJdmdwWGE0M295TXdJVEFPQmdOVkhROEJBZjhFCkJBTUNBcVF3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFLQmdncWhrak9QUVFEQWdOSEFEQkVBaUJoTU92dUxoQzMKUlMzZTNhVTRjQTVCZDh5dGhJYWhqa0tqdE5BOGxNRTlDd0lnWEx4NFdMYWxkWklhVUJ5TjVPNGx3NVppTkppTAo5cjdMNXZWd0ozZk5BMGc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0='
-              }
-            }
-          ],
-          'users': [
+              id: 3,
+              'tag': 'V1.0',
+              'project_name': 'ui-create-test-case',
+              'status': true,
+              'namespace': '74-new-59'
+            },
             {
-              'name': 'local',
-              'user': {
-                'token': 'kubeconfig-user-rsdjt:l8dwjvd9lzwmmmfdkfkfs9flxqwp2hzvwhgsw9hfqsmzd6lngkkftg'
-              }
+              id: 4,
+              'tag': 'V1.0',
+              'project_name': 'ui-create-test-case',
+              'status': null,
+              'namespace': '74-new-60'
             }
-          ],
-          'contexts': [
-            {
-              'name': 'local',
-              'context': {
-                'user': 'local',
-                'cluster': 'local'
-              }
-            }
-          ],
-          'current-context': 'local'
+          ]
         }
-      },
-      hasUploadfile: false
+      ]
     }
   },
   computed: {
-    hasKubeConfig() {
+    disabled() {
       return !!this.form.kubeConfigFile
+    },
+    isFormDataChanged() {
+      if (this.originData.length === 0) return false
+      for (const key in this.form) {
+        console.log(key)
+        if (this.originData[key] !== this.form[key]) return true
+      }
+      return false
     }
   },
   methods: {
     async fetchData() {
       const res = await getDeployedHostsLists()
-      return res.data.cluster
+      return this.deployedData
+      // return res.data.cluster
     },
     async fetchDeployedHostsByList(cluster_id) {
       const res = await getDeployedHostsByList(cluster_id)
       console.log(res)
-      this.setFormData(this.deployedData)
+      this.setFormData(res.data)
+    },
+    async updateDeployHostsById() {
+      try {
+        await updateDeployHostsById(this.editingId, this.updateFormData)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadData()
+      }
+    },
+    async addDeployHosts() {
+      try {
+        await addDeployHosts(this.updateFormData)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadData()
+      }
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
@@ -183,32 +213,66 @@ export default {
       return this.$dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     },
     rowClicked(row) {
+      this.editingId = row.id
       this.fetchDeployedHostsByList(row.id)
+      this.updateStatus = 'UPDATE_PUT'
       this.showAddClusterPage = true
     },
-    setFormData(deployedData) {
-      const { cluster, K8s_Config } = deployedData
-      this.form.clusterName = cluster.name
-      this.form.disabled = cluster.disabled
-      this.form.kubeConfigFile = K8s_Config.clusters[0].cluster['certificate-authority-data']
+    setFormData(data) {
+      const { name, disabled } = data
+      this.form.clusterName = name
+      this.form.disabled = disabled
+      this.setOriginData(this.form)
     },
     addCluster() {
+      this.initFormData()
+      this.updateStatus = 'UPDATE_POST'
+      this.showAddClusterPage = true
+    },
+    handleBackPage() {
+      this.initFormData()
+      this.hasUploadfile = false
+      this.showAddClusterPage = false
+    },
+    initFormData() {
       this.form = {
         clusterName: '',
         disabled: false,
         kubeConfigFile: ''
       }
-      this.showAddClusterPage = true
     },
-    handleBackPage() {
-      this.showAddClusterPage = false
+    hasFileList(val) {
+      this.form.kubeConfigFile = ''
+      this.hasUploadfile = val
     },
-    hasFileList(bool) {
-      if (bool) this.form.kubeConfigFile = ''
-      else this.form.kubeConfigFile = this.deployedData.K8s_Config.clusters[0].cluster['certificate-authority-data']
-      this.hasUploadfile = bool
+    getUpdateFormData() {
+      const formData = {}
+      formData.name = this.form.clusterName
+      formData.disabled = this.form.disabled
+      formData.k8s_config_file = this.hasUploadfile ? this.hasUploadfile : this.form.kubeConfigFile
+      console.log(formData)
+      Object.assign(this.updatedFormData, formData)
     },
-    handleSave() {}
+    handleSave() {
+      this.getUpdateFormData()
+      switch (this.updateStatus) {
+        case 'UPDATE_PUT':
+          this.updateDeployHostsById()
+          break
+        case 'UPDATE_POST':
+          this.addDeployHosts()
+      }
+    },
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
+    }
+    // isFormDataChanged() {
+    //   for (const key in this.form) {
+    //     console.log(key)
+    //     if (this.originData[key] !== this.form[key]) return true
+    //   }
+    //   return false
+    // }
   }
 }
 </script>
