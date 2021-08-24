@@ -5,12 +5,12 @@
     <el-tabs v-model="tabActiveName" type="card">
       <el-tab-pane label="Cluster" name="cluster">
         <el-card>
-          <Cluster />
+          <Cluster @isClusterFormChanged="checkFormDataChanged" />
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="Registry" name="registry">
         <el-card>
-          <Registry />
+          <Registry @isRegistryFormChanged="checkFormDataChanged" />
         </el-card>
       </el-tab-pane>
     </el-tabs>
@@ -25,9 +25,32 @@ import Registry from '@/views/SystemSettings/components/Registry'
 export default {
   name: 'SystemDeploySettings',
   components: { ProjectListSelector, Cluster, Registry },
+  beforeRouteLeave(to, from, next) {
+    if (this.hasUnsavedChanges) {
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          next(false)
+        })
+    } else {
+      next()
+    }
+  },
   data() {
     return {
-      tabActiveName: 'cluster'
+      tabActiveName: 'cluster',
+      hasUnsavedChanges: false
+    }
+  },
+  methods: {
+    checkFormDataChanged(bool) {
+      this.hasUnsavedChanges = true
     }
   }
 }

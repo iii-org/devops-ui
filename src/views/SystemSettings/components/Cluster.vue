@@ -168,10 +168,14 @@ export default {
     isFormDataChanged() {
       if (this.originData.length === 0) return false
       for (const key in this.form) {
-        console.log(key)
         if (this.originData[key] !== this.form[key]) return true
       }
       return false
+    }
+  },
+  watch: {
+    isFormDataChanged(val) {
+      this.$emit('isClusterFormChanged', val)
     }
   },
   methods: {
@@ -229,7 +233,15 @@ export default {
       this.updateStatus = 'UPDATE_POST'
       this.showAddClusterPage = true
     },
-    handleBackPage() {
+    async handleBackPage() {
+      if (this.isFormDataChanged) {
+        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).catch(() => {})
+        if (res !== 'confirm') return
+      }
       this.initFormData()
       this.hasUploadfile = false
       this.showAddClusterPage = false
@@ -266,13 +278,6 @@ export default {
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
     }
-    // isFormDataChanged() {
-    //   for (const key in this.form) {
-    //     console.log(key)
-    //     if (this.originData[key] !== this.form[key]) return true
-    //   }
-    //   return false
-    // }
   }
 }
 </script>
