@@ -167,12 +167,19 @@
             </div>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-check" @click="getTraceCheck">執行需求檢核
+            <el-button type="primary" icon="el-icon-check" @click="getTraceCheck">
+              執行需求檢核
             </el-button>
           </el-form-item>
         </el-form>
         <el-table :data="traceCheck">
-          <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track" />
+          <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track" show-tooltip-when-overflow>
+            <template v-if="row[track]" slot-scope="{row}">
+              <el-link @click="onRelationIssueDialog(row[track].id)">
+                <status :name="row[track].status.name" size="small" /> #{{ row[track].id }} - {{ row[track].name }}
+              </el-link>
+            </template>
+          </el-table-column>
           <template slot="empty">
             <el-empty :description="$t('general.NoData')" />
           </template>
@@ -188,6 +195,17 @@
     </el-dialog>
     <el-dialog title="追溯檢核" :visible.sync="settingDialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
       <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
+    </el-dialog>
+    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
+               :before-close="handleRelationIssueDialogBeforeClose"
+    >
+      <ProjectIssueDetail v-if="relationIssue.visible"
+                          ref="children"
+                          :props-issue-id="relationIssue.id"
+                          :is-in-dialog="true"
+                          @update="handleRelationUpdate"
+                          @delete="handleRelationUpdate"
+      />
     </el-dialog>
   </div>
 </template>
@@ -206,11 +224,13 @@ import {
 } from '@/views/Plugin/QA/api/qa'
 import html2canvas from 'html2canvas'
 import { camelCase, cloneDeep } from 'lodash'
-import OrderListDialog from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/OrderListDialog'
+import OrderListDialog from './components/OrderListDialog'
+import Status from '@/components/Issue/Status'
+import ProjectIssueDetail from '../../Project/IssueDetail'
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
+  components: { Status, OrderListDialog, ProjectListSelector, Tracker, VueMermaid, ProjectIssueDetail },
   data() {
     return {
       activeTab: 'map',
@@ -239,6 +259,10 @@ export default {
         filename: '',
         content_type: '',
         src: ''
+      },
+      relationIssue: {
+        visible: false,
+        id: null
       }
     }
   },
@@ -632,6 +656,31 @@ export default {
         console.log(e)
       }
       this.listLoading = false
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
+    },
+    handleRelationUpdate() {
+      this.onCloseRelationIssueDialog()
+      this.initChart()
+      this.$emit('update-issue')
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      if (this.$refs.children.hasUnsavedChanges()) {
+        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            done()
+          })
+          .catch(() => {
+          })
+      } else {
+        done()
+      }
     },
     async downloadCSVReport() {
       const response = await getTraceabilityMatrixReport(this.selectedProjectId, { responseType: 'blob' })
