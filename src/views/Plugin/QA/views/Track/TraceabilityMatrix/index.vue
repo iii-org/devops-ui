@@ -204,7 +204,6 @@ export default {
       if (!this.nowFilterValue.issueList || this.nowFilterValue.issueList.length <= 0) {
         return null
       }
-      console.log(this.nowFilterValue.issueList)
       return this.nowFilterValue.issueList.map(issue => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.subject}`).join(', ')
     },
     getPercentProgress() {
@@ -275,17 +274,21 @@ export default {
     }
   },
   watch: {
-    selectedProjectId() {
-      this.initChart()
+    async selectedProjectId() {
+      await this.getTrackerMapOptions()
+      await this.initChart()
     },
-    async 'filterValue.tracker_id'() {
-      this.filterValue.issue_id = []
-      await this.getSearchIssue('', true)
-      if (this.issueList.length > 0) {
-        this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
+    'filterValue.tracker_id': {
+      deep: true,
+      async handler() {
+        this.filterValue.issue_id = []
+        await this.getSearchIssue('', true)
+        if (this.issueList.length > 0) {
+          this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
+        }
         await this.onPaintChart()
+        await this.getSearchIssue()
       }
-      await this.getSearchIssue()
     },
     trackerMapTarget: {
       deep: true,
@@ -302,20 +305,23 @@ export default {
   },
   methods: {
     async initChart() {
-      if (this.selectedProjectId === -1) return
+      if (this.selectedProjectId === -1) return Promise.reject()
       if (this.trackerMapTarget.order && this.trackerMapTarget.order.length > 0) {
-        this.$set(this.filterValue, 'tracker_id', this.trackerList[0].id)
+        const getTracker = this.trackerList.find(item => item.name === this.trackerMapTarget.order[0])
+        this.$set(this.filterValue, 'tracker_id', getTracker.id)
       }
+      return Promise.resolve()
     },
     async getTrackerMapOptions() {
       const response = await getTraceOrderList(this.selectedProjectId)
-      this.trackerMapOptions = response.data.trace_order_list
+      this.trackerMapOptions = response.data
       const trackerOrder = this.trackerMapOptions.find(item => item.default)
       if (trackerOrder) {
         this.$set(this.$data, 'trackerMapTarget', cloneDeep(trackerOrder))
       } else {
         this.$set(this.$data, 'trackerMapTarget', {})
       }
+      return Promise.resolve()
     },
     async getSearchIssue(query, init) {
       let querySearch = {}
@@ -354,7 +360,7 @@ export default {
     },
     checkNextRelation(subIssue_tracker, issue_tracker) {
       const object = this.trackerMap.find(item => issue_tracker === item.name)
-      console.log(object.relation, object)
+      if (!object) return true
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
     formatChartData(issue, group) {
@@ -459,6 +465,7 @@ export default {
         this.chartProgress.total += 1
         const issue = await getIssue(item)
         issueList.push(issue.data)
+        this.nowFilterValue = { ...this.nowFilterValue, issueList: issueList }
         const network = new this.PaintNetwork(this, issue.data)
         const family = await getIssueFamily(item)
         this.chartProgress.now += 1
@@ -466,7 +473,6 @@ export default {
         await network.getPaintFamily(issue.data, family.data)
         await network.end()
       }
-      this.nowFilterValue = Object.assign(this.nowFilterValue, { issueList: issueList })
       this.chartLoading = false
     },
     PaintNetwork(vueInstance, rootIssue) {
