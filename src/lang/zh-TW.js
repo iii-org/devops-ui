@@ -276,6 +276,7 @@ export default {
     Queued: '排程中',
     Scanning: '掃描中',
     Finished: '掃描完成',
+    Failed: '掃描失敗',
     InProcess: '產生中'
   },
   WebInspect: {
