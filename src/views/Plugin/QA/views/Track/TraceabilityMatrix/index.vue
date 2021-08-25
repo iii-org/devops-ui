@@ -4,64 +4,6 @@
       <el-popover
         placement="bottom"
         trigger="click"
-        @hide="onPaintChart"
-      >
-        <el-form>
-          <el-form-item :label="$t('Issue.tracker')">
-            <el-select
-              v-model="filterValue.tracker_id"
-              :placeholder="$t('Issue.SelectType')"
-              :disabled="selectedProjectId === -1"
-              filterable
-            >
-              <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
-                         :value="track.id"
-              >
-                <tracker :name="track.name" />
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('Issue.Issue')">
-            <el-select
-              v-model="filterValue.issue_id"
-              style="width: 100%"
-              :placeholder="$t('RuleMsg.PleaseSelect')"
-              clearable
-              filterable
-              remote
-              multiple
-              :remote-method="getSearchIssue"
-              :loading="issueLoading"
-              class="issue-select"
-            >
-              <el-option
-                v-for="item in issueList"
-                :key="item.id"
-                :label="'#' + item.id +' - '+item.name"
-                :value="item.id"
-              >
-                <span
-                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                  <span v-html="highLight(item.name)" />
-                </span>
-                <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                />
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
-                   :disabled="chartLoading"
-        > {{ $t('Track.StartingPoint') }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
-      </el-popover>
-      <el-divider direction="vertical" />
-      <el-popover
-        placement="bottom"
-        trigger="click"
       >
         <el-form>
           <el-form-item label="預設檢核條件">
@@ -92,56 +34,119 @@
         > 追溯檢核
           <i class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
-      <el-divider direction="vertical" />
-      <el-popover
-        placement="bottom"
-        trigger="click"
-      >
-        <el-menu class="download">
-          <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
-            <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
-          </el-menu-item>
-          <!--<el-menu-item>-->
-          <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
-          <!--</el-menu-item>-->
-          <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
-            <em class="el-icon-download" />旋轉90度預覽
-          </el-menu-item>
-          <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
-            <em class="el-icon-download" />預覽
-          </el-menu-item>
-        </el-menu>
-        <el-button slot="reference" icon="el-icon-download">下載</el-button>
-      </el-popover>
     </project-list-selector>
     <el-divider />
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
     <el-tabs v-else v-model="activeTab" type="border-card">
-      <el-tab-pane label="需求追溯圖" name="map">
+      <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
+        <el-row type="flex" justify="space-between" align="middle">
+          <el-col>
+            <el-form inline>
+              <el-form-item :label="$t('general.group')">
+                <el-switch
+                  v-model="group"
+                  :active-text="$t('general.on')"
+                  :inactive-text="$t('general.off')"
+                />
+              </el-form-item>
+              <el-form-item :label="$t('Issue.tracker')">
+                <el-select
+                  v-model="filterValue.tracker_id"
+                  :placeholder="$t('Issue.SelectType')"
+                  :disabled="selectedProjectId === -1"
+                  filterable
+                >
+                  <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
+                             :value="track.id"
+                  >
+                    <tracker :name="track.name" />
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('Issue.Issue')">
+                <el-select
+                  v-model="filterValue.issue_id"
+                  style="width: 100%"
+                  :placeholder="$t('RuleMsg.PleaseSelect')"
+                  clearable
+                  filterable
+                  remote
+                  multiple
+                  collapse-tags
+                  :remote-method="getSearchIssue"
+                  :loading="issueLoading"
+                  class="issue-select"
+                >
+                  <el-option
+                    v-for="item in issueList"
+                    :key="item.id"
+                    :label="'#' + item.id +' - '+item.name"
+                    :value="item.id"
+                  >
+                    <span
+                      style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                    >
+                      <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                      <span v-html="highLight(item.name)" />
+                    </span>
+                    <span style="float: right; color: #8492a6; font-size: 13px"
+                          v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                    />
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item>
+                <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
+                           :disabled="chartLoading" @click="onPaintChart"
+                >
+                  {{ $t('Track.StartingPoint') }}
+                </el-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="4" class="text-right">
+            <el-popover
+              placement="bottom"
+              trigger="click"
+            >
+              <el-menu class="download">
+                <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
+                  <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
+                </el-menu-item>
+                <!--<el-menu-item>-->
+                <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
+                <!--</el-menu-item>-->
+                <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
+                  <em class="el-icon-download" />旋轉90度預覽
+                </el-menu-item>
+                <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
+                  <em class="el-icon-download" />預覽
+                </el-menu-item>
+              </el-menu>
+              <el-button slot="reference" icon="el-icon-download">下載</el-button>
+            </el-popover>
+          </el-col>
+        </el-row>
         <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
           <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
           <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
         </el-alert>
-        {{ $t('general.group') }}:
-        <el-switch
-          v-model="group"
-          :active-text="$t('general.on')"
-          :inactive-text="$t('general.off')"
-        />
-        <template slot="header">
-          {{ $t('Track.DemandTraceability') }}
-          <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
-        </template>
-        <div ref="matrix">
-          <vue-mermaid
-            :nodes="data"
-            type="graph LR"
-            :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
-            @nodeClick="editNode"
-          />
-        </div>
+        <el-card>
+          <template slot="header">
+            {{ $t('Track.DemandTraceability') }}
+            <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
+          </template>
+          <div ref="matrix">
+            <vue-mermaid
+              :nodes="data"
+              type="graph LR"
+              :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
+              @nodeClick="editNode"
+            />
+          </div>
+        </el-card>
       </el-tab-pane>
-      <el-tab-pane v-loading="listLoading" label="需求檢核" name="check" :element-loading-text="$t('Loading')">
+      <el-tab-pane v-loading="listLoading" label="追溯檢核" name="check" :element-loading-text="$t('Loading')">
         <el-form inline>
           <el-form-item label="預設檢核條件">
             <el-select
@@ -173,10 +178,13 @@
           </el-form-item>
         </el-form>
         <el-table :data="traceCheck" height="60vh" style="width: 100%">
-          <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track" show-tooltip-when-overflow>
+          <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track"
+                           show-tooltip-when-overflow
+          >
             <template v-if="row[track]" slot-scope="{row}">
               <el-link @click="onRelationIssueDialog(row[track].id)">
-                <status :name="row[track].status.name" size="small" /> #{{ row[track].id }} - {{ row[track].name }}
+                <status :name="row[track].status.name" size="small" />
+                #{{ row[track].id }} - {{ row[track].name }}
               </el-link>
             </template>
           </el-table-column>
@@ -745,10 +753,16 @@ export default {
     @apply mx-1 inline-block;
   }
 }
+.el-form{
+  padding:10px;
+  .el-form-item{
+    margin-bottom: 0;
+  }
+}
 
 .issue-select {
   > > > .el-tag {
-    width: 100%;
+    //width: 100%;
     height: fit-content;
     white-space: normal;
 
