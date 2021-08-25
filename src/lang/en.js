@@ -268,6 +268,7 @@ export default {
     Queued: 'Queued',
     Scanning: 'Scanning',
     Finished: 'Finished',
+    Failed: 'Failed',
     InProcess: 'In Process'
   },
   WebInspect: {
