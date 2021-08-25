@@ -938,7 +938,9 @@ export default {
     Actions: '@:general.Actions',
     ImpressionFileRepo: 'Impression File Repository',
     RegistryName: 'Registry Name',
-    KubeConfigTextareaHint: 'Please directly paste Kubenate config or use the above to upload the file and upload directly'
+    KubeConfigTextareaHint: 'Please directly paste Kubenate config or use the above to upload the file and upload directly',
+    ClusterMessage: 'The Cluster settings have been updated successfully',
+    RegistryMessage: 'The Registry settings have been updated successfully'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

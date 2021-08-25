@@ -50,9 +50,9 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('SystemDeploySettings.Actions')" width="120">
+        <el-table-column align="center" :label="$t('SystemDeploySettings.Actions')" width="140">
           <template slot-scope="scope">
-            <el-button size="mini" @click="toggleUsage(scope.row)">
+            <el-button size="mini" @click.stop="toggleUsage(scope.row)">
               <div class="flex items-center">
                 <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
                 <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
@@ -130,6 +130,7 @@ export default {
       hasUploadfile: false,
       updatedFormData: {},
       originData: [],
+      isSaved: false,
       deployedData: [
         {
           'id': 2,
@@ -181,8 +182,9 @@ export default {
   methods: {
     async fetchData() {
       const res = await getDeployedHostsLists()
-      return this.deployedData
-      // return res.data.cluster
+      // return this.deployedData
+      console.log(res)
+      return res.data.cluster
     },
     async fetchDeployedHostsByList(cluster_id) {
       const res = await getDeployedHostsByList(cluster_id)
@@ -191,24 +193,42 @@ export default {
     },
     async updateDeployHostsById() {
       try {
-        await updateDeployHostsById(this.editingId, this.updateFormData)
+        await updateDeployHostsById(this.editingId, this.updatedFormData)
       } catch (err) {
         console.error(err)
       } finally {
         this.loadData()
+        this.showAddClusterPage = false
+        this.showUpdateMessage()
       }
     },
     async addDeployHosts() {
       try {
-        await addDeployHosts(this.updateFormData)
+        await addDeployHosts(this.updatedFormData)
       } catch (err) {
         console.error(err)
       } finally {
         this.loadData()
+        this.showAddClusterPage = false
+        this.showUpdateMessage()
+      }
+    },
+    async updateHostsDisabled(row) {
+      const { name, disabled } = row
+      const cluster_id = row.id
+      const data = { name, disabled, k8s_config_file: '' }
+      try {
+        await updateDeployHostsById(cluster_id, data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadData()
+        this.showUpdateMessage()
       }
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
+      this.updateHostsDisabled(row)
     },
     handleLastUpdateTime(time) {
       const date = new Date(time)
@@ -235,6 +255,7 @@ export default {
     },
     async handleBackPage() {
       if (this.isFormDataChanged) {
+        if (this.isSaved) return
         const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),
           cancelButtonText: this.$t('general.Cancel'),
@@ -243,6 +264,7 @@ export default {
         if (res !== 'confirm') return
       }
       this.initFormData()
+      this.isSaved = false
       this.hasUploadfile = false
       this.showAddClusterPage = false
     },
@@ -266,6 +288,7 @@ export default {
       Object.assign(this.updatedFormData, formData)
     },
     handleSave() {
+      this.isSaved = true
       this.getUpdateFormData()
       switch (this.updateStatus) {
         case 'UPDATE_PUT':
@@ -277,6 +300,13 @@ export default {
     },
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
+    },
+    showUpdateMessage() {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('SystemDeploySettings.ClusterMessage'),
+        type: 'success'
+      })
     }
   }
 }

@@ -43,7 +43,7 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('SystemDeploySettings.Actions')" width="120">
           <template slot-scope="scope">
-            <el-button size="mini" @click="toggleUsage(scope.row)">
+            <el-button size="mini" @click.stop="toggleUsage(scope.row)">
               <div class="flex items-center">
                 <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
                 <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
@@ -112,14 +112,18 @@ export default {
       updateStatus: 'UPDATE_PUT',
       editingId: 1,
       form: {
+        type: 'harbor',
+        description: '',
+        insecure: true,
         registryName: '',
         disabled: false,
         url: '',
         account: '',
-        password: ''
+        password: '請輸入密碼'
       },
       updatedFormData: {},
-      originData: []
+      originData: [],
+      isSaved: false
     }
   },
   computed: {
@@ -140,7 +144,7 @@ export default {
     async fetchData() {
       const res = await getRegistryHostsLists()
       console.log(res)
-      return res.data
+      return res.data.registries
     },
     async addRegistryHosts() {
       try {
@@ -149,6 +153,8 @@ export default {
         console.error(err)
       } finally {
         this.loadData()
+        this.showAddRegistryPage = false
+        this.showUpdateMessage()
       }
     },
     async updateRegistryHostsById() {
@@ -158,10 +164,28 @@ export default {
         console.error(err)
       } finally {
         this.loadData()
+        this.showAddRegistryPage = false
+        this.showUpdateMessage()
+      }
+    },
+    async updateHostsDisabled(row) {
+      console.log(row)
+      const { name, disabled, url, access_key, access_secret, type, description } = row
+      const registry_id = row.registries_id
+      const data = { name, disabled, type, description, insecure: true, url, access_key, access_secret }
+      console.log(data)
+      try {
+        await updateRegistryHostsById(registry_id, data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.loadData()
+        this.showUpdateMessage()
       }
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
+      this.updateHostsDisabled(row)
     },
     addRegistry() {
       this.initFormData()
@@ -170,6 +194,7 @@ export default {
     },
     async handleBackPage() {
       if (this.isFormDataChanged) {
+        if (this.isSaved) return
         const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),
           cancelButtonText: this.$t('general.Cancel'),
@@ -178,49 +203,53 @@ export default {
         if (res !== 'confirm') return
       }
       this.initFormData()
+      this.isSaved = false
       this.showAddRegistryPage = false
     },
     initFormData() {
       this.form = {
+        type: 'harbor',
+        description: '',
+        insecure: true,
         registryName: '',
         disabled: false,
         url: '',
-        status: '',
         account: '',
         password: ''
       }
     },
     rowClicked(row) {
-      this.editingId = row.id
+      this.editingId = row.registries_id
       this.setFormData(row)
       this.updateStatus = 'UPDATE_PUT'
       this.showAddRegistryPage = true
     },
     setFormData(rowData) {
-      const { name, disabled, url, credential, status, type, description, insecure } = rowData
+      const { name, disabled, type, description, url, access_key, access_secret } = rowData
       this.form.registryName = name
-      this.form.disabled = status === 'healthy'
-      // this.form.status = status === 'healthy'
+      this.form.disabled = disabled
       this.form.url = url
-      this.form.account = credential.access_key
-      this.form.password = credential.access_secret
+      this.form.account = access_key
+      this.form.password = access_secret
       this.form.type = type
       this.form.description = description
-      this.form.insecure = insecure
       this.setOriginData(this.form)
     },
     getUpdateFormData() {
       const formData = {}
       formData.name = this.form.registryName
-      formData.type = this.form.type
       formData.access_key = this.form.account
       formData.access_secret = this.form.password
+      formData.url = this.form.url
       formData.login_server = this.form.url
       formData.description = this.form.description
       formData.insecure = this.form.insecure
+      formData.disabled = this.form.disabled
       Object.assign(this.updatedFormData, formData)
+      console.log(this.updatedFormData)
     },
     handleSave() {
+      this.isSaved = true
       this.getUpdateFormData()
       switch (this.updateStatus) {
         case 'UPDATE_PUT':
@@ -232,6 +261,13 @@ export default {
     },
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
+    },
+    showUpdateMessage() {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('SystemDeploySettings.RegistryMessage'),
+        type: 'success'
+      })
     }
   }
 }

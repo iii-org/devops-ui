@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector />
+    <ProjectListSelector
+      :has-unsaved-changes="hasUnsavedChanges"
+      :is-confirm-leave="isConfirmLeave"
+      @checkUnsavedChanges="checkShowDialog"
+    />
     <el-divider />
     <el-tabs v-model="tabActiveName" type="card">
       <el-tab-pane label="Cluster" name="cluster">
@@ -14,6 +18,22 @@
         </el-card>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog
+      :title="$t('general.Warning')"
+      :visible.sync="dialogVisible"
+      top="40vh"
+      width="420px"
+      destroy-on-close
+    >
+      <span>
+        <i class="el-icon-warning text-lg" style="color: #E6A23C;" />
+        <span class="text-base">{{ $t('Notify.UnSavedChanges') }}</span>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button type="primary" @click="handleConfirmLeave">{{ $t('general.Confirm') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -33,6 +53,8 @@ export default {
         type: 'warning'
       })
         .then(() => {
+          console.log('confirm')
+          this.isConfirmLeave = true
           next()
         })
         .catch(() => {
@@ -45,12 +67,22 @@ export default {
   data() {
     return {
       tabActiveName: 'cluster',
-      hasUnsavedChanges: false
+      hasUnsavedChanges: false,
+      isConfirmLeave: false,
+      dialogVisible: false
     }
   },
   methods: {
     checkFormDataChanged(bool) {
-      this.hasUnsavedChanges = true
+      this.hasUnsavedChanges = bool
+    },
+    checkShowDialog() {
+      if (this.isConfirmLeave) return
+      this.dialogVisible = true
+    },
+    handleConfirmLeave() {
+      this.dialogVisible = false
+      this.isConfirmLeave = true
     }
   }
 }
@@ -58,16 +90,16 @@ export default {
 
 <style lang="scss" scoped>
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-  background: #c5c8cc;
+  background: #e4ecf7 ;
   color: #3e3f41;
   border-top: 5px solid #3e3f41;
-  border-bottom-color: #c5c8cc;
+  border-bottom-color: #e4ecf7 ;
   height: 45px;
 }
 
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item {
   background: #3e3f41;
-  color: #c5c8cc;
+  color: #e4ecf7 ;
   border-radius: 5px;
   width: 125%;
   &:hover {
@@ -76,7 +108,7 @@ export default {
 }
 
 >>> .el-tabs__content {
-  background: #c5c8cc;
+  background: #e4ecf7 ;
   border-radius: 3px;
 }
 
@@ -86,6 +118,6 @@ export default {
 
 >>> .el-tab-pane {
   margin: 15px;
-  background: #c5c8cc;
+  background: #e4ecf7 ;
 }
 </style>
