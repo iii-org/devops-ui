@@ -101,7 +101,7 @@
 
 <script>
 import { BasicData } from '@/newMixins'
-import { getRegistryHostsLists, addRegistryHosts, updateRegistryHostsById } from '@/api/deploySettings'
+import { getRegistryHostsLists, addRegistryHosts, updateRegistryHostsById } from '@/api/deploy'
 
 export default {
   name: 'Registry',

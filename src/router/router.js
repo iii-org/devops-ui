@@ -191,6 +191,23 @@ export const asyncRoutes = [
         ]
       },
       {
+        path: '/deploy',
+        redirect: { name: 'deploy' },
+        component: parentBlank,
+        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager'] },
+        children: [
+          {
+            path: '',
+            name: 'deploy',
+            component: () => import('@/views/Project/Deploy'),
+            meta: {
+              title: 'deploy',
+              roles: ['Administrator', 'Project Manager']
+            }
+          }
+        ]
+      },
+      {
         path: 'settings',
         component: parentBlank,
         meta: { title: 'Project Settings', roles: ['Administrator', 'Project Manager'] },

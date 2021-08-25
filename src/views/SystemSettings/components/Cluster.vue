@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploySettings'
+import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploy'
 import { BasicData } from '@/newMixins'
 
 export default {

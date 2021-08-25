@@ -1,0 +1,284 @@
+<template>
+  <el-form ref="deployForm" :model="deployForm" :rules="deployFormRules" label-width="120px">
+    <el-row>
+      <el-col>
+        <el-form-item label="服務名稱" prop="name">
+          <el-input v-model="deployForm.name" />
+        </el-form-item>
+        <el-divider />
+      </el-col>
+      <el-col>
+        <el-row class="form-container">
+          <el-row>
+            <el-col :md="12">
+              <el-form-item label="遠端環境" prop="cluster_id">
+                <el-select v-model="deployForm.cluster_id">
+                  <el-option v-for="item in cluster" :key="item.id" :label="item.name" :value="item.id"
+                             :disabled="item.disabled"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :md="12">
+              <el-form-item label="映像檔儲存庫" prop="registry_id">
+                <el-select v-model="deployForm.registry_id">
+                  <el-option v-for="item in registry" :key="item.id" :label="item.name" :value="item.id"
+                             :disabled="item.disabled"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <!--        <el-col :md="12">-->
+            <!--          <el-form-item label="Volume" prop="volume">-->
+            <!--            <el-select v-model="deployForm.volume" />-->
+            <!--          </el-form-item>-->
+            <!--        </el-col>-->
+          </el-row>
+          <template v-if="checkAvailable">
+            <el-row>
+              <el-col :md="12">
+                <el-form-item label="服務空間名稱" prop="namespace">
+                  <el-input v-model="deployForm.namespace" />
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="同步映像檔規則" prop="image.policy">
+                  <el-select v-model="deployForm.image.policy">
+                    <el-option v-for="item in policy" :key="item" :label="item" :value="item" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="釋出版本" prop="release_id">
+                  <el-select v-model="deployForm.release_id">
+                    <el-option v-for="item in release" :key="item.id" :label="item.tag_name" :value="item.id" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
+                <el-divider content-position="left">資源空間設定</el-divider>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="CPU" prop="resources.cpu">
+                  <el-input v-model="deployForm.resources.cpu" />
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="記憶體" prop="resources.memory">
+                  <el-input v-model="deployForm.resources.memory">
+                    <template slot="append">GB</template>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="數量" prop="resources.replicas">
+                  <el-input v-model="deployForm.resources.replicas" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
+                <el-divider content-position="left">網路設定</el-divider>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="類型" prop="network.type">
+                  <el-select v-model="deployForm.network.type">
+                    <el-option v-for="item in network_type" :key="item" :label="item" :value="item" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="連接埠" prop="network.protocol">
+                  <el-radio-group v-model="deployForm.network.protocol">
+                    <el-radio-button v-for="item in protocol" :key="item" :label="item" :value="item" />
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="埠號" prop="network.port">
+                  <el-input v-model="deployForm.network.port" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col>
+                <el-divider content-position="left">服務環境變數
+                  <el-button round size="small" icon="el-icon-plus" type="primary"
+                             @click="addEnvironment"
+                  >
+                    新增環境變數
+                  </el-button>
+                </el-divider>
+              </el-col>
+              <el-col>
+                <el-form-item prop="environments" class="environments">
+                  <el-table :data="deployForm.environments">
+                    <el-table-column prop="key" label="變數名稱">
+                      <template slot-scope="{row}">
+                        <el-input v-model="row.key" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="value" label="值">
+                      <template slot-scope="{row}">
+                        <el-input v-model="row.value" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="type" label="類別" width="150px">
+                      <template slot-scope="{row}">
+                        <el-select v-model="row.type">
+                          <el-option v-for="item in environments_type" :key="item" :label="item" :value="item" />
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="150px">
+                      <template slot-scope="{row}">
+                        <el-popconfirm :confirm-button-text="$t('general.Delete')"
+                                       :cancel-button-text="$t('general.Cancel')"
+                                       icon="el-icon-info"
+                                       icon-color="red"
+                                       :title="$t('Notify.confirmDelete')"
+                                       @confirm="deployForm.environments.splice(deployForm.environments.indexOf(row),1)"
+                        >
+                          <el-button slot="reference" icon="el-icon-delete" size="mini" type="danger">
+                            {{ $t('general.Delete') }}
+                          </el-button>
+                        </el-popconfirm>
+                      </template>
+                    </el-table-column>
+                    <template slot="empty">
+                      <el-empty>
+                        <template slot="description">
+                          <p>{{ $t('general.NoData') }}</p>
+                          <el-button round size="small" icon="el-icon-plus" type="primary"
+                                     @click="addEnvironment"
+                          >
+                            新增環境變數
+                          </el-button>
+                        </template>
+                      </el-empty>
+                    </template>
+                    <div v-if="deployForm.environments.length>0" slot="append">
+                      <p>
+                        <el-button round size="small" icon="el-icon-plus" type="primary"
+                                   @click="addEnvironment"
+                        >
+                          新增環境變數
+                        </el-button>
+                      </p>
+                    </div>
+                  </el-table>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </template>
+        </el-row>
+      </el-col>
+    </el-row>
+  </el-form>
+</template>
+
+<script>
+import { getDeployedHostsLists, getRegistryHostsLists } from '@/api/deploy'
+import { getReleaseVersion } from '@/api/release'
+import { mapGetters } from 'vuex'
+
+const protocol = ['TCP', 'UDP']
+const policy = ['Always', 'Never', 'IfNotPresent']
+const network_type = ['ExternalName', 'ClusterIP', 'NodePort', 'LoadBalancer']
+const environments_type = ['configmap', 'secret']
+
+export default {
+  name: 'AddApplication',
+  components: {},
+
+  data() {
+    const keyValidator = (rule, value) => {
+      return new Promise((resolve, reject) => {
+        value.forEach(item => {
+          if (!item.key || item.key.length <= 0) return reject('Please check key are not null')
+          if (!item.type || item.type.length <= 0) return reject('Please check type are not null')
+        })
+        return resolve()
+      })
+    }
+    return {
+      cluster: [],
+      registry: [],
+      protocol: protocol,
+      policy: policy,
+      network_type: network_type,
+      environments_type: environments_type,
+      release: [],
+      deployForm: {
+        name: '',
+        cluster_id: '',
+        registry_id: '',
+        namespace: '',
+        image: { policy: '' },
+        release_id: '',
+        resources: {
+          cpu: '',
+          memory: '',
+          replicas: ''
+        },
+        network: { type: '', protocol: '', port: '' },
+        environments: []
+      },
+      deployFormRules: {
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        cluster_id: [{ required: true, message: 'Please select cluster', trigger: 'blur' }],
+        registry_id: [{ required: true, message: 'Please select registry', trigger: 'blur' }],
+        namespace: [
+          { required: true, message: 'Namespace is required', trigger: 'blur' },
+          {
+            required: true,
+            pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
+            message: 'Namespace is invalid.',
+            trigger: 'blur'
+          }
+        ],
+        image: { policy: [{ required: true, message: 'Please select policy', trigger: 'blur' }] },
+        release_id: [{ required: true, message: 'Please select a release', trigger: 'blur' }],
+        network: {
+          type: [{ required: true, message: 'Please select type', trigger: 'blur' }],
+          protocol: [{ required: true, message: 'Please select protocol', trigger: 'blur' }],
+          port: [{ required: true, message: 'Please select port', trigger: 'blur' }]
+        },
+        environments: [
+          { type: 'array', validator: keyValidator, trigger: 'blur' }]
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['selectedProjectId']),
+    checkAvailable() {
+      console.log(this.cluster)
+      return this.cluster.length > 0 && this.registry.length > 0
+    }
+  },
+  mounted() {
+    this.getSelectionList()
+  },
+  methods: {
+    async getSelectionList() {
+      const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId)])).map(item => item.data)
+      this.cluster = res[0].cluster
+      this.registry = res[1]
+      this.release = res[2].releases
+    },
+    addEnvironment() {
+      this.deployForm.environments.push({ key: '', value: '', type: '' })
+    }
+  }
+}
+</script>
+
+<style scoped>
+.form-container {
+  height: 50vh;
+  padding: 0 20px;
+  overflow-y: auto;
+}
+</style>
