@@ -239,7 +239,7 @@ export default {
     Path: 'Path',
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
-    SearchName: 'Search Name, Test Message',
+    SearchKey: '搜尋 Collection 名稱',
     SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
     TestItem: '{count} Test Item | {count} Test Items',
     Pass: 'Pass',

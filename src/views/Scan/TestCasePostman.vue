@@ -1,102 +1,142 @@
 <template>
-  <el-row class="app-container">
-    <el-col>
-      <div class="flex justify-between items-center">
+  <div id="postman-report-header" v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
+    <el-backtop target="#postman-report-header" />
+    <div class="flex justify-between items-center mb-5">
+      <div class="flex justify-start items-center">
         <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title" @click="handleBack">
           {{ $t('general.Back') }}
         </el-button>
-        <div class="text-center">
+        <div class="mx-5">
           <div class="text-title mb-2">{{ selectedProject.display }}</div>
           <div>
-            <el-tag size="medium" type="primary" class="mr-2">
+            <el-tag size="mini" type="primary" class="mr-2">
               <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}
             </el-tag>
-            <el-link type="primary" target="_blank" style="font-size: 16px" :href="testCaseInfos.commit_url">
+            <el-link class="mr-3" type="primary" target="_blank" :href="testCaseInfos.commit_url">
               <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ testCaseInfos.commit_id }}
             </el-link>
           </div>
         </div>
-        <el-input
-          v-model="keyword"
-          class="ml-3"
-          :placeholder="$t('TestCase.SearchName')"
-          style="width: 250px"
-          prefix-icon="el-icon-search"
-        />
-      </div>
-      <el-divider />
-      <div class="flex justify-between items-center mb-3">
-        <div class="text-info">{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</div>
-        <div class="flex items-center">
-          <el-tag
-            size="small"
-            class="cursor-pointer mr-2"
-            :type="togglePass ? 'success' : 'info'"
-            :effect="togglePass ? 'dark' : 'light'"
-            @click="togglePass = !togglePass"
-          >
-            {{ $t('TestCase.Pass') }}
-          </el-tag>
-          <span class="mr-4 tex-subtitle-2">{{ countRequestMsg('Pass') }}</span>
-          <el-tag
-            size="small"
-            class="cursor-pointer mr-2"
-            :type="toggleFail ? 'danger' : 'info'"
-            :effect="toggleFail ? 'dark' : 'light'"
-            @click="toggleFail = !toggleFail"
-          >
-            {{ $t('TestCase.Fail') }}
-          </el-tag>
-          <span class="tex-subtitle-2">{{ countRequestMsg('Fail') }}</span>
+        <div class="mx-5">
+          <el-tag class="mb-2" size="small" type="warning">{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</el-tag>
+          <div>
+            <el-tag size="small" type="primary">{{ $t('Postman.TestTotal')
+            }}<span class="font-semibold ml-2">{{ countPassedTotal + countFailedTotal }}</span></el-tag>
+            <el-tag size="small" type="success">{{ $t('TestCase.Pass') }}<span class="font-semibold ml-2">{{ countPassedTotal }}</span></el-tag>
+            <el-tag size="small" type="danger">{{ $t('TestCase.Fail') }}<span class="font-semibold ml-2">{{ countFailedTotal }}</span></el-tag>
+          </div>
         </div>
       </div>
-      <el-table
-        v-loading="listLoading"
-        :element-loading-text="$t('Loading')"
-        :data="pagedDataByChecked"
-        :span-method="mergeCells"
-        height="50vh"
-        border
-        fit
+      <el-input
+        v-model="keyword"
+        :placeholder="$t('TestCase.SearchKey')"
+        style="width: 250px"
+        prefix-icon="el-icon-search"
+      />
+    </div>
+    <el-tabs v-model="activeCollection" type="border-card">
+      <el-empty v-if="filteredData.length === 0" />
+      <el-tab-pane
+        v-for="collection in filteredData"
+        :key="collection.name"
+        :label="collection.name"
+        :name="collection.name"
       >
-        <el-table-column align="center" :label="$t('TestCase.Index')" prop="index" width="110" />
-        <el-table-column align="center" :label="$t('general.Name')" prop="name" min-width="100" show-overflow-tooltip />
-        <el-table-column
-          align="center"
-          :label="$t('TestCase.Method')"
-          show-overflow-tooltip
-          min-width="50"
-          prop="method"
-        />
-        <el-table-column align="center" :label="$t('TestCase.Path')" prop="path" min-width="120" />
-        <el-table-column align="center" :label="$t('TestCase.TestResult')" prop="testResult" min-width="70">
-          <template slot-scope="scope">
-            <el-tag size="mini" :type="getTagType(scope.row.testResult)">
-              <svg-icon :icon-class="scope.row.testResult === 'Pass' ? 'mdi-check' : 'mdi-close'" />
-              {{ $t(`TestCase.${scope.row.testResult}`) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column header-align="center" :label="$t('TestCase.TestMessage')" min-width="150" prop="responseMsg">
-          <template slot-scope="scope">
-            <span class="tex-subtitle-2" :class="`text-${getTagType(scope.row.testResult)}`">
-              {{ scope.row.responseMsg }}
-            </span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-        :page="listQuery.page"
-        :limit="listQuery.limit"
-        :total="checkedData.length"
-        :page-sizes="[listQuery.limit]"
-        :layout="'slot, prev, pager, next'"
-        @pagination="onPagination"
-      >
-        <span class="el-pagination__total">{{ `${$t('general.Total')} ${testRequestCount} ${$t('TestCase.Index')} (${checkedData.length} ${$t('TestCase.TestResult')})` }}</span>
-      </pagination>
-    </el-col>
-  </el-row>
+        <el-tabs v-model="activeStatus">
+          <el-tab-pane label="All Tests" name="All">
+            <el-empty v-if="collection.all.length === 0" />
+            <div v-for="(execution, idx) in collection.all" :key="execution.name + idx">
+              <el-row type="flex" align="middle">
+                <el-col class="flex justify-center items-center" :span="3">
+                  <div class="font-medium mx-5" :class="mapMethodType(execution.method)">{{ execution.method }}</div>
+                </el-col>
+                <el-col :span="21">
+                  <div class="my-3">
+                    <span class="font-medium">{{ execution.name }}</span>
+                    <span class="text-info">{{ decodeURI(execution.path) }}</span>
+                  </div>
+                  <div v-for="(item, itemIdx) in execution.assertions" :key="itemIdx" class="my-1">
+                    <el-tag size="small" :type="mapTagType(getTestResult(item))">
+                      {{ $t(`TestCase.${getTestResult(item)}`) }}
+                    </el-tag>
+                    <span class="ml-2">
+                      {{ item.assertion }}
+                      <template v-if="item.error_message">
+                        | {{ item.error_message }}
+                      </template>
+                    </span>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-divider />
+            </div>
+          </el-tab-pane>
+          <el-tab-pane
+            :label="$t('TestCase.Pass') + ' (' + countRequest(collection.assertions, 'pass') + ')'"
+            name="Pass"
+          >
+            <el-empty v-if="collection.pass.length === 0" />
+            <div v-for="(execution, idx) in collection.pass" :key="execution.name + idx">
+              <el-row type="flex" align="middle">
+                <el-col class="flex justify-center items-center" :span="3">
+                  <div class="font-medium mx-5" :class="mapMethodType(execution.method)">{{ execution.method }}</div>
+                </el-col>
+                <el-col :span="21">
+                  <div class="my-3">
+                    <span class="font-medium">{{ execution.name }}</span>
+                    <span class="text-info">{{ decodeURI(execution.path) }}</span>
+                  </div>
+                  <div v-for="(item, itemIdx) in execution.assertions" :key="itemIdx" class="my-1">
+                    <el-tag size="small" :type="mapTagType(getTestResult(item))">
+                      {{ $t(`TestCase.${getTestResult(item)}`) }}
+                    </el-tag>
+                    <span class="ml-2">
+                      {{ item.assertion }}
+                      <template v-if="item.error_message">
+                        | {{ item.error_message }}
+                      </template>
+                    </span>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-divider />
+            </div>
+          </el-tab-pane>
+          <el-tab-pane
+            :label="$t('TestCase.Fail') + ' (' + countRequest(collection.assertions, 'fail') + ')'"
+            name="Fail"
+          >
+            <el-empty v-if="collection.fail.length === 0" />
+            <div v-for="(execution, idx) in collection.fail" :key="execution.name + idx">
+              <el-row type="flex" align="middle">
+                <el-col class="flex justify-center items-center" :span="3">
+                  <div class="font-medium mx-5" :class="mapMethodType(execution.method)">{{ execution.method }}</div>
+                </el-col>
+                <el-col :span="21">
+                  <div class="my-3">
+                    <span class="font-medium">{{ execution.name }}</span>
+                    <span class="text-info">{{ decodeURI(execution.path) }}</span>
+                  </div>
+                  <div v-for="(item, itemIdx) in execution.assertions" :key="itemIdx" class="my-1">
+                    <el-tag size="small" :type="mapTagType(getTestResult(item))">
+                      {{ $t(`TestCase.${getTestResult(item)}`) }}
+                    </el-tag>
+                    <span class="ml-2">
+                      {{ item.assertion }}
+                      <template v-if="item.error_message">
+                        | {{ item.error_message }}
+                      </template>
+                    </span>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-divider />
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script>
@@ -109,96 +149,106 @@ export default {
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
-      testCaseInfos: {},
-      togglePass: true,
-      toggleFail: true,
       searchKeys: ['name', 'responseMsg'],
-      testRequestCount: null
+      testCaseInfos: {},
+      testRequestCount: null,
+      activeStatus: 'All',
+      activeCollection: ''
     }
   },
   computed: {
-    ...mapGetters(['selectedProject', 'userId']),
-    checkedData() {
-      const isPass = this.togglePass ? 'Pass' : null
-      const isFail = this.toggleFail ? 'Fail' : null
-      const result = this.filteredData.filter(
-        item => item.testResult.includes(isPass) || item.testResult.includes(isFail)
-      )
-      return result
+    ...mapGetters(['selectedProject']),
+    filteredData() {
+      if (!this.keyword) return this.listData
+      const keyword = this.keyword.toLowerCase()
+      return this.listData.filter(item => item.name.toLowerCase().includes(keyword))
     },
-    pagedDataByChecked() {
-      const start = (this.listQuery.page - 1) * this.listQuery.limit
-      const end = start + this.listQuery.limit
-      return this.checkedData.slice(start, end)
+    countPassedTotal() {
+      return this.listData.map(item => item.assertions.total - item.assertions.failed).reduce((a, b) => a + b, 0)
+    },
+    countFailedTotal() {
+      return this.listData.map(item => item.assertions.failed).reduce((a, b) => a + b, 0)
     }
   },
   watch: {
-    togglePass() {
-      this.listQuery.page = 1
+    listData(val) {
+      if (val) this.activeCollection = this.listData[0].name
     },
-    toggleFail() {
-      this.listQuery.page = 1
-    }
+    keyword(val) {
+      if (val && this.filteredData.length !== 0) this.activeCollection = this.filteredData[0].name
+    } 
   },
   methods: {
     async fetchData() {
-      const res = await getPostmanReport(this.$route.params.id)
-      const { branch, commit_id, commit_url, start_time, report } = res.data
-      this.testCaseInfos = { branch, commit_id, commit_url, start_time }
-      const isSingleCollection = Object.keys(report.json_file).includes('assertions' || 'executions')
-      const testCases = isSingleCollection
-        ? this.formatData(report.json_file.executions)
-        : this.handleMultiCollections(report.json_file)
-      return testCases.length ? testCases : []
+      return getPostmanReport(this.$route.params.id)
+        .then(res => {
+          const { branch, commit_id, commit_url, start_time, report } = res.data
+          this.testCaseInfos = { branch, commit_id, commit_url, start_time }
+          return this.formatData(report.json_file)
+        })
+        .catch(() => {
+          this.$router.push({ name: 'postman' })
+        })
     },
-    formatData(testCases) {
-      this.testRequestCount = testCases.length
-      return testCases.flatMap((testCase, idx) =>
-        testCase.assertions.map(assertion => ({
-          index: idx + 1,
-          name: testCase.name,
-          method: testCase.method,
-          path: testCase.path,
-          testResult: assertion.hasOwnProperty('error_message') ? 'Fail' : 'Pass',
-          responseMsg: `${assertion.assertion}${assertion.error_message ? ', ' + assertion.error_message : ''}`
-        }))
-      )
+    formatData(rowData) {
+      const result = Object.keys(rowData).map((key, idx) => ({
+        name: key || 'Default',
+        assertions: rowData[key].assertions,
+        all: rowData[key].executions,
+        pass: this.getPassExecutions(rowData[key].executions),
+        fail: this.getFailExecutions(rowData[key].executions)
+      }))
+      return result
     },
-    handleMultiCollections(testCases) {
-      const flatCollections = Object.values(testCases).flatMap(i => i.executions)
-      return this.formatData(flatCollections)
+    getPassExecutions(executions) {
+      const filteredExecutions = executions.filter(execution => execution.assertions.length > 0)
+      const result = filteredExecutions.flatMap(execution => {
+        const { method, name, path, assertions } = execution
+        return { method, name, path,
+          assertions: assertions.filter(assertion => !assertion.hasOwnProperty('error_message'))
+        }
+      })
+      return result.filter(item => item.assertions.length > 0)
     },
-    countRequestMsg(result) {
-      const length = this.listData.filter(item => item.testResult === result).length
-      return this.$tc('TestCase.TestItem', length, { count: length })
+    getFailExecutions(executions) {
+      const filteredExecutions = executions.filter(i => i.assertions.length > 0)
+      const result = filteredExecutions.flatMap(execution => {
+        const { method, name, path, assertions } = execution
+        return { method, name, path,
+          assertions: assertions.filter(assertion => assertion.hasOwnProperty('error_message'))
+        }
+      })
+      return result.filter(item => item.assertions.length > 0)
     },
-    getTagType(status) {
+    mapTagType(status) {
       const mapping = { Fail: 'danger', Pass: 'success' }
       return mapping[status]
     },
-    mergeCells({ row, column, rowIndex, columnIndex }) {
-      const data = this.pagedDataByChecked
-      const cellVal = row[column.property]
-      const noSortKeys = ['method', 'path', 'testResult', 'responseMsg']
-      if (cellVal && !noSortKeys.includes(column.property)) {
-        const prevRow = data[rowIndex - 1]
-        let nextRow = data[rowIndex + 1]
-        if (prevRow && prevRow[column.property] === cellVal) {
-          return { rowspan: 0, colspan: 0 }
-        } else {
-          let countRowspan = 1
-          while (nextRow && nextRow[column.property] === cellVal) {
-            nextRow = data[++countRowspan + rowIndex]
-          }
-          if (countRowspan > 1) {
-            return { rowspan: countRowspan, colspan: 1 }
-          }
-        }
-      }
-    },
     handleBack() {
       this.$router.push({ name: 'postman-test' })
+    },
+    countRequest(assertions, result) {
+      if (result === 'pass') return assertions.total - assertions.failed
+      if (result === 'fail') return assertions.failed
+    },
+    mapMethodType(method) {
+      const mapping = {
+        GET: 'method-tag text-green-600 border-green-600',
+        POST: 'method-tag text-yellow-500 border-yellow-500',
+        PUT: 'method-tag text-blue-600 border-blue-600',
+        DELETE: 'method-tag text-red-600 border-red-600'
+      }
+      return mapping[method] || 'method-tag text-gray-500 border-gray-500'
+    },
+    getTestResult(result) {
+      return result.hasOwnProperty('error_message') ? 'Fail' : 'Pass'
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.method-tag {
+  @apply border border-solid p-1 rounded;
+}
+</style>
