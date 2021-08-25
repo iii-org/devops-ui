@@ -25,33 +25,20 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="id" min-width="110">
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="服務名稱" min-width="100">
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="部署名稱" min-width="100">
-        <template slot-scope="scope">
-          {{ scope.row.cluster.name }}
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="id" min-width="110" prop="id" />
+      <el-table-column align="center" label="服務名稱" min-width="100" prop="application_name" />
+      <el-table-column align="center" label="部署名稱" min-width="100" prop="cluster_name" />
+      <el-table-column align="center" label="狀態" min-width="100" prop="status_str" />
       <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
-
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="scope">
           <el-button
             :loading="isDownloading"
             size="mini"
             type="primary"
-            icon="el-icon-download"
-            @click="handleDownload(scope.row)"
+            icon="el-icon-edit"
           >
-            {{ $t('File.Download') }}
+            {{ $t('general.Edit') }}
           </el-button>
 
           <el-popconfirm
@@ -117,7 +104,7 @@ export default {
       uploadFileList: [],
       loadingInstance: '',
       isDownloading: false,
-      searchKeys: ['filename']
+      searchKeys: ['application_name']
     }
   },
   mounted() {
@@ -136,6 +123,7 @@ export default {
         return []
       }
       const res = await getServices({ project_id: this.selectedProjectId })
+      console.log(res.data.applications)
       return res.data.applications
     },
     sortFiles(files) {
