@@ -1,5 +1,5 @@
 <template>
-  <el-row v-loading="isLoading" class="app-container">
+  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <el-col>
       <el-row type="flex" justify="end">
         <el-input
@@ -127,7 +127,7 @@
 
 <script>
 import { getPlugins, getPluginDetails, updatePlugin, deletePlugin } from '@/api/systemPlugin'
-import { BasicData, SearchBar, Pagination } from '@/newMixins'
+import { SearchBar, Pagination } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const formTemplate = () => ({
@@ -138,9 +138,11 @@ const formTemplate = () => ({
 export default {
   name: 'SystemPluginManage',
   components: { ElTableColumnTime },
-  mixins: [BasicData, SearchBar, Pagination],
+  mixins: [SearchBar, Pagination],
   data() {
     return {
+      listLoading: false,
+      listData: [],
       isLoading: false,
       isDialogVisible: false,
       pluginName: '',
@@ -153,10 +155,15 @@ export default {
       return this.form.arguments.length > 0
     }
   },
+  mounted() {
+    this.fetchData()
+  },
   methods: {
     async fetchData() {
+      this.listLoading = true
       const res = await getPlugins()
-      return res.data.sort((a, b) => (a.name < b.name ? -1 : 1))
+      this.listData = res.data.sort((a, b) => (a.name < b.name ? -1 : 1))
+      this.listLoading = false
     },
     async handleEditClick(pluginName) {
       this.isAddPlugin = false
