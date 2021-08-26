@@ -940,7 +940,8 @@ export default {
     RegistryName: 'Registry Name',
     KubeConfigTextareaHint: 'Please directly paste Kubenate config or use the above to upload the file and upload directly',
     ClusterMessage: 'The Cluster settings have been updated successfully',
-    RegistryMessage: 'The Registry settings have been updated successfully'
+    RegistryMessage: 'The Registry settings have been updated successfully',
+    FailMessage: 'Please check if the content of the form is entered correctly'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

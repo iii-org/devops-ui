@@ -53,7 +53,6 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          console.log('confirm')
           this.isConfirmLeave = true
           next()
         })

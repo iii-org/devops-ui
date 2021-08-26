@@ -943,7 +943,8 @@ export default {
     RegistryName: 'Registry 名稱',
     KubeConfigTextareaHint: '請直接貼上 kubenate config 或使⽤上⽅上傳檔案，直接上傳',
     ClusterMessage: '遠端部署主機設定已更新成功',
-    RegistryMessage: '印象檔主機設定已更新成功'
+    RegistryMessage: '印象檔主機設定已更新成功',
+    FailMessage: '請檢查表單內容是否輸入正確'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

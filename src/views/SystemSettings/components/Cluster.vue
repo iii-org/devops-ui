@@ -97,7 +97,7 @@
               />
               <el-input
                 v-model="form.kubeConfigFile"
-                :disabled="hasUploadfile"
+                :disabled="!!hasUploadfile"
                 type="textarea"
                 :placeholder="$t('SystemDeploySettings.KubeConfigTextareaHint')"
               />
@@ -130,36 +130,7 @@ export default {
       hasUploadfile: false,
       updatedFormData: {},
       originData: [],
-      isSaved: false,
-      deployedData: [
-        {
-          'id': 2,
-          'name': '74-clustrer-win',
-          'disabled': false,
-          'creator_id': 1,
-          'create_at': '2021-08-19 09:18:19.787067',
-          'update_at': '2021-08-19 09:18:19.787067',
-          'cluster_name': 'local',
-          'cluster_host': 'https://10.20.0.74:31443/k8s/clusters/local',
-          'cluster_user': 'local',
-          'application': [
-            {
-              id: 3,
-              'tag': 'V1.0',
-              'project_name': 'ui-create-test-case',
-              'status': true,
-              'namespace': '74-new-59'
-            },
-            {
-              id: 4,
-              'tag': 'V1.0',
-              'project_name': 'ui-create-test-case',
-              'status': null,
-              'namespace': '74-new-60'
-            }
-          ]
-        }
-      ]
+      isSaved: false
     }
   },
   computed: {
@@ -182,49 +153,47 @@ export default {
   methods: {
     async fetchData() {
       const res = await getDeployedHostsLists()
-      // return this.deployedData
-      console.log(res)
       return res.data.cluster
     },
     async fetchDeployedHostsByList(cluster_id) {
       const res = await getDeployedHostsByList(cluster_id)
-      console.log(res)
       this.setFormData(res.data)
     },
     async updateDeployHostsById() {
-      try {
-        await updateDeployHostsById(this.editingId, this.updatedFormData)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        this.loadData()
-        this.showAddClusterPage = false
-        this.showUpdateMessage()
-      }
+      await updateDeployHostsById(this.editingId, this.updatedFormData)
+        .then(() => {
+          this.loadData()
+          this.showAddClusterPage = false
+          this.showUpdateMessage()
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     async addDeployHosts() {
-      try {
-        await addDeployHosts(this.updatedFormData)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        this.loadData()
-        this.showAddClusterPage = false
-        this.showUpdateMessage()
-      }
+      await addDeployHosts(this.updatedFormData)
+        .then(() => {
+          this.loadData()
+          this.showAddClusterPage = false
+          this.showUpdateMessage()
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     async updateHostsDisabled(row) {
       const { name, disabled } = row
       const cluster_id = row.id
       const data = { name, disabled, k8s_config_file: '' }
-      try {
-        await updateDeployHostsById(cluster_id, data)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        this.loadData()
-        this.showUpdateMessage()
-      }
+
+      await updateDeployHostsById(cluster_id, data)
+        .then(() => {
+          this.loadData()
+          this.showUpdateMessage()
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
@@ -284,7 +253,6 @@ export default {
       formData.name = this.form.clusterName
       formData.disabled = this.form.disabled
       formData.k8s_config_file = this.hasUploadfile ? this.hasUploadfile : this.form.kubeConfigFile
-      console.log(formData)
       Object.assign(this.updatedFormData, formData)
     },
     handleSave() {
