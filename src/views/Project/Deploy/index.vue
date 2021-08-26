@@ -172,6 +172,7 @@ export default {
       } catch (e) {
         console.error(e)
       }
+      await this.loadData()
       this.listLoading = false
     },
     async handleRedeploy(id) {
@@ -186,16 +187,22 @@ export default {
       } catch (e) {
         console.error(e)
       }
+      await this.loadData()
       this.listLoading = false
     },
     async handleDelete(id) {
       this.listLoading = true
       try {
         await deleteService(id)
-        await this.loadData()
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
       } catch (error) {
         console.error(error)
       }
+      await this.loadData()
       this.listLoading = false
     },
     async handleConfirm(id) {
@@ -224,11 +231,11 @@ export default {
             this.loadingInstance.close()
             this.$refs['AddApplication'].$refs['deployForm'].resetFields()
             this.dialogVisible = false
-            await this.loadData()
           } catch (err) {
             this.loadingInstance.close()
             console.error(err)
           }
+          await this.loadData()
         } else {
           return false
         }
