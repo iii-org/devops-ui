@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="deployForm" :model="deployForm" :rules="deployFormRules" label-width="120px">
+  <el-form ref="deployForm" :model="deployForm" :rules="deployFormRules" label-width="150px">
     <el-row>
       <el-col>
         <el-form-item label="服務名稱" prop="name">
@@ -22,7 +22,7 @@
             <el-col :md="12">
               <el-form-item label="映像檔儲存庫" prop="registry_id">
                 <el-select v-model="deployForm.registry_id">
-                  <el-option v-for="item in registry" :key="item.id" :label="item.name" :value="item.id"
+                  <el-option v-for="item in registry" :key="item.registries_id" :label="item.name" :value="item.registries_id"
                              :disabled="item.disabled"
                   />
                 </el-select>
@@ -43,7 +43,7 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item label="同步映像檔規則" prop="image.policy">
-                  <el-select v-model="deployForm.image.policy">
+                  <el-select v-model="deployForm.image.policy" clearable>
                     <el-option v-for="item in policy" :key="item" :label="item" :value="item" />
                   </el-select>
                 </el-form-item>
@@ -62,19 +62,19 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item label="CPU" prop="resources.cpu">
-                  <el-input v-model="deployForm.resources.cpu" />
+                  <el-input v-model="deployForm.resources.cpu" clearable />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item label="記憶體" prop="resources.memory">
-                  <el-input v-model="deployForm.resources.memory">
+                  <el-input v-model="deployForm.resources.memory" clearable>
                     <template slot="append">GB</template>
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item label="數量" prop="resources.replicas">
-                  <el-input v-model="deployForm.resources.replicas" />
+                  <el-input v-model="deployForm.resources.replicas" clearable />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -98,7 +98,17 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item label="埠號" prop="network.port">
-                  <el-input v-model="deployForm.network.port" />
+                  <el-input v-model.number="deployForm.network.port" />
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="主機名稱" prop="network.domain">
+                  <el-input v-model="deployForm.network.domain" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :md="12">
+                <el-form-item label="路徑" prop="network.path">
+                  <el-input v-model="deployForm.network.path" clearable />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -180,7 +190,7 @@
 </template>
 
 <script>
-import { getDeployedHostsLists, getRegistryHostsLists } from '@/api/deploy'
+import { getDeployedHostsLists, getRegistryHostsLists, getService } from '@/api/deploy'
 import { getReleaseVersion } from '@/api/release'
 import { mapGetters } from 'vuex'
 
@@ -191,15 +201,43 @@ const environments_type = ['configmap', 'secret']
 
 export default {
   name: 'AddApplication',
-  components: {},
-
+  props: {
+    id: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
+    const _this = this
     const keyValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
         value.forEach(item => {
-          if (!item.key || item.key.length <= 0) return reject('Please check key are not null')
-          if (!item.type || item.type.length <= 0) return reject('Please check type are not null')
+          if (!item.key || item.key.length <= 0) return reject('Please check all key are not null')
+          if (!item.type || item.type.length <= 0) return reject('Please check all type are not null')
         })
+        return resolve()
+      })
+    }
+    const domainValidator = (rule, value) => {
+      return new Promise((resolve, reject) => {
+        if (
+          (_this.deployForm.network.path !== '' || _this.deployForm.network.path.length > 0) &&
+          (value === '' || value.length <= 0)
+        ) {
+          return reject('Domain name is required, domain name & path is a pair condition')
+        }
+        return resolve()
+      })
+    }
+
+    const pathValidator = (rule, value) => {
+      return new Promise((resolve, reject) => {
+        if (
+          (_this.deployForm.network.domain !== '' || _this.deployForm.network.domain.length > 0) &&
+          (value === '' || value.length <= 0)
+        ) {
+          return reject('Path is required, domain name & path is a pair condition')
+        }
         return resolve()
       })
     }
@@ -223,9 +261,10 @@ export default {
           memory: '',
           replicas: ''
         },
-        network: { type: '', protocol: '', port: '' },
+        network: { type: '', protocol: '', port: '', domain: '', path: '' },
         environments: []
       },
+      edit: {},
       deployFormRules: {
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         cluster_id: [{ required: true, message: 'Please select cluster', trigger: 'blur' }],
@@ -239,34 +278,62 @@ export default {
             trigger: 'blur'
           }
         ],
-        image: { policy: [{ required: true, message: 'Please select policy', trigger: 'blur' }] },
         release_id: [{ required: true, message: 'Please select a release', trigger: 'blur' }],
         network: {
           type: [{ required: true, message: 'Please select type', trigger: 'blur' }],
           protocol: [{ required: true, message: 'Please select protocol', trigger: 'blur' }],
-          port: [{ required: true, message: 'Please select port', trigger: 'blur' }]
+          port: [
+            { type: 'number', message: 'Please select port', trigger: 'blur' },
+            { required: true, message: 'Please select port', trigger: 'blur' }
+          ],
+          domain: [{ validator: domainValidator, trigger: 'blur' }],
+          path: [{ validator: pathValidator, trigger: 'blur' }]
         },
         environments: [
-          { type: 'array', validator: keyValidator, trigger: 'blur' }]
+          { type: 'array', validator: keyValidator, trigger: 'blur' }
+        ]
       }
     }
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
     checkAvailable() {
-      console.log(this.cluster)
       return this.cluster.length > 0 && this.registry.length > 0
+    }
+  },
+  watch: {
+    id(value) {
+      if (value) {
+        this.getServiceDetail(value)
+      }
+    },
+    edit: {
+      deep: true,
+      handler(value) {
+        Object.keys(this.deployForm).forEach(item => {
+          if (value[item]) {
+            this.deployForm[item] = value[item]
+          }
+        })
+      }
     }
   },
   mounted() {
     this.getSelectionList()
+    if (this.id) {
+      this.getServiceDetail(this.id)
+    }
   },
   methods: {
     async getSelectionList() {
       const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId)])).map(item => item.data)
       this.cluster = res[0].cluster
-      this.registry = res[1]
+      this.registry = res[1].registries
       this.release = res[2].releases
+    },
+    async getServiceDetail(value) {
+      const res = await getService(value)
+      this.edit = res.data.application
     },
     addEnvironment() {
       this.deployForm.environments.push({ key: '', value: '', type: '' })

@@ -6,7 +6,7 @@
         type="success"
         :disabled="selectedProjectId === -1"
         icon="el-icon-plus"
-        @click="handleAdding"
+        @click="handleEditDialog(null)"
       >
         新增部署
       </el-button>
@@ -26,17 +26,18 @@
       highlight-current-row
     >
       <el-table-column align="center" label="id" min-width="110" prop="id" />
-      <el-table-column align="center" label="服務名稱" min-width="100" prop="application_name" />
-      <el-table-column align="center" label="部署名稱" min-width="100" prop="cluster_name" />
-      <el-table-column align="center" label="狀態" min-width="100" prop="status_str" />
+      <el-table-column align="center" label="服務名稱" min-width="100" prop="name" />
+      <el-table-column align="center" label="部署名稱" min-width="100" prop="cluster.name" />
+      <el-table-column align="center" label="狀態" min-width="100" prop="status" />
       <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
-        <template slot-scope="scope">
+        <template slot-scope="{row}">
           <el-button
             :loading="isDownloading"
             size="mini"
             type="primary"
             icon="el-icon-edit"
+            @click="handleEditDialog(row.id)"
           >
             {{ $t('general.Edit') }}
           </el-button>
@@ -47,7 +48,7 @@
             icon="el-icon-info"
             icon-color="red"
             :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(scope.row)"
+            @confirm="handleDelete(row)"
           >
             <el-button slot="reference" size="mini" type="danger">
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}
@@ -74,12 +75,14 @@
       :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
-      <AddApplication ref="AddApplication" />
+      <AddApplication :id="edit_id" ref="AddApplication" />
       <!--      v-if="$refs['AddApplication'].checkAvailable"-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
-          {{ $t('general.Confirm') }}</el-button>
+        <el-button v-if="edit_id" type="primary" :loading="memberConfirmLoading" @click="handleConfirm(edit_id)">
+          {{ $t('general.Edit') }}</el-button>
+        <el-button v-else type="primary" :loading="memberConfirmLoading" @click="handleConfirm(null)">
+          {{ $t('general.Add') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -88,7 +91,7 @@
 <script>
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { getServices, postService, deleteService } from '@/api/deploy'
+import { getServices, postService, deleteService, putService } from '@/api/deploy'
 import AddApplication from '@/views/Project/Deploy/components/AddApplication'
 
 export default {
@@ -98,13 +101,14 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      edit_id: null,
       versionList: [],
       dialogStatus: 1,
       memberConfirmLoading: false,
       uploadFileList: [],
       loadingInstance: '',
       isDownloading: false,
-      searchKeys: ['application_name']
+      searchKeys: ['name']
     }
   },
   mounted() {
@@ -123,7 +127,6 @@ export default {
         return []
       }
       const res = await getServices({ project_id: this.selectedProjectId })
-      console.log(res.data.applications)
       return res.data.applications
     },
     sortFiles(files) {
@@ -131,10 +134,9 @@ export default {
       sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
       return sortedFiles
     },
-    handleAdding() {
-      // this.$refs['upload'].clearFiles()
+    handleEditDialog(id) {
       this.dialogVisible = true
-      this.dialogStatus = 1
+      this.edit_id = id
     },
     handleExceed() {
       this.$message({
@@ -153,7 +155,7 @@ export default {
       }
       this.listLoading = false
     },
-    async handleConfirm() {
+    async handleConfirm(id) {
       await this.$refs['AddApplication'].$refs['deployForm'].validate(async valid => {
         if (valid) {
           this.loadingInstance = this.$loading({
@@ -161,13 +163,22 @@ export default {
             text: 'Loading'
           })
           try {
-            await postService({ ...this.$refs['AddApplication'].deployForm, project_id: this.selectedProjectId })
+            if (id) {
+              await putService(id, { ...this.$refs['AddApplication'].deployForm, project_id: this.selectedProjectId })
+              this.$message({
+                title: this.$t('general.Success'),
+                message: this.$t('Notify.Updated'),
+                type: 'success'
+              })
+            } else {
+              await postService({ ...this.$refs['AddApplication'].deployForm, project_id: this.selectedProjectId })
+              this.$message({
+                title: this.$t('general.Success'),
+                message: this.$t('Notify.Created'),
+                type: 'success'
+              })
+            }
             this.loadingInstance.close()
-            this.$message({
-              title: this.$t('general.Success'),
-              message: this.$t('Notify.Uploaded'),
-              type: 'success'
-            })
             this.$refs['AddApplication'].$refs['deployForm'].resetFields()
             this.dialogVisible = false
             await this.loadData()
