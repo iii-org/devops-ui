@@ -17,7 +17,7 @@
     </el-alert>
     <div class="text-right">
       <span v-if="traceCheck.start_time">執行時間:{{ traceCheck.start_time |relativeTime }}</span>
-      <span v-if="traceCheck.end_time">運算時間:{{ $dayjs(traceCheck.end_time).from($dayjs(traceCheck.start_time)) }}</span>
+      <span v-if="traceCheck.finish_time">運算時間:{{ $dayjs(traceCheck.finish_time).from($dayjs(traceCheck.start_time)) }}</span>
     </div>
     <el-table :data="traceCheck.result" height="60vh" style="width: 100%">
       <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track"
