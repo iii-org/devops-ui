@@ -325,6 +325,9 @@ export default {
     async selectedProjectId() {
       await this.getTrackerMapOptions()
       await this.initChart()
+      if (this.$refs['TraceCheck']) {
+        this.$refs['TraceCheck'].resetData()
+      }
     },
     'filterValue.tracker_id': {
       deep: true,
