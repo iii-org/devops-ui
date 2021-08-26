@@ -324,6 +324,7 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.getTrackerMapOptions()
+      this.chartIssueList = []
       await this.initChart()
       if (this.$refs['TraceCheck']) {
         this.$refs['TraceCheck'].resetData()
