@@ -9,7 +9,7 @@
           <el-form-item label="預設檢核條件">
             <el-select
               v-model="trackerMapTarget.id"
-              :disabled="selectedProjectId === -1"
+              :disabled="selectedProjectId === -1||isRunning()"
               filterable
               @change="handleSetDefault"
             >
@@ -18,7 +18,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-button class="w-full" icon="el-icon-setting" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
+          <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
           </el-button>
           <el-divider />
           <el-form-item label="檢核條件" class="relation_settings">
@@ -26,7 +26,8 @@
               <li v-for="item in trackerMapTarget.order" :key="item">{{ $t(`Issue.${item}`) }}</li>
             </ol>
           </el-form-item>
-          <el-button class="w-full" type="primary" icon="el-icon-check" @click="getTraceCheck">執行需求檢核
+          <el-button class="w-full" type="primary" icon="el-icon-check" :loading="isRunning()" @click="createTraceCheckJob">
+            執行需求檢核
           </el-button>
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
@@ -99,7 +100,7 @@
                 <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
                            :disabled="chartLoading" @click="onPaintChart"
                 >
-                  {{ $t('Track.StartingPoint') }}
+                  {{ $t('Track.StartPaint') }}
                 </el-button>
               </el-form-item>
             </el-form>
@@ -151,7 +152,7 @@
           <el-form-item label="預設檢核條件">
             <el-select
               v-model="trackerMapTarget.id"
-              :disabled="selectedProjectId === -1"
+              :disabled="selectedProjectId === -1||isRunning()"
               filterable
               @change="handleSetDefault"
             >
@@ -161,7 +162,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button class="w-full" icon="el-icon-setting" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
+            <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
             </el-button>
           </el-form-item>
           <el-form-item label="檢核條件" class="relation_settings">
@@ -172,26 +173,12 @@
             </div>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-check" @click="getTraceCheck">
+            <el-button type="primary" icon="el-icon-check" :loading="isRunning()" @click="createTraceCheckJob">
               執行需求檢核
             </el-button>
           </el-form-item>
         </el-form>
-        <el-table :data="traceCheck" height="60vh" style="width: 100%">
-          <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track"
-                           show-tooltip-when-overflow
-          >
-            <template v-if="row[track]" slot-scope="{row}">
-              <el-link @click="onRelationIssueDialog(row[track].id)">
-                <status :name="row[track].status.name" size="small" />
-                #{{ row[track].id }} - {{ row[track].name }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <template slot="empty">
-            <el-empty :description="$t('general.NoData')" />
-          </template>
-        </el-table>
+        <TraceCheck v-if="activeTab==='check'" ref="TraceCheck" :tracker-map-target="trackerMapTarget" />
       </el-tab-pane>
     </el-tabs>
     <el-dialog :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
@@ -203,17 +190,6 @@
     </el-dialog>
     <el-dialog title="追溯檢核" :visible.sync="settingDialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
       <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
-    </el-dialog>
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
-               :before-close="handleRelationIssueDialogBeforeClose"
-    >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationUpdate"
-      />
     </el-dialog>
   </div>
 </template>
@@ -227,18 +203,17 @@ import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import {
   getTestFileByTestPlan,
-  getTraceabilityMatrixReport, getTraceOrderExecute,
+  getTraceabilityMatrixReport, patchTraceOrderExecute,
   getTraceOrderList, patchTraceOrder
 } from '@/views/Plugin/QA/api/qa'
 import html2canvas from 'html2canvas'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
-import Status from '@/components/Issue/Status'
-import ProjectIssueDetail from '../../Project/IssueDetail'
+import TraceCheck from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/TraceCheck'
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { Status, OrderListDialog, ProjectListSelector, Tracker, VueMermaid, ProjectIssueDetail },
+  components: { TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   data() {
     return {
       activeTab: 'map',
@@ -253,6 +228,7 @@ export default {
       issueLoading: false,
       chartLoading: false,
       listLoading: false,
+      jobLoading: false,
       chartProgress: {
         now: 0,
         total: 0
@@ -267,10 +243,6 @@ export default {
         filename: '',
         content_type: '',
         src: ''
-      },
-      relationIssue: {
-        visible: false,
-        id: null
       }
     }
   },
@@ -310,13 +282,6 @@ export default {
         }
         return result
       })
-    },
-    traceCheckList() {
-      const result = cloneDeep(this.trackerMapTarget.order)
-      if (result.includes('Test Plan')) {
-        result.splice(result.indexOf('Test Plan') + 1, 0, 'TestFile', 'TestResult')
-      }
-      return result
     },
     data() {
       const chartIssueList = this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
@@ -377,6 +342,9 @@ export default {
       deep: true,
       handler() {
         this.initChart()
+        if (this.$refs['TraceCheck']) {
+          this.$refs['TraceCheck'].resetData()
+        }
       }
     }
   },
@@ -637,6 +605,10 @@ export default {
         this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
       }
     },
+    isRunning() {
+      if (!this.$refs['TraceCheck']) return false
+      return this.$refs['TraceCheck'].getPercentProgress < 100 && !this.$refs['TraceCheck'].traceCheck.exception
+    },
     async handleSetDefault(id) {
       try {
         const data = { default: true }
@@ -654,41 +626,17 @@ export default {
       }
       await this.getTrackerMapOptions()
     },
-    async getTraceCheck() {
+    async createTraceCheckJob() {
       this.listLoading = true
       try {
         this.activeTab = 'check'
-        const res = await getTraceOrderExecute({ project_id: this.selectedProjectId })
+        const res = await patchTraceOrderExecute({ project_id: this.selectedProjectId })
         this.traceCheck = res.data
+        await this.$refs['TraceCheck'].loadData()
       } catch (e) {
         console.log(e)
       }
       this.listLoading = false
-    },
-    onRelationIssueDialog(id) {
-      this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', id)
-    },
-    handleRelationUpdate() {
-      this.onCloseRelationIssueDialog()
-      this.initChart()
-      this.$emit('update-issue')
-    },
-    handleRelationIssueDialogBeforeClose(done) {
-      if (this.$refs.children.hasUnsavedChanges()) {
-        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        })
-          .then(() => {
-            done()
-          })
-          .catch(() => {
-          })
-      } else {
-        done()
-      }
     },
     async downloadCSVReport() {
       const response = await getTraceabilityMatrixReport(this.selectedProjectId, { responseType: 'blob' })
@@ -753,9 +701,11 @@ export default {
     @apply mx-1 inline-block;
   }
 }
-.el-form{
-  padding:10px;
-  .el-form-item{
+
+.el-form {
+  padding: 10px;
+
+  .el-form-item {
     margin-bottom: 0;
   }
 }

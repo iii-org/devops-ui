@@ -896,6 +896,7 @@ export default {
   },
   Track: {
     StartingPoint: '起始點',
+    StartPaint: '開始繪圖',
     DownloadExcel: '下載Excel總表',
     DemandTraceability: '需求追溯'
   },

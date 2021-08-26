@@ -893,6 +893,7 @@ export default {
   },
   Track: {
     StartingPoint: 'Starting Point',
+    StartPaint: 'Start Paint',
     DownloadExcel: 'Download the Excel summary sheet',
     DemandTraceability: 'Demand Traceability'
   },
