@@ -942,7 +942,13 @@ export default {
     KubeConfigTextareaHint: 'Please directly paste Kubenate config or use the above to upload the file and upload directly',
     ClusterMessage: 'The Cluster settings have been updated successfully',
     RegistryMessage: 'The Registry settings have been updated successfully',
-    FailMessage: 'Please check if the content of the form is entered correctly'
+    FailMessage: 'Please check if the content of the form is entered correctly',
+    NoService: 'No service',
+    NoImage: 'No image',
+    Initializing: 'Initializing',
+    StartReplication: 'Synchronizing',
+    Finished: 'Finished',
+    StartDeployment: 'Setting up'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

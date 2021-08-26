@@ -16,15 +16,16 @@
         fit
         @row-click="rowClicked"
       >
-        <el-table-column type="expand">
+        <el-table-column type="expand" width="100">
           <template slot-scope="scope">
-            <ul v-if="scope.row.application">
+            <ul v-if="scope.row.application.length > 0">
               <li v-for="(item, index) in scope.row.application" :key="index" class="mb-5">
                 <span class="mr-5">{{ item.project_name }}</span>
                 <span class="mr-5">{{ item.tag }}</span>
-                <span>{{ item.status }}</span>
+                <el-tag :type="tagType(item.status)" effect="dark">{{ clusterStatus(item.status) }}</el-tag>
               </li>
             </ul>
+            <div v-else>{{ $t('SystemDeploySettings.NoService') }}</div>
           </template>
         </el-table-column>
         <el-table-column type="index" align="center" :label="$t('SystemDeploySettings.Index')" width="100" />
@@ -275,6 +276,26 @@ export default {
         message: this.$t('SystemDeploySettings.ClusterMessage'),
         type: 'success'
       })
+    },
+    clusterStatus(status) {
+      switch (status) {
+        case 'Initializing':
+          return this.$t('SystemDeploySettings.Initializing')
+        case 'Start Image replication':
+          return this.$t('SystemDeploySettings.StartReplication')
+        case 'Finish Image replication':
+          return this.$t('SystemDeploySettings.Finished')
+      }
+    },
+    tagType(status) {
+      switch (status) {
+        case 'Initializing':
+          return 'info'
+        case 'Start Image replication':
+          return 'warning'
+        case 'Finish Image replication':
+          return 'success'
+      }
     }
   }
 }

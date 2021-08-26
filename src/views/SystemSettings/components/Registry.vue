@@ -17,13 +17,14 @@
       >
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <ul v-if="scope.row.application">
+            <ul v-if="scope.row.application.length > 0">
               <li v-for="(item, index) in scope.row.application" :key="index" class="mb-5">
                 <span class="mr-5">{{ item.project_name }}</span>
                 <span class="mr-5">{{ item.tag }}</span>
-                <span>{{ item.status }}</span>
+                <el-tag :type="tagType(item.status)" effect="dark">{{ registryStatus(item.status) }}</el-tag>
               </li>
             </ul>
+            <div v-else>{{ $t('SystemDeploySettings.NoImage') }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('SystemDeploySettings.ImpressionFileRepo')" prop="name" />
@@ -278,6 +279,26 @@ export default {
         message: this.$t('SystemDeploySettings.FailMessage'),
         type: 'warning'
       })
+    },
+    registryStatus(status) {
+      switch (status) {
+        case 'Initializing':
+          return this.$t('SystemDeploySettings.Initializing')
+        case 'Start Kubernetes deployment':
+          return this.$t('SystemDeploySettings.StartDeployment')
+        case 'Finish Kubernetes deployment':
+          return this.$t('SystemDeploySettings.Finished')
+      }
+    },
+    tagType(status) {
+      switch (status) {
+        case 'Initializing':
+          return 'info'
+        case 'Start Kubernetes deployment':
+          return 'warning'
+        case 'Finish Kubernetes deployment':
+          return 'success'
+      }
     }
   }
 }
