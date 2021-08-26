@@ -897,6 +897,7 @@ export default {
   Track: {
     StartingPoint: '起始點',
     StartPaint: '開始繪圖',
+    TraceChecking: '需求檢核中，需要至少3-5分鐘以上，請稍後再回來檢視結果......',
     DownloadExcel: '下載Excel總表',
     DemandTraceability: '需求追溯'
   },

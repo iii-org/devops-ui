@@ -10,7 +10,7 @@
     </el-alert>
     <el-alert v-else-if="getPercentProgress<100" type="warning" class="mb-4 loading" :closable="false">
       <h2 slot="title">
-        <i class="el-icon-loading" /> {{ $t('Loading') }}
+        <i class="el-icon-loading" /> {{ $t('Track.TraceChecking') }}
         ( {{ traceCheck.current_num }} / {{ traceCheck.total_num }} )
       </h2>
       <el-progress :percentage="getPercentProgress" />
@@ -125,6 +125,9 @@ export default {
   },
   mounted() {
     this.loadData()
+  },
+  destroyed() {
+    this.resetData()
   },
   methods: {
     async loadData() {
