@@ -179,7 +179,7 @@ export default {
       const { name, disabled } = row
       this.isLoading = true
       await updatePlugin(name, { disabled: !disabled })
-      this.loadData()
+      this.fetchData()
       this.isLoading = false
     },
     handleClose() {
@@ -200,7 +200,7 @@ export default {
           )
           await updatePlugin(this.pluginName, sendData)
           this.handleClose()
-          this.loadData()
+          this.fetchData()
         }
       })
     },
@@ -220,7 +220,7 @@ export default {
           })
         })
         .then(() => {
-          this.loadData()
+          this.fetchData()
           this.isLoading = false
         })
     }
