@@ -28,32 +28,47 @@
       <el-table-column align="center" label="id" min-width="110" prop="id" />
       <el-table-column align="center" label="服務名稱" min-width="100" prop="name" />
       <el-table-column align="center" label="部署名稱" min-width="100" prop="cluster.name" />
-      <el-table-column align="center" label="狀態" min-width="100" prop="status" />
-      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
+      <el-table-column align="center" label="狀態" min-width="100" prop="status">
+        <template slot-scope="{row}">
+          <template v-if="!row.disabled">
+            {{ row.status }}
+            <Status :id="row.status_id" />
+          </template>
+          <template v-else>
+            已停止
+            <Status :id="0" />
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column-time prop="created_at" :label="$t('general.CreateTime')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="{row}">
-          <el-button
-            :loading="isDownloading"
-            size="mini"
-            type="primary"
-            icon="el-icon-edit"
-            @click="handleEditDialog(row.id)"
-          >
-            {{ $t('general.Edit') }}
-          </el-button>
-
-          <el-popconfirm
-            :confirm-button-text="$t('general.Delete')"
-            :cancel-button-text="$t('general.Cancel')"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="$t('Notify.confirmDelete')"
-            @confirm="handleDelete(row)"
-          >
-            <el-button slot="reference" size="mini" type="danger">
-              <em class="el-icon-delete" /> {{ $t('general.Delete') }}
-            </el-button>
-          </el-popconfirm>
+          <el-dropdown split-button size="small" :type="row.disabled? 'warning': 'success'" @click="handleServiceStatus(row)">
+            <em :class="`el-icon-${row.disabled? 'video-play': 'video-pause'}`" /> {{ row.disabled? '啟動':'停止' }}
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item size="mini"
+                                type="primary"
+                                icon="el-icon-refresh-right"
+                                @click.native="handleRedeploy(row.id)"
+              >重新部署</el-dropdown-item>
+              <el-dropdown-item size="mini"
+                                type="primary"
+                                icon="el-icon-edit"
+                                @click.native="handleEditDialog(row.id)"
+              >{{ $t('general.Edit') }}</el-dropdown-item>
+              <el-popconfirm
+                :confirm-button-text="$t('general.Delete')"
+                :cancel-button-text="$t('general.Cancel')"
+                icon="el-icon-info"
+                icon-color="red"
+                placement="bottom-start"
+                :title="$t('Notify.confirmDelete')"
+                @confirm="handleDelete(row.id)"
+              >
+                <el-dropdown-item slot="reference" type="danger"><em class="el-icon-delete" /> {{ $t('general.Delete') }}</el-dropdown-item>
+              </el-popconfirm>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -76,11 +91,10 @@
       @closed="onDialogClosed"
     >
       <AddApplication :id="edit_id" ref="AddApplication" />
-      <!--      v-if="$refs['AddApplication'].checkAvailable"-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button v-if="edit_id" type="primary" :loading="memberConfirmLoading" @click="handleConfirm(edit_id)">
-          {{ $t('general.Edit') }}</el-button>
+          {{ $t('general.Save') }}</el-button>
         <el-button v-else type="primary" :loading="memberConfirmLoading" @click="handleConfirm(null)">
           {{ $t('general.Add') }}</el-button>
       </span>
@@ -91,12 +105,13 @@
 <script>
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { getServices, postService, deleteService, putService } from '@/api/deploy'
+import { getServices, postService, deleteService, putService, patchService, patchServiceRedeploy } from '@/api/deploy'
 import AddApplication from '@/views/Project/Deploy/components/AddApplication'
+import Status from './components/Status'
 
 export default {
   name: 'ProjectFiles',
-  components: { AddApplication, ElTableColumnTime },
+  components: { AddApplication, ElTableColumnTime, Status },
   mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector],
   data() {
     return {
@@ -145,10 +160,38 @@ export default {
         type: 'warning'
       })
     },
-    async handleDelete(row) {
+    async handleServiceStatus(row) {
       this.listLoading = true
       try {
-        await deleteService(row.id)
+        await patchService(row.id, { disabled: !row.disabled })
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+      } catch (e) {
+        console.error(e)
+      }
+      this.listLoading = false
+    },
+    async handleRedeploy(id) {
+      this.listLoading = true
+      try {
+        await patchServiceRedeploy(id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
+      } catch (e) {
+        console.error(e)
+      }
+      this.listLoading = false
+    },
+    async handleDelete(id) {
+      this.listLoading = true
+      try {
+        await deleteService(id)
         await this.loadData()
       } catch (error) {
         console.error(error)

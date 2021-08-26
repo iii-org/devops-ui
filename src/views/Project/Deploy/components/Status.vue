@@ -1,0 +1,126 @@
+<template>
+  <div class="status">
+    <template v-for="(value, key) in statusCategory">
+      <el-popover :key="key" placement="bottom-start" trigger="hover">
+        <div v-for="item in value" :key="item" class="status-item">
+          <div :class="`icon ${getSubStatusClass(item)}`">
+            <em v-if="getSubStatusClass(item)" :class="`el-icon-${icon[getSubStatusClass(item)]}`" />
+          </div>
+          <div class="item-text">
+            {{ statusList[item] }}
+          </div>
+        </div>
+        <div slot="reference" class="item" :class="getStatusClass(key, value)">
+          <em v-if="getStatusClass(key, value)" :class="`el-icon-${icon[getStatusClass(key, value)]}`" />
+        </div>
+      </el-popover>
+    </template>
+  </div>
+</template>
+
+<script>
+const status = {
+  1: 'Initial',
+  2: 'Start Image replication',
+  3: 'Finish Image replication',
+  4: 'Start Kubernetes deployment ',
+  5: 'Finish Kubernetes deployment ',
+  9: 'Start Kubernetes deletion',
+  10: 'Finish Kubernetes deletion'
+}
+const statusCategory = { 1: [1], 3: [2, 3], 5: [4, 5], 10: [9, 10] }
+const icon = { error: 'warning', progress: 'loading', done: 'check' }
+export default {
+  name: 'Status',
+  props: {
+    id: {
+      type: Number,
+      default: 0
+    },
+    status: {
+      type: String,
+      default: null
+    }
+  },
+  computed: {
+    statusCategory() {
+      return statusCategory
+    },
+    statusList() {
+      return status
+    },
+    icon() {
+      return icon
+    }
+  },
+  methods: {
+    getStatusClass(key, value) {
+      if (value.includes(this.id) && this.status === 'error') {
+        return 'error'
+      } else if (value.indexOf(this.id) === 0) {
+        return 'progress'
+      } else if (this.id >= key) {
+        return 'done'
+      }
+      return null
+    },
+    getSubStatusClass(object) {
+      if (object === this.id && this.status === 'error') {
+        return 'error'
+      } else if (object === this.id) {
+        return 'progress'
+      } else if (this.id >= object) {
+        return 'done'
+      }
+      return null
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.status {
+  @apply w-full flex justify-between;
+  span {
+    @apply w-full;
+    > > > .el-popover__reference-wrapper {
+      @apply w-full;
+    }
+  }
+
+  .item {
+    @apply w-full px-1 h-7 border-2 border-white border-solid bg-gray-300 items-center justify-center;
+    &.error {
+      @apply bg-red-300 text-red-800;
+    }
+
+    &.progress {
+      @apply bg-yellow-300 text-yellow-800;
+    }
+
+    &.done {
+      @apply bg-green-300 text-green-800;
+    }
+  }
+}
+
+.el-popover {
+  .status-item {
+    @apply flex justify-start items-center my-2;
+    .icon {
+      @apply w-7 h-7 rounded-full border-2 border-white border-solid bg-gray-300 flex items-center justify-center mr-1;
+      &.error {
+        @apply bg-red-300 text-red-800;
+      }
+
+      &.progress {
+        @apply bg-yellow-300 text-yellow-800;
+      }
+
+      &.done {
+        @apply bg-green-300 text-green-800;
+      }
+    }
+  }
+}
+</style>
