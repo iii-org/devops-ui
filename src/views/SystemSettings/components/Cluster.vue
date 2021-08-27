@@ -281,20 +281,24 @@ export default {
       switch (status) {
         case 'Initializing':
           return this.$t('SystemDeploySettings.Initializing')
-        case 'Start Image replication':
-          return this.$t('SystemDeploySettings.StartReplication')
-        case 'Finish Image replication':
+        case 'Start Kubernetes deployment':
+          return this.$t('SystemDeploySettings.StartDeployment')
+        case 'Finish Kubernetes deployment':
           return this.$t('SystemDeploySettings.Finished')
+        case 'Error, No Image need to be replicated':
+          return this.$t('general.Error')
       }
     },
     tagType(status) {
       switch (status) {
         case 'Initializing':
           return 'info'
-        case 'Start Image replication':
+        case 'Start Kubernetes deployment':
           return 'warning'
-        case 'Finish Image replication':
+        case 'Finish Kubernetes deployment':
           return 'success'
+        case 'Error, No Image need to be replicated':
+          return 'danger'
       }
     }
   }

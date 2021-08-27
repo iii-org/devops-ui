@@ -15,7 +15,7 @@
         fit
         @row-click="rowClicked"
       >
-        <el-table-column type="expand">
+        <el-table-column type="expand" width="100">
           <template slot-scope="scope">
             <ul v-if="scope.row.application.length > 0">
               <li v-for="(item, index) in scope.row.application" :key="index" class="mb-5">
@@ -284,20 +284,24 @@ export default {
       switch (status) {
         case 'Initializing':
           return this.$t('SystemDeploySettings.Initializing')
-        case 'Start Kubernetes deployment':
-          return this.$t('SystemDeploySettings.StartDeployment')
-        case 'Finish Kubernetes deployment':
+        case 'Start Image replication':
+          return this.$t('SystemDeploySettings.StartReplication')
+        case 'Finish Image replication':
           return this.$t('SystemDeploySettings.Finished')
+        case 'Error, No Image need to be replicated':
+          return this.$t('general.Error')
       }
     },
     tagType(status) {
       switch (status) {
         case 'Initializing':
           return 'info'
-        case 'Start Kubernetes deployment':
+        case 'Start Image replication':
           return 'warning'
-        case 'Finish Kubernetes deployment':
+        case 'Finish Image replication':
           return 'success'
+        case 'Error, No Image need to be replicated':
+          return 'danger'
       }
     }
   }
