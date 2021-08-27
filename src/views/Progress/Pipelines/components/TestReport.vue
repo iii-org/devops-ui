@@ -77,7 +77,7 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">CheckMarx</span>
-            <el-button slot="link" type="text" icon="el-icon-download" :disabled="!checkMarxData" @click="openCheckMarx">
+            <el-button slot="link" type="text" icon="el-icon-download" :disabled="Object.keys(checkMarxData[0]).length === 0" @click="openCheckMarx">
               {{ $t('TestReport.DetailReport') }}
             </el-button>
           </ToolBar>
@@ -119,7 +119,7 @@
           <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">OWASP ZAP</span>
-            <el-button slot="link" type="text" icon="el-icon-position" :disabled="!zapData" @click="openZap">
+            <el-button slot="link" type="text" icon="el-icon-position" :disabled="Object.keys(zapData[0]).length === 0" @click="openZap">
               {{ $t('TestReport.DetailReport') }}
             </el-button>
           </ToolBar>
@@ -159,7 +159,7 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">WebInspect</span>
-            <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="!webInspectData" @click="openWebInspect">
+            <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="Object.keys(webInspectData[0]).length === 0" @click="openWebInspect">
               {{ $t('TestReport.DetailReport') }}
             </el-button>
           </ToolBar>
@@ -213,7 +213,7 @@
           <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
           <ToolBar>
             <span slot="toolName">Postman</span>
-            <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="!postmanData" @click="openPostman">
+            <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="Object.keys(postmanData[0]).length === 0" @click="openPostman">
               {{ $t('TestReport.DetailReport') }}
             </el-button>
           </ToolBar>
@@ -397,11 +397,17 @@ export default {
     },
     openWebInspect() {
       const { scan_id, run_at } = this.webInspectData[0]
-      this.$router.push({ name: 'webinspect-report', params: { scan_id, run_at }})
+      const routeUrl = this.$router.resolve({
+        name: 'webinspect-report', params: { scan_id, run_at }
+      })
+      window.open(routeUrl.href, '_blank')
     },
     openPostman() {
       const { id } = this.postmanData[0]
-      this.$router.push({ name: 'postman-test-case', params: { id }})
+      const routeUrl = this.$router.resolve({
+        name: 'postman-test-case', params: { id }
+      })
+      window.open(routeUrl.href, '_blank')
     },
     async openSideex() {
       const { id } = this.sideexData[0]
