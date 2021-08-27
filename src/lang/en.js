@@ -91,7 +91,8 @@ export default {
     traceabilityMatrix: 'Traceability Matrix',
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management',
-    testReport: 'DevOps Test Report'
+    testReport: 'DevOps Test Report',
+    Deploy: 'Deploy'
   },
   navbar: {
     logOut: 'Log Out',
@@ -950,6 +951,43 @@ export default {
     StartReplication: 'Synchronizing',
     Finished: 'Finished',
     StartDeployment: 'Setting up'
+  },
+  Deploy: {
+    AddApplication: 'Add Application',
+    ID: 'ID',
+    Name: 'Application NAme',
+    Cluster: 'Cluster',
+    Release: 'Release Version',
+    Status: 'Status',
+    Start: 'Start',
+    Stop: 'Stop',
+    Redeploy: 'Redeploy',
+    Stopped: 'Stopped',
+    Registry: 'Registry',
+    Namespace: 'Namespace',
+    Policy: 'Policy',
+    Resource: 'Resource Settings',
+    CPU: 'CPU',
+    Memory: 'Memory',
+    Replicas: 'Replicas',
+    Network: 'Network Settings',
+    Type: 'Type',
+    Protocol: 'Protocol',
+    Port: 'Port',
+    Domain: 'Domain Name',
+    Path: 'Path',
+    EnvironmentVariable: 'Environment Variable',
+    AddVariable: 'Add Variable',
+    Key: 'Key',
+    Value: 'Value',
+    KeyConflicts: '[System Variable] Variable conflicts : Please fix the following variables and re-save. {0}',
+    KeyPair: '@:(Deploy.Key)[{0}] at {1} line.'
+  },
+  Validation: {
+    Input: 'Please Input {0}',
+    Select: 'Please Select {0}',
+    Invalid: '{0} is invalid',
+    Number: 'Number'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

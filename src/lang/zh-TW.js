@@ -91,7 +91,8 @@ export default {
     traceabilityMatrix: '需求追溯表',
     changeManagement: '變更管理',
     'Fail Management': '異常管理',
-    testReport: 'DevOps 測試報告'
+    testReport: 'DevOps 測試報告',
+    deploy: '遠端部署'
   },
   navbar: {
     logOut: '登出',
@@ -954,6 +955,43 @@ export default {
     StartReplication: '同步中',
     Finished: '已完成',
     StartDeployment: '設置中'
+  },
+  Deploy: {
+    AddApplication: '新增部署服務',
+    ID: 'ID',
+    Name: '服務名稱',
+    Cluster: '遠端環境',
+    Release: '釋出版本',
+    Status: '狀態',
+    Start: '開始',
+    Stop: '停止',
+    Redeploy: '重新部署',
+    Stopped: '已停止',
+    Registry: '映像檔儲存庫',
+    Namespace: '服務空間名稱',
+    Policy: '同步映像檔規則',
+    Resource: '資源空間設定',
+    CPU: 'CPU',
+    Memory: '記憶體',
+    Replicas: '數量',
+    Network: '網路設定',
+    Type: '類型',
+    Protocol: '連接埠',
+    Port: '埠號',
+    Domain: '主機名稱',
+    Path: '路徑',
+    EnvironmentVariable: '服務環境變數',
+    AddVariable: '新增環境變數',
+    Key: '變數名稱',
+    Value: '值',
+    KeyConflicts: '[服務環境變數] @:(Deploy.Key)重覆定義，請調整後再存檔。 {0}',
+    KeyPair: '@:(Deploy.Key)[{0}]： 第{1}行'
+  },
+  Validation: {
+    Input: '請輸入 {0}',
+    Select: '請選擇 {0}',
+    Invalid: '{0} 無效，請重新輸入',
+    Number: '數值'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

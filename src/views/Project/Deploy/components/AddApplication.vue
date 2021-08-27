@@ -2,7 +2,7 @@
   <el-form ref="deployForm" :model="deployForm" :rules="deployFormRules" label-width="150px">
     <el-row>
       <el-col>
-        <el-form-item label="服務名稱" prop="name">
+        <el-form-item :label="$t('Deploy.Name')" prop="name">
           <el-input v-model="deployForm.name" />
         </el-form-item>
         <el-divider />
@@ -11,7 +11,7 @@
         <el-row class="form-container">
           <el-row>
             <el-col :md="12">
-              <el-form-item label="遠端環境" prop="cluster_id">
+              <el-form-item :label="$t('Deploy.Cluster')" prop="cluster_id">
                 <el-select v-model="deployForm.cluster_id">
                   <el-option v-for="item in cluster" :key="item.id" :label="item.name" :value="item.id"
                              :disabled="item.disabled"
@@ -20,7 +20,7 @@
               </el-form-item>
             </el-col>
             <el-col :md="12">
-              <el-form-item label="映像檔儲存庫" prop="registry_id">
+              <el-form-item :label="$t('Deploy.Registry')" prop="registry_id">
                 <el-select v-model="deployForm.registry_id">
                   <el-option v-for="item in registry" :key="item.registries_id" :label="item.name"
                              :value="item.registries_id"
@@ -38,19 +38,19 @@
           <template v-if="checkAvailable">
             <el-row>
               <el-col :md="12">
-                <el-form-item label="服務空間名稱" prop="namespace">
+                <el-form-item :label="$t('Deploy.Namespace')" prop="namespace">
                   <el-input v-model="deployForm.namespace" />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="同步映像檔規則" prop="image.policy">
+                <el-form-item :label="$t('Deploy.Policy')" prop="image.policy">
                   <el-select v-model="deployForm.image.policy" clearable>
                     <el-option v-for="item in policy" :key="item" :label="item" :value="item" />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="釋出版本" prop="release_id">
+                <el-form-item :label="$t('Deploy.Release')" prop="release_id">
                   <el-select v-model="deployForm.release_id">
                     <el-option v-for="item in release" :key="item.id" :label="item.tag_name" :value="item.id" />
                   </el-select>
@@ -59,67 +59,67 @@
             </el-row>
             <el-row>
               <el-col>
-                <el-divider content-position="left">資源空間設定</el-divider>
+                <el-divider content-position="left">{{ $t('Deploy.Resource') }}</el-divider>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="CPU" prop="resources.cpu">
+                <el-form-item :label="$t('Deploy.CPU')" prop="resources.cpu">
                   <el-input v-model="deployForm.resources.cpu" clearable />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="記憶體" prop="resources.memory">
+                <el-form-item :label="$t('Deploy.Memory')" prop="resources.memory">
                   <el-input v-model="deployForm.resources.memory" clearable>
                     <template slot="append">GB</template>
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="數量" prop="resources.replicas">
+                <el-form-item :label="$t('Deploy.Replicas')" prop="resources.replicas">
                   <el-input v-model="deployForm.resources.replicas" clearable />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col>
-                <el-divider content-position="left">網路設定</el-divider>
+                <el-divider content-position="left">{{ $t('Deploy.Network') }}</el-divider>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="類型" prop="network.type">
+                <el-form-item :label="$t('Deploy.Type')" prop="network.type">
                   <el-select v-model="deployForm.network.type">
                     <el-option v-for="item in network_type" :key="item" :label="item" :value="item" />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="連接埠" prop="network.protocol">
+                <el-form-item :label="$t('Deploy.Protocol')" prop="network.protocol">
                   <el-radio-group v-model="deployForm.network.protocol">
                     <el-radio-button v-for="item in protocol" :key="item" :label="item" :value="item" />
                   </el-radio-group>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="埠號" prop="network.port">
+                <el-form-item :label="$t('Deploy.Port')" prop="network.port">
                   <el-input v-model.number="deployForm.network.port" />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="主機名稱" prop="network.domain">
+                <el-form-item :label="$t('Deploy.Domain')" prop="network.domain">
                   <el-input v-model="deployForm.network.domain" clearable />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item label="路徑" prop="network.path">
+                <el-form-item :label="$t('Deploy.Path')" prop="network.path">
                   <el-input v-model="deployForm.network.path" clearable />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col>
-                <el-divider content-position="left">服務環境變數
+                <el-divider content-position="left">{{ $t('Deploy.EnvironmentVariable') }}
                   <el-button round size="small" icon="el-icon-plus" type="primary"
                              @click="addEnvironment"
                   >
-                    新增環境變數
+                    {{ $t('Deploy.AddVariable') }}
                   </el-button>
                 </el-divider>
               </el-col>
@@ -131,24 +131,24 @@
                         {{ $index + 1 }}
                       </template>
                     </el-table-column>
-                    <el-table-column prop="key" label="變數名稱">
+                    <el-table-column prop="key" :label="$t('Deploy.Key')">
                       <template slot-scope="{row}">
                         <el-input v-model="row.key" />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="value" label="值">
+                    <el-table-column prop="value" :label="$t('Deploy.Value')">
                       <template slot-scope="{row}">
                         <el-input v-model="row.value" />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="type" label="類別" width="150px">
+                    <el-table-column prop="type" :label="$t('Deploy.Type')" width="150px">
                       <template slot-scope="{row}">
                         <el-select v-model="row.type">
                           <el-option v-for="item in environments_type" :key="item" :label="item" :value="item" />
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="150px">
+                    <el-table-column :label="$t('general.Actions')" width="150px">
                       <template slot-scope="{row}">
                         <el-popconfirm :confirm-button-text="$t('general.Delete')"
                                        :cancel-button-text="$t('general.Cancel')"
@@ -170,7 +170,7 @@
                           <el-button round size="small" icon="el-icon-plus" type="primary"
                                      @click="addEnvironment"
                           >
-                            新增環境變數
+                            {{ $t('Deploy.AddVariable') }}
                           </el-button>
                         </template>
                       </el-empty>
@@ -180,7 +180,7 @@
                         <el-button round size="small" icon="el-icon-plus" type="primary"
                                    @click="addEnvironment"
                         >
-                          新增環境變數
+                          {{ $t('Deploy.AddVariable') }}
                         </el-button>
                       </p>
                     </div>
@@ -229,7 +229,7 @@ export default {
           if (!item.type || item.type.length <= 0) return reject('Please check all type are not null')
         })
         const checkDuplicate = keyCheck.filter(key => key.index.length > 1)
-        if (checkDuplicate.length > 0) return reject(`[System Variable] Variable conflicts : Please fix the following variables and re-save. ${checkDuplicate.map(key => `Key [${key.name}] at ${key.index.join(', ')} line`)}`)
+        if (checkDuplicate.length > 0) return reject(this.$t('Deploy.KeyConflicts', [checkDuplicate.map(key => this.$t('Deploy.KeyPair', [key.name, key.index.join(', ')])).join(', ')]))
         return resolve()
       })
     }
@@ -281,25 +281,25 @@ export default {
       },
       edit: {},
       deployFormRules: {
-        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        cluster_id: [{ required: true, message: 'Please select cluster', trigger: 'blur' }],
-        registry_id: [{ required: true, message: 'Please select registry', trigger: 'blur' }],
+        name: [{ required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Name')]), trigger: 'blur' }],
+        cluster_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]), trigger: 'blur' }],
+        registry_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]), trigger: 'blur' }],
         namespace: [
-          { required: true, message: 'Namespace is required', trigger: 'blur' },
+          { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Namespace')]), trigger: 'blur' },
           {
             required: true,
             pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-            message: 'Namespace is invalid.',
+            message: this.$t(`Validation.Invalid`, [this.$t('Deploy.Namespace')]),
             trigger: 'blur'
           }
         ],
-        release_id: [{ required: true, message: 'Please select a release', trigger: 'blur' }],
+        release_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]), trigger: 'blur' }],
         network: {
-          type: [{ required: true, message: 'Please select type', trigger: 'blur' }],
-          protocol: [{ required: true, message: 'Please select protocol', trigger: 'blur' }],
+          type: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Type')]), trigger: 'blur' }],
+          protocol: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]), trigger: 'blur' }],
           port: [
-            { type: 'number', message: 'Please select port', trigger: 'blur' },
-            { required: true, message: 'Please select port', trigger: 'blur' }
+            { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]), trigger: 'blur' },
+            { type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'blur' }
           ],
           domain: [{ validator: domainValidator, trigger: 'blur' }],
           path: [{ validator: pathValidator, trigger: 'blur' }]
