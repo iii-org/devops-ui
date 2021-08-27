@@ -21,6 +21,7 @@ import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { mapGetters } from 'vuex'
 
+const envKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12']
 export default {
   name: 'PodExecuteShell',
   data() {
@@ -31,7 +32,8 @@ export default {
       podName: '',
       containerName: '',
       command: '',
-      isConnected: false
+      isConnected: false,
+      commandQueue: []
     }
   },
   computed: {
@@ -40,6 +42,12 @@ export default {
       return this.isConnected ? 'bg-success' : 'bg-danger'
     }
   },
+  // watch: {
+  //   initPath() {
+  //     const initStr = ['whoami', 'hostname', 'pwd']
+  //     initStr.forEach(i => this.emitCommand(i))
+  //   }
+  // },
   mounted() {
     this.initSocket()
     this.containerName = this.$route.query.containerName
@@ -61,42 +69,17 @@ export default {
       this.setCmdResponseListener()
       this.initTerm()
     },
-    initTerm() {
-      this.term = new Terminal({
-        rendererType: 'canvas', 
-        fontSize: 12,
-        rows: Math.floor((window.innerHeight - 120) / 15),
-        cursorBlink: true
-      })
-      const fitAddon = new FitAddon()
-      this.term.loadAddon(fitAddon)
-      fitAddon.fit()
-      window.addEventListener('resize', resizeScreen)
-      function resizeScreen() {
-        try { 
-          fitAddon.fit()
-        } catch (e) {
-          console.log('e', e.message)
-        }
-      }
-      this.term.open(this.$refs.terminal)
-      this.term.focus()
-      this.setTermKeyListener()
+    disconnectSocket() {
+      this.socket.close()
+      this.term.dispose()
+      this.isConnected = false
     },
     setConnectStatusListener() {
-      // this.socket.on('connect', () => {
-      //   this.isConnected = true
-      //   this.$notify({
-      //     title: this.$t('general.Success'),
-      //     message: 'Pod Execute is Connected',
-      //     type: 'success'
-      //   })
-      // })
-      this.socket.on('disconnect', (msg) => {
+      this.socket.on('disconnect', message => {
         this.isConnected = false
         this.$notify({
           title: this.$t('general.Info'),
-          message: `Pod Execute is disconnected (${msg})`,
+          message,
           type: 'warning'
         })
       })
@@ -106,50 +89,63 @@ export default {
         const { output } = sioEvt
         let str = output || sioEvt
         str = str.replace(/\n/g, '\r\n')
-        this.term.write(`${str}\r\n$ `)
+        this.term.writeln('\r\n' + str)
+        this.term.write('\r\n# ')
       })
     },
-    setTermKeyListener() {
-      this.term.onKey(key => {
-        console.log('onKey ===>', key)
-        const { code } = key.domEvent
-        if (code === 'Enter') {
-          this.onEnter()
-        } else if (code === 'Backspace') {
-          this.onBackspace()
-        } else if (code === 'ArrowUp') {
-          this.command = this.commandQueue[this.commandQueue.length - 1]
-          this.term.write(this.command)
-        } else if (code === 'ArrowDown') {
-          this.command = this.commandQueue[this.commandQueue.length + 1]
-          this.term.write(this.command)
+    initTerm() {
+      this.term = new Terminal({
+        rendererType: 'canvas',
+        fontSize: 12,
+        rows: Math.floor((window.innerHeight - 120) / 15),
+        cursorBlink: true
+      })
+      this.setResizeListener()
+      this.term.open(this.$refs.terminal)
+      this.term.write('\r\n# ')
+      this.term.focus()
+      this.setTermKeyListener()
+    },
+    setResizeListener() {
+      const fitAddon = new FitAddon()
+      this.term.loadAddon(fitAddon)
+      fitAddon.fit()
+      window.onresize = () => {
+        try {
+          fitAddon.fit()
+        } catch (error) {
+          console.log(error)
         }
-      }) 
-      this.term.onData(data => {
-        console.log('onData ===>', data)
-        if (data.length > 1) {
-          this.command += data
-          this.term.write(data)
+      }
+    },
+    setTermKeyListener() {
+      this.term.onKey(data => {
+        const { key, code, keyCode } = data.domEvent
+        console.log('on (Key, Code) ===>', key, code)
+        if (envKeys.includes(key)) return
+        if (keyCode === 13) {
+          this.onEnter()
+        } else if (keyCode === 8) {
+          this.onBackspace()
+        } else {
+          this.term.write(key)
+          this.command += key
         }
       })
     },
     onEnter() {
-      if (this.command === 'clear') {
-        this.term.clear()
-        this.term.write(`\r\n$ `)
-      } else if (this.command === '') {
-        this.term.write(`\r\n$ `)
-      } else {
-        this.emitCommand(this.command)
-        this.commandQueue.push(this.command)
-        this.term.write(`\r\n`)
-      }
+      // if (this.command === 'clear') {
+      //   this.term.clear()
+      // } else {
+      //   this.emitCommand(this.command)
+      // }
+      this.emitCommand(this.command)
       this.command = ''
     },
     onBackspace() {
-      if (this.command.length === 0) return
-      this.command = this.command.slice(0, -1)
-      this.term.write('\b \b')
+      this.command = this.command.substr(0, this.command.length - 1)
+      this.term.write('\x1b[2K\r')
+      this.term.write('# ' + this.command)
     },
     emitCommand(command) {
       const { podName, containerName, selectedProject } = this
@@ -161,11 +157,6 @@ export default {
       }
       this.socket.emit('pod_exec_cmd', emitObj)
       console.log('emit ===>', emitObj)
-    },
-    disconnectSocket() {
-      this.socket.close()
-      this.term.dispose()
-      this.isConnected = false
     }
   }
 }
