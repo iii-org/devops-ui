@@ -54,6 +54,7 @@
                   <el-select v-model="deployForm.release_id">
                     <el-option v-for="item in release" :key="item.id" :label="item.tag_name" :value="item.id" />
                   </el-select>
+                  <p>* {{ $t('Deploy.ReleaseHelper') }}</p>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -84,7 +85,7 @@
                 <el-divider content-position="left">{{ $t('Deploy.Network') }}</el-divider>
               </el-col>
               <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Type')" prop="network.type">
+                <el-form-item :label="$tc('Deploy.Type')" prop="network.type">
                   <el-select v-model="deployForm.network.type">
                     <el-option v-for="item in network_type" :key="item" :label="item" :value="item" />
                   </el-select>
@@ -131,7 +132,7 @@
                         {{ $index + 1 }}
                       </template>
                     </el-table-column>
-                    <el-table-column prop="key" :label="$t('Deploy.Key')">
+                    <el-table-column prop="key" :label="$tc('Deploy.Key')">
                       <template slot-scope="{row}">
                         <el-input v-model="row.key" />
                       </template>
@@ -141,7 +142,7 @@
                         <el-input v-model="row.value" />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="type" :label="$t('Deploy.Type')" width="150px">
+                    <el-table-column prop="type" :label="$tc('Deploy.Type')" width="150px">
                       <template slot-scope="{row}">
                         <el-select v-model="row.type">
                           <el-option v-for="item in environments_type" :key="item" :label="item" :value="item" />
@@ -225,8 +226,8 @@ export default {
           } else {
             findKeyCheck.index.push(idx + 1)
           }
-          if (!item.key || item.key.length <= 0) return reject('Please check all key are not null')
-          if (!item.type || item.type.length <= 0) return reject('Please check all type are not null')
+          if (!item.key || item.key.length <= 0) return reject(this.$t('Deploy.AllNull', [this.$tc('Deploy.Key', 2)]))
+          if (!item.type || item.type.length <= 0) return reject(this.$t('Deploy.AllNull', [this.$tc('Deploy.Type', 2)]))
         })
         const checkDuplicate = keyCheck.filter(key => key.index.length > 1)
         if (checkDuplicate.length > 0) return reject(this.$t('Deploy.KeyConflicts', [checkDuplicate.map(key => this.$t('Deploy.KeyPair', [key.name, key.index.join(', ')])).join(', ')]))
@@ -239,7 +240,7 @@ export default {
           (_this.deployForm.network.path !== '' || _this.deployForm.network.path.length > 0) &&
           (value === '' || value.length <= 0)
         ) {
-          return reject('Domain name is required, domain name & path is a pair condition')
+          return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Domain'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
         }
         return resolve()
       })
@@ -251,7 +252,7 @@ export default {
           (_this.deployForm.network.domain !== '' || _this.deployForm.network.domain.length > 0) &&
           (value === '' || value.length <= 0)
         ) {
-          return reject('Path is required, domain name & path is a pair condition')
+          return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Path'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
         }
         return resolve()
       })
@@ -295,7 +296,7 @@ export default {
         ],
         release_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]), trigger: 'blur' }],
         network: {
-          type: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Type')]), trigger: 'blur' }],
+          type: [{ required: true, message: this.$t(`Validation.Select`, [this.$tc('Deploy.Type')]), trigger: 'blur' }],
           protocol: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]), trigger: 'blur' }],
           port: [
             { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]), trigger: 'blur' },

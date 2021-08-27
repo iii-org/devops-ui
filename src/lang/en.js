@@ -955,7 +955,7 @@ export default {
   Deploy: {
     AddApplication: 'Add Application',
     ID: 'ID',
-    Name: 'Application NAme',
+    Name: 'Application Name',
     Cluster: 'Cluster',
     Release: 'Release Version',
     Status: 'Status',
@@ -971,17 +971,20 @@ export default {
     Memory: 'Memory',
     Replicas: 'Replicas',
     Network: 'Network Settings',
-    Type: 'Type',
+    Type: 'Type | Types',
     Protocol: 'Protocol',
     Port: 'Port',
     Domain: 'Domain Name',
     Path: 'Path',
     EnvironmentVariable: 'Environment Variable',
     AddVariable: 'Add Variable',
-    Key: 'Key',
+    Key: 'Key | Keys',
     Value: 'Value',
     KeyConflicts: '[System Variable] Variable conflicts : Please fix the following variables and re-save. {0}',
-    KeyPair: '@:(Deploy.Key)[{0}] at {1} line.'
+    KeyPair: 'Key[{0}] at {1} line.',
+    AllNull: 'Please check all {0} are not null',
+    PairCondition: 'Please input {0}. {1} are a pair condition.',
+    ReleaseHelper: 'above release version requires an image included.'
   },
   Validation: {
     Input: 'Please Input {0}',

@@ -985,7 +985,10 @@ export default {
     Key: '變數名稱',
     Value: '值',
     KeyConflicts: '[服務環境變數] @:(Deploy.Key)重覆定義，請調整後再存檔。 {0}',
-    KeyPair: '@:(Deploy.Key)[{0}]： 第{1}行'
+    KeyPair: '@:(Deploy.Key)[{0}]： 第{1}行',
+    AllNull: '請確認所有的 {0} 都已輸入',
+    PairCondition: '請輸入{0}。 {1} 是一組條件。',
+    ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過右方選單的「釋出版本」，或該釋出版本未含有映像檔。'
   },
   Validation: {
     Input: '請輸入 {0}',
