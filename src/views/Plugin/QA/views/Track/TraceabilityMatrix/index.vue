@@ -165,7 +165,7 @@
             <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
             </el-button>
           </el-form-item>
-          <el-form-item :label="t('Track.CheckOrder')" class="relation_settings">
+          <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
             <div v-for="(item,idx) in trackerMapTarget.order" :key="item" class="item">{{ idx + 1 }}.
               <el-tag>
                 <tracker :name="item" />
