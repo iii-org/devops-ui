@@ -22,7 +22,8 @@
             <el-col :md="12">
               <el-form-item label="映像檔儲存庫" prop="registry_id">
                 <el-select v-model="deployForm.registry_id">
-                  <el-option v-for="item in registry" :key="item.registries_id" :label="item.name" :value="item.registries_id"
+                  <el-option v-for="item in registry" :key="item.registries_id" :label="item.name"
+                             :value="item.registries_id"
                              :disabled="item.disabled"
                   />
                 </el-select>
@@ -125,6 +126,11 @@
               <el-col>
                 <el-form-item prop="environments" class="environments">
                   <el-table :data="deployForm.environments">
+                    <el-table-column type="index" width="50px">
+                      <template slot-scope="{$index}">
+                        {{ $index + 1 }}
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="key" label="變數名稱">
                       <template slot-scope="{row}">
                         <el-input v-model="row.key" />
@@ -190,7 +196,7 @@
 </template>
 
 <script>
-import { getDeployedHostsLists, getRegistryHostsLists, getService } from '@/api/deploy'
+import { getDeployedHostsLists, getRegistryHostsLists, getReleaseEnvironments, getService } from '@/api/deploy'
 import { getReleaseVersion } from '@/api/release'
 import { mapGetters } from 'vuex'
 
@@ -211,10 +217,19 @@ export default {
     const _this = this
     const keyValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
-        value.forEach(item => {
+        const keyCheck = []
+        value.forEach((item, idx) => {
+          const findKeyCheck = keyCheck.find(key => key.name === item.key)
+          if (!findKeyCheck) {
+            keyCheck.push({ name: item.key, index: [idx + 1] })
+          } else {
+            findKeyCheck.index.push(idx + 1)
+          }
           if (!item.key || item.key.length <= 0) return reject('Please check all key are not null')
           if (!item.type || item.type.length <= 0) return reject('Please check all type are not null')
         })
+        const checkDuplicate = keyCheck.filter(key => key.index.length > 1)
+        if (checkDuplicate.length > 0) return reject(`[System Variable] Variable conflicts : Please fix the following variables and re-save. ${checkDuplicate.map(key => `Key [${key.name}] at ${key.index.join(', ')} line`)}`)
         return resolve()
       })
     }
@@ -290,7 +305,7 @@ export default {
           path: [{ validator: pathValidator, trigger: 'blur' }]
         },
         environments: [
-          { type: 'array', validator: keyValidator, trigger: 'blur' }
+          { type: 'array', validator: keyValidator, trigger: 'change' }
         ]
       }
     }
@@ -316,6 +331,12 @@ export default {
           }
         })
       }
+    },
+    'deployForm.release_id': {
+      immediate: false,
+      handler(value) {
+        this.getEnvironmentFromRelease(value)
+      }
     }
   },
   mounted() {
@@ -326,10 +347,14 @@ export default {
   },
   methods: {
     async getSelectionList() {
-      const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId)])).map(item => item.data)
+      const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId, { image: true })])).map(item => item.data)
       this.cluster = res[0].cluster
       this.registry = res[1].registries
       this.release = res[2].releases
+    },
+    async getEnvironmentFromRelease(value) {
+      const getEnvironment = await getReleaseEnvironments(value)
+      this.deployForm.environments.push([...getEnvironment.data.env])
     },
     async getServiceDetail(value) {
       const res = await getService(value)

@@ -12,10 +12,10 @@ export const addRegistryHosts = (data) => request.post(`/harbor/registries`, dat
 export const updateRegistryHostsById = (registry_id, data) => request.put(`/harbor/registries/${registry_id}`, data)
 
 // services
-export const getServices = (params) => request.get(`deploy/applications`, { params })
-export const getService = (application_id) => request.get(`deploy/applications/${application_id}`)
-export const postService = (data) => request.post(`deploy/applications`, data)
-export const putService = (application_id, data) => request.put(`deploy/applications/${application_id}`, data)
-export const patchService = (application_id, data) => request.patch(`deploy/applications/${application_id}`, data)
-export const deleteService = (application_id) => request.delete(`deploy/applications/${application_id}`)
-export const patchServiceRedeploy = (application_id) => request.patch(`deploy/applications/${application_id}/redeploy`)
+export const getServices = (params) => request.get(`/deploy/applications`, { params })
+export const getService = (application_id) => request.get(`/deploy/applications/${application_id}`)
+export const postService = (data) => request.post(`/deploy/applications`, data)
+export const putService = (application_id, data) => request.put(`/deploy/applications/${application_id}`, data)
+export const deleteService = (application_id) => request.delete(`/deploy/applications/${application_id}`)
+export const patchServiceRedeploy = (application_id) => request.patch(`/deploy/applications/${application_id}/redeploy`)
+export const getReleaseEnvironments = (release_id) => request.get(`/deploy/release/${release_id}`)

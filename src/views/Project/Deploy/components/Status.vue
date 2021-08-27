@@ -26,7 +26,10 @@ const status = {
   4: 'Start Kubernetes deployment ',
   5: 'Finish Kubernetes deployment ',
   9: 'Start Kubernetes deletion',
-  10: 'Finish Kubernetes deletion'
+  10: 'Finish Kubernetes deletion',
+  32: 'Deploy stopped',
+  3001: 'Error, No Image need to be replicated',
+  5001: 'Error, K8s Error'
 }
 const statusCategory = { 1: [1], 3: [2, 3], 5: [4, 5], 10: [9, 10] }
 const icon = { error: 'warning', progress: 'loading', done: 'check' }
@@ -36,10 +39,6 @@ export default {
     id: {
       type: Number,
       default: 0
-    },
-    status: {
-      type: String,
-      default: null
     }
   },
   computed: {
@@ -51,25 +50,37 @@ export default {
     },
     icon() {
       return icon
+    },
+    status_id() {
+      const id = this.id.toString()
+      let intId = this.id
+      let status = ''
+      if (intId === 32) {
+        intId = 0
+      } else if (id.length >= 4) {
+        intId = parseInt(id.substring(1))
+        status = 'error'
+      }
+      return [intId, status]
     }
   },
   methods: {
     getStatusClass(key, value) {
-      if (value.includes(this.id) && this.status === 'error') {
+      if (value.includes(this.status_id[0]) && this.status_id[1] === 'error') {
         return 'error'
-      } else if (value.indexOf(this.id) === 0) {
+      } else if (value.indexOf(this.status_id[0]) === 0) {
         return 'progress'
-      } else if (this.id >= key) {
+      } else if (this.status_id[0] >= key) {
         return 'done'
       }
       return null
     },
     getSubStatusClass(object) {
-      if (object === this.id && this.status === 'error') {
+      if (object === this.status_id[0] && this.status_id[1] === 'error') {
         return 'error'
-      } else if (object === this.id) {
+      } else if (object === this.status_id[0]) {
         return 'progress'
-      } else if (this.id >= object) {
+      } else if (this.status_id[0] >= object) {
         return 'done'
       }
       return null

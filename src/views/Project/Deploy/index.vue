@@ -105,7 +105,7 @@
 <script>
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { getServices, postService, deleteService, putService, patchService, patchServiceRedeploy } from '@/api/deploy'
+import { getServices, postService, deleteService, putService, patchServiceRedeploy } from '@/api/deploy'
 import AddApplication from '@/views/Project/Deploy/components/AddApplication'
 import Status from './components/Status'
 
@@ -163,7 +163,7 @@ export default {
     async handleServiceStatus(row) {
       this.listLoading = true
       try {
-        await patchService(row.id, { disabled: !row.disabled })
+        await putService(row.id, { disabled: !row.disabled })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
