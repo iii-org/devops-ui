@@ -1,8 +1,5 @@
 <template>
   <div class="app-container">
-    <el-button type="text" size="medium" icon="el-icon-arrow-left" @click="handleBackPage">
-      {{ $t('general.Back') }}
-    </el-button>
     <div class="flex justify-between mb-2">
       <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span>
       <div class="flex items-center">
@@ -21,6 +18,7 @@
 import 'xterm/css/xterm.css'
 import { io } from 'socket.io-client'
 import { Terminal } from 'xterm'
+import { FitAddon } from 'xterm-addon-fit'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -65,11 +63,23 @@ export default {
     },
     initTerm() {
       this.term = new Terminal({
-        rendererType: 'canvas',
+        rendererType: 'canvas', 
+        fontSize: 12,
+        rows: Math.floor((window.innerHeight - 120) / 15),
         cursorBlink: true
       })
+      const fitAddon = new FitAddon()
+      this.term.loadAddon(fitAddon)
+      fitAddon.fit()
+      window.addEventListener('resize', resizeScreen)
+      function resizeScreen() {
+        try { 
+          fitAddon.fit()
+        } catch (e) {
+          console.log('e', e.message)
+        }
+      }
       this.term.open(this.$refs.terminal)
-      this.term.write(`\r\n$ `)
       this.term.focus()
       this.setTermKeyListener()
     },
@@ -100,15 +110,26 @@ export default {
       })
     },
     setTermKeyListener() {
-      this.term.onKey(data => {
-        const { key, domEvent } = data
-        const { code } = domEvent
+      this.term.onKey(key => {
+        console.log('onKey ===>', key)
+        const { code } = key.domEvent
         if (code === 'Enter') {
           this.onEnter()
         } else if (code === 'Backspace') {
           this.onBackspace()
-        } else {
-          this.onKeydown(key)
+        } else if (code === 'ArrowUp') {
+          this.command = this.commandQueue[this.commandQueue.length - 1]
+          this.term.write(this.command)
+        } else if (code === 'ArrowDown') {
+          this.command = this.commandQueue[this.commandQueue.length + 1]
+          this.term.write(this.command)
+        }
+      }) 
+      this.term.onData(data => {
+        console.log('onData ===>', data)
+        if (data.length > 1) {
+          this.command += data
+          this.term.write(data)
         }
       })
     },
@@ -119,8 +140,9 @@ export default {
       } else if (this.command === '') {
         this.term.write(`\r\n$ `)
       } else {
+        this.emitCommand(this.command)
+        this.commandQueue.push(this.command)
         this.term.write(`\r\n`)
-        this.emitCommand()
       }
       this.command = ''
     },
@@ -129,27 +151,21 @@ export default {
       this.command = this.command.slice(0, -1)
       this.term.write('\b \b')
     },
-    onKeydown(key) {
-      this.command += key
-      this.term.write(key)
-    },
-    emitCommand() {
+    emitCommand(command) {
+      const { podName, containerName, selectedProject } = this
       const emitObj = {
-        project_name: this.selectedProject.name,
-        pod_name: this.podName,
-        container_name: this.containerName,
-        command: this.command
+        project_name: selectedProject.name,
+        pod_name: podName,
+        container_name: containerName,
+        command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
-      console.log('emit', emitObj)
+      console.log('emit ===>', emitObj)
     },
     disconnectSocket() {
       this.socket.close()
       this.term.dispose()
       this.isConnected = false
-    },
-    handleBackPage() {
-      this.$router.push({ name: 'Pods List' })
     }
   }
 }

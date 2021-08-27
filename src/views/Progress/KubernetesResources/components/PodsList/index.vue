@@ -65,35 +65,24 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Actions')" align="center" width="270">
+        <el-table-column :label="$t('general.Actions')" align="center" width="100">
           <template slot-scope="scope">
-            <div class="flex items-center">
-              <div>
-                <div v-for="container in scope.row.containers" :key="container.name" class="my-1">
-                  <el-button size="mini" type="primary" @click="handleCommandClick(scope.row.name, container.name)">
-                    command
-                  </el-button>
-                  <el-button size="mini" type="primary" @click="handleLogClick(scope.row.name, container.name)">
-                    log
-                  </el-button>
-                </div>
-              </div>
-              <div>
-                <el-popconfirm
-                  confirm-button-text="Delete"
-                  cancel-button-text="Cancel"
-                  icon="el-icon-info"
-                  icon-color="red"
-                  title="Are you sure?"
-                  @confirm="handleDelete(selectedProjectId, scope.row.name)"
+            <el-dropdown v-for="container in scope.row.containers" :key="container.name" class="my-1" trigger="click">
+              <el-button size="mini" class="el-icon-more" type="primary" plain circle />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  v-show="container.state === 'running'"
+                  @click.native="handleCommandClick(scope.row.name, container.name)"
                 >
-                  <el-button slot="reference" size="mini" type="danger">
-                    <em class="el-icon-delete" />
-                    {{ $t('general.Delete') }}
-                  </el-button>
-                </el-popconfirm>
-              </div>
-            </div>
+                  <em class="ri-terminal-line mr-4" />command
+                </el-dropdown-item>
+                <el-dropdown-item @click.native="handleLogClick(scope.row.name, container.name)">
+                  <em class="ri-terminal-box-line mr-4" />log</el-dropdown-item>
+                <el-dropdown-item @click.native="handleDelete(selectedProjectId, scope.row.name)">
+                  <em class="el-icon-delete mr-4" />{{ $t('general.Delete') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -105,11 +94,7 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <pod-log
-        ref="podLogDialog"
-        :pod-name="focusPodName"
-        :container-name="focusContainerName"
-      />
+      <pod-log ref="podLogDialog" :pod-name="focusPodName" :container-name="focusContainerName" />
     </el-col>
   </el-row>
 </template>
@@ -135,12 +120,16 @@ export default {
     },
     async handleDelete(pId, podName) {
       this.listLoading = true
-      try {
-        await deletePod(pId, podName)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
+      this.$confirm(this.$t('Notify.confirmDeleteSth', { name: podName }), this.$t('general.Delete'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          deletePod(pId, podName)
+          this.loadData()
+        })
+        .catch(() => {})
       this.listLoading = false
     },
     handleCommandClick(podName, containerName) {

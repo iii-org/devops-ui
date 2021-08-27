@@ -219,7 +219,8 @@ export default {
     FileSizeLimit: 'This file cannot be uploaded because it exceeds the maximum allowed file size (20 MB)',
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
-    confirmDelete: 'Are you sure to @:(general.Delete)?'
+    confirmDelete: 'Are you sure to @:(general.Delete)?',
+    confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

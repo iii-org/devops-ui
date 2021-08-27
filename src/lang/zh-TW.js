@@ -224,7 +224,8 @@ export default {
     FileSizeLimit: '超過可上傳的檔案大小 (20 MB)。',
     LoadFail: '讀取失敗，請洽您的系統管理員。',
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？',
-    confirmDelete: '確定@:(general.Delete)嗎？'
+    confirmDelete: '確定@:(general.Delete)嗎？',
+    confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？'
   },
   RuleMsg: {
     PleaseSelect: '請選擇',
