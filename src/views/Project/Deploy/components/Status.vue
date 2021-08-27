@@ -58,7 +58,7 @@ export default {
       if (intId === 32) {
         intId = 0
       } else if (id.length >= 4) {
-        intId = parseInt(id.substring(1))
+        intId = parseInt(id.substring(0, 1))
         status = 'error'
       }
       return [intId, status]
