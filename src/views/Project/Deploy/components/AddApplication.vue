@@ -320,7 +320,9 @@ export default {
   watch: {
     id(value) {
       if (value) {
-        this.getServiceDetail(value)
+        this.getServiceDetail(this.id)
+      } else {
+        this.$refs['deployForm'].resetFields()
       }
     },
     edit: {
@@ -336,7 +338,9 @@ export default {
     'deployForm.release_id': {
       immediate: false,
       handler(value) {
-        this.getEnvironmentFromRelease(value)
+        if (value) {
+          this.getEnvironmentFromRelease(value)
+        }
       }
     }
   },
@@ -344,6 +348,8 @@ export default {
     this.getSelectionList()
     if (this.id) {
       this.getServiceDetail(this.id)
+    } else {
+      this.$refs['deployForm'].resetFields()
     }
   },
   methods: {
@@ -355,7 +361,9 @@ export default {
     },
     async getEnvironmentFromRelease(value) {
       const getEnvironment = await getReleaseEnvironments(value)
-      this.deployForm.environments.push([...getEnvironment.data.env])
+      if (getEnvironment.data.env.length > 0) {
+        this.deployForm.environments.push([...getEnvironment.data.env])
+      }
     },
     async getServiceDetail(value) {
       const res = await getService(value)
