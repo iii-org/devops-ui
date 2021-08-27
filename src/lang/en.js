@@ -896,8 +896,23 @@ export default {
   Track: {
     StartingPoint: 'Starting Point',
     StartPaint: 'Start Paint',
+    TraceChecking: 'Traceability checking might take at least 3-5 mins, please come back to check later......',
     DownloadExcel: 'Download the Excel summary sheet',
-    DemandTraceability: 'Demand Traceability'
+    DemandTraceability: 'Demand Traceability',
+    CheckRule: 'Check Rule',
+    CheckOrder: 'Check Order',
+    Download: 'Download',
+    TraceabilityCheck: 'Traceability Check',
+    Run: 'Run',
+    Portrait: 'Portrait',
+    Landscape: 'Landscape',
+    Enable: 'Enable',
+    SelectTracker: 'Select a Tracker',
+    Run_at: 'Run at',
+    Running_time: 'Running time',
+    OnlyCheckRule: 'only 5 rules can be set.',
+    OnlyCheckOrder: 'only 5 in an order.',
+    AddCheckRule: 'Add Check Rule'
   },
   ProjectRoadmap: {
     DisplayRange: 'Display Range'

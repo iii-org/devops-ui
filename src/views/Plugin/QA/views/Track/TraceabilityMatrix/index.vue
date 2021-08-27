@@ -6,7 +6,7 @@
         trigger="click"
       >
         <el-form>
-          <el-form-item label="預設檢核條件">
+          <el-form-item :label="$t('Track.CheckRule')">
             <el-select
               v-model="trackerMapTarget.id"
               :disabled="selectedProjectId === -1||isRunning()"
@@ -21,18 +21,18 @@
           <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
           </el-button>
           <el-divider />
-          <el-form-item label="檢核條件" class="relation_settings">
+          <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
             <ol>
               <li v-for="item in trackerMapTarget.order" :key="item">{{ $t(`Issue.${item}`) }}</li>
             </ol>
           </el-form-item>
           <el-button class="w-full" type="primary" icon="el-icon-check" :loading="isRunning()" @click="createTraceCheckJob">
-            執行需求檢核
+            {{ $t('Track.Run') }}
           </el-button>
         </el-form>
         <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
                    :disabled="chartLoading"
-        > 追溯檢核
+        > {{ $t('Track.TraceabilityCheck') }}
           <i class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
     </project-list-selector>
@@ -118,13 +118,13 @@
                 <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
                 <!--</el-menu-item>-->
                 <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
-                  <em class="el-icon-download" />旋轉90度預覽
+                  <em class="el-icon-download" />{{ $t('Track.Portrait') }}
                 </el-menu-item>
                 <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
-                  <em class="el-icon-download" />預覽
+                  <em class="el-icon-download" />{{ $t('Track.Landscape') }}
                 </el-menu-item>
               </el-menu>
-              <el-button slot="reference" icon="el-icon-download">下載</el-button>
+              <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
             </el-popover>
           </el-col>
         </el-row>
@@ -137,7 +137,7 @@
             {{ $t('Track.DemandTraceability') }}
             <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
           </template>
-          <div ref="matrix">
+          <div v-show="data.length>0" ref="matrix">
             <vue-mermaid
               :nodes="data"
               type="graph LR"
@@ -147,9 +147,9 @@
           </div>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane v-loading="listLoading" label="追溯檢核" name="check" :element-loading-text="$t('Loading')">
+      <el-tab-pane v-loading="listLoading" :label="$t('Track.TraceabilityCheck')" name="check" :element-loading-text="$t('Loading')">
         <el-form inline>
-          <el-form-item label="預設檢核條件">
+          <el-form-item :label="$t('Track.CheckRule')">
             <el-select
               v-model="trackerMapTarget.id"
               :disabled="selectedProjectId === -1||isRunning()"
@@ -165,7 +165,7 @@
             <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
             </el-button>
           </el-form-item>
-          <el-form-item label="檢核條件" class="relation_settings">
+          <el-form-item :label="t('Track.CheckOrder')" class="relation_settings">
             <div v-for="(item,idx) in trackerMapTarget.order" :key="item" class="item">{{ idx + 1 }}.
               <el-tag>
                 <tracker :name="item" />
@@ -174,7 +174,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-check" :loading="isRunning()" @click="createTraceCheckJob">
-              執行需求檢核
+              {{ $t('Track.Run') }}
             </el-button>
           </el-form-item>
         </el-form>
@@ -188,7 +188,7 @@
         <el-button type="primary" @click="downloadPdf">{{ $t('File.Download') }}</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="追溯檢核" :visible.sync="settingDialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
+    <el-dialog :title="$t('Track.TraceabilityCheck')" :visible.sync="settingDialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
       <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
     </el-dialog>
   </div>
@@ -324,7 +324,6 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.getTrackerMapOptions()
-      this.chartIssueList = []
       await this.initChart()
       if (this.$refs['TraceCheck']) {
         this.$refs['TraceCheck'].resetData()
@@ -334,12 +333,8 @@ export default {
       deep: true,
       async handler() {
         this.filterValue.issue_id = []
-        await this.getSearchIssue('', true)
-        if (this.issueList.length > 0) {
-          this.$set(this.filterValue, 'issue_id', [this.issueList[0].id])
-        }
-        await this.onPaintChart()
         await this.getSearchIssue()
+        await this.initChart()
       }
     },
     trackerMapTarget: {
@@ -356,11 +351,11 @@ export default {
     this.getTrackerMapOptions()
   },
   mounted() {
-    this.initChart()
   },
   methods: {
     async initChart() {
       if (this.selectedProjectId === -1) return Promise.reject()
+      this.$set(this, 'chartIssueList', [])
       if (this.trackerMapTarget.order && this.trackerMapTarget.order.length > 0) {
         const getTracker = this.trackerList.find(item => item.name === this.trackerMapTarget.order[0])
         this.$set(this.filterValue, 'tracker_id', getTracker.id)
@@ -378,26 +373,18 @@ export default {
       }
       return Promise.resolve()
     },
-    async getSearchIssue(query, init) {
+    async getSearchIssue(query) {
       let querySearch = {}
-      let initQuery = {}
       this.issueList = []
       if (query !== '') {
         querySearch = { search: query }
         this.issueQuery = query
       }
-      if (init) {
-        initQuery = {
-          offset: 0,
-          limit: 1
-        }
-      }
       this.issueLoading = true
       const issueList = await getProjectIssueList(this.selectedProjectId, {
         tracker_id: this.filterValue.tracker_id,
         selection: true,
-        ...querySearch,
-        ...initQuery
+        ...querySearch
       })
       this.issueList = (issueList.data.issue_list) ? issueList.data.issue_list : issueList.data
       this.issueLoading = false

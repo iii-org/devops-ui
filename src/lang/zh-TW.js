@@ -901,7 +901,21 @@ export default {
     StartPaint: '開始繪圖',
     TraceChecking: '需求檢核中，需要至少3-5分鐘以上，請稍後再回來檢視結果......',
     DownloadExcel: '下載Excel總表',
-    DemandTraceability: '需求追溯'
+    DemandTraceability: '需求追溯',
+    CheckRule: '檢核模組',
+    CheckOrder: '檢核條件',
+    TraceabilityCheck: '追溯檢核',
+    Run: '執行需求檢核',
+    Portrait: '直式預覽',
+    Landscape: '橫式預覽',
+    Download: '下載',
+    Enable: '啟用',
+    SelectTracker: '選擇新增檢核類別',
+    Run_at: '執行時間',
+    Running_time: '運算時間',
+    OnlyCheckRule: '提供至多5組檢核設定',
+    OnlyCheckOrder: '檢核條件最多5項。',
+    AddCheckRule: '新增檢核模組'
   },
   ProjectRoadmap: {
     DisplayRange: '顯示範圍'

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="order_AppendSelector" placeholder="選擇新增檢核類別" filterable
+    <el-select v-model="order_AppendSelector" :placeholder="$t('Track.SelectTracker')" filterable
                @change="handleAddOrder"
     >
       <el-option v-for="item in appendFilterTrackerList()" :key="item.id" :label="$t(`Issue.${item.name}`)"
@@ -63,7 +63,7 @@ export default {
         } else {
           this.$message({
             title: this.$t('general.Error'),
-            message: '種類至多5項，請刪除不要的種類再新增',
+            message: this.$t('Track.OnlyCheckOrder'),
             type: 'error'
           })
         }

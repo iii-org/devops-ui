@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-plus" @click="addTrackerOrder=!addTrackerOrder">新增檢核順序</el-button>
+    <el-button type="primary" icon="el-icon-plus" @click="addTrackerOrder=!addTrackerOrder">{{ $t('Track.AddCheckRule') }}</el-button>
     <el-divider />
     <el-form v-show="addTrackerOrder" ref="trackerOrderForm" inline :model="trackerOrderForm">
-      <el-form-item label="檢核模組名稱" prop="name">
+      <el-form-item :label="$t('Track.CheckRule')" prop="name">
         <el-input v-model="trackerOrderForm.name" />
       </el-form-item>
-      <el-form-item label="檢核順序" prop="order">
+      <el-form-item :label="$t('Track.CheckOrder')" prop="order">
         <OrderListInput v-model="trackerOrderForm.order" />
       </el-form-item>
       <el-form-item>
@@ -15,21 +15,21 @@
       </el-form-item>
     </el-form>
     <el-table :data="trackerMapOptions">
-      <el-table-column label="預設" prop="default" width="100px">
+      <el-table-column :label="$t('Track.Enable')" prop="default" width="100px">
         <template slot-scope="{row}">
           <el-switch v-model="row.default" :disabled="row.default"
                      @change="handleSetDefault({id:row.id, default:$event})"
           />
         </template>
       </el-table-column>
-      <el-table-column type="index" label="項次" width="100px" />
-      <el-table-column label="檢核模組名稱" prop="name" width="150px" show-tooltip-when-overflow>
+      <el-table-column type="index" label="ID" width="100px" />
+      <el-table-column :label="$t('Track.CheckRule')" prop="name" width="150px" show-tooltip-when-overflow>
         <template slot-scope="{row}">
           <el-input v-if="row.edit" v-model="row.name" />
           <span v-else>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="檢核順序" prop="order" min-width="300px">
+      <el-table-column label="$t('Track.CheckOrder')" prop="order" min-width="300px">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <OrderListInput v-model="row.order" />
