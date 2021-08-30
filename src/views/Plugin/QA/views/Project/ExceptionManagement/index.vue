@@ -12,69 +12,13 @@
       >
         {{ $t('Issue.AddIssue') }}
       </el-button>
-      <el-popover
-        placement="bottom"
-        trigger="click"
-      >
-        <el-form v-loading="listLoading">
-          <template v-for="dimension in filterOptions">
-            <el-form-item :key="dimension.id">
-              <div slot="label">
-                {{ $t('Issue.' + dimension.value) }}
-                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
-                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
-                </el-tag>
-              </div>
-              <el-select
-                v-model="filterValue[dimension.value]"
-                :placeholder="$t('Issue.Select'+dimension.placeholder)"
-                :disabled="selectedProjectId === -1"
-                filterable
-                clearable
-                @change="onChangeFilter"
-              >
-                <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
-                  :key="(dimension.value==='assigned_to')? item.login: item.id"
-                  :label="getSelectionLabel(item)"
-                  :class="{[item.class]:item.class}"
-                  :value="item.id"
-                >
-                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </template>
-          <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
-            <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
-          </el-form-item>
-        </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <em class="el-icon-arrow-down el-icon--right" />
-        </el-button>
-      </el-popover>
-      <el-divider direction="vertical" />
-      <el-input
-        v-if="searchVisible"
-        id="input-search"
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        :placeholder="$t('Issue.SearchNameOrAssignee')"
-        style="width: 250px;"
-        clearable
-        @blur="searchVisible=!searchVisible"
-        @change="onChangeFilter"
+      <SearchFilter
+        :filter-options="filterOptions"
+        :list-loading="listLoading"
+        :selection-options="contextOptions"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        @change-filter="onChangeFilter"
       />
-      <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
-      </el-button>
-      <template v-if="isFilterChanged">
-        <el-divider direction="vertical" />
-        <el-button size="small" icon="el-icon-close" @click="cleanFilter">
-          {{ $t('Issue.CleanFilter') }}
-        </el-button>
-      </template>
-      <el-divider direction="vertical" />
       <span v-show="hasSelectedFail">
         <el-divider direction="vertical" />
         <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedFailList)">
@@ -101,7 +45,6 @@
         highlight-current-row
         row-key="id"
         height="60vh"
-        :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
         @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
@@ -163,7 +106,8 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
+                            - {{ child.assigned_to.login }})
                           </span>
                         </el-link>
                         <el-popconfirm
@@ -225,9 +169,7 @@
             <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Issue.Id')" min-width="300" show-overflow-tooltip prop="project"
-                         sortable="custom"
-        >
+        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
             {{ scope.row.name }}
@@ -249,9 +191,9 @@
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
                          sortable="custom" show-overflow-tooltip
         >
-          <template v-if="scope.row.author" slot-scope="scope">
-            <span>{{ scope.row.author.name }}</span>
-            <span v-if="scope.row.author.login">({{ scope.row.author.login }})</span>
+          <template v-if="scope.row.assigned_to" slot-scope="scope">
+            <span>{{ scope.row.assigned_to.name }}</span>
+            <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
         </el-table-column>
         <template slot="empty">
@@ -283,6 +225,7 @@ import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import SearchFilter from '@/components/Issue/SearchFilter'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'
@@ -296,7 +239,8 @@ export default {
   name: 'ExceptionManagement',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    SearchFilter
   },
   mixins: [Table, IssueList, ContextMenu, IssueExpand],
   data() {

@@ -12,68 +12,13 @@
       >
         {{ $t('Issue.AddIssue') }}
       </el-button>
-      <el-popover
-        placement="bottom"
-        trigger="click"
-      >
-        <el-form v-loading="listLoading">
-          <template v-for="dimension in filterOptions">
-            <el-form-item :key="dimension.id">
-              <div slot="label">
-                {{ $t('Issue.' + dimension.value) }}
-                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
-                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
-                </el-tag>
-              </div>
-              <el-select
-                v-model="filterValue[dimension.value]"
-                :placeholder="$t('Issue.Select'+dimension.placeholder)"
-                :disabled="selectedProjectId === -1"
-                filterable
-                clearable
-                @change="onChangeFilter"
-              >
-                <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
-                  :key="(dimension.value==='assigned_to')? item.login: item.id"
-                  :label="getSelectionLabel(item)"
-                  :class="{[item.class]:item.class}"
-                  :value="item.id"
-                >
-                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </template>
-          <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
-            <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
-          </el-form-item>
-        </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <em class="el-icon-arrow-down el-icon--right" /></el-button>
-      </el-popover>
-      <el-divider direction="vertical" />
-      <el-input
-        v-if="searchVisible"
-        id="input-search"
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        :placeholder="$t('Issue.SearchNameOrAssignee')"
-        style="width: 250px;"
-        clearable
-        @blur="searchVisible=!searchVisible"
-        @change="onChangeFilter"
+      <SearchFilter
+        :filter-options="filterOptions"
+        :list-loading="listLoading"
+        :selection-options="contextOptions"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        @change-filter="onChangeFilter"
       />
-      <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
-      </el-button>
-      <template v-if="isFilterChanged">
-        <el-divider direction="vertical" />
-        <el-button size="small" icon="el-icon-close" @click="cleanFilter">
-          {{ $t('Issue.CleanFilter') }}
-        </el-button>
-      </template>
-      <el-divider direction="vertical" />
       <span v-show="hasSelectedTrack">
         <el-divider direction="vertical" />
         <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedTrackList)">
@@ -162,7 +107,8 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
+                            - {{ child.assigned_to.login }})
                           </span>
                         </el-link>
                         <el-popconfirm
@@ -275,9 +221,10 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { mapActions, mapGetters } from 'vuex'
+import SearchFilter from '@/components/Issue/SearchFilter'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
@@ -292,7 +239,8 @@ export default {
   name: 'TrackManagement',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    SearchFilter
   },
   mixins: [Table, IssueList, ContextMenu, IssueExpand],
   data() {

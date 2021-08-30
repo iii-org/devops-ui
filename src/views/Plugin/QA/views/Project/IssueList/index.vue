@@ -1,77 +1,24 @@
 <template>
   <div class="app-container">
     <project-list-selector>
-      <el-button id="btn-add-issue"
-                 slot="button"
-                 v-permission="['Administrator','Project Manager', 'Engineer']"
-                 type="success"
-                 icon="el-icon-plus"
-                 :disabled="selectedProjectId === -1"
-                 @click="handleQuickAddClose"
+      <el-button
+        id="btn-add-issue"
+        slot="button"
+        v-permission="['Administrator','Project Manager', 'Engineer']"
+        type="success"
+        icon="el-icon-plus"
+        :disabled="selectedProjectId === -1"
+        @click="handleQuickAddClose"
       >
         {{ $t('Issue.AddIssue') }}
       </el-button>
-      <el-popover
-        placement="bottom"
-        trigger="click"
-      >
-        <el-form v-loading="listLoading">
-          <template v-for="dimension in filterOptions">
-            <el-form-item :key="dimension.id">
-              <div slot="label">
-                {{ $t('Issue.' + dimension.value) }}
-                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
-                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
-                </el-tag>
-              </div>
-              <el-select
-                v-model="filterValue[dimension.value]"
-                :placeholder="$t('Issue.Select'+dimension.placeholder)"
-                :disabled="selectedProjectId === -1"
-                filterable
-                clearable
-                @change="onChangeFilter"
-              >
-                <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
-                  :key="(dimension.value==='assigned_to')? item.login: item.id"
-                  :label="getSelectionLabel(item)"
-                  :class="{[item.class]:item.class}"
-                  :value="item.id"
-                >
-                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </template>
-          <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
-            <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
-          </el-form-item>
-        </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
-      </el-popover>
-      <el-divider direction="vertical" />
-      <el-input
-        v-if="searchVisible"
-        id="input-search"
-        v-model="keyword"
-        prefix-icon="el-icon-search"
-        :placeholder="$t('Issue.SearchNameOrAssignee')"
-        style="width: 250px;"
-        clearable
-        @blur="searchVisible=!searchVisible"
-        @change="onChangeFilter"
+      <SearchFilter
+        :filter-options="filterOptions"
+        :list-loading="listLoading"
+        :selection-options="contextOptions"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        @change-filter="onChangeFilter"
       />
-      <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
-        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
-      </el-button>
-      <template v-if="isFilterChanged">
-        <el-divider direction="vertical" />
-        <el-button size="small" icon="el-icon-close" @click="cleanFilter">
-          {{ $t('Issue.CleanFilter') }}
-        </el-button>
-      </template>
       <el-divider direction="vertical" />
       <span v-show="hasSelectedIssue">
         <el-divider direction="vertical" />
@@ -81,12 +28,13 @@
       </span>
     </project-list-selector>
     <el-divider />
-    <quick-add-issue ref="quickAddIssue"
-                     :save-data="saveIssue"
-                     :project-id="selectedProjectId"
-                     :visible.sync="quickAddTopicDialogVisible"
-                     :tracker="tracker"
-                     @add-issue="advancedAddIssue"
+    <quick-add-issue
+      ref="quickAddIssue"
+      :save-data="saveIssue"
+      :project-id="selectedProjectId"
+      :visible.sync="quickAddTopicDialogVisible"
+      :tracker="tracker"
+      @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
             :element-loading-text="$t('Loading')"
@@ -98,7 +46,6 @@
         highlight-current-row
         row-key="id"
         height="60vh"
-        :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
         @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
@@ -160,7 +107,8 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
+                            - {{ child.assigned_to.login }})
                           </span>
                         </el-link>
                         <el-popconfirm
@@ -278,6 +226,7 @@ import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from './components/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import SearchFilter from '@/components/Issue/SearchFilter'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import XLSX from 'xlsx'
 
@@ -290,12 +239,12 @@ export default {
   name: 'QAProjectIssueList',
   components: {
     QuickAddIssue,
-    ProjectListSelector
+    ProjectListSelector,
+    SearchFilter
   },
   mixins: [Table, IssueList, ContextMenu, IssueExpand],
   data() {
     return {
-      remote: true,
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
@@ -326,7 +275,6 @@ export default {
     // }
     this.filterValue = this.issueListFilter
     this.keyword = this.issueListKeyword
-    this.fixed_version_closed = this.fixedVersionShowClosed
     this.displayClosed = this.issueListDisplayClosed
     await this.loadSelectionList()
   },
@@ -354,7 +302,10 @@ export default {
       }
       return result
     },
-    async onChangeFilter() {
+    async onChangeFilter(value) {
+      Object.keys(value).forEach(item => {
+        this[item] = value[item]
+      })
       await this.setIssueListFilter(this.filterValue)
       await this.setIssueListKeyword(this.keyword)
       await this.setIssueListDisplayClosed(this.displayClosed)
