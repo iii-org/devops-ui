@@ -54,7 +54,7 @@
                   <el-select v-model="deployForm.release_id">
                     <el-option v-for="item in release" :key="item.id" :label="item.tag_name" :value="item.id" />
                   </el-select>
-                  <p>* {{ $t('Deploy.ReleaseHelper') }}</p>
+                  <p class="helper">* {{ $t('Deploy.ReleaseHelper') }}</p>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -64,12 +64,12 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.CPU')" prop="resources.cpu">
-                  <el-input v-model="deployForm.resources.cpu" clearable />
+                  <el-input v-model.number="deployForm.resources.cpu" clearable />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Memory')" prop="resources.memory">
-                  <el-input v-model="deployForm.resources.memory" clearable>
+                  <el-input v-model.number="deployForm.resources.memory" clearable>
                     <template slot="append">GB</template>
                   </el-input>
                 </el-form-item>
@@ -207,7 +207,7 @@ const network_type = ['ExternalName', 'ClusterIP', 'NodePort', 'LoadBalancer']
 const environments_type = ['configmap', 'secret']
 
 export default {
-  name: 'AddApplication',
+  name: 'ApplicationSetting',
   props: {
     id: {
       type: Number,
@@ -238,7 +238,7 @@ export default {
       return new Promise((resolve, reject) => {
         if (
           (_this.deployForm.network.path !== '' || _this.deployForm.network.path.length > 0) &&
-          (value === '' || value.length <= 0)
+          (!value || value === '' || value.length <= 0)
         ) {
           return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Domain'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
         }
@@ -250,7 +250,7 @@ export default {
       return new Promise((resolve, reject) => {
         if (
           (_this.deployForm.network.domain !== '' || _this.deployForm.network.domain.length > 0) &&
-          (value === '' || value.length <= 0)
+          (!value || value === '' || value.length <= 0)
         ) {
           return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Path'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
         }
@@ -273,9 +273,9 @@ export default {
         image: { policy: '' },
         release_id: '',
         resources: {
-          cpu: '',
-          memory: '',
-          replicas: ''
+          cpu: null,
+          memory: null,
+          replicas: null
         },
         network: { type: '', protocol: '', port: '', domain: '', path: '' },
         environments: []
@@ -295,6 +295,11 @@ export default {
           }
         ],
         release_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]), trigger: 'blur' }],
+        resources: {
+          cpu: [{ type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'change' }],
+          memory: [{ type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'change' }],
+          replicas: [{ type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'change' }]
+        },
         network: {
           type: [{ required: true, message: this.$t(`Validation.Select`, [this.$tc('Deploy.Type')]), trigger: 'blur' }],
           protocol: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]), trigger: 'blur' }],
@@ -381,5 +386,8 @@ export default {
   height: 50vh;
   padding: 0 20px;
   overflow-y: auto;
+}
+.helper{
+  line-height: initial;
 }
 </style>

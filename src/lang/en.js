@@ -971,6 +971,7 @@ export default {
   },
   Deploy: {
     AddApplication: 'Add Application',
+    ApplicationSetting: 'Application Setting',
     ID: 'ID',
     Name: 'Application Name',
     Cluster: 'Cluster',

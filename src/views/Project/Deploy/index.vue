@@ -91,12 +91,12 @@
     />
     <el-dialog
       width="80%"
-      :title="$t('Deploy.AddApplication')"
+      :title="$t('Deploy.ApplicationSetting')"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
-      <AddApplication :id="edit_id" ref="AddApplication" />
+      <ApplicationSetting :id="edit_id" ref="ApplicationSetting" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button v-if="edit_id" type="primary" :loading="memberConfirmLoading" @click="handleConfirm(edit_id)">
@@ -112,12 +112,12 @@
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getServices, postService, deleteService, putService, patchService, patchServiceRedeploy } from '@/api/deploy'
-import AddApplication from '@/views/Project/Deploy/components/AddApplication'
+import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
 import Status from './components/Status'
 
 export default {
   name: 'ProjectFiles',
-  components: { AddApplication, ElTableColumnTime, Status },
+  components: { ApplicationSetting, ElTableColumnTime, Status },
   filters: {
     getActionIcon(value) {
       return value ? 'el-icon-video-play' : 'el-icon-video-pause'
@@ -213,7 +213,7 @@ export default {
       this.listLoading = false
     },
     async handleConfirm(id) {
-      await this.$refs['AddApplication'].$refs['deployForm'].validate(async valid => {
+      await this.$refs['ApplicationSetting'].$refs['deployForm'].validate(async valid => {
         if (valid) {
           this.loadingInstance = this.$loading({
             target: '.el-dialog',
@@ -221,14 +221,14 @@ export default {
           })
           try {
             if (id) {
-              await putService(id, { ...this.$refs['AddApplication'].deployForm, project_id: this.selectedProjectId })
+              await putService(id, { ...this.$refs['ApplicationSetting'].deployForm, project_id: this.selectedProjectId })
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Updated'),
                 type: 'success'
               })
             } else {
-              await postService({ ...this.$refs['AddApplication'].deployForm, project_id: this.selectedProjectId })
+              await postService({ ...this.$refs['ApplicationSetting'].deployForm, project_id: this.selectedProjectId })
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Created'),
@@ -236,7 +236,7 @@ export default {
               })
             }
             this.loadingInstance.close()
-            this.$refs['AddApplication'].$refs['deployForm'].resetFields()
+            this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
             this.dialogVisible = false
           } catch (err) {
             this.loadingInstance.close()
@@ -250,7 +250,7 @@ export default {
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        this.$refs['AddApplication'].$refs['deployForm'].resetFields()
+        this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
       })
     }
   }
