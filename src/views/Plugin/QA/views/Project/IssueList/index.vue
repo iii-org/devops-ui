@@ -54,7 +54,7 @@
               <div v-if="scope.row.hasOwnProperty('isLoadingFamily') && scope.row.isLoadingFamily" class="p-5" />
               <ul v-else>
                 <li v-if="scope.row.hasOwnProperty('parent') && Object.keys(scope.row.parent).length > 0">
-                  <b>{{ $t('Issue.ParentIssue') }}:</b>
+                  <strong>{{ $t('Issue.ParentIssue') }}:</strong>
                   <el-link
                     :style="{ 'font-size': '14px', cursor: 'pointer' }"
                     :underline="false"
@@ -85,7 +85,7 @@
                   </el-popconfirm>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('children') && scope.row.children.length>0">
-                  <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+                  <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
                   <ol>
                     <template v-for="child in scope.row.children">
                       <li v-if="Object.keys(child).length > 0" :key="child.id">
@@ -120,7 +120,7 @@
                   </ol>
                 </li>
                 <li v-if="scope.row.hasOwnProperty('relations') && scope.row.relations.length>0">
-                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
+                  <strong>{{ $t('Issue.RelatedIssue') }}:</strong>
                   <ol>
                     <template v-for="child in scope.row.relations">
                       <li v-if="Object.keys(child).length > 0" :key="child.id">
@@ -184,7 +184,7 @@
         <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
                          sortable="custom" show-overflow-tooltip
         >
-          <template slot-scope="scope">
+          <template v-if="scope.row.assigned_to" slot-scope="scope">
             <span>{{ scope.row.assigned_to.name }}</span>
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
@@ -265,14 +265,15 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    this.filterValue = this.issueListFilter
-    this.keyword = this.issueListKeyword
-    this.displayClosed = this.issueListDisplayClosed
+    this.filterValue = await this.getIssueListFilter()
+    this.keyword = await this.getIssueListKeyword()
+    this.displayClosed = await this.getIssueListDisplayClosed()
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed',
-      'setIssueListDisplayClosed', 'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
+    ...mapActions('projects', ['getIssueListKeyword', 'getIssueListFilter', 'getIssueListDisplayClosed',
+      'setIssueListKeyword', 'setIssueListFilter', 'setIssueListDisplayClosed', 'setFixedVersionShowClosed',
+      'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
     getParams() {
       const result = {
         offset: this.listQuery.offset,

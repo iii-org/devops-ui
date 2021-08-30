@@ -213,7 +213,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue } from '@/components/Issue'
+import QuickAddIssue from '@/components/Issue/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
@@ -258,14 +258,15 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    this.filterValue = this.issueListFilter
-    this.keyword = this.issueListKeyword
-    this.displayClosed = this.issueListDisplayClosed
+    this.filterValue = await this.getIssueListFilter()
+    this.keyword = await this.getIssueListKeyword()
+    this.displayClosed = await this.getIssueListDisplayClosed()
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed',
-      'setIssueListDisplayClosed', 'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
+    ...mapActions('projects', ['getIssueListKeyword', 'getIssueListFilter', 'getIssueListDisplayClosed',
+      'setIssueListKeyword', 'setIssueListFilter', 'setIssueListDisplayClosed', 'setFixedVersionShowClosed',
+      'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
     getParams() {
       const result = {
         offset: this.listQuery.offset,

@@ -617,7 +617,7 @@ export default {
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keyword = null
+      this.keyword = ''
       this.onChangeFilter()
     },
     removeIssueRelation(child_issue_id) {

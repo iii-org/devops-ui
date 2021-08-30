@@ -173,7 +173,7 @@ export default {
     },
     cleanFilter() {
       this.$set(this.$data, 'filterValue', cloneDeep(this.originFilterValue))
-      this.keyword = null
+      this.keyword = ''
       this.displayClosed = false
       this.onChangeFilter()
     }

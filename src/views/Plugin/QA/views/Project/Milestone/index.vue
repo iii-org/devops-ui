@@ -619,7 +619,7 @@ export default {
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keyword = null
+      this.keyword = ''
       this.displayClosed = false
       this.onChangeFilter()
     },

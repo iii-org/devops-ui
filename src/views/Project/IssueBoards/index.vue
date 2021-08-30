@@ -1,111 +1,109 @@
 <template>
   <el-row class="app-container">
-    <el-row>
-      <project-list-selector>
-        <el-popover
-          placement="bottom"
-          trigger="click"
-        >
-          <el-form v-loading="isLoading">
-            <template v-for="dimension in filterOptions">
-              <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id">
-                <div slot="label">
-                  {{ $t('Issue.'+dimension.value) }}
-                  <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
-                    <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
-                  </el-tag>
-                </div>
-                <el-select
-                  v-model="filterValue[dimension.value]"
-                  :placeholder="$t('Issue.Select'+dimension.placeholder)"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                  clearable
-                  @change="onChangeFilter"
-                >
-                  <el-option
-                    v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
-                    :key="(dimension.value==='assigned_to')? item.login: item.id"
-                    :label="getSelectionLabel(item)"
-                    :class="{[item.class]:item.class}"
-                    :value="item.id"
-                  >
-                    <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </template>
-            <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
-              <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
-            </el-form-item>
-          </el-form>
-          <el-button slot="reference" :loading="isLoading" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-            <i class="el-icon-arrow-down el-icon--right" /></el-button>
-        </el-popover>
-        <el-divider direction="vertical" />
-        <el-popover
-          placement="bottom"
-          trigger="click"
-        >
-          <el-form v-loading="isLoading">
-            <el-form-item :label="$t('Issue.FilterDimensions.label')">
+    <project-list-selector>
+      <el-popover
+        placement="bottom"
+        trigger="click"
+      >
+        <el-form v-loading="isLoading">
+          <template v-for="dimension in filterOptions">
+            <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id">
+              <div slot="label">
+                {{ $t('Issue.'+dimension.value) }}
+                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+                  <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
+                </el-tag>
+              </div>
               <el-select
-                v-model="groupBy.dimension"
-                class="mr-4"
+                v-model="filterValue[dimension.value]"
+                :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                :disabled="selectedProjectId === -1"
                 filterable
-                @change="onChangeGroupByDimension"
+                clearable
+                @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in filterOptions"
-                  :key="item.id"
-                  :label="item.label"
-                  :value="item.value"
-                />
+                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
+                  :key="(dimension.value==='assigned_to')? item.login: item.id"
+                  :label="getSelectionLabel(item)"
+                  :class="{[item.class]:item.class}"
+                  :value="item.id"
+                >
+                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
+                </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('Issue.Display')">
-              <el-select-all
-                ref="groupByValue"
-                :value="groupBy.value"
-                filterable
-                multiple
-                collapse-tags
-                :options="groupByOptions"
-                value-key="id"
-                @change="onChangeGroupByValue"
+          </template>
+          <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
+            <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
+          </el-form-item>
+        </el-form>
+        <el-button slot="reference" :loading="isLoading" icon="el-icon-s-operation" type="text"> {{ listFilter }}
+          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+      </el-popover>
+      <el-divider direction="vertical" />
+      <el-popover
+        placement="bottom"
+        trigger="click"
+      >
+        <el-form v-loading="isLoading">
+          <el-form-item :label="$t('Issue.FilterDimensions.label')">
+            <el-select
+              v-model="groupBy.dimension"
+              class="mr-4"
+              filterable
+              @change="onChangeGroupByDimension"
+            >
+              <el-option
+                v-for="item in filterOptions"
+                :key="item.id"
+                :label="item.label"
+                :value="item.value"
               />
-            </el-form-item>
-          </el-form>
-          <el-button slot="reference" :loading="isLoading" type="text">
-            <i18n path="Issue.GroupBy">
-              <b slot="filter">{{ showSelectedGroupByName }}</b>
-            </i18n>
-            ({{ showSelectedGroupByLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
-        </el-popover>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('Issue.Display')">
+            <el-select-all
+              ref="groupByValue"
+              :value="groupBy.value"
+              filterable
+              multiple
+              collapse-tags
+              :options="groupByOptions"
+              value-key="id"
+              @change="onChangeGroupByValue"
+            />
+          </el-form-item>
+        </el-form>
+        <el-button slot="reference" :loading="isLoading" type="text">
+          <i18n path="Issue.GroupBy">
+            <b slot="filter">{{ showSelectedGroupByName }}</b>
+          </i18n>
+          ({{ showSelectedGroupByLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
+      </el-popover>
+      <el-divider direction="vertical" />
+      <el-input
+        v-if="searchVisible"
+        id="input-search"
+        v-model="keyword"
+        prefix-icon="el-icon-search"
+        :placeholder="$t('Issue.SearchNameOrAssignee')"
+        style="width: 250px;"
+        clearable
+        :disabled="isLoading"
+        @blur="searchVisible=!searchVisible"
+        @change="onChangeFilter"
+      />
+      <el-button v-else type="text" :loading="isLoading" icon="el-icon-search" @click="searchVisible=!searchVisible">
+        {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+      </el-button>
+      <template v-if="isFilterChanged">
         <el-divider direction="vertical" />
-        <el-input
-          v-if="searchVisible"
-          id="input-search"
-          v-model="keyword"
-          prefix-icon="el-icon-search"
-          :placeholder="$t('Issue.SearchNameOrAssignee')"
-          style="width: 250px;"
-          clearable
-          :disabled="isLoading"
-          @blur="searchVisible=!searchVisible"
-          @change="onChangeFilter"
-        />
-        <el-button v-else type="text" :loading="isLoading" icon="el-icon-search" @click="searchVisible=!searchVisible">
-          {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
+        <el-button size="small" icon="el-icon-close" :loading="isLoading" @click="cleanFilter">
+          {{ $t('Issue.CleanFilter') }}
         </el-button>
-        <template v-if="isFilterChanged">
-          <el-divider direction="vertical" />
-          <el-button size="small" icon="el-icon-close" :loading="isLoading" @click="cleanFilter">
-            {{ $t('Issue.CleanFilter') }}
-          </el-button>
-        </template>
-      </project-list-selector>
-    </el-row>
+      </template>
+    </project-list-selector>
     <el-divider />
     <el-col v-loading="isLoading" :element-loading-text="$t('Loading')" class="board"
             :class="{'is-panel':rightPanelVisible}"
@@ -238,7 +236,6 @@ export default {
       'tracker',
       'status',
       'priority',
-      'initKanban',
       'kanbanFilter',
       'kanbanGroupBy',
       'kanbanDisplayClosed',
@@ -320,6 +317,15 @@ export default {
           return true
         }
       }
+      for (const item of Object.keys(this.filterValue)) {
+        const checkFilterValue = this.filterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.originFilterValue[item] !== checkFilterValue[item]) {
+          return true
+        }
+      }
       return !!this.keyword
     }
   },
@@ -339,19 +345,25 @@ export default {
     }
   },
   async created() {
-    this.filterValue = this.kanbanFilter
-    this.groupBy = this.kanbanGroupBy
-    this.displayClosed = this.kanbanDisplayClosed
-    this.keyword = this.kanbanKeyword
+    this.filterValue = await this.getKanbanFilter()
+    this.groupBy = {
+      dimension: await this.getKanbanGroupByDimension(),
+      value: await this.getKanbanGroupByValue()
+    }
+    this.displayClosed = await this.getKanbanDisplayClosed()
+    this.keyword = await this.getKanbanKeyword()
     this.fixed_version_closed = this.fixedVersionShowClosed
     await this.loadSelectionList()
-    this.setInitKanban(true)
     await this.loadData()
   },
   methods: {
     ...mapActions('projects', [
       'getProjectUserList',
-      'setInitKanban',
+      'getKanbanFilter',
+      'getKanbanGroupByDimension',
+      'getKanbanGroupByValue',
+      'getKanbanDisplayClosed',
+      'getKanbanKeyword',
       'setKanbanFilter',
       'setKanbanGroupByDimension',
       'setKanbanGroupByValue',
@@ -461,7 +473,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
-        if (!this.initKanban) {
+        if (Object.keys(this.kanbanFilter).length === 0 && Object.keys(this.originFilterValue).length === 0) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
         }
         this.$set(this.originFilterValue, 'fixed_version', version[0].id)
@@ -677,7 +689,7 @@ export default {
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keyword = null
+      this.keyword = ''
       this.displayClosed = false
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()

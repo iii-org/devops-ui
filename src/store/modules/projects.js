@@ -18,21 +18,19 @@ const getDefaultState = () => {
 
     tracker: [],
     status: [],
-    priority:[],
+    priority: [],
 
     kanbanFilter: {},
     kanbanGroupBy: {
       dimension: 'status',
       value: []
     },
-    initKanban: false,
     kanbanDisplayClosed: false,
-    kanbanKeyword: null,
-    initIssueList: false,
+    kanbanKeyword: '',
     issueListFilter: {},
     issueListListQuery: {},
     issueListPageInfo: {},
-    issueKeyword: null,
+    issueListKeyword:'',
     issueListDisplayClosed: false,
     fixedVersionShowClosed: false
   }
@@ -72,12 +70,6 @@ const mutations = {
   },
   SET_KANBAN_KEYWORD: (state, value) => {
     state.kanbanKeyword = value
-  },
-  SET_INIT_KANBAN(state, value) {
-    state.initKanban = value
-  },
-  SET_INIT_ISSUE_LIST(state, value) {
-    state.initIssueList = value
   },
   SET_ISSUE_LIST_FILTER: (state, value) => {
     state.issueListFilter = value
@@ -122,9 +114,9 @@ const actions = {
       console.error(error.toString())
     }
   },
-  async getSelectionOptions({commit}){
+  async getSelectionOptions({ commit }) {
     let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()])
-    commit('SET_SELECTION_OPTIONS', selections.map((item)=>(item.data)))
+    commit('SET_SELECTION_OPTIONS', selections.map((item) => (item.data)))
   }
   ,
   async addNewProject({ commit, dispatch }, data) {
@@ -180,29 +172,90 @@ const actions = {
     commit('SET_KANBAN_GROUP_BY_DIMENSION', 'status')
     commit('SET_KANBAN_GROUP_BY_VALUE', [])
   },
+  getKanbanFilter({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('kanbanFilter')
+    if (getSessionValue) {
+      commit('SET_KANBAN_FILTER', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.kanbanFilter
+  },
   setKanbanFilter({ commit }, value) {
+    sessionStorage.setItem('kanbanFilter', JSON.stringify(value))
     commit('SET_KANBAN_FILTER', value)
   },
+  getKanbanGroupByDimension({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('kanbanGroupBy.dimension')
+    if (getSessionValue) {
+      commit('SET_KANBAN_GROUP_BY_DIMENSION', getSessionValue)
+      commit('SET_KANBAN_GROUP_BY_VALUE', [])
+      return getSessionValue
+    }
+    return state.kanbanGroupBy.dimension
+  },
   setKanbanGroupByDimension({ commit }, value) {
+    sessionStorage.setItem('kanbanGroupBy.dimension', value)
     commit('SET_KANBAN_GROUP_BY_DIMENSION', value)
     commit('SET_KANBAN_GROUP_BY_VALUE', [])
   },
+  getKanbanGroupByValue({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('kanbanGroupBy.value')
+    if (getSessionValue) {
+      commit('SET_KANBAN_GROUP_BY_VALUE', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.kanbanGroupBy.value
+  },
   setKanbanGroupByValue({ commit }, value) {
+    sessionStorage.setItem('kanbanGroupBy.value', JSON.stringify(value))
     commit('SET_KANBAN_GROUP_BY_VALUE', value)
   },
+  getKanbanDisplayClosed({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('kanbanDisplayClosed')
+    if (getSessionValue) {
+      commit('SET_KANBAN_DISPLAY_CLOSED', getSessionValue)
+      return getSessionValue
+    }
+    return state.kanbanDisplayClosed
+  },
   setKanbanDisplayClosed({ commit }, value) {
+    sessionStorage.setItem('kanbanDisplayClosed', value)
     commit('SET_KANBAN_DISPLAY_CLOSED', value)
   },
+  getKanbanKeyword({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('kanbanKeyword')
+    if (getSessionValue) {
+      commit('SET_KANBAN_KEYWORD', getSessionValue)
+      return getSessionValue
+    }
+    return state.kanbanKeyword
+  },
   setKanbanKeyword({ commit }, value) {
+    sessionStorage.setItem('kanbanKeyword', value)
     commit('SET_KANBAN_KEYWORD', value)
   },
-  setInitKanban({ commit }, value) {
-    commit('SET_INIT_KANBAN', value)
+  getIssueListFilter({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('issueListFilter')
+    if (getSessionValue) {
+      commit('SET_ISSUE_LIST_FILTER', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.issueListFilter
   },
   setIssueListFilter({ commit }, value) {
+    sessionStorage.setItem('issueListFilter', JSON.stringify(value))
     commit('SET_ISSUE_LIST_FILTER', value)
   },
+  getIssueListKeyword({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('issueListKeyword')
+    if (getSessionValue) {
+      commit('SET_ISSUE_LIST_KEYWORD', getSessionValue)
+      return getSessionValue
+    }
+    return state.issueListKeyword
+  },
   setIssueListKeyword({ commit }, value) {
+    sessionStorage.setItem('issueListKeyword', value)
     commit('SET_ISSUE_LIST_KEYWORD', value)
   },
   setIssueListListQuery({ commit }, value) {
@@ -211,10 +264,16 @@ const actions = {
   setIssueListPageInfo({ commit }, value) {
     commit('SET_ISSUE_LIST_PAGE_INFO', value)
   },
-  setInitIssueList({ commit }, value) {
-    commit('SET_INIT_ISSUE_LIST', value)
+  getIssueListDisplayClosed({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('issueListDisplayClosed')
+    if (getSessionValue) {
+      commit('SET_ISSUE_LIST_DISPLAY_CLOSED', getSessionValue)
+      return getSessionValue
+    }
+    return state.issueListDisplayClosed
   },
   setIssueListDisplayClosed({ commit }, value) {
+    sessionStorage.setItem('issueListDisplayClosed', value)
     commit('SET_ISSUE_LIST_DISPLAY_CLOSED', value)
   },
   setFixedVersionShowClosed({ commit }, value) {
