@@ -32,7 +32,7 @@
       :save-data="saveIssue"
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
-      :tracker="tracker"
+      tracker-name="Change Request"
       @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
@@ -45,7 +45,6 @@
         highlight-current-row
         row-key="id"
         height="60vh"
-        :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
         @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
@@ -222,10 +221,10 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import QuickAddIssue from './components/QuickAddIssue'
+import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import SearchFilter from '@/components/Issue/SearchFilter'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import SearchFilter from '@/components/Issue/SearchFilter'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'

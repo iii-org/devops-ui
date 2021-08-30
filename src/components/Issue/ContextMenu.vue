@@ -124,7 +124,7 @@ import {
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
-import AddIssue from '@/views/Project/IssueList/components/AddIssue'
+import AddIssue from './AddIssue'
 
 export default {
   name: 'ContextMenu',

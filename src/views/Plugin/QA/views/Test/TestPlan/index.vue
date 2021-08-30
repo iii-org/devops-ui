@@ -31,7 +31,7 @@
       :save-data="saveIssue"
       :project-id="selectedProjectId"
       :visible.sync="quickAddTopicDialogVisible"
-      :tracker="tracker"
+      tracker-name="Test Plan"
       @add-issue="advancedAddIssue"
     />
     <el-row v-loading="listLoading"
@@ -268,7 +268,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import QuickAddIssue from './components/QuickAddIssue'
+import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'

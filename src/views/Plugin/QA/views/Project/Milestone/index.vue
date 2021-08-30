@@ -153,7 +153,7 @@ import {
 import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
-import AddIssue from '@/views/Project/IssueList/components/AddIssue'
+import AddIssue from '@/components/Issue/AddIssue'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'

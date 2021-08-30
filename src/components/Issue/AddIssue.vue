@@ -50,7 +50,7 @@
       <el-col :md="12" :span="24">
         <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
           <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-            <el-option v-for="item in tracker" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
+            <el-option v-for="item in getTracker" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
               <tracker :name="item.name" />
             </el-option>
           </el-select>
@@ -225,11 +225,16 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => {
+      }
     },
     importFrom: {
       type: String,
       default: null
+    },
+    trackerList: {
+      type: Array,
+      default: () => ([])
     }
   },
 
@@ -269,7 +274,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter'])
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter']),
+    getTracker() {
+      if (this.trackerList.length > 0) return this.trackerList
+      return this.tracker
+    }
   },
 
   watch: {
