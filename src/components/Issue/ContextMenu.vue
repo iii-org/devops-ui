@@ -114,7 +114,7 @@ import {
   ContextmenuSubmenu
 } from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
-import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
+import IssueMatrix from '@/components/Issue/IssueMatrix'
 import {
   addIssue,
   getCheckIssueClosable,

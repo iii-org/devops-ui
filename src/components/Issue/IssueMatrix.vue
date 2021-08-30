@@ -33,10 +33,10 @@
 </template>
 
 <script>
-import VueMermaid from './components/vue-mermaid'
+import VueMermaid from '@/components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
-import ProjectIssueDetail from '../../'
+import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 import { camelCase } from 'lodash'
 
 export default {

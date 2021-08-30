@@ -243,7 +243,7 @@ import {
   putTestPlanWithTestFile
 } from '@/views/Plugin/QA/api/qa'
 import getPageTitle from '@/utils/get-page-title'
-import IssueMatrix from './components/IssueMatrix'
+import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
   name: 'QAProjectIssueDetail',

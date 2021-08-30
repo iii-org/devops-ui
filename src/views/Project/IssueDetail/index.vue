@@ -218,7 +218,7 @@ import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import getPageTitle from '@/utils/get-page-title'
-import IssueMatrix from './components/IssueMatrix'
+import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
   name: 'ProjectIssueDetail',
