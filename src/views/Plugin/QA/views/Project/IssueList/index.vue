@@ -19,13 +19,6 @@
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilter"
       />
-      <el-divider direction="vertical" />
-      <span v-show="hasSelectedIssue">
-        <el-divider direction="vertical" />
-        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedIssueList)">
-          {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}
-        </el-button>
-      </span>
     </project-list-selector>
     <el-divider />
     <quick-add-issue

@@ -104,6 +104,15 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'tracker', 'status', 'priority']),
     isFilterChanged() {
+      for (const item of Object.keys(this.originFilterValue)) {
+        const checkFilterValue = this.originFilterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.filterValue[item] !== checkFilterValue[item]) {
+          return true
+        }
+      }
       for (const item of Object.keys(this.filterValue)) {
         const checkFilterValue = this.filterValue
         if (checkFilterValue[item] === '') {

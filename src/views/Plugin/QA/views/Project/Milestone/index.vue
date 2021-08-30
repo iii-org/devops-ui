@@ -361,6 +361,15 @@ export default {
           return true
         }
       }
+      for (const item of Object.keys(this.filterValue)) {
+        const checkFilterValue = this.filterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.originFilterValue[item] !== checkFilterValue[item]) {
+          return true
+        }
+      }
       return !!this.keyword
     }
   },
