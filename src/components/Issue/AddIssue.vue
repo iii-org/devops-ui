@@ -153,7 +153,7 @@
               <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
               <div class="text-xs text-gray-400 px-12">
                 <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
-                <div>{{ $t('File.AllowedFileTypes') }}: {{ fileType }}</div>
+                <div>{{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}</div>
               </div>
             </div>
           </el-upload>
@@ -178,7 +178,7 @@
 <script>
 import dayjs from 'dayjs'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
-import { fileExtension } from '@/utils/extension'
+import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
@@ -268,7 +268,7 @@ export default {
         }
       },
       fileSizeLimit: '5MB',
-      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
       specialSymbols: '\ / : * ? " < > | # { } % ~ &'
     }
   },
@@ -417,17 +417,25 @@ export default {
       })
     },
     async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
+      const { raw, size, name } = file
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
-      } else if (file.size / 1024 > 20480) {
+      } else if (fileSizeToMB(size) > 5) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.FileSizeLimit'),
+          type: 'warning'
+        })
+        this.$refs['upload'].clearFiles()
+      } else if (containSpecialChar(name)) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileNameLimit'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()

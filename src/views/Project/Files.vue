@@ -87,7 +87,7 @@
       :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
-      <el-form ref="fileForm" :model="fileForm" :rules="fileFormRules" label-width="120px">
+      <el-form ref="fileForm" :model="fileForm" label-width="120px">
         <el-form-item :label="$t('File.Upload')" prop="upload">
           <el-upload
             ref="upload"
@@ -98,11 +98,16 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
           >
-            <div>
+            <div class="el-upload__text">
               <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
-              <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
+              <div>{{ $t('File.DragFilesHere') }}</div>
+              <div class="text-xs text-gray-400 px-12">
+                <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+                <div>{{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}</div>
+              </div>
             </div>
           </el-upload>
+          <div class="text-xs mt-2">*{{ $t('File.UploadWarning') }}: {{ specialSymbols }}</div>
         </el-form-item>
 
         <el-form-item :label="$t('general.Name')" prop="name">
@@ -131,7 +136,7 @@
 </template>
 
 <script>
-import { fileExtension } from '@/utils/extension.js'
+import { allowedTypeMap, isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension.js'
 import {
   deleteProjectFile,
   downloadProjectFile,
@@ -155,24 +160,18 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      fileFormRules: {
-        // name: [{ required: true, message: 'Please input name', trigger: 'blur' }]
-        // version: [{ required: false, message: 'Please select version', trigger: 'blur' }],
-        // description: [{ required: false, message: 'Please input description', trigger: 'blur' }]
-      },
       versionList: [],
       dialogStatus: 1,
       memberConfirmLoading: false,
       fileForm: formTemplate,
       uploadFileList: [],
       loadingInstance: '',
-      extension: {},
       isDownloading: false,
-      searchKeys: ['filename']
+      searchKeys: ['filename'],
+      fileSizeLimit: '20 MB',
+      fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      specialSymbols: '* ? " < > | # { } % ~ &'
     }
-  },
-  mounted() {
-    this.extension = fileExtension()
   },
   methods: {
     showNoProjectWarning() {
@@ -233,17 +232,25 @@ export default {
       this.listLoading = false
     },
     async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
+      const { raw, size, name } = file
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
-      } else if (file.size / 1024 > 20480) {
+      } else if (fileSizeToMB(size) > 20) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('Notify.FileSizeLimit'),
+          message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
+          type: 'warning'
+        })
+        this.$refs['upload'].clearFiles()
+      } else if (containSpecialChar(name)) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileNameLimit'),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()
@@ -255,8 +262,7 @@ export default {
       this.$refs['fileForm'].validate(async valid => {
         if (valid) {
           const data = this.fileForm
-          // const filetype = this.uploadFileList[0].raw.type.split('/')[1]
-          const filetype = this.extension[this.uploadFileList[0].raw.type]
+          const filetype = allowedTypeMap[this.uploadFileList[0].raw.type]
           const form = new FormData()
           if (data.name !== '') {
             form.append('file', this.uploadFileList[0].raw, `${data.name}${filetype}`)

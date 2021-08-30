@@ -8,47 +8,60 @@
         </el-select>
       </el-form-item>
       <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
-        <div>
-          <el-button size="small" type="success" class="mb-2">{{ $t('File.ChooseFile') }}</el-button>
-          <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
+        <div class="el-upload__text">
+          <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
+          <div class="mt-2 mb-3">{{ $t('File.DragFilesHere') }}</div>
+          <div class="text-xs text-gray-400 px-12">
+            <div class="m-1">{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
+            <div class="m-1">{{ $t('File.AllowedFileTypes') }}: {{ fileTypeLimit }}</div>
+          </div>
         </div>
       </el-upload>
+      <div class="text-xs mt-2">*{{ $t('File.UploadWarning') }}: {{ specialSymbols }}</div>
     </el-form>
   </div>
 </template>
 <script>
-import { fileExtension } from '@/utils/extension'
+import { isJSON, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
 export default {
   name: 'CollectionFileUploader',
   data() {
     return {
       software_name: [],
-      uploadFileList: []
+      uploadFileList: [],
+      fileSizeLimit: '5 MB',
+      fileTypeLimit: 'JSON',
+      specialSymbols: '* ? " < > | # { } % ~ &'
     }
   },
   mounted() {
-    this.extension = fileExtension()
     this.resetUpload()
   },
   methods: {
     async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
+      const { raw, size, name } = file
+      if (!isJSON(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
-        this.$refs.fileUploader.clearFiles()
-        this.uploadFileList = []
-      } else if (file.size / 1024 > 20480) {
+        this.resetUpload()
+      } else if (fileSizeToMB(size) > 5) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('Notify.FileSizeLimit'),
+          message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
           type: 'warning'
         })
-        this.$refs.fileUploader.clearFiles()
-        this.uploadFileList.length = []
+        this.resetUpload()
+      } else if (containSpecialChar(name)) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileNameLimit'),
+          type: 'warning'
+        })
+        this.resetUpload()
       } else {
         this.uploadFileList = fileList
       }

@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-import { fileExtension } from '@/utils/extension'
+import { isJSON, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
 export default {
   name: 'IssueFileUploader',
@@ -30,29 +30,30 @@ export default {
       else this.$emit('hasFileList', false)
     }
   },
-  mounted() {
-    this.extension = fileExtension()
-  },
   methods: {
     async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
+      const { raw, size, name } = file
+      if (!isJSON(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         fileList.splice(fileList.length - 1, 1)
-        // this.$refs.fileUploader.clearFiles()
-        // this.uploadFileList.length = []
-      } else if (file.size / 1024 > 20480) {
+      } else if (fileSizeToMB(size) > 5) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('Notify.FileSizeLimit'),
+          message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
           type: 'warning'
         })
         fileList.splice(fileList.length - 1, 1)
-        // this.$refs.fileUploader.clearFiles()
-        // this.uploadFileList.length = []
+      } else if (containSpecialChar(name)) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileNameLimit'),
+          type: 'warning'
+        })
+        this.resetUpload()
       } else {
         this.uploadFileList = fileList
       }

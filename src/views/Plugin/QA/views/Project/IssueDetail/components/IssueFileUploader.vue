@@ -11,7 +11,7 @@
   </el-upload>
 </template>
 <script>
-import { fileExtension } from '@/utils/extension'
+import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
 export default {
   name: 'IssueFileUploader',
@@ -22,22 +22,28 @@ export default {
       fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
     }
   },
-  mounted() {
-    this.extension = fileExtension()
-  },
+
   methods: {
     async handleChange(file, fileList) {
-      if (this.extension[file.raw.type] === undefined) {
+      const { raw, size, name } = file
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
           type: 'warning'
         })
         fileList.splice(fileList.length - 1, 1)
-      } else if (file.size / 1024 > 20480) {
+      } else if (fileSizeToMB(size) > 5) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('Notify.FileSizeLimit'),
+          message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
+          type: 'warning'
+        })
+        fileList.splice(fileList.length - 1, 1)
+      } else if (containSpecialChar(name)) {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.FileNameLimit'),
           type: 'warning'
         })
         fileList.splice(fileList.length - 1, 1)
