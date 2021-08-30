@@ -902,6 +902,7 @@ export default {
     DemandTraceability: 'Demand Traceability',
     CheckRule: 'Check Rule',
     CheckOrder: 'Check Order',
+    CheckRuleSettings: 'Check Rule Settings',
     Download: 'Download',
     TraceabilityCheck: 'Traceability Check',
     Run: 'Run',
@@ -911,8 +912,8 @@ export default {
     SelectTracker: 'Select a Tracker',
     Run_at: 'Run at',
     Running_time: 'Running time',
-    OnlyCheckRule: 'only 5 rules can be set.',
-    OnlyCheckOrder: 'only 5 in an order.',
+    OnlyCheckRule: 'only {0} rules can be set.',
+    OnlyCheckOrder: 'only {0} ~ {1} order in an rule.',
     AddCheckRule: 'Add Check Rule'
   },
   ProjectRoadmap: {

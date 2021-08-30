@@ -1,8 +1,17 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-plus" @click="addTrackerOrder=!addTrackerOrder">{{ $t('Track.AddCheckRule') }}</el-button>
+    <el-row type="flex" justify="space-between">
+      <el-col>
+        <el-button type="primary" icon="el-icon-plus" @click="addTrackerOrder=!addTrackerOrder">
+          {{ $t('Track.AddCheckRule') }}
+        </el-button>
+      </el-col>
+      <el-col class="text-right">*{{ $t('Track.OnlyCheckRule', [5]) }}</el-col>
+    </el-row>
     <el-divider />
-    <el-form v-show="addTrackerOrder" ref="trackerOrderForm" inline :model="trackerOrderForm">
+    <el-form v-show="addTrackerOrder" ref="trackerOrderForm" inline :model="trackerOrderForm"
+             :rules="trackerOrderRules"
+    >
       <el-form-item :label="$t('Track.CheckRule')" prop="name">
         <el-input v-model="trackerOrderForm.name" />
       </el-form-item>
@@ -29,7 +38,7 @@
           <span v-else>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="$t('Track.CheckOrder')" prop="order" min-width="300px">
+      <el-table-column :label="$t('Track.CheckOrder')" prop="order" min-width="300px">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <OrderListInput v-model="row.order" />
@@ -41,7 +50,7 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="200px">
+      <el-table-column :label="$t('general.Actions')" min-width="200px">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-button type="primary" size="mini" icon="el-icon-check" @click="handleSaveEditOrderList(row)">
@@ -90,12 +99,28 @@ export default {
     }
   },
   data() {
+    const _this = this
+    const lengthValidator = (rule, value) => {
+      return new Promise((resolve, reject) => {
+        if (value.length < rule.lengthCondition[0] || value.length > rule.lengthCondition[1]) {
+          return reject(_this.$t('Track.OnlyCheckOrder', [rule.lengthCondition[0], rule.lengthCondition[1]]))
+        }
+        return resolve()
+      })
+    }
     return {
       addTrackerOrder: false,
       trackerOrderForm: {
         name: '',
         order: [],
         default: true
+      },
+      trackerOrderRules: {
+        name: [{ required: true, message: this.$t('Validation.Input', [this.$t('Track.CheckRule')]), trigger: 'blur' }],
+        order: [
+          { required: true, message: this.$t('Validation.Select', [this.$t('Track.CheckOrder')]), trigger: 'change' },
+          { lengthCondition: [2, 5], validator: lengthValidator, trigger: 'change' }
+        ]
       },
       order_AppendSelector: null
     }
@@ -104,31 +129,51 @@ export default {
     ...mapGetters(['selectedProjectId'])
   },
   methods: {
-    async handleAddOrderList() {
-      try {
-        await postTraceOrder({ ...this.trackerOrderForm, project_id: this.selectedProjectId })
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Added'),
-          type: 'success'
-        })
-      } catch (e) {
-        console.log(e)
-      }
-      await this.$emit('update')
+    handleAddOrderList() {
+      this.$refs['trackerOrderForm'].validate(async valid => {
+        if (valid) {
+          try {
+            await postTraceOrder({ ...this.trackerOrderForm, project_id: this.selectedProjectId })
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Added'),
+              type: 'success'
+            })
+          } catch (e) {
+            console.log(e)
+          }
+          await this.$emit('update')
+          this.$refs['trackerOrderForm'].resetFields()
+        }
+      })
     },
     async handleSaveEditOrderList(row) {
-      try {
-        await patchTraceOrder(row.id, row)
+      const lengthCondition = this.trackerOrderRules.order.find(item => item.lengthCondition)
+      if (!row.name || row.name.length <= 0) {
         this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
+          title: this.$t('general.Error'),
+          message: this.$t('Validation.Input', [this.$t('Track.CheckRule')]),
+          type: 'error'
         })
-      } catch (e) {
-        console.log(e)
+      } else if (!row.order || row.order.length < lengthCondition.lengthCondition[0] || row.order.length > lengthCondition.lengthCondition[1]) {
+        this.$message({
+          title: this.$t('general.Error'),
+          message: this.$t('Track.OnlyCheckOrder', [lengthCondition.lengthCondition[0], lengthCondition.lengthCondition[1]]),
+          type: 'error'
+        })
+      } else {
+        try {
+          await patchTraceOrder(row.id, row)
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+        } catch (e) {
+          console.log(e)
+        }
+        await this.$emit('update')
       }
-      await this.$emit('update')
     },
     async handleSetDefault(row) {
       try {
@@ -170,19 +215,16 @@ export default {
       Object.keys(row).forEach(item => {
         this.$set(row, `Original_${item}`, cloneDeep(row[item]))
       })
-      console.log(row)
       this.$set(row, 'edit', true)
     },
     handleCancelEdit(row) {
       Object.keys(row).forEach(item => {
         const checkSplit = item.split('_')
         if (checkSplit.length > 1) {
-          console.log(checkSplit[1], row[item], row[checkSplit[1]], row[item])
           this.$set(row, checkSplit[1], row[item])
           this.$delete(row, item)
         }
       })
-      console.log(row)
       this.$set(row, 'edit', false)
     }
   }

@@ -18,7 +18,8 @@
               />
             </el-select>
           </el-form-item>
-          <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
+          <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">
+            {{ $t('Track.CheckRuleSettings') }}
           </el-button>
           <el-divider />
           <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
@@ -118,10 +119,10 @@
                 <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
                 <!--</el-menu-item>-->
                 <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
-                  <em class="el-icon-download" />{{ $t('Track.Portrait') }}
+                  <em class="el-icon-download" />{{ $t('Track.Landscape') }}
                 </el-menu-item>
                 <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
-                  <em class="el-icon-download" />{{ $t('Track.Landscape') }}
+                  <em class="el-icon-download" />{{ $t('Track.Portrait') }}
                 </el-menu-item>
               </el-menu>
               <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
@@ -162,7 +163,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">設定條件清單
+            <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">
+              {{ $t('Track.CheckRuleSettings') }}
             </el-button>
           </el-form-item>
           <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
@@ -324,6 +326,7 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.getTrackerMapOptions()
+      await this.getSearchIssue()
       await this.initChart()
       if (this.$refs['TraceCheck']) {
         this.$refs['TraceCheck'].resetData()

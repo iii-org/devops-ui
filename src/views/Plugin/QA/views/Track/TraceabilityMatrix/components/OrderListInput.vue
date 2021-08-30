@@ -24,6 +24,7 @@
 import { mapGetters } from 'vuex'
 import Tracker from '@/components/Issue/Tracker'
 import draggable from 'vuedraggable'
+import emitter from 'element-ui/src/mixins/emitter'
 
 export default {
   name: 'OrderListInput',
@@ -31,6 +32,7 @@ export default {
     Tracker,
     draggable
   },
+  mixins: [emitter],
   model: {
     prop: 'value',
     event: 'change'
@@ -39,6 +41,10 @@ export default {
     value: {
       type: Array,
       default: () => ([])
+    },
+    validateEvent: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -48,6 +54,13 @@ export default {
   },
   computed: {
     ...mapGetters(['tracker'])
+  },
+  watch: {
+    value(val) {
+      if (this.validateEvent) {
+        this.dispatch('ElFormItem', 'el.form.change', [val])
+      }
+    }
   },
   methods: {
     appendFilterTrackerList() {

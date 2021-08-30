@@ -120,6 +120,7 @@ export default {
     3003: '您不被允許存取其他使用者的資料。',
     3004: '僅專案經理才可設置，請洽專案經理協助。',
     4001: '該議題不存在。',
+    7005: '{object} 的最大數量為 {num}',
     8001: '{service_name} 回報錯誤：{response}',
     9001: '內部錯誤：{type}: {exception}',
     9003: '發生未被預期的資料庫錯誤：{message}',
@@ -905,6 +906,7 @@ export default {
     DemandTraceability: '需求追溯',
     CheckRule: '檢核模組',
     CheckOrder: '檢核條件',
+    CheckRuleSettings: '設定條件清單',
     TraceabilityCheck: '追溯檢核',
     Run: '執行需求檢核',
     Portrait: '直式預覽',
@@ -914,8 +916,8 @@ export default {
     SelectTracker: '選擇新增檢核類別',
     Run_at: '執行時間',
     Running_time: '運算時間',
-    OnlyCheckRule: '提供至多5組檢核設定',
-    OnlyCheckOrder: '檢核條件最多5項。',
+    OnlyCheckRule: '提供至多{0}組檢核設定',
+    OnlyCheckOrder: '檢核條件最少{0}項，最多{1}項。',
     AddCheckRule: '新增檢核模組'
   },
   ProjectRoadmap: {
