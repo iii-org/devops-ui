@@ -208,16 +208,16 @@
                                @close-dialog="toggleDialogVisible"
       />
     </el-dialog>
-    <el-dialog
-      :visible.sync="issueMatrixDialog.visible"
-      width="80%"
-      top="20px"
-      append-to-body
-      destroy-on-close
-      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"
-    >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
-    </el-dialog>
+    <!--    <el-dialog-->
+    <!--      :visible.sync="issueMatrixDialog.visible"-->
+    <!--      width="80%"-->
+    <!--      top="20px"-->
+    <!--      append-to-body-->
+    <!--      destroy-on-close-->
+    <!--      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"-->
+    <!--    >-->
+    <!--      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />-->
+    <!--    </el-dialog>-->
   </div>
 </template>
 
@@ -243,7 +243,7 @@ import {
   putTestPlanWithTestFile
 } from '@/views/Plugin/QA/api/qa'
 import getPageTitle from '@/utils/get-page-title'
-import IssueMatrix from '@/components/Issue/IssueMatrix'
+// import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
   name: 'QAProjectIssueDetail',
@@ -258,7 +258,7 @@ export default {
     IssueNotesEditor,
     IssueToolbar,
     IssueFiles,
-    IssueMatrix,
+    // IssueMatrix,
     RelatedCollectionDialog
   },
   props: {

@@ -188,16 +188,16 @@
                             @delete="handleRelationDelete"
         />
       </el-dialog>
-      <el-dialog
-        :visible.sync="issueMatrixDialog.visible"
-        width="80%"
-        top="20px"
-        append-to-body
-        destroy-on-close
-        :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"
-      >
-        <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
-      </el-dialog>
+      <!--      <el-dialog-->
+      <!--        :visible.sync="issueMatrixDialog.visible"-->
+      <!--        width="80%"-->
+      <!--        top="20px"-->
+      <!--        append-to-body-->
+      <!--        destroy-on-close-->
+      <!--        :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"-->
+      <!--      >-->
+      <!--        <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />-->
+      <!--      </el-dialog>-->
     </el-card>
   </div>
 </template>
@@ -218,7 +218,7 @@ import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import getPageTitle from '@/utils/get-page-title'
-import IssueMatrix from '@/components/Issue/IssueMatrix'
+// import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -231,8 +231,8 @@ export default {
     IssueNotesDialog,
     IssueNotesEditor,
     IssueToolbar,
-    IssueFiles,
-    IssueMatrix
+    IssueFiles
+    // IssueMatrix
   },
   props: {
     propsIssueId: {
