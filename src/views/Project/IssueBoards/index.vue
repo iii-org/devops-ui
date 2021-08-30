@@ -264,8 +264,9 @@ export default {
     },
     contextOptions() {
       const result = {}
-      this.filterOptions.forEach((item) => {
-        result[item.value] = this[item.value]
+      const getOptions = ['assigned_to', 'fixed_version']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
       })
       return result
     },
