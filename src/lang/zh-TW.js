@@ -128,7 +128,8 @@ export default {
   },
   errorDetail: {
     locked: '鎖定',
-    closed: '關閉'
+    closed: '關閉',
+    trace_order: '@:Track.CheckRule'
   },
   general: {
     Name: '名稱',
