@@ -200,8 +200,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { ContextMenu, IssueList, IssueExpand } from '@/newMixins'
+import { ContextMenuMixins, IssueList, IssueExpand } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
+import { ContextMenu } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -210,7 +211,8 @@ import { getUserIssueList } from '@/api/user'
 
 export default {
   name: 'MyWorkProjectIssueList',
-  mixins: [IssueList, ContextMenu, IssueExpand],
+  components: { ContextMenu },
+  mixins: [IssueList, ContextMenuMixins, IssueExpand],
   props: {
     from: {
       type: String,

@@ -142,13 +142,13 @@ import { mapGetters } from 'vuex'
 import { getUserIssueList } from '@/api/user'
 import { getProjectAssignable } from '@/api/projects'
 import { updateIssue } from '@/api/issue'
-import { BasicData, Pagination, ContextMenu, SearchBar } from '@/newMixins'
-import { Priority, Status, Tracker } from '@/components/Issue'
+import { BasicData, Pagination, ContextMenuMixins, SearchBar } from '@/newMixins'
+import { Priority, Status, Tracker, ContextMenu } from '@/components/Issue'
 
 export default {
   name: 'ProjectIssueTransfer',
-  components: { Tracker, Priority, Status },
-  mixins: [BasicData, Pagination, ContextMenu, SearchBar],
+  components: { Tracker, Priority, Status, ContextMenu },
+  mixins: [BasicData, Pagination, ContextMenuMixins, SearchBar],
   data() {
     return {
       checkedIssues: [],

@@ -18,13 +18,14 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilter"
-      />
-      <span v-show="hasSelectedTrack">
-        <el-divider direction="vertical" />
-        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedTrackList)">
-          {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}
-        </el-button>
-      </span>
+      >
+        <span v-show="hasSelectedTrack">
+          <el-divider direction="vertical" />
+          <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedTrackList)">
+            {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}
+          </el-button>
+        </span>
+      </SearchFilter>
     </project-list-selector>
     <el-divider />
     <quick-add-issue
@@ -223,7 +224,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import { Table, IssueList, ContextMenuMixins, IssueExpand } from '@/newMixins'
+import { ContextMenu } from '@/components/Issue'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import { getProjectUserList } from '@/api/projects'
@@ -239,9 +241,10 @@ export default {
   components: {
     QuickAddIssue,
     ProjectListSelector,
-    SearchFilter
+    SearchFilter,
+    ContextMenu
   },
-  mixins: [Table, IssueList, ContextMenu, IssueExpand],
+  mixins: [Table, IssueList, ContextMenuMixins, IssueExpand],
   data() {
     return {
       quickAddTopicDialogVisible: false,

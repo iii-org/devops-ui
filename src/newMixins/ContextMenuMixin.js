@@ -1,7 +1,4 @@
-import ContextMenu from '@/components/Issue/ContextMenu'
-
 export default {
-  components: { ContextMenu },
   data() {
     return {
       contextMenu: {

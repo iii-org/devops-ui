@@ -217,7 +217,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from '@/components/Issue/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import { Table, IssueList, ContextMenuMixins, IssueExpand } from '@/newMixins'
+import { ContextMenu } from '@/components/Issue'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { csvTranslate } from '@/utils/csvTableTranslate'
 import XLSX from 'xlsx'
@@ -232,9 +233,10 @@ export default {
   components: {
     QuickAddIssue,
     ProjectListSelector,
-    SearchFilter
+    SearchFilter,
+    ContextMenu
   },
-  mixins: [Table, IssueList, ContextMenu, IssueExpand],
+  mixins: [Table, IssueList, ContextMenuMixins, IssueExpand],
   data() {
     return {
       quickAddTopicDialogVisible: false,
