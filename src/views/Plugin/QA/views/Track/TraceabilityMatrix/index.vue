@@ -331,7 +331,8 @@ export default {
       await this.getSearchIssue()
       await this.initChart()
       if (this.$refs['TraceCheck']) {
-        this.$refs['TraceCheck'].resetData()
+        await this.$refs['TraceCheck'].resetData()
+        await this.$refs['TraceCheck'].loadData()
       }
     },
     'filterValue.tracker_id': {
