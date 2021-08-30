@@ -222,7 +222,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue } from '@/components/Issue'
+import QuickAddIssue from '@/components/Issue/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'

@@ -59,7 +59,7 @@
 <script>
 import Tracker from '@/components/Issue/Tracker'
 import { mapGetters } from 'vuex'
-import AddIssue from './AddIssue'
+import AddIssue from '@/components/Issue/AddIssue'
 
 export default {
   name: 'QuickAddIssue',
