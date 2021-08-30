@@ -259,7 +259,6 @@ export default {
       },
       LoadingConfirm: false,
       uploadFileList: [],
-      extension: {},
       pickerOptions(startDate) {
         return {
           disabledDate(time) {
@@ -314,7 +313,6 @@ export default {
 
   mounted() {
     this.fetchData()
-    this.extension = fileExtension()
     this.setFilterValue()
   },
 
