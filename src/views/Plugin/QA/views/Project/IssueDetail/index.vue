@@ -586,7 +586,7 @@ export default {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
-      if (status.hasOwnProperty('upload') && status.upload) {
+      if (status && status.hasOwnProperty('upload') && status.upload) {
         this.isLoading = status.status
         this.handleUploadUpdated()
       } else {

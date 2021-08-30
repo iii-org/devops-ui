@@ -535,8 +535,13 @@ export default {
       this.$router.push(this.formObj)
     },
     showLoading(status) {
-      this.isLoading = status
-      this.handleUploadUpdated()
+      if (status && status.hasOwnProperty('upload') && status.upload) {
+        this.isLoading = status.status
+        this.handleUploadUpdated()
+      } else {
+        this.isLoading = status
+        this.handleUpdated()
+      }
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
