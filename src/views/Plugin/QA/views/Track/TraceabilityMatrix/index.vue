@@ -327,6 +327,7 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.getTrackerMapOptions()
+      this.filterValue.issue_id = []
       await this.getSearchIssue()
       await this.initChart()
       if (this.$refs['TraceCheck']) {
