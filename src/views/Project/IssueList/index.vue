@@ -209,7 +209,7 @@
             </el-row>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('general.Type')" width="130" prop="tracker.id" sortable="custom">
+        <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
           <template slot-scope="scope">
             <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
           </template>
@@ -220,12 +220,12 @@
             {{ scope.row.name }}
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority.id" sortable="custom">
+        <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
           <template slot-scope="scope">
             <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status.id" sortable="custom">
+        <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
           <template slot-scope="scope">
             <status
               v-if="scope.row.status.name"
@@ -233,7 +233,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to.id"
+        <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
                          sortable="custom" show-overflow-tooltip
         >
           <template slot-scope="scope">
