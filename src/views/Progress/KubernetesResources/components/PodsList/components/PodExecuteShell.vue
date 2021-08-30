@@ -1,7 +1,18 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between mb-2">
-      <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span>
+      <div>
+        <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span> 
+        <el-popover
+          placement="top"
+          width="160"
+          trigger="hover"
+        >
+          <div>本功能提供查看 Pod 相關資訊，目前支援指令為：</div>
+          <div>ls, ls -al, whoami, hostname, pwd, cd 等</div>
+          <em slot="reference" class="ri-information-line ml-3" />
+        </el-popover>
+      </div>
       <div class="flex items-center">
         <span class="dot relative" :class="connectStatus" />
         <span class="dot absolute animate-ping" :class="connectStatus" />
@@ -59,8 +70,8 @@ export default {
   methods: {
     initSocket() {
       this.socket =
-        io('/k8s/websocket/pod_exec', {
-        // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
+        // io('/k8s/websocket/pod_exec', {
+        io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
           reconnectionAttempts: 5,
           transports: ['websocket']
         })
@@ -86,6 +97,7 @@ export default {
     },
     setCmdResponseListener() {
       this.socket.on('get_cmd_response', sioEvt => {
+        console.log('get_cmd_response ===>', sioEvt)
         const { output } = sioEvt
         let str = output || sioEvt
         str = str.replace(/\n/g, '\r\n')
@@ -120,8 +132,7 @@ export default {
     },
     setTermKeyListener() {
       this.term.onKey(data => {
-        const { key, code, keyCode } = data.domEvent
-        console.log('on (Key, Code) ===>', key, code)
+        const { key, keyCode } = data.domEvent
         if (envKeys.includes(key)) return
         if (keyCode === 13) {
           this.onEnter()
@@ -134,12 +145,18 @@ export default {
       })
     },
     onEnter() {
-      // if (this.command === 'clear') {
-      //   this.term.clear()
-      // } else {
-      //   this.emitCommand(this.command)
-      // }
-      this.emitCommand(this.command)
+      if (this.command === 'clear') {
+        this.term.write('\r\n# ')
+        this.term.clear()
+      } else if (this.command === '') {
+        this.term.write('\r\n# ')
+      } else if (this.command.includes('cd')) {
+        this.term.write('\r\n# ')
+        this.emitCommand(this.command)
+      } else {
+        this.term.write('\r\n')
+        this.emitCommand(this.command)
+      }
       this.command = ''
     },
     onBackspace() {
