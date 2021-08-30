@@ -115,9 +115,9 @@
                 <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
                   <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
                 </el-menu-item>
-                <!--<el-menu-item>-->
-                <!-- <el-button icon="el-icon-download" @click="downloadPdf">{{ $t('TestReport.DownloadPdf') }}</el-button> -->
-                <!--</el-menu-item>-->
+                <!-- <el-menu-item>
+                  <el-button icon="el-icon-download" @click="download">{{ $t('TestReport.DownloadPdf') }}</el-button>
+                </el-menu-item> -->
                 <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
                   <em class="el-icon-download" />{{ $t('Track.Landscape') }}
                 </el-menu-item>
@@ -245,7 +245,8 @@ export default {
         filename: '',
         content_type: '',
         src: ''
-      }
+      },
+      isRotate: false
     }
   },
   computed: {
@@ -650,11 +651,17 @@ export default {
       link.click()
     },
     downloadPdf() {
-      this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
+      if (this.isRotate) this.$rotatePdf(this.$refs.rotateImage, 'Traceability_Matrix')
+      else this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
     },
     handleRotatePreview() {
+      this.isRotate = true
       this.dialogVisible = true
-      html2canvas(this.$refs.matrix, { scale: 1.2 }).then(canvas => {
+      html2canvas(this.$refs.matrix).then(canvas => {
+        const [A4Width, A4Height] = [595, 841] // a4
+        const { width: CanvasWidth, height: CanvasHeight } = canvas
+        const PdfWidth = A4Width * 2
+        const PdfHeight = (A4Width / CanvasWidth) * CanvasHeight
         const rotCanvas = document.createElement('canvas')
         rotCanvas.width = canvas.height
         rotCanvas.height = canvas.width
@@ -669,15 +676,24 @@ export default {
         const data = rotCanvas.toDataURL('image/png', 1.0)
         const image = new Image()
         image.src = data
+        image.width = PdfWidth
+        image.Height = PdfHeight
         this.$refs.rotateImage.appendChild(image)
       })
     },
     handlePreview() {
+      this.isRotate = false
       this.dialogVisible = true
-      html2canvas(this.$refs.matrix, { scale: 1.2 }).then(canvas => {
+      html2canvas(this.$refs.matrix).then(canvas => {
+        const [A4Width, A4Height] = [595, 841] // a4
+        const { width: CanvasWidth, height: CanvasHeight } = canvas
+        const PdfWidth = A4Width * 1.8
+        const PdfHeight = (A4Width / CanvasWidth) * CanvasHeight
         const data = canvas.toDataURL('image/png', 1.0)
         const image = new Image()
         image.src = data
+        image.width = PdfWidth
+        image.Height = PdfHeight
         this.$refs.rotateImage.appendChild(image)
       })
     }
