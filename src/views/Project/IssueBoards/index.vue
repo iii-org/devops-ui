@@ -345,12 +345,12 @@ export default {
     }
   },
   async created() {
+    this.displayClosed = await this.getKanbanDisplayClosed()
     this.filterValue = await this.getKanbanFilter()
     this.groupBy = {
       dimension: await this.getKanbanGroupByDimension(),
       value: await this.getKanbanGroupByValue()
     }
-    this.displayClosed = await this.getKanbanDisplayClosed()
     this.keyword = await this.getKanbanKeyword()
     this.fixed_version_closed = this.fixedVersionShowClosed
     await this.loadSelectionList()

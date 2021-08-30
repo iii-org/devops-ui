@@ -214,7 +214,7 @@ const actions = {
     const getSessionValue = sessionStorage.getItem('kanbanDisplayClosed')
     if (getSessionValue) {
       commit('SET_KANBAN_DISPLAY_CLOSED', getSessionValue)
-      return getSessionValue
+      return JSON.parse(getSessionValue)
     }
     return state.kanbanDisplayClosed
   },
@@ -268,7 +268,7 @@ const actions = {
     const getSessionValue = sessionStorage.getItem('issueListDisplayClosed')
     if (getSessionValue) {
       commit('SET_ISSUE_LIST_DISPLAY_CLOSED', getSessionValue)
-      return getSessionValue
+      return JSON.parse(getSessionValue)
     }
     return state.issueListDisplayClosed
   },
