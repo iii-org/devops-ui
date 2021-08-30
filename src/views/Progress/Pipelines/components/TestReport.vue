@@ -23,9 +23,14 @@
     </div>
     <div ref="pdfPage">
       <el-card>
-        <div class="text-center text-2xl bg-gray-300 clearfix" style="line-height: 50px;">{{ $t('route.testReport') }}</div>
+        <div class="logo-container">
+          <img src="@/assets/logo.png" class="logo">
+          <h1 class="title">{{ title }} </h1>
+        </div>
+        <div class="text-center text-2xl clearfix" style="line-height: 50px; color: #007300;">{{ $t('route.testReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10">
+            <li>{{ $t('general.project_name') }}: {{ selectedProject.display }}</li>
             <li>{{ $t('TestReport.TestTime') }}: {{ timeNow }}</li>
             <li>
               {{ $t('general.Branch') }} / {{ $t('TestReport.Commit') }}:
@@ -293,6 +298,7 @@ export default {
   components: { ToolBar },
   data() {
     return {
+      title: 'III DevOps',
       listLoading: false,
       sonarQubeData: [],
       checkMarxData: [],
@@ -488,8 +494,35 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 >>> .el-divider__text {
   font-size: 18px;
+}
+
+.logo-container {
+  position: relative;
+  left: 10px;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  text-align: left;
+  overflow: hidden;
+
+  .logo {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right: 12px;
+  }
+
+  .title {
+    display: inline-block;
+    margin: 0;
+    font-weight: 600;
+    line-height: 50px;
+    font-size: 14px;
+    font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+    vertical-align: middle;
+  }
 }
 </style>
