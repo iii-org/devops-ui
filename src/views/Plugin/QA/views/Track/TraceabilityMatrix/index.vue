@@ -339,7 +339,6 @@ export default {
       async handler() {
         this.filterValue.issue_id = []
         await this.getSearchIssue()
-        await this.initChart()
       }
     },
     trackerMapTarget: {
