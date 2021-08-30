@@ -112,7 +112,7 @@ export default {
       filterValue: {},
       originFilterValue: {},
       keyword: null,
-      total: { 'assigned_to_id': 0, 'author_id': 0 }
+      total: { 'assigned_to_id': '-', 'author_id': '-' }
     }
   },
   computed: {

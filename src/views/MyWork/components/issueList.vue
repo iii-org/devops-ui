@@ -68,7 +68,8 @@
                           <tracker :name="child.tracker.name" />
                           #{{ child.id }} - {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
+                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
+                            - {{ child.assigned_to.login }})
                           </span>
                         </el-link>
                         <el-popconfirm
@@ -199,7 +200,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { ContextMenu, IssueList } from '@/newMixins'
+import { ContextMenu, IssueList, IssueExpand } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
 
 /**
@@ -209,7 +210,7 @@ import { getUserIssueList } from '@/api/user'
 
 export default {
   name: 'MyWorkProjectIssueList',
-  mixins: [IssueList, ContextMenu],
+  mixins: [IssueList, ContextMenu, IssueExpand],
   props: {
     from: {
       type: String,
@@ -353,35 +354,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-> > > .row-expand-cover .el-table__expand-column .cell {
-  display: none;
-}
-
-> > > .el-table__expanded-cell {
-  font-size: 0.875em;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-> > > .row-expend-loading .el-table__expand-column .cell {
-  padding: 0;
-
-  .el-table__expand-icon {
-    .el-icon-arrow-right {
-      animation: rotating 2s linear infinite;
-    }
-
-    .el-icon-arrow-right:before {
-      content: "\e6cf";
-      font-size: 1.25em;
-    }
-  }
-
-}
-
-> > > .context-menu {
-  cursor: context-menu;
-}
-</style>
