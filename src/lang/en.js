@@ -902,7 +902,7 @@ export default {
     DemandTraceability: 'Demand Traceability',
     CheckRule: 'Check Rule',
     CheckOrder: 'Check Order',
-    CheckRuleSettings: 'Check Rule Settings',
+    CheckRuleSettings: 'Setting',
     Download: 'Download',
     TraceabilityCheck: 'Traceability Check',
     Run: 'Run',
