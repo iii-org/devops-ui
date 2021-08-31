@@ -178,18 +178,21 @@
       />
     </el-dialog>
     <el-dialog
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
       :visible.sync="uploadDialogVisible"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
       width="80%"
       top="8vh"
       :show-close="false"
       append-to-body
       destroy-on-close
     >
-      <CollectionFileUploader ref="collectionFileUpload" @update="loadData" @upload-file-length="updateFileLength" />
+      <CollectionFileUploader ref="collectionFileUpload" @update="loadData" />
       <template slot="footer">
-        <el-button v-if="hasUploadFile" type="primary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
-        <el-button v-else @click="closeUploadCollection">{{ $t('general.Close') }} </el-button>
+        <el-button @click="closeUploadCollection">{{ $t('general.Close') }} </el-button>
+        <el-button type="primary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
       </template>
     </el-dialog>
   </div>
@@ -240,7 +243,6 @@ export default {
       },
       relatedPlanDialogVisible: false,
       uploadDialogVisible: false,
-      hasUploadFile: false,
       expandedRow: []
     }
   },
@@ -253,6 +255,10 @@ export default {
     },
     softwareValue() {
       return this.software.filter(item => item.visible === true)
+    },
+    hasUploadFile() {
+      if (!this.$refs['collectionFileUpload']) return false
+      return this.$refs['collectionFileUpload'].uploadFileList.length > 0
     }
   },
   watch: {
@@ -383,13 +389,15 @@ export default {
       }
     },
     uploadCollection() {
-      this.hasUploadFile = false
-      const fileList = this.$refs['collectionFileUpload'].handleUpload()
-      this.uploadFiles(fileList)
-      this.uploadDialogVisible = false
+      this.$refs['collectionFileUpload'].$refs['uploadForm'].validate(async valid => {
+        if (valid) {
+          const fileList = await this.$refs['collectionFileUpload'].handleUpload()
+          await this.uploadFiles(fileList)
+          this.uploadDialogVisible = false
+        }
+      })
     },
     closeUploadCollection() {
-      this.hasUploadFile = false
       this.$refs['collectionFileUpload'].resetUpload()
       this.uploadDialogVisible = false
     },
@@ -453,9 +461,6 @@ export default {
     },
     toggleExpandedRows(row, expandedRows) {
       this.expandedRow = expandedRows
-    },
-    updateFileLength(value) {
-      this.hasUploadFile = value > 0
     },
     async uploadFiles({ fileList, software_name }) {
       this.listLoading = true
