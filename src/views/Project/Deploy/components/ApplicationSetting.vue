@@ -259,7 +259,7 @@ export default {
     const numberValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
         const valueInt = parseInt(value)
-        if ((isNaN(valueInt) && value !== '' && value !== null) || valueInt <= 0) {
+        if (value && (isNaN(valueInt) && value !== '' && value !== null) || valueInt <= 0) {
           return reject(this.$t(`Validation.Input`, [this.$t('Validation.Number')]))
         }
         return resolve()
