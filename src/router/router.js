@@ -60,6 +60,12 @@ export const asyncRoutes = [
   {
     path: '/overview',
     component: Layout,
+    redirect: '/overview/dashboard',
+    meta: {
+      icon: 'el-icon-data-analysis',
+      title: 'overview',
+      roles: ['Administrator']
+    },
     children: [
       {
         path: 'dashboard',
@@ -75,25 +81,31 @@ export const asyncRoutes = [
         path: 'project-list',
         name: 'project-list-pm',
         component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
-        meta: {
-          title: 'projectList',
-          icon: 'list',
-          roles: ['Administrator', 'Project Manager']
-        }
+        meta: { title: 'projectList', icon: 'list', roles: ['Administrator'] }
+      }
+    ]
+  },
+
+  {
+    path: '/project-list',
+    component: Layout,
+    meta: { roles: ['Project Manager', 'Engineer'] },
+    children: [
+      {
+        path: '',
+        name: 'project-list-pm',
+        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
+        meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
       },
       {
-        path: 'project-list',
+        path: '',
         name: 'project-list-rd',
         component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
         meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
       }
-    ],
-    meta: {
-      title: 'overview',
-      icon: 'el-icon-data-analysis',
-      roles: ['Administrator', 'Project Manager', 'Engineer']
-    }
+    ]
   },
+
   {
     path: '/project',
     component: Layout,
@@ -101,7 +113,7 @@ export const asyncRoutes = [
     meta: {
       title: 'singleProject',
       icon: 'el-icon-data-analysis',
-      roles: ['Administrator', 'Project Manager', 'Engineer']
+      roles: ['Project Manager', 'Engineer']
     },
     children: [
       {
