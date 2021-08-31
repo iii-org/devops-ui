@@ -197,7 +197,7 @@
 </template>
 
 <script>
-import VueMermaid from '@/components/vue-mermaid'
+import VueMermaid from './components/vue-mermaid'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
