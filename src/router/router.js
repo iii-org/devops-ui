@@ -636,12 +636,12 @@ export const asyncRoutes = [
         component: () => import('@/views/SystemSettings/SystemArguments'),
         meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
-      {
-        path: 'system-deploy-settings',
-        name: 'System Deploy Settings',
-        component: () => import('@/views/SystemSettings/SystemDeploySettings'),
-        meta: { title: 'System Deploy Settings', roles: ['Administrator'] }
-      },
+      // {
+      //   path: 'system-deploy-settings',
+      //   name: 'System Deploy Settings',
+      //   component: () => import('@/views/SystemSettings/SystemDeploySettings'),
+      //   meta: { title: 'System Deploy Settings', roles: ['Administrator'] }
+      // },
       {
         path: 'sub-admin-projects',
         name: 'Sub Admin Projects',
