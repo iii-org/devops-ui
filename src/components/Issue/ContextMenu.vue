@@ -114,7 +114,8 @@ import {
   ContextmenuSubmenu
 } from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
-import IssueMatrix from '@/components/Issue/IssueMatrix'
+import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
+import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import {
   addIssue,
   getCheckIssueClosable,
@@ -123,7 +124,7 @@ import {
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
-import { AddIssue, SettingRelationIssue } from './index'
+import AddIssue from './AddIssue'
 
 export default {
   name: 'ContextMenu',
