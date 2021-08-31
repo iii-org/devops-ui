@@ -31,7 +31,7 @@ export const csvTranslate = {
   },
   trackManagement: {
     id: 'ID',
-    name: '專案名稱',
+    name: '議題名稱',
     description: '變更內容(議題描述)',
     relations: '原始需求/議題',
     status: '狀態',
@@ -40,7 +40,7 @@ export const csvTranslate = {
   exceptionManagement: {
     tracker: '種類',
     id: 'ID',
-    name: '專案名稱',
+    name: '議題名稱',
     priority: '優先權',
     status: '狀態',
     assigned_to: '受分配者'
