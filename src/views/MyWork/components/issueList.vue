@@ -269,7 +269,7 @@ export default {
       immediate: false,
       async handler(value) {
         this.filterValue = value
-        await this.onChangeFilter(value)
+        await this.onChangeFilter()
       }
     },
     displayClosedProps(value) {

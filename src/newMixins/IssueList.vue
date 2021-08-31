@@ -116,9 +116,9 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
-    async onChangeFilter(value) {
-      Object.keys(value).forEach(item => {
-        this[item] = value[item]
+    async onChangeFilter() {
+      Object.keys(this.filterValue).forEach(item => {
+        this[item] = this.filterValue[item]
       })
       await this.backToFirstPage()
       await this.loadData()

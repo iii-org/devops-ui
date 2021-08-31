@@ -288,9 +288,9 @@ export default {
       }
       return result
     },
-    async onChangeFilter(value) {
-      Object.keys(value).forEach(item => {
-        this[item] = value[item]
+    async onChangeFilter() {
+      Object.keys(this.filterValue).forEach(item => {
+        this[item] = this.filterValue[item]
       })
       await this.setIssueListFilter(this.filterValue)
       await this.setIssueListKeyword(this.keyword)
