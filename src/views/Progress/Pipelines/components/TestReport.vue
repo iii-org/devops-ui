@@ -27,7 +27,10 @@
           <img src="@/assets/logo.png" class="logo">
           <h1 class="title">{{ title }} </h1>
         </div>
-        <div class="text-center text-2xl font-bold clearfix" style="line-height: 50px; color: #009608;">{{ $t('route.testReport') }}</div>
+        <div
+          class="text-center font-bold clearfix"
+          style="line-height: 7px; color: #429470; font-size: 36px; text-shadow: #b3b1b1 0.05em 0.05em 0.1em;"
+        >{{ $t('route.testReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
             <li>{{ $t('general.project_name') }}: {{ selectedProject.display }}</li>
