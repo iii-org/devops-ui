@@ -43,7 +43,7 @@
       <el-table-column-time prop="created_at" :label="$t('general.CreateTime')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="{row}">
-          <el-dropdown split-button size="small" :type="row.disabled? 'warning': 'success'"
+          <el-dropdown v-if="row.status_id!==9" split-button size="small" :type="row.disabled? 'warning': 'success'"
                        @click="handleServiceStatus(row)"
           >
             <em :class="row.disabled| getActionIcon" /> {{ getActionText(row.disabled) }}
@@ -220,7 +220,10 @@ export default {
           })
           try {
             if (id) {
-              await putService(id, { ...this.$refs['ApplicationSetting'].deployForm, project_id: this.selectedProjectId })
+              await putService(id, {
+                ...this.$refs['ApplicationSetting'].deployForm,
+                project_id: this.selectedProjectId
+              })
               this.$message({
                 title: this.$t('general.Success'),
                 message: this.$t('Notify.Updated'),
