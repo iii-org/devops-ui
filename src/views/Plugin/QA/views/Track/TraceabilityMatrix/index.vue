@@ -138,7 +138,7 @@
             {{ $t('Track.DemandTraceability') }}
             <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
           </template>
-          <div v-show="data.length>0" ref="matrix">
+          <div v-show="data.length>0" ref="matrix" style="min-height: 841px;">
             <vue-mermaid
               :nodes="data"
               type="graph LR"
@@ -662,8 +662,7 @@ export default {
       link.click()
     },
     downloadPdf() {
-      if (this.isRotate) this.$rotatePdf(this.$refs.rotateImage, 'Traceability_Matrix')
-      else this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
+      this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
     },
     handleRotatePreview() {
       this.isRotate = true
@@ -671,11 +670,11 @@ export default {
       html2canvas(this.$refs.matrix).then(canvas => {
         const [A4Width, A4Height] = [595, 841] // a4
         const { width: CanvasWidth, height: CanvasHeight } = canvas
-        const PdfWidth = A4Width * 2
-        const PdfHeight = (A4Width / CanvasWidth) * CanvasHeight
+        const PdfWidth = A4Width * 1.9
+        const PdfHeight = A4Height * 1.9 / (A4Width / A4Height)
         const rotCanvas = document.createElement('canvas')
-        rotCanvas.width = canvas.height
-        rotCanvas.height = canvas.width
+        rotCanvas.width = CanvasHeight
+        rotCanvas.height = CanvasWidth
         const rctx = rotCanvas.getContext('2d')
         rctx.translate(rotCanvas.width * 0.5, rotCanvas.height * 0.5)
 
@@ -683,7 +682,7 @@ export default {
         rctx.rotate(Math.PI * 0.5)
 
         // draw image offset so center of image is on top of pivot
-        rctx.drawImage(canvas, -canvas.width * 0.5, -canvas.height * 0.5)
+        rctx.drawImage(canvas, -CanvasWidth * 0.5, -CanvasHeight * 0.5)
         const data = rotCanvas.toDataURL('image/png', 1.0)
         const image = new Image()
         image.src = data
@@ -697,9 +696,8 @@ export default {
       this.dialogVisible = true
       html2canvas(this.$refs.matrix).then(canvas => {
         const [A4Width, A4Height] = [595, 841] // a4
-        const { width: CanvasWidth, height: CanvasHeight } = canvas
-        const PdfWidth = A4Width * 1.8
-        const PdfHeight = (A4Width / CanvasWidth) * CanvasHeight
+        const PdfWidth = A4Width * 1.9
+        const PdfHeight = A4Height * 1.9 / (A4Width / A4Height)
         const data = canvas.toDataURL('image/png', 1.0)
         const image = new Image()
         image.src = data
