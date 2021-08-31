@@ -262,14 +262,14 @@ export default {
       await this.loadData()
     },
     async projectId() {
-      await this.onChangeFilter(this.filterValue)
+      await this.onChangeFilterForm(this.filterValue)
     },
     filterValueProps: {
       deep: true,
       immediate: false,
       async handler(value) {
         this.filterValue = value
-        await this.onChangeFilter()
+        await this.onChangeFilterForm(value)
       }
     },
     displayClosedProps(value) {
@@ -279,7 +279,7 @@ export default {
       this.keyword = value
     },
     async displayClosed() {
-      await this.onChangeFilter()
+      await this.onChangeFilterForm(this.filterValue)
     },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)

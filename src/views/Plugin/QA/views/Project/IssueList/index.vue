@@ -17,7 +17,7 @@
         :list-loading="listLoading"
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
-        @change-filter="onChangeFilter"
+        @change-filter="onChangeFilterForm"
       />
     </project-list-selector>
     <el-divider />
@@ -296,9 +296,6 @@ export default {
       return result
     },
     async onChangeFilter() {
-      Object.keys(this.filterValue).forEach(item => {
-        this[item] = this.filterValue[item]
-      })
       await this.setIssueListFilter(this.filterValue)
       await this.setIssueListKeyword(this.keyword)
       await this.setIssueListDisplayClosed(this.displayClosed)

@@ -17,7 +17,7 @@
         :list-loading="listLoading"
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
-        @change-filter="onChangeFilter"
+        @change-filter="onChangeFilterForm"
       />
       <span v-show="hasSelectedTrack">
         <el-divider direction="vertical" />
