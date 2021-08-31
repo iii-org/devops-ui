@@ -132,7 +132,7 @@
           {{ $t('Release.batchMoveDialogHint', [selectedIndexes.length]) }}
         </el-form-item>
         <el-button
-          v-loading.fullscreen.lock="fullScreenLoading"
+          v-loading="loading"
           type="primary"
           :disabled="!batchMoveToVersion"
           @click="batchMove"
@@ -192,7 +192,7 @@ export default {
       showBatchMoveDialog: false,
       showFormDialog: false,
       batchMoveToVersion: null,
-      fullScreenLoading: false,
+      loading: false,
       closedIdex: '',
       closedRow: {},
       notClosedChildrenIssueList: [],
@@ -361,14 +361,14 @@ export default {
       this.listLoading = false
     },
     async batchMove() {
-      this.fullScreenLoading = true
+      this.loading = true
       const indexes = this.selectedIndexes
       for (const index of indexes) {
         await updateIssue(this.listData[index].id, { fixed_version_id: this.batchMoveToVersion })
       }
       this.multipleSelection = []
       await this.$parent.init()
-      this.fullScreenLoading = false
+      this.loading = false
       this.showBatchMoveDialog = false
     }
   }
