@@ -30,7 +30,7 @@ const getDefaultState = () => {
     issueListFilter: {},
     issueListListQuery: {},
     issueListPageInfo: {},
-    issueListKeyword:'',
+    issueListKeyword: '',
     issueListDisplayClosed: false,
     fixedVersionShowClosed: false
   }
@@ -167,6 +167,14 @@ const actions = {
     }
   },
   setSelectedProject({ commit }, project) {
+    sessionStorage.removeItem('kanbanFilter')
+    sessionStorage.removeItem('kanbanGroupBy.dimension')
+    sessionStorage.removeItem('kanbanGroupBy.value')
+    sessionStorage.removeItem('kanbanDisplayClosed')
+    sessionStorage.removeItem('kanbanKeyword')
+    sessionStorage.removeItem('issueListFilter')
+    sessionStorage.removeItem('issueListDisplayClosed')
+    sessionStorage.removeItem('issueListKeyword')
     commit('SET_SELECTED_PROJECT', project)
     commit('SET_KANBAN_FILTER', {})
     commit('SET_KANBAN_GROUP_BY_DIMENSION', 'status')
