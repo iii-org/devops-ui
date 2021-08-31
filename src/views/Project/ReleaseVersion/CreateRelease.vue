@@ -178,6 +178,11 @@ export default {
       handler(val) {
         this.getBranchesData()
       }
+    },
+    branches(val) {
+      if (val) {
+        this.handleSelectedRepoName(val[0])
+      }
     }
   },
   async created() {

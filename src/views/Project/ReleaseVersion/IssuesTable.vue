@@ -168,6 +168,7 @@ import MixinElTableWithCheckbox from '@/mixins/MixinElTableWithCheckbox'
 import { updateIssue, getCheckIssueClosable } from '@/api/issue'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'IssuesTable',
@@ -199,6 +200,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['selectedProjectId']),
     batchCloseHint() {
       return this.$t('Release.confirmBatchClose', [this.selectedIndexes.length])
     },
@@ -216,6 +218,11 @@ export default {
     },
     showOpen() {
       this.setData(this.issues)
+    },
+    selectedProjectId(val) {
+      if (val) {
+        this.batchMoveToVersion = null
+      }
     }
   },
   methods: {
