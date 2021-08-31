@@ -1,10 +1,9 @@
-import Priority from '@/components/Issue/Priority'
-import Status from '@/components/Issue/Status'
-import Tracker from '@/components/Issue/Tracker'
-import ContextMenu from '@/components/Issue/ContextMenu'
-import AddIssue from '@/components/Issue/AddIssue'
-import QuickAddIssue from '@/components/Issue/QuickAddIssue'
-import SettingRelationIssue from '@/components/Issue/SettingRelationIssue'
-import IssueMatrix from '@/components/Issue/IssueMatrix'
+import Priority from './Priority'
+import Status from './Status'
+import Tracker from './Tracker'
+import ContextMenu from './ContextMenu'
+import AddIssue from './AddIssue'
+import QuickAddIssue from './QuickAddIssue'
+import SettingRelationIssue from './SettingRelationIssue'
 
-export { Priority, Status, Tracker, ContextMenu, AddIssue, QuickAddIssue, SettingRelationIssue, IssueMatrix }
+export { Priority, Status, Tracker, ContextMenu, AddIssue, QuickAddIssue, SettingRelationIssue }

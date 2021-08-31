@@ -215,7 +215,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import QuickAddIssue from '@/components/Issue/QuickAddIssue'
+import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenuMixins, IssueExpand } from '@/newMixins'
 import { ContextMenu } from '@/components/Issue'
