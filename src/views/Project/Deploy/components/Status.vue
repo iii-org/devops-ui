@@ -31,7 +31,7 @@ const status = {
   3001: 'Error, No Image need to be replicated',
   5001: 'Error, K8s Error'
 }
-const statusCategory = { 1: [1], 3: [2, 3], 5: [4, 5], 10: [9, 10] }
+const statusCategory = { 1: [1], 3: [2, 3], 5: [4, 5] }
 const icon = { error: 'warning', progress: 'loading', done: 'check' }
 export default {
   name: 'Status',
