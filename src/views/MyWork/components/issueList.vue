@@ -258,17 +258,18 @@ export default {
   },
   watch: {
     async keyword() {
-      await this.onChangeFilter()
+      await this.backToFirstPage()
+      await this.loadData()
     },
     async projectId() {
-      await this.onChangeFilter()
+      await this.onChangeFilter(this.filterValue)
     },
     filterValueProps: {
       deep: true,
       immediate: false,
       async handler(value) {
         this.filterValue = value
-        await this.onChangeFilter()
+        await this.onChangeFilter(value)
       }
     },
     displayClosedProps(value) {
