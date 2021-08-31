@@ -61,7 +61,6 @@
         {{ $t('Issue.CleanFilter') }}
       </el-button>
     </template>
-    <slot />
   </div>
 </template>
 

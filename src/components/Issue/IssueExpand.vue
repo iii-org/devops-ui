@@ -115,15 +115,14 @@
 </template>
 
 <script>
-import { ContextMenuMixins } from '@/newMixins'
+import { ContextMenu } from '@/newMixins'
 import { Status, Tracker } from '@/components/Issue'
 import { deleteIssueRelation, updateIssue } from '@/api/issue'
-import { ContextMenu } from '@/components/Issue'
 
 export default {
   name: 'IssueExpand',
-  components: { Tracker, Status, ContextMenu },
-  mixins: [ContextMenuMixins],
+  components: { Tracker, Status },
+  mixins: [ContextMenu],
   props: {
     issue: {
       type: Object,

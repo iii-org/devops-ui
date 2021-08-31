@@ -18,14 +18,13 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilter"
-      >
-        <span v-show="hasSelectedFail">
-          <el-divider direction="vertical" />
-          <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedFailList)">
-            {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}
-          </el-button>
-        </span>
-      </SearchFilter>
+      />
+      <span v-show="hasSelectedFail">
+        <el-divider direction="vertical" />
+        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedFailList)">
+          {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}
+        </el-button>
+      </span>
     </project-list-selector>
     <el-divider />
     <quick-add-issue
@@ -223,12 +222,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import QuickAddIssue from '@/components/Issue/QuickAddIssue'
+import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenuMixins, IssueExpand } from '@/newMixins'
-import { ContextMenu } from '@/components/Issue'
+import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { csvTranslate } from '@/utils/csvTableTranslate'
+import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'
 
 /**
@@ -241,10 +240,9 @@ export default {
   components: {
     QuickAddIssue,
     ProjectListSelector,
-    SearchFilter,
-    ContextMenu
+    SearchFilter
   },
-  mixins: [Table, IssueList, ContextMenuMixins, IssueExpand],
+  mixins: [Table, IssueList, ContextMenu, IssueExpand],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -312,6 +310,10 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
+    getOptionsData(option_name) {
+      if (option_name === 'tracker') return this.trackerList
+      return this[option_name]
+    },
     getParams() {
       const result = {
         offset: this.listQuery.offset,
@@ -333,6 +335,31 @@ export default {
         result['search'] = this.keyword
       }
       return result
+    },
+    async loadSelectionList() {
+      if (this.selectedProjectId === -1) return
+      await Promise.all([
+        getProjectUserList(this.selectedProjectId)
+      ]).then(res => {
+        const [assigneeList] = res.map(
+          item => item.data
+        )
+        this.assigned_to = [
+          { name: this.$t('Issue.Unassigned'), id: 'null' },
+          {
+            name: this.$t('Issue.me'),
+            login: '-Me-',
+            id: this.userId,
+            class: 'bg-yellow-100'
+          },
+          ...assigneeList.user_list
+        ]
+        if (this.userRole === 'Engineer') {
+          this.$set(this.filterValue, 'assigned_to', this.userId)
+          this.$set(this.originFilterValue, 'assigned_to', this.userId)
+        }
+      })
+      await this.loadVersionList(this.fixed_version_closed)
     },
     handleSelectionChange(list) {
       this.selectedFailList = list

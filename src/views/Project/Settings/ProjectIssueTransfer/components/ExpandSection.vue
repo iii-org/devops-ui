@@ -84,14 +84,14 @@
 </template>
 
 <script>
-import { Status, Tracker, ContextMenu } from '@/components/Issue'
-import { ContextMenuMixins } from '@/newMixins'
+import { Status, Tracker } from '@/components/Issue'
+import { ContextMenu } from '@/newMixins'
 import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'ExpandSection',
-  components: { Status, Tracker, ContextMenu },
-  mixins: [ContextMenuMixins],
+  components: { Status, Tracker },
+  mixins: [ContextMenu],
   props: {
     issue: {
       type: Object,
