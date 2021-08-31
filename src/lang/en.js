@@ -788,7 +788,8 @@ export default {
   PodsList: {
     Pods: 'Pods / Created time',
     Container: 'Container',
-    Image: 'Image'
+    Image: 'Image',
+    ExecuteShellNotify: 'This page provides command-line tool to communicate with your Pod, currently supported commands are:'
   },
   Loading: 'Loading...',
   Updating: 'Updating...',

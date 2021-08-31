@@ -8,8 +8,8 @@
           width="160"
           trigger="hover"
         >
-          <div>本功能提供查看 Pod 相關資訊，目前支援指令為：</div>
-          <div>ls, ls -al, whoami, hostname, pwd, cd 等</div>
+          <div>{{ $t('PodsList.ExecuteShellNotify') }}</div>
+          <div>ls, ls -al, whoami, hostname, pwd, cd</div>
           <em slot="reference" class="ri-information-line ml-3" />
         </el-popover>
       </div>
@@ -70,8 +70,8 @@ export default {
   methods: {
     initSocket() {
       this.socket =
-        // io('/k8s/websocket/pod_exec', {
-        io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
+        io('/k8s/websocket/pod_exec', {
+        // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
           reconnectionAttempts: 5,
           transports: ['websocket']
         })

@@ -785,7 +785,8 @@ export default {
   PodsList: {
     Pods: 'Pods / 建立時間',
     Container: '容器',
-    Image: '映像檔'
+    Image: '映像檔',
+    ExecuteShellNotify: '本功能提供查看 Pod 相關資訊，目前支援指令為：'
   },
   Loading: '讀取中……',
   Updating: '更新中……',
