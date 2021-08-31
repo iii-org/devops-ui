@@ -91,7 +91,7 @@ export default {
     traceabilityMatrix: '需求追溯表',
     changeManagement: '變更管理',
     'Fail Management': '異常管理',
-    testReport: 'DevOps 測試報告',
+    testReport: 'III DevOps 測試彙整',
     deploy: '遠端部署'
   },
   navbar: {
@@ -785,7 +785,8 @@ export default {
   PodsList: {
     Pods: 'Pods / 建立時間',
     Container: '容器',
-    Image: '映像檔'
+    Image: '映像檔',
+    ExecuteShellNotify: '本功能提供查看 Pod 相關資訊，目前支援指令為：'
   },
   Loading: '讀取中……',
   Updating: '更新中……',

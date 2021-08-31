@@ -67,7 +67,7 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
           <template slot-scope="scope">
-            <em v-if="scope.row.commit" class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit)" />
+            <em v-show="scope.row.commit" class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit)" />
           </template>
         </el-table-column>
         <template slot="empty">
