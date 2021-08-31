@@ -177,6 +177,7 @@ export default {
     selectedProject: {
       handler(val) {
         this.getBranchesData()
+        this.commitForm.note = ''
       }
     },
     branches(val) {
@@ -251,6 +252,7 @@ export default {
       }
       if (this.releaseVersions.length === 1) {
         this.commitForm.mainVersion = this.releaseVersions[0]
+        this.commitForm.note = ''
       }
     },
     async release() {
