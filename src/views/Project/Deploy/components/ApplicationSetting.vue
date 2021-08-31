@@ -76,7 +76,7 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Replicas')" prop="resources.replicas">
-                  <el-input v-model="deployForm.resources.replicas" clearable />
+                  <el-input v-model.number="deployForm.resources.replicas" clearable />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -237,7 +237,7 @@ export default {
     const domainValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
         if (
-          (_this.deployForm.network.path !== '' || _this.deployForm.network.path.length > 0) &&
+          (_this.deployForm.network.path && (_this.deployForm.network.path !== '' || _this.deployForm.network.path.length > 0)) &&
           (!value || value === '' || value.length <= 0)
         ) {
           return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Domain'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
@@ -245,14 +245,22 @@ export default {
         return resolve()
       })
     }
-
     const pathValidator = (rule, value) => {
       return new Promise((resolve, reject) => {
         if (
-          (_this.deployForm.network.domain !== '' || _this.deployForm.network.domain.length > 0) &&
+          (_this.deployForm.network.domain && (_this.deployForm.network.domain !== '' || _this.deployForm.network.domain.length > 0)) &&
           (!value || value === '' || value.length <= 0)
         ) {
           return reject(this.$t('Deploy.PairCondition', [this.$t('Deploy.Path'), [this.$t('Deploy.Domain'), this.$t('Deploy.Path')].join(', ')]))
+        }
+        return resolve()
+      })
+    }
+    const numberValidator = (rule, value) => {
+      return new Promise((resolve, reject) => {
+        const valueInt = parseInt(value)
+        if (!valueInt || valueInt <= 0) {
+          return reject(this.$t(`Validation.Input`, [this.$t('Validation.Number')]))
         }
         return resolve()
       })
@@ -273,9 +281,9 @@ export default {
         image: { policy: '' },
         release_id: '',
         resources: {
-          cpu: null,
-          memory: null,
-          replicas: null
+          cpu: '',
+          memory: '',
+          replicas: ''
         },
         network: { type: '', protocol: '', port: '', domain: '', path: '' },
         environments: []
@@ -296,9 +304,9 @@ export default {
         ],
         release_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]), trigger: 'blur' }],
         resources: {
-          cpu: [{ type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'change' }],
-          memory: [{ type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'change' }],
-          replicas: [{ type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'change' }]
+          cpu: [{ validator: numberValidator, trigger: 'change' }],
+          memory: [{ validator: numberValidator, trigger: 'change' }],
+          replicas: [{ validator: numberValidator, trigger: 'change' }]
         },
         network: {
           type: [{ required: true, message: this.$t(`Validation.Select`, [this.$tc('Deploy.Type')]), trigger: 'blur' }],
@@ -362,6 +370,7 @@ export default {
       const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId, { image: true })])).map(item => item.data)
       this.cluster = res[0].cluster
       this.registry = res[1].registries
+      console.log(res[2])
       this.release = res[2].releases
     },
     async getEnvironmentFromRelease(value) {

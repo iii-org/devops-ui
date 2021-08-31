@@ -94,11 +94,10 @@
       :title="$t('Deploy.ApplicationSetting')"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      @closed="onDialogClosed"
     >
-      <ApplicationSetting :id="edit_id" ref="ApplicationSetting" />
+      <ApplicationSetting v-if="dialogVisible" :id="edit_id" ref="ApplicationSetting" />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
         <el-button v-if="edit_id" type="primary" :loading="memberConfirmLoading" @click="handleConfirm(edit_id)">
           {{ $t('general.Save') }}</el-button>
         <el-button v-else type="primary" :loading="memberConfirmLoading" @click="handleConfirm(null)">
@@ -249,9 +248,8 @@ export default {
       })
     },
     onDialogClosed() {
-      this.$nextTick(() => {
-        this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
-      })
+      this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
+      this.dialogVisible = false
     }
   }
 }
