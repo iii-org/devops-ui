@@ -91,7 +91,7 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
           <template slot-scope="scope">
-            <em class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit_id)" />
+            <em v-show="scope.row.commit_id" class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit_id)" />
           </template>
         </el-table-column>
         <template slot="empty">

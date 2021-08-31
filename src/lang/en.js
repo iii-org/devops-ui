@@ -91,7 +91,7 @@ export default {
     traceabilityMatrix: 'Traceability Matrix',
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management',
-    testReport: 'DevOps Test Report',
+    testReport: 'III DevOps Test Report',
     Deploy: 'Deploy'
   },
   navbar: {
