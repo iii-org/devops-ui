@@ -234,6 +234,7 @@ import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import axios from 'axios'
+import { cloneDeep } from 'lodash'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
@@ -414,17 +415,16 @@ export default {
       this.fixed_version = versionList.data.versions
     },
     async getClosable() {
+      let result = true
       try {
         if (this.issueId) {
           const checkClosable = await getCheckIssueClosable(this.issueId)
-          this.checkClosable = checkClosable.data
-        } else {
-          this.checkClosable = true
+          result = checkClosable.data
         }
       } catch (e) {
         // log
       }
-      await this.getDynamicStatusList()
+      await this.getDynamicStatusList(result)
     },
     clearDueDate(val) {
       this.$nextTick(() => {
@@ -434,15 +434,15 @@ export default {
     checkDueDate(startDate) {
       if (new Date(startDate).getTime() >= new Date(this.form.due_date)) this.form.due_date = ''
     },
-    getDynamicStatusList() {
-      const _this = this
-      this.dynamicStatusList = this.status.map((item) => {
-        if (!_this.checkClosable && item.is_closed === true) {
+    getDynamicStatusList(value) {
+      const deepStatus = cloneDeep(this.status)
+      this.$set(this.$data, 'dynamicStatusList', deepStatus.map((item) => {
+        if ((!value) && item.is_closed) {
           item.disabled = true
           item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
         }
         return item
-      })
+      }))
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
