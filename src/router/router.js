@@ -113,7 +113,7 @@ export const asyncRoutes = [
     meta: {
       title: 'singleProject',
       icon: 'el-icon-data-analysis',
-      roles: ['Project Manager', 'Engineer']
+      roles: ['Administrator', 'Project Manager', 'Engineer']
     },
     children: [
       {
