@@ -203,7 +203,7 @@ import { mapGetters } from 'vuex'
 
 const protocol = ['TCP', 'UDP']
 const policy = ['Always', 'Never', 'IfNotPresent']
-const network_type = ['ExternalName', 'ClusterIP', 'NodePort', 'LoadBalancer']
+const network_type = ['ClusterIP', 'NodePort', 'LoadBalancer'] // 'ExternalName',
 const environments_type = ['configmap', 'secret']
 
 export default {
@@ -291,8 +291,16 @@ export default {
       edit: {},
       deployFormRules: {
         name: [{ required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Name')]), trigger: 'blur' }],
-        cluster_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]), trigger: 'blur' }],
-        registry_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]), trigger: 'blur' }],
+        cluster_id: [{
+          required: true,
+          message: this.$t(`Validation.Select`, [this.$t('Deploy.Cluster')]),
+          trigger: 'blur'
+        }],
+        registry_id: [{
+          required: true,
+          message: this.$t(`Validation.Select`, [this.$t('Deploy.Registry')]),
+          trigger: 'blur'
+        }],
         namespace: [
           { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Namespace')]), trigger: 'blur' },
           {
@@ -302,7 +310,11 @@ export default {
             trigger: 'blur'
           }
         ],
-        release_id: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]), trigger: 'blur' }],
+        release_id: [{
+          required: true,
+          message: this.$t(`Validation.Select`, [this.$t('Deploy.Release')]),
+          trigger: 'blur'
+        }],
         resources: {
           cpu: [{ validator: numberValidator, trigger: 'change' }],
           memory: [{ validator: numberValidator, trigger: 'change' }],
@@ -310,7 +322,11 @@ export default {
         },
         network: {
           type: [{ required: true, message: this.$t(`Validation.Select`, [this.$tc('Deploy.Type')]), trigger: 'blur' }],
-          protocol: [{ required: true, message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]), trigger: 'blur' }],
+          protocol: [{
+            required: true,
+            message: this.$t(`Validation.Select`, [this.$t('Deploy.Protocol')]),
+            trigger: 'blur'
+          }],
           port: [
             { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]), trigger: 'blur' },
             { type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'blur' }
@@ -396,7 +412,8 @@ export default {
   padding: 0 20px;
   overflow-y: auto;
 }
-.helper{
+
+.helper {
   line-height: initial;
 }
 </style>
