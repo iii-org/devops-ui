@@ -212,6 +212,7 @@ import html2canvas from 'html2canvas'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
 import TraceCheck from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/TraceCheck'
+import axios from 'axios'
 
 export default {
   name: 'TraceabilityMatrix',
@@ -246,7 +247,8 @@ export default {
         content_type: '',
         src: ''
       },
-      isRotate: false
+      isRotate: false,
+      cancelToken: null
     }
   },
   computed: {
@@ -327,7 +329,8 @@ export default {
   watch: {
     async selectedProjectId() {
       await this.getTrackerMapOptions()
-      this.filterValue.issue_id = []
+      this.$set(this.filterValue, 'issue_id', [])
+      this.$set(this.$data, 'nowFilterValue', { tracker_id: null, issue_id: [] })
       await this.getSearchIssue()
       await this.initChart()
       if (this.$refs['TraceCheck']) {
@@ -338,7 +341,8 @@ export default {
     'filterValue.tracker_id': {
       deep: true,
       async handler() {
-        this.filterValue.issue_id = []
+        this.$set(this.filterValue, 'issue_id', [])
+        this.$set(this.$data, 'nowFilterValue', { tracker_id: null, issue_id: [] })
         await this.getSearchIssue()
       }
     },
@@ -386,13 +390,19 @@ export default {
         this.issueQuery = query
       }
       this.issueLoading = true
+      if (this.cancelToken) {
+        this.cancelToken.cancel()
+      }
+      const CancelToken = axios.CancelToken.source()
+      this.cancelToken = CancelToken
       const issueList = await getProjectIssueList(this.selectedProjectId, {
         tracker_id: this.filterValue.tracker_id,
         selection: true,
         ...querySearch
-      })
-      this.issueList = (issueList.data.issue_list) ? issueList.data.issue_list : issueList.data
+      }, { cancelToken: CancelToken.token })
+      this.issueList = issueList.data
       this.issueLoading = false
+      this.cancelToken = null
     },
     highLight: function(value) {
       if (!value) return ''
