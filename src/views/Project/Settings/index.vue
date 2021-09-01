@@ -153,16 +153,16 @@ export default {
 
 <style lang="scss" scoped>
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-  background: #c5c8cc;
+  background: #e4ecf7 ;
   color: #3e3f41;
   border-top: 5px solid #3e3f41;
-  border-bottom-color: #c5c8cc;
+  border-bottom-color: #e4ecf7 ;
   height: 45px;
 }
 
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item {
   background: #3e3f41;
-  color: #c5c8cc;
+  color: #e4ecf7 ;
   border-radius: 5px;
   width: 125%;
   &:hover {
@@ -171,7 +171,7 @@ export default {
 }
 
 >>> .el-tabs__content {
-  background: #c5c8cc;
+  background: #e4ecf7 ;
   border-radius: 3px;
 }
 
@@ -181,6 +181,6 @@ export default {
 
 >>> .el-tab-pane {
   margin: 15px;
-  background: #c5c8cc;
+  background: #e4ecf7 ;
 }
 </style>
