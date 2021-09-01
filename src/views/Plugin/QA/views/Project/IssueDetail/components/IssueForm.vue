@@ -296,7 +296,7 @@ export default {
 
       relativeIssueList: [],
       isLoading: false,
-      isRecommendRelation: true,
+      isRecommendRelation: false,
       checkClosable: false,
       dynamicStatusList: [],
 
