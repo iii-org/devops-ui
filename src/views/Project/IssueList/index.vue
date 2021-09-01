@@ -31,6 +31,7 @@
     <el-row v-loading="listLoading"
             :element-loading-text="$t('Loading')"
     >
+      <!-- tree-props 取消第二個子議題箭頭-->
       <el-table
         ref="issueList"
         :data="listData"
@@ -38,6 +39,7 @@
         highlight-current-row
         row-key="id"
         height="60vh"
+        :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
         @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"

@@ -1,6 +1,7 @@
 <template>
   <div class="div-container">
     <el-row>
+      <!-- tree-props 取消第二個子議題箭頭-->
       <el-table
         ref="issueList"
         class="w-screen"
@@ -89,7 +90,7 @@
 <script>
 import { getReleaseVersion } from '@/api/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
-import { UTCtoLocalTime } from '@/filters/index'
+import { UTCtoLocalTime } from '@/filters'
 
 export default {
   name: 'ReleaseTable',
@@ -122,8 +123,7 @@ export default {
       return res.data.releases
     },
     formatTime(value) {
-      const time = value.split('.')[0]
-      return time
+      return value.split('.')[0]
     },
     onPagination(listQuery) {
       this.listQuery = listQuery

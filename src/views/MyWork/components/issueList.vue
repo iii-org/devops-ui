@@ -3,6 +3,7 @@
     <el-row v-loading="listLoading"
             :element-loading-text="$t('Loading')"
     >
+      <!-- tree-props 取消第二個子議題箭頭-->
       <el-table
         ref="issueList"
         :data="listData"
