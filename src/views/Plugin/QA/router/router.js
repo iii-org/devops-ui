@@ -155,7 +155,7 @@ export const asyncRoutes = [
     meta: {
       title: 'track',
       icon: 'el-icon-s-marketing',
-      roles: ['QA', 'Administrator'],
+      roles: ['Administrator', 'QA', 'Project Manager'],
       appendRoot: { path: '/scan', position: 'after' }
     },
     children: [
@@ -163,7 +163,7 @@ export const asyncRoutes = [
         path: '',
         name: 'TraceMatrix',
         component: () => import('../views/Track/TraceabilityMatrix'),
-        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA'] }
+        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA', 'Project Manager'] }
       }
     ]
   },
