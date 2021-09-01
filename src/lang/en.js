@@ -1007,6 +1007,7 @@ export default {
     AddVariable: 'Add Variable',
     Key: 'Key | Keys',
     Value: 'Value',
+    Default: '(default)',
     KeyConflicts: '[System Variable] Variable conflicts : Please fix the following variables and re-save. {0}',
     KeyPair: 'Key[{0}] at {1} line.',
     AllNull: 'Please check all {0} are not null',

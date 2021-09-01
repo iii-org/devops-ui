@@ -64,19 +64,19 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.CPU')" prop="resources.cpu">
-                  <el-input v-model.number="deployForm.resources.cpu" clearable />
+                  <el-input v-model.number="deployForm.resources.cpu" clearable :placeholder="$t('Deploy.Default')" />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Memory')" prop="resources.memory">
-                  <el-input v-model.number="deployForm.resources.memory" clearable>
+                  <el-input v-model.number="deployForm.resources.memory" clearable :placeholder="$t('Deploy.Default')">
                     <template slot="append">GB</template>
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Replicas')" prop="resources.replicas">
-                  <el-input v-model.number="deployForm.resources.replicas" clearable />
+                  <el-input v-model.number="deployForm.resources.replicas" clearable :placeholder="$t('Deploy.Default')" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -386,7 +386,6 @@ export default {
       const res = (await Promise.all([getDeployedHostsLists(), getRegistryHostsLists(), getReleaseVersion(this.selectedProjectId, { image: true })])).map(item => item.data)
       this.cluster = res[0].cluster
       this.registry = res[1].registries
-      console.log(res[2])
       this.release = res[2].releases
     },
     async getEnvironmentFromRelease(value) {

@@ -1004,6 +1004,7 @@ export default {
     Path: '路徑',
     EnvironmentVariable: '服務環境變數',
     AddVariable: '新增環境變數',
+    Default: '(系統預設值)',
     Key: '變數名稱',
     Value: '值',
     KeyConflicts: '[服務環境變數] @:(Deploy.Key)重覆定義，請調整後再存檔。 {0}',
