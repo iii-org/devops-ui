@@ -28,10 +28,13 @@
         </contextmenu-submenu>
         <contextmenu-item divider />
         <contextmenu-item @click="toggleRelationDialog('Parent')">{{ $t('Issue.ParentIssue') }}</contextmenu-item>
-        <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('Issue.ChildrenIssue') }}</contextmenu-item>
+        <contextmenu-submenu :title="$t('Issue.ChildrenIssue')">
+          <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}</contextmenu-item>
+          <contextmenu-item @click="advancedAddIssue(false)">{{ $t('Issue.AddSubIssue') }}</contextmenu-item>
+        </contextmenu-submenu>
         <contextmenu-item @click="toggleIssueMatrixDialog">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
         <contextmenu-item divider />
-        <contextmenu-item @click="advancedAddIssue">{{ $t('Issue.CopyIssue') }}</contextmenu-item>
+        <contextmenu-item @click="advancedAddIssue(true)">{{ $t('Issue.CopyIssue') }}</contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog
@@ -89,6 +92,8 @@
       <AddIssue v-if="addTopicDialogVisible"
                 ref="AddIssue"
                 :project-id="row.project.id"
+                :parent-id="parentId"
+                :parent-name="parentName"
                 :prefill="form"
                 :save-data="saveIssue"
                 @loading="loadingUpdate"
@@ -171,6 +176,8 @@ export default {
       fixed_version: [],
       addTopicDialogVisible: false,
       LoadingConfirm: false,
+      parentId: 0,
+      parentName: null,
       form: {},
       originForm: {}
     }
@@ -358,7 +365,7 @@ export default {
     handleCloseDialog() {
       this.addTopicDialogVisible = false
     },
-    setFormData(data) {
+    setFormData(data, copy) {
       const {
         project,
         parent,
@@ -374,10 +381,11 @@ export default {
         due_date,
         description
       } = data
+      this.form = {}
       this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.subject = name + '(' + this.$t('Issue.Copy') + ')'
+      this.form.subject = (copy) ? name + '(' + this.$t('Issue.Copy') + ')' : name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
@@ -389,10 +397,16 @@ export default {
       this.form.description = description === null ? '' : description
       this.originForm = Object.assign({}, this.form)
     },
-    advancedAddIssue() {
-      this.setFormData(this.row)
+    advancedAddIssue(copy) {
+      if (copy) {
+        this.setFormData(this.row, copy)
+        this.parentId = 0
+        this.parentName = null
+      } else {
+        this.parentId = this.row.id
+        this.parentName = this.row.name
+      }
       this.addTopicDialogVisible = true
-      this.parentId = 0
     },
     loadingUpdate(value) {
       this.LoadingConfirm = value
