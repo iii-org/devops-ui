@@ -22,7 +22,7 @@
       </div>
     </div>
     <div ref="pdfPage">
-      <el-card>
+      <el-card class="shadow-md">
         <div class="logo-container">
           <img src="@/assets/logo.png" class="logo">
           <h1 class="title">{{ title }} </h1>
@@ -85,6 +85,13 @@
           </el-table>
           <ToolBar>
             <span slot="toolName">CheckMarx</span>
+            <span slot="warning" style="font-size: 14px;">
+              * {{ $t('TestReport.WarningPartOne') }}
+              <el-link type="primary" :underline="false" target="_blank" :href="dev3CheckMarxLink">
+                {{ $t('TestReport.CheckMarxReport') }}
+              </el-link>
+              {{ $t('TestReport.WarningPartTwo') }}
+            </span>
             <el-button slot="link" type="text" icon="el-icon-download" :disabled="Object.keys(checkMarxData[0]).length === 0" @click="openCheckMarx">
               {{ $t('TestReport.DetailReport') }}
             </el-button>
@@ -312,7 +319,8 @@ export default {
       sonarQubeLink: '',
       downloadFileName: 'DevOps_test_report',
       dataName: ['sonarQubeData', 'checkMarxData', 'zapData', 'webInspectData', 'postmanData', 'sideexData'],
-      dataTimeArr: []
+      dataTimeArr: [],
+      dev3CheckMarxLink: 'http://dev3.iiidevops.org/#/scan/checkmarx'
     }
   },
   computed: {

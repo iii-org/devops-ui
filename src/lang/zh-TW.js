@@ -938,7 +938,10 @@ export default {
     DownloadPdf: '下載 PDF',
     DownloadCsv: '下載 CSV',
     DownloadExcel: '下載 EXCEL',
-    Item: '項'
+    Item: '項',
+    WarningPartOne: '若尚無數據，請連入',
+    WarningPartTwo: '確認報告是否已產出',
+    CheckMarxReport: 'CheckMarx 報告區'
   },
   ProjectSettings: {
     GeneralSettings: '一般設定',

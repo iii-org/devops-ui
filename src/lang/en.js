@@ -939,7 +939,10 @@ export default {
     DownloadPdf: 'Download PDF',
     DownloadCsv: 'Download CSV',
     DownloadExcel: 'Download EXCEL',
-    Item: 'items'
+    Item: 'items',
+    WarningPartOne: 'If no data, please connect',
+    WarningPartTwo: 'to confirm whether the report has been produced',
+    CheckMarxReport: 'CheckMarx'
   },
   ProjectSettings: {
     GeneralSettings: 'General Settings',
