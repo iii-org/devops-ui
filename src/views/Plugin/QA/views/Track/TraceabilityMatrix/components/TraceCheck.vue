@@ -140,6 +140,7 @@ export default {
       } else if (!this.intervalTimer) {
         this.intervalTimer = window.setInterval(this.loadData, 5000)
       }
+      return Promise.resolve()
     },
     async getTraceCheck() {
       try {
@@ -157,6 +158,7 @@ export default {
         this.intervalTimer = null
       }
       this.traceCheck = []
+      return Promise.resolve()
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)

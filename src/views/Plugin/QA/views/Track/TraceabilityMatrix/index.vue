@@ -331,12 +331,12 @@ export default {
       await this.getTrackerMapOptions()
       this.$set(this.filterValue, 'issue_id', [])
       this.$set(this.$data, 'nowFilterValue', { tracker_id: null, issue_id: [] })
-      await this.getSearchIssue()
-      await this.initChart()
       if (this.$refs['TraceCheck']) {
         await this.$refs['TraceCheck'].resetData()
         await this.$refs['TraceCheck'].loadData()
       }
+      await this.getSearchIssue()
+      await this.initChart()
     },
     'filterValue.tracker_id': {
       deep: true,
