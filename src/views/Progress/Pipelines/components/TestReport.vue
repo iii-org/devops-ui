@@ -359,7 +359,7 @@ export default {
         this.getDataTime()
         this.listLoading = false
       } catch (error) {
-        console.log(error)
+        console.error(error)
         this.listLoading = false
       }
     },

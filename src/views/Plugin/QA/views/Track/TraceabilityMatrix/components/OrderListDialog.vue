@@ -140,7 +140,7 @@ export default {
               type: 'success'
             })
           } catch (e) {
-            console.log(e)
+            console.error(e)
           }
           await this.$emit('update')
           this.$refs['trackerOrderForm'].resetFields()
@@ -170,7 +170,7 @@ export default {
             type: 'success'
           })
         } catch (e) {
-          console.log(e)
+          console.error(e)
         }
         await this.$emit('update')
       }
@@ -188,7 +188,7 @@ export default {
           type: 'success'
         })
       } catch (e) {
-        console.log(e)
+        console.erroe(e)
         this.$set(row, 'default', !row.default)
       }
       await this.$emit('update')
@@ -202,7 +202,7 @@ export default {
           type: 'success'
         })
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
       await this.$emit('update')
     },

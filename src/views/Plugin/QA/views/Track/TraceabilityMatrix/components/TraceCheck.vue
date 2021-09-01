@@ -148,7 +148,7 @@ export default {
         this.traceCheck = res.data
         return Promise.resolve(res.data)
       } catch (e) {
-        console.log(e)
+        console.error(e)
         return Promise.reject(e)
       }
     },

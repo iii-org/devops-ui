@@ -628,7 +628,7 @@ export default {
           type: 'success'
         })
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
       await this.getTrackerMapOptions()
     },
@@ -640,7 +640,7 @@ export default {
         this.traceCheck = res.data
         await this.$refs['TraceCheck'].loadData()
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
       this.listLoading = false
     },

@@ -97,7 +97,7 @@ export default {
     },
     setCmdResponseListener() {
       this.socket.on('get_cmd_response', sioEvt => {
-        console.log('get_cmd_response ===>', sioEvt)
+        // console.log('get_cmd_response ===>', sioEvt)
         const { output } = sioEvt
         let str = output || sioEvt
         str = str.replace(/\n/g, '\r\n')
@@ -126,7 +126,7 @@ export default {
         try {
           fitAddon.fit()
         } catch (error) {
-          console.log(error)
+          console.error(error)
         }
       }
     },
@@ -173,7 +173,7 @@ export default {
         command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
-      console.log('emit ===>', emitObj)
+      // console.log('emit ===>', emitObj)
     }
   }
 }
