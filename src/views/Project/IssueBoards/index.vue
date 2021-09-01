@@ -472,7 +472,7 @@ export default {
       let versionList = await getProjectVersion(this.selectedProjectId, params)
       versionList = versionList.data.versions
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
-      const version = this.fixed_version.filter((item) => ((new Date(item.due_date) >= new Date()) && item.status !== 'closed'))
+      const version = this.fixed_version.filter((item) => ((new Date(`${item.due_date}T23:59:59`) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
         if (Object.keys(this.kanbanFilter).length === 0 && Object.keys(this.originFilterValue).length === 0) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
