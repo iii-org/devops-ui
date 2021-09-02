@@ -18,7 +18,7 @@
             filterable
             class="project"
             :clearable="clearable"
-            @focus="checkUnsavedChanges"
+            @click.native="checkUnsavedChanges"
             @blur="selectVisible = false"
             @change="setChange"
           >
@@ -89,14 +89,6 @@ export default {
     clearable: {
       type: Boolean,
       default: false
-    },
-    hasUnsavedChanges: {
-      type: Boolean,
-      default: false
-    },
-    isConfirmLeave: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
@@ -121,6 +113,7 @@ export default {
       handler(val) {
         if (!this.keepSelection) return
         this.$nextTick(() => (this.projectValue = (!val || val) === -1 ? '' : val))
+        this.$parent.isConfirmLeave = false
       }
     },
     projectValue(value) {
@@ -198,13 +191,19 @@ export default {
         })
       )
     },
-    checkUnsavedChanges(event) {
-      if (this.isConfirmLeave) return
-      if (this.hasUnsavedChanges) {
-        setTimeout(() => {
-          this.$refs.selectProject.blur()
-        }, 50)
-        this.$emit('checkUnsavedChanges')
+    async checkUnsavedChanges(event) {
+      if (this.$parent.isConfirmLeave) return
+      if (this.$parent.hasUnsavedChanges) {
+        this.$refs.selectProject.blur()
+        await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            this.$parent.isConfirmLeave = true
+          })
+          .catch(() => {})
       }
     }
   }

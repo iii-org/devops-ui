@@ -138,17 +138,12 @@ export default {
     disabled() {
       return !!this.form.kubeConfigFile
     },
-    isFormDataChanged() {
+    isClusterFormChanged() {
       if (this.originData.length === 0) return false
       for (const key in this.form) {
         if (this.originData[key] !== this.form[key]) return true
       }
       return false
-    }
-  },
-  watch: {
-    isFormDataChanged(val) {
-      this.$emit('isClusterFormChanged', val)
     }
   },
   methods: {
@@ -208,6 +203,7 @@ export default {
     },
     rowClicked(row) {
       this.editingId = row.id
+      this.isSaved = false
       this.fetchDeployedHostsByList(row.id)
       this.updateStatus = 'UPDATE_PUT'
       this.showAddClusterPage = true
@@ -224,7 +220,7 @@ export default {
       this.showAddClusterPage = true
     },
     async handleBackPage() {
-      if (this.isFormDataChanged) {
+      if (this.isClusterFormChanged) {
         if (this.isSaved) return
         const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),

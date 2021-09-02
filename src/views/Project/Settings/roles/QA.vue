@@ -1,12 +1,8 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector
-      :has-unsaved-changes="hasUnsavedChanges"
-      :is-confirm-leave="isConfirmLeave"
-      @checkUnsavedChanges="checkShowDialog"
-    />
+    <ProjectListSelector />
     <el-divider />
-    <el-tabs v-model="tabActiveName" type="card">
+    <el-tabs v-model="tabActiveName" type="card" :before-leave="beforeLeave">
       <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
         <el-row v-if="selectedProjectId !== -1" :gutter="10">
           <el-col class="mb-4" :xs="24">
@@ -24,26 +20,10 @@
       </el-tab-pane>
       <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings">
         <el-card>
-          <AlertSettings @setHasUnsavedChanges="setHasUnsavedChanges" />
+          <AlertSettings ref="alertSettings" />
         </el-card>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog
-      :title="$t('general.Warning')"
-      :visible.sync="dialogVisible"
-      top="40vh"
-      width="420px"
-      destroy-on-close
-    >
-      <span>
-        <i class="el-icon-warning text-lg" style="color: #E6A23C;" />
-        <span class="text-base">{{ $t('Notify.UnSavedChanges') }}</span>
-      </span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" @click="handleConfirmLeave">{{ $t('general.Confirm') }}</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -51,7 +31,6 @@
 import { ProjectMembers } from '../components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { changeProjectAlertSettings, getAlertSettingsByProject, updateAlertSettingsByProject } from '@/api/alert'
 
 export default {
   name: 'QA',
@@ -61,9 +40,12 @@ export default {
     return {
       activeNames: [],
       tabActiveName: 'generalSettings',
-      hasUnsavedChanges: false,
-      dialogVisible: false,
       isConfirmLeave: false
+    }
+  },
+  computed: {
+    hasUnsavedChanges() {
+      return this.$refs.alertSettings.hasUnsavedChanges
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -109,16 +91,34 @@ export default {
         return []
       }
     },
-    setHasUnsavedChanges(hasUnsavedChanges) {
-      this.hasUnsavedChanges = hasUnsavedChanges
+    beforeLeave() {
+      if (this.isConfirmLeave) return true
+      if (this.hasUnsavedChanges) return this.showLeaveMessage()
     },
-    checkShowDialog() {
-      if (this.isConfirmLeave) return
-      this.dialogVisible = true
-    },
-    handleConfirmLeave() {
-      this.dialogVisible = false
-      this.isConfirmLeave = true
+    /*
+      if return false or reject(), then it will prevent switching
+      return true or resolve() on the contrary
+      suggested to return reject() or resolve() because it will sometimes invalid when returned true or false
+    */
+    showLeaveMessage() {
+      const isLeave = new Promise(async(resolve, reject) => {
+        return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            this.isConfirmLeave = true
+            return resolve()
+          })
+          .catch(() => {
+            return reject()
+          })
+          .finally(() => {
+            return reject()
+          })
+      })
+      return isLeave
     }
   }
 }

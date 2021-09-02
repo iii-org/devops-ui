@@ -128,17 +128,12 @@ export default {
     }
   },
   computed: {
-    isFormDataChanged() {
+    isRegistryFormChanged() {
       if (this.originData.length === 0) return false
       for (const key in this.form) {
         if (this.originData[key] !== this.form[key]) return true
       }
       return false
-    }
-  },
-  watch: {
-    isFormDataChanged(val) {
-      this.$emit('isRegistryFormChanged', val)
     }
   },
   methods: {
@@ -193,7 +188,7 @@ export default {
       this.showAddRegistryPage = true
     },
     async handleBackPage() {
-      if (this.isFormDataChanged) {
+      if (this.isRegistryFormChanged) {
         if (this.isSaved) return
         const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),
@@ -220,6 +215,7 @@ export default {
     },
     rowClicked(row) {
       this.editingId = row.registries_id
+      this.isSaved = false
       this.setFormData(row)
       this.updateStatus = 'UPDATE_PUT'
       this.showAddRegistryPage = true

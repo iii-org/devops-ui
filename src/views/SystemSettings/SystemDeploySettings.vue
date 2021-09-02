@@ -1,39 +1,19 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector
-      :has-unsaved-changes="hasUnsavedChanges"
-      :is-confirm-leave="isConfirmLeave"
-      @checkUnsavedChanges="checkShowDialog"
-    />
+    <ProjectListSelector />
     <el-divider />
-    <el-tabs v-model="tabActiveName" type="card">
+    <el-tabs v-model="tabActiveName" type="card" :before-leave="beforeLeave">
       <el-tab-pane label="Cluster" name="cluster">
         <el-card>
-          <Cluster @isClusterFormChanged="checkFormDataChanged" />
+          <Cluster ref="cluster" />
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="Registry" name="registry">
         <el-card>
-          <Registry @isRegistryFormChanged="checkFormDataChanged" />
+          <Registry ref="registry" />
         </el-card>
       </el-tab-pane>
     </el-tabs>
-    <el-dialog
-      :title="$t('general.Warning')"
-      :visible.sync="dialogVisible"
-      top="40vh"
-      width="420px"
-      destroy-on-close
-    >
-      <span>
-        <i class="el-icon-warning text-lg" style="color: #E6A23C;" />
-        <span class="text-base">{{ $t('Notify.UnSavedChanges') }}</span>
-      </span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" @click="handleConfirmLeave">{{ $t('general.Confirm') }}</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -46,7 +26,7 @@ export default {
   name: 'SystemDeploySettings',
   components: { ProjectListSelector, Cluster, Registry },
   beforeRouteLeave(to, from, next) {
-    if (this.hasUnsavedChanges) {
+    if (this.isFormDataChanged) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel'),
@@ -66,22 +46,48 @@ export default {
   data() {
     return {
       tabActiveName: 'cluster',
-      hasUnsavedChanges: false,
-      isConfirmLeave: false,
-      dialogVisible: false
+      isConfirmLeave: false
+    }
+  },
+  computed: {
+    isFormDataChanged() {
+      return this.$refs.cluster.isClusterFormChanged || this.$refs.registry.isRegistryFormChanged
     }
   },
   methods: {
-    checkFormDataChanged(bool) {
-      this.hasUnsavedChanges = bool
+    beforeLeave() {
+      if (this.isConfirmLeave) return true
+      if (this.isFormDataChanged) return this.showLeaveMessage()
     },
-    checkShowDialog() {
-      if (this.isConfirmLeave) return
-      this.dialogVisible = true
+    /*
+      if return false or reject(), then it will prevent switching
+      return true or resolve() on the contrary
+      suggested to return reject() or resolve() because it will sometimes invalid when returned true or false
+    */
+    showLeaveMessage() {
+      const isLeave = new Promise(async(resolve, reject) => {
+        return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            this.isConfirmLeave = true
+            this.initTabsStatus()
+            return resolve()
+          })
+          .catch(() => {
+            return reject()
+          })
+          .finally(() => {
+            return reject()
+          })
+      })
+      return isLeave
     },
-    handleConfirmLeave() {
-      this.dialogVisible = false
-      this.isConfirmLeave = true
+    initTabsStatus() {
+      this.$refs.registry.showAddRegistryPage = false
+      this.$refs.cluster.showAddClusterPage = false
     }
   }
 }

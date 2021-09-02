@@ -82,9 +82,6 @@ export default {
     }
   },
   watch: {
-    hasUnsavedChanges(val) {
-      this.$emit('setHasUnsavedChanges', val)
-    },
     selectedProjectId: {
       handler(val) {
         if (val !== -1) this.disableSwitch = false
