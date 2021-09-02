@@ -1015,7 +1015,8 @@ export default {
     KeyPair: 'Key[{0}] at {1} line.',
     AllNull: 'Please check all {0} are not null',
     PairCondition: 'Please input {0}. {1} are a pair condition.',
-    ReleaseHelper: 'above release version requires an image included.'
+    ReleaseHelper: 'above release version requires an image included.',
+    NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.'
   },
   Validation: {
     Input: 'Please Input {0}',

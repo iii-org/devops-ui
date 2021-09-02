@@ -190,6 +190,7 @@
               </el-col>
             </el-row>
           </template>
+          <el-empty v-else :description="$t('Deploy.NoSetting')" />
         </el-row>
       </el-col>
     </el-row>

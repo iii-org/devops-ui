@@ -1014,7 +1014,8 @@ export default {
     KeyPair: '@:(Deploy.Key)[{0}]： 第{1}行',
     AllNull: '請確認所有的 {0} 都已輸入',
     PairCondition: '請輸入{0}。 {1} 是一組條件。',
-    ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。'
+    ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。',
+    NoSetting: '服務尚未建立，請洽系統管理員'
   },
   Validation: {
     Input: '請輸入 {0}',
