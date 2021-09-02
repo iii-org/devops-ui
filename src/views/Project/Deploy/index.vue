@@ -115,7 +115,7 @@ import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSet
 import Status from './components/Status'
 
 export default {
-  name: 'ProjectFiles',
+  name: 'Deploy',
   components: { ApplicationSetting, ElTableColumnTime, Status },
   filters: {
     getActionIcon(value) {

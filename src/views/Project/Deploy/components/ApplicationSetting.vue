@@ -12,7 +12,7 @@
           <el-row>
             <el-col :md="12">
               <el-form-item :label="$t('Deploy.Cluster')" prop="cluster_id">
-                <el-select v-model="deployForm.cluster_id">
+                <el-select v-model="deployForm.cluster_id" :disabled="cluster.length<=0">
                   <el-option v-for="item in cluster" :key="item.id" :label="item.name" :value="item.id"
                              :disabled="item.disabled"
                   />
@@ -21,7 +21,7 @@
             </el-col>
             <el-col :md="12">
               <el-form-item :label="$t('Deploy.Registry')" prop="registry_id">
-                <el-select v-model="deployForm.registry_id">
+                <el-select v-model="deployForm.registry_id" :disabled="registry.length<=0">
                   <el-option v-for="item in registry" :key="item.registries_id" :label="item.name"
                              :value="item.registries_id"
                              :disabled="item.disabled"

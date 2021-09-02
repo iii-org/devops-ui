@@ -92,7 +92,7 @@ export default {
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management',
     testReport: 'III DevOps Test Report',
-    Deploy: 'Deploy'
+    deploy: 'Deploy'
   },
   navbar: {
     logOut: 'Log Out',
