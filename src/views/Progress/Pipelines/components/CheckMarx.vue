@@ -4,7 +4,7 @@
       <span slot="toolName">CheckMarx</span>
       <span slot="warning" style="font-size: 14px;">
         * {{ $t('TestReport.WarningPartOne') }}
-        <el-link type="primary" :underline="false" target="_blank" :href="dev3CheckMarxLink">
+        <el-link type="primary" :underline="false" target="_blank" @click="openDevCheckMarx">
           {{ $t('TestReport.CheckMarxReport') }}
         </el-link>
         {{ $t('TestReport.WarningPartTwo') }}
@@ -68,11 +68,6 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      dev3CheckMarxLink: 'http://dev3.iiidevops.org/#/scan/checkmarx'
-    }
-  },
   computed: {
     disabled() {
       return this.checkMarxData[0] ? Object.keys(this.checkMarxData[0]).length === 0 : true
@@ -117,6 +112,10 @@ export default {
         if (reportId > 0) this.fetchReportStatus(reportId)
       })
       this.listLoading = false
+    },
+    openDevCheckMarx() {
+      const routeUrl = this.$router.resolve({ name: 'checkmarx' })
+      window.open(routeUrl.href, '_blank')
     }
   }
 }
