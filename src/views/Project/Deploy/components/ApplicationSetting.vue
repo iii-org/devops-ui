@@ -76,7 +76,9 @@
               </el-col>
               <el-col :md="12">
                 <el-form-item :label="$t('Deploy.Replicas')" prop="resources.replicas">
-                  <el-input v-model.number="deployForm.resources.replicas" clearable :placeholder="$t('Deploy.Default')" />
+                  <el-input v-model.number="deployForm.resources.replicas" clearable
+                            :placeholder="$t('Deploy.Default')"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -190,7 +192,13 @@
               </el-col>
             </el-row>
           </template>
-          <el-empty v-else :description="$t('Deploy.NoSetting')" />
+          <el-empty v-else>
+            <template slot="description">
+              <span class="text-danger">
+                {{ $t('Deploy.NoSetting') }}
+              </span>
+            </template>
+          </el-empty>
         </el-row>
       </el-col>
     </el-row>
