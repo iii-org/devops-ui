@@ -119,7 +119,7 @@
                                 :open-delay="300"
                                 :close-delay="50"
                               >
-                                <p :id="`copy-${serviceIdx}`" class="text-center">
+                                <p class="text-center">
                                   <span class="text-title">
                                     {{ service.url }}
                                   </span>
@@ -129,7 +129,7 @@
                                     icon="el-icon-copy-document"
                                     circle
                                     size="mini"
-                                    @click="copyUrl(`copy-${serviceIdx}`)"
+                                    @click="copyUrl(service.url)"
                                   />
                                 </div>
                                 <el-link
@@ -241,15 +241,13 @@ export default {
       }
       return typeMap[type] || ''
     },
-    copyUrl(id) {
-      const target = document.getElementById(id)
-      window.getSelection().selectAllChildren(target)
-      document.execCommand('Copy')
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Copied'),
-        type: 'success'
-      })
+    copyUrl(text) {
+      this.$copyText(text).then(
+        this.$message({
+          message: this.$t('general.copied'),
+          type: 'info'
+        })
+      )
     },
     async handleDelete(pId, branchName) {
       this.btnLoading = true
@@ -269,28 +267,16 @@ export default {
       }
       return colorMap[type] || '#f9fafc'
     },
-    formatEnvironments(pods) {
-      const result = pods.map(pod => ({
-        branch: pod.branch,
-        commit_id: pod.commit_id,
-        commit_url: pod.commit_url,
-        pods: pod.pods.map(pod => ({
-          name: pod.pod_name,
-          type: pod.type,
-          containers: pod.containers.map(container => ({
-            state: container.status.state,
-            name: container.name,
-            start_time: container.status.time,
-            services: container.service_port_mapping.map(service => ({
-              services: service.services.map(service => ({
-                type: service.service_type,
-                label: `${service.service_type} (post:${service.target_port})`,
-                url: service.url[0]
-              }))
-            }))
-          }))
-        }))
-      }))
+    formatEnvironments(envInfos) {
+      const result = envInfos.map(envInfo => {
+        const { branch, commit_id, commit_url, pods } = envInfo
+        return {
+          branch,
+          commit_id,
+          commit_url,
+          pods: this.formatPods(pods)
+        }
+      })
       result.forEach(item => {
         item.pods = item.pods.reduce((groups, item) => {
           const val = item['type']
@@ -300,13 +286,40 @@ export default {
         }, {})
       })
       return result
+    },
+    formatPods(pods) {
+      return pods.map(pod => {
+        const { pod_name, type, containers } = pod
+        return {
+          name: pod_name,
+          type: type,
+          containers: this.formatContainers(containers)
+        }
+      })
+    },
+    formatContainers(containers) {
+      return containers.map(container => {
+        const { status, name, service_port_mapping } = container
+        return {
+          state: status.state,
+          name: name,
+          start_time: status.time,
+          services: service_port_mapping.map(service => ({
+            services: service.services.map(service => ({
+              type: service.service_type,
+              label: `${service.service_type} (post:${service.target_port})`,
+              url: service.url[0]
+            }))
+          }))
+        }
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.pod-border{
+.pod-border {
   border: 1px solid #bbb;
 }
 </style>
