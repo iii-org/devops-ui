@@ -87,12 +87,12 @@ import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
 import { getProjectCommitTestSummary } from '@/api/projects'
 import XLSX from 'xlsx'
-import SonarQube from '@/views/Progress/Pipelines/components/SonarQube'
-import CheckMarx from '@/views/Progress/Pipelines/components/CheckMarx'
-import Zap from '@/views/Progress/Pipelines/components/Zap'
-import WebInspect from '@/views/Progress/Pipelines/components/WebInspect'
-import Postman from '@/views/Progress/Pipelines/components/Postman'
-import Sideex from '@/views/Progress/Pipelines/components/Sideex'
+import SonarQube from '@/views/Progress/Pipelines/components/SonarQubeReport'
+import CheckMarx from '@/views/Progress/Pipelines/components/CheckMarxReport'
+import Zap from '@/views/Progress/Pipelines/components/ZapReport'
+import WebInspect from '@/views/Progress/Pipelines/components/WebInspectReport'
+import Postman from '@/views/Progress/Pipelines/components/PostmanReport'
+import Sideex from '@/views/Progress/Pipelines/components/SideexReport'
 
 export default {
   name: 'TestReport',
