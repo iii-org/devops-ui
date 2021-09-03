@@ -158,9 +158,7 @@ export default {
     async updateDeployHostsById() {
       await updateDeployHostsById(this.editingId, this.updatedFormData)
         .then(() => {
-          this.loadData()
-          this.showAddClusterPage = false
-          this.showUpdateMessage()
+          this.initClusterTab()
         })
         .catch(err => {
           console.error(err)
@@ -169,9 +167,7 @@ export default {
     async addDeployHosts() {
       await addDeployHosts(this.updatedFormData)
         .then(() => {
-          this.loadData()
-          this.showAddClusterPage = false
-          this.showUpdateMessage()
+          this.initClusterTab()
         })
         .catch(err => {
           console.error(err)
@@ -234,6 +230,12 @@ export default {
       this.hasUploadfile = false
       this.showAddClusterPage = false
     },
+    initClusterTab() {
+      this.loadData()
+      this.showAddClusterPage = false
+      this.showUpdateMessage()
+      this.updatedFormData = {}
+    },
     initFormData() {
       this.form = {
         clusterName: '',
@@ -247,9 +249,11 @@ export default {
     },
     getUpdateFormData() {
       const formData = {}
+      const encodedData = btoa(this.form.kubeConfigFile)
       formData.name = this.form.clusterName
       formData.disabled = this.form.disabled
-      formData.k8s_config_file = this.hasUploadfile ? this.hasUploadfile : this.form.kubeConfigFile
+      formData.k8s_config_file = this.hasUploadfile
+      formData.k8s_config_str = encodedData
       Object.assign(this.updatedFormData, formData)
     },
     handleSave() {
