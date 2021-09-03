@@ -293,7 +293,7 @@ export default {
         assigned_to_id: '',
         subject: '',
         fixed_version_id: '',
-        tracker_id: 8,
+        tracker_id: 0,
         status_id: 1,
         priority_id: 3,
         estimated_hours: 0,
@@ -400,10 +400,11 @@ export default {
         await this.fetchIssue()
       } else {
         this.form.project_id = this.selectedProjectId
+        const tracker = this.$refs['IssueForm'].tracker.find(item => item.name === 'Test Plan')
+        this.form.tracker_id = tracker.id
         if (this.test_filename) {
           this.test_files.push({ ...this.test_filename, edit: true })
           this['removeFileName']()
-          this.form.tracker_id = 8
         }
       }
       this.isLoading = false
