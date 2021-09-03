@@ -2,7 +2,7 @@
   <div class="app-container">
     <ProjectListSelector />
     <el-divider />
-    <el-tabs v-model="tabActiveName" type="card" :before-leave="beforeLeave">
+    <el-tabs v-model="tabActiveName" type="card" :before-leave="checkBeforeLeave">
       <el-tab-pane label="Cluster" name="cluster">
         <el-card>
           <Cluster ref="cluster" />
@@ -26,7 +26,7 @@ export default {
   name: 'SystemDeploySettings',
   components: { ProjectListSelector, Cluster, Registry },
   beforeRouteLeave(to, from, next) {
-    if (this.isFormDataChanged) {
+    if (this.hasUnsavedChanges) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
         confirmButtonText: this.$t('general.Confirm'),
         cancelButtonText: this.$t('general.Cancel'),
@@ -50,14 +50,14 @@ export default {
     }
   },
   computed: {
-    isFormDataChanged() {
+    hasUnsavedChanges() {
       return this.$refs.cluster.isClusterFormChanged || this.$refs.registry.isRegistryFormChanged
     }
   },
   methods: {
-    beforeLeave() {
+    checkBeforeLeave() {
       if (this.isConfirmLeave) return true
-      if (this.isFormDataChanged) return this.showLeaveMessage()
+      if (this.hasUnsavedChanges) return this.showLeaveMessage()
     },
     /*
       if return false or reject(), then it will prevent switching
