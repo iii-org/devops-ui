@@ -91,7 +91,7 @@
           </el-col>
           <el-col :span="24" :sm="13">
             <el-form-item :label="$t('general.Password')">
-              <el-input v-model="form.password" show-password />
+              <el-input v-model="form.password" show-password :placeholder="$t('SystemDeploySettings.FillInPassword')" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -167,9 +167,9 @@ export default {
     },
     async updateHostsDisabled(row) {
       const { name, disabled, url, access_key, access_secret, type, description } = row
-      const registry_id = row.registries_id
+      const registries_id = row.registries_id
       const data = { name, disabled, type, description, insecure: true, login_server: url, access_key, access_secret }
-      await updateRegistryHostsById(registry_id, data)
+      await updateRegistryHostsById(registries_id, data)
         .then(() => {
           this.loadData()
           this.showUpdateMessage()
