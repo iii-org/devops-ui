@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-import { isJSON, fileSizeToMB, containSpecialChar } from '@/utils/extension'
+import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
 export default {
   name: 'IssueFileUploader',
@@ -33,7 +33,7 @@ export default {
   methods: {
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isJSON(raw.type)) {
+      if (!isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
