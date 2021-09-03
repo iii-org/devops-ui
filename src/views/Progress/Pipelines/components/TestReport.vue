@@ -42,36 +42,36 @@
             </li>
           </ul>
           <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
-          <SonarQube
+          <SonarQubeReport
             ref="sonarQube"
             :sonar-qube-data="sonarQubeData"
             :sonar-qube-link="sonarQubeLink"
             :list-loading="listLoading"
           />
-          <CheckMarx
+          <CheckMarxReport
             ref="checkMarx"
             :check-marx-data="checkMarxData"
             :list-loading="listLoading"
           />
           <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
-          <Zap
+          <ZapReport
             ref="zap"
             :zap-data="zapData"
             :list-loading="listLoading"
           />
-          <WebInspect
+          <WebInspectReport
             ref="webInspect"
             :web-inspect-data="webInspectData"
             :list-loading="listLoading"
           />
           <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
-          <Postman
+          <PostmanReport
             ref="postman"
             :postman-data="postmanData"
             :list-loading="listLoading"
           />
           <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
-          <Sideex
+          <SideexReport
             ref="sideex"
             :sideex-data="sideexData"
             :list-loading="listLoading"
@@ -87,16 +87,16 @@ import { mapGetters } from 'vuex'
 import { UTCtoLocalTime } from '@/filters/index'
 import { getProjectCommitTestSummary } from '@/api/projects'
 import XLSX from 'xlsx'
-import SonarQube from '@/views/Progress/Pipelines/components/SonarQubeReport'
-import CheckMarx from '@/views/Progress/Pipelines/components/CheckMarxReport'
-import Zap from '@/views/Progress/Pipelines/components/ZapReport'
-import WebInspect from '@/views/Progress/Pipelines/components/WebInspectReport'
-import Postman from '@/views/Progress/Pipelines/components/PostmanReport'
-import Sideex from '@/views/Progress/Pipelines/components/SideexReport'
+import SonarQubeReport from '@/views/Progress/Pipelines/components/SonarQubeReport'
+import CheckMarxReport from '@/views/Progress/Pipelines/components/CheckMarxReport'
+import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
+import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
+import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
+import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
 
 export default {
   name: 'TestReport',
-  components: { SonarQube, CheckMarx, Zap, WebInspect, Postman, Sideex },
+  components: { SonarQubeReport, CheckMarxReport, ZapReport, WebInspectReport, PostmanReport, SideexReport },
   data() {
     return {
       title: 'III DevOps',
