@@ -43,35 +43,41 @@
           </ul>
           <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
           <SonarQubeReport
+            v-show="sonarQubeData"
             ref="sonarQube"
             :sonar-qube-data="sonarQubeData"
             :sonar-qube-link="sonarQubeLink"
             :list-loading="listLoading"
           />
           <CheckMarxReport
+            v-show="checkMarxData"
             ref="checkMarx"
             :check-marx-data="checkMarxData"
             :list-loading="listLoading"
           />
           <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
           <ZapReport
+            v-show="zapData"
             ref="zap"
             :zap-data="zapData"
             :list-loading="listLoading"
           />
           <WebInspectReport
+            v-show="webInspectData"
             ref="webInspect"
             :web-inspect-data="webInspectData"
             :list-loading="listLoading"
           />
           <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
           <PostmanReport
+            v-show="postmanData"
             ref="postman"
             :postman-data="postmanData"
             :list-loading="listLoading"
           />
           <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
           <SideexReport
+            v-show="sideexData"
             ref="sideex"
             :sideex-data="sideexData"
             :list-loading="listLoading"
@@ -136,13 +142,15 @@ export default {
       this.listLoading = true
       try {
         const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
-        this.sonarQubeData = this.handleSonarQubeData(res.data.sonarqube.history)
-        this.sonarQubeLink = res.data.sonarqube.link
-        this.checkMarxData.push(res.data.checkmarx)
-        this.zapData.push(res.data.zap)
-        this.webInspectData.push(res.data.webinspect)
-        this.postmanData.push(res.data.postman)
-        this.sideexData.push(res.data.sideex)
+        if (res.data.sonarqube) {
+          this.sonarQubeData = this.handleSonarQubeData(res.data.sonarqube.history)
+          this.sonarQubeLink = res.data.sonarqube.link
+        } else this.sonarQubeData = undefined
+        res.data.checkmarx ? this.checkMarxData.push(res.data.checkmarx) : this.sonarQubeData = undefined
+        res.data.zap ? this.zapData.push(res.data.zap) : this.zapData = undefined
+        res.data.webInspect ? this.webInspectData.push(res.data.webinspect) : this.webInspectData = undefined
+        res.data.postman ? this.postmanData.push(res.data.postman) : this.postmanData = undefined
+        res.data.sideex ? this.sideexData.push(res.data.sideex) : this.sideexData = undefined
         this.getDataTime()
         this.listLoading = false
       } catch (error) {
@@ -162,6 +170,7 @@ export default {
     getDataTime() {
       const dataTimeArr = []
       this.dataName.map(item => {
+        if (!this[item]) return
         if (this[item][0]) item === 'sonarQubeData' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
       })
       dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
