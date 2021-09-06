@@ -11,7 +11,7 @@
       </el-col>
       <el-col :span="10" :lg="8" class="text-right">
         <span v-if="isAllowPreview(file.content_type)">
-          <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" @click="handlePreview(file)">
+          <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" :disabled="isButtonDisabled" @click="handlePreview(file)">
             {{ $t('general.Preview') }}
           </el-button>
         </span>
@@ -23,7 +23,7 @@
           :title="$t('Issue.DeleteFile')"
           @confirm="deleteIssueFile(file)"
         >
-          <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" :loading="isLoading">
+          <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" :loading="isLoading" :disabled="isButtonDisabled">
             {{ $t('general.Delete') }}
           </el-button>
         </el-popconfirm>
@@ -50,6 +50,10 @@ export default {
     issueFile: {
       type: Array,
       default: () => []
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

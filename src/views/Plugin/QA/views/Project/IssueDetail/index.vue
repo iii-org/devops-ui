@@ -52,7 +52,7 @@
               />
             </el-col>
             <el-col ref="IssueFiles">
-              <issue-files v-if="files.length>0" :issue-file.sync="files" />
+              <issue-files v-if="files.length>0" :is-button-disabled="isButtonDisabled" :issue-file.sync="files" />
             </el-col>
             <el-col ref="IssueTest">
               <issue-collection v-if="test_files.length>0" :issue-test.sync="test_files"
@@ -123,7 +123,7 @@
                               :title="$t('Issue.RemoveIssueRelation')"
                               @confirm="removeIssueRelation(child.id)"
                             >
-                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
                                 {{ $t('Issue.Unlink') }}
                               </el-button>
                             </el-popconfirm>
@@ -155,7 +155,7 @@
                                 :title="$t('Issue.RemoveIssueRelation')"
                                 @confirm="removeRelationIssue(child.relation_id)"
                               >
-                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
                                   {{ $t('Issue.Unlink') }}
                                 </el-button>
                               </el-popconfirm>
@@ -369,7 +369,8 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.$route.params.disableButton
+      // return this.$route.params.disableButton
+      return true
     }
   },
   watch: {

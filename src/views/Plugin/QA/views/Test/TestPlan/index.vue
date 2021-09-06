@@ -47,7 +47,6 @@
         height="60vh"
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
-        @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
         @expand-change="getIssueFamilyData"
         @selection-change="handleSelectionChange"

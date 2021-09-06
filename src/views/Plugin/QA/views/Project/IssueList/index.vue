@@ -41,7 +41,6 @@
         height="60vh"
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
-        @row-contextmenu="handleContextMenu"
         @cell-click="handleClick"
         @expand-change="getIssueFamilyData"
         @sort-change="handleSortChange"
@@ -318,16 +317,21 @@ export default {
       selectedIssueList.forEach(item => {
         const targetObject = {}
         this.csvColumnSelected.map(itemSelected => {
-          if (itemSelected === 'status') {
-            this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
-          } else if (itemSelected === 'priority') {
-            this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
-          } else if (itemSelected === 'tracker') {
-            this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
-          } else if (itemSelected === 'assigned_to') {
-            this.$set(targetObject, itemSelected, item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : '')
-          } else {
-            this.$set(targetObject, itemSelected, item[itemSelected])
+          switch (itemSelected) {
+            case 'status':
+              this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+              break
+            case 'priority':
+              this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
+              break
+            case 'tracker':
+              this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
+              break
+            case 'assigned_to':
+              this.$set(targetObject, itemSelected, item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : '')
+              break
+            default:
+              this.$set(targetObject, itemSelected, item[itemSelected])
           }
         })
         selectedColumn.push(targetObject)
