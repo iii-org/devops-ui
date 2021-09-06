@@ -16,8 +16,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="subject">
-        <el-input v-model="form.subject" :placeholder="$t('Issue.name')" />
+      <el-form-item prop="name">
+        <el-input v-model="form.name" :placeholder="$t('Issue.name')" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
@@ -91,14 +91,14 @@ export default {
       parentId: 0,
       form: {
         tracker_id: 8,
-        subject: null,
+        name: null,
         assigned_to_id: null,
         status_id: 1,
         priority_id: 3
       },
       advancedForm: {},
       formRules: {
-        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }]
       }
     }
@@ -129,7 +129,7 @@ export default {
     setFilterValue() {
       this.form = {
         tracker_id: null,
-        subject: null,
+        name: null,
         assigned_to_id: null,
         status_id: 1,
         priority_id: 3

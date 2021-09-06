@@ -385,7 +385,7 @@ export default {
       this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.subject = (copy) ? name + '(' + this.$t('Issue.Copy') + ')' : name
+      this.form.name = (copy) ? name + '(' + this.$t('Issue.Copy') + ')' : name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
@@ -423,7 +423,7 @@ export default {
           this.LoadingConfirm = false
           this.addTopicDialogVisible = false
           this.$emit('update')
-          this.$refs['AddIssue'].form.subject = ''
+          this.$refs['AddIssue'].form.name = ''
           return res
         })
         .catch(error => {

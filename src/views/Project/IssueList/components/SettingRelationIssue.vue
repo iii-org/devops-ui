@@ -128,7 +128,7 @@
         <ul>
           <li v-for="item in children['append']" :key="item">
             <template v-if="issueFamily[item]">
-              <b><tracker :name="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}</b> ({{ $t('Issue.OriginalParentIssue') }}:
+              <b><tracker :name="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].name }}</b> ({{ $t('Issue.OriginalParentIssue') }}:
               <template v-if="issueFamily[item].hasOwnProperty('parent')">
                 <tracker :name="issueFamily[item].parent.tracker.name" />
                 #{{ issueFamily[item].parent.id }} - {{ issueFamily[item].parent.name }}
@@ -148,7 +148,7 @@
             <s>
               <template v-if="issueFamily[item]">
                 <tracker :name="issueFamily[item].tracker.name" />
-                #{{ issueFamily[item].id }} - {{ issueFamily[item].subject }}
+                #{{ issueFamily[item].id }} - {{ issueFamily[item].name }}
                 <span v-if="issueFamily[item].hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].assigned_to).length>1">
                   ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].assigned_to.name }} - {{ issueFamily[item].assigned_to.login }})</span>
               </template>

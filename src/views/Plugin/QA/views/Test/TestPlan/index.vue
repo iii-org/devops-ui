@@ -502,7 +502,7 @@ export default {
               data = {
                 ...data,
                 object_id: `#${subItem.id}`,
-                object_subject: (subItem.subject) ? subItem.subject : subItem.name,
+                object_name: subItem.name,
                 object_tracker: this.$t('Issue.' + subItem.tracker.name)
               }
               hasFeature = true
@@ -519,8 +519,8 @@ export default {
 
     dataCleanCSV(fetchData) {
       const exportColumn = {
-        name: { column: ['id', 'subject'], root: true },
-        relations: { column: ['object_tracker', 'object_id', 'object_subject'], root: true },
+        name: { column: ['id', 'name'], root: true },
+        relations: { column: ['object_tracker', 'object_id', 'object_name'], root: true },
         software_name: { column: ['software_name'], children: 'test_files' },
         file_name: { column: ['file_name'], children: 'test_files' },
         test_result: { column: ['the_last_test_result'], children: 'test_files' },

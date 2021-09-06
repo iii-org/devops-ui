@@ -423,7 +423,7 @@ export default {
           const tracker = this.tracker.find(item => item.name === 'Audit')
           const issueForm = {
             tracker_id: tracker.id,
-            subject: select.item,
+            name: select.item,
             status_id: 1,
             priority_id: 3
           }

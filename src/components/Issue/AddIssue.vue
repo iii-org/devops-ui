@@ -10,8 +10,8 @@
       </el-row>
 
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.name')" prop="subject">
-          <el-input id="input-name" v-model="issueForm.subject" :placeholder="$t('general.PleaseInput')" />
+        <el-form-item :label="$t('Issue.name')" prop="name">
+          <el-input id="input-name" v-model="issueForm.name" :placeholder="$t('general.PleaseInput')" />
         </el-form-item>
       </el-col>
 
@@ -185,7 +185,7 @@ import Priority from '@/components/Issue/Priority'
 import { mapGetters } from 'vuex'
 
 const getFormTemplate = () => ({
-  subject: '',
+  name: '',
   description: '',
   priority_id: 3,
   tracker_id: '',
@@ -251,7 +251,7 @@ export default {
       fixed_version: [],
       issueForm: getFormTemplate(),
       issueFormRules: {
-        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         assigned_to_id: [{ validator: validateAssignedTo, trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
@@ -351,9 +351,9 @@ export default {
             this.$set(this.issueForm, item + '_id', this[getFilter][item])
           }
         })
-        let checkQuickAddIssueForm = ['tracker_id', 'subject']
+        let checkQuickAddIssueForm = ['tracker_id', 'name']
         if (this.importFrom === 'kanban') {
-          checkQuickAddIssueForm = ['tracker_id', 'subject', 'assigned_to_id']
+          checkQuickAddIssueForm = ['tracker_id', 'name', 'assigned_to_id']
           checkQuickAddIssueForm.push(this.kanbanGroupBy.dimension + '_id')
         }
         checkQuickAddIssueForm.forEach(item => {

@@ -625,7 +625,7 @@ export default {
           })
           this.loadData()
           this.addTopicDialogVisible = false
-          this.$refs['quickAddIssue'].form.subject = ''
+          this.$refs['quickAddIssue'].form.name = ''
           return res
         })
         .catch(error => {

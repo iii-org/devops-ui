@@ -281,7 +281,7 @@ export default {
     }
     return {
       issueFormRules: {
-        subject: [{ required: true, message: 'Please input name', trigger: 'blur' }],
+        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
         parent_id: [{ validator: validateParentId, trigger: 'blur' }],
         tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }],
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],

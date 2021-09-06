@@ -359,7 +359,7 @@ export default {
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
       if (!visible) {
-        this.$refs['quickAddIssue'].form.subject = ''
+        this.$refs['quickAddIssue'].form.name = ''
       }
     },
     async saveCollectionRelation({ collection, test_plans }) {

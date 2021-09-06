@@ -15,7 +15,7 @@
               </template>
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
-              <IssueTitle ref="IssueTitle" v-model="form.subject" :old-value="originForm.subject" :issue-id="issueId" />
+              <IssueTitle ref="IssueTitle" v-model="form.issue.name" :old-value="originForm.issue.name" :issue-id="issueId" />
               <span v-if="!isLoading&&issueId" class="text-base mr-3">
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
@@ -39,7 +39,7 @@
             <IssueToolbar :is-button-disabled="isButtonDisabled"
                           :issue-link="issue_link"
                           :issue-id="issueId"
-                          :issue-name="issueSubject"
+                          :issue-name="issueName"
                           :issue-tracker="formTrackerName"
                           @is-loading="showLoading"
                           @related-collection="toggleDialogVisible"
@@ -109,7 +109,7 @@
                               <tracker :name="child.tracker.name" />
                             </template>
                             <template v-else>{{ $t('Issue.Issue') }}</template>
-                            #{{ child.id }} - {{ child.subject }}
+                            #{{ child.id }} - {{ child.name }}
                             <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
                               ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
                               - {{ child.assigned_to.login }})</span>
@@ -141,7 +141,7 @@
                                 <tracker :name="child.tracker.name" />
                               </template>
                               <template v-else>{{ $t('Issue.Issue') }}</template>
-                              #{{ child.id }} - {{ (child.subject) ? child.subject : child.name }}
+                              #{{ child.id }} - {{ child.name }}
                               <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
                                 ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
                                 - {{ child.assigned_to.login }})</span>
@@ -214,7 +214,7 @@
     <!--      top="20px"-->
     <!--      append-to-body-->
     <!--      destroy-on-close-->
-    <!--      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"-->
+    <!--      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.name+')'"-->
     <!--    >-->
     <!--      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />-->
     <!--    </el-dialog>-->
@@ -282,7 +282,7 @@ export default {
       issue_link: '',
       issue: {},
       issueId: null,
-      issueSubject: '',
+      issueName: '',
       author: '',
       created_date: '',
       tracker: '',
@@ -291,7 +291,7 @@ export default {
         parent_id: null,
         project_id: 0,
         assigned_to_id: '',
-        subject: '',
+        name: '',
         fixed_version_id: '',
         tracker_id: 0,
         status_id: 1,
@@ -435,7 +435,7 @@ export default {
               relation_id: data.relations[idx].id,
               ...data.relations[idx],
               ...issue.data,
-              name: issue.data.subject
+              name: issue.data.name
             })
           })
         }
@@ -468,7 +468,7 @@ export default {
         attachments,
         created_date,
         journals,
-        subject,
+        name,
         tracker,
         parent,
         children,
@@ -477,7 +477,7 @@ export default {
       } = data
       this.issue = data
       this.issue_link = issue_link
-      this.issueSubject = subject
+      this.issueName = name
       this.author = author.name
       this.tracker = tracker.name
       this.files = attachments
@@ -510,7 +510,7 @@ export default {
         parent,
         assigned_to,
         fixed_version,
-        subject,
+        name,
         tracker,
         status,
         priority,
@@ -523,7 +523,7 @@ export default {
       this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.subject = subject
+      this.form.name = name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
@@ -537,7 +537,7 @@ export default {
       this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {
-      this.$confirm(this.$t('Issue.DeleteIssue', { issueName: this.form.subject }), this.$t('general.Delete'), {
+      this.$confirm(this.$t('Issue.DeleteIssue', { issueName: this.form.name }), this.$t('general.Delete'), {
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
         type: 'error',
@@ -605,7 +605,7 @@ export default {
           //   const message = '尚未設定本變更議之原由議題單(父議題），請先行設定後再存檔'
           //   this.setWarningMessage(message)
           // } else
-          if (this.form.subject && this.form.subject !== '') {
+          if (this.form.name && this.form.name !== '') {
             this.submitIssue()
           } else {
             const message = '請輸入標題'

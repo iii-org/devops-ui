@@ -533,7 +533,7 @@ export default {
       return {
         id: issue.id,
         classes: (issue.tracker && issue.tracker.hasOwnProperty('name')) ? [issue.tracker.name] : null,
-        label: (issue.name) ? issue.name : issue.subject,
+        label: issue.name,
         has_children: issue.has_children,
         click: (issue.has_children) ? this.toggleIssueFamily : null,
         children: (issue.children) ? issue.children.map((subIssue) => (this.parseRowFormat(subIssue, issue.children))) : null,

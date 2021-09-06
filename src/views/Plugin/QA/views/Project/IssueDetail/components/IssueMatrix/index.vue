@@ -128,7 +128,7 @@ export default {
       return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
     },
     formatChartData(issue, group) {
-      const issueName = (issue.subject) ? issue.subject : issue.name
+      const issueName = issue.name
       const checkIssueName = issueName.replace(/"/g, '&quot;')
       const link = []
       let children = []

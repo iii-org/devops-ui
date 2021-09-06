@@ -257,7 +257,7 @@ export default {
       if (!this.nowFilterValue.issueList || this.nowFilterValue.issueList.length <= 0) {
         return null
       }
-      return this.nowFilterValue.issueList.map(issue => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.subject}`).join(', ')
+      return this.nowFilterValue.issueList.map(issue => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.name}`).join(', ')
     },
     getPercentProgress() {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
@@ -421,7 +421,7 @@ export default {
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
     formatChartData(issue, group) {
-      const issueName = (issue.subject) ? issue.subject : issue.name
+      const issueName = issue.name
       const checkIssueName = issueName.replace(/"/g, '&quot;')
       const link = []
       let children = []
