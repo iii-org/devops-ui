@@ -9,7 +9,7 @@
           <template v-for="dimension in filterOptions">
             <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id">
               <div slot="label">
-                {{ $t('Issue.'+dimension.value) }}
+                {{ $t('Issue.' + dimension.value) }}
                 <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
                   <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
                 </el-tag>
@@ -208,7 +208,7 @@ export default {
       displayClosed: false,
       fixed_version_closed: false,
       projectIssueList: [],
-      projectIssueQueue: {},
+      projectIssueQueue: null,
       classifyIssueList: {},
       group: 'mission',
       fixed_version: [],
@@ -381,7 +381,7 @@ export default {
     },
     async fetchData() {
       await this.resetClassifyIssue()
-      this.projectIssueList = {}
+      this.projectIssueList = []
       await this.syncLoadFilterData()
       await this.updateData()
       await this.getRelativeList()
@@ -434,35 +434,27 @@ export default {
     },
     async syncLoadFilterData() {
       await this.cancelLoadFilterData()
-      this.projectIssueQueue = {}
-      const getIssueList = []
+      this.projectIssueQueue = null
       this.isLoading = true
-      for (const item of this.groupByValueOnBoard) {
-        const CancelToken = axios.CancelToken.source()
-        this.$set(this.projectIssueQueue, item.id, CancelToken)
-        getIssueList.push(getProjectIssueList(this.selectedProjectId,
-          { ...this.getParams(), [this.groupBy.dimension + '_id']: item.id },
-          { cancelToken: CancelToken.token }))
-      }
+      const CancelToken = axios.CancelToken.source()
+      this.$set(this.$data, 'projectIssueQueue', CancelToken)
+      const dimensionValue = this.groupByValueOnBoard.map(item => item.id).join('|')
       this.projectIssueList = []
-      await Promise.all(getIssueList)
-        .then((res) => {
-          const issueList = res.map(item => item.data)
-          const list = [].concat.apply([], issueList)
-          this.$set(this.$data, 'projectIssueList', list)
-        })
-        .catch((e) => {
-          console.error(e)
-        })
-        .finally(() => {
-          this.projectIssueQueue = {}
-          this.isLoading = false
-        })
+      try {
+        const res = await getProjectIssueList(this.selectedProjectId,
+          { ...this.getParams(), [this.groupBy.dimension + '_id']: dimensionValue },
+          { cancelToken: CancelToken.token })
+        this.projectIssueList = res.data
+      } catch (e) {
+        console.error(e)
+      }
+      this.projectIssueQueue = null
+      this.isLoading = false
     },
     cancelLoadFilterData() {
-      Object.values(this.projectIssueQueue).forEach((item) => {
-        item.cancel()
-      })
+      if (this.projectIssueQueue) {
+        this.projectIssueQueue.cancel()
+      }
     },
     async loadVersionList(status) {
       let params = { status: 'open,locked' }
@@ -625,7 +617,7 @@ export default {
           })
           this.loadData()
           this.addTopicDialogVisible = false
-          this.$refs['quickAddIssue'].form.name = ''
+          this.$refs['quickAddIssue'].form.subject = ''
           return res
         })
         .catch(error => {
@@ -741,7 +733,10 @@ export default {
         this.contextMenu.left = contextmenuPosition.left
         this.contextMenu.row = row
         this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+        this.$refs.contextmenu.$refs.contextmenu.style = {
+          top: this.contextMenu.top + 'px',
+          left: this.contextMenu.left + 'px'
+        }
         document.addEventListener('click', this.hideContextMenu)
       })
     },
@@ -899,7 +894,7 @@ export default {
       }
     }
 
-        > > > &.bug {
+    > > > &.bug {
       .board-column-header {
         .header-bar {
           @apply bg-bug
