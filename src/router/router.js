@@ -123,6 +123,13 @@ export const asyncRoutes = [
         meta: { title: 'projectOverview', roles: ['Administrator', 'Project Manager'] }
       },
       {
+        path: 'milestone',
+        name: 'milestone',
+        component: () => import('@/views/Plugin/QA/views/Project/Milestone'),
+        meta: { title: 'milestone', roles: ['Administrator', 'Project Manager'] },
+        hidden: true
+      },
+      {
         path: 'issue-boards',
         name: 'issue-boards',
         component: () => import('@/views/Project/IssueBoards'),
