@@ -15,7 +15,7 @@
               </template>
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
-              <IssueTitle ref="IssueTitle" v-model="form.issue.name" :old-value="originForm.issue.name" :issue-id="issueId" />
+              <IssueTitle ref="IssueTitle" v-model="form.name" :old-value="originForm.name" :issue-id="issueId" />
               <span v-if="!isLoading&&issueId" class="text-base mr-3">
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
@@ -343,7 +343,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename']),
+    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole']),
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
@@ -369,8 +369,7 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      // return this.$route.params.disableButton
-      return true
+      return this.userRole === 'QA'
     }
   },
   watch: {
