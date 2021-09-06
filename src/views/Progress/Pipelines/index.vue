@@ -192,7 +192,7 @@ export default {
       this.clearTimer()
       const { first, limit } = this.listQuery
       const startId = first - (query.page - 1) * limit
-      this.query.start = startId
+      this.listQuery.start = startId
       this.loadData(10, startId)
     },
     async loadData(limit, startId) {
