@@ -449,7 +449,7 @@ export default {
         Add: '@:general.Add'
       },
       assigned_to_id: '@:Issue.Assignee',
-      name: '@:general.Title',
+      subject: '@:general.Title',
       description: '@:Issue.Description',
       estimated_hours: '@:Issue.Estimate',
       start_date: '@:Issue.StartDate',
