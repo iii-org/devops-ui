@@ -90,14 +90,14 @@
           </el-col>
           <el-col :span="24" :sm="13">
             <el-form-item label="KubeConfig File">
-              <IssueFileUploader
-                ref="IssueFileUploader"
+              <ClusterFileUploader
+                ref="ClusterFileUploader"
                 style="margin-bottom: 40px;"
                 :class="{disabled: disabled}"
                 @hasFileList="hasFileList"
               />
               <el-input
-                v-model="form.kubeConfigFile"
+                v-model="form.kubeConfigString"
                 :disabled="!!hasUploadfile"
                 type="textarea"
                 :placeholder="$t('SystemDeploySettings.KubeConfigTextareaHint')"
@@ -116,7 +116,7 @@ import { BasicData } from '@/newMixins'
 
 export default {
   name: 'Cluster',
-  components: { IssueFileUploader: () => import('@/views/Project/IssueDetail/components/IssueFileUploader') },
+  components: { ClusterFileUploader: () => import('@/views/Project/IssueDetail/components/ClusterFileUploader') },
   mixins: [BasicData],
   data() {
     return {
@@ -125,18 +125,17 @@ export default {
       form: {
         clusterName: '',
         disabled: false,
-        kubeConfigFile: ''
+        kubeConfigString: ''
       },
       editingId: 1,
       hasUploadfile: false,
-      updatedFormData: {},
       originData: [],
       isSaved: false
     }
   },
   computed: {
     disabled() {
-      return !!this.form.kubeConfigFile
+      return !!this.form.kubeConfigString
     },
     isClusterFormChanged() {
       if (this.originData.length === 0) return false
@@ -155,8 +154,8 @@ export default {
       const res = await getDeployedHostsByList(cluster_id)
       this.setFormData(res.data)
     },
-    async updateDeployHostsById() {
-      await updateDeployHostsById(this.editingId, this.updatedFormData)
+    async updateDeployHostsById(formData) {
+      await updateDeployHostsById(this.editingId, formData)
         .then(() => {
           this.initClusterTab()
         })
@@ -164,8 +163,8 @@ export default {
           console.error(err)
         })
     },
-    async addDeployHosts() {
-      await addDeployHosts(this.updatedFormData)
+    async addDeployHosts(formData) {
+      await addDeployHosts(formData)
         .then(() => {
           this.initClusterTab()
         })
@@ -176,9 +175,17 @@ export default {
     async updateHostsDisabled(row) {
       const { name, disabled } = row
       const cluster_id = row.id
-      const data = { name, disabled, k8s_config_file: '' }
+      const formData = new FormData()
+      formData.delete('name')
+      formData.delete('disabled')
+      formData.delete('k8s_config_file')
+      formData.delete('k8s_config_string')
+      formData.append('name', name)
+      formData.append('disabled', disabled)
+      formData.append('k8s_config_file', false)
+      formData.append('k8s_config_string', '')
 
-      await updateDeployHostsById(cluster_id, data)
+      await updateDeployHostsById(cluster_id, formData)
         .then(() => {
           this.loadData()
           this.showUpdateMessage()
@@ -217,13 +224,14 @@ export default {
     },
     async handleBackPage() {
       if (this.isClusterFormChanged) {
-        if (this.isSaved) return
-        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        }).catch(() => {})
-        if (res !== 'confirm') return
+        if (!this.isSaved) {
+          const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+            confirmButtonText: this.$t('general.Confirm'),
+            cancelButtonText: this.$t('general.Cancel'),
+            type: 'warning'
+          }).catch(() => {})
+          if (res !== 'confirm') return
+        }
       }
       this.initFormData()
       this.isSaved = false
@@ -234,37 +242,48 @@ export default {
       this.loadData()
       this.showAddClusterPage = false
       this.showUpdateMessage()
-      this.updatedFormData = {}
     },
     initFormData() {
       this.form = {
         clusterName: '',
         disabled: false,
-        kubeConfigFile: ''
+        kubeConfigString: ''
       }
     },
     hasFileList(val) {
-      this.form.kubeConfigFile = ''
+      this.form.kubeConfigString = ''
       this.hasUploadfile = val
     },
     getUpdateFormData() {
-      const formData = {}
-      const encodedData = btoa(this.form.kubeConfigFile)
-      formData.name = this.form.clusterName
-      formData.disabled = this.form.disabled
-      formData.k8s_config_file = this.hasUploadfile
-      formData.k8s_config_str = encodedData
-      Object.assign(this.updatedFormData, formData)
+      const formData = new FormData()
+      const encodedData = btoa(this.form.kubeConfigString)
+      formData.delete('name')
+      formData.delete('disabled')
+      formData.delete('k8s_config_file')
+      formData.delete('k8s_config_string')
+      formData.append('name', this.form.clusterName)
+      formData.append('disabled', this.form.disabled)
+      formData.append('k8s_config_file', this.hasUploadfile)
+      formData.append('k8s_config_string', encodedData)
+      return formData
     },
     handleSave() {
+      if (!this.hasUploadfile && this.form.kubeConfigString === '') {
+        this.$message({
+          title: this.$t('general.Warning'),
+          message: this.$t('Notify.noUploadFile'),
+          type: 'warning'
+        })
+        return
+      }
       this.isSaved = true
-      this.getUpdateFormData()
+      const formData = this.getUpdateFormData()
       switch (this.updateStatus) {
         case 'UPDATE_PUT':
-          this.updateDeployHostsById()
+          this.updateDeployHostsById(formData)
           break
         case 'UPDATE_POST':
-          this.addDeployHosts()
+          this.addDeployHosts(formData)
       }
     },
     setOriginData(data) {

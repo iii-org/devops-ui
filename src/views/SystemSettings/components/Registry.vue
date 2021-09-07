@@ -185,13 +185,14 @@ export default {
     },
     async handleBackPage() {
       if (this.isRegistryFormChanged) {
-        if (this.isSaved) return
-        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        }).catch(() => {})
-        if (res !== 'confirm') return
+        if (!this.isSaved) {
+          const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+            confirmButtonText: this.$t('general.Confirm'),
+            cancelButtonText: this.$t('general.Cancel'),
+            type: 'warning'
+          }).catch(() => {})
+          if (res !== 'confirm') return
+        }
       }
       this.initFormData()
       this.isSaved = false

@@ -3,8 +3,8 @@ import request from '@/utils/request'
 // cluster
 export const getDeployedHostsLists = () => request.get(`/deploy/clusters`)
 export const getDeployedHostsByList = (cluster_id) => request.get(`/deploy/clusters/${cluster_id}`)
-export const addDeployHosts = (data) => request.post(`/deploy/clusters`, data)
-export const updateDeployHostsById = (cluster_id, data) => request.put(`/deploy/clusters/${cluster_id}`, data)
+export const addDeployHosts = (data) => request.post(`/deploy/clusters`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
+export const updateDeployHostsById = (cluster_id, data) => request.put(`/deploy/clusters/${cluster_id}`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
 
 // registry
 export const getRegistryHostsLists = () => request.get(`/deploy/registries`)
