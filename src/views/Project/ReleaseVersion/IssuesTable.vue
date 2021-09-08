@@ -207,7 +207,7 @@ export default {
     categorySel() {
       const ret = [this.$t('Release.allCategories')]
       for (const c of this.categories) {
-        ret.push(c)
+        ret.push(this.$t(`Issue.${c}`))
       }
       return ret
     }
