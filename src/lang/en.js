@@ -216,6 +216,7 @@ export default {
     Copied: 'Copied',
     Canceled: 'Cancel successful',
     Submit: 'Submit',
+    Same: 'The new value is same with old value.',
     SwitchLanguage: 'Switch Language Success',
     NoProject: 'There are no projects currently, please create a new project.',
     WrongProjectName: 'Please input project name correctly.',

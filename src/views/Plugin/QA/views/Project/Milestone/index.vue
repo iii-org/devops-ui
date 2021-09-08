@@ -1,6 +1,16 @@
 <template>
   <el-row class="app-container">
     <project-list-selector>
+      <el-row slot="button">
+        <el-col class="text-right">
+          <p v-if="updateLoading" class="text-blue-500">
+            <em class="el-icon-loading" /> 儲存中......
+          </p>
+          <p v-else-if="lastUpdated" class="text-blue-500">
+            <em class="el-icon-check" /> 儲存完成：{{ lastUpdated.time|relativeTime }}
+          </p>
+        </el-col>
+      </el-row>
       <!--      <el-popover-->
       <!--        placement="bottom"-->
       <!--        trigger="click"-->
@@ -72,7 +82,7 @@
     <el-divider />
     <el-tabs v-model="activeTab" type="border-card">
       <el-tab-pane name="plan" label="plan">
-        <WBS />
+        <WBS @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus" />
       </el-tab-pane>
       <el-tab-pane name="gannt" label="gantt">
         <Gantt />
@@ -98,6 +108,10 @@ export default {
     return {
       listLoading: false,
       contentLoading: false,
+
+      updateLoading: false,
+      lastUpdated: null,
+
       activeNames: '',
       searchVisible: false,
       fixed_version_closed: false,
@@ -139,7 +153,14 @@ export default {
   },
   async mounted() {
   },
-  methods: {}
+  methods: {
+    handleUpdateLoading(value) {
+      this.updateLoading = value
+    },
+    handleUpdateStatus(value) {
+      this.lastUpdated = value
+    }
+  }
 }
 </script>
 

@@ -1,25 +1,28 @@
 <template>
   <el-table-column v-bind="$props">
-    <template slot-scope="{row, $index}">
+    <template slot-scope="{row, $index, treeNode}">
       <template v-if="row.create">
         <el-input v-if="number"
+                  ref="input"
                   v-model.number="row[prop]"
                   type="number"
-                  class="is-error"
+                  :style="{marginLeft: treeWidth(treeNode)}"
                   @keyup.enter.native="handlerCreate(row, $index)"
                   @keyup.esc.native="handlerResetCreate(row, $index)"
         >
-          <template v-if="hasRequired(row)" slot="prefix">
+          <template v-if="hasRequired(row)" slot="suffix">
             <div class="text-danger">
               {{ $t('Validation.Input', [label]) }}
             </div>
           </template>
         </el-input>
-        <el-input v-else v-model="row[prop]"
+        <el-input v-else ref="input"
+                  v-model="row[prop]"
+                  :style="{marginLeft: treeWidth(treeNode)}"
                   @keyup.enter.native="handlerCreate(row, $index)"
                   @keyup.esc.native="handlerResetCreate(row, $index)"
         >
-          <template v-if="hasRequired(row)" slot="prefix">
+          <template v-if="hasRequired(row)" slot="suffix">
             <div class="text-danger">
               {{ $t('Validation.Input', [label]) }}
             </div>
@@ -28,22 +31,28 @@
       </template>
       <template v-else-if="row.editColumn===prop&&editable(row)">
         <el-input v-if="number"
+                  ref="input"
                   v-model.number="row[prop]"
                   type="number"
-                  @keyup.enter.native="handlerEdit(row, $index)"
-                  @keyup.esc.native="handlerReset(row, $index)"
+                  :style="{marginLeft: treeWidth(treeNode)}"
+                  @blur="handlerBlur(row, $index, treeNode)"
+                  @keyup.enter.native="handlerEdit(row, $index, treeNode)"
+                  @keyup.esc.native="handlerReset(row, $index, treeNode)"
         >
-          <template v-if="hasRequired(row)" slot="prefix">
+          <template v-if="hasRequired(row)" slot="suffix">
             <div class="text-danger">
               {{ $t('Validation.Input', [label]) }}
             </div>
           </template>
         </el-input>
-        <el-input v-else v-model="row[prop]"
-                  @keyup.enter.native="handlerEdit(row, $index)"
-                  @keyup.esc.native="handlerReset(row, $index)"
+        <el-input v-else ref="input"
+                  v-model="row[prop]"
+                  :style="{width: treeWidth(treeNode)}"
+                  @blur="handlerBlur(row, $index, treeNode)"
+                  @keyup.enter.native="handlerEdit(row, $index, treeNode)"
+                  @keyup.esc.native="handlerReset(row, $index, treeNode)"
         >
-          <template v-if="hasRequired(row)" slot="prefix">
+          <template v-if="hasRequired(row)" slot="suffix">
             <div class="text-danger">
               {{ $t('Validation.Input', [label]) }}
             </div>
@@ -98,6 +107,11 @@ export default {
   },
   methods: {
     hasRequired(row) {
+      if (!row.create) {
+        this.$nextTick(() => {
+          this.$refs['input'].focus()
+        })
+      }
       return this.required && row[this.prop].length <= 0
     },
     editable(row) {
@@ -107,17 +121,45 @@ export default {
         return !row['has_children']
       }
     },
-    handlerEdit(row, index) {
-      this.$emit('edit', { value: { [this.prop]: row[this.prop] }, row: row, index: index })
+    treeWidth(treeNode) {
+      if (this.prop === 'name' && treeNode && treeNode.indent) {
+        return `calc(90% - ${treeNode.indent}px)`
+      }
+      return `calc(90%)`
     },
-    handlerCreate(row, index) {
-      this.$emit('create', { value: { [this.prop]: row[this.prop] }, row: row, index: index })
+    handlerBlur(row, index, treeNode) {
+      const checkUpdate = row.originColumn && row[this.prop] !== row.originColumn
+      if (checkUpdate) {
+        this.handlerEdit(row, index, treeNode)
+      } else if (row.originColumn) {
+        this.handlerReset(row, index, treeNode)
+      }
     },
-    handlerReset(row, index) {
-      this.$emit('reset-edit', { value: this.prop, row: row, index: index })
+    handlerEdit(row, index, treeNode) {
+      if (!this.hasRequired(row)) {
+        this.$emit('edit', {
+          value: { [this.prop]: row[this.prop] },
+          row: row,
+          index: index,
+          treeNode: treeNode
+        })
+      }
     },
-    handlerResetCreate(row, index) {
-      this.$emit('reset-create', { value: this.prop, row: row, index: index })
+    handlerCreate(row, index, treeNode) {
+      if (!this.hasRequired(row)) {
+        this.$emit('create', {
+          value: { [this.prop]: row[this.prop] },
+          row: row,
+          index: index,
+          treeNode: treeNode
+        })
+      }
+    },
+    handlerReset(row, index, treeNode) {
+      this.$emit('reset-edit', { value: this.prop, row: row, index: index, treeNode: treeNode })
+    },
+    handlerResetCreate(row, index, treeNode) {
+      this.$emit('reset-create', { value: this.prop, row: row, index: index, treeNode: treeNode })
     }
   }
 }

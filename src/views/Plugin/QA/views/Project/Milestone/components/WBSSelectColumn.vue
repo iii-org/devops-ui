@@ -105,17 +105,17 @@ export default {
         return !row['has_children']
       }
     },
-    handlerEdit(row, index) {
-      this.$emit('edit', { value: { [`${this.prop}_id`]: row[this.prop]['id'] }, row: row, index: index })
+    handlerEdit(row, index, treeNode) {
+      this.$emit('edit', { value: { [`${this.prop}_id`]: row[this.prop]['id'] }, row: row, index: index, treeNode: treeNode })
     },
-    handlerCreate(row, index) {
-      this.$emit('create', { value: { [`${this.prop}_id`]: row[this.prop]['id'] }, row: row, index: index })
+    handlerCreate(row, index, treeNode) {
+      this.$emit('create', { value: { [`${this.prop}_id`]: row[this.prop]['id'] }, row: row, index: index, treeNode: treeNode })
     },
-    handlerReset(row, index) {
-      this.$emit('reset-edit', { value: this.prop, row: row, index: index })
+    handlerReset(row, index, treeNode) {
+      this.$emit('reset-edit', { value: this.prop, row: row, index: index, treeNode: treeNode })
     },
-    handlerResetCreate(row, index) {
-      this.$emit('reset-create', { value: this.prop, row: row, index: index })
+    handlerResetCreate(row, index, treeNode) {
+      this.$emit('reset-create', { value: this.prop, row: row, index: index, treeNode: treeNode })
     }
   }
 }

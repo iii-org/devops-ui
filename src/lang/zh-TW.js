@@ -216,6 +216,7 @@ export default {
     Copied: '已複製',
     Canceled: '已取消',
     Submit: '已送出',
+    Same: '內容相同，未變更。',
     SwitchLanguage: '更換語言成功',
     NoProject: '目前沒有任何專案可供選擇，請先建立專案。',
     WrongProjectName: '請輸入正確的專案名稱。',

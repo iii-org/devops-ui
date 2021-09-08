@@ -1,102 +1,101 @@
 <template>
-  <div>
-    <el-row>
-      <el-col class="text-right">
-        <p v-if="updateLoading" class="text-blue-500">
-          <em class="el-icon-loading" /> 儲存中......
-        </p>
-        <p v-else-if="lastUpdated" class="text-blue-500">
-          <em class="el-icon-check" /> 儲存完成：{{ lastUpdated.time|relativeTime }}
-        </p>
-      </el-col>
-    </el-row>
-    <el-table v-loading="listLoading" :data="listData" :element-loading-text="$t('Loading')" @cell-click="handleCellClick">
+  <div id="wrapper" ref="wrapper">
+    <el-table v-loading="listLoading" :data="listData" :element-loading-text="$t('Loading')" :height="tableHeight"
+              class="table-css"
+              row-key="id"
+              lazy
+              :load="getIssueFamilyData"
+              :tree-props="{children: 'children', hasChildren: 'has_children'}"
+              @cell-click="handleCellClick"
+    >
+      >
       <WBSInputColumn
-        min-width="36%"
+        min-width="28%"
         :label="$t('Issue.name')"
         prop="name"
         required
+        fixed
         :has-child-edit="true"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.tracker')"
         prop="tracker"
         :components="Tracker"
         :options="tracker"
         :has-child-edit="true"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.fixed_version')"
         prop="fixed_version"
         :options="fixed_version"
         :has-child-edit="true"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSDateColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.StartDate')"
         prop="start_date"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSDateColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.EndDate')"
         prop="due_date"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.priority')"
         prop="priority"
         :components="Priority"
         :options="priority"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.assigned_to')"
         prop="assigned_to"
         :options="assigned_to"
         :has-child-edit="true"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.DoneRatio')"
         prop="done_ratio"
         :number="true"
-        @edit="updateIssue"
-        @create="createIssue"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
-        min-width="8%"
+        min-width="9%"
         :label="$t('Issue.points')"
         :has-child-edit="true"
         prop="points"
@@ -118,7 +117,7 @@ import { Tracker, Priority } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSDateColumn'
-import { addIssue, updateIssue } from '@/api/issue'
+import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 
 export default {
@@ -141,9 +140,8 @@ export default {
       Tracker,
       fixed_version: [],
       assigned_to: [],
-      updateLoading: false,
-      lastUpdated: null,
-      addIssueVisible: false
+      addIssueVisible: false,
+      tableHeight: 0
     }
   },
   computed: {
@@ -156,6 +154,7 @@ export default {
   mounted() {
     this.loadVersionList(true)
     this.loadAssignedToList()
+    this.tableHeight = this.$refs['wrapper'].clientHeight
   },
   methods: {
     async fetchData() {
@@ -184,8 +183,8 @@ export default {
       this.listData.splice(row_index, 0, issueForm)
     },
     handleCellClick(row, column) {
-      this.$set(row, 'editColumn', column.property)
       this.$set(row, 'originColumn', cloneDeep(row[column.property]))
+      this.$set(row, 'editColumn', column.property)
     },
     handleResetEdit({ value, row }) {
       this.$set(row, value, row.originColumn)
@@ -215,7 +214,8 @@ export default {
       const versionList = await getProjectVersion(this.selectedProjectId, params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
-    async updateIssue({ value, row, index }) {
+    async handleUpdateIssue({ value, row, index, treeNode }) {
+      console.log(index, treeNode)
       let checkUpdate = false
       if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
         checkUpdate = value[`${row.editColumn}_id`] !== row.originColumn.id
@@ -226,29 +226,40 @@ export default {
         return
       }
       if (checkUpdate) {
-        this.updateLoading = true
+        this.$emit('update-loading', true)
         try {
           const res = await updateIssue(row.id, value)
           this.$set(row, 'editColumn', false)
           this.$set(row, 'originColumn', null)
-          this.$set(this.listData, index, res.data)
-          this.lastUpdated = {
-            id: row.id,
-            column: row.editColumn,
-            value: value,
-            origin: row.originColumn,
-            time: res.datetime
+          if (row.parent_object) {
+            console.log(row.parent_object)
+            const findIssueIndex = row.parent_object.children.findIndex(item => item.id === row.id)
+            this.$set(row.parent_object.children, findIssueIndex, res.data)
+          } else {
+            this.$set(this.listData, index, res.data)
           }
-          this.$notify({ title: this.$t('general.Success').toString(), type: 'success', message: this.$t('Notify.Updated').toString() })
+          this.$emit('update-status', {
+            time: res.datetime
+          })
+          this.$notify({
+            title: this.$t('general.Success').toString(),
+            type: 'success',
+            message: this.$t('Notify.Updated').toString()
+          })
         } catch (e) {
+          this.$emit('update-status', {
+            error: e
+          })
           this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
         }
-        this.updateLoading = false
+        this.$emit('update-loading', false)
       } else {
         console.log('same')
+        this.handleResetEdit({ value, row })
+        this.$notify({ title: this.$t('general.Cancel').toString(), type: 'warning', message: this.$t('Notify.Same').toString() })
       }
     },
-    async createIssue({ value, row }) {
+    async handleCreateIssue({ row }) {
       if (row.name.length <= 0) {
         return
       }
@@ -261,7 +272,7 @@ export default {
           data[item] = row[item]
         }
       })
-      this.updateLoading = true
+      this.$emit('update-loading', true)
       try {
         let res = await addIssue(data)
         this.$set(row, 'create', false)
@@ -270,25 +281,62 @@ export default {
         Object.keys(res).forEach(item => {
           this.$set(row, item, res[item])
         })
-        this.lastUpdated = {
-          id: row.id,
-          column: row.editColumn,
-          value: value,
-          origin: row.originColumn,
+        this.$emit('update-status', {
           time: res.datetime
-        }
-        this.$notify({ title: this.$t('general.Success').toString(), type: 'success', message: this.$t('Notify.Added').toString() })
-        this.updateLoading = false
+        })
+        this.$notify({
+          title: this.$t('general.Success').toString(),
+          type: 'success',
+          message: this.$t('Notify.Added').toString()
+        })
       } catch (e) {
+        this.$emit('update-status', {
+          error: e
+        })
         this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
       }
+      this.$emit('update-loading', false)
+    },
+    async getIssueFamilyData(row, treeNode, resolve) {
+      try {
+        const family = await getIssueFamily(row.id)
+        const data = family.data
+        // if (data.hasOwnProperty('parent')) {
+        //   await this.$set(row, 'parent', data.parent)
+        // }
+        if (data.hasOwnProperty('children')) {
+          // await this.$set(row, 'children', data.children)
+          resolve(data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
+        }
+        // if (data.hasOwnProperty('relations')) {
+        //   await this.$set(row, 'relations', data.relations)
+        // }
+      } catch (e) {
+        //   null
+        return Promise.resolve()
+      }
+      return Promise.resolve()
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .add-issue-inline {
   @apply pl-5;
+}
+
+#wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+}
+
+.table-css {
+  height: 100% !important;
+
+  > > > table {
+    td {
+      padding: 5px;
+    }
+  }
 }
 </style>
