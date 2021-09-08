@@ -375,6 +375,7 @@ export default {
     Limit: 'Limit',
     AddBy: 'Added {created_date} by {user}',
     Author: 'Author',
+    points: 'Points',
     CommentTime: 'Comment Time',
     ParentIssue: 'Parent Issue',
     ChildrenIssue: 'Children Issue',

@@ -6,7 +6,7 @@
                   ref="input"
                   v-model.number="row[prop]"
                   type="number"
-                  :style="{marginLeft: treeWidth(treeNode)}"
+                  :style="{width: treeWidth(treeNode)}"
                   @keyup.enter.native="handlerCreate(row, $index)"
                   @keyup.esc.native="handlerResetCreate(row, $index)"
         >
@@ -18,7 +18,7 @@
         </el-input>
         <el-input v-else ref="input"
                   v-model="row[prop]"
-                  :style="{marginLeft: treeWidth(treeNode)}"
+                  :style="{width: treeWidth(treeNode)}"
                   @keyup.enter.native="handlerCreate(row, $index)"
                   @keyup.esc.native="handlerResetCreate(row, $index)"
         >
@@ -34,7 +34,7 @@
                   ref="input"
                   v-model.number="row[prop]"
                   type="number"
-                  :style="{marginLeft: treeWidth(treeNode)}"
+                  :style="{width: treeWidth(treeNode)}"
                   @blur="handlerBlur(row, $index, treeNode)"
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
                   @keyup.esc.native="handlerReset(row, $index, treeNode)"

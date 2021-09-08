@@ -6,8 +6,11 @@
           <p v-if="updateLoading" class="text-blue-500">
             <em class="el-icon-loading" /> 儲存中......
           </p>
-          <p v-else-if="lastUpdated" class="text-blue-500">
-            <em class="el-icon-check" /> 儲存完成：{{ lastUpdated.time|relativeTime }}
+          <p v-else-if="lastUpdated&&lastUpdated.time" class="text-success">
+            <em class="el-icon-check" /> <strong>儲存完成：</strong>{{ lastUpdated.time|relativeTime }}
+          </p>
+          <p v-else-if="lastUpdated&&lastUpdated.error" class="text-danger">
+            <em class="el-icon-check" /> <strong>儲存失敗：</strong>{{ lastUpdated.error }}
           </p>
         </el-col>
       </el-row>
@@ -158,6 +161,7 @@ export default {
       this.updateLoading = value
     },
     handleUpdateStatus(value) {
+      console.log(value)
       this.lastUpdated = value
     }
   }

@@ -374,6 +374,7 @@ export default {
     Limit: '限制',
     AddBy: '由 {user} 於 {created_date} 新增',
     Author: '作者',
+    points: '點數',
     CommentTime: '加註於',
     ParentIssue: '父議題',
     ChildrenIssue: '子議題',
