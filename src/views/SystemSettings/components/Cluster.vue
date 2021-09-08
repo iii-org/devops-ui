@@ -125,7 +125,7 @@ export default {
       form: {
         clusterName: '',
         disabled: false,
-        kubeConfigString: ''
+        kubeConfigString: null
       },
       editingId: 1,
       hasUploadfile: false,
@@ -157,7 +157,9 @@ export default {
     async updateDeployHostsById(formData) {
       await updateDeployHostsById(this.editingId, formData)
         .then(() => {
+          this.loadData()
           this.initClusterTab()
+          this.showUpdateMessage()
         })
         .catch(err => {
           console.error(err)
@@ -166,7 +168,9 @@ export default {
     async addDeployHosts(formData) {
       await addDeployHosts(formData)
         .then(() => {
+          this.loadData()
           this.initClusterTab()
+          this.showUpdateMessage()
         })
         .catch(err => {
           console.error(err)
@@ -182,8 +186,6 @@ export default {
       formData.delete('k8s_config_string')
       formData.append('name', name)
       formData.append('disabled', disabled)
-      formData.append('k8s_config_file', false)
-      formData.append('k8s_config_string', '')
 
       await updateDeployHostsById(cluster_id, formData)
         .then(() => {
@@ -233,25 +235,23 @@ export default {
           if (res !== 'confirm') return
         }
       }
-      this.initFormData()
-      this.isSaved = false
-      this.hasUploadfile = false
-      this.showAddClusterPage = false
+      this.initClusterTab()
     },
     initClusterTab() {
-      this.loadData()
+      this.initFormData()
+      this.isSaved = false
       this.showAddClusterPage = false
-      this.showUpdateMessage()
+      this.hasUploadfile = false
     },
     initFormData() {
       this.form = {
         clusterName: '',
         disabled: false,
-        kubeConfigString: ''
+        kubeConfigString: null
       }
     },
     hasFileList(val) {
-      this.form.kubeConfigString = ''
+      this.form.kubeConfigString = null
       this.hasUploadfile = val
     },
     getUpdateFormData() {
@@ -263,15 +263,15 @@ export default {
       formData.delete('k8s_config_string')
       formData.append('name', this.form.clusterName)
       formData.append('disabled', this.form.disabled)
-      formData.append('k8s_config_file', this.hasUploadfile)
-      formData.append('k8s_config_string', encodedData)
+      if (this.hasUploadfile) formData.append('k8s_config_file', this.hasUploadfile)
+      if (this.form.kubeConfigString) formData.append('k8s_config_string', encodedData)
       return formData
     },
     handleSave() {
-      if (!this.hasUploadfile && this.form.kubeConfigString === '') {
+      if (!this.form.clusterName) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('Notify.noUploadFile'),
+          message: this.$t('SystemDeploySettings.NoNameWarning'),
           type: 'warning'
         })
         return

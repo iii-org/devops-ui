@@ -144,7 +144,9 @@ export default {
     async addRegistryHosts() {
       await addRegistryHosts(this.updatedFormData)
         .then(() => {
+          this.loadData()
           this.initRegistryTab()
+          this.showUpdateMessage()
         })
         .catch((err) => {
           this.showAddRegistryPage = false
@@ -154,7 +156,9 @@ export default {
     async updateRegistryHostsById() {
       await updateRegistryHostsById(this.editingId, this.updatedFormData)
         .then(() => {
+          this.loadData()
           this.initRegistryTab()
+          this.showUpdateMessage()
         })
         .catch((err) => {
           this.showAddRegistryPage = false
@@ -194,14 +198,12 @@ export default {
           if (res !== 'confirm') return
         }
       }
+      this.initRegistryTab()
+    },
+    initRegistryTab() {
       this.initFormData()
       this.isSaved = false
       this.showAddRegistryPage = false
-    },
-    initRegistryTab() {
-      this.loadData()
-      this.showAddRegistryPage = false
-      this.showUpdateMessage()
       this.updatedFormData = {}
     },
     initFormData() {

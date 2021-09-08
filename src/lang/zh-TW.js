@@ -230,8 +230,7 @@ export default {
     LoadFail: '讀取失敗，請洽您的系統管理員。',
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？',
     confirmDelete: '確定@:(general.Delete)嗎？',
-    confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
-    noUploadFile: '請選擇檔案上傳或是在輸入框貼上檔案內容。'
+    confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？'
   },
   RuleMsg: {
     PleaseSelect: '請選擇',
@@ -971,10 +970,11 @@ export default {
     Actions: '@:general.Actions',
     ImpressionFileRepo: '印象檔儲存庫',
     RegistryName: 'Registry 名稱',
-    KubeConfigTextareaHint: '請直接貼上 kubenate config 或使⽤上⽅上傳檔案，直接上傳',
-    ClusterMessage: '遠端部署主機設定已更新成功',
-    RegistryMessage: '印象檔主機設定已更新成功',
-    FailMessage: '請檢查表單內容是否正確並填寫密碼',
+    KubeConfigTextareaHint: '請直接貼上 kubenate config 或使⽤上⽅上傳檔案，直接上傳。',
+    ClusterMessage: '遠端部署主機設定已更新成功。',
+    RegistryMessage: '印象檔主機設定已更新成功。',
+    FailMessage: '請檢查表單內容是否正確並填寫密碼。',
+    NoNameWarning: '請填寫 Cluster 名稱。',
     FillInPassword: '請輸入密碼',
     NoService: '尚無服務',
     NoImage: '尚無映像檔',

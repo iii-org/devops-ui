@@ -230,8 +230,7 @@ export default {
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
     confirmDelete: 'Are you sure to @:(general.Delete)?',
-    confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
-    noUploadFile: 'Please select file upload or paste the file content in the input box.'
+    confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -977,6 +976,7 @@ export default {
     ClusterMessage: 'The Cluster settings have been updated successfully',
     RegistryMessage: 'The Registry settings have been updated successfully',
     FailMessage: 'Please check if the content of the form is correct and fill in the password',
+    NoNameWarning: 'Please fill in Cluster name',
     FillInPassword: 'Please fill in password',
     NoService: 'No service',
     NoImage: 'No image',

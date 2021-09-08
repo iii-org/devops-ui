@@ -60,7 +60,7 @@ export default {
       this.showWarning(singleFileLimitWarning)
     },
     handleRemove(file, fileList) {
-      if (fileList.length === 0) this.$emit('hasFileList', false)
+      if (fileList.length === 0) this.$emit('hasFileList', null)
     },
     showWarning(message) {
       this.$message({
