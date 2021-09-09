@@ -161,7 +161,6 @@ export default {
       this.updateLoading = value
     },
     handleUpdateStatus(value) {
-      console.log(value)
       this.lastUpdated = value
     }
   }
