@@ -1,40 +1,43 @@
 <template>
   <el-table-column v-bind="$props">
     <template slot-scope="{row, $index, treeNode}">
+      <template v-if="prop==='name'&&!treeNode">
+        <div class="el-table__root" />
+      </template>
+      <el-button
+        v-if="prop==='name'&&(row.id).toString().includes('new')"
+        type="danger"
+        size="mini"
+        icon="el-icon-close"
+        @click="handlerResetCreate(row, $index, treeNode)"
+      />
       <template v-if="row.create">
         <el-input v-if="number"
                   ref="input"
                   v-model.number="row[prop]"
                   type="number"
-                  :style="{width: treeWidth(treeNode)}"
-                  @keyup.enter.native="handlerCreate(row, $index)"
-                  @keyup.esc.native="handlerResetCreate(row, $index)"
-        >
-          <template v-if="hasRequired(row)" slot="suffix">
-            <div class="text-danger">
-              {{ $t('Validation.Input', [label]) }}
-            </div>
-          </template>
-        </el-input>
+                  :style="{width: treeWidth(treeNode, row)}"
+                  @keyup.enter.native="handlerCreate(row, $index, treeNode)"
+                  @keyup.esc.native="handlerResetCreate(row, $index, treeNode)"
+        />
         <el-input v-else ref="input"
                   v-model="row[prop]"
-                  :style="{width: treeWidth(treeNode)}"
-                  @keyup.enter.native="handlerCreate(row, $index)"
-                  @keyup.esc.native="handlerResetCreate(row, $index)"
-        >
-          <template v-if="hasRequired(row)" slot="suffix">
-            <div class="text-danger">
-              {{ $t('Validation.Input', [label]) }}
-            </div>
-          </template>
-        </el-input>
+                  :style="{width: treeWidth(treeNode, row)}"
+                  @keyup.enter.native="handlerCreate(row, $index, treeNode)"
+                  @keyup.esc.native="handlerResetCreate(row, $index, treeNode)"
+        />
+        <ul v-if="hasRequired(row)" slot="suffix">
+          <li class="text-danger text-sm">
+            {{ $t('Validation.Input', [label]) }}
+          </li>
+        </ul>
       </template>
       <template v-else-if="row.editColumn===prop&&editable(row)">
         <el-input v-if="number"
                   ref="input"
                   v-model.number="row[prop]"
                   type="number"
-                  :style="{width: treeWidth(treeNode)}"
+                  :style="{width: treeWidth(treeNode, row)}"
                   @blur="handlerBlur(row, $index, treeNode)"
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
                   @keyup.esc.native="handlerReset(row, $index, treeNode)"
@@ -47,7 +50,7 @@
         </el-input>
         <el-input v-else ref="input"
                   v-model="row[prop]"
-                  :style="{width: treeWidth(treeNode)}"
+                  :style="{width: treeWidth(treeNode, row)}"
                   @blur="handlerBlur(row, $index, treeNode)"
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
                   @keyup.esc.native="handlerReset(row, $index, treeNode)"
@@ -103,6 +106,10 @@ export default {
     hasChildEdit: {
       type: Boolean,
       default: false
+    },
+    showOverflowTooltip: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -121,11 +128,15 @@ export default {
         return !row['has_children']
       }
     },
-    treeWidth(treeNode) {
-      if (this.prop === 'name' && treeNode && treeNode.indent) {
-        return `calc(90% - ${treeNode.indent}px)`
+    treeWidth(treeNode, row) {
+      let width = '75%'
+      if (row && row.id && (row.id).toString().includes('new')) {
+        width = '60%'
       }
-      return `calc(90%)`
+      if (this.prop === 'name' && treeNode && treeNode.indent) {
+        return `calc(${width} - ${treeNode.indent}px)`
+      }
+      return `calc(${width})`
     },
     handlerBlur(row, index, treeNode) {
       const checkUpdate = row.originColumn && row[this.prop] !== row.originColumn
@@ -164,3 +175,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.el-table__root {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+</style>

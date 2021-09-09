@@ -19,6 +19,7 @@
         prop="name"
         required
         fixed
+        show-overflow-tooltip
         :has-child-edit="true"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
@@ -26,7 +27,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
-        min-width="9%"
+        width="125px"
         :label="$t('Issue.tracker')"
         prop="tracker"
         :components="Tracker"
@@ -43,6 +44,7 @@
         prop="fixed_version"
         :options="fixed_version"
         :has-child-edit="true"
+        show-overflow-tooltip
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -52,6 +54,7 @@
         min-width="9%"
         :label="$t('Issue.StartDate')"
         prop="start_date"
+        show-overflow-tooltip
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -61,6 +64,7 @@
         min-width="9%"
         :label="$t('Issue.EndDate')"
         prop="due_date"
+        show-overflow-tooltip
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -72,6 +76,7 @@
         prop="priority"
         :components="Priority"
         :options="priority"
+        show-overflow-tooltip
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -83,13 +88,14 @@
         prop="assigned_to"
         :options="assigned_to"
         :has-child-edit="true"
+        show-overflow-tooltip
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
-        min-width="9%"
+        width="65px"
         :label="$t('Issue.DoneRatio')"
         prop="done_ratio"
         :number="true"
@@ -99,10 +105,11 @@
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
-        min-width="9%"
+        width="65px"
         :label="$t('Issue.points')"
         :has-child-edit="true"
-        prop="points"
+        prop="point"
+        :number="true"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -117,15 +124,17 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length>2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
-        <contextmenu-item @click="appendIssue(contextMenu.row.id, contextMenu.row)">
+        <contextmenu-item @click="appendIssue(contextMenu.row)">
           {{ $t('Issue.AddIssue') }}
         </contextmenu-item>
-        <contextmenu-item @click="appendIssue(contextMenu.row.id, contextMenu.row, true)">
+        <contextmenu-item @click="appendIssue(contextMenu.row, true)">
           {{ $t('Issue.AddSubIssue') }}
         </contextmenu-item>
-        <contextmenu-item @click="appendIssue(contextMenu.row.id, contextMenu.row, false, contextMenu.row)">
+        <contextmenu-item @click="appendIssue(contextMenu.row, false, contextMenu.row)">
           {{ $t('Issue.CopyIssue') }}
         </contextmenu-item>
+        <contextmenu-item divider />
+        <contextmenu-item class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete"> {{ $t('general.Delete') }}</em></contextmenu-item>
       </template>
     </contextmenu>
   </div>
@@ -144,7 +153,7 @@ import { Tracker, Priority } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSDateColumn'
-import { addIssue, getIssueFamily, updateIssue } from '@/api/issue'
+import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 
 export default {
@@ -196,37 +205,44 @@ export default {
   methods: {
     async fetchData() {
       const tracker = this.tracker.find(item => item.name === 'Epic')
-      const res = await getProjectIssueList(this.selectedProjectId, { tracker_id: tracker.id, parent_id: 'null' })
+      const res = await getProjectIssueList(this.selectedProjectId, { tracker_id: tracker.id, parent_id: 'null', with_point: true })
       return Promise.resolve(res.data)
     },
-    appendIssue(id, row, subLevel, prefill) {
+    async appendIssue(row, subLevel, prefill) {
       let row_index = this.listData.length
       let treeDataArray = []
       let updateNodeMap = []
       const store = this.$refs.WBS.layout.store
       const { treeData, lazyTreeNodeMap } = store.states
-      if (id) {
+      if (row.id) {
         if (subLevel) {
           if (!treeData[row.id]) {
-            this.$set(treeData, row.id, { display: true, lazy: true, loaded: true, loading: false })
+            this.$set(treeData, row.id, {})
+            this.$set(treeData[row.id], 'display', true)
+            this.$set(treeData[row.id], 'lazy', true)
+            this.$set(treeData[row.id], 'loaded', true)
+            this.$set(treeData[row.id], 'loading', false)
+            this.$set(treeData[row.id], 'expanded', false)
             this.$set(treeData[row.id], 'children', [])
             if (row.parent_object && treeData[row.parent_object.id]) {
               treeData[row.id]['level'] = treeData[row.parent_object.id]['level'] + 1
             }
             this.$set(lazyTreeNodeMap, row.id, [])
+          } else {
+            await this.getIssueFamilyData(row, row.id, null, lazyTreeNodeMap)
           }
+          this.$refs.WBS.toggleRowExpansion(row, true)
           treeDataArray = treeData[row.id].children
           updateNodeMap = lazyTreeNodeMap[row.id]
-          console.log(row.id, treeData, lazyTreeNodeMap)
-          row_index = treeDataArray.findIndex(issue => issue.id === id)
+          row_index = treeDataArray.findIndex(issue => issue.id === row.id)
         } else if (row && row.parent_object) {
           if (row.parent_object.id && treeData[row.parent_object.id]) {
             treeDataArray = treeData[row.parent_object.id].children
             updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
           }
-          row_index = treeDataArray.findIndex(issue => issue.id === id)
+          row_index = treeDataArray.findIndex(issue => issue.id === row.id) + 1
         } else {
-          row_index = this.listData.findIndex(issue => issue.id === id) + 1
+          row_index = this.listData.findIndex(issue => issue.id === row.id) + 1
         }
       }
       const findEpic = this.tracker.find(item => item.name === 'Epic')
@@ -234,7 +250,6 @@ export default {
       const issueForm = {
         id: `new_${timestamp}`,
         parent_id: (prefill && prefill.parent_id) ? prefill.parent_id : null,
-        project_id: this.selectedProjectId,
         assigned_to: (prefill && prefill.assigned_to) ? prefill.assigned_to : { id: '', name: '' },
         name: (prefill && prefill.name) ? `${prefill.name}(${this.$t('Issue.Copy')})` : '',
         fixed_version: (prefill && prefill.fixed_version) ? prefill.fixed_version : { id: '', name: '' },
@@ -256,7 +271,6 @@ export default {
           updateNodeMap.splice(row_index, 0, issueForm)
           store.$set(treeData[row.id], 'children', treeDataArray)
           store.$set(lazyTreeNodeMap, row.id, updateNodeMap)
-          store.toggleRowExpansionAdapter(row, true)
         } else if (row && row.parent_object) {
           treeDataArray.splice(row_index, 0, `new_${timestamp}`)
           issueForm['parent_id'] = row.parent_object.id
@@ -269,6 +283,74 @@ export default {
         }
       })
     },
+    async removeIssue(row) {
+      let row_index = this.listData.length
+      let treeDataArray = []
+      let updateNodeMap = []
+      const store = this.$refs.WBS.layout.store
+      const { treeData, lazyTreeNodeMap } = store.states
+      if (row.id) {
+        if (row && row.parent_object) {
+          if (row.parent_object.id && treeData[row.parent_object.id]) {
+            treeDataArray = treeData[row.parent_object.id].children
+            updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
+          }
+          row_index = treeDataArray.findIndex(issue => issue.id === row.id)
+        } else {
+          row_index = this.listData.findIndex(issue => issue.id === row.id)
+        }
+      }
+      if (row && row.parent_object) {
+        updateNodeMap.splice(row_index, 1)
+        if (updateNodeMap.length <= 0) {
+          store.$delete(lazyTreeNodeMap, row.parent_object.id)
+          treeDataArray.splice(row_index, 1)
+        } else {
+          store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
+        }
+      } else {
+        this.listData.splice(row_index, 1)
+      }
+    },
+    async handleRemoveIssue(row) {
+      await this.$msgbox({
+        title: this.$t('general.Delete'),
+        type: 'warning',
+        message: this.$t('Issue.DeleteIssue', { issueName: `#${row.id} - ${row.name}` }),
+        showCancelButton: true,
+        confirmButtonClass: 'el-button--danger',
+        confirmButtonText: this.$t('general.Delete'),
+        cancelButtonText: this.$t('general.Cancel'),
+        beforeClose: async(action, instance, done) => {
+          if (action === 'confirm') {
+            this.$emit('update-loading', true)
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = this.$t('Updating')
+            try {
+              const res = await deleteIssue(row.id)
+              this.$emit('update-status', {
+                time: res.datetime
+              })
+              this.$notify({
+                title: this.$t('general.Success').toString(),
+                type: 'success',
+                message: this.$t('Notify.Deleted').toString()
+              })
+            } catch (e) {
+              this.$emit('update-status', {
+                error: e
+              })
+              this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+            }
+            instance.confirmButtonLoading = false
+            done()
+            await this.removeIssue(row)
+          } else {
+            done()
+          }
+        }
+      })
+    },
     handleCellClick(row, column) {
       this.$set(row, 'originColumn', cloneDeep(row[column.property]))
       this.$set(row, 'editColumn', column.property)
@@ -278,7 +360,7 @@ export default {
       this.$set(row, 'editColumn', false)
       this.$set(row, 'originColumn', null)
     },
-    handleResetCreate({ row, index }) {
+    handleResetCreate({ row }) {
       let row_index = 0
       let treeDataArray = []
       let updateNodeMap = []
@@ -295,7 +377,8 @@ export default {
         store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
         store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
       } else {
-        this.listData.splice(index, 1)
+        row_index = this.listData.findIndex(issue => issue.id === row.id)
+        this.listData.splice(row_index, 1)
       }
       this.$set(row, 'create', false)
     },
@@ -388,8 +471,7 @@ export default {
       })
       this.$emit('update-loading', true)
       try {
-        const res = await addIssue(data)
-        console.log(row)
+        const res = await addIssue({ ...data, project_id: this.selectedProjectId })
         this.$set(row, 'create', false)
         this.$set(row, 'editColumn', false)
         Object.keys(res.data).forEach(item => {
@@ -411,7 +493,7 @@ export default {
       }
       this.$emit('update-loading', false)
     },
-    async getIssueFamilyData(row, treeNode, resolve) {
+    async getIssueFamilyData(row, treeNode, resolve, treeData) {
       try {
         const family = await getIssueFamily(row.id)
         const data = family.data
@@ -419,10 +501,17 @@ export default {
         //   await this.$set(row, 'parent', data.parent)
         // }
         if (data.hasOwnProperty('children')) {
-          // await this.$set(row, 'children', data.children)
-          resolve(data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
+          if (treeData) {
+            this.$set(treeData, row.id, data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
+          } else {
+            resolve(data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
+          }
         } else {
-          resolve([])
+          if (treeData) {
+            this.$set(treeData, row.id, [])
+          } else {
+            resolve([])
+          }
         }
         // if (data.hasOwnProperty('relations')) {
         //   await this.$set(row, 'relations', data.relations)
@@ -505,7 +594,10 @@ export default {
 }
 
 .current {
-  @apply text-success;
-  font-weight: 700;
+  @apply text-success font-bold;
+}
+
+.menu-remove{
+  @apply text-danger font-bold;
 }
 </style>

@@ -63,6 +63,10 @@ export default {
     hasChildEdit: {
       type: Boolean,
       default: false
+    },
+    showOverflowTooltip: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
