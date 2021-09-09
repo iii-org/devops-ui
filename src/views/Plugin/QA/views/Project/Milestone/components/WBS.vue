@@ -95,7 +95,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
-        width="65px"
+        width="100px"
         :label="$t('Issue.DoneRatio')"
         prop="done_ratio"
         :number="true"
@@ -105,7 +105,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
-        width="65px"
+        width="100px"
         :label="$t('Issue.points')"
         :has-child-edit="true"
         prop="point"
