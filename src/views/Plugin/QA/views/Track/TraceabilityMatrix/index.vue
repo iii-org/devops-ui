@@ -670,8 +670,6 @@ export default {
       html2canvas(this.$refs.matrix).then(canvas => {
         const [A4Width, A4Height] = [595, 841] // a4
         const { width: CanvasWidth, height: CanvasHeight } = canvas
-        const PdfWidth = A4Width * 1.9
-        const PdfHeight = A4Height * 1.9 / (A4Width / A4Height)
         const rotCanvas = document.createElement('canvas')
         rotCanvas.width = CanvasHeight
         rotCanvas.height = CanvasWidth
@@ -682,12 +680,12 @@ export default {
         rctx.rotate(Math.PI * 0.5)
 
         // draw image offset so center of image is on top of pivot
-        rctx.drawImage(canvas, -CanvasWidth * 0.5, -CanvasHeight * 0.5)
+        rctx.drawImage(canvas, -CanvasWidth * 0.5, -CanvasHeight * 0.5, CanvasWidth, CanvasHeight)
         const data = rotCanvas.toDataURL('image/png', 1.0)
         const image = new Image()
         image.src = data
-        image.width = PdfWidth
-        image.Height = PdfHeight
+        image.width = A4Width * 1.95
+        image.Height = A4Height
         this.$refs.rotateImage.appendChild(image)
       })
     },
@@ -696,13 +694,11 @@ export default {
       this.dialogVisible = true
       html2canvas(this.$refs.matrix).then(canvas => {
         const [A4Width, A4Height] = [595, 841] // a4
-        const PdfWidth = A4Width * 1.9
-        const PdfHeight = A4Height * 1.9 / (A4Width / A4Height)
         const data = canvas.toDataURL('image/png', 1.0)
         const image = new Image()
         image.src = data
-        image.width = PdfWidth
-        image.Height = PdfHeight
+        image.width = A4Width * 1.95
+        image.Height = A4Height
         this.$refs.rotateImage.appendChild(image)
       })
     }
