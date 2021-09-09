@@ -197,6 +197,12 @@ export default {
       return create.length > 0
     }
   },
+  watch: {
+    selectedProjectId() {
+      this.loadVersionList(true)
+      this.loadAssignedToList()
+    }
+  },
   mounted() {
     this.loadVersionList(true)
     this.loadAssignedToList()
@@ -262,26 +268,24 @@ export default {
         due_date: (prefill && prefill.due_date) ? prefill.due_date : '',
         create: true
       }
-      this.$nextTick(() => {
-        if (subLevel) {
-          treeDataArray.splice(row_index, 0, `new_${timestamp}`)
-          issueForm['parent_id'] = row.id
-          issueForm['sub_level'] = true
-          issueForm['parent_object'] = row
-          updateNodeMap.splice(row_index, 0, issueForm)
-          store.$set(treeData[row.id], 'children', treeDataArray)
-          store.$set(lazyTreeNodeMap, row.id, updateNodeMap)
-        } else if (row && row.parent_object) {
-          treeDataArray.splice(row_index, 0, `new_${timestamp}`)
-          issueForm['parent_id'] = row.parent_object.id
-          issueForm['parent_object'] = row.parent_object
-          updateNodeMap.splice(row_index, 0, issueForm)
-          store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
-          store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
-        } else {
-          this.listData.splice(row_index, 0, issueForm)
-        }
-      })
+      if (subLevel) {
+        treeDataArray.splice(row_index, 0, `new_${timestamp}`)
+        issueForm['parent_id'] = row.id
+        issueForm['sub_level'] = true
+        issueForm['parent_object'] = row
+        updateNodeMap.splice(row_index, 0, issueForm)
+        store.$set(treeData[row.id], 'children', treeDataArray)
+        store.$set(lazyTreeNodeMap, row.id, updateNodeMap)
+      } else if (row && row.parent_object) {
+        treeDataArray.splice(row_index, 0, `new_${timestamp}`)
+        issueForm['parent_id'] = row.parent_object.id
+        issueForm['parent_object'] = row.parent_object
+        updateNodeMap.splice(row_index, 0, issueForm)
+        store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
+        store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
+      } else {
+        this.listData.splice(row_index, 0, issueForm)
+      }
     },
     async removeIssue(row) {
       let row_index = this.listData.length
