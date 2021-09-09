@@ -39,26 +39,19 @@
                   @blur="handlerBlur(row, $index, treeNode)"
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
                   @keyup.esc.native="handlerReset(row, $index, treeNode)"
-        >
-          <template v-if="hasRequired(row)" slot="suffix">
-            <div class="text-danger">
-              {{ $t('Validation.Input', [label]) }}
-            </div>
-          </template>
-        </el-input>
+        />
         <el-input v-else ref="input"
                   v-model="row[prop]"
                   :style="{width: treeWidth(treeNode, row)}"
                   @blur="handlerBlur(row, $index, treeNode)"
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
                   @keyup.esc.native="handlerReset(row, $index, treeNode)"
-        >
-          <template v-if="hasRequired(row)" slot="suffix">
-            <div class="text-danger">
-              {{ $t('Validation.Input', [label]) }}
-            </div>
-          </template>
-        </el-input>
+        />
+        <ul v-if="hasRequired(row)" slot="suffix">
+          <li class="text-danger text-sm">
+            {{ $t('Validation.Input', [label]) }}
+          </li>
+        </ul>
       </template>
       <template v-else>
         {{ row[prop] }}
@@ -128,7 +121,7 @@ export default {
     },
     treeWidth(treeNode, row) {
       let width = '75%'
-      if (row && row.id && (row.id).toString().includes('new')) {
+      if (row && row.id && (row.id).toString().includes('new') && !row.parent_object) {
         width = '60%'
       }
       if (this.prop === 'name' && treeNode && treeNode.indent) {
