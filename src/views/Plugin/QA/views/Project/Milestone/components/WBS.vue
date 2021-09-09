@@ -214,7 +214,7 @@ export default {
       let updateNodeMap = []
       const store = this.$refs.WBS.layout.store
       const { treeData, lazyTreeNodeMap } = store.states
-      if (row.id) {
+      if (row && row.id) {
         if (subLevel) {
           if (!treeData[row.id]) {
             this.$set(treeData, row.id, {})
