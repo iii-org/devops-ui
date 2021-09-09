@@ -120,7 +120,7 @@ export default {
       }
     },
     treeWidth(treeNode, row) {
-      let width = '75%'
+      let width = '70%'
       if (row && row.id && (row.id).toString().includes('new') && !row.parent_object) {
         width = '60%'
       }
