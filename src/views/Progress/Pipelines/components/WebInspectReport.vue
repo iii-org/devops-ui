@@ -7,11 +7,11 @@
       </el-button>
     </ToolBar>
     <el-table
-      ref="tableWebInspect"
+      ref="table_webinspect"
       v-loading="listLoading"
       class="mb-10"
       :element-loading-text="$t('Loading')"
-      :data="webInspectData"
+      :data="webinspect"
       border
       fit
     >
@@ -63,7 +63,7 @@ export default {
   name: 'WebInspect',
   components: { ToolBar },
   props: {
-    webInspectData: {
+    webinspect: {
       type: Array,
       default: () => []
     },
@@ -74,12 +74,12 @@ export default {
   },
   computed: {
     disabled() {
-      return this.webInspectData[0] ? Object.keys(this.webInspectData[0]).length === 0 : true
+      return this.webinspect[0] ? Object.keys(this.webinspect[0]).length === 0 : true
     }
   },
   methods: {
     openWebInspect() {
-      const { scan_id, run_at } = this.webInspectData[0]
+      const { scan_id, run_at } = this.webinspect[0]
       const routeUrl = this.$router.resolve({
         name: 'webinspect-report', params: { scan_id, run_at }
       })

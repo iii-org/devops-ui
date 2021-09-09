@@ -7,10 +7,10 @@
       </el-button>
     </ToolBar>
     <el-table
-      ref="tableSideex"
+      ref="table_sideex"
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
-      :data="sideexData"
+      :data="sideex"
       border
       fit
     >
@@ -43,7 +43,7 @@ export default {
   name: 'Sideex',
   components: { ToolBar },
   props: {
-    sideexData: {
+    sideex: {
       type: Array,
       default: () => []
     },
@@ -54,12 +54,12 @@ export default {
   },
   computed: {
     showSideexReport() {
-      return this.sideexData[0] ? this.sideexData[0].status === 'Finished' && this.sideexData[0].has_report : false
+      return this.sideex[0] ? this.sideex[0].status === 'Finished' && this.sideex[0].has_report : false
     }
   },
   methods: {
     async openSideex() {
-      const { id } = this.sideexData[0]
+      const { id } = this.sideex[0]
       const res = await getSideexReport(id)
       this.showFullLog(res.data)
     },

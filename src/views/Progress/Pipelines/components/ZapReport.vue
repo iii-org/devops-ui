@@ -7,10 +7,10 @@
       </el-button>
     </ToolBar>
     <el-table
-      ref="tableZAP"
+      ref="table_zap"
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
-      :data="zapData"
+      :data="zap"
       border
       fit
     >
@@ -50,7 +50,7 @@ export default {
   name: 'Zap',
   components: { ToolBar },
   props: {
-    zapData: {
+    zap: {
       type: Array,
       default: () => []
     },
@@ -61,12 +61,12 @@ export default {
   },
   computed: {
     disabled() {
-      return this.zapData[0] ? Object.keys(this.zapData[0]).length === 0 : true
+      return this.zap[0] ? Object.keys(this.zap[0]).length === 0 : true
     }
   },
   methods: {
     openZap() {
-      const { full_log } = this.zapData[0]
+      const { full_log } = this.zap[0]
       this.showFullLog(full_log)
     },
     showFullLog(log) {

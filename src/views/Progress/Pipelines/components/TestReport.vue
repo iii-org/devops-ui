@@ -41,47 +41,57 @@
               {{ commitId }}
             </li>
           </ul>
-          <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
-          <SonarQubeReport
-            v-show="sonarQubeData"
-            ref="sonarQube"
-            :sonar-qube-data="sonarQubeData"
-            :sonar-qube-link="sonarQubeLink"
-            :list-loading="listLoading"
-          />
-          <CheckMarxReport
-            v-show="checkMarxData"
-            ref="checkMarx"
-            :check-marx-data="checkMarxData"
-            :list-loading="listLoading"
-          />
-          <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
-          <ZapReport
-            v-show="zapData"
-            ref="zap"
-            :zap-data="zapData"
-            :list-loading="listLoading"
-          />
-          <WebInspectReport
-            v-show="webInspectData"
-            ref="webInspect"
-            :web-inspect-data="webInspectData"
-            :list-loading="listLoading"
-          />
-          <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
-          <PostmanReport
-            v-show="postmanData"
-            ref="postman"
-            :postman-data="postmanData"
-            :list-loading="listLoading"
-          />
-          <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
-          <SideexReport
-            v-show="sideexData"
-            ref="sideex"
-            :sideex-data="sideexData"
-            :list-loading="listLoading"
-          />
+          <!-- white box test -->
+          <div v-show="sonarqube || checkmarx">
+            <el-divider content-position="center">{{ $t('TestReport.WhiteBoxTesting') }}</el-divider>
+            <SonarQubeReport
+              v-show="sonarqube"
+              ref="sonarqube"
+              :sonarqube="sonarqube"
+              :sonar-qube-link="sonarQubeLink"
+              :list-loading="listLoading"
+            />
+            <CheckMarxReport
+              v-show="checkmarx"
+              ref="checkmarx"
+              :checkmarx="checkmarx"
+              :list-loading="listLoading"
+            />
+          </div>
+          <!-- black box test -->
+          <div v-show="zap || webinspect">
+            <el-divider content-position="center">{{ $t('TestReport.BlackBoxTesting') }}</el-divider>
+            <ZapReport
+              v-show="zap"
+              ref="zap"
+              :zap="zap"
+              :list-loading="listLoading"
+            />
+            <WebInspectReport
+              v-show="webinspect"
+              ref="webinspect"
+              :webinspect="webinspect"
+              :list-loading="listLoading"
+            />
+          </div>
+          <!-- api script test -->
+          <div v-show="postman">
+            <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
+            <PostmanReport
+              ref="postman"
+              :postman="postman"
+              :list-loading="listLoading"
+            />
+          </div>
+          <!-- web script test -->
+          <div v-show="sideex">
+            <el-divider content-position="center">{{ $t('TestReport.WebScriptTesting') }}</el-divider>
+            <SideexReport
+              ref="sideex"
+              :sideex="sideex"
+              :list-loading="listLoading"
+            />
+          </div>
         </div>
       </el-card>
     </div>
@@ -107,15 +117,15 @@ export default {
     return {
       title: 'III DevOps',
       listLoading: false,
-      sonarQubeData: [],
-      checkMarxData: [],
-      zapData: [],
-      webInspectData: [],
-      postmanData: [],
-      sideexData: [],
+      sonarqube: [],
+      checkmarx: [],
+      zap: [],
+      webinspect: [],
+      postman: [],
+      sideex: [],
       sonarQubeLink: '',
       downloadFileName: 'DevOps_test_report',
-      dataName: ['sonarQubeData', 'checkMarxData', 'zapData', 'webInspectData', 'postmanData', 'sideexData'],
+      dataName: ['sonarqube', 'checkmarx', 'zap', 'webinspect', 'postman', 'sideex'],
       dataTimeArr: []
     }
   },
@@ -128,7 +138,7 @@ export default {
       return UTCtoLocalTime(this.dataTimeArr[0])
     },
     branch() {
-      return this.sonarQubeData && this.sonarQubeData.length > 0 ? this.sonarQubeData[0].branch : '-'
+      return this.sonarqube && this.sonarqube.length > 0 ? this.sonarqube[0].branch : '-'
     },
     commitId() {
       return this.$route.params.commitId
@@ -143,14 +153,14 @@ export default {
       try {
         const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
         if (res.data.sonarqube) {
-          this.sonarQubeData = this.handleSonarQubeData(res.data.sonarqube.history)
+          this.sonarqube = this.handleSonarQubeData(res.data.sonarqube.history)
           this.sonarQubeLink = res.data.sonarqube.link
-        } else this.sonarQubeData = undefined
-        res.data.checkmarx ? this.checkMarxData.push(res.data.checkmarx) : this.sonarQubeData = undefined
-        res.data.zap ? this.zapData.push(res.data.zap) : this.zapData = undefined
-        res.data.webInspect ? this.webInspectData.push(res.data.webinspect) : this.webInspectData = undefined
-        res.data.postman ? this.postmanData.push(res.data.postman) : this.postmanData = undefined
-        res.data.sideex ? this.sideexData.push(res.data.sideex) : this.sideexData = undefined
+        } else this.sonarqube = undefined
+        res.data.checkmarx ? this.checkmarx.push(res.data.checkmarx) : this.checkmarx = undefined
+        res.data.zap ? this.zap.push(res.data.zap) : this.zap = undefined
+        res.data.webinspect ? this.webinspect.push(res.data.webinspect) : this.webinspect = undefined
+        res.data.postman ? this.postman.push(res.data.postman) : this.postman = undefined
+        res.data.sideex ? this.sideex.push(res.data.sideex) : this.sideex = undefined
         this.getDataTime()
         this.listLoading = false
       } catch (error) {
@@ -171,7 +181,7 @@ export default {
       const dataTimeArr = []
       this.dataName.map(item => {
         if (!this[item]) return
-        if (this[item][0]) item === 'sonarQubeData' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
+        if (this[item][0]) item === 'sonarqube' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
       })
       dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
       this.dataTimeArr = dataTimeArr
@@ -192,24 +202,23 @@ export default {
       await this.$pdf(this.$refs.pdfPage, this.downloadFileName)
     },
     async getSheet(filename_extension) {
-      // table dom
-      const tableSonarQube = this.$refs.sonarQube.$refs.tableSonarQube.$el.cloneNode(true)
-      const tableCheckMarx = this.$refs.checkMarx.$refs.tableCheckMarx.$el.cloneNode(true)
-      const tableZAP = this.$refs.zap.$refs.tableZAP.$el.cloneNode(true)
-      const tableWebInspect = this.$refs.webInspect.$refs.tableWebInspect.$el.cloneNode(true)
-      const tablePostman = this.$refs.postman.$refs.tablePostman.$el.cloneNode(true)
-      const tableSideex = this.$refs.sideex.$refs.tableSideex.$el.cloneNode(true)
-
-      // create a new div and append all the table dom on it
-      const newDiv = document.createElement('div')
-
-      newDiv.appendChild(tableSonarQube).appendChild(tableCheckMarx)
-        .appendChild(tableZAP).appendChild(tableWebInspect)
-        .appendChild(tablePostman).appendChild(tableSideex)
-
+      const newDiv = await this.getTableDom()
       // use XLSX to transform a sheet from tables
       const sheet = XLSX.utils.table_to_sheet(newDiv)
       await this.download(sheet, filename_extension)
+    },
+    getTableDom() {
+      let dom = null
+      // create a new div and append all the table dom on it
+      const newDiv = document.createElement('div')
+      // table dom
+      this.dataName.map(name => {
+        if (this[name]) {
+          dom = this.$refs[name].$refs[`table_${name}`].$el.cloneNode(true)
+          newDiv.appendChild(dom)
+        }
+      })
+      return newDiv
     },
     async download(sheet, filename_extension) {
       switch (filename_extension) {

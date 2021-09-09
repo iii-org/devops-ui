@@ -7,11 +7,11 @@
       </el-button>
     </ToolBar>
     <el-table
-      ref="tablePostman"
+      ref="table_postman"
       v-loading="listLoading"
       class="mb-10"
       :element-loading-text="$t('Loading')"
-      :data="postmanData"
+      :data="postman"
       border
       fit
     >
@@ -39,7 +39,7 @@ export default {
   name: 'Postman',
   components: { ToolBar },
   props: {
-    postmanData: {
+    postman: {
       type: Array,
       default: () => []
     },
@@ -50,12 +50,12 @@ export default {
   },
   computed: {
     disabled() {
-      return this.postmanData[0] ? Object.keys(this.postmanData[0]).length === 0 : true
+      return this.postman[0] ? Object.keys(this.postman[0]).length === 0 : true
     }
   },
   methods: {
     openPostman() {
-      const { id } = this.postmanData[0]
+      const { id } = this.postman[0]
       const routeUrl = this.$router.resolve({
         name: 'postman-test-case', params: { id }
       })

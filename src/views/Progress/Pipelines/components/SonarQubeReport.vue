@@ -7,10 +7,10 @@
       </el-button>
     </ToolBar>
     <el-table
-      ref="tableSonarQube"
+      ref="table_sonarqube"
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
-      :data="sonarQubeData"
+      :data="sonarqube"
       border
       fit
     >
@@ -51,7 +51,7 @@ export default {
   name: 'SonarQube',
   components: { ToolBar },
   props: {
-    sonarQubeData: {
+    sonarqube: {
       type: Array,
       default: () => []
     },

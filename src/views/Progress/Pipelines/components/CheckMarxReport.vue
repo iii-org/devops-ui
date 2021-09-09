@@ -14,11 +14,11 @@
       </el-button>
     </ToolBar>
     <el-table
-      ref="tableCheckMarx"
+      ref="table_checkmarx"
       v-loading="listLoading"
       class="mb-10"
       :element-loading-text="$t('Loading')"
-      :data="checkMarxData"
+      :data="checkmarx"
       border
       fit
     >
@@ -59,7 +59,7 @@ export default {
   name: 'CheckMarx',
   components: { ToolBar },
   props: {
-    checkMarxData: {
+    checkmarx: {
       type: Array,
       default: () => []
     },
@@ -70,12 +70,12 @@ export default {
   },
   computed: {
     disabled() {
-      return this.checkMarxData[0] ? Object.keys(this.checkMarxData[0]).length === 0 : true
+      return this.checkmarx[0] ? Object.keys(this.checkmarx[0]).length === 0 : true
     }
   },
   methods: {
     async openCheckMarx() {
-      const { report_id, scan_id } = this.checkMarxData[0]
+      const { report_id, scan_id } = this.checkmarx[0]
       await getCheckMarxReport(report_id)
         .then(res => {
           const url = window.URL.createObjectURL(new Blob([res]))
