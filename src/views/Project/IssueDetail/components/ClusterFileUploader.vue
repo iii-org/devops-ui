@@ -12,7 +12,7 @@
       drag
     >
       <div>
-        <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
+        <el-button size="small" :type="tagType()">{{ $t('File.ChooseFile') }}</el-button>
         <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
         <div class="text-xs text-gray-400">
           <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -27,6 +27,12 @@ import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extens
 
 export default {
   name: 'ClusterFileUploader',
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       limit: 1,
@@ -68,8 +74,10 @@ export default {
         type: 'warning',
         message
       })
+    },
+    tagType() {
+      return this.disabled ? 'info' : 'success'
     }
-
   }
 }
 </script>

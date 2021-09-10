@@ -93,6 +93,7 @@
               <ClusterFileUploader
                 ref="ClusterFileUploader"
                 style="margin-bottom: 40px;"
+                :disabled="disabled"
                 :class="{disabled: disabled}"
                 @hasFileList="hasFileList"
               />
