@@ -47,6 +47,7 @@
         height="60vh"
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
+        @row-contextmenu="handleAuthority"
         @cell-click="handleClick"
         @expand-change="getIssueFamilyData"
         @selection-change="handleSelectionChange"
@@ -612,6 +613,9 @@ export default {
       let result = await this.fetchDataCSV(selectedTestPlan)
       result = await this.dataCleanCSV(result)
       await this.prepareCSV(result)
+    },
+    handleAuthority(row, column, event) {
+      if (this.userRole !== 'QA') this.handleContextMenu(row, column, event)
     }
   }
 }
