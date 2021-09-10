@@ -108,7 +108,7 @@
           <span class="status-bar-track">
             <span
               class="status-bar"
-              :style="`width: ${returnProgress(scope.row.closed_count, scope.row.total_count)}%`"
+              :style="`width: ${getProgressRatio(scope.row.closed_count, scope.row.total_count)}%`"
             />
           </span>
         </template>
@@ -247,7 +247,7 @@ export default {
       this.deleteProject.name = row.name
       this.$refs.deleteProjectDialog.showDialog = true
     },
-    returnProgress(current, total) {
+    getProgressRatio(current, total) {
       return Math.round((current / total) * 100)
     },
     handleClick(projectObj) {
