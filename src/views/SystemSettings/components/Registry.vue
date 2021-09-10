@@ -90,7 +90,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="13">
-            <el-form-item :label="$t('general.Password')">
+            <el-form-item :label="$t('general.Password')" required>
               <el-input v-model="form.password" show-password :placeholder="$t('SystemDeploySettings.FillInPassword')" />
             </el-form-item>
           </el-col>

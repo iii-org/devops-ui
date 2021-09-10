@@ -76,7 +76,7 @@
       <el-form ref="form" :model="form" label-width="120px" size="medium">
         <el-row :gutter="10">
           <el-col :span="24" :sm="13">
-            <el-form-item :label="$t('SystemDeploySettings.ClusterName')">
+            <el-form-item :label="$t('SystemDeploySettings.ClusterName')" required>
               <el-input v-model="form.clusterName" />
             </el-form-item>
           </el-col>
