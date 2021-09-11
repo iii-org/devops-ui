@@ -220,7 +220,7 @@ import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
-import { csvTranslate } from '@/utils/csvTableTranslate'
+import { excelTranslate } from '@/utils/excelTableTranslate'
 import XLSX from 'xlsx'
 
 /**
@@ -248,7 +248,7 @@ export default {
       form: {},
 
       selectedIssueList: [],
-      csvColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to']
+      excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to']
     }
   },
   computed: {
@@ -306,17 +306,17 @@ export default {
     handleSelectionChange(list) {
       this.selectedIssueList = list
     },
-    downloadCsv(selectedIssueList) {
+    downloadExcel(selectedIssueList) {
       const selectedColumn = this.handleCsvSelectedColumn(selectedIssueList)
       const translateTable = this.handleCsvTranslateTable(selectedColumn)
       const worksheet = XLSX.utils.json_to_sheet(translateTable)
-      this.$csv(worksheet, 'projectIssues')
+      this.$excel(worksheet, 'projectIssues')
     },
     handleCsvSelectedColumn(selectedIssueList) {
       const selectedColumn = []
       selectedIssueList.forEach(item => {
         const targetObject = {}
-        this.csvColumnSelected.map(itemSelected => {
+        this.excelColumnSelected.map(itemSelected => {
           switch (itemSelected) {
             case 'status':
               this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
@@ -341,15 +341,15 @@ export default {
     handleCsvTranslateTable(selectedColumn) {
       const translateTable = []
       selectedColumn.forEach(item => {
-        const chineseCsv = {}
+        const chineseExcel = {}
         const chineseColumnKey = Object.keys(item).map(key => {
-          key = csvTranslate.projectIssues[key]
+          key = excelTranslate.projectIssues[key]
           return key
         })
         Object.values(item).map((val, index) => {
-          this.$set(chineseCsv, chineseColumnKey[index], val)
+          this.$set(chineseExcel, chineseColumnKey[index], val)
         })
-        translateTable.push(chineseCsv)
+        translateTable.push(chineseExcel)
       })
       return translateTable
     },

@@ -1,4 +1,4 @@
-export const csvTranslate = {
+export const excelTranslate = {
   projectlistQA: {
     id: '編號',
     name: '名稱',

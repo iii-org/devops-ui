@@ -19,11 +19,22 @@
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilterForm"
       />
-      <span v-show="hasSelectedTrack">
+      <span>
         <el-divider direction="vertical" />
-        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedTrackList)">
-          {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}
-        </el-button>
+        <el-popover
+          placement="bottom"
+          trigger="click"
+        >
+          <el-menu class="download">
+            <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+              <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+            </el-menu-item>
+            <el-menu-item v-show="hasSelectedTrack" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedTrackList)">
+              <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+            </el-menu-item>
+          </el-menu>
+          <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+        </el-popover>
       </span>
     </project-list-selector>
     <el-divider />
@@ -226,7 +237,7 @@ import { QuickAddIssue } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
-import { csvTranslate } from '@/utils/csvTableTranslate'
+import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectUserList } from '@/api/projects'
 import XLSX from 'xlsx'
 
@@ -364,13 +375,13 @@ export default {
     handleSelectionChange(list) {
       this.selectedTrackList = list
     },
-    downloadCsv(selectedTrackList) {
-      const selectedColumn = this.handleCsvSelectedColumn(selectedTrackList)
-      const translateTable = this.handleCsvTranslateTable(selectedColumn)
+    downloadExcel(selectedTrackList) {
+      const selectedColumn = this.handleExcelSelectedColumn(selectedTrackList)
+      const translateTable = this.handleExcelTranslateTable(selectedColumn)
       const worksheet = XLSX.utils.json_to_sheet(translateTable)
-      this.$csv(worksheet, 'changes')
+      this.$excel(worksheet, 'changes')
     },
-    handleCsvSelectedColumn(selectedTrackList) {
+    handleExcelSelectedColumn(selectedTrackList) {
       const selectedColumn = []
       selectedTrackList.forEach(item => {
         const targetObject = {}
@@ -387,18 +398,18 @@ export default {
       })
       return selectedColumn
     },
-    handleCsvTranslateTable(selectedColumn) {
+    handleExcelTranslateTable(selectedColumn) {
       const translateTable = []
       selectedColumn.forEach(item => {
-        const chineseCsv = {}
+        const chineseExcel = {}
         const chineseColumnKey = Object.keys(item).map(key => {
-          key = csvTranslate.trackManagement[key]
+          key = excelTranslate.trackManagement[key]
           return key
         })
         Object.values(item).map((val, index) => {
-          this.$set(chineseCsv, chineseColumnKey[index], val)
+          this.$set(chineseExcel, chineseColumnKey[index], val)
         })
-        translateTable.push(chineseCsv)
+        translateTable.push(chineseExcel)
       })
       return translateTable
     },
@@ -421,3 +432,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.download {
+  @apply border-none;
+}
+</style>

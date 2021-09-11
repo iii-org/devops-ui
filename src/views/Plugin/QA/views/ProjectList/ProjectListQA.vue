@@ -39,11 +39,22 @@
             {{ $t('Issue.CleanFilter') }}
           </el-button>
         </template>
-        <span v-show="hasSelectedProject">
+        <span>
           <el-divider direction="vertical" />
-          <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedProjectList)">{{
-            $t('Dashboard.ADMIN.ProjectList.csv_download')
-          }}</el-button>
+          <el-popover
+            placement="bottom"
+            trigger="click"
+          >
+            <el-menu class="download">
+              <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+              </el-menu-item>
+              <el-menu-item v-show="hasSelectedProject" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedProjectList)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+              </el-menu-item>
+            </el-menu>
+            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+          </el-popover>
         </span>
       </div>
     </div>
@@ -177,7 +188,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { csvTranslate } from '@/utils/csvTableTranslate'
+import { excelTranslate } from '@/utils/excelTableTranslate'
 import { deleteStarProject, postStarProject } from '@/api/projects'
 import XLSX from 'xlsx'
 
@@ -278,9 +289,14 @@ export default {
         type: 'success'
       })
     },
-    downloadCsv(selectedProjectList) {
+    downloadExcel(selectedProjectList) {
+      const selectedColumn = this.handleExcelSelectedColumn(selectedProjectList)
+      const translateTable = this.handleExcelTranslateTable(selectedColumn)
+      const worksheet = XLSX.utils.json_to_sheet(translateTable)
+      this.$excel(worksheet, 'projectlist')
+    },
+    handleExcelSelectedColumn(selectedProjectList) {
       const selectedColumn = []
-      const translateTable = []
       selectedProjectList.forEach(item => {
         const targetObject = {}
         this.csvColumnSelected.map(itemSelected => {
@@ -288,20 +304,47 @@ export default {
         })
         selectedColumn.push(targetObject)
       })
+      return selectedColumn
+    },
+    handleExcelTranslateTable(selectedColumn) {
+      const translateTable = []
       selectedColumn.forEach(item => {
-        const chineseCsv = {}
+        const chineseExcel = {}
         const chineseColumnKey = Object.keys(item).map(key => {
-          key = csvTranslate.projectlistQA[key]
+          key = excelTranslate.projectlistQA[key]
           return key
         })
         Object.values(item).map((val, index) => {
-          this.$set(chineseCsv, chineseColumnKey[index], val)
+          this.$set(chineseExcel, chineseColumnKey[index], val)
         })
-        translateTable.push(chineseCsv)
+        translateTable.push(chineseExcel)
       })
-      const worksheet = XLSX.utils.json_to_sheet(translateTable)
-      this.$csv(worksheet, 'projectlist')
+      return translateTable
     },
+    // downloadExcel(selectedProjectList) {
+    //   const selectedColumn = []
+    //   const translateTable = []
+    //   selectedProjectList.forEach(item => {
+    //     const targetObject = {}
+    //     this.csvColumnSelected.map(itemSelected => {
+    //       this.$set(targetObject, itemSelected, item[itemSelected])
+    //     })
+    //     selectedColumn.push(targetObject)
+    //   })
+    //   selectedColumn.forEach(item => {
+    //     const chineseExcel = {}
+    //     const chineseColumnKey = Object.keys(item).map(key => {
+    //       key = excelTranslate.projectlistQA[key]
+    //       return key
+    //     })
+    //     Object.values(item).map((val, index) => {
+    //       this.$set(chineseExcel, chineseColumnKey[index], val)
+    //     })
+    //     translateTable.push(chineseExcel)
+    //   })
+    //   const worksheet = XLSX.utils.json_to_sheet(translateTable)
+    //   this.$csv(worksheet, 'projectlist')
+    // },
     handleReserve(row) {
       return row.id
     },

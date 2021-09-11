@@ -597,6 +597,7 @@ export default {
         in_progress: '時限內',
         not_started: '未開始',
         csv_download: '下載CSV',
+        excel_download: '下載EXCEL',
         all_download: '全部下載',
         organization: '組織',
         project_start_date: '計畫起始日',

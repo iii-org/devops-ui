@@ -598,6 +598,7 @@ export default {
         in_progress: 'In Progress',
         not_started: 'Not Started',
         csv_download: 'Download CSV',
+        excel_download: 'Download EXCEL',
         all_download: 'Download all',
         organization: 'Organization',
         project_start_date: 'Project start date',
