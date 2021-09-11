@@ -14,6 +14,7 @@
               @cell-click="handleCellClick"
     >
       <WBSInputColumn
+        v-if="columns.indexOf('name')>=0"
         min-width="28%"
         :label="$t('Issue.name')"
         prop="name"
@@ -27,6 +28,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
+        v-if="columns.indexOf('tracker')>=0"
         width="125px"
         :label="$t('Issue.tracker')"
         prop="tracker"
@@ -39,6 +41,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
+        v-if="columns.indexOf('fixed_version')>=0"
         min-width="9%"
         :label="$t('Issue.fixed_version')"
         prop="fixed_version"
@@ -51,6 +54,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSDateColumn
+        v-if="columns.indexOf('StartDate')>=0"
         min-width="9%"
         :label="$t('Issue.StartDate')"
         prop="start_date"
@@ -61,6 +65,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSDateColumn
+        v-if="columns.indexOf('EndDate')>=0"
         min-width="9%"
         :label="$t('Issue.EndDate')"
         prop="due_date"
@@ -71,6 +76,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
+        v-if="columns.indexOf('priority')>=0"
         min-width="9%"
         :label="$t('Issue.priority')"
         prop="priority"
@@ -83,6 +89,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSSelectColumn
+        v-if="columns.indexOf('assigned_to')>=0"
         min-width="9%"
         :label="$t('Issue.assigned_to')"
         prop="assigned_to"
@@ -95,6 +102,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
+        v-if="columns.indexOf('DoneRatio')>=0"
         width="100px"
         :label="$t('Issue.DoneRatio')"
         prop="done_ratio"
@@ -105,6 +113,7 @@
         @reset-create="handleResetCreate"
       />
       <WBSInputColumn
+        v-if="columns.indexOf('points')>=0"
         width="100px"
         :label="$t('Issue.points')"
         :has-child-edit="true"
@@ -178,6 +187,10 @@ export default {
     keyword: {
       type: String,
       default: null
+    },
+    columns: {
+      type: Array,
+      default: () => []
     }
   },
   filter: {

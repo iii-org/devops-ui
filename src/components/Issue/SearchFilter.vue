@@ -1,5 +1,6 @@
 <template>
   <div>
+    <slot />
     <el-popover
       placement="bottom"
       trigger="click"
@@ -93,6 +94,7 @@ export default {
   },
   data() {
     return {
+      columns: [],
       filterValue: {},
       originFilterValue: {},
       keyword: null,

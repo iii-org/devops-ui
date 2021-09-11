@@ -20,7 +20,17 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed, originFilterValue:originFilterValue }"
         @change-filter="onChangeFilterForm"
-      />
+      >
+        <el-popover
+          placement="bottom"
+          trigger="click"
+        >
+          <el-checkbox v-for="item in columnsOptions" :key="item.value" v-model="checkedColumns[item.value]" :label="item.label">{{ item.label }}</el-checkbox>
+          <el-button slot="reference" icon="el-icon-s-operation" type="text"> 顯示欄位
+            <i class="el-icon-arrow-down el-icon--right" /></el-button>
+        </el-popover>
+        <el-divider direction="vertical" />
+      </SearchFilter>
       <!--      <el-popover-->
       <!--        placement="bottom"-->
       <!--        trigger="click"-->
@@ -92,7 +102,9 @@
     <el-divider />
     <el-tabs v-model="activeTab" type="border-card" @tab-click="onChangeFilter">
       <el-tab-pane name="WBS" label="WBS">
-        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus" />
+        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns"
+             @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus"
+        />
       </el-tab-pane>
       <el-tab-pane name="Gantt" label="Gantt">
         <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" />
@@ -128,12 +140,10 @@ export default {
       searchVisible: false,
       fixed_version_closed: false,
       displayClosed: false,
-      fixed_version: [],
-      assigned_to: [],
-      status: [],
-      priority: [],
       filterValue: { tracker: 1 },
       originFilterValue: { tracker: 1 },
+      checkedColumns: { name: true, tracker: true, fixed_version: true, StartDate: true, EndDate: true,
+        priority: true, assigned_to: true, DoneRatio: true, points: true },
       keyword: null,
 
       listData: [],
@@ -179,6 +189,26 @@ export default {
           tag: true
         }
       ]
+    },
+    columnsOptions() {
+      return [
+        { label: this.$t('Issue.name'), value: 'name' },
+        { label: this.$t('Issue.tracker'), value: 'tracker' },
+        { label: this.$t('Issue.fixed_version'), value: 'fixed_version' },
+        { label: this.$t('Issue.StartDate'), value: 'StartDate' },
+        { label: this.$t('Issue.EndDate'), value: 'EndDate' },
+        { label: this.$t('Issue.priority'), value: 'priority' },
+        { label: this.$t('Issue.assigned_to'), value: 'assigned_to' },
+        { label: this.$t('Issue.DoneRatio'), value: 'DoneRatio' },
+        { label: this.$t('Issue.points'), value: 'points' }
+      ]
+    },
+    columns() {
+      const result = []
+      Object.keys(this.checkedColumns).forEach(item => {
+        if (this.checkedColumns[item]) { result.push(item) }
+      })
+      return result
     }
   },
   watch: {
