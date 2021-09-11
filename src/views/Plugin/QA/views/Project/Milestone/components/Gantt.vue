@@ -123,6 +123,16 @@ export default {
     AddIssue,
     ProjectIssueDetail
   },
+  props: {
+    filterValue: {
+      type: Object,
+      default: () => {}
+    },
+    keyword: {
+      type: String,
+      default: null
+    }
+  },
   data() {
     return {
       listLoading: false,
@@ -135,9 +145,6 @@ export default {
       assigned_to: [],
       status: [],
       priority: [],
-      filterValue: {},
-      originFilterValue: {},
-      keyword: null,
 
       listData: [],
       activeIndex: [],
@@ -296,13 +303,6 @@ export default {
     }
   },
   watch: {
-    selectedProjectId: {
-      immediate: false,
-      async handler() {
-        await this.loadSelectionList()
-        await this.loadChart()
-      }
-    },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
@@ -314,7 +314,7 @@ export default {
       deep: true,
       immediate: false,
       handler() {
-        this.loadChart()
+        this.loadData()
       }
     },
     chartDateRange: {
@@ -334,10 +334,9 @@ export default {
       // svelte-gantt options
       props: this.options
     })
-    await this.loadChart()
   },
   methods: {
-    async loadChart() {
+    async loadData() {
       await this.fetchData()
       await this.paintGantt()
     },
@@ -346,15 +345,17 @@ export default {
       const tasks = this.flattenTask(this.listData).map((issue) => (this.parseTaskFormat(issue))).filter((task) => (task.from && task.to))
       if (this.gantt) {
         const tracker = this.tracker.find((search) => (search.id === this.filterValue['tracker']))
-        this.gantt.$set({
-          tableHeaders: [
+        if (tracker) {
+          this.gantt.$set({ tableHeaders: [
             {
               title: this.$t('Issue.' + tracker.name),
               property: 'label',
               width: 140,
               type: 'tree'
             }
-          ],
+          ] })
+        }
+        this.gantt.$set({
           rows: rows,
           tasks: tasks,
           zoomLevels: this.periodOptions.map((item) => (item.value))
@@ -430,11 +431,11 @@ export default {
         const [assigneeList] = res.map(
           item => item.data
         )
-        const epic = this.tracker.find(item => item.name === 'Epic')
-        if (epic) {
-          this.$set(this.filterValue, 'tracker', epic.id)
-          this.$set(this.originFilterValue, 'tracker', epic.id)
-        }
+        // const epic = this.tracker.find(item => item.name === 'Epic')
+        // if (epic) {
+        //   this.$set(this.filterValue, 'tracker', epic.id)
+        //   this.$set(this.originFilterValue, 'tracker', epic.id)
+        // }
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           {
@@ -537,7 +538,7 @@ export default {
       // this.setIssueListFilter(this.filterValue)
       // this.setIssueListKeyword(this.keyword)
       // this.setIssueListDisplayClosed(this.displayClosed)
-      this.loadChart()
+      this.loadData()
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
@@ -583,7 +584,7 @@ export default {
             message: this.$t('Notify.Added'),
             type: 'success'
           })
-          this.loadChart()
+          this.loadData()
           this.addTopicDialogVisible = false
           return res
         })
@@ -613,7 +614,7 @@ export default {
     },
     handleRelationUpdate() {
       this.onCloseRelationIssueDialog()
-      this.loadChart()
+      this.loadData()
       this.$emit('update-issue')
     },
     onRelationIssueDialog(id) {

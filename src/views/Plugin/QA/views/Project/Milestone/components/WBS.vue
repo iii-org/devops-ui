@@ -155,6 +155,7 @@ import WBSSelectColumn from '@/views/Plugin/QA/views/Project/Milestone/component
 import WBSDateColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSDateColumn'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
+import moment from 'moment'
 
 export default {
   name: 'WBS',
@@ -169,6 +170,16 @@ export default {
     contextmenu: directive
   },
   mixins: [BasicData],
+  props: {
+    filterValue: {
+      type: Object,
+      default: () => {}
+    },
+    keyword: {
+      type: String,
+      default: null
+    }
+  },
   filter: {
     relativeTime(dateTime) {
       return dateTime
@@ -197,21 +208,43 @@ export default {
       return create.length > 0
     }
   },
-  watch: {
-    selectedProjectId() {
-      this.loadVersionList(true)
-      this.loadAssignedToList()
-    }
-  },
   mounted() {
-    this.loadVersionList(true)
-    this.loadAssignedToList()
+    this.loadSelectionList()
     this.tableHeight = this.$refs['wrapper'].clientHeight
   },
   methods: {
+    loadSelectionList() {
+      this.loadVersionList(true)
+      this.loadAssignedToList()
+    },
+    getParams() {
+      const result = {
+        parent_id: 'null',
+        with_point: true
+      }
+      if (this.dateRange) {
+        const due_date = this.dateRange.map((item) => (moment(item).format('YYYY-MM-DD')))
+        result['due_date_start'] = due_date[0]
+        result['due_date_end'] = due_date[1]
+      }
+      if (this.sort) {
+        result['sort'] = this.sort
+      }
+      if (!this.displayClosed) {
+        result['status_id'] = 'open'
+      }
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) {
+          result[item + '_id'] = this.filterValue[item]
+        }
+      })
+      if (this.keyword) {
+        result['search'] = this.keyword
+      }
+      return result
+    },
     async fetchData() {
-      const tracker = this.tracker.find(item => item.name === 'Epic')
-      const res = await getProjectIssueList(this.selectedProjectId, { tracker_id: tracker.id, parent_id: 'null', with_point: true })
+      const res = await getProjectIssueList(this.selectedProjectId, this.getParams())
       return Promise.resolve(res.data)
     },
     async appendIssue(row, subLevel, prefill) {

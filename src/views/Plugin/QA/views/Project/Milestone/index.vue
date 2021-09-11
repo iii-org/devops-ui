@@ -14,6 +14,13 @@
           </p>
         </el-col>
       </el-row>
+      <SearchFilter
+        :filter-options="filterOptions"
+        :list-loading="listLoading"
+        :selection-options="contextOptions"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed, originFilterValue:originFilterValue }"
+        @change-filter="onChangeFilterForm"
+      />
       <!--      <el-popover-->
       <!--        placement="bottom"-->
       <!--        trigger="click"-->
@@ -83,12 +90,12 @@
       <!--      </template>-->
     </project-list-selector>
     <el-divider />
-    <el-tabs v-model="activeTab" type="border-card">
-      <el-tab-pane name="plan" label="plan">
-        <WBS @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus" />
+    <el-tabs v-model="activeTab" type="border-card" @tab-click="onChangeFilter">
+      <el-tab-pane name="WBS" label="WBS">
+        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus" />
       </el-tab-pane>
-      <el-tab-pane name="gannt" label="gantt">
-        <Gantt />
+      <el-tab-pane name="Gantt" label="Gantt">
+        <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" />
       </el-tab-pane>
     </el-tabs>
   </el-row>
@@ -99,10 +106,12 @@ import { mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plugin/QA/views/Project/Milestone/components/Gantt'
 import WBS from '@/views/Plugin/QA/views/Project/Milestone/components/WBS'
+import SearchFilter from '@/components/Issue/SearchFilter'
 
 export default {
   name: 'ProjectMilestone',
   components: {
+    SearchFilter,
     WBS,
     Gantt,
     ProjectListSelector
@@ -123,12 +132,12 @@ export default {
       assigned_to: [],
       status: [],
       priority: [],
-      filterValue: {},
-      originFilterValue: {},
+      filterValue: { tracker: 1 },
+      originFilterValue: { tracker: 1 },
       keyword: null,
 
       listData: [],
-      activeTab: 'plan',
+      activeTab: 'WBS',
       addTopicDialog: {
         visible: false,
         parentId: 0,
@@ -142,19 +151,45 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'selectedProject', 'tracker', 'fixedVersionShowClosed']),
-    selectedProjectId() {
-      return this.selectedProject.id
+    ...mapGetters(['userId', 'selectedProjectId', 'tracker', 'fixedVersionShowClosed']),
+    contextOptions() {
+      const result = {}
+      const getOptions = ['assigned_to', 'fixed_version']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
+      })
+      return result
+    },
+    filterOptions() {
+      return [
+        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }
+      ]
     }
   },
   watch: {
-    selectedProjectId: {
-      immediate: false,
-      async handler() {
-      }
+    selectedProjectId() {
+      this.onChangeFilter()
     }
   },
   async mounted() {
+    const tracker = this.tracker.find(item => item.name === 'Epic')
+    this.fillterValue = { tracker_id: tracker.id }
+    this.originalFillterValue = { tracker_id: tracker.id }
   },
   methods: {
     handleUpdateLoading(value) {
@@ -162,6 +197,16 @@ export default {
     },
     handleUpdateStatus(value) {
       this.lastUpdated = value
+    },
+    async onChangeFilterForm(value) {
+      Object.keys(value).forEach(item => {
+        this[item] = value[item]
+      })
+      await this.onChangeFilter()
+    },
+    onChangeFilter() {
+      this.$refs[this.activeTab].loadSelectionList()
+      this.$refs[this.activeTab].loadData()
     }
   }
 }
