@@ -20,6 +20,9 @@ const getDefaultState = () => {
     status: [],
     priority: [],
 
+    filter: {},
+    keyword: {},
+    displayClosed:{},
     kanbanFilter: {},
     kanbanGroupBy: {
       dimension: 'status',
@@ -55,6 +58,15 @@ const mutations = {
     state.tracker = list[0]
     state.status = list[1]
     state.priority = list[2]
+  },
+  SET_FILTER: (state, value) => {
+    state.filter = value
+  },
+  SET_KEYWORD: (state, value) => {
+    state.keyword = value
+  },
+  SET_DISPLAY_CLOSED: (state, value) => {
+    state.displayClosed = value
   },
   SET_KANBAN_FILTER: (state, value) => {
     state.kanbanFilter = value
@@ -179,6 +191,42 @@ const actions = {
     commit('SET_KANBAN_FILTER', {})
     commit('SET_KANBAN_GROUP_BY_DIMENSION', 'status')
     commit('SET_KANBAN_GROUP_BY_VALUE', [])
+  },
+  getFilter({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('filter')
+    if (getSessionValue) {
+      commit('SET_FILTER', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.filter
+  },
+  setFilter({ commit }, value) {
+    sessionStorage.setItem('filter', JSON.stringify(value))
+    commit('SET_FILTER', value)
+  },
+  getKeyword({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('keyword')
+    if (getSessionValue) {
+      commit('SET_KEYWORD', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.keyword
+  },
+  setKeyword({ commit }, value) {
+    sessionStorage.setItem('keyword', JSON.stringify(value))
+    commit('SET_KEYWORD', value)
+  },
+  getDisplayClosed({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('displayClosed')
+    if (getSessionValue) {
+      commit('SET_DISPLAY_CLOSED', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.keyword
+  },
+  setDisplayClosed({ commit }, value) {
+    sessionStorage.setItem('displayClosed', JSON.stringify(value))
+    commit('SET_DISPLAY_CLOSED', value)
   },
   getKanbanFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('kanbanFilter')

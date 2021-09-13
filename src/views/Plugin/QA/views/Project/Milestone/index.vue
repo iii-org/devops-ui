@@ -102,23 +102,26 @@
     <el-divider />
     <el-tabs v-model="activeTab" type="border-card" @tab-click="onChangeFilter">
       <el-tab-pane name="WBS" label="WBS">
-        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns"
-             @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus"
+        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned_to="assigned_to"
+             :fixed_version="fixed_version" @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus"
         />
       </el-tab-pane>
       <el-tab-pane name="Gantt" label="Gantt">
-        <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" />
+        <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" :assigned_to="assigned_to"
+               :fixed_version="fixed_version"
+        />
       </el-tab-pane>
     </el-tabs>
   </el-row>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plugin/QA/views/Project/Milestone/components/Gantt'
 import WBS from '@/views/Plugin/QA/views/Project/Milestone/components/WBS'
 import SearchFilter from '@/components/Issue/SearchFilter'
+import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 
 export default {
   name: 'ProjectMilestone',
@@ -136,9 +139,11 @@ export default {
       updateLoading: false,
       lastUpdated: null,
 
+      assigned_to: [],
+      fixed_version: [],
+
       activeNames: '',
       searchVisible: false,
-      fixed_version_closed: false,
       displayClosed: false,
       filterValue: { tracker: 1 },
       originFilterValue: { tracker: 1 },
@@ -153,10 +158,6 @@ export default {
         parentId: 0,
         parentName: null,
         LoadingConfirm: false
-      },
-      relationIssue: {
-        visible: false,
-        id: null
       }
     }
   },
@@ -214,14 +215,51 @@ export default {
   watch: {
     selectedProjectId() {
       this.onChangeFilter()
+    },
+    fixedVersionShowClosed(value) {
+      this.loadVersionList(value)
     }
   },
-  async mounted() {
+  async created() {
+    this.loadSelectionList()
     const tracker = this.tracker.find(item => item.name === 'Epic')
-    this.fillterValue = { tracker_id: tracker.id }
-    this.originalFillterValue = { tracker_id: tracker.id }
+    const storeFilterValue = await this.getFilter()
+    if (storeFilterValue['milestone']) {
+      this.filterValue = storeFilterValue['milestone']
+    } else {
+      this.fillterValue = { tracker: tracker.id }
+    }
+    this.originalFillterValue = { tracker: tracker.id }
+    const storeKeyword = await this.getKeyword()
+    if (storeKeyword['milestone']) { this.keyword = storeKeyword['milestone'] }
+    const storeDisplayClosed = await this.getDisplayClosed()
+    if (storeDisplayClosed['milestone']) { this.displayClosed = storeDisplayClosed['milestone'] }
   },
   methods: {
+    ...mapActions('projects', ['getFilter', 'getKeyword', 'getDisplayClosed', 'setFilter', 'setKeyword', 'setDisplayClosed']),
+    loadSelectionList() {
+      this.loadVersionList(this.fixedVersionShowClosed)
+      this.loadAssignedToList()
+    },
+    async loadAssignedToList() {
+      const res = await getProjectAssignable(this.selectedProjectId)
+      this.assigned_to = [
+        {
+          name: this.$t('Issue.me'),
+          login: '-Me-',
+          id: this.userId,
+          class: 'bg-yellow-100'
+        }, ...res.data.user_list
+      ]
+    },
+    async loadVersionList(status) {
+      let params = { status: 'open,locked' }
+      if (status) {
+        params = { status: 'open,locked,closed' }
+      }
+      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
+    },
     handleUpdateLoading(value) {
       this.updateLoading = value
     },
@@ -232,10 +270,18 @@ export default {
       Object.keys(value).forEach(item => {
         this[item] = value[item]
       })
+      const storeFilterValue = await this.getFilter()
+      storeFilterValue['milestone'] = this.filterValue
+      const storeKeyword = await this.getKeyword()
+      storeKeyword['milestone'] = this.keyword
+      const storeDisplayClosed = await this.getDisplayClosed()
+      storeDisplayClosed['milestone'] = this.displayClosed
+      await this.setFilter(storeFilterValue)
+      await this.setKeyword(storeKeyword)
+      await this.setDisplayClosed(storeDisplayClosed)
       await this.onChangeFilter()
     },
     onChangeFilter() {
-      this.$refs[this.activeTab].loadSelectionList()
       this.$refs[this.activeTab].loadData()
     }
   }

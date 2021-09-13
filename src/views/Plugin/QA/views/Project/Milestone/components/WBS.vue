@@ -45,7 +45,7 @@
         min-width="9%"
         :label="$t('Issue.fixed_version')"
         prop="fixed_version"
-        :options="fixed_version"
+        :options="fixedVersion"
         :has-child-edit="true"
         show-overflow-tooltip
         @edit="handleUpdateIssue"
@@ -93,7 +93,7 @@
         min-width="9%"
         :label="$t('Issue.assigned_to')"
         prop="assigned_to"
-        :options="assigned_to"
+        :options="assignedTo"
         :has-child-edit="true"
         show-overflow-tooltip
         @edit="handleUpdateIssue"
@@ -124,6 +124,7 @@
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
+      <el-empty slot="empty" :description="$t('general.NoData')" />
       <tr v-if="!hasInlineCreate" slot="append">
         <td class="add-issue-inline">
           <el-link type="text" icon="el-icon-plus" @click="appendIssue()">{{ $t('Issue.AddIssue') }}</el-link>
@@ -133,6 +134,9 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length>2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
+        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">{{ $t('route.Issue Detail') }}</contextmenu-item>
+        <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
+        <contextmenu-item divider />
         <contextmenu-item @click="appendIssue(contextMenu.row)">
           {{ $t('Issue.AddIssue') }}
         </contextmenu-item>
@@ -146,6 +150,29 @@
         <contextmenu-item class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete"> {{ $t('general.Delete') }}</em></contextmenu-item>
       </template>
     </contextmenu>
+    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
+               :before-close="handleRelationIssueDialogBeforeClose"
+    >
+      <QAProjectIssueDetail v-if="relationIssue.visible"
+                            ref="children"
+                            :props-issue-id="relationIssue.id"
+                            :is-in-dialog="true"
+                            @update="handleRelationUpdate"
+                            @delete="handleRelationDelete"
+      />
+    </el-dialog>
+    <el-dialog
+      :visible.sync="issueMatrixDialog.visible"
+      width="80%"
+      top="20px"
+      append-to-body
+      destroy-on-close
+      :title="$t('Issue.TraceabilityMatrix')+'(#'+issueMatrixDialog.row.id+' - '+ issueMatrixDialog.row.name+')'"
+    >
+      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issueMatrixDialog.row"
+                   @update-issue="loadData"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -156,12 +183,14 @@ import {
   ContextmenuItem
 } from 'v-contextmenu'
 import { BasicData } from '@/newMixins'
-import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
+import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import { Tracker, Priority } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plugin/QA/views/Project/Milestone/components/WBSDateColumn'
+import QAProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail/'
+import IssueMatrix from '@/views/Plugin/QA/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 import moment from 'moment'
@@ -173,7 +202,9 @@ export default {
     WBSInputColumn,
     WBSDateColumn,
     Contextmenu,
-    ContextmenuItem
+    ContextmenuItem,
+    QAProjectIssueDetail,
+    IssueMatrix
   },
   directives: {
     contextmenu: directive
@@ -189,6 +220,14 @@ export default {
       default: null
     },
     columns: {
+      type: Array,
+      default: () => []
+    },
+    assignedTo: {
+      type: Array,
+      default: () => []
+    },
+    fixedVersion: {
       type: Array,
       default: () => []
     }
@@ -207,11 +246,17 @@ export default {
     return {
       Priority,
       Tracker,
-      fixed_version: [],
-      assigned_to: [],
       addIssueVisible: false,
       tableHeight: 0,
-      contextMenu: { visible: true, row: {}}
+      contextMenu: { visible: true, row: {}},
+      relationIssue: {
+        visible: false,
+        id: null
+      },
+      issueMatrixDialog: {
+        visible: false,
+        row: { id: null, name: null }
+      }
     }
   },
   computed: {
@@ -222,14 +267,9 @@ export default {
     }
   },
   mounted() {
-    this.loadSelectionList()
     this.tableHeight = this.$refs['wrapper'].clientHeight
   },
   methods: {
-    loadSelectionList() {
-      this.loadVersionList(true)
-      this.loadAssignedToList()
-    },
     getParams() {
       const result = {
         parent_id: 'null',
@@ -432,25 +472,6 @@ export default {
       }
       this.$set(row, 'create', false)
     },
-    async loadAssignedToList() {
-      const res = await getProjectAssignable(this.selectedProjectId)
-      this.assigned_to = [
-        {
-          name: this.$t('Issue.me'),
-          login: '-Me-',
-          id: this.userId,
-          class: 'bg-yellow-100'
-        }, ...res.data.user_list
-      ]
-    },
-    async loadVersionList(status) {
-      let params = { status: 'open,locked' }
-      if (status) {
-        params = { status: 'open,locked,closed' }
-      }
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
-    },
     async handleUpdateIssue({ value, row, index }) {
       let checkUpdate = false
       if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
@@ -607,6 +628,43 @@ export default {
     hideContextMenu() {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
+    },
+    handleRelationDelete() {
+      this.handleUpdated()
+      this.onCloseRelationIssueDialog()
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      if (this.$refs.children.hasUnsavedChanges()) {
+        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            done()
+          })
+          .catch(() => {
+          })
+      } else {
+        done()
+      }
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
+    },
+    onCloseRelationIssueDialog() {
+      this.$set(this.relationIssue, 'visible', false)
+      this.$set(this.relationIssue, 'id', null)
+    },
+    handleRelationUpdate() {
+      this.onCloseRelationIssueDialog()
+      this.loadData()
+      this.$emit('update-issue')
+    },
+    toggleIssueMatrixDialog(row) {
+      this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
+      this.issueMatrixDialog.row = row
     }
   }
 }

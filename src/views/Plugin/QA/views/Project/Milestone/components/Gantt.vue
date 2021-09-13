@@ -76,9 +76,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import {
-  getProjectVersion, getProjectIssueList, getProjectUserList
-} from '@/api/projects'
+import { getProjectIssueList } from '@/api/projects'
 import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
@@ -131,6 +129,14 @@ export default {
     keyword: {
       type: String,
       default: null
+    },
+    assignedTo: {
+      type: Array,
+      default: () => []
+    },
+    fixedVersion: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -139,10 +145,7 @@ export default {
       contentLoading: false,
       activeNames: '',
       searchVisible: false,
-      fixed_version_closed: false,
       displayClosed: false,
-      fixed_version: [],
-      assigned_to: [],
       status: [],
       priority: [],
 
@@ -194,40 +197,6 @@ export default {
     selectedProjectId() {
       return this.selectedProject.id
     },
-    filterOptions() {
-      return [
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        {
-          id: 2,
-          label: this.$t('Issue.FilterDimensions.tracker'),
-          value: 'tracker',
-          placeholder: 'Type',
-          tag: true,
-          non_cleanable: true
-        },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
-        {
-          id: 4,
-          label: this.$t('Issue.FilterDimensions.fixed_version'),
-          value: 'fixed_version',
-          placeholder: 'Version'
-        },
-        {
-          id: 5,
-          label: this.$t('Issue.FilterDimensions.priority'),
-          value: 'priority',
-          placeholder: 'Priority',
-          tag: true
-        }
-      ]
-    },
-    // contextOptions() {
-    //   const result = {}
-    //   this.filterOptions.forEach((item) => {
-    //     result[item.value] = this[item.value]
-    //   })
-    //   return result
-    // },
     periodOptions() {
       return [
         {
@@ -303,10 +272,6 @@ export default {
     }
   },
   watch: {
-    fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
-      this.loadVersionList(value)
-    },
     period(value) {
       this.setChartPeriod(value)
     },
@@ -326,7 +291,6 @@ export default {
     }
   },
   async mounted() {
-    await this.loadSelectionList()
     this.$set(this.$data, 'chartDateRange', [currentStart.toDate(), currentEnd.toDate()])
     this.gantt = new SvelteGantt({
       // target a DOM element
@@ -415,39 +379,6 @@ export default {
       // }
       this.listData = resProjectIssue.data
       this.listLoading = false
-    },
-    async loadVersionList(status) {
-      let params = { status: 'open,locked' }
-      if (status) {
-        params = { status: 'open,locked,closed' }
-      }
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
-    },
-    async loadSelectionList() {
-      await Promise.all([
-        getProjectUserList(this.selectedProjectId)
-      ]).then(res => {
-        const [assigneeList] = res.map(
-          item => item.data
-        )
-        // const epic = this.tracker.find(item => item.name === 'Epic')
-        // if (epic) {
-        //   this.$set(this.filterValue, 'tracker', epic.id)
-        //   this.$set(this.originFilterValue, 'tracker', epic.id)
-        // }
-        this.assigned_to = [
-          { name: this.$t('Issue.Unassigned'), id: 'null' },
-          {
-            name: this.$t('Issue.me'),
-            login: '-Me-',
-            id: this.userId,
-            class: 'bg-yellow-100'
-          },
-          ...assigneeList.user_list
-        ]
-      })
-      await this.loadVersionList(this.fixed_version_closed)
     },
     getOptionsData(option_name) {
       return this[option_name]
