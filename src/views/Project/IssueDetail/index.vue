@@ -304,12 +304,16 @@ export default {
         type: 'warning'
       })
         .then(() => {
+          this.$route.meta.subject = null
+          document.title = getPageTitle(this.$route.meta)
           next()
         })
         .catch(() => {
           next(false)
         })
     } else {
+      this.$route.meta.subject = null
+      document.title = getPageTitle(this.$route.meta)
       next()
     }
   },
@@ -375,7 +379,7 @@ export default {
       try {
         const issue = await getIssue(this.issueId)
         data = issue.data
-        this.$route.meta.subject = `[${this.$t('Issue.' + data.tracker.name)}] #${data.id} - ${data.subject} @ ${data.project.name}`
+        this.$route.meta.subject = `[${this.$t('Issue.' + data.tracker.name)}] #${data.id} - ${data.name} @ ${data.project.name}`
         document.title = getPageTitle(this.$route.meta)
         if (data.hasOwnProperty('relations')) {
           const res_api = []
