@@ -949,6 +949,11 @@ export default {
   ProjectSettings: {
     GeneralSettings: '一般設定',
     NotifySettings: '通知設定',
+    LabelSettings: '標籤管理',
+    Label: '標籤',
+    LabelName: '標籤名稱',
+    LabelInputPlaceholder: '請輸入標籤名稱',
+    AddCustomLabel: '新增自訂義標籤',
     IssueReminderFeature: '議題提醒功能',
     Index: '@:general.Index',
     NotificationConditions: '通知條件',

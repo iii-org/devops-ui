@@ -35,6 +35,11 @@
           <AlertSettings ref="alertSettings" />
         </el-card>
       </el-tab-pane>
+      <el-tab-pane :label="$t('ProjectSettings.LabelSettings')" name="labelSettings">
+        <el-card>
+          <LabelSettings ref="labelSettings" />
+        </el-card>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -51,7 +56,8 @@ export default {
     ProjectVersions,
     PipelineSettings,
     ProjectMembers,
-    AlertSettings: () => import ('@/views/Project/Settings/components/AlertSettings')
+    AlertSettings: () => import ('@/views/Project/Settings/components/AlertSettings'),
+    LabelSettings: () => import ('@/views/Project/Settings/components/LabelSettings')
   },
   mixins: [MixinElTableWithAProject],
   data() {
@@ -155,7 +161,7 @@ export default {
   background: #3e3f41;
   color: #e4ecf7 ;
   border-radius: 5px;
-  width: 125%;
+  width:250px;
   &:hover {
     color: #409eff;
   }

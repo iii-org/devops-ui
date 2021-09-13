@@ -50,3 +50,7 @@ export const getMyProjectList = async (simple, params) => {
   return ret
 }
 export const getTestReport = (reportId) => request.get(`/checkmarx/report/${reportId}`, { responseType: 'blob' })
+export const addProjectTags = (data) => request.post(`/tags`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
+export const getTagsByProject = (pId) => request.get(`/tags?project_id=${pId}`)
+export const getTagsByProjectOrTagName = (pId, tag_name) => request.get(`/tags?project_id=${pId}&tag_name=${tag_name}`)
+

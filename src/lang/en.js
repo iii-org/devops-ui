@@ -951,6 +951,11 @@ export default {
   ProjectSettings: {
     GeneralSettings: 'General Settings',
     NotifySettings: 'Notify Settings',
+    LabelSettings: 'Label Settings',
+    Label: 'Label',
+    LabelName: 'Label Name',
+    LabelInputPlaceholder: 'Please fill in label name',
+    AddCustomLabel: 'Add Custom Labels',
     IssueReminderFeature: 'Issue Reminder Feature',
     Index: '@:general.Index',
     NotificationConditions: 'Notification Conditions',
