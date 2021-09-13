@@ -102,13 +102,13 @@
     <el-divider />
     <el-tabs v-model="activeTab" type="border-card" @tab-click="onChangeFilter">
       <el-tab-pane name="WBS" label="WBS">
-        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned_to="assigned_to"
-             :fixed_version="fixed_version" @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus"
+        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned-to="assigned_to"
+             :fixed-version="fixed_version" @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus"
         />
       </el-tab-pane>
       <el-tab-pane name="Gantt" label="Gantt">
         <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" :assigned_to="assigned_to"
-               :fixed_version="fixed_version"
+               :fixed-version="fixed_version"
         />
       </el-tab-pane>
     </el-tabs>
