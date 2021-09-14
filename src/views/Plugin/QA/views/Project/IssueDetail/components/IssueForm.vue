@@ -7,6 +7,25 @@
     :rules="issueFormRules"
     label-position="top"
   >
+    <el-form-item :label="$t('Issue.Label')" prop="tags">
+      <el-select
+        v-model="form.tags_ids"
+        style="width: 100%"
+        clearable
+        filterable
+        remote
+        multiple
+        :remote-method="getSearchLabels"
+        @focus="getSearchLabels()"
+      >
+        <el-option
+          v-for="item in tags"
+          :key="item.id"
+          :value="item.id"
+          :label="item.name"
+        />
+      </el-select>
+    </el-form-item>
     <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
       <el-select
         v-model="form.parent_id"
@@ -229,7 +248,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getCheckIssueClosable } from '@/api/issue'
-import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
+import { getProjectAssignable, getProjectIssueList, getProjectVersion, getLabelsByName, getLabelsByProject } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -262,6 +281,10 @@ export default {
     relations: {
       type: Array,
       default: () => ([])
+    },
+    tags: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -289,6 +312,7 @@ export default {
       },
       issueQuery: null,
       issueLoading: false,
+      labelListLoading: false,
       issueList: [],
       relationIssueList: [],
       assigned_to: [],
@@ -312,7 +336,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'selectedProject']),
+    selectedProjectId() {
+      return this.selectedProject.id
+    },
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -493,6 +520,47 @@ export default {
       this.issueList = [this.originalParentIssue, { name: this.$t(key), options: queryList }]
       this.issueLoading = false
       this.cancelToken = null
+    },
+    checkToken() {
+      if (this.cancelToken) this.cancelToken.cancel()
+      const CancelToken = axios.CancelToken.source()
+      this.cancelToken = CancelToken
+      return CancelToken.token
+    },
+    async getSearchLabels(query) {
+      const pId = this.selectedProjectId
+      const tag_name = query || null
+      const cancelToken = this.checkToken().token
+      const labels = this.getLabels(pId, tag_name, cancelToken)
+      console.log(labels)
+    },
+    async getLabels(pId, tag_name, cancelToken) {
+      let res = []
+      switch (tag_name) {
+        case null:
+          res = await this.getLabelsByProject(pId)
+          break
+        default:
+          res = await this.getLabelsByName(pId, tag_name, cancelToken)
+      }
+      return res
+    },
+    async getLabelsByProject(pId) {
+      this.labelListLoading = true
+      const res = await getLabelsByProject(pId)
+      const tags = res.data.tags
+      this.labelListLoading = false
+      this.cancelToken = null
+      return tags
+    },
+    async getLabelsByName(project_id, tag_name, cancelToken) {
+      this.labelListLoading = true
+      const params = { project_id, tag_name }
+      const res = await getLabelsByName(params, { cancelToken })
+      const tags = res.data.tags
+      this.labelListLoading = false
+      this.cancelToken = null
+      return tags
     },
     async getSearchRelationIssue(query) {
       const params = {

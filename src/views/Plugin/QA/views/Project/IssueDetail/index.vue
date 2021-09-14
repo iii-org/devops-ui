@@ -180,7 +180,7 @@
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :relations="relations"
-                      :children-issue="children.length"
+                      :children-issue="children.length" :tags="tags"
           />
         </el-col>
       </el-row>
@@ -308,6 +308,7 @@ export default {
       formObj: {},
       parent: {},
       children: [],
+      tags: [],
       dialogHeight: '100%',
       editorHeight: '100px',
       issueScrollTop: 0,
@@ -476,7 +477,8 @@ export default {
         parent,
         children,
         test_files,
-        relations
+        relations,
+        tags
       } = data
       this.issue = data
       this.issue_link = issue_link
@@ -494,6 +496,7 @@ export default {
       this.relations = relations || []
       this.parent = (parent) || {}
       this.children = (children) || []
+      this.tags = tags || []
       this.setFormData(data)
       this.view = data
       if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
@@ -537,6 +540,7 @@ export default {
       this.form.due_date = due_date === null ? '' : due_date
       this.form.description = description === null ? '' : description
       this.form.relation_ids = (this.relations.length > 0) ? this.relations.map((item) => (item.id)) : []
+      this.form.tags_ids = this.tags.length > 0 ? this.tags.map(item => item.id) : []
       this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {

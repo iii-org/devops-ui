@@ -341,6 +341,7 @@ export default {
     ReportedIssue: '由我回報'
   },
   Issue: {
+    Label: '標籤',
     AddIssue: '新增議題',
     EditIssue: '編輯議題',
     AddSubIssue: '新增子議題',

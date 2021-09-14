@@ -342,6 +342,7 @@ export default {
     ReportedIssue: 'Reported Issue'
   },
   Issue: {
+    Label: 'Label',
     status: '@:general.Status',
     AddIssue: 'Add Issue',
     EditIssue: 'Edit Issue',

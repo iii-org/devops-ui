@@ -52,6 +52,7 @@ export const getMyProjectList = async (simple, params) => {
 export const getTestReport = (reportId) => request.get(`/checkmarx/report/${reportId}`, { responseType: 'blob' })
 export const addProjectLabels = (data) => request.post(`/tags`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
 export const getLabelsByProject = (pId) => request.get(`/tags?project_id=${pId}`)
+export const getLabelsByName = (params, config) => request.get(`/tags`, { params: { ...params }, ...config })
 export const getLabelsByProjectOrLabelName = (pId, tag_name) => request.get(`/tags?project_id=${pId}&tag_name=${tag_name}`)
 export const deleteProjectLabels = (tag_id) => request.delete(`/tags/${tag_id}`)
 export const updateProjectLabels = (tag_id, data) => request.put(`/tags/${tag_id}`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
