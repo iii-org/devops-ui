@@ -34,14 +34,14 @@
           <div v-show="scope.row.edit">
             <el-input v-model="scope.row.name" type="text" />
             <el-button type="success" @click.stop="handleTableInputConfirm(scope.row)">{{ $t('general.ok') }}</el-button>
-            <el-button @click.stop="handleTableInputCancel(scope.row)">{{ $t('general.Cancel') }}</el-button>
+            <el-button @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
           </div>
           <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')">
         <template slot-scope="scope">
-          <el-button type="danger" @click.stop="handleLabelDelete(scope)">{{ $t('general.Delete') }}</el-button>
+          <el-button type="danger" @click.stop="handleLabelDelete(scope.row)">{{ $t('general.Delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,7 +50,7 @@
 
 <script>
 import { BasicData } from '@/newMixins'
-import { getTagsByProject } from '@/api/projects'
+import { getLabelsByProject, addProjectLabels, deleteProjectLabels, updateProjectLabels } from '@/api/projects'
 
 export default {
   name: 'LabelSettings',
@@ -58,29 +58,58 @@ export default {
   data() {
     return {
       isAddingLabel: false,
-      labelName: '',
-      originColumnData: {},
+      originData: [],
       form: {
-        id: '',
-        name: '',
-        edit: false
+        name: ''
       }
     }
   },
   methods: {
     async fetchData() {
-      const res = await getTagsByProject(this.selectedProjectId)
+      const res = await getLabelsByProject(this.selectedProjectId)
+      this.setOriginData(res.data.tags)
       return this.handleRowData(res.data.tags)
     },
+    async addProjectLabels(formData) {
+      await addProjectLabels(formData)
+        .then(() => {
+          this.updateTable()
+          this.handleInputCancel()
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
+    async deleteProjectLabels(tag_id) {
+      await deleteProjectLabels(tag_id)
+        .then(() => {
+          this.updateTable()
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
+    async updateProjectLabels(tag_id, data) {
+      await updateProjectLabels(tag_id, data)
+        .then(() => {
+          this.updateTable()
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
+    updateTable() {
+      this.loadData()
+      this.showUpdateMessage()
+    },
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
+    },
     handleRowData(tags) {
-      tags.map(item => {
-        item.edit = false
-      })
+      tags.map(item => { item.edit = false })
       return tags
     },
     handleShowLabelInput() {
-      const index = this.listData.length
-      this.form.id = index
       this.isAddingLabel = true
     },
     handleInputSave() {
@@ -92,30 +121,59 @@ export default {
         })
         return
       }
-      this.listData.push(this.form)
-      this.handleInputCancel()
+      const formData = this.getFormData()
+      this.addProjectLabels(formData)
+    },
+    getFormData() {
+      const name = this.form.name
+      const project_id = this.selectedProjectId
+      const formData = new FormData()
+      formData.delete('name')
+      formData.delete('project_id')
+      formData.append('name', name)
+      formData.append('project_id', project_id)
+      return formData
+    },
+    getUpdatedData(row) {
+      const name = row.name
+      const formData = new FormData()
+      formData.delete(name)
+      formData.append('name', name)
+      return formData
     },
     handleInputCancel() {
       this.initForm()
       this.isAddingLabel = false
     },
     initForm() {
-      this.form = { id: '', name: '', edit: false }
+      this.form = { name: '' }
     },
     handleRowClick(row, column, event) {
-      this.originColumnData = JSON.parse(JSON.stringify(row))
-      row.edit = true
+      if (column.label === '標籤' || column.label === 'Label') {
+        row.edit = true
+      }
     },
     handleTableInputConfirm(row) {
+      const tag_id = row.id
+      const updatedData = this.getUpdatedData(row)
+      this.updateProjectLabels(tag_id, updatedData)
       row.edit = false
     },
-    handleTableInputCancel(row) {
-      row.name = this.originColumnData.name
-      row.edit = false
+    handleTableInputCancel(scope) {
+      const index = scope.$index
+      scope.row.name = this.originData[index].name
+      scope.row.edit = false
     },
-    handleLabelDelete(scope) {
-      console.log(scope.$index)
-      this.listData.splice(scope.$index, 1)
+    handleLabelDelete(row) {
+      const tag_id = row.id
+      this.deleteProjectLabels(tag_id)
+    },
+    showUpdateMessage() {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('ProjectSettings.LabelUpdateMessage'),
+        type: 'success'
+      })
     }
   }
 }
@@ -124,5 +182,12 @@ export default {
 <style lang="scss" scoped>
 >>> .el-input {
   width: 300px;
+}
+
+>>> .el-table__row > td:nth-child(2) {
+  cursor: pointer;
+  &:hover {
+    background: #e4ecf7;
+  }
 }
 </style>

@@ -23,6 +23,11 @@
           <AlertSettings ref="alertSettings" />
         </el-card>
       </el-tab-pane>
+      <el-tab-pane :label="$t('ProjectSettings.LabelSettings')" name="labelSettings">
+        <el-card>
+          <LabelSettings ref="labelSettings" />
+        </el-card>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -34,7 +39,12 @@ import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 export default {
   name: 'QA',
-  components: { ProjectListSelector, ProjectMembers, AlertSettings: () => import ('@/views/Project/Settings/components/AlertSettings') },
+  components: {
+    ProjectListSelector,
+    ProjectMembers,
+    AlertSettings: () => import ('@/views/Project/Settings/components/AlertSettings'),
+    LabelSettings: () => import ('@/views/Project/Settings/components/LabelSettings')
+  },
   mixins: [MixinElTableWithAProject],
   data() {
     return {

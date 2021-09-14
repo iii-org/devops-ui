@@ -965,7 +965,8 @@ export default {
     Unchange: '議題連續未異動達__?__天以上',
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
-    SuccessUpdateAlertSettings: '通知設定已更新成功'
+    SuccessUpdateAlertSettings: '通知設定已更新成功',
+    LabelUpdateMessage: '任務標籤已更新成功'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',
