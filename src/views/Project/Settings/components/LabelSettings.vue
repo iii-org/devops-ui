@@ -74,7 +74,7 @@ export default {
       await addProjectLabels(formData)
         .then(() => {
           this.updateTable()
-          this.handleInputCancel()
+          this.initForm()
         })
         .catch(err => {
           console.error(err)
