@@ -18,7 +18,9 @@
               />
             </el-select>
           </el-form-item>
-          <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">
+          <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()"
+                     @click="settingDialogVisible=!settingDialogVisible"
+          >
             {{ $t('Track.CheckRuleSettings') }}
           </el-button>
           <el-divider />
@@ -27,7 +29,9 @@
               <li v-for="item in trackerMapTarget.order" :key="item">{{ $t(`Issue.${item}`) }}</li>
             </ol>
           </el-form-item>
-          <el-button class="w-full" type="primary" icon="el-icon-check" :loading="isRunning()" @click="createTraceCheckJob">
+          <el-button class="w-full" type="primary" icon="el-icon-check" :loading="isRunning()"
+                     @click="createTraceCheckJob"
+          >
             {{ $t('Track.Run') }}
           </el-button>
         </el-form>
@@ -97,6 +101,20 @@
                   </el-option>
                 </el-select>
               </el-form-item>
+              <el-form-item :label="$t('Issue.fixed_version')">
+                <el-select
+                  v-model="filterValue.fixed_version_id"
+                  multiple
+                  :placeholder="$t('Issue.SelectType')"
+                  :disabled="selectedProjectId === -1"
+                  clearable
+                  filterable
+                >
+                  <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
+                             :value="version.id"
+                  />
+                </el-select>
+              </el-form-item>
               <el-form-item>
                 <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
                            :disabled="chartLoading" @click="onPaintChart"
@@ -148,7 +166,9 @@
           </div>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane v-loading="listLoading" :label="$t('Track.TraceabilityCheck')" name="check" :element-loading-text="$t('Loading')">
+      <el-tab-pane v-loading="listLoading" :label="$t('Track.TraceabilityCheck')" name="check"
+                   :element-loading-text="$t('Loading')"
+      >
         <el-form inline>
           <el-form-item :label="$t('Track.CheckRule')">
             <el-select
@@ -163,7 +183,9 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()" @click="settingDialogVisible=!settingDialogVisible">
+            <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()"
+                       @click="settingDialogVisible=!settingDialogVisible"
+            >
               {{ $t('Track.CheckRuleSettings') }}
             </el-button>
           </el-form-item>
@@ -190,7 +212,9 @@
         <el-button type="primary" @click="downloadPdf">{{ $t('File.Download') }}</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title="$t('Track.TraceabilityCheck')" :visible.sync="settingDialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
+    <el-dialog :title="$t('Track.TraceabilityCheck')" :visible.sync="settingDialogVisible" width="80%" top="3vh"
+               append-to-body destroy-on-close
+    >
       <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
     </el-dialog>
   </div>
@@ -201,7 +225,7 @@ import VueMermaid from './components/vue-mermaid'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
-import { getProjectIssueList } from '@/api/projects'
+import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import {
   getTestFileByTestPlan,
@@ -214,17 +238,33 @@ import OrderListDialog from './components/OrderListDialog'
 import TraceCheck from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/TraceCheck'
 import axios from 'axios'
 
+const stroke = [
+  '#47326C',
+  '#586c32',
+  '#323b6c',
+  '#64326c',
+  '#6c3258',
+  '#6c4732',
+  '#b9320d',
+  '#0d94b9',
+  '#b90d3e',
+  '#b9880d',
+  '#94b90d',
+  '#0db932'
+]
+
 export default {
   name: 'TraceabilityMatrix',
   components: { TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   data() {
     return {
       activeTab: 'map',
-      filterValue: { tracker_id: null, issue_id: [] },
-      nowFilterValue: { tracker_id: null, issue_id: [] },
+      filterValue: { tracker_id: null, issue_id: [], fixed_version_id: [] },
+      nowFilterValue: { tracker_id: null, issue_id: [], fixed_version_id: [] },
       trackerMapOptions: [],
       trackerMapTarget: {},
       trackerOrder: '',
+      fixed_version: [],
       traceCheck: [],
       issueList: [],
       chartIssueList: [],
@@ -288,13 +328,26 @@ export default {
         return result
       })
     },
+    versionFilterList() {
+      const nowVersionList = [...new Set(this.chartIssueList.map(issue => issue.fixed_version.id))]
+      return this.fixed_version.filter(version => nowVersionList.includes(version.id))
+    },
     data() {
-      const chartIssueList = this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
-      let testFileList = this.chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
+      const strokeColor = {}
+
+      let chartIssueList = this.chartIssueList
+      if (this.filterValue.fixed_version_id.length > 0) {
+        chartIssueList = chartIssueList.filter(issue => this.filterValue.fixed_version_id.includes(issue.fixed_version.id))
+      }
+      this.versionFilterList.forEach((version, idx) => {
+        strokeColor[version.id] = stroke[idx % stroke.length]
+      })
+      const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, strokeColor))
+      let testFileList = chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
         .filter(issue => issue)
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
       testFileList = [].concat.apply([], testFileList)
-      return chartIssueList.concat(testFileList)
+      return chartData.concat(testFileList)
     },
     trackerColor() {
       return {
@@ -360,6 +413,7 @@ export default {
     this.getTrackerMapOptions()
   },
   mounted() {
+    this.loadVersionList(true)
   },
   methods: {
     async initChart() {
@@ -381,6 +435,14 @@ export default {
         this.$set(this.$data, 'trackerMapTarget', {})
       }
       return Promise.resolve()
+    },
+    async loadVersionList(status) {
+      let params = { status: 'open,locked' }
+      if (status) {
+        params = { status: 'open,locked,closed' }
+      }
+      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     async getSearchIssue(query) {
       let querySearch = {}
@@ -420,7 +482,7 @@ export default {
       if (!object) return true
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
-    formatChartData(issue, group) {
+    formatChartData(issue, group, strokeColor) {
       const issueName = issue.name
       const checkIssueName = issueName.replace(/"/g, '&quot;')
       const link = []
@@ -456,10 +518,12 @@ export default {
       }
       if (group) {
         point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
-        point['text'] = `"#${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
+        point['text'] = `"#${issue.id} - ${checkIssueName}<br/><span style='border-radius: 0.25rem; background: white; padding: 3px 5px; margin: 3px 5px;'>${issue.fixed_version.name}</span>
+(${this.$t('Issue.' + issue.status.name)})"`
+        point['style'] = `stroke:${strokeColor[issue.fixed_version.id]},stroke-width:3`
       } else {
-        point['text'] = `"${this.$t('Issue.' + issue.tracker.name)} #${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
-        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]}`
+        point['text'] = `"${this.$t('Issue.' + issue.tracker.name)} #${issue.id} - ${checkIssueName}<br/><span style='border-radius: 0.25rem; background: white; padding: 0 5px; margin: 0 5px;'>${issue.fixed_version.name}</span>(${this.$t('Issue.' + issue.status.name)})"`
+        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5,stroke:${strokeColor[issue.fixed_version.id]},stroke-width:3`
       }
       if (this.nowFilterValue.issue_id.includes(issue.id)) {
         point['edgeType'] = 'stadium'
