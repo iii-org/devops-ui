@@ -33,7 +33,7 @@
         <template slot-scope="scope">
           <div v-show="scope.row.edit">
             <el-input v-model="scope.row.name" type="text" />
-            <el-button type="success" @click.stop="handleTableInputConfirm(scope.row)">{{ $t('general.ok') }}</el-button>
+            <el-button type="success" @click.stop="handleTableInputConfirm(scope)">{{ $t('general.ok') }}</el-button>
             <el-button @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
           </div>
           <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
@@ -153,11 +153,12 @@ export default {
         row.edit = true
       }
     },
-    handleTableInputConfirm(row) {
-      const tag_id = row.id
-      const updatedData = this.getUpdatedData(row)
-      this.updateProjectTags(tag_id, updatedData)
-      row.edit = false
+    handleTableInputConfirm(scope) {
+      const index = scope.$index
+      const tag_id = scope.row.id
+      const updatedData = this.getUpdatedData(scope.row)
+      if (this.originData[index].name !== scope.row.name) this.updateProjectTags(tag_id, updatedData)
+      scope.row.edit = false
     },
     handleTableInputCancel(scope) {
       const index = scope.$index
