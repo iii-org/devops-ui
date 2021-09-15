@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="check-wrapper" ref="wrapper">
     <el-alert v-if="traceCheck.exception" type="error" class="mb-4 loading" :closable="false">
       <h2 slot="title">
         <i class="el-icon-loading" /> {{ $t('general.Error') }}
@@ -19,7 +19,10 @@
       <span v-if="traceCheck.start_time">執行時間:{{ traceCheck.start_time |relativeTime }}</span>
       <span v-if="traceCheck.finish_time">運算時間:{{ $dayjs(traceCheck.finish_time).from($dayjs(traceCheck.start_time)) }}</span>
     </div>
-    <el-table :data="traceCheck.result" height="60vh" style="width: 100%">
+    <el-table :data="traceCheck.result"
+              :element-loading-text="$t('Loading')"
+              :height="tableHeight"
+    >
       <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track"
                        show-tooltip-when-overflow
       >
@@ -60,30 +63,18 @@
         <el-empty :description="$t('general.NoData')" />
       </template>
     </el-table>
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
-               :before-close="handleRelationIssueDialogBeforeClose"
-    >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationUpdate"
-      />
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash'
-import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 import Status from '@/components/Issue/Status'
 import { getTraceOrderResult } from '@/views/Plugin/QA/api/qa'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'TraceCheck',
-  components: { ProjectIssueDetail, Status },
+  components: { Status },
   filter: {
     relativeTime(dateTime) {
       return dateTime
@@ -103,11 +94,8 @@ export default {
   data() {
     return {
       traceCheck: { start_time: '' },
-      relationIssue: {
-        visible: false,
-        id: null
-      },
-      intervalTimer: null
+      intervalTimer: null,
+      tableHeight: 0
     }
   },
   computed: {
@@ -125,6 +113,14 @@ export default {
   },
   mounted() {
     this.loadData()
+    this.$nextTick(() => {
+      this.tableHeight = this.$refs['wrapper'].clientHeight
+    })
+    window.onresize = () => {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
+    }
   },
   destroyed() {
     this.resetData()
@@ -161,35 +157,16 @@ export default {
       return Promise.resolve()
     },
     onRelationIssueDialog(id) {
-      this.$set(this.relationIssue, 'visible', true)
-      this.$set(this.relationIssue, 'id', id)
-    },
-    handleRelationUpdate() {
-      this.onCloseRelationIssueDialog()
-      this.initChart()
-      this.$emit('update-issue')
-    },
-    handleRelationIssueDialogBeforeClose(done) {
-      if (this.$refs.children.hasUnsavedChanges()) {
-        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        })
-          .then(() => {
-            done()
-          })
-          .catch(() => {
-          })
-      } else {
-        done()
-      }
+      this.$emit('show-issue', id)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+#check-wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px - 60px);
+}
 .loading {
   > > > .el-alert__content {
     width: 100%;

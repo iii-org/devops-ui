@@ -45,126 +45,133 @@
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
     <el-tabs v-else v-model="activeTab" type="border-card">
       <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
-        <el-row type="flex" justify="space-between" align="middle">
-          <el-col>
-            <el-form inline>
-              <el-form-item :label="$t('general.group')">
-                <el-switch
-                  v-model="group"
-                  :active-text="$t('general.on')"
-                  :inactive-text="$t('general.off')"
-                />
-              </el-form-item>
-              <el-form-item :label="$t('Issue.tracker')">
-                <el-select
-                  v-model="filterValue.tracker_id"
-                  :placeholder="$t('Issue.SelectType')"
-                  :disabled="selectedProjectId === -1"
-                  filterable
-                >
-                  <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
-                             :value="track.id"
-                  >
-                    <tracker :name="track.name" />
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item :label="$t('Issue.Issue')">
-                <el-select
-                  v-model="filterValue.issue_id"
-                  style="width: 100%"
-                  :placeholder="$t('RuleMsg.PleaseSelect')"
-                  clearable
-                  filterable
-                  remote
-                  multiple
-                  collapse-tags
-                  :remote-method="getSearchIssue"
-                  :loading="issueLoading"
-                  class="issue-select"
-                >
-                  <el-option
-                    v-for="item in issueList"
-                    :key="item.id"
-                    :label="'#' + item.id +' - '+item.name"
-                    :value="item.id"
-                  >
-                    <span
-                      style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                    >
-                      <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                      <span v-html="highLight(item.name)" />
-                    </span>
-                    <span style="float: right; color: #8492a6; font-size: 13px"
-                          v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                    />
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item :label="$t('Issue.fixed_version')">
-                <el-select
-                  v-model="filterValue.fixed_version_id"
-                  multiple
-                  :placeholder="$t('Issue.SelectType')"
-                  :disabled="selectedProjectId === -1"
-                  clearable
-                  filterable
-                >
-                  <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
-                             :value="version.id"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
-                           :disabled="chartLoading" @click="onPaintChart"
-                >
-                  {{ $t('Track.StartPaint') }}
-                </el-button>
-              </el-form-item>
-            </el-form>
-          </el-col>
-          <el-col :span="4" class="text-right">
-            <el-popover
-              placement="bottom"
-              trigger="click"
-            >
-              <el-menu class="download">
-                <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
-                  <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
-                </el-menu-item>
-                <!-- <el-menu-item>
-                  <el-button icon="el-icon-download" @click="download">{{ $t('TestReport.DownloadPdf') }}</el-button>
-                </el-menu-item> -->
-                <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
-                  <em class="el-icon-download" />{{ $t('Track.Landscape') }}
-                </el-menu-item>
-                <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
-                  <em class="el-icon-download" />{{ $t('Track.Portrait') }}
-                </el-menu-item>
-              </el-menu>
-              <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
-            </el-popover>
-          </el-col>
-        </el-row>
-        <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
-          <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
-          <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
-        </el-alert>
-        <el-card>
-          <template slot="header">
-            {{ $t('Track.DemandTraceability') }}
-            <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
-          </template>
-          <div v-show="data.length>0" ref="matrix" style="min-height: 841px;">
+        <div id="wrapper" ref="wrapper">
+          <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
+            <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
+            <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
+          </el-alert>
+          <div v-show="data.length>0" ref="matrix" v-dragscroll class="mermaid-wrapper"
+               :style="{height:`${tableHeight}px`}"
+          >
+            <h3>{{ $t('Track.DemandTraceability') }}
+              <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
+            </h3>
             <vue-mermaid
+              ref="mermaid"
               :nodes="data"
-              type="graph LR"
-              :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
+              type="flowchart LR"
+              :class="`w-${zoom}`"
+              :config="{securityLevel:'loose',flowChart:{ htmlLabels:true, width:300}, logLevel:1}"
               @nodeClick="editNode"
             />
+            <div class="toolbar">
+              <el-slider v-model="zoom" :min="25" :max="500" :step="25" />
+            </div>
           </div>
-        </el-card>
+          <el-empty v-if="data.length<=0" :description="$t('general.NoData')" />
+        </div>
+        <right-panel v-if="activeTab==='map'" ref="rightPanel" :click-not-close="true">
+          <div slot="icon"><em class="el-icon-setting" /></div>
+          <el-row class="panel">
+            <el-card>
+              <template slot="header" />
+              <el-form>
+                <el-form-item :label="$t('general.group')">
+                  <el-switch
+                    v-model="group"
+                    :active-text="$t('general.on')"
+                    :inactive-text="$t('general.off')"
+                  />
+                </el-form-item>
+                <el-form-item :label="$t('Issue.tracker')">
+                  <el-select
+                    v-model="filterValue.tracker_id"
+                    :placeholder="$t('Issue.SelectType')"
+                    :disabled="selectedProjectId === -1"
+                    filterable
+                  >
+                    <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
+                               :value="track.id"
+                    >
+                      <tracker :name="track.name" />
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('Issue.Issue')">
+                  <el-select
+                    v-model="filterValue.issue_id"
+                    style="width: 100%"
+                    :placeholder="$t('RuleMsg.PleaseSelect')"
+                    clearable
+                    filterable
+                    remote
+                    multiple
+                    collapse-tags
+                    :remote-method="getSearchIssue"
+                    :loading="issueLoading"
+                    class="issue-select"
+                  >
+                    <el-option
+                      v-for="item in issueList"
+                      :key="item.id"
+                      :label="'#' + item.id +' - '+item.name"
+                      :value="item.id"
+                    >
+                      <span
+                        style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                      >
+                        <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                        <span v-html="highLight(item.name)" />
+                      </span>
+                      <span style="float: right; color: #8492a6; font-size: 13px"
+                            v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                      />
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('Issue.fixed_version')">
+                  <el-select
+                    v-model="filterValue.fixed_version_id"
+                    multiple
+                    :placeholder="$t('Issue.SelectType')"
+                    :disabled="selectedProjectId === -1"
+                    clearable
+                    filterable
+                  >
+                    <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
+                               :value="version.id"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
+              <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
+                         :disabled="chartLoading" @click="onPaintChart"
+              >
+                {{ $t('Track.StartPaint') }}
+              </el-button>
+              <el-popover
+                placement="bottom"
+                trigger="click"
+              >
+                <el-menu class="download">
+                  <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
+                    <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
+                  </el-menu-item>
+                  <!-- <el-menu-item>
+                    <el-button icon="el-icon-download" @click="download">{{ $t('TestReport.DownloadPdf') }}</el-button>
+                  </el-menu-item> -->
+                  <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
+                    <em class="el-icon-download" />{{ $t('Track.Landscape') }}
+                  </el-menu-item>
+                  <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
+                    <em class="el-icon-download" />{{ $t('Track.Portrait') }}
+                  </el-menu-item>
+                </el-menu>
+                <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
+              </el-popover>
+            </el-card>
+          </el-row>
+        </right-panel>
       </el-tab-pane>
       <el-tab-pane v-loading="listLoading" :label="$t('Track.TraceabilityCheck')" name="check"
                    :element-loading-text="$t('Loading')"
@@ -202,7 +209,9 @@
             </el-button>
           </el-form-item>
         </el-form>
-        <TraceCheck v-if="activeTab==='check'" ref="TraceCheck" :tracker-map-target="trackerMapTarget" />
+        <TraceCheck v-if="activeTab==='check'" ref="TraceCheck" :tracker-map-target="trackerMapTarget"
+                    @show-issue="onRelationIssueDialog"
+        />
       </el-tab-pane>
     </el-tabs>
     <el-dialog :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
@@ -216,6 +225,17 @@
                append-to-body destroy-on-close
     >
       <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
+    </el-dialog>
+    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
+               :before-close="handleRelationIssueDialogBeforeClose"
+    >
+      <ProjectIssueDetail v-if="relationIssue.visible"
+                          ref="children"
+                          :props-issue-id="relationIssue.id"
+                          :is-in-dialog="true"
+                          @update="handleRelationUpdate"
+                          @delete="handleRelationUpdate"
+      />
     </el-dialog>
   </div>
 </template>
@@ -236,10 +256,14 @@ import html2canvas from 'html2canvas'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
 import TraceCheck from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/TraceCheck'
+import { dragscroll } from 'vue-dragscroll'
+
 import axios from 'axios'
+import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
+
+import RightPanel from '@/components/RightPanel'
 
 const stroke = [
-  '#47326C',
   '#586c32',
   '#323b6c',
   '#64326c',
@@ -255,10 +279,15 @@ const stroke = [
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
+  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid, RightPanel },
+  directives: {
+    dragscroll
+  },
   data() {
     return {
       activeTab: 'map',
+      tableHeight: 0,
+      zoom: 25,
       filterValue: { tracker_id: null, issue_id: [], fixed_version_id: [] },
       nowFilterValue: { tracker_id: null, issue_id: [], fixed_version_id: [] },
       trackerMapOptions: [],
@@ -286,6 +315,10 @@ export default {
         filename: '',
         content_type: '',
         src: ''
+      },
+      relationIssue: {
+        visible: false,
+        id: null
       },
       isRotate: false,
       cancelToken: null
@@ -329,7 +362,7 @@ export default {
       })
     },
     versionFilterList() {
-      const nowVersionList = [...new Set(this.chartIssueList.map(issue => issue.fixed_version.id))]
+      const nowVersionList = [...new Set(this.chartIssueList.map(issue => (issue.fixed_version) ? issue.fixed_version.id : 'null'))]
       return this.fixed_version.filter(version => nowVersionList.includes(version.id))
     },
     data() {
@@ -414,6 +447,14 @@ export default {
   },
   mounted() {
     this.loadVersionList(true)
+    this.$nextTick(() => {
+      this.tableHeight = this.$refs['wrapper'].clientHeight
+    })
+    window.onresize = () => {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
+    }
   },
   methods: {
     async initChart() {
@@ -516,14 +557,20 @@ export default {
         next: children,
         editable: true
       }
+      point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
+      // TODO: 請注意style內需單引號 ''
+      if (issue.fixed_version && issue.fixed_version.name) {
+        point['text'] += `<span style=\'border-radius: 0.25rem; background: white; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
+      }
+      point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
       if (group) {
         point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
-        point['text'] = `"#${issue.id} - ${checkIssueName}<br/><span style='border-radius: 0.25rem; background: white; padding: 3px 5px; margin: 3px 5px;'>${issue.fixed_version.name}</span>
-(${this.$t('Issue.' + issue.status.name)})"`
-        point['style'] = `stroke:${strokeColor[issue.fixed_version.id]},stroke-width:3`
+        point['style'] = `stroke-width:3`
       } else {
-        point['text'] = `"${this.$t('Issue.' + issue.tracker.name)} #${issue.id} - ${checkIssueName}<br/><span style='border-radius: 0.25rem; background: white; padding: 0 5px; margin: 0 5px;'>${issue.fixed_version.name}</span>(${this.$t('Issue.' + issue.status.name)})"`
-        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5,stroke:${strokeColor[issue.fixed_version.id]},stroke-width:3`
+        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5,stroke-width:3`
+      }
+      if (issue.fixed_version && issue.fixed_version.id) {
+        point['style'] += `,stroke:${strokeColor[issue.fixed_version.id]}`
       }
       if (this.nowFilterValue.issue_id.includes(issue.id)) {
         point['edgeType'] = 'stadium'
@@ -672,7 +719,7 @@ export default {
         const software_name = nodeId.split('.')[0]
         this.$router.push({ name: software_name.toLowerCase() })
       } else {
-        this.$router.push({ name: 'issue-detail', params: { issueId: nodeId }})
+        this.onRelationIssueDialog(nodeId)
       }
     },
     isRunning() {
@@ -765,11 +812,62 @@ export default {
         image.Height = A4Height
         this.$refs.rotateImage.appendChild(image)
       })
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
+    },
+    handleRelationUpdate() {
+      this.onCloseRelationIssueDialog()
+      this.initChart()
+      this.$emit('update-issue')
+    },
+    handleRelationIssueDialogBeforeClose(done) {
+      if (this.$refs.children.hasUnsavedChanges()) {
+        this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        })
+          .then(() => {
+            done()
+          })
+          .catch(() => {
+          })
+      } else {
+        done()
+      }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+$max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+$max_width: calc(90vw);
+#wrapper {
+  height: #{$max_height};
+}
+
+.mermaid-wrapper {
+  @apply cursor-move;
+  overflow: auto;
+  @apply static;
+  .toolbar {
+    @apply absolute bottom-10 right-10 z-50 w-1/6;
+  }
+
+  @for $i from 1 through 20 {
+    .w-#{25 * $i} {
+      width: calc(#{$max_width} * 0.25 * #{$i});
+      height: calc(#{$max_height} * 0.25 * #{$i});
+
+      >>>svg{
+        width: calc(#{$max_width} * 0.25 * #{$i});
+        height: calc(#{$max_height} * 0.25 * #{$i});
+      }
+    }
+  }
+}
 
 .relation_settings {
   > > > .el-form-item__content {
@@ -811,11 +909,11 @@ export default {
   @apply border-none;
 }
 
-> > > .el-tab-pane {
-  .el-tab-pane__body {
-    height: 100%;
-    overflow-y: auto;
-  }
-}
+//> > > .el-tab-pane {
+//  .el-tab-pane__body {
+//    height: 100%;
+//    overflow-y: auto;
+//  }
+//}
 
 </style>
