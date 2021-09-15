@@ -22,6 +22,7 @@
       </template>
       <template v-else-if="row.editColumn===prop&&editable(row)">
         <el-select v-model="row[prop]['id']" @change="handlerEdit(row, $index)"
+                   @keyup.enter.native="handlerEdit(row, $index)"
                    @keyup.esc.native="handlerReset(row, $index)"
         >
           <el-option v-for="item in options" :key="(item.login)?item.login:item.id" :value="item.id"

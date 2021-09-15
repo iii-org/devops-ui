@@ -248,6 +248,7 @@ export default {
       Tracker,
       addIssueVisible: false,
       tableHeight: 0,
+      updateLoading: false,
       contextMenu: { visible: true, row: {}},
       relationIssue: {
         visible: false,
@@ -413,6 +414,7 @@ export default {
         cancelButtonText: this.$t('general.Cancel'),
         beforeClose: async(action, instance, done) => {
           if (action === 'confirm') {
+            this.updateLoading = true
             this.$emit('update-loading', true)
             instance.confirmButtonLoading = true
             instance.confirmButtonText = this.$t('Updating')
@@ -432,6 +434,8 @@ export default {
               })
               this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
             }
+            this.updateLoading = false
+            this.$emit('update-loading', false)
             instance.confirmButtonLoading = false
             done()
             await this.removeIssue(row)
@@ -483,42 +487,46 @@ export default {
         return
       }
       if (checkUpdate) {
-        this.$emit('update-loading', true)
-        try {
-          const res = await updateIssue(row.id, value)
-          this.$set(row, 'editColumn', false)
-          this.$set(row, 'originColumn', null)
-          if (row.parent_object) {
-            let treeDataArray = []
-            let updateNodeMap = []
-            const store = this.$refs.WBS.layout.store
-            const { treeData, lazyTreeNodeMap } = store.states
-            if (row.parent_object.id && treeData[row.parent_object.id]) {
-              treeDataArray = treeData[row.parent_object.id].children
-              updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
+        if (!this.updateLoading) {
+          this.updateLoading = true
+          this.$emit('update-loading', true)
+          try {
+            const res = await updateIssue(row.id, value)
+            this.$set(row, 'editColumn', false)
+            this.$set(row, 'originColumn', null)
+            if (row.parent_object) {
+              let treeDataArray = []
+              let updateNodeMap = []
+              const store = this.$refs.WBS.layout.store
+              const { treeData, lazyTreeNodeMap } = store.states
+              if (row.parent_object.id && treeData[row.parent_object.id]) {
+                treeDataArray = treeData[row.parent_object.id].children
+                updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
+              }
+              const findIssueIndex = treeDataArray.findIndex(issue => issue === row.id)
+              this.$set(updateNodeMap, findIssueIndex, { ...res.data, parent_object: row.parent_object })
+              store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
+              store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
+            } else {
+              this.$set(this.listData, index, res.data)
             }
-            const findIssueIndex = treeDataArray.findIndex(issue => issue === row.id)
-            this.$set(updateNodeMap, findIssueIndex, { ...res.data, parent_object: row.parent_object })
-            store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
-            store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
-          } else {
-            this.$set(this.listData, index, res.data)
+            this.$emit('update-status', {
+              time: res.datetime
+            })
+            this.$notify({
+              title: this.$t('general.Success').toString(),
+              type: 'success',
+              message: this.$t('Notify.Updated').toString()
+            })
+          } catch (e) {
+            this.$emit('update-status', {
+              error: e
+            })
+            this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
           }
-          this.$emit('update-status', {
-            time: res.datetime
-          })
-          this.$notify({
-            title: this.$t('general.Success').toString(),
-            type: 'success',
-            message: this.$t('Notify.Updated').toString()
-          })
-        } catch (e) {
-          this.$emit('update-status', {
-            error: e
-          })
-          this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+          this.updateLoading = false
+          this.$emit('update-loading', false)
         }
-        this.$emit('update-loading', false)
       } else {
         this.handleResetEdit({ value, row })
         this.$notify({
@@ -529,48 +537,49 @@ export default {
       }
     },
     async handleCreateIssue({ row }) {
-      if (row.name.length <= 0) {
-        return
-      }
-      const data = {}
-      Object.keys(row).forEach(item => {
-        if (row[item] && typeof row[item] === 'object') {
-          data[`${item}_id`] = (row[item]['id']) ? row[item]['id'] : row[item]
-        } else {
-          data[item] = row[item]
+      if (!this.updateLoading) {
+        if (row.name.length <= 0) {
+          return
         }
-      })
-      this.$emit('update-loading', true)
-      try {
-        const res = await addIssue({ ...data, project_id: this.selectedProjectId })
-        this.$set(row, 'create', false)
-        this.$set(row, 'editColumn', false)
-        Object.keys(res.data).forEach(item => {
-          this.$set(row, item, res.data[item])
+        const data = {}
+        Object.keys(row).forEach(item => {
+          if (row[item] && typeof row[item] === 'object') {
+            data[`${item}_id`] = (row[item]['id']) ? row[item]['id'] : row[item]
+          } else {
+            data[item] = row[item]
+          }
         })
-        this.$emit('update-status', {
-          time: res.datetime
-        })
-        this.$notify({
-          title: this.$t('general.Success').toString(),
-          type: 'success',
-          message: this.$t('Notify.Added').toString()
-        })
-      } catch (e) {
-        this.$emit('update-status', {
-          error: e
-        })
-        this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+        this.updateLoading = true
+        this.$emit('update-loading', true)
+        try {
+          const res = await addIssue({ ...data, project_id: this.selectedProjectId })
+          this.$set(row, 'create', false)
+          this.$set(row, 'editColumn', false)
+          Object.keys(res.data).forEach(item => {
+            this.$set(row, item, res.data[item])
+          })
+          this.$emit('update-status', {
+            time: res.datetime
+          })
+          this.$notify({
+            title: this.$t('general.Success').toString(),
+            type: 'success',
+            message: this.$t('Notify.Added').toString()
+          })
+        } catch (e) {
+          this.$emit('update-status', {
+            error: e
+          })
+          this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+        }
+        this.updateLoading = false
+        this.$emit('update-loading', false)
       }
-      this.$emit('update-loading', false)
     },
     async getIssueFamilyData(row, treeNode, resolve, treeData) {
       try {
-        const family = await getIssueFamily(row.id)
+        const family = await getIssueFamily(row.id, { params: { with_point: true }})
         const data = family.data
-        // if (data.hasOwnProperty('parent')) {
-        //   await this.$set(row, 'parent', data.parent)
-        // }
         if (data.hasOwnProperty('children')) {
           if (treeData) {
             this.$set(treeData, row.id, data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
@@ -584,9 +593,6 @@ export default {
             resolve([])
           }
         }
-        // if (data.hasOwnProperty('relations')) {
-        //   await this.$set(row, 'relations', data.relations)
-        // }
       } catch (e) {
         //   null
         return Promise.resolve()

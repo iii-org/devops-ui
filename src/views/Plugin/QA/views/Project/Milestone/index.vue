@@ -215,6 +215,7 @@ export default {
   watch: {
     selectedProjectId() {
       this.onChangeFilter()
+      this.loadSelectionList()
     },
     fixedVersionShowClosed(value) {
       this.loadVersionList(value)

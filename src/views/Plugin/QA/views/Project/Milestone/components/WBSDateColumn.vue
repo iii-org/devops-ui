@@ -20,6 +20,7 @@
           :clearable="false"
           style="width: 100%"
           @change="handlerEdit(row, $index)"
+          @keyup.enter.native="handlerEdit(row, $index)"
           @keyup.esc.native="handlerReset(row, $index)"
         />
       </template>
