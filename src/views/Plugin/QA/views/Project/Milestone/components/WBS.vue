@@ -268,7 +268,14 @@ export default {
     }
   },
   mounted() {
-    this.tableHeight = this.$refs['wrapper'].clientHeight
+    this.$nextTick(() => {
+      this.tableHeight = this.$refs['wrapper'].clientHeight
+    })
+    window.onresize = () => {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
+    }
   },
   methods: {
     getParams() {
