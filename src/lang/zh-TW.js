@@ -341,7 +341,7 @@ export default {
     ReportedIssue: '由我回報'
   },
   Issue: {
-    Label: '標籤',
+    Tag: '標籤',
     AddIssue: '新增議題',
     EditIssue: '編輯議題',
     AddSubIssue: '新增子議題',
@@ -950,11 +950,11 @@ export default {
   ProjectSettings: {
     GeneralSettings: '一般設定',
     NotifySettings: '通知設定',
-    LabelSettings: '標籤管理',
-    Label: '標籤',
-    LabelName: '標籤名稱',
-    LabelInputPlaceholder: '請輸入標籤名稱',
-    AddCustomLabel: '新增自訂義標籤',
+    TagSettings: '標籤管理',
+    Tag: '標籤',
+    TagName: '標籤名稱',
+    TagInputPlaceholder: '請輸入標籤名稱',
+    AddCustomTag: '新增自訂義標籤',
     IssueReminderFeature: '議題提醒功能',
     Index: '@:general.Index',
     NotificationConditions: '通知條件',
@@ -967,7 +967,7 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
-    LabelUpdateMessage: '任務標籤已更新成功'
+    TagUpdateMessage: '任務標籤已更新成功'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',

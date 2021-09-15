@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between mt-3">
-      <div class="font-medium text-lg">{{ $t('ProjectSettings.Label') }}</div>
+      <div class="font-medium text-lg">{{ $t('ProjectSettings.Tag') }}</div>
       <div>
-        <el-button type="primary" :disabled="isAddingLabel" @click="handleShowLabelInput">+ {{ $t('ProjectSettings.AddCustomLabel') }}</el-button>
+        <el-button type="primary" :disabled="isAddingTag" @click="handleShowTagInput">+ {{ $t('ProjectSettings.AddCustomTag') }}</el-button>
       </div>
     </div>
     <el-divider />
-    <div v-show="isAddingLabel">
+    <div v-show="isAddingTag">
       <el-form ref="form" :model="form">
         <el-form-item>
-          <span class="mr-3">{{ $t('ProjectSettings.LabelName') }}</span>
+          <span class="mr-3">{{ $t('ProjectSettings.TagName') }}</span>
           <el-input
             v-model="form.name"
-            :placeholder="$t('ProjectSettings.LabelInputPlaceholder')"
+            :placeholder="$t('ProjectSettings.TagInputPlaceholder')"
             type="text"
             class="mr-3"
           />
@@ -29,7 +29,7 @@
       @row-click="handleRowClick"
     >
       <el-table-column type="index" align="center" :label="$t('ProjectSettings.Index')" width="100" />
-      <el-table-column align="center" :label="$t('ProjectSettings.Label')">
+      <el-table-column align="center" :label="$t('ProjectSettings.Tag')">
         <template slot-scope="scope">
           <div v-show="scope.row.edit">
             <el-input v-model="scope.row.name" type="text" />
@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Actions')">
         <template slot-scope="scope">
-          <el-button type="danger" @click.stop="handleLabelDelete(scope.row)">{{ $t('general.Delete') }}</el-button>
+          <el-button type="danger" @click.stop="handleTagDelete(scope.row)">{{ $t('general.Delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,14 +50,14 @@
 
 <script>
 import { BasicData } from '@/newMixins'
-import { getLabelsByProject, addProjectLabels, deleteProjectLabels, updateProjectLabels } from '@/api/projects'
+import { getTagsByProject, addProjectTags, deleteProjectTags, updateProjectTags } from '@/api/projects'
 
 export default {
-  name: 'LabelSettings',
+  name: 'TagSettings',
   mixins: [BasicData],
   data() {
     return {
-      isAddingLabel: false,
+      isAddingTag: false,
       originData: [],
       form: {
         name: ''
@@ -66,12 +66,12 @@ export default {
   },
   methods: {
     async fetchData() {
-      const res = await getLabelsByProject(this.selectedProjectId)
+      const res = await getTagsByProject(this.selectedProjectId)
       this.setOriginData(res.data.tags)
       return this.handleRowData(res.data.tags)
     },
-    async addProjectLabels(formData) {
-      await addProjectLabels(formData)
+    async addProjectTags(formData) {
+      await addProjectTags(formData)
         .then(() => {
           this.updateTable()
           this.initForm()
@@ -80,8 +80,8 @@ export default {
           console.error(err)
         })
     },
-    async deleteProjectLabels(tag_id) {
-      await deleteProjectLabels(tag_id)
+    async deleteProjectTags(tag_id) {
+      await deleteProjectTags(tag_id)
         .then(() => {
           this.updateTable()
         })
@@ -89,8 +89,8 @@ export default {
           console.error(err)
         })
     },
-    async updateProjectLabels(tag_id, data) {
-      await updateProjectLabels(tag_id, data)
+    async updateProjectTags(tag_id, data) {
+      await updateProjectTags(tag_id, data)
         .then(() => {
           this.updateTable()
         })
@@ -109,20 +109,20 @@ export default {
       tags.map(item => { item.edit = false })
       return tags
     },
-    handleShowLabelInput() {
-      this.isAddingLabel = true
+    handleShowTagInput() {
+      this.isAddingTag = true
     },
     handleInputSave() {
       if (!this.form.name) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('ProjectSettings.LabelInputPlaceholder'),
+          message: this.$t('ProjectSettings.TagInputPlaceholder'),
           type: 'warning'
         })
         return
       }
       const formData = this.getFormData()
-      this.addProjectLabels(formData)
+      this.addProjectTags(formData)
     },
     getFormData() {
       const name = this.form.name
@@ -143,20 +143,20 @@ export default {
     },
     handleInputCancel() {
       this.initForm()
-      this.isAddingLabel = false
+      this.isAddingTag = false
     },
     initForm() {
       this.form = { name: '' }
     },
     handleRowClick(row, column, event) {
-      if (column.label === '標籤' || column.label === 'Label') {
+      if (column.label === '標籤' || column.label === 'Tag') {
         row.edit = true
       }
     },
     handleTableInputConfirm(row) {
       const tag_id = row.id
       const updatedData = this.getUpdatedData(row)
-      this.updateProjectLabels(tag_id, updatedData)
+      this.updateProjectTags(tag_id, updatedData)
       row.edit = false
     },
     handleTableInputCancel(scope) {
@@ -164,14 +164,14 @@ export default {
       scope.row.name = this.originData[index].name
       scope.row.edit = false
     },
-    handleLabelDelete(row) {
+    handleTagDelete(row) {
       const tag_id = row.id
-      this.deleteProjectLabels(tag_id)
+      this.deleteProjectTags(tag_id)
     },
     showUpdateMessage() {
       this.$message({
         title: this.$t('general.Success'),
-        message: this.$t('ProjectSettings.LabelUpdateMessage'),
+        message: this.$t('ProjectSettings.TagUpdateMessage'),
         type: 'success'
       })
     }

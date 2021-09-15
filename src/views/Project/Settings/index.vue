@@ -35,9 +35,9 @@
           <AlertSettings ref="alertSettings" />
         </el-card>
       </el-tab-pane>
-      <el-tab-pane :label="$t('ProjectSettings.LabelSettings')" name="labelSettings">
+      <el-tab-pane :label="$t('ProjectSettings.TagSettings')" name="tagSettings">
         <el-card>
-          <LabelSettings ref="labelSettings" />
+          <TagSettings ref="tagSettings" />
         </el-card>
       </el-tab-pane>
     </el-tabs>
@@ -57,7 +57,7 @@ export default {
     PipelineSettings,
     ProjectMembers,
     AlertSettings: () => import ('@/views/Project/Settings/components/AlertSettings'),
-    LabelSettings: () => import ('@/views/Project/Settings/components/LabelSettings')
+    TagSettings: () => import ('@/views/Project/Settings/components/TagSettings')
   },
   mixins: [MixinElTableWithAProject],
   data() {

@@ -7,7 +7,7 @@
     :rules="issueFormRules"
     label-position="top"
   >
-    <el-form-item :label="$t('Issue.Label')" prop="tags">
+    <el-form-item :label="$t('Issue.Tag')" prop="tags">
       <el-select
         v-model="form.tags_ids"
         style="width: 100%"
@@ -15,8 +15,9 @@
         filterable
         remote
         multiple
-        :remote-method="getSearchLabels"
-        @focus="getSearchLabels()"
+        :loading="tagListLoading"
+        :remote-method="getSearchTags"
+        @focus="getSearchTags()"
       >
         <el-option
           v-for="item in tags"
@@ -248,7 +249,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getCheckIssueClosable } from '@/api/issue'
-import { getProjectAssignable, getProjectIssueList, getProjectVersion, getLabelsByName, getLabelsByProject } from '@/api/projects'
+import { getProjectAssignable, getProjectIssueList, getProjectVersion, getTagsByName, getTagsByProject } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -312,7 +313,7 @@ export default {
       },
       issueQuery: null,
       issueLoading: false,
-      labelListLoading: false,
+      tagListLoading: false,
       issueList: [],
       relationIssueList: [],
       assigned_to: [],
@@ -527,38 +528,38 @@ export default {
       this.cancelToken = CancelToken
       return CancelToken.token
     },
-    async getSearchLabels(query) {
+    async getSearchTags(query) {
       const pId = this.selectedProjectId
       const tag_name = query || null
       const cancelToken = this.checkToken().token
-      const labels = this.getLabels(pId, tag_name, cancelToken)
+      const labels = this.getTags(pId, tag_name, cancelToken)
       console.log(labels)
     },
-    async getLabels(pId, tag_name, cancelToken) {
+    async getTags(pId, tag_name, cancelToken) {
       let res = []
       switch (tag_name) {
         case null:
-          res = await this.getLabelsByProject(pId)
+          res = await this.getTagsByProject(pId)
           break
         default:
-          res = await this.getLabelsByName(pId, tag_name, cancelToken)
+          res = await this.getTagsByName(pId, tag_name, cancelToken)
       }
       return res
     },
-    async getLabelsByProject(pId) {
-      this.labelListLoading = true
-      const res = await getLabelsByProject(pId)
+    async getTagsByProject(pId) {
+      this.tagListLoading = true
+      const res = await getTagsByProject(pId)
       const tags = res.data.tags
-      this.labelListLoading = false
+      this.tagListLoading = false
       this.cancelToken = null
       return tags
     },
-    async getLabelsByName(project_id, tag_name, cancelToken) {
-      this.labelListLoading = true
+    async getTagsByName(project_id, tag_name, cancelToken) {
+      this.tagListLoading = true
       const params = { project_id, tag_name }
-      const res = await getLabelsByName(params, { cancelToken })
+      const res = await getTagsByName(params, { cancelToken })
       const tags = res.data.tags
-      this.labelListLoading = false
+      this.tagListLoading = false
       this.cancelToken = null
       return tags
     },
@@ -597,6 +598,7 @@ export default {
         key = 'Issue.LastResult'
       }
       this.relationIssueList = [this.originalRelationIssue, { name: this.$t(key), options: queryList }]
+      console.log(this.relationIssueList)
       this.issueLoading = false
       this.cancelToken = null
     },

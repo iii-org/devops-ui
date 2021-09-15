@@ -342,7 +342,7 @@ export default {
     ReportedIssue: 'Reported Issue'
   },
   Issue: {
-    Label: 'Label',
+    Tag: 'Tag',
     status: '@:general.Status',
     AddIssue: 'Add Issue',
     EditIssue: 'Edit Issue',
@@ -952,11 +952,11 @@ export default {
   ProjectSettings: {
     GeneralSettings: 'General Settings',
     NotifySettings: 'Notify Settings',
-    LabelSettings: 'Label Settings',
-    Label: 'Label',
-    LabelName: 'Label Name',
-    LabelInputPlaceholder: 'Please fill in label name',
-    AddCustomLabel: 'Add Custom Labels',
+    TagSettings: 'Tag Settings',
+    Tag: 'Tag',
+    TagName: 'Tag Name',
+    TagInputPlaceholder: 'Please fill in label name',
+    AddCustomTag: 'Add Custom Tags',
     IssueReminderFeature: 'Issue Reminder Feature',
     Index: '@:general.Index',
     NotificationConditions: 'Notification Conditions',
@@ -969,7 +969,7 @@ export default {
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully',
-    LabelUpdateMessage: 'The task label has been updated successfully'
+    TagUpdateMessage: 'The task label has been updated successfully'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: 'Remote Env.',
