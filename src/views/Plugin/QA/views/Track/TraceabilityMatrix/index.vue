@@ -287,7 +287,7 @@ export default {
     return {
       activeTab: 'map',
       tableHeight: 0,
-      zoom: 25,
+      zoom: 100,
       filterValue: { tracker_id: null, issue_id: [], fixed_version_id: [] },
       nowFilterValue: { tracker_id: null, issue_id: [], fixed_version_id: [] },
       trackerMapOptions: [],
