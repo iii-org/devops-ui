@@ -310,6 +310,7 @@ export default {
       if (row && row.id) {
         if (subLevel) {
           if (!treeData[row.id]) {
+            this.$set(row, 'has_children', true)
             this.$set(treeData, row.id, {})
             this.$set(treeData[row.id], 'display', true)
             this.$set(treeData[row.id], 'lazy', true)
