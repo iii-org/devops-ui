@@ -177,7 +177,7 @@ export default {
       }
       point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
       if (issue.fixed_version && issue.fixed_version.name) {
-        point['text'] += `<span style=\'border-radius: 0.25rem; background: white; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
+        point['text'] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
       point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
       if (group) {
