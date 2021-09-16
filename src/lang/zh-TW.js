@@ -419,6 +419,7 @@ export default {
     RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
     name: '議題名稱',
+    tags: '@:Issue.Tag',
     priority: '@:Issue.Priority',
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',

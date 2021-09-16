@@ -420,6 +420,7 @@ export default {
     RemovedIssue: 'The issue you were trying to edit doesn\'t exist or has been removed.',
     id: 'ID',
     name: 'Name',
+    tags: '@:Issue.Tag',
     priority: '@:Issue.Priority',
     tracker: '@:general.Type',
     assigned_to: '@:Issue.Assignee',
