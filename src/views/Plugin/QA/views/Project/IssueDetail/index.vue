@@ -234,7 +234,7 @@ import {
   IssueToolbar,
   IssueCollection
 } from './components'
-import { addProjectTags, getTagsByProject } from '@/api/projects'
+import { addProjectTags } from '@/api/projects'
 import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
