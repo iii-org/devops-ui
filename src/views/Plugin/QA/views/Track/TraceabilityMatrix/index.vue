@@ -61,7 +61,7 @@
               :nodes="data"
               type="flowchart LR"
               :class="`w-${zoom}`"
-              :config="{securityLevel:'loose',flowChart:{ htmlLabels:true, width:300}, logLevel:1}"
+              :config="{securityLevel:'loose',flowChart:{ htmlLabels:true, width:300}, logLevel:5}"
               @nodeClick="editNode"
             />
             <div class="toolbar">
@@ -362,7 +362,7 @@ export default {
       })
     },
     versionFilterList() {
-      const nowVersionList = [...new Set(this.chartIssueList.map(issue => (issue.fixed_version) ? issue.fixed_version.id : 'null'))]
+      const nowVersionList = [...new Set(this.chartIssueList.map(issue => (issue.fixed_version.id) ? issue.fixed_version.id : 'null'))]
       return this.fixed_version.filter(version => nowVersionList.includes(version.id))
     },
     data() {
@@ -370,7 +370,7 @@ export default {
 
       let chartIssueList = this.chartIssueList
       if (this.filterValue.fixed_version_id.length > 0) {
-        chartIssueList = chartIssueList.filter(issue => this.filterValue.fixed_version_id.includes(issue.fixed_version.id))
+        chartIssueList = chartIssueList.filter(issue => this.filterValue.fixed_version_id.includes((issue.fixed_version.id) ? issue.fixed_version.id : 'null'))
       }
       this.versionFilterList.forEach((version, idx) => {
         strokeColor[version.id] = stroke[idx % stroke.length]
@@ -524,8 +524,7 @@ export default {
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
     formatChartData(issue, group, strokeColor) {
-      const issueName = issue.name
-      const checkIssueName = issueName.replace(/"/g, '&quot;')
+      const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const link = []
       let children = []
       let relations = []
