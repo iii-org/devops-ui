@@ -362,7 +362,7 @@ export default {
       })
     },
     versionFilterList() {
-      const nowVersionList = [...new Set(this.chartIssueList.map(issue => (issue.fixed_version.id) ? issue.fixed_version.id : 'null'))]
+      const nowVersionList = [...new Set(this.chartIssueList.map(issue => (issue.fixed_version && issue.fixed_version.id) ? issue.fixed_version.id : 'null'))]
       return this.fixed_version.filter(version => nowVersionList.includes(version.id))
     },
     data() {
@@ -370,7 +370,7 @@ export default {
 
       let chartIssueList = this.chartIssueList
       if (this.filterValue.fixed_version_id.length > 0) {
-        chartIssueList = chartIssueList.filter(issue => this.filterValue.fixed_version_id.includes((issue.fixed_version.id) ? issue.fixed_version.id : 'null'))
+        chartIssueList = chartIssueList.filter(issue => this.filterValue.fixed_version_id.includes((issue.fixed_version && issue.fixed_version.id) ? issue.fixed_version.id : 'null'))
       }
       this.versionFilterList.forEach((version, idx) => {
         strokeColor[version.id] = stroke[idx % stroke.length]
