@@ -342,6 +342,9 @@ export default {
   },
   Issue: {
     Tag: '標籤',
+    All: '全部',
+    NoTag: '尚無標籤',
+    AddTag: '新增標籤',
     AddIssue: '新增議題',
     EditIssue: '編輯議題',
     AddSubIssue: '新增子議題',

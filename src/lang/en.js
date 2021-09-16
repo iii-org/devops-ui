@@ -343,6 +343,9 @@ export default {
   },
   Issue: {
     Tag: 'Tag',
+    All: 'All',
+    NoTag: 'No Tag yet',
+    AddTag: 'Add Tag',
     status: '@:general.Status',
     AddIssue: 'Add Issue',
     EditIssue: 'Edit Issue',

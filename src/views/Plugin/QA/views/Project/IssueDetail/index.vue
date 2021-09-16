@@ -180,7 +180,7 @@
         </el-col>
         <el-col :span="24" :md="8" class="issueOptionHeight">
           <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :relations="relations"
-                      :children-issue="children.length" :tags="tags"
+                      :children-issue="children.length"
           />
         </el-col>
       </el-row>
@@ -234,6 +234,7 @@ import {
   IssueToolbar,
   IssueCollection
 } from './components'
+import { addProjectTags, getTagsByProject } from '@/api/projects'
 import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -318,7 +319,8 @@ export default {
         id: null
       },
       relations: [],
-      relatedCollectionDialogVisible: false
+      relatedCollectionDialogVisible: false,
+      tagsString: ''
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -540,7 +542,7 @@ export default {
       this.form.due_date = due_date === null ? '' : due_date
       this.form.description = description === null ? '' : description
       this.form.relation_ids = (this.relations.length > 0) ? this.relations.map((item) => (item.id)) : []
-      this.form.tags_ids = this.tags.length > 0 ? this.tags.map(item => item.id) : []
+      this.form.tags = this.tags.length > 0 ? this.tags.map(item => item.id) : []
       this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {
@@ -613,7 +615,7 @@ export default {
           //   this.setWarningMessage(message)
           // } else
           if (this.form.name && this.form.name !== '') {
-            this.submitIssue()
+            this.handleUpdateTags()
           } else {
             const message = '請輸入標題'
             this.setWarningMessage(message)
@@ -627,7 +629,50 @@ export default {
         message
       })
     },
+    async handleUpdateTags() {
+      const tags = this.form.tags
+      const tagsLength = tags.length
+      const addTags = []
+      const originTags = []
+      tags.forEach(tag => {
+        if (typeof tag === 'string') addTags.push(tag)
+        else if (typeof tag === 'number') originTags.push(tag)
+      })
+      if (addTags.length > 0) await this.handleAddProjectTags(addTags, originTags, tagsLength)
+      else this.tagsArrayToString(originTags, tagsLength)
+    },
+    async handleAddProjectTags(addTags, originTags, tagsLength) {
+      addTags.map(async tag => {
+        const tagValue = tag.split('__')[1]
+        const formData = this.getAddTagsFormData(tagValue)
+        this.addProjectTags(formData, originTags, tagsLength)
+      })
+    },
+    async addProjectTags(formData, originTags, tagsLength) {
+      await addProjectTags(formData)
+        .then(async res => {
+          const id = res.data.tags.id
+          originTags.push(id)
+          this.tagsArrayToString(originTags, tagsLength)
+        })
+    },
+    tagsArrayToString(tags, tagsLength) {
+      const tagsString = tags.length > 0 ? tags.join() : null
+      this.tagsString = tagsString
+      if (this.tagsString === null) this.form.tags = ''
+      else this.form.tags = this.tagsString
+      if (tags.length === tagsLength) this.submitIssue()
+    },
+    getAddTagsFormData(tag) {
+      const formData = new FormData()
+      formData.delete('name')
+      formData.delete('project_id')
+      formData.append('name', tag)
+      formData.append('project_id', this.selectedProjectId)
+      return formData
+    },
     submitIssue() {
+      this.tagsString = ''
       const sendData = Object.assign({}, this.form)
       const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
       if (notes !== '') sendData['notes'] = notes
