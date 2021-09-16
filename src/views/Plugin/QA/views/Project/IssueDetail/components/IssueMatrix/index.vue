@@ -310,8 +310,10 @@ $max_width: calc(90vw);
       height: calc(#{$max_height} * 0.25 * #{$i});
 
       >>>svg{
-        width: calc(#{$max_width} * 0.25 * #{$i});
-        height: calc(#{$max_height} * 0.25 * #{$i});
+        width: 25% * $i;
+        height: 25% * $i;
+        transform-origin: top left;
+        transform: scale(0.25* $i);
       }
     }
   }

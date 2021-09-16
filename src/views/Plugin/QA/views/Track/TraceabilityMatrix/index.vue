@@ -841,7 +841,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 $max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
-$max_width: calc(90vw);
+$max_width: calc(100vw);
 .wrapper {
   height: #{$max_height};
 }
@@ -858,10 +858,13 @@ $max_width: calc(90vw);
     .w-#{25 * $i} {
       width: calc(#{$max_width} * 0.25 * #{$i});
       height: calc(#{$max_height} * 0.25 * #{$i});
+      padding:0;
 
       >>>svg{
-        width: calc(#{$max_width} * 0.25 * #{$i});
-        height: calc(#{$max_height} * 0.25 * #{$i});
+        width: 25% * $i;
+        height: 25% * $i;
+        transform-origin: top left;
+        transform: scale(0.25* $i);
       }
     }
   }
