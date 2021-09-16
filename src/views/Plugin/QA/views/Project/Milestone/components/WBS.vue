@@ -394,7 +394,7 @@ export default {
             treeDataArray = treeData[row.parent_object.id].children
             updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
           }
-          row_index = treeDataArray.findIndex(issue => issue.id === row.id)
+          row_index = updateNodeMap.findIndex(issue => issue.id === row.id)
         } else {
           row_index = this.listData.findIndex(issue => issue.id === row.id)
         }
@@ -403,7 +403,7 @@ export default {
         updateNodeMap.splice(row_index, 1)
         if (updateNodeMap.length <= 0) {
           store.$delete(lazyTreeNodeMap, row.parent_object.id)
-          treeDataArray.splice(row_index, 1)
+          treeDataArray.splice(treeDataArray.findIndex(issue => issue.id === row.id), 1)
         } else {
           store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
         }
