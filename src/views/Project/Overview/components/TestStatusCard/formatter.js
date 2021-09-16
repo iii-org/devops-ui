@@ -1,6 +1,6 @@
 import i18n from '@/lang'
 
-const postmanFormatter = (testResult) => {
+const postmanFormatter = testResult => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -22,7 +22,7 @@ const postmanFormatter = (testResult) => {
   }
   return ret
 }
-const getCheckmarxStatusText = (status) => {
+const getCheckmarxStatusText = status => {
   const statusString = String(status)
   const mapText = {
     '-1': i18n.t('CheckMarx.noScan'),
@@ -34,7 +34,7 @@ const getCheckmarxStatusText = (status) => {
   }
   return mapText[statusString]
 }
-const checkmarxFormatter = (testResult) => {
+const checkmarxFormatter = testResult => {
   const { status, report_id, run_at, highSeverity, mediumSeverity, lowSeverity, infoSeverity } = testResult
   const ret = {}
   if (status === 3) {
@@ -65,7 +65,7 @@ const checkmarxFormatter = (testResult) => {
   }
   return ret
 }
-const webinspectFormatter = (testResult) => {
+const webinspectFormatter = testResult => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -89,7 +89,7 @@ const webinspectFormatter = (testResult) => {
   }
   return ret
 }
-const sonarqubeFormatter = (testResult) => {
+const sonarqubeFormatter = testResult => {
   const ret = {}
   const informationArr = testResult
     .map(row => ({ status: row.metric, count: row.value }))
@@ -109,7 +109,7 @@ const sonarqubeFormatter = (testResult) => {
   }
   return ret
 }
-const sideexFormatter = (testResult) => {
+const sideexFormatter = testResult => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -132,7 +132,7 @@ const sideexFormatter = (testResult) => {
   }
   return ret
 }
-const zapFormatter = (testResult) => {
+const zapFormatter = testResult => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -145,10 +145,10 @@ const zapFormatter = (testResult) => {
       Software: 'zap',
       runAt: run_at,
       informationText: [
-        { status: i18n.t('Zap.critical'), count: result['0'] },
-        { status: i18n.t('Zap.high'), count: result['1'] },
+        { status: i18n.t('Zap.high'), count: result['3'] },
         { status: i18n.t('Zap.medium'), count: result['2'] },
-        { status: i18n.t('Zap.low'), count: result['3'] }
+        { status: i18n.t('Zap.low'), count: result['1'] },
+        { status: i18n.t('general.Info'), count: result['0'] }
       ]
     })
   }
