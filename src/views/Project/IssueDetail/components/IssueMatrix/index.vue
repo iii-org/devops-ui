@@ -1,23 +1,31 @@
 <template>
-  <div>
+  <div ref="wrapper" class="wrapper">
     <el-alert v-if="getPercentProgress<100" type="warning" class="mb-4 loading" :closable="false">
       <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
-    <el-card>
-      {{ $t('general.group') }}:
-      <el-switch
-        v-model="group"
-        :active-text="$t('general.on')"
-        :inactive-text="$t('general.off')"
-      />
+    {{ $t('general.group') }}:
+    <el-switch
+      v-model="group"
+      :active-text="$t('general.on')"
+      :inactive-text="$t('general.off')"
+    />
+    <div v-show="data.length>0" ref="matrix" v-dragscroll class="mermaid-wrapper"
+         :style="{height:`${tableHeight}px`}"
+    >
       <vue-mermaid
+        ref="mermaid"
         :nodes="data"
-        type="graph LR"
+        type="flowchart LR"
+        :class="`w-${zoom}`"
         :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
         @nodeClick="editNode"
       />
-    </el-card>
+      <div class="toolbar">
+        <el-slider v-model="zoom" :min="25" :max="500" :step="25" />
+      </div>
+    </div>
+    <el-empty v-if="data.length<=0" :description="$t('general.NoData')" />
     <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
                :before-close="handleRelationIssueDialogBeforeClose"
     >
@@ -38,10 +46,14 @@ import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import ProjectIssueDetail from '../../'
 import { camelCase } from 'lodash'
+import { dragscroll } from 'vue-dragscroll'
 
 export default {
   name: 'IssueMatrix',
   components: { VueMermaid, ProjectIssueDetail },
+  directives: {
+    dragscroll
+  },
   props: {
     row: {
       type: Object,
@@ -50,6 +62,8 @@ export default {
   },
   data() {
     return {
+      tableHeight: 0,
+      zoom: 100,
       chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
@@ -111,6 +125,14 @@ export default {
   },
   mounted() {
     this.initChart()
+    this.$nextTick(() => {
+      this.tableHeight = this.$refs['wrapper'].clientHeight
+    })
+    window.onresize = () => {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
+    }
   },
   methods: {
     async initChart() {
@@ -128,8 +150,7 @@ export default {
       return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
     },
     formatChartData(issue, group) {
-      const issueName = issue.name
-      const checkIssueName = issueName.replace(/"/g, '&quot;')
+      const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const link = []
       let children = []
       let relations = []
@@ -154,12 +175,15 @@ export default {
         next: children,
         editable: true
       }
+      point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
+      if (issue.fixed_version && issue.fixed_version.name) {
+        point['text'] += `<span style=\'border-radius: 0.25rem; background: white; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
+      }
+      point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
       if (group) {
         point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
-        point['text'] = `"#${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
       } else {
-        point['text'] = `"${this.$t('Issue.' + issue.tracker.name)} #${issue.id} - ${checkIssueName}<br/>(${this.$t('Issue.' + issue.status.name)})"`
-        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]}`
+        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
       }
       if (issue.id === this.row.id) {
         point['edgeType'] = 'stadium'
@@ -265,9 +289,55 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+$max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+$max_width: calc(90vw);
+.wrapper {
+  height: #{$max_height};
+  overflow: hidden;
+}
+
+.mermaid-wrapper {
+  @apply cursor-move;
+  overflow: hidden;
+  @apply static;
+  .toolbar {
+    @apply absolute bottom-10 right-10 z-50 w-1/6;
+  }
+
+  @for $i from 1 through 20 {
+    .w-#{25 * $i} {
+      width: calc(#{$max_width} * 0.25 * #{$i});
+      height: calc(#{$max_height} * 0.25 * #{$i});
+
+      >>>svg{
+        width: calc(#{$max_width} * 0.25 * #{$i});
+        height: calc(#{$max_height} * 0.25 * #{$i});
+      }
+    }
+  }
+}
+
+.relation_settings {
+  > > > .el-form-item__content {
+    @apply clear-both;
+  }
+
+  .item {
+    @apply mx-1 inline-block;
+  }
+}
+
+.el-form {
+  padding: 10px;
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
+}
+
 .issue-select {
   > > > .el-tag {
-    width: 100%;
+    //width: 100%;
     height: fit-content;
     white-space: normal;
 
@@ -283,11 +353,11 @@ export default {
   }
 }
 
-> > > .el-card {
-  .el-card__body {
-    height: 100%;
-    overflow-y: auto;
-  }
-}
+//> > > .el-card {
+//  .el-card__body {
+//    height: 100%;
+//    overflow-y: auto;
+//  }
+//}
 
 </style>
