@@ -24,6 +24,7 @@
     </div>
     <el-table
       :data="listData"
+      height="405"
       border
       fit
       @row-click="handleRowClick"
