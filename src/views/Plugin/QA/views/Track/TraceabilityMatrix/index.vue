@@ -45,7 +45,7 @@
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
     <el-tabs v-else v-model="activeTab" type="border-card">
       <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
-        <div id="wrapper" ref="wrapper">
+        <div ref="wrapper" class="wrapper">
           <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
             <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
             <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
@@ -557,7 +557,6 @@ export default {
         editable: true
       }
       point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
-      // TODO: 請注意style內需單引號 ''
       if (issue.fixed_version && issue.fixed_version.name) {
         point['text'] += `<span style=\'border-radius: 0.25rem; background: white; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
@@ -843,7 +842,7 @@ export default {
 <style lang="scss" scoped>
 $max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 $max_width: calc(90vw);
-#wrapper {
+.wrapper {
   height: #{$max_height};
 }
 
