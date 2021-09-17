@@ -289,8 +289,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-$max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
-$max_width: calc(90vw);
+$max_height: calc(100vh - 50px - 20px - 50px - 50px);
+$max_width: calc(100vw - 50px - 20px - 50px - 50px);
 .wrapper {
   height: #{$max_height};
   overflow: hidden;
