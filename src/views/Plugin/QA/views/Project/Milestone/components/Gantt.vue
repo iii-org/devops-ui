@@ -3,13 +3,16 @@
     <el-row :gutter="10" class="content">
       <el-col :span="24">
         <el-card v-loading="listLoading" :element-loading-text="$t('Loading')">
-          <el-form>
+          <el-form inline>
             <el-form-item :label="$t('ProjectRoadmap.DisplayRange')">
               <el-date-picker
                 v-model="chartDateRange"
                 type="daterange"
                 :clearable="false"
               />
+            </el-form-item>
+            <el-form-item>
+              <el-button icon="el-icon-refresh" @click="refreshData" />
             </el-form-item>
           </el-form>
           <div class="gantt-chart">
@@ -82,6 +85,7 @@ import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '../../IssueDetail'
+import jquery from 'jquery'
 
 const currentStart = moment().startOf('year')
 const currentEnd = moment().endOf('year')
@@ -324,6 +328,9 @@ export default {
           tasks: tasks,
           zoomLevels: this.periodOptions.map((item) => (item.value))
         })
+        this.$nextTick(() => {
+          jquery('.sg-timeline-body').animate({ scrollLeft: jquery('.sg-time-range-handle-right').position().left }, 100)
+        })
       }
     },
     setChartPeriod(value) {
@@ -333,6 +340,9 @@ export default {
           ...period.value,
           minWidth: columnWidth * this.duration.as(this.period),
           columnUnit: this.period
+        })
+        this.$nextTick(() => {
+          jquery('.sg-timeline-body').animate({ scrollLeft: jquery('.sg-time-range-handle-right').position().left }, 100)
         })
       }
     },
@@ -344,6 +354,10 @@ export default {
           this.gantt.$set({ from: due_date[0], to: due_date[1] })
         }
       }
+    },
+    refreshData() {
+      this.setDateRange()
+      this.setChartPeriod(this.period)
     },
     getParams() {
       const result = {
@@ -584,7 +598,7 @@ export default {
   @apply h-screen overflow-hidden;
 }
 
-$max_height: calc(100vh - 50px - 20px - 50px - 50px - 20px);
+$max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 
 .content {
   max-height: $max_height !important;

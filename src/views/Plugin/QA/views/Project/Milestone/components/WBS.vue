@@ -1,5 +1,5 @@
 <template>
-  <div id="wrapper" ref="wrapper">
+  <div ref="wrapper" class="wrapper">
     <el-table ref="WBS"
               v-loading="listLoading"
               :data="listData"
@@ -689,7 +689,7 @@ export default {
   @apply pl-5;
 }
 
-#wrapper {
+.wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
 
