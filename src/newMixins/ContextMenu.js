@@ -15,7 +15,7 @@ export default {
   computed: {
     contextOptions() {
       const result = {}
-      const getOptions = ['assigned_to', 'fixed_version']
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
       getOptions.forEach((item) => {
         result[item] = this[item]
       })
@@ -24,16 +24,17 @@ export default {
     filterOptions() {
       return [
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tags'), value: 'tags', placeholder: 'Tag' },
+        { id: 3, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 4, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
         {
-          id: 4,
+          id: 5,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version'
         },
         {
-          id: 5,
+          id: 6,
           label: this.$t('Issue.FilterDimensions.priority'),
           value: 'priority',
           placeholder: 'Priority',

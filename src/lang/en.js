@@ -361,6 +361,7 @@ export default {
     Description: 'Issue Description',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
+    SelectTag: 'Select Tag',
     SelectVersion: '@:Version.SelectVersion',
     SelectPriority: 'Select @:Issue.Priority',
     SelectStatus: 'Select @:general.Status',
@@ -472,6 +473,7 @@ export default {
     },
     FilterDimensions: {
       label: 'Filter Dimensions',
+      tags: 'Tag',
       status: 'Status',
       tracker: 'Type',
       assigned_to: 'Assigned',

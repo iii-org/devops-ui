@@ -174,6 +174,7 @@ export default {
       checkClosable: false,
       assigned_to: [],
       fixed_version: [],
+      tags: [],
       addTopicDialogVisible: false,
       LoadingConfirm: false,
       parentId: 0,
