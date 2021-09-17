@@ -18,7 +18,7 @@
         :nodes="data"
         type="flowchart LR"
         :class="`w-${zoom}`"
-        :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:1}"
+        :config="{securityLevel:'loose',flowChart:{ htmlLabels:true}, logLevel:5}"
         @nodeClick="editNode"
       />
       <div class="toolbar">
@@ -311,7 +311,7 @@ $max_width: calc(90vw);
 
       >>>svg{
         width: 25% * $i;
-        height: 25% * $i;
+        height: calc(25% * #{$i} - 20px);
         transform-origin: top left;
         transform: scale(0.25* $i);
       }
