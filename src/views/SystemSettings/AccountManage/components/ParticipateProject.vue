@@ -24,8 +24,18 @@
       <el-table-column align="center" prop="owner_name" :label="$t('Project.Owner')" />
       <el-table-column align="center" prop="start_date" :label="$t('Project.StartDate')" />
       <el-table-column align="center" prop="due_date" :label="$t('general.DueDate')" />
-      <el-table-column align="center" :label="$t('general.Actions')">
+      <el-table-column align="center" :label="$t('general.Actions')" width="390">
         <template slot-scope="scope">
+          <el-button
+            v-show="$route.params.user_id !== scope.row.owner_id"
+            type="primary"
+            size="mini"
+            @click="handleParticipateDialog(scope.row.owner_id)"
+          >
+            <em class="el-icon-edit" />
+            {{ $t('general.Participate') }}
+          </el-button>
+          <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
           <el-popconfirm
             :confirm-button-text="$t('general.Remove')"
             :cancel-button-text="$t('general.Cancel')"
@@ -115,6 +125,13 @@ export default {
     },
     handleBackPage() {
       this.$router.go(-1)
+    },
+    handleParticipateDialog(owner_id) {
+      this.$router.push({ name: 'ParticipateProject', params: { user_id: owner_id }})
+    },
+    handleIssueClick(row) {
+      const { owner_id, name } = row
+      this.$router.push({ name: 'Issue Transfer', params: { userId: owner_id, userName: name }})
     }
   }
 }
