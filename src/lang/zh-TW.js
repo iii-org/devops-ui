@@ -359,6 +359,7 @@ export default {
     Description: '議題描述',
     SelectDate: '選擇日期',
     SelectType: '選擇種類',
+    SelectTag: '選擇標籤',
     SelectVersion: '@:Version.SelectVersion',
     SelectPriority: '選擇@:Issue.Priority',
     SelectStatus: '選擇@:general.Status',
@@ -471,6 +472,7 @@ export default {
     },
     FilterDimensions: {
       label: '篩選維度',
+      tags: '議題標籤',
       status: '議題狀態',
       tracker: '議題類別',
       assigned_to: '專案成員',

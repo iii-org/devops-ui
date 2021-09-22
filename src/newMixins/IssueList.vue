@@ -3,7 +3,7 @@ import { Priority, Status, Tracker } from '@/components/Issue'
 import { BasicData, Pagination } from '@/newMixins/index'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
+import { getProjectIssueList, getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 
 export default {
@@ -53,16 +53,17 @@ export default {
     filterOptions() {
       return [
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tags'), value: 'tags', placeholder: 'Tag' },
+        { id: 3, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 4, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
         {
-          id: 4,
+          id: 5,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version'
         },
         {
-          id: 5,
+          id: 6,
           label: this.$t('Issue.FilterDimensions.priority'),
           value: 'priority',
           placeholder: 'Priority',
@@ -194,11 +195,13 @@ export default {
     async loadSelectionList() {
       if (this.selectedProjectId === -1) return
       await Promise.all([
-        getProjectUserList(this.selectedProjectId)
+        getProjectUserList(this.selectedProjectId),
+        getTagsByProject(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList] = res.map(
+        const [assigneeList, tagsList] = res.map(
           item => item.data
         )
+        this.tags = tagsList.tags
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           {

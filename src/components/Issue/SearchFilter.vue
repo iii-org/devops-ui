@@ -20,10 +20,11 @@
               :disabled="selectedProjectId === -1"
               filterable
               clearable
+              :multiple="dimension.value === 'tags'"
               @change="onChangeFilter"
             >
               <el-option
-                v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
+                v-for="item in (dimension.value==='status') ? filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
                 :key="(dimension.value==='assigned_to')? item.login: item.id"
                 :label="getSelectionLabel(item)"
                 :class="{[item.class]:item.class}"
