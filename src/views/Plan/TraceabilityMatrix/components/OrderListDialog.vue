@@ -87,7 +87,7 @@
 import { deleteTraceOrder, patchTraceOrder, postTraceOrder } from '@/views/Plugin/QA/api/qa'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
-import OrderListInput from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/OrderListInput'
+import OrderListInput from '@/views/Plan/TraceabilityMatrix/components/OrderListInput'
 
 export default {
   name: 'OrderListDialog',

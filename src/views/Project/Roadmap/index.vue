@@ -55,7 +55,7 @@ import {
   getProjectIssueList
 } from '@/api/projects'
 
-import WorkloadCard from '@/views/Project/Overview/components/WorkloadCard'
+import WorkloadCard from '@/views/Plan/Overview/components/WorkloadCard'
 import Issue from '@/data/issue'
 import { Tracker, Priority } from '@/components/Issue'
 

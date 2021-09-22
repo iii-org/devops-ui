@@ -149,7 +149,7 @@ export default {
     initForm() {
       this.form = { name: '' }
     },
-    handleRowClick(row, column, event) {
+    handleRowClick(row, column) {
       if (column.label === '標籤' || column.label === 'Tag') {
         row.edit = true
       }

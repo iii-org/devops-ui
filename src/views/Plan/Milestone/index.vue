@@ -118,8 +118,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import Gantt from '@/views/Plugin/QA/views/Project/Milestone/components/Gantt'
-import WBS from '@/views/Plugin/QA/views/Project/Milestone/components/WBS'
+import Gantt from '@/views/Plan/Milestone/components/Gantt'
+import WBS from '@/views/Plan/Milestone/components/WBS'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
 

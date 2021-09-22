@@ -50,8 +50,8 @@ export const asyncRoutes = [
       {
         path: 'milestone',
         name: 'milestone',
-        component: () => import('../views/Project/Milestone'),
-        meta: { title: 'milestone', roles: ['Administrator', 'QA'] }
+        component: () => import('@/views/Plan/Milestone'),
+        meta: { title: 'milestone', roles: ['QA'] }
       },
       {
         path: 'issues',
@@ -98,7 +98,7 @@ export const asyncRoutes = [
         component: () => import('../views/Project/TrackManagement'),
         meta: {
           title: 'changeManagement',
-          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
+          roles: ['QA'],
           appendRoot: { path: 'issues', position: 'after' }
         }
       },
@@ -108,9 +108,15 @@ export const asyncRoutes = [
         component: () => import('../views/Project/ExceptionManagement'),
         meta: {
           title: 'Fail Management',
-          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
+          roles: ['QA'],
           appendRoot: { path: 'track', position: 'after' }
         }
+      },
+      {
+        path: 'traceability-matrix',
+        name: 'TraceMatrix',
+        component: () => import('@/views/Plan/TraceabilityMatrix'),
+        meta: { title: 'traceabilityMatrix', roles: ['QA'] }
       },
       {
         path: 'settings',
@@ -125,7 +131,7 @@ export const asyncRoutes = [
               {
                 path: '',
                 name: 'Project Settings',
-                component: () => import('@/views/Project/Settings/roles/QA'),
+                component: () => import('@/views/Plan/Settings/roles/QA'),
                 meta: { roles: ['QA'] }
               },
               {
@@ -141,59 +147,50 @@ export const asyncRoutes = [
             path: 'issue-transfer/:userId',
             name: 'Issue Transfer',
             hidden: true,
-            component: () => import('@/views/Project/Settings/components/ProjectIssueTransfer'),
-            meta: { title: 'Issue Transfer', roles: ['Administrator', 'QA', 'Project Manager'] }
+            component: () => import('@/views/Plan/Settings/components/ProjectIssueTransfer'),
+            meta: { title: 'Issue Transfer', roles: ['QA'] }
           }
         ]
       }
     ]
   },
-  {
-    path: '/traceability-matrix',
-    component: Layout,
-    redirect: { name: 'TraceMatrix' },
-    meta: {
-      title: 'track',
-      icon: 'el-icon-s-marketing',
-      roles: ['Administrator', 'QA', 'Project Manager'],
-      appendRoot: { path: '/scan', position: 'after' }
-    },
-    children: [
-      {
-        path: '',
-        name: 'TraceMatrix',
-        component: () => import('../views/Track/TraceabilityMatrix'),
-        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA', 'Project Manager'] }
-      }
-    ]
-  },
+  // {
+  //   path: '/traceability-matrix',
+  //   component: Layout,
+  //   redirect: { name: 'TraceMatrix' },
+  //   meta: {
+  //     title: 'track',
+  //     icon: 'el-icon-s-marketing',
+  //     roles: ['Administrator', 'QA', 'Project Manager'],
+  //     appendRoot: { path: '/scan', position: 'after' }
+  //   },
+  //   children: [
+  //     {
+  //       path: '',
+  //       name: 'TraceMatrix',
+  //       component: () => import('../../../Plan/TraceabilityMatrix'),
+  //       meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA', 'Project Manager'] }
+  //     }
+  //   ]
+  // },
   {
     path: '/test',
     name: 'test',
     component: Layout,
     redirect: { name: 'test-plan' },
     meta: {
-      title: 'testManagement',
+      title: 'test-report',
       icon: 'el-icon-finished',
-      roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
+      roles: ['QA'],
       appendRoot: { path: '/scan', position: 'before' }
     },
     children: [
-      {
-        path: 'test-file',
-        name: 'test-file',
-        component: () => import('../views/Test/TestFile'),
-        meta: {
-          title: 'testFile',
-          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
-        }
-      },
       {
         path: 'test-plan',
         redirect: '/test/test-plan',
         component: parentBlank,
         meta: {
-          roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
+          roles: ['QA']
         },
         children: [
           {
@@ -201,7 +198,7 @@ export const asyncRoutes = [
             name: 'test-plan',
             component: () => import('../views/Test/TestPlan'),
             meta: {
-              title: 'testPlan', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
+              title: 'unit-test', roles: ['QA']
             }
           },
           {
@@ -211,7 +208,7 @@ export const asyncRoutes = [
             component: () => import('../views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
-              roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
+              roles: ['QA'],
               rolePage: false
             }
           },
@@ -223,6 +220,34 @@ export const asyncRoutes = [
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
+              rolePage: false
+            }
+          }
+        ]
+      },
+      {
+        path: '/release-version',
+        redirect: { name: 'release-version' },
+        component: parentBlank,
+        meta: { title: 'test-result', roles: ['QA'] },
+        children: [
+          {
+            path: '',
+            name: 'release-version',
+            component: () => import('@/views/Project/ReleaseVersion'),
+            hidden: true,
+            meta: {
+              roles: ['QA']
+            }
+          },
+          {
+            path: '/release-version/:issueTag',
+            name: 'closed-issue-list',
+            hidden: true,
+            component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
+            meta: {
+              title: 'Issue Detail',
+              roles: ['QA'],
               rolePage: false
             }
           }

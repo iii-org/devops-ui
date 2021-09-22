@@ -213,7 +213,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import '../../../../styles/variables';
 
 >>> .el-card {
   &__footer {

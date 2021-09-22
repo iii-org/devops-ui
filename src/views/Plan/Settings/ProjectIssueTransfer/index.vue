@@ -68,7 +68,7 @@
         @expand-change="expandFamilyData"
       >
         <el-table-column align="center" width="40">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-checkbox
               v-model="isCheckedAllIssuesByPage"
               :disabled="listData.length < 1"
@@ -268,7 +268,7 @@ export default {
     },
     isCheckedIssue(issue) {
       const { id } = issue
-      return this.checkedIssueIds.findIndex(item => item === issue.id) > -1
+      return this.checkedIssueIds.findIndex(item => item === id) > -1
     },
     toggleIssue(issue) {
       this.isCheckedIssue(issue) ? this.removeIssue(issue) : this.addIssue(issue)
@@ -302,7 +302,7 @@ export default {
       const sendData = new FormData()
       sendData.append('status_id', 6)
       updateIssue(issueId, sendData)
-        .then(res => {
+        .then(() => {
           this.loadData()
           this.removeIssue(issueId)
         })
@@ -347,8 +347,7 @@ export default {
         })
     },
     handleSinglePageChecked() {
-      const result = this.listData.every(issue => this.checkedIssueIds.findIndex(id => id === issue.id) > -1)
-      this.isCheckedAllIssuesByPage = result
+      this.isCheckedAllIssuesByPage = this.listData.every(issue => this.checkedIssueIds.findIndex(id => id === issue.id) > -1)
     },
     onBatchTransferClick() {
       this.dialogVisible = true

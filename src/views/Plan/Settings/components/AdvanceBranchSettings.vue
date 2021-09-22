@@ -37,7 +37,7 @@
         />
         <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" width="160" />
         <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center" width="120">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <div class="mb-2">{{ tool.name }}</div>
             <el-checkbox
               v-if="listData.length > 1"

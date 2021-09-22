@@ -4,23 +4,7 @@
     <el-divider />
     <el-tabs v-model="tabActiveName" type="card" :before-leave="beforeLeave">
       <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
-        <el-row :gutter="10">
-          <el-col class="mb-4" :sm="24" :md="14" :lg="15">
-            <el-card shadow="never">
-              <el-collapse v-model="activeNames">
-                <ProjectVersions />
-              </el-collapse>
-            </el-card>
-          </el-col>
-          <el-col class="mb-4" :sm="24" :md="10" :lg="9">
-            <el-card shadow="never">
-              <el-collapse v-model="activeNames">
-                <PipelineSettings />
-              </el-collapse>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
+        <el-row v-if="selectedProjectId !== -1" :gutter="10">
           <el-col class="mb-4" :xs="24">
             <el-card shadow="never">
               <el-collapse v-model="activeNames">
@@ -29,6 +13,10 @@
             </el-card>
           </el-col>
         </el-row>
+        <el-alert v-else type="warning" :closable="false">
+          <h2><i class="el-icon-warning" /> {{ $t('general.Warning') }}</h2>
+          <h3>{{ this.$t('Notify.NoProject') }}</h3>
+        </el-alert>
       </el-tab-pane>
       <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings">
         <el-card>
@@ -45,19 +33,17 @@
 </template>
 
 <script>
-import { ProjectVersions, ProjectMembers, PipelineSettings } from './components'
+import { ProjectMembers } from '../components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 
 export default {
-  name: 'ProjectSettings',
+  name: 'QA',
   components: {
     ProjectListSelector,
-    ProjectVersions,
-    PipelineSettings,
     ProjectMembers,
-    AlertSettings: () => import ('@/views/Project/Settings/components/AlertSettings'),
-    TagSettings: () => import ('@/views/Project/Settings/components/TagSettings')
+    AlertSettings: () => import ('@/views/Plan/Settings/components/AlertSettings'),
+    TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings')
   },
   mixins: [MixinElTableWithAProject],
   data() {
@@ -125,7 +111,7 @@ export default {
       suggested to return reject() or resolve() because it will sometimes invalid when returned true or false
     */
     showLeaveMessage() {
-      const isLeave = new Promise(async(resolve, reject) => {
+      return new Promise(async(resolve, reject) => {
         return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),
           cancelButtonText: this.$t('general.Cancel'),
@@ -142,7 +128,6 @@ export default {
             return reject()
           })
       })
-      return isLeave
     }
   }
 }
@@ -150,25 +135,25 @@ export default {
 
 <style lang="scss" scoped>
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-  background: #e4ecf7 ;
+  background: #c5c8cc;
   color: #3e3f41;
   border-top: 5px solid #3e3f41;
-  border-bottom-color: #e4ecf7 ;
+  border-bottom-color: #c5c8cc;
   height: 45px;
 }
 
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item {
   background: #3e3f41;
-  color: #e4ecf7 ;
+  color: #c5c8cc;
   border-radius: 5px;
-  width:250px;
+  width: 125%;
   &:hover {
     color: #409eff;
   }
 }
 
 >>> .el-tabs__content {
-  background: #e4ecf7 ;
+  background: #c5c8cc;
   border-radius: 3px;
 }
 
@@ -178,6 +163,10 @@ export default {
 
 >>> .el-tab-pane {
   margin: 15px;
-  background: #e4ecf7 ;
+  background: #c5c8cc;
+}
+
+>>> .el-input__inner {
+  text-align: center;
 }
 </style>

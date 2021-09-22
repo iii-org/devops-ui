@@ -20,7 +20,9 @@ export default {
     testFile: '測試檔案',
     testPlan: '測試計畫',
 
+    'project-management': '專案管理',
     singleProject: '個別專案',
+    works: '工作執行',
     kanban: '議題看板',
     issueList: '議題列表',
     overview: '專案總覽',
@@ -28,7 +30,7 @@ export default {
     fileList: '檔案列表',
 
     'Activity Log': '議題異動紀錄',
-    'Project Roadmap': '專案藍圖',
+    'Project Roadmap': '版本歷程',
     advanceBranchSettings: '進階分支設定',
     'Project Settings': '專案設定',
     'Issue Transfer': '議題轉移',
@@ -88,9 +90,12 @@ export default {
     'System Version': '@:navbar.versions',
 
     track: '追溯管理',
-    traceabilityMatrix: '需求追溯表',
+    traceabilityMatrix: '需求追溯',
     changeManagement: '變更管理',
     'Fail Management': '異常管理',
+    'test-report': '測試報告',
+    'unit-test': '單元測試',
+    'test-result': '測試彙整',
     testReport: 'III DevOps 測試彙整',
     deploy: '遠端部署'
   },

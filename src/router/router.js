@@ -105,30 +105,87 @@ export const asyncRoutes = [
       }
     ]
   },
-
   {
-    path: '/project',
+    path: '/plan',
     component: Layout,
-    redirect: { name: 'Overview' },
+    redirect: { name: 'project-management' },
     meta: {
-      title: 'singleProject',
+      title: 'project-management',
       icon: 'el-icon-data-analysis',
-      roles: ['Administrator', 'Project Manager', 'Engineer']
+      roles: ['Administrator', 'Project Manager']
     },
     children: [
       {
         path: 'overview',
         name: 'Overview',
-        component: () => import('@/views/Project/Overview'),
+        component: () => import('@/views/Plan/Overview'),
         meta: { title: 'projectOverview', roles: ['Administrator', 'Project Manager'] }
       },
       {
         path: 'milestone',
         name: 'milestone',
-        component: () => import('@/views/Plugin/QA/views/Project/Milestone'),
-        meta: { title: 'milestone', roles: ['Administrator', 'Project Manager'] },
-        hidden: true
+        component: () => import('@/views/Plan/Milestone'),
+        meta: { title: 'milestone', roles: ['Administrator', 'Project Manager'] }
       },
+      {
+        path: 'traceability-matrix',
+        name: 'TraceMatrix',
+        component: () => import('@/views/Plan/TraceabilityMatrix'),
+        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA', 'Project Manager'] }
+      },
+      {
+        path: 'settings',
+        component: parentBlank,
+        meta: { title: 'Project Settings', roles: ['Administrator', 'Project Manager'] },
+        children: [
+          {
+            path: '',
+            component: parentBlank,
+            hidden: true,
+            children: [
+              {
+                path: '',
+                name: 'Project Settings',
+                component: () => import('@/views/Plan/Settings/index'),
+                meta: { roles: ['Administrator', 'Project Manager'] }
+              },
+              {
+                path: 'participate-project/:user_id',
+                name: 'ParticipateProject',
+                hidden: true,
+                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                meta: { title: 'Participate Project', roles: ['Administrator', 'Project Manager'] }
+              }
+            ]
+          },
+          {
+            path: 'advance-branch-settings',
+            name: 'advance-branch-settings',
+            hidden: true,
+            component: () => import('@/views/Plan/Settings/components/AdvanceBranchSettings'),
+            meta: { title: 'advanceBranchSettings', roles: ['Administrator', 'Project Manager'] }
+          },
+          {
+            path: 'issue-transfer/:userId',
+            name: 'Issue Transfer',
+            hidden: true,
+            component: () => import('@/views/Plan/Settings/ProjectIssueTransfer'),
+            meta: { title: 'Issue Transfer', roles: ['Administrator', 'Project Manager'] }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    path: '/project',
+    component: Layout,
+    redirect: { name: 'Overview' },
+    meta: {
+      title: 'works',
+      icon: 'el-icon-data-analysis',
+      roles: ['Administrator', 'Project Manager', 'Engineer']
+    },
+    children: [
       {
         path: 'issue-boards',
         name: 'issue-boards',
@@ -223,47 +280,6 @@ export const asyncRoutes = [
               title: 'deploy',
               roles: ['Administrator', 'Project Manager']
             }
-          }
-        ]
-      },
-      {
-        path: 'settings',
-        component: parentBlank,
-        meta: { title: 'Project Settings', roles: ['Administrator', 'Project Manager'] },
-        children: [
-          {
-            path: '',
-            component: parentBlank,
-            hidden: true,
-            children: [
-              {
-                path: '',
-                name: 'Project Settings',
-                component: () => import('@/views/Project/Settings/index'),
-                meta: { roles: ['Administrator', 'Project Manager'] }
-              },
-              {
-                path: 'participate-project/:user_id',
-                name: 'ParticipateProject',
-                hidden: true,
-                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
-                meta: { title: 'Participate Project', roles: ['Administrator', 'QA'] }
-              }
-            ]
-          },
-          {
-            path: 'advance-branch-settings',
-            name: 'advance-branch-settings',
-            hidden: true,
-            component: () => import('@/views/Project/Settings/components/AdvanceBranchSettings'),
-            meta: { title: 'advanceBranchSettings', roles: ['Administrator', 'Project Manager'] }
-          },
-          {
-            path: 'issue-transfer/:userId',
-            name: 'Issue Transfer',
-            hidden: true,
-            component: () => import('@/views/Project/Settings/ProjectIssueTransfer'),
-            meta: { title: 'Issue Transfer', roles: ['Administrator', 'Project Manager'] }
           }
         ]
       }
@@ -425,7 +441,69 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/test',
+    name: 'test',
+    component: Layout,
+    redirect: { name: 'test-plan' },
+    meta: {
+      title: 'testManagement',
+      icon: 'el-icon-finished',
+      roles: ['Administrator', 'Project Manager', 'Engineer'],
+      appendRoot: { path: '/scan', position: 'before' }
+    },
+    children: [
+      {
+        path: 'test-file',
+        name: 'test-file',
+        component: () => import('@/views/Plugin/QA/views/Test/TestFile'),
+        meta: {
+          title: 'testFile',
+          roles: ['Administrator', 'Project Manager', 'Engineer']
+        }
+      },
+      {
+        path: 'test-plan',
+        redirect: '/test/test-plan',
+        component: parentBlank,
+        meta: {
+          roles: ['Administrator', 'Project Manager', 'Engineer']
+        },
+        children: [
+          {
+            path: '',
+            name: 'test-plan',
+            component: () => import('@/views/Plugin/QA/views/Test/TestPlan'),
+            meta: {
+              title: 'testPlan', roles: ['Administrator', 'Project Manager', 'Engineer']
+            }
+          },
+          {
+            path: 'create',
+            name: 'create-test-plan',
+            hidden: true,
+            component: () => import('@/views/Plugin/QA/views/Project/IssueDetail'),
+            meta: {
+              title: 'Issue Detail',
+              roles: ['Administrator', 'Project Manager', 'Engineer'],
+              rolePage: false
+            }
+          },
+          {
+            path: ':issueId',
+            name: 'test-plan-detail',
+            hidden: true,
+            component: () => import('@/views/Plugin/QA/views/Project/IssueDetail'),
+            meta: {
+              title: 'Issue Detail',
+              roles: ['Administrator', 'Project Manager', 'Engineer'],
+              rolePage: false
+            }
+          }
+        ]
+      }
+    ]
+  },
   {
     path: '/scan',
     component: Layout,

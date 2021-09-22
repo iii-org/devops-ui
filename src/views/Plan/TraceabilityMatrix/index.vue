@@ -255,7 +255,7 @@ import {
 import html2canvas from 'html2canvas'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
-import TraceCheck from '@/views/Plugin/QA/views/Track/TraceabilityMatrix/components/TraceCheck'
+import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
 import { dragscroll } from 'vue-dragscroll'
 
 import axios from 'axios'

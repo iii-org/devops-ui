@@ -13,14 +13,16 @@ export default {
     projectOverview: 'Project Overview',
     projectList: 'Project List',
 
-    milestone: 'milestone',
+    milestone: 'Milestone',
     issueTracking: 'Issue Tracking',
 
     testManagement: 'Test Management',
     testFile: 'Test File',
     testPlan: 'Test Plan',
 
+    'project-management': 'Project Management',
     singleProject: 'Single Project',
+    works: 'Works',
     kanban: 'Issue Board',
     issueList: 'Issue List',
     overview: 'Overview',
@@ -91,6 +93,9 @@ export default {
     traceabilityMatrix: 'Traceability Matrix',
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management',
+    'test-report': 'Test Report',
+    'unit-test': 'Unit Test',
+    'test-result': 'Test Result',
     testReport: 'III DevOps Test Report',
     deploy: 'Deploy'
   },

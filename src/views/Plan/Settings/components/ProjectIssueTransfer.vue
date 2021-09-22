@@ -47,7 +47,7 @@
       </div>
       <el-table ref="dataTable" v-loading="listLoading" :data="filteredData" fit @row-contextmenu="handleContextMenu">
         <el-table-column width="55">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-checkbox v-model="isCheckedAllIssuesByPage" @change="handleSinglePageChange" />
           </template>
           <template slot-scope="scope">
@@ -243,7 +243,7 @@ export default {
       const sendData = new FormData()
       sendData.append('status_id', 6)
       updateIssue(issueId, sendData)
-        .then(res => {
+        .then(() => {
           this.loadData()
         })
         .catch(err => {
@@ -252,8 +252,7 @@ export default {
     },
     async onPagination(listQuery) {
       const { page, limit } = listQuery
-      const newOffset = page * limit - limit
-      this.listQuery.offset = newOffset
+      this.listQuery.offset = page * limit - limit
       await this.loadData()
       this.handleSinglePageChecked()
     },
@@ -287,8 +286,7 @@ export default {
         })
     },
     handleSinglePageChecked() {
-      const result = this.focusedIssues.every(item => this.checkedIssues.findIndex(id => id === item) > -1)
-      this.isCheckedAllIssuesByPage = result
+      this.isCheckedAllIssuesByPage = this.focusedIssues.every(item => this.checkedIssues.findIndex(id => id === item) > -1)
     },
     onBatchTransferClick() {
       this.dialogVisible = true
@@ -299,7 +297,7 @@ export default {
         const sendData = new FormData()
         sendData.append('assigned_to_id', this.assigneeId)
         updateIssue(issueId, sendData)
-          .then(res => {
+          .then(() => {
             this.handleClose()
             this.loadData()
           })
@@ -318,7 +316,7 @@ export default {
         const sendData = new FormData()
         sendData.append('status_id', 6)
         updateIssue(issueId, sendData)
-          .then(res => {
+          .then(() => {
             this.loadData()
           })
           .catch(err => {

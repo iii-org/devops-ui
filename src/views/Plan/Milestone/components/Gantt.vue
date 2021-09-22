@@ -84,7 +84,7 @@ import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
 import AddIssue from '@/components/Issue/AddIssue'
-import ProjectIssueDetail from '../../IssueDetail'
+import ProjectIssueDetail from '../../../Plugin/QA/views/Project/IssueDetail'
 import jquery from 'jquery'
 
 const currentStart = moment().startOf('year')
@@ -591,8 +591,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~svelte-gantt/css/svelteGantt.css";
-@import 'src/styles/variables.scss';
+@import "../../../../../node_modules/svelte-gantt/css/svelteGantt.css";
+@import '../../../../styles/variables';
 
 .app-container {
   @apply h-screen overflow-hidden;

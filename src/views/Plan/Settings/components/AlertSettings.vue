@@ -84,8 +84,7 @@ export default {
   watch: {
     selectedProjectId: {
       handler(val) {
-        if (val !== -1) this.disableSwitch = false
-        else this.disableSwitch = true
+        this.disableSwitch = val === -1
       },
       immediate: true
     }
