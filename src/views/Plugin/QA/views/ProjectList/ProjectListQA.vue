@@ -321,30 +321,6 @@ export default {
       })
       return translateTable
     },
-    // downloadExcel(selectedProjectList) {
-    //   const selectedColumn = []
-    //   const translateTable = []
-    //   selectedProjectList.forEach(item => {
-    //     const targetObject = {}
-    //     this.csvColumnSelected.map(itemSelected => {
-    //       this.$set(targetObject, itemSelected, item[itemSelected])
-    //     })
-    //     selectedColumn.push(targetObject)
-    //   })
-    //   selectedColumn.forEach(item => {
-    //     const chineseExcel = {}
-    //     const chineseColumnKey = Object.keys(item).map(key => {
-    //       key = excelTranslate.projectlistQA[key]
-    //       return key
-    //     })
-    //     Object.values(item).map((val, index) => {
-    //       this.$set(chineseExcel, chineseColumnKey[index], val)
-    //     })
-    //     translateTable.push(chineseExcel)
-    //   })
-    //   const worksheet = XLSX.utils.json_to_sheet(translateTable)
-    //   this.$csv(worksheet, 'projectlist')
-    // },
     handleReserve(row) {
       return row.id
     },

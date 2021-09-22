@@ -2,7 +2,7 @@ export const excelTranslate = {
   projectlistQA: {
     id: '編號',
     name: '名稱',
-    display: '顯示',
+    display: '專案名稱',
     description: '描述',
     disabled: '是否停用',
     git_url: 'GitLab',
