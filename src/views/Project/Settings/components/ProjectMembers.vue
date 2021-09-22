@@ -46,7 +46,7 @@
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>
-            <el-button v-permission="['Administrator','Project Manager']" type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button v-permission="['Administrator','Project Manager', 'QA']" type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
             <el-button
               type="danger"
               size="mini"
