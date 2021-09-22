@@ -18,24 +18,25 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilterForm"
-      />
-      <span>
-        <el-divider direction="vertical" />
-        <el-popover
-          placement="bottom"
-          trigger="click"
-        >
-          <el-menu class="download">
-            <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
-              <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
-            </el-menu-item>
-            <el-menu-item v-show="hasSelectedFail" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedFailList)">
-              <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
-            </el-menu-item>
-          </el-menu>
-          <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
-        </el-popover>
-      </span>
+      >
+        <span slot="download">
+          <el-divider direction="vertical" />
+          <el-popover
+            placement="bottom"
+            trigger="click"
+          >
+            <el-menu class="download">
+              <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+              </el-menu-item>
+              <el-menu-item v-show="hasSelectedFail" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedFailList)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+              </el-menu-item>
+            </el-menu>
+            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+          </el-popover>
+        </span>
+      </SearchFilter>
     </project-list-selector>
     <el-divider />
     <quick-add-issue

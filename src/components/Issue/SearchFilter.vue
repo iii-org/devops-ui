@@ -63,6 +63,7 @@
         {{ $t('Issue.CleanFilter') }}
       </el-button>
     </template>
+    <slot name="download" />
   </div>
 </template>
 
