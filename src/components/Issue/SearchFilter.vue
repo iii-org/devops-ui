@@ -132,9 +132,16 @@ export default {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
-          if (value) {
-            result.push(this.getSelectionLabel(value))
+          if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
+            const value = this.getOptionsData(item).filter((search) => (this.filterValue[item].includes(search.id)))
+            if (value) {
+              result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+            }
+          } else {
+            const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
+            if (value) {
+              result.push(this.getSelectionLabel(value))
+            }
           }
         }
       })
