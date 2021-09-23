@@ -125,6 +125,7 @@ export default {
     3003: 'You are not permitted to access another user\'s data.',
     3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
+    7002: 'Argument {arg} is incorrect.。',
     7005: 'Maximum number of {object} in a project is {num}.',
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
@@ -134,7 +135,9 @@ export default {
   errorDetail: {
     locked: 'Locked',
     closed: 'Closed',
-    trace_order: '@:Track.CheckRule'
+    trace_order: '@:Track.CheckRule',
+    start_date: '@:Issue.StartDate',
+    due_date: '@:Issue.EndDate'
   },
   general: {
     Name: 'Name',

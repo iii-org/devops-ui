@@ -125,6 +125,7 @@ export default {
     3003: '您不被允許存取其他使用者的資料。',
     3004: '僅專案經理才可設置，請洽專案經理協助。',
     4001: '該議題不存在。',
+    7002: '參數 {arg} 輸入錯誤。',
     7005: '{object} 的最大數量為 {num}',
     8001: '{service_name} 回報錯誤：{response}',
     9001: '內部錯誤：{type}: {exception}',
@@ -134,7 +135,9 @@ export default {
   errorDetail: {
     locked: '鎖定',
     closed: '關閉',
-    trace_order: '@:Track.CheckRule'
+    trace_order: '@:Track.CheckRule',
+    start_date: '@:Issue.StartDate',
+    due_date: '@:Issue.EndDate'
   },
   general: {
     Name: '名稱',
