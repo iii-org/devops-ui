@@ -18,12 +18,25 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilterForm"
-      />
-      <span v-show="hasSelectedTestPlan">
-        <el-divider direction="vertical" />
-        <el-button type="text" icon="el-icon-download" @click="downloadCsv(selectedTestPlan)">
-          {{ $t('Dashboard.ADMIN.ProjectList.csv_download') }}</el-button>
-      </span>
+      >
+        <span slot="download">
+          <el-divider direction="vertical" />
+          <el-popover
+            placement="bottom"
+            trigger="click"
+          >
+            <el-menu class="download">
+              <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+              </el-menu-item>
+              <el-menu-item v-show="hasSelectedTestPlan" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedTestPlan)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+              </el-menu-item>
+            </el-menu>
+            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+          </el-popover>
+        </span>
+      </SearchFilter>
     </project-list-selector>
     <el-divider />
     <quick-add-issue
@@ -299,14 +312,10 @@ export default {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
-
       tracker_id: null,
-
       assigned_to: [],
       fixed_version: [],
-
       form: {},
-
       selectedTestPlan: []
     }
   },
@@ -460,7 +469,7 @@ export default {
       }
       return Promise.resolve()
     },
-    async fetchDataCSV(selectedTestPlan) {
+    async fetchDataExcel(selectedTestPlan) {
       const apiRequest = []
       const apiTestFile = []
       selectedTestPlan.forEach((item) => {
@@ -518,7 +527,7 @@ export default {
       return result
     },
 
-    dataCleanCSV(fetchData) {
+    dataCleanExcel(fetchData) {
       const exportColumn = {
         name: { column: ['id', 'name'], root: true },
         relations: { column: ['object_tracker', 'object_id', 'object_name'], root: true },
@@ -539,7 +548,9 @@ export default {
           if (exportColumn[column]['children']) {
             const childrenSplit = exportColumn[column]['children'].split('.')
             const getChildrenData = childrenSplit.reduce((total, current) => (total[current]), item)
-            if (column === 'test_result') {
+            if (column === 'software_name' || column === 'file_name') {
+              resultArray = this.formatColumns(getChildrenData, item, column)
+            } else if (column === 'test_result') {
               resultArray = this.getTestResult(getChildrenData)
             } else if (column === 'branch') {
               resultArray = this.getBranch(getChildrenData)
@@ -558,14 +569,16 @@ export default {
       })
       return result
     },
-    formatColumns(column, checkDataset) {
-      return column.map((subColumn) => this.confirmExist(checkDataset, subColumn)).filter(subColumn => subColumn)
+    formatColumns(column, checkDataset, name) {
+      return column.map((subColumn) =>
+        name ? this.confirmExist(checkDataset, subColumn, name) : this.confirmExist(checkDataset, subColumn))
+        .filter(subColumn => subColumn)
     },
-    confirmExist(data, column) {
+    confirmExist(data, column, name) {
       if (!data) {
         return null
       }
-      return data[column]
+      return name ? column[name] : data[column]
     },
     joinResult(columnResult, joinStr) {
       const checkNull = columnResult.reduce((total, current) => (!!total && !!current), true)
@@ -605,14 +618,14 @@ export default {
       })
       return result
     },
-    prepareCSV(result) {
+    prepareExcel(result) {
       const worksheet = XLSX.utils.json_to_sheet(result)
-      this.$csv(worksheet, 'testplan')
+      this.$excel(worksheet, 'testplan')
     },
-    async downloadCsv(selectedTestPlan) {
-      let result = await this.fetchDataCSV(selectedTestPlan)
-      result = await this.dataCleanCSV(result)
-      await this.prepareCSV(result)
+    async downloadExcel(selectedTestPlan) {
+      let result = await this.fetchDataExcel(selectedTestPlan)
+      result = await this.dataCleanExcel(result)
+      await this.prepareExcel(result)
     },
     handleAuthority(row, column, event) {
       if (this.userRole !== 'QA') this.handleContextMenu(row, column, event)
