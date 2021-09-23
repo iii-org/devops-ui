@@ -7,7 +7,7 @@
                              :disabled="(column.value==='priority')?(row.has_children): false"
         >
           <contextmenu-item v-for="item in getOptionsData(column.value, row.has_children)" :key="getId(column.value,item)"
-                            :disabled="item.disabled || getContextMenuCurrentValue(column, item)"
+                            :disabled="column.value !== 'tags'&&(item.disabled || getContextMenuCurrentValue(column, item))"
                             :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"
                             @click="onUpdate(column.value+'_id', item.id)"
           >
@@ -126,7 +126,7 @@ import {
   getCheckIssueClosable,
   updateIssue
 } from '@/api/issue'
-import { getProjectUserList, getProjectVersion } from '@/api/projects'
+import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
 import AddIssue from './AddIssue'
@@ -232,9 +232,9 @@ export default {
       return this[option_name]
     },
     async loadSelectionList() {
-      await this.loadProjectSelectionList(this.fixedVersionShowClosed, true)
+      await this.loadProjectSelectionList(this.fixedVersionShowClosed, true, true)
     },
-    async loadProjectSelectionList(status, user) {
+    async loadProjectSelectionList(status, user, tags) {
       let params = { status: 'open,locked' }
       if (status) {
         params = { status: 'open,locked,closed' }
@@ -244,8 +244,11 @@ export default {
         if (user) {
           getAPI.push(getProjectUserList(this.row.project.id))
         }
+        if (tags) {
+          getAPI.push(getTagsByProject(this.row.project.id))
+        }
         await Promise.all(getAPI).then(res => {
-          const [versionList, assigneeList] = res.map(
+          const [versionList, assigneeList, tagsList] = res.map(
             item => item.data
           )
           this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
@@ -254,6 +257,9 @@ export default {
               { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
               ...assigneeList.user_list
             ]
+          }
+          if (tags) {
+            this.tags = tagsList.tags
           }
         })
       }
@@ -321,7 +327,18 @@ export default {
     },
     async onUpdate(column, value) {
       try {
-        await updateIssue(this.row.id, { [column]: value })
+        let data = { [column]: value }
+        if (column === 'tags_id') {
+          const tags = this.row.tags.map(item => item.id)
+          const findTags = tags.findIndex(item => item === value)
+          if (findTags >= 0) {
+            tags.splice(findTags, 1)
+          } else {
+            tags.push(value)
+          }
+          data = { tags: tags.join(',') }
+        }
+        await updateIssue(this.row.id, data)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -351,7 +368,9 @@ export default {
       if (typeof column === 'string') {
         return (this.row[column]) ? this.row[column] === item.id : item.id === 0
       }
-      if (!this.row[column.value].id) return item.id === 'null'
+      if (!this.row[column.value]) return false
+      if (Array.isArray(this.row[column.value])) return this.row[column.value].map(subItem => subItem.id).includes(item.id)
+      if (!this.row[column.value].id) return (item.id) ? item.id === 'null' : false
       return this.row[column.value].id === item.id
     },
     handleUpdateIssue() {
