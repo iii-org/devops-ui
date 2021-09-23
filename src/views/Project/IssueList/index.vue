@@ -252,8 +252,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed',
-      'issueListListQuery', 'issueListPageInfo', 'initIssueList', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
     refTable() {
       return this.$refs['issueList']
     }
@@ -266,15 +265,19 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    this.filterValue = await this.getIssueListFilter()
-    this.keyword = await this.getIssueListKeyword()
-    this.displayClosed = await this.getIssueListDisplayClosed()
+    const storeFilterValue = await this.getIssueFilter()
+    if (storeFilterValue['list']) {
+      this.filterValue = storeFilterValue['list']
+    }
+    const storeKeyword = await this.getKeyword()
+    if (storeKeyword['list']) { this.keyword = storeKeyword['list'] }
+    const storeDisplayClosed = await this.getDisplayClosed()
+    if (storeDisplayClosed['list']) { this.displayClosed = storeDisplayClosed['list'] }
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['getIssueListKeyword', 'getIssueListFilter', 'getIssueListDisplayClosed',
-      'setIssueListKeyword', 'setIssueListFilter', 'setIssueListDisplayClosed', 'setFixedVersionShowClosed',
-      'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
+    ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed',
+      'setKeyword', 'setIssueFilter', 'setDisplayClosed', 'setFixedVersionShowClosed', 'getFixedVersionShowClosed']),
     getParams() {
       const result = {
         offset: this.listQuery.offset,
@@ -297,9 +300,15 @@ export default {
       return result
     },
     async onChangeFilter() {
-      await this.setIssueListFilter(this.filterValue)
-      await this.setIssueListKeyword(this.keyword)
-      await this.setIssueListDisplayClosed(this.displayClosed)
+      const storeFilterValue = await this.getIssueFilter()
+      storeFilterValue['list'] = this.filterValue
+      const storeKeyword = await this.getKeyword()
+      storeKeyword['list'] = this.keyword
+      const storeDisplayClosed = await this.getDisplayClosed()
+      storeDisplayClosed['list'] = this.displayClosed
+      await this.setIssueFilter(storeFilterValue)
+      await this.setKeyword(storeKeyword)
+      await this.setDisplayClosed(storeDisplayClosed)
       await this.backToFirstPage()
       await this.loadData()
     }

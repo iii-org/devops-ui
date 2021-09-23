@@ -64,13 +64,6 @@
       </div>
     </div>
     <el-divider />
-    <quick-add-issue ref="quickAddIssue"
-                     :save-data="saveIssue"
-                     :project-id="selectedProjectId"
-                     :visible.sync="quickAddTopicDialogVisible"
-                     :tracker="tracker"
-                     @add-issue="advancedAddIssue"
-    />
     <el-row v-loading="listLoading"
             :element-loading-text="$t('Loading')"
     >
@@ -305,8 +298,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed',
-      'issueListListQuery', 'issueListPageInfo', 'initIssueList', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
     filterOptions() {
       return [
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
@@ -382,16 +374,11 @@ export default {
     // if (Object.keys(this.issueListPageInfo).length > 0) {
     //   this.pageInfo = this.issueListPageInfo
     // }
-    // this.filterValue = this.issueListFilter
-    // this.keyword = this.issueListKeyword
     this.fixed_version_closed = true
-    // this.displayClosed = this.issueListDisplayClosed
-    // this.displayClosed = true
     await this.loadSelectionList()
   },
   methods: {
-    ...mapActions('projects', ['setIssueListKeyword', 'setIssueListFilter', 'setFixedVersionShowClosed',
-      'setIssueListDisplayClosed', 'setIssueListListQuery', 'setIssueListPageInfo', 'setInitIssueList']),
+    ...mapActions('projects', ['setFixedVersionShowClosed']),
     handleBackPage() {
       this.$router.push({ name: 'release-version' })
     },
@@ -506,13 +493,13 @@ export default {
     async getIssueFamilyData(row, expandedRows) {
       if (expandedRows.find((item) => (item.id === row.id))) {
         try {
-          await this.$set(row, 'loadingRelation', true)
+          this.$set(row, 'loadingRelation', true)
           const family = await getIssueFamily(row.id, { relation: true })
           const data = family.data
           if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
           if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
           if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
-          await this.$set(row, 'loadingRelation', false)
+          this.$set(row, 'loadingRelation', false)
         } catch (e) {
         //   null
         }
@@ -523,9 +510,6 @@ export default {
       return statusList.filter((item) => (item.is_closed === false))
     },
     onChangeFilter() {
-      // this.setIssueListFilter(this.filterValue)
-      // this.setIssueListKeyword(this.keyword)
-      // this.setIssueListDisplayClosed(this.displayClosed)
       this.initTableData()
     },
     handleClick(row, column) {
@@ -642,7 +626,7 @@ export default {
           console.error(err)
           this.listLoading = false
         })
-    },
+    }
     // handleContextMenu(row, column, event) {
     //   event.preventDefault()
     //   const eventX = event.pageX
@@ -672,10 +656,10 @@ export default {
     //     document.addEventListener('click', this.hideContextMenu)
     //   })
     // },
-    hideContextMenu() {
-      this.contextMenu.visible = false
-      document.removeEventListener('click', this.hideContextMenu)
-    }
+    // hideContextMenu() {
+    //   this.contextMenu.visible = false
+    //   document.removeEventListener('click', this.hideContextMenu)
+    // }
   }
 }
 </script>

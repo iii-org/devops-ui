@@ -39,7 +39,7 @@
                 :parent-id="parentId"
                 :prefill="form"
                 :save-data="saveData"
-                import-from="issueList"
+                import-from="list"
                 :tracker-list="trackerList"
                 @loading="loadingUpdate"
                 @add-topic-visible="handleCloseDialog"
@@ -104,7 +104,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'issueListFilter']),
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'issueFilter']),
     hasSetTracker() {
       return !!this.trackerName
     },
@@ -114,7 +114,7 @@ export default {
     }
   },
   watch: {
-    issueListFilter: {
+    issueFilter: {
       deep: true,
       handler() {
         this.setFilterValue()
@@ -139,8 +139,9 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.issueListFilter[item] !== 'null' && this.issueListFilter[item] !== '' && !!(this.issueListFilter[item])) {
-          this.$set(this.form, item + '_id', this.issueListFilter[item])
+        if (this.issueFilter['list'] && this.issueFilter['list'][item] !== 'null' &&
+          this.issueFilter['list'][item] !== '' && !!(this.issueFilter['list'][item])) {
+          this.$set(this.form, item + '_id', this.issueFilter['list'][item])
         }
       })
     },

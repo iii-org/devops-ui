@@ -9,7 +9,7 @@
           <template v-for="dimension in filterOptions">
             <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id">
               <div slot="label">
-                {{ $t('Issue.'+dimension.value) }}
+                {{ $t('Issue.' + dimension.value) }}
                 <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
                   <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
                 </el-tag>
@@ -52,7 +52,7 @@
               v-model="groupBy.dimension"
               class="mr-4"
               filterable
-              @change="onChangeGroupByDimension"
+              @change="onChangeGroupByDimension($event, true)"
             >
               <el-option
                 v-for="item in filterOptions"
@@ -71,7 +71,7 @@
               collapse-tags
               :options="groupByOptions"
               value-key="id"
-              @change="onChangeGroupByValue"
+              @change="onChangeGroupByValue($event, true)"
             />
           </el-form-item>
         </el-form>
@@ -236,10 +236,6 @@ export default {
       'tracker',
       'status',
       'priority',
-      'kanbanFilter',
-      'kanbanGroupBy',
-      'kanbanDisplayClosed',
-      'kanbanKeyword',
       'fixedVersionShowClosed'
     ]),
     filterOptions() {
@@ -346,30 +342,29 @@ export default {
     }
   },
   async created() {
-    this.displayClosed = await this.getKanbanDisplayClosed()
-    this.filterValue = await this.getKanbanFilter()
-    this.groupBy = {
-      dimension: await this.getKanbanGroupByDimension(),
-      value: await this.getKanbanGroupByValue()
+    this.groupBy = await this.getGroupBy()
+    const storeFilterValue = await this.getIssueFilter()
+    if (storeFilterValue['board']) {
+      this.filterValue = storeFilterValue['board']
     }
-    this.keyword = await this.getKanbanKeyword()
-    this.fixed_version_closed = this.fixedVersionShowClosed
+    const storeKeyword = await this.getKeyword()
+    if (storeKeyword['board']) { this.keyword = storeKeyword['board'] }
+    const storeDisplayClosed = await this.getDisplayClosed()
+    if (storeDisplayClosed['board']) { this.displayClosed = storeDisplayClosed['board'] }
     await this.loadSelectionList()
     await this.loadData()
   },
   methods: {
     ...mapActions('projects', [
       'getProjectUserList',
-      'getKanbanFilter',
-      'getKanbanGroupByDimension',
-      'getKanbanGroupByValue',
-      'getKanbanDisplayClosed',
-      'getKanbanKeyword',
-      'setKanbanFilter',
-      'setKanbanGroupByDimension',
-      'setKanbanGroupByValue',
-      'setKanbanDisplayClosed',
-      'setKanbanKeyword',
+      'getGroupBy',
+      'getIssueFilter',
+      'getKeyword',
+      'getDisplayClosed',
+      'setGroupBy',
+      'setIssueFilter',
+      'setKeyword',
+      'setDisplayClosed',
       'setFixedVersionShowClosed'
     ]),
     async loadData() {
@@ -381,7 +376,7 @@ export default {
     },
     async fetchData() {
       await this.resetClassifyIssue()
-      this.projectIssueList = {}
+      this.projectIssueList = []
       await this.syncLoadFilterData()
       await this.updateData()
       await this.getRelativeList()
@@ -435,8 +430,8 @@ export default {
     async syncLoadFilterData() {
       await this.cancelLoadFilterData()
       this.projectIssueQueue = {}
-      const getIssueList = []
       this.isLoading = true
+      const getIssueList = []
       for (const item of this.groupByValueOnBoard) {
         const CancelToken = axios.CancelToken.source()
         this.$set(this.projectIssueQueue, item.id, CancelToken)
@@ -454,10 +449,8 @@ export default {
         .catch((e) => {
           console.error(e)
         })
-        .finally(() => {
-          this.projectIssueQueue = {}
-          this.isLoading = false
-        })
+      this.projectIssueQueue = {}
+      this.isLoading = false
     },
     cancelLoadFilterData() {
       Object.values(this.projectIssueQueue).forEach((item) => {
@@ -474,7 +467,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.fixed_version.filter((item) => ((new Date(`${item.due_date}T23:59:59`) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
-        if (Object.keys(this.kanbanFilter).length === 0 && Object.keys(this.originFilterValue).length === 0) {
+        if (Object.keys(this.filterValue).length === 0 && Object.keys(this.originFilterValue).length === 0) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
         }
         this.$set(this.originFilterValue, 'fixed_version', version[0].id)
@@ -695,26 +688,33 @@ export default {
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
     },
-    onChangeFilter() {
-      this.setKanbanFilter(this.filterValue)
-      this.setKanbanKeyword(this.keyword)
-      this.setKanbanDisplayClosed(this.displayClosed)
-      this.loadData()
+    async  onChangeFilter() {
+      const storeFilterValue = await this.getIssueFilter()
+      storeFilterValue['board'] = this.filterValue
+      const storeKeyword = await this.getKeyword()
+      storeKeyword['board'] = this.keyword
+      const storeDisplayClosed = await this.getDisplayClosed()
+      storeDisplayClosed['board'] = this.displayClosed
+      await this.setIssueFilter(storeFilterValue)
+      await this.setKeyword(storeKeyword)
+      await this.setDisplayClosed(storeDisplayClosed)
+      await this.loadData()
     },
-    onChangeGroupByDimension(value) {
+    onChangeGroupByDimension(value, loadData) {
       this.$set(this.groupBy, 'dimension', value)
-      if (this.filterValue.hasOwnProperty(this.groupBy.dimension)) {
-        this.$delete(this.filterValue, this.groupBy.dimension)
-      }
-      this.setKanbanGroupByDimension(this.groupBy.dimension)
       this.$set(this.groupBy, 'value', [])
       this.$refs['groupByValue'].selected = []
-      this.loadData()
+      this.setGroupBy(this.groupBy)
+      if (loadData) {
+        this.loadData()
+      }
     },
-    onChangeGroupByValue(value) {
+    onChangeGroupByValue(value, loadData) {
       this.$set(this.groupBy, 'value', value)
-      this.setKanbanGroupByValue(this.groupBy.value)
-      this.loadData()
+      this.setGroupBy(this.groupBy)
+      if (loadData) {
+        this.loadData()
+      }
     },
     handleContextMenu({ row, column, event }) {
       event.preventDefault()
@@ -741,7 +741,10 @@ export default {
         this.contextMenu.left = contextmenuPosition.left
         this.contextMenu.row = row
         this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = { top: this.contextMenu.top + 'px', left: this.contextMenu.left + 'px' }
+        this.$refs.contextmenu.$refs.contextmenu.style = {
+          top: this.contextMenu.top + 'px',
+          left: this.contextMenu.left + 'px'
+        }
         document.addEventListener('click', this.hideContextMenu)
       })
     },

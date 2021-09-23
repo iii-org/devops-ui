@@ -145,8 +145,8 @@ export default {
       this.selectVisible = false
     },
     onProjectChange(value) {
-      localStorage.setItem('projectId', value)
       this.setSelectedProject(this.projectOptions.find(elm => elm.id === value) || { id: -1 })
+      localStorage.setItem('projectId', value)
     },
     async setStar(id, star) {
       if (star) {
@@ -191,7 +191,7 @@ export default {
         })
       )
     },
-    async checkUnsavedChanges(event) {
+    async checkUnsavedChanges() {
       if (this.$parent.isConfirmLeave) return
       if (this.$parent.hasUnsavedChanges) {
         this.$refs.selectProject.blur()

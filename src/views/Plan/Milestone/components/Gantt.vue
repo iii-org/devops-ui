@@ -50,7 +50,7 @@
                 :parent-id="addTopicDialog.parentId"
                 :parent-name="addTopicDialog.parentName"
                 :save-data="saveIssue"
-                import-from="issueList"
+                import-from="list"
                 @loading="loadingUpdate"
                 @add-topic-visible="handleCloseDialog"
       />
@@ -480,9 +480,6 @@ export default {
       return statusList.filter((item) => (item.is_closed === false))
     },
     onChangeFilter() {
-      // this.setIssueListFilter(this.filterValue)
-      // this.setIssueListKeyword(this.keyword)
-      // this.setIssueListDisplayClosed(this.displayClosed)
       this.loadData()
     },
     cleanFilter() {

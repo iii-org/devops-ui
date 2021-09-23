@@ -116,8 +116,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'projectList', 'issueListFilter', 'issueListKeyword', 'issueListDisplayClosed',
-      'issueListListQuery', 'issueListPageInfo', 'initIssueList', 'fixedVersionShowClosed']),
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'projectList']),
     dashboardCards() {
       return [
         { id: 'assigned_to_id', name: this.$t('MyWork.AssignedToMe') },

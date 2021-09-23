@@ -273,7 +273,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'kanbanGroupBy', 'kanbanFilter', 'issueListFilter']),
+    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'groupBy', 'issueFilter']),
     getTracker() {
       if (this.trackerList.length > 0) return this.trackerList
       return this.tracker
@@ -293,20 +293,10 @@ export default {
         this.setFilterValue()
       }
     },
-    kanbanFilter: {
+    issueFilter: {
       deep: true,
       handler() {
-        if (this.importFrom === 'kanban') {
-          this.setFilterValue()
-        }
-      }
-    },
-    issueListFilter: {
-      deep: true,
-      handler() {
-        if (this.importFrom === 'issueList') {
-          this.setFilterValue()
-        }
+        this.setFilterValue()
       }
     }
   },
@@ -344,17 +334,16 @@ export default {
       this.isLoading = false
     },
     setFilterValue() {
-      if (this.importFrom) {
-        const getFilter = this.importFrom + 'Filter'
-        Object.keys(this[getFilter]).forEach(item => {
-          if (this[getFilter][item] !== 'null' && !!this[getFilter][item] && this[getFilter][item] !== '') {
-            this.$set(this.issueForm, item + '_id', this[getFilter][item])
+      if (this.importFrom && this.issueFilter[this.importFrom]) {
+        Object.keys(this.issueFilter[this.importFrom]).forEach(item => {
+          if (this.issueFilter[this.importFrom][item] !== 'null' && !!this.issueFilter[this.importFrom][item] && this.issueFilter[this.importFrom][item] !== '') {
+            this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
           }
         })
         let checkQuickAddIssueForm = ['tracker_id', 'name']
-        if (this.importFrom === 'kanban') {
+        if (this.importFrom === 'board') {
           checkQuickAddIssueForm = ['tracker_id', 'name', 'assigned_to_id']
-          checkQuickAddIssueForm.push(this.kanbanGroupBy.dimension + '_id')
+          checkQuickAddIssueForm.push(this.groupBy.dimension + '_id')
         }
         checkQuickAddIssueForm.forEach(item => {
           this.issueForm[item] = this.prefill[item]

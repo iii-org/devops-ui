@@ -224,7 +224,7 @@ export default {
   async created() {
     this.loadSelectionList()
     const tracker = this.tracker.find(item => item.name === 'Epic')
-    const storeFilterValue = await this.getFilter()
+    const storeFilterValue = await this.getIssueFilter()
     if (storeFilterValue['milestone']) {
       this.filterValue = storeFilterValue['milestone']
     } else {
@@ -237,7 +237,7 @@ export default {
     if (storeDisplayClosed['milestone']) { this.displayClosed = storeDisplayClosed['milestone'] }
   },
   methods: {
-    ...mapActions('projects', ['getFilter', 'getKeyword', 'getDisplayClosed', 'setFilter', 'setKeyword', 'setDisplayClosed']),
+    ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed']),
     loadSelectionList() {
       this.loadVersionList(this.fixedVersionShowClosed)
       this.loadAssignedToList()
@@ -271,13 +271,13 @@ export default {
       Object.keys(value).forEach(item => {
         this[item] = value[item]
       })
-      const storeFilterValue = await this.getFilter()
+      const storeFilterValue = await this.getIssueFilter()
       storeFilterValue['milestone'] = this.filterValue
       const storeKeyword = await this.getKeyword()
       storeKeyword['milestone'] = this.keyword
       const storeDisplayClosed = await this.getDisplayClosed()
       storeDisplayClosed['milestone'] = this.displayClosed
-      await this.setFilter(storeFilterValue)
+      await this.setIssueFilter(storeFilterValue)
       await this.setKeyword(storeKeyword)
       await this.setDisplayClosed(storeDisplayClosed)
       await this.onChangeFilter()

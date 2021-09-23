@@ -60,7 +60,7 @@
                 :parent-id="parentId"
                 :prefill="form"
                 :save-data="saveData"
-                import-from="kanban"
+                import-from="board"
                 @loading="loadingUpdate"
                 @add-topic-visible="handleCloseDialog"
       />
@@ -134,7 +134,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'kanbanGroupBy', 'kanbanFilter', 'tracker'])
+    ...mapGetters(['selectedProjectId', 'userId', 'groupBy', 'issueFilter', 'tracker'])
   },
   watch: {
     boardObject: {
@@ -143,13 +143,13 @@ export default {
         this.setFilterValue()
       }
     },
-    kanbanGroupBy: {
+    groupBy: {
       deep: true,
       handler() {
         this.setFilterValue()
       }
     },
-    kanbanFilter: {
+    issueFilter: {
       deep: true,
       handler() {
         this.setFilterValue()
@@ -188,10 +188,13 @@ export default {
       }
       const dimensions = ['fixed_version', 'tracker']
       dimensions.forEach((item) => {
-        if (this.kanbanFilter[item] !== 'null' && !!(this.kanbanFilter[item]) && this.kanbanFilter[item] !== '') { this.$set(this.form, item + '_id', this.kanbanFilter[item]) }
+        if (this.issueFilter['board'] && this.issueFilter['board'][item] !== 'null' &&
+          !!(this.issueFilter['board'][item]) && this.issueFilter['board'][item] !== '') {
+          this.$set(this.form, item + '_id', this.issueFilter['board'][item])
+        }
       })
       if (this.boardObject.id !== 'null' && !!(this.boardObject.id) && this.boardObject.id !== '') {
-        this.$set(this.form, this.kanbanGroupBy.dimension + '_id', this.boardObject.id)
+        this.$set(this.form, this.groupBy.dimension + '_id', this.boardObject.id)
       }
     },
     handleSave() {
