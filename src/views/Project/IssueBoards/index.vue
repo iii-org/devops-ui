@@ -22,6 +22,7 @@
                 clearable
                 value-key="id"
                 :multiple="dimension.value === 'tags'"
+                :collapse-tags="dimension.value === 'tags'"
                 @change="onChangeFilter"
               >
                 <el-option
