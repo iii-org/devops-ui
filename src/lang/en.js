@@ -405,7 +405,7 @@ export default {
     Document: 'Document',
     Research: 'Research',
     Epic: 'Epic',
-    Audit: 'Audit',
+    Audit: 'Story',
     Feature: 'Feature',
     Bug: 'Bug',
     Issue: 'Issue',

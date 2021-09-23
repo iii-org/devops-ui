@@ -404,7 +404,7 @@ export default {
     Document: '文件',
     Research: '研究',
     Epic: '需求規格',
-    Audit: '合規需求',
+    Audit: '情境故事',
     Feature: '功能設計',
     Bug: '程式錯誤',
     Issue: '議題',
