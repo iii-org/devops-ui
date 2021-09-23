@@ -25,7 +25,7 @@
         />
       </template>
       <template v-else>
-        {{ row[prop] }}
+        {{ (row[prop])?$dayjs(row[prop]).format('YYYY-MM-DD'):null }}
       </template>
     </template>
   </el-table-column>

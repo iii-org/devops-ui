@@ -2,7 +2,7 @@
   <el-table-column v-bind="$props">
     <template slot-scope="{row, $index}">
       <template v-if="row.create">
-        <el-select v-model="row[prop]['id']"
+        <el-select v-model="row[propKey]['id']"
                    @keyup.enter.native="handlerCreate(row, $index)"
                    @keyup.esc.native="handlerResetCreate(row, $index)"
         >
@@ -20,8 +20,8 @@
           </el-option>
         </el-select>
       </template>
-      <template v-else-if="row.editColumn===prop&&editable(row)">
-        <el-select v-model="row[prop]['id']" @change="handlerEdit(row, $index)"
+      <template v-else-if="row.editColumn===propKey&&editable(row)">
+        <el-select v-model="row[propKey]['id']" @change="handlerEdit(row, $index)"
                    @keyup.enter.native="handlerEdit(row, $index)"
                    @keyup.esc.native="handlerReset(row, $index)"
         >
@@ -41,10 +41,10 @@
       </template>
       <template v-else>
         <template v-if="components">
-          <component :is="components" :name="row[prop].name" />
+          <component :is="components" :name="row[propKey].name" />
         </template>
         <template v-else>
-          {{ row[prop].name }}
+          {{ row[propKey].name }}
         </template>
       </template>
     </template>
@@ -58,6 +58,10 @@ export default {
   name: 'WBSSelectColumn',
   props: {
     prop: {
+      type: String,
+      required: true
+    },
+    propKey: {
       type: String,
       required: true
     },
@@ -101,7 +105,7 @@ export default {
   },
   methods: {
     hasRequired(row) {
-      return this.required && row[this.prop].length <= 0
+      return this.required && row[this.propKey].length <= 0
     },
     editable(row) {
       if (this.hasChildEdit) {
@@ -111,16 +115,16 @@ export default {
       }
     },
     handlerEdit(row, index, treeNode) {
-      this.$emit('edit', { value: { [`${this.prop}_id`]: row[this.prop]['id'] }, row: row, index: index, treeNode: treeNode })
+      this.$emit('edit', { value: { [`${this.propKey}_id`]: row[this.propKey]['id'] }, row: row, index: index, treeNode: treeNode })
     },
     handlerCreate(row, index, treeNode) {
-      this.$emit('create', { value: { [`${this.prop}_id`]: row[this.prop]['id'] }, row: row, index: index, treeNode: treeNode })
+      this.$emit('create', { value: { [`${this.propKey}_id`]: row[this.propKey]['id'] }, row: row, index: index, treeNode: treeNode })
     },
     handlerReset(row, index, treeNode) {
-      this.$emit('reset-edit', { value: this.prop, row: row, index: index, treeNode: treeNode })
+      this.$emit('reset-edit', { value: this.propKey, row: row, index: index, treeNode: treeNode })
     },
     handlerResetCreate(row, index, treeNode) {
-      this.$emit('reset-create', { value: this.prop, row: row, index: index, treeNode: treeNode })
+      this.$emit('reset-create', { value: this.propKey, row: row, index: index, treeNode: treeNode })
     }
   }
 }

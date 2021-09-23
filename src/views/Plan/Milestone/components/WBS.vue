@@ -21,6 +21,7 @@
         required
         fixed
         show-overflow-tooltip
+        sortable
         :has-child-edit="true"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
@@ -31,9 +32,11 @@
         v-if="columns.indexOf('tracker')>=0"
         width="125px"
         :label="$t('Issue.tracker')"
-        prop="tracker"
+        prop-key="tracker"
+        prop="tracker.id"
         :components="Tracker"
         :options="tracker"
+        sortable
         :has-child-edit="true"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
@@ -44,8 +47,10 @@
         v-if="columns.indexOf('fixed_version')>=0"
         min-width="9%"
         :label="$t('Issue.fixed_version')"
-        prop="fixed_version"
+        prop-key="fixed_version"
+        prop="fixed_version.id"
         :options="fixedVersion"
+        sortable
         :has-child-edit="true"
         show-overflow-tooltip
         @edit="handleUpdateIssue"
@@ -59,6 +64,7 @@
         :label="$t('Issue.StartDate')"
         prop="start_date"
         show-overflow-tooltip
+        sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -70,6 +76,7 @@
         :label="$t('Issue.EndDate')"
         prop="due_date"
         show-overflow-tooltip
+        sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -79,10 +86,12 @@
         v-if="columns.indexOf('priority')>=0"
         min-width="9%"
         :label="$t('Issue.priority')"
-        prop="priority"
+        prop-key="priority"
+        prop="priority.id"
         :components="Priority"
         :options="priority"
         show-overflow-tooltip
+        sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -92,10 +101,12 @@
         v-if="columns.indexOf('assigned_to')>=0"
         min-width="9%"
         :label="$t('Issue.assigned_to')"
-        prop="assigned_to"
+        prop-key="assigned_to"
+        prop="assigned_to.id"
         :options="assignedTo"
         :has-child-edit="true"
         show-overflow-tooltip
+        sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -107,6 +118,7 @@
         :label="$t('Issue.DoneRatio')"
         prop="done_ratio"
         :number="true"
+        sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -119,6 +131,7 @@
         :has-child-edit="true"
         prop="point"
         :number="true"
+        sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -304,9 +317,26 @@ export default {
       }
       return result
     },
+    async loadData() {
+      if (this.selectedProjectId === -1) return
+      this.listLoading = true
+      this.listData = await this.fetchData()
+      this.listLoading = false
+    },
     async fetchData() {
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams())
-      return Promise.resolve(res.data)
+      return Promise.resolve(res.data.map(item => this.issueFormatter(item)))
+    },
+    issueFormatter(issue) {
+      if (Object.keys(issue.assigned_to).length <= 0) {
+        issue.assigned_to = { id: null }
+      }
+      if (Object.keys(issue.fixed_version).length <= 0) {
+        issue.fixed_version = { id: null }
+      }
+      issue.start_date = issue.start_date ? new Date(issue.start_date) : null
+      issue.due_date = issue.due_date ? new Date(issue.due_date) : null
+      return issue
     },
     async appendIssue(row, subLevel, prefill) {
       let row_index = this.listData.length
@@ -454,8 +484,14 @@ export default {
       })
     },
     handleCellClick(row, column) {
-      this.$set(row, 'originColumn', cloneDeep(row[column.property]))
-      this.$set(row, 'editColumn', column.property)
+      let columnName = column['property'].split('.')
+      if (columnName.length >= 2) {
+        columnName = columnName[0]
+      } else {
+        columnName = column['property']
+      }
+      this.$set(row, 'originColumn', cloneDeep(row[columnName]))
+      this.$set(row, 'editColumn', columnName)
     },
     handleResetEdit({ value, row }) {
       this.$set(row, value, row.originColumn)
@@ -512,11 +548,11 @@ export default {
                 updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
               }
               const findIssueIndex = treeDataArray.findIndex(issue => issue === row.id)
-              this.$set(updateNodeMap, findIssueIndex, { ...res.data, parent_object: row.parent_object })
+              this.$set(updateNodeMap, findIssueIndex, { ...this.issueFormatter(res.data), parent_object: row.parent_object })
               store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
               store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
             } else {
-              this.$set(this.listData, index, res.data)
+              this.$set(this.listData, index, this.issueFormatter(res.data))
             }
             this.$emit('update-status', {
               time: res.datetime
@@ -563,6 +599,7 @@ export default {
           const res = await addIssue({ ...data, project_id: this.selectedProjectId })
           this.$set(row, 'create', false)
           this.$set(row, 'editColumn', false)
+          res.data = this.issueFormatter(res.data)
           Object.keys(res.data).forEach(item => {
             this.$set(row, item, res.data[item])
           })
