@@ -195,7 +195,6 @@ import {
   Contextmenu,
   ContextmenuItem
 } from 'v-contextmenu'
-import { BasicData } from '@/newMixins'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import { Tracker, Priority } from '@/components/Issue'
@@ -222,7 +221,6 @@ export default {
   directives: {
     contextmenu: directive
   },
-  mixins: [BasicData],
   props: {
     filterValue: {
       type: Object,
@@ -259,6 +257,8 @@ export default {
     return {
       Priority,
       Tracker,
+      listLoading: false,
+      listData: [],
       addIssueVisible: false,
       tableHeight: 0,
       updateLoading: false,
@@ -470,7 +470,8 @@ export default {
               this.$emit('update-status', {
                 error: e
               })
-              this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+              this.$notify({ title: this.$t('general.Error').toString(), type: 'error',
+                message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString() })
             }
             this.updateLoading = false
             this.$emit('update-loading', false)
@@ -566,7 +567,8 @@ export default {
             this.$emit('update-status', {
               error: e
             })
-            this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+            this.$notify({ title: this.$t('general.Error').toString(), type: 'error',
+              message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString() })
           }
           this.updateLoading = false
           this.$emit('update-loading', false)
@@ -615,7 +617,8 @@ export default {
           this.$emit('update-status', {
             error: e
           })
-          this.$notify({ title: this.$t('general.Error').toString(), type: 'error', message: e })
+          this.$notify({ title: this.$t('general.Error').toString(), type: 'error',
+            message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString() })
         }
         this.updateLoading = false
         this.$emit('update-loading', false)
