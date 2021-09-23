@@ -467,12 +467,12 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.fixed_version.filter((item) => ((new Date(`${item.due_date}T23:59:59`) >= new Date()) && item.status !== 'closed'))
       if (version.length > 0) {
-        if (Object.keys(this.filterValue).length === 0 && Object.keys(this.originFilterValue).length === 0) {
+        const sessionValue = sessionStorage.getItem('issueFilter')
+        if (!sessionValue || !JSON.parse(sessionValue)['board']) {
           this.$set(this.filterValue, 'fixed_version', version[0].id)
         }
         this.$set(this.originFilterValue, 'fixed_version', version[0].id)
       } else {
-        this.$delete(this.filterValue, 'fixed_version')
         this.$delete(this.originFilterValue, 'fixed_version')
       }
     },
