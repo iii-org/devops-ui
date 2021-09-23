@@ -14,7 +14,9 @@
         >
           <status :name="issue.parent.status.name" size="mini" />
           <tracker :name="issue.parent.tracker.name" />
-          #{{ issue.parent.id }} - {{ issue.parent.name }}
+          #{{ issue.parent.id }} -
+          <el-tag v-for="item in issue.parent.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+          {{ issue.parent.name }}
           <span
             v-if="issue.parent.hasOwnProperty('assigned_to') && Object.keys(issue.parent.assigned_to).length > 1"
           >
@@ -47,7 +49,8 @@
               >
                 <status :name="child.status.name" size="mini" />
                 <tracker :name="child.tracker.name" />
-                #{{ child.id }} - {{ child.name }}
+                #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                {{ child.name }}
                 <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                   ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
                 </span>
@@ -81,7 +84,8 @@
               >
                 <status :name="child.status.name" size="mini" />
                 <tracker :name="child.tracker.name" />
-                #{{ child.id }} - {{ child.name }}
+                #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                {{ child.name }}
                 <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                   ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
                 </span>

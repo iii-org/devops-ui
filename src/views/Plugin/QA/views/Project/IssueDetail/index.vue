@@ -78,7 +78,9 @@
                           <tracker :name="parent.tracker.name" />
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
-                        #{{ parent.id }} - {{ parent.name }}
+                        #{{ parent.id }} -
+                        <el-tag v-for="item in parent.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                        {{ parent.name }}
                         <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">
                           ({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }}
                           - {{ parent.assigned_to.login }})</span>
@@ -109,7 +111,8 @@
                               <tracker :name="child.tracker.name" />
                             </template>
                             <template v-else>{{ $t('Issue.Issue') }}</template>
-                            #{{ child.id }} - {{ child.name }}
+                            #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                            {{ child.name }}
                             <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
                               ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
                               - {{ child.assigned_to.login }})</span>
@@ -141,7 +144,8 @@
                                 <tracker :name="child.tracker.name" />
                               </template>
                               <template v-else>{{ $t('Issue.Issue') }}</template>
-                              #{{ child.id }} - {{ child.name }}
+                              #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                              {{ child.name }}
                               <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
                                 ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
                                 - {{ child.assigned_to.login }})</span>
@@ -657,8 +661,7 @@ export default {
         })
     },
     tagsArrayToString(tags, tagsLength) {
-      const tagsString = tags.length > 0 ? tags.join() : null
-      this.tagsString = tagsString
+      this.tagsString = tags.length > 0 ? tags.join() : null
       if (this.tagsString === null) this.form.tags = ''
       else this.form.tags = this.tagsString
       if (tags.length === tagsLength) this.submitIssue()

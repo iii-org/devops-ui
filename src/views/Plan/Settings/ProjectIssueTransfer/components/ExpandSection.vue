@@ -11,7 +11,9 @@
         >
           <status :name="issue.familyData.parent.status.name" size="mini" />
           <tracker :name="issue.familyData.parent.tracker.name" />
-          #{{ issue.familyData.parent.id }} - {{ issue.familyData.parent.name }}
+          #{{ issue.familyData.parent.id }} -
+          <el-tag v-for="item in issue.familyData.parent.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+          {{ issue.familyData.parent.name }}
           <span
             v-if="
               issue.familyData.parent.hasOwnProperty('assigned_to') &&
@@ -50,7 +52,9 @@
               >
                 <status :name="child.status.name" size="mini" />
                 <tracker :name="child.tracker.name" />
-                #{{ child.id }} - {{ child.name }}
+                #{{ child.id }} -
+                <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                {{ child.name }}
                 <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                   ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
                 </span>

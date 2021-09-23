@@ -34,11 +34,8 @@
                 @click="handleClick(element.id)"
               >
                 {{ element.name }}
+                <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
               </el-link>
-            </div>
-            <div v-if="element.tags.length>0">
-              <em class="el-icon-price-tag" />
-              <el-tag v-for="item in element.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
             </div>
           </div>
           <div>
@@ -83,6 +80,7 @@
                   <status :name="element.parent.status.name" size="mini" />
                   <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
                     {{ element.parent.name }}
+                    <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
                   </el-link>
                 </div>
                 <div v-if="element.hasOwnProperty('children')&&element.children.length > 0" class="parent">
@@ -92,6 +90,7 @@
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
+                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
                       </el-link>
                     </li>
                   </ol>
@@ -103,6 +102,7 @@
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
+                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
                       </el-link>
                     </li>
                   </ol>

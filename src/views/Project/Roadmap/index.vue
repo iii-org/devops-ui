@@ -26,7 +26,9 @@
                         <div>
                           <priority v-if="scope.row.priorityName" class="mr-2" :name="scope.row.priorityName" />
                           <tracker :name="scope.row.trackerName" />
-                          <div class="mt-2">{{ scope.row.name }}</div>
+                          <div class="mt-2">
+                            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                            {{ scope.row.name }}</div>
                         </div>
                       </template>
                     </el-table-column>

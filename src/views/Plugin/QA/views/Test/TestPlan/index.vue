@@ -84,7 +84,9 @@
                   >
                     <status :name="scope.row.parent.status.name" size="mini" />
                     <tracker :name="scope.row.parent.tracker.name" />
-                    #{{ scope.row.parent.id }} - {{ scope.row.parent.name }}
+                    #{{ scope.row.parent.id }} -
+                    <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                    {{ scope.row.parent.name }}
                     <span
                       v-if="scope.row.parent.hasOwnProperty('assigned_to') && Object.keys(scope.row.parent.assigned_to).length > 1"
                     >
@@ -118,7 +120,8 @@
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - {{ child.name }}
+                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                          {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                             ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
                             - {{ child.assigned_to.login }})
@@ -153,7 +156,8 @@
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - {{ child.name }}
+                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                          {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                             ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
                           </span>
@@ -192,31 +196,6 @@
                           <Result :test-file="child" />
                           )
                         </template>
-                        <!--                        <el-link-->
-                        <!--                          :style="{ 'font-size': '14px', cursor: 'pointer' }"-->
-                        <!--                          :underline="false"-->
-                        <!--                          @click="handleEdit(child.id)"-->
-                        <!--                          @contextmenu.native="handleContextMenu(child, '', $event)"-->
-                        <!--                        >-->
-                        <!--                          <status :name="child.status.name" size="mini" />-->
-                        <!--                          <tracker :name="child.tracker.name" />-->
-                        <!--                          #{{ child.id }} - {{ child.name }}-->
-                        <!--                          <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">-->
-                        <!--                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})-->
-                        <!--                          </span>-->
-                        <!--                        </el-link>-->
-                        <!--                        <el-popconfirm-->
-                        <!--                          :confirm-button-text="$t('general.Remove')"-->
-                        <!--                          :cancel-button-text="$t('general.Cancel')"-->
-                        <!--                          icon="el-icon-info"-->
-                        <!--                          icon-color="red"-->
-                        <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
-                        <!--                          @confirm="removeRelationIssue(child.relation_id)"-->
-                        <!--                        >-->
-                        <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">-->
-                        <!--                            {{ $t('Issue.Unlink') }}-->
-                        <!--                          </el-button>-->
-                        <!--                        </el-popconfirm>-->
                       </li>
                     </template>
                   </ol>
@@ -233,7 +212,7 @@
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
-            {{ scope.row.name }}
+            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>{{ scope.row.name }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">

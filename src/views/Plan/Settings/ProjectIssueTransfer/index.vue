@@ -99,6 +99,7 @@
         <el-table-column :label="$t('Issue.Id')" min-width="200" show-overflow-tooltip prop="id">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
+            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
             {{ scope.row.name }}
           </template>
         </el-table-column>
