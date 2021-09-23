@@ -36,6 +36,10 @@
                 {{ element.name }}
               </el-link>
             </div>
+            <div v-if="element.tags.length>0">
+              <em class="el-icon-price-tag" />
+              <el-tag v-for="item in element.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+            </div>
           </div>
           <div>
             <span v-if="dimension !== 'status'" class="detail">

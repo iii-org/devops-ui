@@ -20,6 +20,8 @@
                 :disabled="selectedProjectId === -1"
                 filterable
                 clearable
+                value-key="id"
+                :multiple="dimension.value === 'tags'"
                 @change="onChangeFilter"
               >
                 <el-option
@@ -54,12 +56,14 @@
               filterable
               @change="onChangeGroupByDimension($event, true)"
             >
-              <el-option
-                v-for="item in filterOptions"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
-              />
+              <template v-for="item in filterOptions">
+                <el-option
+                  v-if="item.value!=='tags'"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </template>
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('Issue.Display')">
@@ -176,7 +180,13 @@ import Fuse from 'fuse.js'
 import { Kanban, RightPanel } from './components'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { addIssue, updateIssue } from '@/api/issue'
-import { getProjectIssueList, getProjectIssueListByTree, getProjectUserList, getProjectVersion } from '@/api/projects'
+import {
+  getProjectIssueList,
+  getProjectIssueListByTree,
+  getProjectUserList,
+  getProjectVersion,
+  getTagsByProject
+} from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
@@ -213,6 +223,7 @@ export default {
       group: 'mission',
       fixed_version: [],
       assigned_to: [],
+      tags: [],
 
       relativeIssueList: [],
 
@@ -240,17 +251,36 @@ export default {
     ]),
     filterOptions() {
       return [
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        { id: 1,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
+        },
+        { id: 2,
+          label: this.$t('Issue.FilterDimensions.tags'),
+          value: 'tags',
+          placeholder: 'Tag'
+        },
+        { id: 3,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
+        },
+        { id: 4,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
+        },
         {
-          id: 4,
+          id: 5,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version'
         },
         {
-          id: 5,
+          id: 6,
           label: this.$t('Issue.FilterDimensions.priority'),
           value: 'priority',
           placeholder: 'Priority',
@@ -260,7 +290,7 @@ export default {
     },
     contextOptions() {
       const result = {}
-      const getOptions = ['assigned_to', 'fixed_version']
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
       getOptions.forEach((item) => {
         result[item] = this[item]
       })
@@ -296,9 +326,16 @@ export default {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          const value = this[item].find((search) => (search.id === this.filterValue[item]))
-          if (value) {
-            result.push(this.getSelectionLabel(value))
+          if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
+            const value = this.getOptionsData(item).filter((search) => (this.filterValue[item].includes(search.id)))
+            if (value) {
+              result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+            }
+          } else {
+            const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
+            if (value) {
+              result.push(this.getSelectionLabel(value))
+            }
           }
         }
       })
@@ -419,7 +456,7 @@ export default {
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          result[item + '_id'] = this.filterValue[item]
+          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join(',') : result[item + '_id'] = this.filterValue[item]
         }
       })
       if (this.keyword) {
@@ -435,8 +472,12 @@ export default {
       for (const item of this.groupByValueOnBoard) {
         const CancelToken = axios.CancelToken.source()
         this.$set(this.projectIssueQueue, item.id, CancelToken)
+        let dimension = this.groupBy.dimension + '_id'
+        if (this.groupBy.dimension === 'tags') {
+          dimension = this.groupBy.dimension
+        }
         getIssueList.push(getProjectIssueList(this.selectedProjectId,
-          { ...this.getParams(), [this.groupBy.dimension + '_id']: item.id },
+          { ...this.getParams(), [dimension]: item.id },
           { cancelToken: CancelToken.token }))
       }
       this.projectIssueList = []
@@ -479,9 +520,10 @@ export default {
     async loadSelectionList() {
       if (this.selectedProjectId === -1) return
       await Promise.all([
-        getProjectUserList(this.selectedProjectId)
+        getProjectUserList(this.selectedProjectId),
+        getTagsByProject(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList] = res.map(
+        const [assigneeList, tagsList] = res.map(
           item => item.data
         )
         this.assigned_to = [
@@ -494,6 +536,7 @@ export default {
           },
           ...assigneeList.user_list
         ]
+        this.tags = tagsList.tags
         // if (this.userRole === 'Engineer') {
         //   this.$set(this.filterValue, 'assigned_to', this.userId)
         //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
@@ -530,7 +573,11 @@ export default {
           })
         } else {
           const fuse = new Fuse(this.classifyIssueList[item], opt)
-          const res = fuse.search(`="${value}"`)
+          let pattern = `="${value}"`
+          if (Array.isArray(value) && value.length > 0) {
+            pattern = { $or: value.map(item => ({ $path: [opt['keys']], $val: `="${item}"` })) }
+          }
+          const res = fuse.search(pattern)
           this.classifyIssueList[item] = res.map(items => items.item)
         }
       })
@@ -540,7 +587,7 @@ export default {
       this.classifyIssue()
       Object.keys(this.filterValue).forEach((item) => {
         const searchOpt = {
-          keys: [item + '.id'],
+          keys: [`${item}.id`],
           useExtendedSearch: true
         }
         this.searchKanbanCard(this.filterValue[item], searchOpt)
