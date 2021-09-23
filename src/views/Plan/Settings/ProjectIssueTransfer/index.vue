@@ -312,8 +312,7 @@ export default {
     },
     async onPagination(listQuery) {
       const { page, limit } = listQuery
-      const newOffset = page * limit - limit
-      this.listQuery.offset = newOffset
+      this.listQuery.offset = page * limit - limit
       await this.loadData()
       this.handleSinglePageChecked()
     },
