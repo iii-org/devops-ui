@@ -309,6 +309,11 @@ export default {
               h('li', [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')])
             )
             this.showErrorAlert(errorMsg)
+          } else {
+            this.$emit('update-drag', {
+              id: this.list[idx].id,
+              value: { [Object.keys(data)[0]]: Object.values(data)[0] }
+            })
           }
         } else {
           this.$emit('update-drag', {
@@ -345,14 +350,14 @@ export default {
       }
     },
     async onCollapseChange(element) {
-      await this.$set(element, 'loadingRelation', true)
+      this.$set(element, 'loadingRelation', true)
       const family = await getIssueFamily(element.id)
       const data = family.data
       if (data.hasOwnProperty('parent')) { await this.$set(element, 'parent', data.parent) }
       if (data.hasOwnProperty('children')) { await this.$set(element, 'children', data.children) }
       if (data.hasOwnProperty('relations')) { await this.$set(element, 'relations', data.relations) }
       this.issueReload += 1
-      await this.$set(element, 'loadingRelation', false)
+      this.$set(element, 'loadingRelation', false)
     },
     differentInDays(a, b) {
       const Difference_In_Time = a.getTime() - b.getTime()
