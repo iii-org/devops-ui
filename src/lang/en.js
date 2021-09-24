@@ -553,6 +553,7 @@ export default {
     Brief: 'Brief',
     Report: 'Report',
     ADMIN: {
+      UpdateNow: '@:SystemVersion.UpdateNow',
       sync_date: 'created by: {0}',
       Overview: {
         NAME: 'Overview',

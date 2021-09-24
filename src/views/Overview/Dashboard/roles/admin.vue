@@ -3,6 +3,7 @@
     <el-row type="flex" class="flex-wrap" :gutter="10">
       <el-col class="text-right">
         <span class="text-sm ml-3">*本表每小時更新一次</span>
+        <el-button size="small" icon="el-icon-refresh" @click="getSyncRedmine">{{ $t('Dashboard.ADMIN.UpdateNow') }}</el-button>
       </el-col>
       <el-col :xs="24" :sm="24" :md="10">
         <el-card class="overview">
@@ -78,7 +79,7 @@ import {
   getPassingRate,
   getProjectList,
   getProjectMembers,
-  getProjectOverview
+  getProjectOverview, getSyncRedmine
 } from '@/api/dashboard'
 import {
   AdminProjectList,
@@ -138,6 +139,9 @@ export default {
   methods: {
     async initDashboard() {
       this.gitCommitLog = await this.getGitCommitLogData()
+    },
+    async getSyncRedmine() {
+      await getSyncRedmine()
     },
     async getProjectOverviewData() {
       const res = await getProjectOverview()

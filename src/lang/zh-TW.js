@@ -552,6 +552,7 @@ export default {
     Brief: '摘要',
     Report: '報表',
     ADMIN: {
+      UpdateNow: '@:SystemVersion.UpdateNow',
       sync_date: '統計日期：{0}',
       Overview: {
         NAME: '總覽',
