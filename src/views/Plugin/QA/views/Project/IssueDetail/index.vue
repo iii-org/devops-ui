@@ -651,7 +651,7 @@ export default {
       addTags.map(async tag => {
         const tagValue = tag.split('__')[1]
         const formData = this.getAddTagsFormData(tagValue)
-        this.addProjectTags(formData, originTags, tagsLength)
+        await this.addProjectTags(formData, originTags, tagsLength)
       })
     },
     async addProjectTags(formData, originTags, tagsLength) {
@@ -686,7 +686,11 @@ export default {
       // })
       const sendForm = new FormData()
       Object.keys(sendData).forEach(objKey => {
-        sendForm.append(objKey, sendData[objKey])
+        if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
+          sendForm.append(objKey, '')
+        } else {
+          sendForm.append(objKey, sendData[objKey])
+        }
       })
       this.updateIssueForm(sendForm)
     },

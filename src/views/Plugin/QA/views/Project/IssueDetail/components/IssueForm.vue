@@ -236,8 +236,8 @@
         v-model="form.start_date"
         type="date"
         value-format="yyyy-MM-dd"
-        :clearable="false"
         style="width: 100%"
+        :placeholder="$t('RuleMsg.PleaseSelect')"
         @change="checkDueDate(form.start_date)"
       />
     </el-form-item>
@@ -406,7 +406,7 @@ export default {
         this.getSearchRelationIssue()
       }
     },
-    'form.tags'(value) {
+    'form.tags'() {
       this.getSearchTags()
     }
   },
