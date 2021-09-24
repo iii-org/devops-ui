@@ -44,13 +44,14 @@
 import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
-import QAProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 import { camelCase } from 'lodash'
 import { dragscroll } from 'vue-dragscroll'
 
 export default {
   name: 'IssueMatrix',
-  components: { VueMermaid, QAProjectIssueDetail },
+  components: { VueMermaid,
+    QAProjectIssueDetail: () => import ('@/views/Plugin/QA/views/Project/IssueDetail')
+  },
   directives: {
     dragscroll
   },
