@@ -638,10 +638,12 @@ export default {
       const tagsLength = tags.length
       const addTags = []
       const originTags = []
-      tags.forEach(tag => {
-        if (typeof tag === 'string') addTags.push(tag)
-        else if (typeof tag === 'number') originTags.push(tag)
-      })
+      if (Array.isArray(tags)) {
+        tags.forEach(tag => {
+          if (typeof tag === 'string') addTags.push(tag)
+          else if (typeof tag === 'number') originTags.push(tag)
+        })
+      }
       if (addTags.length > 0) await this.handleAddProjectTags(addTags, originTags, tagsLength)
       else this.tagsArrayToString(originTags, tagsLength)
     },
