@@ -29,12 +29,12 @@
     <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
                :before-close="handleRelationIssueDialogBeforeClose"
     >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationUpdate"
+      <QAProjectIssueDetail v-if="relationIssue.visible"
+                            ref="children"
+                            :props-issue-id="relationIssue.id"
+                            :is-in-dialog="true"
+                            @update="handleRelationUpdate"
+                            @delete="handleRelationUpdate"
       />
     </el-dialog>
   </div>
@@ -44,13 +44,13 @@
 import VueMermaid from './components/vue-mermaid'
 import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
-import ProjectIssueDetail from '../../'
+import QAProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 import { camelCase } from 'lodash'
 import { dragscroll } from 'vue-dragscroll'
 
 export default {
   name: 'IssueMatrix',
-  components: { VueMermaid, ProjectIssueDetail },
+  components: { VueMermaid, QAProjectIssueDetail },
   directives: {
     dragscroll
   },
