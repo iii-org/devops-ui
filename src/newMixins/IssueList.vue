@@ -301,6 +301,13 @@ export default {
     },
     handleQuickAddClose() {
       this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+      if (this.tableHeight) {
+        if (this.quickAddTopicDialogVisible) {
+          this.tableHeight = this.tableHeight - 62
+        } else {
+          this.tableHeight = this.tableHeight + 62
+        }
+      }
     },
     handleSortChange({ prop, order }) {
       const orderBy = this.checkOrder(order)
@@ -387,6 +394,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+}
+
+> > > .el-table__body-wrapper {
+  overflow-y: auto;
+}
+
 > > > .hide-expand-icon .el-table__expand-column .cell {
   display: none;
 }

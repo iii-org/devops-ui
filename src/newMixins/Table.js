@@ -1,6 +1,7 @@
 export default {
   data() {
     return {
+      tableHeight: '60vh',
       rowHeight: 53, // If you can, detect the real thread cell height
       afterInit: false,
       resizing: false,
@@ -10,9 +11,15 @@ export default {
     }
   },
   async mounted() {
+    this.$nextTick(() => {
+      this.tableHeight = this.$refs['wrapper'].clientHeight
+    })
     await this.initTableData()
 
     window.onresize = () => {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
       this.resizeTime = new Date()
       if (!this.timeout) {
         this.timeout = true
@@ -63,7 +70,7 @@ export default {
         if (forceRowNum) {
           this.listQuery.limit = forceRowNum
         } else {
-          this.listQuery.limit = Math.floor(tableHeight / this.rowHeight)
+          this.listQuery.limit = Math.floor(tableHeight / this.rowHeight) - 1
         }
         const nowPage = Math.ceil(this.listQuery.offset / this.listQuery.limit)
         if (nowPage <= 0) {
