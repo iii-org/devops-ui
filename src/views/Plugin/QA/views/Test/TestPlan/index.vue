@@ -26,7 +26,7 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel(allDownloadData)">
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item v-show="hasSelectedTestPlan" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedTestPlan)">
@@ -268,7 +268,7 @@ import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { getTestFileByTestPlan } from '../../../api/qa'
 import { getIssue, getIssueFamily } from '@/api/issue'
-import { getProjectUserList } from '@/api/projects'
+import { getProjectUserList, getProjectIssueList } from '@/api/projects'
 import XLSX from 'xlsx'
 import Result from '@/components/Test/Result'
 
@@ -295,6 +295,8 @@ export default {
       assigned_to: [],
       fixed_version: [],
       form: {},
+      allDownloadData: [],
+      allDataLoading: false,
       selectedTestPlan: []
     }
   },
@@ -339,6 +341,9 @@ export default {
     },
     tracker_id() {
       this.loadData()
+    },
+    listData(val) {
+      this.fetchAllDownloadData()
     }
   },
   async created() {
@@ -346,8 +351,17 @@ export default {
     this.tracker_id = this.trackerList[0].id
     await this.loadSelectionList()
   },
+  mounted() {
+    this.fetchAllDownloadData()
+  },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
+    async fetchAllDownloadData() {
+      this.allDataLoading = true
+      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      this.allDownloadData = res.data.issue_list
+      this.allDataLoading = false
+    },
     async loadData() {
       if (this.selectedProjectId === -1) return
       this.listLoading = true
@@ -359,10 +373,10 @@ export default {
       if (option_name === 'tracker') return this.trackerList
       return this[option_name]
     },
-    getParams() {
+    getParams(limit) {
       const result = {
         offset: this.listQuery.offset,
-        limit: this.listQuery.limit,
+        limit: limit || this.listQuery.limit,
         tracker_id: this.tracker_id
       }
       if (this.sort) {
