@@ -222,6 +222,13 @@ export const asyncRoutes = [
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
               rolePage: false
             }
+          },
+          {
+            path: 'test-report/:commitId',
+            name: 'TestReport',
+            hidden: true,
+            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
+            meta: { title: 'testReport', roles: ['QA'] }
           }
         ]
       },
