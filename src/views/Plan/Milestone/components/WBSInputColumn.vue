@@ -6,6 +6,15 @@
       </template>
       <el-button
         v-if="prop==='name'&&(row.id).toString().includes('new')"
+        class="action"
+        type="success"
+        size="mini"
+        icon="el-icon-check"
+        @click="handlerCreate(row, $index, treeNode)"
+      />
+      <el-button
+        v-if="prop==='name'&&(row.id).toString().includes('new')"
+        class="action"
         type="danger"
         size="mini"
         icon="el-icon-close"
@@ -122,7 +131,7 @@ export default {
     treeWidth(treeNode, row) {
       let width = '70%'
       if (row && row.id && (row.id).toString().includes('new') && !row.parent_object) {
-        width = '60%'
+        width = '50%'
       }
       if (this.prop === 'name' && treeNode && treeNode.indent) {
         return `calc(${width} - ${treeNode.indent}px)`
@@ -172,5 +181,13 @@ export default {
   width: 20px;
   height: 20px;
   display: inline-block;
+}
+
+.action {
+  margin: 0;
+
+  &.el-button--mini {
+    padding: 5px;
+  }
 }
 </style>
