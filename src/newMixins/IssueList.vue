@@ -42,7 +42,8 @@ export default {
         total: 0
       },
       lastIssueListCancelToken: null,
-      expandedRow: []
+      expandedRow: [],
+      totalData: 100
     }
   },
   computed: {
@@ -159,6 +160,7 @@ export default {
         this.lastIssueListCancelToken = cancelTokenSource
         const listData = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: cancelTokenSource.token })
         data = listData.data.issue_list
+        this.totalData = listData.data.page.total
         if (listData.data.hasOwnProperty('page')) {
           this.pageInfo = listData.data.page
         } else {

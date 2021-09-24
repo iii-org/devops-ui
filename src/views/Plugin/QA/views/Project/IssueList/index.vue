@@ -26,7 +26,7 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel(allDownloadData)">
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item v-show="hasSelectedIssue" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedIssueList)">
@@ -243,6 +243,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { excelTranslate } from '@/utils/excelTableTranslate'
+import { getProjectIssueList } from '@/api/projects'
 import XLSX from 'xlsx'
 
 /**
@@ -263,13 +264,12 @@ export default {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
-
       assigned_to: [],
       fixed_version: [],
-
       form: {},
-
       selectedIssueList: [],
+      allDownloadData: [],
+      allDataLoading: false,
       excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to']
     }
   },
@@ -280,6 +280,11 @@ export default {
     },
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
+    }
+  },
+  watch: {
+    listData(val) {
+      this.fetchAllDownloadData()
     }
   },
   async created() {
@@ -300,13 +305,22 @@ export default {
     if (storeDisplayClosed['list']) { this.displayClosed = storeDisplayClosed['list'] }
     await this.loadSelectionList()
   },
+  mounted() {
+    this.fetchAllDownloadData()
+  },
   methods: {
     ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed',
       'setKeyword', 'setIssueFilter', 'setDisplayClosed', 'setFixedVersionShowClosed', 'getFixedVersionShowClosed']),
-    getParams() {
+    async fetchAllDownloadData() {
+      this.allDataLoading = true
+      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      this.allDownloadData = res.data.issue_list
+      this.allDataLoading = false
+    },
+    getParams(limit) {
       const result = {
         offset: this.listQuery.offset,
-        limit: this.listQuery.limit
+        limit: limit || this.listQuery.limit
       }
       if (this.sort) {
         result['sort'] = this.sort
