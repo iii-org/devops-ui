@@ -554,6 +554,7 @@ export default {
     Report: 'Report',
     ADMIN: {
       UpdateNow: '@:SystemVersion.UpdateNow',
+      syncing: 'Syncing......',
       sync_date: 'created by: {0}',
       Overview: {
         NAME: 'Overview',

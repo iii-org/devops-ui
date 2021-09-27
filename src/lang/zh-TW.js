@@ -553,6 +553,7 @@ export default {
     Report: '報表',
     ADMIN: {
       UpdateNow: '@:SystemVersion.UpdateNow',
+      syncing: '同步中......',
       sync_date: '統計日期：{0}',
       Overview: {
         NAME: '總覽',

@@ -1,8 +1,13 @@
 <template>
   <el-row class="app-container">
+    <el-alert v-if="status.is_lock" type="warning" class="mb-4 loading" :closable="false">
+      <h2 slot="title">
+        <i class="el-icon-loading" /> {{ $t('Dashboard.ADMIN.syncing') }}
+      </h2>
+    </el-alert>
     <el-row type="flex" class="flex-wrap" :gutter="10">
       <el-col class="text-right">
-        <span class="text-sm ml-3">*本表每小時更新一次</span>
+        <span class="text-sm ml-3">*本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [status.sync_date]) }}</span>
         <el-button size="small" icon="el-icon-refresh" @click="getSyncRedmine">{{ $t('Dashboard.ADMIN.UpdateNow') }}</el-button>
       </el-col>
       <el-col :xs="24" :sm="24" :md="10">
@@ -79,7 +84,9 @@ import {
   getPassingRate,
   getProjectList,
   getProjectMembers,
-  getProjectOverview, getSyncRedmine
+  getProjectOverview,
+  getSyncRedmine,
+  getSyncRedmineStatus
 } from '@/api/dashboard'
 import {
   AdminProjectList,
@@ -114,7 +121,8 @@ export default {
       overview: [],
       gitCommitLog: [],
       init: true,
-      requestGitLabLastTime: null
+      requestGitLabLastTime: null,
+      status: { is_lock: false, sync_date: '' }
     }
   },
   watch: {
@@ -135,6 +143,7 @@ export default {
   },
   mounted() {
     this.initDashboard()
+    this.loadSyncStatus()
   },
   methods: {
     async initDashboard() {
@@ -142,6 +151,29 @@ export default {
     },
     async getSyncRedmine() {
       await getSyncRedmine()
+      await this.loadSyncStatus()
+    },
+    async loadSyncStatus() {
+      await this.getSyncStatus()
+      if (!this.status.is_lock) {
+        if (this.intervalTimer) {
+          window.clearInterval(this.intervalTimer)
+          this.intervalTimer = null
+        }
+      } else if (!this.intervalTimer) {
+        this.intervalTimer = window.setInterval(this.loadSyncStatus, 5000)
+      }
+      return Promise.resolve()
+    },
+    async getSyncStatus() {
+      try {
+        const res = await getSyncRedmineStatus()
+        this.status = res.data
+        return Promise.resolve(res.data)
+      } catch (e) {
+        console.error(e)
+        return Promise.reject(e)
+      }
     },
     async getProjectOverviewData() {
       const res = await getProjectOverview()
