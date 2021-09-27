@@ -71,8 +71,7 @@ export const allowedTypeMap = () => ({
   'audio/3gpp': '.3gp',
   'video/3gpp2': '.3g2',
   'audio/3gpp2': '.3g2',
-  'application/x-7z-compressed': '.7z',
-  '': ''
+  'application/x-7z-compressed': '.7z'
 })
 
 export const isAllowedTypes = (fileType) => {

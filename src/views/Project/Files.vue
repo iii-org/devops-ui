@@ -262,7 +262,7 @@ export default {
       this.$refs['fileForm'].validate(async valid => {
         if (valid) {
           const data = this.fileForm
-          const filetype = allowedTypeMap[this.uploadFileList[0].raw.type]
+          const filetype = allowedTypeMap()[this.uploadFileList[0].raw.type]
           const form = new FormData()
           if (data.name !== '') {
             form.append('file', this.uploadFileList[0].raw, `${data.name}${filetype}`)
