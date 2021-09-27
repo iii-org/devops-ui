@@ -598,7 +598,7 @@ export default {
       this.isLoading = false
     },
     handleBackPage() {
-      this.$router.push(this.formObj)
+      this.$route.name === 'issue-detail' ? this.$router.push({ name: 'test-file' }) : this.$router.push(this.formObj)
     },
     showLoading(status) {
       if (status && status.hasOwnProperty('upload') && status.upload) {
