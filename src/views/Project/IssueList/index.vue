@@ -270,11 +270,21 @@ export default {
     const storeFilterValue = await this.getIssueFilter()
     if (storeFilterValue['list']) {
       this.filterValue = storeFilterValue['list']
+    } else {
+      this.filterValue = {}
     }
     const storeKeyword = await this.getKeyword()
-    if (storeKeyword['list']) { this.keyword = storeKeyword['list'] }
+    if (storeKeyword['list']) {
+      this.keyword = storeKeyword['list']
+    } else {
+      this.keyword = null
+    }
     const storeDisplayClosed = await this.getDisplayClosed()
-    if (storeDisplayClosed['list']) { this.displayClosed = storeDisplayClosed['list'] }
+    if (storeDisplayClosed['list']) {
+      this.displayClosed = storeDisplayClosed['list']
+    } else {
+      this.displayClosed = false
+    }
     await this.loadSelectionList()
   },
   methods: {
