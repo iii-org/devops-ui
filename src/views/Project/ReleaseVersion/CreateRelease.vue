@@ -124,6 +124,7 @@ import { mapGetters } from 'vuex'
 import { getBranchesByProject } from '@/api/branches'
 import { createRelease } from '@/api/release'
 import { getHarborRepoList, getRepoArtifacts } from '@/api/harbor'
+import { getMemberCommitListByBranch } from '@/api/commitList'
 
 export default {
   name: 'CreateRelease',
@@ -168,7 +169,6 @@ export default {
     'commitForm.branch': {
       handler(val) {
         if (val && val !== this.$t('Loading')) {
-          this.setCommitId(val)
           this.handleSelectedRepoName(val)
         }
       },
@@ -184,6 +184,11 @@ export default {
       if (val) {
         this.handleSelectedRepoName(val[0])
       }
+    },
+    commitId(val) {
+      if (val !== null) {
+        this.handleSelectedRepoName(this.branches[0])
+      }
     }
   },
   async created() {
@@ -195,23 +200,35 @@ export default {
   methods: {
     async getBranchesData() {
       this.branches = []
-      const response = await getBranchesByProject(this.selectedRepositoryId)
-      response.data.branch_list.sort((itemA, itemB) => {
+      const res = await getBranchesByProject(this.selectedRepositoryId)
+      res.data.branch_list.sort((itemA, itemB) => {
         const timeA = Date.parse(itemA.last_commit_time)
         const timeB = Date.parse(itemB.last_commit_time)
         return timeB - timeA
       })
-      this.branchesData = response.data['branch_list']
+      this.branchesData = res.data['branch_list']
+      this.setFormBranch()
+      this.setFormData()
+      this.getMemberCommitListByBranch()
+    },
+    async getMemberCommitListByBranch() {
+      const params = { branch: this.commitForm.branch }
+      const res = await getMemberCommitListByBranch(this.selectedRepositoryId, params)
+      const commitId = res.data.length !== 0 ? res.data[0].short_id : null
+      const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : null
+      this.commitId = harborCommitId
+    },
+    setFormBranch() {
       for (const branch of this.branchesData) {
         this.branches.push(branch.name)
       }
+    },
+    setFormData() {
       if (this.branchesData.length > 0) {
-        this.commitId = this.branchesData[0].short_id
         this.commitForm.branch = this.branchesData[0].name
       } else {
         this.commitForm.mainVersion = null
         this.commitForm.branch = this.$t('Loading')
-        this.commitId = ''
       }
     },
     setIssues(issues) {
@@ -316,10 +333,6 @@ export default {
     },
     handleConfirm() {
       this.isConfirmPackageVersion = true
-    },
-    setCommitId(name) {
-      const branchIndex = this.branchesData.findIndex(item => item.name === name)
-      this.commitId = this.branchesData[branchIndex].short_id
     }
   }
 }
