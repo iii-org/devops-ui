@@ -21,7 +21,7 @@
         :row-class-name="tableRowClassName"
         cell-class-name="items-center"
         header-cell-class-name="items-center"
-        :height="tableHeight"
+        :height="tableHeightDialog"
         @sort-change="onSortChange"
       >
         <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
@@ -108,8 +108,8 @@ export default {
     tableData() {
       return this.inDialog ? this.pagedData : this.listData
     },
-    tableHeight() {
-      return this.inDialog ? 'calc(100vh - 370px)' : '500px'
+    tableHeightDialog() {
+      return this.inDialog ? 'calc(100vh - 370px)' : null
     }
   },
   watch: {
