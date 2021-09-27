@@ -131,7 +131,7 @@ export const asyncRoutes = [
         path: 'traceability-matrix',
         name: 'TraceMatrix',
         component: () => import('@/views/Plan/TraceabilityMatrix'),
-        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'QA', 'Project Manager'] }
+        meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'Project Manager'] }
       },
       {
         path: 'settings',
@@ -236,13 +236,13 @@ export const asyncRoutes = [
         path: 'roadmap',
         name: 'Project Roadmap',
         component: () => import('@/views/Project/Roadmap'),
-        meta: { title: 'Project Roadmap', roles: ['Administrator', 'Project Manager'] }
+        meta: { title: 'Project Roadmap', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
         path: '/release-version',
         redirect: { name: 'release-version' },
         component: parentBlank,
-        meta: { title: 'releaseVersion', roles: ['Administrator', 'Project Manager'] },
+        meta: { title: 'releaseVersion', roles: ['Administrator', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
@@ -250,7 +250,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/ReleaseVersion'),
             hidden: true,
             meta: {
-              roles: ['Administrator', 'Project Manager']
+              roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
           {
@@ -260,7 +260,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
             meta: {
               title: 'Issue Detail',
-              roles: ['Administrator', 'Project Manager'],
+              roles: ['Administrator', 'Project Manager', 'Engineer'],
               rolePage: false
             }
           }
@@ -270,7 +270,7 @@ export const asyncRoutes = [
         path: '/deploy',
         redirect: { name: 'deploy' },
         component: parentBlank,
-        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager'] },
+        meta: { title: 'deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] },
         children: [
           {
             path: '',
@@ -278,7 +278,7 @@ export const asyncRoutes = [
             component: () => import('@/views/Project/Deploy'),
             meta: {
               title: 'deploy',
-              roles: ['Administrator', 'Project Manager']
+              roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           }
         ]
