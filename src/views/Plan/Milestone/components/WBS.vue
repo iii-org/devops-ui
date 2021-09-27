@@ -9,6 +9,7 @@
               row-key="id"
               lazy
               :load="getIssueFamilyData"
+              :row-class-name="getRowClass"
               :tree-props="{children: 'children', hasChildren: 'has_children'}"
               @row-contextmenu="handleContextMenu"
               @cell-click="handleCellClick"
@@ -147,8 +148,10 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length>2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
-        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">{{ $t('route.Issue Detail') }}</contextmenu-item>
-        <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
+        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">{{ $t('route.Issue Detail') }}
+        </contextmenu-item>
+        <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">{{ $t('Issue.TraceabilityMatrix') }}
+        </contextmenu-item>
         <contextmenu-item divider />
         <contextmenu-item @click="appendIssue(contextMenu.row)">
           {{ $t('Issue.AddIssue') }}
@@ -160,7 +163,8 @@
           {{ $t('Issue.CopyIssue') }}
         </contextmenu-item>
         <contextmenu-item divider />
-        <contextmenu-item class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete"> {{ $t('general.Delete') }}</em></contextmenu-item>
+        <contextmenu-item class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete">
+          {{ $t('general.Delete') }}</em></contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
@@ -224,7 +228,8 @@ export default {
   props: {
     filterValue: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     },
     keyword: {
       type: String,
@@ -450,7 +455,7 @@ export default {
         confirmButtonClass: 'el-button--danger',
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
-        beforeClose: async(action, instance, done) => {
+        beforeClose: async (action, instance, done) => {
           if (action === 'confirm') {
             this.updateLoading = true
             this.$emit('update-loading', true)
@@ -470,8 +475,10 @@ export default {
               this.$emit('update-status', {
                 error: e
               })
-              this.$notify({ title: this.$t('general.Error').toString(), type: 'error',
-                message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString() })
+              this.$notify({
+                title: this.$t('general.Error').toString(), type: 'error',
+                message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
+              })
             }
             this.updateLoading = false
             this.$emit('update-loading', false)
@@ -523,8 +530,13 @@ export default {
     },
     async handleUpdateIssue({ value, row, index }) {
       let checkUpdate = false
+      const originDate = this.$dayjs(row.originColumn)
       if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
-        checkUpdate = value[`${row.editColumn}_id`] !== row.originColumn.id
+        if (originDate.isValid()) {
+          checkUpdate = value[row.editColumn] !== originDate.format('YYYY-MM-DD')
+        } else {
+          checkUpdate = value[`${row.editColumn}_id`] !== row.originColumn.id
+        }
       } else {
         checkUpdate = value[row.editColumn] !== row.originColumn
       }
@@ -536,6 +548,11 @@ export default {
           this.updateLoading = true
           this.$emit('update-loading', true)
           try {
+            Object.keys(value).forEach(key => {
+              if (value[key] === null) {
+                value[key] = ''
+              }
+            })
             const res = await updateIssue(row.id, value)
             this.$set(row, 'editColumn', false)
             this.$set(row, 'originColumn', null)
@@ -549,7 +566,10 @@ export default {
                 updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
               }
               const findIssueIndex = treeDataArray.findIndex(issue => issue === row.id)
-              this.$set(updateNodeMap, findIssueIndex, { ...this.issueFormatter(res.data), parent_object: row.parent_object })
+              this.$set(updateNodeMap, findIssueIndex, {
+                ...this.issueFormatter(res.data),
+                parent_object: row.parent_object
+              })
               store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
               store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
             } else {
@@ -567,8 +587,10 @@ export default {
             this.$emit('update-status', {
               error: e
             })
-            this.$notify({ title: this.$t('general.Error').toString(), type: 'error',
-              message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString() })
+            this.$notify({
+              title: this.$t('general.Error').toString(), type: 'error',
+              message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
+            })
           }
           this.updateLoading = false
           this.$emit('update-loading', false)
@@ -617,8 +639,10 @@ export default {
           this.$emit('update-status', {
             error: e
           })
-          this.$notify({ title: this.$t('general.Error').toString(), type: 'error',
-            message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString() })
+          this.$notify({
+            title: this.$t('general.Error').toString(), type: 'error',
+            message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
+          })
         }
         this.updateLoading = false
         this.$emit('update-loading', false)
@@ -630,7 +654,12 @@ export default {
         const data = family.data
         if (data.hasOwnProperty('children')) {
           if (treeData) {
-            this.$set(treeData, row.id, data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
+            this.$set(treeData, row.id, data.children.map(item => ({
+              parent_object: {
+                ...row,
+                children: data.children
+              }, ...item
+            })))
           } else {
             resolve(data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
           }
@@ -719,6 +748,9 @@ export default {
     toggleIssueMatrixDialog(row) {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
       this.issueMatrixDialog.row = row
+    },
+    getRowClass() {
+      return 'cursor-context-menu'
     }
   }
 }
@@ -759,7 +791,11 @@ export default {
   @apply text-success font-bold;
 }
 
-.menu-remove{
+.menu-remove {
   @apply text-danger font-bold;
+}
+
+> > > .cursor-context-menu {
+  cursor: context-menu;
 }
 </style>
