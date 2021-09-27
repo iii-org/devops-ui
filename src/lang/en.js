@@ -94,7 +94,7 @@ export default {
     changeManagement: 'Change Management',
     'Fail Management': 'Fail Management',
     'test-report': 'Test Report',
-    'unit-test': 'Unit Test',
+    'test-case': 'Test Case',
     'test-result': 'Test Result',
     testReport: 'III DevOps Test Report',
     deploy: 'Deploy'

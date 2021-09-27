@@ -94,7 +94,7 @@ export default {
     changeManagement: '變更管理',
     'Fail Management': '異常管理',
     'test-report': '測試報告',
-    'unit-test': '單元測試',
+    'test-case': '測試個案',
     'test-result': '測試彙整',
     testReport: 'III DevOps 測試彙整',
     deploy: '遠端部署'

@@ -198,7 +198,7 @@ export const asyncRoutes = [
             name: 'test-plan',
             component: () => import('../views/Test/TestPlan'),
             meta: {
-              title: 'unit-test', roles: ['QA']
+              title: 'test-case', roles: ['QA']
             }
           },
           {
