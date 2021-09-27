@@ -16,8 +16,10 @@
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
     <div class="text-right">
-      <span v-if="traceCheck.start_time">執行時間:{{ traceCheck.start_time |relativeTime }}</span>
-      <span v-if="traceCheck.finish_time">運算時間:{{ $dayjs(traceCheck.finish_time).from($dayjs(traceCheck.start_time)) }}</span>
+      <span v-if="traceCheck.start_time">{{ $t('Track.Run_at') }}:
+        {{ traceCheck.start_time |relativeTime }}</span>
+      <span v-if="traceCheck.finish_time">{{ $t('Track.Running_time') }}:
+        {{ $dayjs(traceCheck.finish_time).from($dayjs(traceCheck.start_time), true) }}</span>
     </div>
     <el-table :data="traceCheck.result"
               :element-loading-text="$t('Loading')"
@@ -167,6 +169,7 @@ export default {
 #check-wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px - 60px);
 }
+
 .loading {
   > > > .el-alert__content {
     width: 100%;
