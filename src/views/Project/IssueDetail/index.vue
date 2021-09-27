@@ -119,7 +119,7 @@
                               :title="$t('Issue.RemoveIssueRelation')"
                               @confirm="removeIssueRelation(child.id)"
                             >
-                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
                                 {{ $t('Issue.Unlink') }}
                               </el-button>
                             </el-popconfirm>
@@ -152,7 +152,7 @@
                                 :title="$t('Issue.RemoveIssueRelation')"
                                 @confirm="removeRelationIssue(child.relation_id)"
                               >
-                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
                                   {{ $t('Issue.Unlink') }}
                                 </el-button>
                               </el-popconfirm>
@@ -270,7 +270,7 @@ export default {
         assigned_to_id: '',
         name: '',
         fixed_version_id: '',
-        tracker_id: -1,
+        tracker_id: 0,
         status_id: 1,
         priority_id: 3,
         estimated_hours: 0,
@@ -284,6 +284,7 @@ export default {
       formObj: {},
       parent: {},
       children: [],
+      tags: [],
       dialogHeight: '100%',
       editorHeight: '100px',
       issueScrollTop: 0,
@@ -292,7 +293,8 @@ export default {
         visible: false,
         id: null
       },
-      relations: []
+      relations: [],
+      tagsString: ''
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -348,7 +350,7 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.$route.params.disableButton
+      return this.userRole === 'QA'
     }
   },
   watch: {
@@ -435,7 +437,8 @@ export default {
         tracker,
         parent,
         children,
-        relations
+        relations,
+        tags
       } = data
       this.issue = data
       this.issue_link = issue_link
@@ -452,6 +455,7 @@ export default {
       this.relations = relations || []
       this.parent = (parent) || {}
       this.children = (children) || []
+      this.tags = tags || []
       this.setFormData(data)
       this.view = data
       if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
@@ -495,6 +499,7 @@ export default {
       this.form.due_date = due_date === null ? '' : due_date
       this.form.description = description === null ? '' : description
       this.form.relation_ids = (this.relations.length > 0) ? this.relations.map((item) => (item.id)) : []
+      this.form.tags = this.tags.length > 0 ? this.tags.map(item => item.id) : []
       this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {
@@ -565,7 +570,11 @@ export default {
       // })
       const sendForm = new FormData()
       Object.keys(sendData).forEach(objKey => {
-        sendForm.append(objKey, sendData[objKey])
+        if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
+          sendForm.append(objKey, '')
+        } else {
+          sendForm.append(objKey, sendData[objKey])
+        }
       })
       this.updateIssueForm(sendForm)
     },
