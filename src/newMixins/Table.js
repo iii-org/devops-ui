@@ -12,13 +12,17 @@ export default {
   },
   async mounted() {
     this.$nextTick(() => {
-      this.tableHeight = this.$refs['wrapper'].clientHeight
+      if (this.$refs['wrapper']) {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      }
     })
     await this.initTableData()
 
     window.onresize = () => {
       this.$nextTick(() => {
-        this.tableHeight = this.$refs['wrapper'].clientHeight
+        if (this.$refs['wrapper']) {
+          this.tableHeight = this.$refs['wrapper'].clientHeight
+        }
       })
       this.resizeTime = new Date()
       if (!this.timeout) {
