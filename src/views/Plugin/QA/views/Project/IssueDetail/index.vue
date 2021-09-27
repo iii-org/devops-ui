@@ -329,7 +329,8 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.formObj = from
+      if (to.name === 'issue-detail' && from.name === 'create-test-plan') vm.formObj = { name: 'test-file' }
+      else vm.formObj = from
     })
   },
   beforeRouteLeave(to, from, next) {
@@ -598,7 +599,7 @@ export default {
       this.isLoading = false
     },
     handleBackPage() {
-      this.$route.name === 'issue-detail' ? this.$router.push({ name: 'test-file' }) : this.$router.push(this.formObj)
+      this.$router.push(this.formObj)
     },
     showLoading(status) {
       if (status && status.hasOwnProperty('upload') && status.upload) {
