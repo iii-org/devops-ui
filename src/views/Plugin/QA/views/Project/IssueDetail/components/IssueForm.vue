@@ -339,10 +339,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userId', 'tracker', 'status', 'priority', 'selectedProject']),
-    selectedProjectId() {
-      return this.selectedProject.id
-    },
+    ...mapGetters(['userId', 'tracker', 'status', 'priority']),
     isParentIssueClosed() {
       if (Object.keys(this.parent).length <= 0) return false
       return this.parent.status.name === 'Closed'
@@ -571,7 +568,7 @@ export default {
       return CancelToken.token
     },
     async getSearchTags(query) {
-      const pId = this.selectedProjectId
+      const pId = this.form.project_id
       const tag_name = query || null
       const cancelToken = this.checkToken()
       const tags = await this.getTags(pId, tag_name, cancelToken)

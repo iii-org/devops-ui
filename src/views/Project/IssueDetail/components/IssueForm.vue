@@ -7,6 +7,35 @@
     :rules="issueFormRules"
     label-position="top"
   >
+    <el-form-item :label="$t('Issue.Tag')" prop="tags">
+      <el-select
+        v-model="form.tags"
+        style="width: 100%"
+        :placeholder="$t('Issue.NoTag')"
+        clearable
+        filterable
+        remote
+        multiple
+        value-key="tags"
+        :loading="issueLoading"
+        :remote-method="getSearchTags"
+        @focus="getSearchTags()"
+      >
+        <el-option-group
+          v-for="group in tagsList"
+          :key="group.name"
+          :label="group.name"
+        >
+          <template v-for="item in group.options">
+            <el-option
+              :key="item.id"
+              :value="item.id"
+              :label="item.name"
+            />
+          </template>
+        </el-option-group>
+      </el-select>
+    </el-form-item>
     <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
       <el-select
         v-model="form.parent_id"
@@ -207,8 +236,8 @@
         v-model="form.start_date"
         type="date"
         value-format="yyyy-MM-dd"
-        :clearable="false"
         style="width: 100%"
+        :placeholder="$t('RuleMsg.PleaseSelect')"
         @change="checkDueDate(form.start_date)"
       />
     </el-form-item>
@@ -229,7 +258,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getCheckIssueClosable } from '@/api/issue'
-import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
+import { getProjectAssignable, getProjectIssueList, getProjectVersion, getTagsByName, getTagsByProject } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
@@ -284,17 +313,15 @@ export default {
       issueLoading: false,
       issueList: [],
       relationIssueList: [],
+      tagsList: [],
       assigned_to: [],
       fixed_version: [],
-
       relativeIssueList: [],
       isLoading: false,
       isRecommendRelation: false,
       checkClosable: false,
       dynamicStatusList: [],
-
       cancelToken: null,
-
       pickerOptions(startDate) {
         return {
           disabledDate(time) {
@@ -368,10 +395,14 @@ export default {
         this.getSearchIssue()
         this.getSearchRelationIssue()
       }
+    },
+    'form.tags'() {
+      this.getSearchTags()
     }
   },
   mounted() {
     this.fetchData()
+    this.getSearchTags()
     if (this.form.project_id > 0) {
       this.getSearchIssue()
       this.getSearchRelationIssue()
@@ -384,18 +415,7 @@ export default {
         await Promise.all([
           getProjectAssignable(this.form.project_id)
         ]).then(res => {
-          const [assigned_to] = res.map(
-            item => item.data
-          )
-
-          this.assigned_to = [
-            {
-              name: this.$t('Issue.me'),
-              login: '-Me-',
-              id: this.userId,
-              class: 'bg-yellow-100'
-            }, ...assigned_to.user_list
-          ]
+          this.getAssignedTo(res)
         })
         await this.loadVersionList()
       }
@@ -405,6 +425,17 @@ export default {
         this.$set(this.$data, 'dynamicStatusList', this.status)
       }
       this.isLoading = false
+    },
+    getAssignedTo(res) {
+      const [assigned_to] = res.map(item => item.data)
+      this.assigned_to = [
+        {
+          name: this.$t('Issue.me'),
+          login: '-Me-',
+          id: this.userId,
+          class: 'bg-yellow-100'
+        }, ...assigned_to.user_list
+      ]
     },
     async loadVersionList() {
       const params = { status: 'open,locked' }
@@ -452,50 +483,35 @@ export default {
       }
       return result
     },
-    async getSearchIssue(query) {
-      const params = {
-        selection: true,
-        status_id: 'open'
-      }
-      this.issueList = []
-      if (query !== '' && query) {
-        params['search'] = query
-        this.issueQuery = query
-        this.issueLoading = true
-      } else {
-        params['offset'] = 0
-        params['limit'] = 5
-        this.issueQuery = null
-      }
-      if (this.cancelToken) {
-        this.cancelToken.cancel()
-      }
-      const CancelToken = axios.CancelToken.source()
-      this.cancelToken = CancelToken
-      const res = await getProjectIssueList(this.form.project_id, params, { cancelToken: CancelToken.token })
-      let queryList = res.data
-      let key = 'Issue.Result'
-      if (!this.issueQuery) {
-        if (queryList && queryList.hasOwnProperty('issue_list')) {
-          queryList = res.data.issue_list
-        } else {
-          queryList = []
-        }
-        key = 'Issue.LastResult'
-      }
-      this.issueList = [this.originalParentIssue, { name: this.$t(key), options: queryList }]
+    getSearchIssue(query) {
+      const issueKey = 'parent'
+      this.getIssue(query, issueKey)
+    },
+    getSearchRelationIssue(query) {
+      const issueKey = 'relation'
+      this.getIssue(query, issueKey)
+    },
+    async getIssue(query, issue_key) {
+      const params = this.getSearchParams(query, issue_key)
+      const cancelToken = this.checkToken()
+      await getProjectIssueList(this.form.project_id, params, { cancelToken })
+        .then(res => {
+          switch (issue_key) {
+            case 'parent':
+              this.issueList = this.getListLabels(res, issue_key)
+              break
+            case 'relation':
+              this.relationIssueList = this.getListLabels(res, issue_key)
+          }
+        })
       this.issueLoading = false
       this.cancelToken = null
     },
-    async getSearchRelationIssue(query) {
+    getSearchParams(query, issue_key) {
       const params = {
         selection: true,
         status_id: 'open'
       }
-      if (this.isRecommendRelation && this.getTrackerFilter.id) {
-        params['tracker_id'] = this.getTrackerFilter.id
-      }
-      this.relationIssueList = []
       if (query !== '' && query) {
         params['search'] = query
         this.issueQuery = query
@@ -505,14 +521,22 @@ export default {
         params['limit'] = 5
         this.issueQuery = null
       }
-      if (this.cancelToken) {
-        this.cancelToken.cancel()
+      switch (issue_key) {
+        case 'parent':
+          this.issueList = []
+          break
+        case 'relation':
+          if (this.isRecommendRelation && this.getTrackerFilter.id) {
+            params['tracker_id'] = this.getTrackerFilter.id
+          }
+          this.relationIssueList = []
       }
-      const CancelToken = axios.CancelToken.source()
-      this.cancelToken = CancelToken
-      const res = await getProjectIssueList(this.form.project_id, params, { cancelToken: CancelToken.token })
+      return params
+    },
+    getListLabels(res, issue_key) {
       let queryList = res.data
       let key = 'Issue.Result'
+      let issueList
       if (!this.issueQuery) {
         if (queryList && queryList.hasOwnProperty('issue_list')) {
           queryList = res.data.issue_list
@@ -521,9 +545,81 @@ export default {
         }
         key = 'Issue.LastResult'
       }
-      this.relationIssueList = [this.originalRelationIssue, { name: this.$t(key), options: queryList }]
+      switch (issue_key) {
+        case 'parent':
+          issueList = [this.originalParentIssue, { name: this.$t(key), options: queryList }]
+          break
+        case 'relation':
+          issueList = [this.originalRelationIssue, { name: this.$t(key), options: queryList }]
+      }
+      return issueList
+    },
+    checkToken() {
+      if (this.cancelToken) this.cancelToken.cancel()
+      const CancelToken = axios.CancelToken.source()
+      this.cancelToken = CancelToken
+      return CancelToken.token
+    },
+    async getSearchTags(query) {
+      const pId = this.form.project_id
+      const tag_name = query || null
+      const cancelToken = this.checkToken()
+      const tags = await this.getTags(pId, tag_name, cancelToken)
+      this.getTagsLabels(tag_name, tags, query)
+    },
+    async getTags(pId, tag_name, cancelToken) {
+      let res = []
+      switch (tag_name) {
+        case null:
+          res = await this.getTagsByProject(pId)
+          break
+        default:
+          res = await this.getTagsByName(pId, tag_name, cancelToken)
+      }
+      return res
+    },
+    async getTagsByProject(pId) {
+      this.issueLoading = true
+      const res = await getTagsByProject(pId)
+      const tags = res.data.tags
       this.issueLoading = false
       this.cancelToken = null
+      return tags
+    },
+    async getTagsByName(project_id, tag_name, cancelToken) {
+      this.issueLoading = true
+      const params = { project_id, tag_name }
+      const res = await getTagsByName(params, { cancelToken })
+      const tags = res.data.tags
+      this.issueLoading = false
+      this.cancelToken = null
+      return tags
+    },
+    getTagsLabels(tag_name, tags, query) {
+      const tagsList = []
+      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['Result', 'AddTag']
+      tag_sorts.forEach(sort => {
+        const list = tag_name === null ? this.getDefaultTagList(tags, sort) : this.getSearchTagList(tags, sort, query)
+        if (list.options.length > 0) tagsList.push(list)
+      })
+      this.tagsList = tagsList
+    },
+    getDefaultTagList(tags, tag_sort) {
+      const label = {}
+      const showTags = tag_sort === 'All' ? tags : tags.slice(-3)
+      const name = `Issue.${tag_sort}`
+      label.name = this.$t(name)
+      label.options = showTags
+      return label
+    },
+    getSearchTagList(tags, tag_sort, query) {
+      const label = {}
+      const addTag = [{ id: `tag__${query}`, name: query }]
+      const showTags = tag_sort === 'Result' ? tags : addTag
+      const name = `Issue.${tag_sort}`
+      label.name = this.$t(name)
+      label.options = showTags
+      return label
     },
     getObjectById(list, id) {
       return list.find((item) => (item.id === id))
