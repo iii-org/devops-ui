@@ -399,18 +399,16 @@ export default {
     'form.project_id'(value) {
       this.fetchData()
       if (value > 0) {
+        this.getSearchTags()
         this.getSearchIssue()
         this.getSearchRelationIssue()
       }
-    },
-    'form.tags'() {
-      this.getSearchTags()
     }
   },
   mounted() {
     this.fetchData()
-    this.getSearchTags()
     if (this.form.project_id > 0) {
+      this.getSearchTags()
       this.getSearchIssue()
       this.getSearchRelationIssue()
     }
