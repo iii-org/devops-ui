@@ -186,9 +186,7 @@ export default {
       }
     },
     commitId(val) {
-      if (val !== null) {
-        this.handleSelectedRepoName(this.branches[0])
-      }
+      this.handleSelectedRepoName(this.branches[0])
     }
   },
   async created() {

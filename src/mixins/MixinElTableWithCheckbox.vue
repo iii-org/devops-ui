@@ -27,10 +27,10 @@ export default {
   },
   methods: {
     handleSelectionChange(val) {
-      if (this.paged) {
-        this.paged = false
-        return
-      }
+      // if (this.paged) {
+      //   this.paged = false
+      //   return
+      // }
       const indexes = []
       for (const row of val) {
         const index = this.pagedData.indexOf(row)
