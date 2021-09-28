@@ -34,7 +34,7 @@ export const asyncRoutes = [
     path: '/',
     redirect: { name: 'dashboard-admin' },
     meta: {
-      roles: ['Administrator']
+      roles: ['Administrator', 'QA']
     },
     hidden: true
   },
@@ -64,7 +64,7 @@ export const asyncRoutes = [
     meta: {
       icon: 'el-icon-data-analysis',
       title: 'overview',
-      roles: ['Administrator']
+      roles: ['Administrator', 'QA']
     },
     children: [
       {
@@ -74,7 +74,7 @@ export const asyncRoutes = [
         meta: {
           title: 'dashboard',
           icon: 'dashboard',
-          roles: ['Administrator']
+          roles: ['Administrator', 'QA']
         }
       },
       {
