@@ -153,8 +153,7 @@ const actions = {
   },
   setSelectedProject({ commit }, project) {
     const { id } = project
-    if(localStorage.getItem('projectId') !== id.toString())
-    {
+    if (localStorage.getItem('projectId') !== id.toString()) {
       sessionStorage.removeItem('issueFilter')
       sessionStorage.removeItem('groupBy')
       sessionStorage.removeItem('displayClosed')
