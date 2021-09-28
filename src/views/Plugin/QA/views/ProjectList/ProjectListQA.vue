@@ -272,11 +272,11 @@ export default {
     },
     handleClickQA(projectObj) {
       const { id } = projectObj
-      localStorage.setItem('projectId', id)
       const selectedProject = this.userProjectList.filter(elm => {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
+      localStorage.setItem('projectId', id)
       this.$router.push({ name: 'milestone' })
     },
     copyUrl(id) {
