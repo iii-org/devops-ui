@@ -3,15 +3,16 @@
     <project-list-selector>
       <el-row slot="button">
         <el-col class="text-right">
-          <p v-if="updateLoading" class="text-blue-500">
-            <em class="el-icon-loading" /> 儲存中......
-          </p>
-          <p v-else-if="lastUpdated&&lastUpdated.time" class="text-success">
-            <em class="el-icon-check" /> <strong>儲存完成：</strong>{{ lastUpdated.time|relativeTime }}
-          </p>
-          <p v-else-if="lastUpdated&&lastUpdated.error" class="text-danger">
-            <em class="el-icon-check" /> <strong>儲存失敗：</strong>{{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`, lastUpdated.error.response.data.error.details) }}
-          </p>
+          <el-button icon="el-icon-refresh" size="small" @click="onChangeFilter" />
+          <span v-if="updateLoading" class="text-blue-500">
+            <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
+          </span>
+          <span v-else-if="lastUpdated&&lastUpdated.time" class="text-success">
+            <em class="el-icon-check" /> <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
+          </span>
+          <span v-else-if="lastUpdated&&lastUpdated.error" class="text-danger">
+            <em class="el-icon-check" /> <strong>{{ $t('Milestone.Error') }}: </strong>{{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`, lastUpdated.error.response.data.error.details) }}
+          </span>
         </el-col>
       </el-row>
       <SearchFilter
@@ -27,7 +28,7 @@
           trigger="click"
         >
           <el-checkbox v-for="item in columnsOptions" :key="item.value" v-model="checkedColumns[item.value]" :label="item.label">{{ item.label }}</el-checkbox>
-          <el-button slot="reference" icon="el-icon-s-operation" type="text"> 顯示欄位
+          <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ $t('Milestone.Display') }}
             <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
         <el-divider direction="vertical" />

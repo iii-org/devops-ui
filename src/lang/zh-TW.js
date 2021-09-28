@@ -506,6 +506,12 @@ export default {
     List: '議題清單',
     TransferIssueTo: '準備將 {value} 項議題轉移給？'
   },
+  Milestone: {
+    Saving: '儲存中',
+    Success: '儲存@:general.Success',
+    Error: '儲存@:general.Error',
+    Display: '@:(Issue.Display)欄位'
+  },
   Test: {
     TestPlan: {
       no: '@:general.Index',

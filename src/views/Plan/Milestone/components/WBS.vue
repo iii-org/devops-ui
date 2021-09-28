@@ -66,6 +66,7 @@
         prop="start_date"
         show-overflow-tooltip
         sortable
+        before-date-column="due_date"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -78,6 +79,7 @@
         prop="due_date"
         show-overflow-tooltip
         sortable
+        after-date-column="start_date"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -769,6 +771,10 @@ export default {
   height: 100% !important;
 
   > > > table {
+    th {
+      padding: 5px;
+    }
+
     td {
       padding: 5px;
     }

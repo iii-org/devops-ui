@@ -507,6 +507,12 @@ export default {
     List: 'Issue List',
     TransferIssueTo: 'Transfer {value} issues to？'
   },
+  Milestone: {
+    Saving: 'Saving',
+    Success: '@:general.Success',
+    Error: '@:general.Error',
+    Display: '@:Issue.Display Column'
+  },
   Test: {
     TestPlan: {
       no: 'No',
