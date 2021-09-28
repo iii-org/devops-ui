@@ -1,14 +1,16 @@
 <template>
   <el-row class="app-container">
-    <el-alert v-if="status.is_lock" type="warning" class="mb-4 loading" :closable="false">
-      <h2 slot="title">
-        <i class="el-icon-loading" /> {{ $t('Dashboard.ADMIN.syncing') }}
-      </h2>
-    </el-alert>
     <el-row type="flex" class="flex-wrap" :gutter="10">
       <el-col class="text-right">
-        <span class="text-sm ml-3">*本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [status.sync_date]) }}</span>
-        <el-button size="small" icon="el-icon-refresh" @click="getSyncRedmine">{{ $t('Dashboard.ADMIN.UpdateNow') }}</el-button>
+        <span class="text-sm ml-3">*本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)]) }}</span>
+        <el-button size="small" icon="el-icon-refresh" :disabled="status.is_lock" @click="getSyncRedmine">{{ $t('Dashboard.ADMIN.UpdateNow') }}</el-button>
+      </el-col>
+      <el-col v-if="status.is_lock">
+        <el-alert type="warning" class="mb-4 loading" :closable="false">
+          <h2 slot="title">
+            <i class="el-icon-loading" /> {{ $t('Dashboard.ADMIN.syncing') }}
+          </h2>
+        </el-alert>
       </el-col>
       <el-col :xs="24" :sm="24" :md="10">
         <el-card class="overview">
@@ -67,7 +69,7 @@
                 {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
                 <svg-icon icon-class="link-external" />
               </span>
-              <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [lastUpdate]) }} </span>
+              <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
             </div>
           </div>
           <admin-project-list ref="projectList" :data="getProjectListData" @update="getLastUpdate" />
@@ -221,6 +223,9 @@ export default {
     },
     sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
+    },
+    UTCtoLocalTime(value) {
+      return UTCtoLocalTime(value)
     }
   }
 }
