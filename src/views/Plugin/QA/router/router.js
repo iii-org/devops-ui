@@ -2,18 +2,18 @@ import Layout from '@/layout'
 import parentBlank from '@/layout/components/parentBlank'
 
 export const asyncRoutes = [
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/project-list',
-  //   meta: {
-  //     icon: 'list',
-  //     title: 'overview',
-  //     roles: ['QA'],
-  //     appendRoot: { path: '/', position: 'after' }
-  //   },
-  //   hidden: true
-  // },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/project-list',
+    meta: {
+      icon: 'list',
+      title: 'overview',
+      roles: ['QA'],
+      appendRoot: { path: '/', position: 'after' }
+    },
+    hidden: true
+  },
   {
     path: '/project-list',
     component: Layout,
@@ -22,7 +22,7 @@ export const asyncRoutes = [
       icon: 'list',
       title: 'overview',
       roles: ['QA'],
-      appendRoot: { path: '/overview', position: 'after' }
+      appendRoot: { path: '/', position: 'after' }
     },
     children: [
       {
