@@ -2,8 +2,11 @@
   <el-row class="app-container">
     <el-row type="flex" class="flex-wrap" :gutter="10">
       <el-col class="text-right">
-        <span class="text-sm ml-3">*本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)]) }}</span>
-        <el-button size="small" icon="el-icon-refresh" :disabled="status.is_lock" @click="getSyncRedmine">{{ $t('Dashboard.ADMIN.UpdateNow') }}</el-button>
+        <span class="text-sm ml-3">*本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)])
+        }}</span>
+        <el-button size="small" icon="el-icon-refresh" :disabled="status.is_lock" @click="getSyncRedmine">
+          {{ $t('Dashboard.ADMIN.UpdateNow') }}
+        </el-button>
       </el-col>
       <el-col v-if="status.is_lock">
         <el-alert type="warning" class="mb-4 loading" :closable="false">
@@ -152,7 +155,9 @@ export default {
       this.gitCommitLog = await this.getGitCommitLogData()
     },
     async getSyncRedmine() {
+      this.status.is_lock = true
       await getSyncRedmine()
+      await this.sleep(1000)
       await this.loadSyncStatus()
     },
     async loadSyncStatus() {
@@ -237,7 +242,8 @@ export default {
 
 .overview {
   height: 90%;
-  >>> .el-row {
+
+  > > > .el-row {
     height: 100%;
 
     .el-col {
@@ -246,27 +252,29 @@ export default {
   }
 }
 
->>> .el-dialog {
+> > > .el-dialog {
   width: 80%;
+
   &__header {
     padding-bottom: 20px;
     border-bottom: 1px solid #ebeef5;
   }
 }
 
->>> .el-row,
+> > > .el-row,
 .el-row .el-col {
   margin-bottom: 1em;
 }
 
->>> .el-card {
+> > > .el-card {
   height: 100%;
+
   .el-card__body {
     height: 85%;
   }
 }
 
->>> .items-center {
+> > > .items-center {
   text-align: center;
 }
 
@@ -275,7 +283,7 @@ export default {
   min-height: 250px;
 }
 
->>> .el-table {
+> > > .el-table {
   .danger-row {
     background: $danger-4;
   }
