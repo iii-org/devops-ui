@@ -530,7 +530,7 @@ export default {
       }
       this.$set(row, 'create', false)
     },
-    async handleUpdateIssue({ value, row, index }) {
+    async handleUpdateIssue({ value, row }) {
       let checkUpdate = false
       const originDate = this.$dayjs(row.originColumn)
       if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
@@ -575,7 +575,8 @@ export default {
               store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
               store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
             } else {
-              this.$set(this.listData, index, this.issueFormatter(res.data))
+              const row_index = this.listData.findIndex(issue => row.id === issue.id)
+              this.$set(this.listData, row_index, this.issueFormatter(res.data))
             }
             this.$emit('update-status', {
               time: res.datetime
