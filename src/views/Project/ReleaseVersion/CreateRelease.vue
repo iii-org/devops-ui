@@ -200,7 +200,6 @@ export default {
       this.branches = []
       const res = await getBranchesByProject(this.selectedRepositoryId)
       this.setBranchesData(res.data)
-      this.setFormBranch()
       this.setFormData()
       this.getMemberCommitListByBranch()
     },
@@ -219,12 +218,10 @@ export default {
       const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : null
       this.commitId = harborCommitId
     },
-    setFormBranch() {
+    setFormData() {
       for (const branch of this.branchesData) {
         this.branches.push(branch.name)
       }
-    },
-    setFormData() {
       if (this.branchesData.length > 0) {
         this.commitForm.branch = this.branchesData[0].name
       } else {
