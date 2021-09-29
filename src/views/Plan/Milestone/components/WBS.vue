@@ -367,7 +367,7 @@ export default {
             }
             this.$set(lazyTreeNodeMap, row.id, [])
           } else {
-            await this.getIssueFamilyData(row, row.id, null, lazyTreeNodeMap)
+            await this.getIssueFamilyData(row, row.id, null, true)
           }
           this.$refs.WBS.toggleRowExpansion(row, true)
           treeDataArray = treeData[row.id].children
@@ -656,18 +656,25 @@ export default {
         const data = family.data
         if (data.hasOwnProperty('children')) {
           if (treeData) {
-            this.$set(treeData, row.id, data.children.map(item => ({
+            const store = this.$refs.WBS.layout.store
+            const { treeData, lazyTreeNodeMap } = store.states
+            const childrenData = data.children.map(item => ({
               parent_object: {
                 ...row,
                 children: data.children
               }, ...item
-            })))
+            }))
+            store.$set(treeData[row.id], 'children', data.children.map(item => (item.id)))
+            store.$set(lazyTreeNodeMap, row.id, childrenData)
           } else {
             resolve(data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
           }
         } else {
           if (treeData) {
-            this.$set(treeData, row.id, [])
+            const store = this.$refs.WBS.layout.store
+            const { treeData, lazyTreeNodeMap } = store.states
+            store.$set(treeData[row.id], 'children', [])
+            store.$set(lazyTreeNodeMap, row.id, [])
           } else {
             resolve([])
           }
