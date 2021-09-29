@@ -110,6 +110,9 @@ import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectRe
 import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
 import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
 
+const downloadFileName = 'DevOps_test_report'
+const dataName = ['sonarqube', 'checkmarx', 'zap', 'webinspect', 'postman', 'sideex']
+
 export default {
   name: 'TestReport',
   components: { SonarQubeReport, CheckMarxReport, ZapReport, WebInspectReport, PostmanReport, SideexReport },
@@ -124,8 +127,6 @@ export default {
       postman: [],
       sideex: [],
       sonarQubeLink: '',
-      downloadFileName: 'DevOps_test_report',
-      dataName: ['sonarqube', 'checkmarx', 'zap', 'webinspect', 'postman', 'sideex'],
       dataTimeArr: []
     }
   },
@@ -152,7 +153,7 @@ export default {
       this.listLoading = true
       try {
         const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
-        this.dataName.map(name => this.setTestReportData(res.data, name))
+        dataName.forEach(name => this.setTestReportData(res.data, name))
         this.getDataTime()
       } catch (error) {
         console.error(error)
@@ -182,7 +183,7 @@ export default {
     },
     getDataTime() {
       const dataTimeArr = []
-      this.dataName.map(name => {
+      dataName.forEach(name => {
         if (!this[name]) return
         if (this[name][0]) {
           name === 'sonarqube'
@@ -206,7 +207,7 @@ export default {
       this.$router.go(-1)
     },
     async downloadPdf() {
-      await this.$pdf(this.$refs.pdfPage, this.downloadFileName)
+      await this.$pdf(this.$refs.pdfPage, downloadFileName)
     },
     async getSheet(filename_extension) {
       const newDiv = await this.getTableDom()
@@ -219,7 +220,7 @@ export default {
       // create a new div and append all the table dom on it
       const newDiv = document.createElement('div')
       // table dom
-      this.dataName.map(name => {
+      dataName.forEach(name => {
         if (this[name]) {
           dom = this.$refs[name].$refs[`table_${name}`].$el.cloneNode(true)
           newDiv.appendChild(dom)
@@ -230,10 +231,10 @@ export default {
     async download(sheet, filename_extension) {
       switch (filename_extension) {
         case 'csv':
-          await this.$csv(sheet, this.downloadFileName)
+          await this.$csv(sheet, downloadFileName)
           break
         case 'excel':
-          await this.$excel(sheet, this.downloadFileName)
+          await this.$excel(sheet, downloadFileName)
       }
     }
   }
