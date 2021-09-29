@@ -364,6 +364,7 @@ export default {
     Priority: 'Priority',
     Estimate: 'Estimate',
     DoneRatio: 'Done Ratio',
+    DoneRatio_sm: 'Done Ratio',
     StartDate: 'Start Date',
     EndDate: 'End Date',
     Description: 'Issue Description',

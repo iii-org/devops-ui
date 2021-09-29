@@ -118,7 +118,7 @@
       <WBSInputColumn
         v-if="columns.indexOf('DoneRatio')>=0"
         width="100px"
-        :label="$t('Issue.DoneRatio')"
+        :label="$t('Issue.DoneRatio_sm')"
         prop="done_ratio"
         :number="true"
         sortable

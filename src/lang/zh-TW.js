@@ -362,6 +362,7 @@ export default {
     Priority: '優先權',
     Estimate: '預估工時',
     DoneRatio: '完成比率',
+    DoneRatio_sm: '完成率',
     StartDate: '開始日期',
     EndDate: '結束日期',
     Description: '議題描述',
