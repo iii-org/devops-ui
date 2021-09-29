@@ -199,15 +199,18 @@ export default {
     async getBranchesData() {
       this.branches = []
       const res = await getBranchesByProject(this.selectedRepositoryId)
-      res.data.branch_list.sort((itemA, itemB) => {
+      this.setBranchesData(res.data)
+      this.setFormBranch()
+      this.setFormData()
+      this.getMemberCommitListByBranch()
+    },
+    setBranchesData(data) {
+      data.branch_list.sort((itemA, itemB) => {
         const timeA = Date.parse(itemA.last_commit_time)
         const timeB = Date.parse(itemB.last_commit_time)
         return timeB - timeA
       })
-      this.branchesData = res.data['branch_list']
-      this.setFormBranch()
-      this.setFormData()
-      this.getMemberCommitListByBranch()
+      this.branchesData = data['branch_list']
     },
     async getMemberCommitListByBranch() {
       const params = { branch: this.commitForm.branch }

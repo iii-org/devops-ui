@@ -109,14 +109,10 @@ export default {
   },
   methods: {
     async init() {
-      if (this.selectedProjectId < 0) {
-        return
-      }
+      if (this.selectedProjectId < 0) return
       await this.loadData()
       const vsString = this.$route.query.versions
-      if (vsString) {
-        this.checkQuery(vsString)
-      }
+      if (vsString) this.checkQuery(vsString)
     },
     async loadData() {
       const res = await getProjectVersion(this.selectedProjectId)
@@ -151,11 +147,7 @@ export default {
         })
       }
       await this.checkIssues()
-      if (this.hasOpenIssue) {
-        await this.listOpenIssues()
-      } else {
-        await this.showCreateRelease()
-      }
+      this.hasOpenIssue ? await this.listOpenIssues() : await this.showCreateRelease()
       this.fullscreenLoading = false
     },
     async checkIssues() {
@@ -169,9 +161,7 @@ export default {
         for (const issueJson of res.data) {
           const issue = new Issue(issueJson)
           this.allIssues.push(issue)
-          if (!issue.isClosed) {
-            this.hasOpenIssue = true
-          }
+          if (!issue.isClosed) this.hasOpenIssue = true
         }
       }
     },

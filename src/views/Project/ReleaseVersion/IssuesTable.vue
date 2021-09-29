@@ -206,9 +206,7 @@ export default {
     },
     categorySel() {
       const ret = [this.$t('Release.allCategories')]
-      for (const c of this.categories) {
-        ret.push(this.$t(`Issue.${c}`))
-      }
+      this.categories.forEach(category => ret.push(this.$t(`Issue.${category}`)))
       return ret
     }
   },
@@ -244,15 +242,16 @@ export default {
       this.processData()
     },
     processData() {
-      let partialIssues
-      if (this.selectedCategory === this.$t('Release.allCategories')) {
-        partialIssues = this.issues
-      } else {
-        partialIssues = this.issues.filter(item => item.trackerName === this.selectedCategory)
-      }
+      const partialIssues = this.selectedCategory === this.$t('Release.allCategories')
+        ? this.issues : this.issues.filter(item => item.trackerName === this.selectedCategory)
       this.closedIssueCount = 0
       this.openIssueCount = 0
-      this.listData = partialIssues.filter(issue => {
+      this.listData = this.getListData(partialIssues)
+      this.adjustTable(5)
+      this.resizeTable()
+    },
+    getListData(partialIssues) {
+      const listData = partialIssues.filter(issue => {
         if (issue.isClosed) {
           this.closedIssueCount++
           return this.showClosed
@@ -261,19 +260,14 @@ export default {
           return this.showOpen
         }
       })
-      this.adjustTable(5)
-
+      return listData
+    },
+    resizeTable() {
       // If data reduces, we need to set current page to smaller one making data visible
       this.$nextTick(() => {
         const len = this.listData.length
         const pageSize = this.listQuery.limit
-        if ((this.listQuery.page - 1) * pageSize >= len) {
-          if (len > 0) {
-            this.listQuery.page = 1 + Math.floor((len - 1) / pageSize)
-          } else {
-            this.listQuery.page = 1
-          }
-        }
+        if ((this.listQuery.page - 1) * pageSize >= len) this.listQuery.page = len > 0 ? 1 + Math.floor((len - 1) / pageSize) : 1
       })
     },
     handleEdit(idx, row) {
@@ -337,17 +331,13 @@ export default {
           break
         }
       }
-      if (this.pagedData.length === 0 && this.listQuery.page > 1) {
-        this.listQuery.page--
-      }
+      if (this.pagedData.length === 0 && this.listQuery.page > 1) this.listQuery.page--
       this.processData()
       this.listLoading = false
       this.showFormDialog = false
 
       // If all issues are closed, change to create release screen
-      if (this.openIssueCount === 0) {
-        this.$parent.init()
-      }
+      if (this.openIssueCount === 0) this.$parent.init()
     },
     async batchClose() {
       this.listLoading = true
