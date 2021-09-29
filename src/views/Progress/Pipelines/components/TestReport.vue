@@ -152,21 +152,24 @@ export default {
       this.listLoading = true
       try {
         const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
-        if (res.data.sonarqube) {
-          this.sonarqube = this.handleSonarQubeData(res.data.sonarqube.history)
-          this.sonarQubeLink = res.data.sonarqube.link
-        } else this.sonarqube = undefined
-        res.data.checkmarx ? this.checkmarx.push(res.data.checkmarx) : this.checkmarx = undefined
-        res.data.zap ? this.zap.push(res.data.zap) : this.zap = undefined
-        res.data.webinspect ? this.webinspect.push(res.data.webinspect) : this.webinspect = undefined
-        res.data.postman ? this.postman.push(res.data.postman) : this.postman = undefined
-        res.data.sideex ? this.sideex.push(res.data.sideex) : this.sideex = undefined
+        this.dataName.map(name => this.setTestReportData(res.data, name))
         this.getDataTime()
-        this.listLoading = false
       } catch (error) {
         console.error(error)
+      } finally {
         this.listLoading = false
       }
+    },
+    setTestReportData(resData, name) {
+      const data = resData[name]
+      if (name === 'sonarqube') this.setSonarQubeData(resData)
+      else data ? this[name].push(data) : this[name] = undefined
+    },
+    setSonarQubeData(data) {
+      if (data.sonarqube) {
+        this.sonarqube = this.handleSonarQubeData(data.sonarqube.history)
+        this.sonarQubeLink = data.sonarqube.link
+      } else this.sonarqube = undefined
     },
     handleSonarQubeData(data) {
       const ret = []
@@ -179,9 +182,13 @@ export default {
     },
     getDataTime() {
       const dataTimeArr = []
-      this.dataName.map(item => {
-        if (!this[item]) return
-        if (this[item][0]) item === 'sonarqube' ? dataTimeArr.push(this.getSonarQubeTime(this[item][0].run_at)) : dataTimeArr.push(this[item][0].run_at)
+      this.dataName.map(name => {
+        if (!this[name]) return
+        if (this[name][0]) {
+          name === 'sonarqube'
+            ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
+            : dataTimeArr.push(this[name][0].run_at)
+        }
       })
       dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
       this.dataTimeArr = dataTimeArr
