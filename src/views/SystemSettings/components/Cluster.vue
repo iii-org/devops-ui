@@ -122,20 +122,20 @@ export default {
   data() {
     return {
       showAddClusterPage: false,
-      updateStatus: 'UPDATE_PUT',
+      updateStatus: 'UPDATE_INIT',
+      editingId: 1,
+      hasUploadfile: false,
+      isSaved: false,
       form: {
         clusterName: '',
         disabled: false,
         kubeConfigString: null
       },
-      editingId: 1,
-      hasUploadfile: false,
-      originData: {
+      origin: {
         clusterName: '',
         disabled: false,
         kubeConfigString: null
-      },
-      isSaved: false
+      }
     }
   },
   computed: {
@@ -143,9 +143,9 @@ export default {
       return !!this.form.kubeConfigString
     },
     isClusterFormChanged() {
-      if (this.originData.length === 0) return false
+      if (this.origin.length === 0) return false
       for (const key in this.form) {
-        if (this.originData[key] !== this.form[key]) return true
+        if (this.origin[key] !== this.form[key]) return true
       }
       return false
     }
@@ -159,8 +159,9 @@ export default {
       const res = await getDeployedHostsByList(cluster_id)
       this.setFormData(res.data)
     },
-    async updateDeployHostsById(formData) {
-      await updateDeployHostsById(this.editingId, formData)
+    async updateDeployHostsById(formData, cluster_id) {
+      const id = cluster_id || this.editingId
+      await updateDeployHostsById(id, formData)
         .then(() => {
           this.loadData()
           this.initClusterTab()
@@ -191,15 +192,7 @@ export default {
       formData.delete('k8s_config_string')
       formData.append('name', name)
       formData.append('disabled', disabled)
-
-      await updateDeployHostsById(cluster_id, formData)
-        .then(() => {
-          this.loadData()
-          this.showUpdateMessage()
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      this.updateDeployHostsById(formData, cluster_id)
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
@@ -225,43 +218,35 @@ export default {
       this.setOriginData(this.form)
     },
     addCluster() {
-      this.initFormData()
+      this.initData('form')
       this.updateStatus = 'UPDATE_POST'
       this.showAddClusterPage = true
     },
     async handleBackPage() {
-      if (this.isClusterFormChanged) {
-        if (!this.isSaved) {
-          const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-            confirmButtonText: this.$t('general.Confirm'),
-            cancelButtonText: this.$t('general.Cancel'),
-            type: 'warning'
-          }).catch(() => {})
-          if (res !== 'confirm') return
-        }
+      if (this.isClusterFormChanged && !this.isSaved) {
+        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).catch(() => {})
+        if (res !== 'confirm') return
       }
       this.initClusterTab()
     },
     initClusterTab() {
-      this.initFormData()
-      this.initOriginData()
+      this.initData('form')
+      this.initData('origin')
       this.isSaved = false
       this.showAddClusterPage = false
       this.hasUploadfile = false
     },
-    initFormData() {
-      this.form = {
+    initData(source) {
+      const data = {
         clusterName: '',
         disabled: false,
         kubeConfigString: null
       }
-    },
-    initOriginData() {
-      this.originData = {
-        clusterName: '',
-        disabled: false,
-        kubeConfigString: null
-      }
+      this[source] = data
     },
     hasFileList(val) {
       this.form.kubeConfigString = null
@@ -282,15 +267,14 @@ export default {
     },
     handleSave() {
       if (!this.form.clusterName) {
-        this.$message({
-          title: this.$t('general.Warning'),
-          message: this.$t('SystemDeploySettings.NoNameWarning'),
-          type: 'warning'
-        })
+        this.showNoNameWarning()
         return
       }
       this.isSaved = true
       const formData = this.getUpdateFormData()
+      this.updateData(formData)
+    },
+    updateData(formData) {
       switch (this.updateStatus) {
         case 'UPDATE_PUT':
           this.updateDeployHostsById(formData)
@@ -300,13 +284,20 @@ export default {
       }
     },
     setOriginData(data) {
-      this.originData = JSON.parse(JSON.stringify(data))
+      this.origin = JSON.parse(JSON.stringify(data))
     },
     showUpdateMessage() {
       this.$message({
         title: this.$t('general.Success'),
         message: this.$t('SystemDeploySettings.ClusterMessage'),
         type: 'success'
+      })
+    },
+    showNoNameWarning() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('SystemDeploySettings.NoNameWarning'),
+        type: 'warning'
       })
     },
     clusterStatus(status) {

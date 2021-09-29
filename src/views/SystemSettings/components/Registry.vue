@@ -110,8 +110,10 @@ export default {
   data() {
     return {
       showAddRegistryPage: false,
-      updateStatus: 'UPDATE_PUT',
+      updateStatus: 'UPDATE_INIT',
       editingId: 1,
+      updatedFormData: {},
+      isSaved: false,
       form: {
         type: 'harbor',
         description: '',
@@ -122,8 +124,7 @@ export default {
         account: '',
         password: ''
       },
-      updatedFormData: {},
-      originData: {
+      origin: {
         type: 'harbor',
         description: '',
         insecure: true,
@@ -132,15 +133,14 @@ export default {
         url: '',
         account: '',
         password: ''
-      },
-      isSaved: false
+      }
     }
   },
   computed: {
     isRegistryFormChanged() {
-      if (this.originData.length === 0) return false
+      if (this.origin.length === 0) return false
       for (const key in this.form) {
-        if (this.originData[key] !== this.form[key]) return true
+        if (this.origin[key] !== this.form[key]) return true
       }
       return false
     }
@@ -161,8 +161,10 @@ export default {
           console.error(err)
         })
     },
-    async updateRegistryHostsById() {
-      await updateRegistryHostsById(this.editingId, this.updatedFormData)
+    async updateRegistryHostsById(registries_id, data) {
+      const id = registries_id || this.editingId
+      const formData = data || this.updatedFormData
+      await updateRegistryHostsById(id, formData)
         .then(() => {
           this.loadData()
           this.initRegistryTab()
@@ -175,47 +177,38 @@ export default {
     async updateHostsDisabled(row) {
       const { name, disabled, url, access_key, access_secret, type, description } = row
       const registries_id = row.registries_id
-      const data = { name, disabled, type, description, insecure: true, login_server: url, access_key, access_secret }
-      await updateRegistryHostsById(registries_id, data)
-        .then(() => {
-          this.loadData()
-          this.showUpdateMessage()
-        })
-        .catch((err) => {
-          console.error(err)
-        })
+      const data = { name, disabled, type, description, access_key, access_secret, insecure: true, login_server: url }
+      this.updateRegistryHostsById(registries_id, data)
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
       this.updateHostsDisabled(row)
     },
     addRegistry() {
-      this.initFormData()
+      this.initData('form')
       this.updateStatus = 'UPDATE_POST'
       this.showAddRegistryPage = true
     },
     async handleBackPage() {
-      if (this.isRegistryFormChanged) {
-        if (!this.isSaved) {
-          const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-            confirmButtonText: this.$t('general.Confirm'),
-            cancelButtonText: this.$t('general.Cancel'),
-            type: 'warning'
-          }).catch(() => {})
-          if (res !== 'confirm') return
-        }
+      if (this.isRegistryFormChanged && !this.isSaved) {
+        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
+          confirmButtonText: this.$t('general.Confirm'),
+          cancelButtonText: this.$t('general.Cancel'),
+          type: 'warning'
+        }).catch(() => {})
+        if (res !== 'confirm') return
       }
       this.initRegistryTab()
     },
     initRegistryTab() {
-      this.initFormData()
-      this.initOriginData()
+      this.initData('form')
+      this.initData('origin')
       this.isSaved = false
       this.showAddRegistryPage = false
       this.updatedFormData = {}
     },
-    initFormData() {
-      this.form = {
+    initData(source) {
+      const data = {
         type: 'harbor',
         description: '',
         insecure: true,
@@ -225,18 +218,7 @@ export default {
         account: '',
         password: ''
       }
-    },
-    initOriginData() {
-      this.originData = {
-        type: 'harbor',
-        description: '',
-        insecure: true,
-        name: '',
-        disabled: false,
-        url: '',
-        account: '',
-        password: ''
-      }
+      this[source] = data
     },
     rowClicked(row) {
       this.editingId = row.registries_id
@@ -249,23 +231,23 @@ export default {
       const { name, disabled, type, description, url, access_key, access_secret } = rowData
       this.form.name = name
       this.form.disabled = disabled
+      this.form.type = type
+      this.form.description = description
       this.form.url = url
       this.form.account = access_key
       // this.form.password = access_secret
-      this.form.type = type
-      this.form.description = description
       this.setOriginData(this.form)
     },
     getUpdateFormData() {
       const formData = {}
       formData.name = this.form.name
+      formData.disabled = this.form.disabled
+      formData.type = this.form.type
+      formData.description = this.form.description
+      formData.login_server = this.form.url
       formData.access_key = this.form.account
       formData.access_secret = this.form.password
-      formData.type = this.form.type
-      formData.login_server = this.form.url
-      formData.description = this.form.description
       formData.insecure = this.form.insecure
-      formData.disabled = this.form.disabled
       Object.assign(this.updatedFormData, formData)
     },
     handleSave() {
@@ -275,7 +257,9 @@ export default {
         this.showFailUpdateMessage()
         return
       }
-
+      this.updateData()
+    },
+    updateData() {
       switch (this.updateStatus) {
         case 'UPDATE_PUT':
           this.updateRegistryHostsById()
@@ -285,7 +269,7 @@ export default {
       }
     },
     setOriginData(data) {
-      this.originData = JSON.parse(JSON.stringify(data))
+      this.origin = JSON.parse(JSON.stringify(data))
     },
     showUpdateMessage() {
       this.$message({
