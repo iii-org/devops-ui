@@ -130,7 +130,11 @@ export default {
       },
       editingId: 1,
       hasUploadfile: false,
-      originData: [],
+      originData: {
+        clusterName: '',
+        disabled: false,
+        kubeConfigString: null
+      },
       isSaved: false
     }
   },
@@ -240,12 +244,20 @@ export default {
     },
     initClusterTab() {
       this.initFormData()
+      this.initOriginData()
       this.isSaved = false
       this.showAddClusterPage = false
       this.hasUploadfile = false
     },
     initFormData() {
       this.form = {
+        clusterName: '',
+        disabled: false,
+        kubeConfigString: null
+      }
+    },
+    initOriginData() {
+      this.originData = {
         clusterName: '',
         disabled: false,
         kubeConfigString: null

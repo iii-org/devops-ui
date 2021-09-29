@@ -123,7 +123,16 @@ export default {
         password: ''
       },
       updatedFormData: {},
-      originData: [],
+      originData: {
+        type: 'harbor',
+        description: '',
+        insecure: true,
+        name: '',
+        disabled: false,
+        url: '',
+        account: '',
+        password: ''
+      },
       isSaved: false
     }
   },
@@ -149,7 +158,6 @@ export default {
           this.showUpdateMessage()
         })
         .catch((err) => {
-          this.showAddRegistryPage = false
           console.error(err)
         })
     },
@@ -161,7 +169,6 @@ export default {
           this.showUpdateMessage()
         })
         .catch((err) => {
-          this.showAddRegistryPage = false
           console.error(err)
         })
     },
@@ -202,12 +209,25 @@ export default {
     },
     initRegistryTab() {
       this.initFormData()
+      this.initOriginData()
       this.isSaved = false
       this.showAddRegistryPage = false
       this.updatedFormData = {}
     },
     initFormData() {
       this.form = {
+        type: 'harbor',
+        description: '',
+        insecure: true,
+        name: '',
+        disabled: false,
+        url: '',
+        account: '',
+        password: ''
+      }
+    },
+    initOriginData() {
+      this.originData = {
         type: 'harbor',
         description: '',
         insecure: true,
