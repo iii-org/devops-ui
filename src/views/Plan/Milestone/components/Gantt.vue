@@ -87,6 +87,17 @@ import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '../../../Plugin/QA/views/Project/IssueDetail'
 import jquery from 'jquery'
 
+moment.updateLocale('zh-tw', {
+  week: {
+    dow: 0
+  }
+})
+moment.updateLocale('en', {
+  week: {
+    dow: 0
+  }
+})
+
 const currentStart = moment().startOf('year')
 const currentEnd = moment().endOf('year')
 const columnWidth = 35
@@ -109,7 +120,7 @@ const defaultSetting = {
     },
     {
       unit: 'week',
-      format: 'WW'
+      format: 'ww'
     }
   ],
   columnUnit: 'week'
