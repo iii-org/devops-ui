@@ -6,8 +6,9 @@
           v-model="row[prop]"
           type="date"
           value-format="yyyy-MM-dd"
-          :clearable="false"
+          clearable
           style="width: 100%"
+          :picker-options="pickerOptions(row)"
           @keyup.enter.native="handlerCreate(row, $index)"
           @keyup.esc.native="handlerResetCreate(row, $index)"
         />
@@ -17,8 +18,9 @@
           v-model="row[prop]"
           type="date"
           value-format="yyyy-MM-dd"
-          :clearable="false"
+          clearable
           style="width: 100%"
+          :picker-options="pickerOptions(row)"
           @change="handlerEdit(row, $index)"
           @keyup.enter.native="handlerEdit(row, $index)"
           @keyup.esc.native="handlerReset(row, $index)"
@@ -68,9 +70,32 @@ export default {
     showOverflowTooltip: {
       type: Boolean,
       default: false
+    },
+    afterDateColumn: {
+      type: String,
+      default: null
+    },
+    beforeDateColumn: {
+      type: String,
+      default: null
     }
   },
   methods: {
+    pickerOptions(row) {
+      const _this = this
+      return {
+        disabledDate(date) {
+          if (_this.beforeDateColumn && row[_this.beforeDateColumn]) {
+            return date > new Date(row[_this.beforeDateColumn])
+          }
+          if (_this.afterDateColumn && row[_this.afterDateColumn]) {
+            const setAfterDate = new Date(row[_this.afterDateColumn])
+            return date < setAfterDate.setDate(setAfterDate.getDate() - 1)
+          }
+          return false
+        }
+      }
+    },
     hasRequired(row) {
       return this.required && row[this.prop].length <= 0
     },

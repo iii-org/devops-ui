@@ -21,7 +21,8 @@
         </el-select>
       </template>
       <template v-else-if="row.editColumn===propKey&&editable(row)">
-        <el-select v-model="row[propKey]['id']" @change="handlerEdit(row, $index)"
+        <el-select v-model="row[propKey]['id']"
+                   @change="handlerEdit(row, $index)"
                    @keyup.enter.native="handlerEdit(row, $index)"
                    @keyup.esc.native="handlerReset(row, $index)"
         >
