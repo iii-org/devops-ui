@@ -18,8 +18,7 @@ export default {
   name: 'VersionUpdater',
   data() {
     return {
-      loadingInstance: null,
-      timer: null
+      loadingInstance: null
     }
   },
   computed: {
@@ -35,9 +34,6 @@ export default {
   },
   mounted() {
     if (this.userRole === 'Administrator') this.checkApiVersion()
-  },
-  beforeDestroy() {
-    this.clearTimer()
   },
   methods: {
     ...mapActions('settings', ['checkApiVersion']),
@@ -61,8 +57,9 @@ export default {
     async handleUpdate() {
       const res = await this.checkApiVersion()
       const hasUpdate = res.data.has_update
+      let timer = null
       if (hasUpdate) {
-        this.timer = setTimeout(() => {
+        timer = setTimeout(() => {
           updateDevopsVersion()
             .then(() => this.handleUpdate())
             .catch(err => {
@@ -74,6 +71,7 @@ export default {
               console.error(err)
             })
         }, 5000)
+        this.clearTimer(timer)
       } else {
         this.loadingInstance.close()
         this.$message({
@@ -83,9 +81,11 @@ export default {
         })
       }
     },
-    clearTimer() {
-      clearTimeout(this.timer)
-      this.timer = null
+    clearTimer(timer) {
+      this.$once('hook:beforeDestroy', () => {
+        clearTimeout(timer)
+        timer = null
+      })
     }
   }
 }

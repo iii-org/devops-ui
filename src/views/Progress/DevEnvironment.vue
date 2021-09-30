@@ -188,17 +188,12 @@ export default {
     return {
       searchKeys: ['branch'],
       btnLoading: false,
-      timer: null,
       lastUpdateTime: '',
       pods: []
     }
   },
   mounted() {
-    this.timer = setInterval(() => this.fetchData(), 10000)
-  },
-  beforeDestroy() {
-    clearInterval(this.timer)
-    this.timer = null
+    this.handleSetInterval()
   },
   methods: {
     async fetchData() {
@@ -312,6 +307,13 @@ export default {
             }))
           }))
         }
+      })
+    },
+    handleSetInterval() {
+      let timer = setInterval(() => this.fetchData(), 10000)
+      this.$once('hook:beforeDestroy', () => {
+        clearInterval(timer)
+        timer = null
       })
     }
   }

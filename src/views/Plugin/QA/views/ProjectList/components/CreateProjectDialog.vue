@@ -222,7 +222,7 @@ export default {
       loadingTemplateText: ['', '.', '..', '...'],
       loadingInstance: {},
       templateLoadingInstance: {},
-      timeout: '',
+      timer: '',
       focusSources: 'Public Templates'
     }
   },
@@ -251,10 +251,10 @@ export default {
           customClass: 'project-dialog-loading'
         })
         this.loadingText.map((text, index) => {
-          this.timeout = setTimeout(() => this.openFullLoading(text), 3000 * index)
+          this.timer = setTimeout(() => this.openFullLoading(text), 3000 * index)
         })
       } else {
-        clearTimeout(this.timeout)
+        clearTimeout(this.timer)
         this.openFullLoading()
       }
     },
@@ -271,10 +271,10 @@ export default {
         // set 60secs for loading to show different words
         for (let sec = 1; sec < 60; sec++) {
           const templateText = `${text}${this.loadingTemplateText[sec % 4]}`
-          this.timeout = setTimeout(() => this.openTemplateFullLoading(templateText), 1000 * sec)
+          this.timer = setTimeout(() => this.openTemplateFullLoading(templateText), 1000 * sec)
         }
       } else {
-        clearTimeout(this.timeout)
+        clearTimeout(this.timer)
         this.openTemplateFullLoading()
       }
     },
