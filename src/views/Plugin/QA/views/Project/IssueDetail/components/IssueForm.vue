@@ -405,7 +405,7 @@ export default {
       }
     },
     'form.tags'(value) {
-      this.getSearchTags()
+      if (this.form.project_id > 0) this.getSearchTags()
     }
   },
   mounted() {
