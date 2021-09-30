@@ -122,6 +122,9 @@ export default {
       Object.keys(value).forEach(item => {
         this[item] = value[item]
       })
+      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
+        this.$delete(this.filterValue, 'tags')
+      }
       await this.onChangeFilter()
     },
     async onChangeFilter() {

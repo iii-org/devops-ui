@@ -254,24 +254,28 @@ export default {
     ]),
     filterOptions() {
       return [
-        { id: 1,
+        {
+          id: 1,
           label: this.$t('Issue.FilterDimensions.status'),
           value: 'status',
           placeholder: 'Status',
           tag: true
         },
-        { id: 2,
+        {
+          id: 2,
           label: this.$t('Issue.FilterDimensions.tags'),
           value: 'tags',
           placeholder: 'Tag'
         },
-        { id: 3,
+        {
+          id: 3,
           label: this.$t('Issue.FilterDimensions.tracker'),
           value: 'tracker',
           placeholder: 'Type',
           tag: true
         },
-        { id: 4,
+        {
+          id: 4,
           label: this.$t('Issue.FilterDimensions.assigned_to'),
           value: 'assigned_to',
           placeholder: 'Member'
@@ -748,8 +752,11 @@ export default {
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
     },
-    async  onChangeFilter() {
+    async onChangeFilter() {
       const storeFilterValue = await this.getIssueFilter()
+      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
+        this.$delete(this.filterValue, 'tags')
+      }
       storeFilterValue['board'] = this.filterValue
       const storeKeyword = await this.getKeyword()
       storeKeyword['board'] = this.keyword
@@ -962,7 +969,7 @@ export default {
       }
     }
 
-        > > > &.bug {
+    > > > &.bug {
       .board-column-header {
         .header-bar {
           @apply bg-bug
