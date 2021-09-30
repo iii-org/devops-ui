@@ -396,6 +396,9 @@ export default {
         this.getSearchIssue()
         this.getSearchRelationIssue()
       }
+    },
+    'form.tags'(value) {
+      this.getSearchTags()
     }
   },
   mounted() {
