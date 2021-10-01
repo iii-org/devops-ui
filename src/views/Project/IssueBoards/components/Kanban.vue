@@ -34,7 +34,9 @@
                 @click="handleClick(element.id)"
               >
                 {{ element.name }}
-                <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name
+                }}
+                </el-tag>
               </el-link>
             </div>
           </div>
@@ -75,22 +77,30 @@
                 <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
               <template v-if="element.family">
-                <div v-if="element.hasOwnProperty('parent')" class="parent" @contextmenu="handleContextMenu(element.parent, '', $event)">
+                <div v-if="element.hasOwnProperty('parent')" class="parent"
+                     @contextmenu="handleContextMenu(element.parent, '', $event)"
+                >
                   <b>{{ $t('Issue.ParentIssue') }}：</b>
                   <status :name="element.parent.status.name" size="mini" />
                   <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
                     {{ element.parent.name }}
-                    <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                    <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                      {{ item.name }}
+                    </el-tag>
                   </el-link>
                 </div>
                 <div v-if="element.hasOwnProperty('children')&&element.children.length > 0" class="parent">
                   <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                   <ol class="children_list">
-                    <li v-for="(subElement, index) in element.children" :key="index" @contextmenu="handleContextMenu(subElement, '', $event)">
+                    <li v-for="(subElement, index) in element.children" :key="index"
+                        @contextmenu="handleContextMenu(subElement, '', $event)"
+                    >
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
-                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                          {{ item.name }}
+                        </el-tag>
                       </el-link>
                     </li>
                   </ol>
@@ -98,11 +108,15 @@
                 <div v-if="element.hasOwnProperty('relations')&&element.relations.length > 0" class="parent">
                   <b>{{ $t('Issue.RelatedIssue') }}：</b>
                   <ol class="children_list">
-                    <li v-for="(subElement, index) in element.relations" :key="index" @contextmenu="handleContextMenu(subElement, '', $event)">
+                    <li v-for="(subElement, index) in element.relations" :key="index"
+                        @contextmenu="handleContextMenu(subElement, '', $event)"
+                    >
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
-                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                          {{ item.name }}
+                        </el-tag>
                       </el-link>
                     </li>
                   </ol>
@@ -113,8 +127,13 @@
         </div>
       </div>
       <div slot="header">
-        <div class="title board-item select-none" @click="showDialog = !showDialog"><i class="el-icon-plus ml-4 mr-5 add-button" /> {{ $t('Issue.AddIssue') }}</div>
-        <QuickAddIssueOnBoard v-if="showDialog" class="board-item" :save-data="addIssue" :board-object="boardObject" @after-add="showDialog = !showDialog" />
+        <div class="title board-item select-none" @click="showDialog = !showDialog"><i
+          class="el-icon-plus ml-4 mr-5 add-button"
+        /> {{ $t('Issue.AddIssue') }}
+        </div>
+        <QuickAddIssueOnBoard v-if="showDialog" class="board-item" :save-data="addIssue" :board-object="boardObject"
+                              @after-add="showDialog = !showDialog"
+        />
       </div>
     </draggable>
   </div>
@@ -177,7 +196,8 @@ export default {
     },
     addIssue: {
       type: Function,
-      default: () => {}
+      default: () => {
+      }
     }
   },
   data() {
@@ -320,9 +340,21 @@ export default {
             })
           }
         } else {
+          let value = { [Object.keys(data)[0]]: Object.values(data)[0] }
+          if (Object.keys(data)[0] === 'tags') {
+            const now = Object.values(data)[0]
+            const result = element.tags
+            const findTagIndex = element.tags.findIndex(item => item.id === now.id)
+            if (findTagIndex >= 0) {
+              result.splice(findTagIndex, 1)
+            } else {
+              result.push(now)
+            }
+            value = { [Object.keys(data)[0]]: result }
+          }
           this.$emit('update-drag', {
             id: this.list[idx].id,
-            value: { [Object.keys(data)[0]]: Object.values(data)[0] }
+            value: value
           })
         }
         this.reload += 1
@@ -357,9 +389,15 @@ export default {
       this.$set(element, 'loadingRelation', true)
       const family = await getIssueFamily(element.id)
       const data = family.data
-      if (data.hasOwnProperty('parent')) { await this.$set(element, 'parent', data.parent) }
-      if (data.hasOwnProperty('children')) { await this.$set(element, 'children', data.children) }
-      if (data.hasOwnProperty('relations')) { await this.$set(element, 'relations', data.relations) }
+      if (data.hasOwnProperty('parent')) {
+        await this.$set(element, 'parent', data.parent)
+      }
+      if (data.hasOwnProperty('children')) {
+        await this.$set(element, 'children', data.children)
+      }
+      if (data.hasOwnProperty('relations')) {
+        await this.$set(element, 'relations', data.relations)
+      }
       this.issueReload += 1
       this.$set(element, 'loadingRelation', false)
     },
@@ -450,12 +488,14 @@ export default {
     }
   }
 }
-.due_date{
-  .danger{
+
+.due_date {
+  .danger {
     font-weight: 900;
-    color:#F56C6C;
+    color: #F56C6C;
   }
-  .warning{
+
+  .warning {
     font-weight: 500;
     color: #d27e00;
   }

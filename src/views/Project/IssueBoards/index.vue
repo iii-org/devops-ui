@@ -135,7 +135,7 @@
     </el-col>
     <right-panel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
       <template v-for="item in filterOptions">
-        <el-row v-if="item.value!=='tags'" :key="item.id" class="panel">
+        <el-row :key="item.id" class="panel">
           <el-card>
             <template slot="header">{{ item.label }}</template>
             <template v-for="(subItem, index) in getFilterValueList(item.value)">
@@ -660,7 +660,11 @@ export default {
       this.isLoading = true
       const filterDimension = Object.keys(value)[0]
       try {
-        await updateIssue(id, { [filterDimension + '_id']: value[filterDimension].id })
+        let data = { [filterDimension + '_id']: value[filterDimension].id }
+        if (Array.isArray(value[filterDimension])) {
+          data = { [filterDimension]: value[filterDimension].map(item => item.id).join(',') }
+        }
+        await updateIssue(id, data)
         this.projectIssueList.forEach(item => {
           if (item.id === id) {
             item[filterDimension] = value[filterDimension]
