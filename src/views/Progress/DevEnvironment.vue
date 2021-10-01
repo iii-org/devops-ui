@@ -71,8 +71,28 @@
                     shadow="never"
                   >
                     <div class="mb-2 ml-2">
-                      <svg-icon class="mr-1 text-xs" icon-class="k8s-pod" />
-                      <span class="text-xs">{{ $t('ProcessDevEnvironment.Pod') }}</span>
+                      <div class="flex justify-between mb-2">
+                        <div class="text-base">
+                          <svg-icon class="mr-1" icon-class="k8s-pod" />
+                          <span class="">{{ $t('ProcessDevEnvironment.Pod') }}</span>
+                        </div>
+                        <el-dropdown trigger="click">
+                          <el-button size="mini" class="el-icon-more" type="primary" plain circle />
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item
+                              v-show="item.containers[0].state === 'running'"
+                              @click.native="handleCommandClick(item.name, item.containers[0].name)"
+                            >
+                              <em class="ri-terminal-line mr-4" />command
+                            </el-dropdown-item>
+                            <el-dropdown-item @click.native="handleLogClick(item.name, item.containers[0].name)">
+                              <em class="ri-terminal-box-line mr-4" />log</el-dropdown-item>
+                            <el-dropdown-item @click.native="handleDeletePods(selectedProjectId, item.name)">
+                              <em class="el-icon-delete mr-4" />{{ $t('general.Delete') }}
+                            </el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </div>
                       <div class="text-xs font-bold">{{ item.name }}</div>
                     </div>
 
@@ -173,6 +193,7 @@
       <div v-else class="text-center">
         <el-empty :description="$t('general.NoData')" />
       </div>
+      <pod-log ref="podLogDialog" :pod-name="focusPodName" :container-name="focusContainerName" />
     </el-col>
   </el-row>
 </template>
@@ -180,15 +201,20 @@
 <script>
 import { deleteEnvironmentByBranchName, getEnvironmentList, redeployEnvironmentByBranchName } from '@/api/kubernetes'
 import { BasicData, SearchBar, ProjectSelector } from '@/newMixins'
+import PodLog from '@/views/Progress/KubernetesResources/components/PodsList/components/PodLog'
+import { deletePod } from '@/api/kubernetes'
 
 export default {
   name: 'ProgressDevEnvironment',
+  components: { PodLog },
   mixins: [BasicData, SearchBar, ProjectSelector],
   data() {
     return {
       searchKeys: ['branch'],
       btnLoading: false,
       lastUpdateTime: '',
+      focusPodName: '',
+      focusContainerName: '',
       pods: []
     }
   },
@@ -315,6 +341,29 @@ export default {
         clearInterval(timer)
         timer = null
       })
+    },
+    handleCommandClick(podName, containerName) {
+      this.$router.push({ name: 'Pod Execute Shell', query: { podName, containerName }})
+    },
+    handleLogClick(podName, containerName) {
+      this.focusPodName = podName
+      this.focusContainerName = containerName
+      this.$refs.podLogDialog.fetchData(podName, containerName)
+      this.$refs.podLogDialog.dialogVisible = true
+    },
+    async handleDeletePods(pId, podName) {
+      this.listLoading = true
+      this.$confirm(this.$t('Notify.confirmDeleteSth', { name: podName }), this.$t('general.Delete'), {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      })
+        .then(() => {
+          deletePod(pId, podName)
+          this.loadData()
+        })
+        .catch(() => {})
+      this.listLoading = false
     }
   }
 }
