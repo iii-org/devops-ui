@@ -151,6 +151,9 @@
                 <component :is="item.value" v-if="isRightPanelItemHasComponents(item.value)" :name="subItem.name"
                            class="el-tag"
                 />
+                <el-tag v-else-if="item.value==='tags'" effect="plain">
+                  {{ getTranslateHeader(subItem.name) }}
+                </el-tag>
                 <el-tag v-else effect="dark">
                   {{ getTranslateHeader(subItem.name) }}
                 </el-tag>
