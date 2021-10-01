@@ -8,10 +8,13 @@
             <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
           </span>
           <span v-else-if="lastUpdated&&lastUpdated.time" class="text-success">
-            <em class="el-icon-check" /> <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
+            <em class="el-icon-check" />
+            <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
           </span>
           <span v-else-if="lastUpdated&&lastUpdated.error" class="text-danger">
-            <em class="el-icon-check" /> <strong>{{ $t('Milestone.Error') }}: </strong>{{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`, lastUpdated.error.response.data.error.details) }}
+            <em class="el-icon-check" />
+            <strong>{{ $t('Milestone.Error') }}: </strong>
+            {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`, lastUpdated.error.response.data.error.details) }}
           </span>
         </el-col>
       </el-row>
@@ -27,7 +30,13 @@
           placement="bottom"
           trigger="click"
         >
-          <el-checkbox v-for="item in columnsOptions" :key="item.value" v-model="checkedColumns[item.value]" :label="item.label">{{ item.label }}</el-checkbox>
+          <el-form>
+            <el-form-item v-for="item in columnsOptions" :key="item.value">
+              <el-checkbox :value="getCheckColumnValue(item.value)" :label="item.label" @change="onCheckColumnChange(item.value)">
+                {{ item.label }}
+              </el-checkbox>
+            </el-form-item>
+          </el-form>
           <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ $t('Milestone.Display') }}
             <i class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
@@ -57,6 +66,7 @@ import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getWBSCache, putWBSCache } from '@/api/issue'
 
 export default {
   name: 'ProjectMilestone',
@@ -82,8 +92,7 @@ export default {
       displayClosed: false,
       filterValue: { tracker: 1 },
       originFilterValue: { tracker: 1 },
-      checkedColumns: { name: true, tracker: true, fixed_version: true, StartDate: true, EndDate: true,
-        priority: true, assigned_to: true, DoneRatio: true, points: true },
+      displayFields: [],
       keyword: null,
 
       listData: [],
@@ -140,11 +149,10 @@ export default {
       ]
     },
     columns() {
-      const result = []
-      Object.keys(this.checkedColumns).forEach(item => {
-        if (this.checkedColumns[item]) { result.push(item) }
-      })
-      return result
+      if (this.displayFields.length <= 0) {
+        return this.columnsOptions.map(item => item.value)
+      }
+      return this.displayFields
     }
   },
   watch: {
@@ -168,9 +176,13 @@ export default {
     }
     this.originalFillterValue = { tracker: tracker.id }
     const storeKeyword = await this.getKeyword()
-    if (storeKeyword['milestone']) { this.keyword = storeKeyword['milestone'] }
+    if (storeKeyword['milestone']) {
+      this.keyword = storeKeyword['milestone']
+    }
     const storeDisplayClosed = await this.getDisplayClosed()
-    if (storeDisplayClosed['milestone']) { this.displayClosed = storeDisplayClosed['milestone'] }
+    if (storeDisplayClosed['milestone']) {
+      this.displayClosed = storeDisplayClosed['milestone']
+    }
     this.onChangeFilter()
   },
   methods: {
@@ -178,6 +190,11 @@ export default {
     loadSelectionList() {
       this.loadVersionList(this.fixedVersionShowClosed)
       this.loadAssignedToList()
+      this.loadDisplayColumns()
+    },
+    async loadDisplayColumns() {
+      const res = await getWBSCache({ project_id: this.selectedProjectId })
+      this.displayFields = res.data
     },
     async loadAssignedToList() {
       const res = await getProjectAssignable(this.selectedProjectId)
@@ -218,6 +235,20 @@ export default {
       await this.setKeyword(storeKeyword)
       await this.setDisplayClosed(storeDisplayClosed)
       await this.onChangeFilter()
+    },
+    getCheckColumnValue(value) {
+      if (this.displayFields.length <= 0) return true
+      return this.displayFields.includes(value)
+    },
+    async onCheckColumnChange(value) {
+      if (this.displayFields.includes(value)) {
+        const columnIndex = this.displayFields.findIndex(item => item === value)
+        this.displayFields.splice(columnIndex, 1)
+      } else {
+        this.displayFields.push(value)
+      }
+      const res = await putWBSCache({ project_id: this.selectedProjectId, display_fields: this.displayFields })
+      this.displayFields = res.data
     },
     onChangeFilter() {
       this.$refs[this.activeTab].loadData()
