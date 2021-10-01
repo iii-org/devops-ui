@@ -10,7 +10,18 @@
         />
       </project-list-selector>
       <el-divider />
-      <div class="text-right text-base mb-2 text-info">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+      <div class="flex justify-between text-base mb-2 text-info">
+        <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+        <el-popover trigger="click">
+          <el-card shadow="never" body-style="width: 400px">
+            <PipelineSettings />
+          </el-card>
+          <el-link slot="reference" type="primary" style="font-size: 16px" :underline="false">
+            <i class="el-icon-s-tools" />
+            {{ $t('ProgressPipelines.PipeLineSettings') }}
+          </el-link>
+        </el-popover>
+      </div>
       <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" fit>
         <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
         <el-table-column
@@ -118,6 +129,7 @@ import TestDetail from './components/TestDetail'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
+import PipelineSettings from '@/views/Plan/Settings/components/PipelineSettings'
 import { CancelRequest } from '@/newMixins'
 
 const listQuery = () => ({
@@ -132,7 +144,7 @@ const listQuery = () => ({
 
 export default {
   name: 'ProgressPipelinesSocket',
-  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination },
+  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination, PipelineSettings },
   mixins: [CancelRequest],
   data() {
     return {
