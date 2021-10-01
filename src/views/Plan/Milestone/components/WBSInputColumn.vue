@@ -136,7 +136,7 @@ export default {
       if (this.prop === 'name' && treeNode && treeNode.indent) {
         return `calc(${width} - ${treeNode.indent}px)`
       }
-      return `calc(${width})`
+      return `calc(100%)`
     },
     handlerBlur(row, index, treeNode) {
       const checkUpdate = row.originColumn && row[this.prop] !== row.originColumn
