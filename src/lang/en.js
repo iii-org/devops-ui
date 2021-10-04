@@ -128,6 +128,7 @@ export default {
     4001: 'Issue not found.',
     7002: 'Argument {arg} is incorrect.。',
     7005: 'Maximum number of {object} in a project is {num}.',
+    7006: 'Argument {arg} can not be alerted when children issue exist.',
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
     9003: 'An unexpected database error has occurred: {message}',
