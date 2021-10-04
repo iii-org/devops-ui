@@ -24,6 +24,8 @@
         <el-input v-if="number"
                   ref="input"
                   v-model.number="row[prop]"
+                  :min="min"
+                  :max="max"
                   :style="{width: treeWidth(treeNode, row)}"
                   @keyup.enter.native="handlerCreate(row, $index, treeNode)"
                   @keyup.esc.native="handlerResetCreate(row, $index, treeNode)"
@@ -47,6 +49,8 @@
         <el-input v-if="number"
                   ref="input"
                   v-model.number="row[prop]"
+                  :min="min"
+                  :max="max"
                   :style="{width: treeWidth(treeNode, row)}"
                   @blur="handlerBlur(row, $index, treeNode)"
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
@@ -119,6 +123,14 @@ export default {
     showOverflowTooltip: {
       type: Boolean,
       default: false
+    },
+    min: {
+      type: Number,
+      default: null
+    },
+    max: {
+      type: Number,
+      default: null
     }
   },
   methods: {
@@ -159,7 +171,10 @@ export default {
       }
     },
     handlerEdit(row, index, treeNode) {
-      if (!this.hasRequired(row)) {
+      if (this.number && (row[this.prop] > this.max || row[this.prop] < this.min)) {
+        this.$set(row, this.prop, row.originColumn)
+        this.$alert(this.$t('Validation.Input', ['0 - 100']).toString(), this.$t('general.Error').toString(), { type: 'error' })
+      } else if (!this.hasRequired(row)) {
         this.$emit('edit', {
           value: { [this.prop]: row[this.prop] },
           row: row,
@@ -169,7 +184,10 @@ export default {
       }
     },
     handlerCreate(row, index, treeNode) {
-      if (!this.hasRequired(row)) {
+      if (this.number && (row[this.prop] > this.max || row[this.prop] < this.min)) {
+        this.$set(row, this.prop, row.originColumn)
+        this.$alert(this.$t('Validation.Input', ['0 - 100']).toString(), this.$t('general.Error').toString(), { type: 'error' })
+      } else if (!this.hasRequired(row)) {
         this.$emit('create', {
           value: { [this.prop]: row[this.prop] },
           row: row,

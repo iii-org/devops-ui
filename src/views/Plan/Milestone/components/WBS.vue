@@ -120,8 +120,10 @@
         width="100px"
         :label="$t('Issue.DoneRatio_sm')"
         prop="done_ratio"
-        :number="true"
+        number
         sortable
+        :min="0"
+        :max="100"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -133,7 +135,7 @@
         :label="$t('Issue.points')"
         :has-child-edit="true"
         prop="point"
-        :number="true"
+        number
         sortable
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
