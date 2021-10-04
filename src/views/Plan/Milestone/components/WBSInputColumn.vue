@@ -34,6 +34,9 @@
                   @keyup.enter.native="handlerCreate(row, $index, treeNode)"
                   @keyup.esc.native="handlerResetCreate(row, $index, treeNode)"
         />
+        <template v-if="prop==='name'">
+          <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
+        </template>
         <ul v-if="hasRequired(row)" slot="suffix">
           <li class="text-danger text-sm">
             {{ $t('Validation.Input', [label]) }}
@@ -56,11 +59,17 @@
                   @keyup.enter.native="handlerEdit(row, $index, treeNode)"
                   @keyup.esc.native="handlerReset(row, $index, treeNode)"
         />
+        <template v-if="prop==='name'">
+          <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
+        </template>
         <ul v-if="hasRequired(row)" slot="suffix">
           <li class="text-danger text-sm">
             {{ $t('Validation.Input', [label]) }}
           </li>
         </ul>
+      </template>
+      <template v-else-if="prop==='name'">
+        {{ row[prop] }} <el-tag v-for="item in row['tags']" :key="item.id">[{{ item.name }}]</el-tag>
       </template>
       <template v-else>
         {{ row[prop] }}
