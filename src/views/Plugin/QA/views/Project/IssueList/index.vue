@@ -83,7 +83,7 @@
                     <status :name="scope.row.parent.status.name" size="mini" />
                     <tracker :name="scope.row.parent.tracker.name" />
                     #{{ scope.row.parent.id }} -
-                    <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                    <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
                     {{ scope.row.parent.name }}
                     <span
                       v-if="scope.row.parent.hasOwnProperty('assigned_to') && Object.keys(scope.row.parent.assigned_to).length > 1"
@@ -118,7 +118,7 @@
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
                           {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                             ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
@@ -154,7 +154,7 @@
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
+                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
                           {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                             ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
@@ -188,7 +188,7 @@
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
-            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>{{ scope.row.name }}
+            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>{{ scope.row.name }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">

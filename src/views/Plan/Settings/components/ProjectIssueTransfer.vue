@@ -62,7 +62,7 @@
         <el-table-column :label="$t('Issue.Id')" header-align="center" min-width="280" show-overflow-tooltip prop="id">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
-            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>{{ scope.row.name }}
+            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>{{ scope.row.name }}
           </template>
         </el-table-column>
 
