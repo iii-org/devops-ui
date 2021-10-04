@@ -30,9 +30,11 @@
           placement="bottom"
           trigger="click"
         >
-          <el-form>
+          <el-form class="display-column">
             <el-form-item v-for="item in columnsOptions" :key="item.value">
-              <el-checkbox :value="getCheckColumnValue(item.value)" :label="item.label" @change="onCheckColumnChange(item.value)">
+              <el-checkbox :value="getCheckColumnValue(item.value)" :label="item.label"
+                           @change="onCheckColumnChange(item.value)"
+              >
                 {{ item.label }}
               </el-checkbox>
             </el-form-item>
@@ -291,4 +293,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.display-column{
+  .el-form-item{
+    margin:0;
+  }
+}
+</style>
