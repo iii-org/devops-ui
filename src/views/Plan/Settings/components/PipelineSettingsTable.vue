@@ -56,7 +56,7 @@ import { getPipelineDefaultBranch, editPipelineDefaultBranch } from '@/api/proje
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'PipelineSettings',
+  name: 'PipelineSettingsTables',
   data() {
     return {
       isLoading: false,

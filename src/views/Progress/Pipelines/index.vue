@@ -14,7 +14,8 @@
         <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
         <el-popover trigger="click">
           <el-card shadow="never" body-style="width: 400px">
-            <PipelineSettings />
+            <!-- <PipelineSettings /> -->
+            123
           </el-card>
           <el-link slot="reference" type="primary" style="font-size: 16px" :underline="false">
             <i class="el-icon-s-tools" />
