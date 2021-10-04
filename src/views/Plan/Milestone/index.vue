@@ -65,7 +65,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
 import SearchFilter from '@/components/Issue/SearchFilter'
-import { getProjectAssignable, getProjectVersion } from '@/api/projects'
+import { getProjectAssignable, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { getWBSCache, putWBSCache } from '@/api/issue'
 
 export default {
@@ -86,6 +86,7 @@ export default {
 
       assigned_to: [],
       fixed_version: [],
+      tags: [],
 
       activeNames: '',
       searchVisible: false,
@@ -109,7 +110,7 @@ export default {
     ...mapGetters(['userId', 'selectedProjectId', 'tracker', 'fixedVersionShowClosed']),
     contextOptions() {
       const result = {}
-      const getOptions = ['assigned_to', 'fixed_version']
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
       getOptions.forEach((item) => {
         result[item] = this[item]
       })
@@ -117,17 +118,40 @@ export default {
     },
     filterOptions() {
       return [
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 1,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
+        },
+        {
+          id: 2,
+          label: this.$t('Issue.FilterDimensions.tags'),
+          value: 'tags',
+          placeholder: 'Tag'
+        },
+        {
+          id: 3,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
+        },
         {
           id: 4,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
+        },
+        {
+          id: 5,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version'
         },
         {
-          id: 5,
+          id: 6,
           label: this.$t('Issue.FilterDimensions.priority'),
           value: 'priority',
           placeholder: 'Priority',
@@ -191,6 +215,7 @@ export default {
       this.loadVersionList(this.fixedVersionShowClosed)
       this.loadAssignedToList()
       this.loadDisplayColumns()
+      this.loadTagsList()
     },
     async loadDisplayColumns() {
       const res = await getWBSCache({ project_id: this.selectedProjectId })
@@ -215,6 +240,11 @@ export default {
       const versionList = await getProjectVersion(this.selectedProjectId, params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
+    async loadTagsList() {
+      const res = await getTagsByProject(this.selectedProjectId)
+      console.log(res.data.tags)
+      this.tags = res.data.tags
+    },
     handleUpdateLoading(value) {
       this.updateLoading = value
     },
@@ -226,6 +256,9 @@ export default {
         this[item] = value[item]
       })
       const storeFilterValue = await this.getIssueFilter()
+      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
+        this.$delete(this.filterValue, 'tags')
+      }
       storeFilterValue['milestone'] = this.filterValue
       const storeKeyword = await this.getKeyword()
       storeKeyword['milestone'] = this.keyword

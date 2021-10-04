@@ -387,7 +387,7 @@ export default {
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          result[item + '_id'] = this.filterValue[item]
+          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join() : result[item + '_id'] = this.filterValue[item]
         }
       })
       if (this.keyword) {
