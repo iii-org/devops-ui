@@ -47,7 +47,8 @@
     <el-tabs v-model="activeTab" type="border-card" @tab-click="onChangeFilter">
       <el-tab-pane name="WBS" label="WBS">
         <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned-to="assigned_to"
-             :fixed-version="fixed_version" @update-loading="handleUpdateLoading" @update-status="handleUpdateStatus"
+             :fixed-version="fixed_version" :tags="tags" @update-loading="handleUpdateLoading"
+             @update-status="handleUpdateStatus"
         />
       </el-tab-pane>
       <el-tab-pane name="Gantt" label="Gantt">

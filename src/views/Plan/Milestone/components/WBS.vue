@@ -150,9 +150,22 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length>2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
-        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">{{ $t('route.Issue Detail') }}
+        <contextmenu-submenu :title="$t('Issue.tags')">
+          <contextmenu-item v-for="item in tags" :key="item.id"
+                            :class="{current:getContextMenuCurrentValue('tags', item), [item.class]:item.class}"
+                            @click="handleUpdateIssue({value:{'tags':item.id}, row:contextMenu.row})"
+          >
+            <i v-if="getContextMenuCurrentValue('tags', item)" class="el-icon-check" />
+            <i v-if="item.id==='null'" class="el-icon-circle-close" />
+            {{ item.name }} {{ item.message }}
+          </contextmenu-item>
+        </contextmenu-submenu>
+        <contextmenu-item divider />
+        <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">
+          {{ $t('route.Issue Detail') }}
         </contextmenu-item>
-        <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">{{ $t('Issue.TraceabilityMatrix') }}
+        <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
+          {{ $t('Issue.TraceabilityMatrix') }}
         </contextmenu-item>
         <contextmenu-item divider />
         <contextmenu-item @click="appendIssue(contextMenu.row)">
@@ -199,7 +212,8 @@
 import {
   directive,
   Contextmenu,
-  ContextmenuItem
+  ContextmenuItem,
+  ContextmenuSubmenu
 } from 'v-contextmenu'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
@@ -221,6 +235,7 @@ export default {
     WBSDateColumn,
     Contextmenu,
     ContextmenuItem,
+    ContextmenuSubmenu,
     QAProjectIssueDetail,
     IssueMatrix
   },
@@ -246,6 +261,10 @@ export default {
       default: () => []
     },
     fixedVersion: {
+      type: Array,
+      default: () => []
+    },
+    tags: {
       type: Array,
       default: () => []
     }
@@ -534,7 +553,17 @@ export default {
     async handleUpdateIssue({ value, row }) {
       let checkUpdate = false
       const originDate = this.$dayjs(row.originColumn)
-      if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
+      if (value['tags']) {
+        const tags = row['tags'].map(item => item.id)
+        const findTags = tags.findIndex(item => item === value['tags'])
+        if (findTags >= 0) {
+          tags.splice(findTags, 1)
+        } else {
+          tags.push(value['tags'])
+        }
+        value = { tags: tags.join(',') }
+        checkUpdate = true
+      } else if (typeof row.originColumn === 'object' && row.originColumn instanceof Date) {
         if (originDate.isValid()) {
           checkUpdate = value[row.editColumn] !== originDate.format('YYYY-MM-DD')
         } else {
@@ -762,6 +791,9 @@ export default {
     },
     getRowClass() {
       return 'cursor-context-menu'
+    },
+    getContextMenuCurrentValue(column, item) {
+      return this.contextMenu.row[column].map(subItem => subItem.id).includes(item.id)
     }
   }
 }
