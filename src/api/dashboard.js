@@ -18,3 +18,4 @@ export const getUnclosedIssues = (id) => request.get('/dashboard/' + id + '/uncl
 export const getInvolvedProjects = (id) => request.get('/dashboard/' + id + '/involved_projects')
 export const getSyncRedmine = () => request.get(`/sync_redmine/now`)
 export const getSyncRedmineStatus = () => request.get(`/lock?name=sync_redmine`)
+export const getSystemServerStatus = () => request.get(`/monitoring/alive`)

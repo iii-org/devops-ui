@@ -653,6 +653,12 @@ export const asyncRoutes = [
             ]
           }
         ]
+      },
+      {
+        path: 'service-monitoring',
+        name: 'Service Monitoring',
+        component: () => import('@/views/SystemResource/ServiceMonitoring'),
+        meta: { title: 'Service Monitoring', roles: ['Administrator', 'Project Manager'] }
       }
     ]
   },

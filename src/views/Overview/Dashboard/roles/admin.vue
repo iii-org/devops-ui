@@ -4,6 +4,9 @@
       <el-col class="text-right">
         <span class="text-sm ml-3">*本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)])
         }}</span>
+        <el-button v-if="isSystemAbnormal" size="small" icon="el-icon-warning" type="danger" plain @click="handleClick">
+          {{ $t('Dashboard.ADMIN.ExceptionNotification') }}
+        </el-button>
         <el-button size="small" icon="el-icon-refresh" :disabled="status.is_lock" @click="getSyncRedmine">
           {{ $t('Dashboard.ADMIN.UpdateNow') }}
         </el-button>
@@ -91,7 +94,8 @@ import {
   getProjectMembers,
   getProjectOverview,
   getSyncRedmine,
-  getSyncRedmineStatus
+  getSyncRedmineStatus,
+  getSystemServerStatus
 } from '@/api/dashboard'
 import {
   AdminProjectList,
@@ -127,7 +131,13 @@ export default {
       gitCommitLog: [],
       init: true,
       requestGitLabLastTime: null,
-      status: { is_lock: false, sync_date: '' }
+      status: { is_lock: false, sync_date: '' },
+      systemStatusData: []
+    }
+  },
+  computed: {
+    isSystemAbnormal() {
+      return this.systemStatusData.all_alive
     }
   },
   watch: {
@@ -146,9 +156,13 @@ export default {
       }
     }
   },
+  created() {
+    this.getSystemServerStatusInterval()
+  },
   mounted() {
     this.initDashboard()
     this.loadSyncStatus()
+    this.getSystemServerStatus()
   },
   methods: {
     async initDashboard() {
@@ -223,6 +237,21 @@ export default {
       const res = await getProjectList()
       return await Promise.resolve(res.data)
     },
+    async getSystemServerStatus() {
+      this.systemStatusData = []
+      const res = await getSystemServerStatus()
+      this.systemStatusData = res.data
+    },
+    getSystemServerStatusInterval() {
+      const tenMinutes = 1000 * 60 * 10
+      let intervalTimer = window.setInterval(async () => {
+        await this.getSystemServerStatus()
+      }, tenMinutes)
+      this.$once('hook:beforeDestroy', () => {
+        clearInterval(intervalTimer)
+        intervalTimer = null
+      })
+    },
     getLastUpdate(value) {
       this.lastUpdate = value
     },
@@ -231,6 +260,9 @@ export default {
     },
     UTCtoLocalTime(value) {
       return UTCtoLocalTime(value)
+    },
+    handleClick() {
+      this.$router.push({ name: 'Service Monitoring' })
     }
   }
 }

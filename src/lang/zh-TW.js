@@ -63,6 +63,7 @@ export default {
     'ConfigMaps List': 'ConfigMaps 列表',
 
     'Plugin Resource': 'Plugin 資源',
+    'Service Monitoring': '服務監控',
     Harbor: 'Harbor 資源',
 
     Activities: '操作記錄',
@@ -562,6 +563,7 @@ export default {
       UpdateNow: '@:SystemVersion.UpdateNow',
       syncing: '同步中......',
       sync_date: '統計日期：{0}',
+      ExceptionNotification: '系統異常通知',
       Overview: {
         NAME: '總覽',
         projects: '專案數',
@@ -752,7 +754,8 @@ export default {
     TransitioningMessage: '處理訊息',
     LastUpdateTime: '最後更新時間',
     SearchCommitMessage: '搜尋 上傳訊息',
-    TestDetail: '測試細節'
+    TestDetail: '測試細節',
+    PipeLineSettings: 'Pipeline 設定'
   },
   ProcessDevEnvironment: {
     Branch: '@:general.Branch',
@@ -1057,6 +1060,14 @@ export default {
     Select: '請選擇 {0}',
     Invalid: '{0} 無效，請重新輸入',
     Number: '數值'
+  },
+  ServiceMonitoring: {
+    Services: '服務',
+    Health: '健康度',
+    Logs: '訊息',
+    LastUpdateTime: '最後更新時間',
+    true: '良好',
+    false: '異常'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -63,6 +63,7 @@ export default {
     'ConfigMaps List': 'ConfigMaps List',
 
     'Plugin Resource': 'Plugin Resource',
+    'Service Monitoring': 'Service Monitoring',
     Harbor: 'Harbor',
 
     Activities: 'Activities',
@@ -563,6 +564,7 @@ export default {
       UpdateNow: '@:SystemVersion.UpdateNow',
       syncing: 'Syncing......',
       sync_date: 'created by: {0}',
+      ExceptionNotification: 'System Exception Notification',
       Overview: {
         NAME: 'Overview',
         projects: 'Projects',
@@ -755,7 +757,8 @@ export default {
     TransitioningMessage: 'Transitioning Message',
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message',
-    TestDetail: 'Test Detail'
+    TestDetail: 'Test Detail',
+    PipeLineSettings: 'Pipeline Settings'
   },
   ProcessDevEnvironment: {
     Branch: '@:general.Branch',
@@ -1059,6 +1062,14 @@ export default {
     Select: 'Please Select {0}',
     Invalid: '{0} is invalid',
     Number: 'Number'
+  },
+  ServiceMonitoring: {
+    Services: 'Services',
+    Health: 'Health',
+    Logs: 'Logs',
+    LastUpdateTime: 'Last Update Time',
+    true: 'Good',
+    false: 'Abnormal'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
