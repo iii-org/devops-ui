@@ -98,6 +98,7 @@ export default {
     'test-case': '測試個案',
     'test-result': '測試彙整',
     testReport: 'III DevOps 測試彙整',
+    monitoring: 'III DevOps 服務監控',
     deploy: '遠端部署'
   },
   navbar: {

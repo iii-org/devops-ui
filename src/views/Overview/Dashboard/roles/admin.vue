@@ -94,8 +94,7 @@ import {
   getProjectMembers,
   getProjectOverview,
   getSyncRedmine,
-  getSyncRedmineStatus,
-  getSystemServerStatus
+  getSyncRedmineStatus
 } from '@/api/dashboard'
 import {
   AdminProjectList,
@@ -105,6 +104,7 @@ import {
   AdminOverview,
   AdminCommitLog
 } from '../components'
+import { getSystemServerStatus } from '@/api/monitoring'
 import { UTCtoLocalTime } from '@/filters'
 
 const overview = {
@@ -137,7 +137,7 @@ export default {
   },
   computed: {
     isSystemAbnormal() {
-      return this.systemStatusData.all_alive
+      return !this.systemStatusData.all_alive
     }
   },
   watch: {

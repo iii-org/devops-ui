@@ -98,6 +98,7 @@ export default {
     'test-case': 'Test Case',
     'test-result': 'Test Result',
     testReport: 'III DevOps Test Report',
+    monitoring: 'III DevOps Service Monitoring',
     deploy: 'Deploy'
   },
   navbar: {
