@@ -1,19 +1,32 @@
 <template>
   <section>
-    <template v-if="settingStatus === 'Active'">
+    <template v-if="settingStatus === 'active'">
       <div class="flex justify-between items-center mb-1">
         <div>
           <span class="text-sm mr-2">{{ $t('Git.Branch') }}：</span>
-          <span class="text-title">{{ branch }}</span>
+          <el-select v-model="selectedBranchIndex">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </div>
-        <el-button type="text" size="medium" @click="handleClick">
-          {{ $t('route.advanceBranchSettings') }}
-        </el-button>
+        <div>
+          <el-button size="mini" type="success" :loading="isLoading" plain @click="updatePipelineBranch">
+            {{ $t('general.Save') }}
+          </el-button>
+          <el-button size="mini" type="success" :loading="isLoading" @click="runPipeline">
+            <i class="el-icon-refresh" />
+            {{ $t('general.DirectExecution') }}
+          </el-button>
+        </div>
       </div>
       <el-table
-        v-loading="isStagesLoading"
+        v-loading="isLoading"
         :element-loading-text="$t('Updating')"
-        :data="stagesData"
+        :data="selectedToolData"
         fit
         :show-header="false"
       >
@@ -21,22 +34,13 @@
         <el-table-column align="center">
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.has_default_branch"
+              v-model="scope.row.enable"
               active-color="#13ce66"
               inactive-color="gray"
-              @change="handleStageChange(scope.row)"
             />
           </template>
         </el-table-column>
       </el-table>
-      <div class="text-right mt-3">
-        <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">
-          {{ $t('general.Cancel') }}
-        </el-button>
-        <el-button size="mini" type="primary" :loading="isStagesLoading" @click="updatePipeDefBranch">
-          {{ $t('general.Confirm') }}
-        </el-button>
-      </div>
     </template>
     <template v-else-if="settingStatus === 'unSupported'">
       <div class="text-center text-title mb-3">{{ $t('Plugin.CustomEnvWarning') }}</div>
@@ -52,7 +56,7 @@
 </template>
 
 <script>
-import { getPipelineDefaultBranch, editPipelineDefaultBranch } from '@/api/projects'
+import { getPipelineBranch, editPipelineBranch } from '@/api/projects'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -60,92 +64,132 @@ export default {
   data() {
     return {
       isLoading: false,
-      isStagesLoading: false,
-      settingStatus: '',
-      branch: '',
-      stagesData: [],
-      services: ['web', 'db'],
-      dependenceKeys: ['test-postman', 'test-webinspect', 'test-zap', 'test-sideex']
+      branches: [],
+      options: [],
+      pipelineSettingsData: [],
+      selectedBranchIndex: 0,
+      settingStatus: ''
     }
   },
   computed: {
     ...mapGetters(['selectedProject']),
     selectedRepositoryId() {
       return this.selectedProject.repository_ids[0]
+    },
+    selectedBranch() {
+      return this.branches[this.selectedBranchIndex]
+    },
+    selectedToolData() {
+      return this.pipelineSettingsData[this.selectedBranchIndex].testing_tools
+    },
+    branchesList() {
+      return function(data) {
+        return Object.keys(data)
+      }
     }
   },
   watch: {
     selectedProject() {
-      this.fetchPipeDefBranch()
+      this.fetchPipelineBranch()
     }
   },
   mounted() {
     this.settingStatus = ''
-    this.fetchPipeDefBranch()
+    this.fetchPipelineBranch()
   },
   methods: {
-    async fetchPipeDefBranch() {
+    async fetchPipelineBranch() {
       if (this.selectedRepositoryId === -1) return
       this.isLoading = true
       try {
-        const res = await getPipelineDefaultBranch(this.selectedRepositoryId)
-        const hasStages = Object.keys(res.data).length > 0
-        if (hasStages) {
-          const { default_branch, stages } = res.data
-          this.branch = default_branch
-          this.stagesData = stages.map(stage => stage)
-          this.settingStatus = 'Active'
-        } else {
-          this.resetSettings()
-        }
+        const res = await getPipelineBranch(this.selectedRepositoryId)
+        this.handleStages(res.data)
       } catch (err) {
         this.settingStatus = 'error'
       } finally {
         this.isLoading = false
       }
     },
+    handleStages(data) {
+      const hasStages = this.branchesList(data).length > 0
+      if (hasStages) {
+        this.getBranch(data)
+        this.getPipelineSettingsData(data)
+        this.settingStatus = 'active'
+      } else {
+        this.resetSettings()
+      }
+    },
+    getBranch(data) {
+      const branches = this.branchesList(data)
+      const options = []
+      branches.forEach((branch, index) => {
+        const option = { value: index, label: branch }
+        options.push(option)
+      })
+      this.branches = branches
+      this.options = options
+    },
+    getPipelineSettingsData(data) {
+      const branches = this.branchesList(data)
+      const settingsData = branches.map(branch => {
+        const { commit_message, commit_time, testing_tools } = data[branch]
+        return {
+          branch,
+          commit_message,
+          commit_time,
+          testing_tools
+        }
+      })
+      this.pipelineSettingsData = settingsData
+    },
     resetSettings() {
       this.settingStatus = 'unSupported'
-      this.stagesData = []
-      this.branch = ''
+      this.branches = []
+      this.options = []
+      this.pipelineSettingsData = []
     },
-    handleClick() {
-      this.$router.push({ name: 'advance-branch-settings' })
-    },
-    handleStageChange(stage) {
-      const { key, has_default_branch } = stage
-      if (this.services.includes(key)) {
-        if (has_default_branch) return
-        this.dependenceKeys.forEach(key => {
-          const idx = this.stagesData.findIndex(stage => key === stage.key)
-          if (idx < 0) return
-          this.stagesData[idx].has_default_branch = has_default_branch
-        })
-      }
-      if (this.dependenceKeys.includes(key)) {
-        if (!has_default_branch) return
-        this.services.forEach(key => {
-          const idx = this.stagesData.findIndex(stage => key === stage.key)
-          if (idx < 0) return
-          this.stagesData[idx].has_default_branch = has_default_branch
-        })
-      }
-    },
-    async updatePipeDefBranch() {
-      const sendData = { detail: { stages: this.stagesData }}
-      this.isStagesLoading = true
+    async updatePipelineBranch() {
+      const sendData = this.getSendData()
+      this.isLoading = true
       try {
-        await editPipelineDefaultBranch(this.selectedRepositoryId, sendData)
+        await editPipelineBranch(this.selectedRepositoryId, sendData)
       } catch (err) {
-        this.fetchPipeDefBranch()
-        this.$notify({
-          title: this.$t('general.Error'),
-          message: err,
-          type: 'error'
-        })
+        this.fetchPipelineBranch()
+        this.showErrorMessage(err)
       } finally {
-        this.isStagesLoading = false
+        this.isLoading = false
+        this.showSuccessMessage()
       }
+    },
+    runPipeline() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: '功能開發中',
+        type: 'warning'
+      })
+    },
+    getSendData() {
+      const getData = (result, cur) => Object.assign(result, {
+        [cur.branch]: cur.testing_tools.map(tool => ({ enable: tool.enable, key: tool.key }))
+      })
+      const detail = this.pipelineSettingsData.reduce(getData, {})
+      const sendData = { detail }
+      return sendData
+    },
+    showErrorMessage(err) {
+      this.$message({
+        title: this.$t('general.Error'),
+        message: err,
+        type: 'error'
+      })
+    },
+    showSuccessMessage() {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Saved'),
+        type: 'success'
+      })
     }
   }
 }

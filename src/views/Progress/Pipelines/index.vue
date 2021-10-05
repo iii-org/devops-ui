@@ -13,9 +13,8 @@
       <div class="flex justify-between text-base mb-2 text-info">
         <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
         <el-popover trigger="click">
-          <el-card shadow="never" body-style="width: 400px">
-            <!-- <PipelineSettings /> -->
-            123
+          <el-card shadow="never" body-style="width: 500px">
+            <PipelineSettingsTable />
           </el-card>
           <el-link slot="reference" type="primary" style="font-size: 16px" :underline="false">
             <i class="el-icon-s-tools" />
@@ -130,7 +129,7 @@ import TestDetail from './components/TestDetail'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
-import PipelineSettings from '@/views/Plan/Settings/components/PipelineSettings'
+import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/newMixins'
 
 const listQuery = () => ({
@@ -145,7 +144,7 @@ const listQuery = () => ({
 
 export default {
   name: 'ProgressPipelinesSocket',
-  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination, PipelineSettings },
+  components: { ElTableColumnTime, TestDetail, ProjectListSelector, Pagination, PipelineSettingsTable },
   mixins: [CancelRequest],
   data() {
     return {
@@ -203,8 +202,8 @@ export default {
   methods: {
     onPagination(query) {
       this.clearTimer()
-      const { first, limit } = this.listQuery
-      const startId = first - (query.page - 1) * limit
+      const { first, next } = this.listQuery
+      const startId = query.page === 1 ? first : next
       this.listQuery.start = startId
       this.loadData(10, startId)
     },

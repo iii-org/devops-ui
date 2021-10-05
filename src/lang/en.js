@@ -216,7 +216,8 @@ export default {
     off: 'Off',
     Index: 'Index',
     Account: 'Account',
-    Password: 'Password'
+    Password: 'Password',
+    DirectExecution: 'Direct Execution'
   },
   Notify: {
     Updated: 'update successful',
@@ -227,6 +228,7 @@ export default {
     Copied: 'Copied',
     Canceled: 'Cancel successful',
     Submit: 'Submit',
+    Saved: 'Saved successful',
     Same: 'The new value is same with old value.',
     SwitchLanguage: 'Switch Language Success',
     NoProject: 'There are no projects currently, please create a new project.',

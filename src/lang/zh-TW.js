@@ -216,7 +216,8 @@ export default {
     off: '關',
     Index: '項次',
     Account: '帳號',
-    Password: '密碼'
+    Password: '密碼',
+    DirectExecution: '直接執行'
   },
   Notify: {
     Updated: '已更新',
@@ -227,6 +228,7 @@ export default {
     Copied: '已複製',
     Canceled: '已取消',
     Submit: '已送出',
+    Saved: '已儲存',
     Same: '內容相同，未變更。',
     SwitchLanguage: '更換語言成功',
     NoProject: '目前沒有任何專案可供選擇，請先建立專案。',
