@@ -74,6 +74,7 @@
               filterable
               multiple
               collapse-tags
+              :loading="isLoading"
               :options="groupByOptions"
               value-key="id"
               @change="onChangeGroupByValue($event, true)"
