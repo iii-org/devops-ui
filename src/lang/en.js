@@ -217,7 +217,7 @@ export default {
     Index: 'Index',
     Account: 'Account',
     Password: 'Password',
-    DirectExecution: 'Direct Execution'
+    DirectExecution: 'Execution'
   },
   Notify: {
     Updated: 'update successful',
@@ -762,7 +762,8 @@ export default {
     LastUpdateTime: 'Last Update Time',
     SearchCommitMessage: 'Search Commit Message',
     TestDetail: 'Test Detail',
-    PipeLineSettings: 'Pipeline Settings'
+    PipeLineSettings: 'Pipeline Settings',
+    RerunPipeline: 'Pipeline of branch {0} has been re-executed.'
   },
   ProcessDevEnvironment: {
     Branch: '@:general.Branch',

@@ -32,6 +32,7 @@ export const getPipelineDefaultBranch = (rId) => request.get(`/project/${rId}/pi
 export const editPipelineDefaultBranch = (rId, data) => request.put(`/project/${rId}/pipeline/default_branch`, data)
 export const getPipelineBranch = (rId) => request.get(`/project/${rId}/pipeline/branches`)
 export const editPipelineBranch = (rId, data) => request.put(`/project/${rId}/pipeline/branches`, data)
+export const runPipelineByBranch = (rId, params) => request.post(`/pipelines/${rId}/pipelines?action=run`, params, { headers: { 'Content-Type': 'multipart/form-data' }})
 export const getParticipateProject = (user_id) => request.get(`/projects_by_user/${user_id}`)
 export const downloadProjectFile = (params = { id: '', filename: '', project_id: '' }) => request.get(`/download`, { params, responseType: 'arraybuffer' })
 export const uploadProjectFile = (pId, data) => request.post(`/project/${pId}/file`, data, { headers: { 'Content-Type': 'multipart/form-data' }})

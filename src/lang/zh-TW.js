@@ -759,7 +759,8 @@ export default {
     LastUpdateTime: '最後更新時間',
     SearchCommitMessage: '搜尋 上傳訊息',
     TestDetail: '測試細節',
-    PipeLineSettings: 'Pipeline 設定'
+    PipeLineSettings: 'Pipeline 設定',
+    RerunPipeline: '{0} 分支已重新執行 Pipeline。'
   },
   ProcessDevEnvironment: {
     Branch: '@:general.Branch',
