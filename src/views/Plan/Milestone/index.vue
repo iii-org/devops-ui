@@ -26,6 +26,10 @@
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed, originFilterValue:originFilterValue }"
         @change-filter="onChangeFilterForm"
       >
+        <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="downloadExcel()">
+          {{ $t('File.Download') }}
+        </el-button>
+        <el-divider direction="vertical" />
         <el-popover
           placement="bottom"
           trigger="click"
@@ -70,6 +74,7 @@ import WBS from '@/views/Plan/Milestone/components/WBS'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { getProjectAssignable, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { getWBSCache, putWBSCache } from '@/api/issue'
+import XLSX from 'xlsx'
 
 export default {
   name: 'ProjectMilestone',
@@ -245,7 +250,6 @@ export default {
     },
     async loadTagsList() {
       const res = await getTagsByProject(this.selectedProjectId)
-      console.log(res.data.tags)
       this.tags = res.data.tags
     },
     handleUpdateLoading(value) {
@@ -288,15 +292,129 @@ export default {
     },
     onChangeFilter() {
       this.$refs[this.activeTab].loadData()
+    },
+    prepareExcel(result) {
+      const worksheet = XLSX.utils.json_to_sheet(result)
+      this.$excel(worksheet, 'WBS')
+    },
+    async downloadExcel() {
+      let result = await this.$refs['WBS'].fetchData()
+      result = this.dataCleanExcel(result)
+      await this.prepareExcel(result)
+    },
+    dataCleanExcel(fetchData) {
+      const exportColumn = {
+        tags: { column: ['name'], root: true },
+        name: { column: ['id', 'name'], root: true },
+        tracker: { column: ['name'], children: 'tracker' },
+        fixed_version: { column: ['name'], children: 'fixed_version' },
+        StartDate: { column: ['start_date'], root: true },
+        EndDate: { column: ['due_date'], root: true },
+        priority: { column: ['name'], children: 'priority' },
+        assigned_to: { column: ['name'], children: 'assigned_to' },
+        DoneRatio: { column: ['done_ratio'], root: true },
+        points: { column: ['points'], root: true }
+      }
+      const result = []
+      fetchData = fetchData.map((item) => {
+        const start_date = this.$dayjs(item['start_date'])
+        const due_date = this.$dayjs(item['due_date'])
+        if (start_date.isValid()) {
+          item['start_date'] = start_date.format('YYYY-MM-DD')
+        }
+        if (due_date.isValid()) {
+          item['due_date'] = this.$dayjs(item['due_date']).format('YYYY-MM-DD')
+        }
+        return item
+      })
+      fetchData.forEach((item, idx) => {
+        const itemResult = { [this.$t('Test.TestPlan.no')]: idx + 1 }
+        Object.keys(exportColumn).forEach((column) => {
+          let resultArray
+          if (exportColumn[column]['root']) {
+            resultArray = this.formatColumns(exportColumn[column].column, item)
+            resultArray = resultArray.join(' - ')
+          }
+          if (exportColumn[column]['children']) {
+            const childrenSplit = exportColumn[column]['children'].split('.')
+            const getChildrenData = childrenSplit.reduce((total, current) => (total[current]), item)
+            if (column === 'software_name' || column === 'file_name') {
+              resultArray = this.formatColumns(getChildrenData, item, column)
+            } else if (column === 'test_result') {
+              resultArray = this.getTestResult(getChildrenData)
+            } else if (column === 'branch') {
+              resultArray = this.getBranch(getChildrenData)
+            } else if (Array.isArray(getChildrenData)) {
+              resultArray = this.formatColumns(getChildrenData, item).map((check) => this.joinResult(check, ' - '))
+            } else {
+              resultArray = this.formatColumns(exportColumn[column].column, getChildrenData)
+            }
+          }
+          if (Array.isArray(resultArray)) {
+            resultArray = this.joinResult(resultArray, ',')
+          }
+          itemResult[this.$t('Issue.' + column)] = resultArray
+        })
+        result.push(itemResult)
+      })
+      return result
+    },
+    formatColumns(column, checkDataset, name) {
+      return column.map((subColumn) =>
+        name ? this.confirmExist(checkDataset, subColumn, name) : this.confirmExist(checkDataset, subColumn))
+        .filter(subColumn => subColumn)
+    },
+    confirmExist(data, column, name) {
+      if (!data) {
+        return null
+      }
+      return name ? column[name] : data[column]
+    },
+    joinResult(columnResult, joinStr) {
+      const checkNull = columnResult.reduce((total, current) => (!!total && !!current), true)
+      if (!checkNull) return null
+      return columnResult.join(joinStr)
+    },
+    getBranch(data) {
+      const result = []
+      data.forEach((item) => {
+        const last_result = item.the_last_test_result
+        if (last_result.hasOwnProperty('branch') && last_result.hasOwnProperty('commit_id')) {
+          result.push(last_result.branch + ' - ' + last_result.commit_id)
+        } else {
+          result.push(null)
+        }
+      })
+      return result
+    },
+    getTestResult(data) {
+      const result = []
+      data.forEach((item) => {
+        const last_result = item.the_last_test_result
+        if (item.software_name === 'Postman') {
+          if (last_result.hasOwnProperty('success') && last_result.hasOwnProperty('failure')) {
+            result.push(last_result.success + '/' + (last_result.success + last_result.failure))
+          } else {
+            result.push(null)
+          }
+        } else if (item.software_name === 'SideeX') {
+          if (last_result.result && last_result.result.casesPassed && last_result.result.casesTotal) {
+            result.push(last_result.result.casesPassed + '/' + last_result.result.casesTotal)
+          } else {
+            result.push(null)
+          }
+        }
+      })
+      return result
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.display-column{
-  .el-form-item{
-    margin:0;
+.display-column {
+  .el-form-item {
+    margin: 0;
   }
 }
 </style>
