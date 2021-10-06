@@ -67,6 +67,7 @@ export const allowedTypeMap = () => ({
   'application/xml': '.xml',
   'application/vnd.mozilla.xul+xml': '.xul',
   'application/zip': '.zip',
+  'application/x-rar': '.rar',
   'video/3gpp': '.3gp',
   'audio/3gpp': '.3gp',
   'video/3gpp2': '.3g2',
@@ -74,21 +75,21 @@ export const allowedTypeMap = () => ({
   'application/x-7z-compressed': '.7z'
 })
 
-export const isAllowedTypes = (fileType) => {
+export const isAllowedTypes = fileType => {
   const map = allowedTypeMap()
   return map[fileType] !== undefined
 }
 
-export const isJSON = (fileType) => {
+export const isJSON = fileType => {
   const map = {
     'application/json': '.json'
   }
   return map[fileType] !== undefined
 }
 
-export const fileSizeToMB = (fileSize) => fileSize / (1024 ** 2)
+export const fileSizeToMB = fileSize => fileSize / 1024 ** 2
 
-export const containSpecialChar = (fileName) => {
+export const containSpecialChar = fileName => {
   const reg = /[\\/:*?"<>|#{}%~&]/
   return reg.test(fileName)
 }
