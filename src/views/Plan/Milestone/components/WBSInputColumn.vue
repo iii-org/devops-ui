@@ -171,9 +171,14 @@ export default {
       }
     },
     handlerEdit(row, index, treeNode) {
-      if (this.number && (row[this.prop] > this.max || row[this.prop] < this.min)) {
-        this.$set(row, this.prop, row.originColumn)
-        this.$alert(this.$t('Validation.Input', ['0 - 100']).toString(), this.$t('general.Error').toString(), { type: 'error' })
+      if (this.number) {
+        if (!Number.isInteger(row[this.prop])) {
+          this.$set(row, this.prop, row.originColumn)
+          this.$alert(this.$t('Validation.Input', [this.$t('Validation.Number')]).toString(), this.$t('general.Error').toString(), { type: 'error' })
+        } else if (row[this.prop] > this.max || row[this.prop] < this.min) {
+          this.$set(row, this.prop, row.originColumn)
+          this.$alert(this.$t('Validation.Input', ['0 - 100']).toString(), this.$t('general.Error').toString(), { type: 'error' })
+        }
       } else if (!this.hasRequired(row)) {
         this.$emit('edit', {
           value: { [this.prop]: row[this.prop] },
