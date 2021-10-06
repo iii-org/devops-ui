@@ -565,62 +565,50 @@ export default {
       const pId = this.form.project_id
       const tag_name = query || null
       const cancelToken = this.checkToken()
-      const tags = await this.getTags(pId, tag_name, cancelToken)
-      this.getTagsLabels(tag_name, tags, query)
+      const tags = await this.fetchTagsData(pId, tag_name, cancelToken)
+      this.getTagsList(tag_name, tags, query)
     },
-    async getTags(pId, tag_name, cancelToken) {
-      let res = []
-      switch (tag_name) {
-        case null:
-          res = await this.getTagsByProject(pId)
-          break
-        default:
-          res = await this.getTagsByName(pId, tag_name, cancelToken)
-      }
-      return res
-    },
-    async getTagsByProject(pId) {
+    async fetchTagsData(pId, tag_name, cancelToken) {
       this.issueLoading = true
-      const res = await getTagsByProject(pId)
+      const params = { project_id: pId, tag_name }
+      const res = tag_name === null ? await getTagsByProject(pId) : await getTagsByName(params, { cancelToken })
       const tags = res.data.tags
       this.issueLoading = false
       this.cancelToken = null
       return tags
     },
-    async getTagsByName(project_id, tag_name, cancelToken) {
-      this.issueLoading = true
-      const params = { project_id, tag_name }
-      const res = await getTagsByName(params, { cancelToken })
-      const tags = res.data.tags
-      this.issueLoading = false
-      this.cancelToken = null
-      return tags
-    },
-    getTagsLabels(tag_name, tags, query) {
+    getTagsList(tag_name, tags, query) {
       const tagsList = []
-      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['Result', 'AddTag']
+      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['AddTag']
       tag_sorts.forEach(sort => {
-        const list = tag_name === null ? this.getDefaultTagList(tags, sort) : this.getSearchTagList(tags, sort, query)
+        const list = this.getTagsLabel(tags, sort, query)
         if (list.options.length > 0) tagsList.push(list)
       })
       this.tagsList = tagsList
     },
-    getDefaultTagList(tags, tag_sort) {
+    getTagsLabel(tags, tag_sort, query) {
       const label = {}
-      const showTags = tag_sort === 'All' ? tags : tags.slice(-3)
+      const addTag = [{ id: `tag__${query}`, name: query }]
+      const showTags = this.getShowTags(tag_sort, tags, addTag)
       const name = `Issue.${tag_sort}`
       label.name = this.$t(name)
       label.options = showTags
       return label
     },
-    getSearchTagList(tags, tag_sort, query) {
-      const label = {}
-      const addTag = [{ id: `tag__${query}`, name: query }]
-      const showTags = tag_sort === 'Result' ? tags : addTag
-      const name = `Issue.${tag_sort}`
-      label.name = this.$t(name)
-      label.options = showTags
-      return label
+    getShowTags(tag_sort, tags, addTag) {
+      let showTags = null
+      // three type: 'All', 'LastResult', 'AddTag'
+      switch (tag_sort) {
+        case 'LastResult':
+          showTags = tags.slice(-3)
+          break
+        case 'AddTag':
+          showTags = addTag
+          break
+        default:
+          showTags = tags
+      }
+      return showTags
     },
     getObjectById(list, id) {
       return list.find((item) => (item.id === id))
