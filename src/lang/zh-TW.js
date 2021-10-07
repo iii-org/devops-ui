@@ -371,6 +371,7 @@ export default {
     StartDate: '開始日期',
     EndDate: '結束日期',
     Description: '議題描述',
+    due_date: '@:Issue.EndDate',
     SelectDate: '選擇日期',
     SelectType: '選擇種類',
     SelectTag: '選擇標籤',
@@ -491,7 +492,8 @@ export default {
       tracker: '議題類別',
       assigned_to: '專案成員',
       fixed_version: '專案版本',
-      priority: '@:Issue.Priority'
+      priority: '@:Issue.Priority',
+      due_date: '@:Issue.EndDate'
     },
     Display: '顯示',
     DragTip: '拖曳到議題，可以將 {key} 改變成 {value}',

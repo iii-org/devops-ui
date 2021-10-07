@@ -374,11 +374,6 @@ export default {
       const result = {
         parent_id: 'null'
       }
-      if (this.dateRange) {
-        const due_date = this.dateRange.map((item) => (moment(item).format('YYYY-MM-DD')))
-        result['due_date_start'] = due_date[0]
-        result['due_date_end'] = due_date[1]
-      }
       if (this.sort) {
         result['sort'] = this.sort
       }
@@ -387,7 +382,15 @@ export default {
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join() : result[item + '_id'] = this.filterValue[item]
+          if (item === 'due_date') {
+            const due_date = this.filterValue[item].map(date => this.$dayjs(date).format('YYYY-MM-DD'))
+            result['due_date_start'] = due_date[0]
+            result['due_date_end'] = due_date[1]
+          } else if (item === 'tags' && this.filterValue[item].length > 0) {
+            result[item] = this.filterValue[item].join()
+          } else {
+            result[item + '_id'] = this.filterValue[item]
+          }
         }
       })
       if (this.keyword) {

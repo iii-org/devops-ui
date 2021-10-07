@@ -9,20 +9,26 @@
         <template v-for="dimension in filterOptions">
           <el-form-item :key="dimension.id">
             <div slot="label">
-              {{ $t('Issue.' + dimension.value) }}
+              {{ $t(`Issue.${dimension.value}`) }}
               <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
                 <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
               </el-tag>
             </div>
-            <el-select
-              v-model="filterValue[dimension.value]"
-              :placeholder="$t('Issue.Select'+dimension.placeholder)"
-              :disabled="selectedProjectId === -1"
-              filterable
-              clearable
-              :multiple="dimension.value === 'tags'"
-              :collapse-tags="dimension.value === 'tags'"
-              @change="onChangeFilter"
+            <component :is="dimension.component"
+                       v-if="dimension.component"
+                       v-model="filterValue[dimension.value]"
+                       v-bind="dimension.componentOptions"
+                       @change="onChangeFilter"
+            />
+            <el-select v-else
+                       v-model="filterValue[dimension.value]"
+                       :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                       :disabled="selectedProjectId === -1"
+                       filterable
+                       clearable
+                       :multiple="dimension.value === 'tags'"
+                       :collapse-tags="dimension.value === 'tags'"
+                       @change="onChangeFilter"
             >
               <el-option
                 v-for="item in (dimension.value==='status') ? filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
@@ -133,16 +139,21 @@ export default {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
-            const value = this.getOptionsData(item).filter((search) => (this.filterValue[item].includes(search.id)))
-            if (value) {
-              result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+          if (this.getOptionsData(item) && this.getOptionsData(item).length > 0) {
+            if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
+              const value = this.getOptionsData(item).filter((search) => (this.filterValue[item].includes(search.id)))
+              if (value) {
+                result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+              }
+            } else {
+              const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
+              if (value) {
+                result.push(this.getSelectionLabel(value))
+              }
             }
           } else {
-            const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
-            if (value) {
-              result.push(this.getSelectionLabel(value))
-            }
+            const due_date = this.filterValue[item].map(date => this.$dayjs(date).format('YYYY-MM-DD'))
+            result.push(due_date.join('~'))
           }
         }
       })

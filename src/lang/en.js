@@ -373,6 +373,7 @@ export default {
     StartDate: 'Start Date',
     EndDate: 'End Date',
     Description: 'Issue Description',
+    due_date: '@:Issue.EndDate',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
     SelectTag: 'Select Tag',
@@ -492,7 +493,8 @@ export default {
       tracker: 'Type',
       assigned_to: 'Assigned',
       fixed_version: 'Version',
-      priority: '@:Issue.Priority'
+      priority: '@:Issue.Priority',
+      due_date: '@:Issue.EndDate'
     },
     Display: 'Display',
     DragTip: 'Drag to issue, it can change {key} to {value}.',

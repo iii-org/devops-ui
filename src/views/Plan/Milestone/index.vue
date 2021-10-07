@@ -164,6 +164,15 @@ export default {
           value: 'priority',
           placeholder: 'Priority',
           tag: true
+        },
+        {
+          id: 8,
+          label: this.$t('Issue.FilterDimensions.due_date'),
+          value: 'due_date',
+          placeholder: 'Date',
+          component: 'el-date-picker',
+          componentOptions: { type: 'daterange' },
+          tag: true
         }
       ]
     },
