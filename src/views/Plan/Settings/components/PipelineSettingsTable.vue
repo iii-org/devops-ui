@@ -14,10 +14,10 @@
           </el-select>
         </div>
         <div>
-          <el-button size="mini" type="success" :loading="isLoading" plain @click="updatePipelineBranch">
+          <el-button size="mini" type="success" :loading="isLoading" plain @click="updatePipelineBranch(false)">
             {{ $t('general.Save') }}
           </el-button>
-          <el-button size="mini" type="success" :loading="isLoading" @click="handleRunPipeline">
+          <el-button size="mini" type="success" :loading="isLoading" @click="updatePipelineBranch(true)">
             <i class="el-icon-refresh" />
             {{ $t('general.DirectExecution') }}
           </el-button>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getPipelineBranch, editPipelineBranch, runPipelineByBranch } from '@/api/projects'
+import { getPipelineBranch, editPipelineBranch } from '@/api/projects'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -149,9 +149,9 @@ export default {
       this.options = []
       this.pipelineSettingsData = []
     },
-    async updatePipelineBranch() {
-      const sendData = this.getSendData()
-      const message = this.$t('Notify.Saved')
+    async updatePipelineBranch(runPipeline) {
+      const sendData = this.getSendData(runPipeline)
+      const message = runPipeline ? this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch]) : this.$t('Notify.Saved')
       this.isLoading = true
       try {
         await editPipelineBranch(this.selectedRepositoryId, sendData)
@@ -163,29 +163,12 @@ export default {
         this.showSuccessMessage(message)
       }
     },
-    handleRunPipeline() {
-      const branch = this.selectedBranch
-      const formData = new FormData()
-      formData.delete('branch')
-      formData.append('branch', branch)
-      this.runPipelineByBranch(formData)
-    },
-    async runPipelineByBranch(formData) {
-      const message = this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch])
-      try {
-        await runPipelineByBranch(this.selectedRepositoryId, formData)
-      } catch (err) {
-        this.showErrorMessage(err)
-      } finally {
-        this.showSuccessMessage(message)
-      }
-    },
-    getSendData() {
+    getSendData(runPipeline) {
       const getData = (result, cur) => Object.assign(result, {
         [cur.branch]: cur.testing_tools.map(tool => ({ enable: tool.enable, key: tool.key }))
       })
       const detail = this.pipelineSettingsData.reduce(getData, {})
-      const sendData = { detail }
+      const sendData = runPipeline ? { run: true, detail } : { detail }
       return sendData
     },
     showErrorMessage(err) {
