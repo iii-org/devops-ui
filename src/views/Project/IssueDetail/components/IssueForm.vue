@@ -562,14 +562,14 @@ export default {
       return CancelToken.token
     },
     async getSearchTags(query) {
-      const pId = this.form.project_id
       const tag_name = query || null
-      const cancelToken = this.checkToken()
-      const tags = await this.fetchTagsData(pId, tag_name, cancelToken)
+      const tags = await this.fetchTagsData(tag_name)
       this.getTagsList(tag_name, tags, query)
     },
-    async fetchTagsData(pId, tag_name, cancelToken) {
+    async fetchTagsData(tag_name) {
       this.issueLoading = true
+      const pId = this.form.project_id
+      const cancelToken = this.checkToken()
       const params = { project_id: pId, tag_name }
       const res = tag_name === null ? await getTagsByProject(pId) : await getTagsByName(params, { cancelToken })
       const tags = res.data.tags
