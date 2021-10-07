@@ -67,6 +67,7 @@ export default {
       branches: [],
       options: [],
       pipelineSettingsData: [],
+      originData: [],
       selectedBranchIndex: 0,
       settingStatus: ''
     }
@@ -81,6 +82,22 @@ export default {
     },
     selectedToolData() {
       return this.pipelineSettingsData[this.selectedBranchIndex].testing_tools
+    },
+    originToolData() {
+      return this.originData[this.selectedBranchIndex].testing_tools
+    },
+    isDataChanged() {
+      let isChanged = false
+      this.selectedToolData.forEach((item, index) => {
+        if (item.enable !== this.originToolData[index].enable) isChanged = true
+      })
+      return isChanged
+    },
+    selectedBranchData() {
+      const data = []
+      const selectedData = this.pipelineSettingsData[this.selectedBranchIndex]
+      data.push(selectedData)
+      return data
     },
     branchesList() {
       return function(data) {
@@ -142,6 +159,10 @@ export default {
         }
       })
       this.pipelineSettingsData = settingsData
+      this.setOriginData(settingsData)
+    },
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
     },
     resetSettings() {
       this.settingStatus = 'unSupported'
@@ -156,18 +177,18 @@ export default {
       try {
         await editPipelineBranch(this.selectedRepositoryId, sendData)
       } catch (err) {
-        this.fetchPipelineBranch()
         this.showErrorMessage(err)
       } finally {
-        this.isLoading = false
+        this.fetchPipelineBranch()
         this.showSuccessMessage(message)
+        this.isLoading = false
       }
     },
     getSendData(runPipeline) {
       const getData = (result, cur) => Object.assign(result, {
         [cur.branch]: cur.testing_tools.map(tool => ({ enable: tool.enable, key: tool.key }))
       })
-      const detail = this.pipelineSettingsData.reduce(getData, {})
+      const detail = this.selectedBranchData.reduce(getData, {})
       const sendData = runPipeline ? { run: true, detail } : { detail }
       return sendData
     },
