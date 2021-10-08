@@ -46,6 +46,7 @@ import { getIssueFamily } from '@/api/issue'
 import { mapGetters } from 'vuex'
 import { camelCase } from 'lodash'
 import { dragscroll } from 'vue-dragscroll'
+import { getTestFileByTestPlan } from '@/views/Plugin/QA/api/qa'
 
 export default {
   name: 'IssueMatrix',
@@ -87,7 +88,12 @@ export default {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
     },
     data() {
-      return this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
+      const chartData = this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
+      let testFileList = this.chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
+        .filter(issue => issue)
+      testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
+      testFileList = [].concat.apply([], testFileList)
+      return chartData.concat(testFileList)
     },
     trackerColor() {
       return {
@@ -170,6 +176,13 @@ export default {
         this.relationLine[issue.id] = relations
       }
       children = children.concat(relations)
+      if (issue['test_files']) {
+        const test_files = issue['test_files'].map(item => item.file_name)
+        for (let index = 0; index < test_files.length; index++) {
+          link.push('-->')
+        }
+        children = children.concat(test_files)
+      }
       const point = {
         id: issue.id,
         link: link,
@@ -190,6 +203,69 @@ export default {
         point['edgeType'] = 'stadium'
       }
       return point
+    },
+    formatTestFile(test_file, group) {
+      const result = []
+      const file = {
+        id: test_file.file_name,
+        link: ['-->'],
+        next: [`${test_file.software_name}.${test_file.file_name}_result`],
+        editable: false
+      }
+      if (group) {
+        file['group'] = `${this.$t('Issue.TestFile')}`
+        file['text'] = `"${test_file.file_name}"`
+      } else {
+        file['text'] = `"${this.$t('Issue.TestFile')}<br/>${test_file.file_name}"`
+        // file['style'] = `fill:${fullConfig.theme.colors[issue.tracker.name.toLowerCase()]}`
+      }
+      result.push(file)
+      let last_result = null
+      // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
+      const commit_icon = 'Commit: '
+      let status_light = ''
+      const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
+      if (test_file.software_name === 'Postman') {
+        const success = test_file.the_last_test_result.success
+        const failure = test_file.the_last_test_result.failure
+        const total = success + failure
+        let count_result
+        if (success === total) {
+          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
+          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
+        } else {
+          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
+          count_result = ` <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+        }
+        last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+      } else if (test_file.software_name === 'SideeX') {
+        const success = test_file.the_last_test_result.result.casesPassed
+        const total = test_file.the_last_test_result.result.casesTotal
+        let count_result
+        if (success === total) {
+          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['pass']}; display:inline-block; border-radius: 99999px; \'></div>`
+          count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
+        } else {
+          status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
+          count_result = ` <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+        }
+        last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+      }
+      const file_result = {
+        id: `${test_file.software_name}.${test_file.file_name}_result`,
+        link: ['-->'],
+        text: `"${last_result}"`,
+        editable: true
+      }
+      if (group) {
+        file_result['group'] = `${this.$t('TestCase.TestResult')}`
+        file_result['text'] = `"${last_result}"`
+      } else {
+        file_result['text'] = `"${this.$t('TestCase.TestResult')}<br/>${last_result}"`
+        // file_result['style'] = `fill:${fullConfig.theme.colors[issue.tracker.name.toLowerCase()]}`
+      }
+      result.push(file_result)
+      return result
     },
     async onPaintChart() {
       this.chartLoading = true
@@ -216,7 +292,12 @@ export default {
 
       this.getPaintFamily = async function(issue, issueFamily) {
         vueInstance.chartProgress.total += 1
-        vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
+        if (issue.tracker.name === 'Test Plan') {
+          const test_files = await getTestFileByTestPlan(vueInstance.selectedProjectId, issue.id)
+          vueInstance.chartIssueList.push({ ...issue, ...issueFamily, test_files: test_files.data })
+        } else {
+          vueInstance.chartIssueList.push({ ...issue, ...issueFamily })
+        }
         const getFamilyList = await this.combineFamilyList(issue, issueFamily)
         const getIssuesFamilyList = await this.getIssueFamilyData(getFamilyList)
         for (const [index, subIssue] of getFamilyList.entries()) {
