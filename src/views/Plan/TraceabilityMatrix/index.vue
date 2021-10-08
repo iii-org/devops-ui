@@ -609,7 +609,7 @@ export default {
           count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
         } else {
           status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = ` <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+          count_result = `${status_light}  <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
         }
         last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
       } else if (test_file.software_name === 'SideeX') {
@@ -621,7 +621,7 @@ export default {
           count_result = `${status_light} <span style=\'color: ${color['pass']}; font-weight:600;\'>Pass</span>`
         } else {
           status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
-          count_result = ` <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
+          count_result = ` ${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
         }
         last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
       }
