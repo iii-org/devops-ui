@@ -4,12 +4,16 @@
       <el-button type="success" icon="el-icon-plus" @click="handleAdding">
         {{ $t('Project.AddProject') }}
       </el-button>
-      <el-input
-        v-model="keyword"
-        style="width: 250px"
-        :placeholder="$t('Project.SearchProjectNameOrId')"
-        prefix-icon="el-icon-search"
-      />
+      <div class="flex">
+        <SearchFilter />
+        <el-divider direction="vertical" />
+        <el-input
+          v-model="keyword"
+          style="width: 250px"
+          :placeholder="$t('Project.SearchProjectNameOrId')"
+          prefix-icon="el-icon-search"
+        />
+      </div>
     </div>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
@@ -176,7 +180,7 @@
     <EditProjectDialog
       v-if="userRole !== 'QA'"
       ref="editProjectDialog"
-      :edit-project-obj="editProject"
+      :edit-project-obj="editProjectObject"
       @update="loadData"
     />
     <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
@@ -186,6 +190,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
+import SearchFilter from '@/views/Overview/ProjectList/components/SearchFilter'
 import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
@@ -193,7 +198,7 @@ import { deleteStarProject, postStarProject } from '@/api/projects'
 
 export default {
   name: 'ProjectListPM',
-  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog, ElTableColumnTag },
+  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog, ElTableColumnTag, SearchFilter },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -207,7 +212,7 @@ export default {
   mixins: [BasicData, SearchBar, Pagination, Table],
   data() {
     return {
-      editProject: {},
+      editProjectObject: {},
       deleteProject: { id: '', name: '' },
       searchKeys: ['display', 'name', 'owner_name'],
       rowHeight: 74
@@ -225,7 +230,7 @@ export default {
     ])
   },
   methods: {
-    ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
+    ...mapActions('projects', ['setSelectedProject', 'getMyProjectList', 'editProject']),
     async fetchData() {
       await this.getMyProjectList()
       return this.projectList
@@ -235,7 +240,7 @@ export default {
       this.$refs.createProjectDialog.refreshTemplate()
     },
     handleEdit(row) {
-      this.editProject = Object.assign({}, row)
+      this.editProjectObject = Object.assign({}, row)
       this.$refs.editProjectDialog.showDialog = true
     },
     handleDelete(row) {
@@ -256,14 +261,11 @@ export default {
       this.$router.push({ name: 'Overview' })
     },
     copyUrl(id) {
+      const message = this.$t('Notify.Copied')
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Copied'),
-        type: 'success'
-      })
+      this.showSuccessMessage(message)
     },
     isAllowDelete(row) {
       const { creator_id, owner_id } = row
@@ -276,26 +278,62 @@ export default {
       }
     },
     async setStar(id, star) {
+      const message = this.$t('Notify.Updated')
       if (star) {
         await postStarProject(id)
-        await this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        await this.showSuccessMessage(message)
         await this.loadData()
       } else {
         await deleteStarProject(id)
-        await this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        await this.showSuccessMessage(message)
         await this.loadData()
       }
     },
     toggleUsage(row) {
       row.disabled = !row.disabled
+      const sendData = this.getEditData(row)
+      this.handleEditStatus(sendData)
+    },
+    getEditData(row) {
+      const sendData = {
+        pId: row.id,
+        data: {
+          display: row.display,
+          owner_id: row.owner_id,
+          start_date: row.start_date,
+          due_date: row.due_date,
+          disabled: row.disabled
+        }
+      }
+      return sendData
+    },
+    handleEditStatus(sendData) {
+      this.listLoading = true
+      const message = this.$t('Notify.Updated')
+      this.editProject(sendData).then(res => {
+        this.listLoading = false
+        if (res.message === 'success') {
+          this.showSuccessMessage(message)
+          this.loadData()
+        } else {
+          const error = res.error.message
+          this.showErrorMessage(error)
+        }
+      })
+    },
+    showSuccessMessage(message) {
+      this.$message({
+        title: this.$t('general.Success'),
+        message,
+        type: 'success'
+      })
+    },
+    showErrorMessage(error) {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: error,
+        type: 'warning'
+      })
     }
   }
 }
