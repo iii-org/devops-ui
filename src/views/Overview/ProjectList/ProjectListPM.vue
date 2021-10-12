@@ -153,7 +153,7 @@
           >
             {{ $t('general.Delete') }}
           </el-button>
-          <el-button size="mini" @click="toggleUsage(scope.row)">
+          <el-button size="mini" @click="handleToggle(scope.row)">
             <div class="flex items-center">
               <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
               <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
@@ -289,7 +289,7 @@ export default {
         await this.loadData()
       }
     },
-    toggleUsage(row) {
+    handleToggle(row) {
       row.disabled = !row.disabled
       const sendData = this.getEditData(row)
       this.handleEditStatus(sendData)
