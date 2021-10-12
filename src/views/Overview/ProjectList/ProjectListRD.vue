@@ -148,7 +148,7 @@ export default {
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
-      keywords: ['display', 'name']
+      searchKeys: ['display', 'name', 'owner_name']
     }
   },
   computed: {
