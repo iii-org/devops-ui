@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <div>
     <template v-if="settingStatus === 'active'">
       <div class="flex justify-between items-center mb-1">
         <div>
@@ -52,7 +52,7 @@
     <template v-else>
       <el-empty :description="$t('general.NoData')" :image-size="100" />
     </template>
-  </section>
+  </div>
 </template>
 
 <script>
