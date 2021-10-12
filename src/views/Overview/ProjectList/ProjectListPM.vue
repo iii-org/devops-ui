@@ -17,10 +17,14 @@
         <template slot-scope="scope">
           <em
             v-if="scope.row.starred"
-            class="el-icon-star-on text-yellow-500 text-2xl"
+            class="el-icon-star-on text-yellow-500 text-2xl cursor-pointer"
             @click="setStar(scope.row.id, false)"
           />
-          <em v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+          <em
+            v-else
+            class="el-icon-star-off text-gray-400 text-xl cursor-pointer"
+            @click="setStar(scope.row.id, true)"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -29,14 +33,72 @@
         min-width="250"
       >
         <template slot-scope="scope">
-          <el-link v-if="userRole !== 'QA'" type="primary" :underline="false" @click="handleClick(scope.row)">
-            {{ scope.row.display }}
-          </el-link>
-          <template v-else>
-            {{ scope.row.display }}
-          </template>
-          <br>
-          <span class="text-sm text-gray-400">#{{ scope.row.name }}</span>
+          <div class="flex justify-start">
+            <div class="flex items-center mr-5">
+              <!-- gitlab button -->
+              <el-popover
+                v-if="scope.row.git_url"
+                class="mr-1"
+                placement="top"
+                width="400"
+                trigger="hover"
+                :open-delay="300"
+                :close-delay="50"
+              >
+                <p :id="`copy-${scope.$index}`" class="text-center">
+                  <span class="text-title">{{ scope.row.git_url }}</span>
+                </p>
+                <div class="flex justify-center">
+                  <el-button
+                    class="mr-2"
+                    icon="el-icon-copy-document"
+                    circle
+                    size="mini"
+                    @click="copyUrl(`copy-${scope.$index}`)"
+                  />
+                  <a :href="scope.row.git_url" target="_blank">
+                    <el-button circle size="mini">
+                      <svg-icon icon-class="foreign" />
+                    </el-button>
+                  </a>
+                </div>
+                <el-link slot="reference" :underline="false" style="font-size: 22px">
+                  <svg-icon icon-class="gitlab" />
+                </el-link>
+              </el-popover>
+              <!-- redmine button -->
+              <el-link
+                v-if="scope.row.redmine_url"
+                target="_blank"
+                class="mr-1"
+                style="font-size: 22px"
+                :underline="false"
+                :href="scope.row.redmine_url"
+              >
+                <svg-icon icon-class="redmine" />
+              </el-link>
+              <!-- harbor button -->
+              <el-link
+                v-if="scope.row.harbor_url"
+                target="_blank"
+                style="font-size: 22px"
+                :underline="false"
+                :href="scope.row.harbor_url"
+              >
+                <svg-icon icon-class="harbor" />
+              </el-link>
+            </div>
+            <div>
+              <el-link v-if="userRole !== 'QA'" type="primary" :underline="false" @click="handleClick(scope.row)">
+                {{ scope.row.display }}
+              </el-link>
+              <template v-else>
+                {{ scope.row.display }}
+              </template>
+              <br>
+              <span class="text-sm text-gray-400">#{{ scope.row.name }}</span>
+            </div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column-tag
@@ -59,69 +121,15 @@
         </template>
       </el-table-column>
       <el-table-column-time prop="updated_time" :label="$t('Project.IssueUpdate')" />
-      <el-table-column v-if="userRole !== 'QA'" align="center" label="GitLab" width="110">
+      <el-table-column align="center" :label="$t('general.owner_name')" prop="owner_name" />
+      <el-table-column align="center" :label="$t('ProjectSettings.Status')">
         <template slot-scope="scope">
-          <el-popover
-            v-if="scope.row.git_url"
-            placement="top"
-            width="400"
-            trigger="hover"
-            :open-delay="300"
-            :close-delay="50"
-          >
-            <p :id="`copy-${scope.$index}`" class="text-center">
-              <span class="text-title">{{ scope.row.git_url }}</span>
-            </p>
-            <div class="flex justify-center">
-              <el-button
-                class="mr-2"
-                icon="el-icon-copy-document"
-                circle
-                size="mini"
-                @click="copyUrl(`copy-${scope.$index}`)"
-              />
-              <a :href="scope.row.git_url" target="_blank">
-                <el-button circle size="mini">
-                  <svg-icon icon-class="foreign" />
-                </el-button>
-              </a>
-            </div>
-            <el-link slot="reference" :underline="false" style="font-size: 22px">
-              <svg-icon icon-class="gitlab" />
-            </el-link>
-          </el-popover>
-          <span v-else>-</span>
+          <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
+            {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column v-if="userRole !== 'QA'" align="center" label="Redmine" width="110">
-        <template slot-scope="scope">
-          <el-link
-            v-if="scope.row.redmine_url"
-            target="_blank"
-            style="font-size: 22px"
-            :underline="false"
-            :href="scope.row.redmine_url"
-          >
-            <svg-icon icon-class="redmine" />
-          </el-link>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="userRole !== 'QA'" align="center" label="Harbor" width="110">
-        <template slot-scope="scope">
-          <el-link
-            v-if="scope.row.harbor_url"
-            target="_blank"
-            style="font-size: 22px"
-            :underline="false"
-            :href="scope.row.harbor_url"
-          >
-            <svg-icon icon-class="harbor" />
-          </el-link>
-          <span v-else>-</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="210">
+      <el-table-column :label="$t('general.Actions')" align="center" width="300">
         <template slot-scope="scope">
           <el-button
             v-if="userRole !== 'QA'"
@@ -140,6 +148,14 @@
             @click="handleDelete(scope.row)"
           >
             {{ $t('general.Delete') }}
+          </el-button>
+          <el-button size="mini" @click="toggleUsage(scope.row)">
+            <div class="flex items-center">
+              <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
+              <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
+                {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+              </span>
+            </div>
           </el-button>
         </template>
       </el-table-column>
@@ -193,7 +209,7 @@ export default {
     return {
       editProject: {},
       deleteProject: { id: '', name: '' },
-      searchKeys: ['display', 'name'],
+      searchKeys: ['display', 'name', 'owner_name'],
       rowHeight: 74
     }
   },
@@ -277,6 +293,9 @@ export default {
         })
         await this.loadData()
       }
+    },
+    toggleUsage(row) {
+      row.disabled = !row.disabled
     }
   }
 }
