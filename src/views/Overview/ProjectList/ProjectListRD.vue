@@ -171,33 +171,30 @@ export default {
       return `${success} / ${total}`
     },
     copyUrl(id) {
+      const message = this.$t('Notify.Copied')
       const target = document.getElementById(id)
       window.getSelection().selectAllChildren(target)
       document.execCommand('Copy')
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Copied'),
-        type: 'success'
-      })
+      this.showSuccessMessage(message)
     },
     async setStar(id, star) {
+      const message = this.$t('Notify.Updated')
       if (star) {
         await postStarProject(id)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        this.showSuccessMessage(message)
         await this.loadData()
       } else {
         await deleteStarProject(id)
         await this.loadData()
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        this.showSuccessMessage(message)
       }
+    },
+    showSuccessMessage(message) {
+      this.$message({
+        title: this.$t('general.Success'),
+        message,
+        type: 'success'
+      })
     }
   }
 }
