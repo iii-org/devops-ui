@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector :keep-selection="false" :clearable="true" @change="project_id=$event">
+    <ProjectListSelector :project-id="project_id" :keep-selection="false" :clearable="true" @change="project_id=$event">
       <el-popover
         placement="bottom"
         trigger="click"
@@ -186,20 +186,67 @@ export default {
     }
   },
   watch: {
-    project_id() {
-      this.loadProjectSelectionList(this.fixed_version_closed)
+    async project_id(value) {
+      await this.loadProjectSelectionList(this.fixed_version_closed)
+      const storeFilterValue = await this.getIssueFilter()
+      storeFilterValue['work_project_id'] = value
+      await this.setIssueFilter(storeFilterValue)
     },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadProjectSelectionList(value)
+    },
+    async filterValue(value) {
+      const storeFilterValue = await this.getIssueFilter()
+      if (value['tags'] && value['tags'].length <= 0) {
+        this.$delete(value, 'tags')
+      }
+      storeFilterValue['work'] = value
+      await this.setIssueFilter(storeFilterValue)
+    },
+    async keyword(value) {
+      const storeKeyword = await this.getKeyword()
+      storeKeyword['work'] = value
+      await this.setKeyword(storeKeyword)
+    },
+    async displayClosed(value) {
+      const storeDisplayClosed = await this.getDisplayClosed()
+      storeDisplayClosed['work'] = value
+      await this.setDisplayClosed(storeDisplayClosed)
     }
   },
-  mounted() {
-    this.loadSelectionList()
+  async created() {
+    const storeFilterValue = await this.getIssueFilter()
+    if (storeFilterValue['work']) {
+      this.filterValue = storeFilterValue['work']
+    } else {
+      this.filterValue = {}
+    }
+    if (storeFilterValue['work_project_id']) {
+      this.project_id = storeFilterValue['work_project_id']
+    } else {
+      this.project_id = null
+    }
+    await this.setIssueFilter(storeFilterValue)
+    const storeKeyword = await this.getKeyword()
+    if (storeKeyword['work']) {
+      this.keyword = storeKeyword['work']
+    } else {
+      this.keyword = null
+    }
+    const storeDisplayClosed = await this.getDisplayClosed()
+    if (storeDisplayClosed['work']) {
+      this.displayClosed = storeDisplayClosed['work']
+    } else {
+      this.displayClosed = false
+    }
+  },
+  async mounted() {
+    await this.loadSelectionList()
     this.getMyProjectList()
   },
   methods: {
-    ...mapActions('projects', ['getMyProjectList']),
+    ...mapActions('projects', ['getMyProjectList', 'getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed']),
     getOptionsData(option_name) {
       return this[option_name]
     },

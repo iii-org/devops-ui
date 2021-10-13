@@ -267,14 +267,14 @@ export default {
       await this.loadData()
     },
     async projectId() {
-      await this.onChangeFilterForm(this.filterValue)
+      await this.onChangeFilterForm({ filterValue: this.filterValue, keyword: this.keyword, displayClosed: this.displayClosed })
     },
     filterValueProps: {
       deep: true,
       immediate: false,
       async handler(value) {
         this.filterValue = value
-        await this.onChangeFilterForm(value)
+        await this.onChangeFilterForm({ filterValue: value })
       }
     },
     displayClosedProps(value) {
@@ -283,8 +283,8 @@ export default {
     keywordProps(value) {
       this.keyword = value
     },
-    async displayClosed() {
-      await this.onChangeFilterForm(this.filterValue)
+    async displayClosed(value) {
+      await this.onChangeFilterForm({ displayClosed: value })
     },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)

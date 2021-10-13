@@ -82,6 +82,10 @@ import { deleteStarProject, postStarProject } from '@/api/projects'
 export default {
   name: 'ProjectListSelector',
   props: {
+    projectId: {
+      type: Number,
+      default: null
+    },
     keepSelection: {
       type: Boolean,
       default: true
@@ -108,6 +112,9 @@ export default {
     }
   },
   watch: {
+    projectId(value) {
+      if (value) this.projectValue = value
+    },
     selectedProjectId: {
       immediate: true,
       handler(val) {
@@ -203,7 +210,8 @@ export default {
           .then(() => {
             this.$parent.isConfirmLeave = true
           })
-          .catch(() => {})
+          .catch(() => {
+          })
       }
     }
   }
@@ -227,7 +235,7 @@ export default {
 
 .project {
   @apply w-full;
-  >>> .el-input {
+  > > > .el-input {
     input {
       @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate;
     }
