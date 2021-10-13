@@ -35,7 +35,7 @@
 <script>
 import { isJSON, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 
-const fileRegex = { Postman: /^[\w,\s-]+\.postman_collection\.json$/, SideeX: /^[\w,\s-]+\.sideex\.json$/ }
+const fileRegex = { Postman: '.postman_collection.json$', SideeX: '.sideex.json$' }
 
 export default {
   name: 'CollectionFileUploader',
@@ -47,7 +47,8 @@ export default {
           return reject(this.$t(`Validation.Select`, [this.$t('File.File')]))
         }
         if (_this.uploadForm.software_name) {
-          const getFilenameList = value.map(file => file.name.match(fileRegex[_this.uploadForm.software_name])).filter(file => !file)
+          const getFilenameList = value.map(file => file.name.match(fileRegex[_this.uploadForm.software_name]) && !file.name.match('[*?"< >|#}{%~&]'))
+            .filter(file => !file)
           if (getFilenameList.length > 0) {
             return reject(this.$t(`Test.TestFile.${_this.uploadForm.software_name}Upload`))
           }
