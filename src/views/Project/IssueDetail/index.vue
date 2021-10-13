@@ -293,8 +293,7 @@ export default {
         visible: false,
         id: null
       },
-      relations: [],
-      tagsString: ''
+      relations: []
     }
   },
   beforeRouteEnter(to, from, next) {
