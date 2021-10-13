@@ -1,11 +1,10 @@
 <template>
   <div class="app-container">
     <div class="text-right">
-      <el-input
-        v-model="keyword"
-        :placeholder="$t('Project.SearchProjectNameOrId')"
-        style="width: 250px"
-        prefix-icon="el-icon-search"
+      <SearchFilter
+        ref="filter"
+        @changeFilter="loadData"
+        @update:keyword="keyword = $event"
       />
     </div>
     <el-divider />
@@ -141,10 +140,11 @@ import { mapActions, mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { deleteStarProject, postStarProject } from '@/api/projects'
+import SearchFilter from '@/views/Overview/ProjectList/components/SearchFilter'
 
 export default {
   name: 'ProjectListRD',
-  components: { ElTableColumnTime },
+  components: { ElTableColumnTime, SearchFilter },
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
@@ -155,10 +155,18 @@ export default {
     ...mapGetters(['projectList', 'projectListTotal'])
   },
   methods: {
-    ...mapActions(['projects/getMyProjectList']),
+    ...mapActions('projects', ['getMyProjectList']),
     async fetchData() {
-      await this['projects/getMyProjectList']()
+      let params = {}
+      if (this.$refs.filter) params = this.getParams()
+      await this.getMyProjectList(params)
       return this.projectList
+    },
+    getParams() {
+      const params = {}
+      if (this.$refs.filter.isDisabled.length === 1) params.disabled = this.$refs.filter.isDisabled[0]
+      else delete params.disabled
+      return params
     },
     returnTagType(row) {
       const { success, total } = row.last_test_result
