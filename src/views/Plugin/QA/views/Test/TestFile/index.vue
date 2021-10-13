@@ -290,9 +290,9 @@ export default {
       this.software.forEach((item, idx) => {
         this.$set(this.software[idx], 'visible', true)
       })
-      if (this.userRole === 'Engineer') {
-        this.keyword = this.userName
-      }
+      // if (this.userRole === 'Engineer') {
+      //   this.keyword = this.userName
+      // }
       return data
     },
     handleRelatedPlan(collection) {
