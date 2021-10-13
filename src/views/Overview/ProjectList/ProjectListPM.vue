@@ -5,13 +5,10 @@
         {{ $t('Project.AddProject') }}
       </el-button>
       <div class="flex">
-        <SearchFilter />
-        <el-divider direction="vertical" />
-        <el-input
-          v-model="keyword"
-          style="width: 250px"
-          :placeholder="$t('Project.SearchProjectNameOrId')"
-          prefix-icon="el-icon-search"
+        <SearchFilter
+          ref="filter"
+          @changeFilter="loadData"
+          @update:keyword="keyword = $event"
         />
       </div>
     </div>
@@ -133,7 +130,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="300">
+      <el-table-column :label="$t('general.Actions')" align="center" width="320">
         <template slot-scope="scope">
           <el-button
             v-if="userRole !== 'QA'"
@@ -229,11 +226,22 @@ export default {
       'selectedProjectId'
     ])
   },
+  mounted() {
+    this.$nextTick(() => this.loadData())
+  },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList', 'editProject']),
     async fetchData() {
-      await this.getMyProjectList()
+      let params = {}
+      if (this.$refs.filter) params = this.getParams()
+      await this.getMyProjectList(params)
       return this.projectList
+    },
+    getParams() {
+      const params = {}
+      if (this.$refs.filter.isDisabled.length === 1) params.disabled = this.$refs.filter.isDisabled[0]
+      else delete params.disabled
+      return params
     },
     handleAdding() {
       this.$refs.createProjectDialog.showDialog = true
