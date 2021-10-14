@@ -54,7 +54,7 @@
       </el-col>
     </el-row>
     <el-dialog :visible.sync="fullIssuePriority" top="5vh" width="90%">
-      <WorkloadCard :key="reload" :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
+      <WorkloadCard :statistics-obj="statisticsObj" :save-selected-item="saveSelectedItem" />
     </el-dialog>
   </el-row>
 </template>
@@ -81,7 +81,6 @@ export default {
       projectTestObj: {},
       isProjectTestList: false,
       fullIssuePriority: false,
-      reload: 0,
       saveSelectedItem: ''
     }
   },
@@ -164,7 +163,7 @@ export default {
     },
     showFullIssuePriority() {
       this.fullIssuePriority = true
-      this.reload += 1
+      this.$forceUpdate()
     },
     handleSelectedItem(val) {
       this.saveSelectedItem = val

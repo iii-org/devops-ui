@@ -26,7 +26,7 @@
         >
           <el-table-column type="expand">
             <template slot-scope="props">
-              <admin-member-table :key="reload" :loading="props.row.loading" :data="props.row.childrens" />
+              <admin-member-table :loading="props.row.loading" :data="props.row.childrens" />
             </template>
           </el-table-column>
           <el-table-column
@@ -104,8 +104,7 @@ export default {
       loading: false,
       chartData: [],
       detailDialog: false,
-      searchKeys: ['project_name', 'pm_user_name'],
-      reload: 0
+      searchKeys: ['project_name', 'pm_user_name']
     }
   },
   computed: {
@@ -205,17 +204,11 @@ export default {
     rowClicked(row) {
       this.$refs['tableData'].toggleRowExpansion(row)
     },
-    loadMembers(row) {
-      const _this = this
-      row.loading = true
-      getProjectMembersByProjectID(row.project_id)
-        .then((res) => {
-          row['childrens'] = res.data
-        })
-        .finally(() => {
-          row.loading = false
-          _this.reload += 1
-        })
+    async loadMembers(row) {
+      this.$set(row, 'loading', true)
+      const res = await getProjectMembersByProjectID(row.project_id)
+      this.$set(row, 'children', res.data)
+      this.$set(row, 'loading', false)
     },
     onClickChart(row) {
       this.detailDialog = true

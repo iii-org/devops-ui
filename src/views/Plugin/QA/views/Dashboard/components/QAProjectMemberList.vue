@@ -74,8 +74,7 @@ export default {
       detailData: [],
       searchKeys: ['user_name'],
       searchStatus: '',
-      keyword: '',
-      reload: 0
+      keyword: ''
     }
   },
   computed: {

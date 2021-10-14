@@ -1,5 +1,5 @@
 <template>
-  <el-row :key="reload">
+  <el-row>
     <el-row v-if="note.notes" :span="24" type="flex" align="bottom" :justify="right|justifyRight">
       <el-col v-if="right" class="time">
         {{ note.created_on | formatTime }}
@@ -93,11 +93,6 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      reload: 0
-    }
-  },
   watch: {
     note: {
       deep: true,
@@ -122,7 +117,7 @@ export default {
     },
     toggleVisible(detail) {
       detail.detailVisible = !detail.detailVisible
-      this.reload += 1
+      this.$forceUpdate()
     }
   }
 }

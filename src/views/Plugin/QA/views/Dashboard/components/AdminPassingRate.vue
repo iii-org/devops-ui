@@ -95,8 +95,7 @@ export default {
       detailDialog: false,
       searchKeys: ['project_name'],
       keyword: '',
-      maxCircleWidth: 120,
-      reload: 0
+      maxCircleWidth: 120
     }
   },
   computed: {

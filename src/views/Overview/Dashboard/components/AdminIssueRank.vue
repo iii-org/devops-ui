@@ -57,8 +57,7 @@ export default {
       issueRankDetail: {},
       involvedProjectsDialog: false,
       unclosedIssuesDialog: false,
-      searchKeys: ['user_name'],
-      reload: 0
+      searchKeys: ['user_name']
     }
   },
   watch: {

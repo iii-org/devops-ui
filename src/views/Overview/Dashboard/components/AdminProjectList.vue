@@ -97,8 +97,7 @@ export default {
       detailDialog: false,
       detailData: [],
       searchKeys: ['project_name', 'owner_name'],
-      searchStatus: '',
-      reload: 0
+      searchStatus: ''
     }
   },
   computed: {
