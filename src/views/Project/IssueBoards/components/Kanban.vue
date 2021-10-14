@@ -434,7 +434,8 @@ export default {
 
   .board-column-content {
     border: 10px solid transparent;
-    @apply overflow-x-hidden overflow-y-auto h-full space-y-4;
+    height: 95%;
+    @apply overflow-x-hidden overflow-y-auto space-y-4;
 
     .board-item {
       cursor: pointer;
