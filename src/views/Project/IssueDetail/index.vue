@@ -44,15 +44,11 @@
             />
           </el-col>
           <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-            <el-col :span="24" class="mb-3">
-              <issue-description ref="IssueDescription" v-model="form.description" :old-value="originForm.description"
+            <el-col ref="IssueDescription" :span="24" class="mb-3">
+              <issue-description v-model="form.description" :old-value="originForm.description"
                                  :issue-id="issueId"
               />
-            </el-col>
-            <el-col ref="IssueFiles">
               <issue-files v-if="files.length>0" :issue-file.sync="files" />
-            </el-col>
-            <el-col ref="IssueRelation">
               <el-collapse v-if="countRelationIssue>0">
                 <!--                <el-collapse-item>-->
                 <!--                  <div slot="title">-->
@@ -684,11 +680,9 @@ export default {
     onScrollIssue() {
       this.$nextTick(() => {
         const editorHeight = this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
-          this.$refs['IssueDescription'].$el.getBoundingClientRect().height -
-          this.$refs['IssueFiles'].$el.getBoundingClientRect().height -
-          this.$refs['IssueRelation'].$el.getBoundingClientRect().height
+          this.$refs['IssueDescription'].$el.getBoundingClientRect().height
         if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (this.$refs['mainIssue'].$children[3].$children[0].$options && this.$refs['mainIssue'].$children[3].$children[0].$options.name === 'IssueNotesEditor') {
+          if (this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options && this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options.name === 'IssueNotesEditor') {
             this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
             this.scrollClass = 'issueHeightEditor'
           }
@@ -715,7 +709,7 @@ export default {
 }
 
 .issueHeightEditor {
-  height: calc(95vh - 50px - 81px - 40px - 32px - 175px);
+  height: calc(95vh - 50px - 81px - 40px - 32px - 150px);
   overflow-y: auto;
 }
 
