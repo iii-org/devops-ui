@@ -1,5 +1,5 @@
 <template>
-  <div :key="reload" class="board-column">
+  <div class="board-column">
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="flex">
@@ -18,7 +18,7 @@
     >
       <div
         v-for="(element, idx) in list"
-        :key="element.id+issueReload"
+        :key="element.id"
         class="board-item item"
         @drop="drop($event, idx)"
         @dragover="allowDrop($event, idx)"
@@ -267,8 +267,8 @@ export default {
       return !element.has_children
     },
     end(boardObject, event) {
-      this.reload += 1
       this.$emit('update', { boardObject: boardObject, event: event })
+      this.$forceUpdate()
     },
     updateBoard(sendData) {
       this.$emit('update-board', sendData)
@@ -401,7 +401,7 @@ export default {
       if (data.hasOwnProperty('relations')) {
         await this.$set(element, 'relations', data.relations)
       }
-      this.issueReload += 1
+      this.$forceUpdate()
       this.$set(element, 'loadingRelation', false)
     },
     differentInDays(a, b) {
