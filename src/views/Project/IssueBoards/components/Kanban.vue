@@ -357,7 +357,7 @@ export default {
             value: value
           })
         }
-        this.reload += 1
+        this.$forceUpdate()
       }
     },
     allowDrop(e) {
