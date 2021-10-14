@@ -7,35 +7,7 @@
     :rules="issueFormRules"
     label-position="top"
   >
-    <el-form-item :label="$t('Issue.Tag')" prop="tags">
-      <el-select
-        v-model="form.tags"
-        style="width: 100%"
-        :placeholder="$t('Issue.NoTag')"
-        clearable
-        filterable
-        remote
-        multiple
-        value-key="tags"
-        :loading="issueLoading"
-        :remote-method="getSearchTags"
-        @focus="getSearchTags()"
-      >
-        <el-option-group
-          v-for="group in tagsList"
-          :key="group.name"
-          :label="group.name"
-        >
-          <template v-for="item in group.options">
-            <el-option
-              :key="item.id"
-              :value="item.id"
-              :label="item.name"
-            />
-          </template>
-        </el-option-group>
-      </el-select>
-    </el-form-item>
+    <Tags ref="tags" :form.sync="form" />
     <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
       <el-select
         v-model="form.parent_id"
@@ -258,18 +230,19 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getCheckIssueClosable } from '@/api/issue'
-import { getProjectAssignable, getProjectIssueList, getProjectVersion, getTagsByName, getTagsByProject } from '@/api/projects'
+import { getProjectAssignable, getProjectIssueList, getProjectVersion } from '@/api/projects'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
+import Tags from '@/components/Issue/Tags'
 
 const relationIssueFilter = { Feature: 'Test Plan', 'Test Plan': 'Feature', 'Fail Management': 'Test Plan' }
 
 export default {
   name: 'IssueForm',
-  components: { Status, Tracker, Priority },
+  components: { Status, Tracker, Priority, Tags },
   props: {
     issueId: {
       type: Number,
@@ -313,7 +286,6 @@ export default {
       issueLoading: false,
       issueList: [],
       relationIssueList: [],
-      tagsList: [],
       assigned_to: [],
       fixed_version: [],
       relativeIssueList: [],
@@ -392,19 +364,19 @@ export default {
     'form.project_id'(value) {
       this.fetchData()
       if (value > 0) {
-        this.getSearchTags()
+        this.$refs.tags.getSearchTags()
         this.getSearchIssue()
         this.getSearchRelationIssue()
       }
     },
     'form.tags'(value) {
-      if (this.form.project_id > 0) this.getSearchTags()
+      if (this.form.project_id > 0) this.$refs.tags.getSearchTags()
     }
   },
   mounted() {
     this.fetchData()
     if (this.form.project_id > 0) {
-      this.getSearchTags()
+      this.$refs.tags.getSearchTags()
       this.getSearchIssue()
       this.getSearchRelationIssue()
     }
@@ -560,55 +532,6 @@ export default {
       const CancelToken = axios.CancelToken.source()
       this.cancelToken = CancelToken
       return CancelToken.token
-    },
-    async getSearchTags(query) {
-      const tag_name = query || null
-      const tags = await this.fetchTagsData(tag_name)
-      this.getTagsList(tag_name, tags, query)
-    },
-    async fetchTagsData(tag_name) {
-      this.issueLoading = true
-      const pId = this.form.project_id
-      const cancelToken = this.checkToken()
-      const params = { project_id: pId, tag_name }
-      const res = tag_name === null ? await getTagsByProject(pId) : await getTagsByName(params, { cancelToken })
-      const tags = res.data.tags
-      this.issueLoading = false
-      this.cancelToken = null
-      return tags
-    },
-    getTagsList(tag_name, tags, query) {
-      const tagsList = []
-      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['AddTag']
-      tag_sorts.forEach(sort => {
-        const list = this.getTagsLabel(tags, sort, query)
-        if (list.options.length > 0) tagsList.push(list)
-      })
-      this.tagsList = tagsList
-    },
-    getTagsLabel(tags, tag_sort, query) {
-      const label = {}
-      const addTag = [{ id: `tag__${query}`, name: query }]
-      const showTags = this.getShowTags(tag_sort, tags, addTag)
-      const name = `Issue.${tag_sort}`
-      label.name = this.$t(name)
-      label.options = showTags
-      return label
-    },
-    getShowTags(tag_sort, tags, addTag) {
-      let showTags = null
-      // three type: 'All', 'LastResult', 'AddTag'
-      switch (tag_sort) {
-        case 'LastResult':
-          showTags = tags.slice(-3)
-          break
-        case 'AddTag':
-          showTags = addTag
-          break
-        default:
-          showTags = tags
-      }
-      return showTags
     },
     getObjectById(list, id) {
       return list.find((item) => (item.id === id))

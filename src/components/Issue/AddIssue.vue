@@ -161,34 +161,7 @@
       </el-col>
 
       <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.Tag')" prop="tags">
-          <el-select
-            v-model="issueForm.tags"
-            :placeholder="$t('Issue.NoTag')"
-            style="width: 100%"
-            clearable
-            filterable
-            remote
-            multiple
-            value-key="tags"
-            :remote-method="getSearchTags"
-            @focus="getSearchTags()"
-          >
-            <el-option-group
-              v-for="group in tagsList"
-              :key="group.name"
-              :label="group.name"
-            >
-              <template v-for="item in group.options">
-                <el-option
-                  :key="item.id"
-                  :value="item.id"
-                  :label="item.name"
-                />
-              </template>
-            </el-option-group>
-          </el-select>
-        </el-form-item>
+        <Tags :form.sync="issueForm" />
         <el-form-item :label="$t('general.Description')" prop="description">
           <el-input
             id="input-description"
@@ -204,13 +177,13 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getProjectAssignable, getProjectVersion, getTagsByName, getTagsByProject, addProjectTags } from '@/api/projects'
+import { getProjectAssignable, getProjectVersion, addProjectTags } from '@/api/projects'
 import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import { mapGetters } from 'vuex'
-import axios from 'axios'
+import Tags from '@/components/Issue/Tags'
 
 const getFormTemplate = () => ({
   name: '',
@@ -230,7 +203,7 @@ const getFormTemplate = () => ({
 
 export default {
   name: 'AddIssue',
-  components: { Tracker, Status, Priority },
+  components: { Tracker, Status, Priority, Tags },
   props: {
     dialogVisible: {
       type: Boolean,
@@ -298,7 +271,6 @@ export default {
       fileSizeLimit: '5MB',
       fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
-      tagsList: [],
       tagsString: ''
     }
   },
@@ -394,59 +366,6 @@ export default {
         })
       }
       this.$emit('add-topic-visible', false)
-    },
-    checkToken() {
-      if (this.cancelToken) this.cancelToken.cancel()
-      const CancelToken = axios.CancelToken.source()
-      this.cancelToken = CancelToken
-      return CancelToken.token
-    },
-    async getSearchTags(query) {
-      const tag_name = query || null
-      const tags = await this.fetchTagsData(tag_name)
-      this.getTagsList(tag_name, tags, query)
-    },
-    async fetchTagsData(tag_name) {
-      const pId = this.projectId
-      const cancelToken = this.checkToken()
-      const params = { project_id: pId, tag_name }
-      const res = tag_name === null ? await getTagsByProject(pId) : await getTagsByName(params, { cancelToken })
-      const tags = res.data.tags
-      this.cancelToken = null
-      return tags
-    },
-    getTagsList(tag_name, tags, query) {
-      const tagsList = []
-      const tag_sorts = tag_name === null ? ['LastResult', 'All'] : ['AddTag']
-      tag_sorts.forEach(sort => {
-        const list = this.getTagsLabel(tags, sort, query)
-        if (list.options.length > 0) tagsList.push(list)
-      })
-      this.tagsList = tagsList
-    },
-    getTagsLabel(tags, tag_sort, query) {
-      const label = {}
-      const addTag = [{ id: `tag__${query}`, name: query }]
-      const showTags = this.getShowTags(tag_sort, tags, addTag)
-      const name = `Issue.${tag_sort}`
-      label.name = this.$t(name)
-      label.options = showTags
-      return label
-    },
-    getShowTags(tag_sort, tags, addTag) {
-      let showTags = null
-      // three type: 'All', 'LastResult', 'AddTag'
-      switch (tag_sort) {
-        case 'LastResult':
-          showTags = tags.slice(-3)
-          break
-        case 'AddTag':
-          showTags = addTag
-          break
-        default:
-          showTags = tags
-      }
-      return showTags
     },
     handleSave() {
       this.handleUpdateTags()
