@@ -113,7 +113,7 @@
         </div>
         <div v-if="element.due_date || Object.keys(element.assigned_to).length>0" class="info">
           <div v-if="element.due_date" class="ml-1 detail due_date" :class="getDueDateClass(element)">
-            {{ element.due_date }}
+            <i class="el-icon-date" /> {{ element.due_date }}
           </div>
           <div v-else class="ml-1 detail due_date">
             <i class="el-icon-date" />
@@ -125,7 +125,7 @@
             :disabled="!element.assigned_to.login"
           >
             <div class="ml-1 detail user">
-              <span class="ml-1">{{ element.assigned_to.name }}</span>
+              <i class="el-icon-user-solid" /> {{ element.assigned_to.name }}
             </div>
           </el-tooltip>
           <div v-else class="ml-1 detail user">
@@ -203,9 +203,7 @@ export default {
   data() {
     return {
       showDialog: false,
-      showAlert: false,
-      reload: 0,
-      issueReload: 0
+      showAlert: false
     }
   },
   methods: {
