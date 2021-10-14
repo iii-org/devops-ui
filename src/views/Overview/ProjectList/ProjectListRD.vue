@@ -3,8 +3,8 @@
     <div class="text-right">
       <SearchFilter
         ref="filter"
+        :keyword.sync="keyword"
         @changeFilter="loadData"
-        @update:keyword="keyword = $event"
       />
     </div>
     <el-divider />
@@ -154,6 +154,9 @@ export default {
   computed: {
     ...mapGetters(['projectList', 'projectListTotal'])
   },
+  mounted() {
+    this.loadData()
+  },
   methods: {
     ...mapActions('projects', ['getMyProjectList']),
     async fetchData() {
@@ -164,8 +167,7 @@ export default {
     },
     getParams() {
       const params = {}
-      if (this.$refs.filter.isDisabled.length === 1) params.disabled = this.$refs.filter.isDisabled[0]
-      else delete params.disabled
+      this.$refs.filter.isDisabled.length === 1 ? params.disabled = this.$refs.filter.isDisabled[0] : delete params.disabled
       return params
     },
     returnTagType(row) {

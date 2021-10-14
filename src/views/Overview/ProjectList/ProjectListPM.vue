@@ -7,8 +7,8 @@
       <div class="flex">
         <SearchFilter
           ref="filter"
+          :keyword.sync="keyword"
           @changeFilter="loadData"
-          @update:keyword="keyword = $event"
         />
       </div>
     </div>
@@ -227,7 +227,7 @@ export default {
     ])
   },
   mounted() {
-    this.$nextTick(() => this.loadData())
+    this.loadData()
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList', 'editProject']),
@@ -239,8 +239,7 @@ export default {
     },
     getParams() {
       const params = {}
-      if (this.$refs.filter.isDisabled.length === 1) params.disabled = this.$refs.filter.isDisabled[0]
-      else delete params.disabled
+      this.$refs.filter.isDisabled.length === 1 ? params.disabled = this.$refs.filter.isDisabled[0] : delete params.disabled
       return params
     },
     handleAdding() {

@@ -44,14 +44,14 @@
 export default {
   name: 'SearchFilter',
   data() {
+    this.options = [{
+      value: 0,
+      label: this.$t('general.Enable')
+    }, {
+      value: 1,
+      label: this.$t('general.Disable')
+    }]
     return {
-      options: [{
-        value: 0,
-        label: this.$t('general.Enable')
-      }, {
-        value: 1,
-        label: this.$t('general.Disable')
-      }],
       isDisabled: [],
       keyword: '',
       searchVisible: false
