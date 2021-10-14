@@ -3,14 +3,15 @@
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="flex">
-        <el-col class="text-center">{{ headerText }} <b>({{ list.length }})</b></el-col>
+        <el-col class="text-center">{{ getTranslateHeader(boardObject.name) }} <b>({{ list.length }})</b></el-col>
         <!--        <i class="el-icon-more header-icon" />-->
       </el-row>
     </div>
     <draggable
       :list="list"
       v-bind="$attrs"
-      :class="['board-column-content', cName]"
+      class="board-column-content"
+      :class="boardObject.name"
       :move="checkRelatives"
       :draggable="'.item'"
       @change="end(boardObject, $event)"
@@ -19,65 +20,50 @@
         v-for="(element, idx) in list"
         :key="element.id+issueReload"
         class="board-item item"
-        :style="{ cursor: 'move' }"
         @drop="drop($event, idx)"
         @dragover="allowDrop($event, idx)"
       >
+        <div v-if="element.done_ratio>0" class="progress-bar" :class="getStatus(element)"
+             :style="{width: `${element.done_ratio}%`}"
+        />
         <div @contextmenu="handleContextMenu(element, '', $event)">
-          <div class="pb-4">
-            <div>
-              <el-link
-                class="cursor-pointer"
-                type="primary"
-                :underline="false"
-                style="font-size: 16px"
-                @click="handleClick(element.id)"
-              >
-                {{ element.name }}
-                <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="mr-1">{{ item.name
-                }}
-                </el-tag>
-              </el-link>
-            </div>
+          <div class="title">
+            <el-link
+              class="cursor-pointer"
+              type="primary"
+              :underline="false"
+              style="font-size: 16px"
+              @click="handleClick(element.id)"
+            >
+              {{ element.name }}
+              <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                {{ item.name }}
+              </el-tag>
+            </el-link>
           </div>
-          <div>
-            <span v-if="dimension !== 'status'" class="detail">
+          <div class="issue-status-tags">
+            <span v-if="dimension !== 'status'">
               <status :name="element.status.name" size="mini" class="status" />
             </span>
-            <span v-if="dimension !== 'priority'" class="detail">
+            <span v-if="dimension !== 'priority'">
               <priority :name="element.priority.name" size="mini" class="priority" />
             </span>
-            <span v-if="dimension !== 'tracker'" class="detail">
+            <span v-if="dimension !== 'tracker'">
               <tracker :name="element.tracker.name" class="tracker" />
             </span>
-          </div>
-          <el-progress v-if="element.done_ratio>0" :percentage="element.done_ratio" :status="getStatus(element)" />
-          <div>
-            <span class="detail due_date">
-              <i class="el-icon-date" />
-              <span class="ml-1" :class="getDueDateClass(element)">{{ element.due_date }}</span>
+            <span v-if="element.done_ratio>0">
+              <el-tag :type="getStatus(element)" size="mini" effect="dark">{{ element.done_ratio }}%</el-tag>
             </span>
-            <el-tooltip
-              v-if="element.assigned_to"
-              :content="element.assigned_to.login"
-              placement="right-start"
-              :disabled="!element.assigned_to.login"
-            >
-              <span class="ml-1 detail">
-                <i class="el-icon-user-solid" />
-                <span class="ml-1">{{ element.assigned_to.name }}</span>
-              </span>
-            </el-tooltip>
           </div>
         </div>
-        <div v-if="element.family" class="parent">
+        <div v-if="element.family" class="relation">
           <el-collapse v-model="element.show" @change="onCollapseChange(element)">
             <el-collapse-item name="relation">
               <template #title>
                 <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
-              <template v-if="element.family">
-                <div v-if="element.hasOwnProperty('parent')" class="parent"
+              <div v-if="element.family" class="parent">
+                <div v-if="element.hasOwnProperty('parent')"
                      @contextmenu="handleContextMenu(element.parent, '', $event)"
                 >
                   <b>{{ $t('Issue.ParentIssue') }}：</b>
@@ -89,7 +75,7 @@
                     </el-tag>
                   </el-link>
                 </div>
-                <div v-if="element.hasOwnProperty('children')&&element.children.length > 0" class="parent">
+                <div v-if="element.hasOwnProperty('children')&&element.children.length > 0">
                   <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                   <ol class="children_list">
                     <li v-for="(subElement, index) in element.children" :key="index"
@@ -105,7 +91,7 @@
                     </li>
                   </ol>
                 </div>
-                <div v-if="element.hasOwnProperty('relations')&&element.relations.length > 0" class="parent">
+                <div v-if="element.hasOwnProperty('relations')&&element.relations.length > 0">
                   <b>{{ $t('Issue.RelatedIssue') }}：</b>
                   <ol class="children_list">
                     <li v-for="(subElement, index) in element.relations" :key="index"
@@ -121,10 +107,32 @@
                     </li>
                   </ol>
                 </div>
-              </template>
+              </div>
             </el-collapse-item>
           </el-collapse>
         </div>
+        <div v-if="element.due_date || Object.keys(element.assigned_to).length>0" class="info">
+          <div v-if="element.due_date" class="ml-1 detail due_date" :class="getDueDateClass(element)">
+            {{ element.due_date }}
+          </div>
+          <div v-else class="ml-1 detail due_date">
+            <i class="el-icon-date" />
+          </div>
+          <el-tooltip
+            v-if="Object.keys(element.assigned_to).length>0"
+            :content="element.assigned_to.login"
+            placement="right-start"
+            :disabled="!element.assigned_to.login"
+          >
+            <div class="ml-1 detail user">
+              <span class="ml-1">{{ element.assigned_to.name }}</span>
+            </div>
+          </el-tooltip>
+          <div v-else class="ml-1 detail user">
+            <i class="el-icon-user-solid" />
+          </div>
+        </div>
+        <div v-else class="no-info" />
       </div>
       <div slot="header">
         <div class="title board-item select-none" @click="showDialog = !showDialog"><i
@@ -170,10 +178,6 @@ export default {
       type: String,
       default: null
     },
-    headerText: {
-      type: String,
-      default: 'Header'
-    },
     boardObject: {
       type: Object,
       default: () => ({})
@@ -185,10 +189,6 @@ export default {
     relativeList: {
       type: Array,
       default: () => []
-    },
-    cName: {
-      type: String,
-      default: ''
     },
     status: {
       type: Array,
@@ -371,7 +371,7 @@ export default {
       if (element.done_ratio === 100) {
         return 'success'
       } else if (element.due_date && today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
-        return 'exception'
+        return 'danger'
       } else if (element.due_date && this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'warning'
       }
@@ -384,6 +384,9 @@ export default {
       } else if (element.due_date && this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
         return 'warning'
       }
+    },
+    getTranslateHeader(value) {
+      return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
     async onCollapseChange(element) {
       this.$set(element, 'loadingRelation', true)
@@ -414,97 +417,124 @@ export default {
 <style lang="scss" scoped>
 .board-column {
   width: 280px;
-  overflow: hidden;
-  background: #ffffff;
-  border-radius: 3px;
-  border: 1px solid #e7e7e7;
   margin: 0 5px 20px 5px;
   padding-bottom: 20px;
+  @apply overflow-hidden bg-white rounded-md border-solid border border-gray-300;
 
   .board-column-header {
     height: 50px;
     line-height: 50px;
-    overflow: hidden;
-    border-radius: 3px 3px 0 0;
+    @apply overflow-hidden;
 
     .header-bar {
-      background: red;
       height: 3px;
-    }
-
-    .header-icon {
-      float: right;
-      margin-right: 10px;
-      line-height: 50px;
+      @apply bg-red-500;
     }
   }
 
   .board-column-content {
-    overflow: hidden;
-    overflow-y: auto;
     border: 10px solid transparent;
-    height: 95%;
+    @apply overflow-x-hidden overflow-y-auto max-h-full space-y-4;
 
     .board-item {
       cursor: pointer;
       width: 95%;
-      height: 70px;
-      margin: 5px auto;
-      background-color: #fff;
+      height: auto;
       text-align: left;
       line-height: 20px;
-      padding: 5px 10px;
+      //padding: 10px 10px 0 10px;
       box-sizing: border-box;
       border: 1px solid #e9e9e9;
-      box-shadow: 1px 3px 3px 0 rgba(0, 0, 0, 0.2);
+      @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
+      font-size: 16px;
+
+      .add-button {
+        cursor: pointer;
+        @apply m-3;
+      }
+
+      &.item {
+        cursor: move;
+      }
+
+      .progress-bar {
+        @apply bg-active rounded-full;
+        height: 5px;
+
+        &.success {
+          @apply bg-success;
+        }
+
+        &.danger {
+          @apply bg-danger;
+        }
+
+        &.warning {
+          @apply bg-warning;
+        }
+      }
+
+      .title {
+        @apply m-3;
+      }
+
+      .relation {
+        .parent {
+          @apply m-3;
+        }
+
+        .children_list {
+          margin: 0;
+        }
+
+        > > > .el-collapse-item {
+          &__header {
+            height: 2.5em;
+          }
+
+          &__content {
+            padding-bottom: 0;
+          }
+        }
+      }
+
+      .issue-status-tags {
+        font-size: 1em;
+        @apply mx-3 mb-1;
+
+        .tracker {
+          font-size: 0.80em;
+        }
+      }
+
+      .info {
+        @apply flex border-0 border-t border-solid border-gray-200 divide-x divide-solid divide-gray-200 rounded-b-md;
+        .detail {
+          font-size: 1em;
+          line-height: 1em;
+          padding: 0 3px;
+          @apply flex flex-1 py-2 border-0 truncate;
+        }
+
+        .due_date {
+          .danger {
+            font-weight: 900;
+            color: #F56C6C;
+          }
+
+          .warning {
+            font-weight: 500;
+            color: #d27e00;
+          }
+        }
+      }
+
+      .no-info {
+        @apply mb-3;
+      }
     }
   }
 
-  .add-button {
-    cursor: pointer;
-  }
-
-  .detail {
-    font-size: 1em;
-
-    .tracker {
-      font-size: 0.75em;
-    }
-  }
 }
 
-.parent {
-  .children_list {
-    margin: 0;
-  }
-
-  > > > .el-collapse-item {
-    &__header {
-      height: 2.5em;
-    }
-
-    &__content {
-      padding-bottom: 0;
-    }
-  }
-}
-
-.due_date {
-  .danger {
-    font-weight: 900;
-    color: #F56C6C;
-  }
-
-  .warning {
-    font-weight: 500;
-    color: #d27e00;
-  }
-}
-
-.board-column .board-column-content .board-item {
-  font-size: 16px;
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-  height: auto !important;
-}
 </style>

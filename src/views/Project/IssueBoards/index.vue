@@ -124,8 +124,6 @@
         :relative-list="relativeIssueList"
         :group="group"
         class="kanban"
-        :header-text="getTranslateHeader(classObj.name)"
-        :c-name="classObj.name"
         :class="getHeaderBarClassName(classObj.name)"
         :add-issue="saveIssue"
         @update="updateIssueStatus"
@@ -858,7 +856,6 @@ export default {
 
     > > > .parent {
       font-size: 0.75em;
-      margin: 0;
 
       .el-tag {
         font-size: 0.5em;
