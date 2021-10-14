@@ -18,7 +18,7 @@
     >
       <div
         v-for="(element, idx) in list"
-        :key="element.id+issueReload"
+        :key="element.id"
         class="board-item item"
         @drop="drop($event, idx)"
         @dragover="allowDrop($event, idx)"
