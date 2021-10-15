@@ -158,3 +158,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+>>> .el-form-item {
+  &__label {
+    font-size: 16px;
+  }
+}
+</style>
