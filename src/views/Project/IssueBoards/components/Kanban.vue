@@ -1,5 +1,5 @@
 <template>
-  <div class="board-column">
+  <div class="board-column" :class="getHeaderBarClassName(boardObject.name)">
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="flex">
@@ -406,6 +406,9 @@ export default {
       const Difference_In_Time = a.getTime() - b.getTime()
       return Difference_In_Time / (1000 * 3600 * 24)
     },
+    getHeaderBarClassName(name) {
+      return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
+    },
     handleContextMenu(row, context, event) {
       this.$emit('contextmenu', { row, context, event })
     }
@@ -416,6 +419,7 @@ export default {
 .board-column {
   width: 280px;
   margin: 0 5px 20px 5px;
+  flex: 0 0 280px;
   padding-bottom: 20px;
   @apply overflow-hidden bg-white rounded-md border-solid border border-gray-300;
 
@@ -478,8 +482,38 @@ export default {
       }
 
       .relation {
+
         .parent {
           @apply m-3;
+          font-size: 0.75em;
+
+          .el-tag {
+            font-size: 0.5em;
+          }
+
+          .Active {
+            @apply bg-active;
+          }
+
+          .Assigned {
+            @apply bg-assigned;
+          }
+
+          .Solved {
+            @apply bg-solved;
+          }
+
+          .InProgress {
+            @apply bg-inProgress;
+          }
+
+          .Verified {
+            @apply bg-finished;
+          }
+
+          .Closed {
+            @apply bg-closed;
+          }
         }
 
         .children_list {
@@ -502,7 +536,7 @@ export default {
         @apply mx-3 mb-1;
 
         .tracker {
-          font-size: 0.80em;
+          font-size: 0.8em;
         }
       }
 
@@ -512,6 +546,10 @@ export default {
           font-size: 1em;
           line-height: 1em;
           padding: 0 3px;
+          width: 100%;
+          width: -moz-available; /* WebKit-based browsers will ignore this. */
+          width: -webkit-fill-available; /* Mozilla-based browsers will ignore this. */
+          width: fill-available;
           @apply flex flex-1 py-2 border-0 truncate;
         }
 
@@ -534,6 +572,141 @@ export default {
     }
   }
 
+  &.active {
+    .board-column-header {
+      .header-bar {
+        @apply bg-active;
+      }
+    }
+  }
+
+  &.assigned {
+    .board-column-header {
+      .header-bar {
+        @apply bg-assigned;
+      }
+    }
+  }
+
+  &.solved {
+    .board-column-header {
+      .header-bar {
+        @apply bg-solved;
+      }
+    }
+  }
+
+  &.inprogress {
+    .board-column-header {
+      .header-bar {
+        @apply bg-inProgress;
+      }
+    }
+  }
+
+  &.verified {
+    .board-column-header {
+      .header-bar {
+        @apply bg-finished;
+      }
+    }
+  }
+
+  &.closed {
+    .board-column-header {
+      .header-bar {
+        @apply bg-closed;
+      }
+    }
+  }
+
+  &.document {
+    .board-column-header {
+      .header-bar {
+        @apply bg-document;
+      }
+    }
+  }
+
+  &.research {
+    .board-column-header {
+      .header-bar {
+        @apply bg-research
+      }
+    }
+  }
+
+  &.epic {
+    .board-column-header {
+      .header-bar {
+        @apply bg-epic
+      }
+    }
+  }
+
+  &.audit {
+    .board-column-header {
+      .header-bar {
+        @apply bg-audit
+      }
+    }
+  }
+
+  &.feature {
+    .board-column-header {
+      .header-bar {
+        @apply bg-feature;
+      }
+    }
+  }
+
+  &.bug {
+    .board-column-header {
+      .header-bar {
+        @apply bg-bug
+      }
+    }
+  }
+
+  &.issue {
+    .board-column-header {
+      .header-bar {
+        @apply bg-issue
+      }
+    }
+  }
+
+  &.changeRequest {
+    .board-column-header {
+      .header-bar {
+        @apply bg-changeRequest;
+      }
+    }
+  }
+
+  &.risk {
+    .board-column-header {
+      .header-bar {
+        @apply bg-risk
+      }
+    }
+  }
+
+  &.testPlan {
+    .board-column-header {
+      .header-bar {
+        @apply bg-testPlan
+      }
+    }
+  }
+
+  &.failManagement {
+    .board-column-header {
+      .header-bar {
+        @apply bg-failManagement
+      }
+    }
+  }
 }
 
 </style>

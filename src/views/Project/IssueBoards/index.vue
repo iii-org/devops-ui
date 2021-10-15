@@ -123,8 +123,6 @@
         :dimension="groupBy.dimension"
         :relative-list="relativeIssueList"
         :group="group"
-        class="kanban"
-        :class="getHeaderBarClassName(classObj.name)"
         :add-issue="saveIssue"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
@@ -824,9 +822,6 @@ export default {
     hideContextMenu() {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
-    },
-    getHeaderBarClassName(name) {
-      return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
     }
   }
 }
@@ -848,179 +843,6 @@ export default {
 
   &.is-panel {
     width: calc(100% - 260px);
-  }
-
-  .kanban {
-    flex: 0 0 280px;
-    margin-bottom: 0;
-
-    > > > .parent {
-      font-size: 0.75em;
-
-      .el-tag {
-        font-size: 0.5em;
-      }
-
-      .Active {
-        background: $active;
-      }
-
-      .Assigned {
-        background: $assigned;
-      }
-
-      .Solved {
-        background: $solved;
-      }
-
-      .InProgress {
-        background: $inProgress;
-      }
-
-      .Verified {
-        background: $finished;
-      }
-
-      .Closed {
-        background: $closed;
-      }
-    }
-
-    > > > &.active {
-      .board-column-header {
-        .header-bar {
-          background: $active;
-        }
-      }
-    }
-
-    > > > &.assigned {
-      .board-column-header {
-        .header-bar {
-          background: $assigned;
-        }
-      }
-    }
-
-    > > > &.solved {
-      .board-column-header {
-        .header-bar {
-          background: $solved;
-        }
-      }
-    }
-
-    > > > &.inprogress {
-      .board-column-header {
-        .header-bar {
-          background: $inProgress;
-        }
-      }
-    }
-
-    > > > &.verified {
-      .board-column-header {
-        .header-bar {
-          background: $finished;
-        }
-      }
-    }
-
-    > > > &.closed {
-      .board-column-header {
-        .header-bar {
-          background: $closed;
-        }
-      }
-    }
-
-    > > > &.document {
-      .board-column-header {
-        .header-bar {
-          @apply bg-document;
-        }
-      }
-    }
-
-    > > > &.research {
-      .board-column-header {
-        .header-bar {
-          @apply bg-research
-        }
-      }
-    }
-
-    > > > &.epic {
-      .board-column-header {
-        .header-bar {
-          @apply bg-epic
-        }
-      }
-    }
-
-    > > > &.audit {
-      .board-column-header {
-        .header-bar {
-          @apply bg-audit
-        }
-      }
-    }
-
-    > > > &.feature {
-      .board-column-header {
-        .header-bar {
-          @apply bg-feature;
-        }
-      }
-    }
-
-    > > > &.bug {
-      .board-column-header {
-        .header-bar {
-          @apply bg-bug
-        }
-      }
-    }
-
-    > > > &.issue {
-      .board-column-header {
-        .header-bar {
-          @apply bg-issue
-        }
-      }
-    }
-
-    > > > &.changeRequest {
-      .board-column-header {
-        .header-bar {
-          @apply bg-changeRequest;
-        }
-      }
-    }
-
-    > > > &.risk {
-      .board-column-header {
-        .header-bar {
-          @apply bg-risk
-        }
-      }
-    }
-
-    > > > &.testPlan {
-      .board-column-header {
-        .header-bar {
-          @apply bg-testPlan
-        }
-      }
-    }
-
-    > > > &.failManagement {
-      .board-column-header {
-        .header-bar {
-          @apply bg-failManagement
-        }
-      }
-    }
   }
 }
 
