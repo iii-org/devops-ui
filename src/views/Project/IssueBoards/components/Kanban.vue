@@ -114,7 +114,7 @@
         <div v-if="element.due_date || Object.keys(element.assigned_to).length>0" class="info">
           <div v-if="element.due_date" class="detail due_date" :class="getDueDateClass(element)">
             <em class="el-icon-date" />
-            <div class="text">{{ element.due_date }}</div>
+            <div class="text" :class="getDueDateClass(element)">{{ element.due_date }}</div>
           </div>
           <div v-else class="detail due_date">
             <em class="el-icon-date" />
