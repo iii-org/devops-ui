@@ -7,16 +7,15 @@
         <!--        <em class="el-icon-more header-icon" />-->
       </el-row>
     </div>
-    <!--    <draggable-->
-    <!--      :list="list"-->
-    <!--      v-bind="$attrs"-->
-    <!--      class="board-column-content"-->
-    <!--      :class="boardObject.name"-->
-    <!--      :move="checkRelatives"-->
-    <!--      :draggable="'.item'"-->
-    <!--      @change="end(boardObject, $event)"-->
-    <!--    >-->
-    <div class="board-column-content" :class="boardObject.name">
+    <draggable
+      :list="list"
+      v-bind="$attrs"
+      class="board-column-content"
+      :class="boardObject.name"
+      :move="checkRelatives"
+      :draggable="'.item'"
+      @change="end(boardObject, $event)"
+    >
       <div
         v-for="(element, idx) in list"
         :key="element.id"
@@ -146,7 +145,7 @@
                               @after-add="showDialog = !showDialog"
         />
       </div>
-      <!--    </draggable>--></div>
+    </draggable>
   </div>
 </template>
 
