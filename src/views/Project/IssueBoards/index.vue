@@ -111,9 +111,7 @@
       </template>
     </project-list-selector>
     <el-divider />
-    <el-col v-loading="isLoading" :element-loading-text="$t('Loading')" class="board"
-            :class="{'is-panel':rightPanelVisible}"
-    >
+    <div class="board" :class="{'is-panel':rightPanelVisible}">
       <Kanban
         v-for="classObj in groupByValueOnBoard"
         :key="classObj.id"
@@ -129,7 +127,7 @@
         @update-drag="quickUpdateIssue"
         @contextmenu="handleContextMenu"
       />
-    </el-col>
+    </div>
     <right-panel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
       <template v-for="item in filterOptions">
         <el-row :key="item.id" class="panel">
