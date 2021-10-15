@@ -232,9 +232,11 @@ export default {
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList', 'editProject']),
     async fetchData() {
+      this.listLoading = true
       let params = {}
       if (this.$refs.filter) params = this.getParams()
       await this.getMyProjectList(params)
+      this.listLoading = false
       return this.projectList
     },
     getParams() {
@@ -276,25 +278,18 @@ export default {
     },
     isAllowDelete(row) {
       const { creator_id, owner_id } = row
+      if (this.userRole === 'Administrator') return false
       if (this.userRole === 'QA') {
         if (creator_id !== this.userId) return true
-      } else if (this.userRole === 'Administrator') {
-        return false
       } else {
         if (owner_id !== this.userId) return true
       }
     },
     async setStar(id, star) {
       const message = this.$t('Notify.Updated')
-      if (star) {
-        await postStarProject(id)
-        await this.showSuccessMessage(message)
-        await this.loadData()
-      } else {
-        await deleteStarProject(id)
-        await this.showSuccessMessage(message)
-        await this.loadData()
-      }
+      star ? await postStarProject(id) : await deleteStarProject(id)
+      await this.loadData()
+      this.showSuccessMessage(message)
     },
     handleToggle(row) {
       row.disabled = !row.disabled

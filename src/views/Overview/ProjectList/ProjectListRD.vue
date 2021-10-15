@@ -160,9 +160,11 @@ export default {
   methods: {
     ...mapActions('projects', ['getMyProjectList']),
     async fetchData() {
+      this.listLoading = true
       let params = {}
       if (this.$refs.filter) params = this.getParams()
       await this.getMyProjectList(params)
+      this.listLoading = false
       return this.projectList
     },
     getParams() {
@@ -189,15 +191,9 @@ export default {
     },
     async setStar(id, star) {
       const message = this.$t('Notify.Updated')
-      if (star) {
-        await postStarProject(id)
-        this.showSuccessMessage(message)
-        await this.loadData()
-      } else {
-        await deleteStarProject(id)
-        await this.loadData()
-        this.showSuccessMessage(message)
-      }
+      star ? await postStarProject(id) : await deleteStarProject(id)
+      await this.loadData()
+      this.showSuccessMessage(message)
     },
     showSuccessMessage(message) {
       this.$message({
