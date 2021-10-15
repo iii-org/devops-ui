@@ -1,5 +1,5 @@
 <template>
-  <el-row class="app-container">
+  <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
     <project-list-selector>
       <el-popover
         placement="bottom"
@@ -111,7 +111,9 @@
       </template>
     </project-list-selector>
     <el-divider />
-    <div class="board" :class="{'is-panel':rightPanelVisible}">
+    <div class="board"
+         :class="{'is-panel':rightPanelVisible}"
+    >
       <Kanban
         v-for="classObj in groupByValueOnBoard"
         :key="classObj.id"
@@ -172,7 +174,7 @@
       :selection-options="contextOptions"
       @update="loadData"
     />
-  </el-row>
+  </div>
 </template>
 
 <script>
