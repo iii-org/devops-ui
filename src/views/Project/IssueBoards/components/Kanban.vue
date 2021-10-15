@@ -113,7 +113,8 @@
         </div>
         <div v-if="element.due_date || Object.keys(element.assigned_to).length>0" class="info">
           <div v-if="element.due_date" class="ml-1 detail due_date" :class="getDueDateClass(element)">
-            <i class="el-icon-date" /> {{ element.due_date }}
+            <i class="el-icon-date" />
+            <div class="text">{{ element.due_date }}</div>
           </div>
           <div v-else class="ml-1 detail due_date">
             <i class="el-icon-date" />
@@ -125,7 +126,8 @@
             :disabled="!element.assigned_to.login"
           >
             <div class="ml-1 detail user">
-              <i class="el-icon-user-solid" /> {{ element.assigned_to.name }}
+              <i class="el-icon-user-solid" />
+              <div class="text">{{ element.assigned_to.name }}</div>
             </div>
           </el-tooltip>
           <div v-else class="ml-1 detail user">
@@ -543,16 +545,15 @@ export default {
       .info {
         @apply flex border-0 border-t border-solid border-gray-200 divide-x divide-solid divide-gray-200 rounded-b-md;
         .detail {
+          min-width: 0;
           font-size: 1em;
           line-height: 1em;
           padding: 0 3px;
-          width: 100%;
-          width: -moz-available; /* WebKit-based browsers will ignore this. */
-          width: -webkit-fill-available; /* Mozilla-based browsers will ignore this. */
-          width: fill-available;
-          @apply flex flex-1 py-2 border-0 truncate;
+          @apply flex flex-1 py-2 border-0;
+          .text{
+            @apply truncate;
+          }
         }
-
         .due_date {
           .danger {
             font-weight: 900;
