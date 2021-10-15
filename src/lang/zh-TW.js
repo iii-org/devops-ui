@@ -130,10 +130,14 @@ export default {
     7002: '參數 {arg} 輸入錯誤。',
     7005: '{object} 的最大數量為 {num}',
     7006: '當議題有子議題時，參數 {arg} 不能被調整。',
+    7007: `參數 $arg 需要以 'ghp_'做開為開頭。`,
     8001: '{service_name} 回報錯誤：{response}',
     9001: '內部錯誤：{type}: {exception}',
     9003: '發生未被預期的資料庫錯誤：{message}',
-    9999: '發生未知錯誤。'
+    9999: '發生未知錯誤。',
+    20001: 'Token 是無效的。',
+    20002: 'Token 並不屬於這個account。',
+    20003: 'Token 並不屬於這項專案(iiidevops)。'
   },
   errorDetail: {
     locked: '鎖定',
@@ -837,6 +841,7 @@ export default {
     Secrets: 'Secrets',
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
+    Templates: 'Templates',
     AddPlugin: '新增插件',
     AddParams: '新增參數'
   },
@@ -1076,6 +1081,15 @@ export default {
     LastUpdateTime: '最後更新時間',
     true: '良好',
     false: '異常'
+  },
+  Templates: {
+    GithubAccount: 'Github @:general.Account',
+    GithubAccountPlaceholder: '請填入 Github 之帳號名稱 ex: jason_dev',
+    GithubTokenPlaceholder: `請填入 Github 已啟用 public_repo 之 Personal Token，請應以'ghp_'為開頭之字串`,
+    TokenWarning: '確認 Github 的 access token 是否已包含 public_repo?',
+    TemplatesSettings: '範本同步設定',
+    EnableTemplateSync: '啟用範本同步',
+    DocumentUrl: '相關教學請參考'
   },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -1,13 +1,16 @@
 <template>
-  <el-tabs v-model="activeName" tab-position="left" style="height: 100%" @tab-click="handleClick">
-    <el-tab-pane :label="$t('System.Secrets')" name="secrets" style="height: 100%">
-      <system-secrets ref="secrets" />
+  <el-tabs v-model="activeName" tab-position="left" class="h-full" @tab-click="handleClick">
+    <el-tab-pane :label="$t('System.Secrets')" name="secrets">
+      <SystemSecrets ref="secrets" />
     </el-tab-pane>
-    <el-tab-pane :label="$t('System.Registry')" name="registry" style="height: 100%">
-      <system-registry ref="registry" />
+    <el-tab-pane :label="$t('System.Registry')" name="registry">
+      <SystemRegistry ref="registry" />
     </el-tab-pane>
-    <el-tab-pane :label="$t('System.RedmineMail')" name="redmineMail" style="height: 100%">
-      <redmine-mail ref="redmineMail" />
+    <el-tab-pane :label="$t('System.RedmineMail')" name="redmineMail">
+      <RedmineMail ref="redmineMail" />
+    </el-tab-pane>
+    <el-tab-pane :label="$t('System.Templates')" name="templates">
+      <Templates ref="templates" />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -16,10 +19,11 @@
 import SystemSecrets from './components/SystemSecrets'
 import SystemRegistry from './components/SystemRegistry'
 import RedmineMail from './components/RedmineMail'
+import Templates from './components/Templates'
 
 export default {
   name: 'SystemArguments',
-  components: { SystemRegistry, SystemSecrets, RedmineMail },
+  components: { SystemRegistry, SystemSecrets, RedmineMail, Templates },
   data() {
     return {
       activeName: 'secrets'
@@ -36,6 +40,10 @@ export default {
 <style>
 /* To make el-tab content fill space, or table will not expand */
 .el-tabs__content {
+  height: 100%;
+}
+
+.el-tab-pane {
   height: 100%;
 }
 </style>

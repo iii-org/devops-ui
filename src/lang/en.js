@@ -130,10 +130,14 @@ export default {
     7002: 'Argument {arg} is incorrect.。',
     7005: 'Maximum number of {object} in a project is {num}.',
     7006: 'Argument {arg} can not be alerted when children issue exist.',
+    7007: `$arg should begin with 'ghp_'.`,
     8001: '{service_name} error: {response}',
     9001: 'Internal exception: {type}: {exception}',
     9003: 'An unexpected database error has occurred: {message}',
-    9999: 'An unknown error has occurred.'
+    9999: 'An unknown error has occurred.',
+    20001: 'Token is invalid.',
+    20002: 'Token is not belong to this account.',
+    20003: 'Token is not belong to this project(iiidevops).'
   },
   errorDetail: {
     locked: 'Locked',
@@ -840,7 +844,8 @@ export default {
   System: {
     Secrets: 'Secrets',
     Registry: 'Registry',
-    RedmineMail: 'Redmine Mail'
+    RedmineMail: 'Redmine Mail',
+    Templates: 'Templates'
   },
   PipeLines: {
     TestDetail: 'Test Detail'
@@ -1078,6 +1083,15 @@ export default {
     LastUpdateTime: 'Last Update Time',
     true: 'Good',
     false: 'Abnormal'
+  },
+  Templates: {
+    GithubAccount: 'Github @:general.Account',
+    GithubAccountPlaceholder: 'Please fill in Github account name. ex: jason_dev',
+    GithubTokenPlaceholder: `Please fill in Github's Personal Token that has enabled public_repo, and start the string with 'ghp_'.`,
+    TokenWarning: `Confirm whether Github's access token already contains public_repo.`,
+    TemplatesSettings: 'Template Synchronization Settings',
+    EnableTemplateSync: 'Enable template synchronization',
+    DocumentUrl: 'Please refer to related document'
   },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
