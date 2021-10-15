@@ -623,7 +623,7 @@ export default {
           await this.updateRelationIssue(this.projectIssueList, res.data)
           this.projectIssueList.forEach(item => {
             if (item.id === evt.event.added.element.id) {
-              item[this.groupBy.dimension] = evt.boardObject
+              this.$set(item, this.groupBy.dimension, evt.boardObject)
             }
           })
         } catch (e) {
@@ -667,7 +667,7 @@ export default {
         await updateIssue(id, data)
         this.projectIssueList.forEach(item => {
           if (item.id === id) {
-            item[filterDimension] = value[filterDimension]
+            this.$set(item, filterDimension, value[filterDimension])
           }
         })
       } catch (e) {
