@@ -4,7 +4,7 @@
       <div class="header-bar" />
       <el-row class="flex">
         <el-col class="text-center">{{ getTranslateHeader(boardObject.name) }} <b>({{ list.length }})</b></el-col>
-        <!--        <i class="el-icon-more header-icon" />-->
+        <!--        <em class="el-icon-more header-icon" />-->
       </el-row>
     </div>
     <draggable
@@ -36,7 +36,7 @@
               @click="handleClick(element.id)"
             >
               {{ element.name }}
-              <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+              <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="tags">
                 {{ item.name }}
               </el-tag>
             </el-link>
@@ -60,7 +60,7 @@
           <el-collapse v-model="element.show" @change="onCollapseChange(element)">
             <el-collapse-item name="relation">
               <template #title>
-                <i class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
+                <em class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
               <div v-if="element.family" class="parent">
                 <div v-if="element.hasOwnProperty('parent')"
@@ -70,7 +70,7 @@
                   <status :name="element.parent.status.name" size="mini" />
                   <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
                     {{ element.parent.name }}
-                    <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                    <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="tags">
                       {{ item.name }}
                     </el-tag>
                   </el-link>
@@ -84,7 +84,7 @@
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
-                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="tags">
                           {{ item.name }}
                         </el-tag>
                       </el-link>
@@ -100,7 +100,7 @@
                       <status :name="subElement.status.name" size="mini" />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
-                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="mr-1">
+                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="tags">
                           {{ item.name }}
                         </el-tag>
                       </el-link>
@@ -112,12 +112,12 @@
           </el-collapse>
         </div>
         <div v-if="element.due_date || Object.keys(element.assigned_to).length>0" class="info">
-          <div v-if="element.due_date" class="ml-1 detail due_date" :class="getDueDateClass(element)">
-            <i class="el-icon-date" />
+          <div v-if="element.due_date" class="detail due_date" :class="getDueDateClass(element)">
+            <em class="el-icon-date" />
             <div class="text">{{ element.due_date }}</div>
           </div>
-          <div v-else class="ml-1 detail due_date">
-            <i class="el-icon-date" />
+          <div v-else class="detail due_date">
+            <em class="el-icon-date" />
           </div>
           <el-tooltip
             v-if="Object.keys(element.assigned_to).length>0"
@@ -125,19 +125,19 @@
             placement="right-start"
             :disabled="!element.assigned_to.login"
           >
-            <div class="ml-1 detail user">
-              <i class="el-icon-user-solid" />
+            <div class="detail user">
+              <em class="el-icon-user-solid" />
               <div class="text">{{ element.assigned_to.name }}</div>
             </div>
           </el-tooltip>
-          <div v-else class="ml-1 detail user">
-            <i class="el-icon-user-solid" />
+          <div v-else class="detail user">
+            <em class="el-icon-user-solid" />
           </div>
         </div>
         <div v-else class="no-info" />
       </div>
       <div slot="header">
-        <div class="title board-item select-none" @click="showDialog = !showDialog"><i
+        <div class="title board-item select-none" @click="showDialog = !showDialog"><em
           class="el-icon-plus ml-4 mr-5 add-button"
         /> {{ $t('Issue.AddIssue') }}
         </div>
@@ -453,6 +453,10 @@ export default {
       @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
       font-size: 16px;
 
+      .tags{
+        @apply mr-1;
+      }
+
       .add-button {
         cursor: pointer;
         @apply m-3;
@@ -549,9 +553,12 @@ export default {
           font-size: 1em;
           line-height: 1em;
           padding: 0 3px;
-          @apply flex flex-1 py-2 border-0;
+          @apply ml-1 flex flex-1 py-2 border-0;
           .text{
             @apply truncate;
+          }
+          em{
+            @apply mr-0.5 text-gray-400
           }
         }
         .due_date {
