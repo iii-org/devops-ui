@@ -621,11 +621,10 @@ export default {
         try {
           const res = await updateIssue(evt.event.added.element.id, { [this.groupBy.dimension + '_id']: evt.boardObject.id })
           await this.updateRelationIssue(this.projectIssueList, res.data)
-          this.projectIssueList.forEach(item => {
-            if (item.id === evt.event.added.element.id) {
-              this.$set(item, this.groupBy.dimension, evt.boardObject)
-            }
-          })
+          const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
+          const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
+          issue[this.groupBy.dimension] = evt.boardObject
+          this.$set(this.projectIssueList, idx, issue)
         } catch (e) {
           // error
         }
@@ -640,18 +639,15 @@ export default {
           this.$set(issue, 'parent', updatedIssue)
         }
         if (issue.hasOwnProperty('children')) {
-          issue.children.forEach((subIssue, idx) => {
-            if (subIssue.id === updatedIssue.id) {
-              this.$set(issue['children'], idx, updatedIssue)
-            }
-          })
+          const idx = issue.children.findIndex(item => item.id === updatedIssue.id)
+          const issue = issue.children.find(item => item.id === updatedIssue.id)
+          console.log(updatedIssue)
+          this.$set(issue['children'], idx, updatedIssue)
         }
         if (issue.hasOwnProperty('relations')) {
-          issue.relations.forEach((subIssue, idx) => {
-            if (subIssue.id === updatedIssue.id) {
-              this.$set(issue['relations'], idx, updatedIssue)
-            }
-          })
+          const idx = issue.relations.findIndex(item => item.id === updatedIssue.id)
+          const issue = issue.relations.find(item => item.id === updatedIssue.id)
+          this.$set(issue['relations'], idx, updatedIssue)
         }
       })
     },
@@ -664,12 +660,12 @@ export default {
         if (Array.isArray(value[filterDimension])) {
           data = { [filterDimension]: value[filterDimension].map(item => item.id).join(',') }
         }
-        await updateIssue(id, data)
-        this.projectIssueList.forEach(item => {
-          if (item.id === id) {
-            this.$set(item, filterDimension, value[filterDimension])
-          }
-        })
+        const res = await updateIssue(id, data)
+        await this.updateRelationIssue(this.projectIssueList, res.data)
+        const idx = this.projectIssueList.findIndex(item => item.id === id)
+        const issue = this.projectIssueList.find(item => item.id === id)
+        issue[filterDimension] = value[filterDimension]
+        this.$set(this.projectIssueList, idx, issue)
       } catch (e) {
         // error
       }

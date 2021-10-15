@@ -141,7 +141,7 @@
           class="el-icon-plus ml-4 mr-5 add-button"
         /> {{ $t('Issue.AddIssue') }}
         </div>
-        <QuickAddIssueOnBoard v-if="showDialog" class="board-item" :save-data="addIssue" :board-object="boardObject"
+        <QuickAddIssueOnBoard v-if="showDialog" class="board-item quick-add" :save-data="addIssue" :board-object="boardObject"
                               @after-add="showDialog = !showDialog"
         />
       </div>
@@ -441,13 +441,16 @@ export default {
     height: 95%;
     @apply overflow-x-hidden overflow-y-auto space-y-4;
 
+    .quick-add{
+      padding: 10px 10px 0 10px;
+    }
+
     .board-item {
       cursor: pointer;
       width: 95%;
       height: auto;
       text-align: left;
       line-height: 20px;
-      //padding: 10px 10px 0 10px;
       box-sizing: border-box;
       border: 1px solid #e9e9e9;
       @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
