@@ -731,6 +731,7 @@ export default {
     SearchIdentifier: '搜尋ID',
     SearchProjectName: '搜尋專案名稱',
     SearchProjectNameOrId: '搜尋專案名稱或 ID',
+    SearchProjectNameOrIdOrManager: '搜尋專案名稱、ID或經理',
     SearchProjectNameOrManagerOrOrganization: '搜尋專案名稱、經理或組織',
     StartDate: '起始日',
     Owner: '專案經理',

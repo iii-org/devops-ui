@@ -23,7 +23,7 @@
       v-if="searchVisible"
       v-model="keyword"
       style="width: 250px"
-      :placeholder="$t('Project.SearchProjectNameOrId')"
+      :placeholder="$t('Project.SearchProjectNameOrIdOrManager')"
       prefix-icon="el-icon-search"
       clearable
       @blur="searchVisible=!searchVisible"

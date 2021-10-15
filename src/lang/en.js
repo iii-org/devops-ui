@@ -734,6 +734,7 @@ export default {
     SearchIdentifier: 'Please Input Project Identifier',
     SearchProjectName: 'Search Project Name',
     SearchProjectNameOrId: 'Search Project Name or ID',
+    SearchProjectNameOrIdOrManager: 'Search Project Name, ID or Manager',
     SearchProjectNameOrManagerOrOrganization: 'Search Project Name, Manager or Organization',
     StartDate: 'Start Date',
     Owner: 'Project Owner',
