@@ -432,7 +432,6 @@ export default {
       await this.resetClassifyIssue()
       this.projectIssueList = []
       await this.syncLoadFilterData()
-      await this.updateData()
       await this.getRelativeList()
     },
     async getRelativeList() {
@@ -612,7 +611,6 @@ export default {
     },
     async updateIssueBoard() {
       await this.fetchData()
-      await this.updateData()
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
@@ -629,7 +627,6 @@ export default {
           // error
         }
         this.isLoading = false
-        await this.updateData()
         await this.getRelativeList()
       }
     },
