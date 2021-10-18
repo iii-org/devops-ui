@@ -40,11 +40,6 @@ export default {
     }
   },
   data() {
-    this.confirm_options = {
-      confirmButtonText: this.$t('general.Confirm'),
-      cancelButtonText: this.$t('general.Cancel'),
-      type: 'warning'
-    }
     return {
       tabActiveName: 'cluster',
       isConfirmLeave: false
@@ -53,6 +48,14 @@ export default {
   computed: {
     hasUnsavedChanges() {
       return this.$refs.cluster.isFormChanged || this.$refs.registry.isFormChanged
+    },
+    confirm_options() {
+      const options = {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      }
+      return options
     }
   },
   watch: {

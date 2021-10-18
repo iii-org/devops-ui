@@ -119,11 +119,6 @@ export default {
   name: 'Registry',
   mixins: [BasicData],
   data() {
-    this.confirm_options = {
-      confirmButtonText: this.$t('general.Confirm'),
-      cancelButtonText: this.$t('general.Cancel'),
-      type: 'warning'
-    }
     return {
       showAddPage: false,
       updateStatus: 'UPDATE_INIT',
@@ -189,11 +184,16 @@ export default {
       this.showAddPage = true
     },
     async handleBackPage() {
+      const confirm_options = {
+        confirmButtonText: this.$t('general.Confirm'),
+        cancelButtonText: this.$t('general.Cancel'),
+        type: 'warning'
+      }
       if (this.isFormChanged && !this.isSaved) {
         const res = await this.$confirm(
           this.$t('Notify.UnSavedChanges'),
           this.$t('general.Warning'),
-          this.confirm_options).catch(() => {})
+          confirm_options).catch(() => {})
         if (res !== 'confirm') return
       }
       this.initRegistryTab()
