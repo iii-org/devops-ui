@@ -86,12 +86,12 @@
           </el-col>
           <el-col :span="24" :sm="13">
             <el-form-item :label="$t('general.Account')">
-              <el-input v-model="form.account" />
+              <el-input v-model="form.access_key" />
             </el-form-item>
           </el-col>
           <el-col :span="24" :sm="13">
             <el-form-item :label="$t('general.Password')" required>
-              <el-input v-model="form.password" show-password :placeholder="$t('SystemDeploySettings.FillInPassword')" />
+              <el-input v-model="form.access_secret" show-password :placeholder="$t('SystemDeploySettings.FillInPassword')" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -111,8 +111,8 @@ const formData = () => ({
   name: '',
   disabled: false,
   url: '',
-  account: '',
-  password: ''
+  access_key: '',
+  access_secret: ''
 })
 
 export default {
@@ -125,15 +125,14 @@ export default {
       editingId: 1,
       updatedFormData: {},
       isSaved: false,
-      form: formData(),
-      origin: {}
+      form: formData()
     }
   },
   computed: {
     isFormChanged() {
-      if (this.origin.length === 0) return false
+      const originData = this.$options.data().form
       for (const key in this.form) {
-        if (this.origin[key] !== this.form[key]) return true
+        if (this.form[key] !== originData[key]) return true
       }
       return false
     }
@@ -169,7 +168,7 @@ export default {
         })
     },
     async updateHostsDisabled(row) {
-      const { name, disabled, url, access_key, access_secret, type, description } = row
+      const { name, disabled, url, type, description, access_key, access_secret } = row
       const registries_id = row.registries_id
       const data = { name, disabled, type, description, access_key, access_secret, insecure: true, login_server: url }
       this.updateRegistryHostsById(registries_id, data)
@@ -206,7 +205,6 @@ export default {
     },
     initData() {
       this.form = formData()
-      this.setOriginData(this.form)
     },
     rowClicked(row) {
       this.editingId = row.registries_id
@@ -222,9 +220,8 @@ export default {
       this.form.type = type
       this.form.description = description
       this.form.url = url
-      this.form.account = access_key
-      // this.form.password = access_secret
-      this.setOriginData(this.form)
+      this.form.access_key = access_key
+      // this.form.access_secret = access_secret
     },
     getUpdateFormData() {
       const formData = {}
@@ -233,8 +230,8 @@ export default {
       formData.type = this.form.type
       formData.description = this.form.description
       formData.login_server = this.form.url
-      formData.access_key = this.form.account
-      formData.access_secret = this.form.password
+      formData.access_key = this.form.access_key
+      formData.access_secret = this.form.access_secret
       formData.insecure = this.form.insecure
       Object.assign(this.updatedFormData, formData)
     },
@@ -255,9 +252,6 @@ export default {
         case 'UPDATE_POST':
           this.addRegistryHosts()
       }
-    },
-    setOriginData(data) {
-      this.origin = JSON.parse(JSON.stringify(data))
     },
     showUpdateMessage() {
       this.$message({

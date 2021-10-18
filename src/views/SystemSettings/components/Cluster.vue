@@ -132,8 +132,7 @@ export default {
       editingId: 1,
       hasUploadfile: false,
       isSaved: false,
-      form: formData(),
-      origin: {}
+      form: formData()
     }
   },
   computed: {
@@ -141,9 +140,9 @@ export default {
       return !!this.form.kubeConfigString
     },
     isFormChanged() {
-      if (this.origin.length === 0) return false
+      const originData = this.$options.data().form
       for (const key in this.form) {
-        if (this.origin[key] !== this.form[key]) return true
+        if (this.form[key] !== originData[key]) return true
       }
       return false
     }
@@ -212,7 +211,6 @@ export default {
       const { name, disabled } = data
       this.form.clusterName = name
       this.form.disabled = disabled
-      this.setOriginData(this.form)
     },
     addCluster() {
       this.initData()
@@ -242,7 +240,6 @@ export default {
     },
     initData() {
       this.form = formData()
-      this.setOriginData(this.form)
     },
     hasFileList(val) {
       this.form.kubeConfigString = null
@@ -276,9 +273,6 @@ export default {
         case 'UPDATE_POST':
           this.addDeployHosts(formData)
       }
-    },
-    setOriginData(data) {
-      this.origin = JSON.parse(JSON.stringify(data))
     },
     showUpdateMessage() {
       this.$message({
