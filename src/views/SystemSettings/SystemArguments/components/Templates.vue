@@ -89,6 +89,9 @@ export default {
     }
   },
   methods: {
+    async loadData() {
+      await this.fetchData()
+    },
     async fetchData() {
       this.isLoading = true
       const res = await getSystemParameter()
