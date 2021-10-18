@@ -53,6 +53,13 @@
               :inactive-text="$t('general.off')"
             />
           </el-form-item>
+          <el-form-item>
+            <el-switch
+              v-model="status"
+              :active-text="$t('Issue.status')"
+              :inactive-text="$t('Issue.tracker')"
+            />
+          </el-form-item>
           <el-form-item :label="$t('Issue.tracker')">
             <el-select
               v-model="filterValue.tracker_id"
@@ -256,11 +263,9 @@ import { dragscroll } from 'vue-dragscroll'
 import axios from 'axios'
 import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 
-import RightPanel from '@/components/RightPanel'
-
 export default {
   name: 'TraceabilityMatrix',
-  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid, RightPanel },
+  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   directives: {
     dragscroll
   },
@@ -287,6 +292,7 @@ export default {
         total: 0
       },
       group: false,
+      status: true,
       accessedIssueId: [],
       relationLine: {},
       testFilesResult: [],
@@ -347,10 +353,8 @@ export default {
       return this.fixed_version.filter(version => nowVersionList.includes(version.id))
     },
     data() {
-      const strokeColor = {}
-
       const chartIssueList = this.chartIssueList
-      const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, strokeColor))
+      const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, this.status))
       let testFileList = chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
         .filter(issue => issue)
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
@@ -501,7 +505,7 @@ export default {
       if (!object) return true
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
-    formatChartData(issue, group, strokeColor) {
+    formatChartData(issue, group, status) {
       const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const link = []
       let children = []
@@ -538,12 +542,27 @@ export default {
       if (issue.fixed_version && issue.fixed_version.name) {
         point['text'] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
-      point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
+
       if (group) {
-        point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
+        if (status) {
+          point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})"`
+          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        } else {
+          point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
+          point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        }
       } else {
-        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        if (status) {
+          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        } else {
+          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        }
       }
+
       if (issue.fixed_version && issue.fixed_version.id) {
         if (this.filterValue.fixed_version_id.length > 0 && !this.filterValue.fixed_version_id.includes(issue.fixed_version && issue.fixed_version.id)) {
           point['style'] += `,opacity: 0.25,color: #00000040`

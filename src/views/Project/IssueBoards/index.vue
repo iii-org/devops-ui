@@ -638,7 +638,6 @@ export default {
         if (issue.hasOwnProperty('children')) {
           const idx = issue.children.findIndex(item => item.id === updatedIssue.id)
           const issue = issue.children.find(item => item.id === updatedIssue.id)
-          console.log(updatedIssue)
           this.$set(issue['children'], idx, updatedIssue)
         }
         if (issue.hasOwnProperty('relations')) {
