@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <template v-if="!showAddClusterPage">
+    <template v-if="!showAddPage">
       <div class="text-right">
         <el-button type="success" @click="addCluster">+ {{ $t('general.Add') }}</el-button>
       </div>
@@ -115,34 +115,37 @@
 import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploy'
 import { BasicData } from '@/newMixins'
 
+const formData = () => ({
+  clusterName: '',
+  disabled: false,
+  kubeConfigString: null
+})
+
 export default {
   name: 'Cluster',
   components: { ClusterFileUploader: () => import('@/views/Project/IssueDetail/components/ClusterFileUploader') },
   mixins: [BasicData],
   data() {
+    this.confirm_options = {
+      confirmButtonText: this.$t('general.Confirm'),
+      cancelButtonText: this.$t('general.Cancel'),
+      type: 'warning'
+    }
     return {
-      showAddClusterPage: false,
+      showAddPage: false,
       updateStatus: 'UPDATE_INIT',
       editingId: 1,
       hasUploadfile: false,
       isSaved: false,
-      form: {
-        clusterName: '',
-        disabled: false,
-        kubeConfigString: null
-      },
-      origin: {
-        clusterName: '',
-        disabled: false,
-        kubeConfigString: null
-      }
+      form: formData(),
+      origin: {}
     }
   },
   computed: {
     disabled() {
       return !!this.form.kubeConfigString
     },
-    isClusterFormChanged() {
+    isFormChanged() {
       if (this.origin.length === 0) return false
       for (const key in this.form) {
         if (this.origin[key] !== this.form[key]) return true
@@ -153,6 +156,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getDeployedHostsLists()
+      this.initData()
       return res.data.cluster
     },
     async fetchDeployedHostsByList(cluster_id) {
@@ -186,10 +190,8 @@ export default {
       const { name, disabled } = row
       const cluster_id = row.id
       const formData = new FormData()
-      formData.delete('name')
-      formData.delete('disabled')
-      formData.delete('k8s_config_file')
-      formData.delete('k8s_config_string')
+      const params = ['name', 'disabled', 'k8s_config_file', 'k8s_config_string']
+      params.forEach(param => formData.delete(param))
       formData.append('name', name)
       formData.append('disabled', disabled)
       this.updateDeployHostsById(formData, cluster_id)
@@ -209,7 +211,7 @@ export default {
       this.isSaved = false
       this.fetchDeployedHostsByList(row.id)
       this.updateStatus = 'UPDATE_PUT'
-      this.showAddClusterPage = true
+      this.showAddPage = true
     },
     setFormData(data) {
       const { name, disabled } = data
@@ -218,35 +220,29 @@ export default {
       this.setOriginData(this.form)
     },
     addCluster() {
-      this.initData('form')
+      this.initData()
       this.updateStatus = 'UPDATE_POST'
-      this.showAddClusterPage = true
+      this.showAddPage = true
     },
     async handleBackPage() {
-      if (this.isClusterFormChanged && !this.isSaved) {
-        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        }).catch(() => {})
+      if (this.isFormChanged && !this.isSaved) {
+        const res = await this.$confirm(
+          this.$t('Notify.UnSavedChanges'),
+          this.$t('general.Warning'),
+          this.confirm_options).catch(() => {})
         if (res !== 'confirm') return
       }
       this.initClusterTab()
     },
     initClusterTab() {
-      this.initData('form')
-      this.initData('origin')
+      this.initData()
       this.isSaved = false
-      this.showAddClusterPage = false
+      this.showAddPage = false
       this.hasUploadfile = false
     },
-    initData(source) {
-      const data = {
-        clusterName: '',
-        disabled: false,
-        kubeConfigString: null
-      }
-      this[source] = data
+    initData() {
+      this.form = formData()
+      this.setOriginData(this.form)
     },
     hasFileList(val) {
       this.form.kubeConfigString = null
@@ -255,10 +251,8 @@ export default {
     getUpdateFormData() {
       const formData = new FormData()
       const encodedData = btoa(this.form.kubeConfigString)
-      formData.delete('name')
-      formData.delete('disabled')
-      formData.delete('k8s_config_file')
-      formData.delete('k8s_config_string')
+      const params = ['name', 'disabled', 'k8s_config_file', 'k8s_config_string']
+      params.forEach(param => formData.delete(param))
       formData.append('name', this.form.clusterName)
       formData.append('disabled', this.form.disabled)
       if (this.hasUploadfile) formData.append('k8s_config_file', this.hasUploadfile)

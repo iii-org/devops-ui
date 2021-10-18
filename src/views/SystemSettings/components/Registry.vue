@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <template v-if="!showAddRegistryPage">
+    <template v-if="!showAddPage">
       <div class="text-right">
         <el-button type="success" @click="addRegistry">+ {{ $t('general.Add') }}</el-button>
       </div>
@@ -104,40 +104,38 @@
 import { BasicData } from '@/newMixins'
 import { getRegistryHostsLists, addRegistryHosts, updateRegistryHostsById } from '@/api/deploy'
 
+const formData = () => ({
+  type: 'harbor',
+  description: '',
+  insecure: true,
+  name: '',
+  disabled: false,
+  url: '',
+  account: '',
+  password: ''
+})
+
 export default {
   name: 'Registry',
   mixins: [BasicData],
   data() {
+    this.confirm_options = {
+      confirmButtonText: this.$t('general.Confirm'),
+      cancelButtonText: this.$t('general.Cancel'),
+      type: 'warning'
+    }
     return {
-      showAddRegistryPage: false,
+      showAddPage: false,
       updateStatus: 'UPDATE_INIT',
       editingId: 1,
       updatedFormData: {},
       isSaved: false,
-      form: {
-        type: 'harbor',
-        description: '',
-        insecure: true,
-        name: '',
-        disabled: false,
-        url: '',
-        account: '',
-        password: ''
-      },
-      origin: {
-        type: 'harbor',
-        description: '',
-        insecure: true,
-        name: '',
-        disabled: false,
-        url: '',
-        account: '',
-        password: ''
-      }
+      form: formData(),
+      origin: {}
     }
   },
   computed: {
-    isRegistryFormChanged() {
+    isFormChanged() {
       if (this.origin.length === 0) return false
       for (const key in this.form) {
         if (this.origin[key] !== this.form[key]) return true
@@ -148,6 +146,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getRegistryHostsLists()
+      this.initData()
       return res.data.registries
     },
     async addRegistryHosts() {
@@ -185,47 +184,36 @@ export default {
       this.updateHostsDisabled(row)
     },
     addRegistry() {
-      this.initData('form')
+      this.initData()
       this.updateStatus = 'UPDATE_POST'
-      this.showAddRegistryPage = true
+      this.showAddPage = true
     },
     async handleBackPage() {
-      if (this.isRegistryFormChanged && !this.isSaved) {
-        const res = await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        }).catch(() => {})
+      if (this.isFormChanged && !this.isSaved) {
+        const res = await this.$confirm(
+          this.$t('Notify.UnSavedChanges'),
+          this.$t('general.Warning'),
+          this.confirm_options).catch(() => {})
         if (res !== 'confirm') return
       }
       this.initRegistryTab()
     },
     initRegistryTab() {
-      this.initData('form')
-      this.initData('origin')
+      this.initData()
       this.isSaved = false
-      this.showAddRegistryPage = false
+      this.showAddPage = false
       this.updatedFormData = {}
     },
-    initData(source) {
-      const data = {
-        type: 'harbor',
-        description: '',
-        insecure: true,
-        name: '',
-        disabled: false,
-        url: '',
-        account: '',
-        password: ''
-      }
-      this[source] = data
+    initData() {
+      this.form = formData()
+      this.setOriginData(this.form)
     },
     rowClicked(row) {
       this.editingId = row.registries_id
       this.isSaved = false
       this.setFormData(row)
       this.updateStatus = 'UPDATE_PUT'
-      this.showAddRegistryPage = true
+      this.showAddPage = true
     },
     setFormData(rowData) {
       const { name, disabled, type, description, url, access_key, access_secret } = rowData

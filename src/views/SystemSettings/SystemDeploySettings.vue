@@ -27,11 +27,7 @@ export default {
   components: { ProjectListSelector, Cluster, Registry },
   beforeRouteLeave(to, from, next) {
     if (this.hasUnsavedChanges) {
-      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-        confirmButtonText: this.$t('general.Confirm'),
-        cancelButtonText: this.$t('general.Cancel'),
-        type: 'warning'
-      })
+      this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), this.confirm_options)
         .then(() => {
           this.isConfirmLeave = true
           next()
@@ -44,6 +40,11 @@ export default {
     }
   },
   data() {
+    this.confirm_options = {
+      confirmButtonText: this.$t('general.Confirm'),
+      cancelButtonText: this.$t('general.Cancel'),
+      type: 'warning'
+    }
     return {
       tabActiveName: 'cluster',
       isConfirmLeave: false
@@ -51,7 +52,12 @@ export default {
   },
   computed: {
     hasUnsavedChanges() {
-      return this.$refs.cluster.isClusterFormChanged || this.$refs.registry.isRegistryFormChanged
+      return this.$refs.cluster.isFormChanged || this.$refs.registry.isFormChanged
+    }
+  },
+  watch: {
+    tabActiveName(val) {
+      this.isConfirmLeave = false
     }
   },
   methods: {
@@ -66,11 +72,7 @@ export default {
     */
     showLeaveMessage() {
       const isLeave = new Promise(async(resolve, reject) => {
-        return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
-          confirmButtonText: this.$t('general.Confirm'),
-          cancelButtonText: this.$t('general.Cancel'),
-          type: 'warning'
-        })
+        return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), this.confirm_options)
           .then(() => {
             this.isConfirmLeave = true
             this.initTabsStatus()
@@ -86,8 +88,11 @@ export default {
       return isLeave
     },
     initTabsStatus() {
-      this.$refs.registry.showAddRegistryPage = false
-      this.$refs.cluster.showAddClusterPage = false
+      const tabs = ['registry', 'cluster']
+      tabs.forEach(tab => {
+        this.$refs[tab].initData()
+        this.$refs[tab].showAddPage = false
+      })
     }
   }
 }
