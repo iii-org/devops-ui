@@ -55,7 +55,7 @@
           </el-form-item>
           <el-form-item>
             <el-switch
-              v-model="status"
+              v-model="status_toggle"
               :active-text="$t('Issue.status')"
               :inactive-text="$t('Issue.tracker')"
             />
@@ -106,20 +106,6 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('Issue.fixed_version')">
-            <el-select
-              v-model="filterValue.fixed_version_id"
-              multiple
-              :placeholder="$t('Issue.SelectType')"
-              :disabled="selectedProjectId === -1"
-              clearable
-              filterable
-            >
-              <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
-                         :value="version.id"
-              />
-            </el-select>
-          </el-form-item>
           <el-form-item>
             <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
                        :disabled="chartLoading" @click="onPaintChart"
@@ -146,6 +132,20 @@
               </el-menu>
               <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
             </el-popover>
+          </el-form-item>
+          <el-form-item :label="$t('Issue.fixed_version')">
+            <el-select
+              v-model="filterValue.fixed_version_id"
+              multiple
+              :placeholder="$t('Issue.SelectType')"
+              :disabled="selectedProjectId === -1"
+              clearable
+              filterable
+            >
+              <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
+                         :value="version.id"
+              />
+            </el-select>
           </el-form-item>
         </el-form>
 
@@ -292,7 +292,7 @@ export default {
         total: 0
       },
       group: false,
-      status: true,
+      status_toggle: true,
       accessedIssueId: [],
       relationLine: {},
       testFilesResult: [],
@@ -354,7 +354,7 @@ export default {
     },
     data() {
       const chartIssueList = this.chartIssueList
-      const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, this.status))
+      const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, this.status_toggle))
       let testFileList = chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
         .filter(issue => issue)
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
@@ -376,6 +376,7 @@ export default {
         closed: '#909399',
         solved: '#3ecbbc',
         inProgress: '#e6a23c',
+        verified: '#67c23a',
         finished: '#67c23a',
         document: '#005f73',
         research: '#0a9396',
@@ -866,9 +867,7 @@ $max_width: calc(100vw);
 }
 
 .mermaid-wrapper {
-  @apply cursor-move;
-  overflow: auto;
-  @apply static;
+  @apply cursor-move overflow-auto static;
   .toolbar {
     @apply absolute bottom-10 right-10 z-50 w-1/6;
   }

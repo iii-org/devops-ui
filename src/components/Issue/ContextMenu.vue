@@ -73,6 +73,7 @@
       top="20px"
       append-to-body
       destroy-on-close
+      :close-on-click-modal="false"
       :title="$t('Issue.TraceabilityMatrix')+'(#'+row.id+' - '+ row.name+')'"
     >
       <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="tracker" :status="status"

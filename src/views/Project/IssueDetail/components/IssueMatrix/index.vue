@@ -4,12 +4,22 @@
       <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
-    {{ $t('general.group') }}:
-    <el-switch
-      v-model="group"
-      :active-text="$t('general.on')"
-      :inactive-text="$t('general.off')"
-    />
+    <el-form inline>
+      <el-form-item :label="$t('general.group')">
+        <el-switch
+          v-model="group"
+          :active-text="$t('general.on')"
+          :inactive-text="$t('general.off')"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-switch
+          v-model="status_toggle"
+          :active-text="$t('Issue.status')"
+          :inactive-text="$t('Issue.tracker')"
+        />
+      </el-form-item>
+    </el-form>
     <div v-show="data.length>0" ref="matrix" v-dragscroll class="mermaid-wrapper"
          :style="{height:`${tableHeight}px`}"
     >
@@ -74,6 +84,7 @@ export default {
         total: 0
       },
       group: false,
+      status_toggle: true,
       accessedIssueId: [],
       relationLine: {},
       relationIssue: {
@@ -88,7 +99,7 @@ export default {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
     },
     data() {
-      const chartData = this.chartIssueList.map(issue => this.formatChartData(issue, this.group))
+      const chartData = this.chartIssueList.map(issue => this.formatChartData(issue, this.group, this.status_toggle))
       let testFileList = this.chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
         .filter(issue => issue)
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
@@ -110,6 +121,7 @@ export default {
         closed: '#909399',
         solved: '#3ecbbc',
         inProgress: '#e6a23c',
+        verified: '#67c23a',
         finished: '#67c23a',
         document: '#005f73',
         research: '#0a9396',
@@ -133,11 +145,11 @@ export default {
   mounted() {
     this.initChart()
     this.$nextTick(() => {
-      this.tableHeight = this.$refs['wrapper'].clientHeight
+      this.tableHeight = this.$refs['wrapper'].clientHeight - 60
     })
     window.onresize = () => {
       this.$nextTick(() => {
-        this.tableHeight = this.$refs['wrapper'].clientHeight
+        this.tableHeight = this.$refs['wrapper'].clientHeight - 60
       })
     }
   },
@@ -156,7 +168,7 @@ export default {
     checkUniqueRelationLine(subIssue_id, issue_id) {
       return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
     },
-    formatChartData(issue, group) {
+    formatChartData(issue, group, status) {
       const checkIssueName = issue.name.replace(/"/g, '&quot;')
       const link = []
       let children = []
@@ -193,11 +205,25 @@ export default {
       if (issue.fixed_version && issue.fixed_version.name) {
         point['text'] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
-      point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
+
       if (group) {
-        point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
+        if (status) {
+          point['text'] += `(${this.$t('Issue.' + issue.tracker.name)})"`
+          point['group'] = `${this.$t('Issue.' + issue.status.name)}`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        } else {
+          point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
+          point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        }
       } else {
-        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        if (status) {
+          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.status.name)]},fill-opacity:0.5`
+        } else {
+          point['text'] += `${this.$t('Issue.' + issue.status.name)} - (${this.$t('Issue.' + issue.tracker.name)})"`
+          point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
+        }
       }
       if (issue.id === this.row.id) {
         point['edgeType'] = 'stadium'
@@ -375,13 +401,11 @@ $max_height: calc(100vh - 50px - 20px - 50px - 50px);
 $max_width: calc(100vw - 50px - 20px - 50px - 50px);
 .wrapper {
   height: #{$max_height};
-  overflow: hidden;
+  @apply overflow-hidden;
 }
 
 .mermaid-wrapper {
-  @apply cursor-move;
-  overflow: hidden;
-  @apply static;
+  @apply cursor-move static overflow-auto;
   .toolbar {
     @apply absolute bottom-10 right-10 z-50 w-1/6;
   }
