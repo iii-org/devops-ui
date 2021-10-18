@@ -105,7 +105,7 @@ export default {
       this.originData = JSON.parse(JSON.stringify(data))
     },
     handleUpdate() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(valid => {
         if (!valid) return
         this.updateSystemParameter()
       })
@@ -121,8 +121,8 @@ export default {
         .catch(err => {
           console.error(err)
         })
-        .finally(() => {
-          this.loadData()
+        .finally(async () => {
+          await this.loadData()
           this.isLoading = false
         })
     },
