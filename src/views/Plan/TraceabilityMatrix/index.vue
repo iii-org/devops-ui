@@ -45,6 +45,103 @@
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
     <el-tabs v-else v-model="activeTab" type="border-card">
       <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
+        <el-form inline>
+          <el-form-item :label="$t('general.group')">
+            <el-switch
+              v-model="group"
+              :active-text="$t('general.on')"
+              :inactive-text="$t('general.off')"
+            />
+          </el-form-item>
+          <el-form-item :label="$t('Issue.tracker')">
+            <el-select
+              v-model="filterValue.tracker_id"
+              :placeholder="$t('Issue.SelectType')"
+              :disabled="selectedProjectId === -1"
+              filterable
+            >
+              <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
+                         :value="track.id"
+              >
+                <tracker :name="track.name" />
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('Issue.Issue')">
+            <el-select
+              v-model="filterValue.issue_id"
+              style="width: 100%"
+              :placeholder="$t('RuleMsg.PleaseSelect')"
+              clearable
+              filterable
+              remote
+              multiple
+              collapse-tags
+              :remote-method="getSearchIssue"
+              :loading="issueLoading"
+              class="issue-select"
+            >
+              <el-option
+                v-for="item in issueList"
+                :key="item.id"
+                :label="'#' + item.id +' - '+item.name"
+                :value="item.id"
+              >
+                <span
+                  style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                >
+                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                  <span v-html="highLight(item.name)" />
+                </span>
+                <span style="float: right; color: #8492a6; font-size: 13px"
+                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                />
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('Issue.fixed_version')">
+            <el-select
+              v-model="filterValue.fixed_version_id"
+              multiple
+              :placeholder="$t('Issue.SelectType')"
+              :disabled="selectedProjectId === -1"
+              clearable
+              filterable
+            >
+              <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
+                         :value="version.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
+                       :disabled="chartLoading" @click="onPaintChart"
+            >
+              {{ $t('Track.StartPaint') }}
+            </el-button>
+            <el-popover
+              placement="bottom"
+              trigger="click"
+            >
+              <el-menu class="download">
+                <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
+                  <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
+                </el-menu-item>
+                <!-- <el-menu-item>
+                  <el-button icon="el-icon-download" @click="download">{{ $t('TestReport.DownloadPdf') }}</el-button>
+                </el-menu-item> -->
+                <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
+                  <em class="el-icon-download" />{{ $t('Track.Landscape') }}
+                </el-menu-item>
+                <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
+                  <em class="el-icon-download" />{{ $t('Track.Portrait') }}
+                </el-menu-item>
+              </el-menu>
+              <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
+            </el-popover>
+          </el-form-item>
+        </el-form>
+
         <div ref="wrapper" class="wrapper">
           <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
             <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
@@ -70,108 +167,6 @@
           </div>
           <el-empty v-if="data.length<=0" :description="$t('general.NoData')" />
         </div>
-        <right-panel v-if="activeTab==='map'" ref="rightPanel" :click-not-close="true">
-          <div slot="icon"><em class="el-icon-setting" /></div>
-          <el-row class="panel">
-            <el-card>
-              <template slot="header" />
-              <el-form>
-                <el-form-item :label="$t('general.group')">
-                  <el-switch
-                    v-model="group"
-                    :active-text="$t('general.on')"
-                    :inactive-text="$t('general.off')"
-                  />
-                </el-form-item>
-                <el-form-item :label="$t('Issue.tracker')">
-                  <el-select
-                    v-model="filterValue.tracker_id"
-                    :placeholder="$t('Issue.SelectType')"
-                    :disabled="selectedProjectId === -1"
-                    filterable
-                  >
-                    <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
-                               :value="track.id"
-                    >
-                      <tracker :name="track.name" />
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('Issue.Issue')">
-                  <el-select
-                    v-model="filterValue.issue_id"
-                    style="width: 100%"
-                    :placeholder="$t('RuleMsg.PleaseSelect')"
-                    clearable
-                    filterable
-                    remote
-                    multiple
-                    collapse-tags
-                    :remote-method="getSearchIssue"
-                    :loading="issueLoading"
-                    class="issue-select"
-                  >
-                    <el-option
-                      v-for="item in issueList"
-                      :key="item.id"
-                      :label="'#' + item.id +' - '+item.name"
-                      :value="item.id"
-                    >
-                      <span
-                        style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                      >
-                        <b>#<span v-html="highLight(item.id.toString())" /></b> -
-                        <span v-html="highLight(item.name)" />
-                      </span>
-                      <span style="float: right; color: #8492a6; font-size: 13px"
-                            v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
-                      />
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('Issue.fixed_version')">
-                  <el-select
-                    v-model="filterValue.fixed_version_id"
-                    multiple
-                    :placeholder="$t('Issue.SelectType')"
-                    :disabled="selectedProjectId === -1"
-                    clearable
-                    filterable
-                  >
-                    <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
-                               :value="version.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-form>
-              <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
-                         :disabled="chartLoading" @click="onPaintChart"
-              >
-                {{ $t('Track.StartPaint') }}
-              </el-button>
-              <el-popover
-                placement="bottom"
-                trigger="click"
-              >
-                <el-menu class="download">
-                  <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
-                    <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
-                  </el-menu-item>
-                  <!-- <el-menu-item>
-                    <el-button icon="el-icon-download" @click="download">{{ $t('TestReport.DownloadPdf') }}</el-button>
-                  </el-menu-item> -->
-                  <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
-                    <em class="el-icon-download" />{{ $t('Track.Landscape') }}
-                  </el-menu-item>
-                  <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
-                    <em class="el-icon-download" />{{ $t('Track.Portrait') }}
-                  </el-menu-item>
-                </el-menu>
-                <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
-              </el-popover>
-            </el-card>
-          </el-row>
-        </right-panel>
       </el-tab-pane>
       <el-tab-pane v-loading="listLoading" :label="$t('Track.TraceabilityCheck')" name="check"
                    :element-loading-text="$t('Loading')"
@@ -262,20 +257,6 @@ import axios from 'axios'
 import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
 
 import RightPanel from '@/components/RightPanel'
-
-const stroke = [
-  '#586c32',
-  '#323b6c',
-  '#64326c',
-  '#6c3258',
-  '#6c4732',
-  '#b9320d',
-  '#0d94b9',
-  '#b90d3e',
-  '#b9880d',
-  '#94b90d',
-  '#0db932'
-]
 
 export default {
   name: 'TraceabilityMatrix',
@@ -368,10 +349,7 @@ export default {
     data() {
       const strokeColor = {}
 
-      let chartIssueList = this.chartIssueList
-      if (this.filterValue.fixed_version_id.length > 0) {
-        chartIssueList = chartIssueList.filter(issue => this.filterValue.fixed_version_id.includes((issue.fixed_version && issue.fixed_version.id) ? issue.fixed_version.id : 'null'))
-      }
+      const chartIssueList = this.chartIssueList
       this.versionFilterList.forEach((version, idx) => {
         strokeColor[version.id] = stroke[idx % stroke.length]
       })
@@ -566,12 +544,13 @@ export default {
       point['text'] += `(${this.$t('Issue.' + issue.status.name)})"`
       if (group) {
         point['group'] = `${this.$t('Issue.' + issue.tracker.name)}`
-        point['style'] = `stroke-width:3`
       } else {
-        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5,stroke-width:3`
+        point['style'] = `fill:${this.trackerColor[camelCase(issue.tracker.name)]},fill-opacity:0.5`
       }
       if (issue.fixed_version && issue.fixed_version.id) {
-        point['style'] += `,stroke:${strokeColor[issue.fixed_version.id]}`
+        if (this.filterValue.fixed_version_id.length > 0 && !this.filterValue.fixed_version_id.includes(issue.fixed_version && issue.fixed_version.id)) {
+          point['style'] += `,opacity: 0.25,color: #00000040`
+        }
       }
       if (this.nowFilterValue.issue_id.includes(issue.id)) {
         point['edgeType'] = 'stadium'
@@ -864,7 +843,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-$max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+$max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 80px - 40px);
 $max_width: calc(100vw);
 .wrapper {
   height: #{$max_height};
@@ -882,9 +861,9 @@ $max_width: calc(100vw);
     .w-#{25 * $i} {
       width: calc(#{$max_width} * 0.25 * #{$i});
       height: calc(#{$max_height} * 0.25 * #{$i});
-      padding:0;
+      padding: 0;
 
-      >>>svg{
+      > > > svg {
         width: 25% * $i;
         height: 25% * $i;
         transform-origin: top left;
@@ -914,8 +893,7 @@ $max_width: calc(100vw);
 
 .issue-select {
   > > > .el-tag {
-    //width: 100%;
-    height: fit-content;
+    @apply truncate;
     white-space: normal;
 
     .el-select__tags-text {
