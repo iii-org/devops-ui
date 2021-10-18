@@ -132,7 +132,7 @@ export default {
       init: true,
       requestGitLabLastTime: null,
       status: { is_lock: false, sync_date: '' },
-      systemStatusData: []
+      systemStatusData: {}
     }
   },
   computed: {
@@ -238,7 +238,7 @@ export default {
       return await Promise.resolve(res.data)
     },
     async getSystemServerStatus() {
-      this.systemStatusData = []
+      this.systemStatusData = { all_alive: true }
       const res = await getSystemServerStatus()
       this.systemStatusData = res.data
     },
