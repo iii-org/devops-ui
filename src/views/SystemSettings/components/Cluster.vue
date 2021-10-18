@@ -241,7 +241,6 @@ export default {
       this.hasUploadfile = false
     },
     initData() {
-      console.log(this.$options.data().form)
       this.form = formData()
       this.setOriginData(this.form)
     },
