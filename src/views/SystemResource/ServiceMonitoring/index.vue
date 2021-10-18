@@ -55,28 +55,26 @@ export default {
     }
   },
   mounted() {
-    this.fetchData()
+    this.loadData()
     this.handleUpdate()
   },
   methods: {
-    async fetchData() {
+    async loadData() {
       this.isLoading = true
-      await Promise.all([
-        getRancherStatus(),
-        getK8sStatus(),
-        getRedmineStatus(),
-        getGitlabStatus(),
-        getHarborStatus(),
-        getSonarqubeStatus()
-      ]).then(res => {
-        this.listData = this.handleData(res)
+      this.listData = []
+      const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getHarborStatus, getSonarqubeStatus, getGitlabStatus]
+      apis.forEach(async api => await this.fetchData(api))
+    },
+    async fetchData(api) {
+      await api().then(res => {
+        this.listData.push(this.handleData(res))
       })
       this.isLoading = false
     },
     handleUpdate() {
       const tenMinutes = 1000 * 60 * 10
       let timer = window.setInterval(async () => {
-        await this.fetchData()
+        await this.loadData()
       }, tenMinutes)
       this.$once('hook:beforeDestroy', () => {
         clearInterval(timer)
@@ -84,12 +82,9 @@ export default {
       })
     },
     handleData(res) {
-      const listData = res.map(item => {
-        const datetime = this.$dayjs().local(res.datetime).format('YYYY-MM-DD HH:mm:ss')
-        item.datetime = datetime
-        return item
-      })
-      return listData
+      const datetime = this.$dayjs().local(res.datetime).format('YYYY-MM-DD HH:mm:ss')
+      res.datetime = datetime
+      return res
     },
     getTagType(status) {
       return status ? 'success' : 'danger'
