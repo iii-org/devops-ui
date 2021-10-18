@@ -350,9 +350,6 @@ export default {
       const strokeColor = {}
 
       const chartIssueList = this.chartIssueList
-      this.versionFilterList.forEach((version, idx) => {
-        strokeColor[version.id] = stroke[idx % stroke.length]
-      })
       const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, strokeColor))
       let testFileList = chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
         .filter(issue => issue)
