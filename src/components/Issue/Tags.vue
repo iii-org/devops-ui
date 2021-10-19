@@ -97,10 +97,11 @@ export default {
     },
     getShowTags(tag_sort, tags, addTag) {
       let showTags = null
+      const last_three = -3
       // three type: 'All', 'LastResult', 'AddTag'
       switch (tag_sort) {
         case 'LastResult':
-          showTags = tags.slice(-3)
+          showTags = tags.slice(last_three)
           break
         case 'AddTag':
           showTags = addTag

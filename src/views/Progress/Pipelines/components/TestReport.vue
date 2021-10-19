@@ -174,11 +174,11 @@ export default {
     },
     handleSonarQubeData(data) {
       const ret = []
-      for (const key in data) {
+      Object.keys(data).forEach(key => {
         const row = data[key]
         row['run_at'] = key
         ret.push(row)
-      }
+      })
       return ret
     },
     getDataTime() {
