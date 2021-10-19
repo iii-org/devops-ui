@@ -107,15 +107,6 @@
                 <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
                   <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
                 </el-menu-item>
-                <!-- <el-menu-item>
-                  <el-button icon="el-icon-download" @click="download">{{ $t('TestReport.DownloadPdf') }}</el-button>
-                </el-menu-item> -->
-                <el-menu-item :disabled="selectedProjectId === -1" @click="handleRotatePreview">
-                  <em class="el-icon-download" />{{ $t('Track.Landscape') }}
-                </el-menu-item>
-                <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
-                  <em class="el-icon-download" />{{ $t('Track.Portrait') }}
-                </el-menu-item>
                 <el-menu-item :disabled="selectedProjectId === -1" @click="downloadSVG">
                   <em class="el-icon-download" /> SVG
                 </el-menu-item>
@@ -158,7 +149,11 @@
 
         <div ref="wrapper" class="wrapper" :class="{'hidden-filter-setting': !filterSettingVisible}">
           <div v-if="!filterSettingVisible" class="float-setting">
-            <el-button icon="el-icon-arrow-left" type="primary" @click="filterSettingVisible=!filterSettingVisible" />
+            <el-form inline>
+              <el-form-item>
+                <el-button icon="el-icon-arrow-left" type="primary" @click="filterSettingVisible=!filterSettingVisible" />
+              </el-form-item>
+            </el-form>
           </div>
           <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
             <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
@@ -264,7 +259,6 @@ import {
   getTraceabilityMatrixReport, patchTraceOrderExecute,
   getTraceOrderList, patchTraceOrder
 } from '@/views/Plugin/QA/api/qa'
-import html2canvas from 'html2canvas'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
 import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
@@ -608,7 +602,6 @@ export default {
       }
       result.push(file)
       let last_result = null
-      // const commit_icon = '<svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' aria-hidden=\'true\' role=\'img\' class=\'iconify iconify--ion\' width=\'32\' height=\'32\' preserveAspectRatio=\'xMidYMid meet\' viewBox=\'0 0 512 512\'><circle cx=\'256\' cy=\'256\' r=\'96\' fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\'></circle><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M160 256H48\'></path><path fill=\'none\' stroke=\'currentColor\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'32\' d=\'M464 256H352\'></path></svg>'
       const commit_icon = 'Commit: '
       let status_light = ''
       const color = { pass: 'rgba(103,194,80,100)', failure: 'rgba(245,108,108,100)' }
@@ -816,12 +809,6 @@ export default {
         }
         const serializer = new XMLSerializer()
         let source = serializer.serializeToString(svg)
-        // if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
-        //   source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"')
-        // }
-        // if (!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
-        //   source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
-        // }
         source = '<?xml version="1.0" standalone="no"?>\r\n' + source
         const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source)
         const downloadLink = document.createElement('a')
@@ -833,47 +820,6 @@ export default {
       } catch (e) {
         // nothing to do.
       }
-    },
-    downloadPdf() {
-      this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
-    },
-    handleRotatePreview() {
-      this.isRotate = true
-      this.dialogVisible = true
-      html2canvas(this.$refs.matrix).then(canvas => {
-        const [A4Width, A4Height] = [595, 841] // a4
-        const { width: CanvasWidth, height: CanvasHeight } = canvas
-        const rotCanvas = document.createElement('canvas')
-        rotCanvas.width = CanvasHeight
-        rotCanvas.height = CanvasWidth
-        const rctx = rotCanvas.getContext('2d')
-        rctx.translate(rotCanvas.width * 0.5, rotCanvas.height * 0.5)
-
-        // rotate -90° (CCW)
-        rctx.rotate(Math.PI * 0.5)
-
-        // draw image offset so center of image is on top of pivot
-        rctx.drawImage(canvas, -CanvasWidth * 0.5, -CanvasHeight * 0.5, CanvasWidth, CanvasHeight)
-        const data = rotCanvas.toDataURL('image/png', 1.0)
-        const image = new Image()
-        image.src = data
-        image.width = A4Width * 1.95
-        image.Height = A4Height
-        this.$refs.rotateImage.appendChild(image)
-      })
-    },
-    handlePreview() {
-      this.isRotate = false
-      this.dialogVisible = true
-      html2canvas(this.$refs.matrix).then(canvas => {
-        const [A4Width, A4Height] = [595, 841] // a4
-        const data = canvas.toDataURL('image/png', 1.0)
-        const image = new Image()
-        image.src = data
-        image.width = A4Width * 1.95
-        image.Height = A4Height
-        this.$refs.rotateImage.appendChild(image)
-      })
     },
     onRelationIssueDialog(id) {
       this.$set(this.relationIssue, 'visible', true)
@@ -914,6 +860,7 @@ $max_width: calc(100vw);
   }
 
   .float-setting {
+    margin: 15px;
     @apply absolute right-0 top-0;
   }
 
