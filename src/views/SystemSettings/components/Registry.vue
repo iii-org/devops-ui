@@ -125,14 +125,14 @@ export default {
       editingId: 1,
       updatedFormData: {},
       isSaved: false,
-      form: formData()
+      form: formData(),
+      origin: {}
     }
   },
   computed: {
     isFormChanged() {
-      const originData = this.$options.data().form
       for (const key in this.form) {
-        if (this.form[key] !== originData[key]) return true
+        if (this.form[key] !== this.origin[key]) return true
       }
       return false
     }
@@ -140,7 +140,6 @@ export default {
   methods: {
     async fetchData() {
       const res = await getRegistryHostsLists()
-      this.initData()
       return res.data.registries
     },
     async addRegistryHosts() {
@@ -178,7 +177,6 @@ export default {
       this.updateHostsDisabled(row)
     },
     addRegistry() {
-      this.initData()
       this.updateStatus = 'UPDATE_POST'
       this.showAddPage = true
     },
@@ -205,6 +203,10 @@ export default {
     },
     initData() {
       this.form = formData()
+      this.setOriginData(this.form)
+    },
+    setOriginData(data) {
+      this.origin = JSON.parse(JSON.stringify(data))
     },
     rowClicked(row) {
       this.editingId = row.registries_id
@@ -222,6 +224,7 @@ export default {
       this.form.url = url
       this.form.access_key = access_key
       // this.form.access_secret = access_secret
+      this.setOriginData(this.form)
     },
     getUpdateFormData() {
       const formData = {}
