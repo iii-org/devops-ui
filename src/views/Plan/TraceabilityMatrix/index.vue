@@ -45,21 +45,8 @@
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
     <el-tabs v-else v-model="activeTab" type="border-card">
       <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
-        <el-form inline>
-          <el-form-item :label="$t('general.group')">
-            <el-switch
-              v-model="group"
-              :active-text="$t('general.on')"
-              :inactive-text="$t('general.off')"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-switch
-              v-model="status_toggle"
-              :active-text="$t('Issue.status')"
-              :inactive-text="$t('Issue.tracker')"
-            />
-          </el-form-item>
+        <el-form v-if="filterSettingVisible" inline>
+          <el-button type="primary" icon="el-icon-arrow-right" @click="filterSettingVisible=!filterSettingVisible" />
           <el-form-item :label="$t('Issue.tracker')">
             <el-select
               v-model="filterValue.tracker_id"
@@ -132,24 +119,44 @@
               </el-menu>
               <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
             </el-popover>
+            <el-button icon="el-icon-setting" type="success" @click="chartSettingVisible=!chartSettingVisible" />
           </el-form-item>
-          <el-form-item :label="$t('Issue.fixed_version')">
-            <el-select
-              v-model="filterValue.fixed_version_id"
-              multiple
-              :placeholder="$t('Issue.SelectType')"
-              :disabled="selectedProjectId === -1"
-              clearable
-              filterable
-            >
-              <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
-                         :value="version.id"
+          <template v-if="chartSettingVisible">
+            <el-form-item :label="$t('general.group')">
+              <el-switch
+                v-model="group"
+                :active-text="$t('general.on')"
+                :inactive-text="$t('general.off')"
               />
-            </el-select>
-          </el-form-item>
+            </el-form-item>
+            <el-form-item>
+              <el-switch
+                v-model="status_toggle"
+                :active-text="$t('Issue.status')"
+                :inactive-text="$t('Issue.tracker')"
+              />
+            </el-form-item>
+            <el-form-item :label="$t('Issue.fixed_version')">
+              <el-select
+                v-model="filterValue.fixed_version_id"
+                multiple
+                :placeholder="$t('Issue.SelectType')"
+                :disabled="selectedProjectId === -1"
+                clearable
+                filterable
+              >
+                <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
+                           :value="version.id"
+                />
+              </el-select>
+            </el-form-item>
+          </template>
         </el-form>
 
-        <div ref="wrapper" class="wrapper">
+        <div ref="wrapper" class="wrapper" :class="{'hidden-filter-setting': !filterSettingVisible}">
+          <div v-if="!filterSettingVisible" class="float-setting">
+            <el-button icon="el-icon-arrow-left" type="primary" @click="filterSettingVisible=!filterSettingVisible" />
+          </div>
           <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
             <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
             <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
@@ -285,6 +292,8 @@ export default {
       chartIssueList: [],
       issueLoading: false,
       chartLoading: false,
+      chartSettingVisible: false,
+      filterSettingVisible: true,
       listLoading: false,
       jobLoading: false,
       chartProgress: {
@@ -405,6 +414,11 @@ export default {
       }
       await this.getSearchIssue()
       await this.initChart()
+    },
+    filterSettingVisible() {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
     },
     'filterValue.tracker_id': {
       deep: true,
@@ -864,13 +878,22 @@ $max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 80px - 40px);
 $max_width: calc(100vw);
 .wrapper {
   height: #{$max_height};
-}
+  @apply static;
+  &.hidden-filter-setting {
+    height: calc(#{$max_height} + 80px);
+  }
 
-.mermaid-wrapper {
-  @apply cursor-move overflow-auto static;
+  .float-setting {
+    @apply absolute right-0 top-0;
+  }
+
   .toolbar {
     @apply absolute bottom-10 right-10 z-50 w-1/6;
   }
+}
+
+.mermaid-wrapper {
+  @apply cursor-move overflow-auto;
 
   @for $i from 1 through 20 {
     .w-#{25 * $i} {
