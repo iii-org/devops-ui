@@ -209,6 +209,7 @@
         type="date"
         value-format="yyyy-MM-dd"
         style="width: 100%"
+        :disabled="childrenIssue > 0"
         :placeholder="$t('RuleMsg.PleaseSelect')"
         @change="checkDueDate(form.start_date)"
       />
@@ -219,6 +220,7 @@
         type="date"
         value-format="yyyy-MM-dd"
         style="width: 100%"
+        :disabled="childrenIssue > 0"
         :placeholder="$t('RuleMsg.PleaseSelect')"
         :picker-options="pickerOptions(form.start_date)"
         @change="clearDueDate"
