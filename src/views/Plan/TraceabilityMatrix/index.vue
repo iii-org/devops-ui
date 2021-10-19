@@ -116,6 +116,9 @@
                 <el-menu-item :disabled="selectedProjectId === -1" @click="handlePreview">
                   <em class="el-icon-download" />{{ $t('Track.Portrait') }}
                 </el-menu-item>
+                <el-menu-item :disabled="selectedProjectId === -1" @click="downloadSVG">
+                  <em class="el-icon-download" /> SVG
+                </el-menu-item>
               </el-menu>
               <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
             </el-popover>
@@ -803,6 +806,33 @@ export default {
 
       document.body.appendChild(link)
       link.click()
+    },
+    downloadSVG() {
+      try {
+        const svg = document.getElementById('mermaid').getElementsByTagName('svg')[0]
+        const style = svg.getElementsByClassName('nodeLabel')
+        for (let idx = 0; idx < style.length; idx++) {
+          style[idx].style = 'font-size:0.8em'
+        }
+        const serializer = new XMLSerializer()
+        let source = serializer.serializeToString(svg)
+        // if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+        //   source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"')
+        // }
+        // if (!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
+        //   source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"')
+        // }
+        source = '<?xml version="1.0" standalone="no"?>\r\n' + source
+        const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source)
+        const downloadLink = document.createElement('a')
+        downloadLink.href = url
+        downloadLink.download = `TraceabilityMatrix_${this.$dayjs().format('YYYY-MM-DD_HH:mm:ss')}`
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
+      } catch (e) {
+        // nothing to do.
+      }
     },
     downloadPdf() {
       this.$pdf(this.$refs.rotateImage, 'Traceability_Matrix')
