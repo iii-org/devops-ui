@@ -46,8 +46,10 @@
     <el-tabs v-else v-model="activeTab" type="border-card">
       <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
         <el-form v-if="filterSettingVisible" inline>
-          <el-button type="primary" icon="el-icon-arrow-right" @click="filterSettingVisible=!filterSettingVisible" />
-          <el-form-item :label="$t('Issue.tracker')">
+          <el-form-item>
+            <el-button size="small" icon="el-icon-arrow-right" @click="filterSettingVisible=!filterSettingVisible" />
+          </el-form-item>
+          <el-form-item v-show="!chartSettingVisible" :label="$t('Issue.tracker')">
             <el-select
               v-model="filterValue.tracker_id"
               :placeholder="$t('Issue.SelectType')"
@@ -61,7 +63,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('Issue.Issue')">
+          <el-form-item v-show="!chartSettingVisible" :label="$t('Issue.Issue')">
             <el-select
               v-model="filterValue.issue_id"
               style="width: 100%"
@@ -93,12 +95,14 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-show="!chartSettingVisible">
             <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
                        :disabled="chartLoading" @click="onPaintChart"
             >
               {{ $t('Track.StartPaint') }}
             </el-button>
+          </el-form-item>
+          <el-form-item>
             <el-popover
               placement="bottom"
               trigger="click"
@@ -113,45 +117,47 @@
               </el-menu>
               <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
             </el-popover>
-            <el-button icon="el-icon-setting" type="success" @click="chartSettingVisible=!chartSettingVisible" />
           </el-form-item>
-          <template v-if="chartSettingVisible">
-            <el-form-item :label="$t('general.group')">
-              <el-switch
-                v-model="group"
-                :active-text="$t('general.on')"
-                :inactive-text="$t('general.off')"
+          <el-form-item>
+            <el-button :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'" type="success" @click="chartSettingVisible=!chartSettingVisible" />
+          </el-form-item>
+          <el-form-item v-show="chartSettingVisible" :label="$t('general.group')">
+            <el-switch
+              v-model="group"
+              :active-text="$t('general.on')"
+              :inactive-text="$t('general.off')"
+            />
+          </el-form-item>
+          <el-form-item v-show="chartSettingVisible">
+            <el-switch
+              v-model="status_toggle"
+              :active-text="$t('Issue.status')"
+              :inactive-text="$t('Issue.tracker')"
+            />
+          </el-form-item>
+          <el-form-item v-show="chartSettingVisible" :label="$t('Issue.fixed_version')">
+            <el-select
+              v-model="filterValue.fixed_version_id"
+              multiple
+              :placeholder="$t('Issue.SelectVersion')"
+              :disabled="selectedProjectId === -1"
+              clearable
+              filterable
+            >
+              <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
+                         :value="version.id"
               />
-            </el-form-item>
-            <el-form-item>
-              <el-switch
-                v-model="status_toggle"
-                :active-text="$t('Issue.status')"
-                :inactive-text="$t('Issue.tracker')"
-              />
-            </el-form-item>
-            <el-form-item :label="$t('Issue.fixed_version')">
-              <el-select
-                v-model="filterValue.fixed_version_id"
-                multiple
-                :placeholder="$t('Issue.SelectType')"
-                :disabled="selectedProjectId === -1"
-                clearable
-                filterable
-              >
-                <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
-                           :value="version.id"
-                />
-              </el-select>
-            </el-form-item>
-          </template>
+            </el-select>
+          </el-form-item>
         </el-form>
 
         <div ref="wrapper" class="wrapper" :class="{'hidden-filter-setting': !filterSettingVisible}">
           <div v-if="!filterSettingVisible" class="float-setting">
             <el-form inline>
               <el-form-item>
-                <el-button icon="el-icon-arrow-left" type="primary" @click="filterSettingVisible=!filterSettingVisible" />
+                <el-button icon="el-icon-arrow-left" type="primary"
+                           @click="filterSettingVisible=!filterSettingVisible"
+                />
               </el-form-item>
             </el-form>
           </div>
@@ -266,10 +272,11 @@ import { dragscroll } from 'vue-dragscroll'
 
 import axios from 'axios'
 import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
+import Templates from '@/views/SystemSettings/SystemArguments/components/Templates'
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
+  components: { Templates, ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   directives: {
     dragscroll
   },
