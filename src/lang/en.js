@@ -1082,7 +1082,8 @@ export default {
     Logs: 'Logs',
     LastUpdateTime: 'Last Update Time',
     true: 'Good',
-    false: 'Abnormal'
+    false: 'Abnormal',
+    loading: 'Loading'
   },
   Templates: {
     GithubAccount: 'Github @:general.Account',

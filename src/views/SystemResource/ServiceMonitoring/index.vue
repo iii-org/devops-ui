@@ -2,14 +2,10 @@
   <el-row class="app-container">
     <el-col>
       <div>
-        <!-- <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
-          {{ $t('general.Back') }}
-        </el-button> -->
         <span class="ml-2 text-xl">
           <span>{{ $t('route.monitoring') }}</span>
         </span>
       </div>
-      <!-- <project-list-selector /> -->
       <el-divider />
       <el-card>
         <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="listData" fit>
@@ -35,7 +31,6 @@
 </template>
 
 <script>
-// import ProjectListSelector from '@/components/ProjectListSelector'
 import {
   getRancherStatus,
   getK8sStatus,
@@ -45,9 +40,17 @@ import {
   getSonarqubeStatus
 } from '@/api/monitoring'
 
+const listData = () => ([
+  { name: 'Harbor', status: 'loading' },
+  { name: 'Kubernetes', status: 'loading' },
+  { name: 'Sonarqube', status: 'loading' },
+  { name: 'Redmine', status: 'loading' },
+  { name: 'Rancher', status: 'loading' },
+  { name: 'Gitlab', status: 'loading' }
+])
+
 export default {
   name: 'ServiceMonitoring',
-  // components: { ProjectListSelector },
   data() {
     return {
       isLoading: false,
@@ -61,15 +64,16 @@ export default {
   methods: {
     async loadData() {
       this.isLoading = true
-      this.listData = []
+      this.listData = listData()
       const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getHarborStatus, getSonarqubeStatus, getGitlabStatus]
       apis.forEach(async api => await this.fetchData(api))
+      this.isLoading = false
     },
     async fetchData(api) {
       await api().then(res => {
+        this.listData.splice(0, 1)
         this.listData.push(this.handleData(res))
       })
-      this.isLoading = false
     },
     handleUpdate() {
       const tenMinutes = 1000 * 60 * 10
@@ -87,7 +91,7 @@ export default {
       return res
     },
     getTagType(status) {
-      return status ? 'success' : 'danger'
+      return status === 'loading' ? 'warning' : status ? 'success' : 'danger'
     }
   }
 }

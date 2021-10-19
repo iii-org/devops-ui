@@ -1080,7 +1080,8 @@ export default {
     Logs: '訊息',
     LastUpdateTime: '最後更新時間',
     true: '良好',
-    false: '異常'
+    false: '異常',
+    loading: '載入中'
   },
   Templates: {
     GithubAccount: 'Github @:general.Account',
