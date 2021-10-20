@@ -726,7 +726,7 @@ export default {
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
     IdRule:
-      'Identifier should be 2-30 lowercase or number characters long and "-" can be accepted at the middle of string and only numbers cannot be accepted.',
+      `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
     DisplayRule: 'Name cannot includes "<" or "&"',
     DescriptionRule: 'Description cannot includes "<" or "&"',
     WorkloadValue: 'Workload',
