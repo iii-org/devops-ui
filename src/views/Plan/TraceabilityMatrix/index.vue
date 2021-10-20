@@ -227,13 +227,6 @@
         />
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body destroy-on-close>
-      <div ref="rotateImage" />
-      <span slot="footer">
-        <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
-        <el-button type="primary" @click="downloadPdf">{{ $t('File.Download') }}</el-button>
-      </span>
-    </el-dialog>
     <el-dialog :title="$t('Track.TraceabilityCheck')" :visible.sync="settingDialogVisible" width="80%" top="3vh"
                append-to-body destroy-on-close
     >
@@ -310,7 +303,6 @@ export default {
       relationLine: {},
       testFilesResult: [],
       settingDialogVisible: false,
-      dialogVisible: false,
       image: {
         filename: '',
         content_type: '',
@@ -372,6 +364,8 @@ export default {
         .filter(issue => issue)
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
       testFileList = [].concat.apply([], testFileList)
+      // TO-DO: print data test
+      console.log(chartData.concat(testFileList))
       return chartData.concat(testFileList)
     },
     trackerColor() {
