@@ -23,7 +23,6 @@ export default {
   name: 'VersionChecker',
   data() {
     return {
-      hover: false
     }
   },
   computed: {
@@ -39,7 +38,6 @@ export default {
     ...mapActions('settings', ['checkApiVersion']),
     toPage() {
       this.$router.push({ name: 'SystemVersion' })
-      this.hover = false
     }
   }
 }
