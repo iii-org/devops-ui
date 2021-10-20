@@ -1,19 +1,18 @@
 <template>
-  <el-button
-    v-if="showUpdateButton"
-    size="mini"
-    type="warning"
-    plain
-    @mouseover.native="hover = true"
-    @mouseleave.native="hover = false"
-    @click="toPage"
-  >
-    <div class="flex items-center">
-      <span class="dot relative" :class="hover ? 'bg-white' : 'bg-warning'" />
-      <span class="dot absolute animate-ping" :class="hover ? 'bg-white' : 'bg-warning'" />
-      <span class="ml-2">{{ $t('SystemVersion.hasUpdate') }}</span>
-    </div>
-  </el-button>
+  <el-tooltip v-if="showUpdateButton" class="item" :content="$t('SystemVersion.hasUpdate')" placement="bottom">
+    <span class="flex items-center move" @click="toPage">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="text-yellow-500 cursor-pointer"
+        width="30"
+        height="30"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+      </svg>
+    </span>
+  </el-tooltip>
 </template>
 
 <script>
@@ -45,8 +44,26 @@ export default {
 }
 </script>
 
-<style>
-.dot {
-  @apply rounded-full w-2 h-2;
+<style lang="scss" scoped>
+.move {
+  animation: move 2s infinite;
+}
+
+@keyframes move {
+  10% {
+    transform: rotate(15deg);
+  }
+  20% {
+    transform: rotate(-10deg);
+  }
+  30% {
+    transform: rotate(5deg);
+  }
+  40% {
+    transform: rotate(-5deg);
+  }
+  50%, 100% {
+    transform: rotate(0deg);
+  }
 }
 </style>

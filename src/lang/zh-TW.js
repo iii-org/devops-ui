@@ -923,7 +923,7 @@ export default {
     Source: '系統模組',
     Version: '@:Version.Version',
     CommitID: '程式提交編號',
-    hasUpdate: '有新版本',
+    hasUpdate: '版本更新通知',
     UpdateNow: '立即更新',
     Develop: '開發版',
     NewVersion: '新版本通知',

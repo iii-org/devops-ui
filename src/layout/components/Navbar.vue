@@ -4,9 +4,10 @@
 
     <breadcrumb class="breadcrumb-container" />
 
-    <div class="right-menu">
-      <VersionChecker />
-      <lang-select class="right-menu-item hover-effect ml-3" />
+    <div class="flex right-menu items-center">
+      <AbnormalChecker />
+      <VersionChecker class="ml-2" />
+      <lang-select class="right-menu-item hover-effect ml-1" />
       <el-dropdown class="right-menu-item hover-effect mr-5" trigger="click">
         <div>
           {{ userName }}
@@ -40,13 +41,15 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import LangSelect from '@/components/LangSelect'
 import VersionChecker from '@/components/VersionChecker'
+import AbnormalChecker from '@/components/AbnormalChecker'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
     LangSelect,
-    VersionChecker
+    VersionChecker,
+    AbnormalChecker
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'userName'])
