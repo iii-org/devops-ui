@@ -1,9 +1,10 @@
 <template>
-  <el-tooltip v-if="showUpdateButton" class="item" :content="$t('SystemVersion.hasUpdate')" placement="bottom">
+  <el-tooltip v-if="showUpdateButton" :content="$t('SystemVersion.hasUpdate')" placement="bottom" popper-class="update-tooltip">
     <span class="flex items-center move" @click="toPage">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="text-yellow-500 cursor-pointer"
+        class="cursor-pointer"
+        style="color: #56b1e8"
         width="30"
         height="30"
         viewBox="0 0 20 20"

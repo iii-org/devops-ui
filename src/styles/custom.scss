@@ -212,3 +212,33 @@
     color: $info;
   }
 }
+
+// VersionChecker tooltip
+.update-tooltip.is-dark {
+  background: #56b1e8;
+  width: 150px;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 1.5px;
+  > .popper__arrow {
+    border-bottom-color: #56b1e8;
+    &:after {
+      border-bottom-color: #56b1e8;
+    }
+  }
+}
+
+// AbnormalChecker tooltip
+.abnormal-tooltip.is-dark {
+  background: #e85656;
+  width: 150px;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 1.5px;
+  > .popper__arrow {
+    border-bottom-color: #e85656;
+    &:after {
+      border-bottom-color: #e85656;
+    }
+  }
+}

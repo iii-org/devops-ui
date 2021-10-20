@@ -1,10 +1,10 @@
 <template>
-  <el-tooltip v-if="isSystemAbnormal" class="item" :content="$t('Dashboard.ADMIN.ExceptionNotification')" placement="bottom">
+  <el-tooltip v-if="isSystemAbnormal" :content="$t('Dashboard.ADMIN.ExceptionNotification')" placement="bottom" popper-class="abnormal-tooltip">
     <span class="flex items-center move" @click="handleClick">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="cursor-pointer"
-        style="color: red;"
+        style="color: #e85656;"
         width="30"
         height="30"
         viewBox="0 0 20 20"
