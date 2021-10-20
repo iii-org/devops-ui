@@ -113,8 +113,8 @@ export default {
         rows: Math.floor((window.innerHeight - 120) / 15),
         cursorBlink: true
       })
-      await this.setResizeListener()
       this.term.open(this.$refs.terminal)
+      await this.setResizeListener()
       this.term.write('\r\n# ')
       this.term.focus()
       this.setTermKeyListener()
