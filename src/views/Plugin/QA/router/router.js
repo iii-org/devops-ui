@@ -5,7 +5,7 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/project-list',
+    redirect: '/overview',
     meta: {
       icon: 'list',
       title: 'overview',
@@ -15,18 +15,27 @@ export const asyncRoutes = [
     hidden: true
   },
   {
-    path: '/project-list',
+    path: '/overview',
     component: Layout,
-    redirect: '/project-list',
+    redirect: '/overview/dashboard',
     meta: {
-      icon: 'list',
+      icon: 'dashboard',
       title: 'overview',
       roles: ['QA'],
       appendRoot: { path: '/', position: 'after' }
     },
     children: [
       {
-        path: '',
+        path: 'dashboard',
+        name: 'dashboard-admin',
+        component: () => import('@/views/Overview/Dashboard/roles/admin'),
+        meta: {
+          title: 'dashboard',
+          roles: ['QA']
+        }
+      },
+      {
+        path: 'project-list',
         name: 'project-list-qa',
         component: () => import('../views/ProjectList/ProjectListQA'),
         meta: {
