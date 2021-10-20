@@ -34,7 +34,9 @@
                     <status :name="scope.row.parent.status.name" size="mini" />
                     <tracker :name="scope.row.parent.tracker.name" />
                     #{{ scope.row.parent.id }} -
-                    <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                    <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name
+                    }}]
+                    </el-tag>
                     {{ scope.row.parent.name }}
                     <span
                       v-if="scope.row.parent.hasOwnProperty('assigned_to') && Object.keys(scope.row.parent.assigned_to).length > 1"
@@ -69,7 +71,9 @@
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                          #{{ child.id }} -
+                          <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]
+                          </el-tag>
                           {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                             ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
@@ -105,7 +109,9 @@
                         >
                           <status :name="child.status.name" size="mini" />
                           <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                          #{{ child.id }} -
+                          <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]
+                          </el-tag>
                           {{ child.name }}
                           <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
                             ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
@@ -146,7 +152,8 @@
         <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
-            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>{{ scope.row.name }}
+            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+            {{ scope.row.name }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
@@ -298,7 +305,7 @@ export default {
     await this.loadData()
   },
   methods: {
-    ...mapActions('projects', ['setFixedVersionShowClosed']),
+    ...mapActions('projects', ['setFixedVersionShowClosed', 'getListQuery', 'setListQuery']),
     getParams() {
       const result = {
         offset: this.listQuery.offset,
@@ -356,6 +363,32 @@ export default {
       }
       this.lastIssueListCancelToken = null
       return data
+    },
+    async handleCurrentChange(val) {
+      this.listLoading = true
+      const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
+      if (val.init >= 0) {
+        this.listQuery.offset = val.init
+      } else if (offset <= 0 || val.page === 1) {
+        this.listQuery.offset = 0
+      } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
+        this.listQuery.offset = this.pageInfo.total - val.limit
+      } else {
+        this.listQuery.offset = offset
+      }
+
+      if (val.page) {
+        this.listQuery.page = val.page
+      } else {
+        const page = (this.listQuery.offset + 1) / this.listQuery.limit
+        this.listQuery.page = (page > 0) ? Math.ceil(page) : 1
+      }
+
+      await this.loadData()
+      const storeListQuery = await this.getListQuery()
+      storeListQuery[`MyWork_${this.from}`] = this.listQuery.offset
+      await this.setListQuery(storeListQuery)
+      this.listLoading = false
     }
   }
 }

@@ -19,6 +19,7 @@
                 :placeholder="$t('Issue.Select'+dimension.placeholder)"
                 filterable
                 clearable
+                @change="onChangeFilter"
               >
                 <el-option
                   v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
@@ -47,6 +48,7 @@
         :placeholder="$t('Issue.SearchNameOrAssignee')"
         style="width: 250px;"
         clearable
+        @change="onChangeFilter"
         @blur="searchVisible=!searchVisible"
       />
       <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
@@ -244,9 +246,21 @@ export default {
   async mounted() {
     await this.loadSelectionList()
     this.getMyProjectList()
+    const storeListQuery = await this.getListQuery()
+    this.dashboardCards.forEach(card => {
+      if (storeListQuery[`MyWork_${card.id}`]) {
+        this.$set(this.$refs[card.id][0].listQuery, 'offset', storeListQuery[`MyWork_${card.id}`])
+        this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`])
+        this.$set(this.$refs[card.id][0].pageInfo, 'total', Infinity)
+      } else {
+        this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
+        this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
+      }
+      this.$refs[card.id][0].handleCurrentChange({ init: this.$refs[card.id][0].listQuery.offset })
+    })
   },
   methods: {
-    ...mapActions('projects', ['getMyProjectList', 'getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed']),
+    ...mapActions('projects', ['getMyProjectList', 'getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed', 'getListQuery']),
     getOptionsData(option_name) {
       return this[option_name]
     },
@@ -294,6 +308,16 @@ export default {
     },
     updateTotalCount(card_id, value) {
       this.$set(this.total, card_id, value)
+    },
+    async onChangeFilter() {
+      const storeListQuery = await this.getListQuery()
+      this.dashboardCards.forEach(card => {
+        if (storeListQuery[`MyWork_${card.id}`]) {
+          this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
+          this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
+        }
+        this.$refs[card.id][0].handleCurrentChange({ init: this.$refs[card.id][0].listQuery.offset })
+      })
     }
   }
 }

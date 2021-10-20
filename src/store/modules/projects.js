@@ -27,7 +27,7 @@ const getDefaultState = () => {
       dimension: 'status',
       value: []
     },
-    issueListListQuery: {},
+    listQuery: {},
     issueListPageInfo: {},
     fixedVersionShowClosed: false
   }
@@ -65,11 +65,11 @@ const mutations = {
   SET_GROUP_BY: (state, value) => {
     state.groupBy = value
   },
-  SET_ISSUE_LIST_LIST_QUERY: (state, value) => {
-    state.issueListListQuery = value
+  SET_LIST_QUERY: (state, value) => {
+    state.listQuery = value
   },
-  SET_ISSUE_LIST_PAGE_INFO: (state, value) => {
-    state.issueListPageInfo = value
+  SET_PAGE_INFO: (state, value) => {
+    state.pageInfo = value
   },
   SET_FIXED_VERSION_SHOW_CLOSED: (state, value) => {
     state.fixedVersionShowClosed = value
@@ -212,11 +212,29 @@ const actions = {
     sessionStorage.setItem('groupBy', JSON.stringify(value))
     commit('SET_GROUP_BY', value)
   },
-  setIssueListListQuery({ commit }, value) {
-    commit('SET_ISSUE_LIST_LIST_QUERY', value)
+  getListQuery({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('listQuery')
+    if (getSessionValue) {
+      commit('SET_LIST_QUERY', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.listQuery
   },
-  setIssueListPageInfo({ commit }, value) {
-    commit('SET_ISSUE_LIST_PAGE_INFO', value)
+  setListQuery({ commit }, value) {
+    sessionStorage.setItem('listQuery', JSON.stringify(value))
+    commit('SET_LIST_QUERY', value)
+  },
+  getPageInfo({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('pageInfo')
+    if (getSessionValue) {
+      commit('SET_PAGE_INFO', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.pageInfo
+  },
+  setPageInfo({ commit }, value) {
+    sessionStorage.setItem('pageInfo', JSON.stringify(value))
+    commit('SET_PAGE_INFO', value)
   },
   setFixedVersionShowClosed({ commit }, value) {
     commit('SET_FIXED_VERSION_SHOW_CLOSED', value)
