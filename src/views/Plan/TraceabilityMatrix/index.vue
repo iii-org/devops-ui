@@ -112,7 +112,7 @@
                   <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
                 </el-menu-item>
                 <el-menu-item :disabled="selectedProjectId === -1" @click="downloadSVG">
-                  <em class="el-icon-download" /> SVG
+                  <em class="el-icon-download" />{{ $t('Track.DownloadSVG') }}
                 </el-menu-item>
               </el-menu>
               <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
