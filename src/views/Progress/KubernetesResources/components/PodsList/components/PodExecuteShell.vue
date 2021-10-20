@@ -33,6 +33,8 @@ import { FitAddon } from 'xterm-addon-fit'
 import { mapGetters } from 'vuex'
 
 const envKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12']
+const fitAddon = new FitAddon()
+
 export default {
   name: 'PodExecuteShell',
   data() {
@@ -53,10 +55,11 @@ export default {
       return this.isConnected ? 'bg-success' : 'bg-danger'
     }
   },
-  // watch: {
-  //   'sidebar.opened'(val) {
-  //   }
-  // },
+  watch: {
+    'sidebar.opened'(val) {
+      fitAddon.fit()
+    }
+  },
   mounted() {
     this.initSocket()
     this.containerName = this.$route.query.containerName
@@ -117,7 +120,6 @@ export default {
       this.setTermKeyListener()
     },
     setResizeListener() {
-      const fitAddon = new FitAddon()
       return new Promise(resolve => {
         this.term.loadAddon(fitAddon)
         fitAddon.fit()
