@@ -48,15 +48,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProject']),
+    ...mapGetters(['selectedProject', 'sidebar']),
     connectStatus() {
       return this.isConnected ? 'bg-success' : 'bg-danger'
     }
   },
   // watch: {
-  //   initPath() {
-  //     const initStr = ['whoami', 'hostname', 'pwd']
-  //     initStr.forEach(i => this.emitCommand(i))
+  //   'sidebar.opened'(val) {
   //   }
   // },
   mounted() {
@@ -97,7 +95,7 @@ export default {
     },
     setCmdResponseListener() {
       this.socket.on('get_cmd_response', sioEvt => {
-        // console.log('get_cmd_response ===>', sioEvt)
+        console.log('get_cmd_response ===>', sioEvt)
         const { output } = sioEvt
         let str = output || sioEvt
         str = str.replace(/\n/g, '\r\n')
@@ -105,14 +103,14 @@ export default {
         this.term.write('\r\n# ')
       })
     },
-    initTerm() {
+    async initTerm() {
       this.term = new Terminal({
         rendererType: 'canvas',
         fontSize: 12,
         rows: Math.floor((window.innerHeight - 120) / 15),
         cursorBlink: true
       })
-      this.setResizeListener()
+      await this.setResizeListener()
       this.term.open(this.$refs.terminal)
       this.term.write('\r\n# ')
       this.term.focus()
@@ -120,15 +118,18 @@ export default {
     },
     setResizeListener() {
       const fitAddon = new FitAddon()
-      this.term.loadAddon(fitAddon)
-      fitAddon.fit()
-      window.onresize = () => {
-        try {
-          fitAddon.fit()
-        } catch (error) {
-          console.error(error)
+      return new Promise(resolve => {
+        this.term.loadAddon(fitAddon)
+        fitAddon.fit()
+        window.onresize = () => {
+          try {
+            fitAddon.fit()
+          } catch (error) {
+            console.error(error)
+          }
         }
-      }
+        resolve()
+      })
     },
     setTermKeyListener() {
       this.term.onKey(data => {
@@ -173,7 +174,7 @@ export default {
         command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
-      // console.log('emit ===>', emitObj)
+      console.log('emit ===>', emitObj)
     }
   }
 }
