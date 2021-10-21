@@ -14,7 +14,8 @@
           <span v-else-if="lastUpdated&&lastUpdated.error" class="text-danger">
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Error') }}: </strong>
-            {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`, lastUpdated.error.response.data.error.details) }}
+            {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
+                  lastUpdated.error.response.data.error.details) }}
           </span>
         </el-col>
       </el-row>
@@ -290,6 +291,7 @@ export default {
       return this.displayFields.includes(value)
     },
     async onCheckColumnChange(value) {
+      if (this.displayFields.length <= 0) this.displayFields = this.columnsOptions.map(item => item.value)
       if (this.displayFields.includes(value)) {
         const columnIndex = this.displayFields.findIndex(item => item === value)
         this.displayFields.splice(columnIndex, 1)
