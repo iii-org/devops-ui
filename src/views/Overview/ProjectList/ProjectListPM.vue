@@ -150,13 +150,15 @@
           >
             {{ $t('general.Delete') }}
           </el-button>
-          <el-button size="mini" @click="handleToggle(scope.row)">
-            <div class="flex items-center">
-              <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-              <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
-                {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-              </span>
-            </div>
+          <el-button
+            size="mini"
+            :type="getButtonType(scope.row.disabled)"
+            :icon="scope.row.disabled ? 'el-icon-video-play' : 'el-icon-video-pause'"
+            @click="handleToggle(scope.row)"
+          >
+            <span :class="scope.row.disabled ? 'text-success' : 'text-danger'">
+              {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+            </span>
           </el-button>
         </template>
       </el-table-column>
@@ -224,7 +226,12 @@ export default {
       'userProjectList',
       'userProjectList',
       'selectedProjectId'
-    ])
+    ]),
+    getButtonType() {
+      return function(disabled) {
+        return disabled ? 'success' : 'danger'
+      }
+    }
   },
   mounted() {
     this.loadData()
