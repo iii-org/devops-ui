@@ -29,6 +29,9 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-form-item :label="$t('Deploy.Port')" prop="network.port">
+              <el-input v-model.number="deployForm.network.port" />
+            </el-form-item>
             <!--        <el-col :md="12">-->
             <!--          <el-form-item label="Volume" prop="volume">-->
             <!--            <el-select v-model="deployForm.volume" />-->
@@ -101,8 +104,8 @@
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item :label="$t('Deploy.Port')" prop="network.port">
-                  <el-input v-model.number="deployForm.network.port" />
+                <el-form-item :label="$t('Deploy.ExposePort')" prop="network.port">
+                  <el-input v-model.number="deployForm.network.expose_port" />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
@@ -294,7 +297,7 @@ export default {
           memory: '',
           replicas: ''
         },
-        network: { type: '', protocol: '', port: '', domain: '', path: '' },
+        network: { type: '', protocol: '', port: '', domain: '', path: '', expose_port: '' },
         environments: []
       },
       edit: {},
