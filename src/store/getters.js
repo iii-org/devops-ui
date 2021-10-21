@@ -32,6 +32,7 @@ const getters = {
   fixedVersionShowClosed: state => state.projects.fixedVersionShowClosed,
   test_filename: state => state.qa.test_filename,
   hasSystemUpdate: state => state.settings.hasSystemUpdate,
-  updateVersionName: state => state.settings.updateVersionName
+  updateVersionName: state => state.settings.updateVersionName,
+  serverStatus: state => state.monitoring.serverStatus
 }
 export default getters

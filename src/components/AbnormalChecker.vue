@@ -1,6 +1,6 @@
 <template>
   <el-tooltip v-if="isSystemAbnormal" :content="$t('Dashboard.ADMIN.ExceptionNotification')" placement="bottom" popper-class="abnormal-tooltip">
-    <span class="flex items-center move" @click="handleClick">
+    <span class="flex items-center move" @click="toPage">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="cursor-pointer"
@@ -17,33 +17,27 @@
 </template>
 
 <script>
-import { getSystemServerStatus } from '@/api/monitoring'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'AbnormalChecker',
   data() {
     return {
-      systemStatusData: {}
     }
   },
   computed: {
+    ...mapGetters(['serverStatus']),
     isSystemAbnormal() {
-      return !this.systemStatusData.all_alive
+      return !this.serverStatus.all_alive
     }
   },
-  created() {
-    this.getSystemServerStatusInterval()
-  },
-  mounted() {
-    this.getSystemServerStatus()
+  async mounted() {
+    await this.getSystemServerStatus()
+    this.fetchDataInterval()
   },
   methods: {
-    async getSystemServerStatus() {
-      this.systemStatusData = { all_alive: true }
-      const res = await getSystemServerStatus()
-      this.systemStatusData = res.data
-    },
-    getSystemServerStatusInterval() {
+    ...mapActions('monitoring', ['getSystemServerStatus']),
+    fetchDataInterval() {
       const tenMinutes = 1000 * 60 * 10
       let intervalTimer = window.setInterval(async () => {
         await this.getSystemServerStatus()
@@ -53,7 +47,7 @@ export default {
         intervalTimer = null
       })
     },
-    handleClick() {
+    toPage() {
       this.$router.push({ name: 'Service Monitoring' })
     }
   }
