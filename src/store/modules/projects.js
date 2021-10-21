@@ -158,11 +158,11 @@ const actions = {
       sessionStorage.removeItem('groupBy')
       sessionStorage.removeItem('displayClosed')
       sessionStorage.removeItem('Keyword')
-      commit('SET_SELECTED_PROJECT', project)
-      commit('SET_FILTER', {})
-      commit('SET_GROUP_BY', {dimension:'status', value:[]})
-      commit('SET_DISPLAY_CLOSED', {})
     }
+    commit('SET_SELECTED_PROJECT', project)
+    commit('SET_FILTER', {})
+    commit('SET_GROUP_BY', {dimension:'status', value:[]})
+    commit('SET_DISPLAY_CLOSED', {})
   },
   getIssueFilter({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('issueFilter')
