@@ -1,32 +1,37 @@
 <template>
   <div
-    id="wie-report-header" v-loading="isLoading" :element-loading-text="$t('Loading')"
+    id="wie-report-header"
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
     class="px-5 h-full overflow-x-hidden overflow-y-auto"
   >
-    <!-- <div class="drawer w-1/4" :class="isShowDrawer ? '' : 'drawer-close'">
-      <span class="button" @click="showDrawer">
-        <el-icon :class="isShowDrawer ? 'el-icon-close' : 'el-icon-tickets'" />
-      </span>
-      <div class="ml-2 overflow-y-auto h-full">
-        <div class="text-title mb-3">In this report</div>
-        <div v-for="issue in groupByIssueSeverity" :key="issue.id" class="cursor-pointer py-1">
-          <span class="badge" :class="mapSeverity('bgColor', issue.severity)">{{ mapSeverity('name', issue.severity) }}</span>
-          <div class="hover:underline py-1 leading-snug" @click="toIssue(issue.id)"> {{ issue.name }}</div>
-        </div>
-      </div>
-    </div> -->
     <el-backtop target="#wie-report-header" />
-    <div v-if="!isLoading" class="flex justify-between items-center my-5">
+    <div
+      v-if="!isLoading"
+      class="flex justify-between items-center my-5"
+    >
       <h3>「{{ selectedProject.display }}」{{ $t('WebInspect.TestReport') }}</h3>
       <span>{{ $t('WebInspect.RunAt') }}：{{ runAt }}</span>
-      <el-button icon="el-icon-download" @click="handleDownload">
+      <el-button
+        icon="el-icon-download"
+        @click="handleDownload"
+      >
         {{ $t('WebInspect.DownloadReport') }} (.xml)
       </el-button>
     </div>
     <el-row :gutters="12">
-      <el-col v-for="issue in groupByIssueSeverity" :ref="issue.id" :key="issue.id" class="mb-8" :span="24">
+      <el-col
+        v-for="issue in groupByIssueSeverity"
+        :ref="issue.id"
+        :key="issue.id"
+        class="mb-8"
+        :span="24"
+      >
         <div class="sticky top-0">
-          <div class="text-white p-3 font-small font-semibold" :class="mapSeverity('bgColor', issue.severity)">
+          <div
+            class="text-white p-3 font-small font-semibold"
+            :class="mapSeverity('bgColor', issue.severity)"
+          >
             {{ mapSeverity('name', issue.severity) + ' Issue' }}
           </div>
           <div class="p-3 bg-gray-200 text-xl font-medium z-0">
@@ -50,9 +55,17 @@
           </div>
 
           <div class="text-lg font-semibold underline mb-3">Classifications</div>
-          <div v-for="(classification, clIdx) in issue.classifications" :key="clIdx" class="mb-2">
+          <div
+            v-for="(classification, clIdx) in issue.classifications"
+            :key="clIdx"
+            class="mb-2"
+          >
             <div class="text-base font-semibold">{{ classification._ }}</div>
-            <a class="text-blue-400 hover:text-blue-300 underline" :href="classification.href" target="blank">
+            <a
+              class="text-blue-400 hover:text-blue-300 underline"
+              :href="classification.href"
+              target="blank"
+            >
               {{ classification.href }}
             </a>
           </div>
@@ -75,8 +88,7 @@ export default {
       runAt: null,
       isLoading: false,
       xmlData: '',
-      jsonData: [],
-      isShowDrawer: false
+      jsonData: []
     }
   },
   computed: {
@@ -160,29 +172,7 @@ export default {
         .local()
         .format('YYYY-MM-DD HH:mm:ss')
       return localTime
-    },
-    toIssue(target) {
-      this.$refs[target][0].$el.scrollIntoView({ behavior: 'smooth' })
-    },
-    showDrawer() {
-      this.isShowDrawer = !this.isShowDrawer
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.button {
-  @apply bg-green-500 text-white pl-2 pr-5 shadow py-2 rounded relative -left-12 top-52;
-  transform: translate3d(-500px, 0, 0);
-}
-.drawer {
-  @apply fixed h-full right-0 bg-white shadow-lg z-50 transition duration-500 p-5;
-}
-.drawer-close {
-  @apply translate-x-full;
-}
-.badge{
-  @apply uppercase text-white text-xs tracking-wide font-semibold px-2 py-1 rounded-sm cursor-default
-}
-</style>
