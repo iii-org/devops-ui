@@ -68,7 +68,7 @@
              :class="{'active': activeDashboard===card.id, [card.id]:card.id}"
              @click="activeDashboard=card.id"
         >
-          <p class="pb-2 font-bold" :class="{'divider':activeDashboard===card.id}">
+          <p class="font-bold m-1">
             <em v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}
             <span class="count">{{ total[card.id] }}</span>
           </p>
@@ -337,7 +337,7 @@ export default {
 
 .dashboard-card {
   .item {
-    @apply px-3 py-1 md:px-5 md:py-1 rounded-lg bg-gray-200 cursor-pointer hover:shadow-md;
+    @apply px-1.5 py-0.5 md:px-3 md:py-1 rounded-lg bg-gray-200 cursor-pointer hover:shadow-md;
     .divider {
       @apply border-white border-solid border-0 border-b-2;
     }
