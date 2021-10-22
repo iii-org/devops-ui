@@ -27,7 +27,7 @@
       <el-table-column align="center" :label="$t('general.Actions')" width="390">
         <template slot-scope="scope">
           <el-button
-            v-show="$route.params.user_id !== scope.row.owner_id"
+            v-if="$route.params.user_id !== scope.row.owner_id"
             type="primary"
             size="mini"
             @click="handleParticipateDialog(scope.row.owner_id)"
