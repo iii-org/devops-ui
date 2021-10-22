@@ -119,7 +119,9 @@
             </el-popover>
           </el-form-item>
           <el-form-item>
-            <el-button :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'" type="success" @click="chartSettingVisible=!chartSettingVisible" />
+            <el-button :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'" type="success"
+                       @click="chartSettingVisible=!chartSettingVisible"
+            />
           </el-form-item>
           <el-form-item v-show="chartSettingVisible" :label="$t('general.group')">
             <el-switch
@@ -265,11 +267,10 @@ import { dragscroll } from 'vue-dragscroll'
 
 import axios from 'axios'
 import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
-import Templates from '@/views/SystemSettings/SystemArguments/components/Templates'
 
 export default {
   name: 'TraceabilityMatrix',
-  components: { Templates, ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
+  components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
   directives: {
     dragscroll
   },
@@ -364,9 +365,9 @@ export default {
         .filter(issue => issue)
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
       testFileList = [].concat.apply([], testFileList)
-      // TO-DO: print data test
-      console.log(chartData.concat(testFileList))
-      return chartData.concat(testFileList)
+      const result = chartData.concat(testFileList)
+      const unique_check = [...new Set(result.map(issue => issue.id))]
+      return unique_check.map(item => result.find(issue => issue.id === item))
     },
     trackerColor() {
       return {
@@ -651,7 +652,6 @@ export default {
     async onPaintChart() {
       this.chartLoading = true
       this.nowFilterValue = Object.assign({}, this.filterValue)
-      this.accessedIssueId = []
       this.chartIssueList = []
       this.testFilesResult = []
       this.chartProgress.now = 0
@@ -666,18 +666,18 @@ export default {
         const network = new this.PaintNetwork(this, issue.data)
         const family = await getIssueFamily(item)
         this.chartProgress.now += 1
-        this.accessedIssueId.push(item)
+        network.accessedIssueId.push(item)
         await network.getPaintFamily(issue.data, family.data)
         await network.end()
       }
       this.chartLoading = false
     },
     PaintNetwork(vueInstance, rootIssue) {
-      const startNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === rootIssue.tracker.name))
-
+      this.startNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === rootIssue.tracker.name))
+      this.accessedIssueId = []
       this.getIssueFamilyData = async function(chartIssueList) {
         const getIssueFamilyAPI = chartIssueList.map(issue => {
-          vueInstance.accessedIssueId.push(issue.id)
+          this.accessedIssueId.push(issue.id)
           return getIssueFamily(issue.id)
         })
         const response = await Promise.all(getIssueFamilyAPI)
@@ -711,11 +711,9 @@ export default {
             family[relationType] = [family[relationType]]
           }
           family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
-          if (family.hasOwnProperty(relationType)) {
-            getFamilyList = getFamilyList.concat(family[relationType])
-          }
+          getFamilyList = getFamilyList.concat(family[relationType])
         })
-        getFamilyList = getFamilyList.filter(item => !vueInstance.accessedIssueId.includes(item.id))
+        getFamilyList = getFamilyList.filter(item => !this.accessedIssueId.includes(item.id))
         return Promise.resolve(getFamilyList)
       }
 
@@ -728,9 +726,9 @@ export default {
         const nowNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === issue.tracker.name))
         if (!nowNode) return []
         let findRelationTargets = ['children']
-        if (nowNodeIndex === startNodeIndex) {
+        if (nowNodeIndex === this.startNodeIndex) {
           findRelationTargets = ['parent', 'children']
-        } else if (nowNodeIndex < startNodeIndex) {
+        } else if (nowNodeIndex < this.startNodeIndex) {
           findRelationTargets = ['parent']
         }
         let getTargetArray = findRelationTargets.map(target => nowNode.relation[target]).filter(target => target)
