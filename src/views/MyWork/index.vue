@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector :project-id="project_id" :keep-selection="false" :clearable="true" @change="project_id=$event">
+    <ProjectListSelector ref="ProjectSelection" :project-id="project_id" :keep-selection="false" :clearable="true" @change="project_id=$event">
       <el-popover
         placement="bottom"
         trigger="click"
@@ -68,9 +68,10 @@
              :class="{'active': activeDashboard===card.id, [card.id]:card.id}"
              @click="activeDashboard=card.id"
         >
-          <h3 class="pb-2" :class="{'divider':activeDashboard===card.id}">
-            <em v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}</h3>
-          <p class="m-0 mb-2 text-right">{{ total[card.id] }}</p>
+          <p class="pb-2 font-bold" :class="{'divider':activeDashboard===card.id}">
+            <em v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}
+            <span class="count">{{ total[card.id] }}</span>
+          </p>
         </div>
       </el-col>
     </el-row>
@@ -193,18 +194,24 @@ export default {
       const storeFilterValue = await this.getIssueFilter()
       storeFilterValue['work_project_id'] = value
       await this.setIssueFilter(storeFilterValue)
+      if (value && value !== '') {
+        this.$refs['ProjectSelection'].onProjectChange(value)
+      }
     },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadProjectSelectionList(value)
     },
-    async filterValue(value) {
-      const storeFilterValue = await this.getIssueFilter()
-      if (value['tags'] && value['tags'].length <= 0) {
-        this.$delete(value, 'tags')
+    filterValue: {
+      deep: true,
+      async handler(value) {
+        const storeFilterValue = await this.getIssueFilter()
+        if (value['tags'] && value['tags'].length <= 0) {
+          this.$delete(value, 'tags')
+        }
+        storeFilterValue['work'] = value
+        await this.setIssueFilter(storeFilterValue)
       }
-      storeFilterValue['work'] = value
-      await this.setIssueFilter(storeFilterValue)
     },
     async keyword(value) {
       const storeKeyword = await this.getKeyword()
@@ -256,7 +263,7 @@ export default {
         this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
         this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
       }
-      this.$refs[card.id][0].handleCurrentChange({ init: this.$refs[card.id][0].listQuery.offset })
+      this.$refs[card.id][0].handleCurrentChange({ init: this.$refs[card.id][0].listQuery.offset, limit: 10 })
     })
   },
   methods: {
@@ -330,9 +337,21 @@ export default {
 
 .dashboard-card {
   .item {
-    @apply p-2 px-5 py-1 md:px-10 md:py-2 rounded-lg bg-gray-200 cursor-pointer hover:shadow-md;
+    @apply px-3 py-1 md:px-5 md:py-1 rounded-lg bg-gray-200 cursor-pointer hover:shadow-md;
     .divider {
       @apply border-white border-solid border-0 border-b-2;
+    }
+    .count {
+      min-width: 30px;
+      min-height: 30px;
+      width: max-content;
+      height: max-content;
+      @apply inline-block m-0 p-1.5 bg-gray-500 rounded-full text-white text-center;
+    }
+    &.active{
+      .count {
+        @apply inline-block m-0 p-1.5 bg-danger rounded-full text-white text-center;
+      }
     }
   }
 

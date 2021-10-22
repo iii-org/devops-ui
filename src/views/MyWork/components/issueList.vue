@@ -190,11 +190,12 @@
         </template>
       </el-table>
       <pagination
+        ref="pagination"
         :total="pageInfo.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[listQuery.limit]"
-        :layout="'total, prev, pager, next'"
+        :page-sizes="[10,25,50,100]"
+        :layout="'total, sizes, prev, pager, next'"
         @pagination="handleCurrentChange"
       />
     </el-row>
@@ -204,7 +205,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="loadData"
+      @update="initTableData"
     />
   </div>
 </template>
@@ -258,7 +259,7 @@ export default {
       listQuery: {
         offset: 0,
         page: 1,
-        limit: 5
+        limit: 10
       }
     }
   },
@@ -271,10 +272,14 @@ export default {
   watch: {
     async keyword() {
       await this.backToFirstPage()
-      await this.loadData()
+      await this.initTableData()
     },
     async projectId() {
-      await this.onChangeFilterForm({ filterValue: this.filterValue, keyword: this.keyword, displayClosed: this.displayClosed })
+      await this.onChangeFilterForm({
+        filterValue: this.filterValue,
+        keyword: this.keyword,
+        displayClosed: this.displayClosed
+      })
     },
     filterValueProps: {
       deep: true,
@@ -302,7 +307,7 @@ export default {
     }
   },
   async mounted() {
-    await this.loadData()
+    await this.initTableData()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed', 'getListQuery', 'setListQuery']),
@@ -330,6 +335,12 @@ export default {
         result['search'] = this.keyword
       }
       return result
+    },
+    async initTableData() {
+      if (this.selectedProjectId === -1) return
+      this.listLoading = true
+      this.listData = await this.fetchData()
+      this.listLoading = false
     },
     async fetchData() {
       let data
@@ -366,6 +377,7 @@ export default {
     },
     async handleCurrentChange(val) {
       this.listLoading = true
+      this.listQuery.limit = val.limit
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
       if (val.init >= 0) {
         this.listQuery.offset = val.init
@@ -384,7 +396,7 @@ export default {
         this.listQuery.page = (page > 0) ? Math.ceil(page) : 1
       }
 
-      await this.loadData()
+      await this.initTableData()
       const storeListQuery = await this.getListQuery()
       storeListQuery[`MyWork_${this.from}`] = this.listQuery.offset
       await this.setListQuery(storeListQuery)
