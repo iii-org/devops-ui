@@ -174,6 +174,7 @@ export default {
     },
     handleSonarQubeData(data) {
       const ret = []
+      if (!data) return ret
       Object.keys(data).forEach(key => {
         const row = data[key]
         row['run_at'] = key
