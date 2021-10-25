@@ -26,7 +26,7 @@ export const asyncRoutes = [
     path: '/',
     redirect: { name: 'my-works' },
     meta: {
-      roles: ['Engineer']
+      roles: ['Engineer', 'Project Manager']
     },
     hidden: true
   },
@@ -34,7 +34,7 @@ export const asyncRoutes = [
     path: '/',
     redirect: { name: 'dashboard-admin' },
     meta: {
-      roles: ['Administrator', 'Project Manager']
+      roles: ['Administrator']
     },
     hidden: true
   },
