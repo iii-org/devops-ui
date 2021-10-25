@@ -254,7 +254,6 @@ export default {
   },
   async mounted() {
     await this.loadSelectionList()
-    this.getMyProjectList()
     const storeListQuery = await this.getListQuery()
     this.dashboardCards.forEach(card => {
       if (storeListQuery[`MyWork_${card.id}`]) {
@@ -273,7 +272,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions('projects', ['getMyProjectList', 'getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed', 'getListQuery']),
+    ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed', 'getListQuery']),
     getOptionsData(option_name) {
       return this[option_name]
     },
