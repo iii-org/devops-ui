@@ -3,8 +3,8 @@
     <template v-for="(value, key) in statusCategory">
       <el-popover :key="key" placement="bottom-start" trigger="hover">
         <div v-for="item in value" :key="item" class="status-item">
-          <div :class="`icon ${getSubStatusClass(item)}`">
-            <em v-if="getSubStatusClass(item)" :class="`el-icon-${icon[getSubStatusClass(item)]}`" />
+          <div :class="`icon ${getSubStatusClass(item, value)}`">
+            <em v-if="getSubStatusClass(item, value)" :class="`el-icon-${icon[getSubStatusClass(item, value)]}`" />
           </div>
           <div class="item-text">
             {{ statusList[item] }}
@@ -27,6 +27,7 @@ const status = {
   5: 'Finish Kubernetes deployment ',
   9: 'Start Kubernetes deletion',
   10: 'Finish Kubernetes deletion',
+  11: 'Something Error',
   32: 'Deploy stopped',
   3001: 'Error, No Image need to be replicated',
   5001: 'Error, K8s Error'
@@ -57,7 +58,7 @@ export default {
       let status = ''
       if (intId === 32) {
         intId = 0
-      } else if (id.length >= 4) {
+      } else if (id.length >= 4 || intId === 11) {
         intId = parseInt(id.substring(0, 1))
         status = 'error'
       }
@@ -75,9 +76,11 @@ export default {
       }
       return null
     },
-    getSubStatusClass(object) {
+    getSubStatusClass(object, statusList) {
       if (object === this.status_id[0] && this.status_id[1] === 'error') {
         return 'error'
+      } else if (object === this.status_id[0] && this.status_id[0] === statusList[statusList.length - 1]) {
+        return 'done'
       } else if (object === this.status_id[0]) {
         return 'progress'
       } else if (this.status_id[0] >= object) {

@@ -1055,6 +1055,7 @@ export default {
     Type: 'Type | Types',
     Protocol: 'Protocol',
     Port: 'Port',
+    ExposePort: 'Expose Port',
     Domain: 'Domain Name',
     Path: 'Path',
     EnvironmentVariable: 'Environment Variable',

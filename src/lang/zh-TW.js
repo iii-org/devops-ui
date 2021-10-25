@@ -1053,6 +1053,7 @@ export default {
     Type: '類型',
     Protocol: '連接埠',
     Port: '埠號',
+    ExposePort: '對外埠號',
     Domain: '主機名稱',
     Path: '路徑',
     EnvironmentVariable: '服務環境變數',

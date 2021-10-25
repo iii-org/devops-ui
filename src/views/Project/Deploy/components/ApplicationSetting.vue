@@ -215,7 +215,11 @@ import { mapGetters } from 'vuex'
 
 const protocol = ['TCP', 'UDP']
 const policy = ['Always', 'Never', 'IfNotPresent']
-const network_type = ['ClusterIP', 'NodePort', 'LoadBalancer'] // 'ExternalName',
+const network_type = [
+  // 'ClusterIP',
+  'NodePort'
+  // 'LoadBalancer'
+] // 'ExternalName',
 const environments_type = ['configmap', 'secret']
 
 export default {

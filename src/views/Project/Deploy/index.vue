@@ -18,6 +18,7 @@
       />
     </project-list-selector>
     <el-divider />
+    <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
     <el-table
       v-loading="listLoading"
       :data="pagedData"
@@ -133,10 +134,13 @@ export default {
       uploadFileList: [],
       loadingInstance: '',
       isDownloading: false,
-      searchKeys: ['name']
+      searchKeys: ['name'],
+      timer: null,
+      lastUpdateTime: null
     }
   },
-  mounted() {
+  destroyed() {
+    this.clearTimer()
   },
   methods: {
     showNoProjectWarning() {
@@ -152,6 +156,10 @@ export default {
         return []
       }
       const res = await getServices({ project_id: this.selectedProjectId })
+      this.lastUpdateTime = this.$dayjs()
+        .utc(res.datetime)
+        .format('YYYY-MM-DD HH:mm:ss')
+      this.setTimer()
       return res.data.applications
     },
     sortFiles(files) {
@@ -253,6 +261,16 @@ export default {
     onDialogClosed() {
       this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
       this.dialogVisible = false
+    },
+    setTimer() {
+      if (this.timer) {
+        this.clearTimer()
+      }
+      this.timer = setTimeout(() => this.fetchData(), 10000)
+    },
+    clearTimer() {
+      clearTimeout(this.timer)
+      this.timer = null
     }
   }
 }
