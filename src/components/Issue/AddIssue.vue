@@ -1,5 +1,10 @@
 <template>
-  <el-form ref="issueForm" :model="issueForm" :rules="issueFormRules" class="custom-list">
+  <el-form
+    ref="issueForm"
+    :model="issueForm"
+    :rules="issueFormRules"
+    class="custom-list"
+  >
     <el-row>
       <el-row v-if="parentId !== 0">
         <el-col :span="24">
@@ -9,15 +14,38 @@
         </el-col>
       </el-row>
 
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.name')" prop="name">
-          <el-input id="input-name" v-model="issueForm.name" :placeholder="$t('general.PleaseInput')" />
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.name')"
+          prop="name"
+        >
+          <el-input
+            id="input-name"
+            v-model="issueForm.name"
+            :placeholder="$t('general.PleaseInput')"
+          />
         </el-form-item>
       </el-col>
 
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.assigned_to')" prop="assigned_to_id">
-          <el-select id="input-assignee" v-model="issueForm.assigned_to_id" style="width: 100%" filterable clearable>
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.assigned_to')"
+          prop="assigned_to_id"
+        >
+          <el-select
+            id="input-assignee"
+            v-model="issueForm.assigned_to_id"
+            style="width: 100%"
+            filterable
+            clearable
+            @change="handleAssigneeChange"
+          >
             <el-option
               v-for="item in assigned_to"
               :key="item.login"
@@ -33,9 +61,21 @@
     </el-row>
 
     <el-row>
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.fixed_version')" prop="fixed_version_id">
-          <el-select id="input-version" v-model="issueForm.fixed_version_id" style="width: 100%" filterable clearable>
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.fixed_version')"
+          prop="fixed_version_id"
+        >
+          <el-select
+            id="input-version"
+            v-model="issueForm.fixed_version_id"
+            style="width: 100%"
+            filterable
+            clearable
+          >
             <el-option
               v-for="item in fixed_version"
               :key="item.id"
@@ -47,10 +87,25 @@
         </el-form-item>
       </el-col>
 
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.tracker')" prop="tracker_id">
-          <el-select id="input-type" v-model="issueForm.tracker_id" style="width: 100%">
-            <el-option v-for="item in getTracker" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.tracker')"
+          prop="tracker_id"
+        >
+          <el-select
+            id="input-type"
+            v-model="issueForm.tracker_id"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in getTracker"
+              :key="item.id"
+              :label="$t('Issue.' + item.name)"
+              :value="item.id"
+            >
               <tracker :name="item.name" />
             </el-option>
           </el-select>
@@ -58,20 +113,48 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('general.Status')" prop="status_id">
-          <el-select v-model="issueForm.status_id" style="width: 100%">
-            <el-option v-for="item in status" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('general.Status')"
+          prop="status_id"
+        >
+          <el-select
+            v-model="issueForm.status_id"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in status"
+              :key="item.id"
+              :label="$t('Issue.' + item.name)"
+              :value="item.id"
+            >
               <status :name="item.name" />
             </el-option>
           </el-select>
         </el-form-item>
       </el-col>
 
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.Priority')" prop="priority_id">
-          <el-select v-model="issueForm.priority_id" style="width: 100%">
-            <el-option v-for="item in priority" :key="item.id" :label="$t('Issue.' + item.name)" :value="item.id">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.Priority')"
+          prop="priority_id"
+        >
+          <el-select
+            v-model="issueForm.priority_id"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in priority"
+              :key="item.id"
+              :label="$t('Issue.' + item.name)"
+              :value="item.id"
+            >
               <priority :name="item.name" />
             </el-option>
           </el-select>
@@ -80,8 +163,14 @@
     </el-row>
 
     <el-row>
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.Estimate')" prop="estimated_hours">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.Estimate')"
+          prop="estimated_hours"
+        >
           <el-input-number
             id="input-estimate"
             v-model="issueForm.estimated_hours"
@@ -91,8 +180,14 @@
         </el-form-item>
       </el-col>
 
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.DoneRatio')" prop="done_ratio">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.DoneRatio')"
+          prop="done_ratio"
+        >
           <el-input-number
             id="input-done-ratio"
             v-model="issueForm.done_ratio"
@@ -106,8 +201,14 @@
     </el-row>
 
     <el-row>
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.StartDate')" prop="start_date">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.StartDate')"
+          prop="start_date"
+        >
           <el-date-picker
             id="input-start-date"
             v-model="issueForm.start_date"
@@ -120,8 +221,14 @@
         </el-form-item>
       </el-col>
 
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('Issue.EndDate')" prop="due_date">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('Issue.EndDate')"
+          prop="due_date"
+        >
           <el-date-picker
             id="input-end-date"
             v-model="issueForm.due_date"
@@ -136,8 +243,14 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :md="12" :span="24">
-        <el-form-item :label="$t('File.Upload')" prop="upload">
+      <el-col
+        :md="12"
+        :span="24"
+      >
+        <el-form-item
+          :label="$t('File.Upload')"
+          prop="upload"
+        >
           <el-upload
             ref="upload"
             drag
@@ -148,7 +261,11 @@
             :on-change="handleChange"
           >
             <div>
-              <el-button size="small" type="success" class="mb-2">{{ $t('File.ChooseFile') }}</el-button>
+              <el-button
+                size="small"
+                type="success"
+                class="mb-2"
+              >{{ $t('File.ChooseFile') }}</el-button>
               <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
               <div class="text-xs text-gray-400 px-12">
                 <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -160,9 +277,15 @@
         </el-form-item>
       </el-col>
 
-      <el-col :md="12" :span="24">
+      <el-col
+        :md="12"
+        :span="24"
+      >
         <Tags :form.sync="issueForm" />
-        <el-form-item :label="$t('general.Description')" prop="description">
+        <el-form-item
+          :label="$t('general.Description')"
+          prop="description"
+        >
           <el-input
             id="input-description"
             v-model="issueForm.description"
@@ -227,8 +350,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {
-      }
+      default: () => {}
     },
     importFrom: {
       type: String,
@@ -236,7 +358,7 @@ export default {
     },
     trackerList: {
       type: Array,
-      default: () => ([])
+      default: () => []
     }
   },
 
@@ -339,7 +461,11 @@ export default {
     setFilterValue() {
       if (this.importFrom && this.issueFilter[this.importFrom]) {
         Object.keys(this.issueFilter[this.importFrom]).forEach(item => {
-          if (this.issueFilter[this.importFrom][item] !== 'null' && !!this.issueFilter[this.importFrom][item] && this.issueFilter[this.importFrom][item] !== '') {
+          if (
+            this.issueFilter[this.importFrom][item] !== 'null' &&
+            !!this.issueFilter[this.importFrom][item] &&
+            this.issueFilter[this.importFrom][item] !== ''
+          ) {
             this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
           }
         })
@@ -392,12 +518,11 @@ export default {
       })
     },
     async addProjectTags(formData, originTags, tagsLength) {
-      await addProjectTags(formData)
-        .then(async res => {
-          const id = res.data.tags.id
-          originTags.push(id)
-          this.tagsArrayToString(originTags, tagsLength)
-        })
+      await addProjectTags(formData).then(async res => {
+        const id = res.data.tags.id
+        originTags.push(id)
+        this.tagsArrayToString(originTags, tagsLength)
+      })
     },
     tagsArrayToString(tags, tagsLength) {
       this.tagsString = tags.length > 0 ? tags.join() : null
@@ -493,6 +618,16 @@ export default {
     checkDueDate(startDate) {
       if (startDate === null) this.issueForm.start_date = ''
       if (new Date(startDate).getTime() >= new Date(this.issueForm.due_date)) this.issueForm.due_date = ''
+    },
+    handleAssigneeChange() {
+      const activeStatusId = this.status.find(status => status.name === 'Active').id
+      const assignedStatusId = this.status.find(status => status.name === 'Assigned').id
+      if (this.issueForm.status_id === 1) {
+        this.issueForm.status_id = assignedStatusId
+      }
+      if (this.issueForm.status_id === assignedStatusId && this.issueForm.assigned_to_id === '') {
+        this.issueForm.status_id = activeStatusId
+      }
     }
   }
 }
