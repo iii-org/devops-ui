@@ -398,7 +398,7 @@ export default {
 
       await this.initTableData()
       const storeListQuery = await this.getListQuery()
-      storeListQuery[`MyWork_${this.from}`] = this.listQuery.offset
+      storeListQuery[`MyWork_${this.from}`] = this.listQuery
       await this.setListQuery(storeListQuery)
       this.listLoading = false
     }

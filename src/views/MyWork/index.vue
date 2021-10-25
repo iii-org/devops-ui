@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector ref="ProjectSelection" :project-id="project_id" :keep-selection="false" :clearable="true" @change="project_id=$event">
+    <ProjectListSelector ref="ProjectSelection" :project-id="project_id" :keep-selection="false" :clearable="true"
+                         @change="project_id=$event"
+    >
       <el-popover
         placement="bottom"
         trigger="click"
@@ -256,14 +258,18 @@ export default {
     const storeListQuery = await this.getListQuery()
     this.dashboardCards.forEach(card => {
       if (storeListQuery[`MyWork_${card.id}`]) {
-        this.$set(this.$refs[card.id][0].listQuery, 'offset', storeListQuery[`MyWork_${card.id}`])
-        this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`])
+        this.$set(this.$refs[card.id][0], 'listQuery', storeListQuery[`MyWork_${card.id}`])
+        this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`].offset)
         this.$set(this.$refs[card.id][0].pageInfo, 'total', Infinity)
       } else {
         this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
+        this.$set(this.$refs[card.id][0].listQuery, 'limit', 10)
         this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
       }
-      this.$refs[card.id][0].handleCurrentChange({ init: this.$refs[card.id][0].listQuery.offset, limit: 10 })
+      this.$refs[card.id][0].handleCurrentChange({
+        init: this.$refs[card.id][0].listQuery.offset,
+        limit: this.$refs[card.id][0].listQuery.limit
+      })
     })
   },
   methods: {
@@ -314,16 +320,20 @@ export default {
       return (column.includes(name) && (!this.project_id || (name === 'assigned_to' && this.activeDashboard === 'assigned_to_id')))
     },
     updateTotalCount(card_id, value) {
-      this.$set(this.total, card_id, value)
+      if (value === Infinity) {
+        this.$set(this.total, card_id, '-')
+      } else {
+        this.$set(this.total, card_id, value)
+      }
     },
     async onChangeFilter() {
-      const storeListQuery = await this.getListQuery()
       this.dashboardCards.forEach(card => {
-        if (storeListQuery[`MyWork_${card.id}`]) {
-          this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
-          this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
-        }
-        this.$refs[card.id][0].handleCurrentChange({ init: this.$refs[card.id][0].listQuery.offset })
+        this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
+        this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
+        this.$refs[card.id][0].handleCurrentChange({
+          init: this.$refs[card.id][0].listQuery.offset,
+          limit: this.$refs[card.id][0].listQuery.limit
+        })
       })
     }
   }
@@ -341,6 +351,7 @@ export default {
     .divider {
       @apply border-white border-solid border-0 border-b-2;
     }
+
     .count {
       min-width: 30px;
       min-height: 30px;
@@ -348,7 +359,8 @@ export default {
       height: max-content;
       @apply inline-block m-0 p-1.5 bg-gray-500 rounded-full text-white text-center;
     }
-    &.active{
+
+    &.active {
       .count {
         @apply inline-block m-0 p-1.5 bg-danger rounded-full text-white text-center;
       }
