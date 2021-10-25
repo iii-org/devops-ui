@@ -10,7 +10,7 @@ export default {
   route: {
     myWork: '我的工作',
     dashboard: '儀表板',
-    projectOverview: '專案總覽',
+    projectOverview: '專案概述',
     projectList: '專案列表',
 
     milestone: '工作規劃',
@@ -25,7 +25,7 @@ export default {
     works: '工作執行',
     kanban: '議題看板',
     issueList: '議題列表',
-    overview: '專案總覽',
+    overview: '總覽',
     wikiList: '備忘記事',
     fileList: '檔案列表',
 
