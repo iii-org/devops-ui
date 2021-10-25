@@ -18,7 +18,14 @@
       />
     </project-list-selector>
     <el-divider />
-    <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+    <div class="flex justify-between items-center">
+      <div class="flex">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
+      <div class="flex">
+        <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">
+          {{ $t('general.Refresh') }}
+        </el-button>
+      </div>
+    </div>
     <el-table
       v-loading="listLoading"
       :data="pagedData"
