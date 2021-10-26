@@ -29,9 +29,11 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-form-item :label="$t('Deploy.Port')" prop="network.port">
-              <el-input v-model.number="deployForm.network.port" />
-            </el-form-item>
+            <el-col :md="12">
+              <el-form-item :label="$t('Deploy.Port')" prop="network.port">
+                <el-input v-model.number="deployForm.network.port" clearable />
+              </el-form-item>
+            </el-col>
             <!--        <el-col :md="12">-->
             <!--          <el-form-item label="Volume" prop="volume">-->
             <!--            <el-select v-model="deployForm.volume" />-->
@@ -104,8 +106,8 @@
                 </el-form-item>
               </el-col>
               <el-col :md="12">
-                <el-form-item :label="$t('Deploy.ExposePort')" prop="network.port">
-                  <el-input v-model.number="deployForm.network.expose_port" />
+                <el-form-item :label="$t('Deploy.ExposePort')" prop="network.expose_port">
+                  <el-input v-model.number="deployForm.network.expose_port" clearable />
                 </el-form-item>
               </el-col>
               <el-col :md="12">
@@ -281,6 +283,15 @@ export default {
         return resolve()
       })
     }
+    const exposePortValidator = (rule, value) => {
+      return new Promise((resolve, reject) => {
+        const valueInt = parseInt(value)
+        if (value && (isNaN(valueInt) && value !== '' && value !== null) || valueInt < 30000 || valueInt > 32767) {
+          return reject(this.$t(`Validation.Range`, [30000, 32767]))
+        }
+        return resolve()
+      })
+    }
     return {
       cluster: [],
       registry: [],
@@ -346,6 +357,10 @@ export default {
           port: [
             { required: true, message: this.$t(`Validation.Input`, [this.$t('Deploy.Port')]), trigger: 'blur' },
             { type: 'number', message: this.$t(`Validation.Input`, [this.$t('Validation.Number')]), trigger: 'blur' }
+          ],
+          expose_port: [
+            { validator: numberValidator, trigger: 'change' },
+            { validator: exposePortValidator, trigger: 'change' }
           ],
           domain: [{ validator: domainValidator, trigger: 'blur' }],
           path: [{ validator: pathValidator, trigger: 'blur' }]

@@ -1066,12 +1066,14 @@ export default {
     AllNull: '請確認所有的 {0} 都已輸入',
     PairCondition: '請輸入{0}。 {1} 是一組條件。',
     ReleaseHelper: '若下拉未呈現任何版本可供選擇，請確認是否已執行過左方選單的「釋出版本」，或該釋出版本未含有映像檔。',
-    NoSetting: '服務尚未建立，請洽系統管理員'
+    NoSetting: '服務尚未建立，請洽系統管理員',
+    LinkToApplication: '連結到服務'
   },
   Validation: {
     Input: '請輸入 {0}',
     Select: '請選擇 {0}',
     Invalid: '{0} 無效，請重新輸入',
+    Range: '數值範圍是 {0} ~ {1}',
     Number: '數值'
   },
   ServiceMonitoring: {

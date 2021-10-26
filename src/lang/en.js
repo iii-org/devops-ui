@@ -1068,12 +1068,14 @@ export default {
     AllNull: 'Please check all {0} are not null',
     PairCondition: 'Please input {0}. {1} are a pair condition.',
     ReleaseHelper: 'above release version requires an image included.',
-    NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.'
+    NoSetting: 'Deploy setting is not yet ready, please check with your system administrator.',
+    LinkToApplication: 'Link to application'
   },
   Validation: {
     Input: 'Please Input {0}',
     Select: 'Please Select {0}',
     Invalid: '{0} is invalid',
+    Range: 'The number range is {0} ~ {1}',
     Number: 'Number'
   },
   ServiceMonitoring: {

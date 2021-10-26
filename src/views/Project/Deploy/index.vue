@@ -48,6 +48,11 @@
           </template>
         </template>
       </el-table-column>
+      <el-table-column prop="pod" :label="$t('Deploy.Pod')">
+        <template slot-scope="{row}">
+          {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}
+        </template>
+      </el-table-column>
       <el-table-column-time prop="created_at" :label="$t('general.CreateTime')" />
       <el-table-column align="center" :label="$t('general.Actions')" width="240">
         <template slot-scope="{row}">
@@ -56,6 +61,12 @@
           >
             <em :class="row.disabled| getActionIcon" /> {{ getActionText(row.disabled) }}
             <el-dropdown-menu slot="dropdown">
+              <template v-if="row.public_endpoint">
+                <el-dropdown-item type="danger" icon="el-icon-link" @click.native="toEndpoint(row.public_endpoint)">
+                  {{ $t('Deploy.LinkToApplication') }}
+                </el-dropdown-item>
+                <el-dropdown-item><el-divider /></el-dropdown-item>
+              </template>
               <el-dropdown-item size="mini"
                                 type="primary"
                                 icon="el-icon-refresh-right"
@@ -77,7 +88,7 @@
                 :title="$t('Notify.confirmDelete')"
                 @confirm="handleDelete(row.id)"
               >
-                <el-dropdown-item slot="reference" type="danger"><em class="el-icon-delete" />
+                <el-dropdown-item slot="reference" type="danger" icon="el-icon-delete">
                   {{ $t('general.Delete') }}
                 </el-dropdown-item>
               </el-popconfirm>
@@ -116,7 +127,7 @@
 </template>
 
 <script>
-import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, SearchBar, Table, ProjectSelector, CancelRequest } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { getServices, postService, deleteService, putService, patchService, patchServiceRedeploy } from '@/api/deploy'
 import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
@@ -130,7 +141,7 @@ export default {
       return value ? 'el-icon-video-play' : 'el-icon-video-pause'
     }
   },
-  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector],
+  mixins: [BasicData, Pagination, SearchBar, Table, ProjectSelector, CancelRequest],
   data() {
     return {
       dialogVisible: false,
@@ -157,16 +168,26 @@ export default {
         type: 'warning'
       })
     },
+    async loadData() {
+      if (this.selectedProjectId === -1) return
+      this.listLoading = true
+      await this.fetchData()
+    },
     async fetchData() {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
         return []
       }
-      const res = await getServices({ project_id: this.selectedProjectId })
+      if (this.isUpdating) this.cancelRequest()
+      this.isUpdating = true
+      const res = await getServices({ project_id: this.selectedProjectId }, { cancelToken: this.cancelToken })
       this.lastUpdateTime = this.$dayjs()
         .utc(res.datetime)
         .format('YYYY-MM-DD HH:mm:ss')
+      this.listData = res.data.applications
       this.setTimer()
+      this.isUpdating = false
+      this.listLoading = false
       return res.data.applications
     },
     sortFiles(files) {
@@ -278,6 +299,10 @@ export default {
     clearTimer() {
       clearTimeout(this.timer)
       this.timer = null
+    },
+    toEndpoint(url) {
+      console.log(url)
+      window.open(url, '_blank')
     }
   }
 }
