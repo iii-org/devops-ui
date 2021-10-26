@@ -6,7 +6,7 @@
           <el-button size="small" icon="el-icon-upload" :type="isButtonDisabled ? 'info' : 'success'" :disabled="isButtonDisabled" @click="uploadDialogVisible = true">{{ $t('Issue.UploadFiles') }}</el-button>
           <el-button size="small" icon="el-icon-plus" :type="isButtonDisabled ? 'info' : 'warning'" :disabled="isButtonDisabled" @click="addTopicDialogVisible = true">{{ $t('Issue.AddSubIssue') }}</el-button>
         </template>
-        <el-button v-if="issueTracker==='Test Plan'" size="small" type="primary" icon="el-icon-upload" :disabled="isButtonDisabled" @click="handleCollectionDialog">管理測試檔案</el-button>
+        <el-button v-if="issueTracker==='Test Plan'" size="small" :type="isButtonDisabled ? 'info' : 'primary'" icon="el-icon-upload" :disabled="isButtonDisabled" @click="handleCollectionDialog">管理測試檔案</el-button>
       </div>
       <div class="text-right">
         <el-link v-if="issueId" :href="issueLink" target="_blank" type="primary" :underline="false">

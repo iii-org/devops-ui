@@ -152,7 +152,7 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length>2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
-        <contextmenu-submenu :title="$t('Issue.tags')">
+        <contextmenu-submenu v-permission="permission" :title="$t('Issue.tags')">
           <contextmenu-item v-for="item in tags" :key="item.id"
                             :class="{current:getContextMenuCurrentValue('tags', item), [item.class]:item.class}"
                             @click="handleUpdateIssue({value:{'tags':item.id}, row:contextMenu.row})"
@@ -162,25 +162,25 @@
             {{ item.name }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-item divider />
+        <contextmenu-item v-permission="permission" divider />
         <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">
           {{ $t('route.Issue Detail') }}
         </contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
           {{ $t('Issue.TraceabilityMatrix') }}
         </contextmenu-item>
-        <contextmenu-item divider />
-        <contextmenu-item @click="appendIssue(contextMenu.row)">
+        <contextmenu-item v-permission="permission" divider />
+        <contextmenu-item v-permission="permission" @click="appendIssue(contextMenu.row)">
           {{ $t('Issue.AddIssue') }}
         </contextmenu-item>
-        <contextmenu-item @click="appendIssue(contextMenu.row, true)">
+        <contextmenu-item v-permission="permission" @click="appendIssue(contextMenu.row, true)">
           {{ $t('Issue.AddSubIssue') }}
         </contextmenu-item>
-        <contextmenu-item @click="appendIssue(contextMenu.row, false, contextMenu.row)">
+        <contextmenu-item v-permission="permission" @click="appendIssue(contextMenu.row, false, contextMenu.row)">
           {{ $t('Issue.CopyIssue') }}
         </contextmenu-item>
-        <contextmenu-item divider />
-        <contextmenu-item class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete">
+        <contextmenu-item v-permission="permission" divider />
+        <contextmenu-item v-permission="permission" class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete">
           {{ $t('general.Delete') }}</em></contextmenu-item>
       </template>
     </contextmenu>
@@ -302,10 +302,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'userId']),
+    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'userId', 'userRole']),
     hasInlineCreate() {
       const create = this.listData.filter(item => item.create)
       return create.length > 0
+    },
+    isButtonDisabled() {
+      return this.userRole === 'QA'
+    },
+    permission() {
+      return ['Administrator', 'Project Management', 'Engineer']
     }
   },
   mounted() {
@@ -519,14 +525,16 @@ export default {
       })
     },
     handleCellClick(row, column) {
-      let columnName = column['property'].split('.')
-      if (columnName.length >= 2) {
-        columnName = columnName[0]
-      } else {
-        columnName = column['property']
+      if (!this.isButtonDisabled) {
+        let columnName = column['property'].split('.')
+        if (columnName.length >= 2) {
+          columnName = columnName[0]
+        } else {
+          columnName = column['property']
+        }
+        this.$set(row, 'originColumn', cloneDeep(row[columnName]))
+        this.$set(row, 'editColumn', columnName)
       }
-      this.$set(row, 'originColumn', cloneDeep(row[columnName]))
-      this.$set(row, 'editColumn', columnName)
     },
     handleResetEdit({ value, row }) {
       this.$set(row, value, row.originColumn)

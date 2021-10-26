@@ -6,6 +6,7 @@
     :model="form"
     :rules="issueFormRules"
     label-position="top"
+    :disabled="isButtonDisabled"
   >
     <Tags ref="tags" :form.sync="form" />
     <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
@@ -266,6 +267,10 @@ export default {
     relations: {
       type: Array,
       default: () => ([])
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -378,7 +383,7 @@ export default {
         this.getSearchRelationIssue()
       }
     },
-    'form.tags'(value) {
+    'form.tags'() {
       if (this.form.project_id > 0) this.$refs.tags.getSearchTags()
     }
   },

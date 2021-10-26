@@ -9,7 +9,7 @@
         <el-tag v-if="file.edit" type="primary">異動未儲存</el-tag>
       </el-col>
       <el-col :span="4" class="text-right">
-        <el-button type="danger" size="mini" icon="el-icon-remove" @click="deleteIssueFile(file)">
+        <el-button :type="isButtonDisabled ? 'info' : 'danger'" :disabled="isButtonDisabled" size="mini" icon="el-icon-remove" @click="deleteIssueFile(file)">
           移除關聯
         </el-button>
       </el-col>
@@ -25,6 +25,10 @@ export default {
     issueTest: {
       type: Array,
       default: () => []
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

@@ -104,6 +104,7 @@
               />
               <issue-collection
                 v-if="test_files.length>0"
+                :is-button-disabled="isButtonDisabled"
                 :issue-test.sync="test_files"
                 @update="updateTestCollection"
               />
@@ -295,6 +296,7 @@
         >
           <issue-form
             ref="IssueForm"
+            :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
             :form.sync="form"
             :parent="parent"

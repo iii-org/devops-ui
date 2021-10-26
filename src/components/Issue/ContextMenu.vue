@@ -3,7 +3,7 @@
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(row).length>2">
         <contextmenu-item class="menu-title">{{ row.name }}</contextmenu-item>
-        <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" :title="column.label"
+        <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" v-permission="permission" :title="column.label"
                              :disabled="(column.value==='priority')?(row.has_children): false"
         >
           <contextmenu-item v-for="item in getOptionsData(column.value, row.has_children)" :key="getId(column.value,item)"
@@ -16,7 +16,7 @@
             {{ getSelectionLabel(item) }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-submenu :title="$t('Issue.DoneRatio')" :disabled="row.has_children">
+        <contextmenu-submenu v-permission="permission" :title="$t('Issue.DoneRatio')" :disabled="row.has_children">
           <contextmenu-item v-for="item in done_ratio" :key="item.id"
                             :disabled="getContextMenuCurrentValue('done_ratio', item)"
                             :class="{current:getContextMenuCurrentValue('done_ratio', item)}"
@@ -26,15 +26,15 @@
             {{ getSelectionLabel(item) }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-item divider />
-        <contextmenu-item @click="toggleRelationDialog('Parent')">{{ $t('Issue.ParentIssue') }}</contextmenu-item>
-        <contextmenu-submenu :title="$t('Issue.ChildrenIssue')">
+        <contextmenu-item v-permission="permission" divider />
+        <contextmenu-item v-permission="permission" @click="toggleRelationDialog('Parent')">{{ $t('Issue.ParentIssue') }}</contextmenu-item>
+        <contextmenu-submenu v-permission="permission" :title="$t('Issue.ChildrenIssue')">
           <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}</contextmenu-item>
           <contextmenu-item @click="advancedAddIssue(false)">{{ $t('Issue.AddSubIssue') }}</contextmenu-item>
         </contextmenu-submenu>
         <contextmenu-item @click="toggleIssueMatrixDialog">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
-        <contextmenu-item divider />
-        <contextmenu-item @click="advancedAddIssue(true)">{{ $t('Issue.CopyIssue') }}</contextmenu-item>
+        <contextmenu-item v-permission="permission" divider />
+        <contextmenu-item v-permission="permission" @click="advancedAddIssue(true)">{{ $t('Issue.CopyIssue') }}</contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog
@@ -192,6 +192,9 @@ export default {
         result.push({ id: num, name: num + ' %' })
       }
       return result
+    },
+    permission() {
+      return ['Administrator', 'Project Management', 'Engineer']
     }
   },
   watch: {
