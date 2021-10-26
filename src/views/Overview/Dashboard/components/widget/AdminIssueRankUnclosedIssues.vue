@@ -13,19 +13,19 @@
     </el-row>
     <el-card>
       <el-table v-if="listData.length > 0" :data="pagedData">
-        <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.IssueRank.project_name')" />
-        <el-table-column sortable prop="issue_name" :label="$t('Dashboard.ADMIN.IssueRank.issue_name')" />
-        <el-table-column sortable prop="issue_type" :label="$t('Dashboard.ADMIN.IssueRank.issue_type')">
+        <el-table-column sortable show-overflow-tooltip prop="project_name" :label="$t('Dashboard.ADMIN.IssueRank.project_name')" />
+        <el-table-column sortable show-overflow-tooltip prop="issue_name" :label="$t('Dashboard.ADMIN.IssueRank.issue_name')" />
+        <el-table-column sortable show-overflow-tooltip prop="issue_type" :label="$t('Dashboard.ADMIN.IssueRank.issue_type')">
           <template slot-scope="scope">
             <tracker :name="scope.row.issue_type" />
           </template>
         </el-table-column>
-        <el-table-column sortable prop="status" :label="$t('Dashboard.ADMIN.IssueRank.status_id')">
+        <el-table-column sortable show-overflow-tooltip prop="status" :label="$t('Dashboard.ADMIN.IssueRank.status_id')">
           <template slot-scope="scope">
             <status :name="scope.row.status" />
           </template>
         </el-table-column>
-        <el-table-column sortable prop="start_date" :label="$t('Dashboard.ADMIN.IssueRank.start_date')" />
+        <el-table-column sortable show-overflow-tooltip prop="start_date" :label="$t('Dashboard.ADMIN.IssueRank.start_date')" />
       </el-table>
       <pagination
         :total="filteredData.length"

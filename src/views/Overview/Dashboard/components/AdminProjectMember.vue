@@ -37,15 +37,15 @@
               <admin-member-table :loading="props.row.loading" :data="props.row.children" />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')" prop="project_name" sortable />
-          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.owner_name')" prop="owner_name" sortable>
+          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.ProjectMembers.project_name')" prop="project_name" sortable />
+          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.ProjectMembers.owner_name')" prop="owner_name" sortable>
             <template slot-scope="props">
               {{ `${props.row.owner_name} (${props.row.owner_login})` }}
             </template>
           </el-table-column>
           <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.member_count')" prop="member_count" sortable />
-          <el-table-column :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')" prop="start_date" sortable />
-          <el-table-column prop="end_date" :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')" sortable />
+          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.ProjectMembers.start_date')" prop="start_date" sortable />
+          <el-table-column show-overflow-tooltip prop="end_date" :label="$t('Dashboard.ADMIN.ProjectMembers.end_date')" sortable />
         </el-table>
         <pagination
           :total="filteredData.length"

@@ -32,7 +32,7 @@
         </template>
       </el-table-column>
       <el-table-column type="index" label="ID" width="100px" />
-      <el-table-column :label="$t('Track.CheckRule')" prop="name" width="150px" show-tooltip-when-overflow>
+      <el-table-column :label="$t('Track.CheckRule')" prop="name" width="150px" show-overflow-tooltip>
         <template slot-scope="{row}">
           <el-input v-if="row.edit" v-model="row.name" />
           <span v-else>{{ row.name }}</span>

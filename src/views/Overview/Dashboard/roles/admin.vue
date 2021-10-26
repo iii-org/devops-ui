@@ -15,7 +15,7 @@
           </h2>
         </el-alert>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="10">
+      <el-col :xs="24" :sm="24" :md="(userRole==='QA')? 12: 10">
         <el-card class="overview">
           <template slot="header">
             <span class="font-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
@@ -34,7 +34,7 @@
           <admin-project-member ref="projectMember" :data="getProjectMembersData" />
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="7">
+      <el-col v-if="userRole!=='QA'" :xs="24" :sm="24" :md="7">
         <el-card>
           <template slot="header">
             <span class="font-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }} </span>
@@ -102,6 +102,7 @@ import {
   AdminCommitLog
 } from '../components'
 import { UTCtoLocalTime } from '@/filters'
+import { mapGetters } from 'vuex'
 
 const overview = {
   projects: { class: 'primary', database: '' },
@@ -129,6 +130,9 @@ export default {
       requestGitLabLastTime: null,
       status: { is_lock: false, sync_date: '' }
     }
+  },
+  computed: {
+    ...mapGetters(['userRole'])
   },
   watch: {
     gitCommitLog: {

@@ -26,7 +26,7 @@
               :height="tableHeight"
     >
       <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track"
-                       show-tooltip-when-overflow
+                       show-overflow-tooltip
       >
         <template v-if="row[track]" slot-scope="{row}">
           <el-link v-if="row[track].name" @click="onRelationIssueDialog(row[track].id)">

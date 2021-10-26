@@ -24,18 +24,18 @@
         :height="tableHeightDialog"
         @sort-change="onSortChange"
       >
-        <el-table-column sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
-        <el-table-column sortable prop="owner_name" :label="$t('Dashboard.ADMIN.ProjectList.owner_name')">
+        <el-table-column show-overflow-tooltip sortable prop="project_name" :label="$t('Dashboard.ADMIN.ProjectList.project_name')" />
+        <el-table-column show-overflow-tooltip sortable prop="owner_name" :label="$t('Dashboard.ADMIN.ProjectList.owner_name')">
           <template slot-scope="scope">
             {{ `${scope.row.owner_name} (${scope.row.owner_login})` }}
           </template>
         </el-table-column>
-        <el-table-column sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')">
+        <el-table-column show-overflow-tooltip sortable prop="project_status" :label="$t('Dashboard.ADMIN.ProjectList.project_status')">
           <template slot-scope="scope">
             <project-status :name="scope.row.project_status" />
           </template>
         </el-table-column>
-        <el-table-column sortable prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
+        <el-table-column sortable show-overflow-tooltip prop="complete_percent" :label="$t('Dashboard.ADMIN.ProjectList.complete_percent')" />
         <el-table-column
           sortable
           prop="unclosed_issue_count"
@@ -48,7 +48,7 @@
         />
         <el-table-column sortable prop="member_count" :label="$t('Dashboard.ADMIN.ProjectList.member_count')" />
         <el-table-column sortable prop="expired_day" :label="$t('Dashboard.ADMIN.ProjectList.expired_day')" />
-        <el-table-column sortable prop="end_date" :label="$t('general.DueDate')" />
+        <el-table-column sortable show-overflow-tooltip prop="end_date" :label="$t('general.DueDate')" />
         <template slot="empty">
           <el-empty :description="$t('general.NoData')" />
         </template>

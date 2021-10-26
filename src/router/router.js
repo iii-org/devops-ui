@@ -45,7 +45,7 @@ export const asyncRoutes = [
     meta: {
       icon: 'dashboard',
       title: 'overview',
-      roles: ['Administrator', 'Project Manager']
+      roles: ['Administrator']
     },
     children: [
       {
@@ -54,7 +54,7 @@ export const asyncRoutes = [
         component: () => import('@/views/Overview/Dashboard/roles/admin'),
         meta: {
           title: 'dashboard',
-          roles: ['Administrator', 'Project Manager']
+          roles: ['Administrator']
         }
       },
       {
@@ -63,7 +63,7 @@ export const asyncRoutes = [
         component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
         meta: {
           title: 'projectList',
-          roles: ['Administrator', 'Project Manager']
+          roles: ['Administrator']
         }
       }
     ]
@@ -92,12 +92,12 @@ export const asyncRoutes = [
     component: Layout,
     meta: { roles: ['Engineer'] },
     children: [
-      // {
-      //   path: '',
-      //   name: 'project-list-pm',
-      //   component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
-      //   meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
-      // },
+      {
+        path: '',
+        name: 'project-list-pm',
+        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
+        meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
+      },
       {
         path: '',
         name: 'project-list-rd',

@@ -38,7 +38,7 @@
           header-cell-class-name="items-center"
           @row-click="rowClicked"
         >
-          <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.project_name')" prop="project_name" sortable />
+          <el-table-column show-overflow-tooltip :label="$t('Dashboard.ADMIN.PassingRate.project_name')" prop="project_name" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.total')" prop="total" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.success')" prop="success" sortable />
           <el-table-column :label="$t('Dashboard.ADMIN.PassingRate.fail')" prop="fail" sortable />

@@ -10,6 +10,7 @@
       prop="role_name"
       width="200"
       sortable
+      show-overflow-tooltip
     >
       <div slot-scope="scope" class="text-right">
         <span><b>{{ scope.row.role_name }}</b>
@@ -20,6 +21,7 @@
       label="專案成員"
       prop="user_name"
       sortable
+      show-overflow-tooltip
     >
       <template slot-scope="scope">
         <el-tag v-for="(user,idx) in scope.row.user_name" :key="idx" class="member" :class="scope.row.role_name">{{ user

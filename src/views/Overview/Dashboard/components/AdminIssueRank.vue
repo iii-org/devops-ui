@@ -8,7 +8,7 @@
         header-cell-class-name="items-center"
         @row-click="showUnclosedIssuesDetail"
       >
-        <el-table-column prop="user_name" :label="$t('Dashboard.ADMIN.IssueRank.user_name')">
+        <el-table-column prop="user_name" show-overflow-tooltip :label="$t('Dashboard.ADMIN.IssueRank.user_name')">
           <template slot-scope="scope">
             {{ `${scope.row.user_name} (${scope.row.user_login})` }}
           </template>
