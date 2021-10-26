@@ -23,7 +23,7 @@
           <admin-overview :data="getProjectOverviewData" />
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="7">
+      <el-col :xs="24" :sm="24" :md="(userRole==='QA')? 12: 7">
         <el-card>
           <div slot="header" class="cursor-pointer" @click="$refs['projectMember'].detailDialog = true">
             <span class="font-bold">
@@ -44,7 +44,7 @@
       </el-col>
     </el-row>
     <el-row type="flex" class="flex-wrap" :gutter="10">
-      <el-col :xs="24" :sm="24" :md="10">
+      <el-col :xs="24" :sm="24" :md="12">
         <el-card>
           <template slot="header">
             <span class="font-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
@@ -52,7 +52,7 @@
           <admin-issue-rank :data="getIssueRankData" />
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="14">
+      <el-col :xs="24" :sm="24" :md="12">
         <el-card>
           <div slot="header" class="cursor-pointer" @click="$refs['passingRate'].detailDialog = true">
             <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
