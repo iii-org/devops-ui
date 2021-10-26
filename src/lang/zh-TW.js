@@ -1038,6 +1038,7 @@ export default {
     Cluster: '遠端環境',
     Release: '釋出版本',
     Status: '狀態',
+    Pod: 'Pod數量',
     Start: '開始',
     Stop: '停止',
     Redeploy: '重新部署',

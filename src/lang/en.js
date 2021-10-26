@@ -1040,6 +1040,7 @@ export default {
     Cluster: 'Cluster',
     Release: 'Release Version',
     Status: 'Status',
+    Pod: 'Pod',
     Start: 'Start',
     Stop: 'Stop',
     Redeploy: 'Redeploy',
