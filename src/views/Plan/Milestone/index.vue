@@ -51,19 +51,22 @@
       </SearchFilter>
     </project-list-selector>
     <el-divider />
-    <el-tabs v-model="activeTab" type="border-card" @tab-click="onChangeFilter">
-      <el-tab-pane name="WBS" label="WBS">
-        <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned-to="assigned_to"
-             :fixed-version="fixed_version" :tags="tags" @update-loading="handleUpdateLoading"
-             @update-status="handleUpdateStatus"
-        />
-      </el-tab-pane>
-      <el-tab-pane name="Gantt" label="Gantt">
-        <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" :assigned_to="assigned_to"
-               :fixed-version="fixed_version"
-        />
-      </el-tab-pane>
-    </el-tabs>
+    <div ref="wrapper" class="wrapper">
+      <el-tabs v-model="activeTab" type="border-card">
+        <el-tab-pane name="WBS" label="WBS" lazy>
+          <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned-to="assigned_to"
+               :fixed-version="fixed_version" :tags="tags" :table-height="tableHeight"
+               @update-loading="handleUpdateLoading"
+               @update-status="handleUpdateStatus"
+          />
+        </el-tab-pane>
+        <el-tab-pane name="Gantt" label="Gantt" lazy>
+          <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" :assigned_to="assigned_to"
+                 :fixed-version="fixed_version"
+          />
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </el-row>
 </template>
 
@@ -100,8 +103,9 @@ export default {
       activeNames: '',
       searchVisible: false,
       displayClosed: false,
-      filterValue: { tracker: 1 },
-      originFilterValue: { tracker: 1 },
+      tableHeight: 0,
+      filterValue: {},
+      originFilterValue: {},
       displayFields: [],
       keyword: null,
 
@@ -140,13 +144,13 @@ export default {
           value: 'tags',
           placeholder: 'Tag'
         },
-        {
-          id: 3,
-          label: this.$t('Issue.FilterDimensions.tracker'),
-          value: 'tracker',
-          placeholder: 'Type',
-          tag: true
-        },
+        // {
+        //   id: 3,
+        //   label: this.$t('Issue.FilterDimensions.tracker'),
+        //   value: 'tracker',
+        //   placeholder: 'Type',
+        //   tag: true
+        // },
         {
           id: 4,
           label: this.$t('Issue.FilterDimensions.assigned_to'),
@@ -181,6 +185,7 @@ export default {
       return [
         { label: this.$t('Issue.name'), value: 'name' },
         { label: this.$t('Issue.tracker'), value: 'tracker' },
+        { label: this.$t('Issue.status'), value: 'status' },
         { label: this.$t('Issue.fixed_version'), value: 'fixed_version' },
         { label: this.$t('Issue.StartDate'), value: 'StartDate' },
         { label: this.$t('Issue.EndDate'), value: 'EndDate' },
@@ -226,6 +231,16 @@ export default {
       this.displayClosed = storeDisplayClosed['milestone']
     }
     this.onChangeFilter()
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.tableHeight = this.$refs['wrapper'].clientHeight
+    })
+    window.onresize = () => {
+      this.$nextTick(() => {
+        this.tableHeight = this.$refs['wrapper'].clientHeight
+      })
+    }
   },
   methods: {
     ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed']),
@@ -423,6 +438,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+}
+
 .display-column {
   .el-form-item {
     margin: 0;

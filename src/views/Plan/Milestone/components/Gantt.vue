@@ -139,7 +139,7 @@ export default {
   props: {
     filterValue: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     keyword: {
       type: String,
@@ -305,6 +305,9 @@ export default {
       }
     }
   },
+  created() {
+    this.loadData()
+  },
   async mounted() {
     this.$set(this.$data, 'chartDateRange', [currentStart.toDate(), currentEnd.toDate()])
     this.gantt = new SvelteGantt({
@@ -325,14 +328,16 @@ export default {
       if (this.gantt) {
         const tracker = this.tracker.find((search) => (search.id === this.filterValue['tracker']))
         if (tracker) {
-          this.gantt.$set({ tableHeaders: [
-            {
-              title: this.$t('Issue.' + tracker.name),
-              property: 'label',
-              width: 140,
-              type: 'tree'
-            }
-          ] })
+          this.gantt.$set({
+            tableHeaders: [
+              {
+                title: this.$t('Issue.' + tracker.name),
+                property: 'label',
+                width: 140,
+                type: 'tree'
+              }
+            ]
+          })
         }
         this.gantt.$set({
           rows: rows,
@@ -372,7 +377,8 @@ export default {
     },
     getParams() {
       const result = {
-        parent_id: 'null'
+        parent_id: 'null',
+        tracker_id: 1
       }
       if (this.sort) {
         result['sort'] = this.sort

@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper" class="wrapper">
+  <div :style="{height: `${tableHeight}px`}">
     <el-table ref="WBS"
               v-loading="listLoading"
               :data="listData"
@@ -37,6 +37,21 @@
         prop="tracker.id"
         :components="Tracker"
         :options="tracker"
+        sortable
+        :has-child-edit="true"
+        @edit="handleUpdateIssue"
+        @create="handleCreateIssue"
+        @reset-edit="handleResetEdit"
+        @reset-create="handleResetCreate"
+      />
+      <WBSSelectColumn
+        v-if="columns.indexOf('status')>=0"
+        width="125px"
+        :label="$t('Issue.status')"
+        prop-key="status"
+        prop="status.id"
+        :components="Status"
+        :options="status"
         sortable
         :has-child-edit="true"
         @edit="handleUpdateIssue"
@@ -180,7 +195,9 @@
           {{ $t('Issue.CopyIssue') }}
         </contextmenu-item>
         <contextmenu-item v-permission="permission" divider />
-        <contextmenu-item v-permission="permission" class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em class="el-icon-delete">
+        <contextmenu-item v-permission="permission" class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em
+          class="el-icon-delete"
+        >
           {{ $t('general.Delete') }}</em></contextmenu-item>
       </template>
     </contextmenu>
@@ -220,7 +237,7 @@ import {
 } from 'v-contextmenu'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
-import { Tracker, Priority } from '@/components/Issue'
+import { Tracker, Priority, Status } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
@@ -269,6 +286,10 @@ export default {
     tags: {
       type: Array,
       default: () => []
+    },
+    tableHeight: {
+      type: Number,
+      default: 0
     }
   },
   filter: {
@@ -285,10 +306,10 @@ export default {
     return {
       Priority,
       Tracker,
+      Status,
       listLoading: false,
       listData: [],
       addIssueVisible: false,
-      tableHeight: 0,
       updateLoading: false,
       contextMenu: { visible: true, row: {}},
       relationIssue: {
@@ -302,7 +323,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'userId', 'userRole']),
+    ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole']),
     hasInlineCreate() {
       const create = this.listData.filter(item => item.create)
       return create.length > 0
@@ -315,20 +336,14 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.tableHeight = this.$refs['wrapper'].clientHeight
-    })
-    window.onresize = () => {
-      this.$nextTick(() => {
-        this.tableHeight = this.$refs['wrapper'].clientHeight
-      })
-    }
+    this.loadData()
   },
   methods: {
     getParams() {
       const result = {
         parent_id: 'null',
-        with_point: true
+        with_point: true,
+        tracker_id: 1
       }
       if (this.sort) {
         result['sort'] = this.sort
@@ -360,6 +375,9 @@ export default {
       this.listData = []
       this.listData = await this.fetchData()
       this.listLoading = false
+      this.$set(this.$refs['WBS'].resizeState, 'height', 0)
+      this.$set(this.$refs['WBS'], 'isGroup', true)
+      this.$set(this.$refs['WBS'], 'isGroup', false)
     },
     async fetchData() {
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams())
@@ -815,10 +833,6 @@ export default {
 <style lang="scss" scoped>
 .add-issue-inline {
   @apply pl-5;
-}
-
-.wrapper {
-  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
 
 .table-css {
