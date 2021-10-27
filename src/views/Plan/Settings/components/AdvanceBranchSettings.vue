@@ -36,7 +36,7 @@
           min-width="120"
         />
         <el-table-column-time :label="$t('general.LastUpdateTime')" prop="commit_time" width="160" />
-        <el-table-column v-for="(tool, idx) in testingToolNames" :key="tool.name" align="center" width="120">
+        <el-table-column v-for="(tool, idx) in testingToolNames" :key="`${tool.name}-${idx}`" align="center" width="120">
           <template slot="header">
             <div class="mb-2">{{ tool.name }}</div>
             <el-checkbox
@@ -77,6 +77,19 @@ export default {
       isChanged: false
     }
   },
+  computed: {
+    showWarning() {
+      let showWarning = false
+      this.listData.forEach(item => item.testing_tools.reduce((preVal, curVal) => {
+        const enable = 'enable'
+        const hasProperty = preVal.hasOwnProperty(curVal.name)
+        if (hasProperty && preVal[curVal.name] !== curVal[enable]) showWarning = true
+        preVal[curVal.name] = curVal[enable]
+        return preVal
+      }, {}))
+      return showWarning
+    }
+  },
   beforeRouteLeave(to, from, next) {
     if (this.isChanged) {
       this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
@@ -101,7 +114,10 @@ export default {
     async fetchPipelineBranch() {
       this.isLoading = true
       try {
-        const res = await getPipelineBranch(this.selectedRepositoryId)
+        const param = {
+          all_data: true
+        }
+        const res = await getPipelineBranch(this.selectedRepositoryId, param)
         this.listData = Object.keys(res.data).map(key => {
           const { commit_message, commit_time, testing_tools } = res.data[key]
           return {
@@ -129,6 +145,10 @@ export default {
       return status.every(i => i === true)
     },
     async updatePipelineBranch() {
+      if (this.showWarning) {
+        this.showWarningMessage()
+        return
+      }
       const sendData = {
         detail: this.listData.reduce(
           (result, cur) =>
@@ -243,6 +263,13 @@ export default {
     },
     handleBack() {
       this.$router.push({ name: 'Project Settings' })
+    },
+    showWarningMessage() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.pluginWarnNotifications'),
+        type: 'warning'
+      })
     }
   }
 }
