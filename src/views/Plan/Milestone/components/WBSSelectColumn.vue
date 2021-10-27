@@ -106,7 +106,7 @@ export default {
       default: false
     },
     editRowId: {
-      type: Number,
+      type: [String, Number],
       default: null
     }
   },
@@ -122,7 +122,7 @@ export default {
   },
   watch: {
     editRowId(value) {
-      if (this.propKey === 'status' && value) {
+      if (this.propKey === 'status' && value && parseInt(value)) {
         this.getClosable(value)
       }
     }

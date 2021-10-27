@@ -133,7 +133,7 @@ export default {
       default: null
     },
     editRowId: {
-      type: Number,
+      type: [String, Number],
       default: null
     }
   },
