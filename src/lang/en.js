@@ -251,7 +251,8 @@ export default {
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
-    logoutNotifications: 'The session has timed out. Please click re-login button to login back again.'
+    logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
+    pluginWarnNotifications: 'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

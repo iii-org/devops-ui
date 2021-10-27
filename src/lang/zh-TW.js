@@ -251,7 +251,8 @@ export default {
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？',
     confirmDelete: '確定@:(general.Delete)嗎？',
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
-    logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。'
+    logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
+    pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。'
   },
   RuleMsg: {
     PleaseSelect: '請選擇',

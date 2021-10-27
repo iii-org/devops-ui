@@ -23,6 +23,11 @@
           </el-button>
         </div>
       </div>
+      <template v-if="showWarning">
+        <div style="color: red; font-size: 10px;">
+          {{ $t('Notify.pluginWarnNotifications') }}
+        </div>
+      </template>
       <el-table
         v-loading="isLoading"
         :element-loading-text="$t('Updating')"
@@ -103,6 +108,35 @@ export default {
       return function(data) {
         return Object.keys(data)
       }
+    },
+    // count the frequency of each plugin appeared
+    // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
+    // countFrequency() {
+    //   const countFreq = this.selectedToolData.reduce((preVal, curVal) => {
+    //     if (curVal.name in preVal) preVal[curVal.name]++
+    //     else preVal[curVal.name] = 1
+    //     return preVal
+    //   }, {})
+    //   return countFreq
+    // },
+    // find the repeat plugin
+    // repeatPlugin() {
+    //   let repeatPlugin = null
+    //   Object.keys(this.countFrequency).map(item => {
+    //     if (this.countFrequency[item] > 1) repeatPlugin = item
+    //   })
+    //   return repeatPlugin
+    // },
+    // if the enable values of repeat plugins are not the same, showWarning will be true
+    showWarning() {
+      let showWarning = false
+      this.selectedToolData.reduce((preVal, curVal) => {
+        const hasProperty = preVal.hasOwnProperty(curVal.name)
+        if (hasProperty && preVal[curVal.name] !== curVal.enable) showWarning = true
+        preVal[curVal.name] = curVal.enable
+        return preVal
+      }, {})
+      return showWarning
     }
   },
   watch: {
@@ -171,6 +205,10 @@ export default {
       this.pipelineSettingsData = []
     },
     async updatePipelineBranch(runPipeline) {
+      if (this.showWarning) {
+        this.showWarningMessage()
+        return
+      }
       const sendData = this.getSendData(runPipeline)
       const message = runPipeline ? this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch]) : this.$t('Notify.Saved')
       this.isLoading = true
@@ -181,7 +219,6 @@ export default {
       } finally {
         this.fetchPipelineBranch()
         this.showSuccessMessage(message)
-        this.isLoading = false
       }
     },
     getSendData(runPipeline) {
@@ -204,6 +241,13 @@ export default {
         title: this.$t('general.Success'),
         message,
         type: 'success'
+      })
+    },
+    showWarningMessage() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.pluginWarnNotifications'),
+        type: 'warning'
       })
     }
   }
