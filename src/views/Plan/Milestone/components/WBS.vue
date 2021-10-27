@@ -762,36 +762,38 @@ export default {
       return Promise.resolve()
     },
     handleContextMenu(row, column, event) {
-      event.preventDefault()
-      const eventX = event.pageX
-      const eventY = event.pageY
-      this.$refs.contextmenu.show()
-      this.$nextTick(() => {
-        const contextmenuPosition = {
-          top: eventY,
-          left: eventX
-        }
-        const contextmenuWidth = this.$refs.contextmenu.$el.clientWidth
-        const contextmenuHeight = this.$refs.contextmenu.$el.clientHeight
-        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
-          this.handleContextMenu(row, column, event)
-        }
-        if (contextmenuHeight + eventY >= window.innerHeight) {
-          contextmenuPosition.top -= contextmenuHeight
-        }
-        if (contextmenuWidth + eventX >= window.innerWidth) {
-          contextmenuPosition.left -= contextmenuWidth
-        }
-        this.contextMenu.top = contextmenuPosition.top
-        this.contextMenu.left = contextmenuPosition.left
-        this.contextMenu.row = row
-        this.contextMenu.visible = true
-        this.$refs.contextmenu.style = {
-          top: this.contextMenu.top + 'px',
-          left: this.contextMenu.left + 'px'
-        }
-        document.addEventListener('click', this.hideContextMenu)
-      })
+      if (parseInt(row.id)) {
+        event.preventDefault()
+        const eventX = event.pageX
+        const eventY = event.pageY
+        this.$refs.contextmenu.show()
+        this.$nextTick(() => {
+          const contextmenuPosition = {
+            top: eventY,
+            left: eventX
+          }
+          const contextmenuWidth = this.$refs.contextmenu.$el.clientWidth
+          const contextmenuHeight = this.$refs.contextmenu.$el.clientHeight
+          if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
+            this.handleContextMenu(row, column, event)
+          }
+          if (contextmenuHeight + eventY >= window.innerHeight) {
+            contextmenuPosition.top -= contextmenuHeight
+          }
+          if (contextmenuWidth + eventX >= window.innerWidth) {
+            contextmenuPosition.left -= contextmenuWidth
+          }
+          this.contextMenu.top = contextmenuPosition.top
+          this.contextMenu.left = contextmenuPosition.left
+          this.contextMenu.row = row
+          this.contextMenu.visible = true
+          this.$refs.contextmenu.style = {
+            top: this.contextMenu.top + 'px',
+            left: this.contextMenu.left + 'px'
+          }
+          document.addEventListener('click', this.hideContextMenu)
+        })
+      }
     },
     hideContextMenu() {
       this.contextMenu.visible = false
@@ -834,8 +836,8 @@ export default {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
       this.issueMatrixDialog.row = row
     },
-    getRowClass() {
-      return 'cursor-context-menu'
+    getRowClass({ row }) {
+      return (parseInt(row.id)) ? 'cursor-context-menu' : ''
     },
     getContextMenuCurrentValue(column, item) {
       return this.contextMenu.row[column].map(subItem => subItem.id).includes(item.id)
