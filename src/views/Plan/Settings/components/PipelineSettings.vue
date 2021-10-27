@@ -13,6 +13,11 @@
           {{ $t('route.advanceBranchSettings') }}
         </el-button>
       </div>
+      <template v-if="showWarning">
+        <div style="color: red; font-size: 10px;">
+          {{ $t('Notify.pluginWarnNotifications') }}
+        </div>
+      </template>
       <el-table
         v-loading="isStagesLoading"
         :element-loading-text="$t('Updating')"
@@ -75,6 +80,17 @@ export default {
     ...mapGetters(['selectedProject']),
     selectedRepositoryId() {
       return this.selectedProject.repository_ids[0]
+    },
+    showWarning() {
+      let showWarning = false
+      this.stagesData.reduce((preVal, curVal) => {
+        const enable = 'has_default_branch'
+        const hasProperty = preVal.hasOwnProperty(curVal.name)
+        if (hasProperty && preVal[curVal.name] !== curVal[enable]) showWarning = true
+        preVal[curVal.name] = curVal[enable]
+        return preVal
+      }, {})
+      return showWarning
     }
   },
   watch: {
@@ -135,6 +151,10 @@ export default {
       }
     },
     async updatePipeDefBranch() {
+      if (this.showWarning) {
+        this.showWarningMessage()
+        return
+      }
       const sendData = { detail: { stages: this.stagesData }}
       this.isStagesLoading = true
       try {
@@ -149,6 +169,13 @@ export default {
       } finally {
         this.isStagesLoading = false
       }
+    },
+    showWarningMessage() {
+      this.$message({
+        title: this.$t('general.Warning'),
+        message: this.$t('Notify.pluginWarnNotifications'),
+        type: 'warning'
+      })
     }
   }
 }
