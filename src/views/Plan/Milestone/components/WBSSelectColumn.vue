@@ -112,7 +112,7 @@ export default {
   },
   data() {
     return {
-      dynamicStatusList: []
+      dynamicStatusList: this.options
     }
   },
   computed: {
