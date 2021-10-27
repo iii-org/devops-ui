@@ -221,7 +221,10 @@ export default {
     Index: 'Index',
     Account: 'Account',
     Password: 'Password',
-    DirectExecution: 'Execution'
+    DirectExecution: 'Execution',
+    Notify: 'Notify',
+    ReLogin: 'Re-Login',
+    Continue: 'Continue'
   },
   Notify: {
     Updated: 'update successful',
@@ -247,7 +250,8 @@ export default {
     LoadFail: 'Something went wrong, please contact your system administrator.',
     UnSavedChanges: 'Do you really want to leave? you have unsaved changes!',
     confirmDelete: 'Are you sure to @:(general.Delete)?',
-    confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？'
+    confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
+    logoutNotifications: 'The session has timed out. Please click re-login button to login back again.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',

@@ -221,7 +221,10 @@ export default {
     Index: '項次',
     Account: '帳號',
     Password: '密碼',
-    DirectExecution: '直接執行'
+    DirectExecution: '直接執行',
+    Notify: '提示',
+    ReLogin: '重新登入',
+    Continue: '繼續使用'
   },
   Notify: {
     Updated: '已更新',
@@ -247,7 +250,8 @@ export default {
     LoadFail: '讀取失敗，請洽您的系統管理員。',
     UnSavedChanges: '您編輯的內容尚未儲存，確定離開嗎？',
     confirmDelete: '確定@:(general.Delete)嗎？',
-    confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？'
+    confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
+    logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。'
   },
   RuleMsg: {
     PleaseSelect: '請選擇',

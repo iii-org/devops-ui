@@ -1,16 +1,17 @@
 import router from './router/router'
 import store from './store'
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
+import i18n from '@/lang'
 
 NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login']
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
   document.title = getPageTitle(to.meta)
   const hasToken = getToken()
@@ -42,8 +43,16 @@ router.beforeEach(async(to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
+      MessageBox.confirm(i18n.t('Notify.logoutNotifications'), i18n.t('general.Notify'), {
+        confirmButtonText: i18n.t('general.ReLogin'),
+        cancelButtonText: i18n.t('general.Continue'),
+        type: 'warning',
+        showClose: false,
+        showCancelButton: false
+      }).then(() => {
+        next(`/login?redirect=${to.path}`)
+        NProgress.done()
+      })
     }
   }
 })
