@@ -200,6 +200,11 @@ export default {
         this.$refs['ProjectSelection'].onProjectChange(value)
       }
     },
+    async activeDashboard(value) {
+      const storeFilterValue = await this.getIssueFilter()
+      storeFilterValue['work_active_dashboard'] = value
+      await this.setIssueFilter(storeFilterValue)
+    },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadProjectSelectionList(value)
@@ -237,6 +242,11 @@ export default {
       this.project_id = storeFilterValue['work_project_id']
     } else {
       this.project_id = null
+    }
+    if (storeFilterValue['work_active_dashboard']) {
+      this.activeDashboard = storeFilterValue['work_active_dashboard']
+    } else {
+      this.activeDashboard = 'assigned_to_id'
     }
     await this.setIssueFilter(storeFilterValue)
     const storeKeyword = await this.getKeyword()
