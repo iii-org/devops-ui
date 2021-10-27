@@ -117,13 +117,12 @@ export default {
   },
   computed: {
     editDynamicOptions() {
-      console.log('aaa', this.propKey === 'status')
       return (this.propKey === 'status') ? this.dynamicStatusList : this.options
     }
   },
   watch: {
     editRowId(value) {
-      if (this.propKey === 'status') {
+      if (this.propKey === 'status' && value) {
         this.getClosable(value)
       }
     }
