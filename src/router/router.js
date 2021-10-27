@@ -90,7 +90,7 @@ export const asyncRoutes = [
   {
     path: '/project-list',
     component: Layout,
-    meta: { roles: ['Engineer'] },
+    meta: { roles: ['Project Manager', 'Engineer'] },
     children: [
       {
         path: '',
@@ -321,6 +321,13 @@ export const asyncRoutes = [
             hidden: true,
             component: () => import('@/views/Progress/Pipelines'),
             meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
+          },
+          {
+            path: ':projectName/:branch/:commitId',
+            name: 'CommitDetail',
+            hidden: true,
+            component: () => import('@/views/Progress/Commit'),
+            meta: { title: 'testReport', roles: ['Administrator', 'Project Manager', 'Engineer'] }
           },
           {
             path: 'test-report/:commitId',
