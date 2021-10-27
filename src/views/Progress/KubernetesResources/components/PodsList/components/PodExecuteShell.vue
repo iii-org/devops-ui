@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="flex justify-between mb-2">
       <div>
-        <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span> 
+        <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span>
         <el-popover
           placement="top"
           width="160"
@@ -10,12 +10,21 @@
         >
           <div>{{ $t('PodsList.ExecuteShellNotify') }}</div>
           <div>ls, ls -al, whoami, hostname, pwd, cd</div>
-          <em slot="reference" class="ri-information-line ml-3" />
+          <em
+            slot="reference"
+            class="ri-information-line ml-3"
+          />
         </el-popover>
       </div>
       <div class="flex items-center">
-        <span class="dot relative" :class="connectStatus" />
-        <span class="dot absolute animate-ping" :class="connectStatus" />
+        <span
+          class="dot relative"
+          :class="connectStatus"
+        />
+        <span
+          class="dot absolute animate-ping"
+          :class="connectStatus"
+        />
         <span class="text-title ml-3">{{ isConnected ? 'Connected' : 'Disconnected' }}</span>
       </div>
     </div>
@@ -32,7 +41,26 @@ import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { mapGetters } from 'vuex'
 
-const envKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12']
+const envKeys = [
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'Tab',
+  'Escape',
+  'F1',
+  'F2',
+  'F3',
+  'F4',
+  'F5',
+  'F6',
+  'F7',
+  'F8',
+  'F9',
+  'F10',
+  'F11',
+  'F12'
+]
 const fitAddon = new FitAddon()
 
 export default {
@@ -70,12 +98,11 @@ export default {
   },
   methods: {
     initSocket() {
-      this.socket =
-        io('/k8s/websocket/pod_exec', {
+      this.socket = io('/k8s/websocket/pod_exec', {
         // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
-          reconnectionAttempts: 5,
-          transports: ['websocket']
-        })
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      })
       this.isConnected = true
       this.setConnectStatusListener()
       this.setCmdResponseListener()
@@ -98,7 +125,7 @@ export default {
     },
     setCmdResponseListener() {
       this.socket.on('get_cmd_response', sioEvt => {
-        console.log('get_cmd_response ===>', sioEvt)
+        // console.log('get_cmd_response ===>', sioEvt)
         const { output } = sioEvt
         let str = output || sioEvt
         str = str.replace(/\n/g, '\r\n')
@@ -176,7 +203,7 @@ export default {
         command
       }
       this.socket.emit('pod_exec_cmd', emitObj)
-      console.log('emit ===>', emitObj)
+      // console.log('emit ===>', emitObj)
     }
   }
 }

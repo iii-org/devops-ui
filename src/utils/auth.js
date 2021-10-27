@@ -7,7 +7,7 @@ export function getToken() {
 }
 
 export function setToken(token) {
-  if (Cookies.set(TOKEN, token, { expires: 1 })) {
+  if (Cookies.set(TOKEN, token, { expires: (1 / 24 / 60) * 1430 })) {
     return true
   } else {
     return false

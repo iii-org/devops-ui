@@ -21,7 +21,13 @@
     <div class="flex justify-between items-center">
       <div class="flex">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
       <div class="flex">
-        <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">
+        <el-button
+          type="primary"
+          icon="el-icon-refresh"
+          size="mini"
+          plain
+          @click="loadData"
+        >
           {{ $t('general.Refresh') }}
         </el-button>
       </div>
@@ -33,10 +39,30 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" :label="$t('Deploy.ID')" min-width="110" prop="id" />
-      <el-table-column align="center" :label="$t('Deploy.Name')" min-width="100" prop="name" />
-      <el-table-column align="center" :label="$t('Deploy.Cluster')" min-width="100" prop="cluster.name" />
-      <el-table-column align="center" :label="$t('Deploy.Status')" min-width="100" prop="status">
+      <el-table-column
+        align="center"
+        :label="$t('Deploy.ID')"
+        min-width="110"
+        prop="id"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Deploy.Name')"
+        min-width="100"
+        prop="name"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Deploy.Cluster')"
+        min-width="100"
+        prop="cluster.name"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Deploy.Status')"
+        min-width="100"
+        prop="status"
+      >
         <template slot-scope="{row}">
           <template v-if="!row.disabled">
             {{ row.status }}
@@ -48,35 +74,57 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="pod" :label="$t('Deploy.Pod')">
+      <el-table-column
+        prop="pod"
+        :label="$t('Deploy.Pod')"
+      >
         <template slot-scope="{row}">
           {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}
         </template>
       </el-table-column>
-      <el-table-column-time prop="created_at" :label="$t('general.CreateTime')" />
-      <el-table-column align="center" :label="$t('general.Actions')" width="240">
+      <el-table-column-time
+        prop="created_at"
+        :label="$t('general.CreateTime')"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.Actions')"
+        width="240"
+      >
         <template slot-scope="{row}">
-          <el-dropdown v-if="row.status_id!==9" split-button size="small" :type="row.disabled? 'warning': 'success'"
-                       @click="handleServiceStatus(row)"
+          <el-dropdown
+            v-if="row.status_id!==9"
+            split-button
+            size="small"
+            :type="row.disabled? 'warning': 'success'"
+            @click="handleServiceStatus(row)"
           >
             <em :class="row.disabled| getActionIcon" /> {{ getActionText(row.disabled) }}
             <el-dropdown-menu slot="dropdown">
               <template v-if="row.public_endpoint">
-                <el-dropdown-item type="danger" icon="el-icon-link" @click.native="toEndpoint(row.public_endpoint)">
+                <el-dropdown-item
+                  type="danger"
+                  icon="el-icon-link"
+                  @click.native="toEndpoint(row.public_endpoint)"
+                >
                   {{ $t('Deploy.LinkToApplication') }}
                 </el-dropdown-item>
-                <el-dropdown-item><el-divider /></el-dropdown-item>
+                <el-dropdown-item>
+                  <el-divider />
+                </el-dropdown-item>
               </template>
-              <el-dropdown-item size="mini"
-                                type="primary"
-                                icon="el-icon-refresh-right"
-                                @click.native="handleRedeploy(row.id)"
+              <el-dropdown-item
+                size="mini"
+                type="primary"
+                icon="el-icon-refresh-right"
+                @click.native="handleRedeploy(row.id)"
               >{{ $t('Deploy.Redeploy') }}
               </el-dropdown-item>
-              <el-dropdown-item size="mini"
-                                type="primary"
-                                icon="el-icon-edit"
-                                @click.native="handleEditDialog(row.id)"
+              <el-dropdown-item
+                size="mini"
+                type="primary"
+                icon="el-icon-edit"
+                @click.native="handleEditDialog(row.id)"
               >{{ $t('general.Edit') }}
               </el-dropdown-item>
               <el-popconfirm
@@ -88,7 +136,11 @@
                 :title="$t('Notify.confirmDelete')"
                 @confirm="handleDelete(row.id)"
               >
-                <el-dropdown-item slot="reference" type="danger" icon="el-icon-delete">
+                <el-dropdown-item
+                  slot="reference"
+                  type="danger"
+                  icon="el-icon-delete"
+                >
                   {{ $t('general.Delete') }}
                 </el-dropdown-item>
               </el-popconfirm>
@@ -114,12 +166,29 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
     >
-      <ApplicationSetting v-if="dialogVisible" :id="edit_id" ref="ApplicationSetting" />
-      <span slot="footer" class="dialog-footer">
+      <ApplicationSetting
+        v-if="dialogVisible"
+        :id="edit_id"
+        ref="ApplicationSetting"
+      />
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
-        <el-button v-if="edit_id" type="primary" :loading="memberConfirmLoading" @click="handleConfirm(edit_id)">
+        <el-button
+          v-if="edit_id"
+          type="primary"
+          :loading="memberConfirmLoading"
+          @click="handleConfirm(edit_id)"
+        >
           {{ $t('general.Save') }}</el-button>
-        <el-button v-else type="primary" :loading="memberConfirmLoading" @click="handleConfirm(null)">
+        <el-button
+          v-else
+          type="primary"
+          :loading="memberConfirmLoading"
+          @click="handleConfirm(null)"
+        >
           {{ $t('general.Add') }}</el-button>
       </span>
     </el-dialog>
@@ -301,7 +370,7 @@ export default {
       this.timer = null
     },
     toEndpoint(url) {
-      console.log(url)
+      // console.log(url)
       window.open(url, '_blank')
     }
   }
@@ -309,5 +378,4 @@ export default {
 </script>
 
 <style>
-
 </style>
