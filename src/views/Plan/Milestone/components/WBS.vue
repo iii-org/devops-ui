@@ -8,6 +8,7 @@
               class="table-css"
               row-key="id"
               lazy
+              fit
               :load="getIssueFamilyData"
               :row-class-name="getRowClass"
               :tree-props="{children: 'children', hasChildren: 'has_children'}"
@@ -332,7 +333,7 @@ export default {
       return this.userRole === 'QA'
     },
     permission() {
-      return ['Administrator', 'Project Management', 'Engineer']
+      return ['Administrator', 'Project Manager', 'Engineer']
     }
   },
   mounted() {

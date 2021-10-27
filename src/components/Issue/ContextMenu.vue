@@ -194,7 +194,7 @@ export default {
       return result
     },
     permission() {
-      return ['Administrator', 'Project Management', 'Engineer']
+      return ['Administrator', 'Project Manager', 'Engineer']
     }
   },
   watch: {
