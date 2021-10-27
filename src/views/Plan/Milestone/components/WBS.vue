@@ -20,6 +20,7 @@
         min-width="28%"
         :label="$t('Issue.name')"
         prop="name"
+        :edit-row-id="editRowId"
         required
         fixed
         show-overflow-tooltip
@@ -36,6 +37,7 @@
         :label="$t('Issue.tracker')"
         prop-key="tracker"
         prop="tracker.id"
+        :edit-row-id="editRowId"
         :components="Tracker"
         :options="tracker"
         sortable
@@ -51,6 +53,7 @@
         :label="$t('Issue.status')"
         prop-key="status"
         prop="status.id"
+        :edit-row-id="editRowId"
         :components="Status"
         :options="status"
         sortable
@@ -66,6 +69,7 @@
         :label="$t('Issue.fixed_version')"
         prop-key="fixed_version"
         prop="fixed_version.id"
+        :edit-row-id="editRowId"
         :options="fixedVersion"
         sortable
         :has-child-edit="true"
@@ -80,6 +84,7 @@
         min-width="9%"
         :label="$t('Issue.StartDate')"
         prop="start_date"
+        :edit-row-id="editRowId"
         show-overflow-tooltip
         sortable
         before-date-column="due_date"
@@ -93,6 +98,7 @@
         min-width="9%"
         :label="$t('Issue.EndDate')"
         prop="due_date"
+        :edit-row-id="editRowId"
         show-overflow-tooltip
         sortable
         after-date-column="start_date"
@@ -107,6 +113,7 @@
         :label="$t('Issue.priority')"
         prop-key="priority"
         prop="priority.id"
+        :edit-row-id="editRowId"
         :components="Priority"
         :options="priority"
         show-overflow-tooltip
@@ -122,6 +129,7 @@
         :label="$t('Issue.assigned_to')"
         prop-key="assigned_to"
         prop="assigned_to.id"
+        :edit-row-id="editRowId"
         :options="assignedTo"
         :has-child-edit="true"
         show-overflow-tooltip
@@ -136,6 +144,7 @@
         width="100px"
         :label="$t('Issue.DoneRatio_sm')"
         prop="done_ratio"
+        :edit-row-id="editRowId"
         number
         sortable
         :min="0"
@@ -151,6 +160,7 @@
         :label="$t('Issue.points')"
         :has-child-edit="true"
         prop="point"
+        :edit-row-id="editRowId"
         number
         sortable
         @edit="handleUpdateIssue"
@@ -312,6 +322,7 @@ export default {
       listData: [],
       addIssueVisible: false,
       updateLoading: false,
+      editRowId: null,
       contextMenu: { visible: true, row: {}},
       relationIssue: {
         visible: false,
@@ -551,11 +562,13 @@ export default {
         } else {
           columnName = column['property']
         }
+        this.$set(this.$data, 'editRowId', row.id)
         this.$set(row, 'originColumn', cloneDeep(row[columnName]))
         this.$set(row, 'editColumn', columnName)
       }
     },
     handleResetEdit({ value, row }) {
+      this.$set(this.$data, 'editRowId', null)
       this.$set(row, value, row.originColumn)
       this.$set(row, 'editColumn', false)
       this.$set(row, 'originColumn', null)

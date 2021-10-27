@@ -13,7 +13,7 @@
           @keyup.esc.native="handlerResetCreate(row, $index)"
         />
       </template>
-      <template v-else-if="row.editColumn===prop&&editable(row)">
+      <template v-else-if="row.editColumn===prop&&row.id===editRowId&&editable(row)">
         <el-date-picker
           v-model="row[prop]"
           type="date"
@@ -77,6 +77,10 @@ export default {
     },
     beforeDateColumn: {
       type: String,
+      default: null
+    },
+    editRowId: {
+      type: Number,
       default: null
     }
   },

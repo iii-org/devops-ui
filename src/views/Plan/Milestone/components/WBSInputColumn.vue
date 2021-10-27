@@ -45,7 +45,7 @@
           </li>
         </ul>
       </template>
-      <template v-else-if="row.editColumn===prop&&editable(row)">
+      <template v-else-if="row.editColumn===prop&&row.id===editRowId&&editable(row)">
         <el-input v-if="number"
                   ref="input"
                   v-model.number="row[prop]"
@@ -129,6 +129,10 @@ export default {
       default: null
     },
     max: {
+      type: Number,
+      default: null
+    },
+    editRowId: {
       type: Number,
       default: null
     }

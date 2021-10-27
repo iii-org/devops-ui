@@ -20,19 +20,19 @@
           </el-option>
         </el-select>
       </template>
-      <template v-else-if="row.editColumn===propKey&&editable(row)">
+      <template v-else-if="row.editColumn===propKey&&row.id===editRowId&&editable(row)">
         <el-select v-model="row[propKey]['id']"
                    @change="handlerEdit(row, $index)"
                    @keyup.enter.native="handlerEdit(row, $index)"
                    @keyup.esc.native="handlerReset(row, $index)"
         >
-          <el-option v-for="item in options" :key="(item.login)?item.login:item.id" :value="item.id"
+          <el-option v-for="item in editDynamicOptions" :key="(item.login)?item.login:item.id" :value="item.id"
                      :label="$te(`Issue.${item.name}`)?$t(`Issue.${item.name}`):item.name"
                      :class="item.class"
                      :disabled="item.status&&!(item.status==='open'||item.status==='enable')"
           >
             <template v-if="components">
-              <component :is="components" :name="item.name" />
+              <component :is="components" :name="item.name" /> {{ item.message }}
             </template>
             <template v-else>
               {{ item.name }}
@@ -54,6 +54,8 @@
 
 <script>
 import i18n from '@/lang'
+import { getCheckIssueClosable } from '@/api/issue'
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'WBSSelectColumn',
@@ -102,6 +104,28 @@ export default {
     showOverflowTooltip: {
       type: Boolean,
       default: false
+    },
+    editRowId: {
+      type: Number,
+      default: null
+    }
+  },
+  data() {
+    return {
+      dynamicStatusList: []
+    }
+  },
+  computed: {
+    editDynamicOptions() {
+      console.log('aaa', this.propKey === 'status')
+      return (this.propKey === 'status') ? this.dynamicStatusList : this.options
+    }
+  },
+  watch: {
+    editRowId(value) {
+      if (this.propKey === 'status') {
+        this.getClosable(value)
+      }
     }
   },
   methods: {
@@ -126,6 +150,26 @@ export default {
     },
     handlerResetCreate(row, index, treeNode) {
       this.$emit('reset-create', { value: this.propKey, row: row, index: index, treeNode: treeNode })
+    },
+    async getClosable(id) {
+      let result = true
+      try {
+        const checkClosable = await getCheckIssueClosable(id)
+        result = checkClosable.data
+      } catch (e) {
+        // log
+      }
+      await this.getDynamicStatusList(result)
+    },
+    getDynamicStatusList(value) {
+      const deepStatus = cloneDeep(this.options)
+      this.$set(this.$data, 'dynamicStatusList', deepStatus.map((item) => {
+        if ((!value) && item.is_closed) {
+          item.status = true
+          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
+        }
+        return item
+      }))
     }
   }
 }
