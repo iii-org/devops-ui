@@ -323,13 +323,6 @@ export const asyncRoutes = [
             meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
           },
           {
-            path: ':projectName/:branch/:commitId',
-            name: 'CommitDetail',
-            hidden: true,
-            component: () => import('@/views/Progress/Commit'),
-            meta: { title: 'testReport', roles: ['Administrator', 'Project Manager', 'Engineer'] }
-          },
-          {
             path: 'test-report/:commitId',
             name: 'TestReport',
             hidden: true,
