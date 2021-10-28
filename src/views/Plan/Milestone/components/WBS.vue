@@ -828,7 +828,6 @@ export default {
       this.$set(this.relationIssue, 'id', null)
     },
     handleRelationUpdate() {
-      this.onCloseRelationIssueDialog()
       this.loadData()
       this.$emit('update-issue')
     },
