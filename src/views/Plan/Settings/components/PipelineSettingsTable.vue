@@ -24,7 +24,7 @@
         </div>
       </div>
       <template v-if="showWarning">
-        <div style="color: red; font-size: 10px;">
+        <div style="color: red; font-size: 10px; margin-bottom: 5px;">
           {{ $t('Notify.pluginWarnNotifications') }}
         </div>
       </template>
@@ -33,6 +33,7 @@
         :element-loading-text="$t('Updating')"
         :data="selectedToolData"
         fit
+        :row-style="rowStyle"
         :show-header="false"
       >
         <el-table-column prop="name" />
@@ -111,22 +112,22 @@ export default {
     },
     // count the frequency of each plugin appeared
     // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
-    // countFrequency() {
-    //   const countFreq = this.selectedToolData.reduce((preVal, curVal) => {
-    //     if (curVal.name in preVal) preVal[curVal.name]++
-    //     else preVal[curVal.name] = 1
-    //     return preVal
-    //   }, {})
-    //   return countFreq
-    // },
+    countFrequency() {
+      const countFreq = this.selectedToolData.reduce((preVal, curVal) => {
+        if (curVal.name in preVal) preVal[curVal.name]++
+        else preVal[curVal.name] = 1
+        return preVal
+      }, {})
+      return countFreq
+    },
     // find the repeat plugin
-    // repeatPlugin() {
-    //   let repeatPlugin = null
-    //   Object.keys(this.countFrequency).map(item => {
-    //     if (this.countFrequency[item] > 1) repeatPlugin = item
-    //   })
-    //   return repeatPlugin
-    // },
+    repeatPlugins() {
+      const repeatPlugins = []
+      Object.keys(this.countFrequency).forEach(item => {
+        if (this.countFrequency[item] > 1) repeatPlugins.push(item)
+      })
+      return repeatPlugins
+    },
     // if the enable values of repeat plugins are not the same, showWarning will be true
     showWarning() {
       let showWarning = false
@@ -249,6 +250,16 @@ export default {
         message: this.$t('Notify.pluginWarnNotifications'),
         type: 'warning'
       })
+    },
+    rowStyle({ row }) {
+      const style = {}
+      this.repeatPlugins.forEach(plugin => {
+        if (row.name === plugin) {
+          style['background-color'] = '#f56c6c'
+          style['color'] = 'red'
+        }
+      })
+      return style
     }
   }
 }

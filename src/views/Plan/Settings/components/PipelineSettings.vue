@@ -22,6 +22,7 @@
         v-loading="isStagesLoading"
         :element-loading-text="$t('Updating')"
         :data="stagesData"
+        :row-style="rowStyle"
         fit
         :show-header="false"
       >
@@ -81,6 +82,25 @@ export default {
     selectedRepositoryId() {
       return this.selectedProject.repository_ids[0]
     },
+    // count the frequency of each plugin appeared
+    // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
+    countFrequency() {
+      const countFreq = this.stagesData.reduce((preVal, curVal) => {
+        if (curVal.name in preVal) preVal[curVal.name]++
+        else preVal[curVal.name] = 1
+        return preVal
+      }, {})
+      return countFreq
+    },
+    // find the repeat plugin
+    repeatPlugins() {
+      const repeatPlugins = []
+      Object.keys(this.countFrequency).forEach(item => {
+        if (this.countFrequency[item] > 1) repeatPlugins.push(item)
+      })
+      return repeatPlugins
+    },
+    // if the enable values of repeat plugins are not the same, showWarning will be true
     showWarning() {
       let showWarning = false
       this.stagesData.reduce((preVal, curVal) => {
@@ -176,6 +196,16 @@ export default {
         message: this.$t('Notify.pluginWarnNotifications'),
         type: 'warning'
       })
+    },
+    rowStyle({ row }) {
+      const style = {}
+      this.repeatPlugins.forEach(plugin => {
+        if (row.name === plugin) {
+          style['background-color'] = '#f56c6c'
+          style['color'] = 'red'
+        }
+      })
+      return style
     }
   }
 }

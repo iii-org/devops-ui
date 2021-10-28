@@ -22,11 +22,14 @@
       </el-row>
 
       <el-divider />
-      <div class="text-right mb-3">
-        <el-button size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
+      <div class="flex justify-between">
+        <div style="color: red;" class="mt-3 font-bold">{{ $t('Notify.pluginRepeatMessage') }}</div>
+        <div>
+          <el-button size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
+          <el-button type="primary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
+        </div>
       </div>
-      <el-table :data="filteredData" fit>
+      <el-table :data="filteredData" fit :cell-style="cellStyle">
         <el-table-column :label="$t('Git.Branch')" align="center" prop="branch" width="100" />
         <el-table-column
           :label="$t('general.Description')"
@@ -78,16 +81,44 @@ export default {
     }
   },
   computed: {
-    showWarning() {
-      let showWarning = false
-      this.listData.forEach(item => item.testing_tools.reduce((preVal, curVal) => {
-        const enable = 'enable'
-        const hasProperty = preVal.hasOwnProperty(curVal.name)
-        if (hasProperty && preVal[curVal.name] !== curVal[enable]) showWarning = true
-        preVal[curVal.name] = curVal[enable]
+    // count the frequency of each plugin appeared
+    // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
+    countFrequency() {
+      const countFreq = this.listData.map(item => item.testing_tools.reduce((preVal, curVal) => {
+        if (curVal.name in preVal) preVal[curVal.name]++
+        else preVal[curVal.name] = 1
         return preVal
       }, {}))
-      return showWarning
+      return countFreq
+    },
+    // find the repeat plugin
+    repeatPlugins() {
+      const repeatPlugins = []
+      this.countFrequency.forEach((plugin, index) => Object.keys(plugin).forEach(item => {
+        const plungins = []
+        if (this.countFrequency[index][item] > 1) {
+          plungins.push(item)
+          repeatPlugins.push(item)
+        }
+      }))
+      return repeatPlugins
+    },
+    // if the enable values of repeat plugins are not the same, showWarning will be true
+    showWarning() {
+      let showWarning = false
+      const rowShowWarning = []
+      this.listData.forEach(item => {
+        item.testing_tools.reduce((preVal, curVal) => {
+          const enable = 'enable'
+          const hasProperty = preVal.hasOwnProperty(curVal.name)
+          if (hasProperty && preVal[curVal.name] !== curVal[enable]) showWarning = true
+          else if (hasProperty && preVal[curVal.name] === curVal[enable]) showWarning = false
+          preVal[curVal.name] = curVal[enable]
+          return preVal
+        }, {})
+        rowShowWarning.push(showWarning)
+      })
+      return rowShowWarning
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -270,6 +301,17 @@ export default {
         message: this.$t('Notify.pluginWarnNotifications'),
         type: 'warning'
       })
+    },
+    cellStyle(cell) {
+      const columnIndex = cell.columnIndex - 3
+      const rowIndex = cell.rowIndex
+      let name = ''
+      if (columnIndex >= 0) name = cell.row.testing_tools[columnIndex].name
+      const style = {}
+      if (name === this.repeatPlugins[rowIndex] && this.showWarning[rowIndex]) {
+        style['background-color'] = '#f56c6c'
+      }
+      return style
     }
   }
 }

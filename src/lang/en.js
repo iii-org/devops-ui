@@ -252,7 +252,8 @@ export default {
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
-    pluginWarnNotifications: 'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.'
+    pluginWarnNotifications: 'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
+    pluginRepeatMessage: 'The red cells are the repeated script settings. Please make sure that the settings are consistent (if all are on or off) to ensure that the Pipeline operates normally.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
