@@ -201,7 +201,7 @@ export default {
       const style = {}
       this.repeatPlugins.forEach(plugin => {
         if (row.name === plugin) {
-          style['background-color'] = '#f56c6c'
+          style['background-color'] = '#F9CECE'
           style['color'] = 'red'
         }
       })

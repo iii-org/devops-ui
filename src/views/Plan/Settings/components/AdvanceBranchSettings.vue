@@ -22,8 +22,9 @@
       </el-row>
 
       <el-divider />
-      <div class="flex justify-between">
-        <div style="color: red;" class="mt-3 font-bold">{{ $t('Notify.pluginRepeatMessage') }}</div>
+      <div class="flex justify-between mb-3">
+        <div v-if="isShowWarning" style="color: red; font-size: 12px;" class="mt-3">{{ $t('Notify.pluginRepeatMessage') }}</div>
+        <div v-else />
         <div>
           <el-button size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
           <el-button type="primary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
@@ -104,6 +105,7 @@ export default {
       return repeatPlugins
     },
     // if the enable values of repeat plugins are not the same, showWarning will be true
+    // rowShowWarning gets the showWarning by row
     showWarning() {
       let showWarning = false
       const rowShowWarning = []
@@ -119,6 +121,10 @@ export default {
         rowShowWarning.push(showWarning)
       })
       return rowShowWarning
+    },
+    isShowWarning() {
+      const isShowWarning = this.showWarning.find(item => item)
+      return isShowWarning
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -176,7 +182,7 @@ export default {
       return status.every(i => i === true)
     },
     async updatePipelineBranch() {
-      if (this.showWarning) {
+      if (this.isShowWarning) {
         this.showWarningMessage()
         return
       }
@@ -303,14 +309,11 @@ export default {
       })
     },
     cellStyle(cell) {
+      const style = {}
       const columnIndex = cell.columnIndex - 3
       const rowIndex = cell.rowIndex
-      let name = ''
-      if (columnIndex >= 0) name = cell.row.testing_tools[columnIndex].name
-      const style = {}
-      if (name === this.repeatPlugins[rowIndex] && this.showWarning[rowIndex]) {
-        style['background-color'] = '#f56c6c'
-      }
+      const name = columnIndex >= 0 ? cell.row.testing_tools[columnIndex].name : ''
+      if (name === this.repeatPlugins[rowIndex] && this.showWarning[rowIndex]) style['background-color'] = '#F9CECE'
       return style
     }
   }
