@@ -82,8 +82,11 @@ export default {
     }
   },
   computed: {
-    // count the frequency of each plugin appeared
-    // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
+    // count the frequency of each plugin appeared by row
+    // for example: [
+    //  { Web: 2, Sonarqube: 1, Checkmarx: 1, ...},
+    //  { Web: 1, Sonarqube: 1, Checkmarx: 1, ...}
+    // ]
     countFrequency() {
       const countFreq = this.listData.map(item => item.testing_tools.reduce((preVal, curVal) => {
         if (curVal.name in preVal) preVal[curVal.name]++
@@ -92,7 +95,7 @@ export default {
       }, {}))
       return countFreq
     },
-    // find the repeat plugin
+    // find the repeat plugin name by row
     repeatPlugins() {
       const repeatPlugins = []
       this.countFrequency.forEach((plugin, index) => Object.keys(plugin).forEach(item => {
