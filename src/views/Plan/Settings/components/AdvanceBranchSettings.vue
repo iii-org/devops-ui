@@ -113,8 +113,7 @@ export default {
         item.testing_tools.reduce((preVal, curVal) => {
           const enable = 'enable'
           const hasProperty = preVal.hasOwnProperty(curVal.name)
-          if (hasProperty && preVal[curVal.name] !== curVal[enable]) showWarning = true
-          else if (hasProperty && preVal[curVal.name] === curVal[enable]) showWarning = false
+          if (hasProperty) preVal[curVal.name] === curVal[enable] ? showWarning = false : showWarning = true
           preVal[curVal.name] = curVal[enable]
           return preVal
         }, {})
