@@ -352,10 +352,11 @@ export default {
   },
   methods: {
     getParams() {
+      const tracker = this.tracker.find(item => item.name === 'Epic')
       const result = {
         parent_id: 'null',
         with_point: true,
-        tracker_id: 1
+        tracker_id: (tracker) ? tracker.id : 1
       }
       if (this.sort) {
         result['sort'] = this.sort
