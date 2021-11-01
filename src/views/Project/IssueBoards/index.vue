@@ -7,16 +7,16 @@
       >
         <el-form v-loading="isLoading">
           <template v-for="dimension in filterOptions">
-            <el-form-item v-if="groupBy.dimension!==dimension.value" :key="dimension.id">
+            <el-form-item v-if="groupBy.dimension !== dimension.value" :key="dimension.id">
               <div slot="label">
                 {{ $t('Issue.' + dimension.value) }}
-                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+                <el-tag v-if="dimension.value ==='fixed_version'" type="info" class="flex-1">
                   <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
                 </el-tag>
               </div>
               <el-select
                 v-model="filterValue[dimension.value]"
-                :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                :placeholder="$t(`Issue.Select${dimension.placeholder}`)"
                 :disabled="selectedProjectId === -1"
                 filterable
                 clearable
@@ -26,10 +26,10 @@
                 @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
-                  :key="(dimension.value==='assigned_to')? item.login: item.id"
+                  v-for="item in (dimension.value === 'status') ? filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
+                  :key="dimension.value === 'assigned_to' ? item.login : item.id"
                   :label="getSelectionLabel(item)"
-                  :class="{[item.class]:item.class}"
+                  :class="{[item.class]: item.class}"
                   :value="item.id"
                 >
                   <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
@@ -42,7 +42,8 @@
           </el-form-item>
         </el-form>
         <el-button slot="reference" :loading="isLoading" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          <i class="el-icon-arrow-down el-icon--right" />
+        </el-button>
       </el-popover>
       <el-divider direction="vertical" />
       <el-popover
@@ -59,7 +60,7 @@
             >
               <template v-for="item in filterOptions">
                 <el-option
-                  v-if="item.value!=='tags'"
+                  v-if="item.value !== 'tags'"
                   :key="item.id"
                   :label="item.label"
                   :value="item.value"
@@ -85,7 +86,9 @@
           <i18n path="Issue.GroupBy">
             <b slot="filter">{{ showSelectedGroupByName }}</b>
           </i18n>
-          ({{ showSelectedGroupByLength }}) <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          ({{ showSelectedGroupByLength }})
+          <i class="el-icon-arrow-down el-icon--right" />
+        </el-button>
       </el-popover>
       <el-divider direction="vertical" />
       <el-input
@@ -197,6 +200,16 @@ import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
 import ContextMenu from '@/components/Issue/ContextMenu'
 
+const contextMenu = {
+  row: {
+    fixed_version: { id: 'null' },
+    assigned_to: { id: 'null' }
+  },
+  visible: false,
+  left: 0,
+  top: 0
+}
+
 export default {
   name: 'IssueBoards',
   components: {
@@ -210,6 +223,47 @@ export default {
     ContextMenu
   },
   data() {
+    this.filterOptions = [
+      {
+        id: 1,
+        label: this.$t('Issue.FilterDimensions.status'),
+        value: 'status',
+        placeholder: 'Status',
+        tag: true
+      },
+      {
+        id: 2,
+        label: this.$t('Issue.FilterDimensions.tags'),
+        value: 'tags',
+        placeholder: 'Tag'
+      },
+      {
+        id: 3,
+        label: this.$t('Issue.FilterDimensions.tracker'),
+        value: 'tracker',
+        placeholder: 'Type',
+        tag: true
+      },
+      {
+        id: 4,
+        label: this.$t('Issue.FilterDimensions.assigned_to'),
+        value: 'assigned_to',
+        placeholder: 'Member'
+      },
+      {
+        id: 5,
+        label: this.$t('Issue.FilterDimensions.fixed_version'),
+        value: 'fixed_version',
+        placeholder: 'Version'
+      },
+      {
+        id: 6,
+        label: this.$t('Issue.FilterDimensions.priority'),
+        value: 'priority',
+        placeholder: 'Priority',
+        tag: true
+      }
+    ]
     return {
       isLoading: false,
       groupBy: {
@@ -227,20 +281,11 @@ export default {
       fixed_version: [],
       assigned_to: [],
       tags: [],
-
       relativeIssueList: [],
-
       searchVisible: false,
       keyword: null,
-
       rightPanelVisible: false,
-
-      contextMenu: {
-        row: { fixed_version: { id: 'null' }, assigned_to: { id: 'null' }},
-        visible: false,
-        left: 0,
-        top: 0
-      }
+      contextMenu: contextMenu
     }
   },
   computed: {
@@ -252,60 +297,16 @@ export default {
       'priority',
       'fixedVersionShowClosed'
     ]),
-    filterOptions() {
-      return [
-        {
-          id: 1,
-          label: this.$t('Issue.FilterDimensions.status'),
-          value: 'status',
-          placeholder: 'Status',
-          tag: true
-        },
-        {
-          id: 2,
-          label: this.$t('Issue.FilterDimensions.tags'),
-          value: 'tags',
-          placeholder: 'Tag'
-        },
-        {
-          id: 3,
-          label: this.$t('Issue.FilterDimensions.tracker'),
-          value: 'tracker',
-          placeholder: 'Type',
-          tag: true
-        },
-        {
-          id: 4,
-          label: this.$t('Issue.FilterDimensions.assigned_to'),
-          value: 'assigned_to',
-          placeholder: 'Member'
-        },
-        {
-          id: 5,
-          label: this.$t('Issue.FilterDimensions.fixed_version'),
-          value: 'fixed_version',
-          placeholder: 'Version'
-        },
-        {
-          id: 6,
-          label: this.$t('Issue.FilterDimensions.priority'),
-          value: 'priority',
-          placeholder: 'Priority',
-          tag: true
-        }
-      ]
-    },
     contextOptions() {
       const result = {}
       const getOptions = ['assigned_to', 'fixed_version', 'tags']
-      getOptions.forEach((item) => {
+      getOptions.forEach(item => {
         result[item] = this[item]
       })
       return result
     },
     groupByOptions() {
-      let dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
-      dimension = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(dimension) : dimension
+      const dimension = this.getDimension
       return dimension.map((item, idx) => ({
         id: idx,
         label: this.getTranslateHeader(item.name),
@@ -314,14 +315,19 @@ export default {
     },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        let value = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
-        value = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(value) : value
-        return value.map(item => item)
+        const dimension = this.getDimension
+        return dimension.map(item => item)
       }
-      return (this.groupBy.dimension === 'assigned_to') ? this.filterMe(this.groupBy.value) : this.groupBy.value
+      return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
+    },
+    getDimension() {
+      const dimensionKey = this.groupBy.dimension
+      let dimension = dimensionKey === 'status' ? this.filterClosedStatus(this[dimensionKey]) : this[dimensionKey]
+      dimension = dimensionKey === 'assigned_to' ? this.filterMe(dimension) : dimension
+      return dimension
     },
     showSelectedGroupByName() {
-      return this.filterOptions.find((item) => (item.value === this.groupBy.dimension)).label
+      return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
     },
     showSelectedGroupByLength() {
       if (this.groupByOptions.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
@@ -331,43 +337,39 @@ export default {
     },
     listFilter() {
       const result = []
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
-            const value = this.getOptionsData(item).filter((search) => (this.filterValue[item].includes(search.id)))
-            if (value) {
-              result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
-            }
-          } else {
-            const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
-            if (value) {
-              result.push(this.getSelectionLabel(value))
-            }
-          }
+      Object.keys(this.filterValue).forEach(item => {
+        if (!this.filterValue[item]) return
+        if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
+          const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
+          if (value) result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+        } else {
+          const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
+          if (value) result.push(this.getSelectionLabel(value))
         }
       })
-      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
+      const colon = result.length > 0 ? ': ' : ''
+      const factor = result.join(', ')
+      return `${this.$t('general.Filter')}${colon}${factor}`
     },
     isFilterChanged() {
-      for (const item of Object.keys(this.originFilterValue)) {
-        const checkFilterValue = this.originFilterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.filterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      for (const item of Object.keys(this.filterValue)) {
-        const checkFilterValue = this.filterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.originFilterValue[item] !== checkFilterValue[item]) {
-          return true
+      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
+    },
+    checkFilterValue() {
+      return function(key) {
+        const comparedKey = this.getComparedKey(key)
+        for (const item of Object.keys(this[key])) {
+          const checkFilterValue = this[key]
+          if (checkFilterValue[item] === '') delete checkFilterValue[item]
+          if (this[comparedKey][item] !== checkFilterValue[item]) return true
         }
       }
-      return !!this.keyword
+    },
+    getComparedKey() {
+      return function(key) {
+        let comparedKey = ''
+        comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
+        return comparedKey
+      }
     }
   },
   watch: {
@@ -387,24 +389,11 @@ export default {
   },
   async created() {
     this.groupBy = await this.getGroupBy()
-    const storeFilterValue = await this.getIssueFilter()
-    if (storeFilterValue['board']) {
-      this.filterValue = storeFilterValue['board']
-    } else {
-      this.filterValue = {}
-    }
-    const storeKeyword = await this.getKeyword()
-    if (storeKeyword['board']) {
-      this.keyword = storeKeyword['board']
-    } else {
-      this.keyword = null
-    }
-    const storeDisplayClosed = await this.getDisplayClosed()
-    if (storeDisplayClosed['board']) {
-      this.displayClosed = storeDisplayClosed['board']
-    } else {
-      this.displayClosed = false
-    }
+    const storedData = await this.fetchStoredData()
+    const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+    this.filterValue = storedFilterValue['board'] ? storedFilterValue['board'] : {}
+    this.keyword = storedKeyword['board'] ? storedKeyword['board'] : null
+    this.displayClosed = storedDisplayClosed['board'] ? storedDisplayClosed['board'] : false
     await this.loadSelectionList()
     await this.loadData()
   },
@@ -434,8 +423,18 @@ export default {
       await this.syncLoadFilterData()
       await this.getRelativeList()
     },
+    async fetchStoredData() {
+      let storedFilterValue, storedKeyword, storedDisplayClosed
+      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
+        const [filterValue, keyword, displayClosed] = res.map(item => item)
+        storedFilterValue = filterValue
+        storedKeyword = keyword
+        storedDisplayClosed = displayClosed
+      })
+      return { storedFilterValue, storedKeyword, storedDisplayClosed }
+    },
     async getRelativeList() {
-      const isHasClosed = this.groupByValueOnBoard.filter((item) => (item.hasOwnProperty('is_closed') && item.is_closed))
+      const isHasClosed = this.groupByValueOnBoard.filter(item => item.hasOwnProperty('is_closed') && item.is_closed)
       if (isHasClosed.length > 0) {
         const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
         this.relativeIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
@@ -447,7 +446,7 @@ export default {
     },
     classifyIssue() {
       const issueList = this.projectIssueList
-      this.groupByValueOnBoard.forEach((dimension) => {
+      this.groupByValueOnBoard.forEach(dimension => {
         if (!this.classifyIssueList.hasOwnProperty(dimension.id)) {
           this.classifyIssueList[dimension.id] = []
         }
@@ -455,50 +454,49 @@ export default {
       issueList.forEach(issue => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
-          if (!dimensionName) {
-            dimensionName = 'null'
-          }
-          if (this.checkInFilterValue(dimensionName)) {
-            this.classifyIssueList[dimensionName].push(issue)
-          }
+          dimensionName = dimensionName || 'null'
+          if (this.checkInFilterValue(dimensionName)) this.classifyIssueList[dimensionName].push(issue)
         }
       })
       this.sortIssue()
     },
     getParams() {
       const result = {}
-      if (!this.displayClosed && this.groupBy.dimension !== 'status') {
-        result['status_id'] = 'open'
-      }
+      if (!this.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join(',') : result[item + '_id'] = this.filterValue[item]
         }
       })
-      if (this.keyword) {
-        result['search'] = this.keyword
-      }
+      if (this.keyword) result['search'] = this.keyword
       return result
     },
     async syncLoadFilterData() {
       await this.cancelLoadFilterData()
       this.projectIssueQueue = {}
       this.isLoading = true
-      const getIssueList = []
+      const getIssueList = this.getIssueList()
+      this.projectIssueList = []
+      await this.setIssueList(getIssueList)
+      this.projectIssueQueue = {}
+      this.isLoading = false
+    },
+    getIssueList() {
+      const issueList = []
       for (const item of this.groupByValueOnBoard) {
         const CancelToken = axios.CancelToken.source()
+        const config = { cancelToken: CancelToken.token }
         this.$set(this.projectIssueQueue, item.id, CancelToken)
-        let dimension = this.groupBy.dimension + '_id'
-        if (this.groupBy.dimension === 'tags') {
-          dimension = this.groupBy.dimension
-        }
-        getIssueList.push(getProjectIssueList(this.selectedProjectId,
-          { ...this.getParams(), [dimension]: item.id },
-          { cancelToken: CancelToken.token }))
+        const dimension = this.groupBy.dimension === 'tags' ? this.groupBy.dimension : `${this.groupBy.dimension}_id`
+        const params = { ...this.getParams(), [dimension]: item.id }
+        const getIssueList = getProjectIssueList(this.selectedProjectId, params, config)
+        issueList.push(getIssueList)
       }
-      this.projectIssueList = []
+      return issueList
+    },
+    async setIssueList(getIssueList) {
       await Promise.all(getIssueList)
-        .then((res) => {
+        .then(res => {
           const issueList = res.map(item => item.data)
           const list = [].concat.apply([], issueList)
           this.$set(this.$data, 'projectIssueList', list)
@@ -506,23 +504,15 @@ export default {
         .catch((e) => {
           console.error(e)
         })
-      this.projectIssueQueue = {}
-      this.isLoading = false
     },
     cancelLoadFilterData() {
-      Object.values(this.projectIssueQueue).forEach((item) => {
-        item.cancel()
-      })
+      Object.values(this.projectIssueQueue).forEach(item => { item.cancel() })
     },
     async loadVersionList(status) {
-      let params = { status: 'open,locked' }
-      if (status) {
-        params = { status: 'open,locked,closed' }
-      }
-      let versionList = await getProjectVersion(this.selectedProjectId, params)
-      versionList = versionList.data.versions
+      const params = status ? { status: 'open,locked,closed' } : { status: 'open,locked' }
+      const versionList = await this.fetchVersionList(params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
-      const version = this.fixed_version.filter((item) => ((new Date(`${item.due_date}T23:59:59`) >= new Date()) && item.status !== 'closed'))
+      const version = this.fixed_version.filter(item => new Date(`${item.due_date}T23:59:59`) >= new Date() && item.status !== 'closed')
       if (version.length > 0) {
         const sessionValue = sessionStorage.getItem('issueFilter')
         if (!sessionValue || !JSON.parse(sessionValue)['board']) {
@@ -533,15 +523,18 @@ export default {
         this.$delete(this.originFilterValue, 'fixed_version')
       }
     },
+    async fetchVersionList(params) {
+      const res = await getProjectVersion(this.selectedProjectId, params)
+      const versionList = res.data.versions
+      return versionList
+    },
     async loadSelectionList() {
       if (this.selectedProjectId === -1) return
       await Promise.all([
         getProjectUserList(this.selectedProjectId),
         getTagsByProject(this.selectedProjectId)
       ]).then(res => {
-        const [assigneeList, tagsList] = res.map(
-          item => item.data
-        )
+        const [assigneeList, tagsList] = res.map(item => item.data)
         this.assigned_to = [
           { name: this.$t('Issue.Unassigned'), id: 'null' },
           {
@@ -564,11 +557,8 @@ export default {
       return this[option_name]
     },
     setGroupByUnclosedStatus(check) {
-      if (check) {
-        this.$set(this.groupBy, 'value', this.status)
-      } else {
-        this.$set(this.groupBy, 'value', this.status.filter((item) => (item.is_closed === false)))
-      }
+      const isClosed = this.status.filter((item) => (item.is_closed === false))
+      check ? this.$set(this.groupBy, 'value', this.status) : this.$set(this.groupBy, 'value', isClosed)
     },
     resetClassifyIssue() {
       this.classifyIssueList = {}
@@ -601,7 +591,7 @@ export default {
     updateData() {
       this.resetClassifyIssue()
       this.classifyIssue()
-      Object.keys(this.filterValue).forEach((item) => {
+      Object.keys(this.filterValue).forEach(item => {
         const searchOpt = {
           keys: [`${item}.id`],
           useExtendedSearch: true
@@ -635,17 +625,17 @@ export default {
         if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
           this.$set(issue, 'parent', updatedIssue)
         }
-        if (issue.hasOwnProperty('children')) {
-          const idx = issue.children.findIndex(item => item.id === updatedIssue.id)
-          const issue = issue.children.find(item => item.id === updatedIssue.id)
-          this.$set(issue['children'], idx, updatedIssue)
-        }
-        if (issue.hasOwnProperty('relations')) {
-          const idx = issue.relations.findIndex(item => item.id === updatedIssue.id)
-          const issue = issue.relations.find(item => item.id === updatedIssue.id)
-          this.$set(issue['relations'], idx, updatedIssue)
-        }
+        this.handleUpdatedIssue('children')
+        this.handleUpdatedIssue('relations')
       })
+    },
+    handleUpdatedIssue(issue, key, updatedIssue) {
+      if (issue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
+    },
+    setUpdatedIssue(key, updatedIssue) {
+      const idx = issue[key].findIndex(item => item.id === updatedIssue.id)
+      const issue = issue[key].find(item => item.id === updatedIssue.id)
+      this.$set(issue[key], idx, updatedIssue)
     },
     async quickUpdateIssue(event) {
       const { id, value } = event
@@ -694,7 +684,6 @@ export default {
     },
     createRelativeList(list) {
       const result = []
-
       function flatList(parent) {
         for (let i = 0; i < parent.length; i++) {
           result.push(parent[i])
@@ -702,7 +691,6 @@ export default {
           if (parent[i].children.length) flatList(children)
         }
       }
-
       flatList(list)
       return result
     },
@@ -721,10 +709,10 @@ export default {
       const visibleStatus = ['closed', 'locked']
       let result = this.getTranslateHeader(item.name)
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-        result += ' (' + (this.getTranslateHeader(item.status)) + ')'
+        result += ` (${this.getTranslateHeader(item.status)})`
       }
       if (item.hasOwnProperty('login')) {
-        result += ' (' + (item.login) + ')'
+        result += ` (${item.login})`
       }
       return result
     },
@@ -749,35 +737,32 @@ export default {
       this.onChangeFilter()
     },
     async onChangeFilter() {
-      const storeFilterValue = await this.getIssueFilter()
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
       if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
         this.$delete(this.filterValue, 'tags')
       }
-      storeFilterValue['board'] = this.filterValue
-      const storeKeyword = await this.getKeyword()
-      storeKeyword['board'] = this.keyword
-      const storeDisplayClosed = await this.getDisplayClosed()
-      storeDisplayClosed['board'] = this.displayClosed
-      await this.setIssueFilter(storeFilterValue)
-      await this.setKeyword(storeKeyword)
-      await this.setDisplayClosed(storeDisplayClosed)
+      storedFilterValue['board'] = this.filterValue
+      storedKeyword['board'] = this.keyword
+      storedDisplayClosed['board'] = this.displayClosed
+      await this.setIssueFilter(storedFilterValue)
+      await this.setKeyword(storedKeyword)
+      await this.setDisplayClosed(storedDisplayClosed)
       await this.loadData()
     },
     onChangeGroupByDimension(value, loadData) {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
       this.$refs['groupByValue'].selected = []
-      this.setGroupBy(this.groupBy)
-      if (loadData) {
-        this.loadData()
-      }
+      this.updatedByGroupBy(loadData)
     },
     onChangeGroupByValue(value, loadData) {
       this.$set(this.groupBy, 'value', value)
+      this.updatedByGroupBy(loadData)
+    },
+    updatedByGroupBy(loadData) {
       this.setGroupBy(this.groupBy)
-      if (loadData) {
-        this.loadData()
-      }
+      if (loadData) this.loadData()
     },
     handleContextMenu({ row, column, event }) {
       event.preventDefault()
