@@ -1,9 +1,10 @@
 FROM node:16 as build-stage
 WORKDIR /app
+RUN npm install -g yarn
 COPY package*.json ./
-RUN npm install
+RUN yarn install
 COPY . .
-RUN npm run build:stage
+RUN yarn run build:stage
 
 FROM nginx:1.19
 COPY --from=build-stage /app/dist /usr/share/nginx/html
