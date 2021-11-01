@@ -312,6 +312,7 @@ export default {
     },
     cellStyle(cell) {
       const style = {}
+      // there are 3 columns in the front of data columns now
       const columnIndex = cell.columnIndex - 3
       const rowIndex = cell.rowIndex
       const name = columnIndex >= 0 ? cell.row.testing_tools[columnIndex].name : ''
