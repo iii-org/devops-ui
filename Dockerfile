@@ -1,6 +1,5 @@
 FROM node:16 as build-stage
 WORKDIR /app
-RUN npm install -g yarn
 COPY package*.json ./
 RUN yarn install
 COPY . .
