@@ -26,7 +26,7 @@ module.exports = {
         slow: '#56b1e8',
         light: '#c1c3c5',
         info: '#606260',
-        primary: '#5388ff',
+        primary: '#409eff',
         secondary: '#3ecbbc',
         active: '#409eff',
         assigned: '#f56c6c',

@@ -195,6 +195,11 @@
               <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
             </template>
           </el-table-column>
+          <el-table-column type="action" width="50px">
+            <template slot-scope="{row}">
+              <el-button type="text" icon="el-icon-more" @click.native.stop="handleContextMenu(row, {}, $event)" />
+            </template>
+          </el-table-column>
           <template slot="empty">
             <el-empty :description="$t('general.NoData')" />
           </template>
@@ -327,3 +332,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-table .el-button{
+  @apply border-0
+}
+</style>

@@ -28,18 +28,17 @@
         />
         <div @contextmenu="handleContextMenu(element, '', $event)">
           <div class="title">
-            <el-link
-              class="cursor-pointer"
-              type="primary"
-              :underline="false"
-              style="font-size: 16px"
-              @click="handleClick(element.id)"
-            >
+            <span class="text" @click="handleClick(element.id)">
               {{ element.name }}
               <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="tags">
                 {{ item.name }}
               </el-tag>
-            </el-link>
+            </span>
+            <div class="action">
+              <div class="icon" @click.stop="handleContextMenu(element, '', $event)">
+                <em class="el-icon-more" />
+              </div>
+            </div>
           </div>
           <div class="issue-status-tags">
             <span v-if="dimension !== 'status'">
@@ -141,7 +140,8 @@
           class="el-icon-plus ml-4 mr-5 add-button"
         /> {{ $t('Issue.AddIssue') }}
         </div>
-        <QuickAddIssueOnBoard v-if="showDialog" class="board-item quick-add" :save-data="addIssue" :board-object="boardObject"
+        <QuickAddIssueOnBoard v-if="showDialog" class="board-item quick-add" :save-data="addIssue"
+                              :board-object="boardObject"
                               @after-add="showDialog = !showDialog"
         />
       </div>
@@ -441,7 +441,7 @@ export default {
     height: 95%;
     @apply overflow-x-hidden overflow-y-auto space-y-4;
 
-    .quick-add{
+    .quick-add {
       padding: 10px 10px 0 10px;
     }
 
@@ -456,7 +456,7 @@ export default {
       @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
       font-size: 16px;
 
-      .tags{
+      .tags {
         @apply mr-1;
       }
 
@@ -487,7 +487,23 @@ export default {
       }
 
       .title {
-        @apply m-3;
+        @apply m-3 flex justify-between content-start;
+
+        .text {
+          @apply cursor-pointer text-left text-primary font-bold;
+        }
+
+        .action{
+          @apply flex cursor-pointer w-5 h-5;
+          .icon{
+            @apply bg-white text-white rounded-md text-center align-middle px-1;
+          }
+        }
+      }
+      &:hover,&:focus{
+        .title .action .icon{
+          @apply bg-gray-200 text-black;
+        }
       }
 
       .relation {
@@ -557,13 +573,15 @@ export default {
           line-height: 1em;
           padding: 0 3px;
           @apply ml-1 flex flex-1 py-2 border-0;
-          .text{
+          .text {
             @apply truncate;
           }
-          em{
+
+          em {
             @apply mr-0.5 text-gray-400
           }
         }
+
         .due_date {
           .danger {
             font-weight: 900;

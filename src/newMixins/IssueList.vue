@@ -264,7 +264,9 @@ export default {
       return statusList.filter((item) => (item.is_closed === false))
     },
     handleClick(row, column) {
-      if (column.type === 'expand' && this.hasRelationIssue(row)) {
+      if (column.type === 'action') {
+        return false
+      } else if (column.type === 'expand' && this.hasRelationIssue(row)) {
         this.refTable.toggleRowExpansion(row)
       } else {
         this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
