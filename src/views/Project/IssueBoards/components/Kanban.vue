@@ -496,13 +496,8 @@ export default {
         .action{
           @apply flex cursor-pointer w-5 h-5;
           .icon{
-            @apply bg-white text-white rounded-md text-center align-middle px-1;
+            @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
           }
-        }
-      }
-      &:hover,&:focus{
-        .title .action .icon{
-          @apply bg-gray-200 text-black;
         }
       }
 
