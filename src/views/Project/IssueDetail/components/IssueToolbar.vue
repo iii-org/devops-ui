@@ -1,18 +1,20 @@
 <template>
-  <el-row type="flex" justify="space-between" align="middle" class="mb-5">
-    <el-col>
-      <el-button size="small" icon="el-icon-upload" :type="isButtonDisabled ? 'info' : 'success'" :disabled="isButtonDisabled" @click="uploadDialogVisible = true">{{
-        $t('Issue.UploadFiles')
-      }}</el-button>
-      <el-button size="small" icon="el-icon-plus" :type="isButtonDisabled ? 'info' : 'warning'" :disabled="isButtonDisabled" @click="addTopicDialogVisible = true">{{
-        $t('Issue.AddSubIssue')
-      }}</el-button>
-    </el-col>
-    <el-col class="text-right">
-      <el-link :href="issueLink" target="_blank" type="primary" :underline="false">
-        <i class="el-icon-link" /> Redmine
-      </el-link>
-    </el-col>
+  <div class="mb-5">
+    <div class="flex justify-between items-center">
+      <div>
+        <template v-if="issueId">
+          <el-button size="small" icon="el-icon-upload" :type="isButtonDisabled ? 'info' : 'success'" :disabled="isButtonDisabled" @click="uploadDialogVisible = true">{{ $t('Issue.UploadFiles') }}</el-button>
+          <el-button size="small" icon="el-icon-plus" :type="isButtonDisabled ? 'info' : 'warning'" :disabled="isButtonDisabled" @click="addTopicDialogVisible = true">{{ $t('Issue.AddSubIssue') }}</el-button>
+        </template>
+        <el-button v-if="issueTracker==='Test Plan'" size="small" :type="isButtonDisabled ? 'info' : 'primary'" icon="el-icon-upload" :disabled="isButtonDisabled" @click="handleCollectionDialog">管理測試檔案</el-button>
+      </div>
+      <div class="text-right">
+        <el-link v-if="issueId" :href="issueLink" target="_blank" type="primary" :underline="false">
+          <i class="el-icon-link" /> Redmine
+        </el-link>
+      </div>
+    </div>
+
     <el-dialog
       :visible.sync="uploadDialogVisible"
       :title="$t('Issue.UploadFiles')"
@@ -46,7 +48,7 @@
         :project-id="selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
-        @loading="loadingUpdate"
+        @loading="loadingUpdate($event.value, false)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span slot="footer" class="dialog-footer">
@@ -58,7 +60,7 @@
         </el-button>
       </span>
     </el-dialog>
-  </el-row>
+  </div>
 </template>
 
 <script>
@@ -112,32 +114,35 @@ export default {
       this.$refs.IssueFileUploader.uploadFileList = []
       this.uploadDialogVisible = false
     },
-    uploadFiles(sendForm, fileList) {
-      this.isLoading = true
+    async uploadFiles(sendForm, fileList) {
+      this.loadingUpdate(true, true)
       // use one by one edit issue to upload file
       const { issueId } = this
-      fileList
-        .reduce((prev, curr) => {
-          return prev.then(() => {
-            sendForm.delete('upload_file')
-            sendForm.delete('upload_content_type')
-            sendForm.append('upload_content_type', curr.raw.type)
-            sendForm.append('upload_file', curr.raw, curr.raw.name)
-            return updateIssue(issueId, sendForm)
-          })
-        }, Promise.resolve([]))
-        .then(() => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Updated'),
-            type: 'success'
-          })
-          this.$emit('is-loading', this.isLoading)
+      // use one by one edit issue to upload file
+      try {
+        const uploadApi = fileList.map(function(item) {
+          const sendForm = new FormData()
+          sendForm.delete('upload_file')
+          sendForm.delete('upload_content_type')
+          sendForm.append('upload_content_type', item.raw.type)
+          sendForm.append('upload_file', item.raw, item.raw.name)
+          return updateIssue(issueId, sendForm)
         })
-        .catch(err => {
-          console.error(err)
-          this.isLoading = false
+        await Promise.all(uploadApi)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
         })
+      } catch (err) {
+        console.error(err)
+        this.$message({
+          title: this.$t('general.Error'),
+          message: err.message,
+          type: 'error'
+        })
+      }
+      this.loadingUpdate(false, true)
     },
     async saveIssue(data) {
       return await addIssue(data)
@@ -156,6 +161,9 @@ export default {
         })
       // this.addTopicDialogVisible = false
     },
+    handleCollectionDialog() {
+      this.$emit('related-collection', 'relatedCollection')
+    },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
     },
@@ -168,9 +176,9 @@ export default {
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
     },
-    loadingUpdate(value) {
+    loadingUpdate(value, upload) {
       this.isLoading = value
-      this.$emit('is-loading', value)
+      this.$emit('is-loading', { status: value, upload: upload })
     }
   }
 }

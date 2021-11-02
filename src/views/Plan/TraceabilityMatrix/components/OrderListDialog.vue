@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { deleteTraceOrder, patchTraceOrder, postTraceOrder } from '@/views/Plugin/QA/api/qa'
+import { deleteTraceOrder, patchTraceOrder, postTraceOrder } from '@/api/qa'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
 import OrderListInput from '@/views/Plan/TraceabilityMatrix/components/OrderListInput'

@@ -1,12 +1,25 @@
 <template>
   <div class="app-container">
-    <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" :body-style="{ 'min-height': '80vh' }">
+    <el-card
+      v-loading="isLoading"
+      :element-loading-text="$t('Loading')"
+      :body-style="{ 'min-height': '80vh' }"
+    >
       <el-row slot="header">
-        <el-row type="flex" align="bottom" justify="space-between">
+        <el-row
+          type="flex"
+          align="bottom"
+          justify="space-between"
+        >
           <el-row>
             <el-col class="text-xl mr-3">
-              <el-button v-if="!isInDialog" type="text" size="medium" icon="el-icon-arrow-left" class="previous"
-                         @click="handleBackPage"
+              <el-button
+                v-if="!isInDialog"
+                type="text"
+                size="medium"
+                icon="el-icon-arrow-left"
+                class="previous"
+                @click="handleBackPage"
               >
                 {{ $t('general.Back') }}
               </el-button>
@@ -15,40 +28,86 @@
               </template>
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
-              <IssueTitle ref="IssueTitle" v-model="form.name" :old-value="originForm.name" :issue-id="issueId" />
-              <span v-if="!isLoading" class="text-base mr-3">
+              <IssueTitle
+                ref="IssueTitle"
+                v-model="form.name"
+                :old-value="originForm.name"
+                :issue-id="issueId"
+              />
+              <span
+                v-if="!isLoading&&issueId"
+                class="text-base mr-3"
+              >
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
             </el-col>
           </el-row>
-          <el-col :span="6" class="text-right">
-            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'danger'" plain :disabled="isButtonDisabled"
-                       @click="handleDelete"
+          <el-col
+            :span="6"
+            class="text-right"
+          >
+            <el-button
+              size="medium"
+              :type="isButtonDisabled ? 'info' : 'danger'"
+              plain
+              :disabled="isButtonDisabled"
+              @click="handleDelete"
             >{{ $t('general.Delete') }}
             </el-button>
-            <el-button size="medium" :type="isButtonDisabled ? 'info' : 'primary'" :disabled="isButtonDisabled"
-                       @click="handleSave"
+            <el-button
+              size="medium"
+              :type="isButtonDisabled ? 'info' : 'primary'"
+              :disabled="isButtonDisabled"
+              @click="handleSave"
             >{{ $t('general.Save') }}
             </el-button>
           </el-col>
         </el-row>
       </el-row>
       <el-row :gutter="20">
-        <el-col ref="mainIssueWrapper" :span="24" :md="16">
+        <el-col
+          ref="mainIssueWrapper"
+          :span="24"
+          :md="16"
+        >
           <el-col :span="24">
-            <IssueToolbar :is-button-disabled="isButtonDisabled"
-                          :issue-link="issue_link"
-                          :issue-id="issueId"
-                          :issue-name="issueName"
-                          @is-loading="showLoading"
+            <IssueToolbar
+              :is-button-disabled="isButtonDisabled"
+              :issue-link="issue_link"
+              :issue-id="issueId"
+              :issue-name="issueName"
+              :issue-tracker="formTrackerName"
+              @is-loading="showLoading"
+              @related-collection="toggleDialogVisible"
             />
           </el-col>
-          <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-            <el-col ref="IssueDescription" :span="24" class="mb-3">
-              <issue-description v-model="form.description" :old-value="originForm.description"
-                                 :issue-id="issueId"
+          <el-row
+            ref="mainIssue"
+            :gutter="10"
+            :class="scrollClass"
+            @scroll.native="onScrollIssue"
+          >
+            <el-col
+              ref="IssueDescription"
+              :span="24"
+              class="mb-3"
+            >
+              <issue-description
+                v-model="form.description"
+                :old-value="originForm.description"
+                :issue-id="issueId"
               />
-              <issue-files v-if="files.length>0" :issue-file.sync="files" />
+              <issue-files
+                v-if="files.length>0"
+                :is-button-disabled="isButtonDisabled"
+                :issue-file.sync="files"
+              />
+              <issue-collection
+                v-if="test_files.length>0"
+                :is-button-disabled="isButtonDisabled"
+                :issue-test.sync="test_files"
+                @update="updateTestCollection"
+              />
               <el-collapse v-if="countRelationIssue>0">
                 <!--                <el-collapse-item>-->
                 <!--                  <div slot="title">-->
@@ -61,14 +120,25 @@
                   <ul>
                     <li v-if="Object.keys(parent).length>0">
                       {{ $t('Issue.ParentIssue') }}：
-                      <el-link :underline="false" @click="onRelationIssueDialog(parent.id)">
-                        <status :name="parent.status.name" size="mini" />
+                      <el-link
+                        :underline="false"
+                        @click="onRelationIssueDialog(parent.id)"
+                      >
+                        <status
+                          :name="parent.status.name"
+                          size="mini"
+                        />
                         <template v-if="parent.tracker">
                           <tracker :name="parent.tracker.name" />
                         </template>
                         <template v-else>{{ $t('Issue.Issue') }}</template>
                         #{{ parent.id }} -
-                        <el-tag v-for="item in parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                        <el-tag
+                          v-for="item in parent.tags"
+                          :key="item.id"
+                          size="mini"
+                          class="mr-1"
+                        >[{{ item.name }}]</el-tag>
                         {{ parent.name }}
                         <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">
                           ({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }}
@@ -83,8 +153,12 @@
                           :title="$t('Issue.RemoveIssueRelation')"
                           @confirm="removeIssueRelation(issueId)"
                         >
-                          <el-button slot="reference" :type="isButtonDisabled ? 'info' : 'danger'"
-                                     :disabled="isButtonDisabled" size="mini" icon="el-icon-remove"
+                          <el-button
+                            slot="reference"
+                            :type="isButtonDisabled ? 'info' : 'danger'"
+                            :disabled="isButtonDisabled"
+                            size="mini"
+                            icon="el-icon-remove"
                           >
                             {{ $t('Issue.Unlink') }}
                           </el-button>
@@ -93,14 +167,28 @@
                     </li>
                     <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
                       <ol>
-                        <li v-for="child in children" :key="child.id">
-                          <el-link :underline="false" @click="onRelationIssueDialog(child.id)">
-                            <status :name="child.status.name" size="mini" />
+                        <li
+                          v-for="child in children"
+                          :key="child.id"
+                        >
+                          <el-link
+                            :underline="false"
+                            @click="onRelationIssueDialog(child.id)"
+                          >
+                            <status
+                              :name="child.status.name"
+                              size="mini"
+                            />
                             <template v-if="child.tracker">
                               <tracker :name="child.tracker.name" />
                             </template>
                             <template v-else>{{ $t('Issue.Issue') }}</template>
-                            #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                            #{{ child.id }} - <el-tag
+                              v-for="item in child.tags"
+                              :key="item.id"
+                              size="mini"
+                              class="mr-1"
+                            >[{{ item.name }}]</el-tag>
                             {{ child.name }}
                             <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
                               ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
@@ -115,7 +203,13 @@
                               :title="$t('Issue.RemoveIssueRelation')"
                               @confirm="removeIssueRelation(child.id)"
                             >
-                              <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
+                              <el-button
+                                slot="reference"
+                                type="danger"
+                                size="mini"
+                                icon="el-icon-remove"
+                                :disabled="isButtonDisabled"
+                              >
                                 {{ $t('Issue.Unlink') }}
                               </el-button>
                             </el-popconfirm>
@@ -127,13 +221,24 @@
                       <ol>
                         <template v-for="child in relations">
                           <li :key="child.id">
-                            <el-link :underline="false" @click="onRelationIssueDialog(child.id)">
-                              <status :name="child.status.name" size="mini" />
+                            <el-link
+                              :underline="false"
+                              @click="onRelationIssueDialog(child.id)"
+                            >
+                              <status
+                                :name="child.status.name"
+                                size="mini"
+                              />
                               <template v-if="child.tracker">
                                 <tracker :name="child.tracker.name" />
                               </template>
                               <template v-else>{{ $t('Issue.Issue') }}</template>
-                              #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                              #{{ child.id }} - <el-tag
+                                v-for="item in child.tags"
+                                :key="item.id"
+                                size="mini"
+                                class="mr-1"
+                              >[{{ item.name }}]</el-tag>
                               {{ child.name }}
                               <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
                                 ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
@@ -148,7 +253,13 @@
                                 :title="$t('Issue.RemoveIssueRelation')"
                                 @confirm="removeRelationIssue(child.relation_id)"
                               >
-                                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
+                                <el-button
+                                  slot="reference"
+                                  type="danger"
+                                  size="mini"
+                                  icon="el-icon-remove"
+                                  :disabled="isButtonDisabled"
+                                >
                                   {{ $t('Issue.Unlink') }}
                                 </el-button>
                               </el-popconfirm>
@@ -161,50 +272,87 @@
                 </el-collapse-item>
               </el-collapse>
             </el-col>
-            <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
+            <el-col
+              ref="moveEditor"
+              :span="24"
+              class="moveEditor mb-3"
+            >
               <issue-notes-editor ref="IssueNotesEditor" />
             </el-col>
             <el-col :span="24">
-              <issue-notes-dialog ref="IssueNotesDialog" :height="dialogHeight" :data="journals"
-                                  @show-parent-issue="onRelationIssueDialog"
+              <issue-notes-dialog
+                ref="IssueNotesDialog"
+                :height="dialogHeight"
+                :data="journals"
+                @show-parent-issue="onRelationIssueDialog"
               />
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="24" :md="8" class="issueOptionHeight">
-          <issue-form ref="IssueForm" :issue-id="issueId" :form.sync="form" :parent="parent" :relations="relations"
-                      :children-issue="children.length"
+        <el-col
+          :span="24"
+          :md="8"
+          class="issueOptionHeight"
+        >
+          <issue-form
+            ref="IssueForm"
+            :is-button-disabled="isButtonDisabled"
+            :issue-id="issueId"
+            :form.sync="form"
+            :parent="parent"
+            :relations="relations"
+            :children-issue="children.length"
           />
         </el-col>
       </el-row>
-      <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
-                 :before-close="handleRelationIssueDialogBeforeClose"
+      <el-dialog
+        :visible.sync="relationIssue.visible"
+        width="90%"
+        top="3vh"
+        append-to-body
+        destroy-on-close
+        :before-close="handleRelationIssueDialogBeforeClose"
       >
-        <ProjectIssueDetail v-if="relationIssue.visible"
-                            ref="children"
-                            :props-issue-id="relationIssue.id"
-                            :is-in-dialog="true"
-                            @update="showLoading"
-                            @delete="handleRelationDelete"
+        <QAProjectIssueDetail
+          v-if="relationIssue.visible"
+          ref="children"
+          :props-issue-id="relationIssue.id"
+          :is-in-dialog="true"
+          @update="showLoading"
+          @delete="handleRelationDelete"
         />
       </el-dialog>
-      <!--      <el-dialog-->
-      <!--        :visible.sync="issueMatrixDialog.visible"-->
-      <!--        width="80%"-->
-      <!--        top="20px"-->
-      <!--        append-to-body-->
-      <!--        destroy-on-close-->
-      <!--        :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.subject+')'"-->
-      <!--      >-->
-      <!--        <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />-->
-      <!--      </el-dialog>-->
     </el-card>
+    <el-dialog
+      :visible.sync="relatedCollectionDialogVisible"
+      :close-on-click-modal="false"
+      width="80%"
+      :show-close="false"
+      append-to-body
+      destroy-on-close
+    >
+      <RelatedCollectionDialog
+        :selected-collections="test_files"
+        @update="updateTestCollection"
+        @close-dialog="toggleDialogVisible"
+      />
+    </el-dialog>
+    <!--    <el-dialog-->
+    <!--      :visible.sync="issueMatrixDialog.visible"-->
+    <!--      width="80%"-->
+    <!--      top="20px"-->
+    <!--      append-to-body-->
+    <!--      destroy-on-close-->
+    <!--      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.name+')'"-->
+    <!--    >-->
+    <!--      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />-->
+    <!--    </el-dialog>-->
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getIssue, updateIssue, deleteIssue, putIssueRelation, deleteIssueRelation } from '@/api/issue'
+import { getIssue, updateIssue, deleteIssue, addIssue, putIssueRelation, deleteIssueRelation } from '@/api/issue'
 import {
   IssueForm,
   IssueNotesDialog,
@@ -212,17 +360,22 @@ import {
   IssueFiles,
   IssueDescription,
   IssueTitle,
-  IssueToolbar
+  IssueToolbar,
+  IssueCollection
 } from './components'
+import { addProjectTags } from '@/api/projects'
 import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
+import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
+import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 // import IssueMatrix from '@/components/Issue/IssueMatrix'
 
 export default {
-  name: 'ProjectIssueDetail',
+  name: 'QAProjectIssueDetail',
   components: {
+    IssueCollection,
     Tracker,
     Status,
     IssueTitle,
@@ -231,8 +384,9 @@ export default {
     IssueNotesDialog,
     IssueNotesEditor,
     IssueToolbar,
-    IssueFiles
-    // IssueMatrix
+    IssueFiles,
+    // IssueMatrix,
+    RelatedCollectionDialog
   },
   props: {
     propsIssueId: {
@@ -276,8 +430,8 @@ export default {
         description: ''
       },
       files: [],
+      test_files: [],
       journals: [],
-      formObj: {},
       parent: {},
       children: [],
       tags: [],
@@ -289,14 +443,23 @@ export default {
         visible: false,
         id: null
       },
-      relations: []
+      relations: [],
+      relatedCollectionDialogVisible: false,
+      tagsString: ''
     }
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
-      if (to.name === 'issue-detail' && from.name === 'create-test-plan') vm.formObj = { name: 'test-file' }
-      else vm.formObj = from
-    })
+    if (to.query.prev_page) {
+      next()
+    } else {
+      const newTo = Object.assign({}, to, {
+        query: {
+          ...to.query,
+          prev_page: from.fullPath
+        }
+      })
+      next(newTo)
+    }
   },
   beforeRouteLeave(to, from, next) {
     if (this.hasUnsavedChanges()) {
@@ -320,7 +483,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userProjectList', 'selectedProjectId']),
+    ...mapGetters(['userProjectList', 'selectedProjectId', 'test_filename', 'userRole']),
     hasRelationIssue() {
       return Object.keys(this.parent).length > 0 || this.children.length > 0
     },
@@ -366,13 +529,24 @@ export default {
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
+    ...mapActions('qa', ['removeFileName']),
     async fetchIssueLink() {
       this.isLoading = true
-      this.issueId = parseInt(this.$route.params.issueId)
       if (this.propsIssueId) {
         this.issueId = parseInt(this.propsIssueId)
+        await this.fetchIssue()
+      } else if (this.$route.params.issueId) {
+        this.issueId = parseInt(this.$route.params.issueId)
+        await this.fetchIssue()
+      } else {
+        this.form.project_id = this.selectedProjectId
+        const tracker = this.$refs['IssueForm'].tracker.find(item => item.name === 'Test Plan')
+        this.form.tracker_id = tracker.id
+        if (this.test_filename) {
+          this.test_files.push({ ...this.test_filename, edit: true })
+          this['removeFileName']()
+        }
       }
-      await this.fetchIssue()
       this.isLoading = false
     },
     async fetchIssue(isOnlyUpload) {
@@ -381,7 +555,9 @@ export default {
       try {
         const issue = await getIssue(this.issueId)
         data = issue.data
-        this.$route.meta.subject = `[${this.$t('Issue.' + data.tracker.name)}] #${data.id} - ${data.name} @ ${data.project.name}`
+        this.$route.meta.subject = `[${this.$t('Issue.' + data.tracker.name)}] #${data.id} - ${data.name} @ ${
+          data.project.name
+        }`
         document.title = getPageTitle(this.$route.meta)
         if (data.hasOwnProperty('relations')) {
           const res_api = []
@@ -404,13 +580,17 @@ export default {
             })
           })
         }
+        if (data.tracker && data.tracker.name === 'Test Plan') {
+          const test_files = await getTestFileByTestPlan(this.selectedProjectId, this.issueId)
+          this.$set(data, 'test_files', test_files.data)
+        }
         if (isOnlyUpload) {
           this.initUploadFiles(data)
         } else {
           this.initIssueDetails(data)
         }
       } catch (e) {
-        this.$router.push(this.formObj)
+        this.handleBackPage()
         this.$message({
           message: this.$t('Issue.RemovedIssue'),
           type: 'warning'
@@ -433,6 +613,7 @@ export default {
         tracker,
         parent,
         children,
+        test_files,
         relations,
         tags
       } = data
@@ -448,6 +629,7 @@ export default {
       } else {
         this.journals = []
       }
+      this.test_files = test_files || []
       this.relations = relations || []
       this.parent = (parent) || {}
       this.children = (children) || []
@@ -516,7 +698,7 @@ export default {
           if (this.isInDialog) {
             this.$emit('delete')
           } else {
-            this.$router.push(this.formObj)
+            this.handleBackPage()
           }
         } catch (err) {
           this.$message({
@@ -528,12 +710,18 @@ export default {
         this.isLoading = false
       })
     },
-    async handleUpdated() {
+    async handleUpdated(issue_id) {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')
       this.$refs.IssueTitle.edit = false
       this.$refs.IssueDescription.edit = false
+      this.test_files = []
       this.relations = []
-      await this.fetchIssue()
+      if (!this.issueId) {
+        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
+      } else {
+        await this.$refs.IssueForm.getClosable()
+        await this.fetchIssue()
+      }
       this.isLoading = false
     },
     async handleUploadUpdated() {
@@ -541,7 +729,13 @@ export default {
       this.isLoading = false
     },
     handleBackPage() {
-      this.$router.push(this.formObj)
+      if (this.$route.query.prev_page) {
+        this.$router.push(this.$route.query.prev_page)
+      } else {
+        this.$router.push({
+          name: 'issue-list'
+        })
+      }
     },
     showLoading(status) {
       if (status && status.hasOwnProperty('upload') && status.upload) {
@@ -554,10 +748,72 @@ export default {
     },
     handleSave() {
       this.$refs.IssueForm.$refs.form.validate(valid => {
-        if (valid) this.editIssue()
+        // const propParentLength = Object.keys(this.parent).length
+        if (valid) {
+          // const changeRequest = this.$refs.IssueForm.tracker.find((item) => (item.name === 'Change Request'))
+          // if (this.form.tracker_id === changeRequest.id && propParentLength === 0) {
+          //   const message = '尚未設定本變更議之原由議題單(父議題），請先行設定後再存檔'
+          //   this.setWarningMessage(message)
+          // } else
+          if (this.form.name && this.form.name !== '') {
+            this.handleUpdateTags()
+          } else {
+            const message = '請輸入標題'
+            this.setWarningMessage(message)
+          }
+        }
       })
     },
-    editIssue() {
+    setWarningMessage(message) {
+      this.$message({
+        type: 'warning',
+        message
+      })
+    },
+    async handleUpdateTags() {
+      const tags = this.form.tags
+      const tagsLength = tags.length
+      const addTags = []
+      const originTags = []
+      if (Array.isArray(tags)) {
+        tags.forEach(tag => {
+          if (typeof tag === 'string') addTags.push(tag)
+          else if (typeof tag === 'number') originTags.push(tag)
+        })
+      }
+      if (addTags.length > 0) await this.handleAddProjectTags(addTags, originTags, tagsLength)
+      else this.tagsArrayToString(originTags, tagsLength)
+    },
+    async handleAddProjectTags(addTags, originTags, tagsLength) {
+      addTags.map(async tag => {
+        const tagValue = tag.split('__')[1]
+        const formData = this.getAddTagsFormData(tagValue)
+        await this.addProjectTags(formData, originTags, tagsLength)
+      })
+    },
+    async addProjectTags(formData, originTags, tagsLength) {
+      await addProjectTags(formData).then(async res => {
+        const id = res.data.tags.id
+        originTags.push(id)
+        this.tagsArrayToString(originTags, tagsLength)
+      })
+    },
+    tagsArrayToString(tags, tagsLength) {
+      this.tagsString = tags.length > 0 ? tags.join() : null
+      if (this.tagsString === null) this.form.tags = ''
+      else this.form.tags = this.tagsString
+      if (tags.length === tagsLength) this.submitIssue()
+    },
+    getAddTagsFormData(tag) {
+      const formData = new FormData()
+      formData.delete('name')
+      formData.delete('project_id')
+      formData.append('name', tag)
+      formData.append('project_id', this.selectedProjectId)
+      return formData
+    },
+    submitIssue() {
+      this.tagsString = ''
       const sendData = Object.assign({}, this.form)
       const notes = this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('getMarkdown')
       if (notes !== '') sendData['notes'] = notes
@@ -577,9 +833,32 @@ export default {
     async updateIssueForm(sendForm) {
       this.isLoading = true
       const { issueId } = this
+      let issueApi = null
+      if (!this.issueId) {
+        issueApi = addIssue(sendForm)
+      } else {
+        issueApi = updateIssue(issueId, sendForm)
+      }
       try {
-        await updateIssue(issueId, sendForm)
-        const issue_id = this.issueId
+        const res = await issueApi
+        let issue_id = this.issueId
+        if (res.hasOwnProperty('data')) {
+          if (res.data.hasOwnProperty('id')) {
+            issue_id = res.data.id
+          } else {
+            issue_id = res.data.issue_id
+          }
+        }
+        if (this.test_files) {
+          const data = {
+            'issue_id': issue_id,
+            'test_files': this.test_files.map((item) => ({
+              software_name: item.software_name,
+              file_name: item.file_name
+            }))
+          }
+          await putTestPlanWithTestFile(this.form.project_id, data)
+        }
         if (this.form.relation_ids) {
           const data = {
             'issue_id': issue_id,
@@ -592,7 +871,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.handleUpdated()
+        await this.handleUpdated(issue_id)
         this.$emit('update')
       } catch (e) {
         console.error(e)
@@ -660,8 +939,7 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       } else {
         done()
       }
@@ -679,16 +957,24 @@ export default {
     },
     onScrollIssue() {
       this.$nextTick(() => {
-        const editorHeight = this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
+        const editorHeight =
+          this.$refs['IssueNotesDialog'].$el.getBoundingClientRect().top -
           this.$refs['IssueDescription'].$el.getBoundingClientRect().height
         if (this.$refs['mainIssueWrapper'].$el.children.length <= 2 && editorHeight < 0) {
-          if (this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options && this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options.name === 'IssueNotesEditor') {
+          if (
+            this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options &&
+            this.$refs['mainIssue'].$children[this.$refs['mainIssue'].$children.length - 2].$children[0].$options
+              .name === 'IssueNotesEditor'
+          ) {
             this.$refs['mainIssueWrapper'].$el.appendChild(this.$refs['moveEditor'].$el)
             this.scrollClass = 'issueHeightEditor'
           }
         } else {
           if (this.$refs['mainIssueWrapper'].$el.children.length >= 3 && editorHeight > 0) {
-            this.$refs['mainIssue'].$el.insertBefore(this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0], this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1])
+            this.$refs['mainIssue'].$el.insertBefore(
+              this.$refs['mainIssueWrapper'].$el.getElementsByClassName('moveEditor')[0],
+              this.$refs['mainIssue'].$el.children[this.$refs['mainIssue'].$el.children.length - 1]
+            )
             this.scrollClass = 'issueHeight'
           }
         }
@@ -696,6 +982,12 @@ export default {
     },
     toggleIssueMatrixDialog() {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
+    },
+    toggleDialogVisible(value) {
+      this[value + 'DialogVisible'] = !this[value + 'DialogVisible']
+    },
+    updateTestCollection(value) {
+      this.test_files = value
     }
   }
 }

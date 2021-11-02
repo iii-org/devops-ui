@@ -259,14 +259,14 @@ import {
   getTestFileByTestPlan,
   getTraceabilityMatrixReport, patchTraceOrderExecute,
   getTraceOrderList, patchTraceOrder
-} from '@/views/Plugin/QA/api/qa'
+} from '@/api/qa'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
 import TraceCheck from '@/views/Plan/TraceabilityMatrix/components/TraceCheck'
 import { dragscroll } from 'vue-dragscroll'
 
 import axios from 'axios'
-import ProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail'
+import ProjectIssueDetail from '@/views/Project/IssueDetail'
 
 export default {
   name: 'TraceabilityMatrix',

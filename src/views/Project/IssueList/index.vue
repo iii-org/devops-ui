@@ -18,7 +18,25 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilterForm"
-      />
+      >
+        <span slot="download" v-permission="['QA']">
+          <el-divider direction="vertical" />
+          <el-popover
+            placement="bottom"
+            trigger="click"
+          >
+            <el-menu class="download">
+              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel(allDownloadData)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
+              </el-menu-item>
+              <el-menu-item v-show="hasSelectedIssue" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedIssueList)">
+                <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
+              </el-menu-item>
+            </el-menu>
+            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+          </el-popover>
+        </span>
+      </SearchFilter>
     </project-list-selector>
     <el-divider />
     <quick-add-issue
@@ -42,11 +60,13 @@
           :height="tableHeight"
           :tree-props="{ children: 'child' }"
           :row-class-name="getRowClass"
-          @row-contextmenu="handleContextMenu"
           @cell-click="handleClick"
           @expand-change="getIssueFamilyData"
           @sort-change="handleSortChange"
+          @row-contextmenu="handleContextMenu"
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column v-permission="['QA']" type="selection" reserve-selection width="55" />
           <el-table-column type="expand" class-name="informationExpand">
             <template slot-scope="scope">
               <el-row v-if="scope.row.family"
@@ -231,6 +251,9 @@ import QuickAddIssue from '@/components/Issue/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
+import { excelTranslate } from '@/utils/excelTableTranslate'
+import { getProjectIssueList } from '@/api/projects'
+import XLSX from 'xlsx'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -250,18 +273,27 @@ export default {
       quickAddTopicDialogVisible: false,
       addTopicDialogVisible: false,
       searchVisible: false,
-
       assigned_to: [],
       fixed_version: [],
-      tags: [],
-
-      form: {}
+      form: {},
+      selectedIssueList: [],
+      allDownloadData: [],
+      allDataLoading: false,
+      excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to']
     }
   },
   computed: {
     ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
     refTable() {
       return this.$refs['issueList']
+    },
+    hasSelectedIssue() {
+      return this.selectedIssueList.length > 0
+    }
+  },
+  watch: {
+    listData() {
+      this.fetchAllDownloadData()
     }
   },
   async created() {
@@ -292,13 +324,22 @@ export default {
     }
     await this.loadSelectionList()
   },
+  mounted() {
+    this.fetchAllDownloadData()
+  },
   methods: {
     ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed',
       'setKeyword', 'setIssueFilter', 'setDisplayClosed', 'setFixedVersionShowClosed', 'getFixedVersionShowClosed']),
-    getParams() {
+    async fetchAllDownloadData() {
+      this.allDataLoading = true
+      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      this.allDownloadData = res.data.issue_list
+      this.allDataLoading = false
+    },
+    getParams(limit) {
       const result = {
         offset: this.listQuery.offset,
-        limit: this.listQuery.limit
+        limit: limit || this.listQuery.limit
       }
       if (this.sort) {
         result['sort'] = this.sort
@@ -328,12 +369,112 @@ export default {
       await this.setDisplayClosed(storeDisplayClosed)
       await this.backToFirstPage()
       await this.loadData()
+    },
+    handleSelectionChange(list) {
+      this.selectedIssueList = list
+    },
+    downloadExcel(selectedIssueList) {
+      const selectedColumn = this.handleCsvSelectedColumn(selectedIssueList)
+      const translateTable = this.handleCsvTranslateTable(selectedColumn)
+      const worksheet = XLSX.utils.json_to_sheet(translateTable)
+      this.$excel(worksheet, 'projectIssues')
+    },
+    handleCsvSelectedColumn(selectedIssueList) {
+      const selectedColumn = []
+      selectedIssueList.forEach(item => {
+        const targetObject = {}
+        this.excelColumnSelected.map(itemSelected => {
+          switch (itemSelected) {
+            case 'status':
+              this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+              break
+            case 'priority':
+              this.$set(targetObject, itemSelected, this.getPriorityTagType(item.priority.name))
+              break
+            case 'tracker':
+              this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
+              break
+            case 'assigned_to':
+              this.$set(targetObject, itemSelected, item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : '')
+              break
+            default:
+              this.$set(targetObject, itemSelected, item[itemSelected])
+          }
+        })
+        selectedColumn.push(targetObject)
+      })
+      return selectedColumn
+    },
+    handleCsvTranslateTable(selectedColumn) {
+      const translateTable = []
+      selectedColumn.forEach(item => {
+        const chineseExcel = {}
+        const chineseColumnKey = Object.keys(item).map(key => {
+          key = excelTranslate.projectIssues[key]
+          return key
+        })
+        Object.values(item).map((val, index) => {
+          this.$set(chineseExcel, chineseColumnKey[index], val)
+        })
+        translateTable.push(chineseExcel)
+      })
+      return translateTable
+    },
+    getStatusTagType(status) {
+      switch (status) {
+        case 'Active':
+          return '已開立'
+        case 'Assigned':
+          return '已分派'
+        case 'Closed':
+          return '已關閉'
+        case 'Solved':
+          return '已解決'
+        case 'Responded':
+          return '已回應'
+        case 'Finished':
+          return '已完成'
+      }
+    },
+    getPriorityTagType(priority) {
+      switch (priority) {
+        case 'Immediate':
+          return '緊急'
+        case 'High':
+          return '高'
+        case 'Normal':
+          return '一般'
+        case 'Low':
+          return '低'
+      }
+    },
+    getCategoryTagType(category) {
+      switch (category) {
+        case 'Epic':
+          return '需求規格'
+        case 'Audit':
+          return '合規需求'
+        case 'Feature':
+          return '功能設計'
+        case 'Bug':
+          return '程式錯誤'
+        case 'Issue':
+          return '議題'
+        case 'Change Request':
+          return '變更請求'
+        case 'Risk':
+          return '風險管理'
+        case 'Test Plan':
+          return '測試計畫'
+        case 'Fail Management':
+          return '異常管理'
+      }
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .el-table .el-button{
   @apply border-0
 }

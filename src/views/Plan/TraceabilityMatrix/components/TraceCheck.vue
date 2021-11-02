@@ -71,7 +71,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 import Status from '@/components/Issue/Status'
-import { getTraceOrderResult } from '@/views/Plugin/QA/api/qa'
+import { getTraceOrderResult } from '@/api/qa'
 import { mapGetters } from 'vuex'
 
 export default {

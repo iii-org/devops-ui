@@ -213,8 +213,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../styles/variables';
-
 >>> .el-card {
   &__footer {
     padding: 18px 20px;
@@ -224,10 +222,10 @@ export default {
     height: 75px;
 
     .selected_count {
+      @apply bg-white;
       display: inline-block;
       line-height: 1;
       white-space: nowrap;
-      background: #fff;
       border: 1px solid #dcdfe6;
       color: #606266;
       -webkit-appearance: none;
@@ -244,8 +242,7 @@ export default {
       border-radius: 4px;
 
       .value {
-        background: $danger;
-        color: #ffffff;
+        @apply bg-danger text-white;
         padding: 2px 5px;
         margin-left: 5px;
         border-radius: 50%;
@@ -270,22 +267,22 @@ export default {
 }
 
 >>> .el-table .el-button {
-  color: #ffffff !important;
+  @apply text-white #{!important};
 
   &:hover {
-    color: #ffffff !important;
+    @apply text-white #{!important};
   }
 
   &--success {
-    background: $success !important;
+    @apply bg-success #{!important};
   }
 
   &--warning {
-    background: $warning !important;
+    @apply bg-warning #{!important};
   }
 
   &--slow {
-    background: $slow !important;
+    @apply bg-slow #{!important};
   }
 }
 

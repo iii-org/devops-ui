@@ -215,12 +215,12 @@
     <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
                :before-close="handleRelationIssueDialogBeforeClose"
     >
-      <QAProjectIssueDetail v-if="relationIssue.visible"
-                            ref="children"
-                            :props-issue-id="relationIssue.id"
-                            :is-in-dialog="true"
-                            @update="handleRelationUpdate"
-                            @delete="handleRelationDelete"
+      <ProjectIssueDetail v-if="relationIssue.visible"
+                          ref="children"
+                          :props-issue-id="relationIssue.id"
+                          :is-in-dialog="true"
+                          @update="handleRelationUpdate"
+                          @delete="handleRelationDelete"
       />
     </el-dialog>
     <el-dialog
@@ -252,8 +252,8 @@ import { Tracker, Priority, Status } from '@/components/Issue'
 import WBSInputColumn from '@/views/Plan/Milestone/components/WBSInputColumn'
 import WBSSelectColumn from '@/views/Plan/Milestone/components/WBSSelectColumn'
 import WBSDateColumn from '@/views/Plan/Milestone/components/WBSDateColumn'
-import QAProjectIssueDetail from '@/views/Plugin/QA/views/Project/IssueDetail/'
-import IssueMatrix from '@/views/Plugin/QA/views/Project/IssueDetail/components/IssueMatrix'
+import ProjectIssueDetail from '@/views/Project/IssueDetail/'
+import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
 
@@ -266,7 +266,7 @@ export default {
     Contextmenu,
     ContextmenuItem,
     ContextmenuSubmenu,
-    QAProjectIssueDetail,
+    ProjectIssueDetail,
     IssueMatrix
   },
   directives: {

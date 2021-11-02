@@ -103,8 +103,8 @@
 import { mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import Fuse from 'fuse.js'
-import IssueTitle from '../components/widget/IssueTitle'
-import { getTestPlanList } from '@/views/Plugin/QA/api/qa'
+import IssueTitle from './widget/IssueTitle'
+import { getTestPlanList } from '@/api/qa'
 
 export default {
   name: 'RelatedPlanDialog',
@@ -245,7 +245,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
 
 > > > .el-dialog__header {
   display: none;
@@ -264,10 +263,10 @@ export default {
     height: 75px;
 
     .selected_count {
+      @apply bg-white;
       display: inline-block;
       line-height: 1;
       white-space: nowrap;
-      background: #fff;
       border: 1px solid #dcdfe6;
       color: #606266;
       -webkit-appearance: none;
@@ -284,8 +283,7 @@ export default {
       border-radius: 4px;
 
       .value {
-        background: $danger;
-        color: #ffffff;
+        @apply bg-danger text-white;
         padding: 2px 5px;
         margin-left: 5px;
         border-radius: 50%;
@@ -309,23 +307,23 @@ export default {
   padding: 10px 0;
 }
 
-> > > .el-table .el-button {
-  color: #ffffff !important;
+>>> .el-table .el-button {
+  @apply text-white #{!important};
 
   &:hover {
-    color: #ffffff !important;
+    @apply text-white #{!important};
   }
 
   &--success {
-    background: $success !important;
+    @apply bg-success #{!important};
   }
 
   &--warning {
-    background: $warning !important;
+    @apply bg-warning #{!important};
   }
 
   &--slow {
-    background: $slow !important;
+    @apply bg-slow #{!important};
   }
 }
 

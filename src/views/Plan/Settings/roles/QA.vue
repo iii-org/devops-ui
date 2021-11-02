@@ -23,7 +23,7 @@
           <AlertSettings ref="alertSettings" />
         </el-card>
       </el-tab-pane>
-      <el-tab-pane :label="$t('ProjectSettings.TagSettings')" name="tagSettings">
+      <el-tab-pane v-permission="['QA']" :label="$t('ProjectSettings.TagSettings')" name="tagSettings">
         <el-card>
           <TagSettings ref="tagSettings" />
         </el-card>

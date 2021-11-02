@@ -459,8 +459,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variables';
-
 .menu-title {
   background: #d2d2d2;
   max-width: 150px;
@@ -474,7 +472,7 @@ export default {
 }
 
 .current {
-  color: $success !important;
+  @apply text-success #{!important};
   font-weight: 700;
 }
 </style>

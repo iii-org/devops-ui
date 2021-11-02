@@ -84,7 +84,7 @@ import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import moment from 'moment'
 import AddIssue from '@/components/Issue/AddIssue'
-import ProjectIssueDetail from '../../../Plugin/QA/views/Project/IssueDetail'
+import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import jquery from 'jquery'
 
 moment.updateLocale('zh-tw', {
@@ -609,7 +609,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../../../../node_modules/svelte-gantt/css/svelteGantt.css";
-@import '../../../../styles/variables';
 
 .app-container {
   @apply h-screen overflow-hidden;

@@ -66,29 +66,30 @@ const actions = {
     // views Plugin
     let result = asyncRoutes
     let accessedRoutes
-    const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
-    for (const path of req.keys()) {
-      const context = req(path).default || (await req(path))
-      //combine menu by same name
-      const pluginItem = context.asyncRoutes
-
-      const mainItemsPath = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
-      pluginItem.forEach((item, pluginIndex) => { // plugin root
-        // devops root parent
-        if (mainItemsPath.includes(item.path)) { // if same
-          const resultIndex = result.findIndex((menu) => (menu.path === item.path)) // find devops root id
-          if (result[resultIndex].hasOwnProperty('children') && pluginItem[pluginIndex] && pluginItem[pluginIndex].hasOwnProperty('children')) {
-            // find children
-            const pluginChildren = pluginItem[pluginIndex].children
-            pluginChildren.forEach((subItem) => {
-              // devops root children index
-              appendRouter(subItem, result[resultIndex].children)
-            })
-          }
-        }
-        appendRouter(item, result)
-      })
-    }
+    // Plugin
+    // const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
+    // for (const path of req.keys()) {
+    //   const context = req(path).default || (await req(path))
+    //   //combine menu by same name
+    //   const pluginItem = context.asyncRoutes
+    //
+    //   const mainItemsPath = result.map((item) => ((item.hasOwnProperty('path')) ? item.path : undefined))
+    //   pluginItem.forEach((item, pluginIndex) => { // plugin root
+    //     // devops root parent
+    //     if (mainItemsPath.includes(item.path)) { // if same
+    //       const resultIndex = result.findIndex((menu) => (menu.path === item.path)) // find devops root id
+    //       if (result[resultIndex].hasOwnProperty('children') && pluginItem[pluginIndex] && pluginItem[pluginIndex].hasOwnProperty('children')) {
+    //         // find children
+    //         const pluginChildren = pluginItem[pluginIndex].children
+    //         pluginChildren.forEach((subItem) => {
+    //           // devops root children index
+    //           appendRouter(subItem, result[resultIndex].children)
+    //         })
+    //       }
+    //     }
+    //     appendRouter(item, result)
+    //   })
+    // }
     return new Promise(async resolve => {
       if (roles.includes('admin')) {
         accessedRoutes = result || []

@@ -208,11 +208,11 @@ import {
   getTestFileList,
   postTestFile,
   postTestPlanWithTestFile
-} from '@/views/Plugin/QA/api/qa'
-import RelatedPlanDialog from '../TestFile/components/RelatedPlanDialog'
+} from '@/api/qa'
+import RelatedPlanDialog from './components/RelatedPlanDialog'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
-import CollectionFileUploader from '../TestFile/components/CollectionFileUploader'
+import CollectionFileUploader from './components/CollectionFileUploader'
 
 export default {
   name: 'TestFile',
