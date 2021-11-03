@@ -1,6 +1,15 @@
 <template>
   <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <project-list-selector>
+    <FactorFilter
+      ref="filter"
+      :is-loading="isLoading"
+      :filter-options="filterOptions"
+      :group-by="groupBy"
+      @loadData="loadData"
+      @onChangeGroupByDimension="onChangeGroupByDimension"
+      @onChangeGroupByValue="onChangeGroupByValue"
+    />
+    <!-- <project-list-selector>
       <el-popover
         placement="bottom"
         trigger="click"
@@ -112,7 +121,7 @@
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
-    </project-list-selector>
+    </project-list-selector> -->
     <el-divider />
     <div class="board"
          :class="{'is-panel':rightPanelVisible}"
@@ -193,13 +202,15 @@ import {
   getProjectVersion,
   getTagsByProject
 } from '@/api/projects'
-import ElSelectAll from '@/components/ElSelectAll'
+// import ElSelectAll from '@/components/ElSelectAll'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
 import ContextMenu from '@/components/Issue/ContextMenu'
+import FactorFilter from '@/components/FactorFilter'
 
+// TODO: displayClosed,
 const contextMenu = {
   row: {
     fixed_version: { id: 'null' },
@@ -214,13 +225,14 @@ export default {
   name: 'IssueBoards',
   components: {
     RightPanel,
-    ElSelectAll,
+    // ElSelectAll,
     Kanban,
     ProjectListSelector,
     Status,
     Tracker,
     Priority,
-    ContextMenu
+    ContextMenu,
+    FactorFilter
   },
   data() {
     this.filterOptions = [
@@ -270,20 +282,20 @@ export default {
         dimension: 'status',
         value: []
       },
-      filterValue: {},
-      originFilterValue: {},
-      displayClosed: false,
-      fixed_version_closed: false,
+      // filterValue: {},
+      // originFilterValue: {},
+      // displayClosed: false,
+      // fixed_version_closed: false,
       projectIssueList: [],
       projectIssueQueue: {},
       classifyIssueList: {},
       group: 'mission',
-      fixed_version: [],
-      assigned_to: [],
-      tags: [],
+      // fixed_version: [],
+      // assigned_to: [],
+      // tags: [],
       relativeIssueList: [],
-      searchVisible: false,
-      keyword: null,
+      // searchVisible: false,
+      // keyword: null,
       rightPanelVisible: false,
       contextMenu: contextMenu
     }
@@ -291,7 +303,7 @@ export default {
   computed: {
     ...mapGetters([
       'selectedProjectId',
-      'userId',
+      // 'userId',
       'tracker',
       'status',
       'priority',
@@ -305,14 +317,14 @@ export default {
       })
       return result
     },
-    groupByOptions() {
-      const dimension = this.getDimension
-      return dimension.map((item, idx) => ({
-        id: idx,
-        label: this.getTranslateHeader(item.name),
-        value: item
-      }))
-    },
+    // groupByOptions() {
+    //   const dimension = this.getDimension
+    //   return dimension.map((item, idx) => ({
+    //     id: idx,
+    //     label: this.getTranslateHeader(item.name),
+    //     value: item
+    //   }))
+    // },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
         const dimension = this.getDimension
@@ -325,76 +337,76 @@ export default {
       let dimension = dimensionKey === 'status' ? this.filterClosedStatus(this[dimensionKey]) : this[dimensionKey]
       dimension = dimensionKey === 'assigned_to' ? this.filterMe(dimension) : dimension
       return dimension
-    },
-    showSelectedGroupByName() {
-      return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
-    },
-    showSelectedGroupByLength() {
-      if (this.groupByOptions.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
-        return this.$t('general.All')
-      }
-      return this.groupBy.value.length
-    },
-    listFilter() {
-      const result = []
-      Object.keys(this.filterValue).forEach(item => {
-        if (!this.filterValue[item]) return
-        if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
-          const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
-          if (value) result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
-        } else {
-          const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
-          if (value) result.push(this.getSelectionLabel(value))
-        }
-      })
-      const colon = result.length > 0 ? ': ' : ''
-      const factor = result.join(', ')
-      return `${this.$t('general.Filter')}${colon}${factor}`
-    },
-    isFilterChanged() {
-      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
-    },
-    checkFilterValue() {
-      return function(key) {
-        const comparedKey = this.getComparedKey(key)
-        for (const item of Object.keys(this[key])) {
-          const checkFilterValue = this[key]
-          if (checkFilterValue[item] === '') delete checkFilterValue[item]
-          if (this[comparedKey][item] !== checkFilterValue[item]) return true
-        }
-      }
-    },
-    getComparedKey() {
-      return function(key) {
-        let comparedKey = ''
-        comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
-        return comparedKey
-      }
     }
+    // showSelectedGroupByName() {
+    //   return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
+    // }
+    // showSelectedGroupByLength() {
+    //   if (this.groupByOptions.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
+    //     return this.$t('general.All')
+    //   }
+    //   return this.groupBy.value.length
+    // }
+    // listFilter() {
+    //   const result = []
+    //   Object.keys(this.filterValue).forEach(item => {
+    //     if (!this.filterValue[item]) return
+    //     if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
+    //       const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
+    //       if (value) result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+    //     } else {
+    //       const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
+    //       if (value) result.push(this.getSelectionLabel(value))
+    //     }
+    //   })
+    //   const colon = result.length > 0 ? ': ' : ''
+    //   const factor = result.join(', ')
+    //   return `${this.$t('general.Filter')}${colon}${factor}`
+    // },
+    // isFilterChanged() {
+    //   return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
+    // },
+    // checkFilterValue() {
+    //   return function(key) {
+    //     const comparedKey = this.getComparedKey(key)
+    //     for (const item of Object.keys(this[key])) {
+    //       const checkFilterValue = this[key]
+    //       if (checkFilterValue[item] === '') delete checkFilterValue[item]
+    //       if (this[comparedKey][item] !== checkFilterValue[item]) return true
+    //     }
+    //   }
+    // },
+    // getComparedKey() {
+    //   return function(key) {
+    //     let comparedKey = ''
+    //     comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
+    //     return comparedKey
+    //   }
+    // }
   },
   watch: {
-    async selectedProjectId() {
-      await this.loadSelectionList()
-      await this.cleanFilter()
-    },
+    // async selectedProjectId() {
+    // await this.loadSelectionList()
+    // await this.cleanFilter()
+    // },
     isLoading(value) {
       if (!value) {
         this.updateData()
       }
-    },
-    fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
-      this.loadVersionList(value)
     }
+    // fixed_version_closed(value) {
+    //   this.setFixedVersionShowClosed(value)
+    //   this.loadVersionList(value)
+    // }
   },
-  async created() {
+  async mounted() {
     this.groupBy = await this.getGroupBy()
-    const storedData = await this.fetchStoredData()
-    const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-    this.filterValue = storedFilterValue['board'] ? storedFilterValue['board'] : {}
-    this.keyword = storedKeyword['board'] ? storedKeyword['board'] : null
-    this.displayClosed = storedDisplayClosed['board'] ? storedDisplayClosed['board'] : false
-    await this.loadSelectionList()
+    // const storedData = await this.fetchStoredData()
+    // const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+    // this.filterValue = storedFilterValue['board'] ? storedFilterValue['board'] : {}
+    // this.keyword = storedKeyword['board'] ? storedKeyword['board'] : null
+    // this.displayClosed = storedDisplayClosed['board'] ? storedDisplayClosed['board'] : false
+    // await this.loadSelectionList()
     await this.loadData()
   },
   methods: {
@@ -423,16 +435,16 @@ export default {
       await this.syncLoadFilterData()
       await this.getRelativeList()
     },
-    async fetchStoredData() {
-      let storedFilterValue, storedKeyword, storedDisplayClosed
-      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
-        const [filterValue, keyword, displayClosed] = res.map(item => item)
-        storedFilterValue = filterValue
-        storedKeyword = keyword
-        storedDisplayClosed = displayClosed
-      })
-      return { storedFilterValue, storedKeyword, storedDisplayClosed }
-    },
+    // async fetchStoredData() {
+    //   let storedFilterValue, storedKeyword, storedDisplayClosed
+    //   await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
+    //     const [filterValue, keyword, displayClosed] = res.map(item => item)
+    //     storedFilterValue = filterValue
+    //     storedKeyword = keyword
+    //     storedDisplayClosed = displayClosed
+    //   })
+    //   return { storedFilterValue, storedKeyword, storedDisplayClosed }
+    // },
     async getRelativeList() {
       const isHasClosed = this.groupByValueOnBoard.filter(item => item.hasOwnProperty('is_closed') && item.is_closed)
       if (isHasClosed.length > 0) {
@@ -462,13 +474,15 @@ export default {
     },
     getParams() {
       const result = {}
-      if (!this.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join(',') : result[item + '_id'] = this.filterValue[item]
+      if (!this.$refs.filter.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
+      console.log(this.$refs.filter.filterValue)
+      Object.keys(this.$refs.filter.filterValue).forEach((item) => {
+        if (this.$refs.filter.filterValue[item]) {
+          item === 'tags' && this.$refs.filter.filterValue[item].length > 0 ? result[item] = this.$refs.filter.filterValue[item].join(',') : result[item + '_id'] = this.$refs.filter.filterValue[item]
         }
       })
       if (this.keyword) result['search'] = this.keyword
+      console.log(result)
       return result
     },
     async syncLoadFilterData() {
@@ -508,58 +522,54 @@ export default {
     cancelLoadFilterData() {
       Object.values(this.projectIssueQueue).forEach(item => { item.cancel() })
     },
-    async loadVersionList(status) {
-      const params = status ? { status: 'open,locked,closed' } : { status: 'open,locked' }
-      const versionList = await this.fetchVersionList(params)
-      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
-      const version = this.fixed_version.filter(item => new Date(`${item.due_date}T23:59:59`) >= new Date() && item.status !== 'closed')
-      if (version.length > 0) {
-        const sessionValue = sessionStorage.getItem('issueFilter')
-        if (!sessionValue || !JSON.parse(sessionValue)['board']) {
-          this.$set(this.filterValue, 'fixed_version', version[0].id)
-        }
-        this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-      } else {
-        this.$delete(this.originFilterValue, 'fixed_version')
-      }
-    },
-    async fetchVersionList(params) {
-      const res = await getProjectVersion(this.selectedProjectId, params)
-      const versionList = res.data.versions
-      return versionList
-    },
-    async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([
-        getProjectUserList(this.selectedProjectId),
-        getTagsByProject(this.selectedProjectId)
-      ]).then(res => {
-        const [assigneeList, tagsList] = res.map(item => item.data)
-        this.assigned_to = [
-          { name: this.$t('Issue.Unassigned'), id: 'null' },
-          {
-            name: this.$t('Issue.me'),
-            login: '-Me-',
-            id: this.userId,
-            class: 'bg-yellow-100'
-          },
-          ...assigneeList.user_list
-        ]
-        this.tags = tagsList.tags
-        // if (this.userRole === 'Engineer') {
-        //   this.$set(this.filterValue, 'assigned_to', this.userId)
-        //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
-        // }
-      })
-      await this.loadVersionList(this.fixed_version_closed)
-    },
-    getOptionsData(option_name) {
-      return this[option_name]
-    },
-    setGroupByUnclosedStatus(check) {
-      const isClosed = this.status.filter((item) => (item.is_closed === false))
-      check ? this.$set(this.groupBy, 'value', this.status) : this.$set(this.groupBy, 'value', isClosed)
-    },
+    // async loadVersionList(status) {
+    //   const params = status ? { status: 'open,locked,closed' } : { status: 'open,locked' }
+    //   const versionList = await this.fetchVersionList(params)
+    //   this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
+    //   const version = this.fixed_version.filter(item => new Date(`${item.due_date}T23:59:59`) >= new Date() && item.status !== 'closed')
+    //   if (version.length > 0) {
+    //     const sessionValue = sessionStorage.getItem('issueFilter')
+    //     if (!sessionValue || !JSON.parse(sessionValue)['board']) {
+    //       this.$set(this.filterValue, 'fixed_version', version[0].id)
+    //     }
+    //     this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+    //   } else {
+    //     this.$delete(this.originFilterValue, 'fixed_version')
+    //   }
+    // },
+    // async fetchVersionList(params) {
+    //   const res = await getProjectVersion(this.selectedProjectId, params)
+    //   const versionList = res.data.versions
+    //   return versionList
+    // },
+    // async loadSelectionList() {
+    //   if (this.selectedProjectId === -1) return
+    //   await Promise.all([
+    //     getProjectUserList(this.selectedProjectId),
+    //     getTagsByProject(this.selectedProjectId)
+    //   ]).then(res => {
+    //     const [assigneeList, tagsList] = res.map(item => item.data)
+    //     this.assigned_to = [
+    //       { name: this.$t('Issue.Unassigned'), id: 'null' },
+    //       {
+    //         name: this.$t('Issue.me'),
+    //         login: '-Me-',
+    //         id: this.userId,
+    //         class: 'bg-yellow-100'
+    //       },
+    //       ...assigneeList.user_list
+    //     ]
+    //     this.tags = tagsList.tags
+    //     // if (this.userRole === 'Engineer') {
+    //     //   this.$set(this.filterValue, 'assigned_to', this.userId)
+    //     //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
+    //     // }
+    //   })
+    //   await this.loadVersionList(this.fixed_version_closed)
+    // },
+    // getOptionsData(option_name) {
+    //   return this[option_name]
+    // },
     resetClassifyIssue() {
       this.classifyIssueList = {}
     },
@@ -591,12 +601,12 @@ export default {
     updateData() {
       this.resetClassifyIssue()
       this.classifyIssue()
-      Object.keys(this.filterValue).forEach(item => {
+      Object.keys(this.$refs.filter.filterValue).forEach(item => {
         const searchOpt = {
           keys: [`${item}.id`],
           useExtendedSearch: true
         }
-        this.searchKanbanCard(this.filterValue[item], searchOpt)
+        this.searchKanbanCard(this.$refs.filter.filterValue[item], searchOpt)
       })
     },
     async updateIssueBoard() {
@@ -677,7 +687,7 @@ export default {
     },
     sortIssue() {
       // const sortPriority = (a, b) => (a.priority.id - b.priority.id)
-      const sortUpdateOn = (a, b) => (new Date(b.updated_on) - new Date(a.updated_on))
+      const sortUpdateOn = (a, b) => new Date(b.updated_on) - new Date(a.updated_on)
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
       })
@@ -705,17 +715,17 @@ export default {
     getFilterValueList(value) {
       return this[value]
     },
-    getSelectionLabel(item) {
-      const visibleStatus = ['closed', 'locked']
-      let result = this.getTranslateHeader(item.name)
-      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-        result += ` (${this.getTranslateHeader(item.status)})`
-      }
-      if (item.hasOwnProperty('login')) {
-        result += ` (${item.login})`
-      }
-      return result
-    },
+    // getSelectionLabel(item) {
+    //   const visibleStatus = ['closed', 'locked']
+    //   let result = this.getTranslateHeader(item.name)
+    //   if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+    //     result += ` (${this.getTranslateHeader(item.status)})`
+    //   }
+    //   if (item.hasOwnProperty('login')) {
+    //     result += ` (${item.login})`
+    //   }
+    //   return result
+    // },
     isRightPanelItemHasComponents(name) {
       return ['status', 'tracker'].includes(name)
     },
@@ -724,36 +734,36 @@ export default {
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter((item) => (item.is_closed === false))
+      return statusList.filter(item => item.is_closed === false)
     },
     filterMe(userList) {
       return userList.filter((item) => (item.login !== '-Me-'))
     },
-    cleanFilter() {
-      this.filterValue = Object.assign({}, this.originFilterValue)
-      this.keyword = ''
-      this.displayClosed = false
-      this.onChangeGroupByDimension('status')
-      this.onChangeFilter()
-    },
-    async onChangeFilter() {
-      const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
-        this.$delete(this.filterValue, 'tags')
-      }
-      storedFilterValue['board'] = this.filterValue
-      storedKeyword['board'] = this.keyword
-      storedDisplayClosed['board'] = this.displayClosed
-      await this.setIssueFilter(storedFilterValue)
-      await this.setKeyword(storedKeyword)
-      await this.setDisplayClosed(storedDisplayClosed)
-      await this.loadData()
-    },
+    // cleanFilter() {
+    //   this.filterValue = Object.assign({}, this.originFilterValue)
+    //   this.keyword = ''
+    //   this.displayClosed = false
+    //   this.onChangeGroupByDimension('status')
+    //   this.onChangeFilter()
+    // },
+    // async onChangeFilter() {
+    //   const storedData = await this.fetchStoredData()
+    //   const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+    //   if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
+    //     this.$delete(this.filterValue, 'tags')
+    //   }
+    //   storedFilterValue['board'] = this.filterValue
+    //   storedKeyword['board'] = this.keyword
+    //   storedDisplayClosed['board'] = this.displayClosed
+    //   await this.setIssueFilter(storedFilterValue)
+    //   await this.setKeyword(storedKeyword)
+    //   await this.setDisplayClosed(storedDisplayClosed)
+    //   await this.loadData()
+    // },
     onChangeGroupByDimension(value, loadData) {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
-      this.$refs['groupByValue'].selected = []
+      this.$refs['filter'].this.$refs['groupByValue'].selected = []
       this.updatedByGroupBy(loadData)
     },
     onChangeGroupByValue(value, loadData) {
