@@ -313,7 +313,7 @@
         destroy-on-close
         :before-close="handleRelationIssueDialogBeforeClose"
       >
-        <QAProjectIssueDetail
+        <ProjectIssueDetail
           v-if="relationIssue.visible"
           ref="children"
           :props-issue-id="relationIssue.id"
@@ -385,6 +385,7 @@ export default {
     IssueNotesEditor,
     IssueToolbar,
     IssueFiles,
+    ProjectIssueDetail: () => import('@/views/Project/IssueDetail'),
     // IssueMatrix,
     RelatedCollectionDialog
   },
