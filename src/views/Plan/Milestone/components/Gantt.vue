@@ -75,11 +75,7 @@ import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import GanttElastic from 'gantt-elastic'
-
-import resolveConfig from 'tailwindcss/resolveConfig'
-import tailwindConfig from 'tailwindsCssConfig'
-
-const fullConfig = resolveConfig(tailwindConfig)
+import theme from '@/theme.js'
 
 export default {
   name: 'Gantt',
@@ -112,7 +108,7 @@ export default {
   },
   data() {
     const _this = this
-    this.bg = Object.freeze(fullConfig.theme.backgroundColor)
+    this.bg = Object.freeze(theme.backgroundColor)
     return {
       listLoading: false,
       contentLoading: false,

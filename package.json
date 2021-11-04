@@ -6,10 +6,11 @@
   "scripts": {
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
     "lint": "eslint --ext .js,.vue src",
-    "build:prod": "vue-cli-service build",
-    "build:stage": "vue-cli-service build --mode staging",
-    "dev": "vue-cli-service serve",
-    "preview": "node build/index.js --preview",
+    "build:css": "node bin/generate-tailwind-theme.js",
+    "build:prod": "yarn run build:css && vue-cli-service build",
+    "build:stage": "yarn run build:css && vue-cli-service build --mode staging",
+    "dev": "yarn run build:css && vue-cli-service serve",
+    "preview": "yarn run build:css && node build/index.js --preview",
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
     "test:ci": "yarn run lint && yarn run test:unit"
   },
@@ -36,6 +37,7 @@
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
     "postcss": "^7",
+    "prettier": "^2.4.1",
     "remixicon": "^2.5.0",
     "socket.io-client": "^4.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",

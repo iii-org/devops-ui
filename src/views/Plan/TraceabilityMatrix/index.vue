@@ -38,7 +38,7 @@
         <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
                    :disabled="chartLoading"
         > {{ $t('Track.TraceabilityCheck') }}
-          <i class="el-icon-arrow-down el-icon--right" /></el-button>
+          <em class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
     </project-list-selector>
     <el-divider />
@@ -86,7 +86,7 @@
                 <span
                   style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
                 >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                  <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                   <span v-html="highLight(item.name)" />
                 </span>
                 <span style="float: right; color: #8492a6; font-size: 13px"
@@ -164,7 +164,7 @@
             </el-form>
           </div>
           <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
-            <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
+            <h2 slot="title"><em class="el-icon-loading" /> {{ $t('Loading') }}</h2>
             <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
           </el-alert>
           <div v-show="data.length>0" ref="matrix" v-dragscroll class="mermaid-wrapper"
@@ -268,6 +268,8 @@ import { dragscroll } from 'vue-dragscroll'
 import axios from 'axios'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 
+import theme from '@/theme.js'
+
 export default {
   name: 'TraceabilityMatrix',
   components: { ProjectIssueDetail, TraceCheck, OrderListDialog, ProjectListSelector, Tracker, VueMermaid },
@@ -314,7 +316,8 @@ export default {
         id: null
       },
       isRotate: false,
-      cancelToken: null
+      cancelToken: null,
+      trackerColor: Object.freeze(theme.backgroundColor)
     }
   },
   computed: {
@@ -368,36 +371,6 @@ export default {
       const result = chartData.concat(testFileList)
       const unique_check = [...new Set(result.map(issue => issue.id))]
       return unique_check.map(item => result.find(issue => issue.id === item))
-    },
-    trackerColor() {
-      return {
-        success: '#67c23a',
-        danger: '#f56c6c',
-        warning: '#e6a23c',
-        slow: '#56b1e8',
-        light: '#c1c3c5',
-        info: '#606260',
-        primary: '#5388ff',
-        secondary: '#3ecbbc',
-        active: '#409eff',
-        assigned: '#f56c6c',
-        closed: '#909399',
-        solved: '#3ecbbc',
-        inProgress: '#e6a23c',
-        verified: '#67c23a',
-        finished: '#67c23a',
-        document: '#005f73',
-        research: '#0a9396',
-        epic: '#409EEF',
-        audit: '#82DDF0',
-        feature: '#A0DA2C',
-        bug: '#E84855',
-        issue: '#5296A5',
-        changeRequest: '#A06CD5',
-        risk: '#FCD7AD',
-        testPlan: '#A57548',
-        failManagement: '#FF7033'
-      }
     }
   },
   watch: {

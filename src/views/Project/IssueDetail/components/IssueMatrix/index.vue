@@ -1,7 +1,7 @@
 <template>
   <div ref="wrapper" class="wrapper">
     <el-alert v-if="getPercentProgress<100" type="warning" class="mb-4 loading" :closable="false">
-      <h2 slot="title"><i class="el-icon-loading" /> {{ $t('Loading') }}</h2>
+      <h2 slot="title"><em class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
     <el-form inline>
@@ -58,6 +58,8 @@ import { camelCase } from 'lodash'
 import { dragscroll } from 'vue-dragscroll'
 import { getTestFileByTestPlan } from '@/api/qa'
 
+import theme from '@/theme.js'
+
 export default {
   name: 'IssueMatrix',
   components: { VueMermaid,
@@ -90,7 +92,8 @@ export default {
       relationIssue: {
         visible: false,
         id: null
-      }
+      },
+      trackerColor: Object.freeze(theme.backgroundColor)
     }
   },
   computed: {
@@ -105,36 +108,6 @@ export default {
       testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
       testFileList = [].concat.apply([], testFileList)
       return chartData.concat(testFileList)
-    },
-    trackerColor() {
-      return {
-        success: '#67c23a',
-        danger: '#f56c6c',
-        warning: '#e6a23c',
-        slow: '#56b1e8',
-        light: '#c1c3c5',
-        info: '#606260',
-        primary: '#5388ff',
-        secondary: '#3ecbbc',
-        active: '#409eff',
-        assigned: '#f56c6c',
-        closed: '#909399',
-        solved: '#3ecbbc',
-        inProgress: '#e6a23c',
-        verified: '#67c23a',
-        finished: '#67c23a',
-        document: '#005f73',
-        research: '#0a9396',
-        epic: '#409EEF',
-        audit: '#82DDF0',
-        feature: '#A0DA2C',
-        bug: '#E84855',
-        issue: '#5296A5',
-        changeRequest: '#A06CD5',
-        risk: '#FCD7AD',
-        testPlan: '#A57548',
-        failManagement: '#FF7033'
-      }
     }
   },
   watch: {

@@ -49,8 +49,7 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src'),
-        'tailwindsCssConfig$': resolve('./tailwind.config.js')
+        '@': resolve('src')
       }
     }
   },
