@@ -71,6 +71,7 @@ export const allowedTypeMap = () => ({
   'application/x-compressed': '.zip',
   'application/x-zip-compressed': '.zip',
   'application/x-rar': '.rar',
+  'application/x-rar-compressed': '.rar',
   'video/3gpp': '.3gp',
   'audio/3gpp': '.3gp',
   'video/3gpp2': '.3g2',
