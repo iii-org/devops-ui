@@ -183,8 +183,8 @@
                             :class="{current:getContextMenuCurrentValue('tags', item), [item.class]:item.class}"
                             @click="handleUpdateIssue({value:{'tags':item.id}, row:contextMenu.row})"
           >
-            <i v-if="getContextMenuCurrentValue('tags', item)" class="el-icon-check" />
-            <i v-if="item.id==='null'" class="el-icon-circle-close" />
+            <em v-if="getContextMenuCurrentValue('tags', item)" class="el-icon-check" />
+            <em v-if="item.id==='null'" class="el-icon-circle-close" />
             {{ item.name }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
@@ -366,10 +366,11 @@ export default {
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          if (item === 'due_date') {
-            const due_date = this.filterValue[item].map(date => this.$dayjs(date).format('YYYY-MM-DD'))
-            result['due_date_start'] = due_date[0]
-            result['due_date_end'] = due_date[1]
+          if (item === 'due_date_start' || item === 'due_date_end') {
+            result['due_date_start'] = this.$dayjs(result['due_date_start']).isValid()
+              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD') : null
+            result['due_date_end'] = this.$dayjs(result['due_date_end']).isValid()
+              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD') : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
           } else {

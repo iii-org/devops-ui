@@ -16,20 +16,11 @@
             </el-form-item>
           </el-form>
           <div class="gantt-chart">
-            <div id="gantt" />
-            <div class="toolbar">
-              <el-radio-group v-model="period" type="button">
-                <el-radio-button v-for="periodItem in periodOptions" :key="periodItem.period" :label="periodItem.period"
-                                 :class="periodItem.class"
-                >
-                  {{ periodItem.name }}
-                </el-radio-button>
-              </el-radio-group>
-            </div>
+            <gantt-elastic :tasks="listData" :options="options" />
           </div>
           <div v-if="listData.length<=0" class="align-middle">
             <el-alert type="warning">
-              <h1><i class="el-icon-warning" /> {{ $t('general.NoData') }}</h1>
+              <h1><em class="el-icon-warning" /> {{ $t('general.NoData') }}</h1>
             </el-alert>
           </div>
         </el-card>
@@ -80,61 +71,22 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getProjectIssueList } from '@/api/projects'
-import { SvelteGantt, SvelteGanttTable } from 'svelte-gantt'
 import { addIssue, getIssueFamily } from '@/api/issue'
-import moment from 'moment'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
-import jquery from 'jquery'
+import GanttElastic from 'gantt-elastic'
 
-moment.updateLocale('zh-tw', {
-  week: {
-    dow: 0
-  }
-})
-moment.updateLocale('en', {
-  week: {
-    dow: 0
-  }
-})
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from 'tailwindsCssConfig'
 
-const currentStart = moment().startOf('year')
-const currentEnd = moment().endOf('year')
-const columnWidth = 35
-const defaultWidth = columnWidth * 52
-const timeRanges = [
-  {
-    id: 0,
-    from: moment('1999-01-01', 'YYYY-MM-DD'),
-    to: moment(),
-    classes: ['beforeTime'],
-    label: '',
-    enableDragging: false
-  }
-]
-const defaultSetting = {
-  headers: [
-    {
-      unit: 'month',
-      format: 'YYYY-MM'
-    },
-    {
-      unit: 'week',
-      format: 'ww'
-    }
-  ],
-  columnUnit: 'week'
-}
-const defaultFromTo = {
-  from: currentStart,
-  to: currentEnd
-}
+const fullConfig = resolveConfig(tailwindConfig)
 
 export default {
   name: 'Gantt',
   components: {
     AddIssue,
-    ProjectIssueDetail
+    ProjectIssueDetail,
+    GanttElastic
   },
   props: {
     filterValue: {
@@ -152,9 +104,15 @@ export default {
     fixedVersion: {
       type: Array,
       default: () => []
+    },
+    tableHeight: {
+      type: Number,
+      default: 0
     }
   },
   data() {
+    const _this = this
+    this.bg = Object.freeze(fullConfig.theme.backgroundColor)
     return {
       listLoading: false,
       contentLoading: false,
@@ -170,30 +128,14 @@ export default {
       chartDateRange: [],
       period: 'week',
       duration: 52,
-      options: {
-        rows: [],
-        tasks: [],
-        timeRanges,
-        ...defaultSetting,
-        ...defaultFromTo,
-        tableHeaders: [
-          {
-            title: this.$t('Issue.tracker'),
-            property: 'label',
-            width: 140,
-            type: 'tree'
-          }
-        ],
-        minWidth: defaultWidth,
-        fitWidth: true,
-        columnOffset: 1,
-        tableWidth: 240,
-        ganttTableModules: [SvelteGanttTable],
-        addButton: true,
-        onAddButtonClick: (row) => {
-          this.addIssue(row.model)
-        },
-        onTaskButtonClick: (task) => this.onRelationIssueDialog(task.id)
+      treeAttrs: {
+        load: this.getIssueFamilyData,
+        lazy: true,
+        props: {
+          label: 'name',
+          children: 'children',
+          isLeaf: 'has_children'
+        }
       },
       addTopicDialog: {
         visible: false,
@@ -204,6 +146,104 @@ export default {
       relationIssue: {
         visible: false,
         id: null
+      },
+      options: {
+        maxHeight: this.tableHeight - 150,
+        title: {
+          label: 'Your project title as html (link or whatever...)',
+          html: false
+        },
+        row: {
+          height: 24
+        },
+        calendar: {
+          hour: {
+            display: false
+          }
+        },
+        chart: {
+          progress: {
+            bar: false
+          },
+          expander: {
+            display: true
+          }
+        },
+        taskList: {
+          expander: {
+            straight: false
+          },
+          columns: [
+            {
+              id: 1,
+              label: 'ID',
+              value: 'id',
+              width: 40
+            },
+            {
+              id: 2,
+              label: this.$t('Issue.name'),
+              value: issue => `${issue.has_children ? `<em class="el-icon-caret-right" />` : '　'} ${issue.name}`,
+              width: 200,
+              expander: true,
+              html: true,
+              events: {
+                click({ data }) {
+                  if (data.has_children) {
+                    _this.getIssueFamilyData(data)
+                  }
+                }
+              },
+              style: {
+                'task-list-item-value-container': {
+                  cursor: 'pointer'
+                }
+              }
+            },
+            {
+              id: 3,
+              label: this.$t('Issue.assigned_to'),
+              value: (task) => task.assigned_to.name,
+              width: 130,
+              html: true
+            },
+            {
+              id: 4,
+              label: this.$t('Issue.StartDate'),
+              value: (task) => this.$dayjs(task.start).isValid() ? this.$dayjs(task.start).format('YYYY-MM-DD') : null,
+              width: 78
+            },
+            {
+              id: 5,
+              label: this.$t('Issue.EndDate'),
+              value: (task) => this.$dayjs(task.end).isValid() ? this.$dayjs(task.end).format('YYYY-MM-DD') : null,
+              width: 78
+            },
+            {
+              id: 6,
+              label: this.$t('Issue.tracker'),
+              value: (task) => this.$t(`Issue.${task.tracker.name}`),
+              width: 68
+            },
+            {
+              id: 7,
+              label: '%',
+              value: 'progress',
+              width: 35,
+              style: {
+                'task-list-header-label': {
+                  'text-align': 'center',
+                  width: '100%'
+                },
+                'task-list-item-value-container': {
+                  'text-align': 'center',
+                  width: '100%'
+                }
+              }
+            }
+          ]
+        },
+        locale: { name: this.$i18n.locale.toLowerCase() }
       }
     }
   },
@@ -211,46 +251,6 @@ export default {
     ...mapGetters(['userId', 'selectedProject', 'tracker', 'fixedVersionShowClosed']),
     selectedProjectId() {
       return this.selectedProject.id
-    },
-    periodOptions() {
-      return [
-        {
-          name: this.$t('general.week'),
-          period: 'week',
-          startOf: 'month',
-          value: defaultSetting
-        },
-        {
-          name: this.$t('general.month'),
-          period: 'month',
-          startOf: 'year',
-          value: {
-            headers: [
-              {
-                unit: 'year',
-                format: 'YYYY'
-              },
-              {
-                unit: 'month',
-                format: 'MM'
-              }
-            ]
-          }
-        },
-        {
-          name: this.$t('general.year'),
-          period: 'year',
-          startOf: 'year',
-          value: {
-            headers: [
-              {
-                unit: 'year',
-                format: 'YYYY'
-              }
-            ]
-          }
-        }
-      ]
     },
     listFilter() {
       const result = []
@@ -287,8 +287,8 @@ export default {
     }
   },
   watch: {
-    period(value) {
-      this.setChartPeriod(value)
+    tableHeight(value) {
+      this.options.maxHeight = value - 150
     },
     dateRange: {
       deep: true,
@@ -309,67 +309,11 @@ export default {
     this.loadData()
   },
   async mounted() {
-    this.$set(this.$data, 'chartDateRange', [currentStart.toDate(), currentEnd.toDate()])
-    this.gantt = new SvelteGantt({
-      // target a DOM element
-      target: document.getElementById('gantt'),
-      // svelte-gantt options
-      props: this.options
-    })
+    // this.$set(this.$data, 'chartDateRange', [currentStart.toDate(), currentEnd.toDate()])
   },
   methods: {
     async loadData() {
       await this.fetchData()
-      await this.paintGantt()
-    },
-    paintGantt() {
-      const rows = this.listData.map((issue) => (this.parseRowFormat(issue, this.listData)))
-      const tasks = this.flattenTask(this.listData).map((issue) => (this.parseTaskFormat(issue))).filter((task) => (task.from && task.to))
-      if (this.gantt) {
-        const tracker = this.tracker.find((search) => (search.id === this.filterValue['tracker']))
-        if (tracker) {
-          this.gantt.$set({
-            tableHeaders: [
-              {
-                title: this.$t('Issue.' + tracker.name),
-                property: 'label',
-                width: 140,
-                type: 'tree'
-              }
-            ]
-          })
-        }
-        this.gantt.$set({
-          rows: rows,
-          tasks: tasks,
-          zoomLevels: this.periodOptions.map((item) => (item.value))
-        })
-        this.$nextTick(() => {
-          jquery('.sg-timeline-body').animate({ scrollLeft: jquery('.sg-time-range-handle-right').position().left }, 100)
-        })
-      }
-    },
-    setChartPeriod(value) {
-      const period = this.periodOptions.find((item) => (item.period === value))
-      if (period && this.gantt) {
-        this.gantt.$set({
-          ...period.value,
-          minWidth: columnWidth * this.duration.as(this.period),
-          columnUnit: this.period
-        })
-        this.$nextTick(() => {
-          jquery('.sg-timeline-body').animate({ scrollLeft: jquery('.sg-time-range-handle-right').position().left }, 100)
-        })
-      }
-    },
-    setDateRange() {
-      if (this.chartDateRange.length > 0) {
-        const due_date = this.chartDateRange.map((item) => (moment(item)))
-        this.duration = moment.duration(due_date[1].diff(due_date[0]))
-        if (this.gantt) {
-          this.gantt.$set({ from: due_date[0], to: due_date[1] })
-        }
-      }
     },
     refreshData() {
       this.setDateRange()
@@ -388,10 +332,11 @@ export default {
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          if (item === 'due_date') {
-            const due_date = this.filterValue[item].map(date => this.$dayjs(date).format('YYYY-MM-DD'))
-            result['due_date_start'] = due_date[0]
-            result['due_date_end'] = due_date[1]
+          if (item === 'due_date_start' || item === 'due_date_end') {
+            result['due_date_start'] = this.$dayjs(result['due_date_start']).isValid()
+              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD') : null
+            result['due_date_end'] = this.$dayjs(result['due_date_end']).isValid()
+              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD') : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
           } else {
@@ -404,67 +349,34 @@ export default {
       }
       return result
     },
+    formatIssue(issue, parentId) {
+      issue.label = `${this.$t(`Issue.${issue.status.name}`)} - ${issue.name}`
+      issue.start = issue.start_date || new Date()
+      issue.end = issue.due_date || new Date()
+      issue.progress = issue.done_ratio || 0
+      issue.type = 'task'
+      issue.style = {
+        base: {
+          fill: `${this.bg[issue.status.name.toLowerCase()]}75`,
+          stroke: `${this.bg[issue.status.name.toLowerCase()]}75`
+        }
+      }
+      if (parentId) {
+        issue.parentId = parentId
+      }
+      return issue
+    },
     async fetchData() {
       this.listLoading = true
       const resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams())
-      // const issues = []
       // for (const issue_data of resProjectIssue.data) {
       //   issues.push(new Issue(issue_data))
       // }
-      this.listData = resProjectIssue.data
+      this.listData = resProjectIssue.data.map(issue => this.formatIssue(issue))
       this.listLoading = false
     },
     getOptionsData(option_name) {
       return this[option_name]
-    },
-    parseRowFormat(issue, issueList) {
-      return {
-        id: issue.id,
-        classes: (issue.tracker && issue.tracker.hasOwnProperty('name')) ? [issue.tracker.name] : null,
-        label: (issue.name) ? issue.name : issue.subject,
-        has_children: issue.has_children,
-        click: (issue.has_children) ? this.toggleIssueFamily : null,
-        children: (issue.children) ? issue.children.map((subIssue) => (this.parseRowFormat(subIssue, issue.children))) : null,
-        issue: issue,
-        issueList: issueList
-      }
-    },
-    parseTaskFormat(issue) {
-      const _this = this
-      const taskLabel = function() {
-        if (!(issue.status && issue.status.hasOwnProperty('name'))) return null
-        const result = []
-        let done_ratio = ''
-        result.push('#' + issue.id)
-        if (_this.filterValue.hasOwnProperty('tracker') && issue.tracker.id !== _this.filterValue.tracker) {
-          result.push(_this.$t('Issue.' + issue.tracker.name))
-        }
-        if (issue.done_ratio > 0) {
-          done_ratio = ' (' + issue.done_ratio + '%)'
-        }
-        result.push(_this.$t('Issue.' + issue.status.name) + done_ratio)
-        return result.join(' - ')
-      }
-      return {
-        id: issue.id,
-        resourceId: issue.id,
-        classes: (issue.status && issue.status.hasOwnProperty('name')) ? [issue.status.name] : [],
-        from: moment(issue.start_date, 'YYYY-MM-DD'),
-        to: moment(issue.due_date, 'YYYY-MM-DD'),
-        label: taskLabel(),
-        enableDragging: false,
-        amountDone: issue.done_ratio
-      }
-    },
-    flattenTask(issueList) {
-      let result = []
-      issueList.forEach((item) => {
-        result.push(item)
-        if (item.hasOwnProperty('children')) {
-          result = result.concat(this.flattenTask(item.children))
-        }
-      })
-      return result
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
@@ -477,22 +389,27 @@ export default {
       }
       return result
     },
-    async toggleIssueFamily(row) {
-      this.listLoading = true
-      await this.getIssueFamilyData(row.model)
-      await this.paintGantt()
-      this.listLoading = false
-    },
     async getIssueFamilyData(row) {
-      try {
-        const family = await getIssueFamily(row.id)
-        const data = family.data
-        if (data.hasOwnProperty('children')) {
-          const find = row.issueList.find((issue) => (issue === row.issue))
-          this.$set(find, 'children', data.children)
+      if (row.id) {
+        this.listLoading = true
+        try {
+          const family = await getIssueFamily(row.id)
+          const data = family.data
+          if (data.hasOwnProperty('children')) {
+            data.children.forEach(issue => {
+              issue = this.formatIssue(issue, row.id)
+              const oldIssueIndex = this.listData.findIndex(subIssue => subIssue.id === issue.id)
+              if (oldIssueIndex > 0) {
+                this.$set(this.listData, oldIssueIndex, issue)
+              } else {
+                this.listData.push(issue)
+              }
+            })
+          }
+        } catch (e) {
+          //   null
         }
-      } catch (e) {
-        //   null
+        this.listLoading = false
       }
     },
     filterClosedStatus(statusList) {
@@ -531,6 +448,7 @@ export default {
           await this.saveIssue(form)
           this.LoadingConfirm = false
           this.form.tracker_id = data.tracker_id
+          return true
         } else {
           return false
         }
@@ -608,7 +526,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../../../node_modules/svelte-gantt/css/svelteGantt.css";
+@import '../../../../styles/variables';
 
 .app-container {
   @apply h-screen overflow-hidden;

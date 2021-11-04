@@ -369,7 +369,6 @@ export default {
     All: 'All',
     NoTag: 'No Tag yet',
     AddTag: 'Add Tag',
-    status: '@:general.Status',
     AddIssue: 'Add Issue',
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
@@ -393,6 +392,7 @@ export default {
     SelectMember: '@:Member.SelectMember',
     CleanFilter: 'Clean Filter',
     SearchNameOrAssignee: 'Search ID, Name Or Assignee',
+    status: '@:general.Status',
     Save: 'Save',
     Notes: 'Notes',
     AddComment: 'Add Comment',
@@ -504,7 +504,8 @@ export default {
       assigned_to: 'Assigned',
       fixed_version: 'Version',
       priority: '@:Issue.Priority',
-      due_date: '@:Issue.EndDate'
+      due_date_start: '@:Issue.EndDate(>=)',
+      due_date_end: '@:Issue.EndDate(<=)'
     },
     Display: 'Display',
     DragTip: 'Drag to issue, it can change {key} to {value}.',
@@ -523,7 +524,9 @@ export default {
     batchClose: 'Batch Close',
     UploadSuccess: 'Upload Success',
     List: 'Issue List',
-    TransferIssueTo: 'Transfer {value} issues to？'
+    TransferIssueTo: 'Transfer {value} issues to？',
+    due_date_start: '@:Issue.EndDate(>=)',
+    due_date_end: '@:Issue.EndDate(<=)'
   },
   Milestone: {
     Saving: 'Saving',
@@ -851,7 +854,9 @@ export default {
     Secrets: 'Secrets',
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
-    Templates: 'Templates'
+    Templates: 'Templates',
+    AddPlugin: 'Add Plugin',
+    AddParams: 'Add Params'
   },
   PipeLines: {
     TestDetail: 'Test Detail'
