@@ -1,15 +1,6 @@
 <template>
   <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <FactorFilter
-      ref="filter"
-      :is-loading="isLoading"
-      :filter-options="filterOptions"
-      :group-by="groupBy"
-      @loadData="loadData"
-      @onChangeGroupByDimension="onChangeGroupByDimension"
-      @onChangeGroupByValue="onChangeGroupByValue"
-    />
-    <!-- <project-list-selector>
+    <project-list-selector>
       <el-popover
         placement="bottom"
         trigger="click"
@@ -121,70 +112,18 @@
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
-    </project-list-selector> -->
+    </project-list-selector>
     <el-divider />
-    <div class="board"
-         :class="{'is-panel':rightPanelVisible}"
-    >
-      <Kanban
-        v-for="classObj in groupByValueOnBoard"
-        :key="classObj.id"
-        :status="status"
-        :board-object="classObj"
-        :list="classifyIssueList[classObj.id]"
-        :dimension="groupBy.dimension"
-        :relative-list="relativeIssueList"
-        :group="group"
-        :add-issue="saveIssue"
-        @update="updateIssueStatus"
-        @update-board="updateIssueBoard"
-        @update-drag="quickUpdateIssue"
-        @contextmenu="handleContextMenu"
-      />
-    </div>
-    <right-panel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
-      <template v-for="item in filterOptions">
-        <el-row :key="item.id" class="panel">
-          <el-card>
-            <template slot="header">{{ item.label }}</template>
-            <template v-for="(subItem, index) in getFilterValueList(item.value)">
-              <div
-                v-if="subItem.status !== 'closed'"
-                :id="index"
-                :key="index"
-                draggable="true"
-                class="item"
-                @dragstart="dragStart($event, { [item.value]: subItem })"
-                @dragend="dragEnd"
-              >
-                <component :is="item.value" v-if="isRightPanelItemHasComponents(item.value)" :name="subItem.name"
-                           class="el-tag"
-                />
-                <el-tag v-else-if="item.value==='tags'" effect="plain">
-                  {{ getTranslateHeader(subItem.name) }}
-                </el-tag>
-                <el-tag v-else effect="dark">
-                  {{ getTranslateHeader(subItem.name) }}
-                </el-tag>
-                <el-alert class="help_text" :closable="false">
-                  <i18n path="Issue.DragTip">
-                    <b slot="key">{{ item.label }}</b>
-                    <b slot="value">{{ getTranslateHeader(subItem.name) }}</b>
-                  </i18n>
-                </el-alert>
-              </div>
-            </template>
-          </el-card>
-        </el-row>
-      </template>
-    </right-panel>
-    <ContextMenu
-      ref="contextmenu"
-      :visible="contextMenu.visible"
-      :row="contextMenu.row"
-      :filter-column-options="filterOptions"
-      :selection-options="contextOptions"
-      @update="loadData"
+    <Boards
+      :group-by="groupBy"
+      :display-closed="displayClosed"
+      :filter-options="filterOptions"
+      :context-options="contextOptions"
+      :relative-issue-list="relativeIssueList"
+      :classify-issue-list="classifyIssueList"
+      :fixed_version="fixed_version"
+      :assigned_to="assigned_to"
+      @loadData="loadData"
     />
   </div>
 </template>
@@ -192,9 +131,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
-import { Kanban, RightPanel } from './components'
+import Boards from '@/views/Project/IssueBoards/components/Boards'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { addIssue, updateIssue } from '@/api/issue'
 import {
   getProjectIssueList,
   getProjectIssueListByTree,
@@ -202,37 +140,21 @@ import {
   getProjectVersion,
   getTagsByProject
 } from '@/api/projects'
-// import ElSelectAll from '@/components/ElSelectAll'
+import ElSelectAll from '@/components/ElSelectAll'
 import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
-import ContextMenu from '@/components/Issue/ContextMenu'
-import FactorFilter from '@/components/FactorFilter'
-
-// TODO: displayClosed,
-const contextMenu = {
-  row: {
-    fixed_version: { id: 'null' },
-    assigned_to: { id: 'null' }
-  },
-  visible: false,
-  left: 0,
-  top: 0
-}
 
 export default {
   name: 'IssueBoards',
   components: {
-    RightPanel,
-    // ElSelectAll,
-    Kanban,
+    Boards,
+    ElSelectAll,
     ProjectListSelector,
     Status,
     Tracker,
-    Priority,
-    ContextMenu,
-    FactorFilter
+    Priority
   },
   data() {
     this.filterOptions = [
@@ -282,28 +204,25 @@ export default {
         dimension: 'status',
         value: []
       },
-      // filterValue: {},
-      // originFilterValue: {},
-      // displayClosed: false,
-      // fixed_version_closed: false,
+      filterValue: {},
+      originFilterValue: {},
+      displayClosed: false,
+      fixed_version_closed: false,
       projectIssueList: [],
       projectIssueQueue: {},
       classifyIssueList: {},
-      group: 'mission',
-      // fixed_version: [],
-      // assigned_to: [],
-      // tags: [],
+      fixed_version: [],
+      assigned_to: [],
+      tags: [],
       relativeIssueList: [],
-      // searchVisible: false,
-      // keyword: null,
-      rightPanelVisible: false,
-      contextMenu: contextMenu
+      searchVisible: false,
+      keyword: null
     }
   },
   computed: {
     ...mapGetters([
       'selectedProjectId',
-      // 'userId',
+      'userId',
       'tracker',
       'status',
       'priority',
@@ -317,96 +236,99 @@ export default {
       })
       return result
     },
-    // groupByOptions() {
-    //   const dimension = this.getDimension
-    //   return dimension.map((item, idx) => ({
-    //     id: idx,
-    //     label: this.getTranslateHeader(item.name),
-    //     value: item
-    //   }))
-    // },
+    groupByOptions() {
+      let dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+      dimension = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(dimension) : dimension
+      return dimension.map((item, idx) => ({
+        id: idx,
+        label: this.getTranslateHeader(item.name),
+        value: item
+      }))
+    },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        const dimension = this.getDimension
-        return dimension.map(item => item)
+        let value = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
+        value = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(value) : value
+        return value.map(item => item)
       }
       return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
     },
-    getDimension() {
-      const dimensionKey = this.groupBy.dimension
-      let dimension = dimensionKey === 'status' ? this.filterClosedStatus(this[dimensionKey]) : this[dimensionKey]
-      dimension = dimensionKey === 'assigned_to' ? this.filterMe(dimension) : dimension
-      return dimension
+    showSelectedGroupByName() {
+      return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
+    },
+    showSelectedGroupByLength() {
+      if (this.groupByOptions.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
+        return this.$t('general.All')
+      }
+      return this.groupBy.value.length
+    },
+    listFilter() {
+      const result = []
+      Object.keys(this.filterValue).forEach(item => {
+        if (!this.filterValue[item]) return
+        if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
+          const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
+          if (value) result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
+        } else {
+          const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
+          if (value) result.push(this.getSelectionLabel(value))
+        }
+      })
+      const colon = result.length > 0 ? ': ' : ''
+      const factor = result.join(', ')
+      return `${this.$t('general.Filter')}${colon}${factor}`
+    },
+    isFilterChanged() {
+      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
+    },
+    checkFilterValue() {
+      return function(key) {
+        const comparedKey = this.getComparedKey(key)
+        for (const item of Object.keys(this[key])) {
+          const checkFilterValue = this[key]
+          if (checkFilterValue[item] === '') delete checkFilterValue[item]
+          if (this[comparedKey][item] !== checkFilterValue[item]) return true
+        }
+      }
+    },
+    getComparedKey() {
+      return (key) => {
+        let comparedKey = ''
+        comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
+        return comparedKey
+      }
+    },
+    getFilteredVersion() {
+      return this.fixed_version.filter(item => {
+        const validDate = new Date(`${item.due_date}T23:59:59`) >= new Date()
+        const closedStatus = item.status !== 'closed'
+        return validDate && closedStatus
+      })
     }
-    // showSelectedGroupByName() {
-    //   return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
-    // }
-    // showSelectedGroupByLength() {
-    //   if (this.groupByOptions.length === this.groupBy.value.length || this.groupBy.value.length === 0) {
-    //     return this.$t('general.All')
-    //   }
-    //   return this.groupBy.value.length
-    // }
-    // listFilter() {
-    //   const result = []
-    //   Object.keys(this.filterValue).forEach(item => {
-    //     if (!this.filterValue[item]) return
-    //     if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
-    //       const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
-    //       if (value) result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
-    //     } else {
-    //       const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
-    //       if (value) result.push(this.getSelectionLabel(value))
-    //     }
-    //   })
-    //   const colon = result.length > 0 ? ': ' : ''
-    //   const factor = result.join(', ')
-    //   return `${this.$t('general.Filter')}${colon}${factor}`
-    // },
-    // isFilterChanged() {
-    //   return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
-    // },
-    // checkFilterValue() {
-    //   return function(key) {
-    //     const comparedKey = this.getComparedKey(key)
-    //     for (const item of Object.keys(this[key])) {
-    //       const checkFilterValue = this[key]
-    //       if (checkFilterValue[item] === '') delete checkFilterValue[item]
-    //       if (this[comparedKey][item] !== checkFilterValue[item]) return true
-    //     }
-    //   }
-    // },
-    // getComparedKey() {
-    //   return function(key) {
-    //     let comparedKey = ''
-    //     comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
-    //     return comparedKey
-    //   }
-    // }
   },
   watch: {
-    // async selectedProjectId() {
-    // await this.loadSelectionList()
-    // await this.cleanFilter()
-    // },
+    async selectedProjectId() {
+      await this.loadSelectionList()
+      await this.cleanFilter()
+    },
     isLoading(value) {
       if (!value) {
         this.updateData()
       }
+    },
+    fixed_version_closed(value) {
+      this.setFixedVersionShowClosed(value)
+      this.loadVersionList(value)
     }
-    // fixed_version_closed(value) {
-    //   this.setFixedVersionShowClosed(value)
-    //   this.loadVersionList(value)
-    // }
   },
-  async mounted() {
+  async created() {
     this.groupBy = await this.getGroupBy()
-    // const storedData = await this.fetchStoredData()
-    // const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-    // this.filterValue = storedFilterValue['board'] ? storedFilterValue['board'] : {}
-    // this.keyword = storedKeyword['board'] ? storedKeyword['board'] : null
-    // this.displayClosed = storedDisplayClosed['board'] ? storedDisplayClosed['board'] : false
-    // await this.loadSelectionList()
+    const storedData = await this.fetchStoredData()
+    const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+    this.filterValue = storedFilterValue['board'] ? storedFilterValue['board'] : {}
+    this.keyword = storedKeyword['board'] ? storedKeyword['board'] : null
+    this.displayClosed = storedDisplayClosed['board'] ? storedDisplayClosed['board'] : false
+    await this.loadSelectionList()
     await this.loadData()
   },
   methods: {
@@ -435,16 +357,16 @@ export default {
       await this.syncLoadFilterData()
       await this.getRelativeList()
     },
-    // async fetchStoredData() {
-    //   let storedFilterValue, storedKeyword, storedDisplayClosed
-    //   await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
-    //     const [filterValue, keyword, displayClosed] = res.map(item => item)
-    //     storedFilterValue = filterValue
-    //     storedKeyword = keyword
-    //     storedDisplayClosed = displayClosed
-    //   })
-    //   return { storedFilterValue, storedKeyword, storedDisplayClosed }
-    // },
+    async fetchStoredData() {
+      let storedFilterValue, storedKeyword, storedDisplayClosed
+      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
+        const [filterValue, keyword, displayClosed] = res.map(item => item)
+        storedFilterValue = filterValue
+        storedKeyword = keyword
+        storedDisplayClosed = displayClosed
+      })
+      return { storedFilterValue, storedKeyword, storedDisplayClosed }
+    },
     async getRelativeList() {
       const isHasClosed = this.groupByValueOnBoard.filter(item => item.hasOwnProperty('is_closed') && item.is_closed)
       if (isHasClosed.length > 0) {
@@ -474,15 +396,13 @@ export default {
     },
     getParams() {
       const result = {}
-      if (!this.$refs.filter.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
-      console.log(this.$refs.filter.filterValue)
-      Object.keys(this.$refs.filter.filterValue).forEach((item) => {
-        if (this.$refs.filter.filterValue[item]) {
-          item === 'tags' && this.$refs.filter.filterValue[item].length > 0 ? result[item] = this.$refs.filter.filterValue[item].join(',') : result[item + '_id'] = this.$refs.filter.filterValue[item]
+      if (!this.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) {
+          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join(',') : result[item + '_id'] = this.filterValue[item]
         }
       })
       if (this.keyword) result['search'] = this.keyword
-      console.log(result)
       return result
     },
     async syncLoadFilterData() {
@@ -522,54 +442,57 @@ export default {
     cancelLoadFilterData() {
       Object.values(this.projectIssueQueue).forEach(item => { item.cancel() })
     },
-    // async loadVersionList(status) {
-    //   const params = status ? { status: 'open,locked,closed' } : { status: 'open,locked' }
-    //   const versionList = await this.fetchVersionList(params)
-    //   this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
-    //   const version = this.fixed_version.filter(item => new Date(`${item.due_date}T23:59:59`) >= new Date() && item.status !== 'closed')
-    //   if (version.length > 0) {
-    //     const sessionValue = sessionStorage.getItem('issueFilter')
-    //     if (!sessionValue || !JSON.parse(sessionValue)['board']) {
-    //       this.$set(this.filterValue, 'fixed_version', version[0].id)
-    //     }
-    //     this.$set(this.originFilterValue, 'fixed_version', version[0].id)
-    //   } else {
-    //     this.$delete(this.originFilterValue, 'fixed_version')
-    //   }
-    // },
-    // async fetchVersionList(params) {
-    //   const res = await getProjectVersion(this.selectedProjectId, params)
-    //   const versionList = res.data.versions
-    //   return versionList
-    // },
-    // async loadSelectionList() {
-    //   if (this.selectedProjectId === -1) return
-    //   await Promise.all([
-    //     getProjectUserList(this.selectedProjectId),
-    //     getTagsByProject(this.selectedProjectId)
-    //   ]).then(res => {
-    //     const [assigneeList, tagsList] = res.map(item => item.data)
-    //     this.assigned_to = [
-    //       { name: this.$t('Issue.Unassigned'), id: 'null' },
-    //       {
-    //         name: this.$t('Issue.me'),
-    //         login: '-Me-',
-    //         id: this.userId,
-    //         class: 'bg-yellow-100'
-    //       },
-    //       ...assigneeList.user_list
-    //     ]
-    //     this.tags = tagsList.tags
-    //     // if (this.userRole === 'Engineer') {
-    //     //   this.$set(this.filterValue, 'assigned_to', this.userId)
-    //     //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
-    //     // }
-    //   })
-    //   await this.loadVersionList(this.fixed_version_closed)
-    // },
-    // getOptionsData(option_name) {
-    //   return this[option_name]
-    // },
+    async loadVersionList(status) {
+      const params = status ? { status: 'open,locked,closed' } : { status: 'open,locked' }
+      const versionList = await this.fetchVersionList(params)
+      this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
+      const version = this.getFilteredVersion
+      version.length > 0 ? this.setFilterValue(version) : this.$delete(this.originFilterValue, 'fixed_version')
+    },
+    setFilterValue(version) {
+      const sessionValue = sessionStorage.getItem('issueFilter')
+      if (!sessionValue || !JSON.parse(sessionValue)['board']) {
+        this.$set(this.filterValue, 'fixed_version', version[0].id)
+      }
+      this.$set(this.originFilterValue, 'fixed_version', version[0].id)
+    },
+    async fetchVersionList(params) {
+      const res = await getProjectVersion(this.selectedProjectId, params)
+      const versionList = res.data.versions
+      return versionList
+    },
+    async loadSelectionList() {
+      if (this.selectedProjectId === -1) return
+      await Promise.all([
+        getProjectUserList(this.selectedProjectId),
+        getTagsByProject(this.selectedProjectId)
+      ]).then(res => {
+        const [assigneeList, tagsList] = res.map(item => item.data)
+        this.assigned_to = [
+          { name: this.$t('Issue.Unassigned'), id: 'null' },
+          {
+            name: this.$t('Issue.me'),
+            login: '-Me-',
+            id: this.userId,
+            class: 'bg-yellow-100'
+          },
+          ...assigneeList.user_list
+        ]
+        this.tags = tagsList.tags
+        // if (this.userRole === 'Engineer') {
+        //   this.$set(this.filterValue, 'assigned_to', this.userId)
+        //   this.$set(this.originFilterValue, 'assigned_to', this.userId)
+        // }
+      })
+      await this.loadVersionList(this.fixed_version_closed)
+    },
+    getOptionsData(option_name) {
+      return this[option_name]
+    },
+    setGroupByUnclosedStatus(check) {
+      const isClosed = this.status.filter((item) => (item.is_closed === false))
+      check ? this.$set(this.groupBy, 'value', this.status) : this.$set(this.groupBy, 'value', isClosed)
+    },
     resetClassifyIssue() {
       this.classifyIssueList = {}
     },
@@ -601,93 +524,17 @@ export default {
     updateData() {
       this.resetClassifyIssue()
       this.classifyIssue()
-      Object.keys(this.$refs.filter.filterValue).forEach(item => {
+      Object.keys(this.filterValue).forEach(item => {
         const searchOpt = {
           keys: [`${item}.id`],
           useExtendedSearch: true
         }
-        this.searchKanbanCard(this.$refs.filter.filterValue[item], searchOpt)
+        this.searchKanbanCard(this.filterValue[item], searchOpt)
       })
-    },
-    async updateIssueBoard() {
-      await this.fetchData()
-    },
-    async updateIssueStatus(evt) {
-      if (evt.event.hasOwnProperty('added')) {
-        this.isLoading = true
-        // const getUpdateDimension = this[this.groupBy.dimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
-        try {
-          const res = await updateIssue(evt.event.added.element.id, { [this.groupBy.dimension + '_id']: evt.boardObject.id })
-          await this.updateRelationIssue(this.projectIssueList, res.data)
-          const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
-          const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
-          issue[this.groupBy.dimension] = evt.boardObject
-          this.$set(this.projectIssueList, idx, issue)
-        } catch (e) {
-          // error
-        }
-        this.isLoading = false
-        await this.getRelativeList()
-      }
-    },
-    updateRelationIssue(list, updatedIssue) {
-      list.forEach((issue) => {
-        if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
-          this.$set(issue, 'parent', updatedIssue)
-        }
-        this.handleUpdatedIssue('children')
-        this.handleUpdatedIssue('relations')
-      })
-    },
-    handleUpdatedIssue(issue, key, updatedIssue) {
-      if (issue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
-    },
-    setUpdatedIssue(key, updatedIssue) {
-      const idx = issue[key].findIndex(item => item.id === updatedIssue.id)
-      const issue = issue[key].find(item => item.id === updatedIssue.id)
-      this.$set(issue[key], idx, updatedIssue)
-    },
-    async quickUpdateIssue(event) {
-      const { id, value } = event
-      this.isLoading = true
-      const filterDimension = Object.keys(value)[0]
-      try {
-        let data = { [filterDimension + '_id']: value[filterDimension].id }
-        if (Array.isArray(value[filterDimension])) {
-          data = { [filterDimension]: value[filterDimension].map(item => item.id).join(',') }
-        }
-        const res = await updateIssue(id, data)
-        await this.updateRelationIssue(this.projectIssueList, res.data)
-        const idx = this.projectIssueList.findIndex(item => item.id === id)
-        const issue = this.projectIssueList.find(item => item.id === id)
-        issue[filterDimension] = value[filterDimension]
-        this.$set(this.projectIssueList, idx, issue)
-      } catch (e) {
-        // error
-      }
-      this.isLoading = false
-    },
-    async saveIssue(data) {
-      return await addIssue(data)
-        .then(res => {
-          // noinspection JSCheckFunctionSignatures
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
-          this.loadData()
-          this.addTopicDialogVisible = false
-          this.$refs['quickAddIssue'].form.name = ''
-          return res
-        })
-        .catch(error => {
-          return error
-        })
     },
     sortIssue() {
       // const sortPriority = (a, b) => (a.priority.id - b.priority.id)
-      const sortUpdateOn = (a, b) => new Date(b.updated_on) - new Date(a.updated_on)
+      const sortUpdateOn = (a, b) => (new Date(b.updated_on) - new Date(a.updated_on))
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
       })
@@ -704,66 +551,49 @@ export default {
       flatList(list)
       return result
     },
-    dragStart(e, item) {
-      e.effectAllowed = 'copy'
-      e.target.classList.add('draggingObject')
-      e.dataTransfer.setData('json', JSON.stringify(item))
-    },
-    dragEnd(e) {
-      e.target.classList.remove('draggingObject')
-    },
-    getFilterValueList(value) {
-      return this[value]
-    },
-    // getSelectionLabel(item) {
-    //   const visibleStatus = ['closed', 'locked']
-    //   let result = this.getTranslateHeader(item.name)
-    //   if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-    //     result += ` (${this.getTranslateHeader(item.status)})`
-    //   }
-    //   if (item.hasOwnProperty('login')) {
-    //     result += ` (${item.login})`
-    //   }
-    //   return result
-    // },
-    isRightPanelItemHasComponents(name) {
-      return ['status', 'tracker'].includes(name)
-    },
-    handleRightPanelVisible(value) {
-      this.rightPanelVisible = value
+    getSelectionLabel(item) {
+      const visibleStatus = ['closed', 'locked']
+      let result = this.getTranslateHeader(item.name)
+      if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
+        result += ` (${this.getTranslateHeader(item.status)})`
+      }
+      if (item.hasOwnProperty('login')) {
+        result += ` (${item.login})`
+      }
+      return result
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter(item => item.is_closed === false)
+      return statusList.filter((item) => (item.is_closed === false))
     },
     filterMe(userList) {
       return userList.filter((item) => (item.login !== '-Me-'))
     },
-    // cleanFilter() {
-    //   this.filterValue = Object.assign({}, this.originFilterValue)
-    //   this.keyword = ''
-    //   this.displayClosed = false
-    //   this.onChangeGroupByDimension('status')
-    //   this.onChangeFilter()
-    // },
-    // async onChangeFilter() {
-    //   const storedData = await this.fetchStoredData()
-    //   const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-    //   if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
-    //     this.$delete(this.filterValue, 'tags')
-    //   }
-    //   storedFilterValue['board'] = this.filterValue
-    //   storedKeyword['board'] = this.keyword
-    //   storedDisplayClosed['board'] = this.displayClosed
-    //   await this.setIssueFilter(storedFilterValue)
-    //   await this.setKeyword(storedKeyword)
-    //   await this.setDisplayClosed(storedDisplayClosed)
-    //   await this.loadData()
-    // },
+    cleanFilter() {
+      this.filterValue = Object.assign({}, this.originFilterValue)
+      this.keyword = ''
+      this.displayClosed = false
+      this.onChangeGroupByDimension('status')
+      this.onChangeFilter()
+    },
+    async onChangeFilter() {
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
+        this.$delete(this.filterValue, 'tags')
+      }
+      storedFilterValue['board'] = this.filterValue
+      storedKeyword['board'] = this.keyword
+      storedDisplayClosed['board'] = this.displayClosed
+      await this.setIssueFilter(storedFilterValue)
+      await this.setKeyword(storedKeyword)
+      await this.setDisplayClosed(storedDisplayClosed)
+      await this.loadData()
+    },
     onChangeGroupByDimension(value, loadData) {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
-      this.$refs['filter'].this.$refs['groupByValue'].selected = []
+      this.$refs['groupByValue'].selected = []
       this.updatedByGroupBy(loadData)
     },
     onChangeGroupByValue(value, loadData) {
@@ -773,42 +603,6 @@ export default {
     updatedByGroupBy(loadData) {
       this.setGroupBy(this.groupBy)
       if (loadData) this.loadData()
-    },
-    handleContextMenu({ row, column, event }) {
-      event.preventDefault()
-      const eventX = event.pageX
-      const eventY = event.pageY
-      this.$refs.contextmenu.$refs.contextmenu.show()
-      this.$nextTick(() => {
-        const contextmenuPosition = {
-          top: eventY,
-          left: eventX
-        }
-        const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
-        const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
-        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
-          this.handleContextMenu({ row, column, event })
-        }
-        if (contextmenuHeight + eventY >= window.innerHeight) {
-          contextmenuPosition.top -= contextmenuHeight
-        }
-        if (contextmenuWidth + eventX >= window.innerWidth) {
-          contextmenuPosition.left -= contextmenuWidth
-        }
-        this.contextMenu.top = contextmenuPosition.top
-        this.contextMenu.left = contextmenuPosition.left
-        this.contextMenu.row = row
-        this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = {
-          top: this.contextMenu.top + 'px',
-          left: this.contextMenu.left + 'px'
-        }
-        document.addEventListener('click', this.hideContextMenu)
-      })
-    },
-    hideContextMenu() {
-      this.contextMenu.visible = false
-      document.removeEventListener('click', this.hideContextMenu)
     }
   }
 }
@@ -819,74 +613,5 @@ export default {
 
 .app-container {
   overflow: hidden;
-}
-
-.board {
-  display: flex;
-  justify-content: start;
-  flex-wrap: nowrap;
-  height: calc(100vh - 70px - 40px - 40px - 25px - 10px);
-  overflow-x: auto;
-
-  &.is-panel {
-    width: calc(100% - 260px);
-  }
-}
-
-> > > .rightPanel-items {
-  overflow-y: auto;
-  height: 100%;
-
-  .panel {
-    padding: 30px 20px;
-
-    .item {
-      width: fit-content;
-      cursor: move;
-
-      .el-tag {
-        font-size: 1.05em;
-        margin: 3px;
-      }
-
-      .help_text {
-        display: none;
-      }
-    }
-  }
-}
-
-// For drag sources
-.dragging {
-  opacity: 0.25;
-}
-
-.draggingObject {
-  width: 100%;
-
-  .help_text {
-    display: block !important;
-    opacity: 1 !important;
-  }
-}
-
-// For drop target
-.hover {
-  background-color: rgba(0, 191, 165, 0.04);
-}
-
-$tag-options: (
-  secondary: $secondary,
-  document: $document,
-  research: $research,
-  bug: $bug,
-  feature: $feature
-);
-
-@each $key, $value in $tag-options {
-  .el-tag--#{$key} {
-    background-color: $value;
-    border-color: $value;
-  }
 }
 </style>
