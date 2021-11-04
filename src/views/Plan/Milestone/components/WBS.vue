@@ -31,6 +31,15 @@
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
+      <el-table-column width="50px">
+        <template slot-scope="{row}">
+          <div class="action">
+            <div class="icon" @click.stop="handleContextMenu(row, '', $event)">
+              <em class="el-icon-more" />
+            </div>
+          </div>
+        </template>
+      </el-table-column>
       <WBSSelectColumn
         v-if="columns.indexOf('tracker')>=0"
         width="125px"
@@ -763,6 +772,9 @@ export default {
       }
       return Promise.resolve()
     },
+    handleInputContextMenu({ row, column, event }) {
+      this.handleContextMenu(row, column, event)
+    },
     handleContextMenu(row, column, event) {
       if (parseInt(row.id)) {
         event.preventDefault()
@@ -854,7 +866,14 @@ export default {
 
 .table-css {
   height: 100% !important;
-
+  .action {
+    @apply flex cursor-pointer;
+    width: 15px;
+    height: 25px;
+    .icon {
+      @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
+    }
+  }
   > > > table {
     th {
       padding: 5px;
