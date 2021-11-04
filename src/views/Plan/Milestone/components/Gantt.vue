@@ -526,7 +526,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../../../../node_modules/svelte-gantt/css/svelteGantt.css";
 @import '../../../../styles/variables';
 
 .app-container {
