@@ -70,6 +70,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { camelCase } from 'lodash'
 import { getProjectIssueList } from '@/api/projects'
 import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
@@ -353,8 +354,8 @@ export default {
       issue.type = 'task'
       issue.style = {
         base: {
-          fill: `${this.bg[issue.status.name.toLowerCase()]}75`,
-          stroke: `${this.bg[issue.status.name.toLowerCase()]}75`
+          fill: `${this.bg[camelCase(issue.status.name)]}75`,
+          stroke: `${this.bg[camelCase(issue.status.name)]}75`
         }
       }
       if (parentId) {
