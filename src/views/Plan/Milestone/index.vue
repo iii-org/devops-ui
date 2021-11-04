@@ -45,7 +45,7 @@
             </el-form-item>
           </el-form>
           <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ $t('Milestone.Display') }}
-            <i class="el-icon-arrow-down el-icon--right" /></el-button>
+            <em class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
         <el-divider direction="vertical" />
       </SearchFilter>
@@ -60,9 +60,18 @@
                @update-status="handleUpdateStatus"
           />
         </el-tab-pane>
-        <el-tab-pane name="Gantt" label="Gantt" lazy>
-          <Gantt ref="Gantt" :filter-value="filterValue" :keyword="keyword" :assigned_to="assigned_to"
-                 :fixed-version="fixed_version"
+        <el-tab-pane
+          name="Gantt"
+          label="Gantt"
+          lazy
+        >
+          <Gantt
+            ref="Gantt"
+            :filter-value="filterValue"
+            :keyword="keyword"
+            :assigned_to="assigned_to"
+            :fixed-version="fixed_version"
+            :table-height="tableHeight"
           />
         </el-tab-pane>
       </el-tabs>
@@ -171,12 +180,21 @@ export default {
           tag: true
         },
         {
-          id: 8,
-          label: this.$t('Issue.FilterDimensions.due_date'),
-          value: 'due_date',
+          id: 7,
+          label: this.$t('Issue.FilterDimensions.due_date_start'),
+          value: 'due_date_start',
           placeholder: 'Date',
           component: 'el-date-picker',
-          componentOptions: { type: 'daterange' },
+          componentOptions: { type: 'date' },
+          tag: true
+        },
+        {
+          id: 8,
+          label: this.$t('Issue.FilterDimensions.due_date_end'),
+          value: 'due_date_end',
+          placeholder: 'Date',
+          component: 'el-date-picker',
+          componentOptions: { type: 'date' },
           tag: true
         }
       ]

@@ -256,6 +256,7 @@ export default {
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。'
   },
   RuleMsg: {
+    PleaseInput: '請輸入',
     PleaseSelect: '請選擇',
     Invalid: '無效的',
     Member: '@:Member.Member',
@@ -503,7 +504,8 @@ export default {
       assigned_to: '專案成員',
       fixed_version: '專案版本',
       priority: '@:Issue.Priority',
-      due_date: '@:Issue.EndDate'
+      due_date_start: '@:Issue.EndDate(>=)',
+      due_date_end: '@:Issue.EndDate(<=)'
     },
     Display: '顯示',
     DragTip: '拖曳到議題，可以將 {key} 改變成 {value}',
@@ -522,7 +524,9 @@ export default {
     batchClose: '批次關閉',
     UploadSuccess: '上傳成功',
     List: '議題清單',
-    TransferIssueTo: '準備將 {value} 項議題轉移給？'
+    TransferIssueTo: '準備將 {value} 項議題轉移給？',
+    due_date_start: '@:Issue.EndDate(>=)',
+    due_date_end: '@:Issue.EndDate(<=)'
   },
   Milestone: {
     Saving: '儲存中',
@@ -724,6 +728,7 @@ export default {
     IssueStatus: '議題狀態',
     IssueProgress: '議題執行進度',
     IssueUpdate: '議題更新',
+    Progress: '進度',
     UpdateTime: '更新時間',
     deleteProjectConfirmText:
       '確認刪除？此操作將無法復原，也會永久刪除此專案相關內容，包括所有的程式碼、測試結果、議題及檔案等。',
