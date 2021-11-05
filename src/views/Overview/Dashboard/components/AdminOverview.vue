@@ -3,7 +3,8 @@
     <el-row class="circle hidden-sm-and-down" type="flex" justify="center" align="middle">
       <template v-if="listData.length>0">
         <el-col v-for="(item,idx) in listData" :key="idx" :xs="24" :sm="24" :md="8">
-          <CircleDashboard :count="item.count" :item="$t('Dashboard.ADMIN.Overview.'+item.project_status)" class="pointer" :class="'circle-'+item.class"
+          <CircleDashboard :count="item.count" :item="$t('Dashboard.ADMIN.Overview.'+item.project_status)"
+                           class="pointer" :class="'circle-'+item.class"
                            @click.native="onShowDetail(item.database)"
           />
         </el-col>
@@ -15,7 +16,7 @@
               @click="onShowDetail(item.database)"
       >
         <el-col :span="12" class="text-right count">{{ item.count }}</el-col>
-        <el-col :span="12">{{ $t('Dashboard.ADMIN.Overview.'+item.project_status) }}</el-col>
+        <el-col :span="12">{{ $t('Dashboard.ADMIN.Overview.' + item.project_status) }}</el-col>
       </el-row>
     </div>
     <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
@@ -48,6 +49,17 @@ export default {
       listLoading: false,
       listData: [],
       detailDialog: false
+    }
+  },
+  watch: {
+    listLoading(value) {
+      this.$emit('loading', value)
+    },
+    listData: {
+      deep: true,
+      handler(value) {
+        this.$emit('total-count', value[0])
+      }
     }
   },
   mounted() {
@@ -100,7 +112,7 @@ export default {
 
 > > > .table {
   font-size: 1.5em;
-  width:100%;
+  width: 100%;
 
   .count {
     font-size: 2em;

@@ -333,7 +333,7 @@ export default {
       default: false
     },
     projectId: {
-      type: Number,
+      type: [Number, String],
       default: 0
     },
     parentName: {

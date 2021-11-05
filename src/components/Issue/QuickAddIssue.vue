@@ -71,7 +71,7 @@ export default {
       default: false
     },
     projectId: {
-      type: Number,
+      type: [Number, String],
       default: 0
     },
     saveData: {
@@ -138,7 +138,7 @@ export default {
         this.form.tracker_id = this.trackerList[0].id
       }
       const dimensions = ['fixed_version', 'tracker']
-      dimensions.forEach((item) => {
+      dimensions.forEach(item => {
         if (this.issueFilter['list'] && this.issueFilter['list'][item] !== 'null' &&
           this.issueFilter['list'][item] !== '' && !!(this.issueFilter['list'][item])) {
           this.$set(this.form, item + '_id', this.issueFilter['list'][item])
@@ -170,6 +170,7 @@ export default {
           const tracker_id = data.tracker_id
           this.setFilterValue()
           this.form.tracker_id = tracker_id
+          return true
         } else {
           return false
         }

@@ -83,6 +83,10 @@ export default {
       type: Function,
       default: () => []
     },
+    dialogVisible: {
+      type: Boolean,
+      default: false
+    },
     inDialog: {
       type: Boolean,
       default: false
@@ -114,6 +118,10 @@ export default {
   watch: {
     searchStatus(value) {
       this.filterData(value)
+    },
+    dialogVisible(value) {
+      this.detailDialog = value
+      this.$emit('dialog-visible', { key: 'passingRate', value: value })
     }
   },
   methods: {

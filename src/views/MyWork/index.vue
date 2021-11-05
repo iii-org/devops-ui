@@ -3,6 +3,23 @@
     <ProjectListSelector ref="ProjectSelection" :project-id="project_id" :keep-selection="false" :clearable="true"
                          @change="project_id=$event"
     >
+      <template slot="button">
+        <el-button v-if="project_id===null||project_id===''" type="success" icon="el-icon-plus" @click="handleAdding">
+          {{ $t('Project.AddProject') }}
+        </el-button>
+        <el-button
+          v-else
+          id="btn-add-issue"
+          slot="button"
+          v-permission="['Administrator','Project Manager', 'Engineer']"
+          type="success"
+          icon="el-icon-plus"
+          :disabled="project_id === -1"
+          @click="handleQuickAddToggle"
+        >
+          {{ $t('Issue.AddIssue') }}
+        </el-button>
+      </template>
       <el-popover
         placement="bottom"
         trigger="click"
@@ -64,6 +81,13 @@
       </template>
     </ProjectListSelector>
     <el-divider />
+    <QuickAddIssue
+      ref="quickAddIssue"
+      :save-data="saveIssue"
+      :project-id="project_id"
+      :visible.sync="quickAddTopicDialogVisible"
+      @add-issue="advancedAddIssue"
+    />
     <el-row :gutter="10" class="mb-5">
       <el-col v-for="card in dashboardCards" :key="card.id" :span="12" :md="6" class="dashboard-card">
         <div class="item"
@@ -87,6 +111,7 @@
         />
       </el-tab-pane>
     </el-tabs>
+    <CreateProjectDialog ref="createProjectDialog" @update="$router.push({name: 'project-list'})" />
   </div>
 </template>
 
@@ -94,11 +119,16 @@
 import { mapActions, mapGetters } from 'vuex'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
+import { QuickAddIssue } from '@/components/Issue'
+import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
+import { addIssue } from '@/api/issue'
 
 export default {
   name: 'MyWork',
   components: {
+    QuickAddIssue,
     ProjectListSelector,
+    CreateProjectDialog,
     issueList: () => import('./components/issueList'),
     Tracker: () => import('@/components/Issue/Tracker'),
     Status: () => import('@/components/Issue/Status'),
@@ -107,6 +137,7 @@ export default {
   data() {
     return {
       listLoading: false,
+      quickAddTopicDialogVisible: false,
       fixed_version_closed: false,
       searchVisible: false,
       displayClosed: false,
@@ -198,6 +229,8 @@ export default {
       await this.setIssueFilter(storeFilterValue)
       if (value && value !== '') {
         this.$refs['ProjectSelection'].onProjectChange(value)
+      } else {
+        this.quickAddTopicDialogVisible = false
       }
     },
     async activeDashboard(value) {
@@ -344,6 +377,37 @@ export default {
           limit: this.$refs[card.id][0].listQuery.limit
         })
       })
+    },
+    handleQuickAddToggle() {
+      this.quickAddTopicDialogVisible = !this.quickAddTopicDialogVisible
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
+    },
+    handleAdding() {
+      this.$refs.createProjectDialog.showDialog = true
+      this.$refs.createProjectDialog.refreshTemplate()
+    },
+    async saveIssue(data) {
+      return await addIssue(data)
+        .then(res => {
+          // noinspection JSCheckFunctionSignatures
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Added'),
+            type: 'success'
+          })
+          this.backToFirstPage()
+          this.loadData()
+          this.addTopicDialogVisible = false
+          this.$refs['quickAddIssue'].form.name = ''
+          return res
+        })
+        .catch(error => {
+          return error
+        })
     }
   }
 }

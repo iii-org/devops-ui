@@ -70,7 +70,7 @@ export const asyncRoutes = [
       },
       {
         path: 'project-list',
-        name: 'project-list-pm',
+        name: 'project-list',
         component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
         meta: {
           title: 'projectList',
@@ -105,13 +105,13 @@ export const asyncRoutes = [
     children: [
       {
         path: '',
-        name: 'project-list-pm',
+        name: 'project-list',
         component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
         meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
       },
       {
         path: '',
-        name: 'project-list-rd',
+        name: 'project-list',
         component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
         meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
       }
@@ -823,7 +823,7 @@ export const asyncRoutes = [
       },
       {
         path: 'project-list',
-        name: 'project-list-qa',
+        name: 'project-list',
         component: () => import('@/views/Overview/ProjectList/ProjectListQA'),
         meta: {
           title: 'projectList',

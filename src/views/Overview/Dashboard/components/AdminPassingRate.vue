@@ -85,6 +85,10 @@ export default {
     data: {
       type: Function,
       default: () => []
+    },
+    dialogVisible: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -159,8 +163,14 @@ export default {
     }
   },
   watch: {
-    detailDialog() {
-      this.loadData()
+    detailDialog(value) {
+      if (value) {
+        this.loadData()
+      }
+    },
+    dialogVisible(value) {
+      this.detailDialog = value
+      this.$emit('dialog-visible', { key: 'passingRate', value: value })
     }
   },
   mounted() {
