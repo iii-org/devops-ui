@@ -148,12 +148,11 @@ export default {
       this.rightPanelVisible = value
     },
     filterMe(userList) {
-      console.log(userList)
-      return userList.filter((item) => (item.login !== '-Me-'))
+      return userList.filter(item => item.login !== '-Me-')
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter((item) => (item.is_closed === false))
+      return statusList.filter(item => item.is_closed === false)
     },
     async updateIssueBoard() {
       await this.loadData()
@@ -162,11 +161,7 @@ export default {
       return await addIssue(data)
         .then(res => {
           // noinspection JSCheckFunctionSignatures
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
+          this.showSuccessMessage()
           this.loadData()
           this.addTopicDialogVisible = false
           this.$refs['quickAddIssue'].form.name = ''
@@ -176,23 +171,35 @@ export default {
           return error
         })
     },
+    showSuccessMessage() {
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
+      })
+    },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
-        this.isLoading = true
+        // this.isLoading = true
         // const getUpdateDimension = this[this.groupBy.dimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
         try {
-          const res = await updateIssue(evt.event.added.element.id, { [this.groupBy.dimension + '_id']: evt.boardObject.id })
+          const updatedData = { [`${this.groupBy.dimension}_id`]: evt.boardObject.id }
+          const issueId = evt.event.added.element.id
+          const res = await updateIssue(issueId, updatedData)
           await this.updateRelationIssue(this.projectIssueList, res.data)
-          const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
-          const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
-          issue[this.groupBy.dimension] = evt.boardObject
-          this.$set(this.projectIssueList, idx, issue)
+          this.setProjectIssueList(evt)
         } catch (e) {
           // error
         }
-        this.isLoading = false
+        // this.isLoading = false
         await this.getRelativeList()
       }
+    },
+    setProjectIssueList(evt) {
+      const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
+      const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
+      issue[this.groupBy.dimension] = evt.boardObject
+      this.$set(this.projectIssueList, idx, issue)
     },
     updateRelationIssue(list, updatedIssue) {
       list.forEach((issue) => {
@@ -214,6 +221,7 @@ export default {
     async quickUpdateIssue(event) {
       const { id, value } = event
       // this.isLoading = true
+      this.$parent.isLoading = true
       const filterDimension = Object.keys(value)[0]
       try {
         let data = { [filterDimension + '_id']: value[filterDimension].id }
@@ -230,6 +238,7 @@ export default {
         // error
       }
       // this.isLoading = false
+      this.$parent.isLoading = false
     },
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value

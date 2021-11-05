@@ -28,7 +28,7 @@
                 <el-option
                   v-for="item in (dimension.value === 'status') ? filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
                   :key="dimension.value === 'assigned_to' ? item.login : item.id"
-                  :label="getSelectionLabel(item)"
+                  :label="getSelectedLabel(item)"
                   :class="{[item.class]: item.class}"
                   :value="item.id"
                 >
@@ -124,6 +124,7 @@
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
       @loadData="loadData"
+      @updateData="updateData"
     />
   </div>
 </template>
@@ -145,6 +146,7 @@ import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
+import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'IssueBoards',
@@ -263,20 +265,35 @@ export default {
       return this.groupBy.value.length
     },
     listFilter() {
-      const result = []
+      const selectedLabels = []
       Object.keys(this.filterValue).forEach(item => {
         if (!this.filterValue[item]) return
-        if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
-          const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
-          if (value) result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
-        } else {
-          const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
-          if (value) result.push(this.getSelectionLabel(value))
-        }
+        const isArray = Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0
+        isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
       })
-      const colon = result.length > 0 ? ': ' : ''
-      const factor = result.join(', ')
-      return `${this.$t('general.Filter')}${colon}${factor}`
+      const colon = selectedLabels.length > 0 ? ': ' : ''
+      const factor = selectedLabels.join(', ')
+      const showWords = `${this.$t('general.Filter')}${colon}${factor}`
+      return showWords
+    },
+    handleArrayLabels() {
+      let label = ''
+      return function(item) {
+        const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
+        if (value) {
+          const joinedString = value.map(subItem => this.getSelectedLabel(subItem)).join('/')
+          label = `#${joinedString}`
+        }
+        return label
+      }
+    },
+    handleLabels() {
+      let label = ''
+      return function(item) {
+        const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
+        if (value) label = this.getSelectedLabel(value)
+        return label
+      }
     },
     isFilterChanged() {
       return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
@@ -292,7 +309,7 @@ export default {
       }
     },
     getComparedKey() {
-      return (key) => {
+      return function(key) {
         let comparedKey = ''
         comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
         return comparedKey
@@ -368,8 +385,8 @@ export default {
       return { storedFilterValue, storedKeyword, storedDisplayClosed }
     },
     async getRelativeList() {
-      const isHasClosed = this.groupByValueOnBoard.filter(item => item.hasOwnProperty('is_closed') && item.is_closed)
-      if (isHasClosed.length > 0) {
+      const hasClosed = this.groupByValueOnBoard.filter(item => item.hasOwnProperty('is_closed') && item.is_closed)
+      if (hasClosed.length > 0) {
         const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
         this.relativeIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
       }
@@ -397,9 +414,11 @@ export default {
     getParams() {
       const result = {}
       if (!this.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
-      Object.keys(this.filterValue).forEach((item) => {
+      Object.keys(this.filterValue).forEach(item => {
         if (this.filterValue[item]) {
-          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join(',') : result[item + '_id'] = this.filterValue[item]
+          item === 'tags' && this.filterValue[item].length > 0
+            ? result[item] = this.filterValue[item].join(',')
+            : result[`${item}_id`] = this.filterValue[item]
         }
       })
       if (this.keyword) result['search'] = this.keyword
@@ -417,16 +436,20 @@ export default {
     },
     getIssueList() {
       const issueList = []
-      for (const item of this.groupByValueOnBoard) {
-        const CancelToken = axios.CancelToken.source()
-        const config = { cancelToken: CancelToken.token }
+      this.groupByValueOnBoard.forEach(item => {
+        const { CancelToken, config } = this.getCancelToken()
         this.$set(this.projectIssueQueue, item.id, CancelToken)
         const dimension = this.groupBy.dimension === 'tags' ? this.groupBy.dimension : `${this.groupBy.dimension}_id`
         const params = { ...this.getParams(), [dimension]: item.id }
         const getIssueList = getProjectIssueList(this.selectedProjectId, params, config)
         issueList.push(getIssueList)
-      }
+      })
       return issueList
+    },
+    getCancelToken() {
+      const CancelToken = axios.CancelToken.source()
+      const config = { cancelToken: CancelToken.token }
+      return { CancelToken, config }
     },
     async setIssueList(getIssueList) {
       await Promise.all(getIssueList)
@@ -468,16 +491,7 @@ export default {
         getTagsByProject(this.selectedProjectId)
       ]).then(res => {
         const [assigneeList, tagsList] = res.map(item => item.data)
-        this.assigned_to = [
-          { name: this.$t('Issue.Unassigned'), id: 'null' },
-          {
-            name: this.$t('Issue.me'),
-            login: '-Me-',
-            id: this.userId,
-            class: 'bg-yellow-100'
-          },
-          ...assigneeList.user_list
-        ]
+        this.setAssignedToData(assigneeList)
         this.tags = tagsList.tags
         // if (this.userRole === 'Engineer') {
         //   this.$set(this.filterValue, 'assigned_to', this.userId)
@@ -486,11 +500,25 @@ export default {
       })
       await this.loadVersionList(this.fixed_version_closed)
     },
+    setAssignedToData(list) {
+      const unassigned = {
+        name: this.$t('Issue.Unassigned'),
+        id: 'null'
+      }
+      const me = {
+        name: this.$t('Issue.me'),
+        login: '-Me-',
+        id: this.userId,
+        class: 'bg-yellow-100'
+      }
+      const userList = list.user_list
+      this.assigned_to = [unassigned, me, ...userList]
+    },
     getOptionsData(option_name) {
       return this[option_name]
     },
     setGroupByUnclosedStatus(check) {
-      const isClosed = this.status.filter((item) => (item.is_closed === false))
+      const isClosed = this.status.filter(item => item.is_closed === false)
       check ? this.$set(this.groupBy, 'value', this.status) : this.$set(this.groupBy, 'value', isClosed)
     },
     resetClassifyIssue() {
@@ -534,24 +562,21 @@ export default {
     },
     sortIssue() {
       // const sortPriority = (a, b) => (a.priority.id - b.priority.id)
-      const sortUpdateOn = (a, b) => (new Date(b.updated_on) - new Date(a.updated_on))
+      const sortUpdateOn = (a, b) => new Date(b.updated_on) - new Date(a.updated_on)
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
       })
     },
     createRelativeList(list) {
       const result = []
-      function flatList(parent) {
-        for (let i = 0; i < parent.length; i++) {
-          result.push(parent[i])
-          const children = parent[i].children
-          if (parent[i].children.length) flatList(children)
-        }
+      for (let i = 0; i < parent.length; i++) {
+        result.push(parent[i])
+        const children = parent[i].children
+        if (parent[i].children.length) this.createRelativeList(children)
       }
-      flatList(list)
       return result
     },
-    getSelectionLabel(item) {
+    getSelectedLabel(item) {
       const visibleStatus = ['closed', 'locked']
       let result = this.getTranslateHeader(item.name)
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
@@ -564,10 +589,11 @@ export default {
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter((item) => (item.is_closed === false))
+      const isClosed = statusList.filter(item => item.is_closed === false)
+      return isClosed
     },
     filterMe(userList) {
-      return userList.filter((item) => (item.login !== '-Me-'))
+      return userList.filter(item => item.login !== '-Me-')
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
@@ -609,8 +635,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
-
 .app-container {
   overflow: hidden;
 }

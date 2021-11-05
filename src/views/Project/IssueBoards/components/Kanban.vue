@@ -74,7 +74,7 @@
                     </el-tag>
                   </el-link>
                 </div>
-                <div v-if="element.hasOwnProperty('children')&&element.children.length > 0">
+                <div v-if="element.hasOwnProperty('children') && element.children.length > 0">
                   <b>{{ $t('Issue.ChildrenIssue') }}：</b>
                   <ol class="children_list">
                     <li v-for="(subElement, index) in element.children" :key="index"
@@ -90,7 +90,7 @@
                     </li>
                   </ol>
                 </div>
-                <div v-if="element.hasOwnProperty('relations')&&element.relations.length > 0">
+                <div v-if="element.hasOwnProperty('relations') && element.relations.length > 0">
                   <b>{{ $t('Issue.RelatedIssue') }}：</b>
                   <ol class="children_list">
                     <li v-for="(subElement, index) in element.relations" :key="index"
@@ -110,7 +110,7 @@
             </el-collapse-item>
           </el-collapse>
         </div>
-        <div v-if="element.due_date || Object.keys(element.assigned_to).length>0" class="info">
+        <div v-if="element.due_date || Object.keys(element.assigned_to).length > 0" class="info">
           <div v-if="element.due_date" class="detail due_date" :class="getDueDateClass(element)">
             <em class="el-icon-date" />
             <div class="text" :class="getDueDateClass(element)">{{ element.due_date }}</div>
@@ -267,7 +267,8 @@ export default {
       return !element.has_children
     },
     end(boardObject, event) {
-      this.$emit('update', { boardObject: boardObject, event: event })
+      const updateData = { boardObject, event }
+      this.$emit('update', updateData)
       this.$forceUpdate()
     },
     updateBoard(sendData) {
@@ -366,22 +367,28 @@ export default {
       e.preventDefault()
     },
     getStatus(element) {
-      const dueDate = new Date(element.due_date)
+      const dueDateData = element.due_date
+      const dueDate = new Date(dueDateData)
       const today = new Date()
+      const lessDoneRatio = element.done_ratio < 100
+      const notClosed = element.status.name !== 'Closed'
       if (element.done_ratio === 100) {
         return 'success'
-      } else if (element.due_date && today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (dueDateData && lessDoneRatio && notClosed && today > dueDate) {
         return 'danger'
-      } else if (element.due_date && this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (dueDateData && lessDoneRatio && notClosed && this.differentInDays(dueDate, today) <= 3) {
         return 'warning'
       }
     },
     getDueDateClass(element) {
-      const dueDate = new Date(element.due_date)
+      const dueDateData = element.due_date
+      const dueDate = new Date(dueDateData)
       const today = new Date()
-      if (element.due_date && today > dueDate && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      const lessDoneRatio = element.done_ratio < 100
+      const notClosed = element.status.name !== 'Closed'
+      if (dueDateData && lessDoneRatio && notClosed && today > dueDate) {
         return 'danger'
-      } else if (element.due_date && this.differentInDays(dueDate, today) <= 3 && element.done_ratio < 100 && element.status.name !== 'Closed') {
+      } else if (dueDateData && lessDoneRatio && notClosed && this.differentInDays(dueDate, today) <= 3) {
         return 'warning'
       }
     },
@@ -392,21 +399,21 @@ export default {
       this.$set(element, 'loadingRelation', true)
       const family = await getIssueFamily(element.id)
       const data = family.data
-      if (data.hasOwnProperty('parent')) {
-        await this.$set(element, 'parent', data.parent)
-      }
-      if (data.hasOwnProperty('children')) {
-        await this.$set(element, 'children', data.children)
-      }
-      if (data.hasOwnProperty('relations')) {
-        await this.$set(element, 'relations', data.relations)
-      }
+      this.setRelativeIssueData(element, data)
       this.$forceUpdate()
       this.$set(element, 'loadingRelation', false)
     },
+    async setRelativeIssueData(element, data) {
+      const relations = ['parent', 'children', 'relations']
+      relations.forEach(async relation => {
+        const hasOwnProperty = data.hasOwnProperty(relation)
+        if (hasOwnProperty) await this.$set(element, relation, data[relation])
+      })
+    },
     differentInDays(a, b) {
+      const day = 1000 * 3600 * 24
       const Difference_In_Time = a.getTime() - b.getTime()
-      return Difference_In_Time / (1000 * 3600 * 24)
+      return Difference_In_Time / day
     },
     getHeaderBarClassName(name) {
       return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
@@ -417,6 +424,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .board-column {
   width: 280px;
