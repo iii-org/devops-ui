@@ -26,7 +26,7 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel(allDownloadData)">
+              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel('allDownloadData')">
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item v-show="hasSelectedIssue" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedIssueList)">
@@ -66,120 +66,10 @@
           @row-contextmenu="handleContextMenu"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column v-permission="['QA']" type="selection" reserve-selection width="55" />
+          <el-table-column v-if="userRole === 'QA'" type="selection" reserve-selection width="55" />
           <el-table-column type="expand" class-name="informationExpand">
-            <template slot-scope="scope">
-              <el-row v-if="scope.row.family"
-                      v-loading="scope.row.hasOwnProperty('isLoadingFamily')&&scope.row.isLoadingFamily"
-              >
-                <div v-if="scope.row.hasOwnProperty('isLoadingFamily') && scope.row.isLoadingFamily" class="p-5" />
-                <ul v-else>
-                  <li v-if="scope.row.hasOwnProperty('parent') && Object.keys(scope.row.parent).length > 0">
-                    <strong>{{ $t('Issue.ParentIssue') }}:</strong>
-                    <el-link
-                      :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                      :underline="false"
-                      @click="handleEdit(scope.row.parent.id)"
-                      @contextmenu.native="handleContextMenu(scope.row.parent, '', $event)"
-                    >
-                      <status :name="scope.row.parent.status.name" size="mini" />
-                      <tracker :name="scope.row.parent.tracker.name" />
-                      #{{ scope.row.parent.id }} -
-                      <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                      {{ scope.row.parent.name }}
-                      <span
-                        v-if="scope.row.parent.hasOwnProperty('assigned_to') && Object.keys(scope.row.parent.assigned_to).length > 1"
-                      >
-                        ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
-                        - {{ scope.row.parent.assigned_to.login }})
-                      </span>
-                    </el-link>
-                    <el-popconfirm
-                      :confirm-button-text="$t('general.Remove')"
-                      :cancel-button-text="$t('general.Cancel')"
-                      icon="el-icon-info"
-                      icon-color="red"
-                      :title="$t('Issue.RemoveIssueRelation')"
-                      @confirm="removeIssueRelation(scope.row.id)"
-                    >
-                      <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                        {{ $t('Issue.Unlink') }}
-                      </el-button>
-                    </el-popconfirm>
-                  </li>
-                  <li v-if="scope.row.hasOwnProperty('children') && scope.row.children.length>0">
-                    <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
-                    <ol>
-                      <template v-for="child in scope.row.children">
-                        <li v-if="Object.keys(child).length > 0" :key="child.id">
-                          <el-link
-                            :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                            :underline="false"
-                            @click="handleEdit(child.id)"
-                            @contextmenu.native="handleContextMenu(child, '', $event)"
-                          >
-                            <status :name="child.status.name" size="mini" />
-                            <tracker :name="child.tracker.name" />
-                            #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                            {{ child.name }}
-                            <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                              ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
-                              - {{ child.assigned_to.login }})
-                            </span>
-                          </el-link>
-                          <el-popconfirm
-                            :confirm-button-text="$t('general.Remove')"
-                            :cancel-button-text="$t('general.Cancel')"
-                            icon="el-icon-info"
-                            icon-color="red"
-                            :title="$t('Issue.RemoveIssueRelation')"
-                            @confirm="removeIssueRelation(child.id)"
-                          >
-                            <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                              {{ $t('Issue.Unlink') }}
-                            </el-button>
-                          </el-popconfirm>
-                        </li>
-                      </template>
-                    </ol>
-                  </li>
-                  <li v-if="scope.row.hasOwnProperty('relations') && scope.row.relations.length>0">
-                    <strong>{{ $t('Issue.RelatedIssue') }}:</strong>
-                    <ol>
-                      <template v-for="child in scope.row.relations">
-                        <li v-if="Object.keys(child).length > 0" :key="child.id">
-                          <el-link
-                            :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                            :underline="false"
-                            @click="handleEdit(child.id)"
-                            @contextmenu.native="handleContextMenu(child, '', $event)"
-                          >
-                            <status :name="child.status.name" size="mini" />
-                            <tracker :name="child.tracker.name" />
-                            #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                            {{ child.name }}
-                            <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                              ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
-                            </span>
-                          </el-link>
-                          <el-popconfirm
-                            :confirm-button-text="$t('general.Remove')"
-                            :cancel-button-text="$t('general.Cancel')"
-                            icon="el-icon-info"
-                            icon-color="red"
-                            :title="$t('Issue.RemoveIssueRelation')"
-                            @confirm="removeRelationIssue(child.relation_id)"
-                          >
-                            <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                              {{ $t('Issue.Unlink') }}
-                            </el-button>
-                          </el-popconfirm>
-                        </li>
-                      </template>
-                    </ol>
-                  </li>
-                </ul>
-              </el-row>
+            <template slot-scope="{row}">
+              <IssueExpand :issue="row" />
             </template>
           </el-table-column>
           <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
@@ -217,7 +107,7 @@
           </el-table-column>
           <el-table-column type="action" width="50px">
             <template slot-scope="{row}">
-              <el-button type="text" icon="el-icon-more" @click.native.stop="handleContextMenu(row, {}, $event)" />
+              <el-button class="action" type="text" icon="el-icon-more" @click.native.stop="handleContextMenu(row, {}, $event)" />
             </template>
           </el-table-column>
           <template slot="empty">
@@ -249,11 +139,12 @@
 import { mapActions, mapGetters } from 'vuex'
 import QuickAddIssue from '@/components/Issue/QuickAddIssue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
+import { Table, IssueList, ContextMenu } from '@/newMixins'
 import SearchFilter from '@/components/Issue/SearchFilter'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
 import XLSX from 'xlsx'
+import IssueExpand from '@/components/Issue/IssueExpand'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -265,9 +156,10 @@ export default {
   components: {
     QuickAddIssue,
     ProjectListSelector,
-    SearchFilter
+    SearchFilter,
+    IssueExpand
   },
-  mixins: [Table, IssueList, ContextMenu, IssueExpand],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -289,11 +181,6 @@ export default {
     },
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
-    }
-  },
-  watch: {
-    listData() {
-      this.fetchAllDownloadData()
     }
   },
   async created() {
@@ -323,9 +210,6 @@ export default {
       this.displayClosed = false
     }
     await this.loadSelectionList()
-  },
-  mounted() {
-    this.fetchAllDownloadData()
   },
   methods: {
     ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed',
@@ -373,7 +257,11 @@ export default {
     handleSelectionChange(list) {
       this.selectedIssueList = list
     },
-    downloadExcel(selectedIssueList) {
+    async downloadExcel(selectedIssueList) {
+      if (selectedIssueList === 'allDownloadData') {
+        this.$notify({ type: 'warning', title: this.$t('Loading').toString() })
+        await this.fetchAllDownloadData()
+      }
       const selectedColumn = this.handleCsvSelectedColumn(selectedIssueList)
       const translateTable = this.handleCsvTranslateTable(selectedColumn)
       const worksheet = XLSX.utils.json_to_sheet(translateTable)
@@ -475,7 +363,7 @@ export default {
 </script>
 
 <style scoped>
-.el-table .el-button{
+.el-table .action{
   @apply border-0
 }
 </style>

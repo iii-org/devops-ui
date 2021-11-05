@@ -1,107 +1,46 @@
 <template>
-  <el-row v-if="issue.family"
-          v-loading="issue.hasOwnProperty('isLoadingFamily')&&issue.isLoadingFamily"
-  >
+  <el-row v-if="issue.family||family" v-loading="issue.hasOwnProperty('isLoadingFamily')&&issue.isLoadingFamily">
     <div v-if="issue.hasOwnProperty('isLoadingFamily') && issue.isLoadingFamily" class="p-5" />
-    <ul v-else>
+    <ul v-else class="family">
       <li v-if="issue.hasOwnProperty('parent') && Object.keys(issue.parent).length > 0">
-        <b>{{ $t('Issue.ParentIssue') }}:</b>
-        <el-link
-          :style="{ 'font-size': '14px', cursor: 'pointer' }"
-          :underline="false"
-          @click="handleEdit(issue.parent.id)"
-          @contextmenu.native="handleContextMenu(issue.parent, '', $event)"
-        >
-          <status :name="issue.parent.status.name" size="mini" />
-          <tracker :name="issue.parent.tracker.name" />
-          #{{ issue.parent.id }} -
-          <el-tag v-for="item in issue.parent.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
-          {{ issue.parent.name }}
-          <span
-            v-if="issue.parent.hasOwnProperty('assigned_to') && Object.keys(issue.parent.assigned_to).length > 1"
-          >
-            ({{ $t('Issue.Assignee') }}: {{ issue.parent.assigned_to.name }} - {{ issue.parent.assigned_to.login }})
-          </span>
-        </el-link>
-        <el-popconfirm
-          :confirm-button-text="$t('general.Remove')"
-          :cancel-button-text="$t('general.Cancel')"
-          icon="el-icon-info"
-          icon-color="red"
-          :title="$t('Issue.RemoveIssueRelation')"
-          @confirm="removeIssueRelation(issue.id)"
-        >
-          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-            {{ $t('Issue.Unlink') }}
-          </el-button>
-        </el-popconfirm>
+        <span class="title">{{ $t('Issue.ParentIssue') }}:</span>
+        <ul class="issue-list">
+          <li class="issue-item">
+            <IssueRow
+              :issue="issue.parent"
+              @click-title="handleEdit"
+              @show-context-menu="handleContextMenu(issue.parent, '', $event)"
+              @remove-confirm="removeIssueRelation"
+            />
+          </li>
+        </ul>
       </li>
       <li v-if="issue.hasOwnProperty('children') && issue.children.length>0">
-        <b>{{ $t('Issue.ChildrenIssue') }}:</b>
-        <ol>
+        <span class="title">{{ $t('Issue.ChildrenIssue') }}:</span>
+        <ol class="issue-list">
           <template v-for="child in issue.children">
-            <li v-if="Object.keys(child).length > 0" :key="child.id">
-              <el-link
-                :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                :underline="false"
-                @click="handleEdit(child.id)"
-                @contextmenu.native="handleContextMenu(child, '', $event)"
-              >
-                <status :name="child.status.name" size="mini" />
-                <tracker :name="child.tracker.name" />
-                #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
-                {{ child.name }}
-                <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                  ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
-                </span>
-              </el-link>
-              <el-popconfirm
-                :confirm-button-text="$t('general.Remove')"
-                :cancel-button-text="$t('general.Cancel')"
-                icon="el-icon-info"
-                icon-color="red"
-                :title="$t('Issue.RemoveIssueRelation')"
-                @confirm="removeIssueRelation(child.id)"
-              >
-                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                  {{ $t('Issue.Unlink') }}
-                </el-button>
-              </el-popconfirm>
+            <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
+              <IssueRow
+                :issue="child"
+                @click-title="handleEdit"
+                @show-context-menu="handleContextMenu(child, '', $event)"
+                @remove-confirm="removeIssueRelation"
+              />
             </li>
           </template>
         </ol>
       </li>
       <li v-if="issue.hasOwnProperty('relations') && issue.relations.length>0">
-        <b>{{ $t('Issue.RelatedIssue') }}:</b>
-        <ol>
+        <span class="title">{{ $t('Issue.RelatedIssue') }}:</span>
+        <ol class="issue-list">
           <template v-for="child in issue.relations">
-            <li v-if="Object.keys(child).length > 0" :key="child.id">
-              <el-link
-                :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                :underline="false"
-                @click="handleEdit(child.id)"
-                @contextmenu.native="handleContextMenu(child, '', $event)"
-              >
-                <status :name="child.status.name" size="mini" />
-                <tracker :name="child.tracker.name" />
-                #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">{{ item.name }}</el-tag>
-                {{ child.name }}
-                <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                  ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
-                </span>
-              </el-link>
-              <el-popconfirm
-                :confirm-button-text="$t('general.Remove')"
-                :cancel-button-text="$t('general.Cancel')"
-                icon="el-icon-info"
-                icon-color="red"
-                :title="$t('Issue.RemoveIssueRelation')"
-                @confirm="removeRelationIssue(child.relation_id)"
-              >
-                <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                  {{ $t('Issue.Unlink') }}
-                </el-button>
-              </el-popconfirm>
+            <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
+              <IssueRow
+                :issue="child"
+                @click-title="handleEdit"
+                @show-context-menu="handleContextMenu(child, '', $event)"
+                @remove-confirm="removeRelationIssue"
+              />
             </li>
           </template>
         </ol>
@@ -120,17 +59,25 @@
 
 <script>
 import { ContextMenu } from '@/newMixins'
-import { Status, Tracker } from '@/components/Issue'
 import { deleteIssueRelation, updateIssue } from '@/api/issue'
+import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
   name: 'IssueExpand',
-  components: { Tracker, Status },
+  components: { IssueRow },
   mixins: [ContextMenu],
   props: {
     issue: {
       type: Object,
       default: () => ({})
+    },
+    popup: {
+      type: Boolean,
+      default: false
+    },
+    family: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -168,12 +115,28 @@ export default {
       this.$emit('update-list')
     },
     handleEdit(issueId) {
-      this.$router.push({ name: 'issue-detail', params: { issueId }})
+      if (!this.popup) {
+        this.$router.push({ name: 'issue-detail', params: { issueId }})
+      } else {
+        this.$emit('popup-dialog', issueId)
+      }
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.family{
+  @apply space-y-3;
+  .title{
+    @apply text-sm font-bold;
+  }
+  .issue-list{
+    @apply space-y-1;
+    .issue-item:hover,:focus{
+      @apply bg-gray-100
+    }
+  }
 
+}
 </style>

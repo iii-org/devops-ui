@@ -109,166 +109,19 @@
                 @update="updateTestCollection"
               />
               <el-collapse v-if="countRelationIssue>0">
-                <!--                <el-collapse-item>-->
-                <!--                  <div slot="title">-->
-                <!--                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}-->
-                <!--                    <el-button size="mini" type="primary" @click="toggleIssueMatrixDialog">-->
-                <!--                      {{ $t('Issue.TraceabilityMatrix') }}-->
-                <!--                    </el-button>-->
-                <!--                  </div>-->
-                <el-collapse-item :title="$t('Issue.RelatedIssue')+'('+countRelationIssue+')'">
-                  <ul>
-                    <li v-if="Object.keys(parent).length>0">
-                      {{ $t('Issue.ParentIssue') }}：
-                      <el-link
-                        :underline="false"
-                        @click="onRelationIssueDialog(parent.id)"
-                      >
-                        <status
-                          :name="parent.status.name"
-                          size="mini"
-                        />
-                        <template v-if="parent.tracker">
-                          <tracker :name="parent.tracker.name" />
-                        </template>
-                        <template v-else>{{ $t('Issue.Issue') }}</template>
-                        #{{ parent.id }} -
-                        <el-tag
-                          v-for="item in parent.tags"
-                          :key="item.id"
-                          size="mini"
-                          class="mr-1"
-                        >[{{ item.name }}]</el-tag>
-                        {{ parent.name }}
-                        <span v-if="parent.assigned_to&&Object.keys(parent.assigned_to).length>0">
-                          ({{ $t('Issue.Assignee') }}:{{ parent.assigned_to.name }}
-                          - {{ parent.assigned_to.login }})</span>
-                      </el-link>
-                      <div class="text-right">
-                        <el-popconfirm
-                          :confirm-button-text="$t('general.Remove')"
-                          :cancel-button-text="$t('general.Cancel')"
-                          icon="el-icon-info"
-                          icon-color="red"
-                          :title="$t('Issue.RemoveIssueRelation')"
-                          @confirm="removeIssueRelation(issueId)"
-                        >
-                          <el-button
-                            slot="reference"
-                            :type="isButtonDisabled ? 'info' : 'danger'"
-                            :disabled="isButtonDisabled"
-                            size="mini"
-                            icon="el-icon-remove"
-                          >
-                            {{ $t('Issue.Unlink') }}
-                          </el-button>
-                        </el-popconfirm>
-                      </div>
-                    </li>
-                    <li v-if="children.length>0">{{ $t('Issue.ChildrenIssue') }}：
-                      <ol>
-                        <li
-                          v-for="child in children"
-                          :key="child.id"
-                        >
-                          <el-link
-                            :underline="false"
-                            @click="onRelationIssueDialog(child.id)"
-                          >
-                            <status
-                              :name="child.status.name"
-                              size="mini"
-                            />
-                            <template v-if="child.tracker">
-                              <tracker :name="child.tracker.name" />
-                            </template>
-                            <template v-else>{{ $t('Issue.Issue') }}</template>
-                            #{{ child.id }} - <el-tag
-                              v-for="item in child.tags"
-                              :key="item.id"
-                              size="mini"
-                              class="mr-1"
-                            >[{{ item.name }}]</el-tag>
-                            {{ child.name }}
-                            <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
-                              ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
-                              - {{ child.assigned_to.login }})</span>
-                          </el-link>
-                          <div class="text-right">
-                            <el-popconfirm
-                              :confirm-button-text="$t('general.Remove')"
-                              :cancel-button-text="$t('general.Cancel')"
-                              icon="el-icon-info"
-                              icon-color="red"
-                              :title="$t('Issue.RemoveIssueRelation')"
-                              @confirm="removeIssueRelation(child.id)"
-                            >
-                              <el-button
-                                slot="reference"
-                                type="danger"
-                                size="mini"
-                                icon="el-icon-remove"
-                                :disabled="isButtonDisabled"
-                              >
-                                {{ $t('Issue.Unlink') }}
-                              </el-button>
-                            </el-popconfirm>
-                          </div>
-                        </li>
-                      </ol>
-                    </li>
-                    <li v-if="relations.length>0">{{ $t('Issue.RelatedIssue') }}
-                      <ol>
-                        <template v-for="child in relations">
-                          <li :key="child.id">
-                            <el-link
-                              :underline="false"
-                              @click="onRelationIssueDialog(child.id)"
-                            >
-                              <status
-                                :name="child.status.name"
-                                size="mini"
-                              />
-                              <template v-if="child.tracker">
-                                <tracker :name="child.tracker.name" />
-                              </template>
-                              <template v-else>{{ $t('Issue.Issue') }}</template>
-                              #{{ child.id }} - <el-tag
-                                v-for="item in child.tags"
-                                :key="item.id"
-                                size="mini"
-                                class="mr-1"
-                              >[{{ item.name }}]</el-tag>
-                              {{ child.name }}
-                              <span v-if="child.assigned_to&&Object.keys(child.assigned_to).length>0">
-                                ({{ $t('Issue.Assignee') }}:{{ child.assigned_to.name }}
-                                - {{ child.assigned_to.login }})</span>
-                            </el-link>
-                            <div class="text-right">
-                              <el-popconfirm
-                                :confirm-button-text="$t('general.Remove')"
-                                :cancel-button-text="$t('general.Cancel')"
-                                icon="el-icon-info"
-                                icon-color="red"
-                                :title="$t('Issue.RemoveIssueRelation')"
-                                @confirm="removeRelationIssue(child.relation_id)"
-                              >
-                                <el-button
-                                  slot="reference"
-                                  type="danger"
-                                  size="mini"
-                                  icon="el-icon-remove"
-                                  :disabled="isButtonDisabled"
-                                >
-                                  {{ $t('Issue.Unlink') }}
-                                </el-button>
-                              </el-popconfirm>
-                            </div>
-                          </li>
-                        </template>
-                      </ol>
-                    </li>
-                  </ul>
+                <el-collapse-item>
+                  <div slot="title">
+                    {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
+                    <el-button size="mini" type="primary" icon="el-icon-data-line" @click="toggleIssueMatrixDialog">
+                      {{ $t('Issue.TraceabilityMatrix') }}
+                    </el-button>
+                  </div>
+                  <IssueExpand
+                    :issue="$data"
+                    :family="countRelationIssue>0"
+                    :popup="true"
+                    @popup-dialog="onRelationIssueDialog"
+                  />
                 </el-collapse-item>
               </el-collapse>
             </el-col>
@@ -337,16 +190,16 @@
         @close-dialog="toggleDialogVisible"
       />
     </el-dialog>
-    <!--    <el-dialog-->
-    <!--      :visible.sync="issueMatrixDialog.visible"-->
-    <!--      width="80%"-->
-    <!--      top="20px"-->
-    <!--      append-to-body-->
-    <!--      destroy-on-close-->
-    <!--      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.name+')'"-->
-    <!--    >-->
-    <!--      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />-->
-    <!--    </el-dialog>-->
+    <el-dialog
+      :visible.sync="issueMatrixDialog.visible"
+      width="80%"
+      top="20px"
+      append-to-body
+      destroy-on-close
+      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.name+')'"
+    >
+      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
+    </el-dialog>
   </div>
 </template>
 
@@ -366,18 +219,17 @@ import {
 import { addProjectTags } from '@/api/projects'
 import dayjs from 'dayjs'
 import Tracker from '@/components/Issue/Tracker'
-import Status from '@/components/Issue/Status'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
-// import IssueMatrix from '@/components/Issue/IssueMatrix'
+import IssueMatrix from './components/IssueMatrix'
+import IssueExpand from '@/components/Issue/IssueExpand'
 
 export default {
   name: 'ProjectIssueDetail',
   components: {
     IssueCollection,
     Tracker,
-    Status,
     IssueTitle,
     IssueDescription,
     IssueForm,
@@ -385,9 +237,9 @@ export default {
     IssueNotesEditor,
     IssueToolbar,
     IssueFiles,
-    ProjectIssueDetail: () => import('@/views/Project/IssueDetail'),
-    // IssueMatrix,
-    RelatedCollectionDialog
+    IssueMatrix,
+    RelatedCollectionDialog,
+    IssueExpand
   },
   props: {
     propsIssueId: {
@@ -778,12 +630,16 @@ export default {
       const originTags = []
       if (Array.isArray(tags)) {
         tags.forEach(tag => {
-          if (typeof tag === 'string') addTags.push(tag)
-          else if (typeof tag === 'number') originTags.push(tag)
+          if (typeof tag === 'string') {
+            addTags.push(tag)
+          } else if (typeof tag === 'number') originTags.push(tag)
         })
       }
-      if (addTags.length > 0) await this.handleAddProjectTags(addTags, originTags, tagsLength)
-      else this.tagsArrayToString(originTags, tagsLength)
+      if (addTags.length > 0) {
+        await this.handleAddProjectTags(addTags, originTags, tagsLength)
+      } else {
+        this.tagsArrayToString(originTags, tagsLength)
+      }
     },
     async handleAddProjectTags(addTags, originTags, tagsLength) {
       addTags.map(async tag => {
@@ -801,8 +657,11 @@ export default {
     },
     tagsArrayToString(tags, tagsLength) {
       this.tagsString = tags.length > 0 ? tags.join() : null
-      if (this.tagsString === null) this.form.tags = ''
-      else this.form.tags = this.tagsString
+      if (this.tagsString === null) {
+        this.form.tags = ''
+      } else {
+        this.form.tags = this.tagsString
+      }
       if (tags.length === tagsLength) this.submitIssue()
     },
     getAddTagsFormData(tag) {
@@ -940,7 +799,8 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {})
+          .catch(() => {
+          })
       } else {
         done()
       }
