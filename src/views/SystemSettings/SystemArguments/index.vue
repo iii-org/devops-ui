@@ -9,8 +9,8 @@
     <el-tab-pane :label="$t('System.RedmineMail')" name="redmineMail">
       <RedmineMail ref="redmineMail" />
     </el-tab-pane>
-    <el-tab-pane :label="$t('System.Templates')" name="templates">
-      <Templates ref="templates" />
+    <el-tab-pane :label="$t('System.SystemTemplates')" name="templates">
+      <SystemTemplates ref="templates" />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -19,11 +19,11 @@
 import SystemSecrets from './components/SystemSecrets'
 import SystemRegistry from './components/SystemRegistry'
 import RedmineMail from './components/RedmineMail'
-import Templates from './components/Templates'
+import SystemTemplates from './components/SystemTemplates'
 
 export default {
   name: 'SystemArguments',
-  components: { SystemRegistry, SystemSecrets, RedmineMail, Templates },
+  components: { SystemRegistry, SystemSecrets, RedmineMail, SystemTemplates },
   data() {
     return {
       activeName: 'secrets'

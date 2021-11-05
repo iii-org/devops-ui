@@ -852,7 +852,7 @@ export default {
     Secrets: 'Secrets',
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
-    Templates: 'Templates',
+    SystemTemplates: 'Templates',
     AddPlugin: '新增插件',
     AddParams: '新增參數'
   },
@@ -1097,7 +1097,7 @@ export default {
     false: '異常',
     loading: '載入中'
   },
-  Templates: {
+  SystemTemplates: {
     GithubAccount: 'Github @:general.Account',
     GithubAccountPlaceholder: '請填入 Github 之帳號名稱 ex: jason_dev',
     GithubTokenPlaceholder: `請填入 Github 已啟用 public_repo 之 Personal Token，請應以'ghp_'為開頭之字串`,

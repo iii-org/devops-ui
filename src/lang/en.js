@@ -854,7 +854,7 @@ export default {
     Secrets: 'Secrets',
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
-    Templates: 'Templates',
+    SystemTemplates: 'Templates',
     AddPlugin: 'Add Plugin',
     AddParams: 'Add Params'
   },
@@ -1099,7 +1099,7 @@ export default {
     false: 'Abnormal',
     loading: 'Loading'
   },
-  Templates: {
+  SystemTemplates: {
     GithubAccount: 'Github @:general.Account',
     GithubAccountPlaceholder: 'Please fill in Github account name. ex: jason_dev',
     GithubTokenPlaceholder: `Please fill in Github's Personal Token that has enabled public_repo, and start the string with 'ghp_'.`,

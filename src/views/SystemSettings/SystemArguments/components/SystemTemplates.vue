@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <el-card v-loading="isLoading">
-      <div class="text-2xl">{{ $t('Templates.TemplatesSettings') }}</div>
+      <div class="text-2xl">{{ $t('SystemTemplates.TemplatesSettings') }}</div>
       <el-form ref="form" :model="form" :rules="formRules">
         <el-row>
           <el-col :span="24" :sm="12" :md="8" :lg="7">
-            <el-form-item :label="$t('Templates.GithubAccount')" prop="value.account">
-              <el-input v-model="form.value.account" :placeholder="$t('Templates.GithubAccountPlaceholder')" />
+            <el-form-item :label="$t('SystemTemplates.GithubAccount')" prop="value.account">
+              <el-input v-model="form.value.account" :placeholder="$t('SystemTemplates.GithubAccountPlaceholder')" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="Github Token" prop="value.token">
               <el-input
                 v-model="form.value.token"
-                :placeholder="$t('Templates.GithubTokenPlaceholder')"
+                :placeholder="$t('SystemTemplates.GithubTokenPlaceholder')"
                 type="textarea"
                 rows="5"
               />
@@ -22,11 +22,11 @@
           <el-col :span="24">
             <el-form-item>
               <el-checkbox v-model="form.active">
-                <b>{{ $t('Templates.EnableTemplateSync') }}</b>
+                <b>{{ $t('SystemTemplates.EnableTemplateSync') }}</b>
               </el-checkbox>
               <div class="ml-5" style="color: gray;">
-                <section>{{ $t('Templates.TokenWarning') }}</section>
-                <section>{{ $t('Templates.DocumentUrl') }}:
+                <section>{{ $t('SystemTemplates.TokenWarning') }}</section>
+                <section>{{ $t('SystemTemplates.DocumentUrl') }}:
                   <el-link :href="link" target="_blank">{{ link }}</el-link>
                 </section>
               </div>
@@ -58,7 +58,7 @@ const formData = () => ({
 })
 
 export default {
-  name: 'Templates',
+  name: 'SystemTemplates',
   mixins: [BasicData, Table],
   data() {
     this.link = 'https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token'
@@ -100,9 +100,9 @@ export default {
     },
     getSystemParameterData(data) {
       const key = 'github_verify_info'
-      const github_params = data.find(item => item.name === key)
-      this.form = github_params
-      this.setOriginData(github_params)
+      const githubParams = data.find(item => item.name === key)
+      this.form = githubParams
+      this.setOriginData(githubParams)
     },
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
