@@ -1,40 +1,38 @@
 <template>
   <div>
     <el-row :gutter="10" class="content">
-      <el-col :span="24">
-        <el-card v-loading="listLoading" :element-loading-text="$t('Loading')">
-          <el-form inline>
-            <el-form-item :label="$t('ProjectRoadmap.DisplayRange')">
-              <el-date-picker
-                v-model="chartDateRange"
-                type="daterange"
-                :clearable="false"
-              />
-            </el-form-item>
-            <el-form-item>
-              <el-button icon="el-icon-refresh" @click="refreshData" />
-            </el-form-item>
-          </el-form>
-          <div class="gantt-chart">
-            <gantt-elastic :tasks="listData" :options="options" />
-          </div>
-          <div v-if="listData.length<=0" class="align-middle">
-            <el-alert type="warning">
-              <h1><em class="el-icon-warning" /> {{ $t('general.NoData') }}</h1>
-            </el-alert>
-          </div>
-        </el-card>
+      <el-col v-loading="listLoading"
+              :element-loading-text="$t('Loading')"
+              :span="24"
+      >
+        <div v-if="listData.length>0"
+             class="gantt-chart"
+        >
+          <gantt-elastic ref="gantt"
+                         :tasks="listData"
+                         :options="options"
+                         @chart-task-click="onTaskClick"
+          >
+            <gantt-header slot="header"
+                          :options="headerOptions"
+            />
+          </gantt-elastic>
+        </div>
+        <div v-else class="align-middle">
+          <el-alert type="warning">
+            <h1><em class="el-icon-warning" /> {{ $t('general.NoData') }}</h1>
+          </el-alert>
+        </div>
       </el-col>
     </el-row>
-    <el-dialog
-      :title="$t('Issue.AddIssue')"
-      :visible.sync="addTopicDialog.visible"
-      width="50%"
-      top="5px"
-      :close-on-click-modal="false"
-      destroy-on-close
-      append-to-body
-      @close="handleClose"
+    <el-dialog :title="$t('Issue.AddIssue')"
+               :visible.sync="addTopicDialog.visible"
+               width="50%"
+               top="5px"
+               :close-on-click-modal="false"
+               destroy-on-close
+               append-to-body
+               @close="handleClose"
     >
       <AddIssue ref="AddIssue"
                 :project-id="selectedProjectId"
@@ -54,7 +52,11 @@
         </el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
+    <el-dialog :visible.sync="relationIssue.visible"
+               width="90%"
+               top="3vh"
+               append-to-body
+               destroy-on-close
                :before-close="handleRelationIssueDialogBeforeClose"
     >
       <ProjectIssueDetail v-if="relationIssue.visible"
@@ -76,6 +78,7 @@ import { addIssue, getIssueFamily } from '@/api/issue'
 import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import GanttElastic from 'gantt-elastic'
+import GanttHeader from 'gantt-elastic-header'
 import theme from '@/theme.js'
 import { CancelRequest } from '@/newMixins'
 
@@ -84,7 +87,8 @@ export default {
   components: {
     AddIssue,
     ProjectIssueDetail,
-    GanttElastic
+    GanttElastic,
+    GanttHeader
   },
   mixins: [CancelRequest],
   props: {
@@ -122,20 +126,6 @@ export default {
       priority: [],
 
       listData: [],
-      activeIndex: [],
-      dateRange: null,
-      chartDateRange: [],
-      period: 'week',
-      duration: 52,
-      treeAttrs: {
-        load: this.getIssueFamilyData,
-        lazy: true,
-        props: {
-          label: 'name',
-          children: 'children',
-          isLeaf: 'has_children'
-        }
-      },
       addTopicDialog: {
         visible: false,
         parentId: 0,
@@ -147,9 +137,9 @@ export default {
         id: null
       },
       options: {
-        maxHeight: this.tableHeight - 150,
+        maxHeight: this.tableHeight - 125,
         title: {
-          label: 'Your project title as html (link or whatever...)',
+          label: '',
           html: false
         },
         row: {
@@ -199,13 +189,13 @@ export default {
                 }
               }
             },
-            {
-              id: 3,
-              label: this.$t('Issue.assigned_to'),
-              value: (task) => task.assigned_to.name,
-              width: 130,
-              html: true
-            },
+            // {
+            //   id: 3,
+            //   label: this.$t('Issue.assigned_to'),
+            //   value: (task) => task.assigned_to.name,
+            //   width: 130,
+            //   html: true
+            // },
             {
               id: 4,
               label: this.$t('Issue.StartDate'),
@@ -217,32 +207,45 @@ export default {
               label: this.$t('Issue.EndDate'),
               value: (task) => this.$dayjs(task.end).isValid() ? this.$dayjs(task.end).format('YYYY-MM-DD') : null,
               width: 78
-            },
-            {
-              id: 6,
-              label: this.$t('Issue.tracker'),
-              value: (task) => this.$t(`Issue.${task.tracker.name}`),
-              width: 68
-            },
-            {
-              id: 7,
-              label: '%',
-              value: 'progress',
-              width: 35,
-              style: {
-                'task-list-header-label': {
-                  'text-align': 'center',
-                  width: '100%'
-                },
-                'task-list-item-value-container': {
-                  'text-align': 'center',
-                  width: '100%'
-                }
-              }
             }
+            // {
+            //   id: 6,
+            //   label: this.$t('Issue.tracker'),
+            //   value: (task) => this.$t(`Issue.${task.tracker.name}`),
+            //   width: 68
+            // },
+            // {
+            //   id: 7,
+            //   label: '%',
+            //   value: 'progress',
+            //   width: 35,
+            //   style: {
+            //     'task-list-header-label': {
+            //       'text-align': 'center',
+            //       width: '100%'
+            //     },
+            //     'task-list-item-value-container': {
+            //       'text-align': 'center',
+            //       width: '100%'
+            //     }
+            //   }
+            // }
           ]
         },
         locale: { name: this.$i18n.locale.toLowerCase() }
+      },
+      headerOptions: {
+        title: {
+          label: ''
+        },
+        locale: {
+          Now: '今天',
+          'X-Scale': '日期寬度',
+          'Y-Scale': '議題高度',
+          'Task list width': '左側寬度',
+          'Before/After': '時間軸長度',
+          'Display task list': '顯示議題列表'
+        }
       }
     }
   },
@@ -287,7 +290,7 @@ export default {
   },
   watch: {
     tableHeight(value) {
-      this.options.maxHeight = value - 150
+      this.options.maxHeight = value - 125
     },
     dateRange: {
       deep: true,
@@ -295,28 +298,16 @@ export default {
       handler() {
         this.loadData()
       }
-    },
-    chartDateRange: {
-      deep: true,
-      handler() {
-        this.setDateRange()
-        this.setChartPeriod(this.period)
-      }
     }
   },
   created() {
     this.loadData()
   },
   async mounted() {
-    // this.$set(this.$data, 'chartDateRange', [currentStart.toDate(), currentEnd.toDate()])
   },
   methods: {
     async loadData() {
       await this.fetchData()
-    },
-    refreshData() {
-      this.setDateRange()
-      this.setChartPeriod(this.period)
     },
     getParams() {
       const result = {
@@ -339,7 +330,7 @@ export default {
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
           } else {
-            result[item + '_id'] = this.filterValue[item]
+            result[`${item}_id`] = this.filterValue[item]
           }
         }
       })
@@ -349,7 +340,7 @@ export default {
       return result
     },
     formatIssue(issue, parentId) {
-      issue.label = `${this.$t(`Issue.${issue.status.name}`)} - ${issue.name}`
+      issue.label = `${this.$t(`Issue.${issue.status.name}`)}${(issue.done_ratio > 0) ? `(${issue.done_ratio}%)` : ''} - ${issue.name}`
       issue.start = issue.start_date || new Date()
       issue.end = issue.due_date || new Date()
       issue.progress = issue.done_ratio || 0
@@ -357,7 +348,11 @@ export default {
       issue.style = {
         base: {
           fill: `${this.bg[camelCase(issue.status.name)]}75`,
-          stroke: `${this.bg[camelCase(issue.status.name)]}75`
+          stroke: `${this.bg[camelCase(issue.status.name)]}75`,
+          cursor: 'pointer'
+        },
+        'chart-row-progress-bar-pattern': {
+          cursor: 'pointer'
         }
       }
       if (parentId) {
@@ -366,7 +361,9 @@ export default {
       return issue
     },
     async fetchData() {
-      if (this.listLoading) { this.cancelRequest() }
+      if (this.listLoading) {
+        this.cancelRequest()
+      }
       this.listLoading = true
       const resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       // for (const issue_data of resProjectIssue.data) {
@@ -374,9 +371,7 @@ export default {
       // }
       this.listData = resProjectIssue.data.map(issue => this.formatIssue(issue))
       this.listLoading = false
-    },
-    getOptionsData(option_name) {
-      return this[option_name]
+      this.$refs['gantt'].recenterPosition()
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
@@ -411,10 +406,6 @@ export default {
         }
         this.listLoading = false
       }
-    },
-    filterClosedStatus(statusList) {
-      if (this.displayClosed) return statusList
-      return statusList.filter((item) => (item.is_closed === false))
     },
     onChangeFilter() {
       this.loadData()
@@ -492,6 +483,9 @@ export default {
     loadingUpdate(value) {
       this.LoadingConfirm = value
     },
+    onTaskClick({ data }) {
+      this.onRelationIssueDialog(data.id)
+    },
     handleRelationUpdate() {
       this.onCloseRelationIssueDialog()
       this.loadData()
@@ -540,73 +534,6 @@ $max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
   .el-col {
     max-height: inherit;
 
-    .el-card {
-      max-height: inherit;
-
-      > > > .el-card__body {
-        max-height: inherit;
-      }
-
-      .gantt-chart {
-        max-height: calc(#{$max_height} - 40px - 60px);
-        @apply static;
-        .toolbar {
-          @apply absolute bottom-10 right-10 z-50;
-        }
-
-        > > > #gantt {
-          max-height: inherit;
-
-          .sg-gantt {
-            max-height: inherit;
-
-            .sg-time-range {
-              background-image: linear-gradient(-45deg, rgba(0, 0, 0, 0) 46%, #6b728070 49%, #6b728070 51%, rgba(0, 0, 0, 0) 55%) !important;
-            }
-
-            .sg-task-reflected {
-              display: none;
-            }
-
-            .sg-table {
-              .add-task {
-                display: none;
-              }
-            }
-
-            .sg-task {
-              @apply cursor-pointer;
-              color: #333;
-              text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
-
-              &.Active {
-                @apply bg-active bg-opacity-75;
-              }
-
-              &.Assigned {
-                @apply bg-danger bg-opacity-75;
-              }
-
-              &.Closed {
-                @apply bg-info bg-opacity-75;
-              }
-
-              &.Solved {
-                @apply bg-secondary bg-opacity-75;
-              }
-
-              &.InProgress {
-                @apply bg-warning bg-opacity-75;
-              }
-
-              &.Finished {
-                @apply bg-warning bg-opacity-75;
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 </style>
