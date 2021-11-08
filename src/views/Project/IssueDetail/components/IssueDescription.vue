@@ -18,7 +18,7 @@
       </el-form>
       <el-col v-else>
         <Viewer :initial-value="value" />
-        <el-button icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
+        <el-button :type="isButtonDisabled? 'info': 'default'" :disabled="isButtonDisabled" icon="el-icon-edit" size="mini" @click="edit=true">{{ $t('general.Edit') }}</el-button>
       </el-col>
     </el-col>
   </el-row>
@@ -43,6 +43,10 @@ export default {
     issueId: {
       type: [String, Number],
       default: null
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

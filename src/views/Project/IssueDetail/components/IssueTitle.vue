@@ -11,6 +11,7 @@
       >
     </span>
   </span>
+  <span v-else-if="isButtonDisabled">{{ value }}</span>
   <span v-else @click="edit=true">{{ value }}</span>
 </template>
 
@@ -34,6 +35,10 @@ export default {
     issueId: {
       type: [String, Number],
       default: null
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

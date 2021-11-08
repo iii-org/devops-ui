@@ -33,6 +33,7 @@
                 v-model="form.name"
                 :old-value="originForm.name"
                 :issue-id="issueId"
+                :is-button-disabled="isButtonDisabled"
               />
               <span
                 v-if="!isLoading&&issueId"
@@ -96,6 +97,7 @@
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
+                :is-button-disabled="isButtonDisabled"
               />
               <issue-files
                 v-if="files.length>0"
