@@ -115,6 +115,10 @@ export default {
     classifyIssueList: {
       type: Object,
       default: () => {}
+    },
+    projectIssueList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -180,7 +184,7 @@ export default {
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
-        // this.isLoading = true
+        this.$parent.isLoading = true
         // const getUpdateDimension = this[this.groupBy.dimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
         try {
           const updatedData = { [`${this.groupBy.dimension}_id`]: evt.boardObject.id }
@@ -191,7 +195,7 @@ export default {
         } catch (e) {
           // error
         }
-        // this.isLoading = false
+        this.$parent.isLoading = false
         await this.getRelativeList()
       }
     },
@@ -199,7 +203,7 @@ export default {
       const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
       const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
       issue[this.groupBy.dimension] = evt.boardObject
-      this.$set(this.projectIssueList, idx, issue)
+      this.$emit('updateIssueList', idx, issue)
     },
     updateRelationIssue(list, updatedIssue) {
       list.forEach((issue) => {
@@ -220,7 +224,6 @@ export default {
     },
     async quickUpdateIssue(event) {
       const { id, value } = event
-      // this.isLoading = true
       this.$parent.isLoading = true
       const filterDimension = Object.keys(value)[0]
       try {
@@ -233,11 +236,10 @@ export default {
         const idx = this.projectIssueList.findIndex(item => item.id === id)
         const issue = this.projectIssueList.find(item => item.id === id)
         issue[filterDimension] = value[filterDimension]
-        this.$set(this.projectIssueList, idx, issue)
+        this.$emit('updateIssueList', idx, issue)
       } catch (e) {
         // error
       }
-      // this.isLoading = false
       this.$parent.isLoading = false
     },
     getTranslateHeader(value) {

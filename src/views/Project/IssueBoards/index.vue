@@ -121,8 +121,10 @@
       :context-options="contextOptions"
       :relative-issue-list="relativeIssueList"
       :classify-issue-list="classifyIssueList"
+      :project-issue-list="projectIssueList"
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
+      @updateIssueList="updateIssueList"
       @loadData="loadData"
       @updateData="updateData"
     />
@@ -146,7 +148,6 @@ import Status from '@/components/Issue/Status'
 import Tracker from '@/components/Issue/Tracker'
 import Priority from '@/components/Issue/Priority'
 import axios from 'axios'
-import { updateIssue } from '@/api/issue'
 
 export default {
   name: 'IssueBoards',
@@ -461,6 +462,9 @@ export default {
         .catch((e) => {
           console.error(e)
         })
+    },
+    updateIssueList(index, issue) {
+      this.$set(this.projectIssueList, index, issue)
     },
     cancelLoadFilterData() {
       Object.values(this.projectIssueQueue).forEach(item => { item.cancel() })
