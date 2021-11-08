@@ -34,6 +34,7 @@ module.exports = {
         solved: '#3ecbbc',
         inProgress: '#e6a23c',
         finished: '#67c23a',
+        verified: '#67c23a',
         document: '#005f73',
         research: '#0a9396',
         epic: '#409EEF',
