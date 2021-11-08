@@ -26,7 +26,7 @@
         </template>
       </el-table>
       <pagination
-        :total="filteredData.length"
+        :total="listQuery.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
@@ -42,6 +42,11 @@ import { getProjectActivities } from '@/api/activities'
 import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
+const params = () => ({
+  limit: 10,
+  offset: 0
+})
+
 export default {
   name: 'ProjectActivities',
   components: { ElTableColumnTime },
@@ -49,12 +54,31 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      searchKeys: ['operator_name', 'action_type', 'action_parts']
+      params: params,
+      searchKeys: ['operator_name', 'action_type', 'action_parts'],
+      activitiesList: []
+    }
+  },
+  computed: {
+    // cover the origin pagedData
+    pagedData() {
+      return this.activitiesList
     }
   },
   methods: {
-    async fetchData() {
-      return (await getProjectActivities(this.selectedProjectId)).data
+    async fetchData(params) {
+      const apiParams = params || this.params
+      const res = await getProjectActivities(this.selectedProjectId, apiParams)
+      const activities_list = res.data.activities_list
+      this.activitiesList = activities_list
+      this.listQuery = res.data.page
+      return activities_list
+    },
+    async onPagination (listQuery) {
+      const offset = listQuery.limit * (listQuery.page - 1)
+      const limit = listQuery.limit
+      const params = { offset, limit }
+      await this.fetchData(params)
     }
   }
 }
