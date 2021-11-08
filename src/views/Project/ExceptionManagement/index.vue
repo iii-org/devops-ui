@@ -18,6 +18,7 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilterForm"
+        @change-fixed-version="onChangeFixedVersionStatus"
       >
         <span slot="download">
           <el-divider direction="vertical" />

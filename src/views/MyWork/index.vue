@@ -239,7 +239,6 @@ export default {
       await this.setIssueFilter(storeFilterValue)
     },
     fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
       this.loadProjectSelectionList(value)
     },
     filterValue: {

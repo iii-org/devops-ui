@@ -393,6 +393,10 @@ export default {
     },
     handleSelectionChange(list) {
       this.selectedIssueList = list
+    },
+    onChangeFixedVersionStatus(value) {
+      console.log(value)
+      this.fixed_version_closed = value
     }
   }
 }

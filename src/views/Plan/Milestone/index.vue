@@ -26,6 +26,7 @@
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed, originFilterValue:originFilterValue }"
         @change-filter="onChangeFilterForm"
+        @change-fixed-version="onChangeFixedVersionStatus"
       >
         <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="downloadExcel()">
           {{ $t('File.Download') }}
@@ -450,6 +451,9 @@ export default {
         }
       })
       return result
+    },
+    onChangeFixedVersionStatus() {
+      this.$emit('change-fixed-version', this.fixed_version_closed)
     }
   }
 }

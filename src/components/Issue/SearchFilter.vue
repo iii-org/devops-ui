@@ -47,7 +47,7 @@
         </el-form-item>
       </el-form>
       <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-        <i class="el-icon-arrow-down el-icon--right" /></el-button>
+        <em class="el-icon-arrow-down el-icon--right" /></el-button>
     </el-popover>
     <el-divider direction="vertical" />
     <el-input
@@ -165,6 +165,9 @@ export default {
       Object.keys(value).forEach(item => {
         this[item] = value[item]
       })
+    },
+    fixed_version_closed() {
+      this.onChangeFixedVersionStatus()
     }
   },
   methods: {
@@ -193,6 +196,9 @@ export default {
         keyword: this.keyword,
         displayClosed: this.displayClosed
       })
+    },
+    onChangeFixedVersionStatus() {
+      this.$emit('change-fixed-version', this.fixed_version_closed)
     },
     cleanFilter() {
       this.$set(this.$data, 'filterValue', cloneDeep(this.originFilterValue))
