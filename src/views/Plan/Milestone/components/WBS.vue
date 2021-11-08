@@ -178,7 +178,7 @@
         @reset-create="handleResetCreate"
       />
       <el-empty slot="empty" :description="$t('general.NoData')" />
-      <tr v-if="!hasInlineCreate" slot="append">
+      <tr v-if="!hasInlineCreate&&userRole!=='QA'" slot="append">
         <td class="add-issue-inline">
           <el-link type="text" icon="el-icon-plus" @click="appendIssue()">{{ $t('Issue.AddIssue') }}</el-link>
         </td>
@@ -358,8 +358,16 @@ export default {
       return ['Administrator', 'Project Manager', 'Engineer']
     }
   },
+  watch: {
+    tableHeight(value) {
+      console.log(value)
+    }
+  },
   mounted() {
     this.loadData()
+  },
+  destroyed() {
+    console.log('destroyed', this.tableHeight)
   },
   methods: {
     getParams() {
@@ -395,7 +403,9 @@ export default {
       return result
     },
     async loadData() {
-      if (this.listLoading) { this.cancelRequest() }
+      if (this.listLoading) {
+        this.cancelRequest()
+      }
       if (this.selectedProjectId === -1) return
       this.listLoading = true
       this.listData = []
@@ -869,14 +879,17 @@ export default {
 
 .table-css {
   height: 100% !important;
+
   .action {
     @apply flex cursor-pointer;
     width: 15px;
     height: 25px;
+
     .icon {
       @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
     }
   }
+
   > > > table {
     th {
       padding: 5px;
