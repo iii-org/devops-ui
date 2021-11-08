@@ -77,6 +77,7 @@ import AddIssue from '@/components/Issue/AddIssue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail'
 import GanttElastic from 'gantt-elastic'
 import theme from '@/theme.js'
+import { CancelRequest } from '@/newMixins'
 
 export default {
   name: 'Gantt',
@@ -85,6 +86,7 @@ export default {
     ProjectIssueDetail,
     GanttElastic
   },
+  mixins: [CancelRequest],
   props: {
     filterValue: {
       type: Object,
@@ -364,8 +366,9 @@ export default {
       return issue
     },
     async fetchData() {
+      if (this.listLoading) { this.cancelRequest() }
       this.listLoading = true
-      const resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams())
+      const resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       // for (const issue_data of resProjectIssue.data) {
       //   issues.push(new Issue(issue_data))
       // }

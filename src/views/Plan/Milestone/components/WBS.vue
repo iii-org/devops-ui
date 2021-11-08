@@ -265,6 +265,7 @@ import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
 import { addIssue, deleteIssue, getIssueFamily, updateIssue } from '@/api/issue'
 import { cloneDeep } from 'lodash'
+import { CancelRequest } from '@/newMixins'
 
 export default {
   name: 'WBS',
@@ -281,6 +282,7 @@ export default {
   directives: {
     contextmenu: directive
   },
+  mixins: [CancelRequest],
   props: {
     filterValue: {
       type: Object,
@@ -393,6 +395,7 @@ export default {
       return result
     },
     async loadData() {
+      if (this.listLoading) { this.cancelRequest() }
       if (this.selectedProjectId === -1) return
       this.listLoading = true
       this.listData = []
@@ -403,7 +406,7 @@ export default {
       this.$set(this.$refs['WBS'], 'isGroup', false)
     },
     async fetchData() {
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams())
+      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       return Promise.resolve(res.data.map(item => this.issueFormatter(item)))
     },
     issueFormatter(issue) {
