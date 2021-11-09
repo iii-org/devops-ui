@@ -199,7 +199,7 @@ export default {
           // error
         }
         this.$parent.isLoading = false
-        await this.getRelativeList()
+        this.$emit('getRelativeList')
       }
     },
     async updatedIssue(id, updatedData) {

@@ -124,6 +124,7 @@
       :project-issue-list="projectIssueList"
       :fixed_version="fixed_version"
       :assigned_to="assigned_to"
+      @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
       @loadData="loadData"
       @updateData="updateData"
