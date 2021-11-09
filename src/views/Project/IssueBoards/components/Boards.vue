@@ -135,13 +135,17 @@ export default {
       'priority'
     ]),
     groupByValueOnBoard() {
-      const dimension = this[this.groupBy.dimension] || this.contextOptions[this.groupBy.dimension]
       if (this.groupBy.value.length <= 0) {
-        let value = this.groupBy.dimension === 'status' ? this.filterClosedStatus(dimension) : dimension
-        value = this.groupBy.dimension === 'assigned_to' ? this.filterMe(value) : value
-        return value.map(item => item)
+        const statusSort = this.getStatusSort.map(item => item)
+        return statusSort
       }
       return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
+    },
+    getStatusSort() {
+      const dimension = this[this.groupBy.dimension] || this.contextOptions[this.groupBy.dimension]
+      let sort = this.groupBy.dimension === 'status' ? this.filterClosedStatus(dimension) : dimension
+      sort = this.groupBy.dimension === 'assigned_to' ? this.filterMe(sort) : sort
+      return sort
     }
   },
   methods: {
@@ -189,8 +193,7 @@ export default {
         try {
           const updatedData = { [`${this.groupBy.dimension}_id`]: evt.boardObject.id }
           const issueId = evt.event.added.element.id
-          const res = await updateIssue(issueId, updatedData)
-          await this.updateRelationIssue(this.projectIssueList, res.data)
+          await this.updatedIssue(issueId, updatedData)
           this.setProjectIssueList(evt)
         } catch (e) {
           // error
@@ -199,6 +202,10 @@ export default {
         await this.getRelativeList()
       }
     },
+    async updatedIssue(id, updatedData) {
+      const res = await updateIssue(id, updatedData)
+      await this.updateRelationIssue(this.projectIssueList, res.data)
+    },
     setProjectIssueList(evt) {
       const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
       const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
@@ -206,7 +213,7 @@ export default {
       this.$emit('updateIssueList', idx, issue)
     },
     updateRelationIssue(list, updatedIssue) {
-      list.forEach((issue) => {
+      list.forEach(issue => {
         if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
           this.$set(issue, 'parent', updatedIssue)
         }
@@ -227,12 +234,8 @@ export default {
       this.$parent.isLoading = true
       const filterDimension = Object.keys(value)[0]
       try {
-        let data = { [filterDimension + '_id']: value[filterDimension].id }
-        if (Array.isArray(value[filterDimension])) {
-          data = { [filterDimension]: value[filterDimension].map(item => item.id).join(',') }
-        }
-        const res = await updateIssue(id, data)
-        await this.updateRelationIssue(this.projectIssueList, res.data)
+        const data = this.handleFilterArrayData(value)
+        await this.updatedIssue(id, data)
         const idx = this.projectIssueList.findIndex(item => item.id === id)
         const issue = this.projectIssueList.find(item => item.id === id)
         issue[filterDimension] = value[filterDimension]
@@ -241,6 +244,14 @@ export default {
         // error
       }
       this.$parent.isLoading = false
+    },
+    handleFilterArrayData(value) {
+      const filterDimension = Object.keys(value)[0]
+      let data = { [`${filterDimension}_id`]: value[filterDimension].id }
+      if (Array.isArray(value[filterDimension])) {
+        data = { [filterDimension]: value[filterDimension].map(item => item.id).join(',') }
+      }
+      return data
     },
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value

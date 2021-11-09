@@ -240,21 +240,25 @@ export default {
       return result
     },
     groupByOptions() {
-      let dimension = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
-      dimension = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(dimension) : dimension
-      return dimension.map((item, idx) => ({
+      const statusSort = this.getStatusSort.map((item, idx) => ({
         id: idx,
         label: this.getTranslateHeader(item.name),
         value: item
       }))
+      return statusSort
     },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        let value = (this.groupBy.dimension === 'status') ? this.filterClosedStatus(this[this.groupBy.dimension]) : this[this.groupBy.dimension]
-        value = (this.groupBy.dimension === 'assigned_to') ? this.filterMe(value) : value
-        return value.map(item => item)
+        const statusSort = this.getStatusSort.map(item => item)
+        return statusSort
       }
       return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
+    },
+    getStatusSort() {
+      const dimension = this.groupBy.dimension
+      let sort = dimension === 'status' ? this.filterClosedStatus(this[dimension]) : this[dimension]
+      sort = dimension === 'assigned_to' ? this.filterMe(sort) : sort
+      return sort
     },
     showSelectedGroupByName() {
       return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
@@ -398,11 +402,7 @@ export default {
     },
     classifyIssue() {
       const issueList = this.projectIssueList
-      this.groupByValueOnBoard.forEach(dimension => {
-        if (!this.classifyIssueList.hasOwnProperty(dimension.id)) {
-          this.classifyIssueList[dimension.id] = []
-        }
-      })
+      this.checkGroupByValueOnBoard()
       issueList.forEach(issue => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
@@ -412,17 +412,23 @@ export default {
       })
       this.sortIssue()
     },
+    checkGroupByValueOnBoard() {
+      this.groupByValueOnBoard.forEach(dimension => {
+        if (!this.classifyIssueList.hasOwnProperty(dimension.id)) {
+          this.classifyIssueList[dimension.id] = []
+        }
+      })
+    },
     getParams() {
       const result = {}
       if (!this.displayClosed && this.groupBy.dimension !== 'status') result['status_id'] = 'open'
-      Object.keys(this.filterValue).forEach(item => {
-        if (this.filterValue[item]) {
-          item === 'tags' && this.filterValue[item].length > 0
-            ? result[item] = this.filterValue[item].join(',')
-            : result[`${item}_id`] = this.filterValue[item]
+      if (this.keyword) result['search'] = this.keyword
+      Object.keys(this.filterValue).forEach(param => {
+        if (this.filterValue[param]) {
+          const isArray = param === 'tags' && this.filterValue[param].length > 0
+          isArray ? result[param] = this.filterValue[param].join(',') : result[`${param}_id`] = this.filterValue[param]
         }
       })
-      if (this.keyword) result['search'] = this.keyword
       return result
     },
     async syncLoadFilterData() {
