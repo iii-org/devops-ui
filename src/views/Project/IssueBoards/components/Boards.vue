@@ -217,17 +217,17 @@ export default {
         if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
           this.$set(issue, 'parent', updatedIssue)
         }
-        this.handleUpdatedIssue('children')
-        this.handleUpdatedIssue('relations')
+        this.handleUpdatedIssue('children', updatedIssue)
+        this.handleUpdatedIssue('relations', updatedIssue)
       })
     },
-    handleUpdatedIssue(issue, key, updatedIssue) {
-      if (issue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
+    handleUpdatedIssue(key, updatedIssue) {
+      if (updatedIssue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
     },
     setUpdatedIssue(key, updatedIssue) {
-      const idx = issue[key].findIndex(item => item.id === updatedIssue.id)
-      const issue = issue[key].find(item => item.id === updatedIssue.id)
-      this.$set(issue[key], idx, updatedIssue)
+      const idx = updatedIssue[key].findIndex(item => item.id === issue.id)
+      const issue = updatedIssue[key].find(item => item.id === issue.id)
+      this.$set(issue[key], idx, issue)
     },
     async quickUpdateIssue(event) {
       const { id, value } = event
