@@ -41,7 +41,7 @@
         <el-table-column align="center" :label="$t('SystemDeploySettings.Account')" prop="cluster_user" width="100" />
         <el-table-column align="center" :label="$t('SystemDeploySettings.LastUpdateTime')" width="200">
           <template slot-scope="scope">
-            {{ handleLastUpdateTime(scope.row.update_at) }}
+            {{ getLastUpdateTime(scope.row.update_at) }}
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('SystemDeploySettings.Status')">
@@ -193,7 +193,7 @@ export default {
       row.disabled = !row.disabled
       this.updateHostsDisabled(row)
     },
-    handleLastUpdateTime(time) {
+    getLastUpdateTime(time) {
       const date = new Date(time)
       const hours = date.getHours()
       date.setHours(hours + 8)
