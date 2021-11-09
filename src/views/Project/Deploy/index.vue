@@ -76,10 +76,17 @@
       </el-table-column>
       <el-table-column
         prop="pod"
+        align="center"
+        width="200"
         :label="$t('Deploy.Pod')"
       >
         <template slot-scope="{row}">
-          {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}
+          <el-progress
+            :percentage="calcPercentage(row.deployment.available_pod_number, row.deployment.total_pod_number)"
+            :status="format(row.deployment.available_pod_number, row.deployment.total_pod_number)"
+          />
+          <span> {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}</span>
+
         </template>
       </el-table-column>
       <el-table-column-time
@@ -372,6 +379,12 @@ export default {
     toEndpoint(url) {
       // console.log(url)
       window.open(url, '_blank')
+    },
+    format(a, b) {
+      return a / b === 1 ? 'success' : 'warning'
+    },
+    calcPercentage(a, b) {
+      return (a / b) * 100
     }
   }
 }
