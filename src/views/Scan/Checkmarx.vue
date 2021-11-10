@@ -224,10 +224,21 @@ export default {
     },
     async cancelScans(row) {
       const { scan_id } = row
-      await cancelCheckMarxScans(scan_id)
-        .then(async () => {
+      let hasError = false
+      try {
+        await cancelCheckMarxScans(scan_id)
+      } catch (error) {
+        hasError = true
+        console.error(error)
+      } finally {
+        if (!hasError) {
           await this.loadData()
-        })
+          this.$message({
+            message: this.$t('CheckMarx.cancelScansMessage', [scan_id]),
+            type: 'warning'
+          })
+        }
+      }
     },
     // if the scan's status are PreScan, Queued or Scanning, users can cancel the scans
     canBeCanceled(row) {

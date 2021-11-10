@@ -299,6 +299,7 @@ export default {
     registryReport: 'The report no longer exists, regenerate report?',
     registryReportTip: 'It might takes 3-5 minutes to regenerate report, please refresh page later.',
     QueueSequence: 'Sequence',
+    cancelScansMessage: 'The scan program with test number {0} has been cancelled, please wait for CheckMarx to update...',
     New: 'New',
     Queued: 'Queued',
     Scanning: 'Scanning',
