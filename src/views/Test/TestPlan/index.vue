@@ -27,10 +27,14 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel(allDownloadData)">
+              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading"
+                            @click="downloadExcel(allDownloadData)"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
-              <el-menu-item v-show="hasSelectedTestPlan" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedTestPlan)">
+              <el-menu-item v-show="hasSelectedTestPlan" :disabled="selectedProjectId === -1"
+                            @click="downloadExcel(selectedTestPlan)"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
@@ -70,140 +74,36 @@
         >
           <el-table-column type="selection" reserve-selection width="55" />
           <el-table-column type="expand" class-name="informationExpand">
-            <template slot-scope="scope">
-              <el-row v-if="hasRelationIssue(scope.row)"
-                      v-loading="scope.row.hasOwnProperty('isLoadingFamily')&&scope.row.isLoadingFamily"
-              >
-                <div v-if="scope.row.hasOwnProperty('isLoadingFamily') && scope.row.isLoadingFamily" class="p-5" />
-                <ul v-else>
-                  <li v-if="scope.row.hasOwnProperty('parent') && Object.keys(scope.row.parent).length > 0">
-                    <strong>{{ $t('Issue.ParentIssue') }}:</strong>
-                    <el-link
-                      :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                      :underline="false"
-                      @click="handleEdit(scope.row.parent.id)"
-                      @contextmenu.native="handleContextMenu(scope.row.parent, '', $event)"
-                    >
-                      <status :name="scope.row.parent.status.name" size="mini" />
-                      <tracker :name="scope.row.parent.tracker.name" />
-                      #{{ scope.row.parent.id }} -
-                      <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                      {{ scope.row.parent.name }}
-                      <span
-                        v-if="scope.row.parent.hasOwnProperty('assigned_to') && Object.keys(scope.row.parent.assigned_to).length > 1"
-                      >
-                        ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
-                        - {{ scope.row.parent.assigned_to.login }})
-                      </span>
-                    </el-link>
-                    <el-popconfirm
-                      :confirm-button-text="$t('general.Remove')"
-                      :cancel-button-text="$t('general.Cancel')"
-                      icon="el-icon-info"
-                      icon-color="red"
-                      :title="$t('Issue.RemoveIssueRelation')"
-                      @confirm="removeIssueRelation(scope.row.id)"
-                    >
-                      <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                        {{ $t('Issue.Unlink') }}
-                      </el-button>
-                    </el-popconfirm>
-                  </li>
-                  <li v-if="scope.row.hasOwnProperty('children') && scope.row.children.length>0">
-                    <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
-                    <ol>
-                      <template v-for="child in scope.row.children">
-                        <li v-if="Object.keys(child).length > 0" :key="child.id">
-                          <el-link
-                            :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                            :underline="false"
-                            @click="handleEdit(child.id)"
-                            @contextmenu.native="handleContextMenu(child, '', $event)"
+            <template slot-scope="{row}">
+              <ExpandSection
+                v-if="hasRelationIssue(row)"
+                :issue="row"
+                @on-context-menu="onContextMenu"
+              />
+              <ul class="family">
+                <li v-if="row.hasOwnProperty('test_files') && row.test_files.length>0">
+                  <span class="title">{{ $t('Issue.TestFile') }}:</span>
+                  <ol class="issue-list">
+                    <template v-for="child in row.test_files">
+                      <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
+                        {{ child.software_name }} - {{ child.file_name }}
+                        <template v-if="child.the_last_test_result">
+                          ({{ child.the_last_test_result.branch }} -
+                          <el-link type="primary" target="_blank" style="font-size: 16px"
+                                   :href="child.the_last_test_result.commit_url"
                           >
-                            <status :name="child.status.name" size="mini" />
-                            <tracker :name="child.tracker.name" />
-                            #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                            {{ child.name }}
-                            <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                              ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
-                              - {{ child.assigned_to.login }})
-                            </span>
+                            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+                            {{ child.the_last_test_result.commit_id }}
                           </el-link>
-                          <el-popconfirm
-                            :confirm-button-text="$t('general.Remove')"
-                            :cancel-button-text="$t('general.Cancel')"
-                            icon="el-icon-info"
-                            icon-color="red"
-                            :title="$t('Issue.RemoveIssueRelation')"
-                            @confirm="removeIssueRelation(child.id)"
-                          >
-                            <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                              {{ $t('Issue.Unlink') }}
-                            </el-button>
-                          </el-popconfirm>
-                        </li>
-                      </template>
-                    </ol>
-                  </li>
-                  <li v-if="scope.row.hasOwnProperty('relations') && scope.row.relations.length>0">
-                    <strong>{{ $t('Issue.RelatedIssue') }}:</strong>
-                    <ol>
-                      <template v-for="child in scope.row.relations">
-                        <li v-if="Object.keys(child).length > 0" :key="child.id">
-                          <el-link
-                            :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                            :underline="false"
-                            @click="handleEdit(child.id)"
-                            @contextmenu.native="handleContextMenu(child, '', $event)"
-                          >
-                            <status :name="child.status.name" size="mini" />
-                            <tracker :name="child.tracker.name" />
-                            #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                            {{ child.name }}
-                            <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                              ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
-                            </span>
-                          </el-link>
-                          <el-popconfirm
-                            :confirm-button-text="$t('general.Remove')"
-                            :cancel-button-text="$t('general.Cancel')"
-                            icon="el-icon-info"
-                            icon-color="red"
-                            :title="$t('Issue.RemoveIssueRelation')"
-                            @confirm="removeRelationIssue(child.relation_id)"
-                          >
-                            <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                              {{ $t('Issue.Unlink') }}
-                            </el-button>
-                          </el-popconfirm>
-                        </li>
-                      </template>
-                    </ol>
-                  </li>
-                  <li v-if="scope.row.hasOwnProperty('test_files') && scope.row.test_files.length>0">
-                    <strong>{{ $t('Issue.TestFile') }}:</strong>
-                    <ol>
-                      <template v-for="child in scope.row.test_files">
-                        <li v-if="Object.keys(child).length > 0" :key="child.id">
-                          {{ child.software_name }} - {{ child.file_name }}
-                          <template v-if="child.the_last_test_result">
-                            ({{ child.the_last_test_result.branch }} -
-                            <el-link type="primary" target="_blank" style="font-size: 16px"
-                                     :href="child.the_last_test_result.commit_url"
-                            >
-                              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
-                              {{ child.the_last_test_result.commit_id }}
-                            </el-link>
-                            -
-                            <Result :test-file="child" />
-                            )
-                          </template>
-                        </li>
-                      </template>
-                    </ol>
-                  </li>
-                </ul>
-              </el-row>
+                          -
+                          <Result :test-file="child" />
+                          )
+                        </template>
+                      </li>
+                    </template>
+                  </ol>
+                </li>
+              </ul>
             </template>
           </el-table-column>
           <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
@@ -214,7 +114,8 @@
           <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
             <template slot-scope="scope">
               <span class="text-success mr-2">#{{ scope.row.id }}</span>
-              <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>{{ scope.row.name }}
+              <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+              {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
@@ -265,16 +166,14 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue } from '@/components/Issue'
+import { QuickAddIssue, ExpandSection } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu, IssueExpand } from '@/newMixins'
-import SearchFilter from '@/components/Issue/SearchFilter'
+import { Table, IssueList, ContextMenu, SearchFilter } from '@/newMixins'
 import { getTestFileByTestPlan } from '@/api/qa'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'
 import XLSX from 'xlsx'
 import Result from '@/components/Test/Result'
-
 /**
  * @param row.relations  row maybe have parent or children issue
  * @param data.issue_list get paged data from api
@@ -283,12 +182,13 @@ import Result from '@/components/Test/Result'
 export default {
   name: 'TestPlan',
   components: {
+    ExpandSection,
     Result,
     QuickAddIssue,
     ProjectListSelector,
     SearchFilter
   },
-  mixins: [Table, IssueList, ContextMenu, IssueExpand],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -622,7 +522,25 @@ export default {
       let result = await this.fetchDataExcel(selectedTestPlan)
       result = await this.dataCleanExcel(result)
       await this.prepareExcel(result)
+    },
+    onContextMenu({ row, column, event }) {
+      this.handleContextMenu(row, column, event)
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.family {
+  @apply space-y-3;
+  .title {
+    @apply text-sm font-bold;
+  }
+
+  .issue-list {
+    @apply space-y-1;
+    .issue-item:hover, :focus {
+      @apply bg-gray-100
+    }
+  }
+}
+</style>

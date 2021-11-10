@@ -17,124 +17,11 @@
         @sort-change="handleSortChange"
       >
         <el-table-column type="expand" class-name="informationExpand">
-          <template slot-scope="scope">
-            <el-row v-if="scope.row.family"
-                    v-loading="scope.row.hasOwnProperty('isLoadingFamily')&&scope.row.isLoadingFamily"
-            >
-              <div v-if="scope.row.hasOwnProperty('isLoadingFamily') && scope.row.isLoadingFamily" class="p-5" />
-              <ul v-else>
-                <li v-if="scope.row.hasOwnProperty('parent') && Object.keys(scope.row.parent).length > 0">
-                  <b>{{ $t('Issue.ParentIssue') }}:</b>
-                  <el-link
-                    :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                    :underline="false"
-                    @click="handleEdit(scope.row.parent.id)"
-                    @contextmenu.native="handleContextMenu(scope.row.parent, '', $event)"
-                  >
-                    <status :name="scope.row.parent.status.name" size="mini" />
-                    <tracker :name="scope.row.parent.tracker.name" />
-                    #{{ scope.row.parent.id }} -
-                    <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name
-                    }}]
-                    </el-tag>
-                    {{ scope.row.parent.name }}
-                    <span
-                      v-if="scope.row.parent.hasOwnProperty('assigned_to') && Object.keys(scope.row.parent.assigned_to).length > 1"
-                    >
-                      ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
-                      - {{ scope.row.parent.assigned_to.login }})
-                    </span>
-                  </el-link>
-                  <el-popconfirm
-                    :confirm-button-text="$t('general.Remove')"
-                    :cancel-button-text="$t('general.Cancel')"
-                    icon="el-icon-info"
-                    icon-color="red"
-                    :title="$t('Issue.RemoveIssueRelation')"
-                    @confirm="removeIssueRelation(scope.row.id)"
-                  >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                      {{ $t('Issue.Unlink') }}
-                    </el-button>
-                  </el-popconfirm>
-                </li>
-                <li v-if="scope.row.hasOwnProperty('children') && scope.row.children.length>0">
-                  <b>{{ $t('Issue.ChildrenIssue') }}:</b>
-                  <ol>
-                    <template v-for="child in scope.row.children">
-                      <li v-if="Object.keys(child).length > 0" :key="child.id">
-                        <el-link
-                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                          :underline="false"
-                          @click="handleEdit(child.id)"
-                          @contextmenu.native="handleContextMenu(child, '', $event)"
-                        >
-                          <status :name="child.status.name" size="mini" />
-                          <tracker :name="child.tracker.name" />
-                          #{{ child.id }} -
-                          <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]
-                          </el-tag>
-                          {{ child.name }}
-                          <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }}
-                            - {{ child.assigned_to.login }})
-                          </span>
-                        </el-link>
-                        <el-popconfirm
-                          :confirm-button-text="$t('general.Remove')"
-                          :cancel-button-text="$t('general.Cancel')"
-                          icon="el-icon-info"
-                          icon-color="red"
-                          :title="$t('Issue.RemoveIssueRelation')"
-                          @confirm="removeIssueRelation(child.id)"
-                        >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                            {{ $t('Issue.Unlink') }}
-                          </el-button>
-                        </el-popconfirm>
-                      </li>
-                    </template>
-                  </ol>
-                </li>
-                <li v-if="scope.row.hasOwnProperty('relations') && scope.row.relations.length>0">
-                  <b>{{ $t('Issue.RelatedIssue') }}:</b>
-                  <ol>
-                    <template v-for="child in scope.row.relations">
-                      <li v-if="Object.keys(child).length > 0" :key="child.id">
-                        <el-link
-                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                          :underline="false"
-                          @click="handleEdit(child.id)"
-                          @contextmenu.native="handleContextMenu(child, '', $event)"
-                        >
-                          <status :name="child.status.name" size="mini" />
-                          <tracker :name="child.tracker.name" />
-                          #{{ child.id }} -
-                          <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]
-                          </el-tag>
-                          {{ child.name }}
-                          <span v-if="child.hasOwnProperty('assigned_to') && Object.keys(child.assigned_to).length > 1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})
-                          </span>
-                        </el-link>
-                        <el-popconfirm
-                          :confirm-button-text="$t('general.Remove')"
-                          :cancel-button-text="$t('general.Cancel')"
-                          icon="el-icon-info"
-                          icon-color="red"
-                          :title="$t('Issue.RemoveIssueRelation')"
-                          @confirm="removeRelationIssue(child.relation_id)"
-                        >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                            {{ $t('Issue.Unlink') }}
-                          </el-button>
-                        </el-popconfirm>
-                      </li>
-                    </template>
-                  </ol>
-                </li>
-              </ul>
-            </el-row>
+          <template slot-scope="{row}">
+            <ExpandSection
+              :issue="row"
+              @on-context-menu="onContextMenu"
+            />
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
@@ -213,7 +100,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { ContextMenu, IssueList, IssueExpand } from '@/newMixins'
+import { ExpandSection } from '@/components/Issue'
+import { ContextMenu, IssueList } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
 
 /**
@@ -223,7 +111,8 @@ import { getUserIssueList } from '@/api/user'
 
 export default {
   name: 'MyWorkProjectIssueList',
-  mixins: [IssueList, ContextMenu, IssueExpand],
+  components: { ExpandSection },
+  mixins: [IssueList, ContextMenu],
   props: {
     from: {
       type: String,

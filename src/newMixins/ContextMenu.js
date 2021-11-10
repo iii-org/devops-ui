@@ -44,6 +44,9 @@ export default {
     }
   },
   methods: {
+    onContextMenu({ row, column, event }) {
+      this.handleContextMenu(row, column, event)
+    },
     handleContextMenu(row, column, event) {
       event.preventDefault()
       const eventX = event.pageX

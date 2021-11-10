@@ -411,8 +411,15 @@ export default {
   overflow-y: auto;
 }
 
-> > > .hide-expand-icon .el-table__expand-column .cell {
-  display: none;
+> > > .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
+  .action{
+    @apply border-0
+  }
 }
 
 > > > .el-table__expanded-cell {

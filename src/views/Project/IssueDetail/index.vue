@@ -110,18 +110,20 @@
                 :issue-test.sync="test_files"
                 @update="updateTestCollection"
               />
-              <el-collapse v-if="countRelationIssue>0">
+              <el-collapse v-if="countRelationIssue>0" v-model="relationVisible" accordion>
                 <el-collapse-item>
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
-                    <el-button size="mini" type="primary" icon="el-icon-data-line" @click="toggleIssueMatrixDialog">
+                    <el-button size="mini" type="primary" icon="el-icon-data-line" @click.native.stop="toggleIssueMatrixDialog">
                       {{ $t('Issue.TraceabilityMatrix') }}
                     </el-button>
                   </div>
-                  <IssueExpand
+                  <ExpandSection
                     :issue="$data"
                     :family="countRelationIssue>0"
                     :popup="true"
+                    :reload="relationVisible"
+                    @on-context-menu="onContextMenu"
                     @popup-dialog="onRelationIssueDialog"
                   />
                 </el-collapse-item>
@@ -202,6 +204,14 @@
     >
       <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
     </el-dialog>
+    <ContextMenu
+      ref="contextmenu"
+      :visible="contextMenu.visible"
+      :row="contextMenu.row"
+      :filter-column-options="filterOptions"
+      :selection-options="contextOptions"
+      @update="fetchIssueLink"
+    />
   </div>
 </template>
 
@@ -220,12 +230,12 @@ import {
 } from './components'
 import { addProjectTags } from '@/api/projects'
 import dayjs from 'dayjs'
-import Tracker from '@/components/Issue/Tracker'
+import { Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
-import IssueExpand from '@/components/Issue/IssueExpand'
+import ContextMenu from '@/newMixins/ContextMenu'
 
 export default {
   name: 'ProjectIssueDetail',
@@ -241,8 +251,9 @@ export default {
     IssueFiles,
     IssueMatrix,
     RelatedCollectionDialog,
-    IssueExpand
+    ExpandSection
   },
+  mixins: [ContextMenu],
   props: {
     propsIssueId: {
       type: [String, Number],
@@ -294,6 +305,7 @@ export default {
       editorHeight: '100px',
       issueScrollTop: 0,
       scrollClass: 'issueHeight',
+      relationVisible: false,
       relationIssue: {
         visible: false,
         id: null
@@ -851,6 +863,9 @@ export default {
     },
     updateTestCollection(value) {
       this.test_files = value
+    },
+    onContextMenu({ row, column, event }) {
+      this.handleContextMenu(row, column, event)
     }
   }
 }

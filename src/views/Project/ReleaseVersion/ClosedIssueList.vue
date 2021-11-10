@@ -81,104 +81,10 @@
         @sort-change="handleSortChange"
       >
         <el-table-column type="expand" class-name="informationExpand">
-          <template slot-scope="scope">
-            <el-col v-loading="scope.row.loadingRelation">
-              <ul>
-                <li v-if="scope.row.hasOwnProperty('parent')&&Object.keys(scope.row.parent).length>0">
-                  <strong>{{ $t('Issue.ParentIssue') }}:</strong>
-                  <el-link
-                    class="font-weight-regular text-lg cursor-pointer"
-                    :underline="false"
-                    @click="handleEdit(scope.row.parent.id)"
-                  >
-                    <status :name="scope.row.parent.status.name" size="mini" />
-                    <tracker :name="scope.row.parent.tracker.name" />
-                    #{{ scope.row.parent.id }} - <el-tag v-for="item in scope.row.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                    {{ scope.row.parent.name }}
-                    <span
-                      v-if="scope.row.parent.hasOwnProperty('assigned_to')&&Object.keys(scope.row.parent.assigned_to).length>1"
-                    >
-                      ({{ $t('Issue.Assignee') }}: {{ scope.row.parent.assigned_to.name }}
-                      - {{ scope.row.parent.assigned_to.login }})
-                    </span>
-                  </el-link>
-                  <el-popconfirm
-                    :confirm-button-text="$t('general.Remove')"
-                    :cancel-button-text="$t('general.Cancel')"
-                    icon="el-icon-info"
-                    icon-color="red"
-                    :title="$t('Issue.RemoveIssueRelation')"
-                    @confirm="removeIssueRelation(scope.row.id)"
-                  >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
-                  </el-popconfirm>
-                </li>
-                <li v-if="scope.row.hasOwnProperty('children')">
-                  <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
-                  <ol>
-                    <template v-for="child in scope.row.children">
-                      <li v-if="Object.keys(child).length>0" :key="child.id">
-                        <el-link
-                          class="font-weight-regular my-1"
-                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                          :underline="false"
-                          @click="handleEdit(child.id)"
-                        >
-                          <status :name="child.status.name" size="mini" />
-                          <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                          {{ child.name }}
-                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
-                        </el-link>
-                        <el-popconfirm
-                          :confirm-button-text="$t('general.Remove')"
-                          :cancel-button-text="$t('general.Cancel')"
-                          icon="el-icon-info"
-                          icon-color="red"
-                          :title="$t('Issue.RemoveIssueRelation')"
-                          @confirm="removeIssueRelation(child.id)"
-                        >
-                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>
-                        </el-popconfirm>
-                      </li>
-                    </template>
-                  </ol>
-                </li>
-                <li v-if="scope.row.hasOwnProperty('relations')&&scope.row.relations.length>0">
-                  <strong>{{ $t('Issue.RelatedIssue') }}:</strong>
-                  <ol>
-                    <template v-for="child in scope.row.relations">
-                      <li v-if="Object.keys(child).length>0" :key="child.id">
-                        <el-link
-                          class="font-weight-regular my-1"
-                          :style="{ 'font-size': '14px', cursor: 'pointer' }"
-                          :underline="false"
-                          @click="handleEdit(child.id)"
-                        >
-                          <status :name="child.status.name" size="mini" />
-                          <tracker :name="child.tracker.name" />
-                          #{{ child.id }} - <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                          {{ child.name }}
-                          <span v-if="child.hasOwnProperty('assigned_to')&&Object.keys(child.assigned_to).length>1">
-                            ({{ $t('Issue.Assignee') }}: {{ child.assigned_to.name }} - {{ child.assigned_to.login }})</span>
-                        </el-link>
-                        <!--                        <el-popconfirm-->
-                        <!--                          :confirm-button-text="$t('general.Remove')"-->
-                        <!--                          :cancel-button-text="$t('general.Cancel')"-->
-                        <!--                          icon="el-icon-info"-->
-                        <!--                          icon-color="red"-->
-                        <!--                          :title="$t('Issue.RemoveIssueRelation')"-->
-                        <!--                          @confirm="removeIssueRelation(child.id)"-->
-                        <!--                        >-->
-                        <!--                          <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">{{ $t('Issue.Unlink') }}</el-button>-->
-                        <!--                        </el-popconfirm>-->
-                      </li>
-                    </template>
-                  </ol>
-                </li>
-              </ul>
-            </el-col>
+          <template slot-scope="{row}">
+            <ExpandSection
+              :issue="row"
+            />
           </template>
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
@@ -237,7 +143,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addIssue, getIssueFamily, getIssuePriority, getIssueStatus, getIssueTracker, updateIssue } from '@/api/issue'
 import { getProjectIssueList, getProjectUserList, getProjectVersion } from '@/api/projects'
-import { Status, Priority, Tracker } from '@/components/Issue'
+import { Status, Priority, Tracker, ExpandSection } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import axios from 'axios'
 import { BasicData, Table, Pagination } from '@/newMixins'
@@ -255,7 +161,8 @@ export default {
     Priority,
     Status,
     Tracker,
-    ProjectListSelector
+    ProjectListSelector,
+    ExpandSection
   },
   mixins: [BasicData, Table, Pagination],
   data() {
@@ -497,13 +404,13 @@ export default {
     async getIssueFamilyData(row, expandedRows) {
       if (expandedRows.find((item) => (item.id === row.id))) {
         try {
-          this.$set(row, 'loadingRelation', true)
+          this.$set(row, 'isLoadingFamily', true)
           const family = await getIssueFamily(row.id, { relation: true })
           const data = family.data
           if (data.hasOwnProperty('parent')) { await this.$set(row, 'parent', data.parent) }
           if (data.hasOwnProperty('children')) { await this.$set(row, 'children', data.children) }
           if (data.hasOwnProperty('relations')) { await this.$set(row, 'relations', data.relations) }
-          this.$set(row, 'loadingRelation', false)
+          this.$set(row, 'isLoadingFamily', false)
         } catch (e) {
         //   null
         }

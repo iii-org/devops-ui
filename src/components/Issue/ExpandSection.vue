@@ -8,6 +8,7 @@
           <li class="issue-item">
             <IssueRow
               :issue="issue.parent"
+              :reload="reload"
               @click-title="handleEdit"
               @show-context-menu="handleContextMenu(issue.parent, '', $event)"
               @remove-confirm="removeIssueRelation"
@@ -22,6 +23,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
                 @remove-confirm="removeIssueRelation"
@@ -37,6 +39,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
                 @remove-confirm="removeRelationIssue"
@@ -46,26 +49,17 @@
         </ol>
       </li>
     </ul>
-    <ContextMenu
-      ref="contextmenu"
-      :visible="contextMenu.visible"
-      :row="contextMenu.row"
-      :filter-column-options="filterOptions"
-      :selection-options="contextOptions"
-      @update="loadData"
-    />
+    <slot />
   </el-row>
 </template>
 
 <script>
-import { ContextMenu } from '@/newMixins'
 import { deleteIssueRelation, updateIssue } from '@/api/issue'
-import IssueRow from '@/components/Issue/components/IssueRow'
+import IssueRow from './components/IssueRow'
 
 export default {
-  name: 'IssueExpand',
+  name: 'ExpandSection',
   components: { IssueRow },
-  mixins: [ContextMenu],
   props: {
     issue: {
       type: Object,
@@ -77,6 +71,10 @@ export default {
     },
     family: {
       type: Boolean,
+      default: false
+    },
+    reload: {
+      type: [String, Boolean],
       default: false
     }
   },
@@ -120,6 +118,9 @@ export default {
       } else {
         this.$emit('popup-dialog', issueId)
       }
+    },
+    handleContextMenu(row, column, event) {
+      this.$emit('on-context-menu', { row, column, event })
     }
   }
 }
@@ -134,7 +135,7 @@ export default {
   .issue-list{
     @apply space-y-1;
     .issue-item:hover,:focus{
-      @apply bg-gray-100
+      @apply bg-gray-100 text-primary font-bold;
     }
   }
 

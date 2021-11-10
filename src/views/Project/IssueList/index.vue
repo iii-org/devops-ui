@@ -27,10 +27,14 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel('allDownloadData')">
+              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading"
+                            @click="downloadExcel('allDownloadData')"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
-              <el-menu-item v-show="hasSelectedIssue" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedIssueList)">
+              <el-menu-item v-show="hasSelectedIssue" :disabled="selectedProjectId === -1"
+                            @click="downloadExcel(selectedIssueList)"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
@@ -70,7 +74,10 @@
           <el-table-column v-if="userRole === 'QA'" type="selection" reserve-selection width="55" />
           <el-table-column type="expand" class-name="informationExpand">
             <template slot-scope="{row}">
-              <IssueExpand :issue="row" />
+              <ExpandSection
+                :issue="row"
+                @on-context-menu="onContextMenu"
+              />
             </template>
           </el-table-column>
           <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
@@ -108,7 +115,9 @@
           </el-table-column>
           <el-table-column type="action" width="50px">
             <template slot-scope="{row}">
-              <el-button class="action" type="text" icon="el-icon-more" @click.native.stop="handleContextMenu(row, {}, $event)" />
+              <el-button class="action" type="text" icon="el-icon-more"
+                         @click.native.stop="handleContextMenu(row, {}, $event)"
+              />
             </template>
           </el-table-column>
           <template slot="empty">
@@ -138,14 +147,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import QuickAddIssue from '@/components/Issue/QuickAddIssue'
+import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
-import SearchFilter from '@/components/Issue/SearchFilter'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
 import XLSX from 'xlsx'
-import IssueExpand from '@/components/Issue/IssueExpand'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -158,7 +165,7 @@ export default {
     QuickAddIssue,
     ProjectListSelector,
     SearchFilter,
-    IssueExpand
+    ExpandSection
   },
   mixins: [Table, IssueList, ContextMenu],
   data() {
@@ -362,9 +369,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.el-table .action{
-  @apply border-0
-}
-</style>
