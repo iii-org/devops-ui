@@ -580,11 +580,14 @@ export default {
     },
     createRelativeList(list) {
       const result = []
-      for (let i = 0; i < parent.length; i++) {
-        result.push(parent[i])
-        const children = parent[i].children
-        if (parent[i].children.length) this.createRelativeList(children)
+      function flatList(parent) {
+        for (let i = 0; i < parent.length; i++) {
+          result.push(parent[i])
+          const children = parent[i].children
+          if (parent[i].children.length) flatList(children)
+        }
       }
+      flatList(list)
       return result
     },
     getSelectedLabel(item) {
