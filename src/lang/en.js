@@ -298,12 +298,15 @@ export default {
     removedScan: 'The scan removed.',
     registryReport: 'The report no longer exists, regenerate report?',
     registryReportTip: 'It might takes 3-5 minutes to regenerate report, please refresh page later.',
+    QueueSequence: 'Sequence',
     New: 'New',
     Queued: 'Queued',
     Scanning: 'Scanning',
     Finished: 'Finished',
     Failed: 'Failed',
-    InProcess: 'In Process'
+    InProcess: 'In Process',
+    Canceled: 'Canceled',
+    PreScan: 'Preparing'
   },
   WebInspect: {
     ScanId: 'Scan ID',

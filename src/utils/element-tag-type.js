@@ -58,7 +58,9 @@ export const checkMarx = {
   Scanning: 'slow',
   Failed: 'danger',
   Finished: 'success',
-  default: 'slow'
+  default: 'slow',
+  Canceled: 'warning',
+  PreScan: 'slow'
 }
 
 export const zap = {

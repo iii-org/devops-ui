@@ -298,12 +298,15 @@ export default {
     removedScan: '掃描已被刪除。',
     registryReport: '報告已不存在，是否需要重新產生？',
     registryReportTip: '報告產生需要 3-5 分鐘不等，請稍後再進頁面下載，或重整頁面。',
+    QueueSequence: '等候排序',
     New: '已新增',
     Queued: '排程中',
     Scanning: '掃描中',
     Finished: '掃描完成',
     Failed: '掃描失敗',
-    InProcess: '產生中'
+    InProcess: '產生中',
+    Canceled: '已取消',
+    PreScan: '準備中'
   },
   WebInspect: {
     ScanId: '測試編號',

@@ -32,13 +32,21 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag
-        :label="$t('general.Status')"
-        translate-key="CheckMarx"
-        location="checkMarx"
-        prop="status"
-        min-width="130"
-      />
+      <el-table-column :label="$t('general.Status')">
+        <template slot-scope="scope">
+          <el-tag
+            v-if="scope.row.status"
+            class="el-tag--circle"
+            :type="handleType(scope.row.status)"
+            :effect="getTagEffect(scope.row.status)"
+          >
+            <span>{{ $t(`CheckMarx.${scope.row.status}`) }}</span>
+          </el-tag>
+          <div v-if="scope.row.status === 'Queued' && scope.row.queue" class="text-xs">
+            {{ $t('CheckMarx.QueueSequence') }}: {{ scope.row.queue }}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
       <el-table-column :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
       <el-table-column :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
@@ -46,7 +54,20 @@
       <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
       <el-table-column :label="$t('CheckMarx.Report')" prop="report_ready" width="100">
         <template slot-scope="scope">
-          <template v-if="scope.row.status !== 'Failed'">
+          <template v-if="canBeCanceled(scope.row)">
+            <el-link
+              type="danger"
+              style="font-size: 16px"
+              :underline="false"
+              icon="el-icon-close"
+              @click="cancelScans(scope.row)"
+            />
+            <div class="text-sm">
+              {{ $t('general.Cancel') }}
+            </div>
+          </template>
+          <div v-else-if="isException(scope.row)">-</div>
+          <template v-else-if="isInProcess(scope.row)">
             <el-link
               type="primary"
               target="_blank"
@@ -56,7 +77,9 @@
               icon="el-icon-download"
               @click="fetchTestReport(scope.row)"
             />
-            <div class="text-sm">{{ scope.row.report_ready ? '' : $t('CheckMarx.InProcess') }}</div>
+            <div class="text-sm">
+              {{ scope.row.report_ready ? '' : $t('CheckMarx.InProcess') }}
+            </div>
           </template>
           <div v-else>-</div>
         </template>
@@ -83,14 +106,16 @@ import {
   getCheckMarxScans,
   getCheckMarxScanStats,
   getCheckMarxScanStatus,
-  registerCheckMarxReport
+  registerCheckMarxReport,
+  cancelCheckMarxScans
 } from '@/api/checkMarx'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
-import { ElTableColumnTime, ElTableColumnTag } from '@/components'
+import { ElTableColumnTime } from '@/components'
+import * as elementTagType from '@/utils/element-tag-type'
 
 export default {
   name: 'ScanCheckmarx',
-  components: { ElTableColumnTime, ElTableColumnTag },
+  components: { ElTableColumnTime },
   mixins: [MixinElTableWithAProject],
   data() {
     return {
@@ -126,6 +151,7 @@ export default {
         .then(res => {
           const idx = this.listData.findIndex(item => item.scan_id === scanId)
           this.listData[idx].status = res.data.name
+          this.listData[idx].queue = res.data.queue_position
           if (res.data.id === 7) {
             this.fetchScanStats(scanId)
             this.registerReport(scanId)
@@ -195,6 +221,32 @@ export default {
       }).then(() => {
         this.registerReport(scan_id)
       })
+    },
+    async cancelScans(row) {
+      const { scan_id } = row
+      await cancelCheckMarxScans(scan_id)
+        .then(async () => {
+          await this.loadData()
+        })
+    },
+    // if the scan's status are PreScan, Queued or Scanning, users can cancel the scans
+    canBeCanceled(row) {
+      return row.status === 'PreScan' || row.status === 'Queued' || row.status === 'Scanning'
+    },
+    isInProcess(row) {
+      return row.status !== 'Failed' && row.status !== 'Canceled'
+    },
+    // the scans report sometimes wouldn't be produced when they have been scanned
+    isException(row) {
+      return row.status === 'Finished' && row.report_id === -1
+    },
+    handleType(prop) {
+      const location = 'checkMarx'
+      return elementTagType[location][prop] || 'default'
+    },
+    getTagEffect(status) {
+      const tagMap = { Building: 'light' }
+      return tagMap[status] || 'dark'
     }
   }
 }
