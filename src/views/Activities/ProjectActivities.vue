@@ -39,7 +39,7 @@
 
 <script>
 import { getProjectActivities } from '@/api/activities'
-import { BasicData, SearchBar, Pagination, Table, ProjectSelector } from '@/newMixins'
+import { BasicData, Pagination, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
 const params = () => ({
@@ -50,13 +50,13 @@ const params = () => ({
 export default {
   name: 'ProjectActivities',
   components: { ElTableColumnTime },
-  mixins: [BasicData, SearchBar, Pagination, Table, ProjectSelector],
+  mixins: [BasicData, Pagination, Table, ProjectSelector],
   data() {
     return {
+      params: JSON.parse(JSON.stringify(params)),
       dialogVisible: false,
-      params: params,
-      searchKeys: ['operator_name', 'action_type', 'action_parts'],
-      activitiesList: []
+      activitiesList: [],
+      keyword: ''
     }
   },
   computed: {
@@ -65,20 +65,43 @@ export default {
       return this.activitiesList
     }
   },
+  watch: {
+    keyword: {
+      handler(val) {
+        this.onSearch(val)
+      }
+    }
+  },
   methods: {
-    async fetchData(params) {
-      const apiParams = params || this.params
-      const res = await getProjectActivities(this.selectedProjectId, apiParams)
-      const activities_list = res.data.activities_list
-      this.activitiesList = activities_list
-      this.listQuery = res.data.page
-      return activities_list
+    async fetchData() {
+      const res = await getProjectActivities(this.selectedProjectId, this.params)
+      this.setListData(res)
+    },
+    setListData(res) {
+      this.activitiesList = res.data.activities_list
+      this.listQuery = Object.assign({}, res.data.page)
+    },
+    /**
+     * @param keyword
+     * search keys are 'operator_name', 'action_type', 'action_parts'
+     */
+    async onSearch(keyword) {
+      this.params.search = keyword
+      if (keyword === '') delete this.params.search
+      await this.loadData()
+      this.initParams()
     },
     async onPagination (listQuery) {
-      const offset = listQuery.limit * (listQuery.page - 1)
-      const limit = listQuery.limit
-      const params = { offset, limit }
-      await this.fetchData(params)
+      const { limit, page } = listQuery
+      const offset = limit * (page - 1)
+      this.params.offset = offset
+      this.params.limit = limit
+      if (this.keyword !== '') this.params.search = this.keyword
+      await this.loadData()
+      this.initParams()
+    },
+    initParams() {
+      this.params = JSON.parse(JSON.stringify(params))
     }
   }
 }
