@@ -45,37 +45,21 @@
     >
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item :label="$t('Issue.Test Plan')">
-              <ul>
-                <li v-for="plan in scope.row.test_plans" :key="plan.id">
-                  <el-link @click="onRelationIssueDialog(plan.id)">
-                    <status :name="plan.status.name" size="mini" />
-                    <template v-if="plan.tracker">
-                      <tracker :name="plan.tracker.name" />
-                    </template>
-                    <template v-else>{{ $t('Issue.Issue') }}</template>
-                    #{{ plan.id }} - {{ plan.name }}
-                    <span v-if="plan.assigned_to && Object.keys(plan.assigned_to).length > 0">
-                      ({{ $t('Issue.Assignee') }}:{{ plan.assigned_to.name }} - {{ plan.assigned_to.login }})
-                    </span>
-                  </el-link>
-                  <el-popconfirm
-                    :confirm-button-text="$t('general.Remove')"
-                    :cancel-button-text="$t('general.Cancel')"
-                    icon="el-icon-info"
-                    icon-color="red"
-                    :title="$t('Issue.RemoveIssueRelation')"
-                    @confirm="removeTestPlanRelation(plan.project.id, plan.test_files, scope.row.file_name)"
-                  >
-                    <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
-                      {{ $t('Issue.Unlink') }}
-                    </el-button>
-                  </el-popconfirm>
+          <ul class="family">
+            <li>
+              <span class="title">{{ $t('Issue.Test Plan') }}:</span>
+              <ul class="issue-list">
+                <li v-for="plan in scope.row.test_plans" :key="plan.id" class="issue-item">
+                  <IssueRow
+                    :issue="plan"
+                    @click-title="onRelationIssueDialog"
+                    @show-context-menu="handleContextMenu(plan, '', $event)"
+                    @remove-confirm="removeTestPlanRelation(plan.test_files, scope.row.file_name)"
+                  />
                 </li>
               </ul>
-            </el-form-item>
-          </el-form>
+            </li>
+          </ul>
         </template>
       </el-table-column>
       <el-table-column :label="$t('Test.TestFile.TestSoftware')" width="150" prop="software_name" />
@@ -109,8 +93,9 @@
             <template v-if="scope.row.the_last_test_result && Object.keys(scope.row.the_last_test_result).length > 0">
               <div v-if="scope.row.software_name === 'Postman'" class="mt-2">
                 {{
-                  `${scope.row.the_last_test_result.success}/${scope.row.the_last_test_result.success +
-                    scope.row.the_last_test_result.failure}`
+                  `${scope.row.the_last_test_result.success}/${
+                    scope.row.the_last_test_result.success + scope.row.the_last_test_result.failure
+                  }`
                 }}
               </div>
               <div
@@ -118,9 +103,7 @@
                 class="mt-2"
               >
                 {{
-                  `${scope.row.the_last_test_result.result.casesPassed}/${
-                    scope.row.the_last_test_result.result.casesTotal
-                  }`
+                  `${scope.row.the_last_test_result.result.casesPassed}/${scope.row.the_last_test_result.result.casesTotal}`
                 }}
               </div>
             </template>
@@ -195,11 +178,19 @@
         <el-button type="primary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
       </template>
     </el-dialog>
+    <ContextMenu
+      ref="contextmenu"
+      :visible="contextMenu.visible"
+      :row="contextMenu.row"
+      :filter-column-options="filterOptions"
+      :selection-options="contextOptions"
+      @update="loadData"
+    />
   </div>
 </template>
 
 <script>
-import { ProjectSelector, BasicData, Pagination, SearchBar, Table } from '@/newMixins'
+import { ProjectSelector, BasicData, Pagination, SearchBar, Table, ContextMenu } from '@/newMixins'
 import { mapActions, mapGetters } from 'vuex'
 import Fuse from 'fuse.js'
 import {
@@ -210,19 +201,17 @@ import {
   postTestPlanWithTestFile
 } from '@/api/qa'
 import RelatedPlanDialog from './components/RelatedPlanDialog'
-import Status from '@/components/Issue/Status'
-import Tracker from '@/components/Issue/Tracker'
 import CollectionFileUploader from './components/CollectionFileUploader'
+import IssueRow from '@/components/Issue/components/IssueRow'
 
 export default {
   name: 'TestFile',
   components: {
     CollectionFileUploader,
-    Tracker,
-    Status,
-    RelatedPlanDialog
+    RelatedPlanDialog,
+    IssueRow
   },
-  mixins: [ProjectSelector, BasicData, Pagination, SearchBar, Table],
+  mixins: [ProjectSelector, BasicData, Pagination, SearchBar, Table, ContextMenu],
   data() {
     return {
       filterVisible: false,
@@ -249,12 +238,12 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'userRole', 'userName', 'test_filename']),
     filteredData() {
-      return this.listFilterSoftwareData.filter(data => {
+      return this.listFilterSoftwareData.filter((data) => {
         return this.keyword === '' || data[this.searchKey].toLowerCase().includes(this.keyword.toLowerCase())
       })
     },
     softwareValue() {
-      return this.software.filter(item => item.visible === true)
+      return this.software.filter((item) => item.visible === true)
     },
     hasUploadFile() {
       if (!this.$refs['collectionFileUpload']) return false
@@ -286,7 +275,10 @@ export default {
     async fetchData() {
       let data = await getTestFileList(this.selectedProjectId)
       data = data.data
-      this.software = [{ id: 1, name: 'Postman' }, { id: 2, name: 'SideeX' }]
+      this.software = [
+        { id: 1, name: 'Postman' },
+        { id: 2, name: 'SideeX' }
+      ]
       this.software.forEach((item, idx) => {
         this.$set(this.software[idx], 'visible', true)
       })
@@ -325,7 +317,7 @@ export default {
       this.listFilterSoftwareData = this.listData
     },
     onToggleSelect() {
-      const select = this.software.filter(item => item.visible === true)
+      const select = this.software.filter((item) => item.visible === true)
       const checker = select.length > 0
       this.software.forEach((item, idx) => {
         this.$set(this.software[idx], 'visible', !checker)
@@ -348,13 +340,13 @@ export default {
       const fuse = new Fuse(this.listData, opt)
       let search = `="${value}"`
       if (Array.isArray(value) && value.length >= 1) {
-        search = { $or: value.map(item => ({ $path: [opt['keys'][0]], $val: `="${item.name}"` })) }
+        search = { $or: value.map((item) => ({ $path: [opt['keys'][0]], $val: `="${item.name}"` })) }
       }
       const res = fuse.search(search)
-      this.listFilterSoftwareData = res.map(items => items.item)
+      this.listFilterSoftwareData = res.map((items) => items.item)
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$router.push({ name: 'issue-detail', params: { issueId: id } })
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
@@ -364,7 +356,7 @@ export default {
     },
     async saveCollectionRelation({ collection, test_plans }) {
       const apiRequest = []
-      test_plans.append.forEach(item => {
+      test_plans.append.forEach((item) => {
         const data = {
           issue_id: item,
           file_name: collection.file_name,
@@ -372,24 +364,23 @@ export default {
         }
         apiRequest.push(postTestPlanWithTestFile(this.selectedProjectId, data))
       })
-      test_plans.remove.forEach(relation_id => {
+      test_plans.remove.forEach((relation_id) => {
         apiRequest.push(deleteTestPlanWithTestFile(this.selectedProjectId, relation_id))
       })
       if (apiRequest.length > 0) {
-        return await Promise.all(apiRequest)
-          .then(() => {
-            this.$message({
-              title: this.$t('general.Success'),
-              message: this.$t('Notify.Updated'),
-              type: 'success'
-            })
-            this.loadData()
-            this.addTopicDialogVisible = false
+        return await Promise.all(apiRequest).then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
           })
+          this.loadData()
+          this.addTopicDialogVisible = false
+        })
       }
     },
     uploadCollection() {
-      this.$refs['collectionFileUpload'].$refs['uploadForm'].validate(async valid => {
+      this.$refs['collectionFileUpload'].$refs['uploadForm'].validate(async (valid) => {
         if (valid) {
           const fileList = await this.$refs['collectionFileUpload'].handleUpload()
           await this.uploadFiles(fileList)
@@ -408,7 +399,7 @@ export default {
       this.uploadDialogVisible = !this.uploadDialogVisible
     },
     getFilterCount(name) {
-      return this.listData.filter(item => item.software.name === name).length
+      return this.listData.filter((item) => item.software.name === name).length
     },
     advancedAddIssue(form) {
       this.addTopicDialogVisible = true
@@ -416,13 +407,14 @@ export default {
       this.form = form
     },
     onRelationIssueDialog(id) {
-      this.$router.push({ name: 'test-plan-detail', params: { issueId: id }})
+      this.$router.push({ name: 'test-plan-detail', params: { issueId: id } })
     },
-    async removeTestPlanRelation(project_id, file_relation, file_name) {
+    async removeTestPlanRelation(file_relation, file_name) {
+      console.log(file_relation, file_name)
       this.listLoading = true
       try {
-        const id = file_relation.find(item => item.file_name === file_name).id
-        await deleteTestPlanWithTestFile(project_id, id)
+        const id = file_relation.find((item) => item.file_name === file_name).id
+        await deleteTestPlanWithTestFile(this.selectedProjectId, id)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -448,7 +440,7 @@ export default {
         if (getTableRef) {
           const getExpanded = this.expandedRow
           if (Array.isArray(getExpanded) && getExpanded.length > 0) {
-            const getRow = getExpanded.find(item => item.file_name === row.file_name)
+            const getRow = getExpanded.find((item) => item.file_name === row.file_name)
             if (getRow) {
               this.toggleExpandedRows(getRow, getExpanded)
               getTableRef.toggleRowExpansion(getRow, getExpanded)
@@ -467,7 +459,7 @@ export default {
       const _this = this
       // use one by one edit issue to upload file
       try {
-        const uploadApi = fileList.map(function(item) {
+        const uploadApi = fileList.map(function (item) {
           const sendForm = new FormData()
           sendForm.delete('test_file')
           sendForm.append('test_file', item.raw, item.raw.name)
@@ -495,6 +487,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.family {
+  @apply space-y-3;
+  .title {
+    @apply text-sm font-bold;
+  }
+  .issue-list {
+    @apply space-y-1;
+    .issue-item:hover {
+      @apply bg-gray-100 text-primary font-bold;
+    }
+  }
+}
 >>> .el-dialog__header {
   display: none;
 }

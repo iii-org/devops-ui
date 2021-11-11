@@ -1,5 +1,5 @@
 <template>
-  <el-row v-if="issue.family||family" v-loading="issue.hasOwnProperty('isLoadingFamily')&&issue.isLoadingFamily">
+  <el-row v-if="issue.family || family" v-loading="issue.hasOwnProperty('isLoadingFamily') && issue.isLoadingFamily">
     <div v-if="issue.hasOwnProperty('isLoadingFamily') && issue.isLoadingFamily" class="p-5" />
     <ul v-else class="family">
       <li v-if="issue.hasOwnProperty('parent') && Object.keys(issue.parent).length > 0">
@@ -16,7 +16,7 @@
           </li>
         </ul>
       </li>
-      <li v-if="issue.hasOwnProperty('children') && issue.children.length>0">
+      <li v-if="issue.hasOwnProperty('children') && issue.children.length > 0">
         <span class="title">{{ $t('Issue.ChildrenIssue') }}:</span>
         <ol class="issue-list">
           <template v-for="child in issue.children">
@@ -32,7 +32,7 @@
           </template>
         </ol>
       </li>
-      <li v-if="issue.hasOwnProperty('relations') && issue.relations.length>0">
+      <li v-if="issue.hasOwnProperty('relations') && issue.relations.length > 0">
         <span class="title">{{ $t('Issue.RelatedIssue') }}:</span>
         <ol class="issue-list">
           <template v-for="child in issue.relations">
@@ -74,15 +74,15 @@ export default {
       default: false
     },
     reload: {
-      type: [String, Boolean],
-      default: false
+      type: [String, Number],
+      default: 0
     }
   },
   methods: {
-    async removeIssueRelation(childIssueId) {
+    async removeIssueRelation(issue) {
       this.listLoading = true
       try {
-        await updateIssue(childIssueId, { parent_id: '' })
+        await updateIssue(issue.id, { parent_id: '' })
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -114,7 +114,7 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: { issueId }})
+        this.$router.push({ name: 'issue-detail', params: { issueId } })
       } else {
         this.$emit('popup-dialog', issueId)
       }
@@ -127,17 +127,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.family{
+.family {
   @apply space-y-3;
-  .title{
+  .title {
     @apply text-sm font-bold;
   }
-  .issue-list{
+  .issue-list {
     @apply space-y-1;
-    .issue-item:hover,:focus{
+    .issue-item:hover {
       @apply bg-gray-100 text-primary font-bold;
     }
   }
-
 }
 </style>

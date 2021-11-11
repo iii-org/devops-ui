@@ -1,16 +1,8 @@
 <template>
   <div class="app-container">
-    <el-card
-      v-loading="isLoading"
-      :element-loading-text="$t('Loading')"
-      :body-style="{ 'min-height': '80vh' }"
-    >
+    <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" :body-style="{ 'min-height': '80vh' }">
       <el-row slot="header">
-        <el-row
-          type="flex"
-          align="bottom"
-          justify="space-between"
-        >
+        <el-row type="flex" align="bottom" justify="space-between">
           <el-row>
             <el-col class="text-xl mr-3">
               <el-button
@@ -35,42 +27,32 @@
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
               />
-              <span
-                v-if="!isLoading&&issueId"
-                class="text-base mr-3"
-              >
+              <span v-if="!isLoading && issueId" class="text-base mr-3">
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
             </el-col>
           </el-row>
-          <el-col
-            :span="6"
-            class="text-right"
-          >
+          <el-col :span="6" class="text-right">
             <el-button
               size="medium"
               :type="isButtonDisabled ? 'info' : 'danger'"
               plain
               :disabled="isButtonDisabled"
               @click="handleDelete"
-            >{{ $t('general.Delete') }}
+              >{{ $t('general.Delete') }}
             </el-button>
             <el-button
               size="medium"
               :type="isButtonDisabled ? 'info' : 'primary'"
               :disabled="isButtonDisabled"
               @click="handleSave"
-            >{{ $t('general.Save') }}
+              >{{ $t('general.Save') }}
             </el-button>
           </el-col>
         </el-row>
       </el-row>
       <el-row :gutter="20">
-        <el-col
-          ref="mainIssueWrapper"
-          :span="24"
-          :md="16"
-        >
+        <el-col ref="mainIssueWrapper" :span="24" :md="16">
           <el-col :span="24">
             <IssueToolbar
               :is-button-disabled="isButtonDisabled"
@@ -82,45 +64,37 @@
               @related-collection="toggleDialogVisible"
             />
           </el-col>
-          <el-row
-            ref="mainIssue"
-            :gutter="10"
-            :class="scrollClass"
-            @scroll.native="onScrollIssue"
-          >
-            <el-col
-              ref="IssueDescription"
-              :span="24"
-              class="mb-3"
-            >
+          <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
+            <el-col ref="IssueDescription" :span="24" class="mb-3">
               <issue-description
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
               />
-              <issue-files
-                v-if="files.length>0"
-                :is-button-disabled="isButtonDisabled"
-                :issue-file.sync="files"
-              />
+              <issue-files v-if="files.length > 0" :is-button-disabled="isButtonDisabled" :issue-file.sync="files" />
               <issue-collection
-                v-if="test_files.length>0"
+                v-if="test_files.length > 0"
                 :is-button-disabled="isButtonDisabled"
                 :issue-test.sync="test_files"
                 @update="updateTestCollection"
               />
-              <el-collapse v-if="countRelationIssue>0" v-model="relationVisible" accordion>
-                <el-collapse-item>
+              <el-collapse v-if="countRelationIssue > 0" v-model="relationVisible" accordion>
+                <el-collapse-item :name="1">
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
-                    <el-button size="mini" type="primary" icon="el-icon-data-line" @click.native.stop="toggleIssueMatrixDialog">
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      icon="el-icon-data-line"
+                      @click.native.stop="toggleIssueMatrixDialog"
+                    >
                       {{ $t('Issue.TraceabilityMatrix') }}
                     </el-button>
                   </div>
                   <ExpandSection
                     :issue="$data"
-                    :family="countRelationIssue>0"
+                    :family="countRelationIssue > 0"
                     :popup="true"
                     :reload="relationVisible"
                     @on-context-menu="onContextMenu"
@@ -129,11 +103,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-col>
-            <el-col
-              ref="moveEditor"
-              :span="24"
-              class="moveEditor mb-3"
-            >
+            <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
               <issue-notes-editor ref="IssueNotesEditor" />
             </el-col>
             <el-col :span="24">
@@ -146,11 +116,7 @@
             </el-col>
           </el-row>
         </el-col>
-        <el-col
-          :span="24"
-          :md="8"
-          class="issueOptionHeight"
-        >
+        <el-col :span="24" :md="8" class="issueOptionHeight">
           <issue-form
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
@@ -200,7 +166,7 @@
       top="20px"
       append-to-body
       destroy-on-close
-      :title="$t('Issue.TraceabilityMatrix')+'(#'+issue.id+' - '+ issue.name+')'"
+      :title="$t('Issue.TraceabilityMatrix') + '(#' + issue.id + ' - ' + issue.name + ')'"
     >
       <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
     </el-dialog>
@@ -305,7 +271,7 @@ export default {
       editorHeight: '100px',
       issueScrollTop: 0,
       scrollClass: 'issueHeight',
-      relationVisible: false,
+      relationVisible: 0,
       relationIssue: {
         visible: false,
         id: null
@@ -371,7 +337,7 @@ export default {
     },
     formTrackerName() {
       if (!this.form.tracker_id || !this.$refs['IssueForm']) return null
-      const getTrackerName = this.$refs['IssueForm'].tracker.find(item => item.id === this.form.tracker_id)
+      const getTrackerName = this.$refs['IssueForm'].tracker.find((item) => item.id === this.form.tracker_id)
       if (!getTrackerName) return null
       return getTrackerName.name
     },
@@ -407,7 +373,7 @@ export default {
         await this.fetchIssue()
       } else {
         this.form.project_id = this.selectedProjectId
-        const tracker = this.$refs['IssueForm'].tracker.find(item => item.name === 'Test Plan')
+        const tracker = this.$refs['IssueForm'].tracker.find((item) => item.name === 'Test Plan')
         this.form.tracker_id = tracker.id
         if (this.test_filename) {
           this.test_files.push({ ...this.test_filename, edit: true })
@@ -498,8 +464,8 @@ export default {
       }
       this.test_files = test_files || []
       this.relations = relations || []
-      this.parent = (parent) || {}
-      this.children = (children) || []
+      this.parent = parent || {}
+      this.children = children || []
       this.tags = tags || []
       this.setFormData(data)
       this.view = data
@@ -512,7 +478,7 @@ export default {
     },
     onProjectChange(value) {
       localStorage.setItem('projectId', value)
-      this.setSelectedProject(this.userProjectList.filter(elm => elm.id === value)[0])
+      this.setSelectedProject(this.userProjectList.filter((elm) => elm.id === value)[0])
     },
     setFormData(data) {
       const {
@@ -543,8 +509,8 @@ export default {
       this.form.start_date = start_date === null ? '' : start_date
       this.form.due_date = due_date === null ? '' : due_date
       this.form.description = description === null ? '' : description
-      this.form.relation_ids = (this.relations.length > 0) ? this.relations.map((item) => (item.id)) : []
-      this.form.tags = this.tags.length > 0 ? this.tags.map(item => item.id) : []
+      this.form.relation_ids = this.relations.length > 0 ? this.relations.map((item) => item.id) : []
+      this.form.tags = this.tags.length > 0 ? this.tags.map((item) => item.id) : []
       this.originForm = Object.assign({}, this.form)
     },
     handleDelete() {
@@ -584,7 +550,7 @@ export default {
       this.test_files = []
       this.relations = []
       if (!this.issueId) {
-        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
+        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id } })
       } else {
         await this.$refs.IssueForm.getClosable()
         await this.fetchIssue()
@@ -614,7 +580,7 @@ export default {
       }
     },
     handleSave() {
-      this.$refs.IssueForm.$refs.form.validate(valid => {
+      this.$refs.IssueForm.$refs.form.validate((valid) => {
         // const propParentLength = Object.keys(this.parent).length
         if (valid) {
           // const changeRequest = this.$refs.IssueForm.tracker.find((item) => (item.name === 'Change Request'))
@@ -643,7 +609,7 @@ export default {
       const addTags = []
       const originTags = []
       if (Array.isArray(tags)) {
-        tags.forEach(tag => {
+        tags.forEach((tag) => {
           if (typeof tag === 'string') {
             addTags.push(tag)
           } else if (typeof tag === 'number') originTags.push(tag)
@@ -656,14 +622,14 @@ export default {
       }
     },
     async handleAddProjectTags(addTags, originTags, tagsLength) {
-      addTags.map(async tag => {
+      addTags.map(async (tag) => {
         const tagValue = tag.split('__')[1]
         const formData = this.getAddTagsFormData(tagValue)
         await this.addProjectTags(formData, originTags, tagsLength)
       })
     },
     async addProjectTags(formData, originTags, tagsLength) {
-      await addProjectTags(formData).then(async res => {
+      await addProjectTags(formData).then(async (res) => {
         const id = res.data.tags.id
         originTags.push(id)
         this.tagsArrayToString(originTags, tagsLength)
@@ -695,7 +661,7 @@ export default {
       //   if (sendData[item] === '' || !sendData[item]) delete sendData[item]
       // })
       const sendForm = new FormData()
-      Object.keys(sendData).forEach(objKey => {
+      Object.keys(sendData).forEach((objKey) => {
         if ((objKey === 'start_date' || objKey === 'end_date') && !sendData[objKey]) {
           sendForm.append(objKey, '')
         } else {
@@ -725,8 +691,8 @@ export default {
         }
         if (this.test_files) {
           const data = {
-            'issue_id': issue_id,
-            'test_files': this.test_files.map((item) => ({
+            issue_id: issue_id,
+            test_files: this.test_files.map((item) => ({
               software_name: item.software_name,
               file_name: item.file_name
             }))
@@ -735,8 +701,8 @@ export default {
         }
         if (this.form.relation_ids) {
           const data = {
-            'issue_id': issue_id,
-            'issue_to_ids': this.form.relation_ids
+            issue_id: issue_id,
+            issue_to_ids: this.form.relation_ids
           }
           await putIssueRelation(data)
         }
@@ -813,8 +779,7 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       } else {
         done()
       }

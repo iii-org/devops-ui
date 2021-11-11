@@ -1,40 +1,54 @@
 <template>
   <div>
     <contextmenu ref="contextmenu">
-      <template v-if="Object.keys(row).length>2">
+      <template v-if="Object.keys(row).length > 2">
         <contextmenu-item class="menu-title">{{ row.name }}</contextmenu-item>
-        <contextmenu-submenu v-for="column in filterColumnOptions" :key="column.id" v-permission="permission" :title="column.label"
-                             :disabled="(column.value==='priority')?(row.has_children): false"
+        <contextmenu-submenu
+          v-for="column in filterColumnOptions"
+          :key="column.id"
+          v-permission="permission"
+          :title="column.label"
+          :disabled="column.value === 'priority' ? row.has_children : false"
         >
-          <contextmenu-item v-for="item in getOptionsData(column.value, row.has_children)" :key="getId(column.value,item)"
-                            :disabled="column.value !== 'tags'&&(item.disabled || getContextMenuCurrentValue(column, item))"
-                            :class="{current:getContextMenuCurrentValue(column, item), [item.class]:item.class}"
-                            @click="onUpdate(column.value+'_id', item.id)"
+          <contextmenu-item
+            v-for="item in getOptionsData(column.value, row.has_children)"
+            :key="getId(column.value, item)"
+            :disabled="column.value !== 'tags' && (item.disabled || getContextMenuCurrentValue(column, item))"
+            :class="{ current: getContextMenuCurrentValue(column, item), [item.class]: item.class }"
+            @click="onUpdate(column.value + '_id', item.id)"
           >
-            <i v-if="getContextMenuCurrentValue(column, item)" class="el-icon-check" />
-            <i v-if="item.id==='null'" class="el-icon-circle-close" />
+            <em v-if="getContextMenuCurrentValue(column, item)" class="el-icon-check" />
+            <em v-if="item.id === 'null'" class="el-icon-circle-close" />
             {{ getSelectionLabel(item) }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
         <contextmenu-submenu v-permission="permission" :title="$t('Issue.DoneRatio')" :disabled="row.has_children">
-          <contextmenu-item v-for="item in done_ratio" :key="item.id"
-                            :disabled="getContextMenuCurrentValue('done_ratio', item)"
-                            :class="{current:getContextMenuCurrentValue('done_ratio', item)}"
-                            @click="onUpdate('done_ratio', item.id)"
+          <contextmenu-item
+            v-for="item in done_ratio"
+            :key="item.id"
+            :disabled="getContextMenuCurrentValue('done_ratio', item)"
+            :class="{ current: getContextMenuCurrentValue('done_ratio', item) }"
+            @click="onUpdate('done_ratio', item.id)"
           >
             <i v-if="getContextMenuCurrentValue('done_ratio', item)" class="el-icon-check" />
             {{ getSelectionLabel(item) }}
           </contextmenu-item>
         </contextmenu-submenu>
         <contextmenu-item v-permission="permission" divider />
-        <contextmenu-item v-permission="permission" @click="toggleRelationDialog('Parent')">{{ $t('Issue.ParentIssue') }}</contextmenu-item>
+        <contextmenu-item v-permission="permission" @click="toggleRelationDialog('Parent')">{{
+          $t('Issue.ParentIssue')
+        }}</contextmenu-item>
         <contextmenu-submenu v-permission="permission" :title="$t('Issue.ChildrenIssue')">
-          <contextmenu-item @click="toggleRelationDialog('Children')">{{ $t('general.Settings', { name: $t('Issue.ChildrenIssue') }) }}</contextmenu-item>
+          <contextmenu-item @click="toggleRelationDialog('Children')">{{
+            $t('general.Settings', { name: $t('Issue.ChildrenIssue') })
+          }}</contextmenu-item>
           <contextmenu-item @click="advancedAddIssue(false)">{{ $t('Issue.AddSubIssue') }}</contextmenu-item>
         </contextmenu-submenu>
         <contextmenu-item @click="toggleIssueMatrixDialog">{{ $t('Issue.TraceabilityMatrix') }}</contextmenu-item>
         <contextmenu-item v-permission="permission" divider />
-        <contextmenu-item v-permission="permission" @click="advancedAddIssue(true)">{{ $t('Issue.CopyIssue') }}</contextmenu-item>
+        <contextmenu-item v-permission="permission" @click="advancedAddIssue(true)">{{
+          $t('Issue.CopyIssue')
+        }}</contextmenu-item>
       </template>
     </contextmenu>
     <el-dialog
@@ -47,8 +61,12 @@
       <div slot="title">
         <el-row slot="title" type="flex" align="middle">
           <el-col :xs="24" :md="16">
-            <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous text-title"
-                       @click="toggleRelationDialog(relationDialog.target)"
+            <el-button
+              type="text"
+              size="medium"
+              icon="el-icon-arrow-left"
+              class="previous text-title"
+              @click="toggleRelationDialog(relationDialog.target)"
             >
               {{ $t('general.Back') }}
             </el-button>
@@ -63,8 +81,11 @@
           </el-col>
         </el-row>
       </div>
-      <SettingRelationIssue v-if="relationDialog.visible" ref="settingRelationIssue" :row.sync="row"
-                            :target.sync="relationDialog.target"
+      <SettingRelationIssue
+        v-if="relationDialog.visible"
+        ref="settingRelationIssue"
+        :row.sync="row"
+        :target.sync="relationDialog.target"
       />
     </el-dialog>
     <el-dialog
@@ -74,10 +95,14 @@
       append-to-body
       destroy-on-close
       :close-on-click-modal="false"
-      :title="$t('Issue.TraceabilityMatrix')+'(#'+row.id+' - '+ row.name+')'"
+      :title="$t('Issue.TraceabilityMatrix') + '(#' + row.id + ' - ' + row.name + ')'"
     >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="row" :tracker="tracker" :status="status"
-                   @update-issue="handleUpdateIssue"
+      <IssueMatrix
+        v-if="issueMatrixDialog.visible"
+        :row.sync="row"
+        :tracker="tracker"
+        :status="status"
+        @update-issue="handleUpdateIssue"
       />
     </el-dialog>
     <el-dialog
@@ -90,21 +115,20 @@
       destroy-on-close
       append-to-body
     >
-      <AddIssue v-if="addTopicDialogVisible"
-                ref="AddIssue"
-                :project-id="row.project.id"
-                :parent-id="parentId"
-                :parent-name="parentName"
-                :prefill="form"
-                :save-data="saveIssue"
-                @loading="loadingUpdate"
-                @add-topic-visible="handleCloseDialog"
+      <AddIssue
+        v-if="addTopicDialogVisible"
+        ref="AddIssue"
+        :project-id="row.project.id"
+        :parent-id="parentId"
+        :parent-name="parentName"
+        :prefill="form"
+        :save-data="saveIssue"
+        @loading="loadingUpdate"
+        @add-topic-visible="handleCloseDialog"
       />
       <span slot="footer" class="dialog-footer">
         <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary"
-                   @click="handleAdvancedSave"
-        >
+        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleAdvancedSave">
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
@@ -113,20 +137,11 @@
 </template>
 
 <script>
-import {
-  directive,
-  Contextmenu,
-  ContextmenuItem,
-  ContextmenuSubmenu
-} from 'v-contextmenu'
+import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
 import SettingRelationIssue from '@/views/Project/IssueList/components/SettingRelationIssue'
 import IssueMatrix from '@/views/Project/IssueDetail/components/IssueMatrix'
-import {
-  addIssue,
-  getCheckIssueClosable,
-  updateIssue
-} from '@/api/issue'
+import { addIssue, getCheckIssueClosable, updateIssue } from '@/api/issue'
 import { getProjectUserList, getProjectVersion, getTagsByProject } from '@/api/projects'
 import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
@@ -148,7 +163,7 @@ export default {
   props: {
     row: {
       type: Object,
-      default: () => ({ fixed_version: { id: 'null' }, assigned_to: { id: 'null' }})
+      default: () => ({ fixed_version: { id: 'null' }, assigned_to: { id: 'null' } })
     },
     visible: {
       type: Boolean,
@@ -156,7 +171,7 @@ export default {
     },
     filterColumnOptions: {
       type: Array,
-      default: () => ([])
+      default: () => []
     },
     selectionOptions: {
       type: Object,
@@ -251,10 +266,8 @@ export default {
         if (tags) {
           getAPI.push(getTagsByProject(this.row.project.id))
         }
-        await Promise.all(getAPI).then(res => {
-          const [versionList, assigneeList, tagsList] = res.map(
-            item => item.data
-          )
+        await Promise.all(getAPI).then((res) => {
+          const [versionList, assigneeList, tagsList] = res.map((item) => item.data)
           this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
           if (user) {
             this.assigned_to = [
@@ -289,7 +302,13 @@ export default {
           item.disabled = true
           item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
         }
-        if ((!_this.row.assigned_to.id || _this.row.assigned_to.id === '' || _this.row.assigned_to.id === 'null') && item.id > 1) {
+        if (
+          (!_this.row.assigned_to ||
+            !_this.row.assigned_to.id ||
+            _this.row.assigned_to.id === '' ||
+            _this.row.assigned_to.id === 'null') &&
+          item.id > 1
+        ) {
           item.disabled = true
           item.message = '(' + this.$t('Issue.NoAssignee') + ')'
         }
@@ -297,7 +316,7 @@ export default {
       })
     },
     onSaveCheckRelationIssue() {
-      this.$refs.settingRelationIssue.$refs.issueForm.validate(valid => {
+      this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
         if (valid) {
           this.onSaveRelationIssue()
         }
@@ -308,7 +327,9 @@ export default {
         const getSettingRelationIssue = this.$refs['settingRelationIssue']
         const updateApi = []
         if (getSettingRelationIssue.target === 'Parent') {
-          updateApi.push(updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id }))
+          updateApi.push(
+            updateIssue(getSettingRelationIssue.row.id, { parent_id: getSettingRelationIssue.form.parent_id })
+          )
         } else if (getSettingRelationIssue.target === 'Children') {
           getSettingRelationIssue.children['append'].forEach((item) => {
             updateApi.push(updateIssue(item, { parent_id: getSettingRelationIssue.row.id }))
@@ -333,8 +354,11 @@ export default {
       try {
         let data = { [column]: value }
         if (column === 'tags_id') {
-          const tags = this.row.tags.map(item => item.id)
-          const findTags = tags.findIndex(item => item === value)
+          let tags = []
+          if (this.row.tags) {
+            tags = this.row.tags.map((item) => item.id)
+          }
+          const findTags = tags.findIndex((item) => item === value)
           if (findTags >= 0) {
             tags.splice(findTags, 1)
           } else {
@@ -362,7 +386,7 @@ export default {
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
       }
@@ -370,11 +394,12 @@ export default {
     },
     getContextMenuCurrentValue(column, item) {
       if (typeof column === 'string') {
-        return (this.row[column]) ? this.row[column] === item.id : item.id === 0
+        return this.row[column] ? this.row[column] === item.id : item.id === 0
       }
-      if (!this.row[column.value]) return false
-      if (Array.isArray(this.row[column.value])) return this.row[column.value].map(subItem => subItem.id).includes(item.id)
-      if (!this.row[column.value].id) return (item.id) ? item.id === 'null' : false
+      if (!this.row[column.value]) return item.id === 'null'
+      if (Array.isArray(this.row[column.value]))
+        return this.row[column.value].map((subItem) => subItem.id).includes(item.id)
+      if (!this.row[column.value].id) return item.id ? item.id === 'null' : false
       return this.row[column.value].id === item.id
     },
     handleUpdateIssue() {
@@ -409,7 +434,7 @@ export default {
       this.form.parent_id = parent ? parent.id : ''
       this.form.project_id = project ? project.id : ''
       this.form.assigned_to_id = assigned_to ? assigned_to.id : ''
-      this.form.name = (copy) ? name + '(' + this.$t('Issue.Copy') + ')' : name
+      this.form.name = copy ? name + '(' + this.$t('Issue.Copy') + ')' : name
       this.form.fixed_version_id = fixed_version ? fixed_version.id : ''
       this.form.tracker_id = tracker.id
       this.form.status_id = status.id
@@ -437,7 +462,7 @@ export default {
     },
     async saveIssue(data) {
       return await addIssue(data)
-        .then(res => {
+        .then((res) => {
           // noinspection JSCheckFunctionSignatures
           this.$message({
             title: this.$t('general.Success'),
@@ -450,7 +475,7 @@ export default {
           this.$refs['AddIssue'].form.name = ''
           return res
         })
-        .catch(error => {
+        .catch((error) => {
           return error
         })
     }

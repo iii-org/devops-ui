@@ -1,25 +1,12 @@
 <template>
   <div class="issue-row">
     <div class="title">
-      <el-tooltip
-        :disabled="clientWidth>=scrollWidth"
-        :content="title"
-        placement="top"
-      >
-        <div
-          ref="title"
-          @click="clickTitle(issue.id)"
-          @contextmenu="contextMenu"
-        >
+      <el-tooltip :disabled="clientWidth >= scrollWidth" :content="title" placement="top">
+        <div ref="title" @click="clickTitle(issue.id)" @contextmenu="contextMenu">
           <status :name="issue.status.name" size="mini" />
           <tracker :name="issue.tracker.name" />
           #{{ issue.id }} -
-          <el-tag
-            v-for="item in issue.tags"
-            :key="item.id" size="mini"
-            class="mr-1"
-          >[{{ item.name }}]
-          </el-tag>
+          <el-tag v-for="item in issue.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}] </el-tag>
           {{ issue.name }}
           <span v-if="issue.hasOwnProperty('assigned_to') && Object.keys(issue.assigned_to).length > 1">
             ({{ $t('Issue.Assignee') }}: {{ issue.assigned_to.name }} - {{ issue.assigned_to.login }})
@@ -34,7 +21,7 @@
         icon="el-icon-info"
         icon-color="red"
         :title="$t('Issue.RemoveIssueRelation')"
-        @confirm="removeConfirm(issue.relation_id)"
+        @confirm="removeConfirm(issue)"
       >
         <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
           {{ $t('Issue.Unlink') }}
@@ -45,8 +32,7 @@
 </template>
 
 <script>
-import { Tracker } from '@/components/Issue'
-import { Status } from '@/components/Issue'
+import { Tracker, Status } from '@/components/Issue'
 
 export default {
   name: 'IssueRow',
@@ -60,8 +46,8 @@ export default {
       default: () => ({})
     },
     reload: {
-      type: [String, Boolean],
-      default: false
+      type: [String, Number],
+      default: 0
     }
   },
   data() {
@@ -73,7 +59,9 @@ export default {
   computed: {
     title() {
       const result = []
-      result.push(this.issue.tags.map(tag => `[${tag.name}]`).join(' '))
+      if (this.issue.tags) {
+        result.push(this.issue.tags.map((tag) => `[${tag.name}]`).join(' '))
+      }
       result.push(this.issue.name)
       if (this.issue.assigned_to) {
         result.push(`(${this.$t('Issue.Assignee')}: ${this.issue.assigned_to.name} - ${this.issue.assigned_to.login})`)
@@ -88,10 +76,10 @@ export default {
       })
     }
   },
-  mounted: function() {
+  mounted: function () {
     window.addEventListener('resize', this.handleResize)
   },
-  beforeDestroy: function() {
+  beforeDestroy: function () {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
@@ -104,8 +92,8 @@ export default {
     clickTitle(id) {
       this.$emit('click-title', id)
     },
-    removeConfirm(id) {
-      this.$emit('remove-confirm', id)
+    removeConfirm(issue) {
+      this.$emit('remove-confirm', issue)
     },
     contextMenu(id) {
       this.$emit('show-context-menu', id)
