@@ -26,7 +26,7 @@
     </el-table>
     <pagination
       :total="listQuery.total"
-      :page="listQuery.page"
+      :page.sync="listQuery.current"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
@@ -40,10 +40,10 @@ import { getAllActivities } from '@/api/activities'
 import { BasicData, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
-const params = {
+const params = () => ({
   limit: 10,
   offset: 0
-}
+})
 
 export default {
   name: 'SystemActivities',
@@ -51,7 +51,7 @@ export default {
   mixins: [BasicData, Pagination, Table],
   data() {
     return {
-      params: JSON.parse(JSON.stringify(params)),
+      params: params(),
       dialogVisible: false,
       activitiesList: [],
       keyword: ''
@@ -99,7 +99,7 @@ export default {
       this.initParams()
     },
     initParams() {
-      this.params = JSON.parse(JSON.stringify(params))
+      this.params = params()
     }
   }
 }

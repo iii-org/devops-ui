@@ -27,7 +27,7 @@
       </el-table>
       <pagination
         :total="listQuery.total"
-        :page="listQuery.page"
+        :page.sync="listQuery.current"
         :limit="listQuery.limit"
         :page-sizes="[listQuery.limit]"
         :layout="'total, prev, pager, next'"
@@ -53,7 +53,7 @@ export default {
   mixins: [BasicData, Pagination, Table, ProjectSelector],
   data() {
     return {
-      params: JSON.parse(JSON.stringify(params)),
+      params: params(),
       dialogVisible: false,
       activitiesList: [],
       keyword: ''
@@ -101,7 +101,7 @@ export default {
       this.initParams()
     },
     initParams() {
-      this.params = JSON.parse(JSON.stringify(params))
+      this.params = params()
     }
   }
 }
