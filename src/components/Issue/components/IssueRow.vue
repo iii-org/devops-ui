@@ -32,13 +32,11 @@
 </template>
 
 <script>
-import { Tracker, Status } from '@/components/Issue'
-
 export default {
   name: 'IssueRow',
   components: {
-    Tracker,
-    Status
+    Tracker: () => import('@/components/Issue/Tracker'),
+    Status: () => import('@/components/Issue/Status')
   },
   props: {
     issue: {
