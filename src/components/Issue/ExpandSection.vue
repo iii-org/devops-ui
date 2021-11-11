@@ -114,7 +114,7 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: { issueId } })
+        this.$router.push({ name: 'issue-detail', params: { issueId }})
       } else {
         this.$emit('popup-dialog', issueId)
       }
@@ -136,6 +136,9 @@ export default {
     @apply space-y-1;
     .issue-item:hover {
       @apply bg-gray-100 text-primary font-bold;
+      >>>.el-tag{
+        @apply font-normal;
+      }
     }
   }
 }

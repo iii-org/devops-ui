@@ -39,14 +39,14 @@
               plain
               :disabled="isButtonDisabled"
               @click="handleDelete"
-              >{{ $t('general.Delete') }}
+            >{{ $t('general.Delete') }}
             </el-button>
             <el-button
               size="medium"
               :type="isButtonDisabled ? 'info' : 'primary'"
               :disabled="isButtonDisabled"
               @click="handleSave"
-              >{{ $t('general.Save') }}
+            >{{ $t('general.Save') }}
             </el-button>
           </el-col>
         </el-row>
@@ -550,7 +550,7 @@ export default {
       this.test_files = []
       this.relations = []
       if (!this.issueId) {
-        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id } })
+        this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()
         await this.fetchIssue()
@@ -779,7 +779,8 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {})
+          .catch(() => {
+          })
       } else {
         done()
       }

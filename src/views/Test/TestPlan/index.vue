@@ -166,9 +166,9 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection } from '@/components/Issue'
+import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import { Table, IssueList, ContextMenu, SearchFilter } from '@/newMixins'
+import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { getTestFileByTestPlan } from '@/api/qa'
 import { getIssue, getIssueFamily } from '@/api/issue'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'
@@ -256,6 +256,7 @@ export default {
   },
   mounted() {
     this.fetchAllDownloadData()
+    this.getInitPage()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),

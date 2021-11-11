@@ -192,13 +192,6 @@ export default {
     }
   },
   async created() {
-    // TODO: RememberPageProblem
-    // if (Object.keys(this.issueListListQuery).length > 0) {
-    //   this.listQuery = this.issueListListQuery
-    // }
-    // if (Object.keys(this.issueListPageInfo).length > 0) {
-    //   this.pageInfo = this.issueListPageInfo
-    // }
     const storeFilterValue = await this.getIssueFilter()
     if (storeFilterValue['list']) {
       this.filterValue = storeFilterValue['list']
@@ -218,6 +211,9 @@ export default {
       this.displayClosed = false
     }
     await this.loadSelectionList()
+  },
+  mounted() {
+    this.getInitPage()
   },
   methods: {
     ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed',

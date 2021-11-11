@@ -155,7 +155,6 @@ export default {
     async fetchData() {
       let data
       try {
-        // const params = await
         if (this.lastIssueListCancelToken && this.listLoading) {
           this.lastIssueListCancelToken.cancel()
         }
@@ -177,9 +176,6 @@ export default {
             await this.getIssueFamilyData(getIssue, this.expandedRow)
           }
         }
-        // TODO: RememberPageProblem
-        // await this.setIssueListListQuery(this.listQuery)
-        // await this.setIssueListPageInfo(this.pageInfo)
       } catch (e) {
         // null
       }
@@ -369,15 +365,25 @@ export default {
     },
     async handleCurrentChange(val) {
       this.listLoading = true
+      this.listQuery.limit = val.limit
       const offset = this.pageInfo.offset + ((val.page - this.listQuery.page) * val.limit)
-      if (offset <= 0 || val.page === 1) {
+      if (val.init >= 0) {
+        this.listQuery.offset = val.init
+      } else if (offset <= 0 || val.page === 1) {
         this.listQuery.offset = 0
       } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
         this.listQuery.offset = this.pageInfo.total - val.limit
       } else {
         this.listQuery.offset = offset
       }
-      this.listQuery.page = val.page
+
+      if (val.page) {
+        this.listQuery.page = val.page
+      } else {
+        const page = (this.listQuery.offset + 1) / this.listQuery.limit
+        this.listQuery.page = (page > 0) ? Math.ceil(page) : 1
+      }
+      this.$router.push({ query: { offset: this.listQuery.offset }})
       await this.loadData()
       this.listLoading = false
     },
@@ -397,6 +403,13 @@ export default {
     onChangeFixedVersionStatus(value) {
       console.log(value)
       this.fixed_version_closed = value
+    },
+    getInitPage() {
+      const getOffset = this.$route.query.offset
+      if (getOffset && parseInt(getOffset)) {
+        this.pageInfo.total = Infinity
+        this.handleCurrentChange({ init: parseInt(getOffset), limit: 10 })
+      }
     }
   }
 }

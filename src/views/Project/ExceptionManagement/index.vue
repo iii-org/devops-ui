@@ -226,6 +226,7 @@ export default {
   },
   mounted() {
     this.fetchAllDownloadData()
+    this.getInitPage()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
