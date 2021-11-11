@@ -3,8 +3,8 @@
     <div class="title">
       <el-tooltip :disabled="clientWidth >= scrollWidth" :content="title" placement="top">
         <div ref="title" @click="clickTitle(issue.id)" @contextmenu="contextMenu">
-          <status :name="issue.status.name" size="mini" />
-          <tracker :name="issue.tracker.name" />
+          <Status :name="issue.status.name" size="mini" />
+          <Tracker :name="issue.tracker.name" />
           #{{ issue.id }} -
           <el-tag v-for="item in issue.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}] </el-tag>
           {{ issue.name }}
