@@ -16,13 +16,13 @@
         <el-table-column sortable show-overflow-tooltip prop="project_name" :label="$t('Dashboard.ADMIN.IssueRank.project_name')" />
         <el-table-column sortable show-overflow-tooltip prop="issue_name" :label="$t('Dashboard.ADMIN.IssueRank.issue_name')" />
         <el-table-column sortable show-overflow-tooltip prop="issue_type" :label="$t('Dashboard.ADMIN.IssueRank.issue_type')">
-          <template slot-scope="scope">
-            <tracker :name="scope.row.issue_type" />
+          <template slot-scope="{row}">
+            <Tracker :name="$t(`Issue.${row.issue_type}`)" :type="row.issue_type" />
           </template>
         </el-table-column>
         <el-table-column sortable show-overflow-tooltip prop="status" :label="$t('Dashboard.ADMIN.IssueRank.status_id')">
-          <template slot-scope="scope">
-            <status :name="scope.row.status" />
+          <template slot-scope="{row}">
+            <Status :name="$t(`Issue.${row.status}`)" :type="row.status" />
           </template>
         </el-table-column>
         <el-table-column sortable show-overflow-tooltip prop="start_date" :label="$t('Dashboard.ADMIN.IssueRank.start_date')" />

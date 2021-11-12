@@ -22,13 +22,13 @@
                 <el-col :span="8">
                   <el-table :data="workList[version.id]" style="width: 100%" stripe>
                     <el-table-column :label="$t('Issue.List')">
-                      <template slot-scope="scope">
+                      <template slot-scope="{row}">
                         <div>
-                          <priority v-if="scope.row.priorityName" class="mr-2" :name="scope.row.priorityName" />
-                          <tracker :name="scope.row.trackerName" />
+                          <Priority v-if="row.priorityName" class="mr-2" :name="$t(`Issue.${row.priorityName}`)" :type="row.priorityName" />
+                          <Tracker :name="$t(`Issue.${row.trackerName}`)" :type="row.trackerName" />
                           <div class="mt-2">
-                            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-                            {{ scope.row.name }}</div>
+                            <el-tag v-for="item in row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+                            {{ row.name }}</div>
                         </div>
                       </template>
                     </el-table-column>

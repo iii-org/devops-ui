@@ -1,6 +1,6 @@
 <template>
-  <el-tag :type="getStatusTagType(name)" effect="dark" class="rounded-xl font-bold" :size="size">
-    {{ $t(`Issue.${name}`) }}
+  <el-tag :type="getStatusTagType(type)" effect="dark" class="rounded-xl font-bold" :size="size">
+    {{ name }}
   </el-tag>
 </template>
 
@@ -13,6 +13,10 @@ export default {
       default: null
     },
     size: {
+      type: String,
+      default: null
+    },
+    type: {
       type: String,
       default: null
     }

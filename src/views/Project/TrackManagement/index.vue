@@ -93,10 +93,10 @@
           </el-table-column>
           <el-table-column :label="$t('TrackManagement.description')" prop="description" width="200" />
           <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
-            <template slot-scope="scope">
-              <status
-                v-if="scope.row.status.name"
-                :name="scope.row.status.name"
+            <template slot-scope="{row}">
+              <Status
+                v-if="row.status.name"
+                :name="$t(`Issue.${row.status.name}`)" :type="row.status.name"
               />
             </template>
           </el-table-column>

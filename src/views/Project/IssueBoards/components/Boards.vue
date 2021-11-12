@@ -34,7 +34,9 @@
               >
                 <component
                   :is="item.value"
-                  v-if="isRightPanelItemHasComponents(item.value)" :name="subItem.name"
+                  v-if="isRightPanelItemHasComponents(item.value)"
+                  :name="$t(`Issue.${subItem.name}`)"
+                  :type="subItem.name"
                   class="el-tag"
                 />
                 <el-tag v-else-if="item.value==='tags'" effect="plain">
@@ -45,8 +47,8 @@
                 </el-tag>
                 <el-alert class="help_text" :closable="false">
                   <i18n path="Issue.DragTip">
-                    <b slot="key">{{ item.label }}</b>
-                    <b slot="value">{{ getTranslateHeader(subItem.name) }}</b>
+                    <strong slot="key">{{ item.label }}</strong>
+                    <strong slot="value">{{ getTranslateHeader(subItem.name) }}</strong>
                   </i18n>
                 </el-alert>
               </div>
@@ -92,7 +94,7 @@ export default {
     groupBy: {
       type: Object,
       default: () => ({
-        dimention: 'status',
+        dimension: 'status',
         value: []
       })
     },

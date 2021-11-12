@@ -55,8 +55,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="tracker.name" align="center" :label="$t('general.Type')" width="130">
-          <template slot-scope="scope">
-            <tracker v-if="scope.row.tracker.name" :name="scope.row.tracker.name" />
+          <template slot-scope="{row}">
+            <Tracker v-if="row.tracker.name" :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
           </template>
         </el-table-column>
         <el-table-column :label="$t('Issue.Id')" header-align="center" min-width="280" show-overflow-tooltip prop="id">
@@ -67,13 +67,13 @@
         </el-table-column>
 
         <el-table-column prop="priority.name" :label="$t('Issue.Priority')" align="center" width="150">
-          <template slot-scope="scope">
-            <priority v-if="scope.row.priority.name" :name="scope.row.priority.name" />
+          <template slot-scope="{row}">
+            <Priority v-if="row.priority.name" :name="$t(`Issue.${row.priority.name}`)" :type="row.priority.name" />
           </template>
         </el-table-column>
         <el-table-column prop="status.name" :label="$t('general.Status')" align="center" width="150">
-          <template slot-scope="scope">
-            <status v-if="scope.row.status.name" :name="scope.row.status.name" />
+          <template slot-scope="{row}">
+            <Status v-if="row.status.name" :name="$t(`Issue.${row.status.name}`)" :type="row.status.name" />
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="190">

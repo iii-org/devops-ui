@@ -29,17 +29,17 @@
             >
               <el-card>
                 <template slot="header">
-                  <tracker :name="item.tracker.name" />
+                  <Tracker :name="$t(`Issue.${item.tracker.name}`)" :type="item.tracker.name" />
                   #{{ item.id }} - {{ item.name }}
                 </template>
-                <b>{{ $t('Issue.Description') }}:</b>
+                <strong>{{ $t('Issue.Description') }}:</strong>
                 <p>{{ item.description }}</p>
               </el-card>
               <div slot="reference">
                 <span
                   style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
                 >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                  <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                   <span v-html="highLight(item.name)" />
                 </span>
                 <span style="float: right; color: #8492a6; font-size: 13px"
@@ -53,8 +53,8 @@
     </el-form-item>
     <el-form-item v-else-if="target==='Children'" :label="$t('Issue.ParentIssue')">
       <p>
-        <status :name="row.status.name" size="mini" />
-        <tracker :name="row.tracker.name" />
+        <Status :name="$t(`Issue.${row.status.name}`)" :type="row.status.name" size="mini" />
+        <Tracker :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
         #{{ row.id }} - {{ row.name }}
         <span v-if="row.hasOwnProperty('assigned_to')&&Object.keys(row.assigned_to).length>1">
           ({{ $t('Issue.Assignee') }}: {{ row.assigned_to.name }} - {{ row.assigned_to.login }})</span>
@@ -62,8 +62,8 @@
     </el-form-item>
     <el-form-item v-if="target==='Parent'" :label="$t('Issue.ChildrenIssue')">
       <p>
-        <status :name="row.status.name" size="mini" />
-        <tracker :name="row.tracker.name" />
+        <Status :name="$t(`Issue.${row.status.name}`)" :type="row.status.name" size="mini" />
+        <Tracker :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
         #{{ row.id }} - {{ row.name }}
         <span v-if="row.hasOwnProperty('assigned_to')&&Object.keys(row.assigned_to).length>1">
           ({{ $t('Issue.Assignee') }}: {{ row.assigned_to.name }} - {{ row.assigned_to.login }})</span>
@@ -99,17 +99,17 @@
             >
               <el-card>
                 <template slot="header">
-                  <tracker :name="item.tracker.name" />
+                  <Tracker :name="$t(`Issue.${item.tracker.name}`)" :type="item.tracker.name" />
                   #{{ item.id }} - {{ item.name }}
                 </template>
-                <b>{{ $t('Issue.Description') }}:</b>
+                <strong>{{ $t('Issue.Description') }}:</strong>
                 <p>{{ item.description }}</p>
               </el-card>
               <div slot="reference">
                 <span
                   style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
                 >
-                  <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                  <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                   <span v-html="highLight(item.name)" />
                 </span>
                 <span style="float: right; color: #8492a6; font-size: 13px"
@@ -128,9 +128,9 @@
         <ul>
           <li v-for="item in children['append']" :key="item">
             <template v-if="issueFamily[item]">
-              <b><tracker :name="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].name }}</b> ({{ $t('Issue.OriginalParentIssue') }}:
+              <strong><Tracker :name="$t(`Issue.${issueFamily[item].tracker.name}`)" :type="issueFamily[item].tracker.name" /> #{{ issueFamily[item].id }} - {{ issueFamily[item].name }}</strong> ({{ $t('Issue.OriginalParentIssue') }}:
               <template v-if="issueFamily[item].hasOwnProperty('parent')">
-                <tracker :name="issueFamily[item].parent.tracker.name" />
+                <Tracker :name="$t(`Issue.${issueFamily[item].parent.tracker.name}`)" :type="issueFamily[item].parent.tracker.name" />
                 #{{ issueFamily[item].parent.id }} - {{ issueFamily[item].parent.name }}
                 <span v-if="issueFamily[item].parent.hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].parent.assigned_to).length>1">
                   ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].parent.assigned_to.name }} - {{ issueFamily[item].parent.assigned_to.login }})</span>
@@ -147,7 +147,7 @@
           <li v-for="item in children['remove']" :key="item">
             <s>
               <template v-if="issueFamily[item]">
-                <tracker :name="issueFamily[item].tracker.name" />
+                <Tracker :name="$t(`Issue.${issueFamily[item].tracker.name}`)" :type="issueFamily[item].tracker.name" />
                 #{{ issueFamily[item].id }} - {{ issueFamily[item].name }}
                 <span v-if="issueFamily[item].hasOwnProperty('assigned_to')&&Object.keys(issueFamily[item].assigned_to).length>1">
                   ({{ $t('Issue.Assignee') }}: {{ issueFamily[item].assigned_to.name }} - {{ issueFamily[item].assigned_to.login }})</span>

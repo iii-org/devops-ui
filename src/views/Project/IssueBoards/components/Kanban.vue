@@ -3,8 +3,7 @@
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="flex">
-        <el-col class="text-center">{{ getTranslateHeader(boardObject.name) }} <b>({{ list.length }})</b></el-col>
-        <!--        <em class="el-icon-more header-icon" />-->
+        <el-col class="text-center">{{ getTranslateHeader(boardObject.name) }} <strong>({{ list.length }})</strong></el-col>
       </el-row>
     </div>
     <draggable
@@ -42,13 +41,21 @@
           </div>
           <div class="issue-status-tags">
             <span v-if="dimension !== 'status'">
-              <status :name="element.status.name" size="mini" class="status" />
+              <Status
+                v-if="row.status.name"
+                :name="$t(`Issue.${element.status.name}`)"
+                :type="element.status.name"
+                size="mini"
+                class="status"
+              />
             </span>
             <span v-if="dimension !== 'priority'">
-              <priority :name="element.priority.name" size="mini" class="priority" />
+              <Priority v-if="element.priority.name" :name="$t(`Issue.${element.priority.name}`)"
+                        :type="element.priority.name" size="mini" class="priority"
+              />
             </span>
             <span v-if="dimension !== 'tracker'">
-              <tracker :name="element.tracker.name" class="tracker" />
+              <Tracker :name="$t(`Issue.${element.tracker.name}`)" :type="element.tracker.name" class="tracker" />
             </span>
             <span v-if="element.done_ratio>0">
               <el-tag :type="getStatus(element)" size="mini" effect="dark">{{ element.done_ratio }}%</el-tag>
@@ -65,8 +72,12 @@
                 <div v-if="element.hasOwnProperty('parent')"
                      @contextmenu="handleContextMenu(element.parent, '', $event)"
                 >
-                  <b>{{ $t('Issue.ParentIssue') }}：</b>
-                  <status :name="element.parent.status.name" size="mini" />
+                  <strong>{{ $t('Issue.ParentIssue') }}：</strong>
+                  <Status
+                    :name="$t(`Issue.${element.parent.status.name}`)"
+                    :type="element.parent.status.name"
+                    size="mini"
+                  />
                   <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
                     {{ element.parent.name }}
                     <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="tags">
@@ -75,12 +86,16 @@
                   </el-link>
                 </div>
                 <div v-if="element.hasOwnProperty('children') && element.children.length > 0">
-                  <b>{{ $t('Issue.ChildrenIssue') }}：</b>
+                  <strong>{{ $t('Issue.ChildrenIssue') }}：</strong>
                   <ol class="children_list">
                     <li v-for="(subElement, index) in element.children" :key="index"
                         @contextmenu="handleContextMenu(subElement, '', $event)"
                     >
-                      <status :name="subElement.status.name" size="mini" />
+                      <Status
+                        :name="$t(`Issue.${subElement.status.name}`)"
+                        :type="subElement.status.name"
+                        size="mini"
+                      />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
                         <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="tags">
@@ -91,12 +106,16 @@
                   </ol>
                 </div>
                 <div v-if="element.hasOwnProperty('relations') && element.relations.length > 0">
-                  <b>{{ $t('Issue.RelatedIssue') }}：</b>
+                  <strong>{{ $t('Issue.RelatedIssue') }}：</strong>
                   <ol class="children_list">
                     <li v-for="(subElement, index) in element.relations" :key="index"
                         @contextmenu="handleContextMenu(subElement, '', $event)"
                     >
-                      <status :name="subElement.status.name" size="mini" />
+                      <Status
+                        :name="$t(`Issue.${subElement.status.name}`)"
+                        :type="subElement.status.name"
+                        size="mini"
+                      />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
                         <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="tags">

@@ -12,7 +12,7 @@
             :key="option.login" :label="$t('Issue.'+option.name)"
             :value="option.id"
           >
-            <tracker :name="option.name" />
+            <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
           </el-option>
         </el-select>
       </el-form-item>

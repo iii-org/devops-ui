@@ -14,7 +14,7 @@
               :label="$t('Issue.' + option.name)"
               :value="option.id"
             >
-              <tracker :name="option.name" />
+              <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
             </el-option>
           </el-select>
         </el-form-item>
@@ -187,7 +187,7 @@ export default {
         priority_id: 3
       }
       const dimensions = ['fixed_version', 'tracker']
-      dimensions.forEach((item) => {
+      dimensions.forEach(item => {
         if (this.issueFilter['board'] && this.issueFilter['board'][item] !== 'null' &&
           !!(this.issueFilter['board'][item]) && this.issueFilter['board'][item] !== '') {
           this.$set(this.form, item + '_id', this.issueFilter['board'][item])

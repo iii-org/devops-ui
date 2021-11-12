@@ -2,7 +2,7 @@
   <div id="check-wrapper" ref="wrapper">
     <el-alert v-if="traceCheck.exception" type="error" class="mb-4 loading" :closable="false">
       <h2 slot="title">
-        <i class="el-icon-loading" /> {{ $t('general.Error') }}
+        <em class="el-icon-loading" /> {{ $t('general.Error') }}
         ( {{ traceCheck.current_num }} / {{ traceCheck.total_num }} )
       </h2>
       <h3>{{ traceCheck.exception }}</h3>
@@ -10,7 +10,7 @@
     </el-alert>
     <el-alert v-else-if="getPercentProgress<100" type="warning" class="mb-4 loading" :closable="false">
       <h2 slot="title">
-        <i class="el-icon-loading" /> {{ $t('Track.TraceChecking') }}
+        <em class="el-icon-loading" /> {{ $t('Track.TraceChecking') }}
         ( {{ traceCheck.current_num }} / {{ traceCheck.total_num }} )
       </h2>
       <el-progress :percentage="getPercentProgress" />
@@ -31,7 +31,7 @@
         <template v-if="row[track]" slot-scope="{row}">
           <el-link v-if="row[track].name" @click="onRelationIssueDialog(row[track].id)">
             <template>
-              <status :name="row[track].status.name" size="small" />
+              <Status :name="$t(`Issue.${row[track].status.name}`)" :type="row[track].status.name" size="small" />
               #{{ row[track].id }} - {{ row[track].name }}
             </template>
           </el-link>

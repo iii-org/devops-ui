@@ -1,7 +1,7 @@
 <template>
   <span>
-    <span v-if="name" :class="`point ${mapTagType(name)}`" />
-    {{ $t(`Issue.${name}`) }}
+    <span v-if="name" :class="`point ${mapTagType(type)}`" />
+    {{ name }}
   </span>
 </template>
 
@@ -10,6 +10,10 @@ export default {
   name: 'Tracker',
   props: {
     name: {
+      type: String,
+      default: ''
+    },
+    type: {
       type: String,
       default: ''
     }

@@ -6,14 +6,14 @@
       <el-option v-for="item in appendFilterTrackerList()" :key="item.id" :label="$t(`Issue.${item.name}`)"
                  :value="item.name"
       >
-        <tracker :name="item.name" />
+        <Tracker :name="$t(`Issue.${item.name}`)" :type="item.name" />
       </el-option>
     </el-select>
     <draggable v-model="value" :draggable="'.item'">
       <span v-for="(item,idx) in value" :key="item" class="item">
         {{ idx + 1 }}.
         <el-tag closable @close="handleDeleteOrder(item)">
-          <tracker :name="item" />
+          <Tracker :name="$t(`Issue.${item}`)" :type="item" />
         </el-tag>
       </span>
     </draggable>

@@ -46,7 +46,7 @@
                   :label="getSelectionLabel(item)"
                   :value="item.id"
                 >
-                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
+                  <component :is="dimension.value" v-if="dimension.tag" :name="$t(`Issue.${item.name}`)" :type="item.name" />
                 </el-option>
               </el-select>
             </el-form-item>

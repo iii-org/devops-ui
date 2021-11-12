@@ -56,15 +56,16 @@
         <el-table-column :label="$t('Issue.name')" align="center" prop="name" />
         <el-table-column :label="$t('Project.Version')" align="center" prop="versionName" />
         <el-table-column :label="$t('general.Type')" width="130" sortable="custom">
-          <template slot-scope="scope">
-            <tracker v-if="scope.row.trackerName" :name="scope.row.trackerName" />
+          <template slot-scope="{row}">
+            <Tracker v-if="row.trackerName" :name="$t(`Issue.${row.trackerName}`)" :type="row.trackerName" />
           </template>
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Status')" width="150" sortable="custom">
-          <template slot-scope="scope">
-            <status
-              v-if="scope.row.statusName"
-              :name="scope.row.statusName"
+          <template slot-scope="{row}">
+            <Status
+              v-if="row.statusName"
+              :name="$t(`Issue.${row.statusName}`)"
+              :type="row.statusName"
             />
           </template>
         </el-table-column>

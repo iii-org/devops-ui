@@ -59,7 +59,7 @@
               <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
                          :value="track.id"
               >
-                <tracker :name="track.name" />
+                <Tracker :name="$t(`Issue.${track.name}`)" :type="track.name" />
               </el-option>
             </el-select>
           </el-form-item>
@@ -214,7 +214,7 @@
           <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
             <div v-for="(item,idx) in trackerMapTarget.order" :key="item" class="item">{{ idx + 1 }}.
               <el-tag>
-                <tracker :name="item" />
+                <Tracker :name="$t(`Issue.${item}}`)" :type="item" />
               </el-tag>
             </div>
           </el-form-item>

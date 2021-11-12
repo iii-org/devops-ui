@@ -12,7 +12,7 @@
                      :disabled="item.status&&!(item.status==='open'||item.status==='enable')"
           >
             <template v-if="components">
-              <component :is="components" :name="item.name" />
+              <component :is="components" :name="$t(`Issue.${item.name}`)" :type="item.name" />
             </template>
             <template v-else>
               {{ item.name }}
@@ -32,7 +32,7 @@
                      :disabled="item.status&&!(item.status==='open'||item.status==='enable')"
           >
             <template v-if="components">
-              <component :is="components" :name="item.name" /> {{ item.message }}
+              <component :is="components" :name="$t(`Issue.${item.name}`)" :type="item.name" /> {{ item.message }}
             </template>
             <template v-else>
               {{ item.name }}
@@ -42,7 +42,7 @@
       </template>
       <template v-else>
         <template v-if="components">
-          <component :is="components" :name="row[propKey].name" />
+          <component :is="components" :name="$t(`Issue.${row[propKey].name}`)" :type="row[propKey].name" />
         </template>
         <template v-else>
           {{ row[propKey].name }}

@@ -16,7 +16,7 @@
                 {{ $t('general.Back') }}
               </el-button>
               <template v-if="tracker">
-                <tracker :name="tracker" />
+                <Tracker :name="$t(`Issue.${tracker}`)" :type="tracker" />
               </template>
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
@@ -38,7 +38,7 @@
               :type="isButtonDisabled ? 'info' : 'danger'"
               plain
               :disabled="isButtonDisabled"
-              @click="handleDelete"
+              @click="handleDelete('Delete', false)"
             >{{ $t('general.Delete') }}
             </el-button>
             <el-button
@@ -196,7 +196,7 @@ import {
 } from './components'
 import { addProjectTags } from '@/api/projects'
 import dayjs from 'dayjs'
-import { Tracker, ExpandSection } from '@/components/Issue'
+import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
 import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
@@ -207,6 +207,8 @@ export default {
   name: 'ProjectIssueDetail',
   components: {
     IssueCollection,
+    // eslint-disable-next-line vue/no-unused-components
+    Status,
     Tracker,
     IssueTitle,
     IssueDescription,
@@ -513,35 +515,72 @@ export default {
       this.form.tags = this.tags.length > 0 ? this.tags.map((item) => item.id) : []
       this.originForm = Object.assign({}, this.form)
     },
-    handleDelete() {
-      this.$confirm(this.$t('Issue.DeleteIssue', { issueName: this.form.name }), this.$t('general.Delete'), {
+    async handleDelete(msg, force, detail) {
+      const h = this.$createElement
+      const issueName = { issueName: this.issueName }
+      const messageList = [h('span', null, this.$t(`Issue.${msg}Issue`, issueName))]
+      if (detail) {
+        messageList.push(h('ul', null,
+          detail.map(issue => {
+            let tags = ''
+            if (issue.tags && issue.tags.length > 0) {
+              tags = issue.tags.map(tag => h('el-tag', { class: { 'mx-1': true }, props: { type: 'mini' }}, tag.name))
+            }
+            return h('li', null, [
+              h('Status', { class: { 'mx-1': true }, props: { name: this.$t(`Issue.${issue.status.name}`), size: 'mini' }}, ''),
+              h('Tracker', { props: { name: this.$t(`Issue.${issue.tracker.name}`), size: 'mini' }}, ''),
+              h('span', null, [
+                h('span', null, `#${issue.id} - `),
+                ...tags,
+                h('span', null, `${issue.name} ${(Object.keys(issue.assigned_to).length > 0 ? `(${this.$t(`Issue.assigned_to`)}: ${issue.assigned_to.name}
+             -  ${issue.assigned_to.login})` : '')}`)
+              ])
+            ])
+          })
+        ))
+      }
+      const message = h('p', null, messageList)
+      const deleteRequest = await this.$confirm(message, this.$t('general.Delete'), {
         confirmButtonText: this.$t('general.Delete'),
         cancelButtonText: this.$t('general.Cancel'),
         type: 'error',
         confirmButtonClass: 'el-button--danger'
-      }).then(async () => {
+      }).catch(err => console.log(err))
+      if (deleteRequest === 'confirm') {
         this.isLoading = true
         try {
-          await deleteIssue(this.issueId)
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Deleted'),
-            type: 'success'
-          })
-          if (this.isInDialog) {
-            this.$emit('delete')
-          } else {
-            this.handleBackPage()
-          }
+          await this.deleteIssueAPI(force)
         } catch (err) {
-          this.$message({
-            title: this.$t('general.Error'),
-            message: err,
-            type: 'error'
-          })
+          const errorRes = err.response.data
+          if (errorRes && errorRes.error.code === 1013) {
+            await this.handleDelete('ConfirmDelete', true, errorRes.error.details)
+          } else {
+            this.$message({
+              title: this.$t('general.Error'),
+              message: err,
+              type: 'error'
+            })
+          }
         }
         this.isLoading = false
+      }
+    },
+    async deleteIssueAPI(force) {
+      let params = {}
+      if (force) {
+        params = { force: force }
+      }
+      await deleteIssue(this.issueId, params)
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Deleted'),
+        type: 'success'
       })
+      if (this.isInDialog) {
+        this.$emit('delete')
+      } else {
+        this.handleBackPage()
+      }
     },
     async handleUpdated(issue_id) {
       this.$refs.IssueNotesEditor.$refs.mdEditor.invoke('reset')

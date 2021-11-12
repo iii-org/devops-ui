@@ -40,17 +40,17 @@
               >
                 <el-card>
                   <template slot="header">
-                    <tracker :name="item.tracker.name" />
+                    <Tracker :name="$t(`Issue.${item.tracker.name}`)" :type="item.tracker.name" />
                     #{{ item.id }} - {{ item.name }}
                   </template>
-                  <b>{{ $t('Issue.Description') }}:</b>
+                  <strong>{{ $t('Issue.Description') }}:</strong>
                   <p>{{ item.description }}</p>
                 </el-card>
                 <div slot="reference">
                   <span
                     style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
                   >
-                    <b>#<span v-html="highLight(item.id.toString())" /></b> -
+                    <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                     <span v-html="highLight(item.name)" />
                   </span>
                   <span style="float: right; color: #8492a6; font-size: 13px"
@@ -101,17 +101,17 @@
               >
                 <el-card>
                   <template slot="header">
-                    <tracker :name="item.tracker.name" />
+                    <Tracker :name="$t(`Issue.${item.tracker.name}`)" :type="item.tracker.name" />
                     #{{ item.id }} - {{ item.name }}
                   </template>
-                  <b>{{ $t('Issue.Description') }}:</b>
+                  <strong>{{ $t('Issue.Description') }}:</strong>
                   <p>{{ item.description }}</p>
                 </el-card>
                 <div slot="reference">
                   <span
                     style="float: left; width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
                   >
-                    <b>#<span v-html="highLight((item.id)? item.id.toString(): '')" /></b> -
+                    <strong>#<span v-html="highLight((item.id)? item.id.toString(): '')" /></strong> -
                     <span v-html="highLight(item.name)" />
                   </span>
                   <span style="float: right; color: #8492a6; font-size: 13px"
@@ -149,7 +149,9 @@
           :value="option.id"
           :disabled="option.disabled"
         >
-          <status :name="option.name" />
+          <Status
+            :name="$t(`Issue.${option.name}`)" :type="option.name"
+          />
           {{ option.message }}
         </el-option>
       </el-select>
@@ -162,7 +164,7 @@
           :label="$t('Issue.' + option.name)"
           :value="option.id"
         >
-          <tracker :name="option.name" />
+          <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
         </el-option>
       </el-select>
     </el-form-item>
@@ -192,7 +194,7 @@
           :label="$t('Issue.' + option.name)"
           :value="option.id"
         >
-          <priority :name="option.name" />
+          <Priority :name="$t(`Issue.${option.name}`)" :type="option.name" />
         </el-option>
       </el-select>
     </el-form-item>

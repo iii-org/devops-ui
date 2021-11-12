@@ -1,9 +1,9 @@
 <template>
   <el-tag
-    :type="getPriorityTagType(name)"
+    :type="getPriorityTagType(type)"
     :size="size"
   >
-    {{ $t(`Issue.${name}`) }}
+    {{ name }}
   </el-tag>
 </template>
 
@@ -16,6 +16,10 @@ export default {
       default: ''
     },
     size: {
+      type: String,
+      default: ''
+    },
+    type: {
       type: String,
       default: ''
     }

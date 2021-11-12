@@ -2,15 +2,15 @@
   <el-row v-if="issue.hasFamily" v-loading="issue.isLoadingFamily" class="py-3">
     <ul>
       <li v-if="issue.familyData.hasOwnProperty('parent') && Object.keys(issue.familyData.parent).length > 0">
-        <b>{{ $t('Issue.ParentIssue') }}:</b>
+        <strong>{{ $t('Issue.ParentIssue') }}:</strong>
         <el-link
           :style="{ 'font-size': '14px', cursor: 'pointer' }"
           :underline="false"
           @click="handleEdit(issue.familyData.parent.id)"
           @contextmenu.native="handleContextMenu(issue.familyData.parent, '', $event)"
         >
-          <status :name="issue.familyData.parent.status.name" size="mini" />
-          <tracker :name="issue.familyData.parent.tracker.name" />
+          <Status :name="$t(`Issue.${issue.familyData.parent.status.name}`)" :type="issue.familyData.parent.status.name" size="mini" />
+          <Tracker :name="$t(`Issue.${issue.familyData.parent.tracker.name}`)" :type="issue.familyData.parent.tracker.name" />
           #{{ issue.familyData.parent.id }} -
           <el-tag v-for="item in issue.familyData.parent.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
           {{ issue.familyData.parent.name }}
@@ -39,7 +39,7 @@
       </li>
 
       <li v-if="issue.familyData.hasOwnProperty('children')">
-        <b>{{ $t('Issue.ChildrenIssue') }}:</b>
+        <strong>{{ $t('Issue.ChildrenIssue') }}:</strong>
         <ol>
           <template v-for="child in issue.familyData.children">
             <li v-if="Object.keys(child).length > 0" :key="child.id">
@@ -50,8 +50,8 @@
                 @click="handleEdit(child.id)"
                 @contextmenu.native="handleContextMenu(child, '', $event)"
               >
-                <status :name="child.status.name" size="mini" />
-                <tracker :name="child.tracker.name" />
+                <Status :name="$t(`Issue.${child.status.name}`)" :type="child.status.name" size="mini" />
+                <Tracker :name="$t(`Issue.${child.tracker.name}`)" :type="child.tracker.name" />
                 #{{ child.id }} -
                 <el-tag v-for="item in child.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
                 {{ child.name }}

@@ -401,7 +401,6 @@ export default {
       this.selectedIssueList = list
     },
     onChangeFixedVersionStatus(value) {
-      console.log(value)
       this.fixed_version_closed = value
     },
     getInitPage() {

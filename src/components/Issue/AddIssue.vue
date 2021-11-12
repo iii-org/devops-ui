@@ -106,7 +106,7 @@
               :label="$t('Issue.' + item.name)"
               :value="item.id"
             >
-              <tracker :name="item.name" />
+              <Tracker :name="$t(`Issue.${item.name}`)" :type="item.name" />
             </el-option>
           </el-select>
         </el-form-item>
@@ -131,7 +131,7 @@
               :label="$t('Issue.' + item.name)"
               :value="item.id"
             >
-              <status :name="item.name" />
+              <Status :name="$t(`Issue.${item.name}`)" :type="item.name" />
             </el-option>
           </el-select>
         </el-form-item>
@@ -155,7 +155,7 @@
               :label="$t('Issue.' + item.name)"
               :value="item.id"
             >
-              <priority :name="item.name" />
+              <Priority :name="$t(`Issue.${item.name}`)" :type="item.name" />
             </el-option>
           </el-select>
         </el-form-item>
