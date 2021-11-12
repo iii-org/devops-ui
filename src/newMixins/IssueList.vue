@@ -408,7 +408,7 @@ export default {
       const getOffset = this.$route.query.offset
       if (getOffset && parseInt(getOffset)) {
         this.pageInfo.total = Infinity
-        this.handleCurrentChange({ init: parseInt(getOffset), limit: 10 })
+        this.handleCurrentChange({ init: parseInt(getOffset) })
       }
     }
   }
