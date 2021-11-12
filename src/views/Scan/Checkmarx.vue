@@ -42,7 +42,7 @@
           >
             <span>{{ $t(`CheckMarx.${scope.row.status}`) }}</span>
           </el-tag>
-          <div v-if="scope.row.status === 'Queued' && scope.row.queue" class="text-xs">
+          <div v-if="isInQueued(scope.row) && scope.row.queue" class="text-xs">
             {{ $t('CheckMarx.QueueSequence') }}: {{ scope.row.queue }}
           </div>
         </template>
@@ -239,6 +239,9 @@ export default {
           })
         }
       }
+    },
+    isInQueued(row) {
+      return row.status === 'New' || row.status === 'PreScan' || row.status === 'Queued'
     },
     // if the scan's status are PreScan, Queued or Scanning, users can cancel the scans
     canBeCanceled(row) {
