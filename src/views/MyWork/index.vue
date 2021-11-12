@@ -318,6 +318,16 @@ export default {
     getOptionsData(option_name) {
       return this[option_name]
     },
+    loadData() {
+      this.dashboardCards.forEach(card => {
+        this.$refs[card.id][0].initTableData()
+      })
+    },
+    backToFirstPage() {
+      this.dashboardCards.forEach(card => {
+        this.$refs[card.id][0].backToFirstPage()
+      })
+    },
     async loadSelectionList() {
       await this.loadProjectSelectionList(this.fixed_version_closed)
     },
