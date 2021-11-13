@@ -77,12 +77,14 @@
 <script>
 
 import { mapGetters } from 'vuex'
-import { Priority, Status, Tracker } from '@/components/Issue/index'
 import { cloneDeep } from 'lodash'
 
 export default {
   name: 'SearchFilter',
-  components: { Tracker, Status, Priority },
+  components: {
+    Tracker: () => import('@/components/Issue/Tracker'),
+    Status: () => import('@/components/Issue/Status'),
+    Priority: () => import('@/components/Issue/Priority') },
   props: {
     listLoading: {
       type: Boolean,
