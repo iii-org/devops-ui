@@ -11,7 +11,7 @@
           :disabled="column.value === 'priority' ? row.has_children : false"
         >
           <contextmenu-item
-            v-for="item in getOptionsData(column.value, row.has_children)"
+            v-for="item in getOptionsData(column.value)"
             :key="getId(column.value, item)"
             :disabled="column.value !== 'tags' && (item.disabled || getContextMenuCurrentValue(column, item))"
             :class="{ current: getContextMenuCurrentValue(column, item), [item.class]: item.class }"
@@ -30,7 +30,7 @@
             :class="{ current: getContextMenuCurrentValue('done_ratio', item) }"
             @click="onUpdate('done_ratio', item.id)"
           >
-            <i v-if="getContextMenuCurrentValue('done_ratio', item)" class="el-icon-check" />
+            <em v-if="getContextMenuCurrentValue('done_ratio', item)" class="el-icon-check" />
             {{ getSelectionLabel(item) }}
           </contextmenu-item>
         </contextmenu-submenu>
@@ -147,6 +147,12 @@ import { cloneDeep } from 'lodash'
 import { mapGetters } from 'vuex'
 import AddIssue from './AddIssue'
 
+const getAPI = {
+  fixed_version: [getProjectVersion, 'versions'],
+  assigned_to: [getProjectUserList, 'user_list'],
+  tags: [getTagsByProject, 'tags']
+}
+
 export default {
   name: 'ContextMenu',
   components: {
@@ -163,7 +169,7 @@ export default {
   props: {
     row: {
       type: Object,
-      default: () => ({ fixed_version: { id: 'null' }, assigned_to: { id: 'null' } })
+      default: () => ({ fixed_version: { id: 'null' }, assigned_to: { id: 'null' }})
     },
     visible: {
       type: Boolean,
@@ -208,6 +214,14 @@ export default {
       }
       return result
     },
+    checkIssueAssignedToStatus() {
+      return (
+        !this.row.assigned_to ||
+        !this.row.assigned_to.id ||
+        this.row.assigned_to.id === '' ||
+        this.row.assigned_to.id === 'null'
+      )
+    },
     permission() {
       return ['Administrator', 'Project Manager', 'Engineer']
     }
@@ -246,39 +260,38 @@ export default {
         this[item] = option[item]
       })
     },
-    getOptionsData(option_name, has_children) {
-      if (option_name === 'status') return this.getDynamicStatusList(has_children)
+    getOptionsData(option_name) {
+      if (option_name === 'status') return this.getDynamicStatusList()
       return this[option_name]
     },
     async loadSelectionList() {
       await this.loadProjectSelectionList(this.fixedVersionShowClosed, true, true)
     },
-    async loadProjectSelectionList(status, user, tags) {
+    async loadProjectSelectionList(fixed_version, assigned_to, tags) {
       let params = { status: 'open,locked' }
-      if (status) {
+      if (fixed_version) {
         params = { status: 'open,locked,closed' }
       }
       if (this.row.project && this.row.project.id !== '') {
-        const getAPI = [getProjectVersion(this.row.project.id, params)]
-        if (user) {
-          getAPI.push(getProjectUserList(this.row.project.id))
-        }
-        if (tags) {
-          getAPI.push(getTagsByProject(this.row.project.id))
-        }
-        await Promise.all(getAPI).then((res) => {
-          const [versionList, assigneeList, tagsList] = res.map((item) => item.data)
-          this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
-          if (user) {
-            this.assigned_to = [
-              { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
-              ...assigneeList.user_list
-            ]
-          }
-          if (tags) {
-            this.tags = tagsList.tags
-          }
+        Object.keys(getAPI).forEach((key) => {
+          this.loadSelection(key, params, [key])
         })
+      }
+    },
+    async loadSelection(column, params, lazyLoad) {
+      if (lazyLoad) {
+        const res = await getAPI[column][0](this.row.project.id, params)
+        if (column === 'fixed_version') {
+          this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
+        }
+        if (column === 'assigned_to') {
+          this[column] = [
+            { name: this.$t('Issue.Unassigned'), id: 'null', login: 'null' },
+            ...res.data[getAPI[column][1]]
+          ]
+        } else {
+          this[column] = res.data[getAPI[column][1]]
+        }
       }
     },
     async getClosable() {
@@ -289,31 +302,25 @@ export default {
       if (option === 'assigned_to') return item.login
       return item.id
     },
-    getDynamicStatusList(has_children) {
-      const _this = this
+    getDynamicStatusList() {
       let option
       if (this.selectionOptions['status']) {
         option = cloneDeep(this.selectionOptions)
       } else {
         option = cloneDeep({ status: this.status })
       }
-      return option['status'].map((item) => {
-        if (!_this.checkClosable && item.is_closed === true && has_children) {
-          item.disabled = true
-          item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
-        }
-        if (
-          (!_this.row.assigned_to ||
-            !_this.row.assigned_to.id ||
-            _this.row.assigned_to.id === '' ||
-            _this.row.assigned_to.id === 'null') &&
-          item.id > 1
-        ) {
-          item.disabled = true
-          item.message = '(' + this.$t('Issue.NoAssignee') + ')'
-        }
-        return item
-      })
+      return option['status'].map((item) => this.formatDynamicStatusList(item))
+    },
+    formatDynamicStatusList(item) {
+      if (!this.checkClosable && item.is_closed && this.row.has_children) {
+        item.disabled = true
+        item.message = '(' + this.$t('Issue.ChildrenNotClosed') + ')'
+      }
+      if (this.checkIssueAssignedToStatus && item.id > 1) {
+        item.disabled = true
+        item.message = '(' + this.$t('Issue.NoAssignee') + ')'
+      }
+      return item
     },
     onSaveCheckRelationIssue() {
       this.$refs.settingRelationIssue.$refs.issueForm.validate((valid) => {
@@ -354,17 +361,7 @@ export default {
       try {
         let data = { [column]: value }
         if (column === 'tags_id') {
-          let tags = []
-          if (this.row.tags) {
-            tags = this.row.tags.map((item) => item.id)
-          }
-          const findTags = tags.findIndex((item) => item === value)
-          if (findTags >= 0) {
-            tags.splice(findTags, 1)
-          } else {
-            tags.push(value)
-          }
-          data = { tags: tags.join(',') }
+          data = this.setTags(column, value)
         }
         await updateIssue(this.row.id, data)
         this.$message({
@@ -377,6 +374,16 @@ export default {
         console.error(e)
       }
     },
+    setTags(column, value) {
+      const tags = this.row.tags ? this.row.tags.map((item) => item.id) : []
+      const findTags = tags.findIndex((item) => item === value)
+      if (findTags >= 0) {
+        tags.splice(findTags, 1)
+      } else {
+        tags.push(value)
+      }
+      return { tags: tags.join(',') }
+    },
     toggleRelationDialog(target) {
       this.relationDialog.visible = !this.relationDialog.visible
       this.relationDialog.target = target
@@ -388,7 +395,7 @@ export default {
       const visibleStatus = ['closed', 'locked']
       let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+        result += ` (${this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status})`
       }
       return result
     },
@@ -397,8 +404,9 @@ export default {
         return this.row[column] ? this.row[column] === item.id : item.id === 0
       }
       if (!this.row[column.value]) return item.id === 'null'
-      if (Array.isArray(this.row[column.value]))
+      if (Array.isArray(this.row[column.value])) {
         return this.row[column.value].map((subItem) => subItem.id).includes(item.id)
+      }
       if (!this.row[column.value].id) return item.id ? item.id === 'null' : false
       return this.row[column.value].id === item.id
     },
@@ -461,23 +469,17 @@ export default {
       this.LoadingConfirm = value
     },
     async saveIssue(data) {
-      return await addIssue(data)
-        .then((res) => {
-          // noinspection JSCheckFunctionSignatures
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
-          this.LoadingConfirm = false
-          this.addTopicDialogVisible = false
-          this.$emit('update')
-          this.$refs['AddIssue'].form.name = ''
-          return res
-        })
-        .catch((error) => {
-          return error
-        })
+      const res = await addIssue(data)
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Added'),
+        type: 'success'
+      })
+      this.backToFirstPage()
+      this.loadData()
+      this.addTopicDialogVisible = false
+      this.$refs['quickAddIssue'].form.name = ''
+      return res
     }
   }
 }
@@ -497,7 +499,6 @@ export default {
 }
 
 .current {
-  @apply text-success #{!important};
-  font-weight: 700;
+  @apply font-bold text-success #{!important} ;
 }
 </style>
