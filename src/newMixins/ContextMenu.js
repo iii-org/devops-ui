@@ -9,20 +9,8 @@ export default {
         visible: false,
         left: 0,
         top: 0
-      }
-    }
-  },
-  computed: {
-    contextOptions() {
-      const result = {}
-      const getOptions = ['assigned_to', 'fixed_version', 'tags']
-      getOptions.forEach((item) => {
-        result[item] = this[item]
-      })
-      return result
-    },
-    filterOptions() {
-      return [
+      },
+      filterOptions: Object.freeze([
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
         { id: 2, label: this.$t('Issue.FilterDimensions.tags'), value: 'tags', placeholder: 'Tag' },
         { id: 3, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
@@ -40,7 +28,17 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ]
+      ])
+    }
+  },
+  computed: {
+    contextOptions() {
+      const result = {}
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
+      })
+      return result
     }
   },
   methods: {

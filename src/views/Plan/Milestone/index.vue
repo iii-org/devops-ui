@@ -114,33 +114,7 @@ export default {
       searchVisible: false,
       displayClosed: false,
       tableHeight: 0,
-      filterValue: {},
-      originFilterValue: {},
-      displayFields: [],
-      keyword: null,
-
-      listData: [],
-      activeTab: 'WBS',
-      addTopicDialog: {
-        visible: false,
-        parentId: 0,
-        parentName: null,
-        LoadingConfirm: false
-      }
-    }
-  },
-  computed: {
-    ...mapGetters(['userId', 'selectedProjectId', 'tracker', 'fixedVersionShowClosed']),
-    contextOptions() {
-      const result = {}
-      const getOptions = ['assigned_to', 'fixed_version', 'tags']
-      getOptions.forEach((item) => {
-        result[item] = this[item]
-      })
-      return result
-    },
-    filterOptions() {
-      return [
+      filterOptions: Object.freeze([
         {
           id: 1,
           label: this.$t('Issue.FilterDimensions.status'),
@@ -198,7 +172,31 @@ export default {
           componentOptions: { type: 'date' },
           tag: true
         }
-      ]
+      ]),
+      filterValue: {},
+      originFilterValue: {},
+      displayFields: [],
+      keyword: null,
+
+      listData: [],
+      activeTab: 'WBS',
+      addTopicDialog: {
+        visible: false,
+        parentId: 0,
+        parentName: null,
+        LoadingConfirm: false
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['userId', 'selectedProjectId', 'tracker', 'fixedVersionShowClosed']),
+    contextOptions() {
+      const result = {}
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
+      })
+      return result
     },
     columnsOptions() {
       return [

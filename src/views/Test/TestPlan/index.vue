@@ -198,18 +198,7 @@ export default {
       assigned_to: [],
       fixed_version: [],
       form: {},
-      allDownloadData: [],
-      allDataLoading: false,
-      selectedTestPlan: []
-    }
-  },
-  computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
-    refTable() {
-      return this.$refs['issueList']
-    },
-    filterOptions() {
-      return [
+      filterOptions: Object.freeze([
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
         { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
         {
@@ -225,7 +214,16 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ]
+      ]),
+      allDownloadData: [],
+      allDataLoading: false,
+      selectedTestPlan: []
+    }
+  },
+  computed: {
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    refTable() {
+      return this.$refs['issueList']
     },
     hasSelectedTestPlan() {
       return this.selectedTestPlan.length > 0
@@ -521,7 +519,7 @@ export default {
     },
     async downloadExcel(selectedTestPlan) {
       let result = await this.fetchDataExcel(selectedTestPlan)
-      result = await this.dataCleanExcel(result)
+      result = this.dataCleanExcel(result)
       await this.prepareExcel(result)
     },
     onContextMenu({ row, column, event }) {

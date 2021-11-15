@@ -490,8 +490,7 @@ export default {
     },
     async fetchVersionList(params) {
       const res = await getProjectVersion(this.selectedProjectId, params)
-      const versionList = res.data.versions
-      return versionList
+      return res.data.versions
     },
     async loadSelectionList() {
       if (this.selectedProjectId === -1) return
@@ -601,8 +600,7 @@ export default {
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      const isClosed = statusList.filter(item => item.is_closed === false)
-      return isClosed
+      return statusList.filter(item => item.is_closed === false)
     },
     filterMe(userList) {
       return userList.filter(item => item.login !== '-Me-')

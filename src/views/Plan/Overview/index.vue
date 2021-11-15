@@ -16,7 +16,7 @@
       >
         <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
       </el-select>
-      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" @click="onFilterSelection"> {{ listFilter }}
+      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" @click="onFilterSelection"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
       <template v-if="selectedVersion!==null">
@@ -89,7 +89,7 @@ export default {
     selectedProjectId() {
       return this.selectedProject.id
     },
-    listFilter() {
+    displayFilterValue() {
       if (!this.selectedVersion || this.selectedVersion === '') return this.$t('general.Filter')
       return this.$t('general.Filter') + ':' + this.getSelectionLabel(this.versionList.find((item) => (item.id === this.selectedVersion)))
     }

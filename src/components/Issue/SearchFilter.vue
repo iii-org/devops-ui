@@ -46,7 +46,7 @@
           <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
         </el-form-item>
       </el-form>
-      <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
+      <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" /></el-button>
     </el-popover>
     <el-divider direction="vertical" />
@@ -137,7 +137,7 @@ export default {
       }
       return !!this.keyword
     },
-    listFilter() {
+    displayFilterValue() {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {

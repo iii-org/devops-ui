@@ -167,19 +167,7 @@ export default {
       assigned_to: [],
       fixed_version: [],
       form: {},
-      csvColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
-      allDownloadData: [],
-      allDataLoading: false,
-      selectedFailList: []
-    }
-  },
-  computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
-    refTable() {
-      return this.$refs['issueList']
-    },
-    filterOptions() {
-      return [
+      filterOptions: Object.freeze([
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
         { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
         {
@@ -195,7 +183,17 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ]
+      ]),
+      csvColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
+      allDownloadData: [],
+      allDataLoading: false,
+      selectedFailList: []
+    }
+  },
+  computed: {
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    refTable() {
+      return this.$refs['issueList']
     },
     hasSelectedFail() {
       return this.selectedFailList.length > 0

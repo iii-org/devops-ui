@@ -254,7 +254,7 @@ export default {
     selectedProjectId() {
       return this.selectedProject.id
     },
-    listFilter() {
+    displayFilterValue() {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {

@@ -14,8 +14,8 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-        <i class="el-icon-arrow-down el-icon--right" />
+      <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
+        <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
     </el-popover>
     <el-divider direction="vertical" />
@@ -58,14 +58,13 @@ export default {
     }
   },
   computed: {
-    listFilter() {
+    displayFilterValue() {
       const list = []
       this.isDisabled.forEach(item => {
         list.push(this.options[item].label)
       })
       const listJoined = list.join(', ')
-      const listFilter = list.length > 0 ? `${this.$t('general.Filter')}: ${listJoined}` : `${this.$t('general.Filter')}`
-      return listFilter
+      return list.length > 0 ? `${this.$t('general.Filter')}: ${listJoined}` : `${this.$t('general.Filter')}`
     },
     isFilterChanged() {
       return !!this.keyword || this.isDisabled.length > 0

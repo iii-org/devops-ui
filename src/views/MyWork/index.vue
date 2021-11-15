@@ -55,7 +55,7 @@
             <el-checkbox v-model="displayClosed" />
           </el-form-item>
         </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ listFilter }}
+        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
           <em class="el-icon-arrow-down el-icon--right" /></el-button>
       </el-popover>
       <el-divider direction="vertical" />
@@ -145,22 +145,7 @@ export default {
       activeDashboard: 'assigned_to_id',
       fixed_version: [],
       assigned_to: [],
-      filterValue: {},
-      originFilterValue: {},
-      keyword: null,
-      total: { 'assigned_to_id': '-', 'author_id': '-' }
-    }
-  },
-  computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'projectList']),
-    dashboardCards() {
-      return [
-        { id: 'assigned_to_id', name: this.$t('MyWork.AssignedToMe') },
-        { id: 'author_id', name: this.$t('MyWork.ReportedIssue') }
-      ]
-    },
-    filterOptions() {
-      return [
+      filterOptions: Object.freeze([
         { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
         { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
         { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
@@ -177,6 +162,19 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
+      ]),
+      filterValue: {},
+      originFilterValue: {},
+      keyword: null,
+      total: { 'assigned_to_id': '-', 'author_id': '-' }
+    }
+  },
+  computed: {
+    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'projectList']),
+    dashboardCards() {
+      return [
+        { id: 'assigned_to_id', name: this.$t('MyWork.AssignedToMe') },
+        { id: 'author_id', name: this.$t('MyWork.ReportedIssue') }
       ]
     },
     contextOptions() {
@@ -187,7 +185,7 @@ export default {
       })
       return result
     },
-    listFilter() {
+    displayFilterValue() {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {

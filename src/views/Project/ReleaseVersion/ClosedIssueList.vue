@@ -42,7 +42,7 @@
                 <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
               </el-form-item>
             </el-form>
-            <el-button slot="reference" icon="el-icon-s-operation" type="text" disabled style="color: #409eff;"> {{ listFilter }}
+            <el-button slot="reference" icon="el-icon-s-operation" type="text" disabled style="color: #409eff;"> {{ displayFilterValue }}
             </el-button>
           </el-popover>
           <el-divider direction="vertical" />
@@ -188,6 +188,24 @@ export default {
       assigned_to: [],
       status: [],
       priority: [],
+      filterOptions: Object.freeze([
+        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }
+      ]),
       filterValue: {},
       originFilterValue: {},
       quickChangeDialogVisible: false,
@@ -210,26 +228,6 @@ export default {
   },
   computed: {
     ...mapGetters(['userRole', 'userId', 'fixedVersionShowClosed']),
-    filterOptions() {
-      return [
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
-        { id: 3, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
-        {
-          id: 4,
-          label: this.$t('Issue.FilterDimensions.fixed_version'),
-          value: 'fixed_version',
-          placeholder: 'Version'
-        },
-        {
-          id: 5,
-          label: this.$t('Issue.FilterDimensions.priority'),
-          value: 'priority',
-          placeholder: 'Priority',
-          tag: true
-        }
-      ]
-    },
     contextOptions() {
       const result = {}
       this.filterOptions.forEach((item) => {
@@ -237,7 +235,7 @@ export default {
       })
       return result
     },
-    listFilter() {
+    displayFilterValue() {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
