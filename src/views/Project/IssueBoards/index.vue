@@ -32,7 +32,7 @@
                   :class="{[item.class]: item.class}"
                   :value="item.id"
                 >
-                  <component :is="dimension.value" v-if="dimension.tag" :name="item.name" />
+                  <component :is="dimension.value" v-if="dimension.tag" :name="$t(`Issue.${item.name}`)" :type="item.name" />
                 </el-option>
               </el-select>
             </el-form-item>
@@ -41,8 +41,8 @@
             <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
           </el-form-item>
         </el-form>
-        <el-button slot="reference" :loading="isLoading" icon="el-icon-s-operation" type="text"> {{ listFilter }}
-          <i class="el-icon-arrow-down el-icon--right" />
+        <el-button slot="reference" :loading="isLoading" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
+          <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
       <el-divider direction="vertical" />
@@ -84,10 +84,10 @@
         </el-form>
         <el-button slot="reference" :loading="isLoading" type="text">
           <i18n path="Issue.GroupBy">
-            <b slot="filter">{{ showSelectedGroupByName }}</b>
+            <strong slot="filter">{{ showSelectedGroupByName }}</strong>
           </i18n>
           ({{ showSelectedGroupByLength }})
-          <i class="el-icon-arrow-down el-icon--right" />
+          <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
       <el-divider direction="vertical" />
@@ -250,8 +250,7 @@ export default {
     },
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        const statusSort = this.getStatusSort.map(item => item)
-        return statusSort
+        return this.getStatusSort.map(item => item)
       }
       return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
     },
@@ -279,8 +278,7 @@ export default {
       })
       const colon = selectedLabels.length > 0 ? ': ' : ''
       const factor = selectedLabels.join(', ')
-      const showWords = `${this.$t('general.Filter')}${colon}${factor}`
-      return showWords
+      return `${this.$t('general.Filter')}${colon}${factor}`
     },
     handleArrayLabels() {
       let label = ''
