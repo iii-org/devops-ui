@@ -2,14 +2,11 @@
   <el-row v-show="visible">
     <el-form ref="issueForm" inline :model="form" :rules="formRules">
       <el-form-item prop="tracker_id">
-        <el-select
-          v-model="form.tracker_id"
-          :placeholder="$t('Issue.SelectType')"
-          :disabled="hasSetTracker"
-        >
+        <el-select v-model="form.tracker_id" :placeholder="$t('Issue.SelectType')" :disabled="hasSetTracker">
           <el-option
             v-for="option in trackerList"
-            :key="option.login" :label="$t('Issue.'+option.name)"
+            :key="option.login"
+            :label="$t('Issue.' + option.name)"
             :value="option.id"
           >
             <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
@@ -20,8 +17,8 @@
         <el-input v-model="form.name" :placeholder="$t('Issue.name')" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        <el-button @click="advancedAddIssue">{{ $t('general.AdvancedSettings') }}</el-button>
+        <el-button type="primary" :loading="LoadingConfirm" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button :disabled="LoadingConfirm" @click="advancedAddIssue">{{ $t('general.AdvancedSettings') }}</el-button>
       </el-form-item>
     </el-form>
     <el-dialog
@@ -34,21 +31,20 @@
       append-to-body
       @close="handleClose"
     >
-      <AddIssue ref="AddIssue"
-                :project-id="selectedProjectId"
-                :parent-id="parentId"
-                :prefill="form"
-                :save-data="saveData"
-                import-from="list"
-                :tracker-list="trackerList"
-                @loading="loadingUpdate"
-                @add-topic-visible="handleCloseDialog"
+      <AddIssue
+        ref="AddIssue"
+        :project-id="selectedProjectId"
+        :parent-id="parentId"
+        :prefill="form"
+        :save-data="saveData"
+        import-from="list"
+        :tracker-list="trackerList"
+        @loading="loadingUpdate"
+        @add-topic-visible="handleCloseDialog"
       />
       <span slot="footer" class="dialog-footer">
         <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary"
-                   @click="handleAdvancedSave"
-        >
+        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleAdvancedSave">
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
@@ -76,8 +72,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {
-      }
+      default: () => {}
     },
     trackerName: {
       type: String,
@@ -109,7 +104,7 @@ export default {
       return !!this.trackerName
     },
     trackerList() {
-      if (this.hasSetTracker) return this.tracker.filter(item => item.name === this.trackerName)
+      if (this.hasSetTracker) return this.tracker.filter((item) => item.name === this.trackerName)
       return this.tracker
     }
   },
@@ -138,43 +133,45 @@ export default {
         this.form.tracker_id = this.trackerList[0].id
       }
       const dimensions = ['fixed_version', 'tracker']
-      dimensions.forEach(item => {
-        if (this.issueFilter['list'] && this.issueFilter['list'][item] !== 'null' &&
-          this.issueFilter['list'][item] !== '' && !!(this.issueFilter['list'][item])) {
+      dimensions.forEach((item) => {
+        if (
+          this.issueFilter['list'] &&
+          this.issueFilter['list'][item] !== 'null' &&
+          this.issueFilter['list'][item] !== '' &&
+          !!this.issueFilter['list'][item]
+        ) {
           this.$set(this.form, item + '_id', this.issueFilter['list'][item])
         }
       })
     },
     handleSave() {
-      this.$refs['issueForm'].validate(async valid => {
+      this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
-          // deep copy & remove field with empty value
-          const data = JSON.parse(JSON.stringify(this.form))
-          Object.keys(data).map(item => {
-            if (data[item] === '' || data[item] === 'null' || !data[item]) delete data[item]
-          })
-
-          // because have file need upload so use formData object
-          const form = new FormData()
-          form.append('project_id', this.projectId)
-          // if (this.parentId) form.append('parent_id', this.parentId)
-          Object.keys(data).forEach(objKey => {
-            form.append(objKey, data[objKey])
-          })
-          // if (this.uploadFileList.length > 0) {
-          //   form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
-          // }
           this.LoadingConfirm = true
-          await this.saveData(form)
-          this.LoadingConfirm = false
-          const tracker_id = data.tracker_id
-          this.setFilterValue()
-          this.form.tracker_id = tracker_id
-          return true
-        } else {
-          return false
+          const data = this.cleanFormData()
+          await this.sendSaveAction(data)
         }
+        return valid
       })
+    },
+    cleanFormData() {
+      const data = JSON.parse(JSON.stringify(this.form))
+      Object.keys(data).forEach((item) => {
+        if (data[item] === '' || data[item] === 'null' || !data[item]) delete data[item]
+      })
+      return data
+    },
+    async sendSaveAction(data) {
+      const form = new FormData()
+      form.append('project_id', this.projectId)
+      Object.keys(data).forEach((objKey) => {
+        form.append(objKey, data[objKey])
+      })
+      await this.saveData(form)
+      this.LoadingConfirm = false
+      const tracker_id = data.tracker_id
+      this.setFilterValue()
+      this.form.tracker_id = tracker_id
     },
     handleClose() {
       this.$emit('close-dialog', false)
