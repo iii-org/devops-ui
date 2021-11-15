@@ -161,53 +161,53 @@ export default {
     Priority
   },
   data() {
-    this.filterOptions = [
-      {
-        id: 1,
-        label: this.$t('Issue.FilterDimensions.status'),
-        value: 'status',
-        placeholder: 'Status',
-        tag: true
-      },
-      {
-        id: 2,
-        label: this.$t('Issue.FilterDimensions.tags'),
-        value: 'tags',
-        placeholder: 'Tag'
-      },
-      {
-        id: 3,
-        label: this.$t('Issue.FilterDimensions.tracker'),
-        value: 'tracker',
-        placeholder: 'Type',
-        tag: true
-      },
-      {
-        id: 4,
-        label: this.$t('Issue.FilterDimensions.assigned_to'),
-        value: 'assigned_to',
-        placeholder: 'Member'
-      },
-      {
-        id: 5,
-        label: this.$t('Issue.FilterDimensions.fixed_version'),
-        value: 'fixed_version',
-        placeholder: 'Version'
-      },
-      {
-        id: 6,
-        label: this.$t('Issue.FilterDimensions.priority'),
-        value: 'priority',
-        placeholder: 'Priority',
-        tag: true
-      }
-    ]
     return {
       isLoading: false,
       groupBy: {
         dimension: 'status',
         value: []
       },
+      filterOptions: Object.freeze([
+        {
+          id: 1,
+          label: this.$t('Issue.FilterDimensions.status'),
+          value: 'status',
+          placeholder: 'Status',
+          tag: true
+        },
+        {
+          id: 2,
+          label: this.$t('Issue.FilterDimensions.tags'),
+          value: 'tags',
+          placeholder: 'Tag'
+        },
+        {
+          id: 3,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
+        },
+        {
+          id: 4,
+          label: this.$t('Issue.FilterDimensions.assigned_to'),
+          value: 'assigned_to',
+          placeholder: 'Member'
+        },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 6,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }
+      ]),
       filterValue: {},
       originFilterValue: {},
       displayClosed: false,
@@ -269,7 +269,7 @@ export default {
       }
       return this.groupBy.value.length
     },
-    listFilter() {
+    displayFilterValue() {
       const selectedLabels = []
       Object.keys(this.filterValue).forEach(item => {
         if (!this.filterValue[item]) return
