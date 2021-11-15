@@ -302,13 +302,14 @@ export default {
     QueueSequence: '等候排序',
     cancelScansMessage: '已取消測試編號為 {0} 的掃描程序，請等待 CheckMarx 更新...',
     New: '已新增',
+    PreScan: '準備中',
     Queued: '排程中',
     Scanning: '掃描中',
+    PostScan: '掃瞄或處理中',
     Finished: '掃描完成',
-    Failed: '掃描失敗',
-    InProcess: '產生中',
     Canceled: '已取消',
-    PreScan: '準備中'
+    Failed: '掃描失敗',
+    InProcess: '產生中'
   },
   WebInspect: {
     ScanId: '測試編號',

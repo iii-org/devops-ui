@@ -302,13 +302,14 @@ export default {
     QueueSequence: 'Sequence',
     cancelScansMessage: 'The scan program with test number {0} has been cancelled, please wait for CheckMarx to update...',
     New: 'New',
+    PreScan: 'Preparing',
     Queued: 'Queued',
     Scanning: 'Scanning',
+    PostScan: 'Processing',
     Finished: 'Finished',
-    Failed: 'Failed',
-    InProcess: 'In Process',
     Canceled: 'Canceled',
-    PreScan: 'Preparing'
+    Failed: 'Failed',
+    InProcess: 'In Process'
   },
   WebInspect: {
     ScanId: 'Scan ID',

@@ -152,6 +152,7 @@ export default {
           const idx = this.listData.findIndex(item => item.scan_id === scanId)
           this.listData[idx].status = res.data.name
           this.listData[idx].queue = res.data.queue_position
+          this.listData[idx].id = res.data.id
           if (res.data.id === 7) {
             this.fetchScanStats(scanId)
             this.registerReport(scanId)
@@ -240,19 +241,23 @@ export default {
         }
       }
     },
+    /**
+     * all status of checkmarx's scan:
+     * 1: New, 2: PreScan, 3: Queued, 4: Scanning, 6: PostScan, 7: Finished, 8: Canceled, 9: Failed
+     */
     isInQueued(row) {
-      return row.status === 'New' || row.status === 'PreScan' || row.status === 'Queued'
+      return row.id > 0 && row.id < 4
     },
     // if the scan's status are PreScan, Queued or Scanning, users can cancel the scans
     canBeCanceled(row) {
-      return row.status === 'PreScan' || row.status === 'Queued' || row.status === 'Scanning'
+      return row.id > 1 && row.id < 5
     },
     isInProcess(row) {
-      return row.status !== 'Failed' && row.status !== 'Canceled'
+      return row.id !== 8 && row.id !== 9
     },
     // the scans report sometimes wouldn't be produced when they have been scanned
     isException(row) {
-      return row.status === 'Finished' && row.report_id === -1
+      return row.id === 7 && row.report_id === -1
     },
     handleType(prop) {
       const location = 'checkMarx'
