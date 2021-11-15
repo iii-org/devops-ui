@@ -18,37 +18,37 @@
       <el-table-column align="center" :label="$t('DevOps.Tools')">WebInspect</el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.criticalCount">
         <template slot-scope="scope">
-          <span v-if="scope.row && scope.row.stats !== 'None'">{{ scope.row.stats.criticalCount }}</span>
+          <span v-if="showColumn(scope.row)">{{ scope.row.stats.criticalCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.highCount">
         <template slot-scope="scope">
-          <span v-if="scope.row && scope.row.stats !== 'None'">{{ scope.row.stats.highCount }}</span>
+          <span v-if="showColumn(scope.row)">{{ scope.row.stats.highCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount">
         <template slot-scope="scope">
-          <span v-if="scope.row && scope.row.stats !== 'None'">{{ scope.row.stats.mediumCount }}</span>
+          <span v-if="showColumn(scope.row)">{{ scope.row.stats.mediumCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.lowCount">
         <template slot-scope="scope">
-          <span v-if="scope.row && scope.row.stats !== 'None'">{{ scope.row.stats.lowCount }}</span>
+          <span v-if="showColumn(scope.row)">{{ scope.row.stats.lowCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.infoCount">
         <template slot-scope="scope">
-          <span v-if="scope.row && scope.row.stats !== 'None'">{{ scope.row.stats.infoCount }}</span>
+          <span v-if="showColumn(scope.row)">{{ scope.row.stats.infoCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('WebInspect.BpSeverity')" prop="stats.bpCount">
         <template slot-scope="scope">
-          <span v-if="scope.row && scope.row.stats !== 'None'">{{ scope.row.stats.bpCount }}</span>
+          <span v-if="showColumn(scope.row)">{{ scope.row.stats.bpCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -75,6 +75,11 @@ export default {
   computed: {
     disabled() {
       return this.webinspect[0] ? Object.keys(this.webinspect[0]).length === 0 : true
+    },
+    showColumn() {
+      return function(row) {
+        return row.hasOwnProperty('stats') && row.stats !== 'None'
+      }
     }
   },
   methods: {

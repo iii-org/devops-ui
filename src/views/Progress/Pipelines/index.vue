@@ -102,7 +102,11 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Report')">
           <template slot-scope="scope">
-            <em v-show="scope.row.commit_id" class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit_id)" />
+            <em
+              v-show="scope.row.commit_id"
+              class="el-icon-tickets cursor-pointer"
+              @click="handleToTestReport(scope.row)"
+            />
           </template>
         </el-table-column>
         <template slot="empty">
@@ -288,8 +292,10 @@ export default {
       clearTimeout(this.timer)
       this.timer = null
     },
-    handleToTestReport(commitId) {
-      this.$router.push({ name: 'TestReport', params: { commitId }})
+    handleToTestReport(row) {
+      const commitId = row.commit_id
+      const commitBranch = row.commit_branch
+      this.$router.push({ name: 'TestReport', params: { commitId, commitBranch }})
     }
   }
 }

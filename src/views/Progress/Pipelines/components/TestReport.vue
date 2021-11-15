@@ -139,7 +139,7 @@ export default {
       return UTCtoLocalTime(this.dataTimeArr[0])
     },
     branch() {
-      return this.sonarqube && this.sonarqube.length > 0 ? this.sonarqube[0].branch : '-'
+      return this.$route.params.commitBranch
     },
     commitId() {
       return this.$route.params.commitId
