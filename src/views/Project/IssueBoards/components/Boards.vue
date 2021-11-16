@@ -196,12 +196,13 @@ export default {
           const updatedData = { [`${this.groupBy.dimension}_id`]: evt.boardObject.id }
           const issueId = evt.event.added.element.id
           await this.updatedIssue(issueId, updatedData)
-          this.setProjectIssueList(evt)
         } catch (e) {
           // error
+        } finally {
+          this.setProjectIssueList(evt)
+          this.$emit('getRelativeList')
         }
         this.$parent.isLoading = false
-        this.$emit('getRelativeList')
       }
     },
     async updatedIssue(id, updatedData) {
@@ -232,18 +233,19 @@ export default {
       this.$set(issue[key], idx, issue)
     },
     async quickUpdateIssue(event) {
-      const { id, value } = event
+      const { id, params } = event
       this.$parent.isLoading = true
-      const filterDimension = Object.keys(value)[0]
+      const filterDimension = Object.keys(params)[0]
+      const data = this.handleFilterArrayData(params)
       try {
-        const data = this.handleFilterArrayData(value)
         await this.updatedIssue(id, data)
-        const idx = this.projectIssueList.findIndex(item => item.id === id)
-        const issue = this.projectIssueList.find(item => item.id === id)
-        issue[filterDimension] = value[filterDimension]
-        this.$emit('updateIssueList', idx, issue)
       } catch (e) {
         // error
+      } finally {
+        const idx = this.projectIssueList.findIndex(item => item.id === id)
+        const issue = this.projectIssueList.find(item => item.id === id)
+        issue[filterDimension] = params[filterDimension]
+        this.$emit('updateIssueList', idx, issue)
       }
       this.$parent.isLoading = false
     },

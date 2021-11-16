@@ -3,7 +3,9 @@
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="flex">
-        <el-col class="text-center">{{ getTranslateHeader(boardObject.name) }} <strong>({{ list.length }})</strong></el-col>
+        <el-col class="text-center">
+          {{ getTranslateHeader(boardObject.name) }} <strong>({{ list.length }})</strong>
+        </el-col>
       </el-row>
     </div>
     <draggable
@@ -11,7 +13,7 @@
       v-bind="$attrs"
       class="board-column-content"
       :class="boardObject.name"
-      :move="checkRelatives"
+      :move="canIssueMoved"
       :draggable="'.item'"
       @change="end(boardObject, $event)"
     >
@@ -19,17 +21,26 @@
         v-for="(element, idx) in list"
         :key="element.id"
         class="board-item item"
-        @drop="drop($event, idx)"
+        @drop="dropPanelLabels($event, idx)"
         @dragover="allowDrop($event, idx)"
       >
-        <div v-if="element.done_ratio>0" class="progress-bar" :class="getStatus(element)"
-             :style="{width: `${element.done_ratio}%`}"
+        <div
+          v-if="element.done_ratio > 0"
+          class="progress-bar"
+          :class="getStatus(element)"
+          :style="{width: `${element.done_ratio}%`}"
         />
         <div @contextmenu="handleContextMenu(element, '', $event)">
           <div class="title">
             <span class="text" @click="handleClick(element.id)">
               {{ element.name }}
-              <el-tag v-for="item in element.tags" :key="item.id" effect="plain" size="mini" class="tags">
+              <el-tag
+                v-for="item in element.tags"
+                :key="item.id"
+                effect="plain"
+                size="mini"
+                class="tags"
+              >
                 {{ item.name }}
               </el-tag>
             </span>
@@ -42,7 +53,7 @@
           <div class="issue-status-tags">
             <span v-if="dimension !== 'status'">
               <Status
-                v-if="row.status.name"
+                v-if="element.status.name"
                 :name="$t(`Issue.${element.status.name}`)"
                 :type="element.status.name"
                 size="mini"
@@ -50,15 +61,25 @@
               />
             </span>
             <span v-if="dimension !== 'priority'">
-              <Priority v-if="element.priority.name" :name="$t(`Issue.${element.priority.name}`)"
-                        :type="element.priority.name" size="mini" class="priority"
+              <Priority
+                v-if="element.priority.name"
+                :name="$t(`Issue.${element.priority.name}`)"
+                :type="element.priority.name"
+                size="mini"
+                class="priority"
               />
             </span>
             <span v-if="dimension !== 'tracker'">
-              <Tracker :name="$t(`Issue.${element.tracker.name}`)" :type="element.tracker.name" class="tracker" />
+              <Tracker
+                :name="$t(`Issue.${element.tracker.name}`)"
+                :type="element.tracker.name"
+                class="tracker"
+              />
             </span>
             <span v-if="element.done_ratio>0">
-              <el-tag :type="getStatus(element)" size="mini" effect="dark">{{ element.done_ratio }}%</el-tag>
+              <el-tag :type="getStatus(element)" size="mini" effect="dark">
+                {{ element.done_ratio }}%
+              </el-tag>
             </span>
           </div>
         </div>
@@ -69,8 +90,9 @@
                 <em class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
               <div v-if="element.family" class="parent">
-                <div v-if="element.hasOwnProperty('parent')"
-                     @contextmenu="handleContextMenu(element.parent, '', $event)"
+                <div
+                  v-if="element.hasOwnProperty('parent')"
+                  @contextmenu="handleContextMenu(element.parent, '', $event)"
                 >
                   <strong>{{ $t('Issue.ParentIssue') }}：</strong>
                   <Status
@@ -80,7 +102,13 @@
                   />
                   <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
                     {{ element.parent.name }}
-                    <el-tag v-for="item in element.parent.tags" :key="item.id" effect="plain" size="mini" class="tags">
+                    <el-tag
+                      v-for="item in element.parent.tags"
+                      :key="item.id"
+                      effect="plain"
+                      size="mini"
+                      class="tags"
+                    >
                       {{ item.name }}
                     </el-tag>
                   </el-link>
@@ -98,7 +126,13 @@
                       />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
-                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="tags">
+                        <el-tag
+                          v-for="item in subElement.tags"
+                          :key="item.id"
+                          effect="plain"
+                          size="mini"
+                          class="tags"
+                        >
                           {{ item.name }}
                         </el-tag>
                       </el-link>
@@ -118,7 +152,13 @@
                       />
                       <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
                         {{ subElement.name }}
-                        <el-tag v-for="item in subElement.tags" :key="item.id" effect="plain" size="mini" class="tags">
+                        <el-tag
+                          v-for="item in subElement.tags"
+                          :key="item.id"
+                          effect="plain"
+                          size="mini"
+                          class="tags"
+                        >
                           {{ item.name }}
                         </el-tag>
                       </el-link>
@@ -155,20 +195,26 @@
         <div v-else class="no-info" />
       </div>
       <div slot="header">
-        <div class="title board-item select-none" @click="showDialog = !showDialog"><em
-          class="el-icon-plus ml-4 mr-5 add-button"
-        /> {{ $t('Issue.AddIssue') }}
+        <div class="title board-item select-none" @click="showDialog = !showDialog">
+          <em class="el-icon-plus ml-4 mr-5 add-button" :class="{ rotate: showDialog }" /> {{ $t('Issue.AddIssue') }}
         </div>
-        <QuickAddIssueOnBoard v-if="showDialog" class="board-item quick-add" :save-data="addIssue"
-                              :board-object="boardObject"
-                              @after-add="showDialog = !showDialog"
-        />
+        <transition name="slide-down">
+          <QuickAddIssueOnBoard
+            v-if="showDialog"
+            class="board-item quick-add"
+            :project-id="selectedProjectId"
+            :save-data="addIssue"
+            :board-object="boardObject"
+            @after-add="showDialog = !showDialog"
+          />
+        </transition>
       </div>
     </draggable>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
@@ -188,10 +234,11 @@ export default {
   filters: {
     lengthFilter(value) {
       if (!value.hasOwnProperty('parent') && !value.hasOwnProperty('children') && !value.hasOwnProperty('relations')) return null
-      const parent = (value.hasOwnProperty('parent')) ? 1 : 0
-      const children = (value.hasOwnProperty('children')) ? value.children.length : 0
-      const relations = (value.hasOwnProperty('relations')) ? value.relations.length : 0
-      return '(' + (parent + children + relations) + ')'
+      const parent = value.hasOwnProperty('parent') ? 1 : 0
+      const children = value.hasOwnProperty('children') ? value.children.length : 0
+      const relations = value.hasOwnProperty('relations') ? value.relations.length : 0
+      const total = parent + children + relations
+      return `(${total})`
     }
   },
   props: {
@@ -201,7 +248,7 @@ export default {
     },
     boardObject: {
       type: Object,
-      default: () => ({})
+      default: () => {}
     },
     list: {
       type: Array,
@@ -217,66 +264,157 @@ export default {
     },
     addIssue: {
       type: Function,
-      default: () => {
-      }
+      default: () => {}
     }
   },
   data() {
+    this.unassignedError = {
+      title: this.$t('Kanban.unassignedErrorTitle'),
+      content: this.$t('Kanban.unassignedErrorContent')
+    }
+    this.childrenStatusError = {
+      title: this.$t('Kanban.childrenStatusErrorTitle'),
+      content: this.$t('Kanban.childrenStatusErrorContent')
+    }
+    this.priorityError = {
+      title: this.$t('Kanban.priorityErrorTitle'),
+      content: this.$t('Kanban.priorityErrorContent')
+    }
     return {
       showDialog: false,
-      showAlert: false
+      showAlert: false,
+      errorMsg: []
     }
   },
+  computed: {
+    ...mapGetters(['selectedProjectId'])
+  },
   methods: {
-    checkRelatives(evt) {
-      const errorMsg = []
+    /**
+     * check if dragged issue can be moved to another issue status
+     * three items to check:
+     *  1. if the issue is assigned - isAssigned()
+     *  2. if the sub-issues of dragged issue are closed - isChildrenIssuesClosed()
+     *  3. the priority status of the issue - isPriorityUnchanged()
+     * @Param {Object} evt - drag event
+     */
+    canIssueMoved(evt) {
+      // console.log(evt)
       const toName = evt.to.classList[1]
       const toClassObj = this.status.find(item => item.name === toName)
       const element = evt.draggedContext.element
-      const h = this.$createElement
-      if (this.dimension === 'status') {
-        const checkAssigned = this.checkAssigned(toClassObj, element)
-        if (!checkAssigned) {
-          errorMsg.push(
-            h('li', [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')])
-          )
-        }
-        if (toClassObj.id === 6) {
-          const checkChildrenStatus = this.checkChildrenStatus(element)
-          if (!checkChildrenStatus) {
-            errorMsg.push(h('li', [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')]))
-          }
-          if (!checkAssigned || !checkChildrenStatus) {
-            this.showErrorAlert(errorMsg)
-          }
-          return checkAssigned && checkChildrenStatus
-        }
-        if (!checkAssigned) {
-          this.showErrorAlert(errorMsg)
-        }
-        return checkAssigned
-      } else if (this.dimension === 'priority') {
-        const checkPriority = this.checkPriority(element)
-        if (!checkPriority) {
-          errorMsg.push(h('li', [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')]))
-          this.showErrorAlert(errorMsg)
-        }
-        return checkPriority
+      const canIssueMoved = this.isIssueNormal(toClassObj, element)
+      // console.log(canIssueMoved)
+      return canIssueMoved
+    },
+    isIssueNormal(toClassObj, element) {
+      switch (this.dimension) {
+        case 'status':
+          return this.isStatusNormal(toClassObj, element)
+        case 'priority':
+          return this.isPriorityNormal(element)
       }
     },
-    checkAssigned(to, element) {
-      return !(Object.keys(element.assigned_to).length <= 2 && to.id >= 2)
+    isStatusNormal(toClassObj, element) {
+      const isAssigned = this.isAssigned(toClassObj, element)
+      const isChildrenIssuesClosed = toClassObj.id === 6 ? this.isChildrenIssuesClosed(toClassObj, element) : true
+      // console.log(this.errorMsg)
+      if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
+      return isAssigned && isChildrenIssuesClosed
     },
+    isPriorityNormal(element, value) {
+      const isPriorityUnchanged = this.isPriorityUnchanged(element, value)
+      if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
+      return isPriorityUnchanged
+    },
+    isAssigned(toClassObj, element) {
+      const isAssigned = this.checkAssigned(toClassObj, element)
+      if (!isAssigned) {
+        const error = 'unassignedError'
+        this.handleErrorAlert(error)
+      }
+      return isAssigned
+    },
+    isChildrenIssuesClosed(element) {
+      const isChildrenIssuesClosed = this.checkChildrenStatus(element)
+      if (!isChildrenIssuesClosed) {
+        const error = 'childrenStatusError'
+        this.handleErrorAlert(error)
+      }
+      return isChildrenIssuesClosed
+    },
+    isPriorityUnchanged(element) {
+      const isPriorityUnchanged = this.checkPriority(element)
+      if (!isPriorityUnchanged) {
+        const error = 'priorityError'
+        this.handleErrorAlert(error)
+      }
+      return isPriorityUnchanged
+    },
+    dropPanelLabels(e, idx) {
+      e.preventDefault()
+      if (e.dataTransfer.getData('json')) {
+        const data = JSON.parse(e.dataTransfer.getData('json'))
+        const element = this.list[idx]
+        this.handleDropUpdate(data, element)
+        this.$forceUpdate()
+      }
+    },
+    handleDropUpdate(data, element) {
+      const key = Object.keys(data)[0]
+      const toClassObj = Object.values(data)[0]
+      let params = { [key]: toClassObj }
+      if (key === 'status') {
+        const isStatusNormal = this.isStatusNormal(toClassObj, element)
+        if (isStatusNormal) this.emitDragUpdate(element.id, params)
+      } else if (key === 'priority') {
+        const isPriorityNormal = this.isPriorityNormal(element, params)
+        if (isPriorityNormal) this.emitDragUpdate(element.id, params)
+      } else {
+        params = this.getPanelLabelParams(data, element)
+        this.emitDragUpdate(element.id, params)
+      }
+    },
+    getPanelLabelParams(data, element) {
+      const key = Object.keys(data)[0]
+      const value = Object.values(data)[0]
+      let params = { [key]: value }
+      if (key === 'tags') params = this.getPanelLabelParamsByTags(element, key, value)
+      // console.log(params)
+      return params
+    },
+    getPanelLabelParamsByTags(element, key, value) {
+      const result = element.tags
+      const findTagIndex = element.tags.findIndex(item => item.id === value.id)
+      findTagIndex >= 0 ? result.splice(findTagIndex, 1) : result.push(value)
+      return { [key]: result }
+    },
+    checkAssigned(to, element) {
+      return !(Object.keys(element.assigned_to).length < 3 && to.id > 1)
+    },
+    // TODO: still need to modify
     checkChildrenStatus(element) {
-      if (element.children.length <= 0) return true
+      // console.log(element)
+      // const checkChildrenStatus = await this.checkChildrenStatusByApi(element)
+      // console.log(checkChildrenStatus)
+      if (element.children.length === 0) return true
       return element.children.map(issue => issue.status.id === 6).reduce((issue_status, all) => issue_status && all)
+      // return checkChildrenStatus
+    },
+    handleErrorAlert(key) {
+      const { title, content } = this[key]
+      this.errorMsg.push(this.getErrorAlert(title, content))
+    },
+    getErrorAlert(title, content) {
+      const h = this.$createElement
+      const message = h('li', [h('b', title), h('p', content)])
+      return message
     },
     async checkChildrenStatusByApi(element) {
-      this.check = true
       let result = false
       try {
-        result = await getCheckIssueClosable(element.id)
-        result = result.data
+        const res = await getCheckIssueClosable(element.id)
+        result = res.data
       } catch (e) {
         console.error(e)
       }
@@ -286,6 +424,8 @@ export default {
       return !element.has_children
     },
     end(boardObject, event) {
+      // console.log(boardObject)
+      // console.log(event)
       const updateData = { boardObject, event }
       this.$emit('update', updateData)
       this.$forceUpdate()
@@ -297,88 +437,20 @@ export default {
       this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
     showErrorAlert(errorMsg) {
+      // console.log(errorMsg)
       const h = this.$createElement
       if (!this.showAlert) {
         this.showAlert = true
-        this.$msgbox({ message: h('ul', errorMsg), title: '異動議題錯誤' }).then(() => {
-          this.showAlert = false
-        })
-      }
-    },
-    async drop(e, idx) {
-      e.preventDefault()
-      if (e.dataTransfer.getData('json')) {
-        const data = JSON.parse(e.dataTransfer.getData('json'))
-        const toClassObj = Object.values(data)[0]
-        const element = this.list[idx]
-        const h = this.$createElement
-        const checkAssigned = this.checkAssigned(toClassObj, element)
-        const errorMsg = []
-
-        if (Object.keys(data)[0] === 'status') {
-          if (!checkAssigned) {
-            errorMsg.push(
-              h('li', [h('b', '尚未分派的議題：'), h('p', '沒有人被分派到此議題，無法調整到"已分配"之後的議題狀態')])
-            )
-          }
-          if (toClassObj.id === 6) {
-            const checkChildrenStatus = await this.checkChildrenStatusByApi(element)
-            if (checkAssigned && checkChildrenStatus) {
-              this.$emit('update-drag', {
-                id: this.list[idx].id,
-                value: { [Object.keys(data)[0]]: Object.values(data)[0] }
-              })
-            } else {
-              if (!checkChildrenStatus) {
-                errorMsg.push(
-                  h('li', [h('b', '子議題尚未全關閉：'), h('p', '有未關閉的子議題，請確認所有議題皆已關閉')])
-                )
-              }
-              this.showErrorAlert(errorMsg)
-            }
-          } else {
-            if (checkAssigned) {
-              this.$emit('update-drag', {
-                id: this.list[idx].id,
-                value: { [Object.keys(data)[0]]: Object.values(data)[0] }
-              })
-            } else {
-              this.showErrorAlert(errorMsg)
-            }
-          }
-        } else if (Object.keys(data)[0] === 'priority') {
-          const checkPriority = this.checkPriority(element)
-          if (!checkPriority) {
-            errorMsg.push(
-              h('li', [h('b', '父議題不能改變優先權：'), h('p', '優先權會依據最後的子議題進行優先權變更！')])
-            )
-            this.showErrorAlert(errorMsg)
-          } else {
-            this.$emit('update-drag', {
-              id: this.list[idx].id,
-              value: { [Object.keys(data)[0]]: Object.values(data)[0] }
-            })
-          }
-        } else {
-          let value = { [Object.keys(data)[0]]: Object.values(data)[0] }
-          if (Object.keys(data)[0] === 'tags') {
-            const now = Object.values(data)[0]
-            const result = element.tags
-            const findTagIndex = element.tags.findIndex(item => item.id === now.id)
-            if (findTagIndex >= 0) {
-              result.splice(findTagIndex, 1)
-            } else {
-              result.push(now)
-            }
-            value = { [Object.keys(data)[0]]: result }
-          }
-          this.$emit('update-drag', {
-            id: this.list[idx].id,
-            value: value
+        this.$msgbox({ message: h('ul', errorMsg), title: this.$t('Kanban.ChangeIssueError') })
+          .then(() => {
+            this.showAlert = false
           })
-        }
-        this.$forceUpdate()
       }
+      this.errorMsg = []
+    },
+    emitDragUpdate(id, params) {
+      const update = { id, params }
+      this.$emit('update-drag', update)
     },
     allowDrop(e) {
       e.dataTransfer.dropEffect = 'copy'
@@ -489,7 +561,11 @@ export default {
 
       .add-button {
         cursor: pointer;
+        transition: transform .6s;
         @apply m-3;
+        &.rotate {
+          transform: rotate(225deg);
+        }
       }
 
       &.item {
@@ -760,4 +836,21 @@ export default {
   }
 }
 
+.slide-down-enter-active {
+  animation: slide-down .5s ease-out;
+}
+.slide-down-leave-active {
+  animation: slide-down .5s reverse;
+}
+@keyframes slide-down {
+  0% {
+		transform: translateY(-100%);
+	}
+	50%{
+		transform: translateY(10%);
+	}
+	100% {
+		transform: translateY(0%);
+	}
+}
 </style>

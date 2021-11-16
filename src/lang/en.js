@@ -1115,5 +1115,14 @@ export default {
     EnableTemplateSync: 'Enable template synchronization',
     DocumentUrl: 'Please refer to related document'
   },
+  Kanban: {
+    ChangeIssueError: 'Change Issue Error',
+    unassignedErrorTitle: `The issues haven't been assigned:`,
+    unassignedErrorContent: 'No one has been assigned to this issue, and cannot be adjusted to the status of the issue after "assigned".',
+    childrenStatusErrorTitle: `The children issues haven't been closed:`,
+    childrenStatusErrorContent: 'There are unclosed children issues, please confirm that all issues are closed.',
+    priorityErrorTitle: 'The parent issue cannot change priority:',
+    priorityErrorContent: 'Priority will be based on the last children issue.'
+  },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }
