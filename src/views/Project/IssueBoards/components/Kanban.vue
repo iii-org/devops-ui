@@ -816,22 +816,4 @@ export default {
     }
   }
 }
-
-.slide-down-enter-active {
-  animation: slide-down .5s ease-out;
-}
-.slide-down-leave-active {
-  animation: slide-down .5s reverse;
-}
-@keyframes slide-down {
-  0% {
-		transform: translateY(-100%);
-	}
-	50%{
-		transform: translateY(10%);
-	}
-	100% {
-		transform: translateY(0%);
-	}
-}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <el-tooltip v-if="isSystemAbnormal" :content="$t('Dashboard.ADMIN.ExceptionNotification')" placement="bottom" popper-class="abnormal-tooltip">
-    <span class="flex items-center move" @click="toPage">
+    <span class="flex items-center swing" @click="toPage">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="cursor-pointer"
@@ -55,25 +55,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.move {
-  animation: move 2s infinite;
-}
-
-@keyframes move {
-  10% {
-    transform: rotate(-15deg);
-  }
-  20% {
-    transform: rotate(10deg);
-  }
-  30% {
-    transform: rotate(-5deg);
-  }
-  40% {
-    transform: rotate(5deg);
-  }
-  50%, 100% {
-    transform: rotate(0deg);
-  }
+.swing {
+  animation: swing 2s infinite;
 }
 </style>
