@@ -4,7 +4,7 @@
                          @change="project_id=$event"
     >
       <template slot="button">
-        <el-button v-if="project_id===null||project_id===''" type="success" icon="el-icon-plus" @click="handleAdding">
+        <el-button v-if="project_id===null||project_id===''" type="primary" icon="el-icon-plus" @click="handleAdding">
           {{ $t('Project.AddProject') }}
         </el-button>
         <el-button
