@@ -144,8 +144,10 @@
                 <div v-if="element.hasOwnProperty('relations') && element.relations.length > 0">
                   <strong>{{ $t('Issue.RelatedIssue') }}：</strong>
                   <ol class="children_list">
-                    <li v-for="(subElement, index) in element.relations" :key="index"
-                        @contextmenu="handleContextMenu(subElement, '', $event)"
+                    <li
+                      v-for="(subElement, index) in element.relations"
+                      :key="index"
+                      @contextmenu="handleContextMenu(subElement, '', $event)"
                     >
                       <Status
                         :name="$t(`Issue.${subElement.status.name}`)"
