@@ -246,18 +246,18 @@ export default {
      * 1: New, 2: PreScan, 3: Queued, 4: Scanning, 6: PostScan, 7: Finished, 8: Canceled, 9: Failed
      */
     isInQueued(row) {
-      return row.id > 0 && row.id < 4
+      return row.status === 'New' || row.status === 'PreScan' || row.status === 'Queued'
     },
     // if the scan's status are PreScan, Queued or Scanning, users can cancel the scans
     canBeCanceled(row) {
-      return row.id > 1 && row.id < 5
+      return row.status === 'PreScan' || row.status === 'Queued' || row.status === 'Scanning'
     },
     isInProcess(row) {
-      return row.id !== 8 && row.id !== 9
+      return row.status !== 'Failed' && row.status !== 'Canceled'
     },
     // the scans report sometimes wouldn't be produced when they have been scanned
     isException(row) {
-      return row.id === 7 && row.report_id === -1
+      return row.status === 'Finished' && row.report_id === -1
     },
     handleType(prop) {
       const location = 'checkMarx'
