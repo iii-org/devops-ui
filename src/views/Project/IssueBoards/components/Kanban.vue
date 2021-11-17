@@ -76,7 +76,7 @@
                 class="tracker"
               />
             </span>
-            <span v-if="element.done_ratio>0">
+            <span v-if="element.done_ratio > 0">
               <el-tag :type="getStatus(element)" size="mini" effect="dark">
                 {{ element.done_ratio }}%
               </el-tag>
@@ -170,15 +170,15 @@
           </el-collapse>
         </div>
         <div v-if="element.due_date || Object.keys(element.assigned_to).length > 0" class="info">
-          <div v-if="element.due_date" class="detail due_date" :class="getDueDateClass(element)">
+          <div v-if="element.due_date" class="detail due_date" :class="getStatus(element)">
             <em class="el-icon-date" />
-            <div class="text" :class="getDueDateClass(element)">{{ element.due_date }}</div>
+            <div class="text" :class="getStatus(element)">{{ element.due_date }}</div>
           </div>
           <div v-else class="detail due_date">
             <em class="el-icon-date" />
           </div>
           <el-tooltip
-            v-if="Object.keys(element.assigned_to).length>0"
+            v-if="Object.keys(element.assigned_to).length > 0"
             :content="element.assigned_to.login"
             placement="right-start"
             :disabled="!element.assigned_to.login"
@@ -195,13 +195,13 @@
         <div v-else class="no-info" />
       </div>
       <div slot="header">
-        <div class="title board-item select-none" @click="showDialog = !showDialog">
+        <div class="title board-item select-none z-10" @click="showDialog = !showDialog">
           <em class="el-icon-plus ml-4 mr-5 add-button" :class="{ rotate: showDialog }" /> {{ $t('Issue.AddIssue') }}
         </div>
         <transition name="slide-down">
           <QuickAddIssueOnBoard
             v-if="showDialog"
-            class="board-item quick-add"
+            class="board-item quick-add z-5"
             :project-id="selectedProjectId"
             :save-data="addIssue"
             :board-object="boardObject"
@@ -219,7 +219,7 @@ import draggable from 'vuedraggable'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
 import Tracker from '@/components/Issue/Tracker'
-import { getCheckIssueClosable, getIssueFamily } from '@/api/issue'
+import { getIssueFamily } from '@/api/issue'
 import QuickAddIssueOnBoard from './QuickAddIssueOnBoard'
 
 export default {
@@ -287,7 +287,48 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    getHeaderBarClassName() {
+      return function(name) {
+        return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
+      }
+    },
+    differentInDays() {
+      return function(a, b) {
+        const day = 1000 * 3600 * 24
+        const Difference_In_Time = a.getTime() - b.getTime()
+        return Difference_In_Time / day
+      }
+    },
+    getPanelLabelParams() {
+      return function(data, element) {
+        const key = Object.keys(data)[0]
+        const value = Object.values(data)[0]
+        let params = { [key]: value }
+        if (key === 'tags') params = this.getPanelLabelParamsByTags(element, key, value)
+        return params
+      }
+    },
+    getPanelLabelParamsByTags() {
+      return function(element, key, value) {
+        const result = element.tags
+        const findTagIndex = element.tags.findIndex(item => item.id === value.id)
+        findTagIndex >= 0 ? result.splice(findTagIndex, 1) : result.push(value)
+        return { [key]: result }
+      }
+    },
+    checkChildrenIssuesClosed() {
+      return function(element) {
+        const checkedIssue = this.relativeList.length > 0 ? this.findCompleteIssues(element) : element
+        if (checkedIssue.children.length === 0) return true
+        return checkedIssue.children.map(issue => issue.is_closed === true).reduce((issue_status, all) => issue_status && all)
+      }
+    },
+    findCompleteIssues() {
+      return function(element) {
+        return this.relativeList.find(list => list.id === element.id)
+      }
+    }
   },
   methods: {
     /**
@@ -299,12 +340,10 @@ export default {
      * @Param {Object} evt - drag event
      */
     canIssueMoved(evt) {
-      // console.log(evt)
       const toName = evt.to.classList[1]
       const toClassObj = this.status.find(item => item.name === toName)
       const element = evt.draggedContext.element
       const canIssueMoved = this.isIssueNormal(toClassObj, element)
-      // console.log(canIssueMoved)
       return canIssueMoved
     },
     isIssueNormal(toClassObj, element) {
@@ -317,8 +356,7 @@ export default {
     },
     isStatusNormal(toClassObj, element) {
       const isAssigned = this.isAssigned(toClassObj, element)
-      const isChildrenIssuesClosed = toClassObj.id === 6 ? this.isChildrenIssuesClosed(toClassObj, element) : true
-      // console.log(this.errorMsg)
+      const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
       return isAssigned && isChildrenIssuesClosed
     },
@@ -336,7 +374,7 @@ export default {
       return isAssigned
     },
     isChildrenIssuesClosed(element) {
-      const isChildrenIssuesClosed = this.checkChildrenStatus(element)
+      const isChildrenIssuesClosed = this.checkChildrenIssuesClosed(element)
       if (!isChildrenIssuesClosed) {
         const error = 'childrenStatusError'
         this.handleErrorAlert(error)
@@ -357,7 +395,6 @@ export default {
         const data = JSON.parse(e.dataTransfer.getData('json'))
         const element = this.list[idx]
         this.handleDropUpdate(data, element)
-        this.$forceUpdate()
       }
     },
     handleDropUpdate(data, element) {
@@ -375,31 +412,8 @@ export default {
         this.emitDragUpdate(element.id, params)
       }
     },
-    getPanelLabelParams(data, element) {
-      const key = Object.keys(data)[0]
-      const value = Object.values(data)[0]
-      let params = { [key]: value }
-      if (key === 'tags') params = this.getPanelLabelParamsByTags(element, key, value)
-      // console.log(params)
-      return params
-    },
-    getPanelLabelParamsByTags(element, key, value) {
-      const result = element.tags
-      const findTagIndex = element.tags.findIndex(item => item.id === value.id)
-      findTagIndex >= 0 ? result.splice(findTagIndex, 1) : result.push(value)
-      return { [key]: result }
-    },
     checkAssigned(to, element) {
       return !(Object.keys(element.assigned_to).length < 3 && to.id > 1)
-    },
-    // TODO: still need to modify
-    checkChildrenStatus(element) {
-      // console.log(element)
-      // const checkChildrenStatus = await this.checkChildrenStatusByApi(element)
-      // console.log(checkChildrenStatus)
-      if (element.children.length === 0) return true
-      return element.children.map(issue => issue.status.id === 6).reduce((issue_status, all) => issue_status && all)
-      // return checkChildrenStatus
     },
     handleErrorAlert(key) {
       const { title, content } = this[key]
@@ -410,25 +424,12 @@ export default {
       const message = h('li', [h('b', title), h('p', content)])
       return message
     },
-    async checkChildrenStatusByApi(element) {
-      let result = false
-      try {
-        const res = await getCheckIssueClosable(element.id)
-        result = res.data
-      } catch (e) {
-        console.error(e)
-      }
-      return result
-    },
     checkPriority(element) {
       return !element.has_children
     },
     end(boardObject, event) {
-      // console.log(boardObject)
-      // console.log(event)
       const updateData = { boardObject, event }
       this.$emit('update', updateData)
-      this.$forceUpdate()
     },
     updateBoard(sendData) {
       this.$emit('update-board', sendData)
@@ -437,7 +438,6 @@ export default {
       this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
     showErrorAlert(errorMsg) {
-      // console.log(errorMsg)
       const h = this.$createElement
       if (!this.showAlert) {
         this.showAlert = true
@@ -458,28 +458,14 @@ export default {
       e.preventDefault()
     },
     getStatus(element) {
-      const dueDateData = element.due_date
-      const dueDate = new Date(dueDateData)
+      const dueDate = new Date(element.due_date)
       const today = new Date()
-      const lessDoneRatio = element.done_ratio < 100
       const notClosed = element.status.name !== 'Closed'
       if (element.done_ratio === 100) {
         return 'success'
-      } else if (dueDateData && lessDoneRatio && notClosed && today > dueDate) {
+      } else if (notClosed && today > dueDate) {
         return 'danger'
-      } else if (dueDateData && lessDoneRatio && notClosed && this.differentInDays(dueDate, today) <= 3) {
-        return 'warning'
-      }
-    },
-    getDueDateClass(element) {
-      const dueDateData = element.due_date
-      const dueDate = new Date(dueDateData)
-      const today = new Date()
-      const lessDoneRatio = element.done_ratio < 100
-      const notClosed = element.status.name !== 'Closed'
-      if (dueDateData && lessDoneRatio && notClosed && today > dueDate) {
-        return 'danger'
-      } else if (dueDateData && lessDoneRatio && notClosed && this.differentInDays(dueDate, today) <= 3) {
+      } else if (notClosed && this.differentInDays(dueDate, today) <= 3) {
         return 'warning'
       }
     },
@@ -489,25 +475,16 @@ export default {
     async onCollapseChange(element) {
       this.$set(element, 'loadingRelation', true)
       const family = await getIssueFamily(element.id)
-      const data = family.data
-      this.setRelativeIssueData(element, data)
+      this.setRelativeIssue(element, family.data)
       this.$forceUpdate()
       this.$set(element, 'loadingRelation', false)
     },
-    async setRelativeIssueData(element, data) {
+    setRelativeIssue(element, data) {
       const relations = ['parent', 'children', 'relations']
       relations.forEach(async relation => {
         const hasOwnProperty = data.hasOwnProperty(relation)
         if (hasOwnProperty) await this.$set(element, relation, data[relation])
       })
-    },
-    differentInDays(a, b) {
-      const day = 1000 * 3600 * 24
-      const Difference_In_Time = a.getTime() - b.getTime()
-      return Difference_In_Time / day
-    },
-    getHeaderBarClassName(name) {
-      return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
     },
     handleContextMenu(row, context, event) {
       this.$emit('contextmenu', { row, context, event })
