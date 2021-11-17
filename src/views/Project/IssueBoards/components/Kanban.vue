@@ -116,8 +116,10 @@
                 <div v-if="element.hasOwnProperty('children') && element.children.length > 0">
                   <strong>{{ $t('Issue.ChildrenIssue') }}：</strong>
                   <ol class="children_list">
-                    <li v-for="(subElement, index) in element.children" :key="index"
-                        @contextmenu="handleContextMenu(subElement, '', $event)"
+                    <li
+                      v-for="(subElement, index) in element.children"
+                      :key="index"
+                      @contextmenu="handleContextMenu(subElement, '', $event)"
                     >
                       <Status
                         :name="$t(`Issue.${subElement.status.name}`)"
@@ -195,13 +197,13 @@
         <div v-else class="no-info" />
       </div>
       <div slot="header">
-        <div class="title board-item select-none z-10" @click="showDialog = !showDialog">
+        <div class="title board-item select-none" @click="showDialog = !showDialog">
           <em class="el-icon-plus ml-4 mr-5 add-button" :class="{ rotate: showDialog }" /> {{ $t('Issue.AddIssue') }}
         </div>
         <transition name="slide-down">
           <QuickAddIssueOnBoard
             v-if="showDialog"
-            class="board-item quick-add z-5"
+            class="board-item quick-add"
             :project-id="selectedProjectId"
             :save-data="addIssue"
             :board-object="boardObject"
