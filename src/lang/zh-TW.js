@@ -1122,5 +1122,15 @@ export default {
     priorityErrorTitle: '父議題不能改變優先權：',
     priorityErrorContent: '優先權會依據最後的子議題。'
   },
+  Status: {
+    Finished: '掃描完成',
+    Scanning: '掃描中',
+    Aborted: '已取消',
+    Failed: '失敗',
+    Complete: '@:Status.Finished',
+    Running: '@:Status.Scanning',
+    NotRunning: '準備中',
+    Interrupted: '已中斷'
+  },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

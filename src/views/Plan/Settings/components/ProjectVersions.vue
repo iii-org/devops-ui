@@ -31,7 +31,7 @@
         <ElTableColumnTime prop="updated_on" :label="$t('general.LastUpdateTime')" />
         <el-table-column-tag
           prop="status"
-          translate-key="Version"
+          i18n-key="Version"
           :label="$t('general.Status')"
           element-class="el-tag--circle"
           min-width="90"

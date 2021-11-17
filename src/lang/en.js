@@ -1124,5 +1124,15 @@ export default {
     priorityErrorTitle: 'The parent issue cannot change priority:',
     priorityErrorContent: 'Priority will be based on the last children issue.'
   },
+  Status: {
+    Finished: 'Finished',
+    Scanning: 'Scanning',
+    Aborted: 'Aborted',
+    Failed: 'Failed',
+    Complete: '@:Status.Finished',
+    Running: '@:Status.Scanning',
+    NotRunning: 'NotRunning',
+    Interrupted: 'Interrupted'
+  },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

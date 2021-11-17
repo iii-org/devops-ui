@@ -43,7 +43,7 @@
             :type="mapStatusTagType(scope.row.stats.status)"
             effect="dark"
           >
-            {{ scope.row.stats.status }}
+            {{ $t(`Status.${scope.row.stats.status}`) }}
           </el-tag>
         </template>
       </el-table-column>

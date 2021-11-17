@@ -25,7 +25,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="status" size="medium" location="zap" min-width="130" />
+      <el-table-column-tag prop="status" size="medium" location="zap" min-width="130" i18n-key="Status" />
       <el-table-column align="center" :label="$t('Zap.high')">
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>

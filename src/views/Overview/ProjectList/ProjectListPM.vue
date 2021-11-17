@@ -104,7 +104,7 @@
       </el-table-column>
       <el-table-column-tag
         prop="project_status"
-        translate-key="Project"
+        i18n-key="Project"
         :label="$t('Project.IssueStatus')"
         location="projectListPM"
         min-width="120"

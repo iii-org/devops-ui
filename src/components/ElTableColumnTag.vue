@@ -8,7 +8,7 @@
         :size="size"
         :effect="getTagEffect(scope.row[prop])"
       >
-        <span v-if="translateKey">{{ $t(`${translateKey}.${scope.row[prop]}`) }}</span>
+        <span v-if="i18nKey">{{ $t(`${i18nKey}.${scope.row[prop]}`) }}</span>
         <span v-else>{{ scope.row[prop] }}</span>
       </el-tag>
     </template>
@@ -30,7 +30,7 @@ export default {
       type: String,
       default: 'pipelines'
     },
-    translateKey: {
+    i18nKey: {
       type: String,
       default: null
     },

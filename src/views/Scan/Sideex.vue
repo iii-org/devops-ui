@@ -29,7 +29,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="status" min-width="130" location="sideex" />
+      <el-table-column-tag prop="status" min-width="130" location="sideex" i18n-key="Status" />
       <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">
