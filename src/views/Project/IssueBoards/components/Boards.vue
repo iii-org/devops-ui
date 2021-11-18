@@ -320,7 +320,7 @@ export default {
 
 .board {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   height: calc(100vh - 70px - 40px - 40px - 25px - 10px);
   overflow-x: auto;
