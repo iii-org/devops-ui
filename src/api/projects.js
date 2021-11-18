@@ -54,3 +54,7 @@ export const getTagsByProjectOrTagName = (pId, tag_name) => request.get(`/tags?p
 export const deleteProjectTags = (tag_id) => request.delete(`/tags/${tag_id}`)
 export const updateProjectTags = (tag_id, data) => request.put(`/tags/${tag_id}`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
 
+export const postIssueListDownload = (project_id, data) => request.post(`/project/${project_id}/download/execute`, data)
+export const getIssueListDownload = (project_id) => request.get(`/project/${project_id}/download/is_exist`)
+export const patchIssueListDownload = (project_id) => request.patch(`/project/${project_id}/download`, {}, { responseType: 'blob' })
+export const getIssueListLockStatus = () => request.get('/lock', { params: { name: 'download_pj_issues' }})

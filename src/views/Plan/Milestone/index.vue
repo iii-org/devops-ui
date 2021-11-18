@@ -28,20 +28,41 @@
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
-        <el-button icon="el-icon-download" :disabled="selectedProjectId === -1" @click="downloadExcel()">
-          {{ $t('File.Download') }}
-        </el-button>
+        <el-popover>
+          <el-form>
+            <el-form-item label="展開層數">
+              <el-select v-model="downloadForm.levels">
+                <el-option v-for="level in 5" :key="level" :label="level" :value="level" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="generateReport">產生Excel報表</el-button>
+            </el-form-item>
+            <template v-if="downloadInfo.create_at">
+              <el-divider />
+              <el-form-item>
+                <el-button :loading="downloadLock.is_lock" type="success" @click="downloadReport">下載Excel報表</el-button>
+              </el-form-item>
+              <div v-if="!downloadLock.is_lock">
+                {{ $t('general.LastUpdateTime') }}: {{ momentTime(downloadInfo.create_at) }}
+              </div>
+            </template>
+          </el-form>
+          <el-button slot="reference" icon="el-icon-download" :disabled="selectedProjectId === -1">
+            {{ $t('File.Download') }}
+          </el-button>
+        </el-popover>
         <el-divider direction="vertical" />
         <el-popover
           placement="bottom"
           trigger="click"
         >
           <el-form class="display-column">
-            <el-form-item v-for="item in columnsOptions" :key="item.value">
-              <el-checkbox :value="getCheckColumnValue(item.value)" :label="item.label"
-                           @change="onCheckColumnChange(item.value)"
+            <el-form-item v-for="item in columnsOptions" :key="item.field">
+              <el-checkbox :value="getCheckColumnValue(item.field)" :label="item.display"
+                           @change="onCheckColumnChange(item.field)"
               >
-                {{ item.label }}
+                {{ item.display }}
               </el-checkbox>
             </el-form-item>
           </el-form>
@@ -86,7 +107,15 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Gantt from '@/views/Plan/Milestone/components/Gantt'
 import WBS from '@/views/Plan/Milestone/components/WBS'
 import SearchFilter from '@/components/Issue/SearchFilter'
-import { getProjectAssignable, getProjectVersion, getTagsByProject } from '@/api/projects'
+import {
+  getIssueListDownload,
+  getIssueListLockStatus,
+  getProjectAssignable,
+  getProjectVersion,
+  getTagsByProject,
+  patchIssueListDownload,
+  postIssueListDownload
+} from '@/api/projects'
 import { getWBSCache, putWBSCache } from '@/api/issue'
 import XLSX from 'xlsx'
 
@@ -173,6 +202,18 @@ export default {
           tag: true
         }
       ]),
+      columnsOptions: Object.freeze([
+        { display: this.$t('Issue.name'), field: 'name' },
+        { display: this.$t('Issue.tracker'), field: 'tracker' },
+        { display: this.$t('Issue.status'), field: 'status' },
+        { display: this.$t('Issue.fixed_version'), field: 'fixed_version' },
+        { display: this.$t('Issue.StartDate'), field: 'StartDate' },
+        { display: this.$t('Issue.EndDate'), field: 'EndDate' },
+        { display: this.$t('Issue.priority'), field: 'priority' },
+        { display: this.$t('Issue.assigned_to'), field: 'assigned_to' },
+        { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' },
+        { display: this.$t('Issue.points'), field: 'points' }
+      ]),
       filterValue: {},
       originFilterValue: {},
       displayFields: [],
@@ -185,7 +226,17 @@ export default {
         parentId: 0,
         parentName: null,
         LoadingConfirm: false
-      }
+      },
+      downloadForm: {
+        levels: 3
+      },
+      downloadInfo: {
+        create_at: null
+      },
+      downloadLock: {
+        is_lock: false
+      },
+      intervalTimer: null
     }
   },
   computed: {
@@ -198,25 +249,14 @@ export default {
       })
       return result
     },
-    columnsOptions() {
-      return [
-        { label: this.$t('Issue.name'), value: 'name' },
-        { label: this.$t('Issue.tracker'), value: 'tracker' },
-        { label: this.$t('Issue.status'), value: 'status' },
-        { label: this.$t('Issue.fixed_version'), value: 'fixed_version' },
-        { label: this.$t('Issue.StartDate'), value: 'StartDate' },
-        { label: this.$t('Issue.EndDate'), value: 'EndDate' },
-        { label: this.$t('Issue.priority'), value: 'priority' },
-        { label: this.$t('Issue.assigned_to'), value: 'assigned_to' },
-        { label: this.$t('Issue.DoneRatio'), value: 'DoneRatio' },
-        { label: this.$t('Issue.points'), value: 'points' }
-      ]
-    },
     columns() {
       if (this.displayFields.length <= 0) {
-        return this.columnsOptions.map(item => item.value)
+        return this.columnsOptions.map(item => item.field)
       }
       return this.displayFields
+    },
+    deploy_column() {
+      return this.columnsOptions.filter(item => this.columns.includes(item.field))
     }
   },
   watch: {
@@ -250,6 +290,7 @@ export default {
     this.onChangeFilter()
   },
   mounted() {
+    this.loadReportStatus()
     this.$nextTick(() => {
       this.tableHeight = this.$refs['wrapper'].clientHeight
     })
@@ -266,6 +307,7 @@ export default {
       this.loadAssignedToList()
       this.loadDisplayColumns()
       this.loadTagsList()
+      this.loadReportStatus()
     },
     async loadDisplayColumns() {
       const res = await getWBSCache({ project_id: this.selectedProjectId })
@@ -323,7 +365,7 @@ export default {
       return this.displayFields.includes(value)
     },
     async onCheckColumnChange(value) {
-      if (this.displayFields.length <= 0) this.displayFields = this.columnsOptions.map(item => item.value)
+      if (this.displayFields.length <= 0) this.displayFields = this.columnsOptions.map(item => item.field)
       if (this.displayFields.includes(value)) {
         const columnIndex = this.displayFields.findIndex(item => item === value)
         this.displayFields.splice(columnIndex, 1)
@@ -340,118 +382,68 @@ export default {
       const worksheet = XLSX.utils.json_to_sheet(result)
       this.$excel(worksheet, 'WBS')
     },
-    async downloadExcel() {
-      let result = await this.$refs['WBS'].fetchData()
-      result = this.dataCleanExcel(result)
-      await this.prepareExcel(result)
-    },
-    dataCleanExcel(fetchData) {
-      const exportColumn = {
-        tags: { column: ['name'], root: true },
-        name: { column: ['id', 'name'], root: true },
-        tracker: { column: ['name'], children: 'tracker' },
-        fixed_version: { column: ['name'], children: 'fixed_version' },
-        StartDate: { column: ['start_date'], root: true },
-        EndDate: { column: ['due_date'], root: true },
-        priority: { column: ['name'], children: 'priority' },
-        assigned_to: { column: ['name'], children: 'assigned_to' },
-        DoneRatio: { column: ['done_ratio'], root: true },
-        points: { column: ['points'], root: true }
-      }
-      const result = []
-      fetchData = fetchData.map((item) => {
-        const start_date = this.$dayjs(item['start_date'])
-        const due_date = this.$dayjs(item['due_date'])
-        if (start_date.isValid()) {
-          item['start_date'] = start_date.format('YYYY-MM-DD')
-        }
-        if (due_date.isValid()) {
-          item['due_date'] = this.$dayjs(item['due_date']).format('YYYY-MM-DD')
-        }
-        return item
-      })
-      fetchData.forEach((item, idx) => {
-        const itemResult = { [this.$t('Test.TestPlan.no')]: idx + 1 }
-        Object.keys(exportColumn).forEach((column) => {
-          let resultArray
-          if (exportColumn[column]['root']) {
-            resultArray = this.formatColumns(exportColumn[column].column, item)
-            resultArray = resultArray.join(' - ')
-          }
-          if (exportColumn[column]['children']) {
-            const childrenSplit = exportColumn[column]['children'].split('.')
-            const getChildrenData = childrenSplit.reduce((total, current) => (total[current]), item)
-            if (column === 'software_name' || column === 'file_name') {
-              resultArray = this.formatColumns(getChildrenData, item, column)
-            } else if (column === 'test_result') {
-              resultArray = this.getTestResult(getChildrenData)
-            } else if (column === 'branch') {
-              resultArray = this.getBranch(getChildrenData)
-            } else if (Array.isArray(getChildrenData)) {
-              resultArray = this.formatColumns(getChildrenData, item).map((check) => this.joinResult(check, ' - '))
-            } else {
-              resultArray = this.formatColumns(exportColumn[column].column, getChildrenData)
-            }
-          }
-          if (Array.isArray(resultArray)) {
-            resultArray = this.joinResult(resultArray, ',')
-          }
-          itemResult[this.$t('Issue.' + column)] = resultArray
-        })
-        result.push(itemResult)
-      })
-      return result
-    },
-    formatColumns(column, checkDataset, name) {
-      return column.map((subColumn) =>
-        name ? this.confirmExist(checkDataset, subColumn, name) : this.confirmExist(checkDataset, subColumn))
-        .filter(subColumn => subColumn)
-    },
-    confirmExist(data, column, name) {
-      if (!data) {
-        return null
-      }
-      return name ? column[name] : data[column]
-    },
-    joinResult(columnResult, joinStr) {
-      const checkNull = columnResult.reduce((total, current) => (!!total && !!current), true)
-      if (!checkNull) return null
-      return columnResult.join(joinStr)
-    },
-    getBranch(data) {
-      const result = []
-      data.forEach((item) => {
-        const last_result = item.the_last_test_result
-        if (last_result.hasOwnProperty('branch') && last_result.hasOwnProperty('commit_id')) {
-          result.push(last_result.branch + ' - ' + last_result.commit_id)
-        } else {
-          result.push(null)
-        }
-      })
-      return result
-    },
-    getTestResult(data) {
-      const result = []
-      data.forEach((item) => {
-        const last_result = item.the_last_test_result
-        if (item.software_name === 'Postman') {
-          if (last_result.hasOwnProperty('success') && last_result.hasOwnProperty('failure')) {
-            result.push(last_result.success + '/' + (last_result.success + last_result.failure))
-          } else {
-            result.push(null)
-          }
-        } else if (item.software_name === 'SideeX') {
-          if (last_result.result && last_result.result.casesPassed && last_result.result.casesTotal) {
-            result.push(last_result.result.casesPassed + '/' + last_result.result.casesTotal)
-          } else {
-            result.push(null)
-          }
-        }
-      })
-      return result
+    momentTime(time) {
+      return time
+        ? this.$dayjs(time)
+          .utc()
+          .local()
+          .fromNow()
+        : '-'
     },
     onChangeFixedVersionStatus() {
       this.$emit('change-fixed-version', this.fixed_version_closed)
+    },
+    async generateReport() {
+      const generateData = { ...this.downloadForm, ...this.$refs['WBS'].getParams(), deploy_column: this.deploy_column }
+      const res = await postIssueListDownload(this.selectedProjectId, generateData)
+      await this.loadReportStatus()
+      return res
+    },
+    async downloadReport() {
+      const res = await patchIssueListDownload(this.selectedProjectId)
+      const url = window.URL.createObjectURL(new Blob([res]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `WBS_Export${this.selectedProjectId}_${this.downloadInfo.create_at}.xlsx`) // or any other extension
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    },
+    async loadReportStatus() {
+      await this.getLockCheck()
+      console.log('ya')
+      if (!this.downloadLock.is_lock) {
+        console.log('ya2')
+        if (this.intervalTimer) {
+          window.clearInterval(this.intervalTimer)
+          this.intervalTimer = null
+        }
+        await this.getExportFileInfo()
+      } else if (!this.intervalTimer) {
+        console.log('ya1')
+        this.intervalTimer = window.setInterval(this.loadReportStatus, 1000)
+      }
+      return Promise.resolve()
+    },
+    async getLockCheck() {
+      try {
+        const res = await getIssueListLockStatus(this.selectedProjectId)
+        this.downloadLock = res.data
+        return Promise.resolve(res.data)
+      } catch (e) {
+        console.error(e)
+        return Promise.reject(e)
+      }
+    },
+    async getExportFileInfo() {
+      try {
+        const res = await getIssueListDownload(this.selectedProjectId)
+        this.downloadInfo = res.data
+        return Promise.resolve(res.data)
+      } catch (e) {
+        console.error(e)
+        return Promise.reject(e)
+      }
     }
   }
 }
