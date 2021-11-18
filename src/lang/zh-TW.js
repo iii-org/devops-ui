@@ -225,7 +225,8 @@ export default {
     DirectExecution: '直接執行',
     Notify: '提示',
     ReLogin: '重新登入',
-    Continue: '繼續使用'
+    Continue: '繼續使用',
+    BackToHome: '返回首頁'
   },
   Notify: {
     Updated: '已更新',
@@ -671,7 +672,8 @@ export default {
     SelectMember: '選擇成員',
     confirmRemove: '確定@:(general.Remove)嗎？',
     TransferIssue: '進行議題處理  〉',
-    ConfirmTransfer: '{userRole} ({userName}）仍有 {unClosedIssueCount} 項議題未完成，為確保專案執行之完整度，請先將議題移轉或關閉，再執行成員移除作業。',
+    ConfirmTransfer:
+      '{userRole} ({userName}）仍有 {unClosedIssueCount} 項議題未完成，為確保專案執行之完整度，請先將議題移轉或關閉，再執行成員移除作業。',
     ConfirmRemoveMember: '確認@:(general.Remove) {userRole}（{userName}）嗎？'
   },
   Plugin: {

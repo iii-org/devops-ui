@@ -123,9 +123,9 @@ export default {
     2005: 'The username or e-mail is already used.',
     2006: 'The user {user_id} is already in project {project_id}.',
     2007: 'This user is project owner in the project.',
-    3001: 'The user doesn\'t have permission for this operation.',
+    3001: "The user doesn't have permission for this operation.",
     3002: 'You need to be in the project for this operation.',
-    3003: 'You are not permitted to access another user\'s data.',
+    3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
     7002: 'Argument {arg} is incorrect.。',
@@ -225,7 +225,8 @@ export default {
     DirectExecution: 'Execution',
     Notify: 'Notify',
     ReLogin: 'Re-Login',
-    Continue: 'Continue'
+    Continue: 'Continue',
+    BackToHome: 'Back To Home'
   },
   Notify: {
     Updated: 'update successful',
@@ -253,8 +254,10 @@ export default {
     confirmDelete: 'Are you sure to @:(general.Delete)?',
     confirmDeleteSth: 'Are you sure to @:(general.Delete)「{name}」？',
     logoutNotifications: 'The session has timed out. Please click re-login button to login back again.',
-    pluginWarnNotifications: 'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
-    pluginRepeatMessage: 'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.'
+    pluginWarnNotifications:
+      'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
+    pluginRepeatMessage:
+      'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -300,7 +303,8 @@ export default {
     registryReport: 'The report no longer exists, regenerate report?',
     registryReportTip: 'It might takes 3-5 minutes to regenerate report, please refresh page later.',
     QueueSequence: 'Sequence',
-    cancelScansMessage: 'The scan program with test number {0} has been cancelled, please wait for CheckMarx to update...',
+    cancelScansMessage:
+      'The scan program with test number {0} has been cancelled, please wait for CheckMarx to update...',
     New: 'New',
     PreScan: 'Preparing',
     Queued: 'Queued',
@@ -440,7 +444,8 @@ export default {
     'Test Plan': 'Test Plan',
     'Fail Management': 'Fail Management',
     DeleteIssue: 'Are you sure to Delete "{issueName}"?',
-    ConfirmDeleteIssue: 'Warning! The issue with children issues cannot be deleted, please re-confirm it if you insist and all of children issue will be deleted at the same time.',
+    ConfirmDeleteIssue:
+      'Warning! The issue with children issues cannot be deleted, please re-confirm it if you insist and all of children issue will be deleted at the same time.',
     RemoveIssueRelation: 'Are you sure to Unlink Issue Relation?',
     AskDeleteIssue: 'Close work item/issue?',
     DeleteIssueReason: 'Please specify the reason for closure',
@@ -450,7 +455,7 @@ export default {
     Files: 'Files',
     UploadFiles: 'Upload Files',
     DeleteFile: 'Are you sure to Delete File?',
-    RemovedIssue: 'The issue you were trying to edit doesn\'t exist or has been removed.',
+    RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
     name: 'Name',
     tags: '@:Issue.Tag',
@@ -470,7 +475,8 @@ export default {
     closed: '@:Version.closed',
     locked: '@:Version.Locked',
     ResetESCTip: 'Press Windows+ESC (Mac:Command+ESC) to Rest and Close Description Input area.',
-    ChildrenNotClosedWarning: 'There are still sub-topics of this topic that have not been dealt with. Please enter the topic to confirm and close before moving.',
+    ChildrenNotClosedWarning:
+      'There are still sub-topics of this topic that have not been dealt with. Please enter the topic to confirm and close before moving.',
     PackageRecord: 'Package Record',
     NoImage: 'No Image',
     PackageVersionTime: 'Package Version Time',
@@ -671,7 +677,8 @@ export default {
     SelectMember: 'Select Member',
     confirmRemove: 'Are you sure to @:(general.Remove)?',
     TransferIssue: 'Transfer Issue  〉',
-    ConfirmTransfer: '{userRole}  ({userName}) has {unClosedIssueCount} unclosed issues. For the integrity of this project, please transfer or close issues before remove this member.',
+    ConfirmTransfer:
+      '{userRole}  ({userName}) has {unClosedIssueCount} unclosed issues. For the integrity of this project, please transfer or close issues before remove this member.',
     ConfirmRemoveMember: 'Are you sure to @:(general.Remove) {userRole}（{userName}）？'
   },
   Plugin: {
@@ -741,8 +748,7 @@ export default {
       'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
-    IdRule:
-      `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
+    IdRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
     DisplayRule: 'Name cannot includes "<" or "&"',
     DescriptionRule: 'Description cannot includes "<" or "&"',
     WorkloadValue: 'Workload',
@@ -850,7 +856,8 @@ export default {
     Pods: 'Pods / Created time',
     Container: 'Container',
     Image: 'Image',
-    ExecuteShellNotify: 'This page provides command-line tool to communicate with your Pod, currently supported commands are:'
+    ExecuteShellNotify:
+      'This page provides command-line tool to communicate with your Pod, currently supported commands are:'
   },
   Loading: 'Loading...',
   Updating: 'Updating...',
@@ -1037,7 +1044,8 @@ export default {
     Actions: '@:general.Actions',
     ImpressionFileRepo: 'Impression File Repository',
     RegistryName: 'Registry Name',
-    KubeConfigTextareaHint: 'Please directly paste Kubenate config or use the above to upload the file and upload directly',
+    KubeConfigTextareaHint:
+      'Please directly paste Kubenate config or use the above to upload the file and upload directly',
     ClusterMessage: 'The Cluster settings have been updated successfully',
     RegistryMessage: 'The Registry settings have been updated successfully',
     FailMessage: 'Please check if the content of the form is correct and fill in the password',
@@ -1118,7 +1126,8 @@ export default {
   Kanban: {
     ChangeIssueError: 'Change Issue Error',
     unassignedErrorTitle: `The issues haven't been assigned:`,
-    unassignedErrorContent: 'No one has been assigned to this issue, and cannot be adjusted to the status of the issue after "assigned".',
+    unassignedErrorContent:
+      'No one has been assigned to this issue, and cannot be adjusted to the status of the issue after "assigned".',
     childrenStatusErrorTitle: `The children issues haven't been closed:`,
     childrenStatusErrorContent: 'There are unclosed children issues, please confirm that all issues are closed.',
     priorityErrorTitle: 'The parent issue cannot change priority:',
