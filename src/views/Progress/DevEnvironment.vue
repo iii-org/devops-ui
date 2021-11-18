@@ -1,5 +1,9 @@
 <template>
-  <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row
+    v-loading="listLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+  >
     <el-col>
       <project-list-selector>
         <el-input
@@ -10,21 +14,41 @@
         />
       </project-list-selector>
       <el-divider />
-      <el-row v-if="filteredData.length > 0" :gutter="10">
+      <el-row
+        v-if="filteredData.length > 0"
+        :gutter="10"
+      >
         <el-col class="text-right text-base mb-2 text-info">
           {{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}
         </el-col>
 
-        <el-col v-for="pod in filteredData" :key="pod.branch + pod.commit_id" :span="24">
-          <el-card class="mb-2" :body-style="{ padding: '20px' }" shadow="never">
+        <el-col
+          v-for="pod in filteredData"
+          :key="pod.branch + pod.commit_id"
+          :span="24"
+        >
+          <el-card
+            class="mb-2"
+            :body-style="{ padding: '20px' }"
+            shadow="never"
+          >
             <div class="flex justify-between mb-2">
               <div>
                 <span class="text-title">
-                  <svg-icon class="mr-1" icon-class="mdi-branch" />
+                  <em class="ri-git-branch-line mr-1" />
                   {{ pod.branch }}
                 </span>
-                <el-link class="ml-2" type="primary" style="font-size: 14px" target="_blank" :href="pod.commit_url">
-                  <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ pod.commit_id }}
+                <el-link
+                  class="ml-2"
+                  type="primary"
+                  style="font-size: 14px"
+                  target="_blank"
+                  :href="pod.commit_url"
+                >
+                  <svg-icon
+                    class="mr-1"
+                    icon-class="ion-git-commit-outline"
+                  />{{ pod.commit_id }}
                 </el-link>
               </div>
               <div>
@@ -45,7 +69,12 @@
                   :title="$t('Notify.confirmDelete')"
                   @confirm="handleDelete(selectedProject.id, pod.branch)"
                 >
-                  <el-button slot="reference" size="mini" type="danger" plain>
+                  <el-button
+                    slot="reference"
+                    size="mini"
+                    type="danger"
+                    plain
+                  >
                     <em class="el-icon-delete" />
                     {{ $t('general.Delete') }}
                   </el-button>
@@ -62,7 +91,11 @@
                 :lg="6"
                 :xl="4"
               >
-                <div v-for="(item, itemIdx) in data" :key="item.type + itemIdx" class="mb-2">
+                <div
+                  v-for="(item, itemIdx) in data"
+                  :key="item.type + itemIdx"
+                  class="mb-2"
+                >
                   <el-card
                     :body-style="{
                       padding: '10px',
@@ -73,11 +106,20 @@
                     <div class="mb-2 ml-2">
                       <div class="flex justify-between mb-2">
                         <div class="text-base">
-                          <svg-icon class="mr-1" icon-class="k8s-pod" />
+                          <svg-icon
+                            class="mr-1"
+                            icon-class="k8s-pod"
+                          />
                           <span class="">{{ $t('ProcessDevEnvironment.Pod') }}</span>
                         </div>
                         <el-dropdown trigger="click">
-                          <el-button size="mini" class="el-icon-more" type="primary" plain circle />
+                          <el-button
+                            size="mini"
+                            class="el-icon-more"
+                            type="primary"
+                            plain
+                            circle
+                          />
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
                               v-show="item.containers[0].state === 'running'"
@@ -86,7 +128,8 @@
                               <em class="ri-terminal-line mr-4" />command
                             </el-dropdown-item>
                             <el-dropdown-item @click.native="handleLogClick(item.name, item.containers[0].name)">
-                              <em class="ri-terminal-box-line mr-4" />log</el-dropdown-item>
+                              <em class="ri-terminal-box-line mr-4" />log
+                            </el-dropdown-item>
                             <el-dropdown-item @click.native="handleDeletePods(selectedProjectId, item.name)">
                               <em class="el-icon-delete mr-4" />{{ $t('general.Delete') }}
                             </el-dropdown-item>
@@ -116,21 +159,28 @@
                           </div>
 
                           <div class="mb-2">
-                            <svg-icon class="mr-1 text-xs" icon-class="mdi-inbox" />
+                            <em class="mr-1 text-xs ri-inbox-line" />
                             <span class="text-xs">{{ $t('ProcessDevEnvironment.Container') }}</span>
                             <div class="font-bold ml-5">{{ container.name }}</div>
                           </div>
 
                           <div class="mb-2">
-                            <svg-icon class="mr-1 text-xs" icon-class="mdi-clock-outline" />
+                            <em class="mr-1 text-xs ri-time-line" />
                             <span class="text-xs mr-1">{{ $t('general.StartTime') }}</span>
                             <div class="font-bold ml-5">{{ container.start_time | relativeTime }}</div>
                           </div>
 
-                          <div v-for="(servicePM, servicePMIdx) in container.services" :key="servicePMIdx">
-                            <svg-icon class="mr-1 text-xs" icon-class="mdi-family-tree" />
+                          <div
+                            v-for="(servicePM, servicePMIdx) in container.services"
+                            :key="servicePMIdx"
+                          >
+                            <em class="ri-node-tree mr-1 text-xs" />
                             <span class="text-xs">{{ $t('ProcessDevEnvironment.Services') }}</span>
-                            <div v-for="(service, serviceIdx) in servicePM.services" :key="serviceIdx" class="ml-5">
+                            <div
+                              v-for="(service, serviceIdx) in servicePM.services"
+                              :key="serviceIdx"
+                              class="ml-5"
+                            >
                               <el-popover
                                 v-if="service.type === 'db-server'"
                                 placement="top"
@@ -190,10 +240,17 @@
           </el-card>
         </el-col>
       </el-row>
-      <div v-else class="text-center">
+      <div
+        v-else
+        class="text-center"
+      >
         <el-empty :description="$t('general.NoData')" />
       </div>
-      <pod-log ref="podLogDialog" :pod-name="focusPodName" :container-name="focusContainerName" />
+      <pod-log
+        ref="podLogDialog"
+        :pod-name="focusPodName"
+        :container-name="focusContainerName"
+      />
     </el-col>
   </el-row>
 </template>
@@ -225,9 +282,7 @@ export default {
     async fetchData() {
       const res = await getEnvironmentList(this.selectedProjectId)
       const result = this.formatEnvironments(res.data)
-      this.lastUpdateTime = this.$dayjs()
-        .utc(res.datetime)
-        .format('YYYY-MM-DD HH:mm:ss')
+      this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       result.forEach((item, idx) => {
         const result = { ...item }
         this.$set(this.listData, idx, result)
@@ -289,7 +344,7 @@ export default {
       return colorMap[type] || '#f9fafc'
     },
     formatEnvironments(envInfos) {
-      const result = envInfos.map(envInfo => {
+      const result = envInfos.map((envInfo) => {
         const { branch, commit_id, commit_url, pods } = envInfo
         return {
           branch,
@@ -298,7 +353,7 @@ export default {
           pods: this.formatPods(pods)
         }
       })
-      result.forEach(item => {
+      result.forEach((item) => {
         item.pods = item.pods.reduce((groups, item) => {
           const val = item['type']
           groups[val] = groups[val] || []
@@ -309,7 +364,7 @@ export default {
       return result
     },
     formatPods(pods) {
-      return pods.map(pod => {
+      return pods.map((pod) => {
         const { pod_name, type, containers } = pod
         return {
           name: pod_name,
@@ -319,14 +374,14 @@ export default {
       })
     },
     formatContainers(containers) {
-      return containers.map(container => {
+      return containers.map((container) => {
         const { status, name, service_port_mapping } = container
         return {
           state: status.state,
           name: name,
           start_time: status.time,
-          services: service_port_mapping.map(service => ({
-            services: service.services.map(service => ({
+          services: service_port_mapping.map((service) => ({
+            services: service.services.map((service) => ({
               type: service.service_type,
               label: `${service.service_type} (post:${service.target_port})`,
               url: service.url[0]

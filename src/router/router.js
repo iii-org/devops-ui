@@ -119,8 +119,7 @@ export const asyncRoutes = [
             name: 'issue-list',
             hidden: true,
             component: () => import('@/views/Project/IssueList'),
-            meta: { roles: ['Administrator', 'Project Manager', 'Engineer']
-            }
+            meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
           },
           {
             path: ':issueId',
@@ -220,7 +219,8 @@ export const asyncRoutes = [
             name: 'test-plan',
             component: () => import('@/views/Test/TestPlan'),
             meta: {
-              title: 'test-case', roles: ['QA']
+              title: 'test-case',
+              roles: ['QA']
             }
           },
           {
@@ -626,7 +626,8 @@ export const asyncRoutes = [
                 path: 'pod-execute-shell',
                 name: 'Pod Execute Shell',
                 hidden: true,
-                component: () => import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
+                component: () =>
+                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
                 meta: { title: 'Pod Execute Shell', roles: ['Administrator', 'Project Manager', 'Engineer'] }
               }
             ]
@@ -724,7 +725,8 @@ export const asyncRoutes = [
             name: 'test-plan',
             component: () => import('@/views/Test/TestPlan'),
             meta: {
-              title: 'testPlan', roles: ['Administrator', 'Project Manager', 'Engineer']
+              title: 'testPlan',
+              roles: ['Administrator', 'Project Manager', 'Engineer']
             }
           },
           {

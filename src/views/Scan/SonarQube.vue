@@ -1,8 +1,16 @@
 <template>
-  <div class="app-container" style="overflow: hidden;">
+  <div
+    class="app-container"
+    style="overflow: hidden;"
+  >
     <project-list-selector>
-      <el-button slot="button" type="success" :disabled="selectedProjectId === -1" @click="openSonarQube">
-        <svg-icon icon-class="PhArrowSquareOutFill" />
+      <el-button
+        slot="button"
+        type="success"
+        :disabled="selectedProjectId === -1"
+        @click="openSonarQube"
+      >
+        <em class="ri-external-link-line mr-1" />
         {{ $t('SonarQube.ViewReport') }}
       </el-button>
       <el-input
@@ -21,40 +29,75 @@
       :data="pagedData"
       height="100%"
     >
-      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" width="140">
+      <el-table-column
+        align="center"
+        :label="$t('Git.Branch')"
+        prop="branch"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Git.Commit')"
+        prop="commit_id"
+        width="140"
+      >
         <template slot-scope="scope">
-          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.issue_link">
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :href="scope.row.issue_link"
+          >
+            <svg-icon
+              class="mr-1"
+              icon-class="ion-git-commit-outline"
+            />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SonarQube.Bugs')">
+      <el-table-column
+        align="center"
+        :label="$t('SonarQube.Bugs')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.bugs }} ({{ convertRating(scope.row.reliability_rating) }})</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SonarQube.Vulnerabilities')">
+      <el-table-column
+        align="center"
+        :label="$t('SonarQube.Vulnerabilities')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.vulnerabilities }} ({{ convertRating(scope.row.security_rating) }})</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SonarQube.CodeSmells')">
+      <el-table-column
+        align="center"
+        :label="$t('SonarQube.CodeSmells')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.code_smells }} ({{ convertRating(scope.row.sqale_rating) }})</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SonarQube.Duplicates')">
+      <el-table-column
+        align="center"
+        :label="$t('SonarQube.Duplicates')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.duplicated_blocks }} ({{ scope.row.duplicated_lines_density }}%)</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SonarQube.Coverage')">
+      <el-table-column
+        align="center"
+        :label="$t('SonarQube.Coverage')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.coverage === '' ? '-' : `${scope.row.coverage}%` }}</span>
         </template>
       </el-table-column>
-      <el-table-column-time :label="$t('general.RunAt')" prop="date" />
+      <el-table-column-time
+        :label="$t('general.RunAt')"
+        prop="date"
+      />
       <template slot="empty">
         <el-empty :description="$t('general.NoData')" />
       </template>
@@ -82,7 +125,7 @@ export default {
   data() {
     return {
       searchKeys: ['branch'],
-      sqLink: function() {
+      sqLink: function () {
         return ''
       }
     }

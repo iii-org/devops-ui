@@ -11,31 +11,67 @@
         row-key="id"
         :tree-props="{ children: 'child' }"
       >
-        <el-table-column :label="$t('TestCase.Index')" type="index" sortable width="120" />
-        <el-table-column :label="$t('Issue.PackageVersionTime')" sortable width="300">
+        <el-table-column
+          :label="$t('TestCase.Index')"
+          type="index"
+          sortable
+          width="120"
+        />
+        <el-table-column
+          :label="$t('Issue.PackageVersionTime')"
+          sortable
+          width="300"
+        >
           <template slot-scope="scope">
             {{ UTCtoLocalTime(scope.row.create_at) }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Version.Version')" prop="tag_name" sortable width="120" />
-        <el-table-column :label="$t('Issue.SourceCode')" sortable width="230">
+        <el-table-column
+          :label="$t('Version.Version')"
+          prop="tag_name"
+          sortable
+          width="120"
+        />
+        <el-table-column
+          :label="$t('Issue.SourceCode')"
+          sortable
+          width="230"
+        >
           <template slot-scope="scope">
-            <el-link type="primary" :underline="false" :href="scope.row.git_url" target="_blank">
+            <el-link
+              type="primary"
+              :underline="false"
+              :href="scope.row.git_url"
+              target="_blank"
+            >
               <span>
-                <svg-icon class="mr-1" icon-class="mdi-branch" />{{ scope.row.branch }}
+                <em class="ri-git-branch-line mr-1" />{{ scope.row.branch }}
               </span>
               <span>
-                <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit }}
+                <svg-icon
+                  class="mr-1"
+                  icon-class="ion-git-commit-outline"
+                />{{ scope.row.commit }}
               </span>
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Issue.IssueList')" sortable>
+        <el-table-column
+          :label="$t('Issue.IssueList')"
+          sortable
+        >
           <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="showClosedIssue(scope.row.tag_name)">{{ scope.row.tag_name }}</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              @click="showClosedIssue(scope.row.tag_name)"
+            >{{ scope.row.tag_name }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('ProcessDevEnvironment.Image')" sortable>
+        <el-table-column
+          :label="$t('ProcessDevEnvironment.Image')"
+          sortable
+        >
           <template slot-scope="scope">
             <el-popover
               v-if="scope.row.docker"
@@ -45,7 +81,10 @@
               :open-delay="300"
               :close-delay="50"
             >
-              <p :id="`copy-${scope.$index}`" class="text-center">
+              <p
+                :id="`copy-${scope.$index}`"
+                class="text-center"
+              >
                 <span class="text-subtitle-1 font-weight-bold">{{ scope.row.docker }}</span>
               </p>
               <div class="flex justify-center">
@@ -58,7 +97,10 @@
                 />
               </div>
               <span slot="reference">
-                <el-link class="text-xl" :underline="false">
+                <el-link
+                  class="text-xl"
+                  :underline="false"
+                >
                   <svg-icon icon-class="harbor" />
                 </el-link>
               </span>
@@ -66,9 +108,16 @@
             <span v-else>{{ $t('Issue.NoImage') }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Report')">
+        <el-table-column
+          align="center"
+          :label="$t('general.Report')"
+        >
           <template slot-scope="scope">
-            <em v-show="scope.row.commit" class="el-icon-tickets cursor-pointer" @click="handleToTestReport(scope.row.commit)" />
+            <em
+              v-show="scope.row.commit"
+              class="el-icon-tickets cursor-pointer"
+              @click="handleToTestReport(scope.row.commit)"
+            />
           </template>
         </el-table-column>
         <template slot="empty">

@@ -31,7 +31,7 @@
             >
               <span class="font-bold">
                 {{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
-                <svg-icon icon-class="link-external" />
+                <em class="ri-external-link-line" />
               </span>
             </div>
             <admin-project-member :data="getProjectMembersData" :dialog-visible="dialogVisible.projectMember"
@@ -61,7 +61,7 @@
           <el-card>
             <div slot="header" class="cursor-pointer" @click="onChangeDialogVisible({key: 'passingRate', value: true})">
               <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
-                <svg-icon icon-class="link-external" />
+                <em class="ri-external-link-line" />
               </span>
             </div>
             <admin-passing-rate :data="getPassingRateData" :dialog-visible="dialogVisible.passingRate"
@@ -77,7 +77,7 @@
               <div class="flex justify-between items-center">
                 <span class="font-bold">
                   {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
-                  <svg-icon icon-class="link-external" />
+                  <em class="ri-external-link-line" />
                 </span>
                 <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
               </div>

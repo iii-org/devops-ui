@@ -1,29 +1,65 @@
 <template>
-  <div id="postman-report-header" v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <div
+    id="postman-report-header"
+    v-loading="listLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+  >
     <el-backtop target="#postman-report-header" />
     <div class="flex justify-between items-center mb-5">
       <div class="flex justify-start items-center">
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title" @click="handleBack">
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="text-title"
+          @click="handleBack"
+        >
           {{ $t('general.Back') }}
         </el-button>
         <div class="mx-5">
           <div class="text-title mb-2">{{ selectedProject.display }}</div>
           <div>
-            <el-tag size="mini" type="primary" class="mr-2">
-              <svg-icon class="mr-1" icon-class="mdi-branch" />{{ testCaseInfos.branch }}
+            <el-tag
+              size="mini"
+              type="primary"
+              class="mr-2"
+            >
+              <em class="ri-git-branch-line mr-1" />{{ testCaseInfos.branch }}
             </el-tag>
-            <el-link class="mr-3" type="primary" target="_blank" :href="testCaseInfos.commit_url">
-              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ testCaseInfos.commit_id }}
+            <el-link
+              class="mr-3"
+              type="primary"
+              target="_blank"
+              :href="testCaseInfos.commit_url"
+            >
+              <svg-icon
+                class="mr-1"
+                icon-class="ion-git-commit-outline"
+              />{{ testCaseInfos.commit_id }}
             </el-link>
           </div>
         </div>
         <div class="mx-5">
-          <el-tag class="mb-2" size="small" type="warning">{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</el-tag>
+          <el-tag
+            class="mb-2"
+            size="small"
+            type="warning"
+          >{{ $t('general.ScanAt') }}：{{ testCaseInfos.start_time | UTCtoLocalTime }}</el-tag>
           <div>
-            <el-tag size="small" type="primary">{{ $t('Postman.TestTotal')
+            <el-tag
+              size="small"
+              type="primary"
+            >{{ $t('Postman.TestTotal')
             }}<span class="font-semibold ml-2">{{ countPassedTotal + countFailedTotal }}</span></el-tag>
-            <el-tag size="small" type="success">{{ $t('TestCase.Pass') }}<span class="font-semibold ml-2">{{ countPassedTotal }}</span></el-tag>
-            <el-tag size="small" type="danger">{{ $t('TestCase.Fail') }}<span class="font-semibold ml-2">{{ countFailedTotal }}</span></el-tag>
+            <el-tag
+              size="small"
+              type="success"
+            >{{ $t('TestCase.Pass') }}<span class="font-semibold ml-2">{{ countPassedTotal }}</span></el-tag>
+            <el-tag
+              size="small"
+              type="danger"
+            >{{ $t('TestCase.Fail') }}<span class="font-semibold ml-2">{{ countFailedTotal }}</span></el-tag>
           </div>
         </div>
       </div>
@@ -34,7 +70,10 @@
         prefix-icon="el-icon-search"
       />
     </div>
-    <el-tabs v-model="activeCollection" type="border-card">
+    <el-tabs
+      v-model="activeCollection"
+      type="border-card"
+    >
       <el-empty v-if="filteredData.length === 0" />
       <el-tab-pane
         v-for="collection in filteredData"
@@ -43,20 +82,42 @@
         :name="collection.name"
       >
         <el-tabs v-model="activeStatus">
-          <el-tab-pane label="All Tests" name="All">
+          <el-tab-pane
+            label="All Tests"
+            name="All"
+          >
             <el-empty v-if="collection.all.length === 0" />
-            <div v-for="(execution, idx) in collection.all" :key="execution.name + idx">
-              <el-row type="flex" align="middle">
-                <el-col class="flex justify-center items-center" :span="3">
-                  <div class="font-medium mx-5" :class="mapMethodType(execution.method)">{{ execution.method }}</div>
+            <div
+              v-for="(execution, idx) in collection.all"
+              :key="execution.name + idx"
+            >
+              <el-row
+                type="flex"
+                align="middle"
+              >
+                <el-col
+                  class="flex justify-center items-center"
+                  :span="3"
+                >
+                  <div
+                    class="font-medium mx-5"
+                    :class="mapMethodType(execution.method)"
+                  >{{ execution.method }}</div>
                 </el-col>
                 <el-col :span="21">
                   <div class="my-3">
                     <span class="font-medium">{{ execution.name }}</span>
                     <span class="text-info">{{ decodeURI(execution.path) }}</span>
                   </div>
-                  <div v-for="(item, itemIdx) in execution.assertions" :key="itemIdx" class="my-1">
-                    <el-tag size="small" :type="mapTagType(getTestResult(item))">
+                  <div
+                    v-for="(item, itemIdx) in execution.assertions"
+                    :key="itemIdx"
+                    class="my-1"
+                  >
+                    <el-tag
+                      size="small"
+                      :type="mapTagType(getTestResult(item))"
+                    >
                       {{ $t(`TestCase.${getTestResult(item)}`) }}
                     </el-tag>
                     <span class="ml-2">
@@ -76,18 +137,37 @@
             name="Pass"
           >
             <el-empty v-if="collection.pass.length === 0" />
-            <div v-for="(execution, idx) in collection.pass" :key="execution.name + idx">
-              <el-row type="flex" align="middle">
-                <el-col class="flex justify-center items-center" :span="3">
-                  <div class="font-medium mx-5" :class="mapMethodType(execution.method)">{{ execution.method }}</div>
+            <div
+              v-for="(execution, idx) in collection.pass"
+              :key="execution.name + idx"
+            >
+              <el-row
+                type="flex"
+                align="middle"
+              >
+                <el-col
+                  class="flex justify-center items-center"
+                  :span="3"
+                >
+                  <div
+                    class="font-medium mx-5"
+                    :class="mapMethodType(execution.method)"
+                  >{{ execution.method }}</div>
                 </el-col>
                 <el-col :span="21">
                   <div class="my-3">
                     <span class="font-medium">{{ execution.name }}</span>
                     <span class="text-info">{{ decodeURI(execution.path) }}</span>
                   </div>
-                  <div v-for="(item, itemIdx) in execution.assertions" :key="itemIdx" class="my-1">
-                    <el-tag size="small" :type="mapTagType(getTestResult(item))">
+                  <div
+                    v-for="(item, itemIdx) in execution.assertions"
+                    :key="itemIdx"
+                    class="my-1"
+                  >
+                    <el-tag
+                      size="small"
+                      :type="mapTagType(getTestResult(item))"
+                    >
                       {{ $t(`TestCase.${getTestResult(item)}`) }}
                     </el-tag>
                     <span class="ml-2">
@@ -107,18 +187,37 @@
             name="Fail"
           >
             <el-empty v-if="collection.fail.length === 0" />
-            <div v-for="(execution, idx) in collection.fail" :key="execution.name + idx">
-              <el-row type="flex" align="middle">
-                <el-col class="flex justify-center items-center" :span="3">
-                  <div class="font-medium mx-5" :class="mapMethodType(execution.method)">{{ execution.method }}</div>
+            <div
+              v-for="(execution, idx) in collection.fail"
+              :key="execution.name + idx"
+            >
+              <el-row
+                type="flex"
+                align="middle"
+              >
+                <el-col
+                  class="flex justify-center items-center"
+                  :span="3"
+                >
+                  <div
+                    class="font-medium mx-5"
+                    :class="mapMethodType(execution.method)"
+                  >{{ execution.method }}</div>
                 </el-col>
                 <el-col :span="21">
                   <div class="my-3">
                     <span class="font-medium">{{ execution.name }}</span>
                     <span class="text-info">{{ decodeURI(execution.path) }}</span>
                   </div>
-                  <div v-for="(item, itemIdx) in execution.assertions" :key="itemIdx" class="my-1">
-                    <el-tag size="small" :type="mapTagType(getTestResult(item))">
+                  <div
+                    v-for="(item, itemIdx) in execution.assertions"
+                    :key="itemIdx"
+                    class="my-1"
+                  >
+                    <el-tag
+                      size="small"
+                      :type="mapTagType(getTestResult(item))"
+                    >
                       {{ $t(`TestCase.${getTestResult(item)}`) }}
                     </el-tag>
                     <span class="ml-2">
@@ -161,13 +260,13 @@ export default {
     filteredData() {
       if (!this.keyword) return this.listData
       const keyword = this.keyword.toLowerCase()
-      return this.listData.filter(item => item.name.toLowerCase().includes(keyword))
+      return this.listData.filter((item) => item.name.toLowerCase().includes(keyword))
     },
     countPassedTotal() {
-      return this.listData.map(item => item.assertions.total - item.assertions.failed).reduce((a, b) => a + b, 0)
+      return this.listData.map((item) => item.assertions.total - item.assertions.failed).reduce((a, b) => a + b, 0)
     },
     countFailedTotal() {
-      return this.listData.map(item => item.assertions.failed).reduce((a, b) => a + b, 0)
+      return this.listData.map((item) => item.assertions.failed).reduce((a, b) => a + b, 0)
     }
   },
   watch: {
@@ -176,12 +275,12 @@ export default {
     },
     keyword(val) {
       if (val && this.filteredData.length !== 0) this.activeCollection = this.filteredData[0].name
-    } 
+    }
   },
   methods: {
     async fetchData() {
       return getPostmanReport(this.$route.params.id)
-        .then(res => {
+        .then((res) => {
           const { branch, commit_id, commit_url, start_time, report } = res.data
           this.testCaseInfos = { branch, commit_id, commit_url, start_time }
           return this.formatData(report.json_file)
@@ -201,24 +300,30 @@ export default {
       return result
     },
     getPassExecutions(executions) {
-      const filteredExecutions = executions.filter(execution => execution.assertions.length > 0)
-      const result = filteredExecutions.flatMap(execution => {
+      const filteredExecutions = executions.filter((execution) => execution.assertions.length > 0)
+      const result = filteredExecutions.flatMap((execution) => {
         const { method, name, path, assertions } = execution
-        return { method, name, path,
-          assertions: assertions.filter(assertion => !assertion.hasOwnProperty('error_message'))
+        return {
+          method,
+          name,
+          path,
+          assertions: assertions.filter((assertion) => !assertion.hasOwnProperty('error_message'))
         }
       })
-      return result.filter(item => item.assertions.length > 0)
+      return result.filter((item) => item.assertions.length > 0)
     },
     getFailExecutions(executions) {
-      const filteredExecutions = executions.filter(i => i.assertions.length > 0)
-      const result = filteredExecutions.flatMap(execution => {
+      const filteredExecutions = executions.filter((i) => i.assertions.length > 0)
+      const result = filteredExecutions.flatMap((execution) => {
         const { method, name, path, assertions } = execution
-        return { method, name, path,
-          assertions: assertions.filter(assertion => assertion.hasOwnProperty('error_message'))
+        return {
+          method,
+          name,
+          path,
+          assertions: assertions.filter((assertion) => assertion.hasOwnProperty('error_message'))
         }
       })
-      return result.filter(item => item.assertions.length > 0)
+      return result.filter((item) => item.assertions.length > 0)
     },
     mapTagType(status) {
       const mapping = { Fail: 'danger', Pass: 'success' }

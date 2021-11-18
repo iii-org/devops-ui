@@ -1,13 +1,23 @@
 <template>
-  <el-dropdown trigger="click" class="international" @command="handleSetLanguage">
+  <el-dropdown
+    trigger="click"
+    class="international"
+    @command="handleSetLanguage"
+  >
     <div>
-      <svg-icon icon-class="ion-language" />
+      <em class="ri-translate-2" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="language === 'zh-TW'" command="zh-TW">
+      <el-dropdown-item
+        :disabled="language === 'zh-TW'"
+        command="zh-TW"
+      >
         中文
       </el-dropdown-item>
-      <el-dropdown-item :disabled="language === 'en'" command="en">
+      <el-dropdown-item
+        :disabled="language === 'en'"
+        command="en"
+      >
         English
       </el-dropdown-item>
     </el-dropdown-menu>

@@ -1,12 +1,34 @@
 <template>
-  <el-row type="flex" justify="space-between" align="middle">
-    <el-col :span="10" class="align-middle">
-      <el-row type="flex" justify="start" align="middle">
-        <el-col v-if="projectValue !== ''" class="star">
-          <div v-if="projectInformation.starred" class="star-content" @click="setStar(projectValue, false)">
+  <el-row
+    type="flex"
+    justify="space-between"
+    align="middle"
+  >
+    <el-col
+      :span="10"
+      class="align-middle"
+    >
+      <el-row
+        type="flex"
+        justify="start"
+        align="middle"
+      >
+        <el-col
+          v-if="projectValue !== ''"
+          class="star"
+        >
+          <div
+            v-if="projectInformation.starred"
+            class="star-content"
+            @click="setStar(projectValue, false)"
+          >
             <em class="el-icon-star-on star-on" />
           </div>
-          <div v-else class="star-content" @click="setStar(projectValue, true)">
+          <div
+            v-else
+            class="star-content"
+            @click="setStar(projectValue, true)"
+          >
             <em class="el-icon-star-off star-off" />
           </div>
         </el-col>
@@ -23,16 +45,31 @@
             @change="setChange"
           >
             <template slot="prefix"><em class="el-icon-s-cooperation el-input__icon" /></template>
-            <el-option-group v-for="group in categoryProjectList" :key="group.label" :label="group.label">
-              <el-option v-for="item in group.options" :key="item.id" :label="item.display" :value="item.id" />
+            <el-option-group
+              v-for="group in categoryProjectList"
+              :key="group.label"
+              :label="group.label"
+            >
+              <el-option
+                v-for="item in group.options"
+                :key="item.id"
+                :label="item.display"
+                :value="item.id"
+              />
             </el-option-group>
           </el-select>
         </el-col>
         <el-col class="more">
-          <el-popover v-if="projectValue !== ''" placement="right">
+          <el-popover
+            v-if="projectValue !== ''"
+            placement="right"
+          >
             <div class="more-popover">
               <div class="item gitlab">
-                <svg-icon icon-class="gitlab" class="text-xl" />
+                <svg-icon
+                  icon-class="gitlab"
+                  class="text-xl"
+                />
                 <div class="sub-item">
                   <el-button
                     icon="el-icon-copy-document"
@@ -40,22 +77,47 @@
                     size="mini"
                     @click="copyUrl(projectInformation.git_url)"
                   />
-                  <a :href="projectInformation.git_url" target="_blank">
-                    <el-button circle size="mini">
-                      <svg-icon icon-class="foreign" />
+                  <a
+                    :href="projectInformation.git_url"
+                    target="_blank"
+                  >
+                    <el-button
+                      circle
+                      size="mini"
+                    >
+                      <em class="ri-external-link-line" />
                     </el-button>
                   </a>
                 </div>
               </div>
-              <el-link target="_blank" class="item" :underline="false" :href="projectInformation.redmine_url">
-                <svg-icon icon-class="redmine" class="text-xl" />
+              <el-link
+                target="_blank"
+                class="item"
+                :underline="false"
+                :href="projectInformation.redmine_url"
+              >
+                <svg-icon
+                  icon-class="redmine"
+                  class="text-xl"
+                />
               </el-link>
-              <el-link target="_blank" class="item" :underline="false" :href="projectInformation.harbor_url">
-                <svg-icon icon-class="harbor" class="text-xl" />
+              <el-link
+                target="_blank"
+                class="item"
+                :underline="false"
+                :href="projectInformation.harbor_url"
+              >
+                <svg-icon
+                  icon-class="harbor"
+                  class="text-xl"
+                />
               </el-link>
               <div class="item project-name">#{{ projectInformation.name }}</div>
             </div>
-            <div slot="reference" class="more-btn">
+            <div
+              slot="reference"
+              class="more-btn"
+            >
               <em class="el-icon-more" />
             </div>
           </el-popover>
@@ -63,7 +125,11 @@
       </el-row>
     </el-col>
     <el-col>
-      <el-row type="flex" justify="space-between" align="middle">
+      <el-row
+        type="flex"
+        justify="space-between"
+        align="middle"
+      >
         <el-col class="min-w-max max-w-max">
           <slot name="button" />
         </el-col>
@@ -106,7 +172,7 @@ export default {
   computed: {
     ...mapGetters(['projectOptions', 'selectedProject', 'selectedProjectId']),
     projectInformation() {
-      const item = this.projectOptions.find(item => item.id === this.projectValue)
+      const item = this.projectOptions.find((item) => item.id === this.projectValue)
       if (!item) return { display: this.$t('general.All') }
       return item
     }
@@ -152,7 +218,7 @@ export default {
       this.selectVisible = false
     },
     onProjectChange(value) {
-      this.setSelectedProject(this.projectOptions.find(elm => elm.id === value) || { id: -1 })
+      this.setSelectedProject(this.projectOptions.find((elm) => elm.id === value) || { id: -1 })
       localStorage.setItem('projectId', value)
     },
     async setStar(id, star) {
@@ -179,8 +245,8 @@ export default {
         this.showNoProjectWarning()
         return []
       }
-      const starred = this.projectOptions.filter(item => item.starred)
-      const projects = this.projectOptions.filter(item => !item.starred)
+      const starred = this.projectOptions.filter((item) => item.starred)
+      const projects = this.projectOptions.filter((item) => !item.starred)
       this.categoryProjectList = [
         {
           label: this.$t('Project.Starred'),
@@ -210,8 +276,7 @@ export default {
           .then(() => {
             this.$parent.isConfirmLeave = true
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       }
     }
   }
@@ -235,7 +300,7 @@ export default {
 
 .project {
   @apply w-full;
-  > > > .el-input {
+  > .el-input {
     input {
       @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate;
     }
@@ -270,7 +335,7 @@ export default {
   .gitlab {
     @apply p-1 bg-gray-200 rounded-md px-2 mr-2 align-middle;
     .sub-item {
-      @apply inline-block
+      @apply inline-block;
     }
   }
 

@@ -1,7 +1,11 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <el-button type="success" icon="el-icon-plus" @click="handleAdding">
+      <el-button
+        type="success"
+        icon="el-icon-plus"
+        @click="handleAdding"
+      >
         {{ $t('Project.AddProject') }}
       </el-button>
       <div class="flex">
@@ -13,8 +17,17 @@
       </div>
     </div>
     <el-divider />
-    <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
-      <el-table-column width="60" align="center" prop="starred">
+    <el-table
+      v-loading="listLoading"
+      :data="pagedData"
+      :element-loading-text="$t('Loading')"
+      fit
+    >
+      <el-table-column
+        width="60"
+        align="center"
+        prop="starred"
+      >
         <template slot-scope="scope">
           <em
             v-if="scope.row.starred"
@@ -46,7 +59,10 @@
                 :open-delay="300"
                 :close-delay="50"
               >
-                <p :id="`copy-${scope.$index}`" class="text-center">
+                <p
+                  :id="`copy-${scope.$index}`"
+                  class="text-center"
+                >
                   <span class="text-title">{{ scope.row.git_url }}</span>
                 </p>
                 <div class="flex justify-center">
@@ -57,13 +73,23 @@
                     size="mini"
                     @click="copyUrl(`copy-${scope.$index}`)"
                   />
-                  <a :href="scope.row.git_url" target="_blank">
-                    <el-button circle size="mini">
-                      <svg-icon icon-class="foreign" />
+                  <a
+                    :href="scope.row.git_url"
+                    target="_blank"
+                  >
+                    <el-button
+                      circle
+                      size="mini"
+                    >
+                      <em class="ri-external-link-line" />
                     </el-button>
                   </a>
                 </div>
-                <el-link slot="reference" :underline="false" style="font-size: 22px">
+                <el-link
+                  slot="reference"
+                  :underline="false"
+                  style="font-size: 22px"
+                >
                   <svg-icon icon-class="gitlab" />
                 </el-link>
               </el-popover>
@@ -90,7 +116,12 @@
               </el-link>
             </div>
             <div>
-              <el-link v-if="userRole !== 'QA'" type="primary" :underline="false" @click="handleClick(scope.row)">
+              <el-link
+                v-if="userRole !== 'QA'"
+                type="primary"
+                :underline="false"
+                @click="handleClick(scope.row)"
+              >
                 {{ scope.row.display }}
               </el-link>
               <template v-else>
@@ -109,7 +140,11 @@
         location="projectListPM"
         min-width="120"
       />
-      <el-table-column align="center" :label="$t('Project.IssueProgress')" width="140">
+      <el-table-column
+        align="center"
+        :label="$t('Project.IssueProgress')"
+        width="140"
+      >
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
           <br>
@@ -121,16 +156,30 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column-time prop="updated_time" :label="$t('Project.IssueUpdate')" />
-      <el-table-column align="center" :label="$t('general.owner_name')" prop="owner_name" />
-      <el-table-column align="center" :label="$t('ProjectSettings.Status')">
+      <el-table-column-time
+        prop="updated_time"
+        :label="$t('Project.IssueUpdate')"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.owner_name')"
+        prop="owner_name"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('ProjectSettings.Status')"
+      >
         <template slot-scope="scope">
           <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
             {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="320">
+      <el-table-column
+        :label="$t('general.Actions')"
+        align="center"
+        width="320"
+      >
         <template slot-scope="scope">
           <el-button
             v-if="userRole !== 'QA'"
@@ -175,14 +224,21 @@
       @pagination="onPagination"
     />
 
-    <CreateProjectDialog ref="createProjectDialog" @update="loadData" />
+    <CreateProjectDialog
+      ref="createProjectDialog"
+      @update="loadData"
+    />
     <EditProjectDialog
       v-if="userRole !== 'QA'"
       ref="editProjectDialog"
       :edit-project-obj="editProjectObject"
       @update="loadData"
     />
-    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
+    <DeleteProjectDialog
+      ref="deleteProjectDialog"
+      :delete-project-obj="deleteProject"
+      @update="loadData"
+    />
   </div>
 </template>
 
@@ -197,7 +253,14 @@ import { deleteStarProject, postStarProject } from '@/api/projects'
 
 export default {
   name: 'ProjectListPM',
-  components: { ElTableColumnTime, CreateProjectDialog, EditProjectDialog, DeleteProjectDialog, ElTableColumnTag, SearchFilter },
+  components: {
+    ElTableColumnTime,
+    CreateProjectDialog,
+    EditProjectDialog,
+    DeleteProjectDialog,
+    ElTableColumnTag,
+    SearchFilter
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -228,7 +291,7 @@ export default {
       'selectedProjectId'
     ]),
     getButtonType() {
-      return function(disabled) {
+      return function (disabled) {
         return disabled ? 'success' : 'danger'
       }
     }
@@ -248,7 +311,9 @@ export default {
     },
     getParams() {
       const params = {}
-      this.$refs.filter.isDisabled.length === 1 ? params.disabled = this.$refs.filter.isDisabled[0] : delete params.disabled
+      this.$refs.filter.isDisabled.length === 1
+        ? (params.disabled = this.$refs.filter.isDisabled[0])
+        : delete params.disabled
       return params
     },
     handleAdding() {
@@ -269,7 +334,7 @@ export default {
     },
     handleClick(projectObj) {
       const { id } = projectObj
-      const selectedProject = this.userProjectList.filter(elm => {
+      const selectedProject = this.userProjectList.filter((elm) => {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
@@ -319,7 +384,7 @@ export default {
     handleEditStatus(sendData) {
       this.listLoading = true
       const message = this.$t('Notify.Updated')
-      this.editProject(sendData).then(res => {
+      this.editProject(sendData).then((res) => {
         this.listLoading = false
         if (res.message === 'success') {
           this.showSuccessMessage(message)

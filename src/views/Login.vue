@@ -13,7 +13,7 @@
       </div>
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <em class="ri-user-3-fill" />
         </span>
         <el-input
           ref="username"
@@ -28,7 +28,7 @@
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <em class="ri-lock-fill" />
         </span>
         <el-input
           :key="passwordType"
@@ -41,11 +41,19 @@
           auto-complete="on"
           @keyup.enter.native="handleLogin"
         />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+        <span
+          class="show-pwd"
+          @click="showPwd"
+        >
+          <em :class="passwordType === 'password' ? 'ri-eye-close-line' : 'ri-eye-fill'" />
         </span>
       </el-form-item>
-      <el-button :loading="loading" type="primary" class="w-full" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button
+        :loading="loading"
+        type="primary"
+        class="w-full"
+        @click.native.prevent="handleLogin"
+      >Login</el-button>
     </el-form>
   </div>
 </template>
@@ -79,7 +87,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -98,7 +106,7 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (!valid) return
         this.loading = true
         this.$store
@@ -111,7 +119,7 @@ export default {
             this.$router.push({ path: this.redirect || '/' })
             this.$router.go(0)
           })
-          .catch(e => {
+          .catch((e) => {
             console.error(e)
             if (e.message === 'Request failed with status code 401') {
               console.error(e)
