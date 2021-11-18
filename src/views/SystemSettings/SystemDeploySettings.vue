@@ -63,6 +63,9 @@ export default {
       this.isConfirmLeave = false
     }
   },
+  mounted() {
+    this.initTabsStatus()
+  },
   methods: {
     checkBeforeLeave() {
       if (this.isConfirmLeave) return true
