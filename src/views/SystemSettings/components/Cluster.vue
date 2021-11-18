@@ -114,11 +114,12 @@
 <script>
 import { getDeployedHostsLists, getDeployedHostsByList, addDeployHosts, updateDeployHostsById } from '@/api/deploy'
 import { BasicData } from '@/newMixins'
+import { btoa } from '@/utils/base64'
 
 const formData = () => ({
   clusterName: '',
   disabled: false,
-  kubeConfigString: null
+  kubeConfigString: ''
 })
 
 export default {
@@ -245,7 +246,7 @@ export default {
       this.origin = JSON.parse(JSON.stringify(data))
     },
     hasFileList(val) {
-      this.form.kubeConfigString = null
+      this.form.kubeConfigString = ''
       this.hasUploadfile = val
     },
     getUpdateFormData() {

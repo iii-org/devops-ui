@@ -43,6 +43,7 @@
 import { mapGetters } from 'vuex'
 import { deleteIssueFile } from '@/api/issue'
 import { downloadProjectFile } from '@/api/projects'
+import { btoa } from '@/utils/base64'
 
 export default {
   name: 'IssueFiles',
