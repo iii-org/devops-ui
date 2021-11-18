@@ -279,13 +279,14 @@ export default {
       const eventX = event.pageX
       const eventY = event.pageY
       this.$refs.contextmenu.$refs.contextmenu.show()
+      const contextmenu = this.$refs.contextmenu.$refs.contextmenu
       this.$nextTick(() => {
         const contextmenuPosition = {
           top: eventY,
           left: eventX
         }
-        const contextmenuWidth = this.$refs.contextmenu.$refs.contextmenu.$el.clientWidth
-        const contextmenuHeight = this.$refs.contextmenu.$refs.contextmenu.$el.clientHeight
+        const contextmenuWidth = contextmenu.$el.clientWidth
+        const contextmenuHeight = contextmenu.$el.clientHeight
         if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
           this.handleContextMenu({ row, column, event })
         }
@@ -299,9 +300,9 @@ export default {
         this.contextMenu.left = contextmenuPosition.left
         this.contextMenu.row = row
         this.contextMenu.visible = true
-        this.$refs.contextmenu.$refs.contextmenu.style = {
-          top: this.contextMenu.top + 'px',
-          left: this.contextMenu.left + 'px'
+        contextmenu.style = {
+          top: `${this.contextMenu.top}px`,
+          left: `${this.contextMenu.left}px`
         }
         document.addEventListener('click', this.hideContextMenu)
       })

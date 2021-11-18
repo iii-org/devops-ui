@@ -336,10 +336,11 @@ export default {
   },
   methods: {
     /**
+     * issues can be dragged to another status if returning true to property "move", while returning false can't
      * check if dragged issue can be moved to another issue status
      * three items to check:
      *  1. if the issue is assigned - isAssigned()
-     *  2. if the sub-issues of dragged issue are closed - isChildrenIssuesClosed()
+     *  2. if the children issues of dragged issue are closed - isChildrenIssuesClosed()
      *  3. the priority status of the issue - isPriorityUnchanged()
      * @Param {Object} evt - drag event
      */
@@ -434,6 +435,7 @@ export default {
     end(boardObject, event) {
       const updateData = { boardObject, event }
       this.$emit('update', updateData)
+      this.$forceUpdate()
     },
     updateBoard(sendData) {
       this.$emit('update-board', sendData)

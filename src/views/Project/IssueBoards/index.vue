@@ -260,6 +260,12 @@ export default {
       sort = dimension === 'assigned_to' ? this.filterMe(sort) : sort
       return sort
     },
+    filterClosedStatus(statusList) {
+      return function(statusList) {
+        if (this.displayClosed) return statusList
+        return statusList.filter(item => item.is_closed === false)
+      }
+    },
     showSelectedGroupByName() {
       return this.filterOptions.find(item => item.value === this.groupBy.dimension).label
     },
@@ -270,19 +276,23 @@ export default {
       return this.groupBy.value.length
     },
     displayFilterValue() {
+      const selectedLabels = this.getSelectedLabels
+      const colon = selectedLabels.length > 0 ? ': ' : ''
+      const factor = selectedLabels.join(', ')
+      return `${this.$t('general.Filter')}${colon}${factor}`
+    },
+    getSelectedLabels() {
       const selectedLabels = []
       Object.keys(this.filterValue).forEach(item => {
         if (!this.filterValue[item]) return
         const isArray = Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0
         isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
       })
-      const colon = selectedLabels.length > 0 ? ': ' : ''
-      const factor = selectedLabels.join(', ')
-      return `${this.$t('general.Filter')}${colon}${factor}`
+      return selectedLabels
     },
     handleArrayLabels() {
-      let label = ''
       return function(item) {
+        let label = ''
         const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
         if (value) {
           const joinedString = value.map(subItem => this.getSelectedLabel(subItem)).join('/')
@@ -292,8 +302,8 @@ export default {
       }
     },
     handleLabels() {
-      let label = ''
       return function(item) {
+        let label = ''
         const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
         if (value) label = this.getSelectedLabel(value)
         return label
@@ -302,29 +312,18 @@ export default {
     isFilterChanged() {
       return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
     },
-    checkFilterValue() {
-      return function(key) {
-        const comparedKey = this.getComparedKey(key)
-        for (const item of Object.keys(this[key])) {
-          const checkFilterValue = this[key]
-          if (checkFilterValue[item] === '') delete checkFilterValue[item]
-          if (this[comparedKey][item] !== checkFilterValue[item]) return true
-        }
-      }
-    },
-    getComparedKey() {
-      return function(key) {
-        let comparedKey = ''
-        comparedKey = key === 'filterValue' ? 'originFilterValue' : 'filterValue'
-        return comparedKey
-      }
-    },
     getFilteredVersion() {
       return this.fixed_version.filter(item => {
         const validDate = new Date(`${item.due_date}T23:59:59`) >= new Date()
         const closedStatus = item.status !== 'closed'
         return validDate && closedStatus
       })
+    },
+    checkInFilterValue() {
+      return function(value) {
+        if (this.groupBy.value.length <= 0) return true
+        return this.groupBy.value.find(item => item.id === value)
+      }
     }
   },
   watch: {
@@ -388,16 +387,16 @@ export default {
       })
       return { storedFilterValue, storedKeyword, storedDisplayClosed }
     },
+    /**
+     * if clicked to show closed issues, fetch the whole issues by tree in project
+     * and then sort by status
+     */
     async getRelativeList() {
       const hasClosed = this.groupByValueOnBoard.filter(item => item.hasOwnProperty('is_closed') && item.is_closed)
       if (hasClosed.length > 0) {
         const projectIssueListRes = await getProjectIssueListByTree(this.selectedProjectId)
-        this.relativeIssueList = this.createRelativeList(projectIssueListRes.data) // 取得project全部issue by status
+        this.relativeIssueList = this.createRelativeList(projectIssueListRes.data)
       }
-    },
-    checkInFilterValue(value) {
-      if (this.groupBy.value.length <= 0) return true
-      return this.groupBy.value.find(item => item.id === value)
     },
     classifyIssue() {
       const issueList = this.projectIssueList
@@ -525,37 +524,33 @@ export default {
     getOptionsData(option_name) {
       return this[option_name]
     },
-    setGroupByUnclosedStatus(check) {
-      const isClosed = this.status.filter(item => item.is_closed === false)
-      check ? this.$set(this.groupBy, 'value', this.status) : this.$set(this.groupBy, 'value', isClosed)
-    },
     resetClassifyIssue() {
       this.classifyIssueList = {}
     },
     getTranslateHeader(value) {
       return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
-    searchKanbanCard(value, opt) {
-      if (!value || value === '') {
-        return true
-      }
+    searchKanbanCard(value, searchBy) {
+      if (!value || value === '') return true
       Object.keys(this.classifyIssueList).forEach(item => {
-        if (value === 'null') {
-          this.classifyIssueList[item] = this.classifyIssueList[item].filter(subItem => {
-            const findKey = opt['keys'][0].split('.')
-            const findName = findKey.reduce((total, current) => total[current], subItem)
-            return findName === undefined && findKey[0] !== ''
-          })
-        } else {
-          const fuse = new Fuse(this.classifyIssueList[item], opt)
-          let pattern = `="${value}"`
-          if (Array.isArray(value) && value.length > 0) {
-            pattern = { $or: value.map(item => ({ $path: [opt['keys']], $val: `="${item}"` })) }
-          }
-          const res = fuse.search(pattern)
-          this.classifyIssueList[item] = res.map(items => items.item)
-        }
+        value === 'null' ? this.searchUnassignedOrNoVersionIssues(item, searchBy) : this.searchByKeys(item, value, searchBy)
       })
+    },
+    searchUnassignedOrNoVersionIssues(item, searchBy) {
+      this.classifyIssueList[item] = this.classifyIssueList[item].filter(subItem => {
+        const findKey = searchBy['keys'][0].split('.')
+        const findName = findKey.reduce((total, current) => total[current], subItem)
+        return findName === undefined && findKey[0] !== ''
+      })
+    },
+    searchByKeys(item, value, searchBy) {
+      const fuse = new Fuse(this.classifyIssueList[item], searchBy)
+      let pattern = `="${value}"`
+      if (Array.isArray(value) && value.length > 0) {
+        pattern = { $or: value.map(item => ({ $path: [searchBy['keys']], $val: `="${item}"` })) }
+      }
+      const res = fuse.search(pattern)
+      this.classifyIssueList[item] = res.map(items => items.item)
     },
     updateData() {
       this.resetClassifyIssue()
@@ -574,6 +569,18 @@ export default {
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
       })
+    },
+
+    checkFilterValue(key) {
+      const comparedKey = this.getComparedKey(key)
+      for (const item of Object.keys(this[key])) {
+        const checkFilterValue = this[key]
+        if (checkFilterValue[item] === '') delete checkFilterValue[item]
+        if (this[comparedKey][item] !== checkFilterValue[item]) return true
+      }
+    },
+    getComparedKey(key) {
+      return key === 'filterValue' ? 'originFilterValue' : 'filterValue'
     },
     createRelativeList(list) {
       const result = []
@@ -597,10 +604,6 @@ export default {
         result += ` (${item.login})`
       }
       return result
-    },
-    filterClosedStatus(statusList) {
-      if (this.displayClosed) return statusList
-      return statusList.filter(item => item.is_closed === false)
     },
     filterMe(userList) {
       return userList.filter(item => item.login !== '-Me-')
