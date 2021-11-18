@@ -224,6 +224,7 @@ export default {
     Password: 'Password',
     DirectExecution: 'Execution',
     Notify: 'Notify',
+    Login: 'Login',
     ReLogin: 'Re-Login',
     Continue: 'Continue',
     BackToHome: 'Back To Home'
@@ -269,7 +270,10 @@ export default {
     Password: ' password',
     Description: ' description',
     InputNewPwd: 'Please input new password',
-    InputRepeatPwd: 'Please input repeat password'
+    InputRepeatPwd: 'Please input repeat password',
+    PasswordLimit: 'Password must be at least 8 characters',
+    PasswordNotSame: 'Password not same',
+    DifferentNewPassword: 'Your new password must be different from your old password.'
   },
   TestCase: {
     Index: 'Requests',

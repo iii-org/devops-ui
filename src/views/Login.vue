@@ -18,8 +18,8 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          :placeholder="$t('general.Account')"
+          :name="$t('general.Account')"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -35,7 +35,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          :placeholder="$t('general.Password')"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -53,7 +53,9 @@
         type="primary"
         class="w-full"
         @click.native.prevent="handleLogin"
-      >Login</el-button>
+      >
+        {{ $t('general.Login') }}
+      </el-button>
     </el-form>
   </div>
 </template>
@@ -66,7 +68,7 @@ export default {
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 8) {
-        callback(new Error('The password can not be less than 8 characters'))
+        callback(new Error(this.$t('RuleMsg.PasswordLimit')))
       } else {
         callback()
       }
@@ -77,7 +79,13 @@ export default {
         password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur' }],
+        username: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: this.$t('general.PleaseInput') + ' ' + this.$t('general.Account')
+          }
+        ],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,

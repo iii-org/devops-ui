@@ -13,33 +13,76 @@
               class="demo-ruleForm"
               :label-position="labelPosition"
             >
-              <el-form-item v-if="'from_ad' in $data" :label="$t('User.Source')" class="form-input">
-                <el-input v-model="source" :disabled="true" />
+              <el-form-item
+                v-if="'from_ad' in $data"
+                :label="$t('User.Source')"
+                class="form-input"
+              >
+                <el-input
+                  v-model="source"
+                  :disabled="true"
+                />
               </el-form-item>
-              <el-form-item :label="$t('general.Name')" prop="userName">
-                <el-input v-model="userProfileForm.userName" :disabled="disableEdit" class="form-input" />
+              <el-form-item
+                :label="$t('general.Name')"
+                prop="userName"
+              >
+                <el-input
+                  v-model="userProfileForm.userName"
+                  :disabled="disableEdit"
+                  class="form-input"
+                />
               </el-form-item>
               <el-form-item :label="$t('Profile.Department')">
-                <el-input v-model="userProfileForm.department" :disabled="disableEdit" class="form-input" />
+                <el-input
+                  v-model="userProfileForm.department"
+                  :disabled="disableEdit"
+                  class="form-input"
+                />
               </el-form-item>
               <el-form-item :label="$t('Profile.Title')">
-                <el-input v-model="userProfileForm.title" :disabled="disableEdit" class="form-input" />
+                <el-input
+                  v-model="userProfileForm.title"
+                  :disabled="disableEdit"
+                  class="form-input"
+                />
               </el-form-item>
-              <el-form-item label="Email" prop="userEmail">
-                <el-input v-model="userProfileForm.userEmail" :disabled="disableEdit" class="form-input" />
+              <el-form-item
+                label="Email"
+                prop="userEmail"
+              >
+                <el-input
+                  v-model="userProfileForm.userEmail"
+                  :disabled="disableEdit"
+                  class="form-input"
+                />
               </el-form-item>
-              <el-form-item :label="$t('Profile.Phone')" prop="userPhone">
-                <el-input v-model="userProfileForm.userPhone" :disabled="disableEdit" class="form-input" />
+              <el-form-item
+                :label="$t('Profile.Phone')"
+                prop="userPhone"
+              >
+                <el-input
+                  v-model="userProfileForm.userPhone"
+                  :disabled="disableEdit"
+                  class="form-input"
+                />
               </el-form-item>
             </el-form>
             <el-row class="mt-4">
               <el-col :span="8">
-                <el-button type="primary" @click="downloadK8SConfig()">{{ $t('Profile.K8SConfigDownload') }}</el-button>
+                <el-button
+                  type="primary"
+                  @click="downloadK8SConfig()"
+                >{{ $t('Profile.K8SConfigDownload') }}</el-button>
               </el-col>
             </el-row>
             <el-row class="mt-4">
               <el-col :span="8">
-                <el-button :disabled="disableEdit" type="primary" @click="submitUpdateUserProfile('userProfileForm')">{{
+                <el-button
+                  :disabled="disableEdit"
+                  type="primary"
+                  @click="submitUpdateUserProfile('userProfileForm')"
+                >{{
                   $t('Profile.Save')
                 }}</el-button>
               </el-col>
@@ -57,7 +100,10 @@
               class="demo-ruleForm"
               :label-position="labelPosition"
             >
-              <el-form-item :label="$t('Profile.Password')" prop="old_password">
+              <el-form-item
+                :label="$t('Profile.Password')"
+                prop="old_password"
+              >
                 <el-input
                   v-model="userPwdForm.old_password"
                   :disabled="disableEdit"
@@ -65,13 +111,24 @@
                   class="form-input"
                 />
               </el-form-item>
-              <el-form-item :label="$t('Profile.NewPassword')" prop="userNewPwd">
-                <el-input v-model="userPwdForm.userNewPwd" :disabled="disableEdit" type="password" class="form-input" />
+              <el-form-item
+                :label="$t('Profile.NewPassword')"
+                prop="userNewPwd"
+              >
+                <el-input
+                  v-model="userPwdForm.userNewPwd"
+                  :disabled="disableEdit"
+                  type="password"
+                  class="form-input"
+                />
                 <div style="word-break: keep-all; margin-top: 5px">
                   {{ $t('Profile.PasswordRule') }}
                 </div>
               </el-form-item>
-              <el-form-item :label="$t('Profile.RepeatNewPassword')" prop="userRepeatNewPwd">
+              <el-form-item
+                :label="$t('Profile.RepeatNewPassword')"
+                prop="userRepeatNewPwd"
+              >
                 <el-input
                   v-model="userPwdForm.userRepeatNewPwd"
                   :disabled="disableEdit"
@@ -82,7 +139,11 @@
             </el-form>
             <el-row class="mt-4">
               <el-col :span="8">
-                <el-button :disabled="disableEdit" type="primary" @click="handleUpdateUserPwd('userPwdForm')">{{
+                <el-button
+                  :disabled="disableEdit"
+                  type="primary"
+                  @click="handleUpdateUserPwd('userPwdForm')"
+                >{{
                   $t('Profile.Save')
                 }}</el-button>
               </el-col>
@@ -103,16 +164,16 @@ export default {
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length > 0 && value.length < 8) {
-        callback(new Error('The password can not be less than 8 characters'))
+        callback(new Error(this.$t('RuleMsg.PasswordLimit')))
       } else if (this.userPwdForm.old_password === value) {
-        callback(new Error('Your new password must be different from your old password.'))
+        callback(new Error(this.$t('RuleMsg.DifferentNewPassword')))
       } else {
         callback()
       }
     }
     const checkRepeatPwd = (rule, value, callback) => {
       if (value !== this.userPwdForm.userNewPwd) {
-        callback(new Error('password not same'))
+        callback(new Error(this.$t('RuleMsg.PasswordNotSame')))
       } else {
         callback()
       }
@@ -136,10 +197,12 @@ export default {
         userPhone: 0
       },
       userProfileRules: {
-        userName: [{ required: true, message: 'Please input user name', trigger: 'blur' }],
+        userName: [
+          { required: true, message: this.$t('RuleMsg.PleaseInput') + this.$t('RuleMsg.UserName'), trigger: 'blur' }
+        ],
         userEmail: [
-          { required: true, message: 'Please input email', trigger: 'blur' },
-          { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
+          { required: true, message: this.$t('RuleMsg.PleaseInput') + this.$t('RuleMsg.Email'), trigger: 'blur' },
+          { type: 'email', message: this.$t('RuleMsg.Invalid') + this.$t('RuleMsg.Email'), trigger: ['blur', 'change'] }
         ]
       },
       userPwdForm: {
@@ -152,17 +215,19 @@ export default {
           {
             required: true,
             pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])^[\w!@#$%^&*()+|{}\[\]`~\-'";:/?.\\>,<]{8,20}$/,
-            message: 'Password is invalid.',
+            message: this.$t('RuleMsg.Invalid') + this.$t('RuleMsg.Password'),
             trigger: 'blur'
           },
           { validator: validatePassword, trigger: 'blur' },
-          { required: true, message: 'Please input new password', trigger: 'blur' }
+          { required: true, message: this.$t('RuleMsg.InputNewPwd'), trigger: 'blur' }
         ],
         userRepeatNewPwd: [
-          { required: true, message: 'Please input repeat password', trigger: 'blur' },
+          { required: true, message: this.$t('RuleMsg.InputRepeatPwd'), trigger: 'blur' },
           { validator: checkRepeatPwd, trigger: 'blur' }
         ],
-        old_password: [{ required: true, message: 'Please input password', trigger: 'blur' }]
+        old_password: [
+          { required: true, message: this.$t('RuleMsg.PleaseInput') + this.$t('RuleMsg.Password'), trigger: 'blur' }
+        ]
       }
     }
   },
@@ -204,7 +269,7 @@ export default {
     },
     submitUpdateUserProfile(formName) {
       if (!this.disableEdit) {
-        this.$refs[formName].validate(async valid => {
+        this.$refs[formName].validate(async (valid) => {
           if (valid) {
             const data = {
               name: this.userProfileForm.userName,
@@ -225,7 +290,7 @@ export default {
     },
     async handleUpdateUserPwd(formName) {
       if (!this.disableEdit) {
-        this.$refs[formName].validate(async valid => {
+        this.$refs[formName].validate(async (valid) => {
           if (valid) {
             await updateUser(this.userId, {
               password: this.userPwdForm.userNewPwd,

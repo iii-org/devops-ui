@@ -224,6 +224,7 @@ export default {
     Password: '密碼',
     DirectExecution: '直接執行',
     Notify: '提示',
+    Login: '登入',
     ReLogin: '重新登入',
     Continue: '繼續使用',
     BackToHome: '返回首頁'
@@ -267,7 +268,10 @@ export default {
     Password: '密碼',
     Description: '描述',
     InputNewPwd: '請輸入新密碼',
-    InputRepeatPwd: '請再次輸入密碼'
+    InputRepeatPwd: '請再次輸入密碼',
+    PasswordLimit: '密碼不可少於 8 個字元',
+    PasswordNotSame: '密碼不相同',
+    DifferentNewPassword: '新密碼不可與舊密碼相同'
   },
   TestCase: {
     Index: '@:general.Index',

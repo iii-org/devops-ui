@@ -1,7 +1,17 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" style="overflow: hidden;">
+  <el-row
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+    style="overflow: hidden;"
+  >
     <project-list-selector>
-      <el-button slot="button" type="success" :disabled="selectedProjectId === -1" @click="handleAdding">
+      <el-button
+        slot="button"
+        type="success"
+        :disabled="selectedProjectId === -1"
+        @click="handleAdding"
+      >
         <em class="el-icon-plus" />
         {{ $t('Wiki.AddWiki') }}
       </el-button>
@@ -20,17 +30,47 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" :label="$t('Wiki.Title')" prop="title" min-width="120" />
-      <el-table-column align="center" :label="$t('Version.Version')" min-width="50" prop="version" />
-      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
-      <el-table-column-time prop="updated_on" width="170" :label="$t('general.LastUpdateTime')" />
-      <el-table-column align="center" :label="$t('general.Actions')" width="300">
+      <el-table-column
+        align="center"
+        :label="$t('Wiki.Title')"
+        prop="title"
+        min-width="120"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Version.Version')"
+        min-width="50"
+        prop="version"
+      />
+      <el-table-column-time
+        prop="created_on"
+        :label="$t('general.CreateTime')"
+      />
+      <el-table-column-time
+        prop="updated_on"
+        width="170"
+        :label="$t('general.LastUpdateTime')"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('general.Actions')"
+        width="300"
+      >
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" plain @click="handleDetail(scope.$index, scope.row)">
+          <el-button
+            size="mini"
+            type="primary"
+            plain
+            @click="handleDetail(scope.$index, scope.row)"
+          >
             <em class="el-icon-document" />
             {{ $t('Wiki.Content') }}
           </el-button>
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleEdit(scope.$index, scope.row)"
+          >
             <em class="el-icon-edit" />
             {{ $t('general.Edit') }}
           </el-button>
@@ -42,7 +82,11 @@
             :title="$t('Notify.confirmDelete')"
             @confirm="handleDelete(scope.$index, scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger">
+            <el-button
+              slot="reference"
+              size="mini"
+              type="danger"
+            >
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
@@ -72,9 +116,22 @@
       size="80%"
     >
       <div class="container">
-        <el-form v-if="drawerTitle === 'Add'" ref="form" :model="form" :rules="formRules" label-position="top">
-          <el-form-item ref="wikiTitle" label="Title" prop="wikiTitle">
-            <el-input v-model="form.wikiTitle" placeholder="Please Input Title" />
+        <el-form
+          v-if="drawerTitle === 'Add'"
+          ref="form"
+          :model="form"
+          :rules="formRules"
+          label-position="top"
+        >
+          <el-form-item
+            ref="wikiTitle"
+            :label="$t('general.Title')"
+            prop="wikiTitle"
+          >
+            <el-input
+              v-model="form.wikiTitle"
+              :placeholder="`${$t('general.PleaseInput')} ${$t('general.Title')}`"
+            />
           </el-form-item>
         </el-form>
         <h3 v-else>{{ wikiData.title }}</h3>
@@ -92,15 +149,15 @@
           </template>
         </div>
         <div class="form__footer">
-          <el-button
-            @click="
-              dialogVisible = false
-              dialogVisibleEdit = false
-            "
-          >
+          <el-button @click="onCancelClick">
             {{ $t('general.Cancel') }}
           </el-button>
-          <el-button v-if="drawerTitle === 'Edit'" type="primary" :loading="editBtnLoading" @click="handleUpdate">
+          <el-button
+            v-if="drawerTitle === 'Edit'"
+            type="primary"
+            :loading="editBtnLoading"
+            @click="handleUpdate"
+          >
             {{ $t('general.Confirm') }}
           </el-button>
           <el-button
@@ -127,7 +184,10 @@
       <div class="container">
         <div class="form__title">
           <h3>{{ wikiData.title }}</h3>
-          <div v-if="detailVisible" style="text-align: right;">
+          <div
+            v-if="detailVisible"
+            style="text-align: right;"
+          >
             {{ $t('Wiki.edited', { user: wikiData.author.name }) }}
           </div>
           <el-divider />
@@ -173,7 +233,11 @@ export default {
       searchKeys: ['title'],
       formRules: {
         wikiTitle: [
-          { required: true, message: 'Please input name', trigger: 'change' },
+          {
+            required: true,
+            message: `${this.$t('general.PleaseInput')} ${this.$t('general.Title')}`,
+            trigger: 'change'
+          },
           {
             pattern: /^((?![,.\/?;:|]).)*$/,
             message: 'Not allowing special characters (, . / ? ; : |)',
@@ -268,7 +332,7 @@ export default {
       this.form.wikiTitle = ''
     },
     async handleConfirmAdd() {
-      this.$refs['form'].validate(async valid => {
+      this.$refs['form'].validate(async (valid) => {
         if (!valid) {
           return
         }
@@ -289,6 +353,11 @@ export default {
           await this.loadData()
         }
       })
+    },
+    onCancelClick() {
+      this.dialogVisible = false
+      this.dialogVisibleEdit = false
+      this.$refs.form.resetFields()
     }
   }
 }
