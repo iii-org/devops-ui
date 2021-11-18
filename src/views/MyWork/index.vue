@@ -4,9 +4,11 @@
                          @change="project_id=$event"
     >
       <template slot="button">
-        <el-button v-if="project_id===null||project_id===''" type="primary" icon="el-icon-plus" @click="handleAdding">
-          {{ $t('Project.AddProject') }}
-        </el-button>
+        <template v-if="project_id===null||project_id===''">
+          <el-button v-permission="['Administrator','Project Manager']" type="primary" icon="el-icon-plus" @click="handleAdding">
+            {{ $t('Project.AddProject') }}
+          </el-button>
+        </template>
         <el-button
           v-else
           id="btn-add-issue"
