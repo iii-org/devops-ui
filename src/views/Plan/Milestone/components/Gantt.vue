@@ -111,6 +111,10 @@ export default {
     tableHeight: {
       type: Number,
       default: 0
+    },
+    displayClosed: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -121,7 +125,6 @@ export default {
       contentLoading: false,
       activeNames: '',
       searchVisible: false,
-      displayClosed: false,
       status: [],
       priority: [],
 

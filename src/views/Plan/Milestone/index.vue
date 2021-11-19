@@ -76,7 +76,12 @@
     <div ref="wrapper" class="wrapper">
       <el-tabs v-model="activeTab" type="border-card">
         <el-tab-pane name="WBS" label="WBS" lazy>
-          <WBS ref="WBS" :filter-value="filterValue" :keyword="keyword" :columns="columns" :assigned-to="assigned_to"
+          <WBS ref="WBS"
+               :filter-value="filterValue"
+               :keyword="keyword"
+               :display-closed="displayClosed"
+               :columns="columns"
+               :assigned-to="assigned_to"
                :fixed-version="fixed_version" :tags="tags" :table-height="tableHeight"
                @update-loading="handleUpdateLoading"
                @update-status="handleUpdateStatus"
@@ -91,6 +96,7 @@
             ref="Gantt"
             :filter-value="filterValue"
             :keyword="keyword"
+            :display-closed="displayClosed"
             :assigned_to="assigned_to"
             :fixed-version="fixed_version"
             :table-height="tableHeight"

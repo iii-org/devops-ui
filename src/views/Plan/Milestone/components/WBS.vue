@@ -312,6 +312,10 @@ export default {
     tableHeight: {
       type: Number,
       default: 0
+    },
+    displayClosed: {
+      type: Boolean,
+      default: false
     }
   },
   filter: {
@@ -358,16 +362,8 @@ export default {
       return ['Administrator', 'Project Manager', 'Engineer']
     }
   },
-  watch: {
-    tableHeight(value) {
-      console.log(value)
-    }
-  },
   mounted() {
     this.loadData()
-  },
-  destroyed() {
-    console.log('destroyed', this.tableHeight)
   },
   methods: {
     getParams() {
