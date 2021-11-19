@@ -23,11 +23,11 @@
           <AlertSettings ref="alertSettings" />
         </el-card>
       </el-tab-pane>
-      <el-tab-pane v-permission="['QA']" :label="$t('ProjectSettings.TagSettings')" name="tagSettings">
+      <!-- <el-tab-pane v-permission="['QA']" :label="$t('ProjectSettings.TagSettings')" name="tagSettings">
         <el-card>
           <TagSettings ref="tagSettings" />
         </el-card>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
   </div>
 </template>
@@ -42,8 +42,8 @@ export default {
   components: {
     ProjectListSelector,
     ProjectMembers,
-    AlertSettings: () => import ('@/views/Plan/Settings/components/AlertSettings'),
-    TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings')
+    AlertSettings: () => import ('@/views/Plan/Settings/components/AlertSettings')
+    // TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings')
   },
   mixins: [MixinElTableWithAProject],
   data() {
