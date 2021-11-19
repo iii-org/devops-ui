@@ -199,7 +199,11 @@
         <div v-else class="no-info" />
       </div>
       <div slot="header">
-        <div class="title board-item select-none" @click="showDialog = !showDialog">
+        <div
+          :class="selectedProjectId === -1 ? 'board-item-ban' : 'board-item'"
+          class="title board-item select-none"
+          @click="showDialog = !showDialog"
+        >
           <em class="el-icon-plus ml-4 mr-5 add-button" :class="{ rotate: showDialog }" /> {{ $t('Issue.AddIssue') }}
         </div>
         <transition name="slide-down">
@@ -538,12 +542,16 @@ export default {
       @apply shadow-md bg-white rounded-md border-solid border border-gray-300 mx-auto;
       font-size: 16px;
 
+      &-ban {
+        pointer-events: none;
+        opacity: 0.4;
+      }
+
       .tags {
         @apply mr-1;
       }
 
       .add-button {
-        cursor: pointer;
         transition: transform .6s;
         @apply m-3;
         &.rotate {
@@ -579,16 +587,15 @@ export default {
           @apply cursor-pointer text-left text-primary font-bold;
         }
 
-        .action{
+        .action {
           @apply flex cursor-pointer w-5 h-5;
-          .icon{
+          .icon {
             @apply bg-gray-200 text-black rounded-md text-center align-middle px-1;
           }
         }
       }
 
       .relation {
-
         .parent {
           @apply m-3;
           font-size: 0.75em;
