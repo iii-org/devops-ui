@@ -113,7 +113,7 @@
         />
       </el-tab-pane>
     </el-tabs>
-    <CreateProjectDialog ref="createProjectDialog" @update="$router.push({name: 'project-list'})" />
+    <CreateProjectDialog ref="createProjectDialog" v-permission="['Administrator', 'Project Manager']" @update="$router.push({name: 'project-list'})" />
   </div>
 </template>
 
