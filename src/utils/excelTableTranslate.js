@@ -32,7 +32,7 @@ export const excelTranslate = {
   trackManagement: {
     id: 'ID',
     name: '議題名稱',
-    description: '變更內容(議題描述)',
+    parent_description: '變更內容(議題描述)',
     relations: '原始需求/議題',
     status: '狀態',
     assigned_to: '受分配者'

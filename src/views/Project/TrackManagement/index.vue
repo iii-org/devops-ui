@@ -30,7 +30,11 @@
               <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading" @click="downloadExcel(allDownloadData)">
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
-              <el-menu-item v-show="hasSelectedTrack" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedTrackList)">
+              <el-menu-item
+                v-show="hasSelectedTrack"
+                :disabled="selectedProjectId === -1"
+                @click="downloadExcel(selectedTrackList)"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
@@ -88,10 +92,18 @@
               <span class="text-success mr-2">
                 #{{ scope.row.id }}
               </span>
-              <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>{{ scope.row.name }}
+              <el-tag
+                v-for="item in scope.row.tags"
+                :key="item.id"
+                size="mini"
+                class="mr-1"
+              >
+                [{{ item.name }}]
+              </el-tag>
+              {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column :label="$t('TrackManagement.description')" prop="description" width="200" />
+          <el-table-column :label="$t('TrackManagement.description')" prop="parent_description" width="200" />
           <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
             <template slot-scope="{row}">
               <Status
@@ -100,8 +112,13 @@
               />
             </template>
           </el-table-column>
-          <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
-                           sortable="custom" show-overflow-tooltip
+          <el-table-column
+            align="center"
+            :label="$t('Issue.Assignee')"
+            min-width="180"
+            prop="assigned_to"
+            sortable="custom"
+            show-overflow-tooltip
           >
             <template v-if="scope.row.assigned_to" slot-scope="scope">
               <span>{{ scope.row.assigned_to.name }}</span>
@@ -140,6 +157,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectUserList, getProjectIssueList } from '@/api/projects'
+import { getIssueFamily } from '@/api/issue'
 import XLSX from 'xlsx'
 
 /**
@@ -182,9 +200,9 @@ export default {
           tag: true
         }
       ]),
-      csvColumnSelected: ['id', 'name', 'description', 'relations', 'status', 'assigned_to'],
-      allDownloadData: [],
+      csvColumnSelected: ['id', 'name', 'parent_description', 'relations', 'status', 'assigned_to'],
       allDataLoading: false,
+      allDownloadData: [],
       selectedTrackList: []
     }
   },
@@ -211,7 +229,9 @@ export default {
     tracker_id() {
       this.loadData()
     },
-    listData() {
+    listData(data) {
+      if (!data) return
+      this.fetchRelativeData(data)
       this.fetchAllDownloadData()
     }
   },
@@ -228,9 +248,31 @@ export default {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     async fetchAllDownloadData() {
       this.allDataLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
-      this.allDownloadData = res.data.issue_list
-      this.allDataLoading = false
+      try {
+        const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+        this.allDownloadData = res.data.issue_list
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.fetchRelativeData(this.allDownloadData)
+        this.allDataLoading = false
+      }
+    },
+    /**
+     * parent_description is for "變更內容(議題描述)" column
+     */
+    fetchRelativeData(data) {
+      data.forEach(async item => {
+        try {
+          const res = await getIssueFamily(item.id)
+          const listData = res.data
+          if (listData.hasOwnProperty('parent')) {
+            this.$set(item, 'parent_description', listData.parent.description)
+          }
+        } catch (err) {
+          console.error(err)
+        }
+      })
     },
     getOptionsData(option_name) {
       if (option_name === 'tracker') return this.trackerList
@@ -296,28 +338,28 @@ export default {
       const selectedColumn = []
       selectedTrackList.forEach(item => {
         const targetObject = {}
-        this.csvColumnSelected.map(itemSelected => {
-          if (itemSelected === 'status') {
-            this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
-          } else if (itemSelected === 'assigned_to') {
-            this.$set(targetObject, itemSelected, item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : '')
-          } else {
-            this.$set(targetObject, itemSelected, item[itemSelected])
-          }
-        })
+        this.setTargetObjectData(targetObject, item)
         selectedColumn.push(targetObject)
       })
       return selectedColumn
+    },
+    setTargetObjectData(targetObject, item) {
+      this.csvColumnSelected.forEach(itemSelected => {
+        if (itemSelected === 'status') {
+          this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
+        } else if (itemSelected === 'assigned_to') {
+          this.$set(targetObject, itemSelected, item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : '')
+        } else {
+          this.$set(targetObject, itemSelected, item[itemSelected])
+        }
+      })
     },
     handleExcelTranslateTable(selectedColumn) {
       const translateTable = []
       selectedColumn.forEach(item => {
         const chineseExcel = {}
-        const chineseColumnKey = Object.keys(item).map(key => {
-          key = excelTranslate.trackManagement[key]
-          return key
-        })
-        Object.values(item).map((val, index) => {
+        const chineseColumnKey = Object.keys(item).map(key => excelTranslate.trackManagement[key])
+        Object.values(item).forEach((val, index) => {
           this.$set(chineseExcel, chineseColumnKey[index], val)
         })
         translateTable.push(chineseExcel)
