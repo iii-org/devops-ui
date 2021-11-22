@@ -95,7 +95,7 @@ export default {
     },
     async onChangeFilter() {
       await this.backToFirstPage()
-      await this.loadData()
+      // await this.loadData()
     },
     getParams() {
       const result = {
@@ -121,6 +121,7 @@ export default {
       if (this.filterValue[key]) result[resultKey] = this.filterValue[key]
     },
     async fetchData() {
+      console.log('fetchData => fetchData')
       let listData
       try {
         await this.checkLastRequest()
@@ -136,6 +137,7 @@ export default {
         // null
       }
       this.lastIssueListCancelToken = null
+      console.log(listData)
       return listData
     },
     checkLastRequest() {
@@ -188,12 +190,12 @@ export default {
             },
             ...assigneeList.user_list
           ]
-          this.setInitAssingedToForRD()
+          this.setInitAssignedToForRD()
         }
       )
       await this.loadVersionList(this.fixed_version_closed)
     },
-    setInitAssingedToForRD() {
+    setInitAssignedToForRD() {
       if (this.userRole === 'Engineer') {
         this.$set(this.filterValue, 'assigned_to', this.userId)
         this.$set(this.originFilterValue, 'assigned_to', this.userId)
@@ -369,7 +371,7 @@ export default {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = ''
       this.displayClosed = false
-      this.onChangeFilter()
+      // this.onChangeFilter()
     },
     backToFirstPage() {
       this.listQuery.page = 1

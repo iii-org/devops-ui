@@ -20,25 +20,34 @@
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
-        <span slot="download" v-permission="['QA']">
+        <span
+          slot="download"
+          v-permission="['QA']"
+        >
           <el-divider direction="vertical" />
           <el-popover
             placement="bottom"
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1 || allDataLoading"
-                            @click="downloadExcel('allDownloadData')"
+              <el-menu-item
+                :disabled="selectedProjectId === -1 || allDataLoading"
+                @click="downloadExcel('allDownloadData')"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
-              <el-menu-item v-show="hasSelectedIssue" :disabled="selectedProjectId === -1"
-                            @click="downloadExcel(selectedIssueList)"
+              <el-menu-item
+                v-show="hasSelectedIssue"
+                :disabled="selectedProjectId === -1"
+                @click="downloadExcel(selectedIssueList)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
-            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+            <el-button
+              slot="reference"
+              icon="el-icon-download"
+            >{{ $t('File.Download') }}</el-button>
           </el-popover>
         </span>
       </SearchFilter>
@@ -51,9 +60,14 @@
       :visible.sync="quickAddTopicDialogVisible"
       @add-issue="advancedAddIssue"
     />
-    <div ref="wrapper" class="wrapper" :class="{'show-quick':quickAddTopicDialogVisible}">
-      <el-row v-loading="listLoading"
-              :element-loading-text="$t('Loading')"
+    <div
+      ref="wrapper"
+      class="wrapper"
+      :class="{'show-quick':quickAddTopicDialogVisible}"
+    >
+      <el-row
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
       >
         <!-- tree-props 取消第二個子議題箭頭-->
         <el-table
@@ -71,8 +85,16 @@
           @row-contextmenu="handleContextMenu"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column v-if="userRole === 'QA'" type="selection" reserve-selection width="55" />
-          <el-table-column type="expand" class-name="informationExpand">
+          <el-table-column
+            v-if="userRole === 'QA'"
+            type="selection"
+            reserve-selection
+            width="55"
+          />
+          <el-table-column
+            type="expand"
+            class-name="informationExpand"
+          >
             <template slot-scope="{row}">
               <ExpandSection
                 :issue="row"
@@ -80,43 +102,94 @@
               />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
+          <el-table-column
+            :label="$t('general.Type')"
+            width="130"
+            prop="tracker"
+            sortable="custom"
+          >
             <template slot-scope="{row}">
-              <Tracker v-if="row.tracker.name" :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
-            <template slot-scope="scope">
-              <span class="text-success mr-2">#{{ scope.row.id }}</span>
-              <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
-              {{ scope.row.name }}
-            </template>
-          </el-table-column>
-          <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
-            <template slot-scope="{row}">
-              <Priority v-if="row.priority.name" :name="$t(`Issue.${row.priority.name}`)" :type="row.priority.name" />
-            </template>
-          </el-table-column>
-          <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
-            <template slot-scope="{row}">
-              <Status
-                v-if="row.status.name"
-                :name="$t(`Issue.${row.status.name}`)" :type="row.status.name"
+              <Tracker
+                v-if="row.tracker.name"
+                :name="$t(`Issue.${row.tracker.name}`)"
+                :type="row.tracker.name"
               />
             </template>
           </el-table-column>
-          <el-table-column align="center" :label="$t('Issue.Assignee')" min-width="180" prop="assigned_to"
-                           sortable="custom" show-overflow-tooltip
+          <el-table-column
+            :label="$t('Issue.Id')"
+            min-width="280"
+            show-overflow-tooltip
+            prop="id"
+            sortable="custom"
           >
-            <template v-if="scope.row.assigned_to" slot-scope="scope">
+            <template slot-scope="scope">
+              <span class="text-success mr-2">#{{ scope.row.id }}</span>
+              <el-tag
+                v-for="item in scope.row.tags"
+                :key="item.id"
+                size="mini"
+                class="mr-1"
+              >[{{ item.name }}]</el-tag>
+              {{ scope.row.name }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            :label="$t('Issue.Priority')"
+            width="150"
+            prop="priority"
+            sortable="custom"
+          >
+            <template slot-scope="{row}">
+              <Priority
+                v-if="row.priority.name"
+                :name="$t(`Issue.${row.priority.name}`)"
+                :type="row.priority.name"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            :label="$t('general.Status')"
+            width="150"
+            prop="status"
+            sortable="custom"
+          >
+            <template slot-scope="{row}">
+              <Status
+                v-if="row.status.name"
+                :name="$t(`Issue.${row.status.name}`)"
+                :type="row.status.name"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            :label="$t('Issue.Assignee')"
+            min-width="180"
+            prop="assigned_to"
+            sortable="custom"
+            show-overflow-tooltip
+          >
+            <template
+              v-if="scope.row.assigned_to"
+              slot-scope="scope"
+            >
               <span>{{ scope.row.assigned_to.name }}</span>
               <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
             </template>
           </el-table-column>
-          <el-table-column type="action" width="50px">
+          <el-table-column
+            type="action"
+            width="50px"
+          >
             <template slot-scope="{row}">
-              <el-button class="action" type="text" icon="el-icon-more"
-                         @click.native.stop="handleContextMenu(row, {}, $event)"
+              <el-button
+                class="action"
+                type="text"
+                icon="el-icon-more"
+                @click.native.stop="handleContextMenu(row, {}, $event)"
               />
             </template>
           </el-table-column>
@@ -216,8 +289,16 @@ export default {
     this.getInitPage()
   },
   methods: {
-    ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed',
-      'setKeyword', 'setIssueFilter', 'setDisplayClosed', 'setFixedVersionShowClosed', 'getFixedVersionShowClosed']),
+    ...mapActions('projects', [
+      'getIssueFilter',
+      'getKeyword',
+      'getDisplayClosed',
+      'setKeyword',
+      'setIssueFilter',
+      'setDisplayClosed',
+      'setFixedVersionShowClosed',
+      'getFixedVersionShowClosed'
+    ]),
     async fetchAllDownloadData() {
       this.allDataLoading = true
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
@@ -237,7 +318,9 @@ export default {
       }
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          item === 'tags' && this.filterValue[item].length > 0 ? result[item] = this.filterValue[item].join() : result[item + '_id'] = this.filterValue[item]
+          item === 'tags' && this.filterValue[item].length > 0
+            ? (result[item] = this.filterValue[item].join())
+            : (result[item + '_id'] = this.filterValue[item])
         }
       })
       if (this.keyword) {
@@ -273,9 +356,9 @@ export default {
     },
     handleCsvSelectedColumn(selectedIssueList) {
       const selectedColumn = []
-      selectedIssueList.forEach(item => {
+      selectedIssueList.forEach((item) => {
         const targetObject = {}
-        this.excelColumnSelected.map(itemSelected => {
+        this.excelColumnSelected.map((itemSelected) => {
           switch (itemSelected) {
             case 'status':
               this.$set(targetObject, itemSelected, this.getStatusTagType(item.status.name))
@@ -287,7 +370,11 @@ export default {
               this.$set(targetObject, itemSelected, this.getCategoryTagType(item.tracker.name))
               break
             case 'assigned_to':
-              this.$set(targetObject, itemSelected, item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : '')
+              this.$set(
+                targetObject,
+                itemSelected,
+                item.assigned_to.name ? `${item.assigned_to.name}(${item.assigned_to.login})` : ''
+              )
               break
             default:
               this.$set(targetObject, itemSelected, item[itemSelected])
@@ -299,9 +386,9 @@ export default {
     },
     handleCsvTranslateTable(selectedColumn) {
       const translateTable = []
-      selectedColumn.forEach(item => {
+      selectedColumn.forEach((item) => {
         const chineseExcel = {}
-        const chineseColumnKey = Object.keys(item).map(key => {
+        const chineseColumnKey = Object.keys(item).map((key) => {
           key = excelTranslate.projectIssues[key]
           return key
         })
