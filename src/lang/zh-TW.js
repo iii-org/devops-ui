@@ -306,6 +306,7 @@ export default {
     registryReportTip: '報告產生需要 3-5 分鐘不等，請稍後再進頁面下載，或重整頁面。',
     QueueSequence: '等候排序',
     cancelScansMessage: '已取消測試編號為 {0} 的掃描程序，請等待 CheckMarx 更新...',
+    QueueTooltip: '本佇列訊息同 CheckMarx 佇列，採批次更新。',
     New: '已新增',
     PreScan: '準備中',
     Queued: '排程中',

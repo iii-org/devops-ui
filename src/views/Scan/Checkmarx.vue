@@ -10,7 +10,13 @@
     </project-list-selector>
     <el-divider />
     <div class="text-right mb-2">
-      <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">
+      <el-button
+        type="primary"
+        icon="el-icon-refresh"
+        size="mini"
+        plain
+        @click="loadData"
+      >
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
@@ -27,7 +33,12 @@
       <el-table-column :label="$t('Git.Branch')" prop="branch" />
       <el-table-column :label="$t('Git.Commit')" width="140">
         <template slot-scope="scope">
-          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :href="scope.row.commit_url"
+          >
             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
           </el-link>
         </template>
@@ -42,9 +53,17 @@
           >
             <span>{{ $t(`CheckMarx.${scope.row.status}`) }}</span>
           </el-tag>
-          <div v-if="isInQueued(scope.row) && scope.row.queue" class="text-xs">
-            {{ $t('CheckMarx.QueueSequence') }}: {{ scope.row.queue }}
-          </div>
+          <el-tooltip
+            v-if="isInQueued(scope.row) && scope.row.queue"
+            class="item"
+            effect="dark"
+            :content="$t('CheckMarx.QueueTooltip')"
+            placement="bottom"
+          >
+            <el-link class="text-xs">
+              {{ $t('CheckMarx.QueueSequence') }}: {{ scope.row.queue }}
+            </el-link>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
@@ -134,7 +153,7 @@ export default {
       return res.data
     },
     async updateCheckMarxScansStatus(listData) {
-      listData.forEach(item => {
+      listData.forEach((item) => {
         const { status, scan_id, report_id, report_ready } = item
         if (status === null) {
           this.fetchScanStatus(scan_id)
@@ -149,7 +168,7 @@ export default {
       this.listLoading = true
       getCheckMarxScanStatus(scanId)
         .then(res => {
-          const idx = this.listData.findIndex(item => item.scan_id === scanId)
+          const idx = this.listData.findIndex((item) => item.scan_id === scanId)
           this.listData[idx].status = res.data.name
           this.listData[idx].queue = res.data.queue_position
           this.listData[idx].id = res.data.id
@@ -163,16 +182,16 @@ export default {
         })
     },
     fetchScanStats(scanId) {
-      getCheckMarxScanStats(scanId).then(res => {
-        const idx = this.listData.findIndex(item => item.scan_id === scanId)
+      getCheckMarxScanStats(scanId).then((res) => {
+        const idx = this.listData.findIndex((item) => item.scan_id === scanId)
         this.listData[idx].stats = res.data
       })
     },
     registerReport(scanId) {
       this.listLoading = true
-      registerCheckMarxReport(scanId).then(res => {
+      registerCheckMarxReport(scanId).then((res) => {
         const { reportId } = res.data
-        const idx = this.listData.findIndex(item => item.scan_id === scanId)
+        const idx = this.listData.findIndex((item) => item.scan_id === scanId)
         this.listData[idx].report_id = reportId
         if (reportId > 0) this.fetchReportStatus(reportId)
       })
@@ -180,8 +199,8 @@ export default {
     },
     fetchReportStatus(reportId) {
       this.listLoading = true
-      getCheckMarxReportStatus(reportId).then(res => {
-        const idx = this.listData.findIndex(item => item.report_id === reportId)
+      getCheckMarxReportStatus(reportId).then((res) => {
+        const idx = this.listData.findIndex((item) => item.report_id === reportId)
         if (res.data.id === 1) {
           this.listData[idx].report_ready = false
         }
@@ -193,19 +212,17 @@ export default {
     },
     fetchTestReport(row) {
       const { report_id, scan_id } = row
-      getCheckMarxReport(report_id)
-        .then(res => {
-          const url = window.URL.createObjectURL(new Blob([res]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', 'checkmarx_Report.pdf')
-          document.body.appendChild(link)
-          link.click()
-          link.remove()
-        })
-        .catch(_ => {
-          this.confirmRegistryReport(scan_id)
-        })
+      getCheckMarxReport(report_id).then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'checkmarx_Report.pdf')
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+      }).catch(_ => {
+        this.confirmRegistryReport(scan_id)
+      })
     },
     confirmRegistryReport(scan_id) {
       const h = this.$createElement

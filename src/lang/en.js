@@ -309,6 +309,7 @@ export default {
     QueueSequence: 'Sequence',
     cancelScansMessage:
       'The scan program with test number {0} has been cancelled, please wait for CheckMarx to update...',
+    QueueTooltip: 'The information in this queue is the same as the CheckMarx queue, which is updated in batches.',
     New: 'New',
     PreScan: 'Preparing',
     Queued: 'Queued',
