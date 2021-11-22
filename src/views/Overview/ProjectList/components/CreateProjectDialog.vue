@@ -294,11 +294,16 @@ export default {
       }
       if (isForceUpdate) this.isClickUpdateTemplate = true
       this.isLoadingTemplate = true
-      await getTemplateList({ force_update: isForceUpdate }).then(res => {
-        this.templateList = res.data
-      })
+      if (this.userRole === 'Administrator' || this.userRole === 'Project Manager') {
+        this.getTemplateList(isForceUpdate)
+      }
       this.isLoadingTemplate = false
       this.isClickUpdateTemplate = false
+    },
+    async getTemplateList(force_update) {
+      await getTemplateList({ force_update }).then((res) => {
+        this.templateList = res.data
+      })
     },
     onDialogClosed() {
       this.showDialog = false
@@ -309,7 +314,7 @@ export default {
       })
     },
     async handleConfirm() {
-      this.$refs.createProjectForm.validate(async valid => {
+      this.$refs.createProjectForm.validate(async (valid) => {
         if (!valid) return
         this.isLoading = true
         const sendData = this.handleSendData()
@@ -322,7 +327,7 @@ export default {
             this.showDialog = false
             this.$emit('update')
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message({
               message: err,
               type: 'error'
@@ -366,7 +371,7 @@ export default {
     },
     handleTemplateSelect() {
       if (this.form.template_id !== '') {
-        const idx = this.activeTemplateList.findIndex(item => item.id === this.form.template_id)
+        const idx = this.activeTemplateList.findIndex((item) => item.id === this.form.template_id)
         this.focusTemplate = this.activeTemplateList[idx]
         this.form.tag_name = this.versionList[0] ? this.versionList[0].name : ''
         this.handleVersionSelect()
@@ -384,14 +389,14 @@ export default {
     fetchTemplateParams() {
       this.isLoadingTemplate = true
       getTemplateParams(this.form.template_id)
-        .then(res => {
+        .then((res) => {
           if (res.data['arguments']) {
             this.handleArguments(res.data['arguments'])
           } else {
             this.form.argumentsForm = []
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.form.template_id = ''
           this.clearFocusTemplate()
           console.error('fetchTemplateParams error', err)
@@ -403,14 +408,14 @@ export default {
     fetchTemplateParamsByVersion() {
       this.isLoadingTemplate = true
       getTemplateParamsByVersion(this.form.template_id, this.form.tag_name)
-        .then(res => {
+        .then((res) => {
           if (res.data.arguments) {
             this.handleArguments(res.data.arguments)
           } else {
             this.form.argumentsForm = []
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.form.template_id = ''
           this.clearFocusTemplate()
           console.error(err)
@@ -420,7 +425,7 @@ export default {
         })
     },
     handleArguments(data) {
-      this.form.argumentsForm = data.map(item => {
+      this.form.argumentsForm = data.map((item) => {
         const result = item
         result.value = item.default_value
         return result
@@ -431,7 +436,7 @@ export default {
         .then(() => {
           // console.log(res)
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err)
         })
     },
