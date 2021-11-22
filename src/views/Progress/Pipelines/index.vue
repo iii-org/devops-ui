@@ -13,17 +13,35 @@
       <div class="flex justify-between text-base mb-2 text-info">
         <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
         <el-popover trigger="click">
-          <el-card shadow="never" body-style="width: 500px">
+          <el-card
+            shadow="never"
+            body-style="width: 500px"
+          >
             <PipelineSettingsTable />
           </el-card>
-          <el-link slot="reference" type="primary" style="font-size: 16px" :underline="false">
-            <i class="el-icon-s-tools" />
+          <el-link
+            slot="reference"
+            type="primary"
+            style="font-size: 16px"
+            :underline="false"
+          >
+            <em class="el-icon-s-tools" />
             {{ $t('ProgressPipelines.PipeLineSettings') }}
           </el-link>
         </el-popover>
       </div>
-      <el-table v-loading="isLoading" :element-loading-text="$t('Loading')" :data="filteredData" fit>
-        <el-table-column :label="$t('ProgressPipelines.Id')" align="center" width="80" prop="id" />
+      <el-table
+        v-loading="isLoading"
+        :element-loading-text="$t('Loading')"
+        :data="filteredData"
+        fit
+      >
+        <el-table-column
+          :label="$t('ProgressPipelines.Id')"
+          align="center"
+          width="80"
+          prop="id"
+        />
         <el-table-column
           :label="`${$t('general.Status')} / ${$t('ProgressPipelines.TestItems')}`"
           align="center"
@@ -55,8 +73,16 @@
             <div>
               {{ scope.row.commit_branch }}
             </div>
-            <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.commit_url">
-              <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
+            <el-link
+              type="primary"
+              target="_blank"
+              style="font-size: 16px"
+              :href="scope.row.commit_url"
+            >
+              <svg-icon
+                class="mr-1"
+                icon-class="ion-git-commit-outline"
+              />
               {{ scope.row.commit_id }}
             </el-link>
           </template>
@@ -72,10 +98,24 @@
             <div>{{ scope.row.transitioning_message }}</div>
           </template>
         </el-table-column>
-        <el-table-column-time prop="last_test_time" :label="$t('general.LastUpdateTime')" width="140" />
-        <el-table-column :label="$t('general.Actions')" header-align="center" width="230">
+        <el-table-column-time
+          prop="last_test_time"
+          :label="$t('general.LastUpdateTime')"
+          width="140"
+        />
+        <el-table-column
+          :label="$t('general.Actions')"
+          header-align="center"
+          width="230"
+        >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-document" plain @click="onDetailsClick(scope.row)">
+            <el-button
+              size="mini"
+              type="primary"
+              icon="el-icon-document"
+              plain
+              @click="onDetailsClick(scope.row)"
+            >
               {{ $t('general.Detail') }}
             </el-button>
             <el-button
@@ -100,7 +140,10 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('general.Report')">
+        <el-table-column
+          align="center"
+          :label="$t('general.Report')"
+        >
           <template slot-scope="scope">
             <em
               v-show="scope.row.commit_id"
@@ -121,7 +164,11 @@
         :layout="'total, prev, pager, next'"
         @pagination="onPagination"
       />
-      <test-detail ref="testDetail" :pipeline-infos="focusPipeline" @loaded="isLoading = false" />
+      <test-detail
+        ref="testDetail"
+        :pipeline-infos="focusPipeline"
+        @loaded="isLoading = false"
+      />
     </el-col>
   </el-row>
 </template>
@@ -172,7 +219,7 @@ export default {
     filteredData() {
       const { listData, searchKeys } = this
       const keyword = this.keyword.toLowerCase()
-      return listData.filter(data => {
+      return listData.filter((data) => {
         let result = false
         for (const key of searchKeys) {
           const columnValue = data[key].toLowerCase()
@@ -220,10 +267,8 @@ export default {
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
       getPipelines(this.selectedRepositoryId, { limit, start: startId }, { cancelToken: this.cancelToken })
-        .then(res => {
-          this.lastUpdateTime = this.$dayjs()
-            .utc(res.datetime)
-            .format('YYYY-MM-DD HH:mm:ss')
+        .then((res) => {
+          this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
           this.updatePipeExecs(res.data)
           this.listQuery = res.data.pagination
           this.listQuery.page = 1
@@ -231,11 +276,11 @@ export default {
           this.isLoading = false
           this.isUpdating = false
         })
-        .catch(() => {})
+        .catch()
     },
     updatePipeExecs(resData) {
       if (resData.pipe_execs.length > 0) {
-        this.listData = resData.pipe_execs.map(item => {
+        this.listData = resData.pipe_execs.map((item) => {
           const result = { ...item }
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
           return result
@@ -251,10 +296,10 @@ export default {
       }
       this.isLoading = true
       await changePipelineByAction(this.selectedRepositoryId, data)
-        .then(_ => {
+        .then((_) => {
           this.loadData()
         })
-        .catch(err => {
+        .catch((err) => {
           this.isLoading = false
           return err
         })

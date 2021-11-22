@@ -1,6 +1,14 @@
 <template>
-  <div id="check-wrapper" ref="wrapper">
-    <el-alert v-if="traceCheck.exception" type="error" class="mb-4 loading" :closable="false">
+  <div
+    id="check-wrapper"
+    ref="wrapper"
+  >
+    <el-alert
+      v-if="traceCheck.exception"
+      type="error"
+      class="mb-4 loading"
+      :closable="false"
+    >
       <h2 slot="title">
         <em class="el-icon-loading" /> {{ $t('general.Error') }}
         ( {{ traceCheck.current_num }} / {{ traceCheck.total_num }} )
@@ -8,7 +16,12 @@
       <h3>{{ traceCheck.exception }}</h3>
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
-    <el-alert v-else-if="getPercentProgress<100" type="warning" class="mb-4 loading" :closable="false">
+    <el-alert
+      v-else-if="getPercentProgress<100"
+      type="warning"
+      class="mb-4 loading"
+      :closable="false"
+    >
       <h2 slot="title">
         <em class="el-icon-loading" /> {{ $t('Track.TraceChecking') }}
         ( {{ traceCheck.current_num }} / {{ traceCheck.total_num }} )
@@ -21,23 +34,41 @@
       <span v-if="traceCheck.finish_time">{{ $t('Track.Running_time') }}:
         {{ $dayjs(traceCheck.finish_time).from($dayjs(traceCheck.start_time), true) }}</span>
     </div>
-    <el-table :data="traceCheck.result"
-              :element-loading-text="$t('Loading')"
-              :height="tableHeight"
+    <el-table
+      :data="traceCheck.result"
+      :element-loading-text="$t('Loading')"
+      :height="tableHeight"
     >
-      <el-table-column v-for="track in traceCheckList" :key="track" :label="$t(`Issue.${track}`)" :prop="track"
-                       show-overflow-tooltip
+      <el-table-column
+        v-for="track in traceCheckList"
+        :key="track"
+        :label="$t(`Issue.${track}`)"
+        :prop="track"
+        show-overflow-tooltip
       >
-        <template v-if="row[track]" slot-scope="{row}">
-          <el-link v-if="row[track].name" @click="onRelationIssueDialog(row[track].id)">
+        <template
+          v-if="row[track]"
+          slot-scope="{row}"
+        >
+          <el-link
+            v-if="row[track].name"
+            @click="onRelationIssueDialog(row[track].id)"
+          >
             <template>
-              <Status :name="$t(`Issue.${row[track].status.name}`)" :type="row[track].status.name" size="small" />
+              <Status
+                :name="$t(`Issue.${row[track].status.name}`)"
+                :type="row[track].status.name"
+                size="small"
+              />
               #{{ row[track].id }} - {{ row[track].name }}
             </template>
           </el-link>
           <template v-else-if="row[track]&&Array.isArray(row[track])">
             <ol>
-              <li v-for="(item, idx) in row[track]" :key="idx">
+              <li
+                v-for="(item, idx) in row[track]"
+                :key="idx"
+              >
                 <span v-if="item.software_name||item.file_name">
                   <el-tag>{{ item.software_name }}</el-tag>
                   <br>
@@ -79,12 +110,7 @@ export default {
   components: { Status },
   filter: {
     relativeTime(dateTime) {
-      return dateTime
-        ? this.$dayjs(dateTime)
-          .utc()
-          .local()
-          .fromNow()
-        : '-'
+      return dateTime ? this.$dayjs(dateTime).utc().local().fromNow() : '-'
     }
   },
   props: {
@@ -171,7 +197,7 @@ export default {
 }
 
 .loading {
-  > > > .el-alert__content {
+  >>> .el-alert__content {
     width: 100%;
   }
 }

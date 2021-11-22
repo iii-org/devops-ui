@@ -3,14 +3,39 @@
     <div class="flex justify-between items-center">
       <div>
         <template v-if="issueId">
-          <el-button size="small" icon="el-icon-upload" :type="isButtonDisabled ? 'info' : 'success'" :disabled="isButtonDisabled" @click="uploadDialogVisible = true">{{ $t('Issue.UploadFiles') }}</el-button>
-          <el-button size="small" icon="el-icon-plus" :type="isButtonDisabled ? 'info' : 'warning'" :disabled="isButtonDisabled" @click="addTopicDialogVisible = true">{{ $t('Issue.AddSubIssue') }}</el-button>
+          <el-button
+            size="small"
+            icon="el-icon-upload"
+            :type="isButtonDisabled ? 'info' : 'success'"
+            :disabled="isButtonDisabled"
+            @click="uploadDialogVisible = true"
+          >{{ $t('Issue.UploadFiles') }}</el-button>
+          <el-button
+            size="small"
+            icon="el-icon-plus"
+            :type="isButtonDisabled ? 'info' : 'warning'"
+            :disabled="isButtonDisabled"
+            @click="addTopicDialogVisible = true"
+          >{{ $t('Issue.AddSubIssue') }}</el-button>
         </template>
-        <el-button v-if="issueTracker==='Test Plan'" size="small" :type="isButtonDisabled ? 'info' : 'primary'" icon="el-icon-upload" :disabled="isButtonDisabled" @click="handleCollectionDialog">管理測試檔案</el-button>
+        <el-button
+          v-if="issueTracker==='Test Plan'"
+          size="small"
+          :type="isButtonDisabled ? 'info' : 'primary'"
+          icon="el-icon-upload"
+          :disabled="isButtonDisabled"
+          @click="handleCollectionDialog"
+        >管理測試檔案</el-button>
       </div>
       <div class="text-right">
-        <el-link v-if="issueId" :href="issueLink" target="_blank" type="primary" :underline="false">
-          <i class="el-icon-link" /> Redmine
+        <el-link
+          v-if="issueId"
+          :href="issueLink"
+          target="_blank"
+          type="primary"
+          :underline="false"
+        >
+          <em class="el-icon-link" /> Redmine
         </el-link>
       </div>
     </div>
@@ -21,13 +46,22 @@
       top="3vh"
       append-to-body
     >
-      <issue-file-uploader ref="IssueFileUploader" :issue-id="issueId" />
+      <issue-file-uploader
+        ref="IssueFileUploader"
+        :issue-id="issueId"
+      />
       <div class="flex justify-between mt-2">
-        <div class="text-xs" style="line-height: 40px;">
+        <div
+          class="text-xs"
+          style="line-height: 40px;"
+        >
           *{{ $t('File.UploadWarning') }}: {{ specialSymbols }}
         </div>
         <div>
-          <el-button type="primary" @click="handleUploadClose">{{ $t('general.Save') }}</el-button>
+          <el-button
+            type="primary"
+            @click="handleUploadClose"
+          >{{ $t('general.Save') }}</el-button>
         </div>
       </div>
     </el-dialog>
@@ -51,10 +85,19 @@
         @loading="loadingUpdate($event.value, false)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
-      <span slot="footer" class="dialog-footer">
-        <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="isLoading" type="primary"
-                   @click="handleAdvancedSave"
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          id="dialog-btn-cancel"
+          @click="handleAdvancedClose"
+        >{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          id="dialog-btn-confirm"
+          :loading="isLoading"
+          type="primary"
+          @click="handleAdvancedSave"
         >
           {{ $t('general.Confirm') }}
         </el-button>
@@ -120,7 +163,7 @@ export default {
       const { issueId } = this
       // use one by one edit issue to upload file
       try {
-        const uploadApi = fileList.map(function(item) {
+        const uploadApi = fileList.map(function (item) {
           const sendForm = new FormData()
           sendForm.delete('upload_file')
           sendForm.delete('upload_content_type')
@@ -146,7 +189,7 @@ export default {
     },
     async saveIssue(data) {
       return await addIssue(data)
-        .then(res => {
+        .then((res) => {
           this.$message({
             title: this.$t('general.Success'),
             message: this.$t('Notify.Added'),
@@ -156,7 +199,7 @@ export default {
           this.addTopicDialogVisible = false
           return res
         })
-        .catch(error => {
+        .catch((error) => {
           return error
         })
       // this.addTopicDialogVisible = false

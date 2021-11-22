@@ -1,6 +1,14 @@
 <template>
-  <div ref="wrapper" class="wrapper">
-    <el-alert v-if="getPercentProgress<100" type="warning" class="mb-4 loading" :closable="false">
+  <div
+    ref="wrapper"
+    class="wrapper"
+  >
+    <el-alert
+      v-if="getPercentProgress<100"
+      type="warning"
+      class="mb-4 loading"
+      :closable="false"
+    >
       <h2 slot="title"><em class="el-icon-loading" /> {{ $t('Loading') }}</h2>
       <el-progress :percentage="getPercentProgress" />
     </el-alert>
@@ -20,8 +28,12 @@
         />
       </el-form-item>
     </el-form>
-    <div v-show="data.length>0" ref="matrix" v-dragscroll class="mermaid-wrapper"
-         :style="{height:`${tableHeight}px`}"
+    <div
+      v-show="data.length>0"
+      ref="matrix"
+      v-dragscroll
+      class="mermaid-wrapper"
+      :style="{height:`${tableHeight}px`}"
     >
       <vue-mermaid
         ref="mermaid"
@@ -32,19 +44,33 @@
         @nodeClick="editNode"
       />
       <div class="toolbar">
-        <el-slider v-model="zoom" :min="25" :max="500" :step="25" />
+        <el-slider
+          v-model="zoom"
+          :min="25"
+          :max="500"
+          :step="25"
+        />
       </div>
     </div>
-    <el-empty v-if="data.length<=0" :description="$t('general.NoData')" />
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
-               :before-close="handleRelationIssueDialogBeforeClose"
+    <el-empty
+      v-if="data.length<=0"
+      :description="$t('general.NoData')"
+    />
+    <el-dialog
+      :visible.sync="relationIssue.visible"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
     >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationUpdate"
+      <ProjectIssueDetail
+        v-if="relationIssue.visible"
+        ref="children"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationUpdate"
       />
     </el-dialog>
   </div>
@@ -62,9 +88,7 @@ import theme from '@/theme.js'
 
 export default {
   name: 'IssueMatrix',
-  components: { VueMermaid,
-    ProjectIssueDetail: () => import ('@/views/Project/IssueDetail')
-  },
+  components: { VueMermaid, ProjectIssueDetail: () => import('@/views/Project/IssueDetail') },
   directives: {
     dragscroll
   },
@@ -102,10 +126,11 @@ export default {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
     },
     data() {
-      const chartData = this.chartIssueList.map(issue => this.formatChartData(issue, this.group, this.status_toggle))
-      let testFileList = this.chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
-        .filter(issue => issue)
-      testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
+      const chartData = this.chartIssueList.map((issue) => this.formatChartData(issue, this.group, this.status_toggle))
+      let testFileList = this.chartIssueList
+        .map((issue) => (issue.test_files ? issue.test_files : null))
+        .filter((issue) => issue)
+      testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file, this.group))
       testFileList = [].concat.apply([], testFileList)
       return chartData.concat(testFileList)
     }
@@ -130,16 +155,19 @@ export default {
     async initChart() {
       await this.onPaintChart()
     },
-    highLight: function(value) {
+    highLight: function (value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function(str) {
-        return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
+      return value.replace(reg, function (str) {
+        return "<span class='bg-yellow-200 text-danger p-1'><strong>" + str + '</strong></span>'
       })
     },
     checkUniqueRelationLine(subIssue_id, issue_id) {
-      return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
+      return !(
+        Object.keys(this.relationLine).includes(subIssue_id.toString()) &&
+        this.relationLine[subIssue_id].includes(issue_id)
+      )
     },
     formatChartData(issue, group, status) {
       const checkIssueName = issue.name.replace(/"/g, '&quot;')
@@ -147,14 +175,15 @@ export default {
       let children = []
       let relations = []
       if (issue['children']) {
-        children = issue['children'].map(item => item.id)
+        children = issue['children'].map((item) => item.id)
         for (let index = 0; index < children.length; index++) {
           link.push('-->')
         }
       }
       if (issue['relations']) {
-        relations = issue['relations'].map(item => (this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
-          .filter(item => item !== null)
+        relations = issue['relations']
+          .map((item) => (this.checkUniqueRelationLine(item.id, issue.id) ? item.id : null))
+          .filter((item) => item !== null)
         for (let index = 0; index < relations.length; index++) {
           link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
         }
@@ -162,7 +191,7 @@ export default {
       }
       children = children.concat(relations)
       if (issue['test_files']) {
-        const test_files = issue['test_files'].map(item => item.file_name)
+        const test_files = issue['test_files'].map((item) => item.file_name)
         for (let index = 0; index < test_files.length; index++) {
           link.push('-->')
         }
@@ -176,7 +205,9 @@ export default {
       }
       point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
       if (issue.fixed_version && issue.fixed_version.name) {
-        point['text'] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
+        point[
+          'text'
+        ] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
 
       if (group) {
@@ -236,7 +267,13 @@ export default {
           status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
           count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
         }
-        last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
       } else if (test_file.software_name === 'SideeX') {
         const success = test_file.the_last_test_result.result.casesPassed
         const total = test_file.the_last_test_result.result.casesTotal
@@ -248,7 +285,13 @@ export default {
           status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
           count_result = `${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
         }
-        last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
       }
       const file_result = {
         id: `${test_file.software_name}.${test_file.file_name}_result`,
@@ -280,16 +323,16 @@ export default {
       this.chartLoading = false
     },
     PaintNetwork(vueInstance) {
-      this.getIssueFamilyData = async function(chartIssueList) {
-        const getIssueFamilyAPI = chartIssueList.map(issue => {
+      this.getIssueFamilyData = async function (chartIssueList) {
+        const getIssueFamilyAPI = chartIssueList.map((issue) => {
           vueInstance.accessedIssueId.push(issue.id)
           return getIssueFamily(issue.id)
         })
         const response = await Promise.all(getIssueFamilyAPI)
-        return Promise.resolve(response.map(res => res.data))
+        return Promise.resolve(response.map((res) => res.data))
       }
 
-      this.getPaintFamily = async function(issue, issueFamily) {
+      this.getPaintFamily = async function (issue, issueFamily) {
         vueInstance.chartProgress.total += 1
         if (issue.tracker.name === 'Test Plan') {
           const test_files = await getTestFileByTestPlan(vueInstance.selectedProjectId, issue.id)
@@ -306,30 +349,31 @@ export default {
         return Promise.resolve(issue)
       }
 
-      this.combineFamilyList = function(issue, family) {
-        const bug = vueInstance.tracker.find((item) => (item.name === 'Bug')).id
-        const close = vueInstance.status.find((item) => (item.name === 'Closed')).id
+      this.combineFamilyList = function (issue, family) {
+        const bug = vueInstance.tracker.find((item) => item.name === 'Bug').id
+        const close = vueInstance.status.find((item) => item.name === 'Closed').id
         let getFamilyList = []
         Object.keys(family).forEach((relationType) => {
           if (!Array.isArray(family[relationType])) {
             family[relationType] = [family[relationType]]
           }
-          family[relationType] = family[relationType]
-            .filter(item => !(item.status_id === close && item.tracker_id === bug))
+          family[relationType] = family[relationType].filter(
+            (item) => !(item.status_id === close && item.tracker_id === bug)
+          )
           family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
           if (family.hasOwnProperty(relationType)) {
             getFamilyList = getFamilyList.concat(family[relationType])
           }
         })
-        getFamilyList = getFamilyList.filter(item => !vueInstance.accessedIssueId.includes(item.id))
+        getFamilyList = getFamilyList.filter((item) => !vueInstance.accessedIssueId.includes(item.id))
         return Promise.resolve(getFamilyList)
       }
 
-      this.formatFamilyList = function(issue, family, relationTarget) {
+      this.formatFamilyList = function (issue, family, relationTarget) {
         return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
       }
 
-      this.end = function() {
+      this.end = function () {
         vueInstance.chartProgress.now = vueInstance.chartProgress.total
         return Promise.resolve()
       }
@@ -360,8 +404,7 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       } else {
         done()
       }
@@ -388,18 +431,18 @@ $max_width: calc(100vw - 50px - 20px - 50px - 50px);
       width: calc(#{$max_width} * 0.25 * #{$i});
       height: calc(#{$max_height} * 0.25 * #{$i});
 
-      > > > svg {
+      >>> svg {
         width: 25% * $i;
         height: calc(25% * #{$i} - 20px);
         transform-origin: top left;
-        transform: scale(0.25* $i);
+        transform: scale(0.25 * $i);
       }
     }
   }
 }
 
 .relation_settings {
-  > > > .el-form-item__content {
+  >>> .el-form-item__content {
     @apply clear-both;
   }
 
@@ -417,7 +460,7 @@ $max_width: calc(100vw - 50px - 20px - 50px - 50px);
 }
 
 .issue-select {
-  > > > .el-tag {
+  >>> .el-tag {
     //width: 100%;
     height: fit-content;
     white-space: normal;
@@ -429,16 +472,15 @@ $max_width: calc(100vw - 50px - 20px - 50px - 50px);
 }
 
 .loading {
-  > > > .el-alert__content {
+  >>> .el-alert__content {
     width: 100%;
   }
 }
 
-//> > > .el-card {
+//>>>. el-card {
 //  .el-card__body {
 //    height: 100%;
 //    overflow-y: auto;
 //  }
 //}
-
 </style>

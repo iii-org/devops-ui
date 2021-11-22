@@ -1,11 +1,20 @@
 <template>
   <div class="app-container">
-    <ProjectListSelector ref="ProjectSelection" :project-id="project_id" :keep-selection="false" :clearable="true"
-                         @change="project_id=$event"
+    <ProjectListSelector
+      ref="ProjectSelection"
+      :project-id="project_id"
+      :keep-selection="false"
+      :clearable="true"
+      @change="project_id=$event"
     >
       <template slot="button">
         <template v-if="project_id===null||project_id===''">
-          <el-button v-permission="['Administrator','Project Manager']" type="primary" icon="el-icon-plus" @click="handleAdding">
+          <el-button
+            v-permission="['Administrator','Project Manager']"
+            type="primary"
+            icon="el-icon-plus"
+            @click="handleAdding"
+          >
             {{ $t('Project.AddProject') }}
           </el-button>
         </template>
@@ -28,10 +37,17 @@
       >
         <el-form v-loading="listLoading">
           <template v-for="dimension in filterOptions">
-            <el-form-item v-if="!isRequireProjectId(dimension.value)" :key="dimension.id">
+            <el-form-item
+              v-if="!isRequireProjectId(dimension.value)"
+              :key="dimension.id"
+            >
               <div slot="label">
                 {{ $t('Issue.' + dimension.value) }}
-                <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+                <el-tag
+                  v-if="dimension.value==='fixed_version'"
+                  type="info"
+                  class="flex-1"
+                >
                   <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
                 </el-tag>
               </div>
@@ -48,17 +64,30 @@
                   :label="getSelectionLabel(item)"
                   :value="item.id"
                 >
-                  <component :is="dimension.value" v-if="dimension.tag" :name="$t(`Issue.${item.name}`)" :type="item.name" />
+                  <component
+                    :is="dimension.value"
+                    v-if="dimension.tag"
+                    :name="$t(`Issue.${item.name}`)"
+                    :type="item.name"
+                  />
                 </el-option>
               </el-select>
             </el-form-item>
           </template>
-          <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
+          <el-form-item
+            :label="$t('Issue.DisplayClosedIssue')"
+            class="checkbox"
+          >
             <el-checkbox v-model="displayClosed" />
           </el-form-item>
         </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
-          <em class="el-icon-arrow-down el-icon--right" /></el-button>
+        <el-button
+          slot="reference"
+          icon="el-icon-s-operation"
+          type="text"
+        > {{ displayFilterValue }}
+          <em class="el-icon-arrow-down el-icon--right" />
+        </el-button>
       </el-popover>
       <el-divider direction="vertical" />
       <el-input
@@ -72,12 +101,21 @@
         @change="onChangeFilter"
         @blur="searchVisible=!searchVisible"
       />
-      <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
+      <el-button
+        v-else
+        type="text"
+        icon="el-icon-search"
+        @click="searchVisible=!searchVisible"
+      >
         {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
       </el-button>
       <template v-if="isFilterChanged">
         <el-divider direction="vertical" />
-        <el-button size="small" icon="el-icon-close" @click="cleanFilter">
+        <el-button
+          size="small"
+          icon="el-icon-close"
+          @click="cleanFilter"
+        >
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
@@ -90,30 +128,55 @@
       :visible.sync="quickAddTopicDialogVisible"
       @add-issue="advancedAddIssue"
     />
-    <el-row :gutter="10" class="mb-5">
-      <el-col v-for="card in dashboardCards" :key="card.id" :span="12" :md="6" class="dashboard-card">
-        <div class="item"
-             :class="{'active': activeDashboard===card.id, [card.id]:card.id}"
-             @click="activeDashboard=card.id"
+    <el-row
+      :gutter="10"
+      class="mb-5"
+    >
+      <el-col
+        v-for="card in dashboardCards"
+        :key="card.id"
+        :span="12"
+        :md="6"
+        class="dashboard-card"
+      >
+        <div
+          class="item"
+          :class="{'active': activeDashboard===card.id, [card.id]:card.id}"
+          @click="activeDashboard=card.id"
         >
           <p class="font-bold m-1">
-            <em v-if="activeDashboard===card.id" class="el-icon-caret-right" />{{ card.name }}
+            <em
+              v-if="activeDashboard===card.id"
+              class="el-icon-caret-right"
+            />{{ card.name }}
             <span class="count">{{ total[card.id] }}</span>
           </p>
         </div>
       </el-col>
     </el-row>
     <el-tabs v-model="activeDashboard">
-      <el-tab-pane v-for="card in dashboardCards" :key="card.id" :name="card.id" :label="card.name">
-        <issue-list :ref="card.id" :project-id="project_id"
-                    :display-closed-props="displayClosed"
-                    :filter-value-props="filterValue" :from="card.id"
-                    :keyword-props="keyword"
-                    @total="updateTotalCount(card.id, $event)"
+      <el-tab-pane
+        v-for="card in dashboardCards"
+        :key="card.id"
+        :name="card.id"
+        :label="card.name"
+      >
+        <issue-list
+          :ref="card.id"
+          :project-id="project_id"
+          :display-closed-props="displayClosed"
+          :filter-value-props="filterValue"
+          :from="card.id"
+          :keyword-props="keyword"
+          @total="updateTotalCount(card.id, $event)"
         />
       </el-tab-pane>
     </el-tabs>
-    <CreateProjectDialog ref="createProjectDialog" v-permission="['Administrator', 'Project Manager']" @update="$router.push({name: 'project-list'})" />
+    <CreateProjectDialog
+      ref="createProjectDialog"
+      v-permission="['Administrator', 'Project Manager']"
+      @update="$router.push({name: 'project-list'})"
+    />
   </div>
 </template>
 
@@ -168,7 +231,7 @@ export default {
       filterValue: {},
       originFilterValue: {},
       keyword: null,
-      total: { 'assigned_to_id': '-', 'author_id': '-' }
+      total: { assigned_to_id: '-', author_id: '-' }
     }
   },
   computed: {
@@ -191,13 +254,13 @@ export default {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          const value = this[item].find((search) => (search.id === this.filterValue[item]))
+          const value = this[item].find((search) => search.id === this.filterValue[item])
           if (value) {
             result.push(this.getSelectionLabel(value))
           }
         }
       })
-      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
+      return this.$t('general.Filter') + (result.length > 0 ? ': ' : '') + result.join(', ')
     },
     isFilterChanged() {
       for (const item of Object.keys(this.originFilterValue)) {
@@ -297,7 +360,7 @@ export default {
   async mounted() {
     await this.loadSelectionList()
     const storeListQuery = await this.getListQuery()
-    this.dashboardCards.forEach(card => {
+    this.dashboardCards.forEach((card) => {
       if (storeListQuery[`MyWork_${card.id}`]) {
         this.$set(this.$refs[card.id][0], 'listQuery', storeListQuery[`MyWork_${card.id}`])
         this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`].offset)
@@ -314,17 +377,25 @@ export default {
     })
   },
   methods: {
-    ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed', 'getListQuery']),
+    ...mapActions('projects', [
+      'getIssueFilter',
+      'getKeyword',
+      'getDisplayClosed',
+      'setIssueFilter',
+      'setKeyword',
+      'setDisplayClosed',
+      'getListQuery'
+    ]),
     getOptionsData(option_name) {
       return this[option_name]
     },
     loadData() {
-      this.dashboardCards.forEach(card => {
+      this.dashboardCards.forEach((card) => {
         this.$refs[card.id][0].initTableData()
       })
     },
     backToFirstPage() {
-      this.dashboardCards.forEach(card => {
+      this.dashboardCards.forEach((card) => {
         this.$refs[card.id][0].backToFirstPage()
       })
     },
@@ -337,21 +408,18 @@ export default {
         params = { status: 'open,locked,closed' }
       }
       if (this.project_id && this.project_id !== '') {
-        await Promise.all([getProjectVersion(this.project_id, params), getProjectUserList(this.project_id)]).then(res => {
-          const [versionList, assigneeList] = res.map(
-            item => item.data
-          )
-          this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
-          this.assigned_to = [
-            { name: this.$t('Issue.Unassigned'), id: 'null' },
-            ...assigneeList.user_list
-          ]
-        })
+        await Promise.all([getProjectVersion(this.project_id, params), getProjectUserList(this.project_id)]).then(
+          (res) => {
+            const [versionList, assigneeList] = res.map((item) => item.data)
+            this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.versions]
+            this.assigned_to = [{ name: this.$t('Issue.Unassigned'), id: 'null' }, ...assigneeList.user_list]
+          }
+        )
       }
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
       }
@@ -359,7 +427,7 @@ export default {
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter((item) => (item.is_closed === false))
+      return statusList.filter((item) => item.is_closed === false)
     },
     cleanFilter() {
       this.filterValue = Object.assign({}, this.originFilterValue)
@@ -368,7 +436,10 @@ export default {
     },
     isRequireProjectId(name) {
       const column = ['fixed_version', 'assigned_to']
-      return (column.includes(name) && (!this.project_id || (name === 'assigned_to' && this.activeDashboard === 'assigned_to_id')))
+      return (
+        column.includes(name) &&
+        (!this.project_id || (name === 'assigned_to' && this.activeDashboard === 'assigned_to_id'))
+      )
     },
     updateTotalCount(card_id, value) {
       if (value === Infinity) {
@@ -378,7 +449,7 @@ export default {
       }
     },
     async onChangeFilter() {
-      this.dashboardCards.forEach(card => {
+      this.dashboardCards.forEach((card) => {
         this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
         this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
         this.$refs[card.id][0].handleCurrentChange({
@@ -401,7 +472,7 @@ export default {
     },
     async saveIssue(data) {
       return await addIssue(data)
-        .then(res => {
+        .then((res) => {
           // noinspection JSCheckFunctionSignatures
           this.$message({
             title: this.$t('general.Success'),
@@ -414,7 +485,7 @@ export default {
           this.$refs['quickAddIssue'].form.name = ''
           return res
         })
-        .catch(error => {
+        .catch((error) => {
           return error
         })
     }
@@ -423,7 +494,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-> > > .el-tabs__header {
+>>> .el-tabs__header {
   display: none;
 }
 
@@ -463,5 +534,4 @@ export default {
     }
   }
 }
-
 </style>

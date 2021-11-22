@@ -172,7 +172,7 @@ export default {
   computed: {
     ...mapGetters(['projectOptions', 'selectedProject', 'selectedProjectId']),
     projectInformation() {
-      const item = this.projectOptions.find((item) => item.id === this.projectValue)
+      const item = this.projectOptions.find((option) => option.id === this.projectValue)
       if (!item) return { display: this.$t('general.All') }
       return item
     }
@@ -276,7 +276,7 @@ export default {
           .then(() => {
             this.$parent.isConfirmLeave = true
           })
-          .catch(() => {})
+          .catch()
       }
     }
   }
@@ -300,7 +300,7 @@ export default {
 
 .project {
   @apply w-full;
-  > .el-input {
+  >>> .el-input {
     input {
       @apply bg-gray-200 rounded-md font-semibold cursor-pointer text-black text-lg truncate;
     }

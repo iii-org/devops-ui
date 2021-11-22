@@ -2,10 +2,23 @@
   <div class="app-container">
     <ProjectListSelector />
     <el-divider />
-    <el-tabs v-model="tabActiveName" type="card" :before-leave="beforeLeave">
-      <el-tab-pane :label="$t('ProjectSettings.GeneralSettings')" name="generalSettings">
-        <el-row v-if="selectedProjectId !== -1" :gutter="10">
-          <el-col class="mb-4" :xs="24">
+    <el-tabs
+      v-model="tabActiveName"
+      type="card"
+      :before-leave="beforeLeave"
+    >
+      <el-tab-pane
+        :label="$t('ProjectSettings.GeneralSettings')"
+        name="generalSettings"
+      >
+        <el-row
+          v-if="selectedProjectId !== -1"
+          :gutter="10"
+        >
+          <el-col
+            class="mb-4"
+            :xs="24"
+          >
             <el-card shadow="never">
               <el-collapse v-model="activeNames">
                 <ProjectMembers />
@@ -13,12 +26,19 @@
             </el-card>
           </el-col>
         </el-row>
-        <el-alert v-else type="warning" :closable="false">
-          <h2><i class="el-icon-warning" /> {{ $t('general.Warning') }}</h2>
+        <el-alert
+          v-else
+          type="warning"
+          :closable="false"
+        >
+          <h2><em class="el-icon-warning" /> {{ $t('general.Warning') }}</h2>
           <h3>{{ this.$t('Notify.NoProject') }}</h3>
         </el-alert>
       </el-tab-pane>
-      <el-tab-pane :label="$t('ProjectSettings.NotifySettings')" name="notifySettings">
+      <el-tab-pane
+        :label="$t('ProjectSettings.NotifySettings')"
+        name="notifySettings"
+      >
         <el-card>
           <AlertSettings ref="alertSettings" />
         </el-card>
@@ -42,7 +62,7 @@ export default {
   components: {
     ProjectListSelector,
     ProjectMembers,
-    AlertSettings: () => import ('@/views/Plan/Settings/components/AlertSettings')
+    AlertSettings: () => import('@/views/Plan/Settings/components/AlertSettings')
     // TagSettings: () => import ('@/views/Plan/Settings/components/TagSettings')
   },
   mixins: [MixinElTableWithAProject],
@@ -111,7 +131,7 @@ export default {
       suggested to return reject() or resolve() because it will sometimes invalid when returned true or false
     */
     showLeaveMessage() {
-      return new Promise(async(resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         return await this.$confirm(this.$t('Notify.UnSavedChanges'), this.$t('general.Warning'), {
           confirmButtonText: this.$t('general.Confirm'),
           cancelButtonText: this.$t('general.Cancel'),
@@ -134,7 +154,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
->>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+>>> .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
   background: #c5c8cc;
   color: #3e3f41;
   border-top: 5px solid #3e3f41;
@@ -142,7 +162,7 @@ export default {
   height: 45px;
 }
 
->>> .el-tabs--card>.el-tabs__header .el-tabs__item {
+>>> .el-tabs--card > .el-tabs__header .el-tabs__item {
   background: #3e3f41;
   color: #c5c8cc;
   border-radius: 5px;

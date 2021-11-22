@@ -2,15 +2,33 @@
   <div class="app-container">
     <el-card v-loading="isLoading">
       <div class="text-2xl">{{ $t('SystemTemplates.TemplatesSettings') }}</div>
-      <el-form ref="form" :model="form" :rules="formRules">
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="formRules"
+      >
         <el-row>
-          <el-col :span="24" :sm="12" :md="8" :lg="7">
-            <el-form-item :label="$t('SystemTemplates.GithubAccount')" prop="value.account">
-              <el-input v-model="form.value.account" :placeholder="$t('SystemTemplates.GithubAccountPlaceholder')" />
+          <el-col
+            :span="24"
+            :sm="12"
+            :md="8"
+            :lg="7"
+          >
+            <el-form-item
+              :label="$t('SystemTemplates.GithubAccount')"
+              prop="value.account"
+            >
+              <el-input
+                v-model="form.value.account"
+                :placeholder="$t('SystemTemplates.GithubAccountPlaceholder')"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="Github Token" prop="value.token">
+            <el-form-item
+              label="Github Token"
+              prop="value.token"
+            >
               <el-input
                 v-model="form.value.token"
                 :placeholder="$t('SystemTemplates.GithubTokenPlaceholder')"
@@ -22,12 +40,18 @@
           <el-col :span="24">
             <el-form-item>
               <el-checkbox v-model="form.active">
-                <b>{{ $t('SystemTemplates.EnableTemplateSync') }}</b>
+                <strong>{{ $t('SystemTemplates.EnableTemplateSync') }}</strong>
               </el-checkbox>
-              <div class="ml-5" style="color: gray;">
+              <div
+                class="ml-5"
+                style="color: gray;"
+              >
                 <section>{{ $t('SystemTemplates.TokenWarning') }}</section>
                 <section>{{ $t('SystemTemplates.DocumentUrl') }}:
-                  <el-link :href="link" target="_blank">{{ link }}</el-link>
+                  <el-link
+                    :href="link"
+                    target="_blank"
+                  >{{ link }}</el-link>
                 </section>
               </div>
             </el-form-item>
@@ -35,7 +59,10 @@
         </el-row>
       </el-form>
       <div class="text-right">
-        <el-button type="primary" @click="handleUpdate">
+        <el-button
+          type="primary"
+          @click="handleUpdate"
+        >
           {{ $t('general.Save') }}
         </el-button>
       </div>
@@ -73,19 +100,18 @@ export default {
     }
   },
   computed: {
-    paramId () {
+    paramId() {
       return this.form.id
     },
     getUpdateData() {
       const { value, active } = this.form
-      const data = {
+      return {
         value: {
           token: value.token,
           account: value.account
         },
         active
       }
-      return data
     }
   },
   methods: {
@@ -100,7 +126,7 @@ export default {
     },
     getSystemParameterData(data) {
       const key = 'github_verify_info'
-      const githubParams = data.find(item => item.name === key)
+      const githubParams = data.find((item) => item.name === key)
       this.form = githubParams
       this.setOriginData(githubParams)
     },
@@ -108,7 +134,7 @@ export default {
       this.originData = JSON.parse(JSON.stringify(data))
     },
     handleUpdate() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (!valid) return
         this.updateSystemParameter()
       })
@@ -121,7 +147,7 @@ export default {
         .then(() => {
           this.showSuccessMessage()
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err)
         })
         .finally(async () => {

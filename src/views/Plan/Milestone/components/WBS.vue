@@ -1,19 +1,20 @@
 <template>
   <div :style="{height: `${tableHeight}px`}">
-    <el-table ref="WBS"
-              v-loading="listLoading"
-              :data="listData"
-              :element-loading-text="$t('Loading')"
-              :height="tableHeight"
-              class="table-css"
-              row-key="id"
-              lazy
-              fit
-              :load="getIssueFamilyData"
-              :row-class-name="getRowClass"
-              :tree-props="{children: 'children', hasChildren: 'has_children'}"
-              @row-contextmenu="handleContextMenu"
-              @cell-click="handleCellClick"
+    <el-table
+      ref="WBS"
+      v-loading="listLoading"
+      :data="listData"
+      :element-loading-text="$t('Loading')"
+      :height="tableHeight"
+      class="table-css"
+      row-key="id"
+      lazy
+      fit
+      :load="getIssueFamilyData"
+      :row-class-name="getRowClass"
+      :tree-props="{children: 'children', hasChildren: 'has_children'}"
+      @row-contextmenu="handleContextMenu"
+      @cell-click="handleCellClick"
     >
       <WBSInputColumn
         v-if="columns.indexOf('name')>=0"
@@ -34,7 +35,10 @@
       <el-table-column width="50px">
         <template slot-scope="{row}">
           <div class="action">
-            <div class="icon" @click.stop="handleContextMenu(row, '', $event)">
+            <div
+              class="icon"
+              @click.stop="handleContextMenu(row, '', $event)"
+            >
               <em class="el-icon-more" />
             </div>
           </div>
@@ -177,59 +181,107 @@
         @reset-edit="handleResetEdit"
         @reset-create="handleResetCreate"
       />
-      <el-empty slot="empty" :description="$t('general.NoData')" />
-      <tr v-if="!hasInlineCreate&&userRole!=='QA'" slot="append">
+      <el-empty
+        slot="empty"
+        :description="$t('general.NoData')"
+      />
+      <tr
+        v-if="!hasInlineCreate&&userRole!=='QA'"
+        slot="append"
+      >
         <td class="add-issue-inline">
-          <el-link type="text" icon="el-icon-plus" @click="appendIssue()">{{ $t('Issue.AddIssue') }}</el-link>
+          <el-link
+            type="text"
+            icon="el-icon-plus"
+            @click="appendIssue()"
+          >{{ $t('Issue.AddIssue') }}</el-link>
         </td>
       </tr>
     </el-table>
     <contextmenu ref="contextmenu">
       <template v-if="Object.keys(contextMenu.row).length>2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
-        <contextmenu-submenu v-permission="permission" :title="$t('Issue.tags')">
-          <contextmenu-item v-for="item in tags" :key="item.id"
-                            :class="{current:getContextMenuCurrentValue('tags', item), [item.class]:item.class}"
-                            @click="handleUpdateIssue({value:{'tags':item.id}, row:contextMenu.row})"
+        <contextmenu-submenu
+          v-permission="permission"
+          :title="$t('Issue.tags')"
+        >
+          <contextmenu-item
+            v-for="item in tags"
+            :key="item.id"
+            :class="{current:getContextMenuCurrentValue('tags', item), [item.class]:item.class}"
+            @click="handleUpdateIssue({value:{'tags':item.id}, row:contextMenu.row})"
           >
-            <em v-if="getContextMenuCurrentValue('tags', item)" class="el-icon-check" />
-            <em v-if="item.id==='null'" class="el-icon-circle-close" />
+            <em
+              v-if="getContextMenuCurrentValue('tags', item)"
+              class="el-icon-check"
+            />
+            <em
+              v-if="item.id==='null'"
+              class="el-icon-circle-close"
+            />
             {{ item.name }} {{ item.message }}
           </contextmenu-item>
         </contextmenu-submenu>
-        <contextmenu-item v-permission="permission" divider />
+        <contextmenu-item
+          v-permission="permission"
+          divider
+        />
         <contextmenu-item @click="onRelationIssueDialog(contextMenu.row.id)">
           {{ $t('route.Issue Detail') }}
         </contextmenu-item>
         <contextmenu-item @click="toggleIssueMatrixDialog(contextMenu.row)">
           {{ $t('Issue.TraceabilityMatrix') }}
         </contextmenu-item>
-        <contextmenu-item v-permission="permission" divider />
-        <contextmenu-item v-permission="permission" @click="appendIssue(contextMenu.row)">
+        <contextmenu-item
+          v-permission="permission"
+          divider
+        />
+        <contextmenu-item
+          v-permission="permission"
+          @click="appendIssue(contextMenu.row)"
+        >
           {{ $t('Issue.AddIssue') }}
         </contextmenu-item>
-        <contextmenu-item v-permission="permission" @click="appendIssue(contextMenu.row, true)">
+        <contextmenu-item
+          v-permission="permission"
+          @click="appendIssue(contextMenu.row, true)"
+        >
           {{ $t('Issue.AddSubIssue') }}
         </contextmenu-item>
-        <contextmenu-item v-permission="permission" @click="appendIssue(contextMenu.row, false, contextMenu.row)">
+        <contextmenu-item
+          v-permission="permission"
+          @click="appendIssue(contextMenu.row, false, contextMenu.row)"
+        >
           {{ $t('Issue.CopyIssue') }}
         </contextmenu-item>
-        <contextmenu-item v-permission="permission" divider />
-        <contextmenu-item v-permission="permission" class="menu-remove" @click="handleRemoveIssue(contextMenu.row)"><em
-          class="el-icon-delete"
+        <contextmenu-item
+          v-permission="permission"
+          divider
+        />
+        <contextmenu-item
+          v-permission="permission"
+          class="menu-remove"
+          @click="handleRemoveIssue(contextMenu.row)"
         >
-          {{ $t('general.Delete') }}</em></contextmenu-item>
+          <em class="el-icon-delete">{{ $t('general.Delete') }}</em>
+        </contextmenu-item>
       </template>
     </contextmenu>
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
-               :before-close="handleRelationIssueDialogBeforeClose"
+    <el-dialog
+      :visible.sync="relationIssue.visible"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
     >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationDelete"
+      <ProjectIssueDetail
+        v-if="relationIssue.visible"
+        ref="children"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationDelete"
       />
     </el-dialog>
     <el-dialog
@@ -241,20 +293,17 @@
       :close-on-click-modal="false"
       :title="$t('Issue.TraceabilityMatrix')+'(#'+issueMatrixDialog.row.id+' - '+ issueMatrixDialog.row.name+')'"
     >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issueMatrixDialog.row"
-                   @update-issue="loadData"
+      <IssueMatrix
+        v-if="issueMatrixDialog.visible"
+        :row.sync="issueMatrixDialog.row"
+        @update-issue="loadData"
       />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {
-  directive,
-  Contextmenu,
-  ContextmenuItem,
-  ContextmenuSubmenu
-} from 'v-contextmenu'
+import { directive, Contextmenu, ContextmenuItem, ContextmenuSubmenu } from 'v-contextmenu'
 import { getProjectIssueList } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import { Tracker, Priority, Status } from '@/components/Issue'
@@ -286,8 +335,7 @@ export default {
   props: {
     filterValue: {
       type: Object,
-      default: () => {
-      }
+      default: () => ({})
     },
     keyword: {
       type: String,
@@ -320,12 +368,7 @@ export default {
   },
   filter: {
     relativeTime(dateTime) {
-      return dateTime
-        ? this.$dayjs(dateTime)
-          .utc()
-          .local()
-          .fromNow()
-        : '-'
+      return dateTime ? this.$dayjs(dateTime).utc().local().fromNow() : '-'
     }
   },
   data() {
@@ -352,7 +395,7 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole']),
     hasInlineCreate() {
-      const create = this.listData.filter(item => item.create)
+      const create = this.listData.filter((item) => item.create)
       return create.length > 0
     },
     isButtonDisabled() {
@@ -367,11 +410,11 @@ export default {
   },
   methods: {
     getParams() {
-      const tracker = this.tracker.find(item => item.name === 'Epic')
+      const tracker = this.tracker.find((item) => item.name === 'Epic')
       const result = {
         parent_id: 'null',
         with_point: true,
-        tracker_id: (tracker) ? tracker.id : 1
+        tracker_id: tracker ? tracker.id : 1
       }
       if (this.sort) {
         result['sort'] = this.sort
@@ -383,9 +426,11 @@ export default {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
             result['due_date_start'] = this.$dayjs(result['due_date_start']).isValid()
-              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD') : null
+              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD')
+              : null
             result['due_date_end'] = this.$dayjs(result['due_date_end']).isValid()
-              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD') : null
+              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD')
+              : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
           } else {
@@ -413,7 +458,7 @@ export default {
     },
     async fetchData() {
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
-      return Promise.resolve(res.data.map(item => this.issueFormatter(item)))
+      return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))
     },
     issueFormatter(issue) {
       if (Object.keys(issue.assigned_to).length <= 0) {
@@ -453,32 +498,32 @@ export default {
           this.$refs.WBS.toggleRowExpansion(row, true)
           treeDataArray = treeData[row.id].children
           updateNodeMap = lazyTreeNodeMap[row.id]
-          row_index = treeDataArray.findIndex(issue => issue.id === row.id)
+          row_index = treeDataArray.findIndex((issue) => issue.id === row.id)
         } else if (row && row.parent_object) {
           if (row.parent_object.id && treeData[row.parent_object.id]) {
             treeDataArray = treeData[row.parent_object.id].children
             updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
           }
-          row_index = treeDataArray.findIndex(issue => issue.id === row.id) + 1
+          row_index = treeDataArray.findIndex((issue) => issue.id === row.id) + 1
         } else {
-          row_index = this.listData.findIndex(issue => issue.id === row.id) + 1
+          row_index = this.listData.findIndex((issue) => issue.id === row.id) + 1
         }
       }
-      const findEpic = this.tracker.find(item => item.name === 'Epic')
+      const findEpic = this.tracker.find((item) => item.name === 'Epic')
       const timestamp = Math.floor(new Date().getTime() / 1000)
       const issueForm = {
         id: `new_${timestamp}`,
-        parent_id: (prefill && prefill.parent_id) ? prefill.parent_id : null,
-        assigned_to: (prefill && prefill.assigned_to) ? prefill.assigned_to : { id: '', name: '' },
-        name: (prefill && prefill.name) ? `${prefill.name}(${this.$t('Issue.Copy')})` : '',
-        fixed_version: (prefill && prefill.fixed_version) ? prefill.fixed_version : { id: '', name: '' },
-        tracker: (prefill && prefill.tracker) ? prefill.tracker : { id: (findEpic) ? findEpic.id : '', name: '' },
-        status: (prefill && prefill.status) ? prefill.status : { id: 1, name: '' },
-        priority: (prefill && prefill.priority) ? prefill.priority : { id: 3, name: '' },
-        estimated_hours: (prefill && prefill.estimated_hours) ? prefill.estimated_hours : 0,
-        done_ratio: (prefill && prefill.done_ratio) ? prefill.done_ratio : 0,
-        start_date: (prefill && prefill.start_date) ? prefill.start_date : '',
-        due_date: (prefill && prefill.due_date) ? prefill.due_date : '',
+        parent_id: prefill && prefill.parent_id ? prefill.parent_id : null,
+        assigned_to: prefill && prefill.assigned_to ? prefill.assigned_to : { id: '', name: '' },
+        name: prefill && prefill.name ? `${prefill.name}(${this.$t('Issue.Copy')})` : '',
+        fixed_version: prefill && prefill.fixed_version ? prefill.fixed_version : { id: '', name: '' },
+        tracker: prefill && prefill.tracker ? prefill.tracker : { id: findEpic ? findEpic.id : '', name: '' },
+        status: prefill && prefill.status ? prefill.status : { id: 1, name: '' },
+        priority: prefill && prefill.priority ? prefill.priority : { id: 3, name: '' },
+        estimated_hours: prefill && prefill.estimated_hours ? prefill.estimated_hours : 0,
+        done_ratio: prefill && prefill.done_ratio ? prefill.done_ratio : 0,
+        start_date: prefill && prefill.start_date ? prefill.start_date : '',
+        due_date: prefill && prefill.due_date ? prefill.due_date : '',
         create: true
       }
       if (subLevel) {
@@ -512,16 +557,19 @@ export default {
             treeDataArray = treeData[row.parent_object.id].children
             updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
           }
-          row_index = updateNodeMap.findIndex(issue => issue.id === row.id)
+          row_index = updateNodeMap.findIndex((issue) => issue.id === row.id)
         } else {
-          row_index = this.listData.findIndex(issue => issue.id === row.id)
+          row_index = this.listData.findIndex((issue) => issue.id === row.id)
         }
       }
       if (row && row.parent_object) {
         updateNodeMap.splice(row_index, 1)
         if (updateNodeMap.length <= 0) {
           store.$delete(lazyTreeNodeMap, row.parent_object.id)
-          treeDataArray.splice(treeDataArray.findIndex(issue => issue.id === row.id), 1)
+          treeDataArray.splice(
+            treeDataArray.findIndex((issue) => issue.id === row.id),
+            1
+          )
         } else {
           store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
         }
@@ -559,7 +607,8 @@ export default {
                 error: e
               })
               this.$notify({
-                title: this.$t('general.Error').toString(), type: 'error',
+                title: this.$t('general.Error').toString(),
+                type: 'error',
                 message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
               })
             }
@@ -604,13 +653,13 @@ export default {
           treeDataArray = treeData[row.parent_object.id].children
           updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
         }
-        row_index = treeDataArray.findIndex(issue => issue === row.id)
+        row_index = treeDataArray.findIndex((issue) => issue === row.id)
         treeDataArray.splice(row_index, 1)
         updateNodeMap.splice(row_index, 1)
         store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
         store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
       } else {
-        row_index = this.listData.findIndex(issue => issue.id === row.id)
+        row_index = this.listData.findIndex((issue) => issue.id === row.id)
         this.listData.splice(row_index, 1)
       }
       this.$set(row, 'create', false)
@@ -619,8 +668,8 @@ export default {
       let checkUpdate = false
       const originDate = this.$dayjs(row.originColumn)
       if (value['tags']) {
-        const tags = row['tags'].map(item => item.id)
-        const findTags = tags.findIndex(item => item === value['tags'])
+        const tags = row['tags'].map((item) => item.id)
+        const findTags = tags.findIndex((item) => item === value['tags'])
         if (findTags >= 0) {
           tags.splice(findTags, 1)
         } else {
@@ -645,7 +694,7 @@ export default {
           this.updateLoading = true
           this.$emit('update-loading', true)
           try {
-            Object.keys(value).forEach(key => {
+            Object.keys(value).forEach((key) => {
               if (value[key] === null) {
                 value[key] = ''
               }
@@ -662,7 +711,7 @@ export default {
                 treeDataArray = treeData[row.parent_object.id].children
                 updateNodeMap = lazyTreeNodeMap[row.parent_object.id]
               }
-              const findIssueIndex = treeDataArray.findIndex(issue => issue === row.id)
+              const findIssueIndex = treeDataArray.findIndex((issue) => issue === row.id)
               this.$set(updateNodeMap, findIssueIndex, {
                 ...this.issueFormatter(res.data),
                 parent_object: row.parent_object
@@ -670,7 +719,7 @@ export default {
               store.$set(treeData[row.parent_object.id], 'children', treeDataArray)
               store.$set(lazyTreeNodeMap, row.parent_object.id, updateNodeMap)
             } else {
-              const row_index = this.listData.findIndex(issue => row.id === issue.id)
+              const row_index = this.listData.findIndex((issue) => row.id === issue.id)
               this.$set(this.listData, row_index, this.issueFormatter(res.data))
             }
             this.$emit('update-status', {
@@ -686,7 +735,8 @@ export default {
               error: e
             })
             this.$notify({
-              title: this.$t('general.Error').toString(), type: 'error',
+              title: this.$t('general.Error').toString(),
+              type: 'error',
               message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
             })
           }
@@ -708,9 +758,9 @@ export default {
           return
         }
         const data = {}
-        Object.keys(row).forEach(item => {
+        Object.keys(row).forEach((item) => {
           if (row[item] && typeof row[item] === 'object') {
-            data[`${item}_id`] = (row[item]['id']) ? row[item]['id'] : row[item]
+            data[`${item}_id`] = row[item]['id'] ? row[item]['id'] : row[item]
           } else {
             data[item] = row[item]
           }
@@ -722,7 +772,7 @@ export default {
           this.$set(row, 'create', false)
           this.$set(row, 'editColumn', false)
           res.data = this.issueFormatter(res.data)
-          Object.keys(res.data).forEach(item => {
+          Object.keys(res.data).forEach((item) => {
             this.$set(row, item, res.data[item])
           })
           this.$emit('update-status', {
@@ -738,7 +788,8 @@ export default {
             error: e
           })
           this.$notify({
-            title: this.$t('general.Error').toString(), type: 'error',
+            title: this.$t('general.Error').toString(),
+            type: 'error',
             message: this.$t(`errorMessage.${e.response.data.error.code}`, e.response.data.error.details).toString()
           })
         }
@@ -754,16 +805,21 @@ export default {
           if (treeData) {
             const store = this.$refs.WBS.layout.store
             const { treeData, lazyTreeNodeMap } = store.states
-            const childrenData = data.children.map(item => ({
+            const childrenData = data.children.map((item) => ({
               parent_object: {
                 ...row,
                 children: data.children
-              }, ...item
+              },
+              ...item
             }))
-            store.$set(treeData[row.id], 'children', data.children.map(item => (item.id)))
+            store.$set(
+              treeData[row.id],
+              'children',
+              data.children.map((item) => item.id)
+            )
             store.$set(lazyTreeNodeMap, row.id, childrenData)
           } else {
-            resolve(data.children.map(item => ({ parent_object: { ...row, children: data.children }, ...item })))
+            resolve(data.children.map((item) => ({ parent_object: { ...row, children: data.children }, ...item })))
           }
         } else {
           if (treeData) {
@@ -836,8 +892,7 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {
-          })
+          .catch()
       } else {
         done()
       }
@@ -859,10 +914,10 @@ export default {
       this.issueMatrixDialog.row = row
     },
     getRowClass({ row }) {
-      return (parseInt(row.id)) ? 'cursor-context-menu' : ''
+      return parseInt(row.id) ? 'cursor-context-menu' : ''
     },
     getContextMenuCurrentValue(column, item) {
-      return this.contextMenu.row[column].map(subItem => subItem.id).includes(item.id)
+      return this.contextMenu.row[column].map((subItem) => subItem.id).includes(item.id)
     }
   }
 }
@@ -886,7 +941,7 @@ export default {
     }
   }
 
-  > > > table {
+  >>> table {
     th {
       padding: 5px;
     }
@@ -917,7 +972,7 @@ export default {
   @apply text-danger font-bold;
 }
 
-> > > .cursor-context-menu {
+>>> .cursor-context-menu {
   cursor: context-menu;
 }
 </style>

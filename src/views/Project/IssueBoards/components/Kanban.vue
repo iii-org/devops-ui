@@ -1,5 +1,8 @@
 <template>
-  <div class="board-column" :class="getHeaderBarClassName(boardObject.name)">
+  <div
+    class="board-column"
+    :class="getHeaderBarClassName(boardObject.name)"
+  >
     <div class="board-column-header">
       <div class="header-bar" />
       <el-row class="flex">
@@ -32,7 +35,10 @@
         />
         <div @contextmenu="handleContextMenu(element, '', $event)">
           <div class="title">
-            <span class="text" @click="handleClick(element.id)">
+            <span
+              class="text"
+              @click="handleClick(element.id)"
+            >
               {{ element.name }}
               <el-tag
                 v-for="item in element.tags"
@@ -45,7 +51,10 @@
               </el-tag>
             </span>
             <div class="action">
-              <div class="icon" @click.stop="handleContextMenu(element, '', $event)">
+              <div
+                class="icon"
+                @click.stop="handleContextMenu(element, '', $event)"
+              >
                 <em class="el-icon-more" />
               </div>
             </div>
@@ -77,19 +86,32 @@
               />
             </span>
             <span v-if="element.done_ratio > 0">
-              <el-tag :type="getStatus(element)" size="mini" effect="dark">
+              <el-tag
+                :type="getStatus(element)"
+                size="mini"
+                effect="dark"
+              >
                 {{ element.done_ratio }}%
               </el-tag>
             </span>
           </div>
         </div>
-        <div v-if="element.family" class="relation">
-          <el-collapse v-model="element.show" @change="onCollapseChange(element)">
+        <div
+          v-if="element.family"
+          class="relation"
+        >
+          <el-collapse
+            v-model="element.show"
+            @change="onCollapseChange(element)"
+          >
             <el-collapse-item name="relation">
               <template #title>
                 <em class="el-icon-caret-right" /> {{ $t('Issue.RelatedIssue') }} {{ element | lengthFilter }}
               </template>
-              <div v-if="element.family" class="parent">
+              <div
+                v-if="element.family"
+                class="parent"
+              >
                 <div
                   v-if="element.hasOwnProperty('parent')"
                   @contextmenu="handleContextMenu(element.parent, '', $event)"
@@ -100,7 +122,11 @@
                     :type="element.parent.status.name"
                     size="mini"
                   />
-                  <el-link type="primary" :underline="false" @click="handleClick(element.parent.id)">
+                  <el-link
+                    type="primary"
+                    :underline="false"
+                    @click="handleClick(element.parent.id)"
+                  >
                     {{ element.parent.name }}
                     <el-tag
                       v-for="item in element.parent.tags"
@@ -126,7 +152,11 @@
                         :type="subElement.status.name"
                         size="mini"
                       />
-                      <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
+                      <el-link
+                        type="primary"
+                        :underline="false"
+                        @click="handleClick(subElement.id)"
+                      >
                         {{ subElement.name }}
                         <el-tag
                           v-for="item in subElement.tags"
@@ -154,7 +184,11 @@
                         :type="subElement.status.name"
                         size="mini"
                       />
-                      <el-link type="primary" :underline="false" @click="handleClick(subElement.id)">
+                      <el-link
+                        type="primary"
+                        :underline="false"
+                        @click="handleClick(subElement.id)"
+                      >
                         {{ subElement.name }}
                         <el-tag
                           v-for="item in subElement.tags"
@@ -173,12 +207,25 @@
             </el-collapse-item>
           </el-collapse>
         </div>
-        <div v-if="element.due_date || Object.keys(element.assigned_to).length > 0" class="info">
-          <div v-if="element.due_date" class="detail due_date" :class="getStatus(element)">
+        <div
+          v-if="element.due_date || Object.keys(element.assigned_to).length > 0"
+          class="info"
+        >
+          <div
+            v-if="element.due_date"
+            class="detail due_date"
+            :class="getStatus(element)"
+          >
             <em class="el-icon-date" />
-            <div class="text" :class="getStatus(element)">{{ element.due_date }}</div>
+            <div
+              class="text"
+              :class="getStatus(element)"
+            >{{ element.due_date }}</div>
           </div>
-          <div v-else class="detail due_date">
+          <div
+            v-else
+            class="detail due_date"
+          >
             <em class="el-icon-date" />
           </div>
           <el-tooltip
@@ -192,11 +239,17 @@
               <div class="text">{{ element.assigned_to.name }}</div>
             </div>
           </el-tooltip>
-          <div v-else class="detail user">
+          <div
+            v-else
+            class="detail user"
+          >
             <em class="el-icon-user-solid" />
           </div>
         </div>
-        <div v-else class="no-info" />
+        <div
+          v-else
+          class="no-info"
+        />
       </div>
       <div slot="header">
         <div
@@ -204,7 +257,10 @@
           class="title board-item select-none"
           @click="showDialog = !showDialog"
         >
-          <em class="el-icon-plus ml-4 mr-5 add-button" :class="{ rotate: showDialog }" /> {{ $t('Issue.AddIssue') }}
+          <em
+            class="el-icon-plus ml-4 mr-5 add-button"
+            :class="{ rotate: showDialog }"
+          /> {{ $t('Issue.AddIssue') }}
         </div>
         <transition name="slide-down">
           <QuickAddIssueOnBoard
@@ -241,7 +297,9 @@ export default {
   },
   filters: {
     lengthFilter(value) {
-      if (!value.hasOwnProperty('parent') && !value.hasOwnProperty('children') && !value.hasOwnProperty('relations')) return null
+      if (!value.hasOwnProperty('parent') && !value.hasOwnProperty('children') && !value.hasOwnProperty('relations')) {
+        return null
+      }
       const parent = value.hasOwnProperty('parent') ? 1 : 0
       const children = value.hasOwnProperty('children') ? value.children.length : 0
       const relations = value.hasOwnProperty('relations') ? value.relations.length : 0
@@ -297,19 +355,19 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId']),
     getHeaderBarClassName() {
-      return function(name) {
+      return function (name) {
         return name.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase())
       }
     },
     differentInDays() {
-      return function(a, b) {
+      return function (a, b) {
         const day = 1000 * 3600 * 24
         const Difference_In_Time = a.getTime() - b.getTime()
         return Difference_In_Time / day
       }
     },
     getPanelLabelParams() {
-      return function(data, element) {
+      return function (data, element) {
         const key = Object.keys(data)[0]
         const value = Object.values(data)[0]
         let params = { [key]: value }
@@ -318,23 +376,25 @@ export default {
       }
     },
     getPanelLabelParamsByTags() {
-      return function(element, key, value) {
+      return function (element, key, value) {
         const result = element.tags
-        const findTagIndex = element.tags.findIndex(item => item.id === value.id)
+        const findTagIndex = element.tags.findIndex((item) => item.id === value.id)
         findTagIndex >= 0 ? result.splice(findTagIndex, 1) : result.push(value)
         return { [key]: result }
       }
     },
     checkChildrenIssuesClosed() {
-      return function(element) {
+      return function (element) {
         const checkedIssue = this.relativeList.length > 0 ? this.findCompleteIssues(element) : element
         if (checkedIssue.children.length === 0) return true
-        return checkedIssue.children.map(issue => issue.is_closed === true).reduce((issue_status, all) => issue_status && all)
+        return checkedIssue.children
+          .map((issue) => issue.is_closed === true)
+          .reduce((issue_status, all) => issue_status && all)
       }
     },
     findCompleteIssues() {
-      return function(element) {
-        return this.relativeList.find(list => list.id === element.id)
+      return function (element) {
+        return this.relativeList.find((list) => list.id === element.id)
       }
     }
   },
@@ -350,7 +410,7 @@ export default {
      */
     canIssueMoved(evt) {
       const toName = evt.to.classList[1]
-      const toClassObj = this.status.find(item => item.name === toName)
+      const toClassObj = this.status.find((item) => item.name === toName)
       const element = evt.draggedContext.element
       const canIssueMoved = this.isIssueNormal(toClassObj, element)
       return canIssueMoved
@@ -451,10 +511,9 @@ export default {
       const h = this.$createElement
       if (!this.showAlert) {
         this.showAlert = true
-        this.$msgbox({ message: h('ul', errorMsg), title: this.$t('Kanban.ChangeIssueError') })
-          .then(() => {
-            this.showAlert = false
-          })
+        this.$msgbox({ message: h('ul', errorMsg), title: this.$t('Kanban.ChangeIssueError') }).then(() => {
+          this.showAlert = false
+        })
       }
       this.errorMsg = []
     },
@@ -491,7 +550,7 @@ export default {
     },
     setRelativeIssue(element, data) {
       const relations = ['parent', 'children', 'relations']
-      relations.forEach(async relation => {
+      relations.forEach(async (relation) => {
         const hasOwnProperty = data.hasOwnProperty(relation)
         if (hasOwnProperty) await this.$set(element, relation, data[relation])
       })
@@ -552,7 +611,7 @@ export default {
       }
 
       .add-button {
-        transition: transform .6s;
+        transition: transform 0.6s;
         @apply m-3;
         &.rotate {
           transform: rotate(225deg);
@@ -633,7 +692,7 @@ export default {
           margin: 0;
         }
 
-        > > > .el-collapse-item {
+        >>> .el-collapse-item {
           &__header {
             height: 2.5em;
           }
@@ -666,14 +725,14 @@ export default {
           }
 
           em {
-            @apply mr-0.5 text-gray-400
+            @apply mr-0.5 text-gray-400;
           }
         }
 
         .due_date {
           .danger {
             font-weight: 900;
-            color: #F56C6C;
+            color: #f56c6c;
           }
 
           .warning {
@@ -748,7 +807,7 @@ export default {
   &.research {
     .board-column-header {
       .header-bar {
-        @apply bg-research
+        @apply bg-research;
       }
     }
   }
@@ -756,7 +815,7 @@ export default {
   &.epic {
     .board-column-header {
       .header-bar {
-        @apply bg-epic
+        @apply bg-epic;
       }
     }
   }
@@ -764,7 +823,7 @@ export default {
   &.audit {
     .board-column-header {
       .header-bar {
-        @apply bg-audit
+        @apply bg-audit;
       }
     }
   }
@@ -780,7 +839,7 @@ export default {
   &.bug {
     .board-column-header {
       .header-bar {
-        @apply bg-bug
+        @apply bg-bug;
       }
     }
   }
@@ -788,7 +847,7 @@ export default {
   &.issue {
     .board-column-header {
       .header-bar {
-        @apply bg-issue
+        @apply bg-issue;
       }
     }
   }
@@ -804,7 +863,7 @@ export default {
   &.risk {
     .board-column-header {
       .header-bar {
-        @apply bg-risk
+        @apply bg-risk;
       }
     }
   }
@@ -812,7 +871,7 @@ export default {
   &.testPlan {
     .board-column-header {
       .header-bar {
-        @apply bg-testPlan
+        @apply bg-testPlan;
       }
     }
   }
@@ -820,7 +879,7 @@ export default {
   &.failManagement {
     .board-column-header {
       .header-bar {
-        @apply bg-failManagement
+        @apply bg-failManagement;
       }
     }
   }

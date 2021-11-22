@@ -1,17 +1,35 @@
 <template>
   <div class="status">
     <template v-for="(value, key) in statusCategory">
-      <el-popover :key="key" placement="bottom-start" trigger="hover">
-        <div v-for="item in value" :key="item" class="status-item">
+      <el-popover
+        :key="key"
+        placement="bottom-start"
+        trigger="hover"
+      >
+        <div
+          v-for="item in value"
+          :key="item"
+          class="status-item"
+        >
           <div :class="`icon ${getSubStatusClass(item, value)}`">
-            <em v-if="getSubStatusClass(item, value)" :class="`el-icon-${icon[getSubStatusClass(item, value)]}`" />
+            <em
+              v-if="getSubStatusClass(item, value)"
+              :class="`el-icon-${icon[getSubStatusClass(item, value)]}`"
+            />
           </div>
           <div class="item-text">
             {{ statusList[item] }}
           </div>
         </div>
-        <div slot="reference" class="item" :class="getStatusClass(key, value)">
-          <em v-if="getStatusClass(key, value)" :class="`el-icon-${icon[getStatusClass(key, value)]}`" />
+        <div
+          slot="reference"
+          class="item"
+          :class="getStatusClass(key, value)"
+        >
+          <em
+            v-if="getStatusClass(key, value)"
+            :class="`el-icon-${icon[getStatusClass(key, value)]}`"
+          />
         </div>
       </el-popover>
     </template>
@@ -97,7 +115,7 @@ export default {
   @apply w-full flex justify-between;
   span {
     @apply w-full;
-    > > > .el-popover__reference-wrapper {
+    >>> .el-popover__reference-wrapper {
       @apply w-full;
     }
   }

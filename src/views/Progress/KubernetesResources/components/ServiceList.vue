@@ -17,8 +17,17 @@
         height="calc(100vh - 300px)"
         fit
       >
-        <el-table-column :label="$t('general.Name')" align="center" prop="name" min-width="200" />
-        <el-table-column :label="$t('general.Actions')" align="center" width="180">
+        <el-table-column
+          :label="$t('general.Name')"
+          align="center"
+          prop="name"
+          min-width="200"
+        />
+        <el-table-column
+          :label="$t('general.Actions')"
+          align="center"
+          width="180"
+        >
           <template slot-scope="scope">
             <el-popconfirm
               confirm-button-text="Delete"
@@ -28,8 +37,13 @@
               title="Are you sure?"
               @confirm="handleDelete(selectedProjectId, scope.row.name)"
             >
-              <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.is_iii">
-                <i class="el-icon-delete" />
+              <el-button
+                slot="reference"
+                size="mini"
+                type="danger"
+                :disabled="scope.row.is_iii"
+              >
+                <em class="el-icon-delete" />
                 {{ $t('general.Delete') }}
               </el-button>
             </el-popconfirm>

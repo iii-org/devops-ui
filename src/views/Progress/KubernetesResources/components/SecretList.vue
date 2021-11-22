@@ -17,11 +17,18 @@
         height="calc(100vh - 300px)"
         fit
       >
-        <el-table-column :label="$t('general.Name')" header-align="center" prop="name">
+        <el-table-column
+          :label="$t('general.Name')"
+          header-align="center"
+          prop="name"
+        >
           <template slot-scope="scope">
             <div class="font-bold">{{ scope.row.name }}</div>
             <div class="text-xs">
-              Keys：<span v-for="(key, keyIdx) in scope.row.keys" :key="keyIdx">
+              Keys：<span
+                v-for="(key, keyIdx) in scope.row.keys"
+                :key="keyIdx"
+              >
                 {{ key }}
                 <span v-if="keyIdx !== scope.row.keys.length - 1">/</span>
               </span>
@@ -29,7 +36,11 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="$t('general.Actions')" align="center" width="240">
+        <el-table-column
+          :label="$t('general.Actions')"
+          align="center"
+          width="240"
+        >
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -74,11 +85,23 @@
         width="60%"
         @close="closeEditDialog"
       >
-        <el-form ref="form" :rules="formRules" :model="form">
+        <el-form
+          ref="form"
+          :rules="formRules"
+          :model="form"
+        >
           <el-form-item label="Secret Name">
-            <el-input v-model="form.name" autocomplete="off" />
+            <el-input
+              v-model="form.name"
+              autocomplete="off"
+            />
           </el-form-item>
-          <el-row v-for="(secret, secretIdx) in form.secrets" :key="secret + secretIdx" :gutter="12" type="flex">
+          <el-row
+            v-for="(secret, secretIdx) in form.secrets"
+            :key="secret + secretIdx"
+            :gutter="12"
+            type="flex"
+          >
             <el-col :span="6">
               <el-form-item
                 :label="`key ${secretIdx + 1} `"
@@ -108,7 +131,10 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="3" style="padding-top: 45px">
+            <el-col
+              :span="3"
+              style="padding-top: 45px"
+            >
               <el-button
                 :id="`btn-delete${secretIdx + 1}`"
                 type="danger"
@@ -120,15 +146,30 @@
               </el-button>
             </el-col>
           </el-row>
-          <el-button id="btn-add-secret-item" type="success" size="small" @click="addItem">
-            <i class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
+          <el-button
+            id="btn-add-secret-item"
+            type="success"
+            size="small"
+            @click="addItem"
+          >
+            <em class="el-icon-plus" /> {{ $t('Maintenance.AddSecret') }}
           </el-button>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button :loading="isUpdating" @click="closeEditDialog">
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
+          <el-button
+            :loading="isUpdating"
+            @click="closeEditDialog"
+          >
             {{ $t('general.Cancel') }}
           </el-button>
-          <el-button type="primary" :loading="isUpdating" @click="editSecretList">
+          <el-button
+            type="primary"
+            :loading="isUpdating"
+            @click="editSecretList"
+          >
             {{ $t('general.Confirm') }}
           </el-button>
         </span>
@@ -162,10 +203,10 @@ export default {
   methods: {
     async fetchData() {
       const res = await getSecretList(this.selectedProjectId)
-      return res.data.map(secret => ({
+      return res.data.map((secret) => ({
         name: secret.name,
         keys: Object.keys(secret.data),
-        secrets: Object.entries(secret.data).map(item => ({
+        secrets: Object.entries(secret.data).map((item) => ({
           key: item[0],
           value: item[1],
           isDisabled: secret.is_iii
@@ -175,7 +216,7 @@ export default {
     showEditDialog(secretName, secrets) {
       this.editDialogVisible = true
       this.form.name = secretName
-      this.form.secrets = secrets.map(item => item)
+      this.form.secrets = secrets.map((item) => item)
     },
     closeEditDialog() {
       this.editDialogVisible = false

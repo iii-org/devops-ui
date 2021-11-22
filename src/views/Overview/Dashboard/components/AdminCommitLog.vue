@@ -1,9 +1,18 @@
 <template>
-  <el-col v-loading="listLoading" class="inner">
+  <el-col
+    v-loading="listLoading"
+    class="inner"
+  >
     <template v-if="listData.length>0">
-      <transition-group name="slide-fade" tag="el-timeline">
-        <el-timeline-item v-for="commit in listData" :key="commit.id" :timestamp="commit.commit_time"
-                          placement="top"
+      <transition-group
+        name="slide-fade"
+        tag="el-timeline"
+      >
+        <el-timeline-item
+          v-for="commit in listData"
+          :key="commit.id"
+          :timestamp="commit.commit_time"
+          placement="top"
         >
           <el-card class="timeline-item-card">
             <h4>{{ commit.commit_title }}</h4>
@@ -25,7 +34,7 @@ export default {
   props: {
     data: {
       type: Function,
-      default: () => ([])
+      default: () => []
     }
   },
   data() {
@@ -56,7 +65,7 @@ export default {
 }
 
 .timeline-item-card {
-  > > > .el-card__body {
+  >>> .el-card__body {
     padding: 10px;
   }
 
@@ -66,16 +75,15 @@ export default {
 }
 
 .slide-fade-enter-active {
-  transition: all .5s ease;
+  transition: all 0.5s ease;
 }
 
 .slide-fade-leave-active {
-  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-fade-enter, .slide-fade-leave-to
-  /* .slide-fade-leave-active for below version 2.1.8 */
-{
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
   transform: translateX(10px);
   opacity: 0;
 }

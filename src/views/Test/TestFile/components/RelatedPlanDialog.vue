@@ -1,17 +1,39 @@
 <template>
   <div>
-    <el-row slot="title" type="flex" align="middle">
-      <el-col :xs="24" :md="16">
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous text-h6"
-                   @click="onBack"
+    <el-row
+      slot="title"
+      type="flex"
+      align="middle"
+    >
+      <el-col
+        :xs="24"
+        :md="16"
+      >
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="previous text-h6"
+          @click="onBack"
         >
           {{ $t('general.Back') }}
         </el-button>
         <span class="text-h6">{{ collection.file_name }}</span> -
-        <IssueTitle ref="IssueTitle" v-model="form.name" />
+        <IssueTitle
+          ref="IssueTitle"
+          v-model="form.name"
+        />
       </el-col>
-      <el-col :xs="24" :md="8" class="text-right">
-        <el-button type="primary" :loading="btnConfirmLoading" @click="handleAddConfirm">
+      <el-col
+        :xs="24"
+        :md="8"
+        class="text-right"
+      >
+        <el-button
+          type="primary"
+          :loading="btnConfirmLoading"
+          @click="handleAddConfirm"
+        >
           {{ $t('general.Save') }}
         </el-button>
       </el-col>
@@ -46,14 +68,31 @@
           :cell-style="{ height: rowHeight + 'px' }"
           @cell-click="handleClick"
         >
-          <el-table-column width="55" type="first">
+          <el-table-column
+            width="55"
+            type="first"
+          >
             <template slot-scope="scope">
-              <el-checkbox :value="isSelectedIssue(scope.row)" class="el-checkbox" @change="toggleIssue(scope.row)" />
+              <el-checkbox
+                :value="isSelectedIssue(scope.row)"
+                class="el-checkbox"
+                @change="toggleIssue(scope.row)"
+              />
             </template>
           </el-table-column>
-          <el-table-column :label="$t('Issue.name')" prop="name" />
-          <el-table-column :label="$t('Issue.Description')" prop="description" show-overflow-tooltip />
-          <el-table-column :label="$t('Issue.Assignee')" prop="assigned_to">
+          <el-table-column
+            :label="$t('Issue.name')"
+            prop="name"
+          />
+          <el-table-column
+            :label="$t('Issue.Description')"
+            prop="description"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            :label="$t('Issue.Assignee')"
+            prop="assigned_to"
+          >
             <template slot-scope="scope">
               <el-tooltip
                 :content="scope.row.assigned_to.login"
@@ -66,9 +105,16 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column label="測試檔案" prop="test_files" show-overflow-tooltip>
+          <el-table-column
+            label="測試檔案"
+            prop="test_files"
+            show-overflow-tooltip
+          >
             <template slot-scope="scope">
-              <span v-for="file in scope.row.test_files" :key="file.id">
+              <span
+                v-for="file in scope.row.test_files"
+                :key="file.id"
+              >
                 <el-tag>{{ file.software_name }}</el-tag> - {{ file.file_name }}
               </span>
             </template>
@@ -83,15 +129,31 @@
           @pagination="onPagination"
         />
       </el-col>
-      <el-col v-if="selectedList.length > 0" class="el-card__footer">
-        <el-col :xs="8" :md="2">
+      <el-col
+        v-if="selectedList.length > 0"
+        class="el-card__footer"
+      >
+        <el-col
+          :xs="8"
+          :md="2"
+        >
           <div class="selected_count">
             {{ $t('User.Selected') }}<span class="value">{{ selectedList.length }}</span>
           </div>
         </el-col>
-        <el-col :xs="16" :md="22" class="scroll-x">
-          <el-tag v-for="(item, idx) in selectedList" :key="idx" class="item" closable @close="onRemoveIssue(item)">
-            <b>{{ idx + 1 }}</b>.{{ item.name }}
+        <el-col
+          :xs="16"
+          :md="22"
+          class="scroll-x"
+        >
+          <el-tag
+            v-for="(item, idx) in selectedList"
+            :key="idx"
+            class="item"
+            closable
+            @close="onRemoveIssue(item)"
+          >
+            <strong>{{ idx + 1 }}</strong>.{{ item.name }}
           </el-tag>
         </el-col>
       </el-col>
@@ -149,7 +211,7 @@ export default {
         keys: ['name', 'description', 'assigned_to.name']
       })
       const res = fuse.search('!' + this.searchValue)
-      return res.map(items => items.item)
+      return res.map((items) => items.item)
     }
   },
   watch: {
@@ -160,9 +222,9 @@ export default {
       this.fetchData()
     },
     pagedData(value) {
-      const getSelectedListName = this.selectedList.map((item) => (item.id))
-      const getSelectedRow = value.filter((item) => (getSelectedListName.includes(item.file_name)))
-      getSelectedRow.forEach(row => {
+      const getSelectedListName = this.selectedList.map((item) => item.id)
+      const getSelectedRow = value.filter((item) => getSelectedListName.includes(item.file_name))
+      getSelectedRow.forEach((row) => {
         this.$refs['issueTable'].toggleRowSelection(row)
       })
     }
@@ -174,36 +236,40 @@ export default {
   methods: {
     async fetchData() {
       return getTestPlanList(this.selectedProjectId)
-        .then(res => {
+        .then((res) => {
           return Promise.resolve(res.data)
         })
-        .catch(e => {
+        .catch((e) => {
           return Promise.reject(e)
         })
     },
     testPlanDifferent() {
       let oldSetting = []
       if (this.collection.test_plans && this.collection.test_plans) {
-        oldSetting = this.collection.test_plans.map((item) => (item.id))
+        oldSetting = this.collection.test_plans.map((item) => item.id)
       }
-      const newSetting = this.selectedList.map((item) => (item.id))
+      const newSetting = this.selectedList.map((item) => item.id)
       const result = [...oldSetting, ...newSetting]
       const merge = [...new Set(result)]
-      const append = [...merge.filter((item) => (!oldSetting.includes(item)))]
-      const remove = [...merge.filter((item) => (!newSetting.includes(item)))
-        .map((item) => {
-          return this.collection.test_plans.find((issue) => (issue.id === item)).test_files.find((item) => (item.file_name === this.collection.file_name)).id
-        })
+      const append = [...merge.filter((item) => !oldSetting.includes(item))]
+      const remove = [
+        ...merge
+          .filter((item) => !newSetting.includes(item))
+          .map((item) => {
+            return this.collection.test_plans
+              .find((issue) => issue.id === item)
+              .test_files.find((file) => file.file_name === this.collection.file_name).id
+          })
       ]
       return this.$set(this, 'selectedIssue', { append: append, remove: remove, merge: merge })
     },
     toggleSelectAllIssue(event) {
       if (event) {
-        this.$refs['issueTable'].data.forEach(item => {
+        this.$refs['issueTable'].data.forEach((item) => {
           this.onAddIssue(item)
         })
       } else {
-        this.$refs['issueTable'].data.forEach(item => {
+        this.$refs['issueTable'].data.forEach((item) => {
           this.onRemoveIssue(item)
         })
       }
@@ -222,11 +288,11 @@ export default {
       this.selectedList.push(row)
     },
     onRemoveIssue(row) {
-      const find = this.selectedList.find((item) => (item.id === row.id))
+      const find = this.selectedList.find((item) => item.id === row.id)
       this.selectedList.splice(this.selectedList.indexOf(find), 1)
     },
     isSelectedIssue(row) {
-      const find = this.selectedList.find((item) => (item.id === row.id))
+      const find = this.selectedList.find((item) => item.id === row.id)
       return this.selectedList.indexOf(find) >= 0
     },
     handleClick(row, column) {
@@ -239,22 +305,20 @@ export default {
       await this.$emit('save', { collection: this.collection, test_plans: this.selectedIssue })
       await this.$emit('close-dialog', 'relatedPlan')
     }
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-> > > .el-dialog__header {
+>>> .el-dialog__header {
   display: none;
 }
 
-> > > .el-dialog__body {
+>>> .el-dialog__body {
   padding-top: 0;
 }
 
-> > > .el-card {
+>>> .el-card {
   &__footer {
     padding: 18px 20px;
     border-top: 1px solid #ebeef5;
@@ -303,7 +367,7 @@ export default {
   }
 }
 
-> > > .pagination-container {
+>>> .pagination-container {
   padding: 10px 0;
 }
 
@@ -327,7 +391,7 @@ export default {
   }
 }
 
-> > > .el-tag {
+>>> .el-tag {
   &.el-tag {
     margin-left: 10px;
   }
@@ -341,7 +405,7 @@ export default {
   padding-bottom: 0;
 }
 
-> > > .el-form {
+>>> .el-form {
   display: inline;
   margin: 0 0 0 10px;
 

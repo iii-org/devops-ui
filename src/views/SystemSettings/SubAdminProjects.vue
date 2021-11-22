@@ -1,14 +1,39 @@
 <template>
-  <el-row v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="20">
-    <el-col :span="11" :xs="7" :sm="5">
-      <el-row :gutter="10" class="text-center">
-        <el-col :span="24" class="text-title mb-5">
+  <el-row
+    v-loading="isLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+    :gutter="20"
+  >
+    <el-col
+      :span="11"
+      :xs="7"
+      :sm="5"
+    >
+      <el-row
+        :gutter="10"
+        class="text-center"
+      >
+        <el-col
+          :span="24"
+          class="text-title mb-5"
+        >
           {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
         </el-col>
-        <el-col :span="24" class="mb-2">
-          <el-input v-model="keyword" prefix-icon="el-icon-search" :placeholder="$t('Project.SearchProjectName')" />
+        <el-col
+          :span="24"
+          class="mb-2"
+        >
+          <el-input
+            v-model="keyword"
+            prefix-icon="el-icon-search"
+            :placeholder="$t('Project.SearchProjectName')"
+          />
         </el-col>
-        <el-col :span="24" :style="{ overflow: 'hidden auto', 'max-height': `calc(100vh - 200px)` }">
+        <el-col
+          :span="24"
+          :style="{ overflow: 'hidden auto', 'max-height': `calc(100vh - 200px)` }"
+        >
           <draggable
             :list="filteredProjects"
             :group="{ name: 'project', pull: 'clone', put: false }"
@@ -31,9 +56,16 @@
       </el-row>
     </el-col>
 
-    <el-col :span="13" :xs="17" :sm="19">
+    <el-col
+      :span="13"
+      :xs="17"
+      :sm="19"
+    >
       <el-row :gutter="10">
-        <el-col :span="24" class="mb-3">
+        <el-col
+          :span="24"
+          class="mb-3"
+        >
           <el-select
             v-model="selectedSubAdmins"
             filterable
@@ -52,7 +84,15 @@
         </el-col>
       </el-row>
       <el-row :gutter="10">
-        <el-col v-for="user in subAdminProjects" :key="user.id" :span="24" :sm="12" :lg="8" :xl="6" class="mb-2">
+        <el-col
+          v-for="user in subAdminProjects"
+          :key="user.id"
+          :span="24"
+          :sm="12"
+          :lg="8"
+          :xl="6"
+          class="mb-2"
+        >
           <el-card :style="{ 'border-top': `5px solid ${user.color}` }">
             <div class="text-center mb-1">
               <span class="text-title">{{ user.name }}</span>
@@ -74,7 +114,7 @@
               >
                 <div class="flex justify-between">
                   <span class="text-sm">{{ project.name }}</span>
-                  <i
+                  <em
                     class="el-icon-close cursor-pointer text-sm"
                     @click="removeProjectPermission(user.id, project.id)"
                   />
@@ -127,7 +167,7 @@ export default {
   computed: {
     filteredProjects() {
       const keyword = this.keyword.toLowerCase()
-      return this.adminProjects.filter(project => project.name.toLowerCase().includes(keyword))
+      return this.adminProjects.filter((project) => project.name.toLowerCase().includes(keyword))
     }
   },
   mounted() {
@@ -137,14 +177,14 @@ export default {
     fetchData() {
       this.isLoading = true
       Promise.all([getAdminProjects(), getSubAdmins()])
-        .then(res => {
-          this.adminProjects = res[0].data.map(project => ({
+        .then((res) => {
+          this.adminProjects = res[0].data.map((project) => ({
             id: project.id,
             name: project.name
           }))
           this.subAdmins = res[1].data
         })
-        .catch(err => console.error(err))
+        .catch((err) => console.error(err))
         .then(() => {
           this.isLoading = false
         })
@@ -160,13 +200,13 @@ export default {
     fetchSubAdminProjects() {
       const params = { id: this.selectedSubAdmins.toString() }
       getSubAdminProjects(params)
-        .then(res => {
-          this.subAdminProjects = res.data.map(user => ({
+        .then((res) => {
+          this.subAdminProjects = res.data.map((user) => ({
             ...user,
             color: randomColor()
           }))
         })
-        .catch(err => console.error(err))
+        .catch((err) => console.error(err))
     },
     addProjectPermission(user_id, project_id) {
       setProjectPermission({ user_id, project_id })
@@ -177,7 +217,7 @@ export default {
             type: 'success'
           })
         })
-        .catch(err => console.error(err))
+        .catch((err) => console.error(err))
     },
     removeProjectPermission(user_id, project_id) {
       deleteProjectPermission({ user_id, project_id })
@@ -189,11 +229,11 @@ export default {
           })
           this.removeSubAdminProjects(user_id, project_id)
         })
-        .catch(err => console.error(err))
+        .catch((err) => console.error(err))
     },
     removeSubAdminProjects(userId, projectId) {
-      const userIdx = this.subAdminProjects.findIndex(user => user.id === userId)
-      const projectIdx = this.subAdminProjects[userIdx].projects.findIndex(project => project.id === projectId)
+      const userIdx = this.subAdminProjects.findIndex((user) => user.id === userId)
+      const projectIdx = this.subAdminProjects[userIdx].projects.findIndex((project) => project.id === projectId)
       this.subAdminProjects[userIdx].projects.splice(projectIdx, 1)
     },
     checkMove(evt) {
@@ -202,13 +242,13 @@ export default {
         let result = true
         draggedContext.forEach((item) => {
           const draggedId = item.element.id
-          const qaProjects = evt.relatedContext.list.map(project => project.id)
+          const qaProjects = evt.relatedContext.list.map((project) => project.id)
           if (qaProjects.includes(draggedId)) result = result && false
         })
         return result
       } else {
         const draggedId = draggedContext.element.id
-        const qaProjects = evt.relatedContext.list.map(project => project.id)
+        const qaProjects = evt.relatedContext.list.map((project) => project.id)
         if (qaProjects.includes(draggedId)) return false
       }
     },
@@ -242,9 +282,8 @@ export default {
 @import 'src/styles/variables.scss';
 
 .sortable-selected {
-  >>>.el-card__body{
-    background-color: mix($menuActiveText, #FFFFFF, 20%);
+  >>> .el-card__body {
+    background-color: mix($menuActiveText, #ffffff, 20%);
   }
 }
-
 </style>

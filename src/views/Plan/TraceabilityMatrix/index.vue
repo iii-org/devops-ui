@@ -13,57 +13,107 @@
               filterable
               @change="handleSetDefault"
             >
-              <el-option v-for="trackOrder in trackerMapOptions" :key="trackOrder.id" :label="trackOrder.name"
-                         :value="trackOrder.id"
+              <el-option
+                v-for="trackOrder in trackerMapOptions"
+                :key="trackOrder.id"
+                :label="trackOrder.name"
+                :value="trackOrder.id"
               />
             </el-select>
           </el-form-item>
-          <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()"
-                     @click="settingDialogVisible=!settingDialogVisible"
+          <el-button
+            class="w-full"
+            icon="el-icon-setting"
+            :loading="isRunning()"
+            @click="settingDialogVisible=!settingDialogVisible"
           >
             {{ $t('Track.CheckRuleSettings') }}
           </el-button>
           <el-divider />
-          <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
+          <el-form-item
+            :label="$t('Track.CheckOrder')"
+            class="relation_settings"
+          >
             <ol>
-              <li v-for="item in trackerMapTarget.order" :key="item">{{ $t(`Issue.${item}`) }}</li>
+              <li
+                v-for="item in trackerMapTarget.order"
+                :key="item"
+              >{{ $t(`Issue.${item}`) }}</li>
             </ol>
           </el-form-item>
-          <el-button class="w-full" type="primary" icon="el-icon-check" :loading="isRunning()"
-                     @click="createTraceCheckJob"
+          <el-button
+            class="w-full"
+            type="primary"
+            icon="el-icon-check"
+            :loading="isRunning()"
+            @click="createTraceCheckJob"
           >
             {{ $t('Track.Run') }}
           </el-button>
         </el-form>
-        <el-button slot="reference" icon="el-icon-s-operation" type="text" :loading="chartLoading"
-                   :disabled="chartLoading"
+        <el-button
+          slot="reference"
+          icon="el-icon-s-operation"
+          type="text"
+          :loading="chartLoading"
+          :disabled="chartLoading"
         > {{ $t('Track.TraceabilityCheck') }}
-          <em class="el-icon-arrow-down el-icon--right" /></el-button>
+          <em class="el-icon-arrow-down el-icon--right" />
+        </el-button>
       </el-popover>
     </project-list-selector>
     <el-divider />
-    <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" />
-    <el-tabs v-else v-model="activeTab" type="border-card">
-      <el-tab-pane :label="$t('Track.DemandTraceability')" name="map">
-        <el-form v-if="filterSettingVisible" inline>
+    <el-empty
+      v-if="selectedProjectId === -1"
+      :description="$t('general.NoData')"
+    />
+    <el-tabs
+      v-else
+      v-model="activeTab"
+      type="border-card"
+    >
+      <el-tab-pane
+        :label="$t('Track.DemandTraceability')"
+        name="map"
+      >
+        <el-form
+          v-if="filterSettingVisible"
+          inline
+        >
           <el-form-item>
-            <el-button size="small" icon="el-icon-arrow-right" @click="filterSettingVisible=!filterSettingVisible" />
+            <el-button
+              size="small"
+              icon="el-icon-arrow-right"
+              @click="filterSettingVisible=!filterSettingVisible"
+            />
           </el-form-item>
-          <el-form-item v-show="!chartSettingVisible" :label="$t('Issue.tracker')">
+          <el-form-item
+            v-show="!chartSettingVisible"
+            :label="$t('Issue.tracker')"
+          >
             <el-select
               v-model="filterValue.tracker_id"
               :placeholder="$t('Issue.SelectType')"
               :disabled="selectedProjectId === -1"
               filterable
             >
-              <el-option v-for="track in trackerList" :key="track.id" :label="$t('Issue.'+track.name)"
-                         :value="track.id"
+              <el-option
+                v-for="track in trackerList"
+                :key="track.id"
+                :label="$t('Issue.'+track.name)"
+                :value="track.id"
               >
-                <Tracker :name="$t(`Issue.${track.name}`)" :type="track.name" />
+                <Tracker
+                  :name="$t(`Issue.${track.name}`)"
+                  :type="track.name"
+                />
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-show="!chartSettingVisible" :label="$t('Issue.Issue')">
+          <el-form-item
+            v-show="!chartSettingVisible"
+            :label="$t('Issue.Issue')"
+          >
             <el-select
               v-model="filterValue.issue_id"
               style="width: 100%"
@@ -89,15 +139,20 @@
                   <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
                   <span v-html="highLight(item.name)" />
                 </span>
-                <span style="float: right; color: #8492a6; font-size: 13px"
-                      v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                <span
+                  style="float: right; color: #8492a6; font-size: 13px"
+                  v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
                 />
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item v-show="!chartSettingVisible">
-            <el-button icon="el-icon-s-operation" type="primary" :loading="chartLoading"
-                       :disabled="chartLoading" @click="onPaintChart"
+            <el-button
+              icon="el-icon-s-operation"
+              type="primary"
+              :loading="chartLoading"
+              :disabled="chartLoading"
+              @click="onPaintChart"
             >
               {{ $t('Track.StartPaint') }}
             </el-button>
@@ -108,22 +163,36 @@
               trigger="click"
             >
               <el-menu class="download">
-                <el-menu-item :disabled="selectedProjectId === -1" @click="downloadCSVReport">
+                <el-menu-item
+                  :disabled="selectedProjectId === -1"
+                  @click="downloadCSVReport"
+                >
                   <em class="el-icon-download" />{{ $t('Track.DownloadExcel') }}
                 </el-menu-item>
-                <el-menu-item :disabled="selectedProjectId === -1" @click="downloadSVG">
+                <el-menu-item
+                  :disabled="selectedProjectId === -1"
+                  @click="downloadSVG"
+                >
                   <em class="el-icon-download" />{{ $t('Track.DownloadSVG') }}
                 </el-menu-item>
               </el-menu>
-              <el-button slot="reference" icon="el-icon-download">{{ $t('Track.Download') }}</el-button>
+              <el-button
+                slot="reference"
+                icon="el-icon-download"
+              >{{ $t('Track.Download') }}</el-button>
             </el-popover>
           </el-form-item>
           <el-form-item>
-            <el-button :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'" type="success"
-                       @click="chartSettingVisible=!chartSettingVisible"
+            <el-button
+              :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'"
+              type="success"
+              @click="chartSettingVisible=!chartSettingVisible"
             />
           </el-form-item>
-          <el-form-item v-show="chartSettingVisible" :label="$t('general.group')">
+          <el-form-item
+            v-show="chartSettingVisible"
+            :label="$t('general.group')"
+          >
             <el-switch
               v-model="group"
               :active-text="$t('general.on')"
@@ -137,7 +206,10 @@
               :inactive-text="$t('Issue.tracker')"
             />
           </el-form-item>
-          <el-form-item v-show="chartSettingVisible" :label="$t('Issue.fixed_version')">
+          <el-form-item
+            v-show="chartSettingVisible"
+            :label="$t('Issue.fixed_version')"
+          >
             <el-select
               v-model="filterValue.fixed_version_id"
               multiple
@@ -146,29 +218,53 @@
               clearable
               filterable
             >
-              <el-option v-for="version in versionFilterList" :key="version.id" :label="version.name"
-                         :value="version.id"
+              <el-option
+                v-for="version in versionFilterList"
+                :key="version.id"
+                :label="version.name"
+                :value="version.id"
               />
             </el-select>
           </el-form-item>
         </el-form>
 
-        <div ref="wrapper" class="wrapper" :class="{'hidden-filter-setting': !filterSettingVisible}">
-          <div v-if="!filterSettingVisible" class="float-setting">
+        <div
+          ref="wrapper"
+          class="wrapper"
+          :class="{'hidden-filter-setting': !filterSettingVisible}"
+        >
+          <div
+            v-if="!filterSettingVisible"
+            class="float-setting"
+          >
             <el-form inline>
               <el-form-item>
-                <el-button icon="el-icon-arrow-left" type="primary"
-                           @click="filterSettingVisible=!filterSettingVisible"
+                <el-button
+                  icon="el-icon-arrow-left"
+                  type="primary"
+                  @click="filterSettingVisible=!filterSettingVisible"
                 />
               </el-form-item>
             </el-form>
           </div>
-          <el-alert v-if="getPercentProgress<100||issueLoading" type="warning" class="mb-4 loading" :closable="false">
+          <el-alert
+            v-if="getPercentProgress<100||issueLoading"
+            type="warning"
+            class="mb-4 loading"
+            :closable="false"
+          >
             <h2 slot="title"><em class="el-icon-loading" /> {{ $t('Loading') }}</h2>
-            <el-progress v-if="getPercentProgress" :percentage="getPercentProgress" />
+            <el-progress
+              v-if="getPercentProgress"
+              :percentage="getPercentProgress"
+            />
           </el-alert>
-          <div v-show="data.length>0" ref="matrix" v-dragscroll class="mermaid-wrapper"
-               :style="{height:`${tableHeight}px`}"
+          <div
+            v-show="data.length>0"
+            ref="matrix"
+            v-dragscroll
+            class="mermaid-wrapper"
+            :style="{height:`${tableHeight}px`}"
           >
             <h3>{{ $t('Track.DemandTraceability') }}
               <template v-if="startPoint">（{{ $t('Track.StartingPoint') }}：{{ startPoint }}）</template>
@@ -182,14 +278,25 @@
               @nodeClick="editNode"
             />
             <div class="toolbar">
-              <el-slider v-model="zoom" :min="25" :max="500" :step="25" />
+              <el-slider
+                v-model="zoom"
+                :min="25"
+                :max="500"
+                :step="25"
+              />
             </div>
           </div>
-          <el-empty v-if="data.length<=0" :description="$t('general.NoData')" />
+          <el-empty
+            v-if="data.length<=0"
+            :description="$t('general.NoData')"
+          />
         </div>
       </el-tab-pane>
-      <el-tab-pane v-loading="listLoading" :label="$t('Track.TraceabilityCheck')" name="check"
-                   :element-loading-text="$t('Loading')"
+      <el-tab-pane
+        v-loading="listLoading"
+        :label="$t('Track.TraceabilityCheck')"
+        name="check"
+        :element-loading-text="$t('Loading')"
       >
         <el-form inline>
           <el-form-item :label="$t('Track.CheckRule')">
@@ -199,50 +306,88 @@
               filterable
               @change="handleSetDefault"
             >
-              <el-option v-for="trackOrder in trackerMapOptions" :key="trackOrder.id" :label="trackOrder.name"
-                         :value="trackOrder.id"
+              <el-option
+                v-for="trackOrder in trackerMapOptions"
+                :key="trackOrder.id"
+                :label="trackOrder.name"
+                :value="trackOrder.id"
               />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button class="w-full" icon="el-icon-setting" :loading="isRunning()"
-                       @click="settingDialogVisible=!settingDialogVisible"
+            <el-button
+              class="w-full"
+              icon="el-icon-setting"
+              :loading="isRunning()"
+              @click="settingDialogVisible=!settingDialogVisible"
             >
               {{ $t('Track.CheckRuleSettings') }}
             </el-button>
           </el-form-item>
-          <el-form-item :label="$t('Track.CheckOrder')" class="relation_settings">
-            <div v-for="(item,idx) in trackerMapTarget.order" :key="item" class="item">{{ idx + 1 }}.
+          <el-form-item
+            :label="$t('Track.CheckOrder')"
+            class="relation_settings"
+          >
+            <div
+              v-for="(item,idx) in trackerMapTarget.order"
+              :key="item"
+              class="item"
+            >{{ idx + 1 }}.
               <el-tag>
-                <Tracker :name="$t(`Issue.${item}}`)" :type="item" />
+                <Tracker
+                  :name="$t(`Issue.${item}}`)"
+                  :type="item"
+                />
               </el-tag>
             </div>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-check" :loading="isRunning()" @click="createTraceCheckJob">
+            <el-button
+              type="primary"
+              icon="el-icon-check"
+              :loading="isRunning()"
+              @click="createTraceCheckJob"
+            >
               {{ $t('Track.Run') }}
             </el-button>
           </el-form-item>
         </el-form>
-        <TraceCheck v-if="activeTab==='check'" ref="TraceCheck" :tracker-map-target="trackerMapTarget"
-                    @show-issue="onRelationIssueDialog"
+        <TraceCheck
+          v-if="activeTab==='check'"
+          ref="TraceCheck"
+          :tracker-map-target="trackerMapTarget"
+          @show-issue="onRelationIssueDialog"
         />
       </el-tab-pane>
     </el-tabs>
-    <el-dialog :title="$t('Track.TraceabilityCheck')" :visible.sync="settingDialogVisible" width="80%" top="3vh"
-               append-to-body destroy-on-close
+    <el-dialog
+      :title="$t('Track.TraceabilityCheck')"
+      :visible.sync="settingDialogVisible"
+      width="80%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
     >
-      <OrderListDialog :tracker-map-options="trackerMapOptions" @update="getTrackerMapOptions" />
+      <OrderListDialog
+        :tracker-map-options="trackerMapOptions"
+        @update="getTrackerMapOptions"
+      />
     </el-dialog>
-    <el-dialog :visible.sync="relationIssue.visible" width="90%" top="3vh" append-to-body destroy-on-close
-               :before-close="handleRelationIssueDialogBeforeClose"
+    <el-dialog
+      :visible.sync="relationIssue.visible"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
     >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationUpdate"
+      <ProjectIssueDetail
+        v-if="relationIssue.visible"
+        ref="children"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationUpdate"
       />
     </el-dialog>
   </div>
@@ -257,8 +402,10 @@ import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import { mapGetters } from 'vuex'
 import {
   getTestFileByTestPlan,
-  getTraceabilityMatrixReport, patchTraceOrderExecute,
-  getTraceOrderList, patchTraceOrder
+  getTraceabilityMatrixReport,
+  patchTraceOrderExecute,
+  getTraceOrderList,
+  patchTraceOrder
 } from '@/api/qa'
 import { camelCase, cloneDeep } from 'lodash'
 import OrderListDialog from './components/OrderListDialog'
@@ -326,7 +473,9 @@ export default {
       if (!this.nowFilterValue.issueList || this.nowFilterValue.issueList.length <= 0) {
         return null
       }
-      return this.nowFilterValue.issueList.map(issue => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.name}`).join(', ')
+      return this.nowFilterValue.issueList
+        .map((issue) => `${this.$t(`Issue.${issue.tracker.name}`)} #${issue.id} - ${issue.name}`)
+        .join(', ')
     },
     getPercentProgress() {
       return Math.round((this.chartProgress.now / this.chartProgress.total) * 100)
@@ -334,7 +483,7 @@ export default {
     trackerList() {
       if (!this.trackerMapTarget.order) return []
       if (this.trackerMapTarget.order.length === 0) return this.tracker
-      return this.tracker.filter(item => (this.trackerMapTarget.order.includes(item.name)))
+      return this.tracker.filter((item) => this.trackerMapTarget.order.includes(item.name))
     },
     trackerMap() {
       return this.trackerMapTarget.order.map((item, idx) => {
@@ -358,19 +507,26 @@ export default {
       })
     },
     versionFilterList() {
-      const nowVersionList = [...new Set(this.chartIssueList.map(issue => (issue.fixed_version && issue.fixed_version.id) ? issue.fixed_version.id : 'null'))]
-      return this.fixed_version.filter(version => nowVersionList.includes(version.id))
+      const nowVersionList = [
+        ...new Set(
+          this.chartIssueList.map((issue) =>
+            issue.fixed_version && issue.fixed_version.id ? issue.fixed_version.id : 'null'
+          )
+        )
+      ]
+      return this.fixed_version.filter((version) => nowVersionList.includes(version.id))
     },
     data() {
       const chartIssueList = this.chartIssueList
-      const chartData = chartIssueList.map(issue => this.formatChartData(issue, this.group, this.status_toggle))
-      let testFileList = chartIssueList.map(issue => (issue.test_files) ? issue.test_files : null)
-        .filter(issue => issue)
-      testFileList = [].concat.apply([], testFileList).map(test_file => this.formatTestFile(test_file, this.group))
+      const chartData = chartIssueList.map((issue) => this.formatChartData(issue, this.group, this.status_toggle))
+      let testFileList = chartIssueList
+        .map((issue) => (issue.test_files ? issue.test_files : null))
+        .filter((issue) => issue)
+      testFileList = [].concat.apply([], testFileList).map((test_file) => this.formatTestFile(test_file, this.group))
       testFileList = [].concat.apply([], testFileList)
       const result = chartData.concat(testFileList)
-      const unique_check = [...new Set(result.map(issue => issue.id))]
-      return unique_check.map(item => result.find(issue => issue.id === item))
+      const unique_check = [...new Set(result.map((issue) => issue.id))]
+      return unique_check.map((item) => result.find((issue) => issue.id === item))
     }
   },
   watch: {
@@ -430,7 +586,7 @@ export default {
       if (this.selectedProjectId === -1) return Promise.reject()
       this.$set(this, 'chartIssueList', [])
       if (this.trackerMapTarget.order && this.trackerMapTarget.order.length > 0) {
-        const getTracker = this.trackerList.find(item => item.name === this.trackerMapTarget.order[0])
+        const getTracker = this.trackerList.find((item) => item.name === this.trackerMapTarget.order[0])
         this.$set(this.filterValue, 'tracker_id', getTracker.id)
       }
       return Promise.resolve()
@@ -438,7 +594,7 @@ export default {
     async getTrackerMapOptions() {
       const response = await getTraceOrderList({ project_id: this.selectedProjectId })
       this.trackerMapOptions = response.data
-      const trackerOrder = this.trackerMapOptions.find(item => item.default)
+      const trackerOrder = this.trackerMapOptions.find((item) => item.default)
       if (trackerOrder) {
         this.$set(this.$data, 'trackerMapTarget', cloneDeep(trackerOrder))
       } else {
@@ -467,28 +623,35 @@ export default {
       }
       const CancelToken = axios.CancelToken.source()
       this.cancelToken = CancelToken
-      const issueList = await getProjectIssueList(this.selectedProjectId, {
-        tracker_id: this.filterValue.tracker_id,
-        selection: true,
-        ...querySearch
-      }, { cancelToken: CancelToken.token })
+      const issueList = await getProjectIssueList(
+        this.selectedProjectId,
+        {
+          tracker_id: this.filterValue.tracker_id,
+          selection: true,
+          ...querySearch
+        },
+        { cancelToken: CancelToken.token }
+      )
       this.issueList = issueList.data
       this.issueLoading = false
       this.cancelToken = null
     },
-    highLight: function(value) {
+    highLight: function (value) {
       if (!value) return ''
       if (!this.issueQuery) return value
       const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function(str) {
-        return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
+      return value.replace(reg, function (str) {
+        return "<span class='bg-yellow-200 text-danger p-1'><strong>" + str + '</strong></span>'
       })
     },
     checkUniqueRelationLine(subIssue_id, issue_id) {
-      return !(Object.keys(this.relationLine).includes(subIssue_id.toString()) && this.relationLine[subIssue_id].includes(issue_id))
+      return !(
+        Object.keys(this.relationLine).includes(subIssue_id.toString()) &&
+        this.relationLine[subIssue_id].includes(issue_id)
+      )
     },
     checkNextRelation(subIssue_tracker, issue_tracker) {
-      const object = this.trackerMap.find(item => issue_tracker === item.name)
+      const object = this.trackerMap.find((item) => issue_tracker === item.name)
       if (!object) return true
       return [...object.relation.children, object.name].includes(subIssue_tracker)
     },
@@ -498,14 +661,20 @@ export default {
       let children = []
       let relations = []
       if (issue['children']) {
-        children = issue['children'].map(item => item.id)
+        children = issue['children'].map((item) => item.id)
         for (let index = 0; index < children.length; index++) {
           link.push('-->')
         }
       }
       if (issue['relations']) {
-        relations = issue['relations'].map(item => (this.checkNextRelation(item.tracker.name, issue.tracker.name) && this.checkUniqueRelationLine(item.id, issue.id)) ? item.id : null)
-          .filter(item => item !== null)
+        relations = issue['relations']
+          .map((item) =>
+            this.checkNextRelation(item.tracker.name, issue.tracker.name) &&
+            this.checkUniqueRelationLine(item.id, issue.id)
+              ? item.id
+              : null
+          )
+          .filter((item) => item !== null)
         for (let index = 0; index < relations.length; index++) {
           link.push('-.' + this.$t('Issue.RelatedIssue') + '.-')
         }
@@ -513,7 +682,7 @@ export default {
       }
       children = children.concat(relations)
       if (issue['test_files']) {
-        const test_files = issue['test_files'].map(item => item.file_name)
+        const test_files = issue['test_files'].map((item) => item.file_name)
         for (let index = 0; index < test_files.length; index++) {
           link.push('-->')
         }
@@ -527,7 +696,9 @@ export default {
       }
       point['text'] = `"#${issue.id} - ${checkIssueName}<br/>`
       if (issue.fixed_version && issue.fixed_version.name) {
-        point['text'] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
+        point[
+          'text'
+        ] += `<span style=\'border-radius: 0.25rem; background: white; font-size: 0.75em; padding: 3px 5px; margin: 3px 5px;\'>${issue.fixed_version.name}</span>`
       }
 
       if (group) {
@@ -551,7 +722,10 @@ export default {
       }
 
       if (issue.fixed_version && issue.fixed_version.id) {
-        if (this.filterValue.fixed_version_id.length > 0 && !this.filterValue.fixed_version_id.includes(issue.fixed_version && issue.fixed_version.id)) {
+        if (
+          this.filterValue.fixed_version_id.length > 0 &&
+          !this.filterValue.fixed_version_id.includes(issue.fixed_version && issue.fixed_version.id)
+        ) {
           point['style'] += `,opacity: 0.25,color: #00000040`
         }
       }
@@ -592,7 +766,13 @@ export default {
           status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
           count_result = `${status_light}  <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
         }
-        last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
       } else if (test_file.software_name === 'SideeX') {
         const success = test_file.the_last_test_result.result.casesPassed
         const total = test_file.the_last_test_result.result.casesTotal
@@ -604,7 +784,13 @@ export default {
           status_light = `<div style=\'width:10px; height: 10px; background-color: ${color['failure']}; display:inline-block; border-radius: 99999px; \'></div>`
           count_result = ` ${status_light} <span style=\'color: ${color['failure']}; font-weight:600;\'>Failure (${success} / ${total})</span>`
         }
-        last_result = count_result + '<br/>' + test_file.the_last_test_result.branch + '<br/> ' + commit_icon + test_file.the_last_test_result.commit_id
+        last_result =
+          count_result +
+          '<br/>' +
+          test_file.the_last_test_result.branch +
+          '<br/> ' +
+          commit_icon +
+          test_file.the_last_test_result.commit_id
       }
       const file_result = {
         id: `${test_file.software_name}.${test_file.file_name}_result`,
@@ -646,18 +832,18 @@ export default {
       this.chartLoading = false
     },
     PaintNetwork(vueInstance, rootIssue) {
-      this.startNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === rootIssue.tracker.name))
+      this.startNodeIndex = vueInstance.trackerMap.findIndex((item) => item.name === rootIssue.tracker.name)
       this.accessedIssueId = []
-      this.getIssueFamilyData = async function(chartIssueList) {
-        const getIssueFamilyAPI = chartIssueList.map(issue => {
+      this.getIssueFamilyData = async function (chartIssueList) {
+        const getIssueFamilyAPI = chartIssueList.map((issue) => {
           this.accessedIssueId.push(issue.id)
           return getIssueFamily(issue.id)
         })
         const response = await Promise.all(getIssueFamilyAPI)
-        return Promise.resolve(response.map(res => res.data))
+        return Promise.resolve(response.map((res) => res.data))
       }
 
-      this.getPaintFamily = async function(issue, issueFamily) {
+      this.getPaintFamily = async function (issue, issueFamily) {
         vueInstance.chartProgress.total += 1
         const findRelationTargets = await this.getRelationTargets(issue)
         if (findRelationTargets.includes('TestFile')) {
@@ -677,7 +863,7 @@ export default {
         return Promise.resolve(issue)
       }
 
-      this.combineFamilyList = function(issue, family) {
+      this.combineFamilyList = function (issue, family) {
         let getFamilyList = []
         Object.keys(family).forEach((relationType) => {
           if (!Array.isArray(family[relationType])) {
@@ -686,17 +872,17 @@ export default {
           family[relationType] = this.formatFamilyList(issue, family[relationType], relationType)
           getFamilyList = getFamilyList.concat(family[relationType])
         })
-        getFamilyList = getFamilyList.filter(item => !this.accessedIssueId.includes(item.id))
+        getFamilyList = getFamilyList.filter((item) => !this.accessedIssueId.includes(item.id))
         return Promise.resolve(getFamilyList)
       }
 
-      this.formatFamilyList = function(issue, family, relationTarget) {
+      this.formatFamilyList = function (issue, family, relationTarget) {
         return family.map((item) => ({ ...item, relation_type: relationTarget, relation_id: issue.id }))
       }
 
-      this.getRelationTargets = function(issue) {
-        const nowNode = vueInstance.trackerMap.find((item) => (item.name === issue.tracker.name))
-        const nowNodeIndex = vueInstance.trackerMap.findIndex((item) => (item.name === issue.tracker.name))
+      this.getRelationTargets = function (issue) {
+        const nowNode = vueInstance.trackerMap.find((item) => item.name === issue.tracker.name)
+        const nowNodeIndex = vueInstance.trackerMap.findIndex((item) => item.name === issue.tracker.name)
         if (!nowNode) return []
         let findRelationTargets = ['children']
         if (nowNodeIndex === this.startNodeIndex) {
@@ -704,12 +890,12 @@ export default {
         } else if (nowNodeIndex < this.startNodeIndex) {
           findRelationTargets = ['parent']
         }
-        let getTargetArray = findRelationTargets.map(target => nowNode.relation[target]).filter(target => target)
+        let getTargetArray = findRelationTargets.map((target) => nowNode.relation[target]).filter((target) => target)
         getTargetArray = [].concat.apply([], getTargetArray)
         return [...getTargetArray, issue.tracker.name]
       }
 
-      this.end = function() {
+      this.end = function () {
         vueInstance.chartProgress.now = vueInstance.chartProgress.total
         return Promise.resolve()
       }
@@ -812,8 +998,7 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       } else {
         done()
       }
@@ -850,18 +1035,18 @@ $max_width: calc(100vw);
       height: calc(#{$max_height} * 0.25 * #{$i});
       padding: 0;
 
-      > > > svg {
+      >>> svg {
         width: 25% * $i;
         height: 25% * $i;
         transform-origin: top left;
-        transform: scale(0.25* $i);
+        transform: scale(0.25 * $i);
       }
     }
   }
 }
 
 .relation_settings {
-  > > > .el-form-item__content {
+  >>> .el-form-item__content {
     @apply clear-both;
   }
 
@@ -879,7 +1064,7 @@ $max_width: calc(100vw);
 }
 
 .issue-select {
-  > > > .el-tag {
+  >>> .el-tag {
     @apply truncate;
     white-space: normal;
 
@@ -890,7 +1075,7 @@ $max_width: calc(100vw);
 }
 
 .loading {
-  > > > .el-alert__content {
+  >>> .el-alert__content {
     width: 100%;
   }
 }
@@ -899,11 +1084,10 @@ $max_width: calc(100vw);
   @apply border-none;
 }
 
-//> > > .el-tab-pane {
+//>>>. el-tab-pane {
 //  .el-tab-pane__body {
 //    height: 100%;
 //    overflow-y: auto;
 //  }
 //}
-
 </style>

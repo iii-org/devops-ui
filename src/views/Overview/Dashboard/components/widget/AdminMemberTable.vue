@@ -12,8 +12,11 @@
       sortable
       show-overflow-tooltip
     >
-      <div slot-scope="scope" class="text-right">
-        <span><b>{{ scope.row.role_name }}</b>
+      <div
+        slot-scope="scope"
+        class="text-right"
+      >
+        <span><strong>{{ scope.row.role_name }}</strong>
           ({{ scope.row.user_name.length }})</span>
       </div>
     </el-table-column>
@@ -24,7 +27,12 @@
       show-overflow-tooltip
     >
       <template slot-scope="scope">
-        <el-tag v-for="(user,idx) in scope.row.user_name" :key="idx" class="member" :class="scope.row.role_name">{{ user
+        <el-tag
+          v-for="(user,idx) in scope.row.user_name"
+          :key="idx"
+          class="member"
+          :class="scope.row.role_name"
+        >{{ user
         }}
         </el-tag>
       </template>
@@ -33,13 +41,12 @@
 </template>
 
 <script>
-
 export default {
   name: 'AdminMemberTable',
   props: {
     data: {
       type: Array,
-      default: () => ([])
+      default: () => []
     },
     loading: {
       type: Boolean,
@@ -88,6 +95,5 @@ export default {
     color: $success_text;
     background: $success;
   }
-
 }
 </style>

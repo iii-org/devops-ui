@@ -1,6 +1,10 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
 
@@ -8,25 +12,41 @@
       <AbnormalChecker />
       <VersionChecker class="ml-2" />
       <lang-select class="right-menu-item hover-effect ml-1" />
-      <el-dropdown class="right-menu-item hover-effect mr-5" trigger="click">
+      <el-dropdown
+        class="right-menu-item hover-effect mr-5"
+        trigger="click"
+      >
         <div>
           {{ userName }}
-          <i class="el-icon-caret-bottom" />
+          <em class="el-icon-caret-bottom" />
         </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+        <el-dropdown-menu
+          slot="dropdown"
+          class="user-dropdown"
+        >
           <router-link to="/">
             <el-dropdown-item>
-              <router-link :to="'/profile/'" style="color: #409EFF">
+              <router-link
+                :to="'/profile/'"
+                style="color: #409EFF"
+              >
                 <span>{{ $t('navbar.profile') }}</span>
               </router-link>
             </el-dropdown-item>
             <el-dropdown-item>
-              <router-link :to="'/SystemVersion/'" style="color: #409EFF">
+              <router-link
+                :to="'/SystemVersion/'"
+                style="color: #409EFF"
+              >
                 <span>{{ $t('navbar.versions') }}</span>
               </router-link>
             </el-dropdown-item>
           </router-link>
-          <el-dropdown-item id="systemLogoutBtn" divided @click.native="logout">
+          <el-dropdown-item
+            id="systemLogoutBtn"
+            divided
+            @click.native="logout"
+          >
             <span style="display:block;">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>

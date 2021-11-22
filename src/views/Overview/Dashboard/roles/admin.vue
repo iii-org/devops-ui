@@ -1,45 +1,82 @@
 <template>
   <div>
-    <el-row v-show="isLoading||projectCount>0" class="app-container">
-      <el-row type="flex" class="flex-wrap" :gutter="10">
+    <el-row
+      v-show="isLoading||projectCount>0"
+      class="app-container"
+    >
+      <el-row
+        type="flex"
+        class="flex-wrap"
+        :gutter="10"
+      >
         <el-col class="text-right">
           <span class="text-sm ml-3">
             *本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)]) }}</span>
-          <el-button size="small" icon="el-icon-refresh" :disabled="status.is_lock" @click="getSyncRedmine">
+          <el-button
+            size="small"
+            icon="el-icon-refresh"
+            :disabled="status.is_lock"
+            @click="getSyncRedmine"
+          >
             {{ $t('Dashboard.ADMIN.UpdateNow') }}
           </el-button>
         </el-col>
         <el-col v-if="status.is_lock">
-          <el-alert type="warning" class="mb-4 loading" :closable="false">
+          <el-alert
+            type="warning"
+            class="mb-4 loading"
+            :closable="false"
+          >
             <h2 slot="title">
               <em class="el-icon-loading" /> {{ $t('Dashboard.ADMIN.syncing') }}
             </h2>
           </el-alert>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="(userRole==='QA')? 12: 10">
+        <el-col
+          :xs="24"
+          :sm="24"
+          :md="(userRole==='QA')? 12: 10"
+        >
           <el-card class="overview">
             <template slot="header">
               <span class="font-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
             </template>
-            <admin-overview :data="getProjectOverviewData" @total-count="getTotalCount" @loading="getLoadingStatus" />
+            <admin-overview
+              :data="getProjectOverviewData"
+              @total-count="getTotalCount"
+              @loading="getLoadingStatus"
+            />
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="(userRole==='QA')? 12: 7">
+        <el-col
+          :xs="24"
+          :sm="24"
+          :md="(userRole==='QA')? 12: 7"
+        >
           <el-card>
-            <div slot="header" class="cursor-pointer"
-                 @click="onChangeDialogVisible({key: 'projectMember', value: true})"
+            <div
+              slot="header"
+              class="cursor-pointer"
+              @click="onChangeDialogVisible({key: 'projectMember', value: true})"
             >
               <span class="font-bold">
                 {{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
                 <em class="ri-external-link-line" />
               </span>
             </div>
-            <admin-project-member :data="getProjectMembersData" :dialog-visible="dialogVisible.projectMember"
-                                  @dialog-visible="onChangeDialogVisible"
+            <admin-project-member
+              :data="getProjectMembersData"
+              :dialog-visible="dialogVisible.projectMember"
+              @dialog-visible="onChangeDialogVisible"
             />
           </el-card>
         </el-col>
-        <el-col v-if="userRole!=='QA'" :xs="24" :sm="24" :md="7">
+        <el-col
+          v-if="userRole!=='QA'"
+          :xs="24"
+          :sm="24"
+          :md="7"
+        >
           <el-card>
             <template slot="header">
               <span class="font-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }} </span>
@@ -48,8 +85,16 @@
           </el-card>
         </el-col>
       </el-row>
-      <el-row type="flex" class="flex-wrap" :gutter="10">
-        <el-col :xs="24" :sm="24" :md="12">
+      <el-row
+        type="flex"
+        class="flex-wrap"
+        :gutter="10"
+      >
+        <el-col
+          :xs="24"
+          :sm="24"
+          :md="12"
+        >
           <el-card>
             <template slot="header">
               <span class="font-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
@@ -57,23 +102,45 @@
             <admin-issue-rank :data="getIssueRankData" />
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="12">
+        <el-col
+          :xs="24"
+          :sm="24"
+          :md="12"
+        >
           <el-card>
-            <div slot="header" class="cursor-pointer" @click="onChangeDialogVisible({key: 'passingRate', value: true})">
+            <div
+              slot="header"
+              class="cursor-pointer"
+              @click="onChangeDialogVisible({key: 'passingRate', value: true})"
+            >
               <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
                 <em class="ri-external-link-line" />
               </span>
             </div>
-            <admin-passing-rate :data="getPassingRateData" :dialog-visible="dialogVisible.passingRate"
-                                @dialog-visible="onChangeDialogVisible"
+            <admin-passing-rate
+              :data="getPassingRateData"
+              :dialog-visible="dialogVisible.passingRate"
+              @dialog-visible="onChangeDialogVisible"
             />
           </el-card>
         </el-col>
       </el-row>
-      <el-row type="flex" class="flex-wrap" :gutter="10">
-        <el-col :xs="24" :sm="24" :md="24">
+      <el-row
+        type="flex"
+        class="flex-wrap"
+        :gutter="10"
+      >
+        <el-col
+          :xs="24"
+          :sm="24"
+          :md="24"
+        >
           <el-card>
-            <div slot="header" class="cursor-pointer" @click="onChangeDialogVisible({key: 'projectList', value: true})">
+            <div
+              slot="header"
+              class="cursor-pointer"
+              @click="onChangeDialogVisible({key: 'projectList', value: true})"
+            >
               <div class="flex justify-between items-center">
                 <span class="font-bold">
                   {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
@@ -82,8 +149,11 @@
                 <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
               </div>
             </div>
-            <admin-project-list :data="getProjectListData" :dialog-visible="dialogVisible.projectList"
-                                @update="getLastUpdate" @dialog-visible="onChangeDialogVisible"
+            <admin-project-list
+              :data="getProjectListData"
+              :dialog-visible="dialogVisible.projectList"
+              @update="getLastUpdate"
+              @dialog-visible="onChangeDialogVisible"
             />
           </el-card>
         </el-col>
@@ -91,11 +161,18 @@
     </el-row>
     <div v-if="!isLoading&&projectCount<=0">
       <el-empty :description="$t('general.NoData')">
-        <el-button type="success" icon="el-icon-plus" @click="handleAdding">
+        <el-button
+          type="success"
+          icon="el-icon-plus"
+          @click="handleAdding"
+        >
           {{ $t('Project.AddProject') }}
         </el-button>
       </el-empty>
-      <CreateProjectDialog ref="createProjectDialog" @update="$router.push({name: 'project-list'})" />
+      <CreateProjectDialog
+        ref="createProjectDialog"
+        @update="$router.push({name: 'project-list'})"
+      />
     </div>
   </div>
 </template>
@@ -216,7 +293,7 @@ export default {
     async getProjectOverviewData() {
       const res = await getProjectOverview()
       const result = []
-      res.data.forEach(item => {
+      res.data.forEach((item) => {
         result.push({
           ...item,
           class: overview[item['project_status']]['class'],
@@ -244,7 +321,7 @@ export default {
     },
     async getPassingRateData() {
       const res = await getPassingRate()
-      const result = res.data.map(item => ({
+      const result = res.data.map((item) => ({
         name: item['project_name'],
         value: [item['total'], item['passing_rate'] * 100, item['count']]
       }))
@@ -258,7 +335,7 @@ export default {
       this.lastUpdate = value
     },
     sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms))
+      return new Promise((resolve) => setTimeout(resolve, ms))
     },
     UTCtoLocalTime(value) {
       return UTCtoLocalTime(value)
@@ -287,7 +364,7 @@ export default {
 .overview {
   height: 90%;
 
-  > > > .el-row {
+  >>> .el-row {
     height: 100%;
 
     .el-col {
@@ -296,7 +373,7 @@ export default {
   }
 }
 
-> > > .el-dialog {
+>>> .el-dialog {
   width: 80%;
 
   &__header {
@@ -305,12 +382,12 @@ export default {
   }
 }
 
-> > > .el-row,
+>>> .el-row,
 .el-row .el-col {
   margin-bottom: 1em;
 }
 
-> > > .el-card {
+>>> .el-card {
   height: 100%;
 
   .el-card__body {
@@ -318,7 +395,7 @@ export default {
   }
 }
 
-> > > .items-center {
+>>> .items-center {
   text-align: center;
 }
 
@@ -327,7 +404,7 @@ export default {
   min-height: 250px;
 }
 
-> > > .el-table {
+>>> .el-table {
   .danger-row {
     background: $danger-4;
   }

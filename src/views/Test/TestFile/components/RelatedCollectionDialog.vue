@@ -1,16 +1,35 @@
 <template>
   <div>
-    <el-row slot="title" type="flex" align="middle">
-      <el-col :xs="24" :md="16">
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous text-h6"
-                   @click="onBack"
+    <el-row
+      slot="title"
+      type="flex"
+      align="middle"
+    >
+      <el-col
+        :xs="24"
+        :md="16"
+      >
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="previous text-h6"
+          @click="onBack"
         >
           {{ $t('general.Back') }}
         </el-button>
         <span class="text-h6">{{ issueName }}</span>
       </el-col>
-      <el-col :xs="24" :md="8" class="text-right">
-        <el-button type="primary" :loading="btnConfirmLoading" @click="handleAddConfirm">
+      <el-col
+        :xs="24"
+        :md="8"
+        class="text-right"
+      >
+        <el-button
+          type="primary"
+          :loading="btnConfirmLoading"
+          @click="handleAddConfirm"
+        >
           {{ $t('general.Close') }}
         </el-button>
       </el-col>
@@ -45,15 +64,38 @@
           :cell-style="{ height: rowHeight + 'px' }"
           @cell-click="handleClick"
         >
-          <el-table-column width="55" type="first">
+          <el-table-column
+            width="55"
+            type="first"
+          >
             <template slot-scope="scope">
-              <el-checkbox :value="isSelectedCollection(scope.row)" class="el-checkbox" @change="toggleCollection(scope.row)" />
+              <el-checkbox
+                :value="isSelectedCollection(scope.row)"
+                class="el-checkbox"
+                @change="toggleCollection(scope.row)"
+              />
             </template>
           </el-table-column>
-          <el-table-column label="測試軟體" width="100" prop="software_name" />
-          <el-table-column label="檔案" prop="file_name" />
-          <el-table-column label="測試名稱" prop="name" show-overflow-tooltip />
-          <el-table-column label="設計模組" prop="test_plans" min-width="150" show-overflow-tooltip>
+          <el-table-column
+            label="測試軟體"
+            width="100"
+            prop="software_name"
+          />
+          <el-table-column
+            label="檔案"
+            prop="file_name"
+          />
+          <el-table-column
+            label="測試名稱"
+            prop="name"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            label="設計模組"
+            prop="test_plans"
+            min-width="150"
+            show-overflow-tooltip
+          >
             <template slot-scope="scope">
               {{ getTestPlan(scope.row) }}
             </template>
@@ -68,15 +110,31 @@
           @pagination="onPagination"
         />
       </el-col>
-      <el-col v-if="selectedList.length > 0" class="el-card__footer">
-        <el-col :xs="8" :md="2">
+      <el-col
+        v-if="selectedList.length > 0"
+        class="el-card__footer"
+      >
+        <el-col
+          :xs="8"
+          :md="2"
+        >
           <div class="selected_count">
             {{ $t('User.Selected') }}<span class="value">{{ selectedList.length }}</span>
           </div>
         </el-col>
-        <el-col :xs="16" :md="22" class="scroll-x">
-          <el-tag v-for="(item, idx) in selectedList" :key="idx" class="item" closable @close="onRemoveCollection(item)">
-            <b>{{ idx + 1 }}</b>.{{ item.name }}
+        <el-col
+          :xs="16"
+          :md="22"
+          class="scroll-x"
+        >
+          <el-tag
+            v-for="(item, idx) in selectedList"
+            :key="idx"
+            class="item"
+            closable
+            @close="onRemoveCollection(item)"
+          >
+            <strong>{{ idx + 1 }}</strong>.{{ item.name }}
           </el-tag>
         </el-col>
       </el-col>
@@ -100,7 +158,7 @@ export default {
     },
     selectedCollections: {
       type: Array,
-      default: () => ([])
+      default: () => []
     }
   },
   data() {
@@ -136,7 +194,7 @@ export default {
         keys: ['name', 'description', 'assigned_to.name']
       })
       const res = fuse.search('!' + this.searchValue)
-      return res.map(items => items.item)
+      return res.map((items) => items.item)
     }
   },
   watch: {
@@ -156,9 +214,9 @@ export default {
       this.fetchData()
     },
     pagedData(value) {
-      const getSelectedListName = this.selectedList.map((item) => (item.file_name))
-      const getSelectedRow = value.filter((item) => (getSelectedListName.includes(item.file_name)))
-      getSelectedRow.forEach(row => {
+      const getSelectedListName = this.selectedList.map((item) => item.file_name)
+      const getSelectedRow = value.filter((item) => getSelectedListName.includes(item.file_name))
+      getSelectedRow.forEach((row) => {
         this.$refs['collectionTable'].toggleRowSelection(row)
       })
     }
@@ -170,20 +228,20 @@ export default {
   methods: {
     fetchData() {
       return getTestFileList(this.selectedProjectId)
-        .then(res => {
+        .then((res) => {
           return Promise.resolve(res.data)
         })
-        .catch(e => {
+        .catch((e) => {
           return Promise.reject(e)
         })
     },
     toggleSelectAllCollection(event) {
       if (event) {
-        this.$refs['collectionTable'].data.forEach(item => {
+        this.$refs['collectionTable'].data.forEach((item) => {
           this.onAddCollection(item)
         })
       } else {
-        this.$refs['collectionTable'].data.forEach(item => {
+        this.$refs['collectionTable'].data.forEach((item) => {
           this.onRemoveCollection(item)
         })
       }
@@ -206,10 +264,10 @@ export default {
       this.handleAddConfirm()
     },
     isSelectedCollection(row) {
-      return this.selectedList.map((item) => (item.file_name)).indexOf(row.file_name) >= 0
+      return this.selectedList.map((item) => item.file_name).indexOf(row.file_name) >= 0
     },
     getTestPlan(row) {
-      return row.test_plans.map((item) => (item.name)).join('、')
+      return row.test_plans.map((item) => item.name).join('、')
     },
     handleClick(row, column) {
       if (column.type !== 'first') {
@@ -224,7 +282,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-> > > .el-card {
+>>> .el-card {
   &__footer {
     padding: 18px 20px;
     border-top: 1px solid #ebeef5;
@@ -273,11 +331,11 @@ export default {
   }
 }
 
-> > > .pagination-container {
+>>> .pagination-container {
   padding: 10px 0;
 }
 
-> > > .el-table .el-button {
+>>> .el-table .el-button {
   @apply text-white #{!important};
 
   &:hover {
@@ -297,7 +355,7 @@ export default {
   }
 }
 
-> > > .el-tag {
+>>> .el-tag {
   &.el-tag {
     margin-left: 10px;
   }
@@ -311,7 +369,7 @@ export default {
   padding-bottom: 0;
 }
 
-> > > .el-form {
+>>> .el-form {
   display: inline;
   margin: 0 0 0 10px;
 

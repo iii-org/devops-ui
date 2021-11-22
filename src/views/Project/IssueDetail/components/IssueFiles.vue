@@ -1,17 +1,38 @@
 <template>
   <el-row class="el-upload-list">
     <div class="text-sm mb-2">{{ $t('Issue.Files') }}</div>
-    <el-row v-for="file in issueFile" :key="file.id" class="el-upload-list__item is-ready">
-      <el-col :span="14" :lg="16">
-        <a class="el-upload-list__item-name" @click="handleDownload(file)">
-          <i class="el-icon-document" />{{ file.filename }} ({{
+    <el-row
+      v-for="file in issueFile"
+      :key="file.id"
+      class="el-upload-list__item is-ready"
+    >
+      <el-col
+        :span="14"
+        :lg="16"
+      >
+        <a
+          class="el-upload-list__item-name"
+          @click="handleDownload(file)"
+        >
+          <em class="el-icon-document" />{{ file.filename }} ({{
             $dayjs(file.created_on).format('YYYY-MM-DD hh:mm:ss')
           }})
         </a>
       </el-col>
-      <el-col :span="10" :lg="8" class="text-right">
+      <el-col
+        :span="10"
+        :lg="8"
+        class="text-right"
+      >
         <span v-if="isAllowPreview(file.content_type)">
-          <el-button type="primary" size="mini" icon="el-icon-search" :loading="isLoading" :disabled="isButtonDisabled" @click="handlePreview(file)">
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-search"
+            :loading="isLoading"
+            :disabled="isButtonDisabled"
+            @click="handlePreview(file)"
+          >
             {{ $t('general.Preview') }}
           </el-button>
         </span>
@@ -23,17 +44,37 @@
           :title="$t('Issue.DeleteFile')"
           @confirm="deleteIssueFile(file)"
         >
-          <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" :loading="isLoading" :disabled="isButtonDisabled">
+          <el-button
+            slot="reference"
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            :loading="isLoading"
+            :disabled="isButtonDisabled"
+          >
             {{ $t('general.Delete') }}
           </el-button>
         </el-popconfirm>
       </el-col>
     </el-row>
-    <el-dialog :title="image.filename" :visible.sync="dialogVisible" width="80%" top="3vh" append-to-body>
-      <img :src="image.src" style="width: 100%" alt="image.filename">
+    <el-dialog
+      :title="image.filename"
+      :visible.sync="dialogVisible"
+      width="80%"
+      top="3vh"
+      append-to-body
+    >
+      <img
+        :src="image.src"
+        style="width: 100%"
+        alt="image.filename"
+      >
       <span slot="footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
-        <el-button type="primary" @click="downloadImage">{{ $t('File.Download') }}</el-button>
+        <el-button
+          type="primary"
+          @click="downloadImage"
+        >{{ $t('File.Download') }}</el-button>
       </span>
     </el-dialog>
   </el-row>
@@ -93,7 +134,7 @@ export default {
           })
           this.removeFile(row.id)
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message({
             message: err,
             type: 'error'
@@ -104,20 +145,20 @@ export default {
         })
     },
     removeFile(id) {
-      const idx = this.issueFile.findIndex(item => item.id === id)
+      const idx = this.issueFile.findIndex((item) => item.id === id)
       this.issueFile.splice(idx, 1)
     },
     handlePreview(row) {
       const { id, content_type, filename } = row
       downloadProjectFile({ id, filename, project_id: this.selectedProject.id })
-        .then(res => {
+        .then((res) => {
           const base64String = btoa(new Uint8Array(res).reduce((data, byte) => data + String.fromCharCode(byte), ''))
           this.image.content_type = content_type
           this.image.filename = filename
           this.image.src = `data:${content_type};base64, ${base64String}`
           this.dialogVisible = true
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message({
             message: err,
             type: 'error'

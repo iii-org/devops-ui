@@ -1,26 +1,55 @@
 <template>
   <el-row v-loading="listLoading">
-    <el-row class="circle hidden-sm-and-down" type="flex" justify="center" align="middle">
+    <el-row
+      class="circle hidden-sm-and-down"
+      type="flex"
+      justify="center"
+      align="middle"
+    >
       <template v-if="listData.length>0">
-        <el-col v-for="(item,idx) in listData" :key="idx" :xs="24" :sm="24" :md="8">
-          <CircleDashboard :count="item.count" :item="$t('Dashboard.ADMIN.Overview.'+item.project_status)"
-                           class="pointer" :class="'circle-'+item.class"
-                           @click.native="onShowDetail(item.database)"
+        <el-col
+          v-for="(item,idx) in listData"
+          :key="idx"
+          :xs="24"
+          :sm="24"
+          :md="8"
+        >
+          <CircleDashboard
+            :count="item.count"
+            :item="$t('Dashboard.ADMIN.Overview.'+item.project_status)"
+            class="pointer"
+            :class="'circle-'+item.class"
+            @click.native="onShowDetail(item.database)"
           />
         </el-col>
       </template>
       <no-data v-else />
     </el-row>
     <div class="table hidden-md-and-up">
-      <el-row v-for="(item,idx) in listData" :key="idx" :class="'table-'+item.class" align="bottom" type="flex"
-              @click="onShowDetail(item.database)"
+      <el-row
+        v-for="(item,idx) in listData"
+        :key="idx"
+        :class="'table-'+item.class"
+        align="bottom"
+        type="flex"
+        @click="onShowDetail(item.database)"
       >
-        <el-col :span="12" class="text-right count">{{ item.count }}</el-col>
+        <el-col
+          :span="12"
+          class="text-right count"
+        >{{ item.count }}</el-col>
         <el-col :span="12">{{ $t('Dashboard.ADMIN.Overview.' + item.project_status) }}</el-col>
       </el-row>
     </div>
-    <el-dialog :visible.sync="detailDialog" :title="$t('Dashboard.ADMIN.ProjectList.NAME')">
-      <admin-project-list ref="projectList" :data="getProjectListDetailData" :in-dialog="true" />
+    <el-dialog
+      :visible.sync="detailDialog"
+      :title="$t('Dashboard.ADMIN.ProjectList.NAME')"
+    >
+      <admin-project-list
+        ref="projectList"
+        :data="getProjectListDetailData"
+        :in-dialog="true"
+      />
     </el-dialog>
   </el-row>
 </template>
@@ -41,7 +70,7 @@ export default {
   props: {
     data: {
       type: Function,
-      default: () => ([])
+      default: () => []
     }
   },
   data() {
@@ -72,8 +101,7 @@ export default {
       this.listLoading = false
     },
     getProjectListDetailData() {
-      return getProjectListDetail()
-        .then((res) => (Promise.resolve(res.data)))
+      return getProjectListDetail().then((res) => Promise.resolve(res.data))
     },
     onShowDetail(value) {
       this.detailDialog = true
@@ -94,23 +122,23 @@ export default {
 @import 'src/styles/variables.scss';
 
 .circle {
-  > > > .circle-primary {
+  >>> .circle-primary {
     border-color: $menuActiveText;
     color: $menuActiveText;
   }
 
-  > > > .circle-danger {
+  >>> .circle-danger {
     border-color: $danger;
     color: $danger;
   }
 
-  > > > .circle-info {
+  >>> .circle-info {
     border-color: $info-4;
     color: $info-4;
   }
 }
 
-> > > .table {
+>>> .table {
   font-size: 1.5em;
   width: 100%;
 

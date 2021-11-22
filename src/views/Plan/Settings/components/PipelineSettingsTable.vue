@@ -14,11 +14,22 @@
           </el-select>
         </div>
         <div>
-          <el-button size="mini" type="success" :loading="isLoading" plain @click="updatePipelineBranch(false)">
+          <el-button
+            size="mini"
+            type="success"
+            :loading="isLoading"
+            plain
+            @click="updatePipelineBranch(false)"
+          >
             {{ $t('general.Save') }}
           </el-button>
-          <el-button size="mini" type="success" :loading="isLoading" @click="updatePipelineBranch(true)">
-            <i class="el-icon-refresh" />
+          <el-button
+            size="mini"
+            type="success"
+            :loading="isLoading"
+            @click="updatePipelineBranch(true)"
+          >
+            <em class="el-icon-refresh" />
             {{ $t('general.DirectExecution') }}
           </el-button>
         </div>
@@ -56,7 +67,10 @@
       <div class="text-center text-title">{{ $t('Notify.LoadFail') }}</div>
     </template>
     <template v-else>
-      <el-empty :description="$t('general.NoData')" :image-size="100" />
+      <el-empty
+        :description="$t('general.NoData')"
+        :image-size="100"
+      />
     </template>
   </div>
 </template>
@@ -106,7 +120,7 @@ export default {
       return data
     },
     branchesList() {
-      return function(data) {
+      return function (data) {
         return Object.keys(data)
       }
     },
@@ -123,7 +137,7 @@ export default {
     // find the repeat plugin
     repeatPlugins() {
       const repeatPlugins = []
-      Object.keys(this.countFrequency).forEach(item => {
+      Object.keys(this.countFrequency).forEach((item) => {
         if (this.countFrequency[item] > 1) repeatPlugins.push(item)
       })
       return repeatPlugins
@@ -184,7 +198,7 @@ export default {
     },
     getPipelineSettingsData(data) {
       const branches = this.branchesList(data)
-      const settingsData = branches.map(branch => {
+      const settingsData = branches.map((branch) => {
         const { commit_message, commit_time, testing_tools } = data[branch]
         return {
           branch,
@@ -211,7 +225,9 @@ export default {
         return
       }
       const sendData = this.getSendData(runPipeline)
-      const message = runPipeline ? this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch]) : this.$t('Notify.Saved')
+      const message = runPipeline
+        ? this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch])
+        : this.$t('Notify.Saved')
       this.isLoading = true
       try {
         await editPipelineBranch(this.selectedRepositoryId, sendData)
@@ -223,9 +239,10 @@ export default {
       }
     },
     getSendData(runPipeline) {
-      const getData = (result, cur) => Object.assign(result, {
-        [cur.branch]: cur.testing_tools.map(tool => ({ enable: tool.enable, key: tool.key }))
-      })
+      const getData = (result, cur) =>
+        Object.assign(result, {
+          [cur.branch]: cur.testing_tools.map((tool) => ({ enable: tool.enable, key: tool.key }))
+        })
       const detail = this.selectedBranchData.reduce(getData, {})
       const sendData = runPipeline ? { run: true, detail } : { detail }
       return sendData
@@ -253,7 +270,7 @@ export default {
     },
     rowStyle({ row }) {
       const style = {}
-      this.repeatPlugins.forEach(plugin => {
+      this.repeatPlugins.forEach((plugin) => {
         if (row.name === plugin) {
           style['background-color'] = '#F9CECE'
           style['color'] = 'red'

@@ -1,6 +1,9 @@
 <template>
   <section>
-    <div class="board" :class="{'is-panel':rightPanelVisible}">
+    <div
+      class="board"
+      :class="{'is-panel':rightPanelVisible}"
+    >
       <Kanban
         v-for="classObj in groupByValueOnBoard"
         :key="classObj.id"
@@ -17,9 +20,16 @@
         @contextmenu="handleContextMenu"
       />
     </div>
-    <RightPanel ref="rightPanel" :click-not-close="true" @visible="handleRightPanelVisible">
+    <RightPanel
+      ref="rightPanel"
+      :click-not-close="true"
+      @visible="handleRightPanelVisible"
+    >
       <template v-for="item in filterOptions">
-        <el-row :key="item.id" class="panel">
+        <el-row
+          :key="item.id"
+          class="panel"
+        >
           <el-card>
             <template slot="header">{{ item.label }}</template>
             <template v-for="(subItem, index) in getFilterValueList(item.value)">
@@ -39,13 +49,22 @@
                   :type="subItem.name"
                   class="el-tag"
                 />
-                <el-tag v-else-if="item.value==='tags'" effect="plain">
+                <el-tag
+                  v-else-if="item.value==='tags'"
+                  effect="plain"
+                >
                   {{ getTranslateHeader(subItem.name) }}
                 </el-tag>
-                <el-tag v-else effect="dark">
+                <el-tag
+                  v-else
+                  effect="dark"
+                >
                   {{ getTranslateHeader(subItem.name) }}
                 </el-tag>
-                <el-alert class="help_text" :closable="false">
+                <el-alert
+                  class="help_text"
+                  :closable="false"
+                >
                   <i18n path="Issue.DragTip">
                     <strong slot="key">{{ item.label }}</strong>
                     <strong slot="value">{{ getTranslateHeader(subItem.name) }}</strong>
@@ -131,14 +150,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'tracker',
-      'status',
-      'priority'
-    ]),
+    ...mapGetters(['tracker', 'status', 'priority']),
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        const statusSort = this.getStatusSort.map(item => item)
+        const statusSort = this.getStatusSort.map((item) => item)
         return statusSort
       }
       return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
@@ -158,18 +173,18 @@ export default {
       this.rightPanelVisible = value
     },
     filterMe(userList) {
-      return userList.filter(item => item.login !== '-Me-')
+      return userList.filter((item) => item.login !== '-Me-')
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter(item => item.is_closed === false)
+      return statusList.filter((item) => item.is_closed === false)
     },
     async updateIssueBoard() {
       await this.loadData()
     },
     async saveIssue(data) {
       return await addIssue(data)
-        .then(res => {
+        .then((res) => {
           // noinspection JSCheckFunctionSignatures
           this.showSuccessMessage()
           this.loadData()
@@ -177,7 +192,7 @@ export default {
           this.$refs['quickAddIssue'].form.name = ''
           return res
         })
-        .catch(error => {
+        .catch((error) => {
           return error
         })
     },
@@ -210,13 +225,13 @@ export default {
       await this.updateRelationIssue(this.projectIssueList, res.data)
     },
     setProjectIssueList(evt) {
-      const idx = this.projectIssueList.findIndex(item => item.id === evt.event.added.element.id)
-      const issue = this.projectIssueList.find(item => item.id === evt.event.added.element.id)
+      const idx = this.projectIssueList.findIndex((item) => item.id === evt.event.added.element.id)
+      const issue = this.projectIssueList.find((item) => item.id === evt.event.added.element.id)
       issue[this.groupBy.dimension] = evt.boardObject
       this.$emit('updateIssueList', idx, issue)
     },
     updateRelationIssue(list, updatedIssue) {
-      list.forEach(issue => {
+      list.forEach((issue) => {
         if (issue.hasOwnProperty('parent') && issue.parent.id === updatedIssue.id) {
           this.$set(issue, 'parent', updatedIssue)
         }
@@ -228,8 +243,8 @@ export default {
       if (updatedIssue.hasOwnProperty(key)) this.setUpdatedIssue(key, updatedIssue)
     },
     setUpdatedIssue(key, updatedIssue) {
-      const idx = updatedIssue[key].findIndex(item => item.id === issue.id)
-      const issue = updatedIssue[key].find(item => item.id === issue.id)
+      const idx = updatedIssue[key].findIndex((item) => item.id === issue.id)
+      const issue = updatedIssue[key].find((item) => item.id === issue.id)
       this.$set(issue[key], idx, issue)
     },
     async quickUpdateIssue(event) {
@@ -242,8 +257,8 @@ export default {
       } catch (e) {
         // error
       } finally {
-        const idx = this.projectIssueList.findIndex(item => item.id === id)
-        const issue = this.projectIssueList.find(item => item.id === id)
+        const idx = this.projectIssueList.findIndex((item) => item.id === id)
+        const issue = this.projectIssueList.find((item) => item.id === id)
         issue[filterDimension] = params[filterDimension]
         this.$emit('updateIssueList', idx, issue)
       }
@@ -253,7 +268,7 @@ export default {
       const filterDimension = Object.keys(value)[0]
       let data = { [`${filterDimension}_id`]: value[filterDimension].id }
       if (Array.isArray(value[filterDimension])) {
-        data = { [filterDimension]: value[filterDimension].map(item => item.id).join(',') }
+        data = { [filterDimension]: value[filterDimension].map((item) => item.id).join(',') }
       }
       return data
     },
@@ -330,7 +345,7 @@ export default {
   }
 }
 
-> > > .rightPanel-items {
+>>> .rightPanel-items {
   overflow-y: auto;
   height: 100%;
 
