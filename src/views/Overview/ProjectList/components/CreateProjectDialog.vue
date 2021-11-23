@@ -294,7 +294,7 @@ export default {
       }
       if (isForceUpdate) this.isClickUpdateTemplate = true
       this.isLoadingTemplate = true
-      if (this.userRole === 'Administrator' || this.userRole === 'Project Manager') {
+      if (this.userRole !== 'Engineer') {
         this.getTemplateList(isForceUpdate)
       }
       this.isLoadingTemplate = false
