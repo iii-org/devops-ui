@@ -128,7 +128,7 @@
                 {{ scope.row.display }}
               </template>
               <br>
-              <span class="text-sm text-gray-400">#{{ scope.row.name }}</span>
+              <span class="text-info text-sm">#{{ scope.row.name }}</span>
             </div>
           </div>
         </template>
@@ -286,7 +286,6 @@ export default {
       'userRole',
       'projectList',
       'projectListTotal',
-      'userProjectList',
       'userProjectList',
       'selectedProjectId'
     ]),

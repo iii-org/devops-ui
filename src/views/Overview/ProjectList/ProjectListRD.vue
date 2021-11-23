@@ -109,8 +109,15 @@
               </el-link>
             </div>
             <div>
-              <div style="color: #67c23a">{{ scope.row.display }}</div>
-              <div style="color: #949494; font-size: small;">#{{ scope.row.name }}</div>
+              <el-link
+                type="primary"
+                :underline="false"
+                @click="handleClick(scope.row)"
+              >
+                {{ scope.row.display }}
+              </el-link>
+              <br>
+              <span class="text-info text-sm" style="float: left;">#{{ scope.row.name }}</span>
             </div>
           </div>
         </template>
@@ -212,13 +219,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal'])
+    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList'])
   },
   mounted() {
     this.loadData()
   },
   methods: {
-    ...mapActions('projects', ['getMyProjectList']),
+    ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
     async fetchData() {
       this.listLoading = true
       let params = {}
@@ -263,6 +270,15 @@ export default {
         message,
         type: 'success'
       })
+    },
+    handleClick(projectObj) {
+      const { id } = projectObj
+      const selectedProject = this.userProjectList.filter((elm) => {
+        return elm.id === id
+      })[0]
+      this.setSelectedProject(selectedProject)
+      localStorage.setItem('projectId', id)
+      this.$router.push({ name: 'issue-boards' })
     }
   }
 }
