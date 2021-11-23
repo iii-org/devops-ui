@@ -4,6 +4,7 @@
     <el-popover
       placement="bottom"
       trigger="click"
+      @hide="resetSaveFilterButtons"
     >
       <el-form v-loading="listLoading">
         <template v-for="dimension in filterOptions">
@@ -46,6 +47,15 @@
           <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
         </el-form-item>
       </el-form>
+      <SaveFilterButton ref="saveFilterButton" :filter-value="filterValue" :show-button="showSaveFilterButton" @update="onCustomFilterAdded" />
+      <el-button
+        v-show="!showSaveFilterButton"
+        style="width:100%"
+        type="primary"
+        @click="onSaveClick"
+      >
+        儲存設定
+      </el-button>
       <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" /></el-button>
     </el-popover>
@@ -84,7 +94,9 @@ export default {
   components: {
     Tracker: () => import('@/components/Issue/Tracker'),
     Status: () => import('@/components/Issue/Status'),
-    Priority: () => import('@/components/Issue/Priority') },
+    Priority: () => import('@/components/Issue/Priority'),
+    SaveFilterButton: () => import('@/components/Issue/components/SaveFilterButton')
+  },
   props: {
     listLoading: {
       type: Boolean,
@@ -111,7 +123,8 @@ export default {
       keyword: null,
       searchVisible: false,
       fixed_version_closed: false,
-      displayClosed: false
+      displayClosed: false,
+      showSaveFilterButton: false
     }
   },
   computed: {
@@ -207,6 +220,17 @@ export default {
       this.keyword = ''
       this.displayClosed = false
       this.onChangeFilter()
+    },
+    onCustomFilterAdded() {
+      this.resetSaveFilterButtons()
+      this.$emit('add-custom-filter')
+    },
+    onSaveClick() {
+      this.showSaveFilterButton = true
+    },
+    resetSaveFilterButtons() {
+      this.showSaveFilterButton = false
+      this.$refs.saveFilterButton.reset()
     }
   }
 }

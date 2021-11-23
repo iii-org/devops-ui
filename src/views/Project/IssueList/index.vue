@@ -19,7 +19,12 @@
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
+        @add-custom-filter="updateCustomFilter"
       >
+        <CustomFilter
+          ref="customFilter"
+          :selection-options="contextOptions"
+        />
         <span
           slot="download"
           v-permission="['QA']"
@@ -225,6 +230,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
+import CustomFilter from './components/CustomFilter.vue'
 import XLSX from 'xlsx'
 
 /**
@@ -238,7 +244,8 @@ export default {
     QuickAddIssue,
     ProjectListSelector,
     SearchFilter,
-    ExpandSection
+    ExpandSection,
+    CustomFilter
   },
   mixins: [Table, IssueList, ContextMenu],
   data() {
@@ -448,6 +455,9 @@ export default {
         case 'Fail Management':
           return '異常管理'
       }
+    },
+    updateCustomFilter() {
+      this.$refs.customFilter.fetchCustomFilter()
     }
   }
 }

@@ -121,7 +121,6 @@ export default {
       if (this.filterValue[key]) result[resultKey] = this.filterValue[key]
     },
     async fetchData() {
-      console.log('fetchData => fetchData')
       let listData
       try {
         await this.checkLastRequest()
@@ -137,7 +136,6 @@ export default {
         // null
       }
       this.lastIssueListCancelToken = null
-      console.log(listData)
       return listData
     },
     checkLastRequest() {
