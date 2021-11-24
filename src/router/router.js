@@ -768,6 +768,46 @@ export const asyncRoutes = [
     redirect: { name: 'postman' },
     children: [
       {
+        path: 'sonarqube',
+        name: 'sonarqube',
+        component: () => import('@/views/Scan/SonarQube'),
+        meta: { title: 'sonarQube', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+      },
+      {
+        name: 'checkmarx',
+        path: 'checkmarx',
+        component: () => import('@/views/Scan/Checkmarx'),
+        meta: { title: 'checkMarx', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+      },
+      {
+        path: 'zap',
+        name: 'zap',
+        component: () => import('@/views/Scan/Zap'),
+        meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+      },
+      {
+        path: 'web-inspect',
+        name: 'webinspect',
+        component: parentBlank,
+        redirect: { name: 'webinspect-scans' },
+        meta: { title: 'webInspect', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
+        children: [
+          {
+            path: 'scans',
+            name: 'webinspect-scans',
+            hidden: true,
+            component: () => import('@/views/Scan/WebInspect')
+          },
+          {
+            path: 'report/:scan_id',
+            name: 'webinspect-report',
+            component: () => import('@/views/Scan/WIEReportViewer'),
+            hidden: true,
+            meta: { title: 'webInspectReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+          }
+        ]
+      },
+      {
         path: 'postman',
         name: 'postman',
         component: parentBlank,
@@ -806,50 +846,10 @@ export const asyncRoutes = [
         ]
       },
       {
-        name: 'checkmarx',
-        path: 'checkmarx',
-        component: () => import('@/views/Scan/Checkmarx'),
-        meta: { title: 'checkMarx', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
-      },
-      {
-        path: 'web-inspect',
-        name: 'webinspect',
-        component: parentBlank,
-        redirect: { name: 'webinspect-scans' },
-        meta: { title: 'webInspect', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
-        children: [
-          {
-            path: 'scans',
-            name: 'webinspect-scans',
-            hidden: true,
-            component: () => import('@/views/Scan/WebInspect')
-          },
-          {
-            path: 'report/:scan_id',
-            name: 'webinspect-report',
-            component: () => import('@/views/Scan/WIEReportViewer'),
-            hidden: true,
-            meta: { title: 'webInspectReport', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
-          }
-        ]
-      },
-      {
-        path: 'zap',
-        name: 'zap',
-        component: () => import('@/views/Scan/Zap'),
-        meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
-      },
-      {
         path: 'sideex',
         name: 'sideex',
         component: () => import('@/views/Scan/Sideex'),
         meta: { title: 'sideex', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
-      },
-      {
-        path: 'sonarqube',
-        name: 'sonarqube',
-        component: () => import('@/views/Scan/SonarQube'),
-        meta: { title: 'sonarQube', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       }
     ]
   },
