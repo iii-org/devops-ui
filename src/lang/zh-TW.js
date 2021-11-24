@@ -227,7 +227,8 @@ export default {
     Login: '登入',
     ReLogin: '重新登入',
     Continue: '繼續使用',
-    BackToHome: '返回首頁'
+    BackToHome: '返回首頁',
+    SaveSettings: '儲存設定'
   },
   Notify: {
     Updated: '已更新',
@@ -539,7 +540,10 @@ export default {
     List: '議題清單',
     TransferIssueTo: '準備將 {value} 項議題轉移給？',
     due_date_start: '@:Issue.EndDate(>=)',
-    due_date_end: '@:Issue.EndDate(<=)'
+    due_date_end: '@:Issue.EndDate(<=)',
+    CustomFilter: '自定義條件',
+    InputFilterName: '請輸入篩選條件名稱',
+    RemoveCustomFilter: '確認要移除自定義條件嗎?'
   },
   Milestone: {
     Saving: '儲存中',

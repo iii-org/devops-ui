@@ -6,14 +6,21 @@
       width="320"
       @hide="onPopoverHide"
     >
-      <div class="custom-filters-container">
+      <div class="filter-list">
         <div
           v-for="filter in filters"
           :key="filter.id"
           class="my-2"
         >
           <div class="flex justify-between mx-5">
-            <span class="font-medium text-base">
+            <span
+              class="filter-list-name"
+              @click.prevent="onFilterClick(filter.id)"
+            >
+              <em
+                v-show="filter.isApplying"
+                class="el-icon-check text-success"
+              />
               {{ filter.name }}
             </span>
             <span>
@@ -23,13 +30,22 @@
                 circle
                 @click="onEditClick(filter.id)"
               />
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                circle
-                @click="removeFilter(filter.id)"
-              />
+              <el-popconfirm
+                :confirm-button-text="$t('general.Remove')"
+                :cancel-button-text="$t('general.Cancel')"
+                icon="el-icon-info"
+                icon-color="red"
+                :title="$t('Issue.RemoveCustomFilter')"
+                @confirm="removeFilter(filter.id)"
+              >
+                <el-button
+                  slot="reference"
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  circle
+                />
+              </el-popconfirm>
             </span>
           </div>
           <div class="mx-6 my-2 bg-gray-200 flex justify-center">
@@ -150,12 +166,21 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-button
-                class="w-full"
-                type="success"
-                size="small"
-                @click="editFilter(filter)"
-              >儲存</el-button>
+              <div class="flex justify-between">
+                <el-button
+                  size="small"
+                  @click="onEditClick(filter.id)"
+                >
+                  {{ $t('general.Cancel') }}
+                </el-button>
+                <el-button
+                  type="success"
+                  size="small"
+                  @click="editFilter(filter)"
+                >
+                  {{ $t('general.Save') }}
+                </el-button>
+              </div>
             </el-form>
           </div>
         </div>
@@ -163,7 +188,8 @@
       <el-button
         slot="reference"
         type="text"
-      > 自定義條件
+      >
+        {{ $t('Issue.CustomFilter') }}
         <em class="el-icon-arrow-down" />
       </el-button>
     </el-popover>
@@ -227,6 +253,7 @@ export default {
           const result = item
           result.custom_filter = this.formateCustomFilter(item.custom_filter)
           result.isShowForm = false
+          result.isApplying = false
           return result
         })
       })
@@ -243,10 +270,10 @@ export default {
       })
       return result
     },
-    onEditClick(id) {
+    onEditClick(filterId) {
       this.onPopoverHide()
-      const idx = this.filters.findIndex((item) => item.id === id)
-      this.formData = this.filters[idx].custom_filter
+      const idx = this.filters.findIndex((item) => item.id === filterId)
+      this.formData = Object.assign({}, this.filters[idx].custom_filter)
       this.filters[idx].isShowForm = !this.filters[idx].isShowForm
     },
     removeFilter(filterId) {
@@ -271,16 +298,30 @@ export default {
       editIssueFilter(this.selectedProjectId, filterId, sendData).then((res) => {
         this.fetchCustomFilter()
       })
+    },
+    resetApplyFilter() {
+      this.filters.forEach((filter) => {
+        filter.isApplying = false
+      })
+    },
+    onFilterClick(filterId) {
+      this.resetApplyFilter()
+      const idx = this.filters.findIndex((item) => item.id === filterId)
+      this.filters[idx].isApplying = !this.filters[idx].isApplying
+      console.log(this.filters[idx].custom_filter)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.custom-filters-container {
+.filter-list {
   max-height: 80vh;
   overflow-x: hidden;
   overflow-y: scroll;
   overflow-y: overlay;
+  &-name {
+    @apply font-medium text-base truncate w-3/5 cursor-pointer;
+  }
 }
 </style>

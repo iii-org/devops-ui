@@ -6,12 +6,14 @@
     <el-input
       v-model="filterName"
       class="mr-2"
-      placeholder="請輸入篩選條件名稱"
+      :placeholder="$t('Issue.InputFilterName')"
     />
     <el-button
       type="success"
       @click="setCustomFilter"
-    >儲存</el-button>
+    >
+      {{ $t('general.Save') }}
+    </el-button>
   </div>
 </template>
 
@@ -56,7 +58,7 @@ export default {
     },
     setCustomFilter() {
       if (!this.filterName) {
-        this.$message.warning('請輸入篩選條件名稱')
+        this.$message.warning(this.$t('Issue.InputFilterName'))
         return
       }
       const sendData = this.formatFilterData()

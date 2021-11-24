@@ -227,7 +227,8 @@ export default {
     Login: 'Login',
     ReLogin: 'Re-Login',
     Continue: 'Continue',
-    BackToHome: 'Back To Home'
+    BackToHome: 'Back To Home',
+    SaveSettings: 'Save Settings'
   },
   Notify: {
     Updated: 'update successful',
@@ -281,7 +282,7 @@ export default {
     Path: 'Path',
     TestResult: 'Test Result',
     TestMessage: 'Test Message',
-    SearchKey: '搜尋 Collection 名稱',
+    SearchKey: 'Search Collection Name',
     SearchNameOrPathOrTestResult: 'Search Name/Path/Test Result',
     TestItem: '{count} Test Item | {count} Test Items',
     Pass: 'Pass',
@@ -544,7 +545,10 @@ export default {
     List: 'Issue List',
     TransferIssueTo: 'Transfer {value} issues to？',
     due_date_start: '@:Issue.EndDate(>=)',
-    due_date_end: '@:Issue.EndDate(<=)'
+    due_date_end: '@:Issue.EndDate(<=)',
+    CustomFilter: 'Custom Filter',
+    InputFilterName: 'Input Filter Name',
+    RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
   },
   Milestone: {
     Saving: 'Saving',

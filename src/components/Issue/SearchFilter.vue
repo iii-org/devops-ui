@@ -43,7 +43,7 @@
             </el-select>
           </el-form-item>
         </template>
-        <el-form-item :label="$t('Issue.DisplayClosedIssue')" class="checkbox">
+        <el-form-item :label="$t('Issue.DisplayClosedIssue')">
           <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
         </el-form-item>
       </el-form>
@@ -54,7 +54,7 @@
         type="primary"
         @click="onSaveClick"
       >
-        儲存設定
+        {{ $t('general.SaveSettings') }}
       </el-button>
       <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" /></el-button>
@@ -224,6 +224,7 @@ export default {
     onCustomFilterAdded() {
       this.resetSaveFilterButtons()
       this.$emit('add-custom-filter')
+      this.cleanFilter()
     },
     onSaveClick() {
       this.showSaveFilterButton = true
