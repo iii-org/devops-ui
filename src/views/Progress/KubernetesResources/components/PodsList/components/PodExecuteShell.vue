@@ -42,8 +42,6 @@ import { FitAddon } from 'xterm-addon-fit'
 import { mapGetters } from 'vuex'
 
 const envKeys = [
-  'ArrowUp',
-  'ArrowDown',
   'ArrowLeft',
   'ArrowRight',
   'Tab',
@@ -74,7 +72,8 @@ export default {
       containerName: '',
       command: '',
       isConnected: false,
-      commandQueue: []
+      arrowUpQueue: [],
+      arrowDownQueue: []
     }
   },
   computed: {
@@ -114,7 +113,7 @@ export default {
       this.isConnected = false
     },
     setConnectStatusListener() {
-      this.socket.on('disconnect', message => {
+      this.socket.on('disconnect', (message) => {
         this.isConnected = false
         this.$notify({
           title: this.$t('general.Info'),
@@ -124,7 +123,7 @@ export default {
       })
     },
     setCmdResponseListener() {
-      this.socket.on('get_cmd_response', sioEvt => {
+      this.socket.on('get_cmd_response', (sioEvt) => {
         // console.log('get_cmd_response ===>', sioEvt)
         const { output } = sioEvt
         let str = output || sioEvt
@@ -147,7 +146,7 @@ export default {
       this.setTermKeyListener()
     },
     setResizeListener() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         this.term.loadAddon(fitAddon)
         fitAddon.fit()
         window.onresize = () => {
@@ -161,18 +160,41 @@ export default {
       })
     },
     setTermKeyListener() {
-      this.term.onKey(data => {
+      this.term.onKey((data) => {
         const { key, keyCode } = data.domEvent
         if (envKeys.includes(key)) return
         if (keyCode === 13) {
+          this.arrowUpQueue.push(this.command)
           this.onEnter()
         } else if (keyCode === 8) {
           this.onBackspace()
+        } else if (key === 'ArrowUp') {
+          this.onArrowUp()
+        } else if (key === 'ArrowDown') {
+          this.onArrowDown()
         } else {
           this.term.write(key)
           this.command += key
         }
       })
+    },
+    onArrowUp() {
+      if (this.arrowUpQueue.length > 0) {
+        const tempCommand = this.arrowUpQueue.pop()
+        this.command = tempCommand
+        this.arrowDownQueue.push(tempCommand)
+        this.term.write('\x1b[2K\r')
+        this.term.write('# ' + this.command)
+      }
+    },
+    onArrowDown() {
+      if (this.arrowDownQueue.length > 0) {
+        const tempCommand = this.arrowDownQueue.pop()
+        this.command = tempCommand
+        this.arrowUpQueue.push(tempCommand)
+        this.term.write('\x1b[2K\r')
+        this.term.write('# ' + this.command)
+      }
     },
     onEnter() {
       if (this.command === 'clear') {
