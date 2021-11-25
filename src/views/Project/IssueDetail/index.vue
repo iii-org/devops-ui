@@ -1,8 +1,16 @@
 <template>
   <div class="app-container">
-    <el-card v-loading="isLoading" :element-loading-text="$t('Loading')" :body-style="{ 'min-height': '80vh' }">
+    <el-card
+      v-loading="isLoading"
+      :element-loading-text="$t('Loading')"
+      :body-style="{ 'min-height': '80vh' }"
+    >
       <el-row slot="header">
-        <el-row type="flex" align="bottom" justify="space-between">
+        <el-row
+          type="flex"
+          align="bottom"
+          justify="space-between"
+        >
           <el-row>
             <el-col class="text-xl mr-3">
               <el-button
@@ -16,7 +24,10 @@
                 {{ $t('general.Back') }}
               </el-button>
               <template v-if="tracker">
-                <Tracker :name="$t(`Issue.${tracker}`)" :type="tracker" />
+                <Tracker
+                  :name="$t(`Issue.${tracker}`)"
+                  :type="tracker"
+                />
               </template>
               <template v-else>{{ $t('Issue.Issue') }}</template>
               #{{ issueId }} -
@@ -27,12 +38,18 @@
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
               />
-              <span v-if="!isLoading && issueId" class="text-base mr-3">
+              <span
+                v-if="!isLoading && issueId"
+                class="text-base mr-3"
+              >
                 {{ $t('Issue.AddBy', { user: author, created_date: formatTime(created_date) }) }}
               </span>
             </el-col>
           </el-row>
-          <el-col :span="6" class="text-right">
+          <el-col
+            :span="6"
+            class="text-right"
+          >
             <el-button
               size="medium"
               :type="isButtonDisabled ? 'info' : 'danger'"
@@ -52,34 +69,57 @@
         </el-row>
       </el-row>
       <el-row :gutter="20">
-        <el-col ref="mainIssueWrapper" :span="24" :md="16">
-          <el-col :span="24">
-            <IssueToolbar
-              :is-button-disabled="isButtonDisabled"
-              :issue-link="issue_link"
-              :issue-id="issueId"
-              :issue-name="issueName"
-              :issue-tracker="formTrackerName"
-              @is-loading="showLoading"
-              @related-collection="toggleDialogVisible"
-            />
-          </el-col>
-          <el-row ref="mainIssue" :gutter="10" :class="scrollClass" @scroll.native="onScrollIssue">
-            <el-col ref="IssueDescription" :span="24" class="mb-3">
+        <el-col
+          ref="mainIssueWrapper"
+          :span="24"
+          :md="16"
+        >
+          <el-row>
+            <el-col :span="24">
+              <IssueToolbar
+                :is-button-disabled="isButtonDisabled"
+                :issue-link="issue_link"
+                :issue-id="issueId"
+                :issue-name="issueName"
+                :issue-tracker="formTrackerName"
+                @is-loading="showLoading"
+                @related-collection="toggleDialogVisible"
+              />
+            </el-col>
+          </el-row>
+          <el-row
+            ref="mainIssue"
+            :gutter="10"
+            :class="scrollClass"
+            @scroll.native="onScrollIssue"
+          >
+            <el-col
+              ref="IssueDescription"
+              :span="24"
+              class="mb-3"
+            >
               <issue-description
                 v-model="form.description"
                 :old-value="originForm.description"
                 :issue-id="issueId"
                 :is-button-disabled="isButtonDisabled"
               />
-              <issue-files v-if="files.length > 0" :is-button-disabled="isButtonDisabled" :issue-file.sync="files" />
+              <issue-files
+                v-if="files.length > 0"
+                :is-button-disabled="isButtonDisabled"
+                :issue-file.sync="files"
+              />
               <issue-collection
                 v-if="test_files.length > 0"
                 :is-button-disabled="isButtonDisabled"
                 :issue-test.sync="test_files"
                 @update="updateTestCollection"
               />
-              <el-collapse v-if="countRelationIssue > 0" v-model="relationVisible" accordion>
+              <el-collapse
+                v-if="countRelationIssue > 0"
+                v-model="relationVisible"
+                accordion
+              >
                 <el-collapse-item :name="1">
                   <div slot="title">
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
@@ -103,7 +143,11 @@
                 </el-collapse-item>
               </el-collapse>
             </el-col>
-            <el-col ref="moveEditor" :span="24" class="moveEditor mb-3">
+            <el-col
+              ref="moveEditor"
+              :span="24"
+              class="moveEditor mb-3"
+            >
               <issue-notes-editor ref="IssueNotesEditor" />
             </el-col>
             <el-col :span="24">
@@ -116,7 +160,11 @@
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="24" :md="8" class="issueOptionHeight">
+        <el-col
+          :span="24"
+          :md="8"
+          class="issueOptionHeight"
+        >
           <issue-form
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
@@ -168,7 +216,11 @@
       destroy-on-close
       :title="$t('Issue.TraceabilityMatrix') + '(#' + issue.id + ' - ' + issue.name + ')'"
     >
-      <IssueMatrix v-if="issueMatrixDialog.visible" :row.sync="issue" @update-issue="handleUpdated" />
+      <IssueMatrix
+        v-if="issueMatrixDialog.visible"
+        :row.sync="issue"
+        @update-issue="handleUpdated"
+      />
     </el-dialog>
     <ContextMenu
       ref="contextmenu"
