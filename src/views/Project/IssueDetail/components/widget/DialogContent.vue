@@ -264,6 +264,7 @@ export default {
     border-radius: 10px;
     padding: 0 5px;
     min-height: 2em;
+    overflow: auto;
 
     >>> .text {
       p {
