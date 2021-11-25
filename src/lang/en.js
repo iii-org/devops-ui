@@ -758,6 +758,7 @@ export default {
       'This action cannot be undone. This will permanently delete the project, including all commits, issues, test cases and files.',
     PleaseType: 'Please type',
     AndThen: 'to proceed or close this modal to cancel.',
+    IdInvalid: 'Identifier is invalid.',
     IdRule: `Please enter 2-30 English leading letters which combines with English, numbers or '-'. Note that the English must be all lowercase and the ID set cannot be all numbers.`,
     DisplayRule: 'Name cannot includes "<" or "&"',
     DescriptionRule: 'Description cannot includes "<" or "&"',

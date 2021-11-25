@@ -6,25 +6,55 @@
     :close-on-click-modal="false"
     @closed="onDialogClosed"
   >
-    <el-form ref="createProjectForm" :model="form" :rules="rules" label-position="top">
+    <el-form
+      ref="createProjectForm"
+      :model="form"
+      :rules="rules"
+      label-position="top"
+    >
       <el-row :gutter="10">
         <el-col :span="24">
           <el-divider content-position="left">{{ $t('Project.Info') }}</el-divider>
-          <el-col :span="24" :sm="12" :xl="9">
-            <el-form-item :label="$t('Project.Name')" prop="display">
+          <el-col
+            :span="24"
+            :sm="12"
+            :xl="9"
+          >
+            <el-form-item
+              :label="$t('Project.Name')"
+              prop="display"
+            >
               <el-input v-model="form.display" />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :xl="9">
-            <el-form-item :label="$t('Project.Identifier')" prop="name">
-              <el-input v-model="form.name" :maxlength="30" show-word-limit />
+          <el-col
+            :span="24"
+            :sm="12"
+            :xl="9"
+          >
+            <el-form-item
+              :label="$t('Project.Identifier')"
+              prop="name"
+            >
+              <el-input
+                v-model="form.name"
+                :maxlength="30"
+                show-word-limit
+              />
             </el-form-item>
             <span class="font-sm">
               {{ $t('Project.IdRule') }}
             </span>
           </el-col>
-          <el-col :span="24" :sm="12" :xl="3">
-            <el-form-item :label="$t('Project.StartDate')" prop="start_date">
+          <el-col
+            :span="24"
+            :sm="12"
+            :xl="3"
+          >
+            <el-form-item
+              :label="$t('Project.StartDate')"
+              prop="start_date"
+            >
               <el-date-picker
                 v-model="form.start_date"
                 type="date"
@@ -34,8 +64,15 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :xl="3">
-            <el-form-item :label="$t('general.DueDate')" prop="due_date">
+          <el-col
+            :span="24"
+            :sm="12"
+            :xl="3"
+          >
+            <el-form-item
+              :label="$t('general.DueDate')"
+              prop="due_date"
+            >
               <el-date-picker
                 v-model="form.due_date"
                 type="date"
@@ -45,9 +82,19 @@
               />
             </el-form-item>
           </el-col>
-          <el-col v-if="checkOwnerRequired" :span="24">
-            <el-form-item :label="$t('Project.Owner')" :prop="checkOwnerRequired ? 'owner_id' : ''">
-              <el-select v-model="form.owner_id" filterable style="width:100%">
+          <el-col
+            v-if="checkOwnerRequired"
+            :span="24"
+          >
+            <el-form-item
+              :label="$t('Project.Owner')"
+              :prop="checkOwnerRequired ? 'owner_id' : ''"
+            >
+              <el-select
+                v-model="form.owner_id"
+                filterable
+                style="width:100%"
+              >
                 <el-option
                   v-for="user in userList"
                   :key="user.id"
@@ -58,24 +105,50 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item :label="$t('general.Description')" prop="description">
-              <el-input v-model="form.description" type="textarea" placeholder="Please input description" />
+            <el-form-item
+              :label="$t('general.Description')"
+              prop="description"
+            >
+              <el-input
+                v-model="form.description"
+                type="textarea"
+                :placeholder="$t('general.PleaseInput') + $t('general.Description')"
+              />
             </el-form-item>
           </el-col>
         </el-col>
       </el-row>
-      <el-row class="loading-template" :gutter="10">
+      <el-row
+        class="loading-template"
+        :gutter="10"
+      >
         <el-col :span="24">
           <el-divider content-position="left">
             {{ $t('Project.Template') }}
-            <el-button class="ml-2" icon="el-icon-refresh" size="mini" circle @click="init(1)" />
+            <el-button
+              class="ml-2"
+              icon="el-icon-refresh"
+              size="mini"
+              circle
+              @click="init(1)"
+            />
           </el-divider>
         </el-col>
-        <el-col :xs="24" :sm="18" :md="20">
+        <el-col
+          :xs="24"
+          :sm="18"
+          :md="20"
+        >
           <el-form-item :label="$t('Project.TemplateName')">
-            <div slot="label" class="flex items-center mb-2">
+            <div
+              slot="label"
+              class="flex items-center mb-2"
+            >
               <span class="mr-3">{{ $t('Project.TemplateName') }}</span>
-              <el-radio-group v-model="focusSources" size="mini">
+              <el-radio-group
+                v-model="focusSources"
+                size="mini"
+              >
                 <el-radio-button label="Public Templates">Public</el-radio-button>
                 <el-radio-button label="Local Templates">Local</el-radio-button>
               </el-radio-group>
@@ -97,9 +170,16 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :xs="24" :sm="6" :md="4">
+        <el-col
+          :xs="24"
+          :sm="6"
+          :md="4"
+        >
           <el-form-item :label="$t('Project.Version')">
-            <div slot="label" class="mb-2">
+            <div
+              slot="label"
+              class="mb-2"
+            >
               <span>{{ $t('Project.Version') }}</span>
             </div>
             <el-select
@@ -108,33 +188,49 @@
               :disabled="!form.template_id"
               @change="handleVersionSelect"
             >
-              <el-option v-for="item in versionList" :key="item.name" :label="item.name" :value="item.name">
+              <el-option
+                v-for="item in versionList"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              >
                 <span>{{ item.name }}</span>
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col v-if="focusTemplate.description" :span="24">
+        <el-col
+          v-if="focusTemplate.description"
+          :span="24"
+        >
           <el-form-item :label="$t('Project.TemplateDescription')">
             <p v-html="focusTemplate.description" />
           </el-form-item>
         </el-col>
         <div>
-          <el-col v-for="(argument, idx) in form.argumentsForm" :key="argument.key" :span="8">
+          <el-col
+            v-for="(argument, idx) in form.argumentsForm"
+            :key="argument.key"
+            :span="8"
+          >
             <el-form-item
               :label="argument.display"
               :prop="'argumentsForm.' + idx + '.value'"
               :rules="{
                 required: true,
-                message: `${argument.display} is required`,
+                message: $t('general.PleaseInput') + ' ' + argument.display,
                 trigger: 'blur'
               }"
             >
-              <el-input v-if="argument.input_type === 'text'" v-model="argument.value" placeholder="Please input" />
+              <el-input
+                v-if="argument.input_type === 'text'"
+                v-model="argument.value"
+                :placeholder="$t('general.PleaseInput')"
+              />
               <el-input
                 v-else-if="argument.input_type === 'password'"
                 v-model="argument.value"
-                placeholder="Please input"
+                :placeholder="$t('general.PleaseInput')"
                 show-password
               />
             </el-form-item>
@@ -142,16 +238,25 @@
         </div>
       </el-row>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
-      <el-button type="primary" :loading="isLoading" @click="handleConfirm">{{ $t('general.Confirm') }}</el-button>
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button
+        :loading="isLoading"
+        @click="onDialogClosed"
+      >{{ $t('general.Cancel') }}</el-button>
+      <el-button
+        type="primary"
+        :loading="isLoading"
+        @click="handleConfirm"
+      >{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import i18n from '@/lang'
 import { mapActions, mapGetters } from 'vuex'
 import { getTemplateList, getTemplateParams, getTemplateParamsByVersion } from '@/api/template'
 import { refreshRancherCatalogs } from '@/api/rancher'
@@ -178,30 +283,36 @@ export default {
       form: formTemplate(),
       rules: {
         name: [
-          { required: true, message: 'Project Identifier is required', trigger: 'blur' },
+          { required: true, message: this.$t('general.PleaseInput') + this.$t('Project.Identifier'), trigger: 'blur' },
           {
             required: true,
             pattern: /^[a-z][a-z0-9-]{0,28}[a-z0-9]$/,
-            message: 'Identifier is invalid.',
+            message: this.$t('Project.IdInvalid'),
             trigger: 'blur'
           }
         ],
         display: [
-          { required: true, message: 'Project Name is required', trigger: 'blur' },
+          { required: true, message: this.$t('general.PleaseInput') + this.$t('Project.Name'), trigger: 'blur' },
           {
             required: true,
             pattern: /^[^<&]+$/,
-            message: i18n.t('Project.DisplayRule'),
+            message: this.$t('Project.DisplayRule'),
             trigger: 'blur'
           }
         ],
-        start_date: [{ required: true, message: 'Start Date is required', trigger: 'blur' }],
-        due_date: [{ required: true, message: 'Due Date is required', trigger: 'blur' }],
-        owner_id: [{ required: true, message: 'Owner is required', trigger: 'blur' }],
+        start_date: [
+          { required: true, message: this.$t('general.PleaseInput') + this.$t('Project.StartDate'), trigger: 'blur' }
+        ],
+        due_date: [
+          { required: true, message: this.$t('general.PleaseInput') + this.$t('general.DueDate'), trigger: 'blur' }
+        ],
+        owner_id: [
+          { required: true, message: this.$t('general.PleaseInput') + this.$t('general.Owner'), trigger: 'blur' }
+        ],
         description: [
           {
             pattern: /^[^<&]+$/,
-            message: i18n.t('Project.DescriptionRule'),
+            message: this.$t('Project.DescriptionRule'),
             trigger: 'blur'
           }
         ]
@@ -236,7 +347,7 @@ export default {
     },
     activeTemplateList() {
       if (this.templateList.length === 0) return []
-      const idx = this.templateList.findIndex(item => item.source === this.focusSources)
+      const idx = this.templateList.findIndex((item) => item.source === this.focusSources)
       return this.templateList[idx].options
     }
   },
@@ -352,10 +463,7 @@ export default {
     handleSendData() {
       const result = Object.assign({}, this.form)
       if (result.argumentsForm.length > 0) {
-        result.arguments = result.argumentsForm.reduce(
-          (result, cur) => Object.assign(result, { [cur.key]: cur.value }),
-          {}
-        )
+        result.arguments = result.argumentsForm.reduce((arr, cur) => Object.assign(arr, { [cur.key]: cur.value }), {})
       }
       if (result.description === '') delete result.description
       if (result.template_id === '') delete result.template_id
