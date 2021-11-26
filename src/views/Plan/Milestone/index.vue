@@ -36,7 +36,7 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="generateReport">產生Excel報表</el-button>
+              <el-button :loading="downloadLock.is_lock" type="primary" @click="generateReport">產生Excel報表</el-button>
             </el-form-item>
             <template v-if="downloadInfo.create_at">
               <el-divider />
