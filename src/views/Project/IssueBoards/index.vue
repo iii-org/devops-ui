@@ -103,7 +103,13 @@
         @blur="searchVisible=!searchVisible"
         @change="onChangeFilter"
       />
-      <el-button v-else type="text" :loading="isLoading" icon="el-icon-search" @click="searchVisible=!searchVisible">
+      <el-button
+        v-else
+        type="text"
+        :loading="isLoading"
+        icon="el-icon-search"
+        @click="searchVisible=!searchVisible"
+      >
         {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
       </el-button>
       <template v-if="isFilterChanged">
@@ -132,6 +138,7 @@
   </div>
 </template>
 
+//TODO: move dimension filter into SearchFilter.vue
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Fuse from 'fuse.js'
@@ -328,8 +335,7 @@ export default {
   },
   watch: {
     async selectedProjectId() {
-      await this.loadSelectionList()
-      await this.cleanFilter()
+      await this.fetchInitData()
     },
     isLoading(value) {
       if (!value) {
@@ -342,14 +348,7 @@ export default {
     }
   },
   async created() {
-    this.groupBy = await this.getGroupBy()
-    const storedData = await this.fetchStoredData()
-    const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
-    this.filterValue = storedFilterValue['board'] ? storedFilterValue['board'] : {}
-    this.keyword = storedKeyword['board'] ? storedKeyword['board'] : null
-    this.displayClosed = storedDisplayClosed['board'] ? storedDisplayClosed['board'] : false
-    await this.loadSelectionList()
-    await this.loadData()
+    await this.fetchInitData()
   },
   methods: {
     ...mapActions('projects', [
@@ -376,6 +375,20 @@ export default {
       this.projectIssueList = []
       await this.syncLoadFilterData()
       await this.getRelativeList()
+    },
+    async fetchInitData() {
+      this.groupBy = await this.getGroupBy()
+      await this.getInitStoredData()
+      await this.loadSelectionList()
+      await this.loadData()
+    },
+    async getInitStoredData() {
+      const key = 'board'
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
+      this.keyword = storedKeyword[key] ? storedKeyword[key] : null
+      this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
     },
     async fetchStoredData() {
       let storedFilterValue, storedKeyword, storedDisplayClosed

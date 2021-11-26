@@ -1,8 +1,6 @@
 <template>
   <div>
-    <el-row v-loading="listLoading"
-            :element-loading-text="$t('Loading')"
-    >
+    <el-row v-loading="listLoading" :element-loading-text="$t('Loading')">
       <!-- tree-props 取消第二個子議題箭頭-->
       <el-table
         ref="issueList"
@@ -26,46 +24,95 @@
         </el-table-column>
         <el-table-column :label="$t('general.Type')" width="130" prop="tracker" sortable="custom">
           <template slot-scope="{row}">
-            <Tracker v-if="row.tracker.name" :name="$t(`Issue.${row.tracker.name}`)" :type="row.tracker.name" />
+            <Tracker
+              v-if="row.tracker.name"
+              :name="$t(`Issue.${row.tracker.name}`)"
+              :type="row.tracker.name"
+            />
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Project.Name')" min-width="150" show-overflow-tooltip prop="project"
-                         sortable="custom"
+        <el-table-column
+          :label="$t('Project.Name')"
+          min-width="150"
+          show-overflow-tooltip prop="project"
+          sortable="custom"
         >
           <template slot-scope="scope">
             {{ scope.row.project.display }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Issue.Id')" min-width="280" show-overflow-tooltip prop="id" sortable="custom">
+        <el-table-column
+          :label="$t('Issue.Id')"
+          min-width="280"
+          show-overflow-tooltip
+          prop="id"
+          sortable="custom"
+        >
           <template slot-scope="scope">
             <span class="text-success mr-2">#{{ scope.row.id }}</span>
-            <el-tag v-for="item in scope.row.tags" :key="item.id" size="mini" class="mr-1">[{{ item.name }}]</el-tag>
+            <el-tag
+              v-for="item in scope.row.tags"
+              :key="item.id"
+              size="mini"
+              class="mr-1"
+            >
+              [{{ item.name }}]
+            </el-tag>
             {{ scope.row.name }}
           </template>
         </el-table-column>
-        <el-table-column align="center" :label="$t('Issue.Priority')" width="150" prop="priority" sortable="custom">
+        <el-table-column
+          align="center"
+          :label="$t('Issue.Priority')"
+          width="150"
+          prop="priority"
+          sortable="custom"
+        >
           <template slot-scope="{row}">
-            <Priority v-if="row.priority.name" :name="$t(`Issue.${row.priority.name}`)" :type="row.priority.name" />
-          </template>
-        </el-table-column>
-        <el-table-column align="center" :label="$t('general.Status')" width="150" prop="status" sortable="custom">
-          <template slot-scope="{row}">
-            <Status
-              v-if="row.status.name"
-              :name="$t(`Issue.${row.status.name}`)" :type="row.status.name"
+            <Priority
+              v-if="row.priority.name"
+              :name="$t(`Issue.${row.priority.name}`)"
+              :type="row.priority.name"
             />
           </template>
         </el-table-column>
-        <el-table-column v-if="from==='author_id'" align="center" :label="$t('Issue.Assignee')" min-width="180"
-                         prop="assigned_to" sortable="custom" show-overflow-tooltip
+        <el-table-column
+          align="center"
+          :label="$t('general.Status')"
+          width="150"
+          prop="status"
+          sortable="custom"
+        >
+          <template slot-scope="{row}">
+            <Status
+              v-if="row.status.name"
+              :name="$t(`Issue.${row.status.name}`)"
+              :type="row.status.name"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="from === 'author_id'"
+          align="center"
+          :label="$t('Issue.Assignee')"
+          min-width="180"
+          prop="assigned_to"
+          sortable="custom"
+          show-overflow-tooltip
         >
           <template v-if="scope.row.assigned_to" slot-scope="scope">
             <span>{{ scope.row.assigned_to.name }}</span>
             <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
           </template>
         </el-table-column>
-        <el-table-column v-if="from==='assigned_to_id'" align="center" :label="$t('Issue.Author')" min-width="180"
-                         prop="author" sortable="custom" show-overflow-tooltip
+        <el-table-column
+          v-if="from === 'assigned_to_id'"
+          align="center"
+          :label="$t('Issue.Author')"
+          min-width="180"
+          prop="author"
+          sortable="custom"
+          show-overflow-tooltip
         >
           <template v-if="scope.row.author" slot-scope="scope">
             <span>{{ scope.row.author.name }}</span>
@@ -81,7 +128,7 @@
         :total="pageInfo.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
-        :page-sizes="[10,25,50,100]"
+        :page-sizes="[10, 25, 50, 100]"
         :layout="'total, sizes, prev, pager, next'"
         @pagination="handleCurrentChange"
       />
@@ -120,12 +167,11 @@ export default {
     },
     filterValueProps: {
       type: Object,
-      default: () => {
-      }
+      default: () => {}
     },
     projectId: {
       type: [String, Number],
-      default: null
+      default: ''
     },
     displayClosedProps: {
       type: Boolean,
@@ -140,11 +186,9 @@ export default {
     return {
       remote: true,
       searchVisible: false,
-
       quickChangeDialogVisible: false,
       quickChangeForm: {},
       form: {},
-
       listQuery: {
         offset: 0,
         page: 1,
@@ -196,7 +240,7 @@ export default {
     }
   },
   async mounted() {
-    await this.initTableData()
+    // await this.initTableData()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed', 'getListQuery', 'setListQuery']),

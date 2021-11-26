@@ -5,10 +5,10 @@
       :project-id="project_id"
       :keep-selection="false"
       :clearable="true"
-      @change="project_id=$event"
+      @change="project_id = $event"
     >
       <template slot="button">
-        <template v-if="project_id===null||project_id===''">
+        <template v-if="project_id === null || project_id === ''">
           <el-button
             v-permission="['Administrator','Project Manager']"
             type="primary"
@@ -44,7 +44,7 @@
               <div slot="label">
                 {{ $t('Issue.' + dimension.value) }}
                 <el-tag
-                  v-if="dimension.value==='fixed_version'"
+                  v-if="dimension.value ==='fixed_version'"
                   type="info"
                   class="flex-1"
                 >
@@ -53,13 +53,14 @@
               </div>
               <el-select
                 v-model="filterValue[dimension.value]"
-                :placeholder="$t('Issue.Select'+dimension.placeholder)"
+                :placeholder="$t('Issue.Select' + dimension.placeholder)"
                 filterable
                 clearable
                 @change="onChangeFilter"
               >
                 <el-option
-                  v-for="item in (dimension.value==='status')? filterClosedStatus(getOptionsData(dimension.value)):getOptionsData(dimension.value)"
+                  v-for="item in (dimension.value === 'status')
+                    ? filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
                   :key="item.id"
                   :label="getSelectionLabel(item)"
                   :value="item.id"
@@ -99,7 +100,7 @@
         style="width: 250px;"
         clearable
         @change="onChangeFilter"
-        @blur="searchVisible=!searchVisible"
+        @blur="searchVisible = !searchVisible"
       />
       <el-button
         v-else
@@ -141,12 +142,12 @@
       >
         <div
           class="item"
-          :class="{'active': activeDashboard===card.id, [card.id]:card.id}"
-          @click="activeDashboard=card.id"
+          :class="{'active': activeDashboard === card.id, [card.id]: card.id}"
+          @click="activeDashboard = card.id"
         >
           <p class="font-bold m-1">
             <em
-              v-if="activeDashboard===card.id"
+              v-if="activeDashboard === card.id"
               class="el-icon-caret-right"
             />{{ card.name }}
             <span class="count">{{ total[card.id] }}</span>
@@ -235,20 +236,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userRole', 'userId', 'tracker', 'status', 'priority', 'projectList']),
+    ...mapGetters([
+      'selectedProjectId',
+      'userRole',
+      'userId',
+      'tracker',
+      'status',
+      'priority',
+      'projectList'
+    ]),
     dashboardCards() {
       return [
         { id: 'assigned_to_id', name: this.$t('MyWork.AssignedToMe') },
         { id: 'author_id', name: this.$t('MyWork.ReportedIssue') }
       ]
-    },
-    contextOptions() {
-      const result = {}
-      const getOptions = ['assigned_to', 'fixed_version']
-      getOptions.forEach((item) => {
-        result[item.value] = this[item.value]
-      })
-      return result
     },
     displayFilterValue() {
       const result = []
@@ -263,43 +264,29 @@ export default {
       return this.$t('general.Filter') + (result.length > 0 ? ': ' : '') + result.join(', ')
     },
     isFilterChanged() {
-      for (const item of Object.keys(this.originFilterValue)) {
-        const checkFilterValue = this.originFilterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.filterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      for (const item of Object.keys(this.filterValue)) {
-        const checkFilterValue = this.filterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.originFilterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      return !!this.keyword
+      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
     }
   },
   watch: {
     async project_id(value) {
-      await this.loadProjectSelectionList(this.fixed_version_closed)
-      const storeFilterValue = await this.getIssueFilter()
-      storeFilterValue['work_project_id'] = value
-      await this.setIssueFilter(storeFilterValue)
-      if (value && value !== '') {
-        this.$refs['ProjectSelection'].onProjectChange(value)
-      } else {
-        this.quickAddTopicDialogVisible = false
+      if (value === '') this.project_id = 0
+      value && value !== ''
+        ? this.$refs['ProjectSelection'].onProjectChange(value) : this.quickAddTopicDialogVisible = false
+      try {
+        const storedFilterValue = await this.getIssueFilter()
+        storedFilterValue['work_project_id'] = value
+        await this.setIssueFilter(storedFilterValue)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        await this.fetchInitData()
       }
+      await this.loadProjectSelectionList(this.fixed_version_closed)
     },
     async activeDashboard(value) {
-      const storeFilterValue = await this.getIssueFilter()
-      storeFilterValue['work_active_dashboard'] = value
-      await this.setIssueFilter(storeFilterValue)
+      const storedFilterValue = await this.getIssueFilter()
+      storedFilterValue['work_active_dashboard'] = value
+      await this.setIssueFilter(storedFilterValue)
     },
     fixed_version_closed(value) {
       this.loadProjectSelectionList(value)
@@ -307,58 +294,30 @@ export default {
     filterValue: {
       deep: true,
       async handler(value) {
-        const storeFilterValue = await this.getIssueFilter()
+        const storedFilterValue = await this.getIssueFilter()
         if (value['tags'] && value['tags'].length <= 0) {
           this.$delete(value, 'tags')
         }
-        storeFilterValue['work'] = value
-        await this.setIssueFilter(storeFilterValue)
+        storedFilterValue['work'] = value
+        await this.setIssueFilter(storedFilterValue)
       }
     },
     async keyword(value) {
-      const storeKeyword = await this.getKeyword()
-      storeKeyword['work'] = value
-      await this.setKeyword(storeKeyword)
+      const storedKeyword = await this.getKeyword()
+      storedKeyword['work'] = value
+      await this.setKeyword(storedKeyword)
     },
     async displayClosed(value) {
-      const storeDisplayClosed = await this.getDisplayClosed()
-      storeDisplayClosed['work'] = value
-      await this.setDisplayClosed(storeDisplayClosed)
+      const storedDisplayClosed = await this.getDisplayClosed()
+      storedDisplayClosed['work'] = value
+      await this.setDisplayClosed(storedDisplayClosed)
     }
   },
   async created() {
-    const storeFilterValue = await this.getIssueFilter()
-    if (storeFilterValue['work']) {
-      this.filterValue = storeFilterValue['work']
-    } else {
-      this.filterValue = {}
-    }
-    if (storeFilterValue['work_project_id']) {
-      this.project_id = storeFilterValue['work_project_id']
-    } else {
-      this.project_id = null
-    }
-    if (storeFilterValue['work_active_dashboard']) {
-      this.activeDashboard = storeFilterValue['work_active_dashboard']
-    } else {
-      this.activeDashboard = 'assigned_to_id'
-    }
-    await this.setIssueFilter(storeFilterValue)
-    const storeKeyword = await this.getKeyword()
-    if (storeKeyword['work']) {
-      this.keyword = storeKeyword['work']
-    } else {
-      this.keyword = null
-    }
-    const storeDisplayClosed = await this.getDisplayClosed()
-    if (storeDisplayClosed['work']) {
-      this.displayClosed = storeDisplayClosed['work']
-    } else {
-      this.displayClosed = false
-    }
+    await this.fetchInitData()
   },
   async mounted() {
-    await this.loadSelectionList()
+    // await this.loadSelectionList()
     const storeListQuery = await this.getListQuery()
     this.dashboardCards.forEach((card) => {
       if (storeListQuery[`MyWork_${card.id}`]) {
@@ -386,13 +345,45 @@ export default {
       'setDisplayClosed',
       'getListQuery'
     ]),
+    async fetchInitData() {
+      try {
+        await this.getInitStoredData()
+        await this.loadSelectionList()
+      } catch (err) {
+        console.error(err)
+      } finally {
+        await this.loadData()
+      }
+    },
     getOptionsData(option_name) {
       return this[option_name]
     },
     loadData() {
-      this.dashboardCards.forEach((card) => {
-        this.$refs[card.id][0].initTableData()
+      this.$nextTick(() => {
+        this.dashboardCards.forEach((card) => {
+          this.$refs[card.id][0].initTableData()
+        })
       })
+    },
+    async getInitStoredData() {
+      const key = 'work'
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
+      this.project_id = storedFilterValue[`${key}_project_id`] ? storedFilterValue[`${key}_project_id`] : this.project_id
+      this.activeDashboard = storedFilterValue[`${key}_active_dashboard`] || 'assigned_to_id'
+      this.keyword = storedKeyword[key] ? storedKeyword[key] : null
+      this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
+    },
+    async fetchStoredData() {
+      let storedFilterValue, storedKeyword, storedDisplayClosed
+      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
+        const [filterValue, keyword, displayClosed] = res.map(item => item)
+        storedFilterValue = filterValue
+        storedKeyword = keyword
+        storedDisplayClosed = displayClosed
+      })
+      return { storedFilterValue, storedKeyword, storedDisplayClosed }
     },
     backToFirstPage() {
       this.dashboardCards.forEach((card) => {
@@ -441,6 +432,17 @@ export default {
         (!this.project_id || (name === 'assigned_to' && this.activeDashboard === 'assigned_to_id'))
       )
     },
+    checkFilterValue(key) {
+      const comparedKey = this.getComparedKey(key)
+      for (const item of Object.keys(this[key])) {
+        const checkFilterValue = this[key]
+        if (checkFilterValue[item] === '') delete checkFilterValue[item]
+        if (this[comparedKey][item] !== checkFilterValue[item]) return true
+      }
+    },
+    getComparedKey(key) {
+      return key === 'filterValue' ? 'originFilterValue' : 'filterValue'
+    },
     updateTotalCount(card_id, value) {
       if (value === Infinity) {
         this.$set(this.total, card_id, '-')
@@ -448,7 +450,7 @@ export default {
         this.$set(this.total, card_id, value)
       }
     },
-    async onChangeFilter() {
+    onChangeFilter() {
       this.dashboardCards.forEach((card) => {
         this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
         this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)

@@ -255,6 +255,7 @@ export default {
       searchVisible: false,
       assigned_to: [],
       fixed_version: [],
+      tags: [],
       form: {},
       selectedIssueList: [],
       allDownloadData: [],
@@ -271,26 +272,13 @@ export default {
       return this.selectedIssueList.length > 0
     }
   },
+  watch: {
+    async selectedProjectId() {
+      await this.fetchInitData()
+    }
+  },
   async created() {
-    const storeFilterValue = await this.getIssueFilter()
-    if (storeFilterValue['list']) {
-      this.filterValue = storeFilterValue['list']
-    } else {
-      this.filterValue = {}
-    }
-    const storeKeyword = await this.getKeyword()
-    if (storeKeyword['list']) {
-      this.keyword = storeKeyword['list']
-    } else {
-      this.keyword = null
-    }
-    const storeDisplayClosed = await this.getDisplayClosed()
-    if (storeDisplayClosed['list']) {
-      this.displayClosed = storeDisplayClosed['list']
-    } else {
-      this.displayClosed = false
-    }
-    await this.loadSelectionList()
+    await this.fetchInitData()
   },
   mounted() {
     this.getInitPage()
@@ -306,11 +294,34 @@ export default {
       'setFixedVersionShowClosed',
       'getFixedVersionShowClosed'
     ]),
+    async fetchInitData() {
+      await this.getInitStoredData()
+      await this.loadSelectionList()
+      await this.loadData()
+    },
     async fetchAllDownloadData() {
       this.allDataLoading = true
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
       this.allDownloadData = res.data.issue_list
       this.allDataLoading = false
+    },
+    async getInitStoredData() {
+      const key = 'list'
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
+      this.keyword = storedKeyword[key] ? storedKeyword[key] : null
+      this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
+    },
+    async fetchStoredData() {
+      let storedFilterValue, storedKeyword, storedDisplayClosed
+      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
+        const [filterValue, keyword, displayClosed] = res.map(item => item)
+        storedFilterValue = filterValue
+        storedKeyword = keyword
+        storedDisplayClosed = displayClosed
+      })
+      return { storedFilterValue, storedKeyword, storedDisplayClosed }
     },
     getParams(limit) {
       const result = {
@@ -336,15 +347,15 @@ export default {
       return result
     },
     async onChangeFilter() {
-      const storeFilterValue = await this.getIssueFilter()
-      storeFilterValue['list'] = this.filterValue
-      const storeKeyword = await this.getKeyword()
-      storeKeyword['list'] = this.keyword
-      const storeDisplayClosed = await this.getDisplayClosed()
-      storeDisplayClosed['list'] = this.displayClosed
-      await this.setIssueFilter(storeFilterValue)
-      await this.setKeyword(storeKeyword)
-      await this.setDisplayClosed(storeDisplayClosed)
+      const key = 'list'
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      storedFilterValue[key] = this.filterValue
+      storedKeyword[key] = this.keyword
+      storedDisplayClosed[key] = this.displayClosed
+      await this.setIssueFilter(storedFilterValue)
+      await this.setKeyword(storedKeyword)
+      await this.setDisplayClosed(storedDisplayClosed)
       await this.backToFirstPage()
       await this.loadData()
     },

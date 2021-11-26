@@ -11,34 +11,42 @@
           <el-form-item :key="dimension.id">
             <div slot="label">
               {{ $t(`Issue.${dimension.value}`) }}
-              <el-tag v-if="dimension.value==='fixed_version'" type="info" class="flex-1">
+              <el-tag v-if="dimension.value === 'fixed_version'" type="info" class="flex-1">
                 <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
               </el-tag>
             </div>
-            <component :is="dimension.component"
-                       v-if="dimension.component"
-                       v-model="filterValue[dimension.value]"
-                       v-bind="dimension.componentOptions"
-                       @change="onChangeFilter"
+            <component
+              :is="dimension.component"
+              v-if="dimension.component"
+              v-model="filterValue[dimension.value]"
+              v-bind="dimension.componentOptions"
+              @change="onChangeFilter"
             />
-            <el-select v-else
-                       v-model="filterValue[dimension.value]"
-                       :placeholder="$t('Issue.Select'+dimension.placeholder)"
-                       :disabled="selectedProjectId === -1"
-                       filterable
-                       clearable
-                       :multiple="dimension.value === 'tags'"
-                       :collapse-tags="dimension.value === 'tags'"
-                       @change="onChangeFilter"
+            <el-select
+              v-else
+              v-model="filterValue[dimension.value]"
+              :placeholder="$t('Issue.Select'+dimension.placeholder)"
+              :disabled="selectedProjectId === -1"
+              filterable
+              clearable
+              :multiple="dimension.value === 'tags'"
+              :collapse-tags="dimension.value === 'tags'"
+              @change="onChangeFilter"
             >
               <el-option
-                v-for="item in (dimension.value==='status') ? filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
-                :key="(dimension.value==='assigned_to')? item.login: item.id"
-                :label="getSelectionLabel(item)"
+                v-for="item in (dimension.value === 'status') ?
+                  filterClosedStatus(getOptionsData(dimension.value)) : getOptionsData(dimension.value)"
+                :key="(dimension.value === 'assigned_to') ? item.login : item.id"
+                :label="getSelectedLabel(item)"
                 :class="{[item.class]:item.class}"
                 :value="item.id"
               >
-                <component :is="dimension.value" v-if="dimension.tag" :name="$t(`Issue.${item.name}`)" :type="item.name" />
+                <component
+                  :is="dimension.value"
+                  v-if="dimension.tag"
+                  :name="$t(`Issue.${item.name}`)"
+                  :type="item.name"
+                />
               </el-option>
             </el-select>
           </el-form-item>
@@ -47,7 +55,12 @@
           <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
         </el-form-item>
       </el-form>
-      <SaveFilterButton ref="saveFilterButton" :filter-value="filterValue" :show-button="showSaveFilterButton" @update="onCustomFilterAdded" />
+      <SaveFilterButton
+        ref="saveFilterButton"
+        :filter-value="filterValue"
+        :show-button="showSaveFilterButton"
+        @update="onCustomFilterAdded"
+      />
       <el-button
         v-show="!showSaveFilterButton"
         style="width:100%"
@@ -71,7 +84,7 @@
       @blur="searchVisible=!searchVisible"
       @change="onChangeFilter"
     />
-    <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
+    <el-button v-else type="text" icon="el-icon-search" @click="searchVisible = !searchVisible">
       {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
     </el-button>
     <template v-if="isFilterChanged">
@@ -104,15 +117,15 @@ export default {
     },
     filterOptions: {
       type: Array,
-      default: () => ([])
+      default: () => []
     },
     selectionOptions: {
       type: Object,
-      default: () => ({})
+      default: () => {}
     },
     prefill: {
       type: Object,
-      default: () => ({})
+      default: () => {}
     }
   },
   data() {
@@ -130,49 +143,41 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'tracker', 'status', 'priority']),
     isFilterChanged() {
-      for (const item of Object.keys(this.originFilterValue)) {
-        const checkFilterValue = this.originFilterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.filterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      for (const item of Object.keys(this.filterValue)) {
-        const checkFilterValue = this.filterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.originFilterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      return !!this.keyword
+      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
     },
     displayFilterValue() {
-      const result = []
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          if (this.getOptionsData(item) && this.getOptionsData(item).length > 0) {
-            if (Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0) {
-              const value = this.getOptionsData(item).filter((search) => (this.filterValue[item].includes(search.id)))
-              if (value) {
-                result.push(`#${value.map(subItem => this.getSelectionLabel(subItem)).join('/')}`)
-              }
-            } else {
-              const value = this.getOptionsData(item).find((search) => (search.id === this.filterValue[item]))
-              if (value) {
-                result.push(this.getSelectionLabel(value))
-              }
-            }
-          } else {
-            const due_date = this.filterValue[item].map(date => this.$dayjs(date).format('YYYY-MM-DD'))
-            result.push(due_date.join('~'))
-          }
-        }
+      const selectedLabels = this.getSelectedLabels
+      const colon = selectedLabels.length > 0 ? ': ' : ''
+      const factor = selectedLabels.join(', ')
+      return `${this.$t('general.Filter')}${colon}${factor}`
+    },
+    getSelectedLabels() {
+      const selectedLabels = []
+      Object.keys(this.filterValue).forEach(item => {
+        if (!this.filterValue[item]) return
+        const isArray = Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0
+        isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
       })
-      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
+      return selectedLabels
+    },
+    handleArrayLabels() {
+      return function(item) {
+        let label = ''
+        const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
+        if (value) {
+          const joinedString = value.map(subItem => this.getSelectedLabel(subItem)).join('/')
+          label = `#${joinedString}`
+        }
+        return label
+      }
+    },
+    handleLabels() {
+      return function(item) {
+        let label = ''
+        const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
+        if (value) label = this.getSelectedLabel(value)
+        return label
+      }
     }
   },
   watch: {
@@ -186,16 +191,19 @@ export default {
     }
   },
   methods: {
-    getSelectionLabel(item) {
+    getSelectedLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.getTranslateHeader(item.name)
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
-        result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
+        result += ` (${this.getTranslateHeader(item.status)})`
       }
       if (item.hasOwnProperty('login')) {
-        result += ' (' + (item.login) + ')'
+        result += ` (${item.login})`
       }
       return result
+    },
+    getTranslateHeader(value) {
+      return this.$te('Issue.' + value) ? this.$t('Issue.' + value) : value
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
@@ -220,6 +228,17 @@ export default {
       this.keyword = ''
       this.displayClosed = false
       this.onChangeFilter()
+    },
+    checkFilterValue(key) {
+      const comparedKey = this.getComparedKey(key)
+      for (const item of Object.keys(this[key])) {
+        const checkFilterValue = this[key]
+        if (checkFilterValue[item] === '') delete checkFilterValue[item]
+        if (this[comparedKey][item] !== checkFilterValue[item]) return true
+      }
+    },
+    getComparedKey(key) {
+      return key === 'filterValue' ? 'originFilterValue' : 'filterValue'
     },
     onCustomFilterAdded() {
       this.resetSaveFilterButtons()

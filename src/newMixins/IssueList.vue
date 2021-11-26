@@ -73,10 +73,10 @@ export default {
     }
   },
   watch: {
-    async selectedProjectId() {
-      await this.loadSelectionList()
-      await this.cleanFilter()
-    },
+    // async selectedProjectId() {
+    //   await this.fetchInitData()
+    //   // await this.cleanFilter()
+    // },
     fixed_version_closed(value) {
       this.setFixedVersionShowClosed(value)
       this.loadVersionList(value)
