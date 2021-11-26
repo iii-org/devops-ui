@@ -307,7 +307,7 @@ export default {
           { required: true, message: this.$t('general.PleaseInput') + this.$t('general.DueDate'), trigger: 'blur' }
         ],
         owner_id: [
-          { required: true, message: this.$t('general.PleaseInput') + this.$t('general.Owner'), trigger: 'blur' }
+          { required: true, message: this.$t('general.PleaseInput') + this.$t('general.owner_name'), trigger: 'blur' }
         ],
         description: [
           {

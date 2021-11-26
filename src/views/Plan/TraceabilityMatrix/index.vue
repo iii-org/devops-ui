@@ -335,7 +335,7 @@
             >{{ idx + 1 }}.
               <el-tag>
                 <Tracker
-                  :name="$t(`Issue.${item}}`)"
+                  :name="$t(`Issue.${item}`)"
                   :type="item"
                 />
               </el-tag>
