@@ -51,7 +51,7 @@ export default {
       }
     },
     adjustTableRemote(forceRowNum) {
-      this.$nextTick(async function() {
+      this.$nextTick(async () => {
         let siblingsHeight = 0
         const $table = this.$el.getElementsByClassName('el-table__body')[0]
         if (!$table) {
@@ -76,16 +76,16 @@ export default {
         } else {
           this.listQuery.limit = Math.floor(tableHeight / this.rowHeight) - 1
         }
-        const nowPage = Math.ceil(this.listQuery.offset / this.listQuery.limit)
+        const nowPage = Math.ceil((this.listQuery.offset + 1) / this.listQuery.limit)
         if (nowPage <= 0) {
           this.listQuery.page = 1
         } else {
-          this.listQuery.page = Math.ceil(this.listQuery.offset / this.listQuery.limit)
+          this.listQuery.page = nowPage
         }
       })
     },
     adjustTable(forceRowNum) {
-      this.$nextTick(function() {
+      this.$nextTick(() => {
         let siblingsHeight = 0
         const $table = this.$el.getElementsByClassName('el-table')[0]
         if (!$table) {
