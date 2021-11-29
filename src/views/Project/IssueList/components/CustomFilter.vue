@@ -209,7 +209,14 @@ const defaultFormData = () => ({
   fixed_version_id: null,
   priority_id: null
 })
-
+const keysMap = {
+  assigned_to_id: 'assigned_to',
+  fixed_version_id: 'fixed_version',
+  priority_id: 'priority',
+  status_id: 'status',
+  tags: 'tags',
+  tracker_id: 'tracker'
+}
 export default {
   name: 'CustomFilter',
   components: {
@@ -249,13 +256,13 @@ export default {
     fetchCustomFilter() {
       this.isLoading = true
       getIssueFilter(this.selectedProjectId).then((res) => {
-        this.filters = res.data.map((item) => {
-          const result = item
-          result.custom_filter = this.formateCustomFilter(item.custom_filter)
-          result.isShowForm = false
-          result.isApplying = false
-          return result
-        })
+        this.filters = res.data.map((item) =>
+          Object.assign({}, item, {
+            custom_filter: this.formateCustomFilter(item.custom_filter),
+            isShowForm: false,
+            isApplying: false
+          })
+        )
       })
       this.isLoading = false
     },
@@ -308,7 +315,15 @@ export default {
       this.resetApplyFilter()
       const idx = this.filters.findIndex((item) => item.id === filterId)
       this.filters[idx].isApplying = !this.filters[idx].isApplying
-      console.log(this.filters[idx].custom_filter)
+      this.emitCustomFilter(this.filters[idx].custom_filter)
+    },
+    emitCustomFilter(filters) {
+      const options = Object.assign({}, filters)
+      const result = Object.keys(options).reduce(
+        (acc, key) => ({ ...acc, ...{ [keysMap[key] || key]: options[key] }}),
+        {}
+      )
+      this.$emit('apply-filter', result)
     }
   }
 }

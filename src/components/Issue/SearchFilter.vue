@@ -55,20 +55,20 @@
           <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
         </el-form-item>
       </el-form>
-      <SaveFilterButton
+      <!-- <SaveFilterButton
         ref="saveFilterButton"
         :filter-value="filterValue"
         :show-button="showSaveFilterButton"
         @update="onCustomFilterAdded"
       />
       <el-button
-        v-show="!showSaveFilterButton"
+        v-if="showSaveSettingsButton"
         style="width:100%"
         type="primary"
         @click="onSaveClick"
       >
         {{ $t('general.SaveSettings') }}
-      </el-button>
+      </el-button> -->
       <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" /></el-button>
     </el-popover>
@@ -178,6 +178,11 @@ export default {
         if (value) label = this.getSelectedLabel(value)
         return label
       }
+    },
+    showSaveSettingsButton() {
+      const whiteList = ['issue-list']
+      const inWhiteList = whiteList.includes(this.$route.name)
+      return inWhiteList && !this.showSaveFilterButton
     }
   },
   watch: {
@@ -250,7 +255,7 @@ export default {
     },
     resetSaveFilterButtons() {
       this.showSaveFilterButton = false
-      this.$refs.saveFilterButton.reset()
+      // this.$refs.saveFilterButton.reset()
     }
   }
 }

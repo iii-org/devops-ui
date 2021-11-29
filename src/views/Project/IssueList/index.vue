@@ -21,10 +21,11 @@
         @change-fixed-version="onChangeFixedVersionStatus"
         @add-custom-filter="updateCustomFilter"
       >
-        <CustomFilter
+        <!-- <CustomFilter
           ref="customFilter"
           :selection-options="contextOptions"
-        />
+          @apply-filter="applyCustomFilter"
+        /> -->
         <span
           slot="download"
           v-permission="['QA']"
@@ -315,8 +316,8 @@ export default {
     },
     async fetchStoredData() {
       let storedFilterValue, storedKeyword, storedDisplayClosed
-      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then(res => {
-        const [filterValue, keyword, displayClosed] = res.map(item => item)
+      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then((res) => {
+        const [filterValue, keyword, displayClosed] = res.map((item) => item)
         storedFilterValue = filterValue
         storedKeyword = keyword
         storedDisplayClosed = displayClosed
@@ -469,6 +470,9 @@ export default {
     },
     updateCustomFilter() {
       this.$refs.customFilter.fetchCustomFilter()
+    },
+    applyCustomFilter(filters) {
+      this.onChangeFilterForm({ filterValue: filters })
     }
   }
 }
