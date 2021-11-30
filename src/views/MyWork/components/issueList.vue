@@ -242,7 +242,7 @@ export default {
     }
   },
   async mounted() {
-    // await this.initTableData()
+    await this.initTableData()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed', 'getListQuery', 'setListQuery']),
