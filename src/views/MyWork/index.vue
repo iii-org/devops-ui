@@ -319,19 +319,21 @@ export default {
   async mounted() {
     // await this.loadSelectionList()
     const storeListQuery = await this.getListQuery()
-    this.dashboardCards.forEach((card) => {
-      if (storeListQuery[`MyWork_${card.id}`]) {
-        this.$set(this.$refs[card.id][0], 'listQuery', storeListQuery[`MyWork_${card.id}`])
-        this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`].offset)
-        this.$set(this.$refs[card.id][0].pageInfo, 'total', Infinity)
-      } else {
-        this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
-        this.$set(this.$refs[card.id][0].listQuery, 'limit', 10)
-        this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
-      }
-      this.$refs[card.id][0].handleCurrentChange({
-        init: this.$refs[card.id][0].listQuery.offset,
-        limit: this.$refs[card.id][0].listQuery.limit
+    await this.$nextTick(() => {
+      this.dashboardCards.forEach((card) => {
+        if (storeListQuery[`MyWork_${card.id}`]) {
+          this.$set(this.$refs[card.id][0], 'listQuery', storeListQuery[`MyWork_${card.id}`])
+          this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`].offset)
+          this.$set(this.$refs[card.id][0].pageInfo, 'total', Infinity)
+        } else {
+          this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
+          this.$set(this.$refs[card.id][0].listQuery, 'limit', 10)
+          this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
+        }
+        this.$refs[card.id][0].handleCurrentChange({
+          init: this.$refs[card.id][0].listQuery.offset,
+          limit: this.$refs[card.id][0].listQuery.limit
+        })
       })
     })
   },
