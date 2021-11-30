@@ -8,7 +8,7 @@
       @change="project_id = $event"
     >
       <template slot="button">
-        <template v-if="project_id === null || project_id === ''">
+        <template v-if="project_id === null || project_id === '' || project_id === 0">
           <el-button
             v-permission="['Administrator','Project Manager']"
             type="primary"
@@ -319,21 +319,19 @@ export default {
   async mounted() {
     // await this.loadSelectionList()
     const storeListQuery = await this.getListQuery()
-    await this.$nextTick(() => {
-      this.dashboardCards.forEach((card) => {
-        if (storeListQuery[`MyWork_${card.id}`]) {
-          this.$set(this.$refs[card.id][0], 'listQuery', storeListQuery[`MyWork_${card.id}`])
-          this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`].offset)
-          this.$set(this.$refs[card.id][0].pageInfo, 'total', Infinity)
-        } else {
-          this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
-          this.$set(this.$refs[card.id][0].listQuery, 'limit', 10)
-          this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
-        }
-        this.$refs[card.id][0].handleCurrentChange({
-          init: this.$refs[card.id][0].listQuery.offset,
-          limit: this.$refs[card.id][0].listQuery.limit
-        })
+    await this.dashboardCards.forEach((card) => {
+      if (storeListQuery[`MyWork_${card.id}`]) {
+        this.$set(this.$refs[card.id][0], 'listQuery', storeListQuery[`MyWork_${card.id}`])
+        this.$set(this.$refs[card.id][0].pageInfo, 'offset', storeListQuery[`MyWork_${card.id}`].offset)
+        this.$set(this.$refs[card.id][0].pageInfo, 'total', Infinity)
+      } else {
+        this.$set(this.$refs[card.id][0].listQuery, 'offset', 0)
+        this.$set(this.$refs[card.id][0].listQuery, 'limit', 10)
+        this.$set(this.$refs[card.id][0].pageInfo, 'offset', 0)
+      }
+      this.$refs[card.id][0].handleCurrentChange({
+        init: this.$refs[card.id][0].listQuery.offset,
+        limit: this.$refs[card.id][0].listQuery.limit
       })
     })
   },
@@ -362,7 +360,7 @@ export default {
     },
     loadData() {
       this.$nextTick(() => {
-        this.dashboardCards.forEach((card) => {
+        this.dashboardCards.forEach(async (card) => {
           this.$refs[card.id][0].initTableData()
         })
       })
