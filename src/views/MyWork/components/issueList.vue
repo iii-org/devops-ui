@@ -219,7 +219,7 @@ export default {
       immediate: false,
       async handler(value) {
         this.filterValue = value
-        await this.backToFirstPage()
+        // await this.backToFirstPage()
         await this.onChangeFilterForm({ filterValue: value })
       }
     },
