@@ -196,7 +196,7 @@
       width="30%"
       :before-close="handleClose"
     >
-      <div class="text-base mb-2">{{ $t('Issue.TransferIssueTo', { value: checkedIssueIds.length }) }}</div>
+      <div class="text-base mb-2">{{ $t('Issue.TransferIssueTo', { value: checkedIssues.length }) }}</div>
       <el-select
         v-model="assigneeId"
         style="width: 100%"
