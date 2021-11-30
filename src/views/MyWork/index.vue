@@ -79,7 +79,7 @@
             :label="$t('Issue.DisplayClosedIssue')"
             class="checkbox"
           >
-            <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
+            <el-checkbox v-model="displayClosed" />
           </el-form-item>
         </el-form>
         <el-button

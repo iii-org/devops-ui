@@ -219,6 +219,7 @@ export default {
       immediate: false,
       async handler(value) {
         this.filterValue = value
+        await this.backToFirstPage()
         await this.onChangeFilterForm({ filterValue: value })
       }
     },
@@ -229,6 +230,7 @@ export default {
       this.keyword = value
     },
     async displayClosed(value) {
+      await this.backToFirstPage()
       await this.onChangeFilterForm({ displayClosed: value })
     },
     fixed_version_closed(value) {
@@ -268,6 +270,9 @@ export default {
         result['search'] = this.keyword
       }
       return result
+    },
+    async onChangeFilter() {
+      await this.loadData()
     },
     async initTableData() {
       if (this.selectedProjectId === -1) return
