@@ -1,163 +1,162 @@
 <template>
-  <div>
-    <el-row
-      v-show="isLoading||projectCount>0"
-      class="app-container"
-    >
-      <el-row
-        type="flex"
-        class="flex-wrap"
-        :gutter="10"
-      >
-        <el-col class="text-right">
-          <span class="text-sm ml-3">
-            *本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)]) }}</span>
-          <el-button
-            size="small"
-            icon="el-icon-refresh"
-            :disabled="status.is_lock"
-            @click="getSyncRedmine"
+  <div class="app-container">
+    <el-row v-show="isLoading||projectCount>0">
+      <el-col>
+        <el-row
+          type="flex"
+          class="flex-wrap"
+          :gutter="10"
+        >
+          <el-col class="text-right">
+            <span class="text-sm ml-3">
+              *本表每小時更新一次 {{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(status.sync_date)]) }}</span>
+            <el-button
+              size="small"
+              icon="el-icon-refresh"
+              :disabled="status.is_lock"
+              @click="getSyncRedmine"
+            >
+              {{ $t('Dashboard.ADMIN.UpdateNow') }}
+            </el-button>
+          </el-col>
+          <el-col v-if="status.is_lock">
+            <el-alert
+              type="warning"
+              class="mb-4 loading"
+              :closable="false"
+            >
+              <h2 slot="title">
+                <em class="el-icon-loading" /> {{ $t('Dashboard.ADMIN.syncing') }}
+              </h2>
+            </el-alert>
+          </el-col>
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="(userRole==='QA')? 12: 10"
           >
-            {{ $t('Dashboard.ADMIN.UpdateNow') }}
-          </el-button>
-        </el-col>
-        <el-col v-if="status.is_lock">
-          <el-alert
-            type="warning"
-            class="mb-4 loading"
-            :closable="false"
+            <el-card class="overview">
+              <template slot="header">
+                <span class="font-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
+              </template>
+              <admin-overview
+                :data="getProjectOverviewData"
+                @total-count="getTotalCount"
+                @loading="getLoadingStatus"
+              />
+            </el-card>
+          </el-col>
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="(userRole==='QA')? 12: 7"
           >
-            <h2 slot="title">
-              <em class="el-icon-loading" /> {{ $t('Dashboard.ADMIN.syncing') }}
-            </h2>
-          </el-alert>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="24"
-          :md="(userRole==='QA')? 12: 10"
-        >
-          <el-card class="overview">
-            <template slot="header">
-              <span class="font-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
-            </template>
-            <admin-overview
-              :data="getProjectOverviewData"
-              @total-count="getTotalCount"
-              @loading="getLoadingStatus"
-            />
-          </el-card>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="24"
-          :md="(userRole==='QA')? 12: 7"
-        >
-          <el-card>
-            <div
-              slot="header"
-              class="cursor-pointer"
-              @click="onChangeDialogVisible({key: 'projectMember', value: true})"
-            >
-              <span class="font-bold">
-                {{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
-                <em class="ri-external-link-line" />
-              </span>
-            </div>
-            <admin-project-member
-              :data="getProjectMembersData"
-              :dialog-visible="dialogVisible.projectMember"
-              @dialog-visible="onChangeDialogVisible"
-            />
-          </el-card>
-        </el-col>
-        <el-col
-          v-if="userRole!=='QA'"
-          :xs="24"
-          :sm="24"
-          :md="7"
-        >
-          <el-card>
-            <template slot="header">
-              <span class="font-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }} </span>
-            </template>
-            <admin-commit-log :data="getGitCommitLogData" />
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row
-        type="flex"
-        class="flex-wrap"
-        :gutter="10"
-      >
-        <el-col
-          :xs="24"
-          :sm="24"
-          :md="12"
-        >
-          <el-card>
-            <template slot="header">
-              <span class="font-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
-            </template>
-            <admin-issue-rank :data="getIssueRankData" />
-          </el-card>
-        </el-col>
-        <el-col
-          :xs="24"
-          :sm="24"
-          :md="12"
-        >
-          <el-card>
-            <div
-              slot="header"
-              class="cursor-pointer"
-              @click="onChangeDialogVisible({key: 'passingRate', value: true})"
-            >
-              <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
-                <em class="ri-external-link-line" />
-              </span>
-            </div>
-            <admin-passing-rate
-              :data="getPassingRateData"
-              :dialog-visible="dialogVisible.passingRate"
-              @dialog-visible="onChangeDialogVisible"
-            />
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row
-        type="flex"
-        class="flex-wrap"
-        :gutter="10"
-      >
-        <el-col
-          :xs="24"
-          :sm="24"
-          :md="24"
-        >
-          <el-card>
-            <div
-              slot="header"
-              class="cursor-pointer"
-              @click="onChangeDialogVisible({key: 'projectList', value: true})"
-            >
-              <div class="flex justify-between items-center">
+            <el-card>
+              <div
+                slot="header"
+                class="cursor-pointer"
+                @click="onChangeDialogVisible({key: 'projectMember', value: true})"
+              >
                 <span class="font-bold">
-                  {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
+                  {{ $t('Dashboard.ADMIN.ProjectMembers.NAME') }}
                   <em class="ri-external-link-line" />
                 </span>
-                <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
               </div>
-            </div>
-            <admin-project-list
-              :data="getProjectListData"
-              :dialog-visible="dialogVisible.projectList"
-              @update="getLastUpdate"
-              @dialog-visible="onChangeDialogVisible"
-            />
-          </el-card>
-        </el-col>
-      </el-row>
+              <admin-project-member
+                :data="getProjectMembersData"
+                :dialog-visible="dialogVisible.projectMember"
+                @dialog-visible="onChangeDialogVisible"
+              />
+            </el-card>
+          </el-col>
+          <el-col
+            v-if="userRole!=='QA'"
+            :xs="24"
+            :sm="24"
+            :md="7"
+          >
+            <el-card>
+              <template slot="header">
+                <span class="font-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }} </span>
+              </template>
+              <admin-commit-log :data="getGitCommitLogData" />
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row
+          type="flex"
+          class="flex-wrap"
+          :gutter="10"
+        >
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="12"
+          >
+            <el-card>
+              <template slot="header">
+                <span class="font-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
+              </template>
+              <admin-issue-rank :data="getIssueRankData" />
+            </el-card>
+          </el-col>
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="12"
+          >
+            <el-card>
+              <div
+                slot="header"
+                class="cursor-pointer"
+                @click="onChangeDialogVisible({key: 'passingRate', value: true})"
+              >
+                <span class="font-bold">{{ $t('Dashboard.ADMIN.PassingRate.NAME') }}
+                  <em class="ri-external-link-line" />
+                </span>
+              </div>
+              <admin-passing-rate
+                :data="getPassingRateData"
+                :dialog-visible="dialogVisible.passingRate"
+                @dialog-visible="onChangeDialogVisible"
+              />
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row
+          type="flex"
+          class="flex-wrap"
+          :gutter="10"
+        >
+          <el-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+          >
+            <el-card>
+              <div
+                slot="header"
+                class="cursor-pointer"
+                @click="onChangeDialogVisible({key: 'projectList', value: true})"
+              >
+                <div class="flex justify-between items-center">
+                  <span class="font-bold">
+                    {{ $t('Dashboard.ADMIN.ProjectList.NAME') }}
+                    <em class="ri-external-link-line" />
+                  </span>
+                  <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
+                </div>
+              </div>
+              <admin-project-list
+                :data="getProjectListData"
+                :dialog-visible="dialogVisible.projectList"
+                @update="getLastUpdate"
+                @dialog-visible="onChangeDialogVisible"
+              />
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-col>
     </el-row>
     <div v-if="!isLoading&&projectCount<=0">
       <el-empty :description="$t('general.NoData')">
