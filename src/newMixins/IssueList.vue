@@ -188,16 +188,9 @@ export default {
             },
             ...assigneeList.user_list
           ]
-          this.setInitAssignedToForRD()
         }
       )
       await this.loadVersionList(this.fixed_version_closed)
-    },
-    setInitAssignedToForRD() {
-      if (this.userRole === 'Engineer') {
-        this.$set(this.filterValue, 'assigned_to', this.userId)
-        this.$set(this.originFilterValue, 'assigned_to', this.userId)
-      }
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
