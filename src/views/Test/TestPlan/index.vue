@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         id="btn-add-issue"
         slot="button"
@@ -42,7 +42,7 @@
           </el-popover>
         </span>
       </SearchFilter>
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <quick-add-issue
       ref="quickAddIssue"
@@ -497,7 +497,6 @@ export default {
       data.forEach((item) => {
         const last_result = item.the_last_test_result
         if (item.software_name === 'Postman') {
-          // console.log(item.software_name, last_result.success, last_result.failure)
           if (last_result.hasOwnProperty('success') && last_result.hasOwnProperty('failure')) {
             result.push(last_result.success + '/' + (last_result.success + last_result.failure))
           } else {

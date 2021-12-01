@@ -1,13 +1,13 @@
 <template>
   <el-row class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-input
         v-model="keyword"
         :placeholder="$t('CheckMarx.SearchScanId')"
         prefix-icon="el-icon-search"
         style="width: 250px"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <div class="text-right mb-2">
       <el-button
@@ -29,9 +29,19 @@
       :cell-style="{ 'text-align': 'center' }"
       :header-cell-style="{ 'text-align': 'center' }"
     >
-      <el-table-column :label="$t('CheckMarx.ScanId')" prop="scan_id" width="110" />
-      <el-table-column :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column :label="$t('Git.Commit')" width="140">
+      <el-table-column
+        :label="$t('CheckMarx.ScanId')"
+        prop="scan_id"
+        width="110"
+      />
+      <el-table-column
+        :label="$t('Git.Branch')"
+        prop="branch"
+      />
+      <el-table-column
+        :label="$t('Git.Commit')"
+        width="140"
+      >
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -39,7 +49,10 @@
             style="font-size: 16px"
             :href="scope.row.commit_url"
           >
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+            <svg-icon
+              class="mr-1"
+              icon-class="ion-git-commit-outline"
+            />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
@@ -66,12 +79,31 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('CheckMarx.HighSeverity')" prop="stats.highSeverity" />
-      <el-table-column :label="$t('CheckMarx.MediumSeverity')" prop="stats.mediumSeverity" />
-      <el-table-column :label="$t('CheckMarx.LowSeverity')" prop="stats.lowSeverity" />
-      <el-table-column :label="$t('CheckMarx.InfoSeverity')" prop="stats.infoSeverity" />
-      <el-table-column-time prop="run_at" :label="$t('CheckMarx.RunAt')" />
-      <el-table-column :label="$t('CheckMarx.Report')" prop="report_ready" width="100">
+      <el-table-column
+        :label="$t('CheckMarx.HighSeverity')"
+        prop="stats.highSeverity"
+      />
+      <el-table-column
+        :label="$t('CheckMarx.MediumSeverity')"
+        prop="stats.mediumSeverity"
+      />
+      <el-table-column
+        :label="$t('CheckMarx.LowSeverity')"
+        prop="stats.lowSeverity"
+      />
+      <el-table-column
+        :label="$t('CheckMarx.InfoSeverity')"
+        prop="stats.infoSeverity"
+      />
+      <el-table-column-time
+        prop="run_at"
+        :label="$t('CheckMarx.RunAt')"
+      />
+      <el-table-column
+        :label="$t('CheckMarx.Report')"
+        prop="report_ready"
+        width="100"
+      >
         <template slot-scope="scope">
           <template v-if="canBeCanceled(scope.row)">
             <el-link
@@ -167,7 +199,7 @@ export default {
     fetchScanStatus(scanId) {
       this.listLoading = true
       getCheckMarxScanStatus(scanId)
-        .then(res => {
+        .then((res) => {
           const idx = this.listData.findIndex((item) => item.scan_id === scanId)
           this.listData[idx].status = res.data.name
           this.listData[idx].queue = res.data.queue_position
@@ -212,17 +244,19 @@ export default {
     },
     fetchTestReport(row) {
       const { report_id, scan_id } = row
-      getCheckMarxReport(report_id).then((res) => {
-        const url = window.URL.createObjectURL(new Blob([res]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'checkmarx_Report.pdf')
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-      }).catch(_ => {
-        this.confirmRegistryReport(scan_id)
-      })
+      getCheckMarxReport(report_id)
+        .then((res) => {
+          const url = window.URL.createObjectURL(new Blob([res]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'checkmarx_Report.pdf')
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        })
+        .catch((_) => {
+          this.confirmRegistryReport(scan_id)
+        })
     },
     confirmRegistryReport(scan_id) {
       const h = this.$createElement

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         slot="button"
         type="success"
@@ -16,7 +16,7 @@
         :placeholder="$t('general.SearchName')"
         style="width: 300px; float: right"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <div class="flex justify-between items-center">
       <div class="flex">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
@@ -257,9 +257,7 @@ export default {
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
       const res = await getServices({ project_id: this.selectedProjectId }, { cancelToken: this.cancelToken })
-      this.lastUpdateTime = this.$dayjs()
-        .utc(res.datetime)
-        .format('YYYY-MM-DD HH:mm:ss')
+      this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       this.listData = res.data.applications
       this.setTimer()
       this.isUpdating = false
@@ -267,7 +265,7 @@ export default {
       return res.data.applications
     },
     sortFiles(files) {
-      const sortedFiles = files.map(file => file)
+      const sortedFiles = files.map((file) => file)
       sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
       return sortedFiles
     },
@@ -324,7 +322,7 @@ export default {
       this.listLoading = false
     },
     async handleConfirm(id) {
-      await this.$refs['ApplicationSetting'].$refs['deployForm'].validate(async valid => {
+      await this.$refs['ApplicationSetting'].$refs['deployForm'].validate(async (valid) => {
         if (valid) {
           this.loadingInstance = this.$loading({
             target: '.el-dialog',
@@ -377,7 +375,6 @@ export default {
       this.timer = null
     },
     toEndpoint(url) {
-      // console.log(url)
       window.open(url, '_blank')
     },
     format(a, b) {

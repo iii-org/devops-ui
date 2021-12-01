@@ -3,7 +3,7 @@
     class="app-container"
     style="overflow: hidden;"
   >
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         slot="button"
         type="success"
@@ -19,7 +19,7 @@
         style="width: 250px; float: right"
         prefix-icon="el-icon-search"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-table
       v-loading="listLoading"

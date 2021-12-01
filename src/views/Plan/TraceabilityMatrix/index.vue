@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-popover
         placement="bottom"
         trigger="click"
@@ -61,7 +61,7 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-empty
       v-if="selectedProjectId === -1"

@@ -1,6 +1,9 @@
 <template>
-  <el-row class="app-container" style="overflow: hidden;">
-    <project-list-selector>
+  <el-row
+    class="app-container"
+    style="overflow: hidden;"
+  >
+    <ProjectListSelector>
       <el-input
         v-model="keyword"
         class="mr-3"
@@ -8,10 +11,16 @@
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <div class="text-right mb-2">
-      <el-button type="primary" icon="el-icon-refresh" size="mini" plain @click="loadData">{{ $t('general.Refresh') }}</el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-refresh"
+        size="mini"
+        plain
+        @click="loadData"
+      >{{ $t('general.Refresh') }}</el-button>
     </div>
     <el-table
       v-loading="listLoading"
@@ -27,15 +36,38 @@
         min-width="120"
         :show-overflow-tooltip="true"
       />
-      <el-table-column align="center" :label="$t('WebInspect.Branch')" prop="branch" min-width="120" />
-      <el-table-column align="center" :label="$t('WebInspect.Commit')" prop="commit_id" min-width="120">
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.Branch')"
+        prop="branch"
+        min-width="120"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.Commit')"
+        prop="commit_id"
+        min-width="120"
+      >
         <template slot-scope="scope">
-          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.issue_link">
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :href="scope.row.issue_link"
+          >
+            <svg-icon
+              class="mr-1"
+              icon-class="ion-git-commit-outline"
+            />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Status')" prop="stats.status" min-width="130">
+      <el-table-column
+        align="center"
+        :label="$t('general.Status')"
+        prop="stats.status"
+        min-width="130"
+      >
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.stats.status"
@@ -47,19 +79,49 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('WebInspect.Critical')" prop="stats.criticalCount" />
-      <el-table-column align="center" :label="$t('WebInspect.HighSeverity')" prop="stats.highCount" />
-      <el-table-column align="center" :label="$t('WebInspect.MediumSeverity')" prop="stats.mediumCount" />
-      <el-table-column align="center" :label="$t('WebInspect.LowSeverity')" prop="stats.lowCount" />
-      <el-table-column align="center" :label="$t('WebInspect.InfoSeverity')" prop="stats.infoCount" />
-      <el-table-column align="center" :label="$t('WebInspect.BpSeverity')" prop="stats.bpCount">
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.Critical')"
+        prop="stats.criticalCount"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.HighSeverity')"
+        prop="stats.highCount"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.MediumSeverity')"
+        prop="stats.mediumCount"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.LowSeverity')"
+        prop="stats.lowCount"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.InfoSeverity')"
+        prop="stats.infoCount"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.BpSeverity')"
+        prop="stats.bpCount"
+      >
         <template slot-scope="scope">
           <span v-if="scope.row.stats.bpCount">{{ scope.row.stats.bpCount }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column-time :label="$t('WebInspect.RunAt')" prop="run_at" />
-      <el-table-column align="center" :label="$t('WebInspect.Report')">
+      <el-table-column-time
+        :label="$t('WebInspect.RunAt')"
+        prop="run_at"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('WebInspect.Report')"
+      >
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -68,7 +130,10 @@
             :underline="false"
             @click="handleTestReportDetail(scope.row)"
           >
-            <em class="el-icon-document" style="font-size: 16px" />
+            <em
+              class="el-icon-document"
+              style="font-size: 16px"
+            />
           </el-link>
         </template>
       </el-table-column>
@@ -124,7 +189,7 @@ export default {
       return scansData
     },
     handleScans(scans) {
-      const sortedScans = scans.map(scan => {
+      const sortedScans = scans.map((scan) => {
         const result = scan
         if (result.stats === 'None') result.stats = {}
         return result
@@ -133,14 +198,14 @@ export default {
       return sortedScans
     },
     updateWebInspectScans() {
-      this.listData.forEach(item => {
+      this.listData.forEach((item) => {
         if (!item.finished) this.fetchStatus(item.scan_id)
       })
     },
     async fetchStatus(wiScanId) {
       this.listLoading = true
-      getWebInspectStatus(wiScanId).then(res => {
-        const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
+      getWebInspectStatus(wiScanId).then((res) => {
+        const idx = this.listData.findIndex((item) => item.scan_id === wiScanId)
         this.$set(this.listData[idx].stats, 'status', res.data.status)
         if (res.data.status === 'Complete') this.fetchStats(wiScanId)
       })
@@ -148,8 +213,8 @@ export default {
     },
     async fetchStats(wiScanId) {
       this.listLoading = true
-      await getWebInspectStats(wiScanId).then(res => {
-        const idx = this.listData.findIndex(item => item.scan_id === wiScanId)
+      await getWebInspectStats(wiScanId).then((res) => {
+        const idx = this.listData.findIndex((item) => item.scan_id === wiScanId)
         // res data from WI length is 6, while WIE is 7
         if (res.data.severity_count.length === 7) {
           this.$set(this.listData[idx], 'stats', res.data.severity_count)

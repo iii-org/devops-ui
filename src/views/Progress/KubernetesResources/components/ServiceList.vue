@@ -1,14 +1,14 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector>
+      <ProjectListSelector>
         <el-input
           v-model="keyword"
           :placeholder="$t('general.SearchName')"
           style="width: 250px"
           prefix-icon="el-icon-search"
         />
-      </project-list-selector>
+      </ProjectListSelector>
       <el-divider />
       <el-table
         v-loading="listLoading"

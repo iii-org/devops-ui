@@ -2,8 +2,12 @@
   <div class="app-container">
     <el-row>
       <el-col>
-        <project-list-selector>
-          <el-button slot="button" type="success" @click="showProjectVersionSelector">
+        <ProjectListSelector>
+          <el-button
+            slot="button"
+            type="success"
+            @click="showProjectVersionSelector"
+          >
             <span class="el-icon-goods" />
             <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
             <span v-else>{{ $t('Release.startPackageVersion') }}</span>
@@ -14,7 +18,7 @@
             :placeholder="$t('Project.SearchProjectNameOrId')"
             prefix-icon="el-icon-search"
           />
-        </project-list-selector>
+        </ProjectListSelector>
       </el-col>
     </el-row>
     <p v-if="isProjectVersionSelectorShowed">
@@ -25,7 +29,12 @@
         multiple
         filterable
       >
-        <el-option v-for="item in projectVersionOptions" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option
+          v-for="item in projectVersionOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
       </el-select>
 
       <span>
@@ -40,14 +49,20 @@
         </el-button>
       </span>
     </p>
-    <div v-if="isProjectVersionSelectorShowed" class="text-sm text-danger">
+    <div
+      v-if="isProjectVersionSelectorShowed"
+      class="text-sm text-danger"
+    >
       <div>{{ $t('Release.openIssueHint') }}</div>
     </div>
     <el-divider />
     <div v-if="state === STATE_INIT">
       <release-table :keywords="keywords" />
     </div>
-    <issues-table v-show="state === STATE_SHOW_OPEN_ISSUES" ref="issueList" />
+    <issues-table
+      v-show="state === STATE_SHOW_OPEN_ISSUES"
+      ref="issueList"
+    />
     <create-release
       v-show="state === STATE_CREATE_RELEASE"
       ref="createRelease"
@@ -116,9 +131,9 @@ export default {
     },
     async loadData() {
       const res = await getProjectVersion(this.selectedProjectId)
-      this.projectVersions = res.data.versions.filter(ver => ver.status !== 'closed')
+      this.projectVersions = res.data.versions.filter((ver) => ver.status !== 'closed')
       const options = []
-      this.projectVersions.forEach(ver => {
+      this.projectVersions.forEach((ver) => {
         options.push({
           value: ver.id,
           label: ver.name

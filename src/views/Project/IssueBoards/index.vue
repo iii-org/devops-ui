@@ -1,6 +1,6 @@
 <template>
   <div v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-popover
         placement="bottom"
         trigger="click"
@@ -118,7 +118,7 @@
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <Boards
       :group-by="groupBy"

@@ -1,14 +1,14 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector>
+      <ProjectListSelector>
         <el-input
           v-model="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('Activities.SearchPlaceholder')"
           style="width: 300px"
         />
-      </project-list-selector>
+      </ProjectListSelector>
       <el-divider />
       <el-table
         v-loading="listLoading"
@@ -17,10 +17,26 @@
         height="calc(100vh - 300px)"
         fit
       >
-        <el-table-column align="center" :label="$t('Activities.User')" prop="operator_name" />
-        <el-table-column align="center" :label="$t('Activities.ActionType')" prop="action_type" />
-        <el-table-column align="center" :label="$t('Activities.ActionParts')" prop="action_parts" min-width="200" />
-        <el-table-column-time prop="act_at" :label="$t('Activities.ActAt')" />
+        <el-table-column
+          align="center"
+          :label="$t('Activities.User')"
+          prop="operator_name"
+        />
+        <el-table-column
+          align="center"
+          :label="$t('Activities.ActionType')"
+          prop="action_type"
+        />
+        <el-table-column
+          align="center"
+          :label="$t('Activities.ActionParts')"
+          prop="action_parts"
+          min-width="200"
+        />
+        <el-table-column-time
+          prop="act_at"
+          :label="$t('Activities.ActAt')"
+        />
         <template slot="empty">
           <el-empty :description="$t('general.NoData')" />
         </template>
@@ -91,7 +107,7 @@ export default {
       await this.loadData()
       this.initParams()
     },
-    async onPagination (listQuery) {
+    async onPagination(listQuery) {
       const { limit, page } = listQuery
       const offset = limit * (page - 1)
       this.params.offset = offset

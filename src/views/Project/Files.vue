@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         slot="button"
         type="success"
@@ -16,7 +16,7 @@
         :placeholder="$t('general.SearchName')"
         style="width: 300px; float: right"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-table
       v-loading="listLoading"
@@ -25,24 +25,43 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" :label="$t('File.Id')" min-width="110">
+      <el-table-column
+        align="center"
+        :label="$t('File.Id')"
+        min-width="110"
+      >
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Name')" min-width="100">
+      <el-table-column
+        align="center"
+        :label="$t('general.Name')"
+        min-width="100"
+      >
         <template slot-scope="scope">
           {{ scope.row.filename }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Creator')" min-width="100">
+      <el-table-column
+        align="center"
+        :label="$t('general.Creator')"
+        min-width="100"
+      >
         <template slot-scope="scope">
           {{ scope.row.author.name }}
         </template>
       </el-table-column>
-      <el-table-column-time prop="created_on" :label="$t('general.CreateTime')" />
+      <el-table-column-time
+        prop="created_on"
+        :label="$t('general.CreateTime')"
+      />
 
-      <el-table-column align="center" :label="$t('general.Actions')" width="240">
+      <el-table-column
+        align="center"
+        :label="$t('general.Actions')"
+        width="240"
+      >
         <template slot-scope="scope">
           <el-button
             :loading="isDownloading"
@@ -62,7 +81,11 @@
             :title="$t('Notify.confirmDelete')"
             @confirm="handleDelete(scope.row)"
           >
-            <el-button slot="reference" size="mini" type="danger">
+            <el-button
+              slot="reference"
+              size="mini"
+              type="danger"
+            >
               <em class="el-icon-delete" /> {{ $t('general.Delete') }}
             </el-button>
           </el-popconfirm>
@@ -87,8 +110,15 @@
       :close-on-click-modal="false"
       @closed="onDialogClosed"
     >
-      <el-form ref="fileForm" :model="fileForm" label-width="120px">
-        <el-form-item :label="$t('File.Upload')" prop="upload">
+      <el-form
+        ref="fileForm"
+        :model="fileForm"
+        label-width="120px"
+      >
+        <el-form-item
+          :label="$t('File.Upload')"
+          prop="upload"
+        >
           <el-upload
             ref="upload"
             drag
@@ -99,7 +129,10 @@
             :on-change="handleChange"
           >
             <div class="el-upload__text">
-              <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
+              <el-button
+                size="small"
+                type="success"
+              >{{ $t('File.ChooseFile') }}</el-button>
               <div>{{ $t('File.DragFilesHere') }}</div>
               <div class="text-xs text-gray-400 px-12">
                 <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -110,25 +143,46 @@
           <div class="text-xs mt-2">*{{ $t('File.UploadWarning') }}: {{ specialSymbols }}</div>
         </el-form-item>
 
-        <el-form-item :label="$t('general.Name')" prop="name">
-          <el-input v-model="fileForm.name" :placeholder="$t('File.InputName')" />
+        <el-form-item
+          :label="$t('general.Name')"
+          prop="name"
+        >
+          <el-input
+            v-model="fileForm.name"
+            :placeholder="$t('File.InputName')"
+          />
         </el-form-item>
 
-        <el-form-item :label="$t('Version.Version')" prop="version">
+        <el-form-item
+          :label="$t('Version.Version')"
+          prop="version"
+        >
           <el-select
             v-model="fileForm.version"
             :placeholder="$t('Version.SelectVersion')"
             style="width: 100%"
             clearable
           >
-            <el-option v-for="item in versionList" :key="item.id" :label="item.name" :value="item.id" />
+            <el-option
+              v-for="item in versionList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
       </el-form>
 
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
+        <el-button
+          type="primary"
+          :loading="memberConfirmLoading"
+          @click="handleConfirm"
+        >
           {{ $t('general.Confirm') }}</el-button>
       </span>
     </el-dialog>
@@ -194,7 +248,7 @@ export default {
       return this.sortFiles(res[0].data.files)
     },
     sortFiles(files) {
-      const sortedFiles = files.map(file => file)
+      const sortedFiles = files.map((file) => file)
       sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
       return sortedFiles
     },
@@ -259,7 +313,7 @@ export default {
       }
     },
     async handleConfirm() {
-      this.$refs['fileForm'].validate(async valid => {
+      this.$refs['fileForm'].validate(async (valid) => {
         if (valid) {
           const data = this.fileForm
           const filetype = allowedTypeMap()[this.uploadFileList[0].raw.type]

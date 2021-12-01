@@ -1,14 +1,14 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector>
+      <ProjectListSelector>
         <el-input
           v-model="keyword"
           style="width: 250px"
           prefix-icon="el-icon-search"
           :placeholder="$t('ProgressPipelines.SearchCommitMessage')"
         />
-      </project-list-selector>
+      </ProjectListSelector>
       <el-divider />
       <div class="flex justify-between text-base mb-2 text-info">
         <div>{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>

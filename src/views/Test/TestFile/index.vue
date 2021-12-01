@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         id="btn-add-issue"
         slot="button"
@@ -19,7 +19,7 @@
         :placeholder="$t('Issue.SearchNameOrAssignee')"
         style="width: 250px; float: right"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-row v-if="filterVisible" type="flex" :gutter="10">
       <el-col :span="16">
@@ -410,7 +410,6 @@ export default {
       this.$router.push({ name: 'test-plan-detail', params: { issueId: id } })
     },
     async removeTestPlanRelation(file_relation, file_name) {
-      console.log(file_relation, file_name)
       this.listLoading = true
       try {
         const id = file_relation.find((item) => item.file_name === file_name).id

@@ -1,13 +1,16 @@
 <template>
-  <el-row class="app-container" style="overflow: hidden;">
-    <project-list-selector>
+  <el-row
+    class="app-container"
+    style="overflow: hidden;"
+  >
+    <ProjectListSelector>
       <el-input
         v-model="keyword"
         :placeholder="$t('CheckMarx.SearchScanId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <p class="text-right text-info">
       <em class="el-icon-warning" />{{ $t('Sideex.promptMessage') }}
@@ -20,17 +23,46 @@
       :data="pagedData"
       height="100%"
     >
-      <el-table-column align="center" :label="$t('Log.testId')" prop="id" />
-      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" width="140">
+      <el-table-column
+        align="center"
+        :label="$t('Log.testId')"
+        prop="id"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Git.Branch')"
+        prop="branch"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Git.Commit')"
+        prop="commit_id"
+        width="140"
+      >
         <template slot-scope="scope">
-          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.issue_link">
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :href="scope.row.issue_link"
+          >
+            <svg-icon
+              class="mr-1"
+              icon-class="ion-git-commit-outline"
+            />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="status" min-width="130" location="sideex" i18n-key="Status" />
-      <el-table-column align="center" :label="$t('Sideex.suitesPassedRatio')">
+      <el-table-column-tag
+        prop="status"
+        min-width="130"
+        location="sideex"
+        i18n-key="Status"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Sideex.suitesPassedRatio')"
+      >
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">
             {{ scope.row.result.suitesPassed }}/{{ scope.row.result.suitesTotal }}
@@ -38,7 +70,10 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Sideex.casesPassedRatio')">
+      <el-table-column
+        align="center"
+        :label="$t('Sideex.casesPassedRatio')"
+      >
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">
             {{ scope.row.result.casesPassed }}/{{ scope.row.result.casesTotal }}
@@ -46,13 +81,23 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />
-      <el-table-column align="center" :label="$t('Log.duration')">
+      <el-table-column-time
+        :label="$t('general.RunAt')"
+        prop="run_at"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Log.duration')"
+      >
         <template slot-scope="scope">
           {{ durationText(scope.row.run_at, scope.row.finished_at) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Log.fullLog')" min-width="50">
+      <el-table-column
+        align="center"
+        :label="$t('Log.fullLog')"
+        min-width="50"
+      >
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.status === 'Finished' && scope.row.has_report"
@@ -61,7 +106,10 @@
             :underline="false"
             @click="fetchReportData(scope.row.id)"
           >
-            <em class="el-icon-tickets" style="font-size: 16px" />
+            <em
+              class="el-icon-tickets"
+              style="font-size: 16px"
+            />
           </el-link>
         </template>
       </el-table-column>
@@ -102,7 +150,7 @@ export default {
       return this.handleScans(res.data)
     },
     handleScans(scans) {
-      const sortedScans = scans.map(scan => {
+      const sortedScans = scans.map((scan) => {
         if (scan.result === 'None') scan.result = {}
         return scan
       })

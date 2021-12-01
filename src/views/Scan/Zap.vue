@@ -1,13 +1,16 @@
 <template>
-  <el-row class="app-container" style="overflow: hidden;">
-    <project-list-selector>
+  <el-row
+    class="app-container"
+    style="overflow: hidden;"
+  >
+    <ProjectListSelector>
       <el-input
         v-model="keyword"
         :placeholder="$t('Git.searchCommitId')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-table
       v-loading="listLoading"
@@ -17,46 +20,91 @@
       :data="pagedData"
       height="100%"
     >
-      <el-table-column align="center" :label="$t('Git.Branch')" prop="branch" />
-      <el-table-column align="center" :label="$t('Git.Commit')" prop="commit_id" width="140">
+      <el-table-column
+        align="center"
+        :label="$t('Git.Branch')"
+        prop="branch"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Git.Commit')"
+        prop="commit_id"
+        width="140"
+      >
         <template slot-scope="scope">
-          <el-link type="primary" target="_blank" style="font-size: 16px" :href="scope.row.issue_link">
-            <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />{{ scope.row.commit_id }}
+          <el-link
+            type="primary"
+            target="_blank"
+            style="font-size: 16px"
+            :href="scope.row.issue_link"
+          >
+            <svg-icon
+              class="mr-1"
+              icon-class="ion-git-commit-outline"
+            />{{ scope.row.commit_id }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column-tag prop="status" size="medium" location="zap" min-width="130" i18n-key="Status" />
-      <el-table-column align="center" :label="$t('Zap.high')">
+      <el-table-column-tag
+        prop="status"
+        size="medium"
+        location="zap"
+        min-width="130"
+        i18n-key="Status"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Zap.high')"
+      >
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Zap.medium')">
+      <el-table-column
+        align="center"
+        :label="$t('Zap.medium')"
+      >
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['2'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Zap.low')">
+      <el-table-column
+        align="center"
+        :label="$t('Zap.low')"
+      >
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['1'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('general.Info')">
+      <el-table-column
+        align="center"
+        :label="$t('general.Info')"
+      >
         <template slot-scope="scope">
           <span v-if="Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column-time :label="$t('general.RunAt')" prop="run_at" />
-      <el-table-column align="center" :label="$t('Log.duration')">
+      <el-table-column-time
+        :label="$t('general.RunAt')"
+        prop="run_at"
+      />
+      <el-table-column
+        align="center"
+        :label="$t('Log.duration')"
+      >
         <template slot-scope="scope">
           {{ durationText(scope.row.run_at, scope.row.finished_at) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Log.fullLog')" min-width="50">
+      <el-table-column
+        align="center"
+        :label="$t('Log.fullLog')"
+        min-width="50"
+      >
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.status === 'Finished'"
@@ -65,7 +113,10 @@
             :underline="false"
             @click="showFullLog(scope.row.full_log)"
           >
-            <em class="el-icon-tickets" style="font-size: 16px" />
+            <em
+              class="el-icon-tickets"
+              style="font-size: 16px"
+            />
           </el-link>
         </template>
       </el-table-column>
@@ -106,7 +157,7 @@ export default {
       return this.handleScans(res.data)
     },
     handleScans(scans) {
-      const sortedScans = scans.map(scan => {
+      const sortedScans = scans.map((scan) => {
         if (scan.result === 'None') scan.result = {}
         return scan
       })

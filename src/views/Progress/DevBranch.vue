@@ -1,13 +1,13 @@
 <template>
   <el-row class="app-container" style="overflow: hidden;">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-input
         v-model="keyword"
         :placeholder="$t('ProcessDevBranch.SearchBranch')"
         style="width: 250px"
         prefix-icon="el-icon-search"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit height="100%">
       <el-table-column align="center" :label="$t('ProcessDevBranch.Branch')" width="200" prop="name" />

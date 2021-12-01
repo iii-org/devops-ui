@@ -5,14 +5,14 @@
     class="app-container"
   >
     <el-col>
-      <project-list-selector>
+      <ProjectListSelector>
         <el-input
           v-model="keyword"
           style="width: 250px"
           prefix-icon="el-icon-search"
           :placeholder="$t('general.SearchBranch')"
         />
-      </project-list-selector>
+      </ProjectListSelector>
       <el-divider />
       <el-row
         v-if="filteredData.length > 0"

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         id="btn-add-issue"
         slot="button"
@@ -57,7 +57,7 @@
           </el-popover>
         </span>
       </SearchFilter>
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <quick-add-issue
       ref="quickAddIssue"

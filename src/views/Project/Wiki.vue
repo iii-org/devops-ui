@@ -5,7 +5,7 @@
     class="app-container"
     style="overflow: hidden;"
   >
-    <project-list-selector>
+    <ProjectListSelector>
       <el-button
         slot="button"
         type="success"
@@ -21,7 +21,7 @@
         :placeholder="$t('Wiki.SearchTitle')"
         style="width: 250px; float: right"
       />
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-table
       v-loading="listLoading"

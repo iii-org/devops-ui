@@ -1,34 +1,59 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector>
+      <ProjectListSelector>
         <el-input
           v-model="keyword"
           :placeholder="$t('general.SearchName')"
           prefix-icon="el-icon-search"
           style="width: 250px"
         />
-      </project-list-selector>
+      </ProjectListSelector>
       <el-divider />
-      <el-card shadow="never" class="mb-1">
+      <el-card
+        shadow="never"
+        class="mb-1"
+      >
         <el-row :gutter="24">
-          <el-col :span="10" style="font-size: 20px;">
+          <el-col
+            :span="10"
+            style="font-size: 20px;"
+          >
             {{ projectName }}
           </el-col>
-          <el-col :span="6" style="font-size: 20px; text-align: center">
+          <el-col
+            :span="6"
+            style="font-size: 20px; text-align: center"
+          >
             <span>{{ $t('ProjectResource.Storage') }}</span>
             <span>
               {{ (storage.quota.used.storage / 1024 / 1024 / 1024).toFixed(2) }} /
               {{ Math.round(storage.quota.hard.storage / 1024 / 1024 / 1024) }} GB
             </span>
           </el-col>
-          <el-col :span="8" style="text-align:right">
-            <el-progress :text-inside="true" :stroke-width="26" :percentage="returnPercentage(storage.quota)" />
+          <el-col
+            :span="8"
+            style="text-align:right"
+          >
+            <el-progress
+              :text-inside="true"
+              :stroke-width="26"
+              :percentage="returnPercentage(storage.quota)"
+            />
           </el-col>
         </el-row>
       </el-card>
-      <el-table v-loading="listLoading" :data="pagedData" :element-loading-text="$t('Loading')" fit>
-        <el-table-column :label="$t('general.Name')" show-overflow-tooltip min-width="150">
+      <el-table
+        v-loading="listLoading"
+        :data="pagedData"
+        :element-loading-text="$t('Loading')"
+        fit
+      >
+        <el-table-column
+          :label="$t('general.Name')"
+          show-overflow-tooltip
+          min-width="150"
+        >
           <template slot-scope="scope">
             <el-link
               type="primary"
@@ -41,7 +66,12 @@
             </el-link>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('ProjectResource.Artifacts')" show-overflow-tooltip align="center" width="140">
+        <el-table-column
+          :label="$t('ProjectResource.Artifacts')"
+          show-overflow-tooltip
+          align="center"
+          width="140"
+        >
           <template slot-scope="scope">
             <router-link
               :to="{
@@ -54,16 +84,41 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column label="pull" align="center" prop="pull_count" width="140" />
-        <el-table-column :label="$t('general.Description')" prop="description" min-width="200" />
-        <el-table-column-time prop="update_time" :label="$t('general.LastUpdateTime')" />
-        <el-table-column :label="$t('general.Actions')" align="center" show-overflow-tooltip width="200">
+        <el-table-column
+          label="pull"
+          align="center"
+          prop="pull_count"
+          width="140"
+        />
+        <el-table-column
+          :label="$t('general.Description')"
+          prop="description"
+          min-width="200"
+        />
+        <el-table-column-time
+          prop="update_time"
+          :label="$t('general.LastUpdateTime')"
+        />
+        <el-table-column
+          :label="$t('general.Actions')"
+          align="center"
+          show-overflow-tooltip
+          width="200"
+        >
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handleEdit(scope.$index, scope.row)"
+            >
               <em class="el-icon-edit" />
               {{ $t('general.Edit') }}
             </el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+            >
               <em class="el-icon-delete" />
               {{ $t('general.Delete') }}
             </el-button>
@@ -91,10 +146,19 @@
           <strong>{{ deleteResourceName }}</strong>
           {{ $t('ProjectResource.AndThen') }}
         </p>
-        <el-input v-model="inputDelResourceName" :placeholder="placeholderText" />
-        <span slot="footer" class="dialog-footer">
+        <el-input
+          v-model="inputDelResourceName"
+          :placeholder="placeholderText"
+        />
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="showDeleteDialog = false">{{ $t('general.Cancel') }}</el-button>
-          <el-button type="danger" @click="handleDeleteModal()">{{ $t('general.Delete') }}</el-button>
+          <el-button
+            type="danger"
+            @click="handleDeleteModal()"
+          >{{ $t('general.Delete') }}</el-button>
         </span>
       </el-dialog>
       <el-dialog
@@ -103,17 +167,35 @@
         width="50%"
         @closed="onDialogClosed"
       >
-        <el-form ref="form" :model="form" :rules="formRules" label-position="top">
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="formRules"
+          label-position="top"
+        >
           <el-form-item :label="$t('general.Name')">
             {{ form.name }}
           </el-form-item>
-          <el-form-item :label="$t('general.Description')" prop="description">
-            <el-input v-model="form.description" type="textarea" />
+          <el-form-item
+            :label="$t('general.Description')"
+            prop="description"
+          >
+            <el-input
+              v-model="form.description"
+              type="textarea"
+            />
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-          <el-button type="primary" :loading="memberConfirmLoading" @click="handleConfirm">
+          <el-button
+            type="primary"
+            :loading="memberConfirmLoading"
+            @click="handleConfirm"
+          >
             {{ $t('general.Confirm') }}
           </el-button>
         </span>
@@ -169,7 +251,7 @@ export default {
         return []
       }
       const res = await getHarborRepoList(this.selectedProjectId)
-      const resourceList = res.data.map(item => {
+      const resourceList = res.data.map((item) => {
         const name_ary = item.name.split('/')
         item['name_in_harbor'] = name_ary[name_ary.length - 1]
         return item
@@ -190,7 +272,7 @@ export default {
       this.form = Object.assign({}, this.form, row)
     },
     async handleConfirm(index, row) {
-      this.$refs['form'].validate(async valid => {
+      this.$refs['form'].validate(async (valid) => {
         if (valid) {
           this.dialogVisible = false
           const data = this.form

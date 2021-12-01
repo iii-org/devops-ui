@@ -1,7 +1,7 @@
 <template>
   <el-row id="project-overview" v-loading="isLoading" :element-loading-text="$t('Loading')" class="app-container" :gutter="10">
     <el-backtop target="#project-overview" />
-    <project-list-selector>
+    <ProjectListSelector>
       <el-select
         v-show="filterVisible"
         ref="selectVersion"
@@ -25,7 +25,7 @@
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <el-row :gutter="10">
       <el-col :xs="24" :md="12">

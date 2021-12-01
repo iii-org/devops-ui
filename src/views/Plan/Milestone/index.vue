@@ -1,6 +1,6 @@
 <template>
   <el-row class="app-container">
-    <project-list-selector>
+    <ProjectListSelector>
       <el-row slot="button">
         <el-col class="text-right">
           <el-button icon="el-icon-refresh" size="small" @click="onChangeFilter" />
@@ -71,7 +71,7 @@
         </el-popover>
         <el-divider direction="vertical" />
       </SearchFilter>
-    </project-list-selector>
+    </ProjectListSelector>
     <el-divider />
     <div ref="wrapper" class="wrapper">
       <el-tabs v-model="activeTab" type="border-card">
@@ -417,16 +417,13 @@ export default {
     },
     async loadReportStatus() {
       await this.getLockCheck()
-      console.log('ya')
       if (!this.downloadLock.is_lock) {
-        console.log('ya2')
         if (this.intervalTimer) {
           window.clearInterval(this.intervalTimer)
           this.intervalTimer = null
         }
         await this.getExportFileInfo()
       } else if (!this.intervalTimer) {
-        console.log('ya1')
         this.intervalTimer = window.setInterval(this.loadReportStatus, 1000)
       }
       return Promise.resolve()

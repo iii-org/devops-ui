@@ -1,14 +1,14 @@
 <template>
   <el-row class="app-container">
     <el-col>
-      <project-list-selector>
+      <ProjectListSelector>
         <el-input
           v-model="keyword"
           :placeholder="$t('general.SearchName')"
           style="width: 250px"
           prefix-icon="el-icon-search"
         />
-      </project-list-selector>
+      </ProjectListSelector>
       <el-divider />
       <el-table
         v-loading="listLoading"
@@ -17,13 +17,45 @@
         height="calc(100vh - 300px)"
         fit
       >
-        <el-table-column :label="$t('general.Name')" align="center" prop="name" width="200" show-overflow-tooltip />
-        <el-table-column label="hostname" align="center" prop="hostname" min-width="120" show-overflow-tooltip />
-        <el-table-column label="IP" align="center" prop="ip" min-width="120" show-overflow-tooltip />
-        <el-table-column label="Path" align="center" prop="path" min-width="120" show-overflow-tooltip />
-        <el-table-column label="Service" align="center" prop="service" min-width="400">
+        <el-table-column
+          :label="$t('general.Name')"
+          align="center"
+          prop="name"
+          width="200"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="hostname"
+          align="center"
+          prop="hostname"
+          min-width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="IP"
+          align="center"
+          prop="ip"
+          min-width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="Path"
+          align="center"
+          prop="path"
+          min-width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="Service"
+          align="center"
+          prop="service"
+          min-width="400"
+        >
           <template slot-scope="scope">
-            <div v-for="(item, idx) in scope.row.ingress_list" :key="item + idx">
+            <div
+              v-for="(item, idx) in scope.row.ingress_list"
+              :key="item + idx"
+            >
               <el-link
                 type="primary"
                 :underline="false"
@@ -36,8 +68,16 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="tls" align="center" prop="tls" min-width="80" />
-        <el-table-column-time :label="$t('general.CreateTime')" prop="created_time" />
+        <el-table-column
+          label="tls"
+          align="center"
+          prop="tls"
+          min-width="80"
+        />
+        <el-table-column-time
+          :label="$t('general.CreateTime')"
+          prop="created_time"
+        />
       </el-table>
       <pagination
         :total="filteredData.length"
