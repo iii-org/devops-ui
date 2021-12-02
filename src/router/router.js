@@ -786,14 +786,14 @@ export const asyncRoutes = [
         meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'web-inspect',
+        path: 'webinspect',
         name: 'webinspect',
         component: parentBlank,
-        redirect: { name: 'webinspect-scans' },
+        redirect: { name: 'webinspect' },
         meta: { title: 'webInspect', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] },
         children: [
           {
-            path: 'scans',
+            path: '',
             name: 'webinspect-scans',
             hidden: true,
             component: () => import('@/views/Scan/WebInspect')
@@ -811,14 +811,14 @@ export const asyncRoutes = [
         path: 'postman',
         name: 'postman',
         component: parentBlank,
-        redirect: { name: 'postman-test' },
+        redirect: { name: 'postman' },
         meta: {
           title: 'postman',
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']
         },
         children: [
           {
-            path: 'scans',
+            path: '',
             name: 'postman-test',
             hidden: true,
             component: () => import('@/views/Scan/Postman')
