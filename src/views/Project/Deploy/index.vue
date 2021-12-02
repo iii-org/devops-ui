@@ -82,11 +82,12 @@
       >
         <template slot-scope="{row}">
           <el-progress
-            :percentage="calcPercentage(row.deployment.available_pod_number, row.deployment.total_pod_number)"
-            :status="format(row.deployment.available_pod_number, row.deployment.total_pod_number)"
+            :percentage="calcPercentage(row.deployment)"
+            :status="format(row.deployment)"
           />
-          <span> {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}</span>
-
+          <span v-if="isPodNumberNotNull(row.deployment)">
+            {{ row.deployment.available_pod_number }} / {{ row.deployment.total_pod_number }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column-time
@@ -100,10 +101,10 @@
       >
         <template slot-scope="{row}">
           <el-dropdown
-            v-if="row.status_id!==9"
+            v-if="row.status_id !== 9"
             split-button
             size="small"
-            :type="row.disabled? 'warning': 'success'"
+            :type="row.disabled ? 'warning' : 'success'"
             @click="handleServiceStatus(row)"
           >
             <em :class="row.disabled| getActionIcon" /> {{ getActionText(row.disabled) }}
@@ -205,7 +206,14 @@
 <script>
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector, CancelRequest } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { getServices, postService, deleteService, putService, patchService, patchServiceRedeploy } from '@/api/deploy'
+import {
+  getServices,
+  postService,
+  deleteService,
+  putService,
+  patchService,
+  patchServiceRedeploy
+} from '@/api/deploy'
 import ApplicationSetting from '@/views/Project/Deploy/components/ApplicationSetting'
 import Status from './components/Status'
 
@@ -229,12 +237,38 @@ export default {
       loadingInstance: '',
       isDownloading: false,
       searchKeys: ['name'],
-      timer: null,
       lastUpdateTime: null
     }
   },
-  destroyed() {
-    this.clearTimer()
+  computed: {
+    isPodNumberNotNull() {
+      return function(data) {
+        return data.available_pod_number !== null && data.total_pod_number !== null
+      }
+    },
+    sortFiles() {
+      return function (files) {
+        const sortedFiles = files.map((file) => file)
+        sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
+        return sortedFiles
+      }
+    },
+    format() {
+      return function (deployment) {
+        const { available_pod_number, total_pod_number } = deployment
+        if (available_pod_number && total_pod_number) {
+          return available_pod_number / total_pod_number === 1 ? 'success' : 'warning'
+        }
+      }
+    },
+    calcPercentage(deployment) {
+      return function (deployment) {
+        const { available_pod_number, total_pod_number } = deployment
+        if (available_pod_number && total_pod_number) {
+          return (available_pod_number / total_pod_number) * 100
+        }
+      }
+    }
   },
   methods: {
     showNoProjectWarning() {
@@ -244,10 +278,12 @@ export default {
         type: 'warning'
       })
     },
-    async loadData() {
-      if (this.selectedProjectId === -1) return
-      this.listLoading = true
-      await this.fetchData()
+    showSuccessMessage(message) {
+      this.$message({
+        title: this.$t('general.Success'),
+        type: 'success',
+        message
+      })
     },
     async fetchData() {
       if (this.selectedProjectId === -1) {
@@ -258,16 +294,11 @@ export default {
       this.isUpdating = true
       const res = await getServices({ project_id: this.selectedProjectId }, { cancelToken: this.cancelToken })
       this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
-      this.listData = res.data.applications
+      const listData = res.data.applications.map(item => item[0])
       this.setTimer()
       this.isUpdating = false
       this.listLoading = false
-      return res.data.applications
-    },
-    sortFiles(files) {
-      const sortedFiles = files.map((file) => file)
-      sortedFiles.sort((a, b) => new Date(b.created_on) - new Date(a.created_on))
-      return sortedFiles
+      return listData
     },
     handleEditDialog(id) {
       this.dialogVisible = true
@@ -280,11 +311,7 @@ export default {
       this.listLoading = true
       try {
         await patchService(row.id, { disabled: !row.disabled })
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        this.showSuccessMessage(this.$t('Notify.Updated'))
       } catch (e) {
         console.error(e)
       }
@@ -295,11 +322,7 @@ export default {
       this.listLoading = true
       try {
         await patchServiceRedeploy(id)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        this.showSuccessMessage(this.$t('Notify.Updated'))
       } catch (e) {
         console.error(e)
       }
@@ -310,11 +333,7 @@ export default {
       this.listLoading = true
       try {
         await deleteService(id)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Deleted'),
-          type: 'success'
-        })
+        this.showSuccessMessage(this.$t('Notify.Deleted'))
       } catch (error) {
         console.error(error)
       }
@@ -334,18 +353,10 @@ export default {
                 ...this.$refs['ApplicationSetting'].deployForm,
                 project_id: this.selectedProjectId
               })
-              this.$message({
-                title: this.$t('general.Success'),
-                message: this.$t('Notify.Updated'),
-                type: 'success'
-              })
+              this.showSuccessMessage(this.$t('Notify.Updated'))
             } else {
               await postService({ ...this.$refs['ApplicationSetting'].deployForm, project_id: this.selectedProjectId })
-              this.$message({
-                title: this.$t('general.Success'),
-                message: this.$t('Notify.Created'),
-                type: 'success'
-              })
+              this.showSuccessMessage(this.$t('Notify.Created'))
             }
             this.loadingInstance.close()
             this.$refs['ApplicationSetting'].$refs['deployForm'].resetFields()
@@ -355,9 +366,7 @@ export default {
             console.error(err)
           }
           await this.loadData()
-        } else {
-          return false
-        }
+        } else return false
       })
     },
     onDialogClosed() {
@@ -365,27 +374,20 @@ export default {
       this.dialogVisible = false
     },
     setTimer() {
-      if (this.timer) {
-        this.clearTimer()
-      }
-      this.timer = setTimeout(() => this.fetchData(), 10000)
+      let timer = null
+      if (timer) this.clearTimer(timer)
+      timer = setTimeout(() => this.fetchData(), 10000)
+      this.$once('hook:beforeDestroy', () => {
+        this.clearTimer(timer)
+      })
     },
-    clearTimer() {
-      clearTimeout(this.timer)
-      this.timer = null
+    clearTimer(timer) {
+      clearTimeout(timer)
+      timer = null
     },
     toEndpoint(url) {
       window.open(url, '_blank')
-    },
-    format(a, b) {
-      return a / b === 1 ? 'success' : 'warning'
-    },
-    calcPercentage(a, b) {
-      return (a / b) * 100
     }
   }
 }
 </script>
-
-<style>
-</style>
