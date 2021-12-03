@@ -205,7 +205,6 @@ export default {
     },
     async updateIssueStatus(evt) {
       if (evt.event.hasOwnProperty('added')) {
-        this.$parent.isLoading = true
         // const getUpdateDimension = this[this.groupBy.dimension].find((item) => ((evt.list === '') ? item.id === evt.list : item.name === evt.list))
         try {
           const updatedData = { [`${this.groupBy.dimension}_id`]: evt.boardObject.id }
@@ -217,7 +216,6 @@ export default {
           this.setProjectIssueList(evt)
           this.$emit('getRelativeList')
         }
-        this.$parent.isLoading = false
       }
     },
     async updatedIssue(id, updatedData) {
