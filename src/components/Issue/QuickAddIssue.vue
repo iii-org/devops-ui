@@ -1,24 +1,50 @@
 <template>
   <el-row v-show="visible">
-    <el-form ref="issueForm" inline :model="form" :rules="formRules">
+    <el-form
+      ref="issueForm"
+      inline
+      :model="form"
+      :rules="formRules"
+    >
       <el-form-item prop="tracker_id">
-        <el-select v-model="form.tracker_id" :placeholder="$t('Issue.SelectType')" :disabled="hasSetTracker">
+        <el-select
+          v-model="form.tracker_id"
+          :placeholder="$t('Issue.SelectType')"
+          :disabled="hasSetTracker"
+        >
           <el-option
             v-for="option in trackerList"
             :key="option.login"
             :label="$t('Issue.' + option.name)"
             :value="option.id"
           >
-            <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
+            <Tracker
+              :name="$t(`Issue.${option.name}`)"
+              :type="option.name"
+            />
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item prop="name">
-        <el-input v-model="form.name" :placeholder="$t('Issue.name')" />
+        <el-input
+          v-model="form.name"
+          :placeholder="$t('Issue.name')"
+        />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="LoadingConfirm" @click="handleSave">{{ $t('general.Save') }}</el-button>
-        <el-button :disabled="LoadingConfirm" @click="advancedAddIssue">{{ $t('general.AdvancedSettings') }}</el-button>
+        <el-button
+          type="primary"
+          :loading="LoadingConfirm"
+          @click="handleSave"
+        >
+          {{ $t('general.Save') }}
+        </el-button>
+        <el-button
+          :disabled="LoadingConfirm"
+          @click="advancedAddIssue"
+        >
+          {{ $t('general.AdvancedSettings') }}
+        </el-button>
       </el-form-item>
     </el-form>
     <el-dialog
@@ -42,9 +68,22 @@
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
       />
-      <span slot="footer" class="dialog-footer">
-        <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleAdvancedSave">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          id="dialog-btn-cancel"
+          @click="handleAdvancedClose"
+        >
+          {{ $t('general.Cancel') }}
+        </el-button>
+        <el-button
+          id="dialog-btn-confirm"
+          :loading="LoadingConfirm"
+          type="primary"
+          @click="handleAdvancedSave"
+        >
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
@@ -72,7 +111,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     },
     trackerName: {
       type: String,

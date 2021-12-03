@@ -3,6 +3,7 @@
     :title="$t('Project.AddProject')"
     :visible.sync="showDialog"
     width="70%"
+    top="3vh"
     :close-on-click-modal="false"
     @closed="onDialogClosed"
   >

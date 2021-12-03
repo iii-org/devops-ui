@@ -149,7 +149,7 @@ export default {
   name: 'ProjectListSelector',
   props: {
     projectId: {
-      type: Number,
+      type: [Number, String],
       default: null
     },
     keepSelection: {
@@ -213,7 +213,7 @@ export default {
           this.onProjectChange(value)
         }
       } else {
-        this.$emit('change', value)
+        this.$emit('update:project-id', value)
       }
       this.selectVisible = false
     },

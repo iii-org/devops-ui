@@ -370,6 +370,7 @@ export default {
     closed: '關閉',
     open: '開啟',
     Open: '開啟',
+    locked: '鎖定',
     Locked: '鎖定',
     EndDate: '結束日期',
     ConfirmDelete: '確認@:(general.Delete)「{version}」嗎？'

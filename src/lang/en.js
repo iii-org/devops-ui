@@ -373,6 +373,7 @@ export default {
     closed: 'Closed',
     open: 'Open',
     Open: 'Open',
+    locked: 'Locked',
     Locked: 'Locked',
     EndDate: 'EndDate',
     ConfirmDelete: 'Are you sure to @:(general.Delete) 「{version}」?'
