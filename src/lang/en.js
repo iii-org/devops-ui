@@ -1154,5 +1154,13 @@ export default {
     NotRunning: 'NotRunning',
     Interrupted: 'Interrupted'
   },
+  Gantt: {
+    Now: 'Now',
+    XScale: 'X-Scale',
+    YScale: 'Y-Scale',
+    TaskListWidth: 'Task list width',
+    TimelineLength: 'Before/After',
+    DisplayTaskList: 'Display task list'
+  },
   Plugins: { NoArguments: 'No Arguments.', ...asyncLangs }
 }

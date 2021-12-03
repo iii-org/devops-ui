@@ -1145,5 +1145,13 @@ export default {
     NotRunning: '準備中',
     Interrupted: '已中斷'
   },
+  Gantt: {
+    Now: '今天',
+    XScale: '日期寬度',
+    YScale: '議題高度',
+    TaskListWidth: '左側寬度',
+    TimelineLength: '時間軸長度',
+    DisplayTaskList: '顯示議題列表'
+  },
   Plugins: { NoArguments: '無可設定之參數。', ...asyncLangs }
 }

@@ -1,70 +1,73 @@
 <template>
   <div>
     <el-row :gutter="10" class="content">
-      <el-col v-loading="listLoading"
-              :element-loading-text="$t('Loading')"
-              :span="24"
-      >
-        <div v-if="listData.length>0"
-             class="gantt-chart"
-        >
-          <gantt-elastic ref="gantt"
-                         :tasks="listData"
-                         :options="options"
-                         @chart-task-click="onTaskClick"
+      <el-col v-loading="listLoading" :element-loading-text="$t('Loading')" :span="24">
+        <div v-if="listData.length > 0" class="gantt-chart">
+          <gantt-elastic
+            ref="gantt"
+            :tasks="listData"
+            :options="options"
+            @chart-task-click="onTaskClick"
           >
-            <gantt-header slot="header"
-                          :options="headerOptions"
-            />
+            <gantt-header slot="header" :options="headerOptions" />
           </gantt-elastic>
         </div>
         <div v-else class="align-middle">
           <el-alert type="warning">
-            <h1><em class="el-icon-warning" /> {{ $t('general.NoData') }}</h1>
+            <h1>
+              <em class="el-icon-warning" /> {{ $t('general.NoData') }}
+            </h1>
           </el-alert>
         </div>
       </el-col>
     </el-row>
-    <el-dialog :title="$t('Issue.AddIssue')"
-               :visible.sync="addTopicDialog.visible"
-               width="50%"
-               top="5px"
-               :close-on-click-modal="false"
-               destroy-on-close
-               append-to-body
-               @close="handleClose"
+    <el-dialog
+      :title="$t('Issue.AddIssue')"
+      :visible.sync="addTopicDialog.visible"
+      width="50%"
+      top="5px"
+      :close-on-click-modal="false"
+      destroy-on-close
+      append-to-body
+      @close="handleClose"
     >
-      <AddIssue ref="AddIssue"
-                :project-id="selectedProjectId"
-                :parent-id="addTopicDialog.parentId"
-                :parent-name="addTopicDialog.parentName"
-                :save-data="saveIssue"
-                import-from="list"
-                @loading="loadingUpdate"
-                @add-topic-visible="handleCloseDialog"
+      <AddIssue
+        ref="AddIssue"
+        :project-id="selectedProjectId"
+        :parent-id="addTopicDialog.parentId"
+        :parent-name="addTopicDialog.parentName"
+        :save-data="saveIssue"
+        import-from="list"
+        @loading="loadingUpdate"
+        @add-topic-visible="handleCloseDialog"
       />
       <span slot="footer" class="dialog-footer">
         <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="addTopicDialog.LoadingConfirm" type="primary"
-                   @click="handleAdvancedSave"
+        <el-button
+          id="dialog-btn-confirm"
+          :loading="addTopicDialog.LoadingConfirm"
+          type="primary"
+          @click="handleAdvancedSave"
         >
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
     </el-dialog>
-    <el-dialog :visible.sync="relationIssue.visible"
-               width="90%"
-               top="3vh"
-               append-to-body
-               destroy-on-close
-               :before-close="handleRelationIssueDialogBeforeClose"
+    <el-dialog
+      :visible.sync="relationIssue.visible"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+      :before-close="handleRelationIssueDialogBeforeClose"
     >
-      <ProjectIssueDetail v-if="relationIssue.visible"
-                          ref="children"
-                          :props-issue-id="relationIssue.id"
-                          :is-in-dialog="true"
-                          @update="handleRelationUpdate"
-                          @delete="handleRelationUpdate"
+      <ProjectIssueDetail
+        v-if="relationIssue.visible"
+        ref="children"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationUpdate"
       />
     </el-dialog>
   </div>
@@ -118,7 +121,6 @@ export default {
     }
   },
   data() {
-    const _this = this
     this.bg = Object.freeze(theme.backgroundColor)
     return {
       listLoading: false,
@@ -127,7 +129,6 @@ export default {
       searchVisible: false,
       status: [],
       priority: [],
-
       listData: [],
       addTopicDialog: {
         visible: false,
@@ -138,8 +139,50 @@ export default {
       relationIssue: {
         visible: false,
         id: null
-      },
-      options: {
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['userId', 'selectedProject', 'tracker', 'fixedVersionShowClosed']),
+    selectedProjectId() {
+      return this.selectedProject.id
+    },
+    displayFilterValue() {
+      const result = []
+      Object.keys(this.filterValue).forEach((item) => {
+        if (this.filterValue[item]) {
+          const value = this[item].find((search) => (search.id === this.filterValue[item]))
+          if (value) {
+            result.push(this.getSelectionLabel(value))
+          }
+        }
+      })
+      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
+    },
+    isFilterChanged() {
+      for (const item of Object.keys(this.originFilterValue)) {
+        const checkFilterValue = this.originFilterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.filterValue[item] !== checkFilterValue[item]) {
+          return true
+        }
+      }
+      for (const item of Object.keys(this.filterValue)) {
+        const checkFilterValue = this.filterValue
+        if (checkFilterValue[item] === '') {
+          delete checkFilterValue[item]
+        }
+        if (this.originFilterValue[item] !== checkFilterValue[item]) {
+          return true
+        }
+      }
+      return !!this.keyword
+    },
+    options() {
+      const _this = this
+      return {
         maxHeight: this.tableHeight - 125,
         title: {
           label: '',
@@ -234,61 +277,25 @@ export default {
             //   }
             // }
           ]
-        },
-        locale: { name: this.$i18n.locale.toLowerCase() }
-      },
-      headerOptions: {
+        }
+        // locale: { code: this.$i18n.locale.toLowerCase() }
+      }
+    },
+    headerOptions() {
+      const headerOptions = {
         title: {
           label: ''
         },
         locale: {
-          Now: '今天',
-          'X-Scale': '日期寬度',
-          'Y-Scale': '議題高度',
-          'Task list width': '左側寬度',
-          'Before/After': '時間軸長度',
-          'Display task list': '顯示議題列表'
+          Now: this.$t('Gantt.Now'),
+          'X-Scale': this.$t('Gantt.XScale'),
+          'Y-Scale': this.$t('Gantt.YScale'),
+          'Task list width': this.$t('Gantt.TaskListWidth'),
+          'Before/After': this.$t('Gantt.TimelineLength'),
+          'Display task list': this.$t('Gantt.DisplayTaskList')
         }
       }
-    }
-  },
-  computed: {
-    ...mapGetters(['userId', 'selectedProject', 'tracker', 'fixedVersionShowClosed']),
-    selectedProjectId() {
-      return this.selectedProject.id
-    },
-    displayFilterValue() {
-      const result = []
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          const value = this[item].find((search) => (search.id === this.filterValue[item]))
-          if (value) {
-            result.push(this.getSelectionLabel(value))
-          }
-        }
-      })
-      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
-    },
-    isFilterChanged() {
-      for (const item of Object.keys(this.originFilterValue)) {
-        const checkFilterValue = this.originFilterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.filterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      for (const item of Object.keys(this.filterValue)) {
-        const checkFilterValue = this.filterValue
-        if (checkFilterValue[item] === '') {
-          delete checkFilterValue[item]
-        }
-        if (this.originFilterValue[item] !== checkFilterValue[item]) {
-          return true
-        }
-      }
-      return !!this.keyword
+      return headerOptions
     }
   },
   watch: {
@@ -364,17 +371,25 @@ export default {
       return issue
     },
     async fetchData() {
+      let resProjectIssue = {}
       if (this.listLoading) {
         this.cancelRequest()
       }
       this.listLoading = true
-      const resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
-      // for (const issue_data of resProjectIssue.data) {
-      //   issues.push(new Issue(issue_data))
-      // }
-      this.listData = resProjectIssue.data.map(issue => this.formatIssue(issue))
-      this.listLoading = false
-      this.$refs['gantt'].recenterPosition()
+      try {
+        resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
+      } catch (error) {
+        console.error(error)
+      } finally {
+        // for (const issue_data of resProjectIssue.data) {
+        //   issues.push(new Issue(issue_data))
+        // }
+        if (resProjectIssue && resProjectIssue.data) {
+          this.listData = resProjectIssue.data.map(issue => this.formatIssue(issue))
+        }
+        this.listLoading = false
+      }
+      // this.$refs['gantt'].recenterPosition()
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']

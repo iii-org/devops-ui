@@ -7,11 +7,11 @@
           <span v-if="updateLoading" class="text-blue-500">
             <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
           </span>
-          <span v-else-if="lastUpdated&&lastUpdated.time" class="text-success">
+          <span v-else-if="lastUpdated && lastUpdated.time" class="text-success">
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
           </span>
-          <span v-else-if="lastUpdated&&lastUpdated.error" class="text-danger">
+          <span v-else-if="lastUpdated && lastUpdated.error" class="text-danger">
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Error') }}: </strong>
             {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
@@ -24,7 +24,7 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed, originFilterValue:originFilterValue }"
+        :prefill="{ filterValue, keyword, displayClosed, originFilterValue }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
       >
@@ -59,8 +59,10 @@
         >
           <el-form class="display-column">
             <el-form-item v-for="item in columnsOptions" :key="item.field">
-              <el-checkbox :value="getCheckColumnValue(item.field)" :label="item.display"
-                           @change="onCheckColumnChange(item.field)"
+              <el-checkbox
+                :value="getCheckColumnValue(item.field)"
+                :label="item.display"
+                @change="onCheckColumnChange(item.field)"
               >
                 {{ item.display }}
               </el-checkbox>
@@ -76,15 +78,16 @@
     <div ref="wrapper" class="wrapper">
       <el-tabs v-model="activeTab" type="border-card">
         <el-tab-pane name="WBS" label="WBS" lazy>
-          <WBS ref="WBS"
-               :filter-value="filterValue"
-               :keyword="keyword"
-               :display-closed="displayClosed"
-               :columns="columns"
-               :assigned-to="assigned_to"
-               :fixed-version="fixed_version" :tags="tags" :table-height="tableHeight"
-               @update-loading="handleUpdateLoading"
-               @update-status="handleUpdateStatus"
+          <WBS
+            ref="WBS"
+            :filter-value="filterValue"
+            :keyword="keyword"
+            :display-closed="displayClosed"
+            :columns="columns"
+            :assigned-to="assigned_to"
+            :fixed-version="fixed_version" :tags="tags" :table-height="tableHeight"
+            @update-loading="handleUpdateLoading"
+            @update-status="handleUpdateStatus"
           />
         </el-tab-pane>
         <el-tab-pane
