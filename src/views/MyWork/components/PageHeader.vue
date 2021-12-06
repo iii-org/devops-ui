@@ -34,7 +34,7 @@
       <el-form>
         <template v-for="condition in filterConditionGroup">
           <el-form-item
-            v-if="!isRequireProjectId(condition.value)"
+            v-if="!isHiddenFormItem(condition)"
             :key="condition.id"
           >
             <div slot="label">
@@ -59,7 +59,7 @@
               @clear="clearCondition(condition.value)"
             >
               <el-option
-                v-for="option in condition.options"
+                v-for="option in filterOption(condition)"
                 :key="option.id"
                 :label="formatOptionName(condition.value, option.name)"
                 :value="option.id"
@@ -299,8 +299,10 @@ export default {
       this.$emit('update:keyword', '')
       this.$emit('update:filterConditions', {})
     },
-    isRequireProjectId(condition) {
-      return condition === 'fixed_version' && !this.focusedProjectId
+    isHiddenFormItem(condition) {
+      const isRequireProjectId = condition.value === 'fixed_version' && !this.focusedProjectId
+      const isHideAssignedToSelect = condition.value === 'assigned_to' && this.activeTab === 'assigned_to_id'
+      return isRequireProjectId || isHideAssignedToSelect
     },
     clearCondition(condition) {
       delete this.filterConditions[condition]
@@ -316,6 +318,11 @@ export default {
     },
     formatOptionName(condition, optionName) {
       return ['fixed_version', 'assigned_to'].includes(condition) ? optionName : this.$t('Issue.' + optionName)
+    },
+    filterOption(condition) {
+      const { value, options } = condition
+      const showAllOptions = value !== 'status' || this.displayClosedIssue
+      return showAllOptions ? options : options.filter((option) => option.id !== 6)
     }
   }
 }

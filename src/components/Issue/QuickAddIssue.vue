@@ -72,14 +72,10 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button
-          id="dialog-btn-cancel"
-          @click="handleAdvancedClose"
-        >
+        <el-button @click="handleAdvancedClose">
           {{ $t('general.Cancel') }}
         </el-button>
         <el-button
-          id="dialog-btn-confirm"
           :loading="LoadingConfirm"
           type="primary"
           @click="handleAdvancedSave"
@@ -132,8 +128,16 @@ export default {
       },
       advancedForm: {},
       formRules: {
-        name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        tracker_id: [{ required: true, message: 'Please select type', trigger: 'blur' }]
+        name: [
+          {
+            required: true,
+            message: this.$t('Validation.Input', [this.$t('general.Name')]),
+            trigger: 'blur'
+          }
+        ],
+        tracker_id: [
+          { required: true, message: this.$t('Validation.Select', [this.$t('general.Type')]), trigger: 'blur' }
+        ]
       }
     }
   },

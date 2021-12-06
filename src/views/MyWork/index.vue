@@ -14,8 +14,11 @@
     <el-divider />
 
     <QuickAddIssue
+      ref="quickAddIssue"
+      :save-data="saveIssue"
       :project-id="projectId"
       :visible.sync="showQuickAddIssue"
+      @add-issue="advancedAddIssue"
     />
 
     <TabsHeader
@@ -54,6 +57,7 @@
 import { QuickAddIssue } from '@/components/Issue'
 import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
 import { PageHeader, TabsHeader, IssueTable } from './components'
+import { addIssue } from '@/api/issue'
 
 export default {
   name: 'MyWork',
@@ -82,6 +86,29 @@ export default {
     },
     updateTotalCount(tabId, $event) {
       this.tabs.find((tab) => tab.id === tabId).count = $event
+    },
+    advancedAddIssue(form) {
+      this.addTopicDialogVisible = true
+      this.parentId = 0
+      this.form = form
+    },
+    async saveIssue(data) {
+      return addIssue(data)
+        .then((res) => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Added'),
+            type: 'success'
+          })
+          this.backToFirstPage()
+          this.loadData()
+          this.addTopicDialogVisible = false
+          this.$refs['quickAddIssue'].form.name = ''
+          return res
+        })
+        .catch((error) => {
+          return error
+        })
     }
   }
 }
