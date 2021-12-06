@@ -395,7 +395,7 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId', 'priority', 'tracker', 'status', 'userId', 'userRole']),
     hasInlineCreate() {
-      const create = this.listData.filter((item) => item.create)
+      const create = this.listData ? this.listData.filter((item) => item.create) : false
       return create.length > 0
     },
     isButtonDisabled() {
@@ -457,8 +457,11 @@ export default {
       this.$set(this.$refs['WBS'], 'isGroup', false)
     },
     async fetchData() {
+      if (!this.selectedProjectId) return
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
-      return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))
+      if (res.hasOwnProperty('data')) {
+        return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))
+      }
     },
     issueFormatter(issue) {
       if (Object.keys(issue.assigned_to).length <= 0) {
