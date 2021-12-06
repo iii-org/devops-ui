@@ -106,7 +106,10 @@
               :label="$t('Issue.' + item.name)"
               :value="item.id"
             >
-              <Tracker :name="$t(`Issue.${item.name}`)" :type="item.name" />
+              <Tracker
+                :name="$t(`Issue.${item.name}`)"
+                :type="item.name"
+              />
             </el-option>
           </el-select>
         </el-form-item>
@@ -131,7 +134,10 @@
               :label="$t('Issue.' + item.name)"
               :value="item.id"
             >
-              <Status :name="$t(`Issue.${item.name}`)" :type="item.name" />
+              <Status
+                :name="$t(`Issue.${item.name}`)"
+                :type="item.name"
+              />
             </el-option>
           </el-select>
         </el-form-item>
@@ -155,7 +161,10 @@
               :label="$t('Issue.' + item.name)"
               :value="item.id"
             >
-              <Priority :name="$t(`Issue.${item.name}`)" :type="item.name" />
+              <Priority
+                :name="$t(`Issue.${item.name}`)"
+                :type="item.name"
+              />
             </el-option>
           </el-select>
         </el-form-item>
@@ -438,8 +447,8 @@ export default {
         await Promise.all([
           getProjectAssignable(this.projectId),
           getProjectVersion(this.projectId, { status: 'open,locked' })
-        ]).then(res => {
-          const [assigned_to, fixed_version] = res.map(item => item.data)
+        ]).then((res) => {
+          const [assigned_to, fixed_version] = res.map((item) => item.data)
 
           this.assigned_to = [
             {
@@ -460,7 +469,7 @@ export default {
     },
     setFilterValue() {
       if (this.importFrom && this.issueFilter[this.importFrom]) {
-        Object.keys(this.issueFilter[this.importFrom]).forEach(item => {
+        Object.keys(this.issueFilter[this.importFrom]).forEach((item) => {
           if (
             this.issueFilter[this.importFrom][item] !== 'null' &&
             !!this.issueFilter[this.importFrom][item] &&
@@ -474,11 +483,11 @@ export default {
           checkQuickAddIssueForm = ['tracker_id', 'name', 'assigned_to_id']
           checkQuickAddIssueForm.push(this.groupBy.dimension + '_id')
         }
-        checkQuickAddIssueForm.forEach(item => {
+        checkQuickAddIssueForm.forEach((item) => {
           this.issueForm[item] = this.prefill[item]
         })
       } else {
-        Object.keys(this.prefill).forEach(item => {
+        Object.keys(this.prefill).forEach((item) => {
           this.issueForm[item] = this.prefill[item]
         })
       }
@@ -502,7 +511,7 @@ export default {
       const addTags = []
       const originTags = []
       if (Array.isArray(tags)) {
-        tags.forEach(tag => {
+        tags.forEach((tag) => {
           if (typeof tag === 'string') addTags.push(tag)
           else if (typeof tag === 'number') originTags.push(tag)
         })
@@ -511,14 +520,14 @@ export default {
       else this.tagsArrayToString(originTags, tagsLength)
     },
     async handleAddProjectTags(addTags, originTags, tagsLength) {
-      addTags.map(async tag => {
+      addTags.map(async (tag) => {
         const tagValue = tag.split('__')[1]
         const formData = this.getAddTagsFormData(tagValue)
         await this.addProjectTags(formData, originTags, tagsLength)
       })
     },
     async addProjectTags(formData, originTags, tagsLength) {
-      await addProjectTags(formData).then(async res => {
+      await addProjectTags(formData).then(async (res) => {
         const id = res.data.tags.id
         originTags.push(id)
         this.tagsArrayToString(originTags, tagsLength)
@@ -540,11 +549,11 @@ export default {
     },
     save() {
       let result = false
-      this.$refs['issueForm'].validate(async valid => {
+      this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
           // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
-          Object.keys(data).map(item => {
+          Object.keys(data).map((item) => {
             if (data[item] === '' || data[item] === 'null' || !data[item]) delete data[item]
           })
 
@@ -552,7 +561,7 @@ export default {
           const form = new FormData()
           form.append('project_id', this.projectId)
           if (this.parentId) form.append('parent_id', this.parentId)
-          Object.keys(data).forEach(objKey => {
+          Object.keys(data).forEach((objKey) => {
             form.append(objKey, data[objKey])
           })
           if (this.uploadFileList.length > 0) {
@@ -620,8 +629,8 @@ export default {
       if (new Date(startDate).getTime() >= new Date(this.issueForm.due_date)) this.issueForm.due_date = ''
     },
     handleAssigneeChange() {
-      const activeStatusId = this.status.find(status => status.name === 'Active').id
-      const assignedStatusId = this.status.find(status => status.name === 'Assigned').id
+      const activeStatusId = this.status.find((status) => status.name === 'Active').id
+      const assignedStatusId = this.status.find((status) => status.name === 'Assigned').id
       if (this.issueForm.status_id === 1) {
         this.issueForm.status_id = assignedStatusId
       }

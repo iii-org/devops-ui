@@ -208,14 +208,14 @@ export default {
           label: this.$t('Issue.FilterDimensions.assigned_to'),
           value: 'assigned_to',
           placeholder: 'Member',
-          options: []
+          options: [{ id: null, name: '' }]
         },
         {
           id: 4,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version',
-          options: []
+          options: [{ id: null, name: '' }]
         },
         {
           id: 5,
@@ -236,11 +236,15 @@ export default {
   },
   computed: {
     selectedConditions() {
-      const conditions = Object.keys(this.filterConditions).map((key) => {
-        const idx = this.filterConditionGroup.findIndex((condition) => condition.value === key)
-        const optionId = this.filterConditions[key]
-        const optionName = this.filterConditionGroup[idx].options.find((option) => option.id === optionId).name
-        return this.formatOptionName(key, optionName)
+      const conditions = Object.keys(this.filterConditions).map((filterCondition) => {
+        const groupIdx = this.filterConditionGroup.findIndex((condition) => condition.value === filterCondition)
+        const filterOptionId = this.filterConditions[filterCondition]
+        const optionNameIdx = this.filterConditionGroup[groupIdx].options.findIndex(
+          (option) => option.id === filterOptionId
+        )
+        if (optionNameIdx === -1) return
+        const optionName = this.filterConditionGroup[groupIdx].options[optionNameIdx].name
+        return this.formatOptionName(filterCondition, optionName)
       })
       return this.$t('general.Filter') + (conditions.length ? ': ' : '') + conditions.join(', ')
     },
@@ -254,9 +258,9 @@ export default {
     }
   },
   watch: {
-    projectId(val) {
-      this.clearFilter()
-      if (val) this.fetchData()
+    projectId(newId, oldId) {
+      if (oldId !== null) this.clearFilter()
+      if (newId) this.fetchData()
     },
     displayClosedVersion() {
       this.fetchVersionList()
@@ -298,6 +302,7 @@ export default {
     clearFilter() {
       this.$emit('update:keyword', '')
       this.$emit('update:filterConditions', {})
+      this.$emit('update:displayClosedIssue', false)
     },
     isHiddenFormItem(condition) {
       const isRequireProjectId = condition.value === 'fixed_version' && !this.focusedProjectId

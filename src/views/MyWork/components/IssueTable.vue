@@ -164,11 +164,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
-import { ExpandSection } from '@/components/Issue'
-import { ContextMenu, IssueList } from '@/newMixins'
+import { mapActions, mapGetters } from 'vuex'
 import { getUserIssueList } from '@/api/user'
+import { ContextMenu, IssueList } from '@/newMixins'
+import { ExpandSection } from '@/components/Issue'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -230,7 +230,7 @@ export default {
       immediate: false,
       async handler(value) {
         this.filterValue = value
-        // await this.backToFirstPage()
+        await this.backToFirstPage()
         await this.onChangeFilterForm({ filterValue: value })
       }
     },
@@ -316,8 +316,8 @@ export default {
           }
         }
         // TODO: RememberPageProblem
-        // await this.setIssueListListQuery(this.listQuery)
-        // await this.setIssueListPageInfo(this.pageInfo)
+        await this.setIssueListListQuery(this.listQuery)
+        await this.setIssueListPageInfo(this.pageInfo)
       } catch (e) {
         // null
       }

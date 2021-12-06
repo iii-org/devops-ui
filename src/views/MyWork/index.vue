@@ -14,11 +14,9 @@
     <el-divider />
 
     <QuickAddIssue
-      ref="quickAddIssue"
-      :save-data="saveIssue"
       :project-id="projectId"
       :visible.sync="showQuickAddIssue"
-      @add-issue="advancedAddIssue"
+      @update="updateIssueTables"
     />
 
     <TabsHeader
@@ -54,10 +52,9 @@
 </template>
 
 <script>
-import { QuickAddIssue } from '@/components/Issue'
+import { mapActions } from 'vuex'
 import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
-import { PageHeader, TabsHeader, IssueTable } from './components'
-import { addIssue } from '@/api/issue'
+import { PageHeader, QuickAddIssue, TabsHeader, IssueTable } from './components'
 
 export default {
   name: 'MyWork',
@@ -79,7 +76,36 @@ export default {
       activeTab: 'assigned_to_id'
     }
   },
+  watch: {
+    projectId() {
+      this.setStoredProjectId()
+    },
+    filterConditions: {
+      handler() {
+        this.updateIssueTables()
+        this.onFilterChanged()
+      },
+      deep: true
+    },
+    displayClosedIssue() {
+      this.onFilterChanged()
+    },
+    keyword() {
+      this.onFilterChanged()
+    }
+  },
+  mounted() {
+    this.getStoredData()
+  },
   methods: {
+    ...mapActions('projects', [
+      'getIssueFilter',
+      'getKeyword',
+      'getDisplayClosed',
+      'setKeyword',
+      'setIssueFilter',
+      'setDisplayClosed'
+    ]),
     handleCreateProjectClick() {
       this.$refs.createProjectDialog.showDialog = true
       this.$refs.createProjectDialog.refreshTemplate()
@@ -87,28 +113,47 @@ export default {
     updateTotalCount(tabId, $event) {
       this.tabs.find((tab) => tab.id === tabId).count = $event
     },
-    advancedAddIssue(form) {
-      this.addTopicDialogVisible = true
-      this.parentId = 0
-      this.form = form
+    updateIssueTables() {
+      this.tabs.forEach((tab) => {
+        this.$refs[tab.id][0].initTableData()
+      })
     },
-    async saveIssue(data) {
-      return addIssue(data)
-        .then((res) => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
-          this.backToFirstPage()
-          this.loadData()
-          this.addTopicDialogVisible = false
-          this.$refs['quickAddIssue'].form.name = ''
-          return res
-        })
-        .catch((error) => {
-          return error
-        })
+    async fetchStoredData() {
+      let storedFilterValue, storedKeyword, storedDisplayClosed
+      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then((res) => {
+        const [filterValue, keyword, displayClosed] = res.map((item) => item)
+        storedFilterValue = filterValue
+        storedKeyword = keyword
+        storedDisplayClosed = displayClosed
+      })
+      return { storedFilterValue, storedKeyword, storedDisplayClosed }
+    },
+    async getStoredData() {
+      const key = 'work'
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      if (storedFilterValue[key]) this.$set(this, 'filterConditions', storedFilterValue[key])
+      if (storedKeyword[key]) this.keyword = storedKeyword[key]
+      if (storedDisplayClosed[key]) this.displayClosedIssue = storedDisplayClosed[key]
+      this.getStoredProjectId()
+    },
+    async onFilterChanged() {
+      const key = 'work'
+      const storedData = await this.fetchStoredData()
+      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      storedFilterValue[key] = this.filterConditions
+      storedKeyword[key] = this.keyword
+      storedDisplayClosed[key] = this.displayClosedIssue
+      await this.setIssueFilter(storedFilterValue)
+      await this.setKeyword(storedKeyword)
+      await this.setDisplayClosed(storedDisplayClosed)
+    },
+    setStoredProjectId() {
+      sessionStorage.setItem('workProjectId', this.projectId)
+    },
+    getStoredProjectId() {
+      const storedProjectId = Number(sessionStorage.getItem('workProjectId'))
+      if (storedProjectId) this.projectId = storedProjectId
     }
   }
 }
