@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
 import { Tracker, Priority, Status } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
@@ -176,14 +177,7 @@ export default {
           value: 'status',
           placeholder: 'Status',
           tag: true,
-          options: [
-            { id: 1, name: 'Active' },
-            { id: 2, name: 'Assigned' },
-            { id: 3, name: 'InProgress' },
-            { id: 4, name: 'Solved' },
-            { id: 5, name: 'Verified' },
-            { id: 6, name: 'Closed' }
-          ]
+          options: []
         },
         {
           id: 2,
@@ -191,31 +185,21 @@ export default {
           value: 'tracker',
           placeholder: 'Type',
           tag: true,
-          options: [
-            { id: 1, name: 'Epic' },
-            { id: 2, name: 'Audit' },
-            { id: 3, name: 'Feature' },
-            { id: 4, name: 'Bug' },
-            { id: 5, name: 'Issue' },
-            { id: 6, name: 'Change Request' },
-            { id: 7, name: 'Risk' },
-            { id: 8, name: 'Test Plan' },
-            { id: 9, name: 'Fail Management' }
-          ]
+          options: []
         },
         {
           id: 3,
           label: this.$t('Issue.FilterDimensions.assigned_to'),
           value: 'assigned_to',
           placeholder: 'Member',
-          options: [{ id: null, name: '' }]
+          options: []
         },
         {
           id: 4,
           label: this.$t('Issue.FilterDimensions.fixed_version'),
           value: 'fixed_version',
           placeholder: 'Version',
-          options: [{ id: null, name: '' }]
+          options: []
         },
         {
           id: 5,
@@ -223,18 +207,14 @@ export default {
           value: 'priority',
           placeholder: 'Priority',
           tag: true,
-          options: [
-            { id: 1, name: 'Immediate' },
-            { id: 2, name: 'High' },
-            { id: 3, name: 'Normal' },
-            { id: 4, name: 'Low' }
-          ]
+          options: []
         }
       ],
       searchVisible: false
     }
   },
   computed: {
+    ...mapGetters(['status', 'tracker', 'priority']),
     selectedConditions() {
       const conditions = Object.keys(this.filterConditions).map((filterCondition) => {
         const groupIdx = this.filterConditionGroup.findIndex((condition) => condition.value === filterCondition)
@@ -266,10 +246,19 @@ export default {
       this.fetchVersionList()
     }
   },
+  mounted() {
+    this.setFilterOptions()
+  },
   methods: {
     fetchData() {
       this.fetchUserList()
       this.fetchVersionList()
+    },
+    setFilterOptions() {
+      const { status, tracker, priority } = this
+      this.filterConditionGroup[0].options = status
+      this.filterConditionGroup[1].options = tracker
+      this.filterConditionGroup[4].options = priority
     },
     fetchUserList() {
       getProjectUserList(this.projectId).then((res) => {
