@@ -243,7 +243,7 @@ export default {
       if (newId) this.fetchData()
     },
     displayClosedVersion() {
-      this.fetchVersionList()
+      if (this.projectId) this.fetchVersionList()
     }
   },
   mounted() {
@@ -282,16 +282,13 @@ export default {
       })
     },
     formatVersionName(versionStatus, versionName) {
-      if (versionStatus === 'open') {
-        return versionName
-      } else {
-        return versionName + ` (${this.$t('Version.' + versionStatus)})`
-      }
+      return versionStatus === 'open' ? versionName : versionName + ` (${this.$t('Version.' + versionStatus)})`
     },
     clearFilter() {
       this.$emit('update:keyword', '')
       this.$emit('update:filterConditions', {})
       this.$emit('update:displayClosedIssue', false)
+      this.$emit('update:displayClosedVersion', false)
     },
     isHiddenFormItem(condition) {
       const isRequireProjectId = condition.value === 'fixed_version' && !this.focusedProjectId

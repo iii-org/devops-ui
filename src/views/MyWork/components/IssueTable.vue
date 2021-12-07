@@ -11,14 +11,11 @@
         :tree-props="{ children: 'child' }"
         :row-class-name="getRowClass"
         @row-contextmenu="handleContextMenu"
-        @cell-click="handleClick"
+        @cell-click="handleCellClick"
         @expand-change="getIssueFamilyData"
         @sort-change="handleSortChange"
       >
-        <el-table-column
-          type="expand"
-          class-name="informationExpand"
-        >
+        <el-table-column type="expand">
           <template slot-scope="{row}">
             <ExpandSection
               :issue="row"
@@ -149,7 +146,7 @@
         :limit="listQuery.limit"
         :page-sizes="[10, 25, 50, 100]"
         :layout="'total, sizes, prev, pager, next'"
-        @pagination="handleCurrentChange"
+        @pagination="handlePaginationChange"
       />
     </el-row>
     <ContextMenu
@@ -158,39 +155,34 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="initTableData"
+      @update="fetchData"
     />
   </div>
 </template>
 
 <script>
-import axios from 'axios'
 import { mapActions, mapGetters } from 'vuex'
+import { ContextMenu, Pagination, CancelRequest } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
-import { ContextMenu, IssueList } from '@/newMixins'
-import { ExpandSection } from '@/components/Issue'
-
-/**
- * @param row.relations  row maybe have parent or children issue
- * @param data.issue_list get paged data from api
- */
+import { getIssueFamily } from '@/api/issue'
+import { Priority, Status, Tracker, ExpandSection } from '@/components/Issue'
 
 export default {
   name: 'MyWorkIssueTable',
-  components: { ExpandSection },
-  mixins: [IssueList, ContextMenu],
+  components: { Priority, Status, Tracker, ExpandSection },
+  mixins: [ContextMenu, Pagination, CancelRequest],
   props: {
     from: {
       type: String,
       default: 'assigned_to'
     },
-    filterConditionsProps: {
-      type: Object,
-      default: () => ({})
-    },
     projectId: {
       type: [String, Number],
       default: ''
+    },
+    filterConditionsProps: {
+      type: Object,
+      default: () => ({})
     },
     displayClosedProps: {
       type: Boolean,
@@ -207,124 +199,78 @@ export default {
         offset: 0,
         page: 1,
         limit: 10
-      }
+      },
+      pageInfo: {
+        offset: 0,
+        total: 0
+      },
+      sort: '',
+      expandedRow: [],
+      listLoading: false,
+      listData: []
     }
   },
   computed: {
-    ...mapGetters(['userId'])
+    ...mapGetters(['userId']),
+    refTable() {
+      return this.$refs['issueList']
+    },
+    dynamicParams() {
+      return {
+        projectId: this.projectId,
+        filterConditions: this.filterConditionsProps,
+        displayClosed: this.displayClosedProps,
+        keyword: this.keywordProps
+      }
+    }
   },
   watch: {
-    async keyword() {
-      await this.backToFirstPage()
-      await this.initTableData()
-    },
-    async projectId() {
-      await this.onChangeFilterForm({
-        filterValue: this.filterValue,
-        keyword: this.keyword,
-        displayClosed: this.displayClosed
-      })
-    },
-    filterConditionsProps: {
-      deep: true,
-      immediate: false,
-      async handler(value) {
-        this.filterValue = value
-        await this.backToFirstPage()
-        await this.onChangeFilterForm({ filterValue: value })
-      }
-    },
-    displayClosedProps(value) {
-      this.displayClosed = value
-    },
-    keywordProps(value) {
-      this.keyword = value
-    },
-    async displayClosed(value) {
-      await this.backToFirstPage()
-      await this.onChangeFilterForm({ displayClosed: value })
-    },
-    fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
-      this.loadVersionList(value)
+    dynamicParams: {
+      handler() {
+        this.onFilterChange()
+      },
+      deep: true
     },
     'pageInfo.total'(value) {
       this.$emit('total', value)
     }
   },
-  async mounted() {
-    await this.initTableData()
+  mounted() {
+    this.fetchData()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed', 'getListQuery', 'setListQuery']),
-    getParams() {
-      const result = {
-        offset: this.listQuery.offset,
-        limit: this.listQuery.limit,
-        from: this.from
+    async fetchData() {
+      if (this.listLoading) {
+        this.cancelRequest()
       }
-      if (this.projectId && this.projectId !== '') {
-        result['project_id'] = this.projectId
-      }
-      if (this.sort) {
-        result['sort'] = this.sort
-      }
-      if (!this.displayClosed) {
-        result['status_id'] = 'open'
-      }
-      Object.keys(this.filterValue).forEach((item) => {
-        if (this.filterValue[item]) {
-          result[item + '_id'] = this.filterValue[item]
-        }
-      })
-      if (this.keyword) {
-        result['search'] = this.keyword
-      }
-      return result
-    },
-    async onChangeFilter() {
-      await this.loadData()
-    },
-    async initTableData() {
-      if (this.selectedProjectId === -1) return
       this.listLoading = true
-      this.listData = await this.fetchData()
+      await getUserIssueList(this.userId, this.getParams(), { cancelToken: this.cancelToken }).then((res) => {
+        const isEmptyRes = Object.keys(res) === 0
+        if (!isEmptyRes) this.listData = res.data.issue_list // TODO: TypeError: Cannot read properties of undefined (reading 'issue_list')
+        this.setPageInfo(res.data)
+      })
+      await this.setExpandedRow()
       this.listLoading = false
     },
-    async fetchData() {
-      let data
-      try {
-        // const params = await
-        if (this.lastIssueListCancelToken && this.listLoading) {
-          this.lastIssueListCancelToken.cancel()
+    setPageInfo(resData) {
+      if (resData.hasOwnProperty('page')) {
+        this.pageInfo = resData.page
+      } else {
+        this.pageInfo = {
+          total: 0
         }
-        const cancelTokenSource = axios.CancelToken.source()
-        this.lastIssueListCancelToken = cancelTokenSource
-        const listData = await getUserIssueList(this.userId, this.getParams(), { cancelToken: cancelTokenSource.token })
-        data = listData.data.issue_list
-        if (listData.data.hasOwnProperty('page')) {
-          this.pageInfo = listData.data.page
-        } else {
-          this.pageInfo = {
-            total: 0
-          }
-        }
-        if (this.expandedRow.length > 0) {
-          for (const row of this.expandedRow) {
-            const getIssue = data.find((item) => item.id === row.id)
-            await this.getIssueFamilyData(getIssue, this.expandedRow)
-          }
-        }
-        // TODO: RememberPageProblem
-        await this.setIssueListListQuery(this.listQuery)
-        await this.setIssueListPageInfo(this.pageInfo)
-      } catch (e) {
-        // null
       }
-      this.lastIssueListCancelToken = null
-      return data
     },
-    async handleCurrentChange(val) {
+    async setExpandedRow() {
+      if (this.expandedRow.length > 0) {
+        for (const row of this.expandedRow) {
+          const getIssue = this.listData.find((item) => item.id === row.id)
+          await this.getIssueFamilyData(getIssue, this.expandedRow)
+        }
+      }
+    },
+    async handlePaginationChange(val) {
       this.listLoading = true
       this.listQuery.limit = val.limit
       const offset = this.pageInfo.offset + (val.page - this.listQuery.page) * val.limit
@@ -344,13 +290,154 @@ export default {
         const page = (this.listQuery.offset + 1) / this.listQuery.limit
         this.listQuery.page = page > 0 ? Math.ceil(page) : 1
       }
-
-      await this.initTableData()
+      await this.fetchData()
       const storeListQuery = await this.getListQuery()
       storeListQuery[`MyWork_${this.from}`] = this.listQuery
       await this.setListQuery(storeListQuery)
       this.listLoading = false
+    },
+    getParams() {
+      const result = {
+        offset: this.listQuery.offset,
+        limit: this.listQuery.limit,
+        from: this.from
+      }
+      if (this.projectId && this.projectId !== '') {
+        result['project_id'] = this.projectId
+      }
+      if (this.sort) {
+        result['sort'] = this.sort
+      }
+      if (!this.displayClosedProps) {
+        result['status_id'] = 'open'
+      }
+      Object.keys(this.filterConditionsProps).forEach((item) => {
+        if (this.filterConditionsProps[item]) {
+          result[item + '_id'] = this.filterConditionsProps[item]
+        }
+      })
+      if (this.keywordProps) {
+        result['search'] = this.keywordProps
+      }
+      return result
+    },
+    onFilterChange() {
+      this.listLoading = true
+      this.resetListQuery()
+      this.fetchData()
+    },
+    resetListQuery() {
+      this.listQuery.page = 1
+      this.listQuery.offset = 0
+    },
+    getRowClass({ row }) {
+      const result = []
+      if (!this.hasRelationIssue(row)) {
+        result.push('hide-expand-icon')
+        if (this.refTable) {
+          this.checkRowExpended(this.refTable, row)
+        }
+      }
+      this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
+      return result.join(' ')
+    },
+    handleCellClick(row, column) {
+      if (column.type === 'action') {
+        return false
+      }
+      if (column.type === 'expand' && this.hasRelationIssue(row)) {
+        return this.refTable.toggleRowExpansion(row)
+      }
+      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+    },
+    async getIssueFamilyData(row, expandedRows) {
+      this.expandedRow = expandedRows
+      if (expandedRows.find((item) => item.id === row.id)) {
+        try {
+          this.$set(row, 'isLoadingFamily', true)
+          const family = await getIssueFamily(row.id)
+          const data = family.data
+          this.formatIssueFamilyData(row, data)
+          this.$set(row, 'isLoadingFamily', false)
+        } catch (e) {
+          return Promise.resolve()
+        }
+      }
+      return Promise.resolve()
+    },
+    formatIssueFamilyData(row, data) {
+      if (data.hasOwnProperty('parent')) {
+        this.$set(row, 'parent', data.parent)
+      }
+      if (data.hasOwnProperty('children')) {
+        this.$set(row, 'children', data.children)
+      }
+      if (data.hasOwnProperty('relations')) {
+        this.$set(row, 'relations', data.relations)
+      }
+    },
+    handleSortChange({ prop, order }) {
+      const orderBy = this.checkOrder(order)
+      this.sort = orderBy ? `${prop}:${orderBy}` : orderBy
+      this.fetchData()
+    },
+    checkOrder(order) {
+      const orderMap = {
+        ascending: 'asc',
+        descending: 'desc'
+      }
+      return orderMap[order] || false
+    },
+    hasRelationIssue(row) {
+      return row.family
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.wrapper {
+  height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
+}
+
+>>> .el-table__body-wrapper {
+  overflow-y: auto;
+}
+
+>>> .el-table {
+  .hide-expand-icon {
+    .el-table__expand-column .cell {
+      display: none;
+    }
+  }
+
+  .action {
+    @apply border-0;
+  }
+}
+
+>>> .el-table__expanded-cell {
+  font-size: 0.875em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+>>> .row-expend-loading .el-table__expand-column .cell {
+  padding: 0;
+
+  .el-table__expand-icon {
+    .el-icon-arrow-right {
+      animation: rotating 2s linear infinite;
+    }
+
+    .el-icon-arrow-right:before {
+      content: '\e6cf';
+      font-size: 1.25em;
+    }
+  }
+}
+
+>>> .context-menu {
+  cursor: context-menu;
+}
+</style>

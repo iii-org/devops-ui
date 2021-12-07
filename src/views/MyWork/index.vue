@@ -78,7 +78,7 @@ export default {
   },
   watch: {
     projectId() {
-      this.setStoredProjectId()
+      this.setStoredData('workProjectId', this.projectId)
     },
     filterConditions: {
       handler() {
@@ -92,6 +92,12 @@ export default {
     },
     keyword() {
       this.onFilterChanged()
+    },
+    activeTab(value) {
+      this.setStoredData('activeTab', value)
+    },
+    displayClosedVersion(value) {
+      this.setStoredData('displayClosedVersion', value)
     }
   },
   mounted() {
@@ -115,7 +121,7 @@ export default {
     },
     updateIssueTables() {
       this.tabs.forEach((tab) => {
-        this.$refs[tab.id][0].initTableData()
+        this.$refs[tab.id][0].fetchData()
       })
     },
     async fetchStoredData() {
@@ -135,7 +141,7 @@ export default {
       if (storedFilterValue[key]) this.$set(this, 'filterConditions', storedFilterValue[key])
       if (storedKeyword[key]) this.keyword = storedKeyword[key]
       if (storedDisplayClosed[key]) this.displayClosedIssue = storedDisplayClosed[key]
-      this.getStoredProjectId()
+      this.getMyWorkStoredData()
     },
     async onFilterChanged() {
       const key = 'work'
@@ -148,12 +154,17 @@ export default {
       await this.setKeyword(storedKeyword)
       await this.setDisplayClosed(storedDisplayClosed)
     },
-    setStoredProjectId() {
-      sessionStorage.setItem('workProjectId', this.projectId)
+    setStoredData(key, value) {
+      sessionStorage.setItem(key, value)
     },
-    getStoredProjectId() {
+    getMyWorkStoredData() {
+      // TODO: refactor later
       const storedProjectId = Number(sessionStorage.getItem('workProjectId'))
+      const storedActiveTab = sessionStorage.getItem('activeTab')
+      const storedDisplayClosedVersion = Boolean(sessionStorage.getItem('displayClosedVersion'))
       if (storedProjectId) this.projectId = storedProjectId
+      if (storedActiveTab) this.activeTab = storedActiveTab
+      this.displayClosedVersion = storedDisplayClosedVersion
     }
   }
 }
