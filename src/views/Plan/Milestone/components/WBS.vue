@@ -186,7 +186,7 @@
         :description="$t('general.NoData')"
       />
       <tr
-        v-if="!hasInlineCreate&&userRole!=='QA'"
+        v-if="!hasInlineCreate && userRole !=='QA'"
         slot="append"
       >
         <td class="add-issue-inline">
@@ -199,7 +199,7 @@
       </tr>
     </el-table>
     <contextmenu ref="contextmenu">
-      <template v-if="Object.keys(contextMenu.row).length>2">
+      <template v-if="Object.keys(contextMenu.row).length > 2">
         <contextmenu-item class="menu-title">{{ contextMenu.row.name }}</contextmenu-item>
         <contextmenu-submenu
           v-permission="permission"
@@ -448,18 +448,18 @@ export default {
         this.cancelRequest()
       }
       if (this.selectedProjectId === -1) return
-      this.listLoading = true
       this.listData = []
       this.listData = await this.fetchData()
-      this.listLoading = false
       this.$set(this.$refs['WBS'].resizeState, 'height', 0)
       this.$set(this.$refs['WBS'], 'isGroup', true)
       this.$set(this.$refs['WBS'], 'isGroup', false)
     },
     async fetchData() {
       if (!this.selectedProjectId) return
+      this.listLoading = true
       const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
       if (res.hasOwnProperty('data')) {
+        this.listLoading = false
         return Promise.resolve(res.data.map((item) => this.issueFormatter(item)))
       }
     },
