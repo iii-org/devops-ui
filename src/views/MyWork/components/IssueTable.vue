@@ -139,9 +139,9 @@
           />
         </template>
       </el-table>
-      <pagination
+      <Pagination
         ref="pagination"
-        :total="pageInfo.total"
+        :total="listQuery.total"
         :page="listQuery.page"
         :limit="listQuery.limit"
         :page-sizes="[10, 25, 50, 100]"
@@ -161,15 +161,15 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { ContextMenu, Pagination, CancelRequest } from '@/newMixins'
 import { getUserIssueList } from '@/api/user'
 import { getIssueFamily } from '@/api/issue'
-import { Priority, Status, Tracker, ExpandSection } from '@/components/Issue'
+import { Status, Tracker, Priority, ExpandSection } from '@/components/Issue'
 
 export default {
   name: 'MyWorkIssueTable',
-  components: { Priority, Status, Tracker, ExpandSection },
+  components: { Status, Tracker, Priority, ExpandSection },
   mixins: [ContextMenu, Pagination, CancelRequest],
   props: {
     from: {
@@ -195,19 +195,10 @@ export default {
   },
   data() {
     return {
-      listQuery: {
-        offset: 0,
-        page: 1,
-        limit: 10
-      },
-      pageInfo: {
-        offset: 0,
-        total: 0
-      },
-      sort: '',
-      expandedRow: [],
       listLoading: false,
-      listData: []
+      listData: [],
+      sort: '',
+      expandedRow: []
     }
   },
   computed: {
@@ -227,19 +218,31 @@ export default {
   watch: {
     dynamicParams: {
       handler() {
-        this.onFilterChange()
+        this.fetchData()
       },
       deep: true
     },
-    'pageInfo.total'(value) {
+    'listQuery.total'(value) {
       this.$emit('total', value)
     }
   },
+
   mounted() {
-    this.fetchData()
+    this.getStoredListQuery()
   },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed', 'getListQuery', 'setListQuery']),
+    async getStoredListQuery() {
+      const storeListQuery = await this.getListQuery()
+      const storedTabQuery = storeListQuery[`MyWork_${this.from}`]
+      if (storedTabQuery !== undefined) {
+        this.listQuery = storedTabQuery
+        this.fetchData()
+      } else {
+        this.fetchData()
+      }
+      return Promise.resolve()
+    },
     async fetchData() {
       if (this.listLoading) {
         this.cancelRequest()
@@ -248,52 +251,9 @@ export default {
       await getUserIssueList(this.userId, this.getParams(), { cancelToken: this.cancelToken }).then((res) => {
         const isEmptyRes = Object.keys(res) === 0
         if (!isEmptyRes) this.listData = res.data.issue_list // TODO: TypeError: Cannot read properties of undefined (reading 'issue_list')
-        this.setPageInfo(res.data)
+        this.setNewListQuery(res.data.page)
       })
       await this.setExpandedRow()
-      this.listLoading = false
-    },
-    setPageInfo(resData) {
-      if (resData.hasOwnProperty('page')) {
-        this.pageInfo = resData.page
-      } else {
-        this.pageInfo = {
-          total: 0
-        }
-      }
-    },
-    async setExpandedRow() {
-      if (this.expandedRow.length > 0) {
-        for (const row of this.expandedRow) {
-          const getIssue = this.listData.find((item) => item.id === row.id)
-          await this.getIssueFamilyData(getIssue, this.expandedRow)
-        }
-      }
-    },
-    async handlePaginationChange(val) {
-      this.listLoading = true
-      this.listQuery.limit = val.limit
-      const offset = this.pageInfo.offset + (val.page - this.listQuery.page) * val.limit
-      if (val.init >= 0) {
-        this.listQuery.offset = val.init
-      } else if (offset <= 0 || val.page === 1) {
-        this.listQuery.offset = 0
-      } else if (offset >= this.pageInfo.total || val.page >= val.totalPage) {
-        this.listQuery.offset = this.pageInfo.total - val.limit
-      } else {
-        this.listQuery.offset = offset
-      }
-
-      if (val.page) {
-        this.listQuery.page = val.page
-      } else {
-        const page = (this.listQuery.offset + 1) / this.listQuery.limit
-        this.listQuery.page = page > 0 ? Math.ceil(page) : 1
-      }
-      await this.fetchData()
-      const storeListQuery = await this.getListQuery()
-      storeListQuery[`MyWork_${this.from}`] = this.listQuery
-      await this.setListQuery(storeListQuery)
       this.listLoading = false
     },
     getParams() {
@@ -321,14 +281,50 @@ export default {
       }
       return result
     },
-    onFilterChange() {
-      this.listLoading = true
-      this.resetListQuery()
+    setNewListQuery(pageInfo) {
+      const { offset, limit, current, total, pages } = pageInfo
+      if (pages !== 0 && current > pages) {
+        this.resetListQuery()
+      } else {
+        this.listQuery = { offset, limit, total, page: current }
+      }
+    },
+    async setExpandedRow() {
+      if (this.expandedRow.length > 0) {
+        for (const row of this.expandedRow) {
+          const getIssue = this.listData.find((item) => item.id === row.id)
+          await this.getIssueFamilyData(getIssue, this.expandedRow)
+        }
+      }
+    },
+    handleSortChange({ prop, order }) {
+      const orderBy = this.checkOrder(order)
+      this.sort = orderBy ? `${prop}:${orderBy}` : orderBy
       this.fetchData()
     },
-    resetListQuery() {
-      this.listQuery.page = 1
+    checkOrder(order) {
+      const orderMap = {
+        ascending: 'asc',
+        descending: 'desc'
+      }
+      return orderMap[order] || false
+    },
+    async handlePaginationChange(val) {
+      this.listQuery.offset = val.limit * val.page - val.limit
+      this.listQuery.limit = val.limit
+      this.listQuery.page = val.page
+      await this.fetchData()
+      const storeListQuery = await this.getListQuery()
+      storeListQuery[`MyWork_${this.from}`] = this.listQuery
+      await this.setListQuery(storeListQuery)
+    },
+    async resetListQuery() {
       this.listQuery.offset = 0
+      this.listQuery.page = 1
+      const storeListQuery = await this.getListQuery()
+      storeListQuery[`MyWork_${this.from}`] = this.listQuery
+      await this.setListQuery(storeListQuery)
+      await this.fetchData()
     },
     getRowClass({ row }) {
       const result = []
@@ -375,18 +371,6 @@ export default {
       if (data.hasOwnProperty('relations')) {
         this.$set(row, 'relations', data.relations)
       }
-    },
-    handleSortChange({ prop, order }) {
-      const orderBy = this.checkOrder(order)
-      this.sort = orderBy ? `${prop}:${orderBy}` : orderBy
-      this.fetchData()
-    },
-    checkOrder(order) {
-      const orderMap = {
-        ascending: 'asc',
-        descending: 'desc'
-      }
-      return orderMap[order] || false
     },
     hasRelationIssue(row) {
       return row.family

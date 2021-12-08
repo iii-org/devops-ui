@@ -15,7 +15,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const mutations = {
-  RESET_STATE: state => {
+  RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
   },
   SET_USER_ID: (state, userId) => {
@@ -38,7 +38,7 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password })
-        .then(response => {
+        .then((response) => {
           const { data } = response
           const { token } = data
           const jwtContent = VueJwtDecode.decode(token)
@@ -52,7 +52,7 @@ const actions = {
 
           resolve()
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
@@ -81,7 +81,7 @@ const actions = {
     commit('SET_USER_ROLE', user.default_role_name)
     const myProjects = rootState.projects.options
     if (myProjects.length > 0) {
-      const projectStorage = myProjects.find(elm => String(elm.id) === localStorage.getItem('projectId'))
+      const projectStorage = myProjects.find((elm) => String(elm.id) === localStorage.getItem('projectId'))
       if (projectStorage) {
         commit('projects/SET_SELECTED_PROJECT', projectStorage, { root: true })
       } else {
@@ -93,6 +93,7 @@ const actions = {
   // user logout
   logout({ commit }) {
     localStorage.clear()
+    sessionStorage.clear()
     removeToken()
     resetRouter()
     commit('RESET_STATE')
@@ -100,7 +101,7 @@ const actions = {
 
   // remove token
   resetToken({ commit }) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       resolve()

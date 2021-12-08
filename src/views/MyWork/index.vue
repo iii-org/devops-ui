@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { CreateProjectDialog } from '@/views/Overview/ProjectList/components'
 import { PageHeader, QuickAddIssue, TabsHeader, IssueTable } from './components'
 
@@ -76,13 +76,19 @@ export default {
       activeTab: 'assigned_to_id'
     }
   },
+  computed: {
+    ...mapGetters(['projectOptions'])
+  },
   watch: {
-    projectId() {
+    projectId(id) {
       this.setStoredData('workProjectId', this.projectId)
+      if (id) {
+        this.setSelectedProject(this.projectOptions.find((elm) => elm.id === id))
+        localStorage.setItem('projectId', id)
+      }
     },
     filterConditions: {
       handler() {
-        this.updateIssueTables()
         this.onFilterChanged()
       },
       deep: true
@@ -110,7 +116,8 @@ export default {
       'getDisplayClosed',
       'setKeyword',
       'setIssueFilter',
-      'setDisplayClosed'
+      'setDisplayClosed',
+      'setSelectedProject'
     ]),
     handleCreateProjectClick() {
       this.$refs.createProjectDialog.showDialog = true
