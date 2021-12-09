@@ -145,7 +145,7 @@ export default {
       return this.$route.params.commitId
     }
   },
-  created() {
+  mounted() {
     this.loadTestReport()
   },
   methods: {
@@ -163,33 +163,35 @@ export default {
     },
     setTestReportData(resData, name) {
       const data = resData[name]
-      if (name === 'sonarqube') this.setSonarQubeData(resData)
-      else data ? this[name].push(data) : this[name] = undefined
+      // if (name === 'sonarqube') this.setSonarQubeData(resData)
+      // else data ? this[name].push(data) : this[name] = undefined
+      data ? this[name].push(data) : this[name] = undefined
     },
-    setSonarQubeData(data) {
-      if (data.sonarqube) {
-        this.sonarqube = this.handleSonarQubeData(data.sonarqube.history)
-        this.sonarQubeLink = data.sonarqube.link
-      } else this.sonarqube = undefined
-    },
-    handleSonarQubeData(data) {
-      const ret = []
-      if (!data) return ret
-      Object.keys(data).forEach(key => {
-        const row = data[key]
-        row['run_at'] = key
-        ret.push(row)
-      })
-      return ret
-    },
+    // setSonarQubeData(data) {
+    //   if (data.sonarqube) {
+    //     this.sonarqube = this.handleSonarQubeData(data.sonarqube.history)
+    //     this.sonarQubeLink = data.sonarqube.link
+    //   } else this.sonarqube = undefined
+    // },
+    // handleSonarQubeData(data) {
+    //   const ret = []
+    //   if (!data) return ret
+    //   Object.keys(data).forEach(key => {
+    //     const row = data[key]
+    //     row['run_at'] = key
+    //     ret.push(row)
+    //   })
+    //   return ret
+    // },
     getDataTime() {
       const dataTimeArr = []
       dataName.forEach(name => {
         if (!this[name]) return
-        if (this[name][0]) {
-          name === 'sonarqube'
-            ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
-            : dataTimeArr.push(this[name][0].run_at)
+        if (this[name][0] && this[name][0].run_at) {
+          // name === 'sonarqube'
+          //   ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
+          //   : dataTimeArr.push(this[name][0].run_at)
+          dataTimeArr.push(this[name][0].run_at)
         }
       })
       dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
