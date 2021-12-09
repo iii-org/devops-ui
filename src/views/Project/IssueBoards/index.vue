@@ -625,7 +625,6 @@ export default {
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = ''
       this.displayClosed = false
-      this.fixed_version_closed = false
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
     },

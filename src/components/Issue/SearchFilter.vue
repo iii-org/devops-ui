@@ -232,7 +232,6 @@ export default {
       this.$set(this.$data, 'filterValue', cloneDeep(this.originFilterValue))
       this.keyword = ''
       this.displayClosed = false
-      this.fixed_version_closed = false
       this.onChangeFilter()
     },
     checkFilterValue(key) {
