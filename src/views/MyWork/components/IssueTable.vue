@@ -248,15 +248,16 @@ export default {
         this.cancelRequest()
       }
       this.listLoading = true
-      await getUserIssueList(this.userId, this.getParams(), { cancelToken: this.cancelToken }).then((res) => {
-        const isEmptyRes = Object.keys(res).length === 0
-        if (!isEmptyRes) {
+      await getUserIssueList(this.userId, this.getParams(), { cancelToken: this.cancelToken })
+        .then((res) => {
           this.listData = res.data.issue_list
           this.setNewListQuery(res.data.page)
-        }
-      })
+          this.listLoading = false
+        })
+        .catch(() => {
+          // console.log(err)
+        })
       await this.setExpandedRow()
-      this.listLoading = false
     },
     getParams() {
       const result = {
