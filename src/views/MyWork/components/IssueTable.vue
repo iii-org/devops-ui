@@ -249,9 +249,11 @@ export default {
       }
       this.listLoading = true
       await getUserIssueList(this.userId, this.getParams(), { cancelToken: this.cancelToken }).then((res) => {
-        const isEmptyRes = Object.keys(res) === 0
-        if (!isEmptyRes) this.listData = res.data.issue_list // TODO: TypeError: Cannot read properties of undefined (reading 'issue_list')
-        this.setNewListQuery(res.data.page)
+        const isEmptyRes = Object.keys(res).length === 0
+        if (!isEmptyRes) {
+          this.listData = res.data.issue_list
+          this.setNewListQuery(res.data.page)
+        }
       })
       await this.setExpandedRow()
       this.listLoading = false

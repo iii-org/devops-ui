@@ -165,13 +165,12 @@ export default {
       sessionStorage.setItem(key, value)
     },
     getMyWorkStoredData() {
-      // TODO: refactor later
       const storedProjectId = Number(sessionStorage.getItem('workProjectId'))
       const storedActiveTab = sessionStorage.getItem('activeTab')
-      const storedDisplayClosedVersion = Boolean(sessionStorage.getItem('displayClosedVersion'))
+      const storedDisplayClosedVersion = JSON.parse(sessionStorage.getItem('displayClosedVersion'))
       if (storedProjectId) this.projectId = storedProjectId
       if (storedActiveTab) this.activeTab = storedActiveTab
-      this.displayClosedVersion = storedDisplayClosedVersion
+      if (storedDisplayClosedVersion) this.displayClosedVersion = storedDisplayClosedVersion
     }
   }
 }
