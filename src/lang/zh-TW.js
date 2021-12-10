@@ -963,7 +963,8 @@ export default {
     DeploymentName: '部署名稱',
     DeploymentUuid: '部署 UUID',
     ReloadSystem: '刷新系統',
-    UpdatedNotify: '請於數分鐘後重新整理頁面，檢查系統是否完成更新。'
+    UpdatedNotify: '請於數分鐘後重新整理頁面，檢查系統是否完成更新。',
+    UploadSystemInfos: '上傳系統資訊'
   },
   LoadingText: {
     createRedmine: '建立Redmine專案中...',

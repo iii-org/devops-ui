@@ -6,27 +6,55 @@
         <span>{{ $t('SystemVersion.DeploymentName') }}： </span>
         <span class="select-all">{{ deployment_name }}</span>
       </div>
-      <div class="text-title">
-        <span>{{ $t('SystemVersion.DeploymentUuid') }}： </span>
-        <span class="select-all">{{ deployment_uuid }}</span>
+      <div>
+        <span class="text-title">{{ $t('SystemVersion.DeploymentUuid') }}： </span>
+        <span class="text-title select-all mr-4">{{ deployment_uuid }}</span>
+        <el-button
+          :loading="isLoading"
+          size="small"
+          type="primary"
+          plain
+          @click="handleUploadInfoClick"
+        >{{ this.$t('SystemVersion.UploadSystemInfos') }}</el-button>
       </div>
     </div>
-    <el-table :data="list" :element-loading-text="$t('Loading')" fit highlight-current-row>
-      <el-table-column align="center" :label="$t('SystemVersion.Source')" width="180">
+    <el-table
+      :data="list"
+      :element-loading-text="$t('Loading')"
+      fit
+      highlight-current-row
+    >
+      <el-table-column
+        align="center"
+        :label="$t('SystemVersion.Source')"
+        width="180"
+      >
         <template slot-scope="scope">
           {{ scope.row.source }}
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('SystemVersion.Version')" prop="tag" width="180" />
-      <el-table-column :label="$t('SystemVersion.CommitID')" prop="commitId" />
-      <el-table-column-time align="center" prop="commitTime" width="180" />
+      <el-table-column
+        align="center"
+        :label="$t('SystemVersion.Version')"
+        prop="tag"
+        width="180"
+      />
+      <el-table-column
+        :label="$t('SystemVersion.CommitID')"
+        prop="commitId"
+      />
+      <el-table-column-time
+        align="center"
+        prop="commitTime"
+        width="180"
+      />
     </el-table>
   </div>
 </template>
 
 <script>
 import { getVersion } from '@/api/dashboard'
-import { getDevopsApiServerVersion } from '@/api/devopsVersion'
+import { getDevopsApiServerVersion, updateSystemInfoReport } from '@/api/devopsVersion'
 
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import VersionUpdater from './components/VersionUpdater.vue'
@@ -48,7 +76,8 @@ export default {
     return {
       list: [],
       deployment_name: '',
-      deployment_uuid: ''
+      deployment_uuid: '',
+      isLoading: false
     }
   },
   created() {
@@ -65,7 +94,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getVersion().then(response => {
+      getVersion().then((response) => {
         const apiData = {
           source: 'API',
           tag: response.data.git_tag,
@@ -76,11 +105,32 @@ export default {
       })
     },
     fetchVersionInfo() {
-      getDevopsApiServerVersion().then(res => {
+      getDevopsApiServerVersion().then((res) => {
         const { deployment_name, deployment_uuid } = res.data
         this.deployment_name = deployment_name
         this.deployment_uuid = deployment_uuid
       })
+    },
+    handleUploadInfoClick() {
+      this.isLoading = true
+      updateSystemInfoReport()
+        .then(() => {
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Uploaded'),
+            type: 'success'
+          })
+        })
+        .catch((err) => {
+          this.$message({
+            title: this.$t('general.Error'),
+            message: err,
+            type: 'error'
+          })
+        })
+        .then(() => {
+          this.isLoading = false
+        })
     }
   }
 }

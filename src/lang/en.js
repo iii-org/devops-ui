@@ -970,7 +970,8 @@ export default {
     DeploymentName: 'Deployment Name',
     DeploymentUuid: 'Deployment UUID',
     ReloadSystem: 'Reload System',
-    UpdatedNotify: 'Please reload this page after a few minutes to check if the update is complete.'
+    UpdatedNotify: 'Please reload this page after a few minutes to check if the update is complete.',
+    UploadSystemInfos: 'Upload system information'
   },
   LoadingText: {
     createRedmine: 'Adding a Redmine project...',
