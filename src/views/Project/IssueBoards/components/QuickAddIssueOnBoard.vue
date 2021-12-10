@@ -214,6 +214,7 @@ export default {
       return data
     },
     async sendSaveAction(data) {
+      if (data.name) data.status_id = 2
       const form = new FormData()
       form.append('project_id', this.projectId)
       Object.keys(data).forEach((objKey) => {
