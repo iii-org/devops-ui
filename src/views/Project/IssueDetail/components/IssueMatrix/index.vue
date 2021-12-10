@@ -27,6 +27,13 @@
           :inactive-text="$t('Issue.tracker')"
         />
       </el-form-item>
+      <el-form-item class="float-right">
+        <el-button
+          icon="el-icon-download"
+          :disabled="selectedProjectId === -1 || chartLoading"
+          @click="downloadSVG"
+        >{{ $t('Track.DownloadSVG') }}</el-button>
+      </el-form-item>
     </el-form>
     <div
       v-show="data.length>0"
@@ -407,6 +414,27 @@ export default {
           .catch(() => {})
       } else {
         done()
+      }
+    },
+    downloadSVG() {
+      try {
+        const svg = document.getElementById('mermaid').getElementsByTagName('svg')[0]
+        const style = svg.getElementsByClassName('nodeLabel')
+        for (let idx = 0; idx < style.length; idx++) {
+          style[idx].style = 'font-size:0.8em'
+        }
+        const serializer = new XMLSerializer()
+        let source = serializer.serializeToString(svg)
+        source = '<?xml version="1.0" standalone="no"?>\r\n' + source
+        const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source)
+        const downloadLink = document.createElement('a')
+        downloadLink.href = url
+        downloadLink.download = `TraceabilityMatrix_${this.$dayjs().format('YYYY-MM-DD_HH:mm:ss')}`
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
+      } catch (e) {
+        // nothing to do.
       }
     }
   }
