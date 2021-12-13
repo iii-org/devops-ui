@@ -1140,6 +1140,8 @@ export default {
     unassignedErrorTitle: `The issues haven't been assigned:`,
     unassignedErrorContent:
       'No one has been assigned to this issue, and cannot be adjusted to the status of the issue after "assigned".',
+    assignedErrorTitle: 'Assigned issues:',
+    assignedErrorContent: 'Issues that have been assigned cannot be adjusted to "opened".',
     childrenStatusErrorTitle: `The children issues haven't been closed:`,
     childrenStatusErrorContent: 'There are unclosed children issues, please confirm that all issues are closed.',
     priorityErrorTitle: 'The parent issue cannot change priority:',

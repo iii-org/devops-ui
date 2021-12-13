@@ -1131,6 +1131,8 @@ export default {
     ChangeIssueError: '異動議題錯誤',
     unassignedErrorTitle: '尚未分派的議題：',
     unassignedErrorContent: '沒有人被分派到此議題，無法調整到"已分派"之後的議題狀態。',
+    assignedErrorTitle: '已分派的議題',
+    assignedErrorContent: '已分派的議題，無法調整議題狀態到"已開立"',
     childrenStatusErrorTitle: '子議題尚未全關閉：',
     childrenStatusErrorContent: '有未關閉的子議題，請確認所有議題皆已關閉。',
     priorityErrorTitle: '父議題不能改變優先權：',
