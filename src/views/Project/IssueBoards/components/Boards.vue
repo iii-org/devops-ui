@@ -91,10 +91,7 @@
 import { mapGetters } from 'vuex'
 import { addIssue, updateIssue } from '@/api/issue'
 import { Kanban, RightPanel } from '@/views/Project/IssueBoards/components'
-import ContextMenu from '@/components/Issue/ContextMenu'
-import Status from '@/components/Issue/Status'
-import Tracker from '@/components/Issue/Tracker'
-import Priority from '@/components/Issue/Priority'
+import { Status, Tracker, Priority, ContextMenu } from '@/components/Issue'
 
 const contextMenu = {
   row: {
@@ -108,7 +105,7 @@ const contextMenu = {
 
 export default {
   name: 'Boards',
-  components: { Kanban, RightPanel, ContextMenu, Status, Tracker, Priority },
+  components: { Kanban, RightPanel, Status, Tracker, Priority, ContextMenu },
   props: {
     groupBy: {
       type: Object,
@@ -127,7 +124,7 @@ export default {
     },
     contextOptions: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     relativeIssueList: {
       type: Array,
@@ -135,7 +132,7 @@ export default {
     },
     classifyIssueList: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     projectIssueList: {
       type: Array,
@@ -153,8 +150,7 @@ export default {
     ...mapGetters(['tracker', 'status', 'priority']),
     groupByValueOnBoard() {
       if (this.groupBy.value.length <= 0) {
-        const statusSort = this.getStatusSort.map((item) => item)
-        return statusSort
+        return this.getStatusSort.map((item) => item)
       }
       return this.groupBy.dimension === 'assigned_to' ? this.filterMe(this.groupBy.value) : this.groupBy.value
     },
@@ -179,11 +175,11 @@ export default {
       if (this.displayClosed) return statusList
       return statusList.filter((item) => item.is_closed === false)
     },
-    async updateIssueBoard() {
-      await this.loadData()
+    updateIssueBoard() {
+      this.loadData()
     },
     async saveIssue(data) {
-      return await addIssue(data)
+      await addIssue(data)
         .then((res) => {
           // noinspection JSCheckFunctionSignatures
           this.showSuccessMessage()

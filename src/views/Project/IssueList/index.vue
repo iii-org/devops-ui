@@ -16,7 +16,7 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,fixed_version_closed:fixed_version_closed }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
         @add-custom-filter="updateCustomFilter"
@@ -310,20 +310,27 @@ export default {
     async getInitStoredData() {
       const key = 'list'
       const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
       this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
       this.keyword = storedKeyword[key] ? storedKeyword[key] : null
       this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
+      this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
     },
     async fetchStoredData() {
-      let storedFilterValue, storedKeyword, storedDisplayClosed
-      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then((res) => {
-        const [filterValue, keyword, displayClosed] = res.map((item) => item)
+      let storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed
+      await Promise.all([
+        this.getIssueFilter(),
+        this.getKeyword(),
+        this.getDisplayClosed(),
+        this.getFixedVersionShowClosed()
+      ]).then((res) => {
+        const [filterValue, keyword, displayClosed, fixedVersionClosed] = res.map((item) => item)
         storedFilterValue = filterValue
         storedKeyword = keyword
         storedDisplayClosed = displayClosed
+        storedVersionClosed = fixedVersionClosed
       })
-      return { storedFilterValue, storedKeyword, storedDisplayClosed }
+      return { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed }
     },
     getParams(limit) {
       const result = {

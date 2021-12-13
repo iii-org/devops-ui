@@ -20,9 +20,9 @@ const getDefaultState = () => {
     status: [],
     priority: [],
 
-    issueFilter: JSON.parse(sessionStorage.getItem('issueFilter')) ||{},
+    issueFilter: JSON.parse(sessionStorage.getItem('issueFilter')) || {},
     keyword: JSON.parse(sessionStorage.getItem('keyword')) || {},
-    displayClosed: JSON.parse(sessionStorage.getItem('displayClosed')) ||{},
+    displayClosed: JSON.parse(sessionStorage.getItem('displayClosed')) || {},
     groupBy: JSON.parse(sessionStorage.getItem('groupBy')) || {
       dimension: 'status',
       value: []
@@ -80,8 +80,9 @@ const actions = {
   async getMyProjectList({ commit, dispatch }, params) {
     try {
       let projects = await getMyProjectList(false, params)
-      projects = projects.sort((a, b) => (-(new Date(a.updated_time) - new Date(b.updated_time))))
-        .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
+      projects = projects
+        .sort((a, b) => -(new Date(a.updated_time) - new Date(b.updated_time)))
+        .sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1))
       dispatch('getMyProjectOptions')
       commit('SET_LIST', projects)
       commit('SET_TOTAL', projects.length)
@@ -92,8 +93,7 @@ const actions = {
   async getMyProjectOptions({ commit }) {
     try {
       let projects = await getMyProjectList(true)
-      projects = projects.sort((a, b) => (a.id - b.id))
-        .sort((a, b) => ((a.starred === b.starred) ? 0 : a.starred ? -1 : 1))
+      projects = projects.sort((a, b) => a.id - b.id).sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1))
       commit('SET_OPTIONS', projects)
     } catch (error) {
       console.error(error.toString())
@@ -101,9 +101,11 @@ const actions = {
   },
   async getSelectionOptions({ commit }) {
     let selections = await Promise.all([getIssueTracker(), getIssueStatus(), getIssuePriority()])
-    commit('SET_SELECTION_OPTIONS', selections.map((item) => (item.data)))
-  }
-  ,
+    commit(
+      'SET_SELECTION_OPTIONS',
+      selections.map((item) => item.data)
+    )
+  },
   async addNewProject({ commit, dispatch }, data) {
     try {
       const res = await addNewProject(data)
@@ -161,7 +163,7 @@ const actions = {
     }
     commit('SET_SELECTED_PROJECT', project)
     commit('SET_FILTER', {})
-    commit('SET_GROUP_BY', {dimension:'status', value:[]})
+    commit('SET_GROUP_BY', { dimension: 'status', value: [] })
     commit('SET_DISPLAY_CLOSED', {})
   },
   getIssueFilter({ commit, state }) {
@@ -236,7 +238,16 @@ const actions = {
     sessionStorage.setItem('pageInfo', JSON.stringify(value))
     commit('SET_PAGE_INFO', value)
   },
+  getFixedVersionShowClosed({ commit, state }) {
+    const getSessionValue = sessionStorage.getItem('fixed_version_show_closed')
+    if (getSessionValue) {
+      commit('SET_FIXED_VERSION_SHOW_CLOSED', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.fixedVersionShowClosed
+  },
   setFixedVersionShowClosed({ commit }, value) {
+    sessionStorage.setItem('fixed_version_show_closed', JSON.stringify(value))
     commit('SET_FIXED_VERSION_SHOW_CLOSED', value)
   }
 }

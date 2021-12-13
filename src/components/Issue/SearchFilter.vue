@@ -11,7 +11,11 @@
           <el-form-item :key="dimension.id">
             <div slot="label">
               {{ $t(`Issue.${dimension.value}`) }}
-              <el-tag v-if="dimension.value === 'fixed_version'" type="info" class="flex-1">
+              <el-tag
+                v-if="dimension.value === 'fixed_version'"
+                type="info"
+                class="flex-1"
+              >
                 <el-checkbox v-model="fixed_version_closed"> {{ $t('Issue.DisplayClosedVersion') }}</el-checkbox>
               </el-tag>
             </div>
@@ -52,7 +56,10 @@
           </el-form-item>
         </template>
         <el-form-item :label="$t('Issue.DisplayClosedIssue')">
-          <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
+          <el-checkbox
+            v-model="displayClosed"
+            @change="onChangeFilter"
+          />
         </el-form-item>
       </el-form>
       <!-- <SaveFilterButton
@@ -69,8 +76,13 @@
       >
         {{ $t('general.SaveSettings') }}
       </el-button> -->
-      <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ displayFilterValue }}
-        <em class="el-icon-arrow-down el-icon--right" /></el-button>
+      <el-button
+        slot="reference"
+        icon="el-icon-s-operation"
+        type="text"
+      > {{ displayFilterValue }}
+        <em class="el-icon-arrow-down el-icon--right" />
+      </el-button>
     </el-popover>
     <el-divider direction="vertical" />
     <el-input
@@ -84,12 +96,21 @@
       @blur="searchVisible=!searchVisible"
       @change="onChangeFilter"
     />
-    <el-button v-else type="text" icon="el-icon-search" @click="searchVisible = !searchVisible">
+    <el-button
+      v-else
+      type="text"
+      icon="el-icon-search"
+      @click="searchVisible = !searchVisible"
+    >
       {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
     </el-button>
     <template v-if="isFilterChanged">
       <el-divider direction="vertical" />
-      <el-button size="small" icon="el-icon-close" @click="cleanFilter">
+      <el-button
+        size="small"
+        icon="el-icon-close"
+        @click="cleanFilter"
+      >
         {{ $t('Issue.CleanFilter') }}
       </el-button>
     </template>
@@ -98,7 +119,6 @@
 </template>
 
 <script>
-
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
 
@@ -153,7 +173,7 @@ export default {
     },
     getSelectedLabels() {
       const selectedLabels = []
-      Object.keys(this.filterValue).forEach(item => {
+      Object.keys(this.filterValue).forEach((item) => {
         if (!this.filterValue[item]) return
         const isArray = Array.isArray(this.filterValue[item]) && this.filterValue[item].length > 0
         isArray ? selectedLabels.push(this.handleArrayLabels(item)) : selectedLabels.push(this.handleLabels(item))
@@ -161,20 +181,20 @@ export default {
       return selectedLabels
     },
     handleArrayLabels() {
-      return function(item) {
+      return function (item) {
         let label = ''
-        const value = this.getOptionsData(item).filter(search => this.filterValue[item].includes(search.id))
+        const value = this.getOptionsData(item).filter((search) => this.filterValue[item].includes(search.id))
         if (value) {
-          const joinedString = value.map(subItem => this.getSelectedLabel(subItem)).join('/')
+          const joinedString = value.map((subItem) => this.getSelectedLabel(subItem)).join('/')
           label = `#${joinedString}`
         }
         return label
       }
     },
     handleLabels() {
-      return function(item) {
+      return function (item) {
         let label = ''
-        const value = this.getOptionsData(item).find(search => search.id === this.filterValue[item])
+        const value = this.getOptionsData(item).find((search) => search.id === this.filterValue[item])
         if (value) label = this.getSelectedLabel(value)
         return label
       }
@@ -187,7 +207,7 @@ export default {
   },
   watch: {
     prefill(value) {
-      Object.keys(value).forEach(item => {
+      Object.keys(value).forEach((item) => {
         this[item] = value[item]
       })
     },
@@ -212,7 +232,7 @@ export default {
     },
     filterClosedStatus(statusList) {
       if (this.displayClosed) return statusList
-      return statusList.filter((item) => (item.is_closed === false))
+      return statusList.filter((item) => item.is_closed === false)
     },
     getOptionsData(option_name) {
       const options = { ...this.selectionOptions, tracker: this.tracker, status: this.status, priority: this.priority }
@@ -262,5 +282,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
