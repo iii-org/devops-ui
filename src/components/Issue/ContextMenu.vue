@@ -475,10 +475,10 @@ export default {
         message: this.$t('Notify.Added'),
         type: 'success'
       })
-      this.backToFirstPage()
-      this.loadData()
+      this.$emit('backToFirstPage')
+      this.$emit('update')
       this.addTopicDialogVisible = false
-      this.$refs['quickAddIssue'].form.name = ''
+      // this.$refs['quickAddIssue'].form.name = ''
       return res
     }
   }

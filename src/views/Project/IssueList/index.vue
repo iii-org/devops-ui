@@ -219,6 +219,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
+      @backToFirstPage="backToFirstPage"
       @update="loadData"
     />
   </div>
