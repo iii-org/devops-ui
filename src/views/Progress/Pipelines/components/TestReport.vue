@@ -153,7 +153,6 @@ export default {
           name === 'sonarqube'
             ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
             : dataTimeArr.push(this[name][0].run_at)
-          // dataTimeArr.push(this[name][0].run_at)
         }
       })
       return dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
@@ -197,7 +196,7 @@ export default {
   created() {
     triggerReport(this.selectedProject, this.commitId)
   },
-  async mounted() {
+  mounted() {
     this.loadTestReport()
   },
   methods: {
@@ -217,7 +216,6 @@ export default {
       const data = resData[name]
       if (name === 'sonarqube') this.setSonarQubeData(resData)
       else data ? this[name].push(data) : this[name] = undefined
-      // data ? this[name].push(data) : this[name] = undefined
     },
     setSonarQubeData(data) {
       if (data.sonarqube) {
