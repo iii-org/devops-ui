@@ -47,30 +47,22 @@
 <script>
 import { mapGetters } from 'vuex'
 import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
-import { getSonarQubeData } from '@/api/sonarQube'
 
 export default {
   name: 'SonarQube',
   components: { ToolBar },
   props: {
-    // sonarqube: {
-    //   type: Array,
-    //   default: () => []
-    // },
-    // sonarQubeLink: {
-    //   type: String,
-    //   default: ''
-    // },
-    // listLoading: {
-    //   type: Boolean,
-    //   default: false
-    // }
-  },
-  data() {
-    return {
-      sonarqube: [],
-      sonarQubeLink: '',
-      listLoading: false
+    sonarqube: {
+      type: Array,
+      default: () => []
+    },
+    sonarQubeLink: {
+      type: String,
+      default: ''
+    },
+    listLoading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -82,36 +74,7 @@ export default {
       return this.$route.params.commitId
     }
   },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
-    async fetchData() {
-      if (this.selectedProjectId === -1) return []
-      this.listLoading = true
-      const res = (await getSonarQubeData(this.selectedProject.name)).data
-      this.listLoading = false
-      this.setSonarQubeData(res)
-    },
-    setSonarQubeData(data) {
-      if (data) {
-        const sonarqubeData = this.handleSonarQubeData(data.history)
-          .sort((a, b) => Date.parse(b) - Date.parse(a))
-        const foundData = sonarqubeData.find(item => item.commit_id === this.commitId)
-        foundData ? this.sonarqube.push(foundData) : this.sonarqube = []
-        this.sonarQubeLink = data.link
-      } else this.sonarqube = undefined
-    },
-    handleSonarQubeData(data) {
-      const ret = []
-      if (!data) return ret
-      Object.keys(data).forEach(key => {
-        const row = data[key]
-        row['run_at'] = key
-        ret.push(row)
-      })
-      return ret
-    },
     openSonarQube() {
       window.open(this.sonarQubeLink)
     },

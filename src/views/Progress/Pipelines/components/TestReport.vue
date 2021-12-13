@@ -109,6 +109,7 @@ import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
 import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
 import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
 import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
+import { triggerReport } from '@/utils/triggerReport'
 
 const downloadFileName = 'DevOps_test_report'
 const dataName = ['sonarqube', 'checkmarx', 'zap', 'webinspect', 'postman', 'sideex']
@@ -143,80 +144,41 @@ export default {
     },
     commitId() {
       return this.$route.params.commitId
-    }
-  },
-  mounted() {
-    this.loadTestReport()
-  },
-  methods: {
-    async loadTestReport() {
-      this.listLoading = true
-      try {
-        const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
-        dataName.forEach(name => this.setTestReportData(res.data, name))
-        this.getDataTime()
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.listLoading = false
-      }
     },
-    setTestReportData(resData, name) {
-      const data = resData[name]
-      // if (name === 'sonarqube') this.setSonarQubeData(resData)
-      // else data ? this[name].push(data) : this[name] = undefined
-      data ? this[name].push(data) : this[name] = undefined
-    },
-    // setSonarQubeData(data) {
-    //   if (data.sonarqube) {
-    //     this.sonarqube = this.handleSonarQubeData(data.sonarqube.history)
-    //     this.sonarQubeLink = data.sonarqube.link
-    //   } else this.sonarqube = undefined
-    // },
-    // handleSonarQubeData(data) {
-    //   const ret = []
-    //   if (!data) return ret
-    //   Object.keys(data).forEach(key => {
-    //     const row = data[key]
-    //     row['run_at'] = key
-    //     ret.push(row)
-    //   })
-    //   return ret
-    // },
     getDataTime() {
       const dataTimeArr = []
       dataName.forEach(name => {
         if (!this[name]) return
         if (this[name][0] && this[name][0].run_at) {
-          // name === 'sonarqube'
-          //   ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
-          //   : dataTimeArr.push(this[name][0].run_at)
-          dataTimeArr.push(this[name][0].run_at)
+          name === 'sonarqube'
+            ? dataTimeArr.push(this.getSonarQubeTime(this[name][0].run_at))
+            : dataTimeArr.push(this[name][0].run_at)
+          // dataTimeArr.push(this[name][0].run_at)
         }
       })
-      dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
-      this.dataTimeArr = dataTimeArr
+      return dataTimeArr.sort((a, b) => Date.parse(b) - Date.parse(a))
     },
-    getSonarQubeTime(time) {
-      const currentDate = new Date()
-      const offset = -(currentDate.getTimezoneOffset() / 60)
-      const givenDate = new Date(time)
-      let hours = givenDate.getUTCHours()
-      hours -= offset
-      givenDate.setHours(hours)
-      return givenDate
+    handleSonarQubeData() {
+      return function (data) {
+        const ret = []
+        if (!data) return ret
+        Object.keys(data).forEach(key => {
+          const row = data[key]
+          row['run_at'] = key
+          ret.push(row)
+        })
+        return ret
+      }
     },
-    handleBackPage() {
-      this.$router.go(-1)
-    },
-    async downloadPdf() {
-      await this.$pdf(this.$refs.pdfPage, downloadFileName)
-    },
-    async getSheet(filename_extension) {
-      const newDiv = await this.getTableDom()
-      // use XLSX to transform a sheet from tables
-      const sheet = XLSX.utils.table_to_sheet(newDiv)
-      await this.download(sheet, filename_extension)
+    getSonarQubeTime() {
+      return function (time) {
+        const currentDate = new Date()
+        const offset = currentDate.getTimezoneOffset() / 60
+        const givenDate = new Date(time)
+        const hours = givenDate.getUTCHours() + offset
+        givenDate.setHours(hours)
+        return givenDate
+      }
     },
     getTableDom() {
       let dom = null
@@ -230,6 +192,50 @@ export default {
         }
       })
       return newDiv
+    }
+  },
+  created() {
+    triggerReport(this.selectedProject, this.commitId)
+  },
+  async mounted() {
+    this.loadTestReport()
+  },
+  methods: {
+    async loadTestReport() {
+      this.listLoading = true
+      try {
+        const res = await getProjectCommitTestSummary(this.selectedProjectId, this.$route.params.commitId)
+        dataName.forEach(name => this.setTestReportData(res.data, name))
+        this.dataTimeArr = this.getDataTime
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.listLoading = false
+      }
+    },
+    setTestReportData(resData, name) {
+      const data = resData[name]
+      if (name === 'sonarqube') this.setSonarQubeData(resData)
+      else data ? this[name].push(data) : this[name] = undefined
+      // data ? this[name].push(data) : this[name] = undefined
+    },
+    setSonarQubeData(data) {
+      if (data.sonarqube) {
+        this.sonarqube = this.handleSonarQubeData(data.sonarqube.history)
+        this.sonarQubeLink = data.sonarqube.link
+      } else this.sonarqube = undefined
+    },
+    handleBackPage() {
+      this.$router.go(-1)
+    },
+    async downloadPdf() {
+      await this.$pdf(this.$refs.pdfPage, downloadFileName)
+    },
+    async getSheet(filename_extension) {
+      const newDiv = await this.getTableDom
+      // use XLSX to transform a sheet from tables
+      const sheet = XLSX.utils.table_to_sheet(newDiv)
+      await this.download(sheet, filename_extension)
     },
     async download(sheet, filename_extension) {
       switch (filename_extension) {
