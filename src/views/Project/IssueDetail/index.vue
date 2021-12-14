@@ -597,7 +597,7 @@ export default {
         cancelButtonText: this.$t('general.Cancel'),
         type: 'error',
         confirmButtonClass: 'el-button--danger'
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
       if (deleteRequest === 'confirm') {
         this.isLoading = true
         try {

@@ -413,7 +413,6 @@ export default {
      * @Param {Object} evt - drag event
      */
     canIssueMoved(evt) {
-      console.log(evt)
       const toName = evt.to.classList[1]
       const fromName = evt.from.classList[1]
       const toClassObj = this.status.find((item) => item.name === toName)
@@ -432,7 +431,6 @@ export default {
     },
     isStatusNormal(toClassObj, fromClassObj, element) {
       const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
-      console.log(isAssigned)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
       return isAssigned && isChildrenIssuesClosed
@@ -443,9 +441,7 @@ export default {
       return isPriorityUnchanged
     },
     isAssigned(toClassObj, fromClassObj, element) {
-      console.log(toClassObj)
       let isAssigned = this.checkAssigned(toClassObj, element)
-      console.log(isAssigned)
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
