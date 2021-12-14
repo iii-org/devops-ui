@@ -62,9 +62,9 @@
           />
         </el-form-item>
       </el-form>
-      <!-- <SaveFilterButton
+      <SaveFilterButton
         ref="saveFilterButton"
-        :filter-value="filterValue"
+        :filter-value="filterValueClone"
         :show-button="showSaveFilterButton"
         @update="onCustomFilterAdded"
       />
@@ -75,7 +75,7 @@
         @click="onSaveClick"
       >
         {{ $t('general.SaveSettings') }}
-      </el-button> -->
+      </el-button>
       <el-button
         slot="reference"
         icon="el-icon-s-operation"
@@ -141,11 +141,11 @@ export default {
     },
     selectionOptions: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     prefill: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -203,6 +203,12 @@ export default {
       const whiteList = ['issue-list']
       const inWhiteList = whiteList.includes(this.$route.name)
       return inWhiteList && !this.showSaveFilterButton
+    },
+    filterValueClone() {
+      return Object.assign({}, this.filterValue, {
+        fixed_version_closed: this.fixed_version_closed,
+        displayClosed: this.displayClosed
+      })
     }
   },
   watch: {
@@ -249,10 +255,13 @@ export default {
       this.$emit('change-fixed-version', this.fixed_version_closed)
     },
     cleanFilter() {
+      this.$emit('clean-filter')
       this.$set(this.$data, 'filterValue', cloneDeep(this.originFilterValue))
       this.keyword = ''
       this.displayClosed = false
+      this.fixed_version_closed = false
       this.onChangeFilter()
+      this.onChangeFixedVersionStatus()
     },
     checkFilterValue(key) {
       const comparedKey = this.getComparedKey(key)

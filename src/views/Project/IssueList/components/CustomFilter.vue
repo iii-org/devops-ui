@@ -130,7 +130,17 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('Issue.fixed_version')">
+              <el-form-item>
+                <div slot="label">
+                  {{ $t(`Issue.fixed_version`) }}
+                  <el-tag
+                    type="info"
+                    class="flex-1"
+                  >
+                    <el-checkbox v-model="formData.show_closed_versions"> {{ $t('Issue.DisplayClosedVersion') }}
+                    </el-checkbox>
+                  </el-tag>
+                </div>
                 <el-select
                   v-model="formData.fixed_version_id"
                   :placeholder="$t('Issue.SelectVersion')"
@@ -166,10 +176,13 @@
                   </el-option>
                 </el-select>
               </el-form-item>
+              <el-form-item :label="$t('Issue.DisplayClosedIssue')">
+                <el-checkbox v-model="formData.show_closed_issues" />
+              </el-form-item>
               <div class="flex justify-between">
                 <el-button
                   size="small"
-                  @click="onEditClick(filter.id)"
+                  @click="onCancelClick(filter.id)"
                 >
                   {{ $t('general.Cancel') }}
                 </el-button>
@@ -207,7 +220,9 @@ const defaultFormData = () => ({
   tracker_id: null,
   assigned_to_id: null,
   fixed_version_id: null,
-  priority_id: null
+  priority_id: null,
+  show_closed_issues: false,
+  show_closed_versions: false
 })
 const keysMap = {
   assigned_to_id: 'assigned_to',
@@ -215,7 +230,9 @@ const keysMap = {
   priority_id: 'priority',
   status_id: 'status',
   tags: 'tags',
-  tracker_id: 'tracker'
+  tracker_id: 'tracker',
+  show_closed_issues: 'displayClosed',
+  show_closed_versions: 'fixed_version_closed'
 }
 export default {
   name: 'CustomFilter',
@@ -249,6 +266,11 @@ export default {
       return this.priority
     }
   },
+  watch: {
+    selectedProjectId() {
+      this.fetchCustomFilter()
+    }
+  },
   mounted() {
     this.fetchCustomFilter()
   },
@@ -271,6 +293,8 @@ export default {
       Object.keys(options).forEach((key) => {
         if (key === 'tags') {
           result[key] = options[key] === null ? null : options[key].split(',').map((i) => Number(i))
+        } else if (key === 'show_closed_issues' || key === 'show_closed_versions') {
+          result[key] = options[key] === null ? null : Boolean(options[key])
         } else {
           result[key] = options[key] === null ? null : Number(options[key])
         }
@@ -282,6 +306,9 @@ export default {
       const idx = this.filters.findIndex((item) => item.id === filterId)
       this.formData = Object.assign({}, this.filters[idx].custom_filter)
       this.filters[idx].isShowForm = !this.filters[idx].isShowForm
+    },
+    onCancelClick() {
+      this.onPopoverHide()
     },
     removeFilter(filterId) {
       removeIssueFilter(this.selectedProjectId, filterId).then((res) => {
@@ -323,7 +350,10 @@ export default {
         (acc, key) => ({ ...acc, ...{ [keysMap[key] || key]: options[key] }}),
         {}
       )
-      this.$emit('apply-filter', result)
+      const { displayClosed, fixed_version_closed } = result
+      delete result.displayClosed
+      delete result.fixed_version_closed
+      this.$emit('apply-filter', { result, displayClosed, fixed_version_closed })
     }
   }
 }

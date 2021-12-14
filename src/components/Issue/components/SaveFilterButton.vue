@@ -27,10 +27,13 @@ const keyMap = {
   tracker_id: 'tracker',
   assigned_to_id: 'assigned_to',
   fixed_version_id: 'fixed_version',
-  priority_id: 'priority'
+  priority_id: 'priority',
+  show_closed_issues: 'displayClosed',
+  show_closed_versions: 'fixed_version_closed'
 }
 
 export default {
+  name: 'SaveFilterButton',
   props: {
     showButton: {
       type: Boolean,
@@ -75,6 +78,8 @@ export default {
         tracker_id: null,
         assigned_to_id: null,
         fixed_version_id: null,
+        show_closed_issues: null,
+        show_closed_versions: null,
         priority_id: null,
         name: '',
         type: 'issue_list'

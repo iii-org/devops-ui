@@ -20,12 +20,13 @@
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
         @add-custom-filter="updateCustomFilter"
+        @clean-filter="cleanFilter"
       >
-        <!-- <CustomFilter
+        <CustomFilter
           ref="customFilter"
           :selection-options="contextOptions"
           @apply-filter="applyCustomFilter"
-        /> -->
+        />
         <span
           slot="download"
           v-permission="['QA']"
@@ -479,8 +480,14 @@ export default {
     updateCustomFilter() {
       this.$refs.customFilter.fetchCustomFilter()
     },
+    cleanFilter() {
+      this.$refs.customFilter.resetApplyFilter()
+    },
     applyCustomFilter(filters) {
-      this.onChangeFilterForm({ filterValue: filters })
+      const { result, displayClosed, fixed_version_closed } = filters
+      this.onChangeFilterForm({ filterValue: result })
+      this.displayClosed = displayClosed
+      this.fixed_version_closed = fixed_version_closed
     }
   }
 }
