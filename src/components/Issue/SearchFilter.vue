@@ -64,6 +64,7 @@
       </el-form>
       <SaveFilterButton
         ref="saveFilterButton"
+        type="issue_list"
         :filter-value="filterValueClone"
         :show-button="showSaveFilterButton"
         @update="onCustomFilterAdded"

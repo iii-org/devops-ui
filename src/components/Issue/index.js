@@ -6,4 +6,5 @@ import AddIssue from './AddIssue'
 import QuickAddIssue from './QuickAddIssue'
 import ExpandSection from './ExpandSection'
 import SearchFilter from './SearchFilter'
-export { Priority, Status, Tracker, ContextMenu, AddIssue, QuickAddIssue, ExpandSection, SearchFilter }
+import CustomFilter from './CustomFilter'
+export { Priority, Status, Tracker, ContextMenu, AddIssue, QuickAddIssue, ExpandSection, SearchFilter, CustomFilter }

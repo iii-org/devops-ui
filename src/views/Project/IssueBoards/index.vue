@@ -5,6 +5,12 @@
     class="app-container"
   >
     <ProjectListSelector>
+      <CustomFilter
+        ref="customFilter"
+        type="issue_board"
+        :selection-options="contextOptions"
+        @apply-filter="applyCustomFilter"
+      />
       <el-popover
         placement="bottom"
         trigger="click"
@@ -63,6 +69,21 @@
             />
           </el-form-item>
         </el-form>
+        <SaveFilterButton
+          ref="saveFilterButton"
+          type="issue_board"
+          :filter-value="filterValueClone"
+          :show-button="showSaveFilterButton"
+          @update="onCustomFilterAdded"
+        />
+        <el-button
+          v-if="!showSaveFilterButton"
+          style="width:100%"
+          type="primary"
+          @click="onSaveClick"
+        >
+          {{ $t('general.SaveSettings') }}
+        </el-button>
         <el-button
           slot="reference"
           :loading="isLoading"
@@ -188,10 +209,9 @@ import {
   getTagsByProject
 } from '@/api/projects'
 import ElSelectAll from '@/components/ElSelectAll'
-import Status from '@/components/Issue/Status'
-import Tracker from '@/components/Issue/Tracker'
-import Priority from '@/components/Issue/Priority'
+import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
 import axios from 'axios'
+import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
 
 export default {
   name: 'IssueBoards',
@@ -201,7 +221,9 @@ export default {
     ProjectListSelector,
     Status,
     Tracker,
-    Priority
+    Priority,
+    CustomFilter,
+    SaveFilterButton
   },
   data() {
     return {
@@ -263,7 +285,8 @@ export default {
       tags: [],
       relativeIssueList: [],
       searchVisible: false,
-      keyword: null
+      keyword: null,
+      showSaveFilterButton: false
     }
   },
   computed: {
@@ -359,6 +382,13 @@ export default {
         if (this.groupBy.value.length <= 0) return true
         return this.groupBy.value.find((item) => item.id === value)
       }
+    },
+    filterValueClone() {
+      return Object.assign({}, this.filterValue, {
+        groupBy: this.groupBy,
+        fixed_version_closed: this.fixed_version_closed,
+        displayClosed: this.displayClosed
+      })
     }
   },
   watch: {
@@ -663,11 +693,13 @@ export default {
       return userList.filter((item) => item.login !== '-Me-')
     },
     cleanFilter() {
+      this.$emit('clean-filter')
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = ''
       this.displayClosed = false
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
+      this.fixed_version_closed = false
     },
     async onChangeFilter() {
       const storedData = await this.fetchStoredData()
@@ -696,6 +728,21 @@ export default {
     updatedByGroupBy(loadData) {
       this.setGroupBy(this.groupBy)
       if (loadData) this.loadData()
+    },
+    applyCustomFilter(filters) {
+      const { result, displayClosed, fixed_version_closed } = filters
+      this.filterValue = result
+      this.displayClosed = displayClosed
+      this.fixed_version_closed = fixed_version_closed
+      this.onChangeFilter()
+    },
+    onSaveClick() {
+      this.showSaveFilterButton = !this.showSaveFilterButton
+    },
+    onCustomFilterAdded() {
+      this.$refs.customFilter.fetchCustomFilter()
+      this.showSaveFilterButton = false
+      this.cleanFilter()
     }
   }
 }

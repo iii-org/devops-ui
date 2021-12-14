@@ -42,6 +42,10 @@ export default {
     filterValue: {
       type: Object,
       default: () => ({})
+    },
+    type: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -82,7 +86,7 @@ export default {
         show_closed_versions: null,
         priority_id: null,
         name: '',
-        type: 'issue_list'
+        type: this.type
       }
       for (const key in keyMap) {
         const originalKey = keyMap[key]

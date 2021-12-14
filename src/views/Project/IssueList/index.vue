@@ -24,6 +24,7 @@
       >
         <CustomFilter
           ref="customFilter"
+          type="issue_list"
           :selection-options="contextOptions"
           @apply-filter="applyCustomFilter"
         />
@@ -228,12 +229,11 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
+import { QuickAddIssue, ExpandSection, SearchFilter, CustomFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
-import CustomFilter from './components/CustomFilter.vue'
 import XLSX from 'xlsx'
 
 /**
