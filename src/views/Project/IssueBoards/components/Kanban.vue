@@ -338,6 +338,10 @@ export default {
       title: this.$t('Kanban.unassignedErrorTitle'),
       content: this.$t('Kanban.unassignedErrorContent')
     }
+    this.assignedError = {
+      title: this.$t('Kanban.assignedErrorTitle'),
+      content: this.$t('Kanban.assignedErrorContent')
+    }
     this.childrenStatusError = {
       title: this.$t('Kanban.childrenStatusErrorTitle'),
       content: this.$t('Kanban.childrenStatusErrorContent')
@@ -409,22 +413,26 @@ export default {
      * @Param {Object} evt - drag event
      */
     canIssueMoved(evt) {
+      console.log(evt)
       const toName = evt.to.classList[1]
+      const fromName = evt.from.classList[1]
       const toClassObj = this.status.find((item) => item.name === toName)
+      const fromClassObj = this.status.find((item) => item.name === fromName)
       const element = evt.draggedContext.element
-      const canIssueMoved = this.isIssueNormal(toClassObj, element)
+      const canIssueMoved = this.isIssueNormal(toClassObj, fromClassObj, element)
       return canIssueMoved
     },
-    isIssueNormal(toClassObj, element) {
+    isIssueNormal(toClassObj, fromClassObj, element) {
       switch (this.dimension) {
         case 'status':
-          return this.isStatusNormal(toClassObj, element)
+          return this.isStatusNormal(toClassObj, fromClassObj, element)
         case 'priority':
           return this.isPriorityNormal(element)
       }
     },
-    isStatusNormal(toClassObj, element) {
-      const isAssigned = this.isAssigned(toClassObj, element)
+    isStatusNormal(toClassObj, fromClassObj, element) {
+      const isAssigned = this.isAssigned(toClassObj, fromClassObj, element)
+      console.log(isAssigned)
       const isChildrenIssuesClosed = toClassObj.is_closed === true ? this.isChildrenIssuesClosed(element) : true
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
       return isAssigned && isChildrenIssuesClosed
@@ -434,11 +442,17 @@ export default {
       if (this.errorMsg.length > 0) this.showErrorAlert(this.errorMsg)
       return isPriorityUnchanged
     },
-    isAssigned(toClassObj, element) {
-      const isAssigned = this.checkAssigned(toClassObj, element)
+    isAssigned(toClassObj, fromClassObj, element) {
+      console.log(toClassObj)
+      let isAssigned = this.checkAssigned(toClassObj, element)
+      console.log(isAssigned)
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
+      } else if (isAssigned && fromClassObj.name === 'Assigned' && toClassObj.name === 'Active') {
+        const error = 'assignedError'
+        this.handleErrorAlert(error)
+        isAssigned = !isAssigned
       }
       return isAssigned
     },
