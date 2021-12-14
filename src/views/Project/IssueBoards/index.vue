@@ -700,6 +700,7 @@ export default {
       this.onChangeGroupByDimension('status')
       this.onChangeFilter()
       this.fixed_version_closed = false
+      this.$refs.customFilter.resetApplyFilter()
     },
     async onChangeFilter() {
       const storedData = await this.fetchStoredData()

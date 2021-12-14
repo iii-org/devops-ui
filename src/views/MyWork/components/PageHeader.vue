@@ -27,6 +27,13 @@
       </el-button>
     </template>
 
+    <CustomFilter
+      ref="customFilter"
+      type="my_work"
+      :selection-options="contextOptions"
+      @apply-filter="applyCustomFilter"
+    />
+
     <el-popover
       placement="bottom"
       trigger="click"
@@ -83,6 +90,22 @@
         </el-form-item>
       </el-form>
 
+      <SaveFilterButton
+        ref="saveFilterButton"
+        type="my_work"
+        :filter-value="filterValueClone"
+        :show-button="showSaveFilterButton"
+        @update="onCustomFilterAdded"
+      />
+      <el-button
+        v-if="!showSaveFilterButton && focusedProjectId"
+        style="width:100%"
+        type="primary"
+        @click="onSaveClick"
+      >
+        {{ $t('general.SaveSettings') }}
+      </el-button>
+
       <el-button
         slot="reference"
         icon="el-icon-s-operation"
@@ -131,13 +154,16 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getProjectUserList, getProjectVersion } from '@/api/projects'
-import { Tracker, Priority, Status } from '@/components/Issue'
+import { CustomFilter, Tracker, Priority, Status } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
+import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
 
 export default {
   name: 'MyWorkPageHeader',
   components: {
     ProjectListSelector,
+    CustomFilter,
+    SaveFilterButton,
     Tracker,
     Priority,
     Status
@@ -210,7 +236,8 @@ export default {
           options: []
         }
       ],
-      searchVisible: false
+      searchVisible: false,
+      showSaveFilterButton: false
     }
   },
   computed: {
@@ -234,6 +261,18 @@ export default {
       },
       set(id) {
         this.$emit('update:projectId', id)
+      }
+    },
+    filterValueClone() {
+      return Object.assign({}, this.filterConditions, {
+        fixed_version_closed: this.displayClosedVersion,
+        displayClosed: this.displayClosedIssue
+      })
+    },
+    contextOptions() {
+      return {
+        assigned_to: this.filterConditionGroup[2].options,
+        fixed_version: this.filterConditionGroup[3].options
       }
     }
   },
@@ -289,6 +328,7 @@ export default {
       this.$emit('update:filterConditions', {})
       this.$emit('update:displayClosedIssue', false)
       this.$emit('update:displayClosedVersion', false)
+      this.$refs.customFilter.resetApplyFilter()
     },
     isHiddenFormItem(condition) {
       const isRequireProjectId = condition.value === 'fixed_version' && !this.focusedProjectId
@@ -314,6 +354,26 @@ export default {
       const { value, options } = condition
       const showAllOptions = value !== 'status' || this.displayClosedIssue
       return showAllOptions ? options : options.filter((option) => option.id !== 6)
+    },
+    onSaveClick() {
+      this.showSaveFilterButton = !this.showSaveFilterButton
+    },
+    onCustomFilterAdded() {
+      this.$refs.customFilter.fetchCustomFilter()
+      this.showSaveFilterButton = false
+      this.clearFilter()
+    },
+    applyCustomFilter(filters) {
+      const { result, displayClosed, fixed_version_closed } = filters
+      this.$emit('update:filterConditions', this.formatFilterResult(result))
+      this.$emit('update:displayClosedIssue', displayClosed)
+      this.$emit('update:displayClosedVersion', fixed_version_closed)
+    },
+    formatFilterResult(result) {
+      Object.keys(result).forEach((key) => {
+        if (result[key] === null) delete result[key]
+      })
+      return result
     }
   }
 }
