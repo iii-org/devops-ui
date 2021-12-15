@@ -109,7 +109,6 @@ import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
 import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
 import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
 import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
-import { triggerReport } from '@/utils/triggerReport'
 
 const downloadFileName = 'DevOps_test_report'
 const dataName = ['sonarqube', 'checkmarx', 'zap', 'webinspect', 'postman', 'sideex']
@@ -192,9 +191,6 @@ export default {
       })
       return newDiv
     }
-  },
-  created() {
-    triggerReport(this.selectedProject, this.commitId)
   },
   mounted() {
     this.loadTestReport()

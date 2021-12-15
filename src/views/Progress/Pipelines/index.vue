@@ -182,6 +182,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/newMixins'
+import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({
   page: 1,
@@ -340,6 +341,7 @@ export default {
     handleToTestReport(row) {
       const commitId = row.commit_id
       const commitBranch = row.commit_branch
+      triggerReport(this.selectedProject, commitId)
       this.$router.push({ name: 'TestReport', params: { commitId, commitBranch }})
     }
   }
