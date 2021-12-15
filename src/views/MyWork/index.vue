@@ -6,7 +6,7 @@
       :keyword.sync="keyword"
       :display-closed-issue.sync="displayClosedIssue"
       :display-closed-version.sync="displayClosedVersion"
-      :active-tab="activeTab"
+      :active-tab.sync="activeTab"
       @create-project="handleCreateProjectClick"
       @add-issue="showQuickAddIssue = !showQuickAddIssue"
     />

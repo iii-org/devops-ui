@@ -7,7 +7,6 @@
     />
 
     <breadcrumb class="breadcrumb-container" />
-
     <div class="flex right-menu items-center">
       <AbnormalChecker />
       <VersionChecker class="ml-2" />

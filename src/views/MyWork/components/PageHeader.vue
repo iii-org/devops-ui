@@ -30,6 +30,8 @@
     <CustomFilter
       ref="customFilter"
       type="my_work"
+      :project-id="projectId"
+      :active-tab="activeTab"
       :selection-options="contextOptions"
       @apply-filter="applyCustomFilter"
     />
@@ -93,12 +95,14 @@
       <SaveFilterButton
         ref="saveFilterButton"
         type="my_work"
+        :project-id="projectId"
         :filter-value="filterValueClone"
         :show-button="showSaveFilterButton"
+        :active-tab="activeTab"
         @update="onCustomFilterAdded"
       />
       <el-button
-        v-if="!showSaveFilterButton && focusedProjectId"
+        v-if="!showSaveFilterButton"
         style="width:100%"
         type="primary"
         @click="onSaveClick"
@@ -361,13 +365,13 @@ export default {
     onCustomFilterAdded() {
       this.$refs.customFilter.fetchCustomFilter()
       this.showSaveFilterButton = false
-      this.clearFilter()
     },
     applyCustomFilter(filters) {
-      const { result, displayClosed, fixed_version_closed } = filters
+      const { result, displayClosed, fixed_version_closed, activeTab } = filters
       this.$emit('update:filterConditions', this.formatFilterResult(result))
       this.$emit('update:displayClosedIssue', displayClosed)
       this.$emit('update:displayClosedVersion', fixed_version_closed)
+      this.$emit('update:activeTab', activeTab)
     },
     formatFilterResult(result) {
       Object.keys(result).forEach((key) => {

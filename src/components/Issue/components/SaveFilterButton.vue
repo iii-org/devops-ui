@@ -46,6 +46,18 @@ export default {
     type: {
       type: String,
       default: ''
+    },
+    projectId: {
+      type: [Number, String],
+      default: null
+    },
+    activeTab: {
+      type: String,
+      default: null
+    },
+    groupBy: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -57,6 +69,13 @@ export default {
     ...mapGetters(['selectedProjectId']),
     isIssueList() {
       return this.$route.name === 'issue-list'
+    },
+    myWorkProjectId() {
+      if (this.$route.name === 'my-works') {
+        return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
+      } else {
+        return this.selectedProjectId
+      }
     }
   },
   methods: {
@@ -70,7 +89,7 @@ export default {
       }
       const sendData = this.formatFilterData()
       sendData.name = this.filterName
-      addIssueFilter(this.selectedProjectId, sendData).then((response) => {
+      addIssueFilter(this.myWorkProjectId, sendData).then(() => {
         this.$emit('update')
         this.reset()
       })
@@ -85,6 +104,8 @@ export default {
         show_closed_issues: null,
         show_closed_versions: null,
         priority_id: null,
+        group_by: null,
+        focus_tab: null,
         name: '',
         type: this.type
       }
@@ -95,6 +116,8 @@ export default {
         } else if (this.filterValue[originalKey]) {
           sendData[key] = this.filterValue[originalKey] === 'null' ? null : this.filterValue[originalKey]
         }
+        sendData['focus_tab'] = this.activeTab
+        sendData['group_by'] = this.groupBy
       }
       return sendData
     }

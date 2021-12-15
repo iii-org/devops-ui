@@ -278,7 +278,6 @@ export default {
     onCustomFilterAdded() {
       this.resetSaveFilterButtons()
       this.$emit('add-custom-filter')
-      this.cleanFilter()
     },
     onSaveClick() {
       this.showSaveFilterButton = true

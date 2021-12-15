@@ -11,6 +11,7 @@
           v-for="filter in filtersByType"
           :key="filter.id"
           class="my-2"
+          :title="filter.name"
         >
           <div class="flex justify-between mx-5">
             <span
@@ -77,7 +78,10 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('Issue.tags')">
+              <el-form-item
+                v-if="projectId"
+                :label="$t('Issue.tags')"
+              >
                 <el-select
                   v-model="formData.tags"
                   :placeholder="$t('Issue.SelectTag')"
@@ -115,7 +119,10 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('Issue.assigned_to')">
+              <el-form-item
+                v-if="formData.assigned_to_id"
+                :label="$t('Issue.assigned_to')"
+              >
                 <el-select
                   v-model="formData.assigned_to_id"
                   :placeholder="$t('Issue.SelectMember')"
@@ -130,7 +137,7 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item>
+              <el-form-item v-if="projectId">
                 <div slot="label">
                   {{ $t(`Issue.fixed_version`) }}
                   <el-tag
@@ -176,8 +183,14 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('Issue.DisplayClosedIssue')">
-                <el-checkbox v-model="formData.show_closed_issues" />
+              <el-form-item>
+                <div slot="label">
+                  {{ $t('Issue.DisplayClosedIssue') }}
+                  <el-checkbox
+                    v-model="formData.show_closed_issues"
+                    class="ml-2"
+                  />
+                </div>
               </el-form-item>
               <div class="flex justify-between">
                 <el-button
@@ -222,7 +235,9 @@ const defaultFormData = () => ({
   fixed_version_id: null,
   priority_id: null,
   show_closed_issues: false,
-  show_closed_versions: false
+  show_closed_versions: false,
+  group_by: [],
+  focus_tab: null
 })
 const keysMap = {
   assigned_to_id: 'assigned_to',
@@ -232,7 +247,9 @@ const keysMap = {
   tags: 'tags',
   tracker_id: 'tracker',
   show_closed_issues: 'displayClosed',
-  show_closed_versions: 'fixed_version_closed'
+  show_closed_versions: 'fixed_version_closed',
+  group_by: 'groupBy',
+  focus_tab: 'activeTab'
 }
 export default {
   name: 'CustomFilter',
@@ -249,6 +266,14 @@ export default {
     type: {
       type: String,
       default: ''
+    },
+    projectId: {
+      type: [Number, String],
+      default: null
+    },
+    activeTab: {
+      type: String,
+      default: 'assigned_to_id'
     }
   },
   data() {
@@ -271,10 +296,17 @@ export default {
     },
     filtersByType() {
       return this.filters.filter((item) => item.type === this.type)
+    },
+    myWorkProjectId() {
+      if (this.$route.name === 'my-works') {
+        return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
+      } else {
+        return this.selectedProjectId
+      }
     }
   },
   watch: {
-    selectedProjectId() {
+    myWorkProjectId() {
       this.fetchCustomFilter()
     }
   },
@@ -284,7 +316,7 @@ export default {
   methods: {
     fetchCustomFilter() {
       this.isLoading = true
-      getIssueFilter(this.selectedProjectId).then((res) => {
+      getIssueFilter(this.myWorkProjectId).then((res) => {
         this.filters = res.data.map((item) =>
           Object.assign({}, item, {
             custom_filter: this.formateCustomFilter(item.custom_filter),
@@ -302,6 +334,8 @@ export default {
           result[key] = options[key] === null ? null : options[key].split(',').map((i) => Number(i))
         } else if (key === 'show_closed_issues' || key === 'show_closed_versions') {
           result[key] = options[key] === null ? null : Boolean(options[key])
+        } else if (key === 'focus_tab' || key === 'group_by') {
+          result[key]
         } else {
           result[key] = options[key] === null ? null : Number(options[key])
         }
@@ -318,7 +352,7 @@ export default {
       this.onPopoverHide()
     },
     removeFilter(filterId) {
-      removeIssueFilter(this.selectedProjectId, filterId).then((res) => {
+      removeIssueFilter(this.myWorkProjectId, filterId).then((res) => {
         this.fetchCustomFilter()
       })
     },
@@ -336,7 +370,7 @@ export default {
       this.modifyCustomFilter(id, sendData)
     },
     modifyCustomFilter(filterId, sendData) {
-      editIssueFilter(this.selectedProjectId, filterId, sendData).then((res) => {
+      editIssueFilter(this.myWorkProjectId, filterId, sendData).then(() => {
         this.fetchCustomFilter()
         this.$message({
           message: this.$t('Notify.Saved'),
@@ -361,10 +395,12 @@ export default {
         (acc, key) => ({ ...acc, ...{ [keysMap[key] || key]: options[key] }}),
         {}
       )
-      const { displayClosed, fixed_version_closed } = result
+      const { displayClosed, fixed_version_closed, activeTab, groupBy } = result
       delete result.displayClosed
       delete result.fixed_version_closed
-      this.$emit('apply-filter', { result, displayClosed, fixed_version_closed })
+      delete result.activeTab
+      delete result.groupBy
+      this.$emit('apply-filter', { result, displayClosed, fixed_version_closed, activeTab, groupBy })
     }
   }
 }

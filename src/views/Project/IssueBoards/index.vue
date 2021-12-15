@@ -74,6 +74,7 @@
           type="issue_board"
           :filter-value="filterValueClone"
           :show-button="showSaveFilterButton"
+          :group-by="groupBy"
           @update="onCustomFilterAdded"
         />
         <el-button
@@ -731,10 +732,11 @@ export default {
       if (loadData) this.loadData()
     },
     applyCustomFilter(filters) {
-      const { result, displayClosed, fixed_version_closed } = filters
+      const { result, displayClosed, fixed_version_closed, groupBy } = filters
       this.filterValue = result
       this.displayClosed = displayClosed
       this.fixed_version_closed = fixed_version_closed
+      this.groupBy = groupBy
       this.onChangeFilter()
     },
     onSaveClick() {
@@ -743,7 +745,6 @@ export default {
     onCustomFilterAdded() {
       this.$refs.customFilter.fetchCustomFilter()
       this.showSaveFilterButton = false
-      this.cleanFilter()
     }
   }
 }
