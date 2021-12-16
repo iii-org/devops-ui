@@ -695,7 +695,6 @@ export default {
       return userList.filter((item) => item.login !== '-Me-')
     },
     cleanFilter() {
-      console.log('cleanFilter => cleanFilter')
       this.$emit('clean-filter')
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = ''
@@ -738,7 +737,9 @@ export default {
       this.filterValue = result
       this.displayClosed = displayClosed
       this.fixed_version_closed = fixed_version_closed
-      this.groupBy = groupBy
+      this.$set(this.groupBy, 'dimension', groupBy.dimension)
+      this.$set(this.groupBy, 'value', groupBy.value)
+      this.setGroupBy(groupBy)
       this.onChangeFilter()
     },
     onSaveClick() {
