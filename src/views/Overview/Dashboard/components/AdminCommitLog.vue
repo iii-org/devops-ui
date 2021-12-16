@@ -2,6 +2,7 @@
   <el-col
     v-loading="listLoading"
     class="inner"
+    :style="{height:height}"
   >
     <template v-if="listData.length>0">
       <transition-group
@@ -35,6 +36,10 @@ export default {
     data: {
       type: Function,
       default: () => []
+    },
+    height: {
+      type: String,
+      default: '250px'
     }
   },
   data() {
@@ -59,7 +64,6 @@ export default {
 
 <style lang="scss" scoped>
 .inner {
-  height: 250px;
   overflow-y: auto;
   overflow-x: hidden;
 }

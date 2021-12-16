@@ -410,6 +410,8 @@ export default {
     status: '@:general.Status',
     Save: '儲存',
     Notes: '處理紀錄 / 訊息回覆',
+    History: '歷史紀錄',
+    Commit: '程式提交',
     AddComment: '新增備註',
     Flow: '流程',
     FlowId: '流程編號',

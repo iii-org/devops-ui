@@ -413,6 +413,8 @@ export default {
     status: '@:general.Status',
     Save: 'Save',
     Notes: 'Notes',
+    History: 'History',
+    Commit: 'Commit',
     AddComment: 'Add Comment',
     Flow: 'Flow',
     FlowId: 'Flow Id',

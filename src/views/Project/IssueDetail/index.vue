@@ -151,12 +151,30 @@
               <issue-notes-editor ref="IssueNotesEditor" />
             </el-col>
             <el-col :span="24">
-              <issue-notes-dialog
+              <el-tabs
                 ref="IssueNotesDialog"
-                :height="dialogHeight"
-                :data="journals"
-                @show-parent-issue="onRelationIssueDialog"
-              />
+                type="border-card"
+              >
+                <el-tab-pane :label="$t('Issue.History')">
+                  <issue-notes-dialog
+                    :height="dialogHeight"
+                    :data="journals"
+                    @show-parent-issue="onRelationIssueDialog"
+                  />
+                </el-tab-pane>
+                <el-tab-pane>
+                  <template #label>
+                    <span>
+                      <em class="ri-git-commit-line" />{{ $t('Issue.Commit') }}
+                    </span>
+                  </template>
+                  <admin-commit-log
+                    ref="adminCommitLog"
+                    :height="dialogHeight"
+                    :data="getGitCommitLogData"
+                  />
+                </el-tab-pane>
+              </el-tabs>
             </el-col>
           </el-row>
         </el-col>
@@ -235,7 +253,15 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getIssue, updateIssue, deleteIssue, addIssue, putIssueRelation, deleteIssueRelation } from '@/api/issue'
+import {
+  getIssue,
+  updateIssue,
+  deleteIssue,
+  addIssue,
+  putIssueRelation,
+  deleteIssueRelation,
+  getIssueGitCommitLog
+} from '@/api/issue'
 import {
   IssueForm,
   IssueNotesDialog,
@@ -246,6 +272,8 @@ import {
   IssueToolbar,
   IssueCollection
 } from './components'
+import { AdminCommitLog } from '@/views/Overview/Dashboard/components'
+import { UTCtoLocalTime } from '@/filters'
 import { addProjectTags } from '@/api/projects'
 import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
@@ -254,6 +282,9 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
+
+const commitLimit = 10
+const refreshCommitLog = 300000 // ms
 
 export default {
   name: 'ProjectIssueDetail',
@@ -271,7 +302,8 @@ export default {
     IssueFiles,
     IssueMatrix,
     RelatedCollectionDialog,
-    ExpandSection
+    ExpandSection,
+    AdminCommitLog
   },
   mixins: [ContextMenu],
   props: {
@@ -318,6 +350,8 @@ export default {
       files: [],
       test_files: [],
       journals: [],
+      gitCommitLog: [],
+      requestGitLabLastTime: null,
       parent: {},
       children: [],
       tags: [],
@@ -409,6 +443,20 @@ export default {
     },
     propsIssueId() {
       this.fetchIssueLink()
+    },
+    gitCommitLog: {
+      deep: true,
+      async handler() {
+        if (!this.requestGitLabLastTime) {
+          this.requestGitLabLastTime = new Date().valueOf()
+        }
+        await this.sleep(refreshCommitLog)
+        const nowTime = new Date().valueOf()
+        const gap = nowTime - this.requestGitLabLastTime
+        if (gap >= refreshCommitLog) {
+          this.gitCommitLog = await this.getGitCommitLogData()
+        }
+      }
     }
   },
   async mounted() {
@@ -434,6 +482,7 @@ export default {
           this['removeFileName']()
         }
       }
+      this.gitCommitLog = await this.getGitCommitLogData()
       this.isLoading = false
     },
     async fetchIssue(isOnlyUpload) {
@@ -533,6 +582,20 @@ export default {
     onProjectChange(value) {
       localStorage.setItem('projectId', value)
       this.setSelectedProject(this.userProjectList.filter((elm) => elm.id === value)[0])
+    },
+    setIssueId() {
+      if (this.propsIssueId) this.issueId = parseInt(this.propsIssueId)
+      else if (this.$route.params.issueId) this.issueId = parseInt(this.$route.params.issueId)
+    },
+    async getGitCommitLogData() {
+      this.setIssueId()
+      const params = { limit: commitLimit }
+      const res = await getIssueGitCommitLog(this.selectedProjectId, this.issueId, params)
+      res.data.forEach((item, index) => {
+        item['id'] = index
+        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
+      })
+      return Promise.resolve(res.data)
     },
     setFormData(data) {
       const {
@@ -923,6 +986,12 @@ export default {
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
+    },
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms))
+    },
+    UTCtoLocalTime(value) {
+      return UTCtoLocalTime(value)
     }
   }
 }
