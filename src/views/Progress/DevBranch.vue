@@ -22,56 +22,71 @@
             <el-timeline-item
               v-for="commit in props.row.gitCommitLog"
               :key="commit.id"
+              class="pb-0 !important"
               :hide-timestamp="true"
             >
-              <el-card class="timeline-item-card w-3/5">
-                <h4>
-                  <div>
-                    <span style="color: #409eff" class="cursor-pointer" :underline="false">
-                      <svg-icon icon-class="ion-git-commit-outline" />
-                      {{ commit.commit_id }}
-                    </span>
-                    <span>@ {{ commit.author_name }} -</span>
-                    <span
-                      v-for="(item, index) in commit.issue_id"
-                      :key="index"
-                      style="color: #67C23A"
-                      class="cursor-pointer"
-                      @click="toIssueDetail(item)"
+              <el-collapse
+                class="w-3/5"
+                :class="commit.issues ? 'hasArrow' : 'noArrow'"
+              >
+                <el-collapse-item :name="commit.id">
+                  <template slot="title">
+                    <div class="flex justify-between text-base cursor-pointer" style="width: 95%">
+                      <div>
+                        <span class="text-primary">
+                          <svg-icon icon-class="ion-git-commit-outline" />
+                          {{ commit.commit_id }}
+                        </span>
+                        <span>@ {{ commit.author_name }} -</span>
+                        <span
+                          v-for="(item, index) in commit.issue_id"
+                          :key="index"
+                          class="text-success"
+                        >
+                          {{ item }}&nbsp;
+                        </span>
+                        <span v-if="commit.issue_id.length > 0">{{ commit.issue_title }}</span>
+                        <span v-else>{{ commit.commit_title }}</span>
+                      </div>
+                      <div>{{ relativeTime(commit.commit_time) }}</div>
+                    </div>
+                  </template>
+                  <section>
+                    <ul
+                      v-for="item in commit.issues"
+                      :key="item.id"
+                      @click="toIssueDetail(item.id)"
                     >
-                      {{ item }}&nbsp;
-                    </span>
-                    <template v-if="commit.issue_id.length > 0">{{ commit.issue_title }}</template>
-                    <template v-else>{{ commit.commit_title }}</template>
-                  </div>
-                  <div>{{ relativeTime(commit.commit_time) }}</div>
-                </h4>
-                <ul
-                  v-for="item in commit.issues"
-                  :key="item.id"
-                  class="cursor-pointer"
-                  @click="toIssueDetail(item.id)"
-                >
-                  <li class="mt-2">
-                    <span>-&nbsp;</span>
-                    <span style="color: #67C23A">#{{ item.id }}</span>
-                    <Status
-                      v-if="item.status.name"
-                      class="ml-2"
-                      size="mini"
-                      :name="$t(`Issue.${item.status.name}`)"
-                      :type="item.status.name"
-                    />
-                    <el-tag v-if="item.assigned_to" class="ml-1" type="info" size="mini">
-                      {{ item.assigned_to.name }}
-                    </el-tag>
-                    <span class="ml-2">
-                      {{ item.name }}
-                    </span>
-                  </li>
-                </ul>
-              </el-card>
+                      <li class="cursor-pointer">
+                        <span class="text-success">#{{ item.id }}</span>
+                        <Status
+                          v-if="item.status.name"
+                          class="ml-1"
+                          size="mini"
+                          :name="$t(`Issue.${item.status.name}`)"
+                          :type="item.status.name"
+                        />
+                        <el-tag v-if="item.assigned_to" class="ml-1" type="info" size="mini" effect="dark">
+                          {{ item.assigned_to.name }}
+                        </el-tag>
+                        <span class="ml-1">{{ item.name }}</span>
+                      </li>
+                    </ul>
+                  </section>
+                </el-collapse-item>
+              </el-collapse>
             </el-timeline-item>
+            <div class="flex justify-center w-3/5">
+              <el-button
+                type="primary"
+                round
+                style="position: relative; bottom: 15px;"
+                class="el-icon-bottom"
+                @click="toGitlab"
+              >
+                {{ $t('general.SeeMore') }}
+              </el-button>
+            </div>
           </el-timeline>
         </template>
       </el-table-column>
@@ -158,6 +173,31 @@ export default {
             .fromNow()
           : '-'
       }
+    },
+    getOpenedItem() {
+      return function (commit) {
+        return commit.map(item => {
+          if (item.issues) return item.id
+        })
+      }
+    },
+    getIssueId() {
+      return function (title) {
+        const splitArray = title.split(' ')
+        const issue_id = []
+        splitArray.forEach(item => {
+          if (item.match(reg_pound_sign) && !item.match(reg_english_alphabets)) {
+            issue_id.push(item)
+          }
+        })
+        return issue_id
+      }
+    },
+    getIssueTitle() {
+      return function (title) {
+        const splitArray = title.split(' ')
+        return splitArray.filter(item => !item.match(reg_pound_sign)).join(' ')
+      }
     }
   },
   watch: {
@@ -168,6 +208,7 @@ export default {
   methods: {
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchData() {
+      this.listLoading = true
       await this.getBranchesByProject(this.selectedRepositoryId)
       this.gitCommitLog = await this.getGitCommitLogData()
       if (this.gitCommitLog.length === 0) return this.branchList
@@ -187,20 +228,6 @@ export default {
       })
       return res.data
     },
-    getIssueId(title) {
-      const splitArray = title.split(' ')
-      const issue_id = []
-      splitArray.forEach(item => {
-        if (item.match(reg_pound_sign) && !item.match(reg_english_alphabets)) {
-          issue_id.push(item)
-        }
-      })
-      return issue_id
-    },
-    getIssueTitle(title) {
-      const splitArray = title.split(' ')
-      return splitArray.filter(item => !item.match(reg_pound_sign)).join(' ')
-    },
     async getIssues(ids) {
       if (!ids[0]) return
       const issueData = []
@@ -209,6 +236,7 @@ export default {
         const res = await getIssue(issueId)
         issueData.push(res.data)
       })
+      this.listLoading = false
       return issueData
     },
     onPagination(listQuery) {
@@ -217,10 +245,26 @@ export default {
     toIssueDetail(tag) {
       const issueId = tag.toString().match(reg_pound_sign) ? tag.split('#')[1] : tag
       this.$router.push({ name: 'issue-detail', params: { issueId }})
+    },
+    toGitlab() {
+      const splitUrl = this.selectedProject.git_url.split('/')
+      splitUrl.pop()
+      splitUrl.push(this.selectedProject.name)
+      splitUrl.push('activity')
+      const gitlabUrl = splitUrl.join('/')
+      window.open(gitlabUrl, '_blank')
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.noArrow {
+  >>> .el-collapse-item__arrow {
+    display: none;
+  }
+}
+.cursor-pointer:hover {
+  @apply bg-gray-100 text-primary font-bold;
+}
 </style>

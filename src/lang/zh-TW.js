@@ -228,7 +228,8 @@ export default {
     ReLogin: '重新登入',
     Continue: '繼續使用',
     BackToHome: '返回首頁',
-    SaveSettings: '儲存設定'
+    SaveSettings: '儲存設定',
+    SeeMore: '看更多'
   },
   Notify: {
     Updated: '已更新',

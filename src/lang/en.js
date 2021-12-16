@@ -228,7 +228,8 @@ export default {
     ReLogin: 'Re-Login',
     Continue: 'Continue',
     BackToHome: 'Back To Home',
-    SaveSettings: 'Save Settings'
+    SaveSettings: 'Save Settings',
+    SeeMore: 'See more'
   },
   Notify: {
     Updated: 'update successful',
