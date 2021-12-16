@@ -8,6 +8,7 @@
       <CustomFilter
         ref="customFilter"
         type="issue_board"
+        :group-by="groupBy"
         :selection-options="contextOptions"
         @apply-filter="applyCustomFilter"
       />
@@ -694,6 +695,7 @@ export default {
       return userList.filter((item) => item.login !== '-Me-')
     },
     cleanFilter() {
+      console.log('cleanFilter => cleanFilter')
       this.$emit('clean-filter')
       this.filterValue = Object.assign({}, this.originFilterValue)
       this.keyword = ''

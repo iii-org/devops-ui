@@ -57,12 +57,16 @@
               :model="formData"
               class="mb-3"
             >
-              <el-form-item :label="$t('Issue.status')">
+              <el-form-item
+                v-if="checkEditable('status')"
+                :label="$t('Issue.status')"
+              >
                 <el-select
                   v-model="formData.status_id"
                   :placeholder="$t('Issue.SelectStatus')"
                   clearable
                   filterable
+                  @clear="onClear('status_id')"
                 >
                   <el-option
                     v-for="item in statusOptions"
@@ -79,7 +83,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item
-                v-if="projectId"
+                v-if="checkEditable('tags')"
                 :label="$t('Issue.tags')"
               >
                 <el-select
@@ -89,6 +93,7 @@
                   filterable
                   collapse-tags
                   multiple
+                  @clear="onClear('tags')"
                 >
                   <el-option
                     v-for="item in selectionOptions.tags"
@@ -98,12 +103,16 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('Issue.tracker')">
+              <el-form-item
+                v-if="checkEditable('tracker')"
+                :label="$t('Issue.tracker')"
+              >
                 <el-select
                   v-model="formData.tracker_id"
                   :placeholder="$t('Issue.SelectType')"
                   clearable
                   filterable
+                  @clear="onClear('tracker_id')"
                 >
                   <el-option
                     v-for="item in trackerOptions"
@@ -120,7 +129,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item
-                v-if="formData.assigned_to_id"
+                v-if="checkEditable('assigned_to')"
                 :label="$t('Issue.assigned_to')"
               >
                 <el-select
@@ -128,6 +137,7 @@
                   :placeholder="$t('Issue.SelectMember')"
                   clearable
                   filterable
+                  @clear="onClear('assigned_to_id')"
                 >
                   <el-option
                     v-for="item in selectionOptions.assigned_to"
@@ -137,7 +147,7 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item v-if="projectId">
+              <el-form-item v-if="checkEditable('fixed_version')">
                 <div slot="label">
                   {{ $t(`Issue.fixed_version`) }}
                   <el-tag
@@ -153,6 +163,7 @@
                   :placeholder="$t('Issue.SelectVersion')"
                   clearable
                   filterable
+                  @clear="onClear('fixed_version_id')"
                 >
                   <el-option
                     v-for="item in selectionOptions.fixed_version"
@@ -162,12 +173,16 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item :label="$t('Issue.priority')">
+              <el-form-item
+                v-if="checkEditable('priority')"
+                :label="$t('Issue.priority')"
+              >
                 <el-select
                   v-model="formData.priority_id"
                   :placeholder="$t('Issue.SelectPriority')"
                   clearable
                   filterable
+                  @clear="onClear('priority_id')"
                 >
                   <el-option
                     v-for="item in priorityOptions"
@@ -183,7 +198,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item>
+              <el-form-item v-if="checkEditable('DisplayClosedIssue')">
                 <div slot="label">
                   {{ $t('Issue.DisplayClosedIssue') }}
                   <el-checkbox
@@ -229,14 +244,14 @@ import { getIssueFilter, editIssueFilter, removeIssueFilter } from '@/api/issueF
 
 const defaultFormData = () => ({
   status_id: null,
-  tags: [],
+  tags: null,
   tracker_id: null,
   assigned_to_id: null,
   fixed_version_id: null,
   priority_id: null,
   show_closed_issues: false,
   show_closed_versions: false,
-  group_by: [],
+  group_by: null,
   focus_tab: null
 })
 const keysMap = {
@@ -274,6 +289,10 @@ export default {
     activeTab: {
       type: String,
       default: 'assigned_to_id'
+    },
+    groupBy: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -297,7 +316,7 @@ export default {
     filtersByType() {
       return this.filters.filter((item) => item.type === this.type)
     },
-    myWorkProjectId() {
+    focusProjectId() {
       if (this.$route.name === 'my-works') {
         return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
       } else {
@@ -306,7 +325,7 @@ export default {
     }
   },
   watch: {
-    myWorkProjectId() {
+    focusProjectId() {
       this.fetchCustomFilter()
     }
   },
@@ -314,19 +333,22 @@ export default {
     this.fetchCustomFilter()
   },
   methods: {
-    fetchCustomFilter() {
+    async fetchCustomFilter() {
       this.isLoading = true
-      getIssueFilter(this.myWorkProjectId).then((res) => {
-        this.filters = res.data.map((item) =>
-          Object.assign({}, item, {
-            custom_filter: this.formateCustomFilter(item.custom_filter),
-            isShowForm: false,
-            isApplying: false
-          })
-        )
-      })
-      this.isLoading = false
+      return getIssueFilter(this.focusProjectId)
+        .then((res) => {
+          this.filters = res.data.map((item) =>
+            Object.assign({}, item, {
+              custom_filter: this.formateCustomFilter(item.custom_filter),
+              isShowForm: false,
+              isApplying: false
+            })
+          )
+        })
+        .catch((err) => console.error(err))
+        .then(() => (this.isLoading = false))
     },
+    // TODO refactor
     formateCustomFilter(options) {
       const result = Object.assign({}, options)
       Object.keys(options).forEach((key) => {
@@ -352,8 +374,9 @@ export default {
       this.onPopoverHide()
     },
     removeFilter(filterId) {
-      removeIssueFilter(this.myWorkProjectId, filterId).then((res) => {
+      removeIssueFilter(this.focusProjectId, filterId).then((res) => {
         this.fetchCustomFilter()
+        this.$message.success(this.$t('Notify.Deleted'))
       })
     },
     onPopoverHide() {
@@ -366,16 +389,22 @@ export default {
       const sendData = Object.assign({}, this.formData)
       sendData['name'] = name
       sendData['type'] = this.type
-      sendData['tags'] = sendData['tags'] === null ? null : sendData['tags'].join(',')
+      sendData['tags'] = this.formatSendTags(sendData['tags'])
       this.modifyCustomFilter(id, sendData)
     },
+    formatSendTags(tags) {
+      if (tags === null) return null
+      if (tags.length < 1) return null
+      else return tags.join(',')
+    },
     modifyCustomFilter(filterId, sendData) {
-      editIssueFilter(this.myWorkProjectId, filterId, sendData).then(() => {
-        this.fetchCustomFilter()
+      editIssueFilter(this.focusProjectId, filterId, sendData).then(async () => {
+        await this.fetchCustomFilter()
         this.$message({
           message: this.$t('Notify.Saved'),
           type: 'success'
         })
+        this.onFilterClick(filterId)
       })
     },
     resetApplyFilter() {
@@ -401,6 +430,27 @@ export default {
       delete result.activeTab
       delete result.groupBy
       this.$emit('apply-filter', { result, displayClosed, fixed_version_closed, activeTab, groupBy })
+    },
+    onClear(itemName) {
+      this.formData[itemName] = null
+    },
+    checkEditable(formItemName) {
+      const isMyWork = this.$route.name === 'my-works'
+      if (isMyWork) {
+        return this.checkIsMyWorkFilterDisplayRule(formItemName)
+      } else {
+        if (!this.groupBy) return true
+        const { dimension } = this.formData.group_by
+        return formItemName !== dimension
+      }
+    },
+    checkIsMyWorkFilterDisplayRule(formItemName) {
+      if (formItemName === 'fixed_version') return this.projectId
+      if (formItemName === 'assigned_to') {
+        const { focus_tab } = this.formData
+        return focus_tab === 'author_id'
+      }
+      return formItemName !== 'tags'
     }
   }
 }

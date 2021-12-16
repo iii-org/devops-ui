@@ -31,6 +31,13 @@ const keyMap = {
   show_closed_issues: 'displayClosed',
   show_closed_versions: 'fixed_version_closed'
 }
+const sendDataMap = {
+  status: 'status_id',
+  tracker: 'tracker_id',
+  assigned_to: 'assigned_to_id',
+  fixed_version: 'fixed_version_id',
+  priority: 'priority_id'
+}
 
 export default {
   name: 'SaveFilterButton',
@@ -70,7 +77,7 @@ export default {
     isIssueList() {
       return this.$route.name === 'issue-list'
     },
-    myWorkProjectId() {
+    focusProjectId() {
       if (this.$route.name === 'my-works') {
         return this.projectId ? this.projectId : -1 // -1 means all projects (dump project)
       } else {
@@ -89,7 +96,8 @@ export default {
       }
       const sendData = this.formatFilterData()
       sendData.name = this.filterName
-      addIssueFilter(this.myWorkProjectId, sendData).then(() => {
+      addIssueFilter(this.focusProjectId, sendData).then(() => {
+        this.$message.success(this.$t('Notify.Saved'))
         this.$emit('update')
         this.reset()
       })
@@ -119,7 +127,14 @@ export default {
         sendData['focus_tab'] = this.activeTab
         sendData['group_by'] = this.groupBy
       }
-      return sendData
+      const isIssueBoard = this.$route.name === 'issue-boards'
+      return isIssueBoard ? this.formateSendData(sendData) : sendData
+    },
+    formateSendData(sendData) {
+      const result = Object.assign({}, sendData)
+      const removeKey = sendDataMap[this.groupBy.dimension]
+      delete result[removeKey]
+      return result
     }
   }
 }
