@@ -39,6 +39,7 @@
     <el-popover
       placement="bottom"
       trigger="click"
+      @hide="resetSaveFilterButtons"
     >
       <el-form>
         <template v-for="condition in filterConditionGroup">
@@ -364,6 +365,9 @@ export default {
         if (result[key] === null) delete result[key]
       })
       return result
+    },
+    resetSaveFilterButtons() {
+      this.$refs.saveFilterButton.reset()
     }
   }
 }

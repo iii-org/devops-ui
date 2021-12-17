@@ -15,6 +15,7 @@
       <el-popover
         placement="bottom"
         trigger="click"
+        @hide="resetSaveFilterButtons"
       >
         <el-form v-loading="isLoading">
           <template v-for="dimension in filterOptions">
@@ -736,6 +737,9 @@ export default {
     },
     onCustomFilterAdded() {
       this.$refs.customFilter.fetchCustomFilter()
+    },
+    resetSaveFilterButtons() {
+      this.$refs.saveFilterButton.reset()
     }
   }
 }

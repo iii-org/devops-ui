@@ -38,7 +38,7 @@ export default {
     devProgress: '開發進度',
     devBranch: '開發分支',
     gitGraph: '開發線圖',
-    pipelines: 'Pipeline',
+    pipelines: 'Pipelines',
     devEnvironment: '實證環境',
     kubernetesResources: 'Kubernetes 資源',
     releaseVersion: '釋出版本',
