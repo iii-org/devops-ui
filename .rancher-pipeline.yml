@@ -99,7 +99,7 @@ stages:
       include:
       - master
       - develop
-- name: Build--Push image with git commit tag(develop tag1)
+- name: Build--Push image with git commit tag1
   iiidevops: deployed-environments
   steps:
     - env:
@@ -114,6 +114,13 @@ stages:
         pushRemote: true
         registry: harbor-dev3.iiidevops.org
         tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
+  when:
+    branch:
+      include:
+      - develop
+- name: Build--Push image with git commit tag2
+  iiidevops: deployed-environments
+  steps:
     - env:
         PLUGIN_BUILD_ARGS: --progress=tty --network=host
         PLUGIN_DEBUG: "true"
