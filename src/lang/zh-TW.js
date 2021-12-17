@@ -502,6 +502,7 @@ export default {
       },
       assigned_to_id: '@:Issue.Assignee',
       subject: '@:general.Title',
+      tag: '@:Issue.Tag',
       description: '@:Issue.Description',
       estimated_hours: '@:Issue.Estimate',
       start_date: '@:Issue.StartDate',

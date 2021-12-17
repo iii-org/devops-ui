@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-row
-      v-if="note.notes"
+      v-if="note.notes && !filterJson(note.notes)"
       :span="24"
       type="flex"
       align="bottom"
@@ -38,7 +38,7 @@
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
       <el-row
-        v-for="(detail,index) in note.details"
+        v-for="(detail,index) in filterTag"
         :key="index"
         class="el-alert el-alert--info is-light detail"
       >
@@ -189,10 +189,22 @@ export default {
       default: false
     }
   },
+  computed: {
+    filterTag() {
+      let data = this.note
+      if (data.details.length === 0 && this.filterJson(data.notes)) {
+        data = JSON.parse(data.notes).details
+      } else {
+        data = data.details
+      }
+      return data
+    }
+  },
   watch: {
     note: {
       deep: true,
       handler(value) {
+        if (this.filterJson(this.note.notes)) return
         this.$nextTick(() => {
           if (value.notes) {
             this.$refs['viewer'].invoke('setMarkdown', value.notes)
@@ -214,6 +226,15 @@ export default {
     toggleVisible(detail) {
       detail.detailVisible = !detail.detailVisible
       this.$forceUpdate()
+    },
+    filterJson(note) {
+      try {
+        if (typeof JSON.parse(note) === 'object') {
+          return true
+        }
+      } catch (e) {
+        return false
+      }
     }
   }
 }
