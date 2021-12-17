@@ -22,7 +22,7 @@
           <el-skeleton v-if="props.row.timelineLoading" v-loading="props.row.timelineLoading" />
           <el-timeline v-else>
             <el-timeline-item
-              v-for="commit in props.row.gitCommitLog"
+              v-for="(commit, commit_index) in props.row.gitCommitLog"
               :key="commit.id"
               class="pb-0 !important"
               :hide-timestamp="true"
@@ -35,49 +35,53 @@
                   <template slot="title">
                     <div class="flex justify-between text-base cursor-pointer" style="width: 95%">
                       <div>
-                        <span class="text-primary">
+                        <span
+                          class="text-primary hover-underline"
+                          @click.stop="toGitlab(gitlabCommitUrl(props.row, commit_index))"
+                        >
                           <svg-icon icon-class="ion-git-commit-outline" />
                           {{ commit.commit_id }}
                         </span>
                         <span>@ {{ commit.author_name }} -</span>
                         <span
-                          v-for="(item, index) in commit.issue_id"
-                          :key="index"
-                          class="text-success"
+                          v-for="(id, id_index) in commit.issue_id"
+                          :key="id_index"
+                          class="text-success hover-underline"
+                          @click.stop="toIssueDetail(id)"
                         >
-                          {{ item }}&nbsp;
+                          {{ id }}
                         </span>
-                        <span v-if="commit.issue_id.length > 0">{{ commit.issue_title }}</span>
-                        <span v-else>{{ commit.commit_title }}</span>
+                        <span v-if="commit.issue_id.length > 0">&nbsp;{{ commit.issue_title }}</span>
+                        <span v-else>&nbsp;{{ commit.commit_title }}</span>
                       </div>
                       <div>{{ relativeTime(commit.commit_time) }}</div>
                     </div>
                   </template>
                   <section>
                     <ul
-                      v-for="item in commit.issues"
-                      :key="item.id"
-                      @click="toIssueDetail(item.id)"
+                      v-for="issue in commit.issues"
+                      :key="issue.id"
+                      @click="toIssueDetail(issue.id)"
                     >
                       <li class="cursor-pointer">
-                        <span class="text-success">#{{ item.id }}</span>
+                        <span class="text-success">#{{ issue.id }}</span>
                         <Status
-                          v-if="item.status.name"
+                          v-if="issue.status.name"
                           class="ml-1"
                           size="mini"
-                          :name="$t(`Issue.${item.status.name}`)"
-                          :type="item.status.name"
+                          :name="$t(`Issue.${issue.status.name}`)"
+                          :type="issue.status.name"
                         />
                         <el-tag
-                          v-if="item.assigned_to"
+                          v-if="issue.assigned_to"
                           class="ml-1"
                           type="info"
                           size="mini"
                           effect="dark"
                         >
-                          {{ item.assigned_to.name }}
+                          {{ issue.assigned_to.name }}
                         </el-tag>
-                        <span class="ml-1">{{ item.name }}</span>
+                        <span class="ml-1">{{ issue.name }}</span>
                       </li>
                     </ul>
                   </section>
@@ -89,7 +93,7 @@
                 type="primary"
                 round
                 class="el-icon-bottom"
-                @click="toGitlab"
+                @click="toGitlab(gitlabActivityUrl)"
               >
                 {{ $t('general.SeeMore') }}
               </el-button>
@@ -207,12 +211,20 @@ export default {
         return splitArray.filter((item) => !item.match(regExp.pound_sign)).join(' ')
       }
     },
-    gitlabUrl() {
+    gitlabActivityUrl() {
       const splitUrl = this.selectedProject.git_url.split('/')
       splitUrl.pop()
       splitUrl.push(this.selectedProject.name)
       splitUrl.push('activity')
       return splitUrl.join('/')
+    },
+    gitlabCommitUrl() {
+      return function (row, index) {
+        const splitUrl = row.commit_url.split('/')
+        splitUrl.pop()
+        splitUrl.push(row.gitCommitLog[index].commit_id)
+        return splitUrl.join('/')
+      }
     }
   },
   watch: {
@@ -268,8 +280,8 @@ export default {
       const issueId = tag.toString().match(regExp.pound_sign) ? tag.split('#')[1] : tag
       this.$router.push({ name: 'issue-detail', params: { issueId }})
     },
-    toGitlab() {
-      window.open(this.gitlabUrl, '_blank')
+    toGitlab(url) {
+      window.open(url, '_blank')
     }
   }
 }
@@ -283,5 +295,8 @@ export default {
 }
 .cursor-pointer:hover {
   @apply bg-gray-100 text-primary font-bold;
+}
+.hover-underline:hover {
+  @apply underline font-bold;
 }
 </style>
