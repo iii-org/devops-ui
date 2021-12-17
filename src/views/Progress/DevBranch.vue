@@ -1,5 +1,5 @@
 <template>
-  <el-row class="app-container" style="overflow: hidden;">
+  <div class="app-container">
     <ProjectListSelector>
       <el-input
         v-model="keyword"
@@ -13,12 +13,14 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
+      row-key="id"
       fit
-      height="100%"
+      @expand-change="fetchGitCommitLog"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-timeline>
+          <el-skeleton v-if="props.row.timelineLoading" v-loading="props.row.timelineLoading" />
+          <el-timeline v-else>
             <el-timeline-item
               v-for="commit in props.row.gitCommitLog"
               :key="commit.id"
@@ -66,7 +68,13 @@
                           :name="$t(`Issue.${item.status.name}`)"
                           :type="item.status.name"
                         />
-                        <el-tag v-if="item.assigned_to" class="ml-1" type="info" size="mini" effect="dark">
+                        <el-tag
+                          v-if="item.assigned_to"
+                          class="ml-1"
+                          type="info"
+                          size="mini"
+                          effect="dark"
+                        >
                           {{ item.assigned_to.name }}
                         </el-tag>
                         <span class="ml-1">{{ item.name }}</span>
@@ -80,7 +88,6 @@
               <el-button
                 type="primary"
                 round
-                style="position: relative; bottom: 15px;"
                 class="el-icon-bottom"
                 @click="toGitlab"
               >
@@ -132,12 +139,13 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-  </el-row>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
+import ProjectListSelector from '@/components/ProjectListSelector'
+import { Table, BasicData, Pagination, SearchBar } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { UTCtoLocalTime } from '@/filters'
 import { getGitCommitLog } from '@/api/dashboard'
@@ -145,13 +153,16 @@ import { getIssue } from '@/api/issue'
 import { Status } from '@/components/Issue'
 
 const commitLimit = 10
-const reg_pound_sign = RegExp(/#/)
-const reg_english_alphabets = RegExp(/[a-zA-Z]/)
+const regExp = {
+  pound_sign: RegExp(/#/),
+  english_alphabets: RegExp(/[a-zA-Z]/),
+  chinese_words: RegExp(/[\u4E00-\u9FFF]/)
+}
 
 export default {
   name: 'ProgressDevBranch',
-  components: { ElTableColumnTime, Status },
-  mixins: [MixinElTableWithAProject],
+  components: { ProjectListSelector, ElTableColumnTime, Status },
+  mixins: [Table, BasicData, Pagination, SearchBar],
   data() {
     return {
       gitCommitLog: []
@@ -186,7 +197,9 @@ export default {
         const splitArray = title.split(' ')
         const issue_id = []
         splitArray.forEach(item => {
-          if (item.match(reg_pound_sign) && !item.match(reg_english_alphabets)) {
+          if (item.match(regExp.pound_sign) &&
+            !item.match(regExp.english_alphabets) &&
+            !item.match(regExp.chinese_words)) {
             issue_id.push(item)
           }
         })
@@ -196,8 +209,15 @@ export default {
     getIssueTitle() {
       return function (title) {
         const splitArray = title.split(' ')
-        return splitArray.filter(item => !item.match(reg_pound_sign)).join(' ')
+        return splitArray.filter(item => !item.match(regExp.pound_sign)).join(' ')
       }
+    },
+    gitlabUrl() {
+      const splitUrl = this.selectedProject.git_url.split('/')
+      splitUrl.pop()
+      splitUrl.push(this.selectedProject.name)
+      splitUrl.push('activity')
+      return splitUrl.join('/')
     }
   },
   watch: {
@@ -208,22 +228,30 @@ export default {
   methods: {
     ...mapActions('branches', ['getBranchesByProject']),
     async fetchData() {
-      this.listLoading = true
       await this.getBranchesByProject(this.selectedRepositoryId)
-      this.gitCommitLog = await this.getGitCommitLogData()
-      if (this.gitCommitLog.length === 0) return this.branchList
-      const master_index = this.branchList.findIndex(item => item.name === 'master')
-      this.branchList[master_index].gitCommitLog = this.gitCommitLog
       return this.branchList
     },
-    async getGitCommitLogData() {
-      const params = { show_commit_rows: commitLimit, git_repository_id: this.selectedRepositoryId }
+    async fetchGitCommitLog(row) {
+      if (row.gitCommitLog) return
+      this.$set(row, 'timelineLoading', true)
+      this.gitCommitLog = await this.getGitCommitLogData(row.name)
+      this.listData.forEach((item) => {
+        if (item.id === row.id) item.gitCommitLog = this.gitCommitLog
+      })
+      this.$set(row, 'timelineLoading', false)
+    },
+    async getGitCommitLogData(branch_name) {
+      const params = {
+        show_commit_rows: commitLimit,
+        git_repository_id: this.selectedRepositoryId,
+        branch_name
+      }
       const res = await getGitCommitLog(params)
-      res.data.forEach(async (item, index) => {
+      await res.data.forEach(async (item, index) => {
+        item['id'] = index
         item['issue_id'] = this.getIssueId(item['commit_title'])
         item['issue_title'] = this.getIssueTitle(item['commit_title'])
         item['issues'] = await this.getIssues(item['issue_id'])
-        item['id'] = index
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
       })
       return res.data
@@ -236,23 +264,17 @@ export default {
         const res = await getIssue(issueId)
         issueData.push(res.data)
       })
-      this.listLoading = false
       return issueData
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
     toIssueDetail(tag) {
-      const issueId = tag.toString().match(reg_pound_sign) ? tag.split('#')[1] : tag
+      const issueId = tag.toString().match(regExp.pound_sign) ? tag.split('#')[1] : tag
       this.$router.push({ name: 'issue-detail', params: { issueId }})
     },
     toGitlab() {
-      const splitUrl = this.selectedProject.git_url.split('/')
-      splitUrl.pop()
-      splitUrl.push(this.selectedProject.name)
-      splitUrl.push('activity')
-      const gitlabUrl = splitUrl.join('/')
-      window.open(gitlabUrl, '_blank')
+      window.open(this.gitlabUrl, '_blank')
     }
   }
 }
