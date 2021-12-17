@@ -99,7 +99,7 @@ stages:
       include:
       - master
       - develop
-- name: Build--Push image ${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
+- name: Build--Push image repo_name:branch
   iiidevops: deployed-environments
   steps:
     - env:
@@ -110,15 +110,16 @@ stages:
         PLUGIN_MTU: "1000"
       publishImageConfig:
         buildContext: .
-        dockerfilePath: ./Dockerfile.develop.dev3
+        dockerfilePath: ./Dockerfile.${CICD_GIT_BRANCH}.dev3
         pushRemote: true
         registry: harbor-dev3.iiidevops.org
         tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
   when:
     branch:
       include:
+      - master
       - develop
-- name: Build--Push image ${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
+- name: Build--Push image branch:commit_id
   iiidevops: deployed-environments
   steps:
     - env:
@@ -129,13 +130,14 @@ stages:
         PLUGIN_MTU: "1000"
       publishImageConfig:
         buildContext: .
-        dockerfilePath: ./Dockerfile.develop.dev3
+        dockerfilePath: ./Dockerfile.${CICD_GIT_BRANCH}.dev3
         pushRemote: true
         registry: harbor-dev3.iiidevops.org
         tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
   when:
     branch:
       include:
+      - master
       - develop
 - name: Deploy--Web
   iiidevops: deployed-environments
@@ -182,6 +184,7 @@ stages:
     branch:
       include:
       - master
+      - develop
 - name: Test--ZAP
   iiidevops: zap
   steps:
