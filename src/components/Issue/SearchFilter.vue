@@ -66,17 +66,8 @@
         ref="saveFilterButton"
         type="issue_list"
         :filter-value="filterValueClone"
-        :show-button="showSaveFilterButton"
         @update="onCustomFilterAdded"
       />
-      <el-button
-        v-if="showSaveSettingsButton"
-        style="width:100%"
-        type="primary"
-        @click="onSaveClick"
-      >
-        {{ $t('general.SaveSettings') }}
-      </el-button>
       <el-button
         slot="reference"
         icon="el-icon-s-operation"
@@ -157,8 +148,7 @@ export default {
       keyword: null,
       searchVisible: false,
       fixed_version_closed: false,
-      displayClosed: false,
-      showSaveFilterButton: false
+      displayClosed: false
     }
   },
   computed: {
@@ -199,11 +189,6 @@ export default {
         if (value) label = this.getSelectedLabel(value)
         return label
       }
-    },
-    showSaveSettingsButton() {
-      const whiteList = ['issue-list']
-      const inWhiteList = whiteList.includes(this.$route.name)
-      return inWhiteList && !this.showSaveFilterButton
     },
     filterValueClone() {
       return Object.assign({}, this.filterValue, {
@@ -276,15 +261,10 @@ export default {
       return key === 'filterValue' ? 'originFilterValue' : 'filterValue'
     },
     onCustomFilterAdded() {
-      this.resetSaveFilterButtons()
       this.$emit('add-custom-filter')
     },
-    onSaveClick() {
-      this.showSaveFilterButton = true
-    },
     resetSaveFilterButtons() {
-      this.showSaveFilterButton = false
-      // this.$refs.saveFilterButton.reset()
+      this.$refs.saveFilterButton.reset()
     }
   }
 }

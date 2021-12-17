@@ -1,19 +1,29 @@
 <template>
-  <div
-    v-show="showButton"
-    class="flex"
-  >
-    <el-input
-      v-model="filterName"
-      class="mr-2"
-      :placeholder="$t('Issue.InputFilterName')"
-    />
+  <div>
     <el-button
-      type="success"
-      @click="setCustomFilter"
+      v-if="showSaveSettingsButton"
+      style="width:100%"
+      type="primary"
+      @click="showSaveSettingsButton = !showSaveSettingsButton"
     >
-      {{ $t('general.Save') }}
+      {{ $t('general.SaveSettings') }}
     </el-button>
+    <div
+      v-else
+      class="flex"
+    >
+      <el-input
+        v-model="filterName"
+        class="mr-2"
+        :placeholder="$t('Issue.InputFilterName')"
+      />
+      <el-button
+        type="success"
+        @click="setCustomFilter"
+      >
+        {{ $t('general.Save') }}
+      </el-button>
+    </div>
   </div>
 </template>
 
@@ -42,10 +52,6 @@ const sendDataMap = {
 export default {
   name: 'SaveFilterButton',
   props: {
-    showButton: {
-      type: Boolean,
-      default: false
-    },
     filterValue: {
       type: Object,
       default: () => ({})
@@ -69,7 +75,8 @@ export default {
   },
   data() {
     return {
-      filterName: ''
+      filterName: '',
+      showSaveSettingsButton: true
     }
   },
   computed: {
@@ -88,6 +95,7 @@ export default {
   methods: {
     reset() {
       this.filterName = ''
+      this.showSaveSettingsButton = true
     },
     setCustomFilter() {
       if (!this.filterName) {

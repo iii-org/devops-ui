@@ -97,18 +97,9 @@
         type="my_work"
         :project-id="projectId"
         :filter-value="filterValueClone"
-        :show-button="showSaveFilterButton"
         :active-tab="activeTab"
         @update="onCustomFilterAdded"
       />
-      <el-button
-        v-if="!showSaveFilterButton"
-        style="width:100%"
-        type="primary"
-        @click="onSaveClick"
-      >
-        {{ $t('general.SaveSettings') }}
-      </el-button>
 
       <el-button
         slot="reference"
@@ -240,8 +231,7 @@ export default {
           options: []
         }
       ],
-      searchVisible: false,
-      showSaveFilterButton: false
+      searchVisible: false
     }
   },
   computed: {
@@ -359,12 +349,8 @@ export default {
       const showAllOptions = value !== 'status' || this.displayClosedIssue
       return showAllOptions ? options : options.filter((option) => option.id !== 6)
     },
-    onSaveClick() {
-      this.showSaveFilterButton = !this.showSaveFilterButton
-    },
     onCustomFilterAdded() {
       this.$refs.customFilter.fetchCustomFilter()
-      this.showSaveFilterButton = false
     },
     applyCustomFilter(filters) {
       const { result, displayClosed, fixed_version_closed, activeTab } = filters

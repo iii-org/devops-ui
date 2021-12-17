@@ -70,22 +70,15 @@
             />
           </el-form-item>
         </el-form>
+
         <SaveFilterButton
           ref="saveFilterButton"
           type="issue_board"
           :filter-value="filterValueClone"
-          :show-button="showSaveFilterButton"
           :group-by="groupBy"
           @update="onCustomFilterAdded"
         />
-        <el-button
-          v-if="!showSaveFilterButton"
-          style="width:100%"
-          type="primary"
-          @click="onSaveClick"
-        >
-          {{ $t('general.SaveSettings') }}
-        </el-button>
+
         <el-button
           slot="reference"
           :loading="isLoading"
@@ -287,8 +280,7 @@ export default {
       tags: [],
       relativeIssueList: [],
       searchVisible: false,
-      keyword: null,
-      showSaveFilterButton: false
+      keyword: null
     }
   },
   computed: {
@@ -742,12 +734,8 @@ export default {
       this.setGroupBy(groupBy)
       this.onChangeFilter()
     },
-    onSaveClick() {
-      this.showSaveFilterButton = !this.showSaveFilterButton
-    },
     onCustomFilterAdded() {
       this.$refs.customFilter.fetchCustomFilter()
-      this.showSaveFilterButton = false
     }
   }
 }
