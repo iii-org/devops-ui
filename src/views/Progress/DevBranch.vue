@@ -170,11 +170,6 @@ export default {
   },
   computed: {
     ...mapGetters(['branchesByProject']),
-    UTCtoLocalTime() {
-      return function (value) {
-        return UTCtoLocalTime(value)
-      }
-    },
     relativeTime() {
       return function (dateTime) {
         return dateTime
