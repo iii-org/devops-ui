@@ -114,13 +114,6 @@ stages:
         pushRemote: true
         registry: harbor-dev3.iiidevops.org
         tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_BRANCH}
-    when:
-      branch:
-        include:
-          - develop
-- name: Build--Push image with git commit tag(develop tag2)
-  iiidevops: deployed-environments
-  steps:
     - env:
         PLUGIN_BUILD_ARGS: --progress=tty --network=host
         PLUGIN_DEBUG: "true"
@@ -133,10 +126,10 @@ stages:
         pushRemote: true
         registry: harbor-dev3.iiidevops.org
         tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_COMMIT}
-    when:
-      branch:
-        include:
-          - develop
+  when:
+    branch:
+      include:
+      - develop
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
