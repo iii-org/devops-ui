@@ -182,7 +182,7 @@ export default {
     },
     getOpenedItem() {
       return function (commit) {
-        return commit.map(item => {
+        return commit.map((item) => {
           if (item.issues) return item.id
         })
       }
@@ -191,7 +191,7 @@ export default {
       return function (title) {
         const splitArray = title.split(' ')
         const issue_id = []
-        splitArray.forEach(item => {
+        splitArray.forEach((item) => {
           if (item.match(regExp.pound_sign) &&
             !item.match(regExp.english_alphabets) &&
             !item.match(regExp.chinese_words)) {
@@ -204,7 +204,7 @@ export default {
     getIssueTitle() {
       return function (title) {
         const splitArray = title.split(' ')
-        return splitArray.filter(item => !item.match(regExp.pound_sign)).join(' ')
+        return splitArray.filter((item) => !item.match(regExp.pound_sign)).join(' ')
       }
     },
     gitlabUrl() {
@@ -229,13 +229,13 @@ export default {
     async fetchGitCommitLog(row) {
       if (row.gitCommitLog) return
       this.$set(row, 'timelineLoading', true)
-      this.gitCommitLog = await this.getGitCommitLogData(row.name)
+      this.gitCommitLog = await this.getGitCommitLog(row.name)
       this.listData.forEach((item) => {
         if (item.id === row.id) item.gitCommitLog = this.gitCommitLog
       })
       this.$set(row, 'timelineLoading', false)
     },
-    async getGitCommitLogData(branch_name) {
+    async getGitCommitLog(branch_name) {
       const params = {
         show_commit_rows: commitLimit,
         git_repository_id: this.selectedRepositoryId,
@@ -246,15 +246,15 @@ export default {
         item['id'] = index
         item['issue_id'] = this.getIssueId(item['commit_title'])
         item['issue_title'] = this.getIssueTitle(item['commit_title'])
-        item['issues'] = await this.getIssues(item['issue_id'])
+        item['issues'] = await this.getIssue(item['issue_id'])
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
       })
       return res.data
     },
-    async getIssues(ids) {
+    async getIssue(ids) {
       if (!ids[0]) return
       const issueData = []
-      await ids.forEach(async id => {
+      await ids.forEach(async (id) => {
         const issueId = id.split('#')[1]
         const res = await getIssue(issueId)
         issueData.push(res.data)
