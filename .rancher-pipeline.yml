@@ -99,7 +99,7 @@ stages:
       include:
       - master
       - develop
-- name: Build--Push image with git commit tag1
+- name: Build--Push image ${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
   iiidevops: deployed-environments
   steps:
     - env:
@@ -118,7 +118,7 @@ stages:
     branch:
       include:
       - develop
-- name: Build--Push image with git commit tag2
+- name: Build--Push image ${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
   iiidevops: deployed-environments
   steps:
     - env:
