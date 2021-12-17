@@ -17,7 +17,7 @@
         >
           <el-card class="timeline-item-card">
             <h4>{{ commit.commit_title }}</h4>
-            <p v-if="commit.commit_message!==commit.commit_title">{{ commit.commit_message }}</p>
+            <p v-if="commit.commit_message.trim()!==commit.commit_title">{{ commit.commit_message }}</p>
             <p class="author">{{ commit.author_name }} @ {{ commit.pj_name }}</p>
           </el-card>
         </el-timeline-item>
