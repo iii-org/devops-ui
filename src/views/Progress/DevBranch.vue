@@ -263,7 +263,7 @@ export default {
       const { expandedRow, collapseActiveValue } = storedData
       const rowIndex = this.branchList.findIndex((list) => list.id === expandedRow)
       const row = this.branchList[rowIndex]
-      if (!rowIndex || !row) return
+      if (rowIndex === undefined || row === undefined) return
       this.onExpandChange(row, [row])
       this.collapseActiveValue = collapseActiveValue
     },
