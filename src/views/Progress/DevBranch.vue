@@ -10,12 +10,13 @@
     </ProjectListSelector>
     <el-divider />
     <el-table
+      ref="table"
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
       row-key="id"
       fit
-      @expand-change="fetchGitCommitLog"
+      @expand-change="onExpandChange"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -28,6 +29,7 @@
               :hide-timestamp="true"
             >
               <el-collapse
+                v-model="collapseActiveValue"
                 class="w-3/5"
                 :class="commit.issues ? 'hasArrow' : 'noArrow'"
               >
@@ -63,7 +65,7 @@
                       :key="issue.id"
                       @click="toIssueDetail(issue.id)"
                     >
-                      <li class="cursor-pointer">
+                      <li v-show="issue" class="cursor-pointer">
                         <span class="text-success">#{{ issue.id }}</span>
                         <Status
                           v-if="issue.status.name"
@@ -169,7 +171,9 @@ export default {
   mixins: [Table, BasicData, Pagination, SearchBar],
   data() {
     return {
-      gitCommitLog: []
+      gitCommitLog: [],
+      collapseActiveValue: [],
+      expandedRow: ''
     }
   },
   computed: {
@@ -225,21 +229,69 @@ export default {
         splitUrl.push(row.gitCommitLog[index].commit_id)
         return splitUrl.join('/')
       }
+    },
+    tableExpand() {
+      return {
+        expandedRow: this.expandedRow,
+        collapseActiveValue: this.collapseActiveValue
+      }
     }
   },
   watch: {
+    selectedProject: {
+      handler(val) {
+        this.initTableExpand()
+      },
+      deep: true
+    },
     branchesByProject(ary) {
       this.branchList = ary
+      this.getStoredData()
+    },
+    tableExpand: {
+      handler(val) {
+        this.setTableExpand(val)
+      },
+      deep: true
     }
   },
   methods: {
     ...mapActions('branches', ['getBranchesByProject']),
+    ...mapActions('projects', ['getTableExpand', 'setTableExpand']),
+    async getStoredData() {
+      const storedData = await this.getTableExpand()
+      const { expandedRow, collapseActiveValue } = storedData
+      const rowIndex = this.branchList.findIndex((list) => list.id === expandedRow)
+      const row = this.branchList[rowIndex]
+      if (!rowIndex || !row) return
+      this.onExpandChange(row, [row])
+      this.collapseActiveValue = collapseActiveValue
+    },
     async fetchData() {
       await this.getBranchesByProject(this.selectedRepositoryId)
       return this.branchList
     },
+    async onExpandChange(row, expandedRows) {
+      this.handleExpanded(row, expandedRows)
+      if (row.gitCommitLog || row.timelineLoading) return
+      await this.fetchGitCommitLog(row)
+    },
+    handleExpanded(row, expandedRows) {
+      this.collapseActiveValue = []
+      if (expandedRows.length === 0) {
+        this.expandedRow = ''
+        return
+      }
+      this.expandedRow = row.id
+      expandedRows.forEach((expandRow) => {
+        this.$refs.table.toggleRowExpansion(expandRow, row.id === expandRow.id)
+      })
+    },
+    initTableExpand() {
+      this.expandedRow = ''
+      this.collapseActiveValue = []
+    },
     async fetchGitCommitLog(row) {
-      if (row.gitCommitLog) return
       this.$set(row, 'timelineLoading', true)
       this.gitCommitLog = await this.getGitCommitLog(row.name)
       this.listData.forEach((item) => {

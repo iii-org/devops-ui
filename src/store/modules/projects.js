@@ -27,6 +27,7 @@ const getDefaultState = () => {
       dimension: 'status',
       value: []
     },
+    tableExpand: JSON.parse(sessionStorage.getItem('tableExpand')) || {},
     listQuery: {},
     issueListPageInfo: {},
     fixedVersionShowClosed: false
@@ -64,6 +65,9 @@ const mutations = {
   },
   SET_GROUP_BY: (state, value) => {
     state.groupBy = value
+  },
+  SET_TABLE_EXPAND: (state, value) => {
+    state.tableExpand = value
   },
   SET_LIST_QUERY: (state, value) => {
     state.listQuery = value
@@ -249,6 +253,18 @@ const actions = {
   setFixedVersionShowClosed({ commit }, value) {
     sessionStorage.setItem('fixed_version_show_closed', JSON.stringify(value))
     commit('SET_FIXED_VERSION_SHOW_CLOSED', value)
+  },
+  getTableExpand({commit, state}) {
+    const getSessionValue = sessionStorage.getItem('tableExpand')
+    if (getSessionValue) {
+      commit('SET_TABLE_EXPAND', JSON.parse(getSessionValue))
+      return JSON.parse(getSessionValue)
+    }
+    return state.tableExpand
+  },
+  setTableExpand({commit}, value) {
+    sessionStorage.setItem('tableExpand', JSON.stringify(value))
+    commit('SET_TABLE_EXPAND', value)
   }
 }
 

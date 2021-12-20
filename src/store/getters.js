@@ -33,6 +33,7 @@ const getters = {
   test_filename: state => state.qa.test_filename,
   hasSystemUpdate: state => state.settings.hasSystemUpdate,
   updateVersionName: state => state.settings.updateVersionName,
-  serverStatus: state => state.monitoring.serverStatus
+  serverStatus: state => state.monitoring.serverStatus,
+  tableExpand: state => state.project.tableExpand
 }
 export default getters
