@@ -17,11 +17,11 @@
         >
           <el-card class="timeline-item-card">
             <h4>{{ commit.commit_title }}</h4>
-            <p v-if="commit.commit_message.trim()!==commit.commit_title">{{ commit.commit_message }}</p>
+            <p v-if="compareCommitContent(commit)">{{ commit.commit_message }}</p>
             <p class="author">
               <template v-if="commitLink">
                 <a :href="commit.web_url" class="link" target="_blank">
-                  <em class="ri-git-commit-line" />{{ commit.commit_id.slice(0,8) }}
+                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
                 </a> : 
               </template>
               {{ commit.author_name }} @ {{ commit.pj_name }}
@@ -58,6 +58,18 @@ export default {
       listData: [],
       detailDialog: false,
       listLoading: false
+    }
+  },
+  computed: {
+    compareCommitContent() {
+      return function (commit) {
+        return commit.commit_message.trim() !== commit.commit_title
+      }
+    },
+    firstEightCommitId() {
+      return function (commit) {
+        return commit.slice(0, 8)
+      }
     }
   },
   mounted() {
