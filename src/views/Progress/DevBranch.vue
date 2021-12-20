@@ -283,8 +283,8 @@ export default {
         return
       }
       this.expandedRow = row.id
-      expandedRows.forEach((expandRow) => {
-        this.$refs.table.toggleRowExpansion(expandRow, row.id === expandRow.id)
+      expandedRows.forEach((expandedRow) => {
+        this.$refs.table.toggleRowExpansion(expandedRow, row.id === expandedRow.id)
       })
     },
     initTableExpand() {
