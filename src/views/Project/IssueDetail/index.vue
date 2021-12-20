@@ -170,8 +170,9 @@
                   </template>
                   <admin-commit-log
                     ref="adminCommitLog"
-                    :height="dialogHeight"
                     :data="getGitCommitLogData"
+                    :commit-link="true"
+                    :height="dialogHeight"
                   />
                 </el-tab-pane>
               </el-tabs>

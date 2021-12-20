@@ -18,7 +18,14 @@
           <el-card class="timeline-item-card">
             <h4>{{ commit.commit_title }}</h4>
             <p v-if="commit.commit_message.trim()!==commit.commit_title">{{ commit.commit_message }}</p>
-            <p class="author">{{ commit.author_name }} @ {{ commit.pj_name }}</p>
+            <p class="author">
+              <template v-if="commitLink">
+                <a :href="commit.web_url" class="link" target="_blank">
+                  <em class="ri-git-commit-line" />{{ commit.commit_id.slice(0,8) }}
+                </a> : 
+              </template>
+              {{ commit.author_name }} @ {{ commit.pj_name }}
+            </p>
           </el-card>
         </el-timeline-item>
       </transition-group>
@@ -36,6 +43,10 @@ export default {
     data: {
       type: Function,
       default: () => []
+    },
+    commitLink: {
+      type: Boolean,
+      default: false
     },
     height: {
       type: String,
@@ -75,6 +86,13 @@ export default {
 
   .author {
     margin-bottom: 0;
+  }
+
+  .link {
+    color: blue;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
