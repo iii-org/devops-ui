@@ -162,7 +162,8 @@ const commitLimit = 10
 const regExp = {
   pound_sign: RegExp(/#/),
   english_alphabets: RegExp(/[a-zA-Z]/),
-  chinese_words: RegExp(/[\u4E00-\u9FFF]/)
+  chinese_words: RegExp(/[\u4E00-\u9FFF]/),
+  brackets: RegExp(/\([^\)]+\)/g)
 }
 
 export default {
@@ -200,13 +201,22 @@ export default {
         const splitArray = title.split(' ')
         const issue_id = []
         splitArray.forEach((item) => {
-          if (item.match(regExp.pound_sign) &&
-            !item.match(regExp.english_alphabets) &&
-            !item.match(regExp.chinese_words)) {
+          if (this.checkRegExp(item)) {
+            if (item.match(regExp.brackets)) {
+              item = item.match(regExp.brackets)[0]
+              item = item.substring(1, item.length - 1)
+            }
             issue_id.push(item)
           }
         })
         return issue_id
+      }
+    },
+    checkRegExp() {
+      return function (item) {
+        return item.match(regExp.pound_sign) &&
+          !item.match(regExp.english_alphabets) &&
+          !item.match(regExp.chinese_words)
       }
     },
     getIssueTitle() {
@@ -272,7 +282,7 @@ export default {
       return this.branchList
     },
     async onExpandChange(row, expandedRows) {
-      this.handleExpanded(row, expandedRows)
+      // this.handleExpanded(row, expandedRows)
       if (row.gitCommitLog || row.timelineLoading) return
       await this.fetchGitCommitLog(row)
     },
