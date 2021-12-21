@@ -25,7 +25,7 @@
       </template>
       <no-data v-else />
     </el-row>
-    <div class="table hidden-md-and-up">
+    <div class="hidden-md-and-up">
       <el-row
         v-for="(item,idx) in listData"
         :key="idx"
