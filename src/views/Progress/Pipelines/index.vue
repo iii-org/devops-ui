@@ -286,6 +286,7 @@ export default {
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
           return result
         })
+        triggerReport(this.selectedProject, this.listData[0].commit_id)
       } else {
         this.listData = []
       }
@@ -341,7 +342,6 @@ export default {
     handleToTestReport(row) {
       const commitId = row.commit_id
       const commitBranch = row.commit_branch
-      triggerReport(this.selectedProject, commitId)
       this.$router.push({ name: 'TestReport', params: { commitId, commitBranch }})
     }
   }
