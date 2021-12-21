@@ -294,7 +294,7 @@ export default {
       this.isUpdating = true
       const res = await getServices({ project_id: this.selectedProjectId }, { cancelToken: this.cancelToken })
       this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
-      const listData = res.data.applications.map(item => item[0])
+      const listData = res.data.applications
       this.setTimer()
       this.isUpdating = false
       this.listLoading = false
