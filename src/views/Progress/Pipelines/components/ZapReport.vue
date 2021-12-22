@@ -10,6 +10,7 @@
       ref="table_zap"
       v-loading="listLoading"
       :element-loading-text="$t('Loading')"
+      class="mb-10"
       :data="zap"
       border
       fit

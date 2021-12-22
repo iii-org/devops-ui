@@ -2,7 +2,13 @@
   <div class="app-container">
     <div class="mr-3 flex justify-between">
       <div>
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+        <el-button
+          type="text"
+          size="medium"
+          icon="el-icon-arrow-left"
+          class="previous"
+          @click="handleBackPage"
+        >
           {{ $t('general.Back') }}
         </el-button>
         <span class="ml-2 text-xl">
@@ -10,13 +16,28 @@
         </span>
       </div>
       <div>
-        <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="downloadPdf">
+        <el-button
+          v-show="!listLoading"
+          type="text"
+          icon="el-icon-download"
+          @click="downloadPdf"
+        >
           {{ $t('TestReport.DownloadPdf') }}
         </el-button>
-        <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="getSheet('excel')">
+        <el-button
+          v-show="!listLoading"
+          type="text"
+          icon="el-icon-download"
+          @click="getSheet('excel')"
+        >
           {{ $t('TestReport.DownloadExcel') }}
         </el-button>
-        <el-button v-show="!listLoading" type="text" icon="el-icon-download" @click="getSheet('csv')">
+        <el-button
+          v-show="!listLoading"
+          type="text"
+          icon="el-icon-download"
+          @click="getSheet('csv')"
+        >
           {{ $t('TestReport.DownloadCsv') }}
         </el-button>
       </div>
@@ -29,7 +50,12 @@
         </div>
         <div
           class="text-center font-bold clearfix"
-          style="line-height: 7px; color: #429470; font-size: 36px; text-shadow: #b3b1b1 0.05em 0.05em 0.1em;"
+          style="
+            line-height: 7px;
+            color: #429470;
+            font-size: 36px;
+            text-shadow: #b3b1b1 0.05em 0.05em 0.1em;
+          "
         >{{ $t('route.testReport') }}</div>
         <div style="padding: 40px;">
           <ul class="text-base mb-10 font-semibold">
@@ -74,6 +100,15 @@
               :list-loading="listLoading"
             />
           </div>
+          <!-- app script test -->
+          <div v-show="cmas">
+            <el-divider content-position="center">{{ $t('TestReport.AppScriptTesting') }}</el-divider>
+            <CmasReport
+              ref="cmas"
+              :cmas="cmas"
+              :list-loading="listLoading"
+            />
+          </div>
           <!-- api script test -->
           <div v-show="postman">
             <el-divider content-position="center">{{ $t('TestReport.ApiScriptTesting') }}</el-divider>
@@ -109,13 +144,30 @@ import ZapReport from '@/views/Progress/Pipelines/components/ZapReport'
 import WebInspectReport from '@/views/Progress/Pipelines/components/WebInspectReport'
 import PostmanReport from '@/views/Progress/Pipelines/components/PostmanReport'
 import SideexReport from '@/views/Progress/Pipelines/components/SideexReport'
+import CmasReport from '@/views/Progress/Pipelines/components/CmasReport'
 
 const downloadFileName = 'DevOps_test_report'
-const dataName = ['sonarqube', 'checkmarx', 'zap', 'webinspect', 'postman', 'sideex']
+const dataName = [
+  'sonarqube',
+  'checkmarx',
+  'zap',
+  'webinspect',
+  'cmas',
+  'postman',
+  'sideex'
+]
 
 export default {
   name: 'TestReport',
-  components: { SonarQubeReport, CheckMarxReport, ZapReport, WebInspectReport, PostmanReport, SideexReport },
+  components: {
+    SonarQubeReport,
+    CheckMarxReport,
+    ZapReport,
+    WebInspectReport,
+    CmasReport,
+    PostmanReport,
+    SideexReport
+  },
   data() {
     return {
       title: 'III DevOps',
@@ -124,6 +176,7 @@ export default {
       checkmarx: [],
       zap: [],
       webinspect: [],
+      cmas: [],
       postman: [],
       sideex: [],
       sonarQubeLink: '',
