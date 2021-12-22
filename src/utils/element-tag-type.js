@@ -71,6 +71,12 @@ export const zap = {
   default: 'slow'
 }
 
+export const cmas = {
+  SUCCESS: 'success',
+  RUNNING: 'slow',
+  NOT_FOUND: 'danger'
+}
+
 export const systemRegistry = {
   Active: 'success',
   Removing: 'warning'

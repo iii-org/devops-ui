@@ -53,6 +53,7 @@ export default {
     webInspectReport: '@:general.Report',
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
+    cmas: 'CMAS',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -338,6 +339,12 @@ export default {
     TestReport: 'Test Report',
     DownloadReport: 'Download Report',
     SearchCommitId: 'Search Commit ID'
+  },
+  Cmas: {
+    SUCCESS: 'Success',
+    RUNNING: 'Scanning',
+    NOT_FOUND: 'Fail',
+    MOEA: 'Mobile APP Assurance Specification'
   },
   TestValue: {
     TestValue: 'Test Value',
@@ -1018,6 +1025,7 @@ export default {
     Commit: 'Commit',
     WhiteBoxTesting: 'White-box Testing(Source Code Scanning)',
     BlackBoxTesting: 'Black-box Testing(Weakness Scanning)',
+    AppScriptTesting: 'APP Script Testing',
     ApiScriptTesting: 'API Script Testing',
     WebScriptTesting: 'Web Script Testing',
     DetailReport: 'Detail Report',

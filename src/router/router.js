@@ -786,6 +786,12 @@ export const asyncRoutes = [
         meta: { title: 'zap', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
       },
       {
+        path: 'cmas',
+        name: 'cmas',
+        component: () => import('@/views/Scan/Cmas'),
+        meta: { title: 'cmas', roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
+      },
+      {
         path: 'webinspect',
         name: 'webinspect',
         component: parentBlank,

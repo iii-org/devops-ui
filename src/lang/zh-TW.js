@@ -53,6 +53,7 @@ export default {
     webInspectReport: '@:general.Report',
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
+    cmas: 'APP檢測(CMAS)',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes',
@@ -319,6 +320,12 @@ export default {
     Canceled: '已取消',
     Failed: '掃描失敗',
     InProcess: '產生中'
+  },
+  Cmas: {
+    SUCCESS: '掃描完成',
+    RUNNING: '掃描中',
+    NOT_FOUND: '掃描失敗',
+    MOEA: '行動應用APP基本資安規範'
   },
   WebInspect: {
     ScanId: '測試編號',
@@ -1011,6 +1018,7 @@ export default {
     Commit: '提交碼',
     WhiteBoxTesting: '白箱測試(原始碼掃描)',
     BlackBoxTesting: '黑箱測試(弱點掃描)',
+    AppScriptTesting: 'APP測試',
     ApiScriptTesting: 'API腳本測試',
     WebScriptTesting: '網頁腳本測試',
     DetailReport: '詳細報告',
