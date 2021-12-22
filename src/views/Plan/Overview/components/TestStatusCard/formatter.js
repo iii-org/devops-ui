@@ -155,11 +155,29 @@ const zapFormatter = (testResult) => {
   return ret
 }
 const cmasFormatter = (testResult) => {
+  console.log(testResult)
   const ret = {}
-  Object.assign(ret, {
-    Software: 'CMAS',
-    informationText: []
-  })
+  if (Object.keys(testResult).length === 0) {
+    Object.assign(ret, {
+      Software: 'cmas',
+      informationText: []
+    })
+  } else {
+    const { MOEA, OWASP } = testResult
+    Object.assign(ret, {
+      Software: 'cmas',
+      informationText: [
+        { status: 'MOEA', count: MOEA['summary'] },
+        { status: 'L3', count: MOEA['High'] },
+        { status: 'L2', count: MOEA['Medium'] },
+        { status: 'L1', count: MOEA['Low'] },
+        { status: 'OWASP', count: OWASP['summary'] },
+        { status: 'High', count: OWASP['High'] },
+        { status: 'Medium', count: OWASP['Medium'] },
+        { status: 'Low', count: OWASP['Low'] }
+      ]
+    })
+  }
   return ret
 }
 export {
