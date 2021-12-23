@@ -163,18 +163,19 @@ const cmasFormatter = (testResult) => {
       informationText: []
     })
   } else {
-    const { MOEA, OWASP } = testResult
+    const { MOEA, OWASP, run_at } = testResult
     Object.assign(ret, {
       Software: 'cmas',
+      runAt: run_at,
       informationText: [
         { status: 'MOEA', count: MOEA['summary'] },
         { status: 'L3', count: MOEA['High'] },
         { status: 'L2', count: MOEA['Medium'] },
         { status: 'L1', count: MOEA['Low'] },
         { status: 'OWASP', count: OWASP['summary'] },
-        { status: 'High', count: OWASP['High'] },
-        { status: 'Medium', count: OWASP['Medium'] },
-        { status: 'Low', count: OWASP['Low'] }
+        { status: i18n.t('general.High'), count: OWASP['High'] },
+        { status: i18n.t('general.Medium'), count: OWASP['Medium'] },
+        { status: i18n.t('general.Low'), count: OWASP['Low'] }
       ]
     })
   }

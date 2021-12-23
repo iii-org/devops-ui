@@ -230,7 +230,10 @@ export default {
     Continue: 'Continue',
     BackToHome: 'Back To Home',
     SaveSettings: 'Save Settings',
-    SeeMore: 'See more'
+    SeeMore: 'See more',
+    High: 'High',
+    Medium: 'Medium',
+    Low: 'Low'
   },
   Notify: {
     Updated: 'update successful',

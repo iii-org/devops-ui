@@ -230,7 +230,10 @@ export default {
     Continue: '繼續使用',
     BackToHome: '返回首頁',
     SaveSettings: '儲存設定',
-    SeeMore: '看更多'
+    SeeMore: '看更多',
+    High: '高',
+    Medium: '中',
+    Low: '低'
   },
   Notify: {
     Updated: '已更新',
