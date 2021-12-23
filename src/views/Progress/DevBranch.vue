@@ -174,7 +174,7 @@ export default {
     return {
       gitCommitLog: [],
       collapseActiveValue: [],
-      expandedRow: ''
+      expandedRow: []
     }
   },
   computed: {
@@ -249,7 +249,7 @@ export default {
   },
   watch: {
     selectedProject: {
-      handler(val) {
+      handler() {
         this.initTableExpand()
       },
       deep: true
@@ -273,7 +273,7 @@ export default {
     async getStoredData() {
       const storedData = await this.getTableExpand()
       const { expandedRow, collapseActiveValue } = storedData
-      const rowIndex = this.branchList.findIndex((list) => list.id === expandedRow)
+      const rowIndex = this.branchList.findIndex((list) => list.id === expandedRow[0])
       const row = this.branchList[rowIndex]
       if (rowIndex === undefined || row === undefined) return
       this.onExpandChange(row, [row])
@@ -289,18 +289,14 @@ export default {
       await this.fetchGitCommitLog(row)
     },
     handleExpanded(row, expandedRows) {
-      this.collapseActiveValue = []
-      if (expandedRows.length === 0) {
-        this.expandedRow = ''
-        return
-      }
-      this.expandedRow = row.id
+      this.initTableExpand()
+      this.expandedRow.push(row.id)
       expandedRows.forEach((expandedRow) => {
         this.$refs.table.toggleRowExpansion(expandedRow, row.id === expandedRow.id)
       })
     },
     initTableExpand() {
-      this.expandedRow = ''
+      this.expandedRow = []
       this.collapseActiveValue = []
     },
     async fetchGitCommitLog(row) {
