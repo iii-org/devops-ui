@@ -155,7 +155,6 @@ const zapFormatter = (testResult) => {
   return ret
 }
 const cmasFormatter = (testResult) => {
-  console.log(testResult)
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {

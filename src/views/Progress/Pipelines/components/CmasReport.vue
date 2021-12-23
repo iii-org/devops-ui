@@ -58,7 +58,7 @@ export default {
   data() {
     this.levels = ['High', 'Medium', 'Low']
     this.MOEA = ['L3', 'L2', 'L1']
-    this.OWASP = ['高', '中', '低']
+    this.OWASP = [this.$t('general.High'), this.$t('general.Medium'), this.$t('general.Low')]
     return {}
   },
   computed: {
@@ -70,8 +70,13 @@ export default {
         const arr = this.levels.map((level, index) => {
           return `${this[spec][index]} = ${row[spec][level]}`
         })
-        return arr[0] ? arr.join(', ') : '-'
+        return !arr.includes(undefined) ? arr.join(', ') : '-'
       }
+    }
+  },
+  watch: {
+    '$i18n.locale'() {
+      this.setI18n()
     }
   },
   methods: {
@@ -89,6 +94,13 @@ export default {
           link.remove()
         })
         .catch((error) => console.error(error))
+    },
+    setI18n() {
+      this.OWASP = [
+        this.$t('general.High'),
+        this.$t('general.Medium'),
+        this.$t('general.Low')
+      ]
     }
   }
 }
