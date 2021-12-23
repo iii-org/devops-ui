@@ -141,7 +141,6 @@ export default {
 >>> .list {
   font-size: 1.5em;
   width: 100%;
-  display: table;
 
   .count {
     font-size: 2em;
