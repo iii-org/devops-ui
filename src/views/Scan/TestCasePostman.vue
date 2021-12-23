@@ -330,7 +330,7 @@ export default {
       return mapping[status]
     },
     handleBack() {
-      this.$router.push({ name: 'postman-test' })
+      this.$router.push({ name: 'postman-test', params: { projectName: this.selectedProject.name }})
     },
     countRequest(assertions, result) {
       if (result === 'pass') return assertions.total - assertions.failed

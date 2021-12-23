@@ -342,7 +342,10 @@ export default {
     handleToTestReport(row) {
       const commitId = row.commit_id
       const commitBranch = row.commit_branch
-      this.$router.push({ name: 'TestReport', params: { commitId, commitBranch }})
+      this.$router.push({
+        name: 'TestReport',
+        params: { commitId, commitBranch, projectName: this.$store.getters.selectedProject.name }
+      })
     }
   }
 }

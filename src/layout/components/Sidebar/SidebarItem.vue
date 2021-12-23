@@ -1,14 +1,18 @@
 <template>
   <div v-if="!item.hidden">
-    <template
-      v-if="
-        hasOneShowingChild(item.children, item) &&
-          (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
-          !item.alwaysShow
-      "
-    >
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
+    <template v-if="
+      hasOneShowingChild(item.children, item) &&
+        (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
+        !item.alwaysShow
+    ">
+      <app-link
+        v-if="onlyOneChild.meta"
+        :to="resolvePath(onlyOneChild.path)"
+      >
+        <el-menu-item
+          :index="resolvePath(onlyOneChild.path)"
+          :class="{ 'submenu-title-noDropdown': !isNest }"
+        >
           <item
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
             :title="generateTitle(onlyOneChild.meta.title)"
@@ -17,9 +21,18 @@
       </app-link>
     </template>
 
-    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
+    <el-submenu
+      v-else
+      ref="subMenu"
+      :index="resolvePath(item.path)"
+      popper-append-to-body
+    >
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="generateTitle(item.meta.title)" />
+        <item
+          v-if="item.meta"
+          :icon="item.meta && item.meta.icon"
+          :title="generateTitle(item.meta.title)"
+        />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -69,7 +82,7 @@ export default {
   methods: {
     generateTitle,
     hasOneShowingChild(children = [], parent) {
-      const showingChildren = children.filter(item => {
+      const showingChildren = children.filter((item) => {
         if (item.hidden) {
           return false
         } else {
@@ -93,13 +106,16 @@ export default {
       return false
     },
     resolvePath(routePath) {
-      if (isExternal(routePath)) {
+      const projectName = this.$store.getters.selectedProject.name || ''
+      const pathWithProjectName = routePath.replace(':projectName?', projectName)
+      const basePathWithProjectName = this.basePath.replace(':projectName?', projectName)
+      if (isExternal(pathWithProjectName)) {
         return routePath
       }
-      if (isExternal(this.basePath)) {
-        return this.basePath
+      if (isExternal(basePathWithProjectName)) {
+        return basePathWithProjectName
       }
-      return path.resolve(this.basePath, routePath)
+      return path.resolve(basePathWithProjectName, routePath)
     }
   }
 }

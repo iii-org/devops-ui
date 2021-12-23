@@ -188,16 +188,22 @@ export default {
         this.$nextTick(() => (this.projectValue = (!val || val) === -1 ? '' : val))
         this.$parent.isConfirmLeave = false
       }
-    },
-    projectValue(value) {
-      this.setChange(value)
     }
   },
   mounted() {
     this.getCategoryProjectList()
+    this.handleRouteParams()
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectOptions']),
+    handleRouteParams() {
+      const routeProjectNameParam = this.$route.params.projectName
+      if (!routeProjectNameParam) return
+      const project = this.projectOptions.find((option) => option.name === routeProjectNameParam)
+      if (!project) return
+      const projectId = project.id
+      this.setChange(projectId)
+    },
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
       this.$message({
@@ -215,7 +221,12 @@ export default {
       } else {
         this.$emit('update:project-id', value)
       }
+      this.setNewRoute(value)
       this.selectVisible = false
+    },
+    setNewRoute() {
+      const projectName = this.selectedProject.name
+      this.$router.push({ name: this.$route.name, params: { projectName }})
     },
     onProjectChange(value) {
       this.setSelectedProject(this.projectOptions.find((elm) => elm.id === value) || { id: -1 })
