@@ -256,7 +256,9 @@ export default {
     },
     branchesByProject(ary) {
       this.branchList = ary
-      this.getStoredData()
+    },
+    listLoading(val) {
+      if (!val) this.getStoredData()
     },
     tableExpand: {
       handler(val) {
@@ -282,7 +284,7 @@ export default {
       return this.branchList
     },
     async onExpandChange(row, expandedRows) {
-      // this.handleExpanded(row, expandedRows)
+      this.handleExpanded(row, expandedRows)
       if (row.gitCommitLog || row.timelineLoading) return
       await this.fetchGitCommitLog(row)
     },
