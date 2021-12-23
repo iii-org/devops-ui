@@ -38,7 +38,7 @@
     </el-row>
     <template v-if="note.hasOwnProperty('details')">
       <el-row
-        v-for="(detail,index) in filterTag"
+        v-for="(detail,index) in filterData"
         :key="index"
         class="el-alert el-alert--info is-light detail"
       >
@@ -61,9 +61,7 @@
               slot="action"
               class="title"
             >
-              <span v-if="detail.old_value&&detail.new_value">{{ $t('general.Edit') }}</span>
-              <span v-else-if="detail.old_value">{{ $t('general.Delete') }}</span>
-              <span v-else>{{ $t('general.Add') }}</span>
+              <span>{{ $t(filterTag(detail)) }}</span>
               <strong>
                 {{ ($te('Issue.detail.' + detail.name)) ? $t('Issue.detail.' + detail.name) : $t('Issue.detail.' + detail.property) }}
               </strong>
@@ -190,7 +188,7 @@ export default {
     }
   },
   computed: {
-    filterTag() {
+    filterData() {
       let data = this.note
       if (data.details.length === 0 && this.filterJson(data.notes)) {
         data = JSON.parse(data.notes).details
@@ -198,6 +196,18 @@ export default {
         data = data.details
       }
       return data
+    },
+    filterTag() {
+      return function(detail) {
+        let type = 'general.Add'
+        if (detail.name === 'tag') {
+          if (detail.old_value.name) type = 'general.Delete'
+        } else {
+          if (detail.old_value && detail.new_value) type = 'general.Edit'
+          else if (detail.old_value) type = 'general.Delete'
+        }
+        return type
+      }
     }
   },
   watch: {
