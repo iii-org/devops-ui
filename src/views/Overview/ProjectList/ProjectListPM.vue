@@ -281,14 +281,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userId',
-      'userRole',
-      'projectList',
-      'projectListTotal',
-      'userProjectList',
-      'selectedProjectId'
-    ]),
+    ...mapGetters(['userId', 'userRole', 'projectList', 'projectListTotal', 'userProjectList', 'selectedProjectId']),
     getButtonType() {
       return function (disabled) {
         return disabled ? 'success' : 'danger'
@@ -338,7 +331,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'Overview' })
+      this.$router.push({ name: 'Overview', params: { projectName: selectedProject.name }})
     },
     copyUrl(id) {
       const message = this.$t('Notify.Copied')

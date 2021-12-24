@@ -301,7 +301,7 @@ export default {
       this.fetchPipelineBranch()
     },
     handleBack() {
-      this.$router.push({ name: 'Project Settings' })
+      this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
     },
     showWarningMessage() {
       this.$message({

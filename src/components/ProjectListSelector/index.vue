@@ -197,10 +197,14 @@ export default {
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectOptions']),
     handleRouteParams() {
+      if (!this.keepSelection) return
       const routeProjectNameParam = this.$route.params.projectName
       if (!routeProjectNameParam) return
       const project = this.projectOptions.find((option) => option.name === routeProjectNameParam)
-      if (!project) return
+      if (!project) {
+        this.$router.replace({ name: '404' })
+        return
+      }
       const projectId = project.id
       this.setChange(projectId)
     },
@@ -225,7 +229,7 @@ export default {
       this.selectVisible = false
     },
     setNewRoute() {
-      const projectName = this.selectedProject.name
+      const projectName = this.keepSelection ? this.selectedProject.name : this.projectValue
       this.$router.push({ name: this.$route.name, params: { projectName }})
     },
     onProjectChange(value) {

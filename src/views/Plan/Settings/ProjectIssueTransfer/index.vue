@@ -389,7 +389,7 @@ export default {
       this.handleSinglePageChecked()
     },
     onBackClick() {
-      this.$router.push({ name: 'Project Settings' })
+      this.$router.push({ name: 'Project Settings', params: { projectName: this.selectedProject.name }})
     },
     onTransferClick(issueId) {
       this.$router.push({ name: 'issue-detail', params: { issueId }})

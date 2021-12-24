@@ -1,7 +1,11 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <el-button type="success" icon="el-icon-plus" @click="handleAdding">
+      <el-button
+        type="success"
+        icon="el-icon-plus"
+        @click="handleAdding"
+      >
         {{ $t('Project.AddProject') }}
       </el-button>
       <div>
@@ -16,8 +20,14 @@
             value-format="yyyy-MM-dd"
             @change="handleDatePicked"
           />
-          <el-button slot="reference" icon="el-icon-date" type="text">
-            {{ $t('Project.ProjectPeriod') }}:{{ selectedDateNow[0] }} ~ {{ selectedDateNow[1] }}<em class="el-icon-arrow-down el-icon--right" />
+          <el-button
+            slot="reference"
+            icon="el-icon-date"
+            type="text"
+          >
+            {{ $t('Project.ProjectPeriod') }}:{{ selectedDateNow[0] }} ~ {{ selectedDateNow[1] }}<em
+              class="el-icon-arrow-down el-icon--right"
+            />
           </el-button>
         </el-popover>
         <el-divider direction="vertical" />
@@ -30,12 +40,21 @@
           style="width: 250px;"
           @blur="searchVisible = !searchVisible"
         />
-        <el-button v-else type="text" icon="el-icon-search" @click="searchVisible = !searchVisible">
+        <el-button
+          v-else
+          type="text"
+          icon="el-icon-search"
+          @click="searchVisible = !searchVisible"
+        >
           {{ $t('general.Search') + (keyword ? ': ' + keyword : '') }}
         </el-button>
         <template v-if="keyword !== ''">
           <el-divider direction="vertical" />
-          <el-button size="small" icon="el-icon-close" @click="cleanFilter">
+          <el-button
+            size="small"
+            icon="el-icon-close"
+            @click="cleanFilter"
+          >
             {{ $t('Issue.CleanFilter') }}
           </el-button>
         </template>
@@ -46,14 +65,26 @@
             trigger="click"
           >
             <el-menu class="download">
-              <el-menu-item :disabled="selectedProjectId === -1" @click="downloadExcel(listData)">
+              <el-menu-item
+                :disabled="selectedProjectId === -1"
+                @click="downloadExcel(listData)"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
-              <el-menu-item v-show="hasSelectedProject" :disabled="selectedProjectId === -1" @click="downloadExcel(selectedProjectList)">
+              <el-menu-item
+                v-show="hasSelectedProject"
+                :disabled="selectedProjectId === -1"
+                @click="downloadExcel(selectedProjectList)"
+              >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
-            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+            <el-button
+              slot="reference"
+              icon="el-icon-download"
+            >
+              {{ $t('File.Download') }}
+            </el-button>
           </el-popover>
         </span>
       </div>
@@ -70,28 +101,54 @@
       height="100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" reserve-selection width="55" />
-      <el-table-column width="60" align="center" prop="starred">
+      <el-table-column
+        type="selection"
+        reserve-selection
+        width="55"
+      />
+      <el-table-column
+        width="60"
+        align="center"
+        prop="starred"
+      >
         <template slot-scope="scope">
           <em
             v-if="scope.row.starred"
             class="el-icon-star-on text-yellow-500 text-2xl"
             @click="setStar(scope.row.id, false)"
           />
-          <em v-else class="el-icon-star-off text-gray-400 text-xl" @click="setStar(scope.row.id, true)" />
+          <em
+            v-else
+            class="el-icon-star-off text-gray-400 text-xl"
+            @click="setStar(scope.row.id, true)"
+          />
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.organization')" prop="department" width="150" />
+      <el-table-column
+        :label="$t('Dashboard.ADMIN.ProjectList.organization')"
+        prop="department"
+        width="150"
+      />
       <el-table-column
         :label="`${$t('general.project_name')} / ${$t('Project.Identifier')}`"
         :show-overflow-tooltip="true"
         min-width="250"
       >
         <template slot-scope="scope">
-          <el-link v-if="userRole !== 'QA'" type="primary" :underline="false" @click="handleClick(scope.row)">
+          <el-link
+            v-if="userRole !== 'QA'"
+            type="primary"
+            :underline="false"
+            @click="handleClick(scope.row)"
+          >
             {{ scope.row.display }}
           </el-link>
-          <el-link v-else-if="userRole === 'QA'" type="primary" :underline="false" @click="handleClickQA(scope.row)">
+          <el-link
+            v-else-if="userRole === 'QA'"
+            type="primary"
+            :underline="false"
+            @click="handleClickQA(scope.row)"
+          >
             {{ scope.row.display }}
           </el-link>
           <template v-else>
@@ -101,7 +158,10 @@
           <span style="color: #949494; font-size: small;">#{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.owner_name')" width="90">
+      <el-table-column
+        :label="$t('general.owner_name')"
+        width="90"
+      >
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -112,7 +172,11 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('Project.IssueProgress')" width="140">
+      <el-table-column
+        align="center"
+        :label="$t('Project.IssueProgress')"
+        width="140"
+      >
         <template slot-scope="scope">
           {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
           <br>
@@ -124,21 +188,43 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.project_start_date')" prop="start_date" width="120" />
-      <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.project_due_date')" prop="due_date" width="120" />
-      <el-table-column :label="$t('Dashboard.ADMIN.ProjectList.user_name')" width="90">
+      <el-table-column
+        :label="$t('Dashboard.ADMIN.ProjectList.project_start_date')"
+        prop="start_date"
+        width="120"
+      />
+      <el-table-column
+        :label="$t('Dashboard.ADMIN.ProjectList.project_due_date')"
+        prop="due_date"
+        width="120"
+      />
+      <el-table-column
+        :label="$t('Dashboard.ADMIN.ProjectList.user_name')"
+        width="90"
+      >
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="handleRoutingProjectMembers(scope.row)">
+          <el-link
+            type="primary"
+            :underline="false"
+            @click="handleRoutingProjectMembers(scope.row)"
+          >
             {{ scope.row.members }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.DueDate')" width="80">
+      <el-table-column
+        :label="$t('general.DueDate')"
+        width="80"
+      >
         <template slot-scope="scope">
           {{ calculateDays(scope.row.due_date, scope.row.start_date) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('general.Actions')" align="center" width="200">
+      <el-table-column
+        :label="$t('general.Actions')"
+        align="center"
+        width="200"
+      >
         <template slot-scope="scope">
           <el-button
             v-if="userRole !== 'QA'"
@@ -173,14 +259,21 @@
       @pagination="onPagination"
     />
 
-    <CreateProjectDialog ref="createProjectDialog" @update="loadData" />
+    <CreateProjectDialog
+      ref="createProjectDialog"
+      @update="loadData"
+    />
     <EditProjectDialog
       v-if="userRole !== 'QA'"
       ref="editProjectDialog"
       :edit-project-obj="editProject"
       @update="loadData"
     />
-    <DeleteProjectDialog ref="deleteProjectDialog" :delete-project-obj="deleteProject" @update="loadData" />
+    <DeleteProjectDialog
+      ref="deleteProjectDialog"
+      :delete-project-obj="deleteProject"
+      @update="loadData"
+    />
   </div>
 </template>
 
@@ -263,21 +356,21 @@ export default {
     },
     handleClick(projectObj) {
       const { id } = projectObj
-      const selectedProject = this.userProjectList.filter(elm => {
+      const selectedProject = this.userProjectList.filter((elm) => {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'issue-list' })
+      this.$router.push({ name: 'issue-list', params: { projectName: selectedProject.name }})
     },
     handleClickQA(projectObj) {
       const { id } = projectObj
-      const selectedProject = this.userProjectList.filter(elm => {
+      const selectedProject = this.userProjectList.filter((elm) => {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'milestone' })
+      this.$router.push({ name: 'milestone', params: { projectName: selectedProject.name }})
     },
     copyUrl(id) {
       const target = document.getElementById(id)
@@ -297,9 +390,9 @@ export default {
     },
     handleExcelSelectedColumn(selectedProjectList) {
       const selectedColumn = []
-      selectedProjectList.forEach(item => {
+      selectedProjectList.forEach((item) => {
         const targetObject = {}
-        this.csvColumnSelected.map(itemSelected => {
+        this.csvColumnSelected.map((itemSelected) => {
           this.$set(targetObject, itemSelected, item[itemSelected])
         })
         selectedColumn.push(targetObject)
@@ -308,9 +401,9 @@ export default {
     },
     handleExcelTranslateTable(selectedColumn) {
       const translateTable = []
-      selectedColumn.forEach(item => {
+      selectedColumn.forEach((item) => {
         const chineseExcel = {}
-        const chineseColumnKey = Object.keys(item).map(key => {
+        const chineseColumnKey = Object.keys(item).map((key) => {
           key = excelTranslate.projectlistQA[key]
           return key
         })
@@ -346,12 +439,12 @@ export default {
     },
     handleRoutingProjectMembers(projectObj) {
       const { id } = projectObj
-      const selectedProject = this.userProjectList.filter(elm => {
+      const selectedProject = this.userProjectList.filter((elm) => {
         return elm.id === id
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'Project Settings' })
+      this.$router.push({ name: 'Project Settings', params: { projectName: selectedProject.name }})
     },
     async setStar(id, star) {
       if (star) {
