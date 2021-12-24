@@ -241,10 +241,10 @@ export default {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         return this.refTable.toggleRowExpansion(row)
       }
-      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      this.$router.push({ name: 'issue-detail', params: { issueId: row.id, projectName: this.selectedProject.name }})
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$router.push({ name: 'issue-detail', params: { issueId: id, projectName: this.selectedProject.name }})
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
