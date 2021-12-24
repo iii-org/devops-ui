@@ -20,7 +20,7 @@
             <p v-if="compareCommitContent(commit)">{{ commit.commit_message }}</p>
             <p class="author">
               <template v-if="commitLink">
-                <a :href="commit.web_url" class="link" target="_blank">
+                <a :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
                   <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
                 </a> : 
               </template>
@@ -98,13 +98,6 @@ export default {
 
   .author {
     margin-bottom: 0;
-  }
-
-  .link {
-    color: blue;
-    &:hover {
-      text-decoration: underline;
-    }
   }
 }
 
