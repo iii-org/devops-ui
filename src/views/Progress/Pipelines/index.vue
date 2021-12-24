@@ -105,8 +105,8 @@
         />
         <el-table-column
           :label="$t('general.Actions')"
-          header-align="center"
-          width="230"
+          align="center"
+          width="130"
         >
           <template slot-scope="scope">
             <el-button
@@ -128,7 +128,7 @@
             >
               {{ $t('general.Stop') }}
             </el-button>
-            <el-button
+            <!-- <el-button
               v-else
               size="mini"
               type="primary"
@@ -137,7 +137,7 @@
               @click="onActionClick(scope.row.id, 'rerun')"
             >
               {{ $t('general.Rerun') }}
-            </el-button>
+            </el-button> -->
           </template>
         </el-table-column>
         <el-table-column
