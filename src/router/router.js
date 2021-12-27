@@ -83,7 +83,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/project',
+    path: '/project/:projectName?/',
     component: Layout,
     redirect: { name: 'milestone' },
     meta: {
@@ -93,7 +93,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'milestone/:projectName?',
+        path: 'milestone',
         name: 'milestone',
         component: () => import('@/views/Plan/Milestone'),
         meta: { title: 'milestone', roles: ['QA'] }
@@ -129,7 +129,7 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: 'track/:projectName?',
+        path: 'track',
         name: 'track',
         component: () => import('@/views/Project/TrackManagement'),
         meta: {
@@ -138,7 +138,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'exception/:projectName?',
+        path: 'exception',
         name: 'exception-management',
         component: () => import('@/views/Project/ExceptionManagement'),
         meta: {
@@ -147,13 +147,13 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'traceability-matrix/:projectName?',
+        path: 'traceability-matrix',
         name: 'TraceMatrix',
         component: () => import('@/views/Plan/TraceabilityMatrix'),
         meta: { title: 'traceabilityMatrix', roles: ['QA'] }
       },
       {
-        path: 'settings/:projectName?',
+        path: 'settings',
         component: parentBlank,
         meta: { title: 'Project Settings', roles: ['QA'] },
         children: [
@@ -189,7 +189,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/test',
+    path: '/test/:projectName?/',
     name: 'test',
     component: Layout,
     redirect: { name: 'test-plan' },
@@ -200,7 +200,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'test-plan/:projectName?',
+        path: 'test-plan',
         redirect: '/test/test-plan',
         component: parentBlank,
         meta: {
@@ -248,7 +248,7 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: '/release-version/:projectName?',
+        path: 'release-version',
         redirect: { name: 'release-version' },
         component: parentBlank,
         meta: { title: 'test-result', roles: ['QA'] },
@@ -349,7 +349,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/plan',
+    path: '/plan/:projectName?/',
     component: Layout,
     redirect: { name: 'project-management' },
     meta: {
@@ -359,25 +359,25 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'overview/:projectName?',
+        path: 'overview',
         name: 'Overview',
         component: () => import('@/views/Plan/Overview'),
         meta: { title: 'projectOverview', roles: ['Administrator', 'Project Manager'] }
       },
       {
-        path: 'milestone/:projectName?',
+        path: 'milestone',
         name: 'milestone',
         component: () => import('@/views/Plan/Milestone'),
         meta: { title: 'milestone', roles: ['Administrator', 'Project Manager'] }
       },
       {
-        path: 'traceability-matrix/:projectName?',
+        path: 'traceability-matrix',
         name: 'TraceMatrix',
         component: () => import('@/views/Plan/TraceabilityMatrix'),
         meta: { title: 'traceabilityMatrix', roles: ['Administrator', 'Project Manager'] }
       },
       {
-        path: 'settings/:projectName?',
+        path: 'settings',
         component: parentBlank,
         meta: { title: 'Project Settings', roles: ['Administrator', 'Project Manager'] },
         children: [
@@ -420,7 +420,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/project',
+    path: '/project/:projectName?/',
     component: Layout,
     redirect: { name: 'Overview' },
     meta: {
@@ -430,13 +430,13 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'issue-boards/:projectName?',
+        path: 'issue-boards',
         name: 'issue-boards',
         component: () => import('@/views/Project/IssueBoards'),
         meta: { title: 'kanban', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'issues/:projectName?',
+        path: 'issues',
         component: parentBlank,
         meta: { title: 'issueList' },
         children: [
@@ -464,25 +464,25 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: 'notes/:projectName?',
+        path: 'notes',
         name: 'wiki-list',
         component: () => import('@/views/Project/Wiki'),
         meta: { title: 'wikiList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'files/:projectName?',
+        path: 'files',
         name: 'file-list',
         component: () => import('@/views/Project/Files'),
         meta: { title: 'fileList', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'roadmap/:projectName?',
+        path: 'roadmap',
         name: 'Project Roadmap',
         component: () => import('@/views/Project/Roadmap'),
         meta: { title: 'Project Roadmap', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
-        path: '/release-version/:projectName?',
+        path: 'release-version',
         redirect: { name: 'release-version' },
         component: parentBlank,
         meta: { title: 'releaseVersion', roles: ['Administrator', 'Project Manager', 'Engineer'] },
@@ -510,7 +510,7 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: '/deploy/:projectName?',
+        path: 'deploy',
         redirect: { name: 'deploy' },
         component: parentBlank,
         meta: { title: 'deploy', roles: ['Administrator', 'Project Manager', 'Engineer'] },
@@ -530,7 +530,7 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/progress',
+    path: '/progress/:projectName?/',
     component: Layout,
     name: 'progress',
     redirect: { name: 'dev-environment' },
@@ -541,7 +541,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'dev-branch/:projectName?',
+        path: 'dev-branch',
         name: 'dev-branch',
         component: () => import('@/views/Progress/DevBranch'),
         meta: { title: 'devBranch', roles: ['Administrator', 'Project Manager', 'Engineer'] }
@@ -553,7 +553,7 @@ export const asyncRoutes = [
       //   meta: { title: 'gitGraph', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       // },
       {
-        path: 'pipelines/:projectName?',
+        path: 'pipelines',
         component: parentBlank,
         meta: { title: 'pipelines', roles: ['Administrator', 'Project Manager', 'Engineer'] },
         children: [
@@ -574,13 +574,13 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: 'dev-environment/:projectName?',
+        path: 'dev-environment',
         name: 'dev-environment',
         component: () => import('@/views/Progress/DevEnvironment'),
         meta: { title: 'devEnvironment', roles: ['Administrator', 'Project Manager', 'Engineer'] }
       },
       {
-        path: 'kubernetes-resources/:projectName?',
+        path: 'kubernetes-resources',
         component: parentBlank,
         meta: {
           title: 'kubernetesResources',
@@ -686,7 +686,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/test',
+    path: '/test/:projectName?/',
     name: 'test',
     component: Layout,
     redirect: { name: 'test-plan' },
@@ -697,7 +697,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'test-file/:projectName?',
+        path: 'test-file',
         name: 'test-file',
         component: () => import('@/views/Test/TestFile'),
         meta: {
@@ -706,7 +706,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'test-plan/:projectName?',
+        path: 'test-plan',
         redirect: '/test/test-plan',
         component: parentBlank,
         meta: {
@@ -749,7 +749,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/scan/:projectName?',
+    path: '/scan/:projectName?/',
     component: Layout,
     name: 'scan',
     alwaysShow: true,
@@ -865,7 +865,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'plugin-resource/:projectName?',
+        path: ':projectName?/plugin-resource',
         component: parentBlank,
         meta: { title: 'Plugin Resource', roles: ['Administrator', 'Project Manager'] },
         children: [
