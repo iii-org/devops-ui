@@ -85,7 +85,7 @@ export const asyncRoutes = [
   {
     path: '/project',
     component: Layout,
-    redirect: '/project/milestone',
+    redirect: { name: 'milestone' },
     meta: {
       title: 'singleProject',
       icon: 'el-icon-data-analysis',
@@ -99,8 +99,8 @@ export const asyncRoutes = [
         meta: { title: 'milestone', roles: ['QA'] }
       },
       {
-        path: 'issues/:projectName?',
-        redirect: '/project/issues',
+        path: 'issues',
+        redirect: { name: 'issue-list' },
         component: parentBlank,
         meta: {
           title: 'issueList',
@@ -111,21 +111,14 @@ export const asyncRoutes = [
             path: '',
             name: 'issue-list',
             hidden: true,
-            component: () => import('../views/Project/IssueList'),
-            meta: { roles: ['QA'] }
-          },
-          {
-            path: '',
-            name: 'issue-list',
-            hidden: true,
             component: () => import('@/views/Project/IssueList'),
-            meta: { roles: ['Administrator', 'Project Manager', 'Engineer'] }
+            meta: { roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'] }
           },
           {
             path: ':issueId',
             name: 'issue-detail',
             hidden: true,
-            component: () => import('../views/Project/IssueDetail'),
+            component: () => import('@/views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
@@ -138,7 +131,7 @@ export const asyncRoutes = [
       {
         path: 'track/:projectName?',
         name: 'track',
-        component: () => import('../views/Project/TrackManagement'),
+        component: () => import('@/views/Project/TrackManagement'),
         meta: {
           title: 'changeManagement',
           roles: ['QA']
@@ -147,7 +140,7 @@ export const asyncRoutes = [
       {
         path: 'exception/:projectName?',
         name: 'exception-management',
-        component: () => import('../views/Project/ExceptionManagement'),
+        component: () => import('@/views/Project/ExceptionManagement'),
         meta: {
           title: 'Fail Management',
           roles: ['QA']
@@ -196,7 +189,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/test/:projectName?',
+    path: '/test',
     name: 'test',
     component: Layout,
     redirect: { name: 'test-plan' },
@@ -207,7 +200,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'test-plan',
+        path: 'test-plan/:projectName?',
         redirect: '/test/test-plan',
         component: parentBlank,
         meta: {
@@ -227,7 +220,7 @@ export const asyncRoutes = [
             path: 'create',
             name: 'create-test-plan',
             hidden: true,
-            component: () => import('../views/Project/IssueDetail'),
+            component: () => import('@/views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
               roles: ['QA'],
@@ -238,7 +231,7 @@ export const asyncRoutes = [
             path: ':issueId',
             name: 'test-plan-detail',
             hidden: true,
-            component: () => import('../views/Project/IssueDetail'),
+            component: () => import('@/views/Project/IssueDetail'),
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator', 'QA', 'Project Manager', 'Engineer'],
@@ -255,7 +248,7 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: '/release-version',
+        path: '/release-version/:projectName?',
         redirect: { name: 'release-version' },
         component: parentBlank,
         meta: { title: 'test-result', roles: ['QA'] },
@@ -693,7 +686,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/test/:projectName?',
+    path: '/test',
     name: 'test',
     component: Layout,
     redirect: { name: 'test-plan' },
@@ -704,7 +697,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'test-file',
+        path: 'test-file/:projectName?',
         name: 'test-file',
         component: () => import('@/views/Test/TestFile'),
         meta: {
@@ -713,7 +706,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'test-plan',
+        path: 'test-plan/:projectName?',
         redirect: '/test/test-plan',
         component: parentBlank,
         meta: {
@@ -898,7 +891,7 @@ export const asyncRoutes = [
                 component: () => import('@/views/SystemResource/Harbor/ResourceHarbor')
               },
               {
-                path: 'artifacts',
+                path: ':rName/artifacts',
                 name: 'Artifacts',
                 hidden: true,
                 component: () => import('@/views/SystemResource/Harbor/components/ProjectArtifacts'),

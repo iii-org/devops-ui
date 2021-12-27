@@ -721,7 +721,10 @@ export default {
         this.$router.push(this.$route.query.prev_page)
       } else {
         this.$router.push({
-          name: 'issue-list'
+          name: 'issue-list',
+          params: {
+            projectName: this.selectedProject.name
+          }
         })
       }
     },
