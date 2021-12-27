@@ -63,6 +63,7 @@
         </el-form-item>
       </el-form>
       <SaveFilterButton
+        v-show="checkSaveFilterButtonDisplay()"
         ref="saveFilterButton"
         type="issue_list"
         :filter-value="filterValueClone"
@@ -267,6 +268,10 @@ export default {
     },
     resetSaveFilterButtons() {
       this.$refs.saveFilterButton.reset()
+    },
+    checkSaveFilterButtonDisplay() {
+      const whiteList = ['issue-list']
+      return whiteList.includes(this.$route.name)
     }
   }
 }
