@@ -30,7 +30,7 @@
             >
               <el-collapse
                 v-model="collapseActiveValue"
-                style="width: 75%"
+                class="w-75"
                 :class="commit.issues ? 'hasArrow' : 'noArrow'"
               >
                 <el-collapse-item :name="commit.id">
@@ -89,7 +89,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-timeline-item>
-            <div class="flex justify-center w-3/5">
+            <div class="flex justify-center w-75">
               <el-button
                 type="primary"
                 round
@@ -338,6 +338,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.w-75 {
+  width: 75%;
+}
 .noArrow {
   >>> .el-collapse-item__arrow {
     display: none;
