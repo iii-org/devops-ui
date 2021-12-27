@@ -2,6 +2,7 @@
   <div>
     <slot />
     <el-popover
+      popper-class="popper"
       placement="bottom"
       trigger="click"
       @hide="resetSaveFilterButtons"
@@ -278,4 +279,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

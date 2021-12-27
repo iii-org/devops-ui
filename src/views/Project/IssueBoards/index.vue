@@ -2,7 +2,7 @@
   <div
     v-loading="isLoading"
     :element-loading-text="$t('Loading')"
-    class="app-container"
+    style="height: 100%; padding: 20px;"
   >
     <ProjectListSelector>
       <CustomFilter
@@ -13,6 +13,7 @@
         @apply-filter="applyCustomFilter"
       />
       <el-popover
+        popper-class="popper"
         placement="bottom"
         trigger="click"
         @hide="resetSaveFilterButtons"
@@ -744,9 +745,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.app-container {
-  overflow: hidden;
-}
-</style>
