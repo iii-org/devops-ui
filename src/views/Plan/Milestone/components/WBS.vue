@@ -425,11 +425,11 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
-            result['due_date_start'] = this.$dayjs(result['due_date_start']).isValid()
-              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD')
+            result['due_date_start'] = this.$dayjs(this.filterValue['due_date_start']).isValid()
+              ? this.$dayjs(this.filterValue['due_date_start']).format('YYYY-MM-DD')
               : null
-            result['due_date_end'] = this.$dayjs(result['due_date_end']).isValid()
-              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD')
+            result['due_date_end'] = this.$dayjs(this.filterValue['due_date_end']).isValid()
+              ? this.$dayjs(this.filterValue['due_date_end']).format('YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
@@ -536,7 +536,7 @@ export default {
       for (const data in form) {
         if (!prefill) break
         if (data !== 'id' && data !== 'create' && prefill[data]) {
-          if (data === 'name') form[data] = `${prefill.name}(${this.$t('Issue.Copy')})`          
+          if (data === 'name') form[data] = `${prefill.name}(${this.$t('Issue.Copy')})`
           else form[data] = prefill[data]
         }
       }

@@ -185,7 +185,9 @@ export default {
     handleLabels() {
       return function (item) {
         let label = ''
-        const value = this.getOptionsData(item).find((search) => search.id === this.filterValue[item])
+        const value = this.getOptionsData(item)
+          ? this.getOptionsData(item).find((search) => search.id === this.filterValue[item])
+          : this.filterValue[item]
         if (value) label = this.getSelectedLabel(value)
         return label
       }
@@ -210,7 +212,7 @@ export default {
   methods: {
     getSelectedLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = this.getTranslateHeader(item.name)
+      let result = this.getTranslateHeader(item.name || this.$dayjs(item).format('YYYY-MM-DD'))
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ` (${this.getTranslateHeader(item.status)})`
       }
