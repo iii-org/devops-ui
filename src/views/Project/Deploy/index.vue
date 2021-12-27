@@ -208,6 +208,7 @@ import { BasicData, Pagination, SearchBar, Table, ProjectSelector, CancelRequest
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import {
   getServices,
+  getService,
   postService,
   deleteService,
   putService,
@@ -285,6 +286,15 @@ export default {
         message
       })
     },
+    async getAllServices() {
+      const res = await getServices(
+        { project_id: this.selectedProjectId },
+        { cancelToken: this.cancelToken }
+      )
+      this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
+      const listData = res.data.applications
+      return listData
+    },
     async fetchData() {
       if (this.selectedProjectId === -1) {
         this.showNoProjectWarning()
@@ -292,13 +302,23 @@ export default {
       }
       if (this.isUpdating) this.cancelRequest()
       this.isUpdating = true
-      const res = await getServices({ project_id: this.selectedProjectId }, { cancelToken: this.cancelToken })
-      this.lastUpdateTime = this.$dayjs().utc(res.datetime).format('YYYY-MM-DD HH:mm:ss')
-      const listData = res.data.applications
+      const listData = await this.getAllServices()
       this.setTimer()
       this.isUpdating = false
       this.listLoading = false
       return listData
+    },
+    async fetchUnfinishedData() {
+      const listData = await this.getAllServices()
+      await listData.forEach(async (data, i) => {
+        const statusId = data.status_id
+        if ((statusId > 0 && statusId < 5) || statusId === 9 || statusId === 11) {
+          const restData = await getService(data.id)
+          this.$set(listData, i, restData.data.application)
+        }
+      })
+      this.setTimer()
+      this.listData = listData
     },
     handleEditDialog(id) {
       this.dialogVisible = true
@@ -355,7 +375,10 @@ export default {
               })
               this.showSuccessMessage(this.$t('Notify.Updated'))
             } else {
-              await postService({ ...this.$refs['ApplicationSetting'].deployForm, project_id: this.selectedProjectId })
+              await postService({
+                ...this.$refs['ApplicationSetting'].deployForm,
+                project_id: this.selectedProjectId
+              })
               this.showSuccessMessage(this.$t('Notify.Created'))
             }
             this.loadingInstance.close()
@@ -376,7 +399,7 @@ export default {
     setTimer() {
       let timer = null
       if (timer) this.clearTimer(timer)
-      timer = setTimeout(() => this.fetchData(), 10000)
+      timer = setTimeout(() => this.fetchUnfinishedData(), 10000)
       this.$once('hook:beforeDestroy', () => {
         this.clearTimer(timer)
       })
