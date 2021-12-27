@@ -129,7 +129,9 @@ export default {
         const originalKey = keyMap[key]
         if (key === 'tags') {
           sendData[key] = this.filterValue[originalKey] ? this.filterValue[originalKey].join(',') : null
-        } else if (this.filterValue[originalKey]) {
+        } else if (key === 'assigned_to_id') {
+          sendData[key] = this.filterValue[originalKey]
+        } else {
           sendData[key] = this.filterValue[originalKey] === 'null' ? null : this.filterValue[originalKey]
         }
         sendData['focus_tab'] = this.activeTab

@@ -356,8 +356,8 @@ export default {
           result[key] = options[key] === null ? null : options[key].split(',').map((i) => Number(i))
         } else if (key === 'show_closed_issues' || key === 'show_closed_versions') {
           result[key] = options[key] === null ? null : Boolean(options[key])
-        } else if (key === 'focus_tab' || key === 'group_by') {
-          result[key]
+        } else if (['assigned_to_id', 'focus_tab', 'group_by'].includes(key)) {
+          result[key] = options[key]
         } else {
           result[key] = options[key] === null ? null : Number(options[key])
         }
