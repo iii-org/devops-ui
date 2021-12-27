@@ -30,7 +30,7 @@
             >
               <el-collapse
                 v-model="collapseActiveValue"
-                class="w-3/5"
+                style="width: 75%"
                 :class="commit.issues ? 'hasArrow' : 'noArrow'"
               >
                 <el-collapse-item :name="commit.id">
@@ -53,8 +53,7 @@
                         >
                           {{ id }}
                         </span>
-                        <span v-if="commit.issue_id.length > 0">&nbsp;{{ commit.issue_title }}</span>
-                        <span v-else>&nbsp;{{ commit.commit_title }}</span>
+                        <span>&nbsp;{{ commit.commit_title }}</span>
                       </div>
                       <div>{{ relativeTime(commit.commit_time) }}</div>
                     </div>
@@ -160,10 +159,10 @@ import { Status } from '@/components/Issue'
 
 const commitLimit = 10
 const regExp = {
-  pound_sign: RegExp(/#/),
-  english_alphabets: RegExp(/[a-zA-Z]/),
-  chinese_words: RegExp(/[\u4E00-\u9FFF]/),
-  brackets: RegExp(/\([^\)]+\)/g)
+  pound_sign: new RegExp(/#/),
+  english_alphabets: new RegExp(/[a-zA-Z]/),
+  chinese_words: new RegExp(/[\u4E00-\u9FFF]/),
+  numbers: new RegExp(/[^\d.]/g)
 }
 
 export default {
@@ -189,24 +188,14 @@ export default {
           : '-'
       }
     },
-    getOpenedItem() {
-      return function (commit) {
-        return commit.map((item) => {
-          if (item.issues) return item.id
-        })
-      }
-    },
     getIssueId() {
       return function (title) {
         const splitArray = title.split(' ')
         const issue_id = []
         splitArray.forEach((item) => {
           if (this.checkRegExp(item)) {
-            if (item.match(regExp.brackets)) {
-              item = item.match(regExp.brackets)[0]
-              item = item.substring(1, item.length - 1)
-            }
-            issue_id.push(item)
+            const id = item.replace(regExp.numbers, '')
+            if (id) issue_id.push(`#${id}`)
           }
         })
         return issue_id
@@ -219,12 +208,12 @@ export default {
           !item.match(regExp.chinese_words)
       }
     },
-    getIssueTitle() {
-      return function (title) {
-        const splitArray = title.split(' ')
-        return splitArray.filter((item) => !item.match(regExp.pound_sign)).join(' ')
-      }
-    },
+    // getIssueTitle() {
+    //   return function (title) {
+    //     const splitArray = title.split(' ')
+    //     return splitArray.filter((item) => !item.match(regExp.pound_sign)).join(' ')
+    //   }
+    // },
     gitlabActivityUrl() {
       const splitUrl = this.selectedProject.git_url.split('/')
       splitUrl.pop()
@@ -317,7 +306,7 @@ export default {
       await res.data.forEach(async (item, index) => {
         item['id'] = index
         item['issue_id'] = this.getIssueId(item['commit_title'])
-        item['issue_title'] = this.getIssueTitle(item['commit_title'])
+        // item['issue_title'] = this.getIssueTitle(item['commit_title'])
         item['issues'] = await this.getIssue(item['issue_id'])
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
       })
@@ -327,6 +316,7 @@ export default {
       if (!ids[0]) return
       const issueData = []
       await ids.forEach(async (id) => {
+        if (id === '#') return
         const issueId = id.split('#')[1]
         const res = await getIssue(issueId)
         issueData.push(res.data)
