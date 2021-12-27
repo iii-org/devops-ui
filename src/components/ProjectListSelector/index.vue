@@ -197,7 +197,10 @@ export default {
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectOptions']),
     handleRouteParams() {
-      if (!this.keepSelection) return
+      if (!this.keepSelection) {
+        this.handleMyWorkInitRoute()
+        return
+      }
       const routeProjectNameParam = this.$route.params.projectName
       if (!routeProjectNameParam) return
       const project = this.projectOptions.find((option) => option.name === routeProjectNameParam)
@@ -205,8 +208,15 @@ export default {
         this.$router.replace({ name: '404' })
         return
       }
-      const projectId = project.id
-      this.setChange(projectId)
+      this.setChange(project.id)
+    },
+    handleMyWorkInitRoute() {
+      const storedProjectId = Number(sessionStorage.getItem('workProjectId'))
+      if (storedProjectId) {
+        this.$emit('update:project-id', storedProjectId)
+      } else {
+        this.$router.push({ name: 'my-works' })
+      }
     },
     showNoProjectWarning() {
       // noinspection JSCheckFunctionSignatures
@@ -222,15 +232,14 @@ export default {
         if (value || value !== '') {
           this.onProjectChange(value)
         }
+        this.setNewRoute(value)
       } else {
         this.$emit('update:project-id', value)
       }
-      this.setNewRoute(value)
       this.selectVisible = false
     },
     setNewRoute() {
-      const projectName = this.keepSelection ? this.selectedProject.name : this.projectValue
-      this.$router.push({ name: this.$route.name, params: { projectName }})
+      this.$router.push({ name: this.$route.name, params: { projectName: this.selectedProject.name }})
     },
     onProjectChange(value) {
       this.setSelectedProject(this.projectOptions.find((elm) => elm.id === value) || { id: -1 })

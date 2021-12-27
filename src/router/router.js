@@ -311,7 +311,7 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/my-work',
+    path: '/my-work/:projectName?',
     component: Layout,
     meta: {
       roles: ['Project Manager', 'Engineer']

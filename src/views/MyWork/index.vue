@@ -86,6 +86,12 @@ export default {
         this.setSelectedProject(this.projectOptions.find((elm) => elm.id === id))
         localStorage.setItem('projectId', id)
       }
+      if (!id) {
+        this.$router.push({ name: this.$route.name })
+        return
+      }
+      const projectName = this.projectOptions.find((elm) => elm.id === this.projectId).name
+      this.$router.push({ name: this.$route.name, params: { projectName }})
     },
     filterConditions: {
       handler() {
