@@ -558,6 +558,7 @@ export default {
     due_date_start: '@:Issue.EndDate(>=)',
     due_date_end: '@:Issue.EndDate(<=)',
     CustomFilter: '自定義條件',
+    CustomFilterName: '自定義條件名稱',
     InputFilterName: '請輸入篩選條件名稱',
     RemoveCustomFilter: '確認要移除自定義條件嗎?'
   },

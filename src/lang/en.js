@@ -563,6 +563,7 @@ export default {
     due_date_start: '@:Issue.EndDate(>=)',
     due_date_end: '@:Issue.EndDate(<=)',
     CustomFilter: 'Custom Filter',
+    CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
     RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
   },

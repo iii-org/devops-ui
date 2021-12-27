@@ -57,6 +57,9 @@
               :model="formData"
               class="mb-3"
             >
+              <el-form-item :label="$t('Issue.CustomFilterName')">
+                <el-input v-model="formData.name" />
+              </el-form-item>
               <el-form-item
                 v-if="checkEditable('status')"
                 :label="$t('Issue.status')"
@@ -243,6 +246,7 @@ import { mapGetters } from 'vuex'
 import { getIssueFilter, editIssueFilter, removeIssueFilter } from '@/api/issueFilter'
 
 const defaultFormData = () => ({
+  name: '',
   status_id: null,
   tags: null,
   tracker_id: null,
@@ -367,7 +371,9 @@ export default {
     onEditClick(filterId) {
       this.onPopoverHide()
       const idx = this.filters.findIndex((item) => item.id === filterId)
-      this.formData = Object.assign({}, this.filters[idx].custom_filter)
+      this.formData = Object.assign({}, this.filters[idx].custom_filter, {
+        name: this.filters[idx].name
+      })
       this.filters[idx].isShowForm = !this.filters[idx].isShowForm
     },
     onCancelClick() {
@@ -385,9 +391,8 @@ export default {
       })
     },
     editFilter(filter) {
-      const { id, name } = filter
+      const { id } = filter
       const sendData = Object.assign({}, this.formData)
-      sendData['name'] = name
       sendData['type'] = this.type
       sendData['tags'] = this.formatSendTags(sendData['tags'])
       this.modifyCustomFilter(id, sendData)
