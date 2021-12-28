@@ -360,13 +360,24 @@ export default {
           result[key] = options[key] === null ? null : options[key].split(',').map((i) => Number(i))
         } else if (key === 'show_closed_issues' || key === 'show_closed_versions') {
           result[key] = options[key] === null ? null : Boolean(options[key])
-        } else if (['assigned_to_id', 'focus_tab', 'group_by'].includes(key)) {
+        } else if (['focus_tab', 'group_by'].includes(key)) {
           result[key] = options[key]
+        } else if (key === 'assigned_to_id') {
+          result[key] = this.formatAssignedTo(options[key])
         } else {
           result[key] = options[key] === null ? null : Number(options[key])
         }
       })
       return result
+    },
+    formatAssignedTo(idString) {
+      if (idString === null) {
+        return null
+      } else if (idString === 'null') {
+        return 'null'
+      } else {
+        return Number(idString)
+      }
     },
     onEditClick(filterId) {
       this.onPopoverHide()
