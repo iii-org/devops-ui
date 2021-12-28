@@ -425,11 +425,11 @@ export default {
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
-            result['due_date_start'] = this.$dayjs(result['due_date_start']).isValid()
-              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD')
+            result['due_date_start'] = this.$dayjs(this.filterValue['due_date_start']).isValid()
+              ? this.$dayjs(this.filterValue['due_date_start']).format('YYYY-MM-DD')
               : null
-            result['due_date_end'] = this.$dayjs(result['due_date_end']).isValid()
-              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD')
+            result['due_date_end'] = this.$dayjs(this.filterValue['due_date_end']).isValid()
+              ? this.$dayjs(this.filterValue['due_date_end']).format('YYYY-MM-DD')
               : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
@@ -474,27 +474,29 @@ export default {
       issue.due_date = issue.due_date ? new Date(issue.due_date) : null
       return issue
     },
-    async appendIssue(row, subLevel, prefill) {
+    setTreeData(row, treeData, lazyTreeNodeMap) {
+      this.$set(row, 'has_children', true)
+      this.$set(treeData, row.id, {})
+      this.$set(treeData[row.id], 'display', true)
+      this.$set(treeData[row.id], 'lazy', true)
+      this.$set(treeData[row.id], 'loaded', true)
+      this.$set(treeData[row.id], 'loading', false)
+      this.$set(treeData[row.id], 'expanded', false)
+      this.$set(treeData[row.id], 'children', [])
+      if (row.parent_object && treeData[row.parent_object.id]) {
+        treeData[row.id]['level'] = treeData[row.parent_object.id]['level'] + 1
+      }
+      this.$set(lazyTreeNodeMap, row.id, [])
+    },
+    async treeDataArray(row, subLevel) {
       let row_index = this.listData.length
       let treeDataArray = []
       let updateNodeMap = []
-      const store = this.$refs.WBS.layout.store
-      const { treeData, lazyTreeNodeMap } = store.states
+      const { treeData, lazyTreeNodeMap } = this.$refs.WBS.layout.store.states
       if (row && row.id) {
         if (subLevel) {
           if (!treeData[row.id]) {
-            this.$set(row, 'has_children', true)
-            this.$set(treeData, row.id, {})
-            this.$set(treeData[row.id], 'display', true)
-            this.$set(treeData[row.id], 'lazy', true)
-            this.$set(treeData[row.id], 'loaded', true)
-            this.$set(treeData[row.id], 'loading', false)
-            this.$set(treeData[row.id], 'expanded', false)
-            this.$set(treeData[row.id], 'children', [])
-            if (row.parent_object && treeData[row.parent_object.id]) {
-              treeData[row.id]['level'] = treeData[row.parent_object.id]['level'] + 1
-            }
-            this.$set(lazyTreeNodeMap, row.id, [])
+            this.setTreeData(row, treeData, lazyTreeNodeMap)
           } else {
             await this.getIssueFamilyData(row, row.id, null, true)
           }
@@ -512,23 +514,40 @@ export default {
           row_index = this.listData.findIndex((issue) => issue.id === row.id) + 1
         }
       }
+      return { row_index, treeDataArray, updateNodeMap }
+    },
+    issueForm(prefill, timestamp) {
       const findEpic = this.tracker.find((item) => item.name === 'Epic')
-      const timestamp = Math.floor(new Date().getTime() / 1000)
-      const issueForm = {
+      const form = {
         id: `new_${timestamp}`,
-        parent_id: prefill && prefill.parent_id ? prefill.parent_id : null,
-        assigned_to: prefill && prefill.assigned_to ? prefill.assigned_to : { id: '', name: '' },
-        name: prefill && prefill.name ? `${prefill.name}(${this.$t('Issue.Copy')})` : '',
-        fixed_version: prefill && prefill.fixed_version ? prefill.fixed_version : { id: '', name: '' },
-        tracker: prefill && prefill.tracker ? prefill.tracker : { id: findEpic ? findEpic.id : '', name: '' },
-        status: prefill && prefill.status ? prefill.status : { id: 1, name: '' },
-        priority: prefill && prefill.priority ? prefill.priority : { id: 3, name: '' },
-        estimated_hours: prefill && prefill.estimated_hours ? prefill.estimated_hours : 0,
-        done_ratio: prefill && prefill.done_ratio ? prefill.done_ratio : 0,
-        start_date: prefill && prefill.start_date ? prefill.start_date : '',
-        due_date: prefill && prefill.due_date ? prefill.due_date : '',
+        parent_id: null,
+        assigned_to: { id: '', name: '' },
+        name: '',
+        fixed_version: { id: '', name: '' },
+        tracker: { id: findEpic ? findEpic.id : '', name: '' },
+        status: { id: 1, name: '' },
+        priority: { id: 3, name: '' },
+        estimated_hours: 0,
+        done_ratio: 0,
+        start_date: '',
+        due_date: '',
         create: true
       }
+      for (const data in form) {
+        if (!prefill) break
+        if (data !== 'id' && data !== 'create' && prefill[data]) {
+          if (data === 'name') form[data] = `${prefill.name}(${this.$t('Issue.Copy')})`
+          else form[data] = prefill[data]
+        }
+      }
+      return form
+    },
+    async appendIssue(row, subLevel, prefill) {
+      const { row_index, treeDataArray, updateNodeMap } = await this.treeDataArray(row, subLevel)
+      const store = this.$refs.WBS.layout.store
+      const { treeData, lazyTreeNodeMap } = store.states
+      const timestamp = Math.floor(new Date().getTime() / 1000)
+      const issueForm = this.issueForm(prefill, timestamp)
       if (subLevel) {
         treeDataArray.splice(row_index, 0, `new_${timestamp}`)
         issueForm['parent_id'] = row.id

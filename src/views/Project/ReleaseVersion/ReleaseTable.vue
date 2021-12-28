@@ -178,7 +178,10 @@ export default {
       this.listQuery = listQuery
     },
     showClosedIssue(tag_name) {
-      this.$router.push({ name: 'closed-issue-list', params: { issueTag: tag_name }})
+      this.$router.push({
+        name: 'closed-issue-list',
+        params: { issueTag: tag_name, projectName: this.selectedProject.name }
+      })
     },
     copyUrl(id) {
       const target = document.getElementById(id)
@@ -194,7 +197,10 @@ export default {
       return UTCtoLocalTime(time)
     },
     handleToTestReport(commitId) {
-      this.$router.push({ name: 'TestReport', params: { commitId }})
+      this.$router.push({
+        name: 'TestReport',
+        params: { commitId, projectName: this.$store.getters.selectedProject.name }
+      })
     }
   }
 }

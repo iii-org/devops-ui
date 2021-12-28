@@ -117,7 +117,12 @@
                 {{ scope.row.display }}
               </el-link>
               <br>
-              <span class="text-info text-sm" style="float: left;">#{{ scope.row.name }}</span>
+              <span
+                class="text-info text-sm"
+                style="float: left;"
+              >
+                #{{ scope.row.name }}
+              </span>
             </div>
           </div>
         </template>
@@ -278,7 +283,7 @@ export default {
       })[0]
       this.setSelectedProject(selectedProject)
       localStorage.setItem('projectId', id)
-      this.$router.push({ name: 'issue-boards' })
+      this.$router.push({ name: 'issue-boards', params: { projectName: selectedProject.name }})
     }
   }
 }

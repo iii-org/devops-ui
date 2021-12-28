@@ -83,7 +83,8 @@ import {
   webinspectFormatter,
   sonarqubeFormatter,
   sideexFormatter,
-  zapFormatter
+  zapFormatter,
+  cmasFormatter
 } from './formatter'
 
 export default {
@@ -95,7 +96,7 @@ export default {
     },
     projectTestObj: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -121,7 +122,8 @@ export default {
         webinspect: webinspectFormatter,
         sonarqube: sonarqubeFormatter,
         sideex: sideexFormatter,
-        zap: zapFormatter
+        zap: zapFormatter,
+        cmas: cmasFormatter
       }
       keys.forEach((key) => {
         result.push(mapFormatter[key](testResult[key]))

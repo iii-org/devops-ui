@@ -78,7 +78,7 @@ export default {
     //   // await this.cleanFilter()
     // },
     fixed_version_closed(value) {
-      this.setFixedVersionShowClosed(value)
+      this.setFixedVersionShowClosed({ list: value })
       this.loadVersionList(value)
     }
   },

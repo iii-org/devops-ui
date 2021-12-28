@@ -38,7 +38,7 @@ export default {
     devProgress: '開發進度',
     devBranch: '開發分支',
     gitGraph: '開發線圖',
-    pipelines: 'Pipeline',
+    pipelines: 'Pipelines',
     devEnvironment: '實證環境',
     kubernetesResources: 'Kubernetes 資源',
     releaseVersion: '釋出版本',
@@ -53,6 +53,7 @@ export default {
     webInspectReport: '@:general.Report',
     zap: '黑箱測試(OWASP ZAP)',
     sideex: 'ＷEB 測試(Sideex)',
+    cmas: 'APP檢測(CMAS)',
 
     'System Resource': '系統資源',
     Kubernetes: 'Kubernetes',
@@ -228,7 +229,11 @@ export default {
     ReLogin: '重新登入',
     Continue: '繼續使用',
     BackToHome: '返回首頁',
-    SaveSettings: '儲存設定'
+    SaveSettings: '儲存設定',
+    SeeMore: '看更多',
+    High: '高',
+    Medium: '中',
+    Low: '低'
   },
   Notify: {
     Updated: '已更新',
@@ -318,6 +323,12 @@ export default {
     Canceled: '已取消',
     Failed: '掃描失敗',
     InProcess: '產生中'
+  },
+  Cmas: {
+    SUCCESS: '掃描完成',
+    RUNNING: '掃描中',
+    NOT_FOUND: '掃描失敗',
+    MOEA: '行動應用APP基本資安規範'
   },
   WebInspect: {
     ScanId: '測試編號',
@@ -410,6 +421,8 @@ export default {
     status: '@:general.Status',
     Save: '儲存',
     Notes: '處理紀錄 / 訊息回覆',
+    History: '歷史紀錄',
+    Commit: '程式提交',
     AddComment: '新增備註',
     Flow: '流程',
     FlowId: '流程編號',
@@ -499,6 +512,7 @@ export default {
       },
       assigned_to_id: '@:Issue.Assignee',
       subject: '@:general.Title',
+      tag: '@:Issue.Tag',
       description: '@:Issue.Description',
       estimated_hours: '@:Issue.Estimate',
       start_date: '@:Issue.StartDate',
@@ -544,6 +558,7 @@ export default {
     due_date_start: '@:Issue.EndDate(>=)',
     due_date_end: '@:Issue.EndDate(<=)',
     CustomFilter: '自定義條件',
+    CustomFilterName: '自定義條件名稱',
     InputFilterName: '請輸入篩選條件名稱',
     RemoveCustomFilter: '確認要移除自定義條件嗎?'
   },
@@ -963,7 +978,8 @@ export default {
     DeploymentName: '部署名稱',
     DeploymentUuid: '部署 UUID',
     ReloadSystem: '刷新系統',
-    UpdatedNotify: '請於數分鐘後重新整理頁面，檢查系統是否完成更新。'
+    UpdatedNotify: '請於數分鐘後重新整理頁面，檢查系統是否完成更新。',
+    UploadSystemInfos: '上傳系統資訊'
   },
   LoadingText: {
     createRedmine: '建立Redmine專案中...',
@@ -1006,6 +1022,7 @@ export default {
     Commit: '提交碼',
     WhiteBoxTesting: '白箱測試(原始碼掃描)',
     BlackBoxTesting: '黑箱測試(弱點掃描)',
+    AppScriptTesting: 'APP測試',
     ApiScriptTesting: 'API腳本測試',
     WebScriptTesting: '網頁腳本測試',
     DetailReport: '詳細報告',
@@ -1131,6 +1148,8 @@ export default {
     ChangeIssueError: '異動議題錯誤',
     unassignedErrorTitle: '尚未分派的議題：',
     unassignedErrorContent: '沒有人被分派到此議題，無法調整到"已分派"之後的議題狀態。',
+    assignedErrorTitle: '已分派的議題',
+    assignedErrorContent: '已分派的議題，無法調整議題狀態到"已開立"',
     childrenStatusErrorTitle: '子議題尚未全關閉：',
     childrenStatusErrorContent: '有未關閉的子議題，請確認所有議題皆已關閉。',
     priorityErrorTitle: '父議題不能改變優先權：',

@@ -2,6 +2,7 @@
   <el-col
     v-loading="listLoading"
     class="inner"
+    :style="{height:height}"
   >
     <template v-if="listData.length>0">
       <transition-group
@@ -16,8 +17,15 @@
         >
           <el-card class="timeline-item-card">
             <h4>{{ commit.commit_title }}</h4>
-            <p v-if="commit.commit_message!==commit.commit_title">{{ commit.commit_message }}</p>
-            <p class="author">{{ commit.author_name }} @ {{ commit.pj_name }}</p>
+            <p v-if="compareCommitContent(commit)">{{ commit.commit_message }}</p>
+            <p class="author">
+              <template v-if="commitLink">
+                <a :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
+                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
+                </a> : 
+              </template>
+              {{ commit.author_name }} @ {{ commit.pj_name }}
+            </p>
           </el-card>
         </el-timeline-item>
       </transition-group>
@@ -35,6 +43,14 @@ export default {
     data: {
       type: Function,
       default: () => []
+    },
+    commitLink: {
+      type: Boolean,
+      default: false
+    },
+    height: {
+      type: String,
+      default: '250px'
     }
   },
   data() {
@@ -42,6 +58,18 @@ export default {
       listData: [],
       detailDialog: false,
       listLoading: false
+    }
+  },
+  computed: {
+    compareCommitContent() {
+      return function (commit) {
+        return commit.commit_message.trim() !== commit.commit_title
+      }
+    },
+    firstEightCommitId() {
+      return function (commit) {
+        return commit.slice(0, 8)
+      }
     }
   },
   mounted() {
@@ -59,7 +87,6 @@ export default {
 
 <style lang="scss" scoped>
 .inner {
-  height: 250px;
   overflow-y: auto;
   overflow-x: hidden;
 }

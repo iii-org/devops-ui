@@ -1,6 +1,6 @@
 import i18n from '@/lang'
 
-const postmanFormatter = testResult => {
+const postmanFormatter = (testResult) => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -22,7 +22,7 @@ const postmanFormatter = testResult => {
   }
   return ret
 }
-const getCheckmarxStatusText = status => {
+const getCheckmarxStatusText = (status) => {
   const statusString = String(status)
   const mapText = {
     '-1': i18n.t('CheckMarx.noScan'),
@@ -34,7 +34,7 @@ const getCheckmarxStatusText = status => {
   }
   return mapText[statusString]
 }
-const checkmarxFormatter = testResult => {
+const checkmarxFormatter = (testResult) => {
   const { status, report_id, run_at, highSeverity, mediumSeverity, lowSeverity, infoSeverity } = testResult
   const ret = {}
   if (status === 3) {
@@ -65,7 +65,7 @@ const checkmarxFormatter = testResult => {
   }
   return ret
 }
-const webinspectFormatter = testResult => {
+const webinspectFormatter = (testResult) => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -89,12 +89,12 @@ const webinspectFormatter = testResult => {
   }
   return ret
 }
-const sonarqubeFormatter = testResult => {
+const sonarqubeFormatter = (testResult) => {
   const ret = {}
   const informationArr = testResult
-    .map(row => ({ status: row.metric, count: row.value }))
-    .filter(item => item.status !== 'run_at')
-  const runAtIdx = testResult.findIndex(row => row.metric === 'run_at')
+    .map((row) => ({ status: row.metric, count: row.value }))
+    .filter((item) => item.status !== 'run_at')
+  const runAtIdx = testResult.findIndex((row) => row.metric === 'run_at')
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
       Software: 'sonarqube',
@@ -104,12 +104,12 @@ const sonarqubeFormatter = testResult => {
     Object.assign(ret, {
       Software: 'sonarqube',
       runAt: runAtIdx > -1 ? testResult[runAtIdx].value : undefined,
-      informationText: informationArr.map(row => ({ status: i18n.t(`SonarQube.${row.status}`), count: row.count }))
+      informationText: informationArr.map((row) => ({ status: i18n.t(`SonarQube.${row.status}`), count: row.count }))
     })
   }
   return ret
 }
-const sideexFormatter = testResult => {
+const sideexFormatter = (testResult) => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -132,7 +132,7 @@ const sideexFormatter = testResult => {
   }
   return ret
 }
-const zapFormatter = testResult => {
+const zapFormatter = (testResult) => {
   const ret = {}
   if (Object.keys(testResult).length === 0) {
     Object.assign(ret, {
@@ -154,4 +154,38 @@ const zapFormatter = testResult => {
   }
   return ret
 }
-export { postmanFormatter, checkmarxFormatter, webinspectFormatter, sonarqubeFormatter, sideexFormatter, zapFormatter }
+const cmasFormatter = (testResult) => {
+  const ret = {}
+  if (Object.keys(testResult).length === 0) {
+    Object.assign(ret, {
+      Software: 'cmas',
+      informationText: []
+    })
+  } else {
+    const { MOEA, OWASP, run_at } = testResult
+    Object.assign(ret, {
+      Software: 'cmas',
+      runAt: run_at,
+      informationText: [
+        { status: 'MOEA', count: MOEA['summary'] },
+        { status: 'L3', count: MOEA['High'] },
+        { status: 'L2', count: MOEA['Medium'] },
+        { status: 'L1', count: MOEA['Low'] },
+        { status: 'OWASP', count: OWASP['summary'] },
+        { status: i18n.t('general.High'), count: OWASP['High'] },
+        { status: i18n.t('general.Medium'), count: OWASP['Medium'] },
+        { status: i18n.t('general.Low'), count: OWASP['Low'] }
+      ]
+    })
+  }
+  return ret
+}
+export {
+  postmanFormatter,
+  checkmarxFormatter,
+  webinspectFormatter,
+  sonarqubeFormatter,
+  sideexFormatter,
+  zapFormatter,
+  cmasFormatter
+}

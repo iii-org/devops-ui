@@ -76,7 +76,7 @@
             <router-link
               :to="{
                 name: 'Artifacts',
-                params: { rName: scope.row.name }
+                params: { rName: scope.row.name, projectName }
               }"
               style="color: #409eff"
             >

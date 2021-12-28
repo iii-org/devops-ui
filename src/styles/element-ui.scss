@@ -58,3 +58,9 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+// to fix search filter out of screen error
+.el-popover.popper {
+  top: 100px !important;
+  height: max-content;
+}

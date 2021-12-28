@@ -105,8 +105,8 @@
         />
         <el-table-column
           :label="$t('general.Actions')"
-          header-align="center"
-          width="230"
+          align="center"
+          width="130"
         >
           <template slot-scope="scope">
             <el-button
@@ -128,7 +128,7 @@
             >
               {{ $t('general.Stop') }}
             </el-button>
-            <el-button
+            <!-- <el-button
               v-else
               size="mini"
               type="primary"
@@ -137,7 +137,7 @@
               @click="onActionClick(scope.row.id, 'rerun')"
             >
               {{ $t('general.Rerun') }}
-            </el-button>
+            </el-button> -->
           </template>
         </el-table-column>
         <el-table-column
@@ -182,6 +182,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/newMixins'
+import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({
   page: 1,
@@ -285,6 +286,7 @@ export default {
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
           return result
         })
+        triggerReport(this.selectedProject, this.listData[0].commit_id)
       } else {
         this.listData = []
       }
@@ -340,7 +342,10 @@ export default {
     handleToTestReport(row) {
       const commitId = row.commit_id
       const commitBranch = row.commit_branch
-      this.$router.push({ name: 'TestReport', params: { commitId, commitBranch }})
+      this.$router.push({
+        name: 'TestReport',
+        params: { commitId, commitBranch, projectName: this.$store.getters.selectedProject.name }
+      })
     }
   }
 }

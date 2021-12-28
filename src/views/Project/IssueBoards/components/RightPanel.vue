@@ -11,7 +11,6 @@
         :style="{'top':buttonTop+'px','background-color':'#85c1e9'}"
         @click="handleShow"
       >
-        <!--        <em :class="show?'el-icon-close':'el-icon-setting'" />-->
         <em
           v-if="show"
           class="el-icon-close"
@@ -96,15 +95,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-//.rightPanel-background {
-//  position: fixed;
-//  top: 0;
-//  left: 0;
-//  opacity: 0;
-//  transition: opacity .3s cubic-bezier(.7, .3, .1, 1);
-//  background: rgba(0, 0, 0, .2);
-//  z-index: -1;
-//}
 .rightPanel {
   width: 100%;
   max-width: 260px;

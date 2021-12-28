@@ -16,16 +16,18 @@
         :filter-options="filterOptions"
         :list-loading="listLoading"
         :selection-options="contextOptions"
-        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed }"
+        :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,fixed_version_closed:fixed_version_closed }"
         @change-filter="onChangeFilterForm"
         @change-fixed-version="onChangeFixedVersionStatus"
         @add-custom-filter="updateCustomFilter"
+        @clean-filter="cleanFilter"
       >
-        <!-- <CustomFilter
+        <CustomFilter
           ref="customFilter"
+          type="issue_list"
           :selection-options="contextOptions"
           @apply-filter="applyCustomFilter"
-        /> -->
+        />
         <span
           slot="download"
           v-permission="['QA']"
@@ -219,6 +221,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
+      @backToFirstPage="backToFirstPage"
       @update="loadData"
     />
   </div>
@@ -226,12 +229,11 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { QuickAddIssue, ExpandSection, SearchFilter } from '@/components/Issue'
+import { QuickAddIssue, ExpandSection, SearchFilter, CustomFilter } from '@/components/Issue'
 import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
-import CustomFilter from './components/CustomFilter.vue'
 import XLSX from 'xlsx'
 
 /**
@@ -309,20 +311,27 @@ export default {
     async getInitStoredData() {
       const key = 'list'
       const storedData = await this.fetchStoredData()
-      const { storedFilterValue, storedKeyword, storedDisplayClosed } = storedData
+      const { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed } = storedData
       this.filterValue = storedFilterValue[key] ? storedFilterValue[key] : {}
       this.keyword = storedKeyword[key] ? storedKeyword[key] : null
       this.displayClosed = storedDisplayClosed[key] ? storedDisplayClosed[key] : false
+      this.fixed_version_closed = storedVersionClosed[key] ? storedVersionClosed[key] : false
     },
     async fetchStoredData() {
-      let storedFilterValue, storedKeyword, storedDisplayClosed
-      await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then((res) => {
-        const [filterValue, keyword, displayClosed] = res.map((item) => item)
+      let storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed
+      await Promise.all([
+        this.getIssueFilter(),
+        this.getKeyword(),
+        this.getDisplayClosed(),
+        this.getFixedVersionShowClosed()
+      ]).then((res) => {
+        const [filterValue, keyword, displayClosed, fixedVersionClosed] = res.map((item) => item)
         storedFilterValue = filterValue
         storedKeyword = keyword
         storedDisplayClosed = displayClosed
+        storedVersionClosed = fixedVersionClosed
       })
-      return { storedFilterValue, storedKeyword, storedDisplayClosed }
+      return { storedFilterValue, storedKeyword, storedDisplayClosed, storedVersionClosed }
     },
     getParams(limit) {
       const result = {
@@ -471,8 +480,14 @@ export default {
     updateCustomFilter() {
       this.$refs.customFilter.fetchCustomFilter()
     },
+    cleanFilter() {
+      this.$refs.customFilter.resetApplyFilter()
+    },
     applyCustomFilter(filters) {
-      this.onChangeFilterForm({ filterValue: filters })
+      const { result, displayClosed, fixed_version_closed } = filters
+      this.onChangeFilterForm({ filterValue: result })
+      this.displayClosed = displayClosed
+      this.fixed_version_closed = fixed_version_closed
     }
   }
 }

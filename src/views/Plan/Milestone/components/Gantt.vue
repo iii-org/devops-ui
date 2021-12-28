@@ -1,18 +1,35 @@
 <template>
   <div>
-    <el-row :gutter="10" class="content">
-      <el-col v-loading="listLoading" :element-loading-text="$t('Loading')" :span="24">
-        <div v-if="listData.length > 0" class="gantt-chart">
+    <el-row
+      :gutter="10"
+      class="content"
+    >
+      <el-col
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
+        :span="24"
+      >
+        <div
+          v-if="listData.length > 0"
+          class="gantt-chart"
+        >
           <gantt-elastic
             ref="gantt"
             :tasks="listData"
             :options="options"
             @chart-task-click="onTaskClick"
           >
-            <gantt-header slot="header" :options="headerOptions" />
+            <gantt-header
+              ref="header"
+              slot="header"
+              :options="headerOptions"
+            />
           </gantt-elastic>
         </div>
-        <div v-else class="align-middle">
+        <div
+          v-else
+          class="align-middle"
+        >
           <el-alert type="warning">
             <h1>
               <em class="el-icon-warning" /> {{ $t('general.NoData') }}
@@ -41,8 +58,14 @@
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
       />
-      <span slot="footer" class="dialog-footer">
-        <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          id="dialog-btn-cancel"
+          @click="handleAdvancedClose"
+        >{{ $t('general.Cancel') }}</el-button>
         <el-button
           id="dialog-btn-confirm"
           :loading="addTopicDialog.LoadingConfirm"
@@ -139,6 +162,19 @@ export default {
       relationIssue: {
         visible: false,
         id: null
+      },
+      headerOptions: {
+        title: {
+          label: ''
+        },
+        locale: {
+          Now: this.$t('Gantt.Now'),
+          'X-Scale': this.$t('Gantt.XScale'),
+          'Y-Scale': this.$t('Gantt.YScale'),
+          'Task list width': this.$t('Gantt.TaskListWidth'),
+          'Before/After': this.$t('Gantt.TimelineLength'),
+          'Display task list': this.$t('Gantt.DisplayTaskList')
+        }
       }
     }
   },
@@ -151,13 +187,13 @@ export default {
       const result = []
       Object.keys(this.filterValue).forEach((item) => {
         if (this.filterValue[item]) {
-          const value = this[item].find((search) => (search.id === this.filterValue[item]))
+          const value = this[item].find((search) => search.id === this.filterValue[item])
           if (value) {
             result.push(this.getSelectionLabel(value))
           }
         }
       })
-      return this.$t('general.Filter') + ((result.length > 0) ? ': ' : '') + result.join(', ')
+      return this.$t('general.Filter') + (result.length > 0 ? ': ' : '') + result.join(', ')
     },
     isFilterChanged() {
       for (const item of Object.keys(this.originFilterValue)) {
@@ -218,7 +254,7 @@ export default {
             {
               id: 2,
               label: this.$t('Issue.name'),
-              value: issue => `${issue.has_children ? `<em class="el-icon-caret-right" />` : '　'} ${issue.name}`,
+              value: (issue) => `${issue.has_children ? `<em class="el-icon-caret-right" />` : '　'} ${issue.name}`,
               width: 200,
               expander: true,
               html: true,
@@ -245,13 +281,14 @@ export default {
             {
               id: 4,
               label: this.$t('Issue.StartDate'),
-              value: (task) => this.$dayjs(task.start).isValid() ? this.$dayjs(task.start).format('YYYY-MM-DD') : null,
+              value: (task) =>
+                this.$dayjs(task.start).isValid() ? this.$dayjs(task.start).format('YYYY-MM-DD') : null,
               width: 78
             },
             {
               id: 5,
               label: this.$t('Issue.EndDate'),
-              value: (task) => this.$dayjs(task.end).isValid() ? this.$dayjs(task.end).format('YYYY-MM-DD') : null,
+              value: (task) => (this.$dayjs(task.end).isValid() ? this.$dayjs(task.end).format('YYYY-MM-DD') : null),
               width: 78
             }
             // {
@@ -280,22 +317,6 @@ export default {
         }
         // locale: { code: this.$i18n.locale.toLowerCase() }
       }
-    },
-    headerOptions() {
-      const headerOptions = {
-        title: {
-          label: ''
-        },
-        locale: {
-          Now: this.$t('Gantt.Now'),
-          'X-Scale': this.$t('Gantt.XScale'),
-          'Y-Scale': this.$t('Gantt.YScale'),
-          'Task list width': this.$t('Gantt.TaskListWidth'),
-          'Before/After': this.$t('Gantt.TimelineLength'),
-          'Display task list': this.$t('Gantt.DisplayTaskList')
-        }
-      }
-      return headerOptions
     }
   },
   watch: {
@@ -308,16 +329,32 @@ export default {
       handler() {
         this.loadData()
       }
+    },
+    '$i18n.locale'() {
+      this.setHeaders()
     }
   },
   created() {
     this.loadData()
   },
-  async mounted() {
-  },
   methods: {
     async loadData() {
       await this.fetchData()
+    },
+    setHeaders() {
+      this.$refs.header.opts = {
+        title: {
+          label: ''
+        },
+        locale: {
+          Now: this.$t('Gantt.Now'),
+          'X-Scale': this.$t('Gantt.XScale'),
+          'Y-Scale': this.$t('Gantt.YScale'),
+          'Task list width': this.$t('Gantt.TaskListWidth'),
+          'Before/After': this.$t('Gantt.TimelineLength'),
+          'Display task list': this.$t('Gantt.DisplayTaskList')
+        }
+      }
     },
     getParams() {
       const result = {
@@ -334,9 +371,11 @@ export default {
         if (this.filterValue[item]) {
           if (item === 'due_date_start' || item === 'due_date_end') {
             result['due_date_start'] = this.$dayjs(result['due_date_start']).isValid()
-              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD') : null
+              ? this.$dayjs(result['due_date_start']).format('YYYY-MM-DD')
+              : null
             result['due_date_end'] = this.$dayjs(result['due_date_end']).isValid()
-              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD') : null
+              ? this.$dayjs(result['due_date_end']).format('YYYY-MM-DD')
+              : null
           } else if (item === 'tags' && this.filterValue[item].length > 0) {
             result[item] = this.filterValue[item].join()
           } else {
@@ -350,7 +389,9 @@ export default {
       return result
     },
     formatIssue(issue, parentId) {
-      issue.label = `${this.$t(`Issue.${issue.status.name}`)}${(issue.done_ratio > 0) ? `(${issue.done_ratio}%)` : ''} - ${issue.name}`
+      issue.label = `${this.$t(`Issue.${issue.status.name}`)}${
+        issue.done_ratio > 0 ? `(${issue.done_ratio}%)` : ''
+      } - ${issue.name}`
       issue.start = issue.start_date || new Date()
       issue.end = issue.due_date || new Date()
       issue.progress = issue.done_ratio || 0
@@ -377,7 +418,9 @@ export default {
       }
       this.listLoading = true
       try {
-        resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), { cancelToken: this.cancelToken })
+        resProjectIssue = await getProjectIssueList(this.selectedProjectId, this.getParams(), {
+          cancelToken: this.cancelToken
+        })
       } catch (error) {
         console.error(error)
       } finally {
@@ -385,7 +428,7 @@ export default {
         //   issues.push(new Issue(issue_data))
         // }
         if (resProjectIssue && resProjectIssue.data) {
-          this.listData = resProjectIssue.data.map(issue => this.formatIssue(issue))
+          this.listData = resProjectIssue.data.map((issue) => this.formatIssue(issue))
         }
         this.listLoading = false
       }
@@ -393,12 +436,12 @@ export default {
     },
     getSelectionLabel(item) {
       const visibleStatus = ['closed', 'locked']
-      let result = (this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name)
+      let result = this.$te('Issue.' + item.name) ? this.$t('Issue.' + item.name) : item.name
       if (item.hasOwnProperty('status') && visibleStatus.includes(item.status)) {
         result += ' (' + (this.$te('Issue.' + item.status) ? this.$t('Issue.' + item.status) : item.status) + ')'
       }
       if (item.hasOwnProperty('login')) {
-        result += ' (' + (item.login) + ')'
+        result += ' (' + item.login + ')'
       }
       return result
     },
@@ -409,9 +452,9 @@ export default {
           const family = await getIssueFamily(row.id)
           const data = family.data
           if (data.hasOwnProperty('children')) {
-            data.children.forEach(issue => {
+            data.children.forEach((issue) => {
               issue = this.formatIssue(issue, row.id)
-              const oldIssueIndex = this.listData.findIndex(subIssue => subIssue.id === issue.id)
+              const oldIssueIndex = this.listData.findIndex((subIssue) => subIssue.id === issue.id)
               if (oldIssueIndex > 0) {
                 this.$set(this.listData, oldIssueIndex, issue)
               } else {
@@ -435,11 +478,11 @@ export default {
       this.onChangeFilter()
     },
     handleSave() {
-      this.$refs['issueForm'].validate(async valid => {
+      this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
           // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.form))
-          Object.keys(data).map(item => {
+          Object.keys(data).map((item) => {
             if (data[item] === '' || data[item] === 'null' || !data[item]) delete data[item]
           })
 
@@ -447,7 +490,7 @@ export default {
           const form = new FormData()
           form.append('project_id', this.projectId)
           // if (this.parentId) form.append('parent_id', this.parentId)
-          Object.keys(data).forEach(objKey => {
+          Object.keys(data).forEach((objKey) => {
             form.append(objKey, data[objKey])
           })
           // if (this.uploadFileList.length > 0) {
@@ -461,12 +504,11 @@ export default {
         } else {
           return false
         }
-      }
-      )
+      })
     },
     async saveIssue(data) {
-      return await addIssue(data)
-        .then(res => {
+      await addIssue(data)
+        .then((res) => {
           // noinspection JSCheckFunctionSignatures
           this.$message({
             title: this.$t('general.Success'),
@@ -477,7 +519,7 @@ export default {
           this.addTopicDialogVisible = false
           return res
         })
-        .catch(error => {
+        .catch((error) => {
           return error
         })
     },
@@ -527,8 +569,7 @@ export default {
           .then(() => {
             done()
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       } else {
         done()
       }
@@ -551,7 +592,6 @@ $max_height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
   //navbar, padding, project selector,divider
   .el-col {
     max-height: inherit;
-
   }
 }
 </style>

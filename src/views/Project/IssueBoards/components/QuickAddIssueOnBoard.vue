@@ -1,21 +1,35 @@
 <template>
   <el-row>
     <el-col>
-      <el-form ref="issueForm" :model="form" :rules="formRules">
+      <el-form
+        ref="issueForm"
+        :model="form"
+        :rules="formRules"
+      >
         <el-form-item prop="tracker_id">
-          <el-select v-model="form.tracker_id" :placeholder="$t('Issue.SelectType')" style="width: 100%">
+          <el-select
+            v-model="form.tracker_id"
+            :placeholder="$t('Issue.SelectType')"
+            style="width: 100%"
+          >
             <el-option
               v-for="option in tracker"
               :key="option.id"
               :label="$t('Issue.' + option.name)"
               :value="option.id"
             >
-              <Tracker :name="$t(`Issue.${option.name}`)" :type="option.name" />
+              <Tracker
+                :name="$t(`Issue.${option.name}`)"
+                :type="option.name"
+              />
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="name">
-          <el-input v-model="form.name" :placeholder="$t('Issue.name')" />
+          <el-input
+            v-model="form.name"
+            :placeholder="$t('Issue.name')"
+          />
         </el-form-item>
         <el-form-item prop="assigned_to_id">
           <el-select
@@ -37,8 +51,15 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="LoadingConfirm" @click="handleSave">{{ $t('general.Save') }}</el-button>
-          <el-button :disabled="LoadingConfirm" @click="advancedAddIssue">{{
+          <el-button
+            type="primary"
+            :loading="LoadingConfirm"
+            @click="handleSave"
+          >{{ $t('general.Save') }}</el-button>
+          <el-button
+            :disabled="LoadingConfirm"
+            @click="advancedAddIssue"
+          >{{
             $t('general.AdvancedSettings')
           }}</el-button>
         </el-form-item>
@@ -64,9 +85,20 @@
         @loading="loadingUpdate"
         @add-topic-visible="handleCloseDialog"
       />
-      <span slot="footer" class="dialog-footer">
-        <el-button id="dialog-btn-cancel" @click="handleAdvancedClose">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" :loading="LoadingConfirm" type="primary" @click="handleAdvancedSave">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          id="dialog-btn-cancel"
+          @click="handleAdvancedClose"
+        >{{ $t('general.Cancel') }}</el-button>
+        <el-button
+          id="dialog-btn-confirm"
+          :loading="LoadingConfirm"
+          type="primary"
+          @click="handleAdvancedSave"
+        >
           {{ $t('general.Confirm') }}
         </el-button>
       </span>
@@ -214,6 +246,7 @@ export default {
       return data
     },
     async sendSaveAction(data) {
+      if (data.name) data.status_id = 2
       const form = new FormData()
       form.append('project_id', this.projectId)
       Object.keys(data).forEach((objKey) => {

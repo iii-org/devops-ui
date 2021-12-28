@@ -53,6 +53,7 @@ export default {
     webInspectReport: '@:general.Report',
     zap: 'OWASP ZAP',
     sideex: 'Sideex',
+    cmas: 'CMAS',
 
     'System Resource': 'System Resource',
     Kubernetes: 'Kubernetes',
@@ -228,7 +229,11 @@ export default {
     ReLogin: 'Re-Login',
     Continue: 'Continue',
     BackToHome: 'Back To Home',
-    SaveSettings: 'Save Settings'
+    SaveSettings: 'Save Settings',
+    SeeMore: 'See more',
+    High: 'High',
+    Medium: 'Medium',
+    Low: 'Low'
   },
   Notify: {
     Updated: 'update successful',
@@ -338,6 +343,12 @@ export default {
     DownloadReport: 'Download Report',
     SearchCommitId: 'Search Commit ID'
   },
+  Cmas: {
+    SUCCESS: 'Success',
+    RUNNING: 'Scanning',
+    NOT_FOUND: 'Fail',
+    MOEA: 'Mobile APP Assurance Specification'
+  },
   TestValue: {
     TestValue: 'Test Value',
     AddTestValue: 'Add Test Value',
@@ -413,6 +424,8 @@ export default {
     status: '@:general.Status',
     Save: 'Save',
     Notes: 'Notes',
+    History: 'History',
+    Commit: 'Commit',
     AddComment: 'Add Comment',
     Flow: 'Flow',
     FlowId: 'Flow Id',
@@ -504,6 +517,7 @@ export default {
       },
       assigned_to_id: '@:Issue.Assignee',
       subject: '@:general.Title',
+      tag: '@:Issue.Tag',
       description: '@:Issue.Description',
       estimated_hours: '@:Issue.Estimate',
       start_date: '@:Issue.StartDate',
@@ -549,6 +563,7 @@ export default {
     due_date_start: '@:Issue.EndDate(>=)',
     due_date_end: '@:Issue.EndDate(<=)',
     CustomFilter: 'Custom Filter',
+    CustomFilterName: 'Custom Filter Name',
     InputFilterName: 'Input Filter Name',
     RemoveCustomFilter: 'Are you sure to Remove Custom Filter?'
   },
@@ -970,7 +985,8 @@ export default {
     DeploymentName: 'Deployment Name',
     DeploymentUuid: 'Deployment UUID',
     ReloadSystem: 'Reload System',
-    UpdatedNotify: 'Please reload this page after a few minutes to check if the update is complete.'
+    UpdatedNotify: 'Please reload this page after a few minutes to check if the update is complete.',
+    UploadSystemInfos: 'Upload system information'
   },
   LoadingText: {
     createRedmine: 'Adding a Redmine project...',
@@ -1013,6 +1029,7 @@ export default {
     Commit: 'Commit',
     WhiteBoxTesting: 'White-box Testing(Source Code Scanning)',
     BlackBoxTesting: 'Black-box Testing(Weakness Scanning)',
+    AppScriptTesting: 'APP Script Testing',
     ApiScriptTesting: 'API Script Testing',
     WebScriptTesting: 'Web Script Testing',
     DetailReport: 'Detail Report',
@@ -1140,6 +1157,8 @@ export default {
     unassignedErrorTitle: `The issues haven't been assigned:`,
     unassignedErrorContent:
       'No one has been assigned to this issue, and cannot be adjusted to the status of the issue after "assigned".',
+    assignedErrorTitle: 'Assigned issues:',
+    assignedErrorContent: 'Issues that have been assigned cannot be adjusted to "opened".',
     childrenStatusErrorTitle: `The children issues haven't been closed:`,
     childrenStatusErrorContent: 'There are unclosed children issues, please confirm that all issues are closed.',
     priorityErrorTitle: 'The parent issue cannot change priority:',

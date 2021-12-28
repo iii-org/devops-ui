@@ -25,7 +25,7 @@
       </template>
       <no-data v-else />
     </el-row>
-    <div class="table hidden-md-and-up">
+    <div class="list hidden-md-and-up">
       <el-row
         v-for="(item,idx) in listData"
         :key="idx"
@@ -138,7 +138,7 @@ export default {
   }
 }
 
->>> .table {
+>>> .list {
   font-size: 1.5em;
   width: 100%;
 

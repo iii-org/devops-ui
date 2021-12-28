@@ -292,7 +292,7 @@ export default {
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     handleBackPage() {
-      this.$router.push({ name: 'release-version' })
+      this.$router.push({ name: 'release-version', params: { projectName: this.selectedProject.name }})
     },
     getFixedVersionClosed() {
       const fixed_version = this.fixed_version.filter(item => item.name === this.$route.params.issueTag)[0].id

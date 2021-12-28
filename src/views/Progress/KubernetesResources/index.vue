@@ -1,27 +1,50 @@
 <template>
-  <el-row v-loading="listLoading" :element-loading-text="$t('Loading')" class="app-container">
+  <el-row
+    v-loading="listLoading"
+    :element-loading-text="$t('Loading')"
+    class="app-container"
+  >
     <el-col>
       <project-list-selector />
       <el-divider />
       <el-row :gutter="12">
-        <el-empty v-if="listData.length < 1" :description="$t('general.NoData')" />
-        <el-col v-for="item in listData" :key="item.title" :md="12" :lg="8" :xl="6">
+        <el-empty
+          v-if="listData.length < 1"
+          :description="$t('general.NoData')"
+        />
+        <el-col
+          v-for="item in listData"
+          :key="item.title"
+          :md="12"
+          :lg="8"
+          :xl="6"
+        >
           <el-card
             v-loading="listLoading"
             :class="{ 'mb-3': true, 'float-card': hasDetail(item.title) }"
             :shadow="hasDetail(item.title) ? 'always' : 'never'"
             @click.native="showDetail(item.title)"
           >
-            <div slot="header" class="flex justify-between items-center" style="height: 24px">
+            <div
+              slot="header"
+              class="flex justify-between items-center"
+              style="height: 24px"
+            >
               <strong>{{ item.title }}{{ item.quota }}</strong>
             </div>
-            <div v-if="selectedProjectId === -1" style="text-align: center;">
+            <div
+              v-if="selectedProjectId === -1"
+              style="text-align: center;"
+            >
               {{ $t('general.NoData') }}
             </div>
             <div v-else>
               <resource-pie :chart-data="item.data" />
             </div>
-            <div :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'" :style="{ cursor: 'pointer' }">
+            <div
+              :class="hasDetail(item.title) ? 'details-reminder' : 'reminder-space'"
+              :style="{ cursor: 'pointer' }"
+            >
               {{ $t('ProjectResource.Details') }}
             </div>
           </el-card>
@@ -50,13 +73,13 @@ export default {
     },
     hasDetail(target) {
       const allowList = ['Deployment', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Ingresses']
-      return allowList.findIndex(i => i === target) > -1
+      return allowList.findIndex((i) => i === target) > -1
     },
     showDetail(target) {
       if (!this.hasDetail(target)) {
         return
       }
-      this.$router.push({ name: `${target} List` })
+      this.$router.push({ name: `${target} List`, params: { projectName: this.selectedProject.name }})
     },
     handleChartData(data) {
       const titleList = ['CPU', 'Memory', 'Pods', 'Service', 'Secret', 'ConfigMaps', 'Deployment', 'Ingresses']
@@ -76,7 +99,7 @@ export default {
           }
         }
       })
-      result.forEach(i => {
+      result.forEach((i) => {
         i.leftQuota = {
           value: i.quota.value === null ? null : roundValue(i.quota.value - i.used.value),
           unit: i.quota.unit

@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import ToolBar from '@/views/Progress/Pipelines/components/ToolBar'
 
 export default {
@@ -62,6 +63,15 @@ export default {
     listLoading: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    ...mapGetters(['selectedProject']),
+    selectedProjectId() {
+      return this.selectedProject.id
+    },
+    commitId() {
+      return this.$route.params.commitId
     }
   },
   methods: {
