@@ -249,9 +249,9 @@ export default {
     } else {
       await this.loadSelectionList()
     }
-    if (Object.keys(this.row).length > 2) {
-      await this.getClosable()
-    }
+    // if (Object.keys(this.row).length > 2) {
+    //   await this.getClosable()
+    // }
   },
   methods: {
     initOptions() {
