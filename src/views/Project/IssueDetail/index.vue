@@ -137,6 +137,7 @@
                     :family="countRelationIssue > 0"
                     :popup="true"
                     :reload="relationVisible"
+                    @update-list="fetchIssueLink"
                     @on-context-menu="onContextMenu"
                     @popup-dialog="onRelationIssueDialog"
                   />
