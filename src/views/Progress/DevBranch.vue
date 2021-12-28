@@ -14,7 +14,7 @@
       v-loading="listLoading"
       :data="pagedData"
       :element-loading-text="$t('Loading')"
-      row-key="id"
+      row-key="name"
       fit
       @expand-change="onExpandChange"
     >
@@ -262,7 +262,7 @@ export default {
     async getStoredData() {
       const storedData = await this.getTableExpand()
       const { expandedRow, collapseActiveValue } = storedData
-      const rowIndex = this.branchList.findIndex((list) => list.id === expandedRow[0])
+      const rowIndex = this.branchList.findIndex((list) => list.name === expandedRow[0])
       const row = this.branchList[rowIndex]
       if (rowIndex === undefined || row === undefined) return
       this.onExpandChange(row, [row])
@@ -279,9 +279,9 @@ export default {
     },
     handleExpanded(row, expandedRows) {
       this.initTableExpand()
-      this.expandedRow.push(row.id)
+      this.expandedRow.push(row.name)
       expandedRows.forEach((expandedRow) => {
-        this.$refs.table.toggleRowExpansion(expandedRow, row.id === expandedRow.id)
+        this.$refs.table.toggleRowExpansion(expandedRow, row.name === expandedRow.name)
       })
     },
     initTableExpand() {
@@ -292,7 +292,7 @@ export default {
       this.$set(row, 'timelineLoading', true)
       this.gitCommitLog = await this.getGitCommitLog(row.name)
       this.listData.forEach((item) => {
-        if (item.id === row.id) item.gitCommitLog = this.gitCommitLog
+        if (item.name === row.name) item.gitCommitLog = this.gitCommitLog
       })
       this.$set(row, 'timelineLoading', false)
     },
