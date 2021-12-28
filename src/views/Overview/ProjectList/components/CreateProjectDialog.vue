@@ -120,6 +120,7 @@
         </el-col>
       </el-row>
       <el-row
+        v-loading="isLoadingTemplate"
         class="loading-template"
         :gutter="10"
       >
@@ -404,18 +405,16 @@ export default {
         const userList = await getUserListByFilter({ role_ids: 3 }) // pm
         this.userList = userList.data.user_list
       }
-      if (isForceUpdate) this.isClickUpdateTemplate = true
-      this.isLoadingTemplate = true
       if (this.userRole !== 'Engineer') {
         this.getTemplateList(isForceUpdate)
       }
-      this.isLoadingTemplate = false
-      this.isClickUpdateTemplate = false
     },
     async getTemplateList(force_update) {
+      if (force_update) this.isClickUpdateTemplate = true
       await getTemplateList({ force_update }).then((res) => {
         this.templateList = res.data
       })
+      this.isClickUpdateTemplate = false
     },
     onDialogClosed() {
       this.showDialog = false
