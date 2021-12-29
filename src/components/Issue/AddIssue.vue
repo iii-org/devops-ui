@@ -568,9 +568,7 @@ export default {
             form.append('upload_content_type', this.uploadFileList[0].raw.type)
             form.append('upload_file', this.uploadFileList[0].raw, this.uploadFileList[0].raw.name)
           }
-          this.LoadingConfirm = true
           await this.saveData(form)
-          this.LoadingConfirm = false
           result = true
           this.handleClose()
         } else {
