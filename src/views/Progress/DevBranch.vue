@@ -270,7 +270,7 @@ export default {
     },
     async fetchData() {
       await this.getBranchesByProject(this.selectedRepositoryId)
-      return this.branchList
+      return this.branchList.sort((a, b) => new Date(b.last_commit_time) - new Date(a.last_commit_time))
     },
     async onExpandChange(row, expandedRows) {
       this.handleExpanded(row, expandedRows)
