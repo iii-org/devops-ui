@@ -243,6 +243,9 @@ export default {
     },
     keyword() {
       this.listQuery.page = 1
+    },
+    isUpdating() {
+      this.triggerReport()
     }
   },
   mounted() {
@@ -252,6 +255,13 @@ export default {
     this.clearTimer()
   },
   methods: {
+    triggerReport() {
+      this.listData.forEach((item, index) => {
+        if (item.status.success > 0) {
+          triggerReport(this.selectedProject, this.listData[index].commit_id)
+        }
+      })
+    },
     onPagination(query) {
       this.clearTimer()
       const { first, next } = this.listQuery
@@ -286,7 +296,6 @@ export default {
           if (result.execution_state === 'Success') result.execution_state = 'Finished'
           return result
         })
-        triggerReport(this.selectedProject, this.listData[0].commit_id)
       } else {
         this.listData = []
       }
