@@ -16,6 +16,7 @@
     <QuickAddIssue
       :project-id="projectId"
       :visible.sync="showQuickAddIssue"
+      :filter-conditions="filterConditions"
       @update="updateIssueTables"
     />
 
