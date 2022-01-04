@@ -158,7 +158,7 @@ export default {
       this.uploadDialogVisible = false
     },
     async uploadFiles(sendForm, fileList) {
-      this.loadingUpdate(true, true)
+      this.loadingUpdate(true, false)
       // use one by one edit issue to upload file
       const { issueId } = this
       // use one by one edit issue to upload file
@@ -195,7 +195,7 @@ export default {
             message: this.$t('Notify.Added'),
             type: 'success'
           })
-          this.loadData()
+          this.loadingUpdate(true, false)
           this.addTopicDialogVisible = false
           return res
         })
