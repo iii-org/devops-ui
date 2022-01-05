@@ -35,28 +35,35 @@
               >
                 <el-collapse-item :name="commit.id">
                   <template slot="title">
-                    <div class="flex justify-between text-base cursor-pointer" style="width: 95%">
-                      <div>
-                        <span
-                          class="text-primary hover-underline"
-                          @click.stop="toGitlab(gitlabCommitUrl(props.row, commit_index))"
-                        >
-                          <svg-icon icon-class="ion-git-commit-outline" />
-                          {{ commit.commit_id }}
-                        </span>
-                        <span>@ {{ commit.author_name }} -</span>
-                        <span
-                          v-for="(id, id_index) in commit.issue_id"
-                          :key="id_index"
-                          class="text-success hover-underline"
-                          @click.stop="toIssueDetail(id)"
-                        >
-                          {{ id }}
-                        </span>
-                        <span>&nbsp;{{ commit.commit_title }}</span>
+                    <el-tooltip
+                      class="item"
+                      effect="light"
+                      :content="commit.commit_title"
+                      placement="bottom"
+                    >
+                      <div class="flex justify-between text-base cursor-pointer" style="width: 95%">
+                        <div class="ellipsis">
+                          <span
+                            class="text-primary hover-underline"
+                            @click.stop="toGitlab(gitlabCommitUrl(props.row, commit_index))"
+                          >
+                            <svg-icon icon-class="ion-git-commit-outline" />
+                            {{ commit.commit_id }}
+                          </span>
+                          <span>@ {{ commit.author_name }} -</span>
+                          <span
+                            v-for="(id, id_index) in commit.issue_id"
+                            :key="id_index"
+                            class="text-success hover-underline"
+                            @click.stop="toIssueDetail(id)"
+                          >
+                            {{ id }}
+                          </span>
+                          <span>&nbsp;{{ commit.commit_title }}</span>
+                        </div>
+                        <div>{{ relativeTime(commit.commit_time) }}</div>
                       </div>
-                      <div>{{ relativeTime(commit.commit_time) }}</div>
-                    </div>
+                    </el-tooltip>
                   </template>
                   <section>
                     <ul
@@ -340,6 +347,12 @@ export default {
 <style lang="scss" scoped>
 .w-75 {
   width: 75%;
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 75%;
+  }
 }
 .noArrow {
   >>> .el-collapse-item__arrow {
