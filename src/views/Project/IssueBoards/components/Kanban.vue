@@ -445,10 +445,12 @@ export default {
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } else if (isAssigned && fromClassObj.name === 'Assigned' && toClassObj.name === 'Active') {
-        const error = 'assignedError'
-        this.handleErrorAlert(error)
-        isAssigned = !isAssigned
+      } else if (isAssigned && toClassObj.name === 'Active') {
+        if (fromClassObj === null || fromClassObj.name === 'Assigned') {
+          const error = 'assignedError'
+          this.handleErrorAlert(error)
+          isAssigned = !isAssigned
+        }
       }
       return isAssigned
     },
@@ -481,7 +483,7 @@ export default {
       const toClassObj = Object.values(data)[0]
       let params = { [key]: toClassObj }
       if (key === 'status') {
-        const isStatusNormal = this.isStatusNormal(toClassObj, element)
+        const isStatusNormal = this.isStatusNormal(toClassObj, null, element)
         if (isStatusNormal) this.emitDragUpdate(element.id, params)
       } else if (key === 'priority') {
         const isPriorityNormal = this.isPriorityNormal(element, params)
