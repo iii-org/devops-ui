@@ -233,7 +233,8 @@ export default {
     SeeMore: 'See more',
     High: 'High',
     Medium: 'Medium',
-    Low: 'Low'
+    Low: 'Low',
+    Run: 'Run'
   },
   Notify: {
     Updated: 'update successful',

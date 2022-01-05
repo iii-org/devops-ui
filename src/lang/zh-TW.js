@@ -233,7 +233,8 @@ export default {
     SeeMore: '看更多',
     High: '高',
     Medium: '中',
-    Low: '低'
+    Low: '低',
+    Run: '執行'
   },
   Notify: {
     Updated: '已更新',

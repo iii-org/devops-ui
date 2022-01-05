@@ -60,8 +60,15 @@
       </el-form>
       <div class="text-right">
         <el-button
+          type="success"
+          :loading="is_lock"
+          @click="handleUpdate(true)"
+        >
+          {{ $t('general.Run') }}
+        </el-button>
+        <el-button
           type="primary"
-          @click="handleUpdate"
+          @click="handleUpdate(false)"
         >
           {{ $t('general.Save') }}
         </el-button>
@@ -71,7 +78,7 @@
 </template>
 
 <script>
-import { getSystemParameter, updateSystemParameter } from '@/api/systemParameter'
+import { getSystemParameter, updateSystemParameter, runSystemParameter, getGithubVerifyStatus } from '@/api/systemParameter'
 import { BasicData, Table } from '@/newMixins/index'
 
 const formData = () => ({
@@ -96,7 +103,9 @@ export default {
     return {
       form: formData(),
       originData: {},
-      isLoading: false
+      isLoading: false,
+      is_lock: false,
+      intervalTimer: null
     }
   },
   computed: {
@@ -113,6 +122,12 @@ export default {
         active
       }
     }
+  },
+  mounted() {
+    this.getLockCheck()
+  },
+  beforeDestroy() {
+    this.clearTimer()
   },
   methods: {
     async loadData() {
@@ -133,19 +148,22 @@ export default {
     setOriginData(data) {
       this.originData = JSON.parse(JSON.stringify(data))
     },
-    handleUpdate() {
+    handleUpdate(isRun) {
       this.$refs.form.validate((valid) => {
         if (!valid) return
-        this.updateSystemParameter()
+        this.updateSystemParameter(isRun)
       })
     },
-    async updateSystemParameter() {
+    async updateSystemParameter(isRun) {
       const data = this.getUpdateData
       const paramId = this.paramId
       this.isLoading = true
       await updateSystemParameter(paramId, data)
         .then(() => {
-          this.showSuccessMessage()
+          this.showSuccessMessage(this.$t('Notify.Updated'))
+          if (isRun) {
+            this.runTemplate()
+          }
         })
         .catch((err) => {
           console.error(err)
@@ -155,9 +173,46 @@ export default {
           this.isLoading = false
         })
     },
-    showSuccessMessage() {
+    async runTemplate() {
+      const githubData = { name: 'github_verify_info' }
+      try {
+        await runSystemParameter(githubData)
+          .then(() => {
+            this.showSuccessMessage('Running GitHub template')
+          })
+          .catch((err) => {
+            console.log(err)
+            console.error(err)
+          })
+        await this.getLockCheck()
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async getLockCheck() {
+      try {
+        const res = await getGithubVerifyStatus()
+        this.is_lock = res.data.is_lock
+        console.log(res.data)
+        if (!this.is_lock) {
+          if (this.intervalTimer) {
+            this.clearTimer()
+          }
+        } else if (!this.intervalTimer) {
+          this.intervalTimer = window.setInterval(this.getLockCheck, 5000)
+        }
+        return Promise.resolve(res.data)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    clearTimer() {
+      clearInterval(this.intervalTimer)
+      this.intervalTimer = null
+    },
+    showSuccessMessage(msg) {
       this.$message({
-        message: this.$t('Notify.Updated'),
+        message: msg,
         type: 'success'
       })
     }
