@@ -8,7 +8,7 @@
     >
       <el-form-item prop="tracker_id">
         <el-select
-          v-model="formData.tracker_id"
+          v-model="tracker_id"
           :placeholder="$t('Issue.SelectType')"
         >
           <el-option
@@ -40,7 +40,7 @@
         </el-button>
         <el-button
           :disabled="isLoading"
-          @click="showDialog = true"
+          @click="onAdvancedSettingsClick"
         >
           {{ $t('general.AdvancedSettings') }}
         </el-button>
@@ -107,12 +107,17 @@ export default {
     projectId: {
       type: [Number, String],
       default: 0
+    },
+    filterConditions: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
     return {
       parentId: 0,
       formData: getDefaultFormData(),
+      tracker_id: null,
       isLoading: false,
       showDialog: false,
       formRules: {
@@ -124,7 +129,11 @@ export default {
           }
         ],
         tracker_id: [
-          { required: true, message: this.$t('Validation.Select', [this.$t('general.Type')]), trigger: 'blur' }
+          { 
+            required: true,
+            message: this.$t('Validation.Select', [this.$t('general.Type')]),
+            trigger: 'blur'
+          }
         ]
       }
     }
@@ -149,6 +158,14 @@ export default {
         })
         this.handleIssueSave(sendData)
       })
+    },
+    onAdvancedSettingsClick() {
+      const { priority, status, tracker, fixed_version } = this.filterConditions
+      this.formData.tracker_id = this.tracker_id || tracker
+      if (priority) this.formData.priority_id = priority
+      if (status) this.formData.status_id = status
+      if (fixed_version) this.formData.fixed_version_id = fixed_version
+      this.showDialog = true
     },
     onDialogCancel() {
       this.$refs.addIssueDialog.handleClose()
