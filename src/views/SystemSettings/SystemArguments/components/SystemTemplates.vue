@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-card v-loading="isLoading">
+    <el-card v-if="!isLogs" v-loading="isLoading">
       <div class="text-2xl">{{ $t('SystemTemplates.TemplatesSettings') }}</div>
       <el-form
         ref="form"
@@ -58,21 +58,57 @@
           </el-col>
         </el-row>
       </el-form>
-      <div class="text-right">
-        <el-button
-          type="success"
-          :loading="is_lock"
-          @click="handleUpdate(true)"
-        >
-          {{ $t('general.Run') }}
-        </el-button>
-        <el-button
-          type="primary"
-          @click="handleUpdate(false)"
-        >
-          {{ $t('general.Save') }}
-        </el-button>
-      </div>
+      <el-row>
+        <el-col :span="8">
+          <el-button
+            icon="ri-terminal-box-line"
+            @click.native="handleExecuteLogs"
+          >
+            Execution Logs
+          </el-button>
+        </el-col>
+        <el-col :span="16" class="text-right">
+          <el-button
+            type="success"
+            :loading="is_lock"
+            @click="handleUpdate(true)"
+          >
+            {{ $t('general.Run') }}
+          </el-button>
+          <el-button
+            type="primary"
+            @click="handleUpdate(false)"
+          >
+            {{ $t('general.Save') }}
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-card v-if="isLogs">
+      <el-button 
+        type="text"
+        icon="el-icon-arrow-left"
+        @click="handleClose"
+      >
+        Back
+      </el-button>
+      <span>
+        <span class="text-title">Template Synchronization Execute Logs</span>
+      </span>
+      <el-card
+        id="podLogSection"
+        shadow="never"
+        :body-style="{
+          color: '#fff',
+          background: '#222',
+          height: 'calc(100vh - 250px)',
+          overflow: 'auto',
+          'scroll-behavior': 'smooth'
+        }"
+      >
+        <!-- <pre>{{ logData }}</pre> -->
+        <pre>{{ logData }}</pre>
+      </el-card>
     </el-card>
   </div>
 </template>
@@ -80,6 +116,7 @@
 <script>
 import { getSystemParameter, updateSystemParameter, runSystemParameter, getGithubVerifyStatus } from '@/api/systemParameter'
 import { BasicData, Table } from '@/newMixins/index'
+import { io } from 'socket.io-client'
 
 const formData = () => ({
   id: '',
@@ -88,7 +125,8 @@ const formData = () => ({
     token: '',
     account: ''
   },
-  active: ''
+  active: '',
+  logData: 'Loading...'
 })
 
 export default {
@@ -105,7 +143,14 @@ export default {
       originData: {},
       isLoading: false,
       is_lock: false,
-      intervalTimer: null
+      intervalTimer: null,
+      isLogs: false,
+      socket: io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
+      // socket: io('/sync_template/websocket/logs', {
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      }),
+      logData: 'Loading...'
     }
   },
   computed: {
@@ -181,7 +226,6 @@ export default {
             this.showSuccessMessage('Running GitHub template')
           })
           .catch((err) => {
-            console.log(err)
             console.error(err)
           })
         await this.getLockCheck()
@@ -193,7 +237,6 @@ export default {
       try {
         const res = await getGithubVerifyStatus()
         this.is_lock = res.data.is_lock
-        console.log(res.data)
         if (!this.is_lock) {
           if (this.intervalTimer) {
             this.clearTimer()
@@ -215,6 +258,39 @@ export default {
         message: msg,
         type: 'success'
       })
+    },
+    handleExecuteLogs() {
+      this.isLogs = true
+      this.setLogMessageListener()
+    },
+    setLogMessageListener() {
+      this.socket.on('get_perl_log', sioEvt => {
+        console.log(sioEvt)
+        const data = sioEvt
+        this.setLogMessage(data)
+        this.scrollToBottom()
+      })
+    },
+    setLogMessage(data) {
+      const target = this.logData
+      const isHistoryMessage = target === data || target === 'Loading...'
+      if (isHistoryMessage) {
+        this.logData = data
+      } else {
+        if (target.includes(data)) return
+        this.logData = this.logData.concat(data)
+      }
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const target = this.$el.querySelector(`#podLogSection`).childNodes[1]
+        target.scrollTop = target.scrollHeight
+      })
+    },
+    handleClose() {
+      this.socket.close()
+      // this.logData = 'Loading...'
+      this.isLogs = false
     }
   }
 }
