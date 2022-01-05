@@ -388,8 +388,13 @@ export default {
     }
   },
   watch: {
-    async selectedProjectId() {
-      await this.fetchInitData()
+    selectedProjectId: {
+      async handler() {
+        this.keyword = ''
+        await this.onChangeFilter()
+        await this.fetchInitData()
+      },
+      immediate: true
     },
     isLoading(value) {
       if (!value) {
