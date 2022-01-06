@@ -178,6 +178,7 @@ export default {
   mixins: [Table, BasicData, Pagination, SearchBar],
   data() {
     return {
+      branchList: [],
       gitCommitLog: [],
       collapseActiveValue: [],
       expandedRow: []
@@ -244,14 +245,18 @@ export default {
     }
   },
   watch: {
-    selectedProject: {
-      handler() {
-        this.initTableExpand()
+    // selectedProject: {
+    //   handler() {
+    //     this.initTableExpand()
+    //   },
+    //   deep: true
+    // },
+    branchesByProject: {
+      handler(ary) {
+        this.branchList = JSON.parse(JSON.stringify(ary))
+        this.getStoredData()
       },
       deep: true
-    },
-    branchesByProject(ary) {
-      this.branchList = ary
     },
     listLoading(val) {
       if (!val) this.getStoredData()
@@ -269,6 +274,7 @@ export default {
     async getStoredData() {
       const storedData = await this.getTableExpand()
       const { expandedRow, collapseActiveValue } = storedData
+      if (expandedRow === undefined && collapseActiveValue === undefined) return
       const rowIndex = this.branchList.findIndex((list) => list.name === expandedRow[0])
       const row = this.branchList[rowIndex]
       if (rowIndex === undefined || row === undefined) return
