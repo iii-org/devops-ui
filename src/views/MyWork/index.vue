@@ -86,12 +86,13 @@ export default {
       if (id) {
         this.setSelectedProject(this.projectOptions.find((elm) => elm.id === id))
         localStorage.setItem('projectId', id)
-      }
-      if (!id) {
+      } else {
+        this.clearFilter()
         this.$router.push({ name: this.$route.name })
         return
       }
       const projectName = this.projectOptions.find((elm) => elm.id === this.projectId).name
+      this.clearFilter()
       this.$router.push({ name: this.$route.name, params: { projectName }})
     },
     filterConditions: {
@@ -141,12 +142,34 @@ export default {
     async fetchStoredData() {
       let storedFilterValue, storedKeyword, storedDisplayClosed
       await Promise.all([this.getIssueFilter(), this.getKeyword(), this.getDisplayClosed()]).then((res) => {
-        const [filterValue, keyword, displayClosed] = res.map((item) => item)
+        const [filterValue, keyword, displayClosed] = res
         storedFilterValue = filterValue
         storedKeyword = keyword
         storedDisplayClosed = displayClosed
       })
       return { storedFilterValue, storedKeyword, storedDisplayClosed }
+    },
+    clearFilter() {
+      this.clearKeyword()
+      this.clearIssueFilter()
+      this.clearDisplayClosed()
+      this.clearDisplayClosedVersion()
+    },
+    clearKeyword() {
+      this.keyword = ''
+      this.setStoredData('keyword', JSON.stringify({ work: '' }))
+    },
+    clearIssueFilter() {
+      Object.assign({}, this.filterConditions)
+      this.setStoredData('issueFilter', JSON.stringify({ work: {}}))
+    },
+    clearDisplayClosed() {
+      this.displayClosedIssue = false
+      this.setStoredData('displayClosed', JSON.stringify({ work: false }))
+    },
+    clearDisplayClosedVersion() {
+      this.displayClosedVersion = false
+      this.setStoredData('displayClosedVersion', false)
     },
     async getStoredData() {
       const key = 'work'
