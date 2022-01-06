@@ -3,15 +3,28 @@
     <ProjectListSelector>
       <el-row slot="button">
         <el-col class="text-right">
-          <el-button icon="el-icon-refresh" size="small" @click="onChangeFilter" />
-          <span v-if="updateLoading" class="text-blue-500">
+          <el-button
+            icon="el-icon-refresh"
+            size="small"
+            @click="onChangeFilter"
+          />
+          <span
+            v-if="updateLoading"
+            class="text-blue-500"
+          >
             <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
           </span>
-          <span v-else-if="lastUpdated && lastUpdated.time" class="text-success">
+          <span
+            v-else-if="lastUpdated && lastUpdated.time"
+            class="text-success"
+          >
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Success') }}: </strong>{{ lastUpdated.time|relativeTime }}
           </span>
-          <span v-else-if="lastUpdated && lastUpdated.error" class="text-danger">
+          <span
+            v-else-if="lastUpdated && lastUpdated.error"
+            class="text-danger"
+          >
             <em class="el-icon-check" />
             <strong>{{ $t('Milestone.Error') }}: </strong>
             {{ $t(`errorMessage.${lastUpdated.error.response.data.error.code}`,
@@ -32,23 +45,44 @@
           <el-form>
             <el-form-item label="展開層數">
               <el-select v-model="downloadForm.levels">
-                <el-option v-for="level in 5" :key="level" :label="level" :value="level" />
+                <el-option
+                  v-for="level in 5"
+                  :key="level"
+                  :label="level"
+                  :value="level"
+                />
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button :loading="downloadLock.is_lock" type="primary" @click="generateReport">產生Excel報表</el-button>
+              <el-button
+                :loading="downloadLock.is_lock"
+                type="primary"
+                @click="generateReport"
+              >
+                產生Excel報表
+              </el-button>
             </el-form-item>
             <template v-if="downloadInfo.create_at">
               <el-divider />
               <el-form-item>
-                <el-button :loading="downloadLock.is_lock" type="success" @click="downloadReport">下載Excel報表</el-button>
+                <el-button
+                  :loading="downloadLock.is_lock"
+                  type="success"
+                  @click="downloadReport"
+                >
+                  下載Excel報表
+                </el-button>
               </el-form-item>
               <div v-if="!downloadLock.is_lock">
                 {{ $t('general.LastUpdateTime') }}: {{ momentTime(downloadInfo.create_at) }}
               </div>
             </template>
           </el-form>
-          <el-button slot="reference" icon="el-icon-download" :disabled="selectedProjectId === -1">
+          <el-button
+            slot="reference"
+            icon="el-icon-download"
+            :disabled="selectedProjectId === -1"
+          >
             {{ $t('File.Download') }}
           </el-button>
         </el-popover>
@@ -58,7 +92,10 @@
           trigger="click"
         >
           <el-form class="display-column">
-            <el-form-item v-for="item in columnsOptions" :key="item.field">
+            <el-form-item
+              v-for="item in columnsOptions"
+              :key="item.field"
+            >
               <el-checkbox
                 :value="getCheckColumnValue(item.field)"
                 :label="item.display"
@@ -68,16 +105,32 @@
               </el-checkbox>
             </el-form-item>
           </el-form>
-          <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ $t('Milestone.Display') }}
-            <em class="el-icon-arrow-down el-icon--right" /></el-button>
+          <el-button
+            slot="reference"
+            icon="el-icon-s-operation"
+            type="text"
+          >
+            {{ $t('Milestone.Display') }}
+            <em class="el-icon-arrow-down el-icon--right" />
+          </el-button>
         </el-popover>
         <el-divider direction="vertical" />
       </SearchFilter>
     </ProjectListSelector>
     <el-divider />
-    <div ref="wrapper" class="wrapper">
-      <el-tabs v-model="activeTab" type="border-card">
-        <el-tab-pane name="WBS" label="WBS" lazy>
+    <div
+      ref="wrapper"
+      class="wrapper"
+    >
+      <el-tabs
+        v-model="activeTab"
+        type="border-card"
+      >
+        <el-tab-pane
+          name="WBS"
+          label="WBS"
+          lazy
+        >
           <WBS
             ref="WBS"
             :filter-value="filterValue"
@@ -85,7 +138,9 @@
             :display-closed="displayClosed"
             :columns="columns"
             :assigned-to="assigned_to"
-            :fixed-version="fixed_version" :tags="tags" :table-height="tableHeight"
+            :fixed-version="fixed_version"
+            :tags="tags"
+            :table-height="tableHeight"
             @update-loading="handleUpdateLoading"
             @update-status="handleUpdateStatus"
           />
@@ -260,12 +315,12 @@ export default {
     },
     columns() {
       if (this.displayFields.length <= 0) {
-        return this.columnsOptions.map(item => item.field)
+        return this.columnsOptions.map((item) => item.field)
       }
       return this.displayFields
     },
     deploy_column() {
-      return this.columnsOptions.filter(item => this.columns.includes(item.field))
+      return this.columnsOptions.filter((item) => this.columns.includes(item.field))
     }
   },
   watch: {
@@ -280,7 +335,7 @@ export default {
   },
   async created() {
     this.loadSelectionList()
-    const tracker = this.tracker.find(item => item.name === 'Epic')
+    const tracker = this.tracker.find((item) => item.name === 'Epic')
     const storeFilterValue = await this.getIssueFilter()
     if (storeFilterValue['milestone']) {
       this.filterValue = storeFilterValue['milestone']
@@ -310,7 +365,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions('projects', ['getIssueFilter', 'getKeyword', 'getDisplayClosed', 'setIssueFilter', 'setKeyword', 'setDisplayClosed']),
+    ...mapActions('projects', [
+      'getIssueFilter',
+      'getKeyword',
+      'getDisplayClosed',
+      'setIssueFilter',
+      'setKeyword',
+      'setDisplayClosed'
+    ]),
     loadSelectionList() {
       this.loadVersionList(this.fixedVersionShowClosed)
       this.loadAssignedToList()
@@ -325,12 +387,14 @@ export default {
     async loadAssignedToList() {
       const res = await getProjectAssignable(this.selectedProjectId)
       this.assigned_to = [
+        { id: 'null', name: this.$t('Issue.Unassigned') },
         {
           name: this.$t('Issue.me'),
           login: '-Me-',
           id: this.userId,
           class: 'bg-yellow-100'
-        }, ...res.data.user_list
+        },
+        ...res.data.user_list
       ]
     },
     async loadVersionList(status) {
@@ -352,7 +416,7 @@ export default {
       this.lastUpdated = value
     },
     async onChangeFilterForm(value) {
-      Object.keys(value).forEach(item => {
+      Object.keys(value).forEach((item) => {
         this[item] = value[item]
       })
       const storeFilterValue = await this.getIssueFilter()
@@ -374,9 +438,9 @@ export default {
       return this.displayFields.includes(value)
     },
     async onCheckColumnChange(value) {
-      if (this.displayFields.length <= 0) this.displayFields = this.columnsOptions.map(item => item.field)
+      if (this.displayFields.length <= 0) this.displayFields = this.columnsOptions.map((item) => item.field)
       if (this.displayFields.includes(value)) {
-        const columnIndex = this.displayFields.findIndex(item => item === value)
+        const columnIndex = this.displayFields.findIndex((item) => item === value)
         this.displayFields.splice(columnIndex, 1)
       } else {
         this.displayFields.push(value)
@@ -392,12 +456,7 @@ export default {
       this.$excel(worksheet, 'WBS')
     },
     momentTime(time) {
-      return time
-        ? this.$dayjs(time)
-          .utc()
-          .local()
-          .fromNow()
-        : '-'
+      return time ? this.$dayjs(time).utc().local().fromNow() : '-'
     },
     onChangeFixedVersionStatus() {
       this.$emit('change-fixed-version', this.fixed_version_closed)
@@ -456,7 +515,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
