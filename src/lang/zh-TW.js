@@ -1143,7 +1143,10 @@ export default {
     TokenWarning: '確認 Github 的 access token 是否已包含 public_repo?',
     TemplatesSettings: '範本同步設定',
     EnableTemplateSync: '啟用範本同步',
-    DocumentUrl: '相關教學請參考'
+    DocumentUrl: '相關教學請參考',
+    ExecLogsButton: '執行細節',
+    NotifyRun: '範本同步執行中，預計需時 3 - 10 分鐘，請耐心等候，或點入左下方執行細節，瞭解實際同步進度。',
+    TemplateSyncExecLogs: '範本同步執行紀錄'
   },
   Kanban: {
     ChangeIssueError: '異動議題錯誤',
