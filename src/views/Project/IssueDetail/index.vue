@@ -529,10 +529,10 @@ export default {
         }
       } catch (e) {
         this.handleBackPage()
-        this.$message({
-          message: this.$t('Issue.RemovedIssue'),
-          type: 'warning'
-        })
+        // this.$message({
+        //   message: this.$t('Issue.RemovedIssue'),
+        //   type: 'warning'
+        // })
       }
       return data
     },

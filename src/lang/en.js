@@ -125,7 +125,7 @@ export default {
     2006: 'The user {user_id} is already in project {project_id}.',
     2007: 'This user is project owner in the project.',
     3001: "The user doesn't have permission for this operation.",
-    3002: 'You need to be in the project for this operation.',
+    3002: 'You are not participating in this project.',
     3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
