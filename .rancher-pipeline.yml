@@ -34,17 +34,17 @@ stages:
 - name: Test--SonarQube source code scan
   iiidevops: sonarqube
   steps:
-    - applyAppConfig:
-        answers:
-          git.branch: ${CICD_GIT_BRANCH}
-          git.commitID: ${CICD_GIT_COMMIT}
-          git.repoName: ${CICD_GIT_REPO_NAME}
-          git.url: ${CICD_GIT_URL}
-          pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
-        catalogTemplate: cattle-global-data:iii-dev-charts3-scan-sonarqube
-        name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-sq
-        targetNamespace: ${CICD_GIT_REPO_NAME}
-        version: 0.2.1
+  - applyAppConfig:
+      answers:
+        git.branch: ${CICD_GIT_BRANCH}
+        git.commitID: ${CICD_GIT_COMMIT}
+        git.repoName: ${CICD_GIT_REPO_NAME}
+        git.url: ${CICD_GIT_URL}
+        pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
+      catalogTemplate: cattle-global-data:iii-dev-charts3-scan-sonarqube
+      name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-sq
+      targetNamespace: ${CICD_GIT_REPO_NAME}
+      version: 0.2.1
   when:
     branch:
       include:
@@ -53,17 +53,17 @@ stages:
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
-    - applyAppConfig:
-        answers:
-          git.branch: ${CICD_GIT_BRANCH}
-          git.commitID: ${CICD_GIT_COMMIT}
-          git.repoName: ${CICD_GIT_REPO_NAME}
-          git.url: ${CICD_GIT_URL}
-          pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
-        catalogTemplate: cattle-global-data:iii-dev-charts3-scan-checkmarx
-        name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-cmx
-        targetNamespace: ${CICD_GIT_REPO_NAME}
-        version: 0.2.0
+  - applyAppConfig:
+      answers:
+        git.branch: ${CICD_GIT_BRANCH}
+        git.commitID: ${CICD_GIT_COMMIT}
+        git.repoName: ${CICD_GIT_REPO_NAME}
+        git.url: ${CICD_GIT_URL}
+        pipeline.sequence: ${CICD_EXECUTION_SEQUENCE}
+      catalogTemplate: cattle-global-data:iii-dev-charts3-scan-checkmarx
+      name: ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-cmx
+      targetNamespace: ${CICD_GIT_REPO_NAME}
+      version: 0.2.0
   when:
     branch:
       include:
@@ -72,29 +72,29 @@ stages:
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
-    - envFrom:
-        - sourceKey: API_TOKEN
-          sourceName: pipeline-api-key
-          targetKey: rancher_api_token
-        - sourceKey: rancher-url
-          sourceName: rancher
-          targetKey: rancher_url
-      runScriptConfig:
-        image: iiiorg/rancher-cli:v2.4.6
-        shellScript:
-          rancher login ${rancher_url} -t ${rancher_api_token} --skip-verify
-          && rancher kubectl delete configmap -n ${CICD_GIT_REPO_NAME} ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-env
-          --ignore-not-found=true && perl iiidevops/bin/chk-app-env.pl && rancher kubectl
-          create configmap -n ${CICD_GIT_REPO_NAME} ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-env
-          --from-env-file=iiidevops/app.env && rancher kubectl annotate configmap -n
-          ${CICD_GIT_REPO_NAME} ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-env iiidevops.org/project_name=${CICD_GIT_REPO_NAME}
-          iiidevops.org/branch=${CICD_GIT_BRANCH} iiidevops.org/commit_id=${CICD_GIT_COMMIT}
-          iiidevops.org/type=appenv
+  - envFrom:
+    - sourceKey: API_TOKEN
+      sourceName: pipeline-api-key
+      targetKey: rancher_api_token
+    - sourceKey: rancher-url
+      sourceName: rancher
+      targetKey: rancher_url
+    runScriptConfig:
+      image: iiiorg/rancher-cli:v2.4.6
+      shellScript: rancher login ${rancher_url} -t ${rancher_api_token} --skip-verify
+        && rancher kubectl delete configmap -n ${CICD_GIT_REPO_NAME} ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-env
+        --ignore-not-found=true && perl iiidevops/bin/chk-app-env.pl && rancher kubectl
+        create configmap -n ${CICD_GIT_REPO_NAME} ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-env
+        --from-env-file=iiidevops/app.env && rancher kubectl annotate configmap -n
+        ${CICD_GIT_REPO_NAME} ${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}-env iiidevops.org/project_name=${CICD_GIT_REPO_NAME}
+        iiidevops.org/branch=${CICD_GIT_BRANCH} iiidevops.org/commit_id=${CICD_GIT_COMMIT}
+        iiidevops.org/type=appenv
   when:
     branch:
       include:
       - master
       - develop
+      - githubwebsocket
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -115,82 +115,87 @@ stages:
       include:
       - master
       - develop
+      - githubwebsocket
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
-    - env:
-        PLUGIN_BUILD_ARGS: --progress=tty --network=host
-        PLUGIN_DEBUG: "true"
-        PLUGIN_INSECURE: "true"
-        PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
-        PLUGIN_MTU: "1000"
-      publishImageConfig:
-        buildContext: .
-        dockerfilePath: ./Dockerfile.master.dev3
-        pushRemote: true
-        registry: harbor-dev3.iiidevops.org
-        tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
+  - env:
+      PLUGIN_BUILD_ARGS: --progress=tty --network=host
+      PLUGIN_DEBUG: 'true'
+      PLUGIN_INSECURE: 'true'
+      PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
+      PLUGIN_MTU: '1000'
+    publishImageConfig:
+      buildContext: .
+      dockerfilePath: ./Dockerfile.master.dev3
+      pushRemote: true
+      registry: harbor-dev3.iiidevops.org
+      tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
   when:
     branch:
       include:
       - master
+      - githubwebsocket
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
-    - env:
-        PLUGIN_BUILD_ARGS: --progress=tty --network=host
-        PLUGIN_DEBUG: "true"
-        PLUGIN_INSECURE: "true"
-        PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
-        PLUGIN_MTU: "1000"
-      publishImageConfig:
-        buildContext: .
-        dockerfilePath: ./Dockerfile.master.dev3
-        pushRemote: true
-        registry: harbor-dev3.iiidevops.org
-        tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
+  - env:
+      PLUGIN_BUILD_ARGS: --progress=tty --network=host
+      PLUGIN_DEBUG: 'true'
+      PLUGIN_INSECURE: 'true'
+      PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
+      PLUGIN_MTU: '1000'
+    publishImageConfig:
+      buildContext: .
+      dockerfilePath: ./Dockerfile.master.dev3
+      pushRemote: true
+      registry: harbor-dev3.iiidevops.org
+      tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
   when:
     branch:
       include:
       - master
+      - githubwebsocket
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
-    - env:
-        PLUGIN_BUILD_ARGS: --progress=tty --network=host
-        PLUGIN_DEBUG: "true"
-        PLUGIN_INSECURE: "true"
-        PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
-        PLUGIN_MTU: "1000"
-      publishImageConfig:
-        buildContext: .
-        dockerfilePath: ./Dockerfile.develop.dev3
-        pushRemote: true
-        registry: harbor-dev3.iiidevops.org
-        tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
+  - env:
+      PLUGIN_BUILD_ARGS: --progress=tty --network=host
+      PLUGIN_DEBUG: 'true'
+      PLUGIN_INSECURE: 'true'
+      PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
+      PLUGIN_MTU: '1000'
+    publishImageConfig:
+      buildContext: .
+      dockerfilePath: ./Dockerfile.develop.dev3
+      pushRemote: true
+      registry: harbor-dev3.iiidevops.org
+      tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_REPO_NAME}:${CICD_GIT_BRANCH}
   when:
     branch:
       include:
       - develop
+      - githubwebsocket
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
-    - env:
-        PLUGIN_BUILD_ARGS: --progress=tty --network=host
-        PLUGIN_DEBUG: "true"
-        PLUGIN_INSECURE: "true"
-        PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
-        PLUGIN_MTU: "1000"
-      publishImageConfig:
-        buildContext: .
-        dockerfilePath: ./Dockerfile.develop.dev3
-        pushRemote: true
-        registry: harbor-dev3.iiidevops.org
-        tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
+  - env:
+      PLUGIN_BUILD_ARGS: --progress=tty --network=host
+      PLUGIN_DEBUG: 'true'
+      PLUGIN_INSECURE: 'true'
+      PLUGIN_MIRROR: https://harbor-dev3.iiidevops.org
+      PLUGIN_MTU: '1000'
+    publishImageConfig:
+      buildContext: .
+      dockerfilePath: ./Dockerfile.develop.dev3
+      pushRemote: true
+      registry: harbor-dev3.iiidevops.org
+      tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
   when:
     branch:
       include:
       - develop
+      - githubwebsocket
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -214,6 +219,7 @@ stages:
       include:
       - master
       - develop
+      - githubwebsocket
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -237,6 +243,7 @@ stages:
       include:
       - master
       - develop
+      - githubwebsocket
 - name: Test--ZAP
   iiidevops: zap
   steps:
