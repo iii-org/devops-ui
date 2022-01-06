@@ -64,12 +64,13 @@
             icon="ri-terminal-box-line"
             @click.native="handleExecuteLogs"
           >
-            Execution Logs
+            {{ $t('SystemTemplates.ExecLogsButton') }}
           </el-button>
         </el-col>
         <el-col :span="16" class="text-right">
           <el-button
             type="success"
+            icon="el-icon-caret-right"
             :loading="is_lock"
             @click="handleUpdate(true)"
           >
@@ -90,10 +91,12 @@
         icon="el-icon-arrow-left"
         @click="handleClose"
       >
-        Back
+        {{ $t('general.Back') }}
       </el-button>
       <span>
-        <span class="text-title">Template Synchronization Execute Logs</span>
+        <span class="text-title">{{ $t('SystemTemplates.TemplateSyncExecLogs') }}</span>
+        <em v-if="is_lock" class="el-icon-loading font-bold" style="color: #F89F03" />
+        <em v-else class="el-icon-check font-bold" style="color: #72C040" />
       </span>
       <el-card
         id="podLogSection"
@@ -106,7 +109,6 @@
           'scroll-behavior': 'smooth'
         }"
       >
-        <!-- <pre>{{ logData }}</pre> -->
         <pre>{{ logData }}</pre>
       </el-card>
     </el-card>
@@ -145,12 +147,8 @@ export default {
       is_lock: false,
       intervalTimer: null,
       isLogs: false,
-      socket: io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
-      // socket: io('/sync_template/websocket/logs', {
-        reconnectionAttempts: 5,
-        transports: ['websocket']
-      }),
-      logData: 'Loading...'
+      logData: 'Loading...',
+      socket: ''
     }
   },
   computed: {
@@ -173,6 +171,7 @@ export default {
   },
   beforeDestroy() {
     this.clearTimer()
+    this.handleClose()
   },
   methods: {
     async loadData() {
@@ -205,8 +204,9 @@ export default {
       this.isLoading = true
       await updateSystemParameter(paramId, data)
         .then(() => {
-          this.showSuccessMessage(this.$t('Notify.Updated'))
-          if (isRun) {
+          if (!isRun) {
+            this.showSuccessMessage(this.$t('Notify.Updated'))
+          } else {
             this.runTemplate()
           }
         })
@@ -223,7 +223,7 @@ export default {
       try {
         await runSystemParameter(githubData)
           .then(() => {
-            this.showSuccessMessage('Running GitHub template')
+            this.showSuccessMessage(this.$t('SystemTemplates.NotifyRun'))
           })
           .catch((err) => {
             console.error(err)
@@ -244,6 +244,7 @@ export default {
         } else if (!this.intervalTimer) {
           this.intervalTimer = window.setInterval(this.getLockCheck, 5000)
         }
+        console.log(res.data)
         return Promise.resolve(res.data)
       } catch (e) {
         console.error(e)
@@ -261,11 +262,17 @@ export default {
     },
     handleExecuteLogs() {
       this.isLogs = true
+      this.socket = io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
+      // this.socket = io('/sync_template/websocket/logs', {
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      })
+      this.socket.connect()
       this.setLogMessageListener()
     },
     setLogMessageListener() {
-      this.socket.on('get_perl_log', sioEvt => {
-        console.log(sioEvt)
+      this.socket.emit('get_perl_log', 'get')
+      this.socket.on('sync_templ_log', sioEvt => {
         const data = sioEvt
         this.setLogMessage(data)
         this.scrollToBottom()
@@ -289,8 +296,8 @@ export default {
     },
     handleClose() {
       this.socket.close()
-      // this.logData = 'Loading...'
       this.isLogs = false
+      this.logData = 'Loading...'
     }
   }
 }
