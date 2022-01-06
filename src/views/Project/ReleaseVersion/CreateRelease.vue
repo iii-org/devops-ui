@@ -237,11 +237,9 @@ export default {
     }
   },
   watch: {
-    'commitForm.branch': {
-      handler(val) {
-        if (val && val !== this.$t('Loading')) {
-          this.handleSelectedRepoName(val)
-        }
+    branchesData: {
+      handler(data) {
+        this.handleSelectedRepoName(this.commitForm.branch)
       },
       immediate: true
     },
@@ -373,6 +371,7 @@ export default {
     },
     async handleSelectedRepoName(repo) {
       if (!repo) return
+      this.showHarborTag = true
       this.checkHarborLoading = true
       this.onChangeCommitId(repo)
       const harborData = await getHarborRepoList(this.selectedProjectId)
@@ -392,6 +391,7 @@ export default {
       if (repoNameIndex === -1) {
         this.repoArtifact = {}
         this.showHarborTag = false
+        this.checkHarborLoading = false
       } else {
         this.selectedRepo = harborData[repoNameIndex].name
         this.checkHarborImage()
