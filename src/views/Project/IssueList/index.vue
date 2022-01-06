@@ -58,6 +58,25 @@
             >{{ $t('File.Download') }}</el-button>
           </el-popover>
         </span>
+        <el-popover
+          placement="bottom"
+          trigger="click"
+        >
+          <el-form class="display-column">
+            <el-form-item v-for="item in columnsOptions" :key="item.field">
+              <el-checkbox
+                :value="getCheckColumnValue(item.field)"
+                :label="item.display"
+                @change="onCheckColumnChange(item.field)"
+              >
+                {{ item.display }}
+              </el-checkbox>
+            </el-form-item>
+          </el-form>
+          <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ $t('Milestone.Display') }}
+            <em class="el-icon-arrow-down el-icon--right" /></el-button>
+        </el-popover>
+        <el-divider direction="vertical" />
       </SearchFilter>
     </ProjectListSelector>
     <el-divider />
@@ -111,6 +130,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="columns.indexOf('tracker')>=0"
             :label="$t('general.Type')"
             width="130"
             prop="tracker"
@@ -125,6 +145,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="columns.indexOf('name')>=0"
             :label="$t('Issue.Id')"
             min-width="280"
             show-overflow-tooltip
@@ -143,6 +164,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="columns.indexOf('priority')>=0"
             align="center"
             :label="$t('Issue.Priority')"
             width="150"
@@ -158,6 +180,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="columns.indexOf('status')>=0"
             align="center"
             :label="$t('general.Status')"
             width="150"
@@ -173,6 +196,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="columns.indexOf('assigned_to')>=0"
             align="center"
             :label="$t('Issue.Assignee')"
             min-width="180"
@@ -186,6 +210,70 @@
             >
               <span>{{ scope.row.assigned_to.name }}</span>
               <span v-if="scope.row.assigned_to.login">({{ scope.row.assigned_to.login }})</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="columns.indexOf('fixed_version')>=0"
+            align="center"
+            :label="$t('Issue.fixed_version')"
+            min-width="180"
+            prop="fixed_version"
+            sortable="custom"
+            show-overflow-tooltip
+          >
+            <template
+              v-if="scope.row.fixed_version"
+              slot-scope="scope"
+            >
+              <span>{{ scope.row.fixed_version.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="columns.indexOf('StartDate')>=0"
+            align="center"
+            :label="$t('Issue.StartDate')"
+            min-width="180"
+            prop="start_date"
+            sortable="custom"
+            show-overflow-tooltip
+          >
+            <template
+              v-if="scope.row.start_date"
+              slot-scope="scope"
+            >
+              <span>{{ scope.row.start_date }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="columns.indexOf('EndDate')>=0"
+            align="center"
+            :label="$t('Issue.EndDate')"
+            min-width="180"
+            prop="due_date"
+            sortable="custom"
+            show-overflow-tooltip
+          >
+            <template
+              v-if="scope.row.due_date"
+              slot-scope="scope"
+            >
+              <span>{{ scope.row.due_date }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="columns.indexOf('DoneRatio')>=0"
+            align="center"
+            :label="$t('Issue.DoneRatio')"
+            min-width="180"
+            prop="done_ratio"
+            sortable="custom"
+            show-overflow-tooltip
+          >
+            <template
+              v-if="scope.row.done_ratio"
+              slot-scope="scope"
+            >
+              <span>{{ scope.row.done_ratio }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -234,6 +322,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, IssueList, ContextMenu } from '@/newMixins'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
+import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
 
 /**
@@ -263,7 +352,19 @@ export default {
       selectedIssueList: [],
       allDownloadData: [],
       allDataLoading: false,
-      excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to']
+      excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
+      columnsOptions: Object.freeze([
+        { display: this.$t('Issue.name'), field: 'name' },
+        { display: this.$t('Issue.tracker'), field: 'tracker' },
+        { display: this.$t('Issue.status'), field: 'status' },
+        { display: this.$t('Issue.fixed_version'), field: 'fixed_version' },
+        { display: this.$t('Issue.StartDate'), field: 'StartDate' },
+        { display: this.$t('Issue.EndDate'), field: 'EndDate' },
+        { display: this.$t('Issue.priority'), field: 'priority' },
+        { display: this.$t('Issue.assigned_to'), field: 'assigned_to' },
+        { display: this.$t('Issue.DoneRatio'), field: 'DoneRatio' }
+      ]),
+      displayFields: []
     }
   },
   computed: {
@@ -273,6 +374,12 @@ export default {
     },
     hasSelectedIssue() {
       return this.selectedIssueList.length > 0
+    },
+    columns() {
+      if (this.displayFields.length <= 0) {
+        return this.columnsOptions.map(item => item.field)
+      }
+      return this.displayFields
     }
   },
   watch: {
@@ -305,6 +412,7 @@ export default {
     async fetchInitData() {
       await this.getInitStoredData()
       await this.loadSelectionList()
+      await this.loadDisplayColumns()
       await this.loadData()
     },
     async fetchAllDownloadData() {
@@ -482,6 +590,35 @@ export default {
           return '異常管理'
       }
     },
+    async loadDisplayColumns() {
+      const res = await getIssueFieldDisplay({
+        project_id: this.selectedProjectId,
+        type: 'issue_list'
+      })
+      this.displayFields = res.data
+    },
+    getCheckColumnValue(value) {
+      if (this.displayFields.length <= 0) return true
+      return this.displayFields.includes(value)
+    },
+    async onCheckColumnChange(value) {
+      if (this.displayFields.includes(value)) {
+        const columnIndex = this.displayFields.findIndex(item => item === value)
+        this.displayFields.splice(columnIndex, 1)
+      } else {
+        this.displayFields.push(value)
+      }
+      if (this.displayFields.length <= 0) {
+        this.displayFields = this.columnsOptions.map(item => item.field)
+      }
+      const res = await putIssueFieldDisplay({ 
+        project_id: this.selectedProjectId,
+        type: 'issue_list',
+        display_fields: this.displayFields
+      })
+      this.displayFields = res.data
+      this.$nextTick(() => { this.$refs['issueList'].doLayout() })
+    },
     updateCustomFilter() {
       this.$refs.customFilter.fetchCustomFilter()
     },
@@ -497,3 +634,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.el-table .el-button {
+    border: none
+}
+
+.display-column {
+  .el-form-item {
+    margin: 0;
+  }
+}
+</style>

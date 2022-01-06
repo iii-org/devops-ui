@@ -180,7 +180,7 @@ import {
   patchIssueListDownload,
   postIssueListDownload
 } from '@/api/projects'
-import { getWBSCache, putWBSCache } from '@/api/issue'
+import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
 
 export default {
@@ -381,7 +381,10 @@ export default {
       this.loadReportStatus()
     },
     async loadDisplayColumns() {
-      const res = await getWBSCache({ project_id: this.selectedProjectId })
+      const res = await getIssueFieldDisplay({
+        project_id: this.selectedProjectId,
+        type: 'wbs_cache'
+      })
       this.displayFields = res.data
     },
     async loadAssignedToList() {
@@ -438,14 +441,20 @@ export default {
       return this.displayFields.includes(value)
     },
     async onCheckColumnChange(value) {
-      if (this.displayFields.length <= 0) this.displayFields = this.columnsOptions.map((item) => item.field)
       if (this.displayFields.includes(value)) {
         const columnIndex = this.displayFields.findIndex((item) => item === value)
         this.displayFields.splice(columnIndex, 1)
       } else {
         this.displayFields.push(value)
       }
-      const res = await putWBSCache({ project_id: this.selectedProjectId, display_fields: this.displayFields })
+      if (this.displayFields.length <= 0) {
+        this.displayFields = this.columnsOptions.map((item) => item.field)
+      }
+      const res = await putIssueFieldDisplay({
+        project_id: this.selectedProjectId,
+        type: 'wbs_cache',
+        display_fields: this.displayFields
+      })
       this.displayFields = res.data
     },
     onChangeFilter() {

@@ -15,6 +15,6 @@ export const getCheckIssueClosable = (issue_id) => request.get(`/issues/${issue_
 export const getIssueFamily = (issue_id, config) => request.get(`/issue/${issue_id}/family`, config)
 export const putIssueRelation = (data) => request.put('/issues/relation', data)
 export const deleteIssueRelation = (issue_id) => request.delete(`/issues/relation/${issue_id}`)
-export const getWBSCache = (params) => request.get(`/wbs_cache`, { params })
-export const putWBSCache = (data) => request.put(`/wbs_cache`, data)
+export const getIssueFieldDisplay = (params) => request.get(`/issue_field_display`, { params })
+export const putIssueFieldDisplay = (data) => request.put(`/issue_field_display`, data)
 export const getIssueGitCommitLog = (project_id, issue_id, params) => request.get(`/project/${project_id}/issues_commit/${issue_id}`, { params })
