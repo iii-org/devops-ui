@@ -269,8 +269,8 @@ export default {
     },
     handleExecuteLogs() {
       this.isLogs = true
-      this.socket = io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
-      // this.socket = io('/sync_template/websocket/logs', {
+      // this.socket = io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
+      this.socket = io('/sync_template/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
       })
