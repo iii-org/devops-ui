@@ -389,9 +389,8 @@ export default {
   },
   watch: {
     selectedProjectId: {
-      async handler() {
-        this.keyword = ''
-        await this.onChangeFilter()
+      async handler(id) {
+        await this.onCleanKeyWord()
         await this.fetchInitData()
       },
       immediate: true
@@ -405,9 +404,6 @@ export default {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
     }
-  },
-  async created() {
-    await this.fetchInitData()
   },
   methods: {
     ...mapActions('projects', [
@@ -692,6 +688,12 @@ export default {
     },
     filterMe(userList) {
       return userList.filter((item) => item.login !== '-Me-')
+    },
+    async onCleanKeyWord() {
+      this.keyword = ''
+      const storedData = await this.fetchStoredData()
+      storedData.storedKeyword['board'] = this.keyword
+      await this.setKeyword(storedData.storedKeyword)
     },
     cleanFilter() {
       this.$emit('clean-filter')
