@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
-    <el-card v-loading="isLoading">
+    <el-card
+      v-if="!isLogs" 
+      v-loading="isLoading"
+      :element-loading-text="loadingText"
+    >
       <div class="text-2xl">{{ $t('SystemTemplates.TemplatesSettings') }}</div>
       <el-form
         ref="form"
@@ -58,21 +62,59 @@
           </el-col>
         </el-row>
       </el-form>
-      <div class="text-right">
-        <el-button
-          type="success"
-          :loading="is_lock"
-          @click="handleUpdate(true)"
-        >
-          {{ $t('general.Run') }}
-        </el-button>
-        <el-button
-          type="primary"
-          @click="handleUpdate(false)"
-        >
-          {{ $t('general.Save') }}
-        </el-button>
-      </div>
+      <el-row>
+        <el-col :span="8">
+          <el-button
+            icon="ri-terminal-box-line"
+            @click.native="handleExecuteLogs"
+          >
+            {{ $t('SystemTemplates.ExecLogsButton') }}
+          </el-button>
+        </el-col>
+        <el-col :span="16" class="text-right">
+          <el-button
+            type="success"
+            icon="el-icon-caret-right"
+            :loading="is_lock"
+            @click="handleUpdate(true)"
+          >
+            {{ $t('general.Run') }}
+          </el-button>
+          <el-button
+            type="primary"
+            @click="handleUpdate(false)"
+          >
+            {{ $t('general.Save') }}
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-card v-if="isLogs">
+      <el-button 
+        type="text"
+        icon="el-icon-arrow-left"
+        @click="handleClose"
+      >
+        {{ $t('general.Back') }}
+      </el-button>
+      <span>
+        <span class="text-title">{{ $t('SystemTemplates.TemplateSyncExecLogs') }}</span>
+        <em v-if="is_lock" class="el-icon-loading font-bold" style="color: #F89F03" />
+        <em v-else class="el-icon-check font-bold" style="color: #72C040" />
+      </span>
+      <el-card
+        id="podLogSection"
+        shadow="never"
+        :body-style="{
+          color: '#fff',
+          background: '#222',
+          height: 'calc(100vh - 250px)',
+          overflow: 'auto',
+          'scroll-behavior': 'smooth'
+        }"
+      >
+        <pre>{{ logData }}</pre>
+      </el-card>
     </el-card>
   </div>
 </template>
@@ -80,6 +122,7 @@
 <script>
 import { getSystemParameter, updateSystemParameter, runSystemParameter, getGithubVerifyStatus } from '@/api/systemParameter'
 import { BasicData, Table } from '@/newMixins/index'
+import { io } from 'socket.io-client'
 
 const formData = () => ({
   id: '',
@@ -88,7 +131,8 @@ const formData = () => ({
     token: '',
     account: ''
   },
-  active: ''
+  active: '',
+  logData: 'Loading...'
 })
 
 export default {
@@ -105,7 +149,11 @@ export default {
       originData: {},
       isLoading: false,
       is_lock: false,
-      intervalTimer: null
+      intervalTimer: null,
+      isLogs: false,
+      logData: 'Loading...',
+      socket: '',
+      loadingText: ''
     }
   },
   computed: {
@@ -128,6 +176,7 @@ export default {
   },
   beforeDestroy() {
     this.clearTimer()
+    this.handleClose()
   },
   methods: {
     async loadData() {
@@ -135,6 +184,7 @@ export default {
     },
     async fetchData() {
       this.isLoading = true
+      this.loadingText = this.$t('Loading')
       const res = await getSystemParameter()
       this.getSystemParameterData(res.data)
       this.isLoading = false
@@ -158,10 +208,12 @@ export default {
       const data = this.getUpdateData
       const paramId = this.paramId
       this.isLoading = true
+      this.loadingText = this.$t('SystemTemplates.VerifyGithubToken')
       await updateSystemParameter(paramId, data)
         .then(() => {
-          this.showSuccessMessage(this.$t('Notify.Updated'))
-          if (isRun) {
+          if (!isRun) {
+            this.showSuccessMessage(this.$t('Notify.Updated'))
+          } else {
             this.runTemplate()
           }
         })
@@ -178,10 +230,9 @@ export default {
       try {
         await runSystemParameter(githubData)
           .then(() => {
-            this.showSuccessMessage('Running GitHub template')
+            this.showSuccessMessage(this.$t('SystemTemplates.NotifyRun'))
           })
           .catch((err) => {
-            console.log(err)
             console.error(err)
           })
         await this.getLockCheck()
@@ -193,7 +244,6 @@ export default {
       try {
         const res = await getGithubVerifyStatus()
         this.is_lock = res.data.is_lock
-        console.log(res.data)
         if (!this.is_lock) {
           if (this.intervalTimer) {
             this.clearTimer()
@@ -201,6 +251,7 @@ export default {
         } else if (!this.intervalTimer) {
           this.intervalTimer = window.setInterval(this.getLockCheck, 5000)
         }
+        console.log(res.data)
         return Promise.resolve(res.data)
       } catch (e) {
         console.error(e)
@@ -215,6 +266,47 @@ export default {
         message: msg,
         type: 'success'
       })
+    },
+    handleExecuteLogs() {
+      this.isLogs = true
+      this.socket = io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
+      // this.socket = io('/sync_template/websocket/logs', {
+        reconnectionAttempts: 5,
+        transports: ['websocket']
+      })
+      this.socket.connect()
+      this.setLogMessageListener()
+    },
+    setLogMessageListener() {
+      this.socket.emit('get_perl_log', 'get')
+      this.socket.on('sync_templ_log', sioEvt => {
+        const data = sioEvt
+        this.setLogMessage(data)
+        this.scrollToBottom()
+      })
+    },
+    setLogMessage(data) {
+      const target = this.logData
+      const isHistoryMessage = target === data || target === 'Loading...'
+      if (isHistoryMessage) {
+        this.logData = data
+      } else {
+        if (target.includes(data)) return
+        this.logData = this.logData.concat(data)
+      }
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const target = this.$el.querySelector(`#podLogSection`).childNodes[1]
+        target.scrollTop = target.scrollHeight
+      })
+    },
+    handleClose() {
+      if (this.socket !== '') {
+        this.socket.close()
+      }
+      this.isLogs = false
+      this.logData = 'Loading...'
     }
   }
 }
@@ -232,6 +324,9 @@ $font-size: 16px;
   }
 }
 >>> .el-checkbox__label {
+  font-size: $font-size;
+}
+>>> .el-loading-text {
   font-size: $font-size;
 }
 </style>

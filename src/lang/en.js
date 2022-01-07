@@ -1151,7 +1151,11 @@ export default {
     TokenWarning: `Confirm whether Github's access token already contains public_repo.`,
     TemplatesSettings: 'Template Synchronization Settings',
     EnableTemplateSync: 'Enable template synchronization',
-    DocumentUrl: 'Please refer to related document'
+    DocumentUrl: 'Please refer to related document',
+    ExecLogsButton: 'Execution Logs',
+    NotifyRun: `Synchronizing Templates, it might takes 3 - 10 mins depends on the networking, please come back later or click in the 'Execution Logs' for details.`,
+    TemplateSyncExecLogs: 'Template Synchronization Execute Logs',
+    VerifyGithubToken: 'Verifying given GitHub token...'
   },
   Kanban: {
     ChangeIssueError: 'Change Issue Error',
