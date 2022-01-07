@@ -83,6 +83,7 @@ stages:
       - master
       - develop
       - githubwebsocket
+      - coribranch
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -104,6 +105,7 @@ stages:
       - master
       - develop
       - githubwebsocket
+      - coribranch
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -124,6 +126,7 @@ stages:
       include:
       - master
       - githubwebsocket
+      - coribranch
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -144,6 +147,7 @@ stages:
       include:
       - master
       - githubwebsocket
+      - coribranch
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -164,6 +168,7 @@ stages:
       include:
       - develop
       - githubwebsocket
+      - coribranch
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
@@ -184,6 +189,7 @@ stages:
       include:
       - develop
       - githubwebsocket
+      - coribranch
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -208,6 +214,7 @@ stages:
       - master
       - develop
       - githubwebsocket
+      - coribranch
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -232,6 +239,7 @@ stages:
       - master
       - develop
       - githubwebsocket
+      - coribranch
 - name: Test--ZAP
   iiidevops: zap
   steps:
