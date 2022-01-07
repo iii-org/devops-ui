@@ -221,13 +221,13 @@ export default {
           value: 'tags',
           placeholder: 'Tag'
         },
-        // {
-        //   id: 3,
-        //   label: this.$t('Issue.FilterDimensions.tracker'),
-        //   value: 'tracker',
-        //   placeholder: 'Type',
-        //   tag: true
-        // },
+        {
+          id: 3,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
+        },
         {
           id: 4,
           label: this.$t('Issue.FilterDimensions.assigned_to'),
