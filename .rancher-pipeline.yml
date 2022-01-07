@@ -36,6 +36,7 @@ stages:
       include:
       - master
       - develop
+      - githubwebsocket
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
