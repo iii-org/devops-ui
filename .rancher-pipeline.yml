@@ -17,6 +17,7 @@ stages:
       include:
       - master
       - develop
+      - githubwebsocket
 - name: Test--SonarQube source code scan
   iiidevops: sonarqube
   steps:
