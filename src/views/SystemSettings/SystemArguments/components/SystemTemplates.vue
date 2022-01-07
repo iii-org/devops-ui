@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
-    <el-card v-if="!isLogs" v-loading="isLoading">
+    <el-card
+      v-if="!isLogs" 
+      v-loading="isLoading"
+      :element-loading-text="loadingText"
+    >
       <div class="text-2xl">{{ $t('SystemTemplates.TemplatesSettings') }}</div>
       <el-form
         ref="form"
@@ -148,7 +152,8 @@ export default {
       intervalTimer: null,
       isLogs: false,
       logData: 'Loading...',
-      socket: ''
+      socket: '',
+      loadingText: ''
     }
   },
   computed: {
@@ -179,6 +184,7 @@ export default {
     },
     async fetchData() {
       this.isLoading = true
+      this.loadingText = this.$t('Loading')
       const res = await getSystemParameter()
       this.getSystemParameterData(res.data)
       this.isLoading = false
@@ -202,6 +208,7 @@ export default {
       const data = this.getUpdateData
       const paramId = this.paramId
       this.isLoading = true
+      this.loadingText = this.$t('SystemTemplates.VerifyGithubToken')
       await updateSystemParameter(paramId, data)
         .then(() => {
           if (!isRun) {
@@ -295,7 +302,9 @@ export default {
       })
     },
     handleClose() {
-      this.socket.close()
+      if (this.socket !== '') {
+        this.socket.close()
+      }
       this.isLogs = false
       this.logData = 'Loading...'
     }
@@ -315,6 +324,9 @@ $font-size: 16px;
   }
 }
 >>> .el-checkbox__label {
+  font-size: $font-size;
+}
+>>> .el-loading-text {
   font-size: $font-size;
 }
 </style>

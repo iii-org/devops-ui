@@ -1154,7 +1154,8 @@ export default {
     DocumentUrl: 'Please refer to related document',
     ExecLogsButton: 'Execution Logs',
     NotifyRun: `Synchronizing Templates, it might takes 3 - 10 mins depends on the networking, please come back later or click in the 'Execution Logs' for details.`,
-    TemplateSyncExecLogs: 'Template Synchronization Execute Logs'
+    TemplateSyncExecLogs: 'Template Synchronization Execute Logs',
+    VerifyGithubToken: 'Verifying given GitHub token...'
   },
   Kanban: {
     ChangeIssueError: 'Change Issue Error',
