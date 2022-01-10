@@ -475,6 +475,7 @@ export default {
     DeleteFile: '確認要刪除附件嗎?',
     RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
+    project: '專案名稱',
     name: '議題名稱',
     tags: '@:Issue.Tag',
     priority: '@:Issue.Priority',

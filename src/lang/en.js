@@ -479,6 +479,7 @@ export default {
     DeleteFile: 'Are you sure to Delete File?',
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
+    project: 'Project',
     name: 'Name',
     tags: '@:Issue.Tag',
     priority: '@:Issue.Priority',

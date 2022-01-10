@@ -130,6 +130,21 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="columns.indexOf('project')>=0"
+            :label="$t('Issue.project')"
+            min-width="130"
+            show-overflow-tooltip
+            prop="project.id"
+            sortable="custom"
+          >
+            <template
+              v-if="scope.row.project"
+              slot-scope="scope"
+            >
+              <span>{{ scope.row.project.display }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
             v-if="columns.indexOf('tracker')>=0"
             :label="$t('general.Type')"
             width="130"
@@ -354,6 +369,7 @@ export default {
       allDataLoading: false,
       excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
       columnsOptions: Object.freeze([
+        { display: this.$t('Issue.project'), field: 'project' },
         { display: this.$t('Issue.name'), field: 'name' },
         { display: this.$t('Issue.tracker'), field: 'tracker' },
         { display: this.$t('Issue.status'), field: 'status' },
@@ -611,7 +627,7 @@ export default {
       if (this.displayFields.length <= 0) {
         this.displayFields = this.columnsOptions.map(item => item.field)
       }
-      const res = await putIssueFieldDisplay({ 
+      const res = await putIssueFieldDisplay({
         project_id: this.selectedProjectId,
         type: 'issue_list',
         display_fields: this.displayFields
