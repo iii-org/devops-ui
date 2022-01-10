@@ -613,6 +613,9 @@ export default {
       })
       this.displayFields = res.data
     },
+    getRowClass({ row }) {
+      return row.family ? '' : 'row-expand-cover'
+    },
     getCheckColumnValue(value) {
       if (this.displayFields.length <= 0) return true
       return this.displayFields.includes(value)
@@ -652,8 +655,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+>>> .row-expand-cover .el-table__expand-icon {
+  display: none
+}
+
 .el-table .el-button {
-    border: none
+  border: none
 }
 
 .display-column {
