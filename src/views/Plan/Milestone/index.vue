@@ -195,14 +195,11 @@ export default {
     return {
       listLoading: false,
       contentLoading: false,
-
       updateLoading: false,
       lastUpdated: null,
-
       assigned_to: [],
       fixed_version: [],
       tags: [],
-
       activeNames: '',
       searchVisible: false,
       displayClosed: false,
@@ -210,23 +207,23 @@ export default {
       filterOptions: Object.freeze([
         {
           id: 1,
+          label: this.$t('Issue.FilterDimensions.tracker'),
+          value: 'tracker',
+          placeholder: 'Type',
+          tag: true
+        },
+        {
+          id: 2,
           label: this.$t('Issue.FilterDimensions.status'),
           value: 'status',
           placeholder: 'Status',
           tag: true
         },
         {
-          id: 2,
+          id: 3,
           label: this.$t('Issue.FilterDimensions.tags'),
           value: 'tags',
           placeholder: 'Tag'
-        },
-        {
-          id: 3,
-          label: this.$t('Issue.FilterDimensions.tracker'),
-          value: 'tracker',
-          placeholder: 'Type',
-          tag: true
         },
         {
           id: 4,
@@ -282,7 +279,6 @@ export default {
       originFilterValue: {},
       displayFields: [],
       keyword: null,
-
       listData: [],
       activeTab: 'WBS',
       addTopicDialog: {
@@ -337,11 +333,8 @@ export default {
     this.loadSelectionList()
     const tracker = this.tracker.find((item) => item.name === 'Epic')
     const storeFilterValue = await this.getIssueFilter()
-    if (storeFilterValue['milestone']) {
-      this.filterValue = storeFilterValue['milestone']
-    } else {
-      this.fillterValue = { tracker: tracker.id }
-    }
+    this.filterValue = storeFilterValue['milestone']
+      ? storeFilterValue['milestone'] : { tracker: tracker.id }
     this.originalFillterValue = { tracker: tracker.id }
     const storeKeyword = await this.getKeyword()
     if (storeKeyword['milestone']) {
