@@ -102,7 +102,6 @@ import { getUserRedmineMailProfile, editUserRedmineMailProfile } from '@/api/red
 import MixinElTable from '@/mixins/MixinElTable'
 
 const defaultFormData = () => ({
-  emission_email_address: '',
   smtp_settings: {
     address: '',
     authentication: '',
@@ -113,7 +112,8 @@ const defaultFormData = () => ({
     user_name: '',
     openssl_verify_mode: '',
     ssl: ''
-  }
+  },
+  emission_email_address: ''
 })
 
 export default {
@@ -155,7 +155,7 @@ export default {
         if (arr.includes(item) && data[item] === '') delete data[item]
       })
     },
-    checkEmpty() {
+    checkData() {
       const res = this.redmineMailForm
       if (this.isAuthenticationNil) {
         delete res.smtp_settings.user_name
@@ -168,7 +168,10 @@ export default {
       this.isLoading = true
       this.$refs.redmineMailForm.validate(async valid => {
         if (!valid) return
-        const data = { redmine_mail: this.redmineMailForm }
+        const data = {
+          redmine_mail: { smtp_settings: this.checkData().smtp_settings },
+          emission_email_address: this.checkData().emission_email_address
+        }
         editUserRedmineMailProfile(data)
           .then(() => {
             this.$message({
