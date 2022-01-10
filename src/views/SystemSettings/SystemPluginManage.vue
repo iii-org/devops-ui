@@ -112,9 +112,9 @@
             >
               <el-option
                 v-for="option in form.arguments[argIdx].options"
-                :key="option.id"
+                :key="option.value"
                 :label="option.name"
-                :value="String(option.id)"
+                :value="String(option.value)"
               />
             </el-select>
           </el-form-item>
