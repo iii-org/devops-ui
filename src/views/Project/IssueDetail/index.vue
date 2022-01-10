@@ -319,6 +319,10 @@ export default {
     }
   },
   data() {
+    this.assignedError = {
+      title: this.$t('Kanban.assignedErrorTitle'),
+      content: this.$t('Kanban.assignedErrorContent')
+    }
     return {
       mode: 'view',
       originForm: {},
@@ -368,7 +372,9 @@ export default {
       },
       relations: [],
       relatedCollectionDialogVisible: false,
-      tagsString: ''
+      tagsString: '',
+      errorMsg: [],
+      showAlert: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -827,6 +833,12 @@ export default {
           sendForm.append(objKey, sendData[objKey])
         }
       })
+      if (sendData.assigned_to_id && sendData.status_id === 1) {
+        const error = 'assignedError'
+        this.handleErrorAlert(error)
+        this.showErrorAlert(this.errorMsg)
+        return
+      }
       this.updateIssueForm(sendForm)
     },
     async updateIssueForm(sendForm) {
@@ -876,6 +888,25 @@ export default {
         console.error(e)
       }
       this.isLoading = false
+    },
+    handleErrorAlert(key) {
+      const { title, content } = this[key]
+      this.errorMsg.push(this.getErrorAlert(title, content))
+    },
+    getErrorAlert(title, content) {
+      const h = this.$createElement
+      const message = h('li', [h('b', title), h('p', content)])
+      return message
+    },
+    showErrorAlert(errorMsg) {
+      const h = this.$createElement
+      if (!this.showAlert) {
+        this.showAlert = true
+        this.$msgbox({ message: h('ul', errorMsg), title: this.$t('Kanban.ChangeIssueError') }).then(() => {
+          this.showAlert = false
+        })
+      }
+      this.errorMsg = []
     },
     async removeIssueRelation(child_issue_id) {
       this.isLoading = true
