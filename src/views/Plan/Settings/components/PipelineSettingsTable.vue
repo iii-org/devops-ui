@@ -27,7 +27,7 @@
             size="mini"
             type="success"
             :loading="isLoading"
-            @click="updatePipelineBranch(true)"
+            @click="isDataChanged ? updatePipelineBranch(true) : updateUnalteredPipelineBranch()"
           >
             <em class="el-icon-refresh" />
             {{ $t('general.DirectExecution') }}
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { getPipelineBranch, editPipelineBranch } from '@/api/projects'
+import { getPipelineBranch, editPipelineBranch, updateUnalteredPipelineBranch } from '@/api/projects'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -236,6 +236,19 @@ export default {
       } finally {
         this.fetchPipelineBranch()
         this.showSuccessMessage(message)
+      }
+    },
+    async updateUnalteredPipelineBranch() {
+      const sendData = new FormData()
+      sendData.append('branch', this.selectedBranch)
+      this.isLoading = true
+      try {
+        await updateUnalteredPipelineBranch(this.selectedRepositoryId, sendData)
+      } catch (err) {
+        this.showErrorMessage(err)
+      } finally {
+        this.fetchPipelineBranch()
+        this.showSuccessMessage(this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch]))
       }
     },
     getSendData(runPipeline) {
