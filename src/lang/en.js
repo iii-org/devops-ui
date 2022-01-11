@@ -902,7 +902,9 @@ export default {
     AddParams: 'Add Params'
   },
   PipeLines: {
-    TestDetail: 'Test Detail'
+    TestDetail: 'Test Detail',
+    ExecuteDetail: 'Detail',
+    Report: 'Report'
   },
   Git: {
     Branch: '@:general.Branch',

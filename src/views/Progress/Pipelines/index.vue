@@ -109,47 +109,41 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="primary"
-              icon="el-icon-document"
-              plain
-              @click="onDetailsClick(scope.row)"
+            <el-tooltip
+              class="item cursor-pointer"
+              :content="$t('PipeLines.ExecuteDetail')"
+              placement="bottom"
+              @click.native="onDetailsClick(scope.row)"
             >
-              {{ $t('general.Detail') }}
-            </el-button>
-            <el-button
+              <em class="ri-terminal-box-fill icon" />
+            </el-tooltip>
+            <el-tooltip
               v-if="isAllowStop(scope.row.execution_state)"
-              size="mini"
-              type="danger"
-              plain
-              icon="el-icon-circle-close"
-              @click="onActionClick(scope.row.id, 'stop')"
+              class="item cursor-pointer"
+              :content="$t('general.Stop')"
+              placement="bottom"
+              @click.native="onActionClick(scope.row.id, 'stop')"
             >
-              {{ $t('general.Stop') }}
-            </el-button>
-            <!-- <el-button
-              v-else
-              size="mini"
-              type="primary"
-              plain
-              icon="el-icon-refresh-left"
-              @click="onActionClick(scope.row.id, 'rerun')"
+              <em class="ri-close-circle-fill icon danger" />
+            </el-tooltip>
+            <el-tooltip
+              v-else-if="!isAllowStop(scope.row.execution_state) && scope.row.id === lastData.id"
+              class="item cursor-pointer"
+              :content="$t('general.Rerun')"
+              placement="bottom"
+              @click.native="onActionClick(scope.row.id, 'rerun')"
             >
-              {{ $t('general.Rerun') }}
-            </el-button> -->
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          :label="$t('general.Report')"
-        >
-          <template slot-scope="scope">
-            <em
+              <em class="ri-refresh-fill icon active" />
+            </el-tooltip>
+            <el-tooltip
               v-show="scope.row.commit_id"
-              class="el-icon-tickets cursor-pointer"
-              @click="handleToTestReport(scope.row)"
-            />
+              class="item cursor-pointer"
+              :content="$t('PipeLines.Report')"
+              placement="bottom"
+              @click.native="handleToTestReport(scope.row)"
+            >
+              <em class="ri-file-list-2-fill icon" />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">
@@ -232,6 +226,9 @@ export default {
     },
     selectedRepositoryId() {
       return this.selectedProject.repository_ids[0]
+    },
+    lastData() {
+      return this.listData[0]
     }
   },
   watch: {
@@ -359,3 +356,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/variables';
+
+.icon {
+  font-size: x-large;
+  font-weight: bolder;
+  margin-right: 5px;
+  color: $info;
+  &.active {
+    color: $active;
+  }
+  &.danger {
+    color: $danger;
+  }
+  &:hover {
+    color: #66b1ff;
+  }
+}
+</style>

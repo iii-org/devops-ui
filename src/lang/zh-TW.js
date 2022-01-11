@@ -895,7 +895,9 @@ export default {
     AddParams: '新增參數'
   },
   PipeLines: {
-    TestDetail: '測試細節'
+    TestDetail: '測試細節',
+    ExecuteDetail: '執行細節',
+    Report: '測試彙整報告'
   },
   Git: {
     Branch: '@:general.Branch',
