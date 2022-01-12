@@ -477,10 +477,11 @@ export default {
     classifyIssue() {
       const issueList = this.projectIssueList
       this.checkGroupByValueOnBoard()
-      issueList.forEach((issue) => {
+      issueList.forEach((issue, index) => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
           dimensionName = dimensionName || 'null'
+          if (!this.classifyIssueList[dimensionName]) return
           if (this.checkInFilterValue(dimensionName)) this.classifyIssueList[dimensionName].push(issue)
         }
       })

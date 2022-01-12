@@ -390,7 +390,7 @@ export default {
     checkChildrenIssuesClosed() {
       return function (element) {
         const checkedIssue = this.relativeList.length > 0 ? this.findCompleteIssues(element) : element
-        if (checkedIssue.children.length === 0) return true
+        if (!checkedIssue.children || checkedIssue.children.length === 0) return true
         return checkedIssue.children
           .map((issue) => issue.is_closed === true)
           .reduce((issue_status, all) => issue_status && all)
