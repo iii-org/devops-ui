@@ -375,6 +375,9 @@ export default {
         if (column === 'tags_id') {
           data = this.setTags(column, item.id)
         }
+        if (column === 'assigned_to_id') {
+          data = this.setStatusId(column, item.id, data)
+        }
         await updateIssue(this.row.id, data)
         this.$message({
           title: this.$t('general.Success'),
@@ -414,6 +417,15 @@ export default {
         tags.push(value)
       }
       return { tags: tags.join(',') }
+    },
+    setStatusId(column, id, data) {
+      if (this.row.status.id === 1 && id) {
+        data = {
+          [column]: id,
+          status_id: 2
+        }
+      }
+      return data
     },
     toggleRelationDialog(target) {
       this.relationDialog.visible = !this.relationDialog.visible
