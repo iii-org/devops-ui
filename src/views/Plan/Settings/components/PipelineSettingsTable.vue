@@ -247,7 +247,7 @@ export default {
       } catch (err) {
         this.showErrorMessage(err)
       } finally {
-        this.fetchPipelineBranch()
+        this.isLoading = false
         this.showSuccessMessage(this.$t('ProgressPipelines.RerunPipeline', [this.selectedBranch]))
       }
     },
