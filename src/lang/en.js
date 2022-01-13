@@ -347,7 +347,8 @@ export default {
   Cmas: {
     SUCCESS: 'Success',
     RUNNING: 'Scanning',
-    NOT_FOUND: 'Fail',
+    NOT_FOUND: 'Scan Failed',
+    FAIL: 'Establish Failed',
     MOEA: 'Mobile APP Assurance Specification'
   },
   TestValue: {

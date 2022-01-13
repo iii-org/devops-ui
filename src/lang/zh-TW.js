@@ -329,6 +329,7 @@ export default {
     SUCCESS: '掃描完成',
     RUNNING: '掃描中',
     NOT_FOUND: '掃描失敗',
+    FAIL: '建立失敗',
     MOEA: '行動應用APP基本資安規範'
   },
   WebInspect: {
