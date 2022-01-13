@@ -403,6 +403,7 @@ export default {
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
     CloseIssue: 'Close Issue',
+    IssueHookSetting: 'Commit Issue Hook Setting',
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',

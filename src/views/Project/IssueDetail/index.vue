@@ -171,6 +171,7 @@
                   </template>
                   <admin-commit-log
                     ref="adminCommitLog"
+                    :type="'issueDetail'"
                     :data="getGitCommitLogData"
                     :commit-link="true"
                     :height="dialogHeight"
