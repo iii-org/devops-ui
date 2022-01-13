@@ -655,7 +655,7 @@ export default {
         @apply m-3 flex justify-between content-start;
 
         .text {
-          @apply cursor-pointer text-left text-primary font-bold;
+          @apply cursor-pointer text-left text-primary font-bold break-all;
         }
 
         .action {
