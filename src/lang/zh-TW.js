@@ -1061,7 +1061,8 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
-    TagUpdateMessage: '任務標籤已更新成功'
+    TagUpdateMessage: '任務標籤已更新成功',
+    ChangeManager: '變更專案經理'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',

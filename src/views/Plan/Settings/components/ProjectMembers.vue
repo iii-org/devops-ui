@@ -113,7 +113,7 @@ export default {
     confirmSetProjectOwner() {
       const h = this.$createElement
       this.$msgbox({
-        title: this.$t('general.Warning'),
+        title: this.$t('ProjectSettings.ChangeManager'),
         message: h('p', null, [
           h('span', null, this.$t('Notify.ChangeProjectManager'))
         ]),

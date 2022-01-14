@@ -1068,7 +1068,8 @@ export default {
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully',
-    TagUpdateMessage: 'The task label has been updated successfully'
+    TagUpdateMessage: 'The task label has been updated successfully',
+    ChangeManager: 'Change Project Manager'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: 'Remote Env.',
