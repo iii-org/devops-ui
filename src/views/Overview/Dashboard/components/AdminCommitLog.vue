@@ -20,11 +20,14 @@
             <p v-if="compareCommitContent(commit)">{{ commit.commit_message }}</p>
             <p class="author">
               <template v-if="commitLink">
-                <a :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
+                <a v-if="commit.web_url" :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
                   <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
-                </a> : 
+                </a>
+                <a v-else style="cursor: default;">
+                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
+                </a>
               </template>
-              {{ commit.author_name }} @ {{ commit.pj_name }}
+              : {{ commit.author_name }} @ {{ commit.pj_name }}
               <a v-if="type==='issueDetail'" @click="toggleIssueSingleCommitDialog(commit)">
                 <em class="ri-link" />
               </a>
@@ -52,9 +55,13 @@
               {{ $t('general.Save') }}
             </el-button>
           </div>
-          <a :href="commitData.web_url" class="el-link el-link--primary is-underline" target="_blank">
+          <a v-if="commitData.web_url" :href="commitData.web_url" class="el-link el-link--primary is-underline" target="_blank">
             <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }}
-          </a> : {{ commitData.author_name }} @ {{ commitData.commit_title }}
+          </a>
+          <a v-else style="cursor: default;">
+            <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }}
+          </a>
+          : {{ commitData.author_name }} @ {{ commitData.commit_title }}
           <el-select
             v-model="issueIds"
             style="width: 100%"
@@ -143,9 +150,13 @@
               <p class="author">
                 <el-row>
                   <el-col :span="14">
-                    <a :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
+                    <a v-if="commit.web_url" :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
                       <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
-                    </a> : {{ commit.author_name }} @ {{ commit.commit_message }}
+                    </a>
+                    <a v-else style="cursor: default;">
+                      <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
+                    </a>
+                    : {{ commit.author_name }} @ {{ commit.commit_message }}
                   </el-col>
                   <el-col :span="10">
                     <IssueSelect
