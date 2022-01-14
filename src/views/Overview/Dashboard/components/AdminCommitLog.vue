@@ -25,91 +25,149 @@
                 </a> : 
               </template>
               {{ commit.author_name }} @ {{ commit.pj_name }}
-              <a v-if="type==='issueDetail'" @click="toggleIssueCommitDialog(commit)">
+              <a v-if="type==='issueDetail'" @click="toggleIssueSingleCommitDialog(commit)">
                 <em class="ri-link" />
               </a>
             </p>
           </el-card>
         </el-timeline-item>
       </transition-group>
-      <el-dialog
-        v-if="type==='issueDetail'"
-        :visible.sync="issueCommitDialog.visible"
-        width="60%"
-        top="50px"
-        append-to-body
-        destroy-on-close
-      >
-        <div slot="title">
-          {{ $t('Issue.IssueHookSetting') }}
-          <el-button
-            type="primary"
-            class="float-right"
-            style="margin-right: 2em;"
-            size="small"
-            @click="toggleSaveCommitDialog"
-          >
-            {{ $t('general.Save') }}
-          </el-button>
-        </div>
-        <a :href="commitData.web_url" class="el-link el-link--primary is-underline" target="_blank">
-          <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }}
-        </a>
-        : {{ commitData.author_name }} @ {{ commitData.commit_title }}
-        <el-select
-          v-model="issueIds"
-          style="width: 100%"
-          :placeholder="$t('Issue.SearchNameOrAssignee')"
-          clearable
-          filterable
-          remote
-          multiple
-          value-key="issueIds"
-          :remote-method="getSearchIssue"
-          :loading="issueLoading"
-          @focus="getSearchIssue()"
+      <template v-if="type==='issueDetail'">
+        <el-dialog
+          :visible.sync="issueSingleCommitDialog.visible"
+          width="60%"
+          top="50px"
+          append-to-body
+          destroy-on-close
         >
-          <el-option-group
-            v-for="group in issueList"
-            :key="group.name"
-            :label="group.name"
+          <div slot="title">
+            {{ $t('Issue.CommitIssueHookSetting') }}
+            <el-button
+              type="primary"
+              class="float-right"
+              style="margin-right: 2em;"
+              size="small"
+              @click="toggleSaveSingleCommitDialog"
+            >
+              {{ $t('general.Save') }}
+            </el-button>
+          </div>
+          <a :href="commitData.web_url" class="el-link el-link--primary is-underline" target="_blank">
+            <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }}
+          </a> : {{ commitData.author_name }} @ {{ commitData.commit_title }}
+          <el-select
+            v-model="issueIds"
+            style="width: 100%"
+            :placeholder="$t('Issue.SearchNameOrAssignee')"
+            clearable
+            filterable
+            remote
+            multiple
+            value-key="issueIds"
+            :remote-method="getSearchIssue"
+            :loading="issueLoading"
+            @focus="getSearchIssue()"
           >
-            <template v-for="item in group.options">
-              <el-option
-                :key="item.id"
-                :label="'#' + item.id +' - '+item.name"
-                :value="item.id"
-              >
-                <el-popover
-                  placement="left"
-                  width="250"
-                  trigger="hover"
+            <el-option-group
+              v-for="group in issueList"
+              :key="group.name"
+              :label="group.name"
+            >
+              <template v-for="item in group.options">
+                <el-option
+                  :key="item.id"
+                  :label="'#' + item.id +' - '+item.name"
+                  :value="item.id"
                 >
-                  <el-card>
-                    <template slot="header">
-                      <Tracker :name="$t(`Issue.${item.tracker.name}`)" :type="item.tracker.name" />
-                      #{{ item.id }} - {{ item.name }}
-                    </template>
-                    <strong>{{ $t('Issue.Description') }}:</strong>
-                    <p>{{ item.description }}</p>
-                  </el-card>
-                  <div slot="reference">
-                    <span
-                      style="float: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
-                    >
-                      <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
-                      <span v-html="highLight(item.name)" />
-                    </span>
-                    <span style="float: right; color: #8492a6; font-size: 13px"
-                          v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                  <el-popover
+                    placement="left"
+                    width="250"
+                    trigger="hover"
+                  >
+                    <el-card>
+                      <template slot="header">
+                        <Tracker :name="$t(`Issue.${item.tracker.name}`)" :type="item.tracker.name" />
+                        #{{ item.id }} - {{ item.name }}
+                      </template>
+                      <strong>{{ $t('Issue.Description') }}:</strong>
+                      <p>{{ item.description }}</p>
+                    </el-card>
+                    <div slot="reference">
+                      <span
+                        style="float: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; "
+                      >
+                        <strong>#<span v-html="highLight(item.id.toString())" /></strong> -
+                        <span v-html="highLight(item.name)" />
+                      </span>
+                      <span style="float: right; color: #8492a6; font-size: 13px"
+                            v-html="highLight((item.assigned_to)?item.assigned_to.name:null)"
+                      />
+                    </div>
+                  </el-popover>
+                </el-option>
+              </template>
+            </el-option-group>
+          </el-select>
+        </el-dialog>
+        <el-dialog
+          :visible.sync="issueMultiCommitDialog.visible"
+          width="60%"
+          top="50px"
+          append-to-body
+        >
+          <div slot="title">
+            {{ $t('Issue.CommitIssueHookSetting') }}
+            <span style="padding-left: 10px;">
+              #{{ issueId }} - {{ issueName }}
+            </span>
+            <el-button
+              type="primary"
+              class="float-right"
+              style="margin-right: 2em;"
+              size="small"
+              @click="toggleSaveMultiCommitDialog"
+            >
+              {{ $t('general.Save') }}
+            </el-button>
+          </div>
+          <transition-group
+            name="slide-fade"
+            tag="el-timeline"
+          >
+            <el-timeline-item
+              v-for="commit in listAllData"
+              :key="commit.id"
+              :timestamp="commit.commit_time"
+              placement="top"
+            >
+              <p class="author">
+                <el-row>
+                  <el-col :span="14">
+                    <a :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
+                      <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
+                    </a> : {{ commit.author_name }} @ {{ commit.commit_message }}
+                  </el-col>
+                  <el-col :span="10">
+                    <IssueSelect
+                      ref="IssueSelect"
+                      :commit="commit"
                     />
-                  </div>
-                </el-popover>
-              </el-option>
-            </template>
-          </el-option-group>
-        </el-select>
-      </el-dialog>
+                  </el-col>
+                </el-row>
+              </p>
+            </el-timeline-item>
+          </transition-group>
+        </el-dialog>
+        <a
+          size="mini"
+          class="el-link el-link--info is-underline"
+          style="position:absolute; right:10px; top:5px;"
+          @click="toggleIssueMultiCommitDialog()"
+        >
+          {{ $t('Issue.IssueHookSetting') }}
+          <em class="ri-link" />
+        </a>
+      </template>
     </template>
     <no-data v-else />
   </el-col>
@@ -124,14 +182,27 @@ import {
   getCommitRelation,
   patchCommitRelation
 } from '@/api/projects'
-import { getIssue } from '@/api/issue'
+import {
+  getIssue,
+  getIssueGitCommitLog
+} from '@/api/issue'
+import { UTCtoLocalTime } from '@/filters'
+import IssueSelect from '@/components/Issue/IssueSelect'
 import Tracker from '@/components/Issue/Tracker'
 import NoData from './widget/NoData'
 
 export default {
   name: 'AdminCommitLog',
-  components: { Tracker, NoData },
+  components: { IssueSelect, Tracker, NoData },
   props: {
+    issueId: {
+      type: Number,
+      default: null
+    },
+    issueName: {
+      type: String,
+      default: ''
+    },
     type: {
       type: String,
       default: 'dashboard'
@@ -154,9 +225,13 @@ export default {
       listData: [],
       detailDialog: false,
       listLoading: false,
-      issueCommitDialog: {
+      issueSingleCommitDialog: {
         visible: false
       },
+      issueMultiCommitDialog: {
+        visible: false
+      },
+      listAllData: [],
       parent: [],
       commitData: {},
       commitId: '',
@@ -178,6 +253,14 @@ export default {
     firstEightCommitId() {
       return function (commit) {
         return commit.slice(0, 8)
+      }
+    },
+    highLight() {
+      return function (value) {
+        if (!value) return ''
+        if (!this.issueQuery) return value
+        const reg = new RegExp(this.issueQuery, 'gi')
+        return value.replace(reg, (str) => `<span class=\'bg-yellow-200 text-danger p-1\'><strong>${str}</strong></span>`)
       }
     }
   },
@@ -203,25 +286,25 @@ export default {
       this.listData = await this.data()
       this.listLoading = false
     },
-    async getCommitRelationProject() {
-      const issue_ids = await getCommitRelation(this.commitId)
+    async getCommitRelationProject(commitId) {
+      const issue_ids = await getCommitRelation(commitId)
       this.issueIds = issue_ids.data.issue_ids
     },
-    async getRootProject() {
-      const res = await getRootProjectId(this.selectedProjectId)
+    async getRootProject(projectId) {
+      const res = await getRootProjectId(projectId)
       this.rootProjectId = res.root_project_id
     },
-    async toggleIssueCommitDialog(commit) {
+    async toggleIssueSingleCommitDialog(commit) {
       this.listLoading = true
       this.commitData = commit
       this.commitId = commit.commit_id
-      await this.getCommitRelationProject()
-      await this.getRootProject()
+      await this.getCommitRelationProject(this.commitId)
+      await this.getRootProject(this.selectedProjectId)
       this.parent = await this.originalParentIssue()
-      this.issueCommitDialog.visible = !this.issueCommitDialog.visible
+      this.issueSingleCommitDialog.visible = !this.issueSingleCommitDialog.visible
       this.listLoading = false
     },
-    async toggleSaveCommitDialog() {
+    async toggleSaveSingleCommitDialog() {
       const data = {
         commit_id: this.commitId,
         issue_ids: this.issueIds
@@ -232,7 +315,22 @@ export default {
         message: this.$t('Notify.Updated'),
         type: 'success'
       })
-      this.issueCommitDialog.visible = !this.issueCommitDialog.visible
+      this.issueSingleCommitDialog.visible = !this.issueSingleCommitDialog.visible
+    },
+    async toggleIssueMultiCommitDialog() {
+      this.listAllData = await this.getAllGitCommitLogData()
+      this.issueMultiCommitDialog.visible = !this.issueMultiCommitDialog.visible
+    },
+    toggleSaveMultiCommitDialog() {
+      this.$refs.IssueSelect.forEach((item) => {
+        item.saveIssueLink()
+      })
+      this.$message({
+        title: this.$t('general.Success'),
+        message: this.$t('Notify.Updated'),
+        type: 'success'
+      })
+      this.issueMultiCommitDialog.visible = !this.issueMultiCommitDialog.visible
     },
     async getSearchIssue(query) {
       const params = this.getSearchParams(query)
@@ -289,13 +387,13 @@ export default {
       this.cancelToken = CancelToken
       return CancelToken.token
     },
-    highLight: function(value) {
-      if (!value) return ''
-      if (!this.issueQuery) return value
-      const reg = new RegExp(this.issueQuery, 'gi')
-      return value.replace(reg, function(str) {
-        return '<span class=\'bg-yellow-200 text-danger p-1\'><strong>' + str + '</strong></span>'
+    async getAllGitCommitLogData() {
+      const res = await getIssueGitCommitLog(this.selectedProjectId, parseInt(this.$route.params.issueId))
+      res.data.forEach((item, index) => {
+        item['id'] = index
+        item['commit_time'] = UTCtoLocalTime(item['commit_time'])
       })
+      return res.data
     }
   }
 }
@@ -329,5 +427,10 @@ export default {
   /* .slide-fade-leave-active for below version 2.1.8 */ {
   transform: translateX(10px);
   opacity: 0;
+}
+
+>>> .el-dialog{
+  max-height: 80%;
+  overflow: auto;
 }
 </style>

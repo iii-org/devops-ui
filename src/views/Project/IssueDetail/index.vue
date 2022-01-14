@@ -170,7 +170,9 @@
                     </span>
                   </template>
                   <admin-commit-log
-                    ref="adminCommitLog"
+                    ref="AdminCommitLog"
+                    :issue-id="issueId"
+                    :issue-name="form.name"
                     :type="'issueDetail'"
                     :data="getGitCommitLogData"
                     :commit-link="true"
