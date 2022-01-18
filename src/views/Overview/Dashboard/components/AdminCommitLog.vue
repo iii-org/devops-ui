@@ -21,13 +21,13 @@
             <p class="author">
               <template v-if="commitLink">
                 <a v-if="commit.web_url" :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
-                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
+                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }} :
                 </a>
                 <a v-else style="cursor: default;">
-                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
+                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }} :
                 </a>
               </template>
-              : {{ commit.author_name }} @ {{ commit.pj_name }}
+              {{ commit.author_name }} @ {{ commit.pj_name }}
               <el-tooltip effect="dark" :content="$t('Issue.EditIssueHook')" placement="bottom">
                 <a
                   v-if="type==='issueDetail'"
@@ -62,12 +62,12 @@
             </el-button>
           </div>
           <a v-if="commitData.web_url" :href="commitData.web_url" class="el-link el-link--primary is-underline" target="_blank">
-            <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }}
+            <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }} :
           </a>
           <a v-else style="cursor: default;">
-            <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }}
+            <em class="ri-git-commit-line" />{{ firstEightCommitId(commitId) }} :
           </a>
-          : {{ commitData.author_name }} @ {{ commitData.commit_title }}
+          {{ commitData.author_name }} @ {{ commitData.commit_title }}
           <el-select
             v-model="issueIds"
             style="width: 100%"

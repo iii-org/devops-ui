@@ -279,7 +279,10 @@ import {
 } from './components'
 import { AdminCommitLog } from '@/views/Overview/Dashboard/components'
 import { UTCtoLocalTime } from '@/filters'
-import { addProjectTags } from '@/api/projects'
+import {
+  addProjectTags,
+  getRootProjectId
+} from '@/api/projects'
 import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
@@ -333,6 +336,7 @@ export default {
       issueMatrixDialog: {
         visible: false
       },
+      rootProjectId: '',
       issue_link: '',
       issue: {},
       issueId: null,
@@ -598,10 +602,15 @@ export default {
       if (this.propsIssueId) this.issueId = parseInt(this.propsIssueId)
       else if (this.$route.params.issueId) this.issueId = parseInt(this.$route.params.issueId)
     },
+    async getRootProject(projectId) {
+      const res = await getRootProjectId(projectId)
+      this.rootProjectId = res.root_project_id
+    },
     async getGitCommitLogData() {
+      await this.getRootProject(this.selectedProjectId)
       this.setIssueId()
       const params = { limit: commitLimit }
-      const res = await getIssueGitCommitLog(this.selectedProjectId, this.issueId, params)
+      const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
       res.data.forEach((item, index) => {
         item['id'] = index
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
