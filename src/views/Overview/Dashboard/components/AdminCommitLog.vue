@@ -28,9 +28,15 @@
                 </a>
               </template>
               : {{ commit.author_name }} @ {{ commit.pj_name }}
-              <a v-if="type==='issueDetail'" @click="toggleIssueSingleCommitDialog(commit)">
-                <em class="ri-link" />
-              </a>
+              <el-tooltip effect="dark" :content="$t('Issue.EditIssueHook')" placement="bottom">
+                <a
+                  v-if="type==='issueDetail'"
+                  class="el-link el-link--primary"
+                  @click="toggleIssueSingleCommitDialog(commit)"
+                >
+                  <em class="ri-link" />
+                </a>
+              </el-tooltip>
             </p>
           </el-card>
         </el-timeline-item>
@@ -169,15 +175,17 @@
             </el-timeline-item>
           </transition-group>
         </el-dialog>
-        <a
-          size="mini"
-          class="el-link el-link--info is-underline"
-          style="position:absolute; right:10px; top:5px;"
-          @click="toggleIssueMultiCommitDialog()"
-        >
-          {{ $t('Issue.IssueHookSetting') }}
-          <em class="ri-link" />
-        </a>
+        <el-tooltip effect="dark" :content="$t('Issue.BatchEditIssueHook')" placement="bottom">
+          <a
+            size="mini"
+            class="el-link el-link--primary"
+            style="position:absolute; right:10px; top:5px;"
+            @click="toggleIssueMultiCommitDialog()"
+          >
+            {{ $t('Issue.IssueHookSetting') }}
+            <em class="ri-link" />
+          </a>
+        </el-tooltip>
       </template>
     </template>
     <no-data v-else />
@@ -438,6 +446,14 @@ export default {
   /* .slide-fade-leave-active for below version 2.1.8 */ {
   transform: translateX(10px);
   opacity: 0;
+}
+
+.el-tooltip.el-link.el-link--primary {
+    color: inherit;
+}
+
+.el-tooltip.el-link.el-link--primary:hover {
+    color: #66b1ff;
 }
 
 >>> .el-dialog{

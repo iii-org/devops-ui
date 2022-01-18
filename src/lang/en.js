@@ -407,6 +407,8 @@ export default {
     CloseIssue: 'Close Issue',
     IssueHookSetting: '@:Issue.CommitIssueHookSetting',
     CommitIssueHookSetting: 'Commit Issue Hook Setting',
+    EditIssueHook: 'Edit Issue Hook',
+    BatchEditIssueHook: 'Batch Edit Issue Hook',
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',
