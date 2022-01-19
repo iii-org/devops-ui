@@ -61,7 +61,6 @@ import { getIssue } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
 import {
   getProjectIssueList,
-  getRootProjectId,
   getCommitRelation,
   patchCommitRelation
 } from '@/api/projects'
@@ -70,9 +69,9 @@ export default {
   name: 'IssueSelect',
   components: { Tracker },
   props: {
-    commit: {
-      type: Object,
-      default: () => {}
+    commitId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -85,11 +84,6 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
-    firstEightCommitId() {
-      return function (commit) {
-        return commit.slice(0, 8)
-      }
-    },
     highLight() {
       return function (value) {
         if (!value) return ''
@@ -113,21 +107,16 @@ export default {
     }
   },
   mounted() {
-    this.getCommitRelationProject(this.commit.commit_id)
+    this.getCommitRelationIssue(this.commitId)
   },
   methods: {
-    async getCommitRelationProject(commitId) {
+    async getCommitRelationIssue(commitId) {
       const issue_ids = await getCommitRelation(commitId)
       this.issueIds = issue_ids.data.issue_ids
       await this.getOriginalParentIssue()
     },
     async getOriginalParentIssue() {
       this.parent = await this.originalParentIssue()
-    },
-
-    async getRootProject(projectId) {
-      const res = await getRootProjectId(projectId)
-      this.rootProjectId = res.root_project_id
     },
     async getSearchIssue(query) {
       const params = this.getSearchParams(query)
@@ -186,7 +175,7 @@ export default {
     },
     async saveIssueLink() {
       const data = {
-        commit_id: this.commit.commit_id,
+        commit_id: this.commitId,
         issue_ids: this.issueIds
       }
       await patchCommitRelation(data)
