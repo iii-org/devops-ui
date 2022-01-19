@@ -297,7 +297,7 @@ export default {
     }
   },
   mounted() {
-    this.loadData()
+    if (this.issueId) this.loadData()
   },
   methods: {
     async loadData() {

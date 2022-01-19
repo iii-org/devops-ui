@@ -497,7 +497,9 @@ export default {
           this['removeFileName']()
         }
       }
-      this.gitCommitLog = await this.getGitCommitLogData()
+      if (this.issueId) {
+        this.gitCommitLog = await this.getGitCommitLogData()
+      }
       this.isLoading = false
     },
     async fetchIssue(isOnlyUpload) {
