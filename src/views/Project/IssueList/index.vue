@@ -126,6 +126,7 @@
               <ExpandSection
                 :issue="row"
                 @on-context-menu="onContextMenu"
+                @update-list="loadData"
               />
             </template>
           </el-table-column>
