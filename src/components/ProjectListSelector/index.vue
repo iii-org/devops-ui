@@ -219,7 +219,6 @@ export default {
       }
     },
     showNoProjectWarning() {
-      // noinspection JSCheckFunctionSignatures
       this.$message({
         title: this.$t('general.Warning'),
         message: this.$t('Notify.NoProject'),
@@ -227,23 +226,27 @@ export default {
       })
       this.listLoading = false
     },
-    setChange(value) {
+    setChange(projectId) {
       if (this.keepSelection) {
-        if (value || value !== '') {
-          this.onProjectChange(value)
+        if (projectId || projectId !== '') {
+          this.onProjectChange(projectId)
         }
-        this.setNewRoute(value)
+        this.setNewRoute(projectId)
       } else {
-        this.$emit('update:project-id', value)
+        this.$emit('update:project-id', projectId)
       }
       this.selectVisible = false
     },
     setNewRoute() {
-      this.$router.push({ name: this.$route.name, params: { projectName: this.selectedProject.name }})
+      this.$router.push({ name: this.$route.name, params: { projectName: this.selectedProject.name }, query: this.getQuery() })
     },
-    onProjectChange(value) {
-      this.setSelectedProject(this.projectOptions.find((elm) => elm.id === value) || { id: -1 })
-      localStorage.setItem('projectId', value)
+    getQuery() {
+      const changeProject = this.$route.params.projectName !== this.selectedProject.name
+      return changeProject ? {} : this.$route.query 
+    },
+    onProjectChange(projectId) {
+      this.setSelectedProject(this.projectOptions.find((elm) => elm.id === projectId) || { id: -1 })
+      localStorage.setItem('projectId', projectId)
     },
     async setStar(id, star) {
       if (star) {
