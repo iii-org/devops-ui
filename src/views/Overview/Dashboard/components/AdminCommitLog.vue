@@ -140,7 +140,7 @@
         </el-tooltip>
       </template>
     </template>
-    <no-data v-else />
+    <NoData v-else />
   </el-col>
 </template>
 
@@ -168,7 +168,7 @@ export default {
       type: String,
       default: 'dashboard'
     },
-    data: {
+    getData: {
       type: Function,
       default: () => []
     },
@@ -217,13 +217,15 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.issueId) this.loadData()
+  watch: {
+    issueId(value) {
+      if (value) this.loadData()
+    }
   },
   methods: {
     async loadData() {
       this.listLoading = true
-      this.listData = await this.data()
+      this.listData = await this.getData()
       this.listLoading = false
     },
     async getRootProject(projectId) {

@@ -157,7 +157,7 @@
                 type="border-card"
               >
                 <el-tab-pane :label="$t('Issue.History')">
-                  <issue-notes-dialog
+                  <IssueNotesDialog
                     :height="dialogHeight"
                     :data="journals"
                     @show-parent-issue="onRelationIssueDialog"
@@ -169,12 +169,12 @@
                       <em class="ri-git-commit-line" />{{ $t('Issue.Commit') }}
                     </span>
                   </template>
-                  <admin-commit-log
+                  <AdminCommitLog
                     ref="AdminCommitLog"
                     :issue-id="issueId"
                     :issue-name="form.name"
                     :type="'issueDetail'"
-                    :data="getGitCommitLogData"
+                    :get-data="getGitCommitLogData"
                     :commit-link="true"
                     :height="dialogHeight"
                   />
@@ -188,7 +188,7 @@
           :md="8"
           class="issueOptionHeight"
         >
-          <issue-form
+          <IssueForm
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
@@ -292,7 +292,6 @@ import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
 
 const commitLimit = 10
-const refreshCommitLog = 300000 // ms
 
 export default {
   name: 'ProjectIssueDetail',
@@ -363,7 +362,6 @@ export default {
       files: [],
       test_files: [],
       journals: [],
-      gitCommitLog: [],
       requestGitLabLastTime: null,
       parent: {},
       children: [],
@@ -458,20 +456,6 @@ export default {
     },
     propsIssueId() {
       this.fetchIssueLink()
-    },
-    gitCommitLog: {
-      deep: true,
-      async handler() {
-        if (!this.requestGitLabLastTime) {
-          this.requestGitLabLastTime = new Date().valueOf()
-        }
-        await this.sleep(refreshCommitLog)
-        const nowTime = new Date().valueOf()
-        const gap = nowTime - this.requestGitLabLastTime
-        if (gap >= refreshCommitLog) {
-          this.gitCommitLog = await this.getGitCommitLogData()
-        }
-      }
     }
   },
   async mounted() {
@@ -496,9 +480,6 @@ export default {
           this.test_files.push({ ...this.test_filename, edit: true })
           this['removeFileName']()
         }
-      }
-      if (this.issueId) {
-        this.gitCommitLog = await this.getGitCommitLogData()
       }
       this.isLoading = false
     },
