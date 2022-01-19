@@ -408,7 +408,7 @@ export default {
     }
   },
   mounted() {
-    this.getInitPage()
+    this.fetchInitData()
   },
   methods: {
     ...mapActions('projects', [
@@ -422,6 +422,7 @@ export default {
       'getFixedVersionShowClosed'
     ]),
     async fetchInitData() {
+      this.getInitPage()
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadDisplayColumns()
