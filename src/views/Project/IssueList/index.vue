@@ -404,12 +404,8 @@ export default {
         this.keyword = ''
         await this.onChangeFilter()
         await this.fetchInitData()
-      },
-      immediate: true
+      }
     }
-  },
-  async created() {
-    await this.fetchInitData()
   },
   mounted() {
     this.getInitPage()
