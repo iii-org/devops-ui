@@ -390,7 +390,6 @@ export default {
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
-      LoadingConfirm: false,
       uploadFileList: [],
       pickerOptions(startDate) {
         return {
@@ -417,9 +416,6 @@ export default {
   watch: {
     projectId() {
       this.fetchData()
-    },
-    LoadingConfirm(value) {
-      this.$emit('loading', value)
     },
     prefill: {
       deep: true,
@@ -551,6 +547,7 @@ export default {
       let result = false
       this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
+          this.$emit('loading', true)
           // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
           Object.keys(data).map((item) => {
