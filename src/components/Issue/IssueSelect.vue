@@ -190,11 +190,6 @@ export default {
         issue_ids: this.issueIds
       }
       await patchCommitRelation(data)
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Updated'),
-        type: 'success'
-      })
     }
   }
 }
