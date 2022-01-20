@@ -212,7 +212,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed', 'selectedProjectId']),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -278,15 +278,18 @@ export default {
       if (fixed_version) {
         params = { status: 'open,locked,closed' }
       }
-      if (this.row.project && this.row.project.id !== '') {
-        Object.keys(getAPI).forEach((key) => {
-          this.loadSelection(key, params, [key])
-        })
-      }
+      // if ((this.row.project && this.row.project.id !== '') || !this.row.project) {
+      Object.keys(getAPI).forEach((key) => {
+        this.loadSelection(key, params, [key])
+      })
+      // }
     },
     async loadSelection(column, params, lazyLoad) {
       if (lazyLoad) {
-        const res = await getAPI[column][0](this.row.project.id, params)
+        const projectId =
+          Object.prototype.hasOwnProperty.call(this.row, 'project')
+            ? this.row.project.id : this.selectedProjectId
+        const res = await getAPI[column][0](projectId, params)
         if (column === 'fixed_version') {
           this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
         }
