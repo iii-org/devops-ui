@@ -9,7 +9,14 @@
     :disabled="isButtonDisabled"
   >
     <Tags ref="tags" :form.sync="form" />
-    <el-form-item :label="$t('Issue.ParentIssue')" prop="parent_id">
+    <el-form-item prop="parent_id">
+      <template slot="label">
+        {{ $t('Issue.ParentIssue') }}
+        <el-tag v-if="getTrackerFilter.name" icon="el-icon-s-operation">
+          <el-checkbox v-model="isRecommendRelation" /> &nbsp;{{ $t('general.Filter') }}:
+          {{ $t('Issue.' + getTrackerFilter.name) }}
+        </el-tag>
+      </template>
       <el-select
         v-model="form.parent_id"
         style="width: 100%"
@@ -63,13 +70,7 @@
         </el-option-group>
       </el-select>
     </el-form-item>
-    <el-form-item prop="relation_ids">
-      <template slot="label">{{ $t('Issue.RelatedIssue') }}
-        <el-tag v-if="getTrackerFilter.name" icon="el-icon-s-operation">
-          <el-checkbox v-model="isRecommendRelation" /> &nbsp;{{ $t('general.Filter') }}:
-          {{ $t('Issue.' + getTrackerFilter.name) }}
-        </el-tag>
-      </template>
+    <el-form-item :label="$t('Issue.RelatedIssue')" prop="relation_ids">
       <el-select
         v-model="form.relation_ids"
         style="width: 100%"
