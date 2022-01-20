@@ -427,7 +427,6 @@ export default {
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadDisplayColumns()
-      await this.loadData()
     },
     async fetchAllDownloadData() {
       this.allDataLoading = true

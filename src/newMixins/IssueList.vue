@@ -94,8 +94,7 @@ export default {
       await this.onChangeFilter()
     },
     async onChangeFilter() {
-      await this.backToFirstPage()
-      // await this.loadData()
+      this.backToFirstPage()
     },
     getParams() {
       const result = {

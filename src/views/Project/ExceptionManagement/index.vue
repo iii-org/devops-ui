@@ -278,7 +278,7 @@ export default {
       this.tracker_id = value[0].id
     },
     tracker_id() {
-      this.loadData()
+      this.fetchData()
     },
     listData() {
       this.fetchAllDownloadData()
