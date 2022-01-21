@@ -18,25 +18,25 @@
       <el-table-column align="center" :label="$t('DevOps.Tools')">OWASP ZAP</el-table-column>
       <el-table-column align="center" :label="$t('Zap.high')">
         <template slot-scope="scope">
-          <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['3'] }}</span>
+          <span v-if="hasData(scope.row.result)">{{ scope.row.result['3'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.medium')">
         <template slot-scope="scope">
-          <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['2'] }}</span>
+          <span v-if="hasData(scope.row.result)">{{ scope.row.result['2'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('Zap.low')">
         <template slot-scope="scope">
-          <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['1'] }}</span>
+          <span v-if="hasData(scope.row.result)">{{ scope.row.result['1'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('general.Info')">
         <template slot-scope="scope">
-          <span v-if="scope.row.result && Object.keys(scope.row.result).length > 0">{{ scope.row.result['0'] }}</span>
+          <span v-if="hasData(scope.row.result)">{{ scope.row.result['0'] }}</span>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -63,6 +63,11 @@ export default {
   computed: {
     disabled() {
       return this.zap[0] ? Object.keys(this.zap[0]).length === 0 : true
+    },
+    hasData() {
+      return function (result) {
+        return result !== 'None' && Object.keys(result).length > 0
+      }
     }
   },
   methods: {
