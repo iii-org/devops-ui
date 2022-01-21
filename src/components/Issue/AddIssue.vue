@@ -359,7 +359,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     },
     importFrom: {
       type: String,
@@ -496,6 +496,7 @@ export default {
           this.$refs['issueForm'].resetFields()
         })
       }
+      this.$emit('loading', false)
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
