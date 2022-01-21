@@ -52,7 +52,7 @@
             class="float-right"
             style="margin-right: 2em;"
             size="small"
-            :disabled="btnStatus"
+            :disabled="!isEnabledSaveSingleCommitHookBtn"
             @click="toggleSaveSingleCommitDialog"
           >
             {{ $t('general.Save') }}
@@ -91,7 +91,7 @@
             class="float-right"
             style="margin-right: 2em;"
             size="small"
-            :disabled="btnStatus"
+            :disabled="!isEnabledSaveMultiCommitHookBtn"
             @click="toggleSaveMultiCommitDialog"
           >
             {{ $t('general.Save') }}
@@ -168,8 +168,29 @@ import { UTCtoLocalTime } from '@/filters'
 import IssueSelect from '@/components/Issue/IssueSelect'
 import NoData from './widget/NoData'
 
+class CommitLogItem {
+  constructor (data) {
+    this.issue_ids = data.issue_ids !== undefined ? data.issue_ids : []
+    this.parent = data.parent !== undefined ? data.parent : []
+    this.issue_list = data.issue_list !== undefined ? data.issue_list : []
+    this.id = data.id !== undefined ? data.id : -1
+    this.issue_loading = data.issue_loading !== undefined ? data.issue_loading : true
+    this.pj_name = data.pj_name !== undefined ? data.pj_name : ''
+    this.issue_id = data.issue_id !== undefined ? data.issue_id : ''
+    this.author_name = data.author_name !== undefined ? data.author_name : ''
+    this.commit_id = data.commit_id !== undefined ? data.commit_id : ''
+    this.commit_message = data.commit_message !== undefined ? data.commit_message : ''
+    this.commit_title = data.commit_title !== undefined ? data.commit_title : ''
+    this.commit_time = data.commit_time !== undefined ? data.commit_time : ''
+    this.branch = data.branch !== undefined ? data.branch : ''
+    this.web_url = data.web_url !== undefined ? data.web_url : ''
+    this.created_at = data.created_at !== undefined ? data.created_at : ''
+    this.updated_at = data.updated_at !== undefined ? data.updated_at : ''
+  }
+}
+
 export default {
-  name: 'AdminCommitLog',
+  name: 'CommitIssueHookTab',
   components: { IssueSelect, NoData },
   props: {
     issueId: {
@@ -214,18 +235,18 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
-    compareCommitContent() {
-      return function (commit) {
-        return commit.commit_message.trim() !== commit.commit_title
-      }
+    isEnabledSaveSingleCommitHookBtn() {
+      return this.issueIds.length > 0
     },
-    firstEightCommitId() {
-      return function (commitId) {
-        return commitId.slice(0, 8)
+    isEnabledSaveMultiCommitHookBtn() {
+      const hasCommit = this.listAllData.length > 0
+      if (hasCommit) {
+        return this.listAllData.reduce((prevVal, commitLog) => {
+          return prevVal && commitLog.issue_ids.length > 0
+        }, true)
+      } else {
+        return false
       }
-    },
-    btnStatus() {
-      return true
     }
   },
   watch: {
@@ -291,8 +312,9 @@ export default {
     },
     async getAllGitCommitLogData() {
       await this.getRootProject(this.selectedProjectId)
-      const res = await getIssueGitCommitLog(this.rootProjectId, parseInt(this.$route.params.issueId))
-      res.data.forEach(async(item, index) => {
+      const { data } = await getIssueGitCommitLog(this.rootProjectId, parseInt(this.$route.params.issueId))
+      const commitLogs = data.map((item) => new CommitLogItem(item))
+      commitLogs.forEach(async(item, index) => {
         item['id'] = index
         const issueIds = await this.getCommitRelationIssue(item['commit_id'])
         item['issue_ids'] = issueIds
@@ -303,7 +325,7 @@ export default {
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
         item['issue_loading'] = false
       })
-      return res.data
+      return commitLogs
     },
     async getSearchIssue(query) {
       const params = this.getSearchParams(query)
@@ -391,7 +413,7 @@ export default {
         commit_id: commitId,
         issue_ids: issueIds
       }
-      console.log(data)
+      // console.log(data)
       // await patchCommitRelation(data)
     },
     changeIssueIds(value) {
@@ -399,6 +421,12 @@ export default {
         return (item.commit_id === value.commitId)
       })
       this.$set(this.listAllData[index], 'issue_ids', value.issue_ids)
+    },
+    firstEightCommitId (commitId) {
+      return commitId.slice(0, 8)
+    },
+    compareCommitContent (commit) {
+      return commit.commit_message.trim() !== commit.commit_title
     }
   }
 }
