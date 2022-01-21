@@ -513,12 +513,15 @@ export default {
       }
       switch (issue_key) {
         case 'parent':
-          this.issueList = []
-          break
-        case 'relation':
+          // this.issueList = []
           if (this.isRecommendRelation && this.getTrackerFilter.id) {
             params['tracker_id'] = this.getTrackerFilter.id
           }
+          break
+        case 'relation':
+          // if (this.isRecommendRelation && this.getTrackerFilter.id) {
+          //   params['tracker_id'] = this.getTrackerFilter.id
+          // }
           this.relationIssueList = []
       }
       return params
