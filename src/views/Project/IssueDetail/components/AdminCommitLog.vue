@@ -429,8 +429,7 @@ export default {
         commit_id: commitId,
         issue_ids: issueIds
       }
-      console.log(data)
-      // await patchCommitRelation(data)
+      await patchCommitRelation(data)
     },
     changeSingleIssueIds(value) {
       this.issueIds = value.issue_ids
