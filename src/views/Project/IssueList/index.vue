@@ -427,6 +427,7 @@ export default {
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadDisplayColumns()
+      await this.loadData() // TODO: loadData should be called after getInitStoredData, will solve this problem on vuetify ui
     },
     async fetchAllDownloadData() {
       this.allDataLoading = true
