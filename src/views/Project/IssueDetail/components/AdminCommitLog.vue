@@ -228,6 +228,7 @@ export default {
       commitData: {},
       commitId: '',
       issueIds: [],
+      fatherIssueIds: [],
       rootProjectId: '',
       issueQuery: null,
       issueList: [],
@@ -275,7 +276,17 @@ export default {
     },
     async getCommitRelationIssue(commitId) {
       const issue_ids = await getCommitRelation(commitId)
-      return issue_ids.data.issue_ids
+      const issueInProject = []
+      const issueOutProject = []
+      for (const [key, value] of Object.entries(issue_ids.data.issue_ids)) {
+        if (value) {
+          issueInProject.push(parseInt(key))
+        } else {
+          issueOutProject.push(parseInt(key))
+        }
+      }
+      this.fatherIssueIds = issueOutProject
+      return issueInProject
     },
     async getRootProject(projectId) {
       const res = await getRootProjectId(projectId)
@@ -291,7 +302,8 @@ export default {
       this.parent = await this.originalParentIssue(this.issueIds)
     },
     toggleSaveSingleCommitDialog() {
-      this.saveIssueIds(this.commitId, this.issueIds)
+      const issueAllIds = this.issueIds.concat(this.fatherIssueIds)
+      this.saveIssueIds(this.commitId, issueAllIds)
       this.$message({
         title: this.$t('general.Success'),
         message: this.$t('Notify.Updated'),
@@ -307,7 +319,8 @@ export default {
     },
     toggleSaveMultiCommitDialog() {
       this.listAllData.forEach((item) => {
-        this.saveIssueIds(item.commit_id, item.issue_ids)
+        const issueAllIds = item.issue_ids.concat(item.father_issue_ids)
+        this.saveIssueIds(item.commit_id, issueAllIds)
       })
       this.$message({
         title: this.$t('general.Success'),
@@ -325,6 +338,7 @@ export default {
         item['id'] = index
         const issueIds = await this.getCommitRelationIssue(item['commit_id'])
         item['issue_ids'] = issueIds
+        item['father_issue_ids'] = this.fatherIssueIds
         const parent = await this.originalParentIssue(issueIds)
         item['parent'] = parent
         const issueList = await this.getMultiUnderLine(parent)

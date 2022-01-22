@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       isLoading: this.issueLoading,
-      issue_ids: []
+      issue_ids: this.issueIds
     }
   },
   computed: {
