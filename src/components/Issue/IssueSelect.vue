@@ -57,7 +57,6 @@
 
 <script>
 import Tracker from '@/components/Issue/Tracker'
-import { patchCommitRelation } from '@/api/projects'
 
 export default {
   name: 'IssueSelect',
@@ -66,6 +65,10 @@ export default {
     commitId: {
       type: String,
       default: ''
+    },
+    parent: {
+      type: Object,
+      default: () => ({})
     },
     issueIds: {
       type: Array,
@@ -117,7 +120,9 @@ export default {
   },
   methods: {
     async getSearchIssue(query) {
-      this.$emit('update', query)
+      const commitId = this.commitId
+      const parent = this.parent
+      this.$emit('update', query, commitId, parent)
     },
     changeIssueIds() {
       const { commitId, issue_ids } = this

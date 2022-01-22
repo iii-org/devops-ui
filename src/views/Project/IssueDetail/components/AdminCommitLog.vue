@@ -72,6 +72,7 @@
           :issue-list="issueList"
           :issue-query="issueQuery"
           @update="getSearchIssue"
+          @change="changeSingleIssueIds"
         />
       </el-dialog>
       <el-dialog
@@ -125,9 +126,10 @@
                     :issue-ids="commit.issue_ids"
                     :issue-list="commit.issue_list"
                     :issue-loading="commit.issue_loading"
+                    :parent="commit.parent"
                     :issue-query="issueQuery"
                     @update="getSearchIssue"
-                    @change="changeIssueIds"
+                    @change="changeMultiIssueIds"
                   />
                 </el-col>
               </el-row>
@@ -171,7 +173,7 @@ import NoData from './widget/NoData'
 class CommitLogItem {
   constructor (data) {
     this.issue_ids = data.issue_ids !== undefined ? data.issue_ids : []
-    this.parent = data.parent !== undefined ? data.parent : []
+    this.parent = data.parent !== undefined ? data.parent : {}
     this.issue_list = data.issue_list !== undefined ? data.issue_list : []
     this.id = data.id !== undefined ? data.id : -1
     this.issue_loading = data.issue_loading !== undefined ? data.issue_loading : true
@@ -230,7 +232,7 @@ export default {
       issueQuery: null,
       issueList: [],
       cancelToken: null,
-      buttonState: false
+      multiType: false
     }
   },
   computed: {
@@ -281,8 +283,10 @@ export default {
     },
     async toggleIssueSingleCommitDialog(commit) {
       this.issueSingleCommitDialog.visible = !this.issueSingleCommitDialog.visible
+      this.multiType = false
       this.commitData = commit
       this.commitId = commit.commit_id
+      await this.getRootProject(this.selectedProjectId)
       this.issueIds = await this.getCommitRelationIssue(commit.commit_id)
       this.parent = await this.originalParentIssue(this.issueIds)
     },
@@ -296,6 +300,7 @@ export default {
       this.issueSingleCommitDialog.visible = !this.issueSingleCommitDialog.visible
     },
     async toggleIssueMultiCommitDialog() {
+      this.multiType = true
       this.listAllData = await this.getAllGitCommitLogData()
       this.issueMultiCommitDialog.visible = !this.issueMultiCommitDialog.visible
     },
@@ -320,19 +325,29 @@ export default {
         item['issue_ids'] = issueIds
         const parent = await this.originalParentIssue(issueIds)
         item['parent'] = parent
-        await this.getMultiUnderLine(parent)
-        item['issue_list'] = this.issueList
+        const issueList = await this.getMultiUnderLine(parent)
+        item['issue_list'] = issueList
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
         item['issue_loading'] = false
       })
       return commitLogs
     },
-    async getSearchIssue(query) {
+    async getSearchIssue(query, commitId, parent) {
       const params = this.getSearchParams(query)
       const cancelToken = this.checkToken()
       const projectId = this.rootProjectId || this.selectedProjectId
       await getProjectIssueList(projectId, params, { cancelToken })
-        .then((res) => { this.issueList = this.getListLabels(res) })
+        .then(async(res) => {
+          if (this.multiType) {
+            this.issueList = await this.getMultiListLabels(res, parent)
+            const index = this.listAllData.findIndex((item) => {
+              return (item.commit_id === commitId)
+            })
+            this.$set(this.listAllData[index], 'issue_list', this.issueList)
+          } else {
+            this.issueList = await this.getListLabels(res)
+          }
+        })
       this.$refs.IssueSelect.isLoading = false
       this.cancelToken = null
     },
@@ -385,8 +400,9 @@ export default {
       const cancelToken = this.checkToken()
       const projectId = this.rootProjectId || this.selectedProjectId
       await getProjectIssueList(projectId, params, { cancelToken })
-        .then(async(res) => { this.issueList = await this.getMultiListLabels(res, parent) })
+        .then((res) => { this.issueList = this.getMultiListLabels(res, parent) })
       this.cancelToken = null
+      return this.issueList
     },
     getMultiListLabels(res, parent) {
       let queryList = res.data
@@ -413,10 +429,13 @@ export default {
         commit_id: commitId,
         issue_ids: issueIds
       }
-      // console.log(data)
+      console.log(data)
       // await patchCommitRelation(data)
     },
-    changeIssueIds(value) {
+    changeSingleIssueIds(value) {
+      this.issueIds = value.issue_ids
+    },
+    changeMultiIssueIds(value) {
       const index = this.listAllData.findIndex((item) => {
         return (item.commit_id === value.commitId)
       })

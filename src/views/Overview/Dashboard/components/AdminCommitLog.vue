@@ -59,10 +59,8 @@ export default {
       }
     }
   },
-  watch: {
-    issueId(value) {
-      if (value) this.loadData()
-    }
+  mounted() {
+    this.loadData()
   },
   methods: {
     async loadData() {
@@ -76,6 +74,7 @@ export default {
 
 <style lang="scss" scoped>
 .inner {
+  height: 250px;
   overflow-y: auto;
   overflow-x: hidden;
 }
