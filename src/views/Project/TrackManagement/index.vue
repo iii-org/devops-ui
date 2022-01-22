@@ -398,6 +398,9 @@ export default {
       })
       return translateTable
     },
+    getRowClass({ row }) {
+      return row.family ? '' : 'row-expand-cover'
+    },
     getStatusTagType(status) {
       switch (status) {
         case 'Active':
@@ -419,6 +422,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+>>> .row-expand-cover .el-table__expand-icon {
+  display: none
+}
 .download {
   @apply border-none;
 }

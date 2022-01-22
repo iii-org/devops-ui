@@ -484,6 +484,9 @@ export default {
       if (!checkNull) return null
       return columnResult.join(joinStr)
     },
+    getRowClass({ row }) {
+      return row.family ? '' : 'row-expand-cover'
+    },
     getBranch(data) {
       const result = []
       data.forEach((item) => {
@@ -532,6 +535,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+>>> .row-expand-cover .el-table__expand-icon {
+  display: none
+}
 .family {
   @apply space-y-3;
   .title {
