@@ -271,6 +271,10 @@ export default {
       this.listData = await this.getAllTestFiles(listData)
       this.listLoading = false
     },
+    onChangeFilter() {
+      this.backToFirstPage()
+      this.loadData()
+    },
     getOptionsData(option_name) {
       if (option_name === 'tracker') return this.trackerList
       return this[option_name]
