@@ -364,7 +364,7 @@ export default {
       }
     },
     isFilterChanged() {
-      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
+      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword || this.groupBy.dimension !== 'status'
     },
     getFilteredVersion() {
       return this.fixed_version.filter((item) => {
