@@ -298,6 +298,7 @@ export default {
         type: 'success'
       })
       this.issueSingleCommitDialog.visible = !this.issueSingleCommitDialog.visible
+      this.loadData()
     },
     async toggleIssueMultiCommitDialog() {
       this.multiType = true
@@ -314,6 +315,7 @@ export default {
         type: 'success'
       })
       this.issueMultiCommitDialog.visible = !this.issueMultiCommitDialog.visible
+      this.loadData()
     },
     async getAllGitCommitLogData() {
       await this.getRootProject(this.selectedProjectId)
