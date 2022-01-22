@@ -246,6 +246,7 @@ export default {
     Canceled: '已取消',
     Submit: '已送出',
     Saved: '已儲存',
+    NoEmpty: '內容不得為空',
     Same: '內容相同，未變更。',
     SwitchLanguage: '更換語言成功',
     NoProject: '目前沒有任何專案可供選擇，請先建立專案。',

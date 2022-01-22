@@ -8,8 +8,9 @@ import IssueTitle from './IssueTitle'
 import IssueToolbar from './IssueToolbar'
 import IssueMatrix from './IssueMatrix'
 import IssueCollection from './IssueCollection'
+import AdminCommitLog from './AdminCommitLog'
 
 export {
   IssueFiles, IssueForm, IssueNotesDialog, IssueNotesEditor, IssueFileUploader,
-  IssueDescription, IssueTitle, IssueToolbar, IssueMatrix, IssueCollection
+  IssueDescription, IssueTitle, IssueToolbar, IssueMatrix, IssueCollection, AdminCommitLog
 }

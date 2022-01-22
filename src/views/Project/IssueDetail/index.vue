@@ -173,9 +173,7 @@
                     ref="AdminCommitLog"
                     :issue-id="issueId"
                     :issue-name="form.name"
-                    :type="'issueDetail'"
                     :get-data="getGitCommitLogData"
-                    :commit-link="true"
                     :height="dialogHeight"
                   />
                 </el-tab-pane>
@@ -275,9 +273,9 @@ import {
   IssueDescription,
   IssueTitle,
   IssueToolbar,
-  IssueCollection
+  IssueCollection,
+  AdminCommitLog
 } from './components'
-import { AdminCommitLog } from '@/views/Overview/Dashboard/components'
 import { UTCtoLocalTime } from '@/filters'
 import {
   addProjectTags,

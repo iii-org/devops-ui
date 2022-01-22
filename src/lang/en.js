@@ -246,6 +246,7 @@ export default {
     Canceled: 'Cancel successful',
     Submit: 'Submit',
     Saved: 'Saved successful',
+    NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
     SwitchLanguage: 'Switch Language Success',
     NoProject: 'There are no projects currently, please create a new project.',

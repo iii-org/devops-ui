@@ -1,6 +1,7 @@
 <template>
   <el-select
-    v-model="issueIds"
+    v-model="issue_ids"
+    v-loading="isLoading"
     style="width: 100%"
     :placeholder="$t('Issue.SearchNameOrAssignee')"
     clearable
@@ -9,8 +10,8 @@
     multiple
     value-key="issueIds"
     :remote-method="getSearchIssue"
-    :loading="issueLoading"
     @focus="getSearchIssue()"
+    @change="changeIssueIds()"
   >
     <el-option-group
       v-for="group in issueList"
@@ -55,15 +56,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-import { getIssue } from '@/api/issue'
 import Tracker from '@/components/Issue/Tracker'
-import {
-  getProjectIssueList,
-  getCommitRelation,
-  patchCommitRelation
-} from '@/api/projects'
 
 export default {
   name: 'IssueSelect',
@@ -72,18 +65,35 @@ export default {
     commitId: {
       type: String,
       default: ''
+    },
+    parent: {
+      type: Object,
+      default: () => ({})
+    },
+    issueIds: {
+      type: Array,
+      default: () => []
+    },
+    issueList: {
+      type: Array,
+      default: () => []
+    },
+    issueQuery: {
+      type: String,
+      default: ''
+    },
+    issueLoading: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
-      issueLoading: false,
-      parent: [],
-      issueIds: [],
-      issueList: []
+      isLoading: this.issueLoading,
+      issue_ids: []
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
     highLight() {
       return function (value) {
         if (!value) return ''
@@ -94,91 +104,29 @@ export default {
     }
   },
   watch: {
-    parent: {
-      deep: true,
-      handler() {
-        this.getSearchIssue()
-      }
+    'issueLoading'(value) {
+      this.isLoading = value
     },
     'issueIds'(value) {
+      if (value) {
+        this.issue_ids = this.issueIds
+      }
+    },
+    'issue_ids'(value) {
       if (!value && !this.issueQuery) {
         this.getSearchIssue()
       }
     }
   },
-  mounted() {
-    this.getCommitRelationIssue(this.commitId)
-  },
   methods: {
-    async getCommitRelationIssue(commitId) {
-      const issue_ids = await getCommitRelation(commitId)
-      this.issueIds = issue_ids.data.issue_ids
-      await this.getOriginalParentIssue()
-    },
-    async getOriginalParentIssue() {
-      this.parent = await this.originalParentIssue()
-    },
     async getSearchIssue(query) {
-      const params = this.getSearchParams(query)
-      const cancelToken = this.checkToken()
-      const projectId = this.rootProjectId || this.selectedProjectId
-      await getProjectIssueList(projectId, params, { cancelToken })
-        .then(res => { this.issueList = this.getListLabels(res) })
-      this.issueLoading = false
-      this.cancelToken = null
+      const commitId = this.commitId
+      const parent = this.parent
+      this.$emit('update', query, commitId, parent)
     },
-    getSearchParams(query) {
-      const params = {
-        selection: true,
-        status_id: 'open'
-      }
-      if (query !== '' && query) {
-        params['search'] = query
-        this.issueQuery = query
-        this.issueLoading = true
-      } else {
-        params['offset'] = 0
-        params['limit'] = 5
-        this.issueQuery = null
-      }
-      this.issueList = []
-      return params
-    },
-    getListLabels(res) {
-      let queryList = res.data
-      let key = 'Issue.Result'
-      if (!this.issueQuery) {
-        if (queryList && queryList.hasOwnProperty('issue_list')) {
-          queryList = res.data.issue_list
-        } else {
-          queryList = []
-        }
-        key = 'Issue.LastResult'
-      }
-      const issueList = [this.parent, { name: this.$t(key), options: queryList }]
-      return issueList
-    },
-    async originalParentIssue() {
-      const parent = []
-      for (const element of this.issueIds) {
-        const res = await getIssue(element)
-        parent.push(res.data)
-      }
-      if (parent.length <= 0) return {}
-      return { name: this.$t('Issue.OriginalSetting'), options: parent }
-    },
-    checkToken() {
-      if (this.cancelToken) this.cancelToken.cancel()
-      const CancelToken = axios.CancelToken.source()
-      this.cancelToken = CancelToken
-      return CancelToken.token
-    },
-    async saveIssueLink() {
-      const data = {
-        commit_id: this.commitId,
-        issue_ids: this.issueIds
-      }
-      await patchCommitRelation(data)
+    changeIssueIds() {
+      const { commitId, issue_ids } = this
+      this.$emit('change', { commitId, issue_ids })
     }
   }
 }
