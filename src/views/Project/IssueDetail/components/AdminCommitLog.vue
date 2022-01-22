@@ -275,17 +275,18 @@ export default {
       this.listLoading = false
     },
     async getCommitRelationIssue(commitId) {
-      const issue_ids = await getCommitRelation(commitId)
       const issueInProject = []
       const issueOutProject = []
-      for (const [key, value] of Object.entries(issue_ids.data.issue_ids)) {
-        if (value) {
-          issueInProject.push(parseInt(key))
-        } else {
-          issueOutProject.push(parseInt(key))
+      await getCommitRelation(commitId).then((res) => {
+        for (const [key, value] of Object.entries(res.data.issue_ids)) {
+          if (value) {
+            issueInProject.push(parseInt(key))
+          } else {
+            issueOutProject.push(parseInt(key))
+          }
         }
-      }
-      this.fatherIssueIds = issueOutProject
+        this.fatherIssueIds = issueOutProject
+      })
       return issueInProject
     },
     async getRootProject(projectId) {
@@ -341,7 +342,7 @@ export default {
         item['father_issue_ids'] = this.fatherIssueIds
         const parent = await this.originalParentIssue(issueIds)
         item['parent'] = parent
-        const issueList = await this.getMultiUnderLine(parent)
+        const issueList = await this.getMultiUnderList(parent)
         item['issue_list'] = issueList
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
         item['issue_loading'] = false
@@ -351,7 +352,7 @@ export default {
     async getSearchIssue(query, commitId, parent) {
       const params = this.getSearchParams(query)
       const cancelToken = this.checkToken()
-      const projectId = this.rootProjectId || this.selectedProjectId
+      const projectId = this.fatherIssueIds.length === 0 ? this.rootProjectId : this.selectedProjectId
       await getProjectIssueList(projectId, params, { cancelToken })
         .then(async(res) => {
           if (this.multiType) {
@@ -406,7 +407,7 @@ export default {
       if (parent.length <= 0) return {}
       return { name: this.$t('Issue.OriginalSetting'), options: parent }
     },
-    async getMultiUnderLine(parent) {
+    async getMultiUnderList(parent) {
       const params = {
         selection: true,
         status_id: 'open',
@@ -414,7 +415,7 @@ export default {
         limit: 5
       }
       const cancelToken = this.checkToken()
-      const projectId = this.rootProjectId || this.selectedProjectId
+      const projectId = this.fatherIssueIds.length === 0 ? this.rootProjectId : this.selectedProjectId
       await getProjectIssueList(projectId, params, { cancelToken })
         .then((res) => { this.issueList = this.getMultiListLabels(res, parent) })
       this.cancelToken = null
