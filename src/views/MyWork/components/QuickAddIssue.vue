@@ -129,7 +129,7 @@ export default {
           }
         ],
         tracker_id: [
-          { 
+          {
             required: true,
             message: this.$t('Validation.Select', [this.$t('general.Type')]),
             trigger: 'blur'

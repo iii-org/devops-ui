@@ -311,7 +311,6 @@ export default {
         type: 'success'
       })
       this.issueSingleCommitDialog.visible = !this.issueSingleCommitDialog.visible
-      this.loadData()
     },
     async toggleIssueMultiCommitDialog() {
       this.multiType = true
@@ -329,7 +328,6 @@ export default {
         type: 'success'
       })
       this.issueMultiCommitDialog.visible = !this.issueMultiCommitDialog.visible
-      this.loadData()
     },
     async getAllGitCommitLogData() {
       await this.getRootProject(this.selectedProjectId)
@@ -352,8 +350,7 @@ export default {
     async getSearchIssue(query, commitId, parent) {
       const params = this.getSearchParams(query)
       const cancelToken = this.checkToken()
-      const projectId = this.fatherIssueIds.length === 0 ? this.rootProjectId : this.selectedProjectId
-      await getProjectIssueList(projectId, params, { cancelToken })
+      await getProjectIssueList(this.rootProjectId, params, { cancelToken })
         .then(async(res) => {
           if (this.multiType) {
             this.issueList = await this.getMultiListLabels(res, parent)
@@ -415,8 +412,7 @@ export default {
         limit: 5
       }
       const cancelToken = this.checkToken()
-      const projectId = this.fatherIssueIds.length === 0 ? this.rootProjectId : this.selectedProjectId
-      await getProjectIssueList(projectId, params, { cancelToken })
+      await getProjectIssueList(this.rootProjectId, params, { cancelToken })
         .then((res) => { this.issueList = this.getMultiListLabels(res, parent) })
       this.cancelToken = null
       return this.issueList
@@ -447,6 +443,7 @@ export default {
         issue_ids: issueIds
       }
       await patchCommitRelation(data)
+      await this.loadData()
     },
     changeSingleIssueIds(value) {
       this.issueIds = value.issue_ids
