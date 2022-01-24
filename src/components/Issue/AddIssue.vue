@@ -471,7 +471,11 @@ export default {
             !!this.issueFilter[this.importFrom][item] &&
             this.issueFilter[this.importFrom][item] !== ''
           ) {
-            this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
+            if (item === 'tags') {
+              this.$set(this.issueForm, item, this.issueFilter[this.importFrom][item])
+            } else {
+              this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
+            }
           }
         })
         let checkQuickAddIssueForm = ['tracker_id', 'name']

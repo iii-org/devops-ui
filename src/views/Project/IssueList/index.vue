@@ -80,7 +80,7 @@
       </SearchFilter>
     </ProjectListSelector>
     <el-divider />
-    <quick-add-issue
+    <QuickAddIssue
       ref="quickAddIssue"
       :save-data="saveIssue"
       :project-id="selectedProjectId"
