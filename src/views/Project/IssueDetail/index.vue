@@ -118,6 +118,7 @@
               <el-collapse
                 v-if="countRelationIssue > 0"
                 v-model="relationVisible"
+                v-loading="isLoadingFamily"
                 accordion
               >
                 <el-collapse-item :name="1">
@@ -288,6 +289,7 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
+import { getIssueFamily } from '@/api/issue'
 
 const commitLimit = 10
 
@@ -377,7 +379,8 @@ export default {
       relatedCollectionDialogVisible: false,
       tagsString: '',
       errorMsg: [],
-      showAlert: false
+      showAlert: false,
+      isLoadingFamily: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -454,6 +457,11 @@ export default {
     },
     propsIssueId() {
       this.fetchIssueLink()
+    },
+    async relationVisible(val) {
+      if (val === 1) {
+        await this.getIssueFamilyData(this.issue)
+      }
     }
   },
   async mounted() {
@@ -1003,6 +1011,34 @@ export default {
           }
         }
       })
+    },
+    async getIssueFamilyData(row) {
+      try {
+        this.isLoadingFamily = true
+        const family = await getIssueFamily(row.id)
+        const data = family.data
+        this.formatIssueFamilyData(row, data)
+      } catch (e) {
+        //   null
+        return Promise.resolve()
+      } finally {
+        this.isLoadingFamily = false
+      }
+      return Promise.resolve()
+    },
+    formatIssueFamilyData(row, data) {
+      if (data.hasOwnProperty('parent')) {
+        this.$set(row, 'parent', data.parent)
+        this.$set(this, 'parent', data.parent)
+      }
+      if (data.hasOwnProperty('children')) {
+        this.$set(row, 'children', data.children)
+        this.$set(this, 'children', data.children)
+      }
+      if (data.hasOwnProperty('relations')) {
+        this.$set(row, 'relations', data.relations)
+        this.$set(this, 'relations', data.relations)
+      }
     },
     toggleIssueMatrixDialog() {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible
