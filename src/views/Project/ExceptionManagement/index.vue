@@ -427,6 +427,10 @@ export default {
     },
     getCategoryTagType(category) {
       if (category === 'Fail Management') return '異常管理'
+    },
+    onChangeFilter() {
+      this.backToFirstPage()
+      this.loadData()
     }
   }
 }
