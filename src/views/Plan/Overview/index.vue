@@ -137,6 +137,15 @@ export default {
       const hasVersion = res.data.versions.length > 0
       if (hasVersion) {
         this.versionList = res.data.versions
+        this.versionList.reduce((acc, cur) => {
+          if (cur.updated_on >= acc.updated_on && cur.status === 'open') {
+            this.selectedVersion = cur.id
+          } else if (acc.status === 'open') {
+            this.selectedVersion = acc.id
+            return acc
+          }
+          return cur
+        })
       } else {
         this.clearSelectedVersion()
         this.versionList = []
