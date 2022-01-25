@@ -153,6 +153,8 @@ const getAPI = {
   tags: [getTagsByProject, 'tags']
 }
 
+const rowFormData = () => ({})
+
 export default {
   name: 'ContextMenu',
   components: {
@@ -506,6 +508,7 @@ export default {
         this.parentId = 0
         this.parentName = null
       } else {
+        this.form = Object.assign({}, rowFormData())
         this.parentId = this.row.id
         this.parentName = this.row.name
       }
