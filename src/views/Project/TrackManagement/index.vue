@@ -401,6 +401,11 @@ export default {
     getRowClass({ row }) {
       return row.family ? '' : 'row-expand-cover'
     },
+    onChangeFilter() {
+      this.backToFirstPage()
+      this.loadData()
+    },
+
     getStatusTagType(status) {
       switch (status) {
         case 'Active':
