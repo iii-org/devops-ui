@@ -250,7 +250,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="fetchIssueLink"
+      @update="getData"
     />
   </div>
 </template>
@@ -455,7 +455,7 @@ export default {
         this.editorHeight = '390px'
       }
     },
-    propsIssueId() {
+    propsIssueId(val) {
       this.fetchIssueLink()
     },
     async relationVisible(val) {
@@ -470,6 +470,10 @@ export default {
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
     ...mapActions('qa', ['removeFileName']),
+    async getData() {
+      await this.fetchIssueLink()
+      await this.getIssueFamilyData(this.issue)
+    },
     async fetchIssueLink() {
       this.isLoading = true
       if (this.propsIssueId) {
