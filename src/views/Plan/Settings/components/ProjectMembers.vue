@@ -15,7 +15,7 @@
             v-model="selectedProject.owner_id"
             size="medium"
             :disabled="disabledEditOwner"
-            @change="setProjectOwner"
+            @change="confirmSetProjectOwner"
           >
             <el-option v-for="user in assignedList" :key="user.id" :value="user.id" :label="user.label">
               {{ user.label }}
@@ -88,7 +88,8 @@ export default {
   data() {
     return {
       searchKeys: ['name', 'login', 'department'],
-      unClosedIssueCount: 0
+      unClosedIssueCount: 0,
+      ownerId: 0
     }
   },
   computed: {
@@ -101,13 +102,34 @@ export default {
       return this.listData.filter(item => item.role_id !== 1).map(item => ({ id: item.id, label: item.name }))
     }
   },
+  mounted() {
+    this.setOwner()
+  },
   methods: {
     async fetchData() {
       const res = await getProjectUserList(this.selectedProjectId)
       return res.data.user_list
     },
-    setProjectOwner() {
+    confirmSetProjectOwner() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: this.$t('ProjectSettings.ChangeManager'),
+        message: h('p', null, [
+          h('span', null, this.$t('Notify.ChangeProjectManager'))
+        ]),
+        showCancelButton: true,
+        confirmButtonText: this.$t('general.ok'),
+        cancelButtonText: this.$t('general.Cancel'),
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') this.setProjectOwner()
+          else this.selectedProject.owner_id = this.ownerId
+          done()
+        }
+      })
+    },
+    setProjectOwner () {
       this.listLoading = true
+      this.setOwner()
       updateProjectInfos(this.selectedProjectId, { owner_id: this.selectedProject.owner_id })
         .then(() => {
           this.$message({
@@ -124,6 +146,9 @@ export default {
         .then(() => {
           this.listLoading = false
         })
+    },
+    setOwner() {
+      this.ownerId = this.selectedProject.owner_id
     },
     showDialog() {
       this.$refs.addMemberDialog.dialogVisible = true

@@ -200,7 +200,7 @@ const actions = {
       commit('SET_DISPLAY_CLOSED', JSON.parse(getSessionValue))
       return JSON.parse(getSessionValue)
     }
-    return state.keyword
+    return state.displayClosed
   },
   setDisplayClosed({ commit }, value) {
     sessionStorage.setItem('displayClosed', JSON.stringify(value))
@@ -254,7 +254,7 @@ const actions = {
     sessionStorage.setItem('fixed_version_show_closed', JSON.stringify(value))
     commit('SET_FIXED_VERSION_SHOW_CLOSED', value)
   },
-  getTableExpand({commit, state}) {
+  getTableExpand({ commit, state }) {
     const getSessionValue = sessionStorage.getItem('tableExpand')
     if (getSessionValue) {
       commit('SET_TABLE_EXPAND', JSON.parse(getSessionValue))
@@ -262,7 +262,7 @@ const actions = {
     }
     return state.tableExpand
   },
-  setTableExpand({commit}, value) {
+  setTableExpand({ commit }, value) {
     sessionStorage.setItem('tableExpand', JSON.stringify(value))
     commit('SET_TABLE_EXPAND', value)
   }

@@ -105,7 +105,7 @@ export default {
   },
   mounted() {
     this.fetchVersionList()
-    this.fetchAllData()
+    // this.fetchAllData()
   },
   methods: {
     ...mapActions('projects', ['getProjectUserList']),
@@ -137,6 +137,14 @@ export default {
       const hasVersion = res.data.versions.length > 0
       if (hasVersion) {
         this.versionList = res.data.versions
+        for (const item of this.versionList) {
+          const nowDate = Date.parse(new Date(Date.now()))
+          const dueDate = Date.parse(new Date(item.due_date))
+          if (dueDate >= nowDate && item.status === 'open') {
+            this.selectedVersion = item.id
+            break
+          }
+        }
       } else {
         this.clearSelectedVersion()
         this.versionList = []

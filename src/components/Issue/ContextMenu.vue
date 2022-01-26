@@ -15,7 +15,7 @@
             :key="getId(column.value, item)"
             :disabled="column.value !== 'tags' && (item.disabled || getContextMenuCurrentValue(column, item))"
             :class="{ current: getContextMenuCurrentValue(column, item), [item.class]: item.class }"
-            @click="onUpdate(column.value + '_id', item.id)"
+            @click="onUpdate(column.value + '_id', item)"
           >
             <em v-if="getContextMenuCurrentValue(column, item)" class="el-icon-check" />
             <em v-if="item.id === 'null'" class="el-icon-circle-close" />
@@ -28,7 +28,7 @@
             :key="item.id"
             :disabled="getContextMenuCurrentValue('done_ratio', item)"
             :class="{ current: getContextMenuCurrentValue('done_ratio', item) }"
-            @click="onUpdate('done_ratio', item.id)"
+            @click="onUpdate('done_ratio', item)"
           >
             <em v-if="getContextMenuCurrentValue('done_ratio', item)" class="el-icon-check" />
             {{ getSelectionLabel(item) }}
@@ -153,6 +153,8 @@ const getAPI = {
   tags: [getTagsByProject, 'tags']
 }
 
+const rowFormData = () => ({})
+
 export default {
   name: 'ContextMenu',
   components: {
@@ -185,6 +187,10 @@ export default {
     }
   },
   data() {
+    this.assignedError = {
+      title: this.$t('Kanban.assignedErrorTitle'),
+      content: this.$t('Kanban.assignedErrorContent')
+    }
     return {
       relationDialog: {
         visible: false,
@@ -202,11 +208,13 @@ export default {
       parentId: 0,
       parentName: null,
       form: {},
-      originForm: {}
+      originForm: {},
+      showAlert: false,
+      errorMsg: []
     }
   },
   computed: {
-    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    ...mapGetters(['tracker', 'status', 'priority', 'fixedVersionShowClosed', 'selectedProjectId']),
     done_ratio() {
       const result = []
       for (let num = 0; num <= 100; num += 10) {
@@ -249,9 +257,9 @@ export default {
     } else {
       await this.loadSelectionList()
     }
-    if (Object.keys(this.row).length > 2) {
-      await this.getClosable()
-    }
+    // if (Object.keys(this.row).length > 2) {
+    //   await this.getClosable()
+    // }
   },
   methods: {
     initOptions() {
@@ -272,15 +280,18 @@ export default {
       if (fixed_version) {
         params = { status: 'open,locked,closed' }
       }
-      if (this.row.project && this.row.project.id !== '') {
-        Object.keys(getAPI).forEach((key) => {
-          this.loadSelection(key, params, [key])
-        })
-      }
+      // if ((this.row.project && this.row.project.id !== '') || !this.row.project) {
+      Object.keys(getAPI).forEach((key) => {
+        this.loadSelection(key, params, [key])
+      })
+      // }
     },
     async loadSelection(column, params, lazyLoad) {
       if (lazyLoad) {
-        const res = await getAPI[column][0](this.row.project.id, params)
+        const projectId =
+          Object.prototype.hasOwnProperty.call(this.row, 'project')
+            ? this.row.project.id : this.selectedProjectId
+        const res = await getAPI[column][0](projectId, params)
         if (column === 'fixed_version') {
           this[column] = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...res.data[getAPI[column][1]]]
         }
@@ -357,11 +368,20 @@ export default {
         console.error(e)
       }
     },
-    async onUpdate(column, value) {
+    async onUpdate(column, item) {
+      if (this.row.assigned_to.name && item.id === 1) {
+        const error = 'assignedError'
+        this.handleErrorAlert(error)
+        this.showErrorAlert(this.errorMsg)
+        return
+      }
       try {
-        let data = { [column]: value }
+        let data = { [column]: item.id }
         if (column === 'tags_id') {
-          data = this.setTags(column, value)
+          data = this.setTags(column, item.id)
+        }
+        if (column === 'assigned_to_id') {
+          data = this.setStatusId(column, item.id, data)
         }
         await updateIssue(this.row.id, data)
         this.$message({
@@ -374,6 +394,25 @@ export default {
         console.error(e)
       }
     },
+    handleErrorAlert(key) {
+      const { title, content } = this[key]
+      this.errorMsg.push(this.getErrorAlert(title, content))
+    },
+    getErrorAlert(title, content) {
+      const h = this.$createElement
+      const message = h('li', [h('b', title), h('p', content)])
+      return message
+    },
+    showErrorAlert(errorMsg) {
+      const h = this.$createElement
+      if (!this.showAlert) {
+        this.showAlert = true
+        this.$msgbox({ message: h('ul', errorMsg), title: this.$t('Kanban.ChangeIssueError') }).then(() => {
+          this.showAlert = false
+        })
+      }
+      this.errorMsg = []
+    },
     setTags(column, value) {
       const tags = this.row.tags ? this.row.tags.map((item) => item.id) : []
       const findTags = tags.findIndex((item) => item === value)
@@ -383,6 +422,15 @@ export default {
         tags.push(value)
       }
       return { tags: tags.join(',') }
+    },
+    setStatusId(column, id, data) {
+      if (this.row.status.id === 1 && id) {
+        data = {
+          [column]: id,
+          status_id: 2
+        }
+      }
+      return data
     },
     toggleRelationDialog(target) {
       this.relationDialog.visible = !this.relationDialog.visible
@@ -460,6 +508,7 @@ export default {
         this.parentId = 0
         this.parentName = null
       } else {
+        this.form = Object.assign({}, rowFormData())
         this.parentId = this.row.id
         this.parentName = this.row.name
       }

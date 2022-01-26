@@ -2,7 +2,6 @@
   <el-col
     v-loading="listLoading"
     class="inner"
-    :style="{height:height}"
   >
     <template v-if="listData.length>0">
       <transition-group
@@ -19,38 +18,26 @@
             <h4>{{ commit.commit_title }}</h4>
             <p v-if="compareCommitContent(commit)">{{ commit.commit_message }}</p>
             <p class="author">
-              <template v-if="commitLink">
-                <a :href="commit.web_url" class="el-link el-link--primary is-underline" target="_blank">
-                  <em class="ri-git-commit-line" />{{ firstEightCommitId(commit.commit_id) }}
-                </a> : 
-              </template>
               {{ commit.author_name }} @ {{ commit.pj_name }}
             </p>
           </el-card>
         </el-timeline-item>
       </transition-group>
     </template>
-    <no-data v-else />
+    <NoData v-else />
   </el-col>
 </template>
 
 <script>
 import NoData from './widget/NoData'
+
 export default {
   name: 'AdminCommitLog',
   components: { NoData },
   props: {
-    data: {
+    getData: {
       type: Function,
       default: () => []
-    },
-    commitLink: {
-      type: Boolean,
-      default: false
-    },
-    height: {
-      type: String,
-      default: '250px'
     }
   },
   data() {
@@ -67,8 +54,8 @@ export default {
       }
     },
     firstEightCommitId() {
-      return function (commit) {
-        return commit.slice(0, 8)
+      return function (commitId) {
+        return commitId.slice(0, 8)
       }
     }
   },
@@ -78,7 +65,7 @@ export default {
   methods: {
     async loadData() {
       this.listLoading = true
-      this.listData = await this.data()
+      this.listData = await this.getData()
       this.listLoading = false
     }
   }
@@ -87,6 +74,7 @@ export default {
 
 <style lang="scss" scoped>
 .inner {
+  height: 250px;
   overflow-y: auto;
   overflow-x: hidden;
 }

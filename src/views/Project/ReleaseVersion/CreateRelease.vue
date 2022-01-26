@@ -113,8 +113,8 @@
                 class="custom-black"
                 style="line-height: 40px;"
               >
-                <svg-icon icon-class="ion-git-commit-outline" />
-                {{ repoArtifactName }}
+                <svg-icon v-if="!checkHarborLoading" icon-class="ion-git-commit-outline" />
+                {{ checkHarborLoading ? $t('Updating') : repoArtifactName }}
               </span>
               <span v-else>
                 <span class="text-danger mr-3">
@@ -220,7 +220,8 @@ export default {
       commitId: '',
       isConfirmPackageVersion: false,
       branchesData: [],
-      listLoading: false
+      listLoading: false,
+      checkHarborLoading: false
     }
   },
   computed: {
@@ -236,11 +237,9 @@ export default {
     }
   },
   watch: {
-    'commitForm.branch': {
-      handler(val) {
-        if (val && val !== this.$t('Loading')) {
-          this.handleSelectedRepoName(val)
-        }
+    branchesData: {
+      handler(data) {
+        this.handleSelectedRepoName(this.commitForm.branch)
       },
       immediate: true
     },
@@ -249,20 +248,10 @@ export default {
         this.getBranchesData()
         this.commitForm.note = ''
       }
-    },
-    branches(val) {
-      if (val) {
-        this.handleSelectedRepoName(val[0])
-      }
-    },
-    commitId(val) {
-      this.handleSelectedRepoName(this.branches[0])
     }
   },
   async created() {
-    if (this.selectedProjectId < 0) {
-      return
-    }
+    if (this.selectedProjectId < 0) return
     this.getBranchesData()
   },
   methods: {
@@ -281,13 +270,6 @@ export default {
       })
       this.branchesData = data['branch_list']
     },
-    async getMemberCommitListByBranch() {
-      const params = { branch: this.commitForm.branch }
-      const res = await getMemberCommitListByBranch(this.selectedRepositoryId, params)
-      const commitId = res.data.length !== 0 ? res.data[0].short_id : null
-      const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : null
-      this.commitId = harborCommitId
-    },
     setFormData() {
       for (const branch of this.branchesData) {
         this.branches.push(branch.name)
@@ -298,6 +280,13 @@ export default {
         this.commitForm.mainVersion = null
         this.commitForm.branch = this.$t('Loading')
       }
+    },
+    async getMemberCommitListByBranch() {
+      const params = { branch: this.commitForm.branch }
+      const res = await getMemberCommitListByBranch(this.selectedRepositoryId, params)
+      const commitId = res.data.length !== 0 ? res.data[0].short_id : null
+      const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : null
+      this.commitId = harborCommitId
     },
     setIssues(issues) {
       this.issues = issues
@@ -378,18 +367,31 @@ export default {
       this.repoArtifact = await getRepoArtifacts(this.selectedRepo, this.commitId)
       if (this.repoArtifact.data && this.repoArtifact.data.length > 0) this.showHarborTag = true
       else this.showHarborTag = false
+      this.checkHarborLoading = false
     },
     async handleSelectedRepoName(repo) {
+      if (!repo) return
+      this.showHarborTag = true
+      this.checkHarborLoading = true
+      this.onChangeCommitId(repo)
       const harborData = await getHarborRepoList(this.selectedProjectId)
       this.checkSelectedRepoName(harborData.data, repo)
     },
+    onChangeCommitId(repo) {
+      const branch = this.branchesData.find(branch => branch.name === repo)
+      this.commitId = branch.short_id
+    },
     checkSelectedRepoName(harborData, repo) {
-      if (!harborData) return
+      if (!harborData) {
+        this.checkHarborLoading = false
+        return
+      }
       const repoNameArray = harborData.map((item) => item.name.split('/')[1])
       const repoNameIndex = repoNameArray.findIndex((repoName) => repoName === repo)
       if (repoNameIndex === -1) {
         this.repoArtifact = {}
         this.showHarborTag = false
+        this.checkHarborLoading = false
       } else {
         this.selectedRepo = harborData[repoNameIndex].name
         this.checkHarborImage()

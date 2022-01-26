@@ -278,7 +278,7 @@ export default {
       this.tracker_id = value[0].id
     },
     tracker_id() {
-      this.loadData()
+      this.fetchData()
     },
     listData() {
       this.fetchAllDownloadData()
@@ -427,6 +427,10 @@ export default {
     },
     getCategoryTagType(category) {
       if (category === 'Fail Management') return '異常管理'
+    },
+    onChangeFilter() {
+      this.backToFirstPage()
+      this.loadData()
     }
   }
 }

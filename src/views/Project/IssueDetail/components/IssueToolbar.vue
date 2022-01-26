@@ -82,7 +82,7 @@
         :project-id="selectedProjectId"
         :parent-id="issueId"
         :parent-name="issueName"
-        @loading="loadingUpdate($event.value, false)"
+        @loading="loadingUpdate($event, false)"
         @add-topic-visible="emitAddTopicDialogVisible"
       />
       <span
@@ -158,7 +158,7 @@ export default {
       this.uploadDialogVisible = false
     },
     async uploadFiles(sendForm, fileList) {
-      this.loadingUpdate(true, true)
+      this.loadingUpdate(true, false)
       // use one by one edit issue to upload file
       const { issueId } = this
       // use one by one edit issue to upload file
@@ -195,14 +195,15 @@ export default {
             message: this.$t('Notify.Added'),
             type: 'success'
           })
-          this.loadData()
           this.addTopicDialogVisible = false
           return res
         })
         .catch((error) => {
           return error
         })
-      // this.addTopicDialogVisible = false
+        .finally(() => {
+          this.loadingUpdate(false, false)
+        })
     },
     handleCollectionDialog() {
       this.$emit('related-collection', 'relatedCollection')

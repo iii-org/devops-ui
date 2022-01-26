@@ -359,7 +359,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     },
     importFrom: {
       type: String,
@@ -390,7 +390,6 @@ export default {
         status_id: [{ required: true, message: 'Please select status', trigger: 'blur' }],
         priority_id: [{ required: true, message: 'Please select priority', trigger: 'blur' }]
       },
-      LoadingConfirm: false,
       uploadFileList: [],
       pickerOptions(startDate) {
         return {
@@ -417,9 +416,6 @@ export default {
   watch: {
     projectId() {
       this.fetchData()
-    },
-    LoadingConfirm(value) {
-      this.$emit('loading', value)
     },
     prefill: {
       deep: true,
@@ -475,7 +471,11 @@ export default {
             !!this.issueFilter[this.importFrom][item] &&
             this.issueFilter[this.importFrom][item] !== ''
           ) {
-            this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
+            if (item === 'tags') {
+              this.$set(this.issueForm, item, this.issueFilter[this.importFrom][item])
+            } else {
+              this.$set(this.issueForm, item + '_id', this.issueFilter[this.importFrom][item])
+            }
           }
         })
         let checkQuickAddIssueForm = ['tracker_id', 'name']
@@ -500,6 +500,7 @@ export default {
           this.$refs['issueForm'].resetFields()
         })
       }
+      this.$emit('loading', false)
       this.$emit('add-topic-visible', false)
     },
     handleSave() {
@@ -551,6 +552,7 @@ export default {
       let result = false
       this.$refs['issueForm'].validate(async (valid) => {
         if (valid) {
+          this.$emit('loading', true)
           // deep copy & remove field with empty value
           const data = JSON.parse(JSON.stringify(this.issueForm))
           Object.keys(data).map((item) => {

@@ -259,7 +259,7 @@ export default {
       this.tracker_id = value[0].id
     },
     tracker_id() {
-      this.loadData()
+      this.fetchData()
     },
     listData(data) {
       if (!data) return
@@ -398,6 +398,14 @@ export default {
       })
       return translateTable
     },
+    getRowClass({ row }) {
+      return row.family ? '' : 'row-expand-cover'
+    },
+    onChangeFilter() {
+      this.backToFirstPage()
+      this.loadData()
+    },
+
     getStatusTagType(status) {
       switch (status) {
         case 'Active':
@@ -419,6 +427,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+>>> .row-expand-cover .el-table__expand-icon {
+  display: none
+}
 .download {
   @apply border-none;
 }

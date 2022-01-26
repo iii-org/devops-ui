@@ -39,7 +39,7 @@
               <template slot="header">
                 <span class="font-bold">{{ $t('Dashboard.ADMIN.Overview.NAME') }}</span>
               </template>
-              <admin-overview
+              <AdminOverview
                 :data="getProjectOverviewData"
                 @total-count="getTotalCount"
                 @loading="getLoadingStatus"
@@ -62,7 +62,7 @@
                   <em class="ri-external-link-line" />
                 </span>
               </div>
-              <admin-project-member
+              <AdminProjectMember
                 :data="getProjectMembersData"
                 :dialog-visible="dialogVisible.projectMember"
                 @dialog-visible="onChangeDialogVisible"
@@ -79,7 +79,7 @@
               <template slot="header">
                 <span class="font-bold">{{ $t('Dashboard.ADMIN.CommitLog.NAME') }} </span>
               </template>
-              <admin-commit-log :data="getGitCommitLogData" />
+              <AdminCommitLog :get-data="getGitCommitLogData" />
             </el-card>
           </el-col>
         </el-row>
@@ -97,7 +97,7 @@
               <template slot="header">
                 <span class="font-bold">{{ $t('Dashboard.ADMIN.IssueRank.NAME') }}</span>
               </template>
-              <admin-issue-rank :data="getIssueRankData" />
+              <AdminIssueRank :data="getIssueRankData" />
             </el-card>
           </el-col>
           <el-col
@@ -115,7 +115,7 @@
                   <em class="ri-external-link-line" />
                 </span>
               </div>
-              <admin-passing-rate
+              <AdminPassingRate
                 :data="getPassingRateData"
                 :dialog-visible="dialogVisible.passingRate"
                 @dialog-visible="onChangeDialogVisible"
@@ -147,7 +147,7 @@
                   <span class="text-right">{{ $t('Dashboard.ADMIN.sync_date', [UTCtoLocalTime(lastUpdate)]) }} </span>
                 </div>
               </div>
-              <admin-project-list
+              <AdminProjectList
                 :data="getProjectListData"
                 :dialog-visible="dialogVisible.projectList"
                 @update="getLastUpdate"

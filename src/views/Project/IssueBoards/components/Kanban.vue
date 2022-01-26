@@ -390,7 +390,7 @@ export default {
     checkChildrenIssuesClosed() {
       return function (element) {
         const checkedIssue = this.relativeList.length > 0 ? this.findCompleteIssues(element) : element
-        if (checkedIssue.children.length === 0) return true
+        if (!checkedIssue.children || checkedIssue.children.length === 0) return true
         return checkedIssue.children
           .map((issue) => issue.is_closed === true)
           .reduce((issue_status, all) => issue_status && all)
@@ -445,10 +445,12 @@ export default {
       if (!isAssigned) {
         const error = 'unassignedError'
         this.handleErrorAlert(error)
-      } else if (isAssigned && fromClassObj.name === 'Assigned' && toClassObj.name === 'Active') {
-        const error = 'assignedError'
-        this.handleErrorAlert(error)
-        isAssigned = !isAssigned
+      } else if (isAssigned && toClassObj.name === 'Active') {
+        if (fromClassObj === null || fromClassObj.name === 'Assigned') {
+          const error = 'assignedError'
+          this.handleErrorAlert(error)
+          isAssigned = !isAssigned
+        }
       }
       return isAssigned
     },
@@ -481,7 +483,7 @@ export default {
       const toClassObj = Object.values(data)[0]
       let params = { [key]: toClassObj }
       if (key === 'status') {
-        const isStatusNormal = this.isStatusNormal(toClassObj, element)
+        const isStatusNormal = this.isStatusNormal(toClassObj, null, element)
         if (isStatusNormal) this.emitDragUpdate(element.id, params)
       } else if (key === 'priority') {
         const isPriorityNormal = this.isPriorityNormal(element, params)
@@ -653,7 +655,7 @@ export default {
         @apply m-3 flex justify-between content-start;
 
         .text {
-          @apply cursor-pointer text-left text-primary font-bold;
+          @apply cursor-pointer text-left text-primary font-bold break-all;
         }
 
         .action {

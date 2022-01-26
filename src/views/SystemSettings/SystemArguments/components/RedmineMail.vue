@@ -11,22 +11,28 @@
         label-position="top"
       >
         <el-row :gutter="10">
-          <el-col :span="24" :sm="12" :md="8" :lg="7">
+          <el-col :span="24" :sm="12" :md="7" :lg="7">
             <el-form-item label="User Name">
-              <el-input v-model="redmineMailForm.smtp_settings.user_name" />
+              <el-input
+                v-model="redmineMailForm.smtp_settings.user_name"
+                :disabled="isAuthenticationNil"
+              />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :md="8" :lg="7">
+          <el-col :span="24" :sm="12" :md="7" :lg="7">
             <el-form-item label="Password">
-              <el-input v-model="redmineMailForm.smtp_settings.password" show-password />
+              <el-input
+                v-model="redmineMailForm.smtp_settings.password"
+                show-password :disabled="isAuthenticationNil"
+              />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :md="8" :lg="6">
+          <el-col :span="24" :sm="12" :md="5" :lg="6">
             <el-form-item label="Domain">
               <el-input v-model="redmineMailForm.smtp_settings.domain" />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :md="8" :lg="4">
+          <el-col :span="24" :sm="12" :md="5" :lg="4">
             <el-form-item label="Authentication">
               <el-select
                 v-model="redmineMailForm.smtp_settings.authentication"
@@ -42,30 +48,34 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :md="8" :lg="5">
-            <el-form-item label="Delivery Method" prop="delivery_method">
-              <el-select
-                v-model="redmineMailForm.delivery_method"
-                :placeholder="$t('RuleMsg.PleaseSelect')"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in deliveryMethodOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
+          <el-col :span="24" :sm="12" :md="7" :lg="7">
+            <el-form-item label="Delivery Method">
+              <el-input value=":stmp" disabled />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :md="8" :lg="7">
+          <el-col :span="24" :sm="12" :md="12" :lg="13">
             <el-form-item label="Address" prop="smtp_settings.address">
               <el-input v-model="redmineMailForm.smtp_settings.address" />
             </el-form-item>
           </el-col>
-          <el-col :span="24" :sm="12" :md="6" :lg="2">
+          <el-col :span="24" :sm="12" :md="5" :lg="4">
             <el-form-item label="Port" prop="smtp_settings.port" :placeholder="$t('general.PleaseInput')">
               <el-input v-model="redmineMailForm.smtp_settings.port" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="7" :lg="7">
+            <el-form-item label="Openssl Verify Mode" prop="smtp_settings.openssl_verify_mode">
+              <el-input v-model="redmineMailForm.smtp_settings.openssl_verify_mode" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="12" :lg="13">
+            <el-form-item label="Emission Email Address" prop="emission_email_address">
+              <el-input v-model="redmineMailForm.emission_email_address" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" :sm="12" :md="5" :lg="4">
+            <el-form-item label="SSL" prop="smtp_settings.ssl">
+              <el-input v-model="redmineMailForm.smtp_settings.ssl" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -92,7 +102,6 @@ import { getUserRedmineMailProfile, editUserRedmineMailProfile } from '@/api/red
 import MixinElTable from '@/mixins/MixinElTable'
 
 const defaultFormData = () => ({
-  delivery_method: '',
   smtp_settings: {
     address: '',
     authentication: '',
@@ -100,8 +109,11 @@ const defaultFormData = () => ({
     enable_starttls_auto: '',
     password: '',
     port: '',
-    user_name: ''
-  }
+    user_name: '',
+    openssl_verify_mode: '',
+    ssl: ''
+  },
+  emission_email_address: ''
 })
 
 export default {
@@ -118,11 +130,15 @@ export default {
       ],
       redmineMailForm: defaultFormData(),
       redmineMailRules: {
-        delivery_method: [{ required: true, message: 'Please input user name.', trigger: 'blur' }],
         'smtp_settings.address': [{ required: true, message: 'Please input address.', trigger: 'blur' }],
         'smtp_settings.port': [{ required: true, message: 'Please input port.', trigger: 'blur' }]
       },
       isLoading: false
+    }
+  },
+  computed: {
+    isAuthenticationNil() {
+      return this.redmineMailForm.smtp_settings.authentication === 'nil'
     }
   },
   methods: {
@@ -132,11 +148,30 @@ export default {
       this.redmineMailForm = res.data
       this.isLoading = false
     },
+    filterEmpty(data) {
+      const arr = ['openssl_verify_mode', 'user_name', 'password', 'ssl']
+      Object.keys(data).forEach((item) => {
+        if (typeof data[item] === 'object') this.filterEmpty(data[item])
+        if (arr.includes(item) && data[item] === '') delete data[item]
+      })
+    },
+    checkData() {
+      const res = this.redmineMailForm
+      if (this.isAuthenticationNil) {
+        delete res.smtp_settings.user_name
+        delete res.smtp_settings.password
+      }
+      this.filterEmpty(res)
+      return res
+    },
     submitUpdateRedmineMail() {
       this.isLoading = true
       this.$refs.redmineMailForm.validate(async valid => {
         if (!valid) return
-        const data = { redmine_mail: this.redmineMailForm }
+        const data = {
+          redmine_mail: { smtp_settings: this.checkData().smtp_settings },
+          emission_email_address: this.checkData().emission_email_address
+        }
         editUserRedmineMailProfile(data)
           .then(() => {
             this.$message({

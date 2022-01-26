@@ -61,6 +61,6 @@
 
 // to fix search filter out of screen error
 .el-popover.popper {
-  top: 100px !important;
-  height: max-content;
+  height: 50%;
+  overflow-y: scroll;
 }

@@ -125,7 +125,7 @@ export default {
     2006: 'The user {user_id} is already in project {project_id}.',
     2007: 'This user is project owner in the project.',
     3001: "The user doesn't have permission for this operation.",
-    3002: 'You need to be in the project for this operation.',
+    3002: 'You are not participating in this project.',
     3003: "You are not permitted to access another user's data.",
     3004: 'Only project owner can set it, please contact project owner for assistance.',
     4001: 'Issue not found.',
@@ -233,7 +233,8 @@ export default {
     SeeMore: 'See more',
     High: 'High',
     Medium: 'Medium',
-    Low: 'Low'
+    Low: 'Low',
+    Run: 'Run'
   },
   Notify: {
     Updated: 'update successful',
@@ -245,6 +246,7 @@ export default {
     Canceled: 'Cancel successful',
     Submit: 'Submit',
     Saved: 'Saved successful',
+    NoEmpty: 'Content must not be empty',
     Same: 'The new value is same with old value.',
     SwitchLanguage: 'Switch Language Success',
     NoProject: 'There are no projects currently, please create a new project.',
@@ -265,7 +267,8 @@ export default {
     pluginWarnNotifications:
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
     pluginRepeatMessage:
-      'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.'
+      'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
+    ChangeProjectManager: 'Confirming if you want to change the project manager?'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -346,7 +349,8 @@ export default {
   Cmas: {
     SUCCESS: 'Success',
     RUNNING: 'Scanning',
-    NOT_FOUND: 'Fail',
+    NOT_FOUND: 'Scan Failed',
+    FAIL: 'Establish Failed',
     MOEA: 'Mobile APP Assurance Specification'
   },
   TestValue: {
@@ -402,6 +406,10 @@ export default {
     EditIssue: 'Edit Issue',
     AddSubIssue: 'Add Sub Issue',
     CloseIssue: 'Close Issue',
+    IssueHookSetting: '@:Issue.CommitIssueHookSetting',
+    CommitIssueHookSetting: 'Commit Issue Hook Setting',
+    EditIssueHook: 'Edit Issue Hook',
+    BatchEditIssueHook: 'Batch Edit Issue Hook',
     Id: 'Id / Name',
     Assignee: 'Assignee',
     Priority: 'Priority',
@@ -478,6 +486,7 @@ export default {
     DeleteFile: 'Are you sure to Delete File?',
     RemovedIssue: "The issue you were trying to edit doesn't exist or has been removed.",
     id: 'ID',
+    project: 'Project',
     name: 'Name',
     tags: '@:Issue.Tag',
     priority: '@:Issue.Priority',
@@ -900,7 +909,9 @@ export default {
     AddParams: 'Add Params'
   },
   PipeLines: {
-    TestDetail: 'Test Detail'
+    TestDetail: 'Test Detail',
+    ExecuteDetail: 'Detail',
+    Report: 'Report'
   },
   Git: {
     Branch: '@:general.Branch',
@@ -1061,7 +1072,8 @@ export default {
     EnableMessage: 'The reminder feature has been successfully turned on',
     DisableMessage: 'The reminder feature has been successfully turned off',
     SuccessUpdateAlertSettings: 'The reminder Settings have been updated successfully',
-    TagUpdateMessage: 'The task label has been updated successfully'
+    TagUpdateMessage: 'The task label has been updated successfully',
+    ChangeManager: 'Change Project Manager'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: 'Remote Env.',
@@ -1150,7 +1162,11 @@ export default {
     TokenWarning: `Confirm whether Github's access token already contains public_repo.`,
     TemplatesSettings: 'Template Synchronization Settings',
     EnableTemplateSync: 'Enable template synchronization',
-    DocumentUrl: 'Please refer to related document'
+    DocumentUrl: 'Please refer to related document',
+    ExecLogsButton: 'Execution Logs',
+    NotifyRun: `Synchronizing Templates, it might takes 3 - 10 mins depends on the networking, please come back later or click in the 'Execution Logs' for details.`,
+    TemplateSyncExecLogs: 'Template Synchronization Execute Logs',
+    VerifyGithubToken: 'Verifying given GitHub token...'
   },
   Kanban: {
     ChangeIssueError: 'Change Issue Error',

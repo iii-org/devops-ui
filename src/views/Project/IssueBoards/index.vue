@@ -364,7 +364,7 @@ export default {
       }
     },
     isFilterChanged() {
-      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword
+      return this.checkFilterValue('originFilterValue') || this.checkFilterValue('filterValue') || !!this.keyword || this.groupBy.dimension !== 'status'
     },
     getFilteredVersion() {
       return this.fixed_version.filter((item) => {
@@ -388,8 +388,12 @@ export default {
     }
   },
   watch: {
-    async selectedProjectId() {
-      await this.fetchInitData()
+    selectedProjectId: {
+      async handler(id) {
+        await this.onCleanKeyWord()
+        await this.fetchInitData()
+      },
+      immediate: true
     },
     isLoading(value) {
       if (!value) {
@@ -400,9 +404,6 @@ export default {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
     }
-  },
-  async created() {
-    await this.fetchInitData()
   },
   methods: {
     ...mapActions('projects', [
@@ -476,10 +477,11 @@ export default {
     classifyIssue() {
       const issueList = this.projectIssueList
       this.checkGroupByValueOnBoard()
-      issueList.forEach((issue) => {
+      issueList.forEach((issue, index) => {
         if (issue) {
           let dimensionName = issue[this.groupBy.dimension].id
           dimensionName = dimensionName || 'null'
+          if (!this.classifyIssueList[dimensionName]) return
           if (this.checkInFilterValue(dimensionName)) this.classifyIssueList[dimensionName].push(issue)
         }
       })
@@ -687,6 +689,12 @@ export default {
     },
     filterMe(userList) {
       return userList.filter((item) => item.login !== '-Me-')
+    },
+    async onCleanKeyWord() {
+      this.keyword = ''
+      const storedData = await this.fetchStoredData()
+      storedData.storedKeyword['board'] = this.keyword
+      await this.setKeyword(storedData.storedKeyword)
     },
     cleanFilter() {
       this.$emit('clean-filter')

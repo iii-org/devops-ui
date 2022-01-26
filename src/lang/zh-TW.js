@@ -125,7 +125,7 @@ export default {
     2006: '使用者 {user_id} 已經在專案 {project_id} 內了。',
     2007: '該使用者為本專案之專案經理，不可刪除。',
     3001: '您的角色沒有權限進行此項操作。',
-    3002: '您需要屬於此專案才能進行這項操作。',
+    3002: '您已非專案成員。',
     3003: '您不被允許存取其他使用者的資料。',
     3004: '僅專案經理才可設置，請洽專案經理協助。',
     4001: '該議題不存在。',
@@ -233,7 +233,8 @@ export default {
     SeeMore: '看更多',
     High: '高',
     Medium: '中',
-    Low: '低'
+    Low: '低',
+    Run: '執行'
   },
   Notify: {
     Updated: '已更新',
@@ -245,6 +246,7 @@ export default {
     Canceled: '已取消',
     Submit: '已送出',
     Saved: '已儲存',
+    NoEmpty: '內容不得為空',
     Same: '內容相同，未變更。',
     SwitchLanguage: '更換語言成功',
     NoProject: '目前沒有任何專案可供選擇，請先建立專案。',
@@ -263,7 +265,8 @@ export default {
     confirmDeleteSth: '確定@:(general.Delete)「{name}」嗎？',
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
-    pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。'
+    pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
+    ChangeProjectManager: '確認是否要變更專案經理人。'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -328,6 +331,7 @@ export default {
     SUCCESS: '掃描完成',
     RUNNING: '掃描中',
     NOT_FOUND: '掃描失敗',
+    FAIL: '建立失敗',
     MOEA: '行動應用APP基本資安規範'
   },
   WebInspect: {
@@ -399,6 +403,10 @@ export default {
     EditIssue: '編輯議題',
     AddSubIssue: '新增子議題',
     CloseIssue: '關閉議題',
+    IssueHookSetting: '程式關聯設定',
+    CommitIssueHookSetting: '修改程式議題關聯',
+    EditIssueHook: '修改議題關聯',
+    BatchEditIssueHook: '批次修改議題關聯',
     Id: '議題編號 / 議題名稱',
     Assignee: '受分配者',
     Priority: '優先權',
@@ -474,6 +482,7 @@ export default {
     DeleteFile: '確認要刪除附件嗎?',
     RemovedIssue: '議題已被刪除或找不到該議題',
     id: '編號',
+    project: '專案名稱',
     name: '議題名稱',
     tags: '@:Issue.Tag',
     priority: '@:Issue.Priority',
@@ -893,7 +902,9 @@ export default {
     AddParams: '新增參數'
   },
   PipeLines: {
-    TestDetail: '測試細節'
+    TestDetail: '測試細節',
+    ExecuteDetail: '執行細節',
+    Report: '測試彙整報告'
   },
   Git: {
     Branch: '@:general.Branch',
@@ -1054,7 +1065,8 @@ export default {
     EnableMessage: '已成功啟用提醒功能',
     DisableMessage: '已成功停用提醒功能',
     SuccessUpdateAlertSettings: '通知設定已更新成功',
-    TagUpdateMessage: '任務標籤已更新成功'
+    TagUpdateMessage: '任務標籤已更新成功',
+    ChangeManager: '變更專案經理'
   },
   SystemDeploySettings: {
     RemoteDeploymentEnvironment: '遠端佈署環境',
@@ -1142,7 +1154,11 @@ export default {
     TokenWarning: '確認 Github 的 access token 是否已包含 public_repo?',
     TemplatesSettings: '範本同步設定',
     EnableTemplateSync: '啟用範本同步',
-    DocumentUrl: '相關教學請參考'
+    DocumentUrl: '相關教學請參考',
+    ExecLogsButton: '執行細節',
+    NotifyRun: '範本同步執行中，預計需時 3 - 10 分鐘，請耐心等候，或點入左下方執行細節，瞭解實際同步進度。',
+    TemplateSyncExecLogs: '範本同步執行紀錄',
+    VerifyGithubToken: '檢核GitHub token 中...'
   },
   Kanban: {
     ChangeIssueError: '異動議題錯誤',

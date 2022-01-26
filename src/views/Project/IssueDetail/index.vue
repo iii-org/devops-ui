@@ -118,6 +118,7 @@
               <el-collapse
                 v-if="countRelationIssue > 0"
                 v-model="relationVisible"
+                v-loading="isLoadingFamily"
                 accordion
               >
                 <el-collapse-item :name="1">
@@ -157,7 +158,7 @@
                 type="border-card"
               >
                 <el-tab-pane :label="$t('Issue.History')">
-                  <issue-notes-dialog
+                  <IssueNotesDialog
                     :height="dialogHeight"
                     :data="journals"
                     @show-parent-issue="onRelationIssueDialog"
@@ -169,10 +170,11 @@
                       <em class="ri-git-commit-line" />{{ $t('Issue.Commit') }}
                     </span>
                   </template>
-                  <admin-commit-log
-                    ref="adminCommitLog"
-                    :data="getGitCommitLogData"
-                    :commit-link="true"
+                  <AdminCommitLog
+                    ref="AdminCommitLog"
+                    :issue-id="issueId"
+                    :issue-name="form.name"
+                    :get-data="getGitCommitLogData"
                     :height="dialogHeight"
                   />
                 </el-tab-pane>
@@ -185,7 +187,7 @@
           :md="8"
           class="issueOptionHeight"
         >
-          <issue-form
+          <IssueForm
             ref="IssueForm"
             :is-button-disabled="isButtonDisabled"
             :issue-id="issueId"
@@ -248,7 +250,7 @@
       :row="contextMenu.row"
       :filter-column-options="filterOptions"
       :selection-options="contextOptions"
-      @update="fetchIssueLink"
+      @update="getData"
     />
   </div>
 </template>
@@ -272,11 +274,14 @@ import {
   IssueDescription,
   IssueTitle,
   IssueToolbar,
-  IssueCollection
+  IssueCollection,
+  AdminCommitLog
 } from './components'
-import { AdminCommitLog } from '@/views/Overview/Dashboard/components'
 import { UTCtoLocalTime } from '@/filters'
-import { addProjectTags } from '@/api/projects'
+import {
+  addProjectTags,
+  getRootProjectId
+} from '@/api/projects'
 import dayjs from 'dayjs'
 import { Status, Tracker, ExpandSection } from '@/components/Issue'
 import RelatedCollectionDialog from '@/views/Test/TestFile/components/RelatedCollectionDialog'
@@ -284,9 +289,9 @@ import { getTestFileByTestPlan, putTestPlanWithTestFile } from '@/api/qa'
 import getPageTitle from '@/utils/get-page-title'
 import IssueMatrix from './components/IssueMatrix'
 import ContextMenu from '@/newMixins/ContextMenu'
+import { getIssueFamily } from '@/api/issue'
 
 const commitLimit = 10
-const refreshCommitLog = 300000 // ms
 
 export default {
   name: 'ProjectIssueDetail',
@@ -319,6 +324,10 @@ export default {
     }
   },
   data() {
+    this.assignedError = {
+      title: this.$t('Kanban.assignedErrorTitle'),
+      content: this.$t('Kanban.assignedErrorContent')
+    }
     return {
       mode: 'view',
       originForm: {},
@@ -326,6 +335,7 @@ export default {
       issueMatrixDialog: {
         visible: false
       },
+      rootProjectId: '',
       issue_link: '',
       issue: {},
       issueId: null,
@@ -352,7 +362,6 @@ export default {
       files: [],
       test_files: [],
       journals: [],
-      gitCommitLog: [],
       requestGitLabLastTime: null,
       parent: {},
       children: [],
@@ -368,7 +377,10 @@ export default {
       },
       relations: [],
       relatedCollectionDialogVisible: false,
-      tagsString: ''
+      tagsString: '',
+      errorMsg: [],
+      showAlert: false,
+      isLoadingFamily: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -443,21 +455,12 @@ export default {
         this.editorHeight = '390px'
       }
     },
-    propsIssueId() {
+    propsIssueId(val) {
       this.fetchIssueLink()
     },
-    gitCommitLog: {
-      deep: true,
-      async handler() {
-        if (!this.requestGitLabLastTime) {
-          this.requestGitLabLastTime = new Date().valueOf()
-        }
-        await this.sleep(refreshCommitLog)
-        const nowTime = new Date().valueOf()
-        const gap = nowTime - this.requestGitLabLastTime
-        if (gap >= refreshCommitLog) {
-          this.gitCommitLog = await this.getGitCommitLogData()
-        }
+    async relationVisible(val) {
+      if (val === 1) {
+        await this.getIssueFamilyData(this.issue)
       }
     }
   },
@@ -467,6 +470,10 @@ export default {
   methods: {
     ...mapActions('projects', ['setSelectedProject']),
     ...mapActions('qa', ['removeFileName']),
+    async getData() {
+      await this.fetchIssueLink()
+      await this.getIssueFamilyData(this.issue)
+    },
     async fetchIssueLink() {
       this.isLoading = true
       if (this.propsIssueId) {
@@ -484,7 +491,6 @@ export default {
           this['removeFileName']()
         }
       }
-      this.gitCommitLog = await this.getGitCommitLogData()
       this.isLoading = false
     },
     async fetchIssue(isOnlyUpload) {
@@ -529,10 +535,10 @@ export default {
         }
       } catch (e) {
         this.handleBackPage()
-        this.$message({
-          message: this.$t('Issue.RemovedIssue'),
-          type: 'warning'
-        })
+        // this.$message({
+        //   message: this.$t('Issue.RemovedIssue'),
+        //   type: 'warning'
+        // })
       }
       return data
     },
@@ -589,10 +595,15 @@ export default {
       if (this.propsIssueId) this.issueId = parseInt(this.propsIssueId)
       else if (this.$route.params.issueId) this.issueId = parseInt(this.$route.params.issueId)
     },
+    async getRootProject(projectId) {
+      const res = await getRootProjectId(projectId)
+      this.rootProjectId = res.root_project_id
+    },
     async getGitCommitLogData() {
+      await this.getRootProject(this.selectedProjectId)
       this.setIssueId()
       const params = { limit: commitLimit }
-      const res = await getIssueGitCommitLog(this.selectedProjectId, this.issueId, params)
+      const res = await getIssueGitCommitLog(this.rootProjectId, this.issueId, params)
       res.data.forEach((item, index) => {
         item['id'] = index
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
@@ -827,6 +838,12 @@ export default {
           sendForm.append(objKey, sendData[objKey])
         }
       })
+      if (sendData.assigned_to_id && sendData.status_id === 1) {
+        const error = 'assignedError'
+        this.handleErrorAlert(error)
+        this.showErrorAlert(this.errorMsg)
+        return
+      }
       this.updateIssueForm(sendForm)
     },
     async updateIssueForm(sendForm) {
@@ -876,6 +893,25 @@ export default {
         console.error(e)
       }
       this.isLoading = false
+    },
+    handleErrorAlert(key) {
+      const { title, content } = this[key]
+      this.errorMsg.push(this.getErrorAlert(title, content))
+    },
+    getErrorAlert(title, content) {
+      const h = this.$createElement
+      const message = h('li', [h('b', title), h('p', content)])
+      return message
+    },
+    showErrorAlert(errorMsg) {
+      const h = this.$createElement
+      if (!this.showAlert) {
+        this.showAlert = true
+        this.$msgbox({ message: h('ul', errorMsg), title: this.$t('Kanban.ChangeIssueError') }).then(() => {
+          this.showAlert = false
+        })
+      }
+      this.errorMsg = []
     },
     async removeIssueRelation(child_issue_id) {
       this.isLoading = true
@@ -979,6 +1015,34 @@ export default {
           }
         }
       })
+    },
+    async getIssueFamilyData(row) {
+      try {
+        this.isLoadingFamily = true
+        const family = await getIssueFamily(row.id)
+        const data = family.data
+        this.formatIssueFamilyData(row, data)
+      } catch (e) {
+        //   null
+        return Promise.resolve()
+      } finally {
+        this.isLoadingFamily = false
+      }
+      return Promise.resolve()
+    },
+    formatIssueFamilyData(row, data) {
+      if (data.hasOwnProperty('parent')) {
+        this.$set(row, 'parent', data.parent)
+        this.$set(this, 'parent', data.parent)
+      }
+      if (data.hasOwnProperty('children')) {
+        this.$set(row, 'children', data.children)
+        this.$set(this, 'children', data.children)
+      }
+      if (data.hasOwnProperty('relations')) {
+        this.$set(row, 'relations', data.relations)
+        this.$set(this, 'relations', data.relations)
+      }
     },
     toggleIssueMatrixDialog() {
       this.issueMatrixDialog.visible = !this.issueMatrixDialog.visible

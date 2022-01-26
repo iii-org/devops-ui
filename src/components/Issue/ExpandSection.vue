@@ -88,13 +88,14 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.loadData()
+        this.loadData()
       } catch (err) {
         console.error(err)
       }
       this.listLoading = false
     },
-    async removeRelationIssue(relation_id) {
+    async removeRelationIssue(issue) {
+      const { relation_id } = issue
       this.listLoading = true
       try {
         await deleteIssueRelation(relation_id)
@@ -103,7 +104,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.loadData()
+        this.loadData()
       } catch (err) {
         console.error(err)
       }

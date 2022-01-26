@@ -54,6 +54,9 @@ export default {
   computed: {
     ...mapGetters(['selectedProjectId'])
   },
+  mounted() {
+    this.getSearchTags()
+  },
   methods: {
     checkToken() {
       if (this.cancelToken) this.cancelToken.cancel()

@@ -23,40 +23,51 @@
           <el-skeleton v-if="props.row.timelineLoading" v-loading="props.row.timelineLoading" />
           <el-timeline v-else>
             <el-timeline-item
-              v-for="(commit, commit_index) in props.row.gitCommitLog"
+              v-for="commit in props.row.gitCommitLog"
               :key="commit.id"
               class="pb-0 !important"
               :hide-timestamp="true"
             >
               <el-collapse
-                v-model="collapseActiveValue"
+                v-model="collapseExpandedRow"
                 class="w-75"
-                :class="commit.issues ? 'hasArrow' : 'noArrow'"
+                :class="isAbled(commit.issues) ? 'hasArrow' : 'noArrow'"
               >
                 <el-collapse-item :name="commit.id">
                   <template slot="title">
-                    <div class="flex justify-between text-base cursor-pointer" style="width: 95%">
-                      <div>
-                        <span
-                          class="text-primary hover-underline"
-                          @click.stop="toGitlab(gitlabCommitUrl(props.row, commit_index))"
-                        >
-                          <svg-icon icon-class="ion-git-commit-outline" />
-                          {{ commit.commit_id }}
-                        </span>
-                        <span>@ {{ commit.author_name }} -</span>
-                        <span
-                          v-for="(id, id_index) in commit.issue_id"
-                          :key="id_index"
-                          class="text-success hover-underline"
-                          @click.stop="toIssueDetail(id)"
-                        >
-                          {{ id }}
-                        </span>
-                        <span>&nbsp;{{ commit.commit_title }}</span>
+                    <el-tooltip
+                      class="item"
+                      effect="light"
+                      :content="commit.commit_title"
+                      placement="bottom"
+                    >
+                      <div
+                        :class="isAbled(commit.issues) ? 'cursor-pointer' : 'initial'"
+                        class="flex justify-between text-base"
+                        style="width: 95%"
+                      >
+                        <div class="ellipsis">
+                          <span
+                            class="text-primary hover-underline cursor-pointer"
+                            @click.stop="toGitlab(commit.gitlab_url)"
+                          >
+                            <svg-icon icon-class="ion-git-commit-outline" />
+                            {{ commit.commit_short_id }}
+                          </span>
+                          <span>@ {{ commit.author_name }} -</span>
+                          <span
+                            v-for="id in commit.issue_id"
+                            :key="id"
+                            :class="commit.issue_hook[id.split('#')[1]] ? 'text-success hover-underline' : 'text-info'"
+                            @click.stop="toIssueDetail(id)"
+                          >
+                            {{ id }}
+                          </span>
+                          <span>&nbsp;{{ commit.commit_title }}</span>
+                        </div>
+                        <div>{{ relativeTime(commit.commit_time) }}</div>
                       </div>
-                      <div>{{ relativeTime(commit.commit_time) }}</div>
-                    </div>
+                    </el-tooltip>
                   </template>
                   <section>
                     <ul
@@ -153,17 +164,11 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import { Table, BasicData, Pagination, SearchBar } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { UTCtoLocalTime } from '@/filters'
-import { getGitCommitLog } from '@/api/dashboard'
+import { getHookByBranch } from '@/api/dashboard'
 import { getIssue } from '@/api/issue'
 import { Status } from '@/components/Issue'
 
 const commitLimit = 10
-const regExp = {
-  pound_sign: new RegExp(/#/),
-  english_alphabets: new RegExp(/[a-zA-Z]/),
-  chinese_words: new RegExp(/[\u4E00-\u9FFF]/),
-  numbers: new RegExp(/[^\d.]/g)
-}
 
 export default {
   name: 'ProgressDevBranch',
@@ -171,8 +176,9 @@ export default {
   mixins: [Table, BasicData, Pagination, SearchBar],
   data() {
     return {
+      branchList: [],
       gitCommitLog: [],
-      collapseActiveValue: [],
+      collapseExpandedRow: [],
       expandedRow: []
     }
   },
@@ -188,32 +194,20 @@ export default {
           : '-'
       }
     },
+    isAbled() {
+      return function (commitIssues) {
+        return commitIssues && commitIssues.length > 0
+      }
+    },
     getIssueId() {
-      return function (title) {
-        const splitArray = title.split(' ')
-        const issue_id = []
-        splitArray.forEach((item) => {
-          if (this.checkRegExp(item)) {
-            const id = item.replace(regExp.numbers, '')
-            if (id) issue_id.push(`#${id}`)
-          }
-        })
+      return function (branch) {
+        let issue_id = []
+        if (branch) {
+          issue_id = Object.keys(branch).map((id) => `#${id}`)
+        }
         return issue_id
       }
     },
-    checkRegExp() {
-      return function (item) {
-        return item.match(regExp.pound_sign) &&
-          !item.match(regExp.english_alphabets) &&
-          !item.match(regExp.chinese_words)
-      }
-    },
-    // getIssueTitle() {
-    //   return function (title) {
-    //     const splitArray = title.split(' ')
-    //     return splitArray.filter((item) => !item.match(regExp.pound_sign)).join(' ')
-    //   }
-    // },
     gitlabActivityUrl() {
       const splitUrl = this.selectedProject.git_url.split('/')
       splitUrl.pop()
@@ -221,30 +215,26 @@ export default {
       splitUrl.push('activity')
       return splitUrl.join('/')
     },
-    gitlabCommitUrl() {
-      return function (row, index) {
-        const splitUrl = row.commit_url.split('/')
-        splitUrl.pop()
-        splitUrl.push(row.gitCommitLog[index].commit_id)
-        return splitUrl.join('/')
-      }
-    },
     tableExpand() {
       return {
         expandedRow: this.expandedRow,
-        collapseActiveValue: this.collapseActiveValue
+        collapseExpandedRow: this.collapseExpandedRow
       }
     }
   },
   watch: {
-    selectedProject: {
-      handler() {
-        this.initTableExpand()
+    // selectedProject: {
+    //   handler() {
+    //     this.initTableExpand()
+    //   },
+    //   deep: true
+    // },
+    branchesByProject: {
+      handler(ary) {
+        this.branchList = JSON.parse(JSON.stringify(ary))
+        this.getStoredData()
       },
       deep: true
-    },
-    branchesByProject(ary) {
-      this.branchList = ary
     },
     listLoading(val) {
       if (!val) this.getStoredData()
@@ -261,12 +251,13 @@ export default {
     ...mapActions('projects', ['getTableExpand', 'setTableExpand']),
     async getStoredData() {
       const storedData = await this.getTableExpand()
-      const { expandedRow, collapseActiveValue } = storedData
+      const { expandedRow, collapseExpandedRow } = storedData
+      if (expandedRow === undefined && collapseExpandedRow === undefined) return
       const rowIndex = this.branchList.findIndex((list) => list.name === expandedRow[0])
       const row = this.branchList[rowIndex]
       if (rowIndex === undefined || row === undefined) return
       this.onExpandChange(row, [row])
-      this.collapseActiveValue = collapseActiveValue
+      this.collapseExpandedRow = collapseExpandedRow
     },
     async fetchData() {
       await this.getBranchesByProject(this.selectedRepositoryId)
@@ -286,38 +277,36 @@ export default {
     },
     initTableExpand() {
       this.expandedRow = []
-      this.collapseActiveValue = []
+      this.collapseExpandedRow = []
     },
     async fetchGitCommitLog(row) {
       this.$set(row, 'timelineLoading', true)
-      this.gitCommitLog = await this.getGitCommitLog(row.name)
+      this.gitCommitLog = await this.getHookByBranch(row.name)
       this.listData.forEach((item) => {
         if (item.name === row.name) item.gitCommitLog = this.gitCommitLog
       })
       this.$set(row, 'timelineLoading', false)
     },
-    async getGitCommitLog(branch_name) {
+    async getHookByBranch(branch_name) {
       const params = {
-        show_commit_rows: commitLimit,
-        git_repository_id: this.selectedRepositoryId,
+        limit: commitLimit,
         branch_name
       }
-      const res = await getGitCommitLog(params)
+      const res = await getHookByBranch(this.selectedProjectId, params)
       await res.data.forEach(async (item, index) => {
         item['id'] = index
-        item['issue_id'] = this.getIssueId(item['commit_title'])
-        // item['issue_title'] = this.getIssueTitle(item['commit_title'])
-        item['issues'] = await this.getIssue(item['issue_id'])
+        item['issue_id'] = this.getIssueId(item['issue_hook'])
+        item['issues'] = await this.getIssue(item['issue_id'], item['issue_hook'])
         item['commit_time'] = UTCtoLocalTime(item['commit_time'])
       })
       return res.data
     },
-    async getIssue(ids) {
+    async getIssue(ids, hooks) {
       if (!ids[0]) return
       const issueData = []
       await ids.forEach(async (id) => {
-        if (id === '#') return
         const issueId = id.split('#')[1]
+        if (!hooks[issueId]) return
         const res = await getIssue(issueId)
         issueData.push(res.data)
       })
@@ -327,7 +316,8 @@ export default {
       this.listQuery = listQuery
     },
     toIssueDetail(tag) {
-      const issueId = tag.toString().match(regExp.pound_sign) ? tag.split('#')[1] : tag
+      const pound = new RegExp(/#/)
+      const issueId = tag.toString().match(pound) ? tag.split('#')[1] : tag
       this.$router.push({ name: 'issue-detail', params: { issueId }})
     },
     toGitlab(url) {
@@ -340,6 +330,15 @@ export default {
 <style lang="scss" scoped>
 .w-75 {
   width: 75%;
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 75%;
+    .text-info {
+      pointer-events: none;
+    }
+  }
 }
 .noArrow {
   >>> .el-collapse-item__arrow {

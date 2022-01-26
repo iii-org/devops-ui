@@ -346,7 +346,7 @@ export default {
       this.listFilterSoftwareData = res.map((items) => items.item)
     },
     handleEdit(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id } })
+      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
     },
     emitAddTopicDialogVisible(visible) {
       this.addTopicDialogVisible = visible
@@ -407,7 +407,7 @@ export default {
       this.form = form
     },
     onRelationIssueDialog(id) {
-      this.$router.push({ name: 'test-plan-detail', params: { issueId: id } })
+      this.$router.push({ name: 'test-plan-detail', params: { issueId: id }})
     },
     async removeTestPlanRelation(file_relation, file_name) {
       this.listLoading = true
