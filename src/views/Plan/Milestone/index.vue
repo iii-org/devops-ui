@@ -459,7 +459,9 @@ export default {
       this.$excel(worksheet, 'WBS')
     },
     momentTime(time) {
-      return time ? this.$dayjs(time).utc().local().fromNow() : '-'
+      const timezoneOffset = this.$dayjs().utcOffset()
+      return time === 'None' ? '-'
+        : this.$dayjs(time).utc().add(timezoneOffset, 'minute').local().fromNow()
     },
     onChangeFixedVersionStatus() {
       this.$emit('change-fixed-version', this.fixed_version_closed)
