@@ -79,6 +79,7 @@
             </template>
           </el-form>
           <el-button
+            v-show="filterValue.tracker === 1"
             slot="reference"
             icon="el-icon-download"
             :disabled="selectedProjectId === -1"
