@@ -145,9 +145,11 @@ export default {
             break
           }
         }
+        if (!this.selectedVersion) this.fetchAllData()
       } else {
         this.clearSelectedVersion()
         this.versionList = []
+        this.fetchAllData()
       }
     },
     onFilterSelection() {
