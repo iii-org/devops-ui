@@ -351,7 +351,7 @@ export const asyncRoutes = [
   {
     path: '/plan/:projectName?/',
     component: Layout,
-    redirect: { name: 'project-management' },
+    redirect: { name: 'Overview' },
     meta: {
       title: 'project-management',
       icon: 'el-icon-edit-outline',
