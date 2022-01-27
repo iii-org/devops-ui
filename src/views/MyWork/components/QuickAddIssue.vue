@@ -151,7 +151,7 @@ export default {
   },
   methods: {
     onSaveClick() {
-      this.formData.tracker_id = this.tracker_id
+      // this.formData.tracker_id = this.tracker_id
       this.$refs.quickAddIssueForm.validate(async (valid) => {
         if (!valid) return
         const sendData = Object.assign({}, this.formData, {
