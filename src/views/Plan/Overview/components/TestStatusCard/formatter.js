@@ -2,17 +2,18 @@ import i18n from '@/lang'
 
 const postmanFormatter = (testResult) => {
   const ret = {}
-  if (Object.keys(testResult).length === 0) {
+  if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'postman',
       runAt: '',
-      informationText: []
+      informationText: [],
+      status: testResult.status
     })
   } else {
-    const { run_at, passed, failed, total } = testResult
+    const { passed, failed, total } = testResult.result
     Object.assign(ret, {
       Software: 'postman',
-      runAt: run_at,
+      runAt: testResult.run_at,
       informationText: [
         { status: i18n.t('Postman.TestPass'), count: passed },
         { status: i18n.t('Postman.TestFail'), count: failed },
@@ -35,13 +36,15 @@ const getCheckmarxStatusText = (status) => {
   return mapText[statusString]
 }
 const checkmarxFormatter = (testResult) => {
-  const { status, report_id, run_at, highSeverity, mediumSeverity, lowSeverity, infoSeverity } = testResult
+  const { highSeverity, mediumSeverity, lowSeverity, infoSeverity } = testResult.result
+  const { report_id } = testResult
+  const status = testResult.status
   const ret = {}
   if (status === 3) {
     Object.assign(ret, {
       Software: 'checkmarx',
       report_id: report_id,
-      runAt: run_at,
+      runAt: testResult.run_at,
       informationText: [
         { status: i18n.t('CheckMarx.HighSeverity'), count: highSeverity },
         { status: i18n.t('CheckMarx.MediumSeverity'), count: mediumSeverity },
@@ -53,30 +56,33 @@ const checkmarxFormatter = (testResult) => {
     Object.assign(ret, {
       Software: 'checkmarx',
       report_id: report_id,
-      runAt: run_at,
-      informationText: []
+      runAt: testResult.run_at,
+      informationText: [],
+      status: testResult.status
     })
   } else {
     Object.assign(ret, {
       Software: 'checkmarx',
       runAt: '',
-      informationText: [{ status: getCheckmarxStatusText(status), count: '' }]
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
+      status: testResult.status
     })
   }
   return ret
 }
 const webinspectFormatter = (testResult) => {
   const ret = {}
-  if (Object.keys(testResult).length === 0) {
+  if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'webinspect',
-      informationText: []
+      informationText: [],
+      status: testResult.status
     })
   } else {
-    const { bpCount, criticalCount, highCount, mediumCount, lowCount, infoCount, run_at } = testResult
+    const { bpCount, criticalCount, highCount, mediumCount, lowCount, infoCount } = testResult.result
     Object.assign(ret, {
       Software: 'webinspect',
-      runAt: run_at,
+      runAt: testResult.run_at,
       informationText: [
         { status: i18n.t('WebInspect.BpSeverity'), count: bpCount },
         { status: i18n.t('WebInspect.Critical'), count: criticalCount },
@@ -91,37 +97,37 @@ const webinspectFormatter = (testResult) => {
 }
 const sonarqubeFormatter = (testResult) => {
   const ret = {}
-  const informationArr = testResult
-    .map((row) => ({ status: row.metric, count: row.value }))
-    .filter((item) => item.status !== 'run_at')
-  const runAtIdx = testResult.findIndex((row) => row.metric === 'run_at')
-  if (Object.keys(testResult).length === 0) {
+  if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'sonarqube',
-      informationText: []
+      informationText: [],
+      status: testResult.status
     })
   } else {
     Object.assign(ret, {
       Software: 'sonarqube',
-      runAt: runAtIdx > -1 ? testResult[runAtIdx].value : undefined,
-      informationText: informationArr.map((row) => ({ status: i18n.t(`SonarQube.${row.status}`), count: row.count }))
+      runAt: testResult['run_at'] > -1 ? testResult['run_at'] : undefined,
+      informationText: Object.keys(testResult.result).map((key) =>
+        ({ status: i18n.t(`SonarQube.${key}`),
+          count: testResult.result[key]
+        }))
     })
   }
   return ret
 }
 const sideexFormatter = (testResult) => {
   const ret = {}
-  if (Object.keys(testResult).length === 0) {
+  if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'sideex',
-      informationText: []
+      informationText: [],
+      status: testResult.status
     })
   } else {
-    const { run_at } = testResult
     const { suitesPassed, suitesTotal, casesPassed, casesTotal } = testResult.result
     Object.assign(ret, {
       Software: 'sideex',
-      runAt: run_at,
+      runAt: testResult.run_at,
       informationText: [
         { status: i18n.t('Sideex.suitesPassedRatio'), count: suitesPassed },
         { status: i18n.t('Sideex.suitesPassedTotal'), count: suitesTotal },
@@ -134,16 +140,17 @@ const sideexFormatter = (testResult) => {
 }
 const zapFormatter = (testResult) => {
   const ret = {}
-  if (Object.keys(testResult).length === 0) {
+  if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'zap',
-      informationText: []
+      informationText: [],
+      status: testResult.status
     })
   } else {
-    const { result, run_at } = testResult
+    const result = testResult.result
     Object.assign(ret, {
       Software: 'zap',
-      runAt: run_at,
+      runAt: testResult.run_at,
       informationText: [
         { status: i18n.t('Zap.high'), count: result['3'] },
         { status: i18n.t('Zap.medium'), count: result['2'] },
@@ -156,16 +163,17 @@ const zapFormatter = (testResult) => {
 }
 const cmasFormatter = (testResult) => {
   const ret = {}
-  if (Object.keys(testResult).length === 0) {
+  if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'cmas',
-      informationText: []
+      informationText: [],
+      status: testResult.status
     })
   } else {
-    const { MOEA, OWASP, run_at } = testResult
+    const { MOEA, OWASP } = testResult.result
     Object.assign(ret, {
       Software: 'cmas',
-      runAt: run_at,
+      runAt: testResult.run_at,
       informationText: [
         { status: 'MOEA', count: MOEA['summary'] },
         { status: 'L3', count: MOEA['High'] },
