@@ -2,11 +2,12 @@ import i18n from '@/lang'
 
 const postmanFormatter = (testResult) => {
   const ret = {}
+  const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'postman',
       runAt: '',
-      informationText: [],
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status: testResult.status
     })
   } else {
@@ -26,12 +27,15 @@ const postmanFormatter = (testResult) => {
 const getCheckmarxStatusText = (status) => {
   const statusString = String(status)
   const mapText = {
-    '-1': i18n.t('CheckMarx.noScan'),
-    '1': i18n.t('CheckMarx.notCompletedScan'),
-    '2': i18n.t('CheckMarx.generatingReportScan'),
-    '4': i18n.t('CheckMarx.canceledScan'),
-    '5': i18n.t('CheckMarx.failedScan'),
-    '6': i18n.t('CheckMarx.removedScan')
+    // '-1': i18n.t('CheckMarx.noScan'),
+    // '1': i18n.t('CheckMarx.notCompletedScan'),
+    // '2': i18n.t('CheckMarx.generatingReportScan'),
+    // '4': i18n.t('CheckMarx.canceledScan'),
+    // '5': i18n.t('CheckMarx.failedScan'),
+    // '6': i18n.t('CheckMarx.removedScan')
+    '-1': i18n.t('CheckMarx.failedScan'),
+    '0': i18n.t('general.NoData'),
+    '2': i18n.t('CheckMarx.Scanning')
   }
   return mapText[statusString]
 }
@@ -40,7 +44,7 @@ const checkmarxFormatter = (testResult) => {
   const { report_id } = testResult
   const status = testResult.status
   const ret = {}
-  if (status === 3) {
+  if (status === 1) {
     Object.assign(ret, {
       Software: 'checkmarx',
       report_id: report_id,
@@ -51,14 +55,6 @@ const checkmarxFormatter = (testResult) => {
         { status: i18n.t('CheckMarx.LowSeverity'), count: lowSeverity },
         { status: i18n.t('CheckMarx.InfoSeverity'), count: infoSeverity }
       ]
-    })
-  } else if (status === -1) {
-    Object.assign(ret, {
-      Software: 'checkmarx',
-      report_id: report_id,
-      runAt: testResult.run_at,
-      informationText: [],
-      status: testResult.status
     })
   } else {
     Object.assign(ret, {
@@ -72,10 +68,11 @@ const checkmarxFormatter = (testResult) => {
 }
 const webinspectFormatter = (testResult) => {
   const ret = {}
+  const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'webinspect',
-      informationText: [],
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status: testResult.status
     })
   } else {
@@ -97,16 +94,17 @@ const webinspectFormatter = (testResult) => {
 }
 const sonarqubeFormatter = (testResult) => {
   const ret = {}
+  const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'sonarqube',
-      informationText: [],
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status: testResult.status
     })
   } else {
     Object.assign(ret, {
       Software: 'sonarqube',
-      runAt: testResult['run_at'] > -1 ? testResult['run_at'] : undefined,
+      runAt: !!testResult['run_at'] > -1 ? testResult['run_at'] : undefined,
       informationText: Object.keys(testResult.result).map((key) =>
         ({ status: i18n.t(`SonarQube.${key}`),
           count: testResult.result[key]
@@ -117,10 +115,11 @@ const sonarqubeFormatter = (testResult) => {
 }
 const sideexFormatter = (testResult) => {
   const ret = {}
+  const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'sideex',
-      informationText: [],
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status: testResult.status
     })
   } else {
@@ -140,10 +139,11 @@ const sideexFormatter = (testResult) => {
 }
 const zapFormatter = (testResult) => {
   const ret = {}
+  const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'zap',
-      informationText: [],
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status: testResult.status
     })
   } else {
@@ -163,10 +163,11 @@ const zapFormatter = (testResult) => {
 }
 const cmasFormatter = (testResult) => {
   const ret = {}
+  const status = testResult.status
   if (Object.keys(testResult.result).length === 0) {
     Object.assign(ret, {
       Software: 'cmas',
-      informationText: [],
+      informationText: [{ status: getCheckmarxStatusText(status), count: '' }],
       status: testResult.status
     })
   } else {
