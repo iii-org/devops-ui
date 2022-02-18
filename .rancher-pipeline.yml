@@ -335,4 +335,4 @@ stages:
   when:
     branch:
       include:
-      - GitGraph
+      - develop
