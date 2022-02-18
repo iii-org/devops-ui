@@ -315,7 +315,7 @@ stages:
   when:
     branch:
       include:
-      - develop
+      - skip
 - name: Test--SideeX
   iiidevops: sideex
   steps:
