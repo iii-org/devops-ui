@@ -244,7 +244,7 @@ stages:
     branch:
       include:
       - master
-      - develop
+      - skip-develop
       - githubwebsocket
       - GitGraph
 - name: Deploy--Wait Web deployment
@@ -269,7 +269,7 @@ stages:
     branch:
       include:
       - master
-      - develop
+      - skip-develop
       - githubwebsocket
       - GitGraph
 - name: Test--ZAP
