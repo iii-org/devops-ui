@@ -100,6 +100,7 @@ stages:
       - skip-develop
       - githubwebsocket
       - GitGraph
+      - develop
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -122,6 +123,7 @@ stages:
       - skip-develop
       - githubwebsocket
       - GitGraph
+      - develop
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -142,6 +144,7 @@ stages:
       include:
       - master
       - GitGraph
+      - develop
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -162,6 +165,7 @@ stages:
       include:
       - master
       - GitGraph
+      - develop
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -182,6 +186,7 @@ stages:
       include:
       - skip-develop
       - GitGraph
+      - develop
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
@@ -202,6 +207,7 @@ stages:
       include:
       - skip-develop
       - GitGraph
+      - develop
 - name: Build--Push image branch:commit_id(githubwebsocket)
   iiidevops: deployed-environments
   steps:
@@ -222,6 +228,7 @@ stages:
       include:
       - githubwebsocket
       - GitGraph
+      - develop
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -247,6 +254,7 @@ stages:
       - skip-develop
       - githubwebsocket
       - GitGraph
+      - develop
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -272,6 +280,7 @@ stages:
       - skip-develop
       - githubwebsocket
       - GitGraph
+      - develop
 - name: Test--ZAP
   iiidevops: zap
   steps:
