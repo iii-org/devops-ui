@@ -351,3 +351,4 @@ stages:
     branch:
       include:
       - develop
+      - GitGraph
