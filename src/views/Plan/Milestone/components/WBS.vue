@@ -412,7 +412,7 @@ export default {
     getParams() {
       // const tracker = this.tracker.find((item) => item.name === 'Epic')
       const result = {
-        // parent_id: 'null',
+        parent_id: 'null',
         with_point: true
         // tracker_id: tracker ? tracker.id : 1
       }
