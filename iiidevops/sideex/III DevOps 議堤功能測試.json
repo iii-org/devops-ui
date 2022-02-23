@@ -29,7 +29,7 @@
                 "options": [
                   {
                     "type": "other",
-                    "value": "http://devops-ui-develop.ingress-dev3.iiidevops.org/#/login?redirect=%2F"
+                    "value": "${target_origin}"
                   }
                 ],
                 "tac": ""
