@@ -51,6 +51,7 @@ stages:
     branch:
       include:
       - master
+      - develop
       - githubwebsocket
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
@@ -70,6 +71,7 @@ stages:
     branch:
       include:
       - master
+      - develop
       - coribranch
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
@@ -179,10 +181,7 @@ stages:
     branch:
       include:
       - develop
-<<<<<<< HEAD
       - githubwebsocket
-=======
->>>>>>> develop
       - GitGraph
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
