@@ -810,7 +810,7 @@ export const asyncRoutes = [
         path: 'postman',
         name: 'postman',
         component: parentBlank,
-        redirect: { name: 'postman' },
+        redirect: { name: 'postman-test' },
         meta: {
           title: 'postman',
           roles: ['Administrator', 'QA', 'Project Manager', 'Engineer']

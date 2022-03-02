@@ -37,6 +37,7 @@ import {
   getRedmineStatus,
   getGitlabStatus,
   getHarborStatus,
+  getHarborCapacity,
   getSonarqubeStatus
 } from '@/api/monitoring'
 
@@ -65,12 +66,13 @@ export default {
     async loadData() {
       this.isLoading = true
       this.listData = listData()
-      const apis = [getRancherStatus, getK8sStatus, getRedmineStatus, getHarborStatus, getSonarqubeStatus, getGitlabStatus]
-      apis.forEach(async api => await this.fetchData(api))
+      const apis = [getHarborStatus, getRancherStatus, getK8sStatus, getRedmineStatus, getSonarqubeStatus, getGitlabStatus]
+      await getHarborStatus().then(async (res) => { if (res.status) apis[0] = getHarborCapacity })
+      apis.forEach(async (api) => await this.fetchData(api))
       this.isLoading = false
     },
     async fetchData(api) {
-      await api().then(res => {
+      await api().then((res) => {
         this.listData.splice(0, 1)
         this.listData.push(this.handleData(res))
       })
@@ -86,6 +88,7 @@ export default {
       })
     },
     handleData(res) {
+      if (res.name === 'Harbor nfs folder storage remain.') { res.name = 'Harbor' }
       const datetime = this.$dayjs().local(res.datetime).format('YYYY-MM-DD HH:mm:ss')
       res.datetime = datetime
       return res

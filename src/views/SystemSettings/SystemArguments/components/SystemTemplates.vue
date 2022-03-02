@@ -1,38 +1,16 @@
 <template>
   <div class="app-container">
-    <el-card
-      v-if="!isLogs" 
-      v-loading="isLoading"
-      :element-loading-text="loadingText"
-    >
+    <el-card v-if="!isLogs" v-loading="isLoading" :element-loading-text="loadingText">
       <div class="text-2xl">{{ $t('SystemTemplates.TemplatesSettings') }}</div>
-      <el-form
-        ref="form"
-        :model="form"
-        :rules="formRules"
-      >
+      <el-form ref="form" :model="form" :rules="formRules">
         <el-row>
-          <el-col
-            :span="24"
-            :sm="12"
-            :md="8"
-            :lg="7"
-          >
-            <el-form-item
-              :label="$t('SystemTemplates.GithubAccount')"
-              prop="value.account"
-            >
-              <el-input
-                v-model="form.value.account"
-                :placeholder="$t('SystemTemplates.GithubAccountPlaceholder')"
-              />
+          <el-col :span="24" :sm="12" :md="8" :lg="7">
+            <el-form-item :label="$t('SystemTemplates.GithubAccount')" prop="value.account">
+              <el-input v-model="form.value.account" :placeholder="$t('SystemTemplates.GithubAccountPlaceholder')" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item
-              label="Github Token"
-              prop="value.token"
-            >
+            <el-form-item label="Github Token" prop="value.token">
               <el-input
                 v-model="form.value.token"
                 :placeholder="$t('SystemTemplates.GithubTokenPlaceholder')"
@@ -46,16 +24,11 @@
               <el-checkbox v-model="form.active">
                 <strong>{{ $t('SystemTemplates.EnableTemplateSync') }}</strong>
               </el-checkbox>
-              <div
-                class="ml-5"
-                style="color: gray;"
-              >
+              <div class="ml-5" style="color: gray">
                 <section>{{ $t('SystemTemplates.TokenWarning') }}</section>
-                <section>{{ $t('SystemTemplates.DocumentUrl') }}:
-                  <el-link
-                    :href="link"
-                    target="_blank"
-                  >{{ link }}</el-link>
+                <section>
+                  {{ $t('SystemTemplates.DocumentUrl') }}:
+                  <el-link :href="link" target="_blank">{{ link }}</el-link>
                 </section>
               </div>
             </el-form-item>
@@ -64,43 +37,28 @@
       </el-form>
       <el-row>
         <el-col :span="8">
-          <el-button
-            icon="ri-terminal-box-line"
-            @click.native="handleExecuteLogs"
-          >
+          <el-button icon="ri-terminal-box-line" @click.native="handleExecuteLogs">
             {{ $t('SystemTemplates.ExecLogsButton') }}
           </el-button>
         </el-col>
         <el-col :span="16" class="text-right">
-          <el-button
-            type="success"
-            icon="el-icon-caret-right"
-            :loading="is_lock"
-            @click="handleUpdate(true)"
-          >
+          <el-button type="success" icon="el-icon-caret-right" :loading="is_lock" @click="handleUpdate(true)">
             {{ $t('general.Run') }}
           </el-button>
-          <el-button
-            type="primary"
-            @click="handleUpdate(false)"
-          >
+          <el-button type="primary" @click="handleUpdate(false)">
             {{ $t('general.Save') }}
           </el-button>
         </el-col>
       </el-row>
     </el-card>
     <el-card v-if="isLogs">
-      <el-button 
-        type="text"
-        icon="el-icon-arrow-left"
-        @click="handleClose"
-      >
+      <el-button type="text" icon="el-icon-arrow-left" @click="handleClose">
         {{ $t('general.Back') }}
       </el-button>
       <span>
         <span class="text-title">{{ $t('SystemTemplates.TemplateSyncExecLogs') }}</span>
-        <em v-if="is_lock" class="el-icon-loading font-bold" style="color: #F89F03" />
-        <em v-else class="el-icon-check font-bold" style="color: #72C040" />
+        <em v-if="is_lock" class="el-icon-loading font-bold" style="color: #f89f03" />
+        <em v-else class="el-icon-check font-bold" style="color: #72c040" />
       </span>
       <el-card
         id="podLogSection"
@@ -120,7 +78,12 @@
 </template>
 
 <script>
-import { getSystemParameter, updateSystemParameter, runSystemParameter, getGithubVerifyStatus } from '@/api/systemParameter'
+import {
+  getSystemParameter,
+  updateSystemParameter,
+  runSystemParameter,
+  getGithubVerifyStatus
+} from '@/api/systemParameter'
 import { BasicData, Table } from '@/newMixins/index'
 import { io } from 'socket.io-client'
 
@@ -269,8 +232,7 @@ export default {
     },
     handleExecuteLogs() {
       this.isLogs = true
-      // this.socket = io(process.env.VUE_APP_BASE_API + '/sync_template/websocket/logs', {
-      this.socket = io('/sync_template/websocket/logs', {
+      this.socket = io(process.env.VUE_APP_WS_API + '/sync_template/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
       })
@@ -279,7 +241,7 @@ export default {
     },
     setLogMessageListener() {
       this.socket.emit('get_perl_log', 'get')
-      this.socket.on('sync_templ_log', sioEvt => {
+      this.socket.on('sync_templ_log', (sioEvt) => {
         const data = sioEvt
         this.setLogMessage(data)
         this.scrollToBottom()

@@ -3,28 +3,15 @@
     <div class="flex justify-between mb-2">
       <div>
         <span class="text-title"><em class="ri-terminal-line mr-3" />{{ podName }}</span>
-        <el-popover
-          placement="top"
-          width="160"
-          trigger="hover"
-        >
+        <el-popover placement="top" width="160" trigger="hover">
           <div>{{ $t('PodsList.ExecuteShellNotify') }}</div>
           <div>ls, ls -al, whoami, hostname, pwd, cd</div>
-          <em
-            slot="reference"
-            class="ri-information-line ml-3"
-          />
+          <em slot="reference" class="ri-information-line ml-3" />
         </el-popover>
       </div>
       <div class="flex items-center">
-        <span
-          class="dot relative"
-          :class="connectStatus"
-        />
-        <span
-          class="dot absolute animate-ping"
-          :class="connectStatus"
-        />
+        <span class="dot relative" :class="connectStatus" />
+        <span class="dot absolute animate-ping" :class="connectStatus" />
         <span class="text-title ml-3">{{ isConnected ? 'Connected' : 'Disconnected' }}</span>
       </div>
     </div>
@@ -97,8 +84,7 @@ export default {
   },
   methods: {
     initSocket() {
-      this.socket = io('/k8s/websocket/pod_exec', {
-        // io(process.env.VUE_APP_BASE_API + '/k8s/websocket/pod_exec', {
+      this.socket = io(process.env.VUE_APP_WS_API + '/k8s/websocket/pod_exec', {
         reconnectionAttempts: 5,
         transports: ['websocket']
       })

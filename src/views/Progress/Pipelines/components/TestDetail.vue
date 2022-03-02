@@ -33,8 +33,8 @@
           <div class="text-title mb-3">
             <em class="el-icon-tickets mr-2" />
             <span class="mr-3">{{ stage.name }}</span>
-            <em v-if="stage.isLoading" class="el-icon-loading font-bold" style="color: #F89F03" />
-            <em v-else class="el-icon-check font-bold" style="color: #72C040" />
+            <em v-if="stage.isLoading" class="el-icon-loading font-bold" style="color: #f89f03" />
+            <em v-else class="el-icon-check font-bold" style="color: #72c040" />
           </div>
           <el-card
             v-for="(step, stepIdx) in stage.steps"
@@ -86,8 +86,7 @@ export default {
       ciPipelineId: 0,
       emitStages: [],
       timer: null,
-      socket: io('/rancher/websocket/logs', {
-      // socket: io(process.env.VUE_APP_BASE_API + '/rancher/websocket/logs', {
+      socket: io(process.env.VUE_APP_WS_API + '/rancher/websocket/logs', {
         reconnectionAttempts: 5,
         transports: ['websocket']
       })
@@ -131,7 +130,7 @@ export default {
       this.socket.emit('get_pipe_log', emitObj)
     },
     setLogMessageListener() {
-      this.socket.on('pipeline_log', sioEvt => {
+      this.socket.on('pipeline_log', (sioEvt) => {
         const { stage_index, step_index, data } = sioEvt
         const stageIdx = stage_index - 1
         if (data === '') {
@@ -177,12 +176,12 @@ export default {
       this.socket.connect()
       try {
         const res = await getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun })
-        this.stages = res.map(stage => ({
+        this.stages = res.map((stage) => ({
           stage_id: stage.stage_id,
           name: stage.name,
           state: stage.state,
           isLoading: true,
-          steps: stage.steps.map(step => ({
+          steps: stage.steps.map((step) => ({
             step_id: step.step_id,
             state: step.state,
             message: 'Loading...'
@@ -204,18 +203,20 @@ export default {
     },
     fetchCiPipelineId() {
       getCiPipelineId(this.selectedRepositoryId)
-        .then(res => {
+        .then((res) => {
           this.ciPipelineId = res.data
         })
-        .catch(err => console.error(err))
+        .catch((err) => console.error(err))
     },
     updateStagesState() {
-      getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun }).then(res => {
-        res.forEach((stage, idx) => {
-          this.stages[idx].state = stage.state
+      getPipelinesConfig(this.selectedRepositoryId, { pipelines_exec_run: this.pipelinesExecRun })
+        .then((res) => {
+          res.forEach((stage, idx) => {
+            this.stages[idx].state = stage.state
+          })
+          this.setTimer()
         })
-        this.setTimer()
-      }).catch(() => ({}))
+        .catch(() => ({}))
     },
     handleClose() {
       this.socket.close()
@@ -226,7 +227,7 @@ export default {
       this.activeStage = ''
     },
     setTimer() {
-      const isActive = this.stages.some(item => item.state === 'Building' || item.state === 'Waiting')
+      const isActive = this.stages.some((item) => item.state === 'Building' || item.state === 'Waiting')
       if (isActive) this.timer = setTimeout(() => this.updateStagesState(), 1000)
     },
     clearTimer() {
@@ -234,7 +235,7 @@ export default {
       this.timer = null
     },
     getBuildingStageIdx() {
-      return this.stages.findIndex(item => item.state === 'Building')
+      return this.stages.findIndex((item) => item.state === 'Building')
     },
     mapStateType(state) {
       const mapping = {

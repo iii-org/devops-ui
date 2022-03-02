@@ -1,5 +1,5 @@
 stages:
-- name: Integration--initial pipeline
+- name: Integration--initial pipeline(Delete APP)
   iiidevops: initial-pipeline
   steps:
   - envFrom:
@@ -10,7 +10,22 @@ stages:
       image: iiiorg/rancher-cli:v2.4.6
       shellScript: curl --location -s --request POST ${api_origin}/rancher/delete_app
         --form project_name=${CICD_GIT_REPO_NAME} --form branch_name=${CICD_GIT_BRANCH}
-        && curl --location -s --request POST ${api_origin}/project/issues_commit_by_name
+  when:
+    branch:
+      include:
+      - master
+      - develop
+      - githubwebsocket
+- name: Integration--initial pipeline(Issue and Code)
+  iiidevops: initial-pipeline
+  steps:
+  - envFrom:
+    - sourceKey: api-origin
+      sourceName: nexus
+      targetKey: api_origin
+    runScriptConfig:
+      image: iiiorg/rancher-cli:v2.4.6
+      shellScript: curl --location -s --request POST ${api_origin}/project/issues_commit_by_name
         --form project_name=${CICD_GIT_REPO_NAME}
   when:
     branch:
@@ -124,9 +139,7 @@ stages:
     branch:
       include:
       - master
-      - githubwebsocket
       - GitGraph
-      - develop
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -146,9 +159,7 @@ stages:
     branch:
       include:
       - master
-      - githubwebsocket
       - GitGraph
-      - develop
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -168,7 +179,10 @@ stages:
     branch:
       include:
       - develop
+<<<<<<< HEAD
       - githubwebsocket
+=======
+>>>>>>> develop
       - GitGraph
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
@@ -210,7 +224,6 @@ stages:
       include:
       - githubwebsocket
       - GitGraph
-      - develop
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
