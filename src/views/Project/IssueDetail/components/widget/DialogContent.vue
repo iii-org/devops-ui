@@ -251,7 +251,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables';
+@import 'src/styles/theme/variables.scss';
 
 .detail {
   font-size: 0.875em;

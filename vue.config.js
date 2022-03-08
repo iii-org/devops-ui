@@ -7,6 +7,7 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
+const theme = process.env.VUE_APP_THEME_PATH || 'default'
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -49,7 +50,8 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src'),
+        'themePath': resolve(`src/styles/theme/${theme}`)
       }
     }
   },

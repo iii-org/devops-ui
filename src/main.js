@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'remixicon/fonts/remixicon.css'
 import i18n, { getLanguage } from './lang'
 import VueGtag from 'vue-gtag'
-import '@/styles/index.scss'
+import '@/styles/theme/index.scss'
 import permission from '@/directive/permission/index.js'
 
 import App from './App'

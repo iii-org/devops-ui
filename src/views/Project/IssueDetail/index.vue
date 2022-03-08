@@ -1066,7 +1066,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import 'src/styles/theme/variables.scss';
 
 .issueHeight {
   height: calc(95vh - 50px - 81px - 40px - 32px);

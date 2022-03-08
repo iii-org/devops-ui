@@ -579,7 +579,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../styles/variables';
+@import 'src/styles/theme/variables.scss';
 
 .app-container {
   @apply h-screen overflow-hidden;

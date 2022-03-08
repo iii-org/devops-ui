@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import 'src/styles/theme/variables.scss';
 
 .point {
   @apply w-2.5 h-2.5 mr-1 rounded-lg inline-block;

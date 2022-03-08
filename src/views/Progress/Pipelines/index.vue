@@ -358,7 +358,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables';
+@import 'src/styles/theme/variables.scss';
 
 .icon {
   font-size: x-large;
