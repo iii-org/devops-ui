@@ -122,7 +122,7 @@ stages:
       dockerfilePath: ./Dockerfile
       pushRemote: true
       registry: harbor-dev3.iiidevops.org
-      tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_BRANCH}
+      tag: ${CICD_GIT_REPO_NAME}/${CICD_GIT_BRANCH}:${CICD_GIT_COMMIT}
   when:
     branch:
       include:
