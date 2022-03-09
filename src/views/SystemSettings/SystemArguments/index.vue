@@ -12,6 +12,9 @@
     <el-tab-pane :label="$t('System.SystemTemplates')" name="templates">
       <SystemTemplates ref="templates" />
     </el-tab-pane>
+    <el-tab-pane :label="$t('System.SystemConfigs')" name="configs">
+      <SystemConfigs ref="configs" />
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -20,10 +23,17 @@ import SystemSecrets from './components/SystemSecrets'
 import SystemRegistry from './components/SystemRegistry'
 import RedmineMail from './components/RedmineMail'
 import SystemTemplates from './components/SystemTemplates'
+import SystemConfigs from './components/SystemConfigs'
 
 export default {
   name: 'SystemArguments',
-  components: { SystemRegistry, SystemSecrets, RedmineMail, SystemTemplates },
+  components: {
+    SystemRegistry,
+    SystemSecrets,
+    RedmineMail,
+    SystemTemplates,
+    SystemConfigs
+  },
   data() {
     return {
       activeName: 'secrets'
