@@ -2,7 +2,7 @@
 <template>
   <el-table-column align="center" v-bind="$props">
     <template slot-scope="scope">
-      <el-tooltip placement="top" :open-delay="200" :content="scope.row[prop] | UTCtoLocalTime">
+      <el-tooltip placement="top" :disabled="!scope.row[prop]" :open-delay="200" :content="scope.row[prop] | UTCtoLocalTime">
         <span>{{ scope.row[prop] | relativeTime }}</span>
       </el-tooltip>
     </template>

@@ -4,13 +4,13 @@
       <SearchFilter
         ref="filter"
         :keyword.sync="keyword"
-        @changeFilter="loadData"
+        @changeFilter="fetchData"
       />
     </div>
     <el-divider />
     <el-table
       v-loading="listLoading"
-      :data="pagedData"
+      :data="listData"
       :element-loading-text="$t('Loading')"
       height="calc(100vh - 300px)"
       fit
@@ -45,6 +45,7 @@
               <!-- gitlab button -->
               <el-popover
                 v-if="scope.row.git_url"
+                :disabled="scope.row.disabled || scope.row.is_lock"
                 class="mr-1"
                 placement="top"
                 width="400"
@@ -80,6 +81,7 @@
                 </div>
                 <el-link
                   slot="reference"
+                  :disabled="scope.row.disabled || scope.row.is_lock"
                   :underline="false"
                   style="font-size: 22px"
                 >
@@ -93,6 +95,7 @@
                 class="mr-1"
                 style="font-size: 22px"
                 :underline="false"
+                :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.redmine_url"
               >
                 <svg-icon icon-class="redmine" />
@@ -103,6 +106,7 @@
                 target="_blank"
                 style="font-size: 22px"
                 :underline="false"
+                :disabled="scope.row.disabled || scope.row.is_lock"
                 :href="scope.row.harbor_url"
               >
                 <svg-icon icon-class="harbor" />
@@ -112,6 +116,7 @@
               <el-link
                 type="primary"
                 :underline="false"
+                :disabled="scope.row.disabled || scope.row.is_lock"
                 @click="handleClick(scope.row)"
               >
                 {{ scope.row.display }}
@@ -131,8 +136,11 @@
         align="center"
         :label="$t('Project.WorkloadValue')"
         width="120"
-        prop="issues"
-      />
+      >
+        <template slot-scope="scope">
+          {{ scope.row.issues >= 0 ? scope.row.issues : '-' }}
+        </template>
+      </el-table-column>
       <el-table-column-time
         prop="next_d_time"
         :label="$t('Project.UpcomingDeadline')"
@@ -160,6 +168,7 @@
       >
         <template slot-scope="scope">
           <el-tag
+            v-if="scope.row.last_test_result !== undefined"
             class="el-tag--circle"
             :type="returnTagType(scope.row)"
             size="large"
@@ -175,6 +184,7 @@
             />
             <span>{{ testResults(scope.row) }}</span>
           </el-tag>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -187,9 +197,19 @@
         :label="$t('ProjectSettings.Status')"
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.disabled ? 'danger' : 'success'">
-            {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
-          </el-tag>
+          <el-tooltip 
+            placement="bottom" 
+            :disabled="(!permission(scope.row)) || scope.row.is_lock!==true"
+            :open-delay="200" 
+            :content="scope.row.lock_reason"
+          >
+            <el-tag v-if="scope.row.is_lock" type="info">
+              {{ $t('errorDetail.locked') }}
+            </el-tag>
+            <el-tag v-else :type="scope.row.disabled ? 'danger' : 'success'">
+              {{ scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+            </el-tag>
+          </el-tooltip>
         </template>
       </el-table-column>
       <template slot="empty">
@@ -197,10 +217,10 @@
       </template>
     </el-table>
     <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
+      :total="projectListTotal"
+      :page="params.page"
+      :limit="params.limit"
+      :page-sizes="[params.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
@@ -211,8 +231,14 @@
 import { mapActions, mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
-import { deleteStarProject, postStarProject } from '@/api/projects'
+import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
 import SearchFilter from '@/views/Overview/ProjectList/components/SearchFilter'
+
+const params = () => ({
+  limit: 10,
+  offset: 0,
+  test_result: true
+})
 
 export default {
   name: 'ProjectListRD',
@@ -220,41 +246,109 @@ export default {
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {
-      searchKeys: ['display', 'name', 'owner_name']
+      searchKeys: ['display', 'name', 'owner_name'],
+      params: params(),
+      listData: []
     }
   },
   computed: {
-    ...mapGetters(['projectList', 'projectListTotal', 'userProjectList'])
+    ...mapGetters(['userId', 'userRole', 'projectList', 'projectListTotal', 'userProjectList'])
+  },
+  watch: {
+    keyword(val) {
+      if (val !== null) {
+        if (val.length > 2 || val === '') {
+          this.params.offset = 0
+          this.params.limit = 10
+          this.params.search = this.keyword
+          this.fetchData()
+        }
+      } else this.keyword = ''
+    }
   },
   mounted() {
-    this.loadData()
+    this.fetchData()
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
     async fetchData() {
       this.listLoading = true
-      let params = {}
-      if (this.$refs.filter) params = this.getParams()
-      await this.getMyProjectList(params)
+      if (this.$refs.filter) this.getParams()
+      await this.getMyProjectList(this.params)
       this.listLoading = false
+      if (this.projectList.length > 0) {
+        this.getCalculateProjectData(this.projectList)
+      }
+      this.listData = this.projectList
       return this.projectList
     },
     getParams() {
-      const params = {}
-      this.$refs.filter.isDisabled.length === 1
-        ? (params.disabled = this.$refs.filter.isDisabled[0])
-        : delete params.disabled
-      return params
+      if (this.keyword !== '') {
+        this.params.search = this.keyword
+      } else delete this.params.search
+      if (this.$refs.filter.isDisabled.length === 1) {
+        this.params.disabled = this.$refs.filter.isDisabled[0]
+      } else {
+        delete this.params.disabled
+      }
+    },
+    async getCalculateProjectData(project) {
+      const filteredArray = project.filter(function(obj) {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      const ids = filteredArray.map(function (el) {
+        return el.id
+      })
+      const calculated = (await getCalculateProjectList(ids.join())).data
+      for (const i in calculated.project_list) {
+        calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
+      }
+      const merged = []
+      for (let i = 0; i < this.listData.length; i++) {
+        merged.push({
+          ...this.listData[i],
+          ...calculated.project_list.find(
+            (itmInner) => itmInner.id === this.listData[i].id
+          )
+        })
+      }
+      this.listData = merged
+    },
+    async onPagination(listQuery) {
+      const { limit, page } = listQuery
+      const offset = limit * (page - 1)
+      this.params.offset = offset
+      this.params.limit = limit
+      await this.fetchData()
+      this.initParams()
+    },
+    initParams() {
+      this.params = params()
+    },
+    permission(row) {
+      const { creator_id, owner_id } = row
+      if (this.userRole === 'Administrator') return false
+      if (this.userRole === 'QA') {
+        if (creator_id !== this.userId) return true
+      } else {
+        if (owner_id !== this.userId) return true
+      }
     },
     returnTagType(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'info'
-      return success === total ? 'success' : 'danger'
+      if (row.last_test_result) {
+        const { success, total } = row.last_test_result
+        if (!success || !total) return 'info'
+        return success === total ? 'success' : 'danger'
+      }
     },
     testResults(row) {
-      const { success, total } = row.last_test_result
-      if (!success || !total) return 'No Test'
-      return `${success} / ${total}`
+      if (row.last_test_result) {
+        const { success, total } = row.last_test_result
+        if (!success || !total) return 'No Test'
+        return `${success} / ${total}`
+      } else {
+        return '-'
+      }
     },
     copyUrl(id) {
       const message = this.$t('Notify.Copied')
@@ -266,7 +360,7 @@ export default {
     async setStar(id, star) {
       const message = this.$t('Notify.Updated')
       star ? await postStarProject(id) : await deleteStarProject(id)
-      await this.loadData()
+      await this.fetchData()
       this.showSuccessMessage(message)
     },
     showSuccessMessage(message) {
