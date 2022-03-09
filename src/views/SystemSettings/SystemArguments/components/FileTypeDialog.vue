@@ -21,33 +21,39 @@
           </el-button>
         </div>
       </div>
-      <el-divider class="mb-0" />
+      <el-divider class="my-2" />
       <div v-show="isAdding">
-        <el-form ref="form" :model="form">
+        <el-form ref="form" :model="form" :rules="formRules" size="mini">
           <el-row :gutter="20">
             <el-col :span="24" :sm="12" :md="8" :lg="6">
-              <el-input
-                v-model="form.fileExtension"
-                :placeholder="this.$t('RuleMsg.PleaseInput') + this.$t('SystemConfigs.FileExtension')"
-                type="text"
-                class="mr-3"
-              />
+              <el-form-item prop="fileExtension" class="required">
+                <el-input
+                  v-model="form.fileExtension"
+                  :placeholder="this.$t('RuleMsg.PleaseInput') + this.$t('SystemConfigs.FileExtension')"
+                  type="text"
+                  class="mr-3"
+                />
+              </el-form-item>
             </el-col>
             <el-col :span="24" :sm="12" :md="8" :lg="6">
-              <el-input
-                v-model="form.mimeType"
-                :placeholder="this.$t('RuleMsg.PleaseInput') + 'MIME Type'"
-                type="text"
-                class="mr-3"
-              />
+              <el-form-item prop="mimeType" class="required">
+                <el-input
+                  v-model="form.mimeType"
+                  :placeholder="this.$t('RuleMsg.PleaseInput') + 'MIME Type'"
+                  type="text"
+                  class="mr-3"
+                />
+              </el-form-item>
             </el-col>
             <el-col :span="24" :sm="12" :md="8" :lg="6">
-              <el-input
-                v-model="form.name"
-                :placeholder="this.$t('RuleMsg.PleaseInput') + this.$t('general.Name')"
-                type="text"
-                class="mr-3"
-              />
+              <el-form-item prop="name">
+                <el-input
+                  v-model="form.name"
+                  :placeholder="this.$t('RuleMsg.PleaseInput') + this.$t('general.Name')"
+                  type="text"
+                  class="mr-3"
+                />
+              </el-form-item>
             </el-col>
             <el-col :span="24" :sm="12" :md="8" :lg="6">
               <el-form-item>
@@ -63,82 +69,126 @@
         </el-form>
       </div>
     </template>
-    <el-table
-      :data="pagedData"
-      border
-      size="mini"
-      style="width: 100%"
-    >
-      <el-table-column
-        type="index"
-        :label="$t('general.Index')"
-        align="center"
-        width="100"
-      />
-      <el-table-column
-        prop="name"
-        :label="$t('general.Name')"
-        width="100"
-      />
-      <el-table-column
-        prop="mimeType"
-        label="MIME Type"
-      />
-      <el-table-column
-        prop="fileExtension"
-        :label="$t('SystemConfigs.FileExtension')"
-        width="100"
-      />
-      <el-table-column
-        :label="$t('general.Actions')"
-        align="center"
-        width="150"
+    <el-form ref="formTable" :model="formTable" :rules="formRules" size="mini">
+      <el-table
+        :data="formTable.pagedData"
+        border
+        size="mini"
+        style="width: 100%"
       >
-        <template slot-scope="scope">
-          <div v-if="!isEditing">
-            <el-button
-              size="mini"
-              type="primary"
-              icon="el-icon-edit"
-              circle
-              @click="handleEdit(scope.row)"
-            />
-            <el-popconfirm
-              confirm-button-text="Delete"
-              cancel-button-text="Cancel"
-              icon="el-icon-info"
-              icon-color="red"
-              title="Are you sure?"
-              @confirm="handleDelete(scope.row.name)"
+        <el-table-column
+          prop="index"
+          :label="$t('general.Index')"
+          align="center"
+          width="100"
+        />
+        <el-table-column
+          prop="name"
+          :label="$t('general.Name')"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <el-form-item
+              v-show="scope.row.edit"
+              :prop="'pagedData.'+ scope.$index +'.name'"
+              :rules="formTableRules.name"
             >
+              <el-input
+                v-model="scope.row.name"
+                type="text"
+              />
+            </el-form-item>
+            <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="mimeType"
+          label="MIME Type"
+        >
+          <template slot-scope="scope">
+            <el-form-item
+              v-show="scope.row.edit"
+              :prop="'pagedData.'+ scope.$index +'.mimeType'"
+              :rules="formTableRules.mimeType"
+            >
+              <el-input
+                v-model="scope.row.mimeType"
+                type="text"
+              />
+            </el-form-item>
+            <span v-show="!scope.row.edit">{{ scope.row.mimeType }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="fileExtension"
+          :label="$t('SystemConfigs.FileExtension')"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <el-form-item
+              v-show="scope.row.edit"
+              :prop="'pagedData.'+ scope.$index +'.fileExtension'"
+              :rules="formTableRules.fileExtension"
+            >
+              <el-input
+                v-model="scope.row.fileExtension"
+                type="text"
+              />
+            </el-form-item>
+            <span v-show="!scope.row.edit">{{ scope.row.fileExtension }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('general.Actions')"
+          align="center"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <div v-show="!scope.row.edit">
               <el-button
-                slot="reference"
+                size="mini"
+                type="primary"
+                icon="el-icon-edit"
+                circle
+                @click="handleEdit(scope)"
+              />
+              <el-popconfirm
+                confirm-button-text="Delete"
+                cancel-button-text="Cancel"
+                icon="el-icon-info"
+                icon-color="red"
+                title="Are you sure?"
+                @confirm="handleDelete(scope)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                  circle
+                />
+              </el-popconfirm>
+            </div>
+            <div v-show="scope.row.edit">
+              <el-button
+                size="mini"
+                type="primary"
+                icon="el-icon-check"
+                circle
+                @click="handleSaveFile(scope)"
+              />
+              <el-button
                 size="mini"
                 type="danger"
-                icon="el-icon-delete"
+                icon="el-icon-close"
                 circle
+                @click="handleCancelFile(scope)"
               />
-            </el-popconfirm>
-          </div>
-          <div v-else>
-            <el-button
-              size="mini"
-              type="primary"
-              icon="el-icon-check"
-              circle
-              @click="handleSaveFile(scope.row)"
-            />
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-close"
-              circle
-              @click="handleCancelFile(scope.row)"
-            />
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-form>
     <Pagination
       :total="filteredData.length"
       :page="listQuery.page"
@@ -147,13 +197,6 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
-
-    <!-- <span slot="footer" class="dialog-footer">
-      <el-button id="dialog-btn-cancel" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-      <el-button id="dialog-btn-confirm" type="primary" :loading="confirmLoading" @click="handleConfirm">
-        {{ $t('general.Confirm') }}
-      </el-button>
-    </span> -->
   </el-dialog>
 </template>
 
@@ -170,9 +213,38 @@ export default {
     return {
       dialogVisible: false,
       isAdding: false,
-      isEditing: false,
+      rowCache: null,
+      originData: [],
+      isSaved: true,
       form: {
-        name: ''
+        fileExtension: '',
+        mimeType: ''
+      },
+      formRules: {
+        fileExtension: [{
+          required: true,
+          message: 'Please input File Extension',
+          trigger: 'blur'
+        }],
+        mimeType: [{
+          required: true,
+          message: 'Please input Mime Type',
+          trigger: 'blur'
+        }]
+      },
+      formTableRules: {
+        fileExtension: [{
+          validator: this.validate,
+          trigger: 'blur'
+        }],
+        mimeType: [{
+          validator: this.validate,
+          trigger: 'blur'
+        }],
+        name: [{
+          validator: this.validate,
+          trigger: 'blur'
+        }]
       },
       confirmLoading: false
     }
@@ -180,23 +252,65 @@ export default {
   computed: {
     fileData() {
       return Object.entries(allowedTypeMap()).map((item, index) => ({
-        name: '123',
+        index: index + 1,
+        name: 'Microsoft Office',
         mimeType: item[0],
-        fileExtension: item[1]
+        fileExtension: item[1],
+        edit: false
       }))
+    },
+    formTable() {
+      return { pagedData: this.pagedData }
     }
   },
   methods: {
     async fetchData() {
+      this.setOriginData(this.fileData)
       return this.fileData
     },
-    handleEdit(row) {
-      this.isEditing = true
+    validate (rule, value, callback) {
+      const i = rule.field.split('.')[1]
+      const type = rule.field.split('.')[2]
+      if (value !== this.originData[i][type]) {
+        this.isSaved = false
+        callback(new Error('not saved'))
+      } else {
+        this.isSaved = true
+        callback()
+      }
     },
-    handleSaveFile(row) {
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
     },
-    handleCancelFile(row) {
-      this.isEditing = false
+    handleEdit(scope) {
+      if (this.isSaved) {
+        if (this.rowCache) {
+          const i = this.rowCache.index - 1
+          this.rowCache.edit = false
+          this.rowCache.name = this.originData[i].name
+          this.rowCache.mimeType = this.originData[i].mimeType
+          this.rowCache.fileExtension = this.originData[i].fileExtension
+        }
+        scope.row.edit = true
+        this.rowCache = scope.row
+        this.$refs['formTable'].clearValidate()
+      }
+    },
+    handleSaveFile(scope) {
+      const i = scope.$index
+      scope.row.name = this.originData[i].name
+      scope.row.mimeType = this.originData[i].mimeType
+      scope.row.fileExtension = this.originData[i].fileExtension
+      scope.row.edit = false
+      this.isSaved = true
+    },
+    handleCancelFile(scope) {
+      const i = scope.$index
+      scope.row.name = this.originData[i].name
+      scope.row.mimeType = this.originData[i].mimeType
+      scope.row.fileExtension = this.originData[i].fileExtension
+      scope.row.edit = false
+      this.isSaved = true
     },
     async handleDelete(secretName) {
       this.listLoading = true
@@ -218,11 +332,33 @@ export default {
       this.isAdding = true
     },
     async handleConfirm() {
-
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          // this.listLoading = true
+          // this.confirmLoading = true
+          // const sendData = {
+          //   name: this.formData.name,
+          //   type: this.formData.type,
+          //   data: this.formData.data.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
+          // }
+          // try {
+          //   await addSystemSecret(sendData)
+          //   await this.loadData()
+          //   this.dialogVisible = false
+          // } catch (error) {
+          //   console.error(error)
+          // }
+          // this.listLoading = false
+          // this.confirmLoading = false
+        } else {
+          return false
+        }
+      })
     },
     handleCancel() {
       this.initForm()
       this.isAdding = false
+      this.$refs['form'].clearValidate()
     },
     onDialogClosed() {
       this.$nextTick(() => {
@@ -237,5 +373,16 @@ export default {
 <style lang="scss" scoped>
 >>> .el-dialog__body {
   padding-top: 0;
+}
+
+>>> .required:before {
+  display: inline-block;
+  content:'*';
+  color:#ff4949;
+  margin-right: 4px;
+}
+
+>>> .el-form-item__content {
+  display: inline-block;
 }
 </style>

@@ -67,7 +67,7 @@
           <el-button
             v-else
             size="mini"
-            @click="handleActiveClick(scope.row)"
+            @click="handleActive(scope.row)"
           >
             <div class="flex items-center">
               <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
@@ -139,7 +139,7 @@ export default {
     handleEdit(row) {
       this.$refs['FileTypeDialog'].dialogVisible = true
     },
-    async handleDelete(secretName) {
+    async handleActive(secretName) {
       this.listLoading = true
       try {
         // await deleteSystemSecret(secretName)
@@ -148,9 +148,6 @@ export default {
         console.error(error)
       }
       this.listLoading = false
-    },
-    async handleConfirm() {
-
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
