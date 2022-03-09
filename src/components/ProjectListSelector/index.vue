@@ -272,8 +272,11 @@ export default {
         this.showNoProjectWarning()
         return []
       }
-      const starred = this.projectOptions.filter((item) => item.starred)
-      const projects = this.projectOptions.filter((item) => !item.starred)
+      const filteredArray = this.projectOptions.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      const starred = filteredArray.filter((item) => item.starred)
+      const projects = filteredArray.filter((item) => !item.starred)
       this.categoryProjectList = [
         {
           label: this.$t('Project.Starred'),
