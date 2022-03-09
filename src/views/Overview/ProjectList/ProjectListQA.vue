@@ -361,17 +361,17 @@ export default {
       this.listLoading = true
       await this.getMyProjectList(this.params)
       this.listLoading = false
-      if (this.projectList.length > 0) {
-        this.getCalculateProjectData(this.projectList)
-      }
       this.listData = this.projectList
+      const filteredArray = this.projectList.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      if (filteredArray.length > 0) {
+        this.getCalculateProjectData(filteredArray)
+      }
       return this.projectList
     },
     async getCalculateProjectData(project) {
-      const filteredArray = project.filter(function(obj) {
-        return obj.is_lock !== true && obj.disabled !== true
-      })
-      const ids = filteredArray.map(function (el) {
+      const ids = project.map(function (el) {
         return el.id
       })
       const calculated = (await getCalculateProjectList(ids.join())).data

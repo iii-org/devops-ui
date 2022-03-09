@@ -370,10 +370,13 @@ export default {
       if (this.$refs.filter) this.getParams()
       await this.getMyProjectList(this.params)
       this.listLoading = false
-      if (this.projectList.length > 0) {
-        this.getCalculateProjectData(this.projectList)
-      }
       this.listData = this.projectList
+      const filteredArray = this.projectList.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      if (filteredArray.length > 0) {
+        this.getCalculateProjectData(filteredArray)
+      }
       return this.projectList
     },
     getParams() {
@@ -387,10 +390,7 @@ export default {
       }
     },
     async getCalculateProjectData(project) {
-      const filteredArray = project.filter(obj => {
-        return obj.is_lock !== true && obj.disabled !== true
-      })
-      const ids = filteredArray.map(function (el) {
+      const ids = project.map(function (el) {
         return el.id
       })
       const calculated = (await getCalculateProjectList(ids.join())).data
@@ -405,6 +405,12 @@ export default {
             (itmInner) => itmInner.id === this.listData[i].id
           )
         })
+      }
+      if (Object.prototype.hasOwnProperty.call(calculated, 'broken_project_id')) {
+        for (const i in calculated.broken_project_id) {
+          const dataIndex = merged.findIndex((x) => x.id === i)
+          merged[dataIndex].is_lock = true
+        }
       }
       this.listData = merged
     },
