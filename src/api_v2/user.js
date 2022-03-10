@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 import User from '@/data/user'
 
 export const login = (data) => request.post('/v2/user/login', data)

@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getCommitListByBranch = (repository_id, params) =>
   request.get(`/v2/repositories/${repository_id}/commits`, { params })

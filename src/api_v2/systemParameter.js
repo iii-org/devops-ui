@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getSystemParameter = () => request.get(`/v2/system_parameter`)
 export const updateSystemParameter = (param_id, data) => request.put(`/v2/system_parameter/${param_id}`, data)

@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getCheckMarxScans = (project_id) => request.get(`/v2/checkmarx/scans/${project_id}`)
 export const getCheckMarxScanStatus = (scan_id) => request.get(`/v2/checkmarx/scan_status/${scan_id}`)

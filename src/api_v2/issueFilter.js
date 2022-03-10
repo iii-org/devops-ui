@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getIssueFilter = (project_id) => request.get(`/v2/project/${project_id}/issue_filter`)
 export const addIssueFilter = (project_id, data) => request.post(`/v2/project/${project_id}/issue_filter`, data)

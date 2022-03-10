@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getWikiList = (project_id) => request.get(`/v2/project/${project_id}/wiki`)
 export const getWikiDetail = (project_id, wiki_title) => request.get(`/v2/project/${project_id}/wiki/${wiki_title}`)

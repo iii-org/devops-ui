@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getDevopsVersion = () => request.get(`/v2/devops_version/check`)
 export const updateDevopsVersion = () => request.patch(`/v2/devops_version/update`)

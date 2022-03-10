@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getTemplateList = (params) => request.get('/v2/template_list', { params })
 export const getTemplateParams = (git_project_id) => request.get(`/v2/template/${git_project_id}`)
