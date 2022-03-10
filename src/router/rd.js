@@ -1,5 +1,3 @@
-import Layout from '@/layout'
-import parentBlank from '@/layout/components/parentBlank'
 
 const rdRoute = [
   // 首頁
@@ -14,7 +12,7 @@ const rdRoute = [
   // 我的工作
   {
     path: '/my-work/:projectName?',
-    component: Layout,
+    component: 'layout',
     meta: {
       roles: ['Engineer']
     },
@@ -22,7 +20,7 @@ const rdRoute = [
       {
         path: '',
         name: 'my-works',
-        component: () => import('@/views/MyWork'),
+        component: 'views/MyWork',
         meta: {
           title: 'myWork',
           icon: 'el-icon-s-home',
@@ -34,13 +32,13 @@ const rdRoute = [
   // 專案列表
   {
     path: '/project-list',
-    component: Layout,
+    component: 'layout',
     meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
         name: 'project-list',
-        component: () => import('@/views/Overview/ProjectList/ProjectListRD'),
+        component: 'views/Overview/ProjectList/ProjectListRD',
         meta: { title: 'projectList', icon: 'list', roles: ['Engineer'] }
       }
     ]
@@ -48,7 +46,7 @@ const rdRoute = [
   // 工作執行
   {
     path: '/project/:projectName?/',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Overview' },
     meta: {
       title: 'works',
@@ -59,19 +57,19 @@ const rdRoute = [
       {
         path: 'issue-boards',
         name: 'issue-boards',
-        component: () => import('@/views/Project/IssueBoards'),
+        component: 'views/Project/IssueBoards',
         meta: { title: 'kanban', roles: ['Engineer'] }
       },
       {
         path: 'issues',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'issueList' },
         children: [
           {
             path: '',
             name: 'issue-list',
             hidden: true,
-            component: () => import('@/views/Project/IssueList'),
+            component: 'views/Project/IssueList',
             meta: {
               roles: ['Engineer']
             }
@@ -80,7 +78,7 @@ const rdRoute = [
             path: ':issueId',
             name: 'issue-detail',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Engineer'],
@@ -93,31 +91,31 @@ const rdRoute = [
       {
         path: 'notes',
         name: 'wiki-list',
-        component: () => import('@/views/Project/Wiki'),
+        component: 'views/Project/Wiki',
         meta: { title: 'wikiList', roles: ['Engineer'] }
       },
       {
         path: 'files',
         name: 'file-list',
-        component: () => import('@/views/Project/Files'),
+        component: 'views/Project/Files',
         meta: { title: 'fileList', roles: ['Engineer'] }
       },
       {
         path: 'roadmap',
         name: 'Project Roadmap',
-        component: () => import('@/views/Project/Roadmap'),
+        component: 'views/Project/Roadmap',
         meta: { title: 'Project Roadmap', roles: ['Engineer'] }
       },
       {
         path: 'release-version',
         redirect: { name: 'release-version' },
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'releaseVersion', roles: ['Engineer'] },
         children: [
           {
             path: '',
             name: 'release-version',
-            component: () => import('@/views/Project/ReleaseVersion'),
+            component: 'views/Project/ReleaseVersion',
             hidden: true,
             meta: {
               roles: ['Engineer']
@@ -127,7 +125,7 @@ const rdRoute = [
             path: ':issueTag',
             name: 'closed-issue-list',
             hidden: true,
-            component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
+            component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
               title: 'Issue Detail',
               roles: ['Engineer'],
@@ -139,13 +137,13 @@ const rdRoute = [
       {
         path: 'deploy',
         redirect: { name: 'deploy' },
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'deploy', roles: ['Engineer'] },
         children: [
           {
             path: '',
             name: 'deploy',
-            component: () => import('@/views/Project/Deploy'),
+            component: 'views/Project/Deploy',
             meta: {
               title: 'deploy',
               roles: ['Engineer']
@@ -158,7 +156,7 @@ const rdRoute = [
   // 開發進度
   {
     path: '/progress/:projectName?/',
-    component: Layout,
+    component: 'layout',
     name: 'progress',
     redirect: { name: 'dev-environment' },
     meta: {
@@ -170,32 +168,32 @@ const rdRoute = [
       {
         path: 'dev-branch',
         name: 'dev-branch',
-        component: () => import('@/views/Progress/DevBranch'),
+        component: 'views/Progress/DevBranch',
         meta: { title: 'devBranch', roles: ['Engineer'] }
       },
       // {
       //   path: 'git-graph',
       //   name: 'git-graph',
-      //   component: () => import('@/views/Progress/GitGraph'),
+      //   component: 'views/Progress/GitGraph',
       //   meta: { title: 'gitGraph', roles: ['Engineer'] }
       // },
       {
         path: 'pipelines',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'pipelines', roles: ['Engineer'] },
         children: [
           {
             path: '',
             name: 'Pipelines',
             hidden: true,
-            component: () => import('@/views/Progress/Pipelines'),
+            component: 'views/Progress/Pipelines',
             meta: { roles: ['Engineer'] }
           },
           {
             path: 'test-report/:commitId',
             name: 'TestReport',
             hidden: true,
-            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
+            component: 'views/Progress/Pipelines/components/TestReport',
             meta: { title: 'testReport', roles: ['Engineer'] }
           }
         ]
@@ -203,12 +201,12 @@ const rdRoute = [
       {
         path: 'dev-environment',
         name: 'dev-environment',
-        component: () => import('@/views/Progress/DevEnvironment'),
+        component: 'views/Progress/DevEnvironment',
         meta: { title: 'devEnvironment', roles: ['Engineer'] }
       },
       {
         path: 'kubernetes-resources',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           title: 'kubernetesResources',
           roles: ['Engineer']
@@ -217,27 +215,26 @@ const rdRoute = [
           {
             path: '',
             name: 'Kubernetes-resources',
-            component: () => import('@/views/Progress/KubernetesResources'),
+            component: 'views/Progress/KubernetesResources',
             hidden: true
           },
           {
             path: 'pods-list',
             hidden: true,
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             meta: { title: 'Pods List', roles: ['Engineer'] },
             children: [
               {
                 path: '',
                 name: 'Pods List',
                 hidden: true,
-                component: () => import('@/views/Progress/KubernetesResources/components/PodsList')
+                component: 'views/Progress/KubernetesResources/components/PodsList'
               },
               {
                 path: 'pod-execute-shell',
                 name: 'Pod Execute Shell',
                 hidden: true,
-                component: () =>
-                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
+                component: 'views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell',
                 meta: { title: 'Pod Execute Shell', roles: ['Engineer'] }
               }
             ]
@@ -246,7 +243,7 @@ const rdRoute = [
             path: 'service-list',
             name: 'Service List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ServiceList'),
+            component: 'views/Progress/KubernetesResources/components/ServiceList',
             meta: {
               title: 'Service List',
               roles: ['Engineer']
@@ -256,7 +253,7 @@ const rdRoute = [
             path: 'secret-list',
             name: 'Secret List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/SecretList'),
+            component: 'views/Progress/KubernetesResources/components/SecretList',
             meta: {
               title: 'Secret List',
               roles: ['Engineer']
@@ -266,7 +263,7 @@ const rdRoute = [
             path: 'configmaps-list',
             name: 'ConfigMaps List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ConfigMapsList'),
+            component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
             meta: {
               title: 'ConfigMaps List',
               roles: ['Engineer']
@@ -276,7 +273,7 @@ const rdRoute = [
             path: 'deployment-list',
             name: 'Deployment List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/DeploymentList'),
+            component: 'views/Progress/KubernetesResources/components/DeploymentList',
             meta: {
               title: 'Deployment List',
               roles: ['Engineer']
@@ -286,7 +283,7 @@ const rdRoute = [
             path: 'ingresses-list',
             name: 'Ingresses List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/IngressesList'),
+            component: 'views/Progress/KubernetesResources/components/IngressesList',
             meta: {
               title: 'Ingresses List',
               roles: ['Engineer']
@@ -298,7 +295,7 @@ const rdRoute = [
   },
   {
     path: '/commit_list/:rId/:branchName/:projectName',
-    component: Layout,
+    component: 'layout',
     hidden: true,
     meta: { roles: ['Engineer'] },
     children: [
@@ -306,7 +303,7 @@ const rdRoute = [
         path: '',
         name: 'commitList',
         props: true,
-        component: () => import('@/views/Progress/CommitList'),
+        component: 'views/Progress/CommitList',
         meta: { title: 'Commit List', icon: 'tree', roles: ['Engineer'] }
       }
     ]
@@ -315,7 +312,7 @@ const rdRoute = [
   {
     path: '/test/:projectName?/',
     name: 'test',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'test-plan' },
     meta: {
       title: 'testManagement',
@@ -326,7 +323,7 @@ const rdRoute = [
       {
         path: 'test-file',
         name: 'test-file',
-        component: () => import('@/views/Test/TestFile'),
+        component: 'views/Test/TestFile',
         meta: {
           title: 'testFile',
           roles: ['Engineer']
@@ -335,7 +332,7 @@ const rdRoute = [
       {
         path: 'test-plan',
         redirect: '/test/test-plan',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           roles: ['Engineer']
         },
@@ -343,7 +340,7 @@ const rdRoute = [
           {
             path: '',
             name: 'test-plan',
-            component: () => import('@/views/Test/TestPlan'),
+            component: 'views/Test/TestPlan',
             meta: {
               title: 'testPlan',
               roles: ['Engineer']
@@ -353,7 +350,7 @@ const rdRoute = [
             path: 'create',
             name: 'create-test-plan',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Engineer'],
@@ -364,7 +361,7 @@ const rdRoute = [
             path: ':issueId',
             name: 'test-plan-detail',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Engineer'],
@@ -378,7 +375,7 @@ const rdRoute = [
   // 測試紀錄
   {
     path: '/scan/:projectName?/',
-    component: Layout,
+    component: 'layout',
     name: 'scan',
     alwaysShow: true,
     meta: {
@@ -391,31 +388,31 @@ const rdRoute = [
       {
         path: 'sonarqube',
         name: 'sonarqube',
-        component: () => import('@/views/Scan/SonarQube'),
+        component: 'views/Scan/SonarQube',
         meta: { title: 'sonarQube', roles: ['Engineer'] }
       },
       {
         name: 'checkmarx',
         path: 'checkmarx',
-        component: () => import('@/views/Scan/Checkmarx'),
+        component: 'views/Scan/Checkmarx',
         meta: { title: 'checkMarx', roles: ['Engineer'] }
       },
       {
         path: 'zap',
         name: 'zap',
-        component: () => import('@/views/Scan/Zap'),
+        component: 'views/Scan/Zap',
         meta: { title: 'zap', roles: ['Engineer'] }
       },
       {
         path: 'cmas',
         name: 'cmas',
-        component: () => import('@/views/Scan/Cmas'),
+        component: 'views/Scan/Cmas',
         meta: { title: 'cmas', roles: ['Engineer'] }
       },
       {
         path: 'webinspect',
         name: 'webinspect',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         redirect: { name: 'webinspect' },
         meta: { title: 'webInspect', roles: ['Engineer'] },
         children: [
@@ -423,12 +420,12 @@ const rdRoute = [
             path: '',
             name: 'webinspect-scans',
             hidden: true,
-            component: () => import('@/views/Scan/WebInspect')
+            component: 'views/Scan/WebInspect'
           },
           {
             path: 'report/:scan_id',
             name: 'webinspect-report',
-            component: () => import('@/views/Scan/WIEReportViewer'),
+            component: 'views/Scan/WIEReportViewer',
             hidden: true,
             meta: { title: 'webInspectReport', roles: ['Engineer'] }
           }
@@ -437,7 +434,7 @@ const rdRoute = [
       {
         path: 'postman',
         name: 'postman',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         redirect: { name: 'postman-test' },
         meta: {
           title: 'postman',
@@ -448,13 +445,13 @@ const rdRoute = [
             path: '',
             name: 'postman-test',
             hidden: true,
-            component: () => import('@/views/Scan/Postman')
+            component: 'views/Scan/Postman'
           },
           {
             path: 'devops/:id',
             name: 'devops-test-case',
             hidden: true,
-            component: () => import('@/views/Scan/TestCaseDevOps'),
+            component: 'views/Scan/TestCaseDevOps',
             meta: {
               title: 'fromDevops',
               roles: ['Engineer']
@@ -464,7 +461,7 @@ const rdRoute = [
             path: 'postman/:id',
             name: 'postman-test-case',
             hidden: true,
-            component: () => import('@/views/Scan/TestCasePostman'),
+            component: 'views/Scan/TestCasePostman',
             meta: {
               title: 'fromCollection',
               roles: ['Engineer']
@@ -475,7 +472,7 @@ const rdRoute = [
       {
         path: 'sideex',
         name: 'sideex',
-        component: () => import('@/views/Scan/Sideex'),
+        component: 'views/Scan/Sideex',
         meta: { title: 'sideex', roles: ['Engineer'] }
       }
     ]
@@ -483,14 +480,14 @@ const rdRoute = [
   // 個人資料 & 版本資訊
   {
     path: '/profile',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Profile' },
     hidden: true,
     meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/Profile'),
+        component: 'views/Profile',
         name: 'Profile',
         meta: {
           title: 'Profile',
@@ -503,14 +500,14 @@ const rdRoute = [
   },
   {
     path: '/SystemVersion',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'SystemVersion' },
     hidden: true,
     meta: { roles: ['Engineer'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/SystemVersion'),
+        component: 'views/SystemVersion',
         name: 'SystemVersion',
         meta: {
           title: 'System Version',

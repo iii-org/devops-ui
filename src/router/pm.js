@@ -1,5 +1,3 @@
-import Layout from '@/layout'
-import parentBlank from '@/layout/components/parentBlank'
 
 const pmRoute = [
   // 首頁
@@ -14,7 +12,7 @@ const pmRoute = [
   // 我的工作
   {
     path: '/my-work/:projectName?',
-    component: Layout,
+    component: 'layout',
     meta: {
       roles: ['Project Manager']
     },
@@ -22,7 +20,7 @@ const pmRoute = [
       {
         path: '',
         name: 'my-works',
-        component: () => import('@/views/MyWork'),
+        component: 'views/MyWork',
         meta: {
           title: 'myWork',
           icon: 'el-icon-s-home',
@@ -34,13 +32,13 @@ const pmRoute = [
   // 專案列表
   {
     path: '/project-list',
-    component: Layout,
+    component: 'layout',
     meta: { roles: ['Project Manager'] },
     children: [
       {
         path: '',
         name: 'project-list',
-        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
+        component: 'views/Overview/ProjectList/ProjectListPM',
         meta: { title: 'projectList', icon: 'list', roles: ['Project Manager'] }
       }
     ]
@@ -48,7 +46,7 @@ const pmRoute = [
   // 專案管理
   {
     path: '/plan/:projectName?/',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Overview' },
     meta: {
       title: 'project-management',
@@ -59,42 +57,42 @@ const pmRoute = [
       {
         path: 'overview',
         name: 'Overview',
-        component: () => import('@/views/Plan/Overview'),
+        component: 'views/Plan/Overview',
         meta: { title: 'projectOverview', roles: ['Project Manager'] }
       },
       {
         path: 'milestone',
         name: 'milestone',
-        component: () => import('@/views/Plan/Milestone'),
+        component: 'views/Plan/Milestone',
         meta: { title: 'milestone', roles: ['Project Manager'] }
       },
       {
         path: 'traceability-matrix',
         name: 'TraceMatrix',
-        component: () => import('@/views/Plan/TraceabilityMatrix'),
+        component: 'views/Plan/TraceabilityMatrix',
         meta: { title: 'traceabilityMatrix', roles: ['Project Manager'] }
       },
       {
         path: 'settings',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'Project Settings', roles: ['Project Manager'] },
         children: [
           {
             path: '',
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             hidden: true,
             children: [
               {
                 path: '',
                 name: 'Project Settings',
-                component: () => import('@/views/Plan/Settings/index'),
+                component: 'views/Plan/Settings/index',
                 meta: { roles: ['Project Manager'] }
               },
               {
                 path: 'participate-project/:user_id',
                 name: 'ParticipateProject',
                 hidden: true,
-                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
                 meta: { title: 'Participate Project', roles: ['Project Manager'] }
               }
             ]
@@ -103,14 +101,14 @@ const pmRoute = [
             path: 'advance-branch-settings',
             name: 'advance-branch-settings',
             hidden: true,
-            component: () => import('@/views/Plan/Settings/components/AdvanceBranchSettings'),
+            component: 'views/Plan/Settings/components/AdvanceBranchSettings',
             meta: { title: 'advanceBranchSettings', roles: ['Project Manager'] }
           },
           {
             path: 'issue-transfer/:userId',
             name: 'Issue Transfer',
             hidden: true,
-            component: () => import('@/views/Plan/Settings/ProjectIssueTransfer'),
+            component: 'views/Plan/Settings/ProjectIssueTransfer',
             meta: { title: 'Issue Transfer', roles: ['Project Manager'] }
           }
         ]
@@ -120,7 +118,7 @@ const pmRoute = [
   // 工作執行
   {
     path: '/project/:projectName?/',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Overview' },
     meta: {
       title: 'works',
@@ -131,19 +129,19 @@ const pmRoute = [
       {
         path: 'issue-boards',
         name: 'issue-boards',
-        component: () => import('@/views/Project/IssueBoards'),
+        component: 'views/Project/IssueBoards',
         meta: { title: 'kanban', roles: ['Project Manager'] }
       },
       {
         path: 'issues',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'issueList' },
         children: [
           {
             path: '',
             name: 'issue-list',
             hidden: true,
-            component: () => import('@/views/Project/IssueList'),
+            component: 'views/Project/IssueList',
             meta: {
               roles: ['Project Manager']
             }
@@ -152,7 +150,7 @@ const pmRoute = [
             path: ':issueId',
             name: 'issue-detail',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Project Manager'],
@@ -165,31 +163,31 @@ const pmRoute = [
       {
         path: 'notes',
         name: 'wiki-list',
-        component: () => import('@/views/Project/Wiki'),
+        component: 'views/Project/Wiki',
         meta: { title: 'wikiList', roles: ['Project Manager'] }
       },
       {
         path: 'files',
         name: 'file-list',
-        component: () => import('@/views/Project/Files'),
+        component: 'views/Project/Files',
         meta: { title: 'fileList', roles: ['Project Manager'] }
       },
       {
         path: 'roadmap',
         name: 'Project Roadmap',
-        component: () => import('@/views/Project/Roadmap'),
+        component: 'views/Project/Roadmap',
         meta: { title: 'Project Roadmap', roles: ['Project Manager'] }
       },
       {
         path: 'release-version',
         redirect: { name: 'release-version' },
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'releaseVersion', roles: ['Project Manager'] },
         children: [
           {
             path: '',
             name: 'release-version',
-            component: () => import('@/views/Project/ReleaseVersion'),
+            component: 'views/Project/ReleaseVersion',
             hidden: true,
             meta: {
               roles: ['Project Manager']
@@ -199,7 +197,7 @@ const pmRoute = [
             path: ':issueTag',
             name: 'closed-issue-list',
             hidden: true,
-            component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
+            component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
               title: 'Issue Detail',
               roles: ['Project Manager'],
@@ -211,13 +209,13 @@ const pmRoute = [
       {
         path: 'deploy',
         redirect: { name: 'deploy' },
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'deploy', roles: ['Project Manager'] },
         children: [
           {
             path: '',
             name: 'deploy',
-            component: () => import('@/views/Project/Deploy'),
+            component: 'views/Project/Deploy',
             meta: {
               title: 'deploy',
               roles: ['Project Manager']
@@ -230,7 +228,7 @@ const pmRoute = [
   // 開發進度
   {
     path: '/progress/:projectName?/',
-    component: Layout,
+    component: 'layout',
     name: 'progress',
     redirect: { name: 'dev-environment' },
     meta: {
@@ -242,32 +240,32 @@ const pmRoute = [
       {
         path: 'dev-branch',
         name: 'dev-branch',
-        component: () => import('@/views/Progress/DevBranch'),
+        component: 'views/Progress/DevBranch',
         meta: { title: 'devBranch', roles: ['Project Manager'] }
       },
       // {
       //   path: 'git-graph',
       //   name: 'git-graph',
-      //   component: () => import('@/views/Progress/GitGraph'),
+      //   component: 'views/Progress/GitGraph',
       //   meta: { title: 'gitGraph', roles: ['Project Manager'] }
       // },
       {
         path: 'pipelines',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'pipelines', roles: ['Project Manager'] },
         children: [
           {
             path: '',
             name: 'Pipelines',
             hidden: true,
-            component: () => import('@/views/Progress/Pipelines'),
+            component: 'views/Progress/Pipelines',
             meta: { roles: ['Project Manager'] }
           },
           {
             path: 'test-report/:commitId',
             name: 'TestReport',
             hidden: true,
-            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
+            component: 'views/Progress/Pipelines/components/TestReport',
             meta: { title: 'testReport', roles: ['Project Manager'] }
           }
         ]
@@ -275,12 +273,12 @@ const pmRoute = [
       {
         path: 'dev-environment',
         name: 'dev-environment',
-        component: () => import('@/views/Progress/DevEnvironment'),
+        component: 'views/Progress/DevEnvironment',
         meta: { title: 'devEnvironment', roles: ['Project Manager'] }
       },
       {
         path: 'kubernetes-resources',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           title: 'kubernetesResources',
           roles: ['Project Manager']
@@ -289,20 +287,20 @@ const pmRoute = [
           {
             path: '',
             name: 'Kubernetes-resources',
-            component: () => import('@/views/Progress/KubernetesResources'),
+            component: 'views/Progress/KubernetesResources',
             hidden: true
           },
           {
             path: 'pods-list',
             hidden: true,
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             meta: { title: 'Pods List', roles: ['Project Manager'] },
             children: [
               {
                 path: '',
                 name: 'Pods List',
                 hidden: true,
-                component: () => import('@/views/Progress/KubernetesResources/components/PodsList')
+                component: 'views/Progress/KubernetesResources/components/PodsList'
               },
               {
                 path: 'pod-execute-shell',
@@ -318,7 +316,7 @@ const pmRoute = [
             path: 'service-list',
             name: 'Service List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ServiceList'),
+            component: 'views/Progress/KubernetesResources/components/ServiceList',
             meta: {
               title: 'Service List',
               roles: ['Project Manager']
@@ -328,7 +326,7 @@ const pmRoute = [
             path: 'secret-list',
             name: 'Secret List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/SecretList'),
+            component: 'views/Progress/KubernetesResources/components/SecretList',
             meta: {
               title: 'Secret List',
               roles: ['Project Manager']
@@ -338,7 +336,7 @@ const pmRoute = [
             path: 'configmaps-list',
             name: 'ConfigMaps List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ConfigMapsList'),
+            component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
             meta: {
               title: 'ConfigMaps List',
               roles: ['Project Manager']
@@ -348,7 +346,7 @@ const pmRoute = [
             path: 'deployment-list',
             name: 'Deployment List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/DeploymentList'),
+            component: 'views/Progress/KubernetesResources/components/DeploymentList',
             meta: {
               title: 'Deployment List',
               roles: ['Project Manager']
@@ -358,7 +356,7 @@ const pmRoute = [
             path: 'ingresses-list',
             name: 'Ingresses List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/IngressesList'),
+            component: 'views/Progress/KubernetesResources/components/IngressesList',
             meta: {
               title: 'Ingresses List',
               roles: ['Project Manager']
@@ -372,7 +370,7 @@ const pmRoute = [
   {
     path: '/test/:projectName?/',
     name: 'test',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'test-plan' },
     meta: {
       title: 'testManagement',
@@ -383,7 +381,7 @@ const pmRoute = [
       {
         path: 'test-file',
         name: 'test-file',
-        component: () => import('@/views/Test/TestFile'),
+        component: 'views/Test/TestFile',
         meta: {
           title: 'testFile',
           roles: ['Project Manager']
@@ -392,7 +390,7 @@ const pmRoute = [
       {
         path: 'test-plan',
         redirect: '/test/test-plan',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           roles: ['Project Manager']
         },
@@ -400,7 +398,7 @@ const pmRoute = [
           {
             path: '',
             name: 'test-plan',
-            component: () => import('@/views/Test/TestPlan'),
+            component: 'views/Test/TestPlan',
             meta: {
               title: 'testPlan',
               roles: ['Project Manager']
@@ -410,7 +408,7 @@ const pmRoute = [
             path: 'create',
             name: 'create-test-plan',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Project Manager'],
@@ -421,7 +419,7 @@ const pmRoute = [
             path: ':issueId',
             name: 'test-plan-detail',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Project Manager'],
@@ -435,7 +433,7 @@ const pmRoute = [
   // 測試紀錄
   {
     path: '/scan/:projectName?/',
-    component: Layout,
+    component: 'layout',
     name: 'scan',
     alwaysShow: true,
     meta: {
@@ -448,31 +446,31 @@ const pmRoute = [
       {
         path: 'sonarqube',
         name: 'sonarqube',
-        component: () => import('@/views/Scan/SonarQube'),
+        component: 'views/Scan/SonarQube',
         meta: { title: 'sonarQube', roles: ['Project Manager'] }
       },
       {
         name: 'checkmarx',
         path: 'checkmarx',
-        component: () => import('@/views/Scan/Checkmarx'),
+        component: 'views/Scan/Checkmarx',
         meta: { title: 'checkMarx', roles: ['Project Manager'] }
       },
       {
         path: 'zap',
         name: 'zap',
-        component: () => import('@/views/Scan/Zap'),
+        component: 'views/Scan/Zap',
         meta: { title: 'zap', roles: ['Project Manager'] }
       },
       {
         path: 'cmas',
         name: 'cmas',
-        component: () => import('@/views/Scan/Cmas'),
+        component: 'views/Scan/Cmas',
         meta: { title: 'cmas', roles: ['Project Manager'] }
       },
       {
         path: 'webinspect',
         name: 'webinspect',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         redirect: { name: 'webinspect' },
         meta: { title: 'webInspect', roles: ['Project Manager'] },
         children: [
@@ -480,12 +478,12 @@ const pmRoute = [
             path: '',
             name: 'webinspect-scans',
             hidden: true,
-            component: () => import('@/views/Scan/WebInspect')
+            component: 'views/Scan/WebInspect'
           },
           {
             path: 'report/:scan_id',
             name: 'webinspect-report',
-            component: () => import('@/views/Scan/WIEReportViewer'),
+            component: 'views/Scan/WIEReportViewer',
             hidden: true,
             meta: { title: 'webInspectReport', roles: ['Project Manager'] }
           }
@@ -494,7 +492,7 @@ const pmRoute = [
       {
         path: 'postman',
         name: 'postman',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         redirect: { name: 'postman-test' },
         meta: {
           title: 'postman',
@@ -505,13 +503,13 @@ const pmRoute = [
             path: '',
             name: 'postman-test',
             hidden: true,
-            component: () => import('@/views/Scan/Postman')
+            component: 'views/Scan/Postman'
           },
           {
             path: 'devops/:id',
             name: 'devops-test-case',
             hidden: true,
-            component: () => import('@/views/Scan/TestCaseDevOps'),
+            component: 'views/Scan/TestCaseDevOps',
             meta: {
               title: 'fromDevops',
               roles: ['Project Manager']
@@ -521,7 +519,7 @@ const pmRoute = [
             path: 'postman/:id',
             name: 'postman-test-case',
             hidden: true,
-            component: () => import('@/views/Scan/TestCasePostman'),
+            component: 'views/Scan/TestCasePostman',
             meta: {
               title: 'fromCollection',
               roles: ['Project Manager']
@@ -532,7 +530,7 @@ const pmRoute = [
       {
         path: 'sideex',
         name: 'sideex',
-        component: () => import('@/views/Scan/Sideex'),
+        component: 'views/Scan/Sideex',
         meta: { title: 'sideex', roles: ['Project Manager'] }
       }
     ]
@@ -540,7 +538,7 @@ const pmRoute = [
   // 系統資源
   {
     path: '/system-resource',
-    component: Layout,
+    component: 'layout',
     name: 'System Resource',
     redirect: { name: 'Plugin Resource' },
     meta: {
@@ -551,7 +549,7 @@ const pmRoute = [
     children: [
       {
         path: ':projectName?/plugin-resource',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           title: 'Plugin Resource',
           roles: ['Project Manager']
@@ -561,12 +559,12 @@ const pmRoute = [
             path: '',
             name: 'Plugin Resource',
             hidden: true,
-            component: () => import('@/views/SystemResource/PluginResource')
+            component: 'views/SystemResource/PluginResource'
           },
           {
             path: 'harbor',
             hidden: true,
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             meta: {
               title: 'Harbor',
               roles: ['Project Manager']
@@ -576,13 +574,13 @@ const pmRoute = [
                 path: '',
                 name: 'Harbor',
                 hidden: true,
-                component: () => import('@/views/SystemResource/Harbor/ResourceHarbor')
+                component: 'views/SystemResource/Harbor/ResourceHarbor'
               },
               {
                 path: ':rName/artifacts',
                 name: 'Artifacts',
                 hidden: true,
-                component: () => import('@/views/SystemResource/Harbor/components/ProjectArtifacts'),
+                component: 'views/SystemResource/Harbor/components/ProjectArtifacts',
                 meta: {
                   title: 'Artifacts',
                   roles: ['Project Manager']
@@ -595,7 +593,7 @@ const pmRoute = [
       {
         path: 'service-monitoring',
         name: 'Service Monitoring',
-        component: () => import('@/views/SystemResource/ServiceMonitoring'),
+        component: 'views/SystemResource/ServiceMonitoring',
         meta: {
           title: 'Service Monitoring',
           roles: ['Project Manager']
@@ -606,7 +604,7 @@ const pmRoute = [
   // 操作記錄
   {
     path: '/project-activities/:projectName?',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'ProjectActivities' },
     meta: {
       icon: 'el-icon-s-order',
@@ -615,7 +613,7 @@ const pmRoute = [
     children: [
       {
         path: '',
-        component: () => import('@/views/Activities/ProjectActivities'),
+        component: 'views/Activities/ProjectActivities',
         name: 'ProjectActivities',
         meta: { title: 'Project Activities', roles: ['Project Manager'] }
       }
@@ -624,14 +622,14 @@ const pmRoute = [
   // 個人資料 & 版本資訊
   {
     path: '/profile',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Profile' },
     hidden: true,
     meta: { roles: ['Project Manager'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/Profile'),
+        component: 'views/Profile',
         name: 'Profile',
         meta: {
           title: 'Profile',
@@ -644,14 +642,14 @@ const pmRoute = [
   },
   {
     path: '/SystemVersion',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'SystemVersion' },
     hidden: true,
     meta: { roles: ['Project Manager'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/SystemVersion'),
+        component: 'views/SystemVersion',
         name: 'SystemVersion',
         meta: {
           title: 'System Version',

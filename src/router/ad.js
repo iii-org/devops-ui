@@ -1,5 +1,3 @@
-import Layout from '@/layout'
-import parentBlank from '@/layout/components/parentBlank'
 
 const adRoute = [
   // 首頁
@@ -14,7 +12,7 @@ const adRoute = [
   // 總覽
   {
     path: '/overview',
-    component: Layout,
+    component: 'layout',
     redirect: '/overview/dashboard',
     meta: {
       icon: 'dashboard',
@@ -25,7 +23,7 @@ const adRoute = [
       {
         path: 'dashboard',
         name: 'dashboard-admin',
-        component: () => import('@/views/Overview/Dashboard/roles/admin'),
+        component: 'views/Overview/Dashboard/roles/admin',
         meta: {
           title: 'dashboard',
           roles: ['Administrator']
@@ -34,7 +32,7 @@ const adRoute = [
       {
         path: 'project-list',
         name: 'project-list',
-        component: () => import('@/views/Overview/ProjectList/ProjectListPM'),
+        component: 'views/Overview/ProjectList/ProjectListPM',
         meta: {
           title: 'projectList',
           roles: ['Administrator']
@@ -45,7 +43,7 @@ const adRoute = [
   // 專案管理
   {
     path: '/plan/:projectName?/',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Overview' },
     meta: {
       title: 'project-management',
@@ -56,42 +54,42 @@ const adRoute = [
       {
         path: 'overview',
         name: 'Overview',
-        component: () => import('@/views/Plan/Overview'),
+        component: '/views/Plan/Overview',
         meta: { title: 'projectOverview', roles: ['Administrator'] }
       },
       {
         path: 'milestone',
         name: 'milestone',
-        component: () => import('@/views/Plan/Milestone'),
+        component: 'views/Plan/Milestone',
         meta: { title: 'milestone', roles: ['Administrator'] }
       },
       {
         path: 'traceability-matrix',
         name: 'TraceMatrix',
-        component: () => import('@/views/Plan/TraceabilityMatrix'),
+        component: 'views/Plan/TraceabilityMatrix',
         meta: { title: 'traceabilityMatrix', roles: ['Administrator'] }
       },
       {
         path: 'settings',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'Project Settings', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             hidden: true,
             children: [
               {
                 path: '',
                 name: 'Project Settings',
-                component: () => import('@/views/Plan/Settings/index'),
+                component: 'views/Plan/Settings/index',
                 meta: { roles: ['Administrator'] }
               },
               {
                 path: 'participate-project/:user_id',
                 name: 'ParticipateProject',
                 hidden: true,
-                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
                 meta: { title: 'Participate Project', roles: ['Administrator'] }
               }
             ]
@@ -100,14 +98,14 @@ const adRoute = [
             path: 'advance-branch-settings',
             name: 'advance-branch-settings',
             hidden: true,
-            component: () => import('@/views/Plan/Settings/components/AdvanceBranchSettings'),
+            component: 'views/Plan/Settings/components/AdvanceBranchSettings',
             meta: { title: 'advanceBranchSettings', roles: ['Administrator'] }
           },
           {
             path: 'issue-transfer/:userId',
             name: 'Issue Transfer',
             hidden: true,
-            component: () => import('@/views/Plan/Settings/ProjectIssueTransfer'),
+            component: 'views/Plan/Settings/ProjectIssueTransfer',
             meta: { title: 'Issue Transfer', roles: ['Administrator'] }
           }
         ]
@@ -117,7 +115,7 @@ const adRoute = [
   // 工作執行
   {
     path: '/project/:projectName?/',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Overview' },
     meta: {
       title: 'works',
@@ -128,19 +126,19 @@ const adRoute = [
       {
         path: 'issue-boards',
         name: 'issue-boards',
-        component: () => import('@/views/Project/IssueBoards'),
+        component: 'views/Project/IssueBoards',
         meta: { title: 'kanban', roles: ['Administrator'] }
       },
       {
         path: 'issues',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'issueList' },
         children: [
           {
             path: '',
             name: 'issue-list',
             hidden: true,
-            component: () => import('@/views/Project/IssueList'),
+            component: 'views/Project/IssueList',
             meta: {
               roles: ['Administrator']
             }
@@ -149,7 +147,7 @@ const adRoute = [
             path: ':issueId',
             name: 'issue-detail',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator'],
@@ -162,31 +160,31 @@ const adRoute = [
       {
         path: 'notes',
         name: 'wiki-list',
-        component: () => import('@/views/Project/Wiki'),
+        component: 'views/Project/Wiki',
         meta: { title: 'wikiList', roles: ['Administrator'] }
       },
       {
         path: 'files',
         name: 'file-list',
-        component: () => import('@/views/Project/Files'),
+        component: 'views/Project/Files',
         meta: { title: 'fileList', roles: ['Administrator'] }
       },
       {
         path: 'roadmap',
         name: 'Project Roadmap',
-        component: () => import('@/views/Project/Roadmap'),
+        component: 'views/Project/Roadmap',
         meta: { title: 'Project Roadmap', roles: ['Administrator'] }
       },
       {
         path: 'release-version',
         redirect: { name: 'release-version' },
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'releaseVersion', roles: ['Administrator'] },
         children: [
           {
             path: '',
             name: 'release-version',
-            component: () => import('@/views/Project/ReleaseVersion'),
+            component: 'views/Project/ReleaseVersion',
             hidden: true,
             meta: {
               roles: ['Administrator']
@@ -196,7 +194,7 @@ const adRoute = [
             path: ':issueTag',
             name: 'closed-issue-list',
             hidden: true,
-            component: () => import('@/views/Project/ReleaseVersion/ClosedIssueList'),
+            component: 'views/Project/ReleaseVersion/ClosedIssueList',
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator'],
@@ -208,13 +206,13 @@ const adRoute = [
       {
         path: 'deploy',
         redirect: { name: 'deploy' },
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'deploy', roles: ['Administrator'] },
         children: [
           {
             path: '',
             name: 'deploy',
-            component: () => import('@/views/Project/Deploy'),
+            component: 'views/Project/Deploy',
             meta: {
               title: 'deploy',
               roles: ['Administrator']
@@ -227,7 +225,7 @@ const adRoute = [
   // 開發進度
   {
     path: '/progress/:projectName?/',
-    component: Layout,
+    component: 'layout',
     name: 'progress',
     redirect: { name: 'dev-environment' },
     meta: {
@@ -239,32 +237,32 @@ const adRoute = [
       {
         path: 'dev-branch',
         name: 'dev-branch',
-        component: () => import('@/views/Progress/DevBranch'),
+        component: 'views/Progress/DevBranch',
         meta: { title: 'devBranch', roles: ['Administrator'] }
       },
       // {
       //   path: 'git-graph',
       //   name: 'git-graph',
-      //   component: () => import('@/views/Progress/GitGraph'),
+      //   component: 'views/Progress/GitGraph',
       //   meta: { title: 'gitGraph', roles: ['Administrator'] }
       // },
       {
         path: 'pipelines',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'pipelines', roles: ['Administrator'] },
         children: [
           {
             path: '',
             name: 'Pipelines',
             hidden: true,
-            component: () => import('@/views/Progress/Pipelines'),
+            component: 'views/Progress/Pipelines',
             meta: { roles: ['Administrator'] }
           },
           {
             path: 'test-report/:commitId',
             name: 'TestReport',
             hidden: true,
-            component: () => import('@/views/Progress/Pipelines/components/TestReport'),
+            component: 'views/Progress/Pipelines/components/TestReport',
             meta: { title: 'testReport', roles: ['Administrator'] }
           }
         ]
@@ -272,12 +270,12 @@ const adRoute = [
       {
         path: 'dev-environment',
         name: 'dev-environment',
-        component: () => import('@/views/Progress/DevEnvironment'),
+        component: 'views/Progress/DevEnvironment',
         meta: { title: 'devEnvironment', roles: ['Administrator'] }
       },
       {
         path: 'kubernetes-resources',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           title: 'kubernetesResources',
           roles: ['Administrator']
@@ -286,27 +284,26 @@ const adRoute = [
           {
             path: '',
             name: 'Kubernetes-resources',
-            component: () => import('@/views/Progress/KubernetesResources'),
+            component: 'views/Progress/KubernetesResources',
             hidden: true
           },
           {
             path: 'pods-list',
             hidden: true,
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             meta: { title: 'Pods List', roles: ['Administrator'] },
             children: [
               {
                 path: '',
                 name: 'Pods List',
                 hidden: true,
-                component: () => import('@/views/Progress/KubernetesResources/components/PodsList')
+                component: 'views/Progress/KubernetesResources/components/PodsList'
               },
               {
                 path: 'pod-execute-shell',
                 name: 'Pod Execute Shell',
                 hidden: true,
-                component: () =>
-                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
+                component: 'views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell',
                 meta: { title: 'Pod Execute Shell', roles: ['Administrator'] }
               }
             ]
@@ -315,7 +312,7 @@ const adRoute = [
             path: 'service-list',
             name: 'Service List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ServiceList'),
+            component: 'views/Progress/KubernetesResources/components/ServiceList',
             meta: {
               title: 'Service List',
               roles: ['Administrator']
@@ -325,7 +322,7 @@ const adRoute = [
             path: 'secret-list',
             name: 'Secret List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/SecretList'),
+            component: 'views/Progress/KubernetesResources/components/SecretList',
             meta: {
               title: 'Secret List',
               roles: ['Administrator']
@@ -335,7 +332,7 @@ const adRoute = [
             path: 'configmaps-list',
             name: 'ConfigMaps List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/ConfigMapsList'),
+            component: 'views/Progress/KubernetesResources/components/ConfigMapsList',
             meta: {
               title: 'ConfigMaps List',
               roles: ['Administrator']
@@ -345,7 +342,7 @@ const adRoute = [
             path: 'deployment-list',
             name: 'Deployment List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/DeploymentList'),
+            component: 'views/Progress/KubernetesResources/components/DeploymentList',
             meta: {
               title: 'Deployment List',
               roles: ['Administrator']
@@ -355,7 +352,7 @@ const adRoute = [
             path: 'ingresses-list',
             name: 'Ingresses List',
             hidden: true,
-            component: () => import('@/views/Progress/KubernetesResources/components/IngressesList'),
+            component: 'views/Progress/KubernetesResources/components/IngressesList',
             meta: {
               title: 'Ingresses List',
               roles: ['Administrator']
@@ -369,7 +366,7 @@ const adRoute = [
   {
     path: '/test/:projectName?/',
     name: 'test',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'test-plan' },
     meta: {
       title: 'testManagement',
@@ -380,7 +377,7 @@ const adRoute = [
       {
         path: 'test-file',
         name: 'test-file',
-        component: () => import('@/views/Test/TestFile'),
+        component: 'views/Test/TestFile',
         meta: {
           title: 'testFile',
           roles: ['Administrator']
@@ -389,7 +386,7 @@ const adRoute = [
       {
         path: 'test-plan',
         redirect: '/test/test-plan',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: {
           roles: ['Administrator']
         },
@@ -397,7 +394,7 @@ const adRoute = [
           {
             path: '',
             name: 'test-plan',
-            component: () => import('@/views/Test/TestPlan'),
+            component: 'views/Test/TestPlan',
             meta: {
               title: 'testPlan',
               roles: ['Administrator']
@@ -407,7 +404,7 @@ const adRoute = [
             path: 'create',
             name: 'create-test-plan',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator'],
@@ -418,7 +415,7 @@ const adRoute = [
             path: ':issueId',
             name: 'test-plan-detail',
             hidden: true,
-            component: () => import('@/views/Project/IssueDetail'),
+            component: 'views/Project/IssueDetail',
             meta: {
               title: 'Issue Detail',
               roles: ['Administrator'],
@@ -432,7 +429,7 @@ const adRoute = [
   // 測試紀錄
   {
     path: '/scan/:projectName?/',
-    component: Layout,
+    component: 'layout',
     name: 'scan',
     alwaysShow: true,
     meta: {
@@ -445,31 +442,31 @@ const adRoute = [
       {
         path: 'sonarqube',
         name: 'sonarqube',
-        component: () => import('@/views/Scan/SonarQube'),
+        component: 'views/Scan/SonarQube',
         meta: { title: 'sonarQube', roles: ['Administrator'] }
       },
       {
         name: 'checkmarx',
         path: 'checkmarx',
-        component: () => import('@/views/Scan/Checkmarx'),
+        component: 'views/Scan/Checkmarx',
         meta: { title: 'checkMarx', roles: ['Administrator'] }
       },
       {
         path: 'zap',
         name: 'zap',
-        component: () => import('@/views/Scan/Zap'),
+        component: 'views/Scan/Zap',
         meta: { title: 'zap', roles: ['Administrator'] }
       },
       {
         path: 'cmas',
         name: 'cmas',
-        component: () => import('@/views/Scan/Cmas'),
+        component: 'views/Scan/Cmas',
         meta: { title: 'cmas', roles: ['Administrator'] }
       },
       {
         path: 'webinspect',
         name: 'webinspect',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         redirect: { name: 'webinspect' },
         meta: { title: 'webInspect', roles: ['Administrator'] },
         children: [
@@ -477,12 +474,12 @@ const adRoute = [
             path: '',
             name: 'webinspect-scans',
             hidden: true,
-            component: () => import('@/views/Scan/WebInspect')
+            component: 'views/Scan/WebInspect'
           },
           {
             path: 'report/:scan_id',
             name: 'webinspect-report',
-            component: () => import('@/views/Scan/WIEReportViewer'),
+            component: 'views/Scan/WIEReportViewer',
             hidden: true,
             meta: { title: 'webInspectReport', roles: ['Administrator'] }
           }
@@ -491,7 +488,7 @@ const adRoute = [
       {
         path: 'postman',
         name: 'postman',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         redirect: { name: 'postman-test' },
         meta: {
           title: 'postman',
@@ -502,13 +499,13 @@ const adRoute = [
             path: '',
             name: 'postman-test',
             hidden: true,
-            component: () => import('@/views/Scan/Postman')
+            component: 'views/Scan/Postman'
           },
           {
             path: 'devops/:id',
             name: 'devops-test-case',
             hidden: true,
-            component: () => import('@/views/Scan/TestCaseDevOps'),
+            component: 'views/Scan/TestCaseDevOps',
             meta: {
               title: 'fromDevops',
               roles: ['Administrator']
@@ -518,7 +515,7 @@ const adRoute = [
             path: 'postman/:id',
             name: 'postman-test-case',
             hidden: true,
-            component: () => import('@/views/Scan/TestCasePostman'),
+            component: 'views/Scan/TestCasePostman',
             meta: {
               title: 'fromCollection',
               roles: ['Administrator']
@@ -529,7 +526,7 @@ const adRoute = [
       {
         path: 'sideex',
         name: 'sideex',
-        component: () => import('@/views/Scan/Sideex'),
+        component: 'views/Scan/Sideex',
         meta: { title: 'sideex', roles: ['Administrator'] }
       }
     ]
@@ -537,7 +534,7 @@ const adRoute = [
   // 系統資源
   {
     path: '/system-resource',
-    component: Layout,
+    component: 'layout',
     name: 'System Resource',
     redirect: { name: 'Plugin Resource' },
     meta: {
@@ -548,19 +545,19 @@ const adRoute = [
     children: [
       {
         path: ':projectName?/plugin-resource',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'Plugin Resource', roles: ['Administrator'] },
         children: [
           {
             path: '',
             name: 'Plugin Resource',
             hidden: true,
-            component: () => import('@/views/SystemResource/PluginResource')
+            component: 'views/SystemResource/PluginResource'
           },
           {
             path: 'harbor',
             hidden: true,
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             meta: {
               title: 'Harbor',
               roles: ['Administrator']
@@ -570,13 +567,13 @@ const adRoute = [
                 path: '',
                 name: 'Harbor',
                 hidden: true,
-                component: () => import('@/views/SystemResource/Harbor/ResourceHarbor')
+                component: 'views/SystemResource/Harbor/ResourceHarbor'
               },
               {
                 path: ':rName/artifacts',
                 name: 'Artifacts',
                 hidden: true,
-                component: () => import('@/views/SystemResource/Harbor/components/ProjectArtifacts'),
+                component: 'views/SystemResource/Harbor/components/ProjectArtifacts',
                 meta: {
                   title: 'Artifacts',
                   roles: ['Administrator']
@@ -589,7 +586,7 @@ const adRoute = [
       {
         path: 'service-monitoring',
         name: 'Service Monitoring',
-        component: () => import('@/views/SystemResource/ServiceMonitoring'),
+        component: 'views/SystemResource/ServiceMonitoring',
         meta: { title: 'Service Monitoring', roles: ['Administrator'] }
       }
     ]
@@ -597,7 +594,7 @@ const adRoute = [
   // 操作記錄
   {
     path: '/project-activities/:projectName?',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'ProjectActivities' },
     meta: {
       icon: 'el-icon-s-order',
@@ -606,7 +603,7 @@ const adRoute = [
     children: [
       {
         path: '',
-        component: () => import('@/views/Activities/ProjectActivities'),
+        component: 'views/Activities/ProjectActivities',
         name: 'ProjectActivities',
         meta: { title: 'Project Activities', roles: ['Administrator'] }
       }
@@ -615,32 +612,32 @@ const adRoute = [
   // 系統設定
   {
     path: '/system-settings',
-    component: Layout,
+    component: 'layout',
     name: 'Admin',
     redirect: { name: 'AccountManage' },
     meta: { title: 'Admin', icon: 'el-icon-setting', roles: ['Administrator'] },
     children: [
       {
         path: 'account-manage',
-        component: parentBlank,
+        component: 'layout/components/parentBlank',
         meta: { title: 'Account Manage', roles: ['Administrator'] },
         children: [
           {
             path: '',
-            component: parentBlank,
+            component: 'layout/components/parentBlank',
             hidden: true,
             children: [
               {
                 path: '',
                 name: 'AccountManage',
-                component: () => import('@/views/SystemSettings/AccountManage'),
+                component: 'views/SystemSettings/AccountManage',
                 meta: { roles: ['Administrator'] }
               },
               {
                 path: 'participate-project/:user_id',
                 name: 'SystemParticipateProject',
                 hidden: true,
-                component: () => import('@/views/SystemSettings/AccountManage/components/ParticipateProject'),
+                component: 'views/SystemSettings/AccountManage/components/ParticipateProject',
                 meta: { title: 'Participate Project', roles: ['Administrator'] }
               }
             ]
@@ -650,31 +647,31 @@ const adRoute = [
       {
         path: 'system-activities',
         name: 'SystemActivities',
-        component: () => import('@/views/SystemSettings/SystemActivities'),
+        component: 'views/SystemSettings/SystemActivities',
         meta: { title: 'System Activities', roles: ['Administrator'] }
       },
       {
         path: 'system-arguments',
         name: 'System Arguments',
-        component: () => import('@/views/SystemSettings/SystemArguments'),
+        component: 'views/SystemSettings/SystemArguments',
         meta: { title: 'System Arguments', roles: ['Administrator'] }
       },
       {
         path: 'system-deploy-settings',
         name: 'System Deploy Settings',
-        component: () => import('@/views/SystemSettings/SystemDeploySettings'),
+        component: 'views/SystemSettings/SystemDeploySettings',
         meta: { title: 'System Deploy Settings', roles: ['Administrator'] }
       },
       {
         path: 'sub-admin-projects',
         name: 'Sub Admin Projects',
-        component: () => import('@/views/SystemSettings/SubAdminProjects'),
+        component: 'views/SystemSettings/SubAdminProjects',
         meta: { title: 'Project Settings (QA)', roles: ['Administrator'] }
       },
       {
         path: 'system-plugin-manage',
         name: 'System Plugin Manage',
-        component: () => import('@/views/SystemSettings/SystemPluginManage'),
+        component: 'views/SystemSettings/SystemPluginManage',
         meta: { title: 'System Plugin Manage', roles: ['Administrator'] }
       }
     ]
@@ -682,14 +679,14 @@ const adRoute = [
   // 個人資料 & 版本資訊
   {
     path: '/profile',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'Profile' },
     hidden: true,
     meta: { roles: ['Administrator'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/Profile'),
+        component: 'views/Profile',
         name: 'Profile',
         meta: {
           title: 'Profile',
@@ -702,14 +699,14 @@ const adRoute = [
   },
   {
     path: '/SystemVersion',
-    component: Layout,
+    component: 'layout',
     redirect: { name: 'SystemVersion' },
     hidden: true,
     meta: { roles: ['Administrator'] },
     children: [
       {
         path: '',
-        component: () => import('@/views/SystemVersion'),
+        component: 'views/SystemVersion',
         name: 'SystemVersion',
         meta: {
           title: 'System Version',
