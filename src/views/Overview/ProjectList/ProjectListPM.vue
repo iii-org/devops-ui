@@ -227,8 +227,9 @@
             type="danger"
             class="text-error"
             icon="el-icon-delete"
+            @click="handleForceDelete(scope.row.id)"
           >
-            Force Delete
+            {{ $t('general.ForceDelete') }}
           </el-button>
           <el-button
             v-if="scope.row.is_lock===true"
@@ -237,14 +238,17 @@
             type="success"
             class="text-success"
             icon="el-icon-refresh"
+            @click="handleFix(scope.row.id)"
           >
-            Fix
+            {{ $t('general.Fix') }}
           </el-button>
           <el-tooltip 
             placement="bottom" 
             :disabled="!permission(scope.row)"
             :open-delay="200" 
-            content="Only Project Owner can enable this project"
+            :content="scope.row.disabled ? 
+              $t('Dashboard.ADMIN.ProjectList.enable_tooltip') : 
+              $t('Dashboard.ADMIN.ProjectList.disable_tooltip')"
           >
             <span>
               <el-button
@@ -406,13 +410,8 @@ export default {
           )
         })
       }
-      if (Object.prototype.hasOwnProperty.call(calculated, 'broken_project_id')) {
-        for (const i in calculated.broken_project_id) {
-          const dataIndex = merged.findIndex((x) => x.id === i)
-          merged[dataIndex].is_lock = true
-        }
-      }
       this.listData = merged
+      console.log(this.listData)
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -439,7 +438,8 @@ export default {
       this.$refs.deleteProjectDialog.showDialog = true
     },
     returnProgress(current, total) {
-      return Math.round((current / total) * 100)
+      if (current) return Math.round((current / total) * 100)
+      else return 0
     },
     handleClick(projectObj) {
       const { id } = projectObj
@@ -516,7 +516,6 @@ export default {
       this.listLoading = false
     },
     async handleFix(project_id) {
-      console.log(project_id)
       this.listLoading = true
       const res = await syncProject(project_id)
       if (res.message === 'success') {

@@ -426,7 +426,8 @@ export default {
       this.$refs.deleteProjectDialog.showDialog = true
     },
     getProgressRatio(current, total) {
-      return Math.round((current / total) * 100)
+      if (current) return Math.round((current / total) * 100)
+      else return 0
     },
     handleClick(projectObj) {
       const { id } = projectObj
