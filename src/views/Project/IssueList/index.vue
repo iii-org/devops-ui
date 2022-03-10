@@ -13,7 +13,8 @@
         {{ $t('Issue.AddIssue') }}
       </el-button>
       <SearchFilter
-        :filter-options="filterOptions"
+        :filter-options="filterOptionsWithProject"
+        :project-relation-list="projectRelationList"
         :list-loading="listLoading"
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,fixed_version_closed:fixed_version_closed }"
@@ -340,6 +341,7 @@ import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -355,7 +357,7 @@ export default {
     ExpandSection,
     CustomFilter
   },
-  mixins: [Table, IssueList, ContextMenu],
+  mixins: [Table, ContextMenu, IssueList],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -368,6 +370,8 @@ export default {
       selectedIssueList: [],
       allDownloadData: [],
       allDataLoading: false,
+      filterOptionsWithProject: [],
+      projectRelationList: [],
       excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
       columnsOptions: Object.freeze([
         { display: this.$t('Issue.project'), field: 'project' },
@@ -397,6 +401,9 @@ export default {
         return this.columnsOptions.map(item => item.field)
       }
       return this.displayFields
+    },
+    filterSelectProjectId() {
+      return this.filterValue.project
     }
   },
   watch: {
@@ -422,8 +429,50 @@ export default {
       'setFixedVersionShowClosed',
       'getFixedVersionShowClosed'
     ]),
+    async isProjectHasSon() {
+      const hasSon = await getHasSon(this.selectedProjectId)
+      console.log(this.selectedProjectId)
+      console.log(this.filterSelectProjectId)
+      console.log(hasSon.has_child)
+      if (hasSon.has_child) {
+        this.filterOptionsWithProject = [{
+          id: 7,
+          label: this.$t('Issue.FilterDimensions.project'),
+          value: 'project',
+          placeholder: 'Project'
+        },
+        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
+        { id: 2, label: this.$t('Issue.FilterDimensions.tags'), value: 'tags', placeholder: 'Tag' },
+        { id: 3, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
+        { id: 4, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
+        {
+          id: 5,
+          label: this.$t('Issue.FilterDimensions.fixed_version'),
+          value: 'fixed_version',
+          placeholder: 'Version'
+        },
+        {
+          id: 6,
+          label: this.$t('Issue.FilterDimensions.priority'),
+          value: 'priority',
+          placeholder: 'Priority',
+          tag: true
+        }]
+      } else {
+        this.filterOptionsWithProject = this.filterOptions
+      }
+    },
+    async getProjectRelationData() {
+      // const projectRelation = await getProjectRelation(this.selectedProjectId)
+      this.projectRelationList = [
+        { id: 138, name: 'testA' },
+        { id: 137, name: 'testB' }
+      ]
+    },
     async fetchInitData() {
       this.getInitPage()
+      await this.isProjectHasSon()
+      await this.getProjectRelationData()
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadDisplayColumns()
@@ -431,7 +480,10 @@ export default {
     },
     async fetchAllDownloadData() {
       this.allDataLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      const res = await getProjectIssueList(
+        this.filterSelectProjectId || this.selectedProjectId,
+        this.getParams(this.totalData)
+      )
       this.allDownloadData = res.data.issue_list
       this.allDataLoading = false
     },
@@ -606,7 +658,7 @@ export default {
     },
     async loadDisplayColumns() {
       const res = await getIssueFieldDisplay({
-        project_id: this.selectedProjectId,
+        project_id: this.filterSelectProjectId || this.selectedProjectId,
         type: 'issue_list'
       })
       this.displayFields = res.data
@@ -629,7 +681,7 @@ export default {
         this.displayFields = this.columnsOptions.map(item => item.field)
       }
       const res = await putIssueFieldDisplay({
-        project_id: this.selectedProjectId,
+        project_id: this.filterSelectProjectId || this.selectedProjectId,
         type: 'issue_list',
         display_fields: this.displayFields
       })

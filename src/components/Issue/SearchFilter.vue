@@ -140,6 +140,10 @@ export default {
     prefill: {
       type: Object,
       default: () => ({})
+    },
+    projectRelationList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -231,7 +235,13 @@ export default {
       return statusList.filter((item) => item.is_closed === false)
     },
     getOptionsData(option_name) {
-      const options = { ...this.selectionOptions, tracker: this.tracker, status: this.status, priority: this.priority }
+      const options = {
+        ...this.selectionOptions,
+        tracker: this.tracker,
+        status: this.status,
+        priority: this.priority,
+        project: this.projectRelationList
+      }
       return options[option_name]
     },
     async onChangeFilter() {

@@ -417,6 +417,7 @@ export default {
     EndDate: '結束日期',
     Description: '議題描述',
     due_date: '@:Issue.EndDate',
+    SelectProject: '選擇專案',
     SelectDate: '選擇日期',
     SelectType: '選擇種類',
     SelectTag: '選擇標籤',

@@ -420,6 +420,7 @@ export default {
     EndDate: 'End Date',
     Description: 'Issue Description',
     due_date: '@:Issue.EndDate',
+    SelectProject: 'Select Project',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
     SelectTag: 'Select Tag',
