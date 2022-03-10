@@ -40,7 +40,6 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -85,10 +84,8 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
       - projectlist
-      - systemConfig
+      - sysconfig
 - name: Build--Build and push docker image(master develop)
   iiidevops: deployed-environments
   steps:
@@ -127,10 +124,8 @@ stages:
   when:
     branch:
       include:
-      - githubwebsocket
-      - GitGraph
       - projectlist
-      - systemConfig
+      - sysconfig
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -230,10 +225,8 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
       - projectlist
-      - systemConfig
+      - sysconfig
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -257,10 +250,8 @@ stages:
       include:
       - master
       - develop
-      - githubwebsocket
-      - GitGraph
       - projectlist
-      - systemConfig
+      - sysconfig
 - name: Test--ZAP
   iiidevops: zap
   steps:
