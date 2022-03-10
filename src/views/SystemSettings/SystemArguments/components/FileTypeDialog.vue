@@ -10,15 +10,23 @@
           <span class="header-title font-medium text-lg">
             {{ $t('SystemConfigs.UploadFileTypes') }}
           </span>
-        </div>
-        <div class="mr-5">
           <el-button
-            type="success"
             :disabled="isAdding"
+            type="success"
+            size="small"
             @click="handleShow"
           >
             + {{ $t('general.Add') }}
           </el-button>
+        </div>
+        <div class="mr-5 float-right">
+          <el-input
+            v-model="keyword"
+            clearable
+            prefix-icon="el-icon-search"
+            :placeholder="$t('general.Search')"
+            style="width: 100%"
+          />
         </div>
       </div>
       <el-divider class="my-2" />
@@ -211,6 +219,7 @@ export default {
   mixins: [MixinElTable],
   data() {
     return {
+      searchKeys: ['name', 'mimeType', 'fileExtension'],
       dialogVisible: false,
       isAdding: false,
       rowCache: null,
