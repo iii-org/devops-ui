@@ -18,6 +18,8 @@ function Project(project) {
   this.update_at = project.update_at
   this.members = project.members
   this.starred = project.starred
+  this.is_lock = project.is_lock
+  this.lock_reason = project.lock_reason
 
   this.creator_id = project.creator_id
   this.owner_id = project.owner_id

@@ -234,7 +234,9 @@ export default {
     High: 'High',
     Medium: 'Medium',
     Low: 'Low',
-    Run: 'Run'
+    Run: 'Run',
+    ForceDelete: 'Force Delete',
+    Fix: 'Fix'
   },
   Notify: {
     Updated: 'update successful',
@@ -674,7 +676,7 @@ export default {
         rate: 'Pass rate'
       },
       ProjectList: {
-        NAME: 'Project list',
+        NAME: 'Project List',
         user_name: 'PM',
         unclosed_count: '# unsolved',
         project_count: '# projects',
@@ -694,8 +696,10 @@ export default {
         excel_download: 'Download EXCEL',
         all_download: 'Download all',
         organization: 'Organization',
-        project_start_date: 'Project start date',
-        project_due_date: 'Project due date'
+        project_start_date: 'Project Start Date',
+        project_due_date: 'Project Due Date',
+        disable_tooltip: 'Only Project Owner can enable this project',
+        enable_tooltip: 'Only Project Owner can disable this project'
       }
     }
   },

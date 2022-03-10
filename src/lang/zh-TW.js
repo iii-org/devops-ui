@@ -234,7 +234,9 @@ export default {
     High: '高',
     Medium: '中',
     Low: '低',
-    Run: '執行'
+    Run: '執行',
+    ForceDelete: '刪除',
+    Fix: '修復'
   },
   Notify: {
     Updated: '已更新',
@@ -690,7 +692,9 @@ export default {
         all_download: '全部下載',
         organization: '組織',
         project_start_date: '計畫起始日',
-        project_due_date: '計畫結束日'
+        project_due_date: '計畫結束日',
+        disable_tooltip: '僅本專案經理可啟用本專案',
+        enable_tooltip: '僅本專案經理可停用本專案'
       }
     }
   },
