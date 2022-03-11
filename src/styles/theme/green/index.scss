@@ -1,28 +1,34 @@
 // sidebar
-$menuText: #FFFFFF;
-$menuActiveText: #3C5654;
-$subMenuActiveText: #FFFFFF; //https://github.com/ElemeFE/element/issues/12951
+$menuText: #e0e0e0;
+$menuActiveText: #000000;
+$subMenuActiveText: #ffffff; //https://github.com/ElemeFE/element/issues/12951
 
 $menuBg: #3C5654;
-$menuHover: #e6a23c;
+$menuHover: #D7A217;
 
 $subMenuBg: #b2c2c2;
-$subMenuHover: #e6a23c;
+$subMenuHover: #D7A217;
+$subMenuText: #000000;
 
-$sideBarWidth: 220px;
+$sideBarWidth: 300px;
 
 $appMainBg: #E4F2F2;
 
 $navbarBg: #3C5654;
-$navbarHover: #e6a23c;
+$navbarHover: #D7A217;
 $navbarRightText:#FFFFFF;
 
 $breadcrumpText: #FFFFFF;
-$breadcrumpTextHover: #e6a23c;
+$breadcrumpTextHover: #D7A217;
+
+$buttonPrimary: #3C5654;
+$buttonSecondary: #D7A217;
+
+$headerTextColor : #000000;
 
 $success: #67c23a;
 $danger: #f56c6c;
-$warning: #e6a23c;
+$warning: #D7A217;
 $slow: #56b1e8;
 $light: #c1c3c5;
 $info: #606260;
@@ -32,7 +38,7 @@ $active: #409eff;
 $assigned: #f56c6c;
 $closed: #909399;
 $solved: #3ecbbc;
-$inProgress: #e6a23c;
+$inProgress: #D7A217;
 $finished: #67c23a;
 $feature: #66d7ff;
 $document: #5388ff;

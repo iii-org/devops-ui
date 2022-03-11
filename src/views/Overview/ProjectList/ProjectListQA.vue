@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="flex justify-between">
       <el-button
-        type="success"
+        class="buttonPrimary"
         icon="el-icon-plus"
         @click="handleAdding"
       >
@@ -24,6 +24,7 @@
             slot="reference"
             icon="el-icon-date"
             type="text"
+            class="filterTextColor"
           >
             {{ $t('Project.ProjectPeriod') }}:{{ selectedDateNow[0] }} ~ {{ selectedDateNow[1] }}<em
               class="el-icon-arrow-down el-icon--right"
@@ -44,6 +45,7 @@
           v-else
           type="text"
           icon="el-icon-search"
+          class="filterTextColor"
           @click="searchVisible = !searchVisible"
         >
           {{ $t('general.Search') + (keyword ? ': ' + keyword : '') }}
@@ -53,6 +55,7 @@
           <el-button
             size="small"
             icon="el-icon-close"
+            class="filterTextColor"
             @click="cleanFilter"
           >
             {{ $t('Issue.CleanFilter') }}
@@ -82,6 +85,7 @@
             <el-button
               slot="reference"
               icon="el-icon-download"
+              class="filterTextColor"
             >
               {{ $t('File.Download') }}
             </el-button>
@@ -552,6 +556,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+
 .status-bar-track {
   background: #f5f5f5;
   border-radius: 5px;
@@ -570,5 +576,16 @@ export default {
   top: 0;
   background: #3ecbbc;
   height: 4px;
+}
+
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+.filterTextColor {
+  color: $headerTextColor !important;
+  &:hover {
+    border-color: transparent;
+  }
 }
 </style>

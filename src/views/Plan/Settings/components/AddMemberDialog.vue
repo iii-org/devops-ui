@@ -21,7 +21,7 @@
           </el-col>
           <el-col :xs="24" :md="12" class="text-right">
             <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-            <el-button type="primary" :loading="btnConfirmLoading" @click="handleAddConfirm">
+            <el-button class="buttonPrimary" :loading="btnConfirmLoading" @click="handleAddConfirm">
               {{ $t('general.Confirm') }}
             </el-button>
           </el-col>
@@ -307,5 +307,11 @@ export default {
   .el-form-item {
     margin: 0;
   }
+}
+
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
 }
 </style>

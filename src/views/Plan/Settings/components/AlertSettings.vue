@@ -13,7 +13,7 @@
           :inactive-text="$t('general.Disable')"
           @change="toggleSwitch"
         />
-        <el-button type="primary" :disabled="!isToggle" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button class="buttonPrimary" :disabled="!isToggle" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
     </div>
     <el-divider />
@@ -167,5 +167,11 @@ export default {
 <style lang="scss" scoped>
 >>> input.el-input__inner {
   text-align: center;
+}
+
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
 }
 </style>

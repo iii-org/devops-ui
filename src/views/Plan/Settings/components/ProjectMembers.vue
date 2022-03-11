@@ -6,7 +6,7 @@
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
     <template v-else>
       <div class="flex justify-between mb-4">
-        <el-button type="success" size="medium" icon="el-icon-plus" @click="showDialog">
+        <el-button class="buttonSecondary" size="medium" icon="el-icon-plus" @click="showDialog">
           {{ $t('Member.AddMember') }}
         </el-button>
         <div>
@@ -42,11 +42,11 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="390">
           <template slot-scope="scope">
-            <el-button v-permission="['Administrator','QA']" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+            <el-button v-permission="['Administrator','QA']" size="mini" class="buttonPrimary" @click="handleParticipateDialog(scope.row.id)">
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>
-            <el-button v-permission="['Administrator','Project Manager', 'QA']" type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button v-permission="['Administrator','Project Manager', 'QA']" class="buttonPrimary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
             <el-button
               type="danger"
               size="mini"
@@ -201,7 +201,7 @@ export default {
         .then(() => {
           this.handleIssueClick(row)
         })
-        .catch(() => {})
+        .catch(() => ({}))
     },
     showConfirmRemoveMemberDialog(row) {
       const { id, name } = row
@@ -218,7 +218,7 @@ export default {
         .then(() => {
           this.handleDelete(id)
         })
-        .catch(() => {})
+        .catch(() => ({}))
     },
     async fetchIssueByUser(row) {
       const { id } = row
@@ -238,3 +238,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+.buttonSecondary {
+  background-color: $buttonSecondary;
+  color: white
+}
+</style>

@@ -74,6 +74,7 @@
         slot="reference"
         icon="el-icon-s-operation"
         type="text"
+        class="filterTextColor"
       > {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
@@ -94,6 +95,7 @@
       v-else
       type="text"
       icon="el-icon-search"
+      class="filterTextColor"
       @click="searchVisible = !searchVisible"
     >
       {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
@@ -103,6 +105,7 @@
       <el-button
         size="small"
         icon="el-icon-close"
+        class="filterTextColor"
         @click="cleanFilter"
       >
         {{ $t('Issue.CleanFilter') }}
@@ -278,6 +281,12 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.filterTextColor {
+  color: $headerTextColor !important;
+  &:hover {
+    border-color: transparent;
+  }
+}
 </style>

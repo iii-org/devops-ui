@@ -3,7 +3,7 @@
     <div class="flex justify-between mt-3">
       <div class="font-medium text-lg">{{ $t('ProjectSettings.Tag') }}</div>
       <div>
-        <el-button type="primary" :disabled="isAddingTag" @click="handleShowTagInput">+ {{ $t('ProjectSettings.AddCustomTag') }}</el-button>
+        <el-button class="buttonPrimary" :disabled="isAddingTag" @click="handleShowTagInput">+ {{ $t('ProjectSettings.AddCustomTag') }}</el-button>
       </div>
     </div>
     <el-divider />
@@ -17,7 +17,7 @@
             type="text"
             class="mr-3"
           />
-          <el-button type="primary" @click="handleInputSave">{{ $t('general.Save') }}</el-button>
+          <el-button class="buttonPrimary" @click="handleInputSave">{{ $t('general.Save') }}</el-button>
           <el-button @click="handleInputCancel">{{ $t('general.Cancel') }}</el-button>
         </el-form-item>
       </el-form>
@@ -191,5 +191,11 @@ export default {
   &:hover {
     background: #e4ecf7;
   }
+}
+
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
 }
 </style>

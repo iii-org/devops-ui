@@ -42,7 +42,7 @@
         <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">
           {{ $t('general.Cancel') }}
         </el-button>
-        <el-button size="mini" type="primary" :loading="isStagesLoading" @click="updatePipeDefBranch">
+        <el-button size="mini" class="buttonPrimary" :loading="isStagesLoading" @click="updatePipeDefBranch">
           {{ $t('general.Confirm') }}
         </el-button>
       </div>
@@ -85,12 +85,11 @@ export default {
     // count the frequency of each plugin appeared
     // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
     countFrequency() {
-      const countFreq = this.stagesData.reduce((preVal, curVal) => {
+      return this.stagesData.reduce((preVal, curVal) => {
         if (curVal.name in preVal) preVal[curVal.name]++
         else preVal[curVal.name] = 1
         return preVal
       }, {})
-      return countFreq
     },
     // find the repeat plugin
     repeatPlugins() {
@@ -210,3 +209,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+</style>

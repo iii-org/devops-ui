@@ -16,7 +16,7 @@
         <div>
           <el-button
             size="mini"
-            type="success"
+            class="buttonSecondary"
             :loading="isLoading"
             plain
             @click="updatePipelineBranch(false)"
@@ -25,7 +25,7 @@
           </el-button>
           <el-button
             size="mini"
-            type="success"
+            class="buttonSecondary"
             :loading="isLoading"
             @click="isDataChanged ? updatePipelineBranch(true) : updateUnalteredPipelineBranch()"
           >
@@ -294,3 +294,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonSecondary {
+  background-color: $buttonSecondary;
+  color: white
+}
+</style>

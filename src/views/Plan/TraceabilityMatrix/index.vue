@@ -22,7 +22,7 @@
             </el-select>
           </el-form-item>
           <el-button
-            class="w-full"
+            class="w-full filterTextColor"
             icon="el-icon-setting"
             :loading="isRunning()"
             @click="settingDialogVisible=!settingDialogVisible"
@@ -42,8 +42,7 @@
             </ol>
           </el-form-item>
           <el-button
-            class="w-full"
-            type="primary"
+            class="w-full buttonPrimary"
             icon="el-icon-check"
             :loading="isRunning()"
             @click="createTraceCheckJob"
@@ -55,6 +54,7 @@
           slot="reference"
           icon="el-icon-s-operation"
           type="text"
+          class="filterTextColor"
           :loading="chartLoading"
           :disabled="chartLoading"
         > {{ $t('Track.TraceabilityCheck') }}
@@ -149,7 +149,7 @@
           <el-form-item v-show="!chartSettingVisible">
             <el-button
               icon="el-icon-s-operation"
-              type="primary"
+              class="buttonPrimary"
               :loading="chartLoading"
               :disabled="chartLoading"
               @click="onPaintChart"
@@ -179,13 +179,14 @@
               <el-button
                 slot="reference"
                 icon="el-icon-download"
+                class="filterTextColor"
               >{{ $t('Track.Download') }}</el-button>
             </el-popover>
           </el-form-item>
           <el-form-item>
             <el-button
               :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'"
-              type="success"
+              class="buttonSecondary"
               @click="chartSettingVisible=!chartSettingVisible"
             />
           </el-form-item>
@@ -240,8 +241,9 @@
             <el-form inline>
               <el-form-item>
                 <el-button
+                  size="small"
                   icon="el-icon-arrow-left"
-                  type="primary"
+                  class="buttonPrimary"
                   @click="filterSettingVisible=!filterSettingVisible"
                 />
               </el-form-item>
@@ -316,7 +318,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
-              class="w-full"
+              class="w-full filterTextColor"
               icon="el-icon-setting"
               :loading="isRunning()"
               @click="settingDialogVisible=!settingDialogVisible"
@@ -333,7 +335,7 @@
               :key="item"
               class="item"
             >{{ idx + 1 }}.
-              <el-tag>
+              <el-tag class="filterTextColor">
                 <Tracker
                   :name="$t(`Issue.${item}`)"
                   :type="item"
@@ -343,7 +345,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
-              type="primary"
+              class="buttonPrimary"
               icon="el-icon-check"
               :loading="isRunning()"
               @click="createTraceCheckJob"
@@ -1090,4 +1092,19 @@ $max_width: calc(100vw);
 //    overflow-y: auto;
 //  }
 //}
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+.buttonSecondary {
+  background-color: $buttonSecondary;
+  color: white
+}
+.filterTextColor {
+  color: $headerTextColor !important;
+  &:hover {
+    border-color: transparent;
+  }
+}
 </style>

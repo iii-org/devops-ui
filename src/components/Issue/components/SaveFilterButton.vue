@@ -3,7 +3,7 @@
     <el-button
       v-if="showSaveSettingsButton"
       style="width:100%"
-      type="primary"
+      class="buttonPrimary"
       @click="showSaveSettingsButton = !showSaveSettingsButton"
     >
       {{ $t('general.SaveSettings') }}
@@ -149,3 +149,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+</style>

@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="flex justify-between">
       <el-button
-        type="success"
         icon="el-icon-plus"
+        class="buttonPrimary"
         @click="handleAdding"
       >
         {{ $t('Project.AddProject') }}
@@ -533,6 +533,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+
 .status-bar-track {
   background: #f5f5f5;
   border-radius: 5px;
@@ -551,5 +553,10 @@ export default {
   top: 0;
   background: #3ecbbc;
   height: 4px;
+}
+
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
 }
 </style>

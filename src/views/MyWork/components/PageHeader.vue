@@ -8,7 +8,7 @@
       <template v-if="!focusedProjectId">
         <el-button
           v-permission="['Administrator','Project Manager']"
-          type="primary"
+          class="buttonPrimary"
           icon="el-icon-plus"
           @click="$emit('create-project')"
         >
@@ -19,7 +19,7 @@
       <el-button
         v-else
         v-permission="['Administrator','Project Manager', 'Engineer']"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         @click="$emit('add-issue')"
       >
@@ -106,6 +106,7 @@
         slot="reference"
         icon="el-icon-s-operation"
         type="text"
+        class="filterTextColor"
       >
         {{ selectedConditions }}
         <em class="el-icon-arrow-down" />
@@ -117,6 +118,7 @@
     <el-button
       v-if="!searchVisible"
       type="text"
+      class="filterTextColor"
       icon="el-icon-search"
       @click="showKeywordInput"
     >
@@ -138,6 +140,7 @@
       <el-divider direction="vertical" />
       <el-button
         size="small"
+        class="filterTextColor"
         icon="el-icon-close"
         @click="clearFilter"
       >
@@ -372,3 +375,21 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+.buttonSecondary {
+  background-color: $buttonSecondary;
+  color: white
+}
+.filterTextColor {
+  color: $headerTextColor !important;
+  &:hover {
+    border-color: transparent;
+  }
+}
+</style>

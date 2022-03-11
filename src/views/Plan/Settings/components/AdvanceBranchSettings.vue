@@ -27,7 +27,7 @@
         <div v-else />
         <div>
           <el-button size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
-          <el-button type="primary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
+          <el-button class="buttonPrimary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
         </div>
       </div>
       <el-table :data="filteredData" fit :cell-style="cellStyle">
@@ -322,3 +322,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+</style>

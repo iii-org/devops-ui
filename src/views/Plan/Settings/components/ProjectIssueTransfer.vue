@@ -149,7 +149,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimary"
               @click="onTransferClick(scope.row.id)"
             >
               {{ $t('general.Transfer') }}
@@ -217,7 +217,7 @@
       >
         <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
         <el-button
-          type="primary"
+          class="buttonPrimary"
           @click="batchTransfer"
         >{{ $t('general.Confirm') }}</el-button>
       </span>
@@ -417,3 +417,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonPrimary {
+  background-color: $buttonPrimary;
+  color: white
+}
+</style>
