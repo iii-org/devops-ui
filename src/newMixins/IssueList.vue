@@ -125,9 +125,11 @@ export default {
         await this.checkLastRequest()
         const cancelTokenSource = axios.CancelToken.source()
         this.lastIssueListCancelToken = cancelTokenSource
-        const res = await getProjectIssueList(this.selectedProjectId, this.getParams(), {
-          cancelToken: cancelTokenSource.token
-        })
+        const res = await getProjectIssueList(
+          this.filterValue.project || this.selectedProjectId,
+          this.getParams(), {
+            cancelToken: cancelTokenSource.token
+          })
         listData = res.data.issue_list
         this.setPageInfoWhenFetchData(res)
         await this.checkExpandedRowWhenFetchData(listData)
@@ -168,12 +170,15 @@ export default {
       if (status) {
         params = { status: 'open,locked,closed' }
       }
-      const versionList = await getProjectVersion(this.selectedProjectId, params)
+      const versionList = await getProjectVersion(this.filterValue.project || this.selectedProjectId, params)
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     async loadSelectionList() {
-      if (this.selectedProjectId === -1) return
-      await Promise.all([getProjectUserList(this.selectedProjectId), getTagsByProject(this.selectedProjectId)]).then(
+      if (this.filterValue.project || this.selectedProjectId === -1) return
+      await Promise.all([
+        getProjectUserList(this.filterValue.project || this.selectedProjectId),
+        getTagsByProject(this.filterValue.project || this.selectedProjectId)
+      ]).then(
         (res) => {
           const [assigneeList, tagsList] = res.map((item) => item.data)
           this.tags = tagsList.tags

@@ -7,7 +7,7 @@
         v-permission="['Administrator','Project Manager', 'Engineer']"
         type="success"
         icon="el-icon-plus"
-        :disabled="selectedProjectId === -1"
+        :disabled="isDisabled"
         @click="handleQuickAddClose"
       >
         {{ $t('Issue.AddIssue') }}
@@ -40,14 +40,14 @@
           >
             <el-menu class="download">
               <el-menu-item
-                :disabled="selectedProjectId === -1 || allDataLoading"
+                :disabled="isDisabled || allDataLoading"
                 @click="downloadExcel('allDownloadData')"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item
                 v-show="hasSelectedIssue"
-                :disabled="selectedProjectId === -1"
+                :disabled="isDisabled"
                 @click="downloadExcel(selectedIssueList)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
@@ -357,7 +357,7 @@ export default {
     ExpandSection,
     CustomFilter
   },
-  mixins: [Table, ContextMenu, IssueList],
+  mixins: [Table, IssueList, ContextMenu],
   data() {
     return {
       quickAddTopicDialogVisible: false,
@@ -402,8 +402,11 @@ export default {
       }
       return this.displayFields
     },
-    filterSelectProjectId() {
-      return this.filterValue.project
+    isDisabled() {
+      return this.mainSelectedProjectId === -1
+    },
+    mainSelectedProjectId() {
+      return this.filterValue.project || this.selectedProjectId
     }
   },
   watch: {
@@ -429,50 +432,9 @@ export default {
       'setFixedVersionShowClosed',
       'getFixedVersionShowClosed'
     ]),
-    async isProjectHasSon() {
-      const hasSon = await getHasSon(this.selectedProjectId)
-      console.log(this.selectedProjectId)
-      console.log(this.filterSelectProjectId)
-      console.log(hasSon.has_child)
-      if (hasSon.has_child) {
-        this.filterOptionsWithProject = [{
-          id: 7,
-          label: this.$t('Issue.FilterDimensions.project'),
-          value: 'project',
-          placeholder: 'Project'
-        },
-        { id: 1, label: this.$t('Issue.FilterDimensions.status'), value: 'status', placeholder: 'Status', tag: true },
-        { id: 2, label: this.$t('Issue.FilterDimensions.tags'), value: 'tags', placeholder: 'Tag' },
-        { id: 3, label: this.$t('Issue.FilterDimensions.tracker'), value: 'tracker', placeholder: 'Type', tag: true },
-        { id: 4, label: this.$t('Issue.FilterDimensions.assigned_to'), value: 'assigned_to', placeholder: 'Member' },
-        {
-          id: 5,
-          label: this.$t('Issue.FilterDimensions.fixed_version'),
-          value: 'fixed_version',
-          placeholder: 'Version'
-        },
-        {
-          id: 6,
-          label: this.$t('Issue.FilterDimensions.priority'),
-          value: 'priority',
-          placeholder: 'Priority',
-          tag: true
-        }]
-      } else {
-        this.filterOptionsWithProject = this.filterOptions
-      }
-    },
-    async getProjectRelationData() {
-      // const projectRelation = await getProjectRelation(this.selectedProjectId)
-      this.projectRelationList = [
-        { id: 138, name: 'testA' },
-        { id: 137, name: 'testB' }
-      ]
-    },
     async fetchInitData() {
       this.getInitPage()
-      await this.isProjectHasSon()
-      await this.getProjectRelationData()
+      if (await this.isProjectHasSon()) await this.getProjectRelationData()
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadDisplayColumns()
@@ -481,7 +443,7 @@ export default {
     async fetchAllDownloadData() {
       this.allDataLoading = true
       const res = await getProjectIssueList(
-        this.filterSelectProjectId || this.selectedProjectId,
+        this.mainSelectedProjectId,
         this.getParams(this.totalData)
       )
       this.allDownloadData = res.data.issue_list
@@ -658,7 +620,7 @@ export default {
     },
     async loadDisplayColumns() {
       const res = await getIssueFieldDisplay({
-        project_id: this.filterSelectProjectId || this.selectedProjectId,
+        project_id: this.mainSelectedProjectId,
         type: 'issue_list'
       })
       this.displayFields = res.data
@@ -681,7 +643,7 @@ export default {
         this.displayFields = this.columnsOptions.map(item => item.field)
       }
       const res = await putIssueFieldDisplay({
-        project_id: this.filterSelectProjectId || this.selectedProjectId,
+        project_id: this.mainSelectedProjectId,
         type: 'issue_list',
         display_fields: this.displayFields
       })
@@ -699,6 +661,26 @@ export default {
       this.onChangeFilterForm({ filterValue: result })
       this.displayClosed = displayClosed
       this.fixed_version_closed = fixed_version_closed
+    },
+    async isProjectHasSon() {
+      const hasSon = await getHasSon(this.selectedProjectId)
+      if (hasSon.has_child) {
+        this.filterOptionsWithProject = [{
+          id: 7,
+          value: 'project',
+          placeholder: 'Project'
+        }].concat(this.filterOptions)
+      } else {
+        this.filterOptionsWithProject = this.filterOptions
+      }
+      return hasSon.has_child
+    },
+    async getProjectRelationData() {
+      const projectRelation = await getProjectRelation(this.selectedProjectId)
+      this.projectRelationList = []
+      projectRelation.data.forEach((item) => {
+        this.projectRelationList.push(...item.child)
+      })
     }
   }
 }
