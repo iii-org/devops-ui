@@ -972,7 +972,6 @@ export default {
     releaseNote: '[Release Note]',
     releaseVersionName: 'Version name',
     selectMainVersion: 'Please main version',
-    startRelease: 'Start releasing',
     copyIssues: 'Copy issue names to clipboard',
     allCategories: 'All',
     batchClose: 'Batch close',
@@ -983,10 +982,10 @@ export default {
     selectMoveToVersion: 'Please select version',
     batchMoveDialogHint: 'Will batch move {0} issues',
     releaseDone: 'Done releasing version {0}.',
-    startPackageVersion: 'Start Package Version',
-    stopPackageVersion: 'Stop Package Version',
+    startRelease: 'Start Release',
+    stopRelease: 'Stop Release',
     checkIssue: 'Check Issues',
-    packageVersionSettings: 'Package Version Settings'
+    releaseSettings: 'Release Settings'
   },
   SystemVersion: {
     Source: 'Source',

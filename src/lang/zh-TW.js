@@ -965,7 +965,6 @@ export default {
     releaseNote: '版本說明',
     releaseVersionName: '包版版號',
     selectMainVersion: '請選擇主版本',
-    startRelease: '開始包版',
     copyIssues: '複製選中議題名稱到剪貼簿',
     allCategories: '所有種類',
     batchClose: '批次關閉',
@@ -976,10 +975,10 @@ export default {
     selectMoveToVersion: '請選擇版本',
     batchMoveDialogHint: '將批次搬移 {0} 個議題',
     releaseDone: '版本 {0} 包版成功。',
-    startPackageVersion: '包版作業',
-    stopPackageVersion: '取消包版',
+    startRelease: '開始包版',
+    stopRelease: '取消包版',
     checkIssue: '檢查議題',
-    packageVersionSettings: '包版作業設定-'
+    releaseSettings: '包版作業設定-'
   },
   SystemVersion: {
     Source: '系統模組',

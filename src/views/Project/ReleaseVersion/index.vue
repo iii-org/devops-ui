@@ -9,8 +9,8 @@
             @click="showProjectVersionSelector"
           >
             <span class="el-icon-goods" />
-            <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopPackageVersion') }}</span>
-            <span v-else>{{ $t('Release.startPackageVersion') }}</span>
+            <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopRelease') }}</span>
+            <span v-else>{{ $t('Release.startRelease') }}</span>
           </el-button>
           <el-input
             v-model="keywords"
