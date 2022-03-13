@@ -585,8 +585,7 @@ const allRoutes = [
                 path: 'pod-execute-shell',
                 name: 'Pod Execute Shell',
                 hidden: true,
-                component: () =>
-                  import('@/views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell'),
+                component: 'views/Progress/KubernetesResources/components/PodsList/components/PodExecuteShell',
                 meta: { title: 'Pod Execute Shell', roles: ['Administrator', 'Project Manager', 'Engineer'] }
               }
             ]
