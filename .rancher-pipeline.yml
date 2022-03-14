@@ -40,9 +40,6 @@ stages:
       include:
       - master
       - develop
-      - projectlist
-      - projectfilter
-      - sysconfig  
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -92,6 +89,9 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - theme
+      - themetry
+      - socket
 - name: Build--Build and push docker image(master develop)
   iiidevops: deployed-environments
   steps:
@@ -135,6 +135,9 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - theme
+      - themetry
+      - socket
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -239,6 +242,9 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - theme
+      - themetry
+      - socket
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -267,6 +273,9 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - theme
+      - themetry
+      - socket
 - name: Test--ZAP
   iiidevops: zap
   steps:
