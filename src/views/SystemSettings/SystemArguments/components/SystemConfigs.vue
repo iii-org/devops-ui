@@ -37,16 +37,17 @@
       />
       <el-table-column
         :label="$t('SystemConfigs.Content')"
-        prop="content"
         align="center"
       >
         <template slot-scope="scope">
           <span v-if="scope.row.type === 'fileType'">
             {{ scope.row.id }}
           </span>
-          <el-tag v-else type="success">
-            <span>{{ scope.row.content }}</span>
-          </el-tag>
+          <span v-else>
+            <el-tag :type="scope.row.disabled === true ? 'success' : 'danger'">
+              <span>{{ scope.row.disabled === true ? $t('general.Enable') : $t('general.Disable') }}</span>
+            </el-tag>
+          </span>
         </template>
       </el-table-column>
       <el-table-column
@@ -67,12 +68,16 @@
           <el-button
             v-else
             size="mini"
-            @click="handleActive(scope.row)"
+            :disabled="gitlabDomainIP"
+            @click="handleActive(!scope.row.disabled)"
           >
-            <div class="flex items-center">
-              <span class="dot" :class="scope.row.disabled ? 'bg-success' : 'bg-danger'" />
-              <span class="ml-2" :class="scope.row.disabled ? 'text-success' : 'text-danger'">
-                {{ !scope.row.disabled ? $t('general.Disable') : $t('general.Enable') }}
+            <div v-if="gitlabDomainIP">
+              {{ !scope.row.disabled ? $t('general.Enable') : $t('general.Disable') }}
+            </div>
+            <div v-else class="flex items-center">
+              <span class="dot" :class="!scope.row.disabled ? 'bg-success' : 'bg-danger'" />
+              <span class="ml-2" :class="!scope.row.disabled ? 'text-success' : 'text-danger'">
+                {{ !scope.row.disabled ? $t('general.Enable') : $t('general.Disable') }}
               </span>
             </div>
           </el-button>
@@ -97,17 +102,19 @@
 import Pagination from '@/components/Pagination'
 import MixinElTable from '@/mixins/MixinElTable'
 import FileTypeDialog from './FileTypeDialog'
+import {
+  getGitlabStatus,
+  editGitlabStatus,
+  isGitlabDomainIP
+} from '@/api/gitlab'
 
 export default {
   name: 'SystemConfigs',
   components: { Pagination, FileTypeDialog },
   mixins: [MixinElTable],
   data() {
-    return {}
-  },
-  computed: {
-    tableData() {
-      return [
+    return {
+      tableData: [
         {
           type: 'fileType',
           name: this.$t('SystemConfigs.FileType'),
@@ -119,30 +126,32 @@ export default {
           name: this.$t('SystemConfigs.GitLabExternalAccess'),
           description: `For security concern, III DevOps only enable Gitlab internal access.
                         But Will not be affected in the IP mode`,
-          content: this.$t('general.Enable'),
           disabled: false
         }
-      ]
+      ],
+      gitlabStatus: false,
+      gitlabDomainIP: false
     }
+  },
+  mounted() {
+    this.isGitlabDomainIP()
   },
   methods: {
     async fetchData() {
-      // const res = await getSystemSecrets()
-      // return res.data.map(item => ({
-      //   name: item.name,
-      //   created: item.created,
-      //   keys: item.data ? Object.keys(item.data).join(', ') : '',
-      //   status: item.removed ? 'Removing' : 'Active'
-      // }))
+      await this.isGitlabStatus()
+      this.tableData[1].disabled = this.gitlabStatus
       return this.tableData
     },
     handleEdit(row) {
       this.$refs['FileTypeDialog'].dialogVisible = true
     },
-    async handleActive(secretName) {
+    async handleActive(active) {
       this.listLoading = true
+      const data = {
+        action: active ? 'open' : 'close'
+      }
       try {
-        // await deleteSystemSecret(secretName)
+        await editGitlabStatus(data)
         await this.loadData()
       } catch (error) {
         console.error(error)
@@ -151,6 +160,14 @@ export default {
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    async isGitlabStatus() {
+      const res = await getGitlabStatus()
+      this.gitlabStatus = res.data.status
+    },
+    async isGitlabDomainIP() {
+      const res = await isGitlabDomainIP()
+      this.gitlabDomainIP = res.is_ip
     }
   }
 }
