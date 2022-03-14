@@ -27,7 +27,11 @@ export default {
   props: {
     deleteProjectObj: {
       type: Object,
-      default: () => {}
+      default: () => ({})
+    },
+    isForceDelete: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -38,7 +42,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('projects', ['deleteProject']),
+    ...mapActions('projects', ['deleteProject', 'forceDeleteProject']),
     onDialogClosedDelete() {
       this.confirmProjectName = ''
     },
@@ -51,7 +55,10 @@ export default {
       } else {
         try {
           this.isLoading = true
-          const res = await this.deleteProject(this.deleteProjectObj.id)
+          let res = []
+          if (this.isForceDelete) {
+            res = await this.forceDeleteProject(this.deleteProjectObj.id)
+          } else res = await this.deleteProject(this.deleteProjectObj.id)
           if (res.message !== 'success') {
             throw new Error()
           }

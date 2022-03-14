@@ -202,7 +202,6 @@
         <template slot-scope="scope">
           <el-button
             v-if="userRole !== 'QA' && scope.row.is_lock!==true"
-            :disabled="permission(scope.row)"
             size="mini"
             type="primary"
             icon="el-icon-edit"
@@ -227,13 +226,12 @@
             type="danger"
             class="text-error"
             icon="el-icon-delete"
-            @click="handleForceDelete(scope.row.id)"
+            @click="handleDelete(scope.row, true)"
           >
             {{ $t('general.ForceDelete') }}
           </el-button>
           <el-button
             v-if="scope.row.is_lock===true"
-            :disabled="permission(scope.row)"
             size="mini"
             type="success"
             class="text-success"
@@ -293,6 +291,7 @@
     <DeleteProjectDialog
       ref="deleteProjectDialog"
       :delete-project-obj="deleteProject"
+      :is-force-delete="forceDelete"
       @update="fetchData"
     />
   </div>
@@ -306,7 +305,7 @@ import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
-import { forceDeleteProject, syncProject } from '@/api_v2/projects'
+import { syncProject } from '@/api_v2/projects'
 
 const params = () => ({
   limit: 10,
@@ -341,7 +340,8 @@ export default {
       searchKeys: ['display', 'name', 'owner_name'],
       rowHeight: 74,
       params: params(),
-      listData: []
+      listData: [],
+      forceDelete: false
     }
   },
   computed: {
@@ -364,13 +364,11 @@ export default {
       } else this.keyword = ''
     }
   },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList', 'editProject']),
     async fetchData() {
       this.listLoading = true
+      this.forceDelete = false
       if (this.$refs.filter) this.getParams()
       await this.getMyProjectList(this.params)
       this.listLoading = false
@@ -411,7 +409,6 @@ export default {
         })
       }
       this.listData = merged
-      console.log(this.listData)
     },
     async onPagination(listQuery) {
       const { limit, page } = listQuery
@@ -432,9 +429,11 @@ export default {
       this.editProjectObject = Object.assign({}, row)
       this.$refs.editProjectDialog.showDialog = true
     },
-    handleDelete(row) {
+    handleDelete(row, isForce) {
       this.deleteProject.id = row.id
       this.deleteProject.name = row.name
+      
+      if (isForce) this.forceDelete = true
       this.$refs.deleteProjectDialog.showDialog = true
     },
     returnProgress(current, total) {
@@ -502,18 +501,6 @@ export default {
           this.showErrorMessage(error)
         }
       })
-    },
-    async handleForceDelete(project_id) {
-      this.listLoading = true
-      const res = await forceDeleteProject(project_id)
-      if (res.message === 'success') {
-        this.showSuccessMessage(res.message)
-        this.fetchData()
-      } else {
-        const error = res.error.message
-        this.showErrorMessage(error)
-      }
-      this.listLoading = false
     },
     async handleFix(project_id) {
       this.listLoading = true

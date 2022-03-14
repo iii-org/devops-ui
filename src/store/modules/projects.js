@@ -7,6 +7,7 @@ import {
   getProjectIssueStatistics,
   getProjectUserList
 } from '@/api/projects'
+import { forceDeleteProject } from '@/api_v2/projects'
 import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
 
 const getDefaultState = () => {
@@ -135,6 +136,15 @@ const actions = {
   async deleteProject({ commit, dispatch }, pId) {
     try {
       const res = await deleteProject(pId)
+      dispatch('user/getInfo', null, { root: true })
+      return res
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async forceDeleteProject({ commit, dispatch }, pId) {
+    try {
+      const res = await forceDeleteProject(pId)
       dispatch('user/getInfo', null, { root: true })
       return res
     } catch (error) {

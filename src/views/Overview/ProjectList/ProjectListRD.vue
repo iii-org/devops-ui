@@ -266,9 +266,6 @@ export default {
       } else this.keyword = ''
     }
   },
-  mounted() {
-    this.fetchData()
-  },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
     async fetchData() {

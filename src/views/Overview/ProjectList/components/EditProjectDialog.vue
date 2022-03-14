@@ -67,6 +67,7 @@
           <el-form-item prop="disabled">
             <el-switch
               v-model="form.disabled"
+              :disabled="disabledEditOwner"
               :active-value="false"
               :inactive-value="true"
               active-color="#13ce66"
@@ -106,7 +107,7 @@ export default {
   props: {
     editProjectObj: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
