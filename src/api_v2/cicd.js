@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getPipelines = (repository_id, params, config) =>
   request.get(`/v2/pipelines/${repository_id}/pipelines_exec`, { params, ...config })

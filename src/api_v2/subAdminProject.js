@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getAdminProjects = () => request.get(`/v2/project_permission/admin_projects`)
 export const getSubAdminProjects = (params) => request.get(`/v2/project_permission/subadmin_projects`, { params })

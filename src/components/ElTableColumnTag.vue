@@ -11,6 +11,7 @@
         <span v-if="i18nKey">{{ $t(`${i18nKey}.${scope.row[prop]}`) }}</span>
         <span v-else>{{ scope.row[prop] }}</span>
       </el-tag>
+      <span v-else>-</span>
     </template>
   </el-table-column>
 </template>

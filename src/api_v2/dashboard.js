@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getRdDashboardIssuesPriority = (user_id) => request.get(`/v2/dashboard_issues_priority/${user_id}`)
 export const getRdDashboardIssuesProject = (issue_id) => request.get(`/v2/dashboard_issues_project/${issue_id}`)

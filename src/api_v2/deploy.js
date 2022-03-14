@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 // cluster
 export const getDeployedHostsLists = () => request.get(`/v2/deploy/clusters`)

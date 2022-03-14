@@ -53,7 +53,7 @@
       </el-row>
     </el-card>
     <br>
-    <div class="font-bold text-lg mb-2">{{ $t('Release.packageVersionSettings') }}</div>
+    <div class="font-bold text-lg mb-2">{{ $t('Release.releaseSettings') }}</div>
     <el-row class="flex">
       <el-col
         :span="9"

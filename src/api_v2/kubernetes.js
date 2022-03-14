@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 // secret
 export const getSecretList = (project_id) => request.get(`/v2/project/${project_id}/resource/secrets`)

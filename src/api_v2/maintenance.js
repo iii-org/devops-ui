@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getSystemSecrets = () => request.get(`/v2/maintenance/secretes_into_rc_all`)
 export const addSystemSecret = (data) => request.post(`/v2/maintenance/secretes_into_rc_all`, data)

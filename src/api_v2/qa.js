@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getTestFileList = (project_id) => request.get(`/v2/quality/${project_id}/testfile_list`)
 export const postTestFile = (project_id, software_name, data) =>

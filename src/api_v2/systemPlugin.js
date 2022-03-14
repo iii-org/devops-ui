@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getPlugins = () => request.get(`/v2/plugins`)
 export const getPluginDetails = (plugin_id) => request.get(`/v2/plugins/${plugin_id}`)

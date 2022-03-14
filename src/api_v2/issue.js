@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getIssue = (issue_id) => request.get(`/v2/issues/${issue_id}`)
 export const getIssueStatus = () => request.get(`/v2/issues_status`)

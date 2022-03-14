@@ -1,4 +1,4 @@
-import request from '@/plugins/axios'
+import request from '@/utils/request'
 
 export const getSystemServerStatus = () => request.get(`/v2/monitoring/alive`)
 export const getRancherStatus = () => request.get(`/v2/monitoring/rancher/alive`)
