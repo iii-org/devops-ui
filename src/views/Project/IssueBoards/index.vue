@@ -412,10 +412,11 @@ export default {
       this.loadVersionList(value)
     }
   },
-  mounted() {
+  async created() {
     this.setSocketListener()
-    this.socket.connect()
-    this.socket.emit('join', { project_id: this.selectedProjectId })
+    await this.socket.connect()
+    await this.socket.emit('join', { project_id: this.selectedProjectId })
+    await this.fetchInitData()
   },
   beforeDestroy() {
     this.socket.disconnect()
@@ -662,7 +663,6 @@ export default {
       })
     },
     sortIssue() {
-      // const sortPriority = (a, b) => (a.priority.id - b.priority.id)
       const sortUpdateOn = (a, b) => new Date(b.updated_on) - new Date(a.updated_on)
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
@@ -767,47 +767,50 @@ export default {
       this.$refs.saveFilterButton.reset()
     },
     setSocketListener() {
-      console.log('in the socket')
-      // const _this = this
+      const _this = this
       this.socket.on('connect', () => {
-        console.log('connected')
+        this.$message({
+          message: this.$t('Notify.ConnectSocket'),
+          type: 'success'
+        })
       })
       this.socket.on('update_issue', async (data) => {
-        console.log('update issue')
-        await this.loadData()
-        // data = _this.socketDataFormat(data)
-        // const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
-        // this.$set(this.projectIssueList, findChangeIndex, data)
-        // this.updateData()
-        // this.$notify({ title: `${data.id} 已修改`, type: 'success', message: data })
+        data = _this.socketDataFormat(data)
+        const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        this.$set(this.projectIssueList, findChangeIndex, data)
+        this.updateData()
+        this.showUpdateMessage(data)
       })
       this.socket.on('delete_issue', async (data) => {
-        await this.loadData()
-        // const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
-        // this.$delete(this.projectIssueList, findChangeIndex)
-        // this.updateData()
-        // this.$notify({ title: `${data.id} 已刪除`, type: 'success', message: data })
+        const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        this.$delete(this.projectIssueList, findChangeIndex)
+        this.updateData()
+        this.showUpdateMessage(data)
       })
       this.socket.on('add_issue', async data => {
-        await this.loadData()
-        // this.$set(this.projectIssueList, this.projectIssueList.length, data)
-        // this.updateData()
-        // this.$notify({ title: `${data.id} 已新增`, type: 'success', message: data })
+        this.$set(this.projectIssueList, this.projectIssueList.length, data)
+        this.updateData()
+        this.showUpdateMessage(data)
+      })
+    },
+    socketDataFormat(data) {
+      Object.keys(data).forEach(key => {
+        const splitKey = key.split('_id')
+        if (splitKey.length > 1) {
+          const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+          if (findObject) {
+            data[splitKey[0]] = findObject
+          }
+        }
+      })
+      return data
+    },
+    showUpdateMessage(data) {
+      this.$message({
+        message: this.$t('Notify.UpdateKanban', { issueName: data.name }),
+        type: 'success'
       })
     }
-    // socketDataFormat(data) {
-    //   console.log(data)
-    //   Object.keys(data).forEach(key => {
-    //     const splitKey = key.split('_id')
-    //     if (splitKey.length > 1) {
-    //       const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
-    //       if (findObject) {
-    //         data[splitKey[0]] = findObject
-    //       }
-    //     }
-    //   })
-    //   return data
-    // }
   }
 }
 </script>
