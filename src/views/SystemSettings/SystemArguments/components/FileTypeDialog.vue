@@ -79,13 +79,16 @@
     </template>
     <el-form ref="formTable" :model="formTable" :rules="formRules" size="mini">
       <el-table
+        v-loading="listLoading"
+        :element-loading-text="$t('Loading')"
         :data="formTable.pagedData"
         border
+        fit
         size="mini"
         style="width: 100%"
       >
         <el-table-column
-          prop="index"
+          prop="id"
           :label="$t('general.Index')"
           align="center"
           width="100"
@@ -166,7 +169,7 @@
                 icon="el-icon-info"
                 icon-color="red"
                 title="Are you sure?"
-                @confirm="handleDelete(scope)"
+                @confirm="handleDelete(scope.row.id)"
               >
                 <el-button
                   slot="reference"
@@ -211,7 +214,18 @@
 <script>
 import Pagination from '@/components/Pagination'
 import MixinElTable from '@/mixins/MixinElTable'
-import { allowedTypeMap, isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension.js'
+import {
+  getUploadFileType,
+  addUploadFileType,
+  editUploadFileType,
+  deleteUploadFileType
+} from '@/api_v2/fileType'
+
+const defaultFormData = () => ({
+  name: '',
+  mimeType: '',
+  fileExtension: ''
+})
 
 export default {
   name: 'FileTypeDialog',
@@ -225,10 +239,7 @@ export default {
       rowCache: null,
       originData: [],
       isSaved: true,
-      form: {
-        fileExtension: '',
-        mimeType: ''
-      },
+      form: defaultFormData(),
       formRules: {
         fileExtension: [{
           required: true,
@@ -254,31 +265,38 @@ export default {
           validator: this.validate,
           trigger: 'blur'
         }]
-      },
-      confirmLoading: false
+      }
     }
   },
   computed: {
-    fileData() {
-      return Object.entries(allowedTypeMap()).map((item, index) => ({
-        index: index + 1,
-        name: 'Microsoft Office',
-        mimeType: item[0],
-        fileExtension: item[1],
-        edit: false
-      }))
-    },
     formTable() {
       return { pagedData: this.pagedData }
     }
   },
   methods: {
     async fetchData() {
-      this.setOriginData(this.fileData)
-      return this.fileData
+      const res = await getUploadFileType()
+      const uploadFileTypesList = res.data.upload_file_types.map((item) => ({
+        id: item.id,
+        name: item.name,
+        mimeType: item['MIME Type'],
+        fileExtension: item['file extension'],
+        edit: false
+      }))
+      this.setOriginData(uploadFileTypesList)
+      return uploadFileTypesList
+    },
+    setOriginData(data) {
+      this.originData = JSON.parse(JSON.stringify(data))
+    },
+    onPagination(listQuery) {
+      this.listQuery = listQuery
+    },
+    initForm() {
+      this.form = defaultFormData()
     },
     validate (rule, value, callback) {
-      const i = rule.field.split('.')[1]
+      const i = this.originData.findIndex((item) => item.id === this.rowCache.id)
       const type = rule.field.split('.')[2]
       if (value !== this.originData[i][type]) {
         this.isSaved = false
@@ -288,91 +306,107 @@ export default {
         callback()
       }
     },
-    setOriginData(data) {
-      this.originData = JSON.parse(JSON.stringify(data))
-    },
-    handleEdit(scope) {
-      if (this.isSaved) {
-        if (this.rowCache) {
-          const i = this.rowCache.index - 1
-          this.rowCache.edit = false
-          this.rowCache.name = this.originData[i].name
-          this.rowCache.mimeType = this.originData[i].mimeType
-          this.rowCache.fileExtension = this.originData[i].fileExtension
-        }
-        scope.row.edit = true
-        this.rowCache = scope.row
-        this.$refs['formTable'].clearValidate()
-      }
-    },
-    handleSaveFile(scope) {
-      const i = scope.$index
-      scope.row.name = this.originData[i].name
-      scope.row.mimeType = this.originData[i].mimeType
-      scope.row.fileExtension = this.originData[i].fileExtension
-      scope.row.edit = false
-      this.isSaved = true
-    },
-    handleCancelFile(scope) {
-      const i = scope.$index
-      scope.row.name = this.originData[i].name
-      scope.row.mimeType = this.originData[i].mimeType
-      scope.row.fileExtension = this.originData[i].fileExtension
-      scope.row.edit = false
-      this.isSaved = true
-    },
-    async handleDelete(secretName) {
-      this.listLoading = true
-      try {
-        // await deleteSystemSecret(secretName)
-        await this.loadData()
-      } catch (error) {
-        console.error(error)
-      }
-      this.listLoading = false
-    },
-    onPagination(listQuery) {
-      this.listQuery = listQuery
-    },
-    initForm() {
-      this.form = { name: '' }
-    },
     handleShow() {
       this.isAdding = true
     },
     async handleConfirm() {
-      this.$refs['form'].validate(async valid => {
+      this.$refs['form'].validate(async(valid) => {
         if (valid) {
-          // this.listLoading = true
-          // this.confirmLoading = true
-          // const sendData = {
-          //   name: this.formData.name,
-          //   type: this.formData.type,
-          //   data: this.formData.data.reduce((result, cur) => Object.assign(result, { [cur.key]: cur.value }), {})
-          // }
-          // try {
-          //   await addSystemSecret(sendData)
-          //   await this.loadData()
-          //   this.dialogVisible = false
-          // } catch (error) {
-          //   console.error(error)
-          // }
-          // this.listLoading = false
-          // this.confirmLoading = false
+          this.listLoading = true
+          const sendData = new FormData()
+          sendData.append('name', this.form.name)
+          sendData.append('mimetype', this.form.mimeType)
+          sendData.append('file_extension', this.form.fileExtension)
+          try {
+            await addUploadFileType(sendData)
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Added'),
+              type: 'success'
+            })
+            this.handleCancel()
+            await this.loadData()
+          } catch (error) {
+            console.error(error)
+          } finally {
+            this.listLoading = false
+          }
         } else {
           return false
         }
       })
     },
     handleCancel() {
-      this.initForm()
+      this.$refs['form'].resetFields()
       this.isAdding = false
-      this.$refs['form'].clearValidate()
+      this.initForm()
+    },
+    handleEdit(scope) {
+      if (this.isSaved) {
+        if (this.rowCache) {
+          const i = this.originData.findIndex((item) => item.id === this.rowCache.id)
+          this.rowCache.edit = false
+          this.rowCache = this.originData[i]
+        }
+        scope.row.edit = true
+        this.rowCache = scope.row
+        this.$refs['formTable'].clearValidate()
+      }
+    },
+    async handleDelete(type_id) {
+      this.listLoading = true
+      try {
+        await deleteUploadFileType(type_id)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Deleted'),
+          type: 'success'
+        })
+        await this.loadData()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.listLoading = false
+      }
+    },
+    handleSaveFile(scope) {
+      this.$refs['formTable'].validate(async(valid) => {
+        if (!valid) {
+          this.listLoading = true
+          const sendData = new FormData()
+          sendData.append('name', scope.row.name)
+          sendData.append('mimetype', scope.row.mimeType)
+          sendData.append('file_extension', scope.row.fileExtension)
+          try {
+            await editUploadFileType(scope.row.id, sendData)
+            this.$message({
+              title: this.$t('general.Success'),
+              message: this.$t('Notify.Updated'),
+              type: 'success'
+            })
+            this.isSaved = true
+            await this.loadData()
+          } catch (error) {
+            console.error(error)
+          } finally {
+            this.listLoading = false
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    handleCancelFile(scope) {
+      const i = this.originData.findIndex((item) => item.id === this.rowCache.id)
+      scope.row.name = this.originData[i].name
+      scope.row.mimeType = this.originData[i].mimeType
+      scope.row.fileExtension = this.originData[i].fileExtension
+      scope.row.edit = this.originData[i].edit
+      this.isSaved = true
     },
     onDialogClosed() {
       this.$nextTick(() => {
-        // this.$refs['form'].resetFields()
-        // this.formData = defaultFormData()
+        this.handleCancel()
       })
     }
   }

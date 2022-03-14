@@ -41,7 +41,7 @@
       >
         <template slot-scope="scope">
           <span v-if="scope.row.type === 'fileType'">
-            {{ scope.row.id }}
+            {{ scope.row.content }}
           </span>
           <span v-else>
             <el-tag :type="scope.row.disabled === true ? 'success' : 'danger'">
@@ -61,7 +61,7 @@
             size="mini"
             type="primary"
             icon="el-icon-edit"
-            @click="handleEdit(scope.row)"
+            @click="handleEdit()"
           >
             {{ $t('general.Edit') }}
           </el-button>
@@ -102,11 +102,12 @@
 import Pagination from '@/components/Pagination'
 import MixinElTable from '@/mixins/MixinElTable'
 import FileTypeDialog from './FileTypeDialog'
+import { getFileNameList } from '@/api_v2/fileType'
 import {
   getGitlabStatus,
   editGitlabStatus,
   isGitlabDomainIP
-} from '@/api/gitlab'
+} from '@/api/gitlab' // v2 backend not finish yet, so use original api
 
 export default {
   name: 'SystemConfigs',
@@ -129,6 +130,7 @@ export default {
           disabled: false
         }
       ],
+      fileNameList: '',
       gitlabStatus: false,
       gitlabDomainIP: false
     }
@@ -138,12 +140,15 @@ export default {
   },
   methods: {
     async fetchData() {
+      await this.getGitlabStatus()
       await this.isGitlabStatus()
+      this.tableData[0].content = this.fileNameList.toString()
       this.tableData[1].disabled = this.gitlabStatus
       return this.tableData
     },
-    handleEdit(row) {
+    handleEdit() {
       this.$refs['FileTypeDialog'].dialogVisible = true
+      this.$refs['FileTypeDialog'].loadData()
     },
     async handleActive(active) {
       this.listLoading = true
@@ -152,14 +157,24 @@ export default {
       }
       try {
         await editGitlabStatus(data)
+        this.$message({
+          title: this.$t('general.Success'),
+          message: this.$t('Notify.Updated'),
+          type: 'success'
+        })
         await this.loadData()
       } catch (error) {
         console.error(error)
+      } finally {
+        this.listLoading = false
       }
-      this.listLoading = false
     },
     onPagination(listQuery) {
       this.listQuery = listQuery
+    },
+    async getGitlabStatus() {
+      const res = await getFileNameList()
+      this.fileNameList = res.data
     },
     async isGitlabStatus() {
       const res = await getGitlabStatus()
