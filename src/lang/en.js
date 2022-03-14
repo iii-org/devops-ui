@@ -236,7 +236,9 @@ export default {
     Low: 'Low',
     Run: 'Run',
     ForceDelete: 'Force Delete',
-    Fix: 'Fix'
+    Fix: 'Fix',
+    Connecting: 'Connecting',
+    Offline: 'Offline'
   },
   Notify: {
     Updated: 'update successful',
