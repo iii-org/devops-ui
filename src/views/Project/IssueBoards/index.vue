@@ -139,6 +139,10 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
+      <el-button slot="button" :type="(socket.connected)? 'success': 'danger'" @click="connectSocket()">
+        <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
+        {{ (socket.connected) ? '連線中' : '斷線' }}
+      </el-button>
       <el-divider direction="vertical" />
       <el-input
         v-if="searchVisible"
@@ -396,7 +400,9 @@ export default {
   },
   watch: {
     selectedProjectId: {
-      async handler(id) {
+      async handler(newId, oldId) {
+        this.socket.emit('leave', { project_id: oldId })
+        this.socket.emit('join', { project_id: newId })
         await this.onCleanKeyWord()
         await this.fetchInitData()
       },
@@ -413,9 +419,7 @@ export default {
     }
   },
   async created() {
-    this.setSocketListener()
-    await this.socket.connect()
-    await this.socket.emit('join', { project_id: this.selectedProjectId })
+    this.connectSocket()
     await this.fetchInitData()
   },
   beforeDestroy() {
@@ -810,6 +814,11 @@ export default {
         message: this.$t('Notify.UpdateKanban', { issueName: data.name }),
         type: 'success'
       })
+    },
+    async connectSocket() {
+      this.setSocketListener()
+      await this.socket.connect()
+      await this.socket.emit('join', { project_id: this.selectedProjectId })
     }
   }
 }
