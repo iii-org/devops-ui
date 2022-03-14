@@ -176,7 +176,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/newMixins'
-import { triggerReport } from '@/utils/triggerReport'
+// import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({
   page: 1,
@@ -240,10 +240,10 @@ export default {
     },
     keyword() {
       this.listQuery.page = 1
-    },
-    isUpdating() {
-      this.triggerReport()
     }
+    // isUpdating() {
+    //   this.triggerReport()
+    // }
   },
   mounted() {
     this.loadData()
@@ -252,13 +252,13 @@ export default {
     this.clearTimer()
   },
   methods: {
-    triggerReport() {
-      this.listData.forEach((item, index) => {
-        if (item.status.success > 0) {
-          triggerReport(this.selectedProject, this.listData[index].commit_id)
-        }
-      })
-    },
+    // triggerReport() {
+    //   this.listData.forEach((item, index) => {
+    //     if (item.status.success > 0) {
+    //       triggerReport(this.selectedProject, this.listData[index].commit_id)
+    //     }
+    //   })
+    // },
     onPagination(query) {
       this.clearTimer()
       const { first, next } = this.listQuery
