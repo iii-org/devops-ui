@@ -209,6 +209,7 @@ import ElSelectAll from '@/components/ElSelectAll'
 import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
 import axios from 'axios'
 import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
+import { io } from 'socket.io-client'
 
 export default {
   name: 'IssueBoards',
@@ -282,7 +283,13 @@ export default {
       tags: [],
       relativeIssueList: [],
       searchVisible: false,
-      keyword: null
+      keyword: null,
+      socket: io(`/issues/websocket`, {
+        reconnectionAttempts: 5
+      })
+      // socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, {
+      //   reconnectionAttempts: 5
+      // })
     }
   },
   computed: {
@@ -405,6 +412,14 @@ export default {
       this.loadVersionList(value)
     }
   },
+  mounted() {
+    this.setSocketListener()
+    this.socket.connect()
+    this.socket.emit('join', { project_id: this.selectedProjectId })
+  },
+  beforeDestroy() {
+    this.socket.disconnect()
+  },
   methods: {
     ...mapActions('projects', [
       'getProjectUserList',
@@ -515,6 +530,7 @@ export default {
       const getIssueList = this.getIssueList()
       this.projectIssueList = []
       await this.setIssueList(getIssueList)
+      this.updateData()
       this.projectIssueQueue = {}
       this.isLoading = false
     },
@@ -749,7 +765,49 @@ export default {
     },
     resetSaveFilterButtons() {
       this.$refs.saveFilterButton.reset()
+    },
+    setSocketListener() {
+      console.log('in the socket')
+      // const _this = this
+      this.socket.on('connect', () => {
+        console.log('connected')
+      })
+      this.socket.on('update_issue', async (data) => {
+        console.log('update issue')
+        await this.loadData()
+        // data = _this.socketDataFormat(data)
+        // const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        // this.$set(this.projectIssueList, findChangeIndex, data)
+        // this.updateData()
+        // this.$notify({ title: `${data.id} 已修改`, type: 'success', message: data })
+      })
+      this.socket.on('delete_issue', async (data) => {
+        await this.loadData()
+        // const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        // this.$delete(this.projectIssueList, findChangeIndex)
+        // this.updateData()
+        // this.$notify({ title: `${data.id} 已刪除`, type: 'success', message: data })
+      })
+      this.socket.on('add_issue', async data => {
+        await this.loadData()
+        // this.$set(this.projectIssueList, this.projectIssueList.length, data)
+        // this.updateData()
+        // this.$notify({ title: `${data.id} 已新增`, type: 'success', message: data })
+      })
     }
+    // socketDataFormat(data) {
+    //   console.log(data)
+    //   Object.keys(data).forEach(key => {
+    //     const splitKey = key.split('_id')
+    //     if (splitKey.length > 1) {
+    //       const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+    //       if (findObject) {
+    //         data[splitKey[0]] = findObject
+    //       }
+    //     }
+    //   })
+    //   return data
+    // }
   }
 }
 </script>
