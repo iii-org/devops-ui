@@ -50,8 +50,7 @@
       </el-form-item>
       <el-button
         :loading="loading"
-        type="primary"
-        class="w-full"
+        class="w-full buttonPrimary"
         @click.native.prevent="handleLogin"
       >
         {{ $t('general.Login') }}
@@ -143,7 +142,8 @@ export default {
 </script>
 
 <style lang="scss">
-$bg: #283443;
+@import 'src/styles/theme/variables.scss';
+$bg: $loginBackground;
 $light_gray: #fff;
 $cursor: #fff;
 
@@ -187,7 +187,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+@import 'src/styles/theme/variables.scss';
+
+$bg: $loginBackground;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
@@ -220,7 +222,7 @@ $light_gray: #eee;
 
   .svg-container {
     padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    color: $light_gray;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
@@ -243,7 +245,7 @@ $light_gray: #eee;
     right: 10px;
     top: 7px;
     font-size: 16px;
-    color: $dark_gray;
+    color: $light_gray;
     cursor: pointer;
     user-select: none;
   }

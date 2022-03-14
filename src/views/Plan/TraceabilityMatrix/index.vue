@@ -22,7 +22,7 @@
             </el-select>
           </el-form-item>
           <el-button
-            class="w-full filterTextColor"
+            class="w-full buttonSecondaryReverse"
             icon="el-icon-setting"
             :loading="isRunning()"
             @click="settingDialogVisible=!settingDialogVisible"
@@ -54,7 +54,7 @@
           slot="reference"
           icon="el-icon-s-operation"
           type="text"
-          class="filterTextColor"
+          class="headerTextColor"
           :loading="chartLoading"
           :disabled="chartLoading"
         > {{ $t('Track.TraceabilityCheck') }}
@@ -83,6 +83,7 @@
           <el-form-item>
             <el-button
               size="small"
+              class="buttonPrimaryReverse"
               icon="el-icon-arrow-right"
               @click="filterSettingVisible=!filterSettingVisible"
             />
@@ -179,7 +180,6 @@
               <el-button
                 slot="reference"
                 icon="el-icon-download"
-                class="filterTextColor"
               >{{ $t('Track.Download') }}</el-button>
             </el-popover>
           </el-form-item>
@@ -318,7 +318,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
-              class="w-full filterTextColor"
+              class="w-full buttonSecondaryReverse"
               icon="el-icon-setting"
               :loading="isRunning()"
               @click="settingDialogVisible=!settingDialogVisible"
@@ -335,7 +335,7 @@
               :key="item"
               class="item"
             >{{ idx + 1 }}.
-              <el-tag class="filterTextColor">
+              <el-tag>
                 <Tracker
                   :name="$t(`Issue.${item}`)"
                   :type="item"
@@ -1092,19 +1092,4 @@ $max_width: calc(100vw);
 //    overflow-y: auto;
 //  }
 //}
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-.filterTextColor {
-  color: $headerTextColor !important;
-  &:hover {
-    border-color: transparent;
-  }
-}
 </style>

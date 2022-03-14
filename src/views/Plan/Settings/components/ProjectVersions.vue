@@ -40,7 +40,7 @@
         />
         <el-table-column :label="$t('general.Actions')" align="center" width="210">
           <template slot-scope="scope">
-            <el-button size="mini" class="buttonPrimary" icon="el-icon-edit" @click="handleEdit(scope.row)">
+            <el-button size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEdit(scope.row)">
               {{ $t('general.Edit') }}
             </el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">
@@ -110,14 +110,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-</style>

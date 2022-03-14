@@ -189,7 +189,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimary"
               @click="onTransferClick(scope.row.id)"
             >
               {{ $t('general.Transfer') }}
@@ -263,10 +263,10 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+        <el-button class="buttonSecondaryReverse" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
         <el-button
           :loading="isTransferring"
-          type="primary"
+          class="buttonPrimary"
           @click="onBatchTransferConfirm"
         >
           {{ $t('general.Confirm') }}

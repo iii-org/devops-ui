@@ -14,7 +14,7 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <el-button slot="reference" icon="el-icon-s-operation" class="filterTextColor" type="text"> {{ displayFilterValue }}
+      <el-button slot="reference" icon="el-icon-s-operation" class="headerTextColor" type="text"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
     </el-popover>
@@ -28,12 +28,12 @@
       clearable
       @blur="searchVisible=!searchVisible"
     />
-    <el-button v-else type="text" icon="el-icon-search" class="filterTextColor" @click="searchVisible=!searchVisible">
+    <el-button v-else type="text" icon="el-icon-search" class="headerTextColor" @click="searchVisible=!searchVisible">
       {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
     </el-button>
     <template v-if="isFilterChanged">
       <el-divider direction="vertical" />
-      <el-button size="small" icon="el-icon-close" class="filterTextColor" @click="cleanFilter">
+      <el-button size="small" icon="el-icon-close" class="buttonSecondaryReverse" @click="cleanFilter">
         {{ $t('Issue.CleanFilter') }}
       </el-button>
     </template>
@@ -87,13 +87,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.filterTextColor {
-  color: $headerTextColor !important;
-  &:hover {
-    border-color: transparent;
-  }
-}
-</style>

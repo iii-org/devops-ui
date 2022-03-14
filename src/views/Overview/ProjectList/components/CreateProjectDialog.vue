@@ -246,10 +246,11 @@
     >
       <el-button
         :loading="isLoading"
+        class="buttonSecondaryReverse"
         @click="onDialogClosed"
       >{{ $t('general.Cancel') }}</el-button>
       <el-button
-        type="primary"
+        class="buttonPrimary"
         :loading="isLoading"
         @click="handleConfirm"
       >{{ $t('general.Confirm') }}</el-button>

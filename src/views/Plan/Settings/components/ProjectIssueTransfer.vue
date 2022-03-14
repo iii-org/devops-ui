@@ -6,7 +6,7 @@
           type="text"
           size="medium"
           icon="el-icon-arrow-left"
-          class="text-title"
+          class="text-title linkTextColor"
           @click="onBackClick"
         >
           {{ $t('general.Back') }}
@@ -418,10 +418,3 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-</style>

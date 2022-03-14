@@ -80,8 +80,8 @@
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
-      <el-button type="primary" :loading="isLoading" @click="handleConfirm">{{ $t('general.Confirm') }}</el-button>
+      <el-button class="buttonSecondaryReverse" :loading="isLoading" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
+      <el-button class="buttonPrimary" :loading="isLoading" @click="handleConfirm">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>

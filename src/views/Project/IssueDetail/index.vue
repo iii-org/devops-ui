@@ -18,7 +18,7 @@
                 type="text"
                 size="medium"
                 icon="el-icon-arrow-left"
-                class="previous"
+                class="previous linkTextColor"
                 @click="handleBackPage"
               >
                 {{ $t('general.Back') }}
@@ -60,7 +60,7 @@
             </el-button>
             <el-button
               size="medium"
-              :type="isButtonDisabled ? 'info' : 'primary'"
+              :class="isButtonDisabled ? 'buttonInfo' : 'buttonPrimary'"
               :disabled="isButtonDisabled"
               @click="handleSave"
             >{{ $t('general.Save') }}
@@ -126,7 +126,7 @@
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
                       size="mini"
-                      type="primary"
+                      class="buttonPrimary"
                       icon="el-icon-data-line"
                       @click.native.stop="toggleIssueMatrixDialog"
                     >

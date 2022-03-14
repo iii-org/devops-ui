@@ -6,12 +6,12 @@
           <el-button
             icon="el-icon-refresh"
             size="small"
-            class="filterTextColor"
+            class="buttonSecondaryReverse"
             @click="onChangeFilter"
           />
           <span
             v-if="updateLoading"
-            class="filterTextColor"
+            class="headerTextColor"
           >
             <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
           </span>
@@ -82,7 +82,7 @@
           <el-button
             slot="reference"
             icon="el-icon-download"
-            class="filterTextColor"
+            class="buttonPrimaryReverse"
             :disabled="selectedProjectId === -1"
           >
             {{ $t('File.Download') }}
@@ -111,7 +111,7 @@
             slot="reference"
             icon="el-icon-s-operation"
             type="text"
-            class="filterTextColor"
+            class="headerTextColor"
           >
             {{ $t('Milestone.Display') }}
             <em class="el-icon-arrow-down el-icon--right" />
@@ -522,8 +522,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-
 .wrapper {
   height: calc(100vh - 50px - 20px - 50px - 50px - 50px - 40px);
 }
@@ -531,22 +529,6 @@ export default {
 .display-column {
   .el-form-item {
     margin: 0;
-  }
-}
-
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-
-.filterTextColor {
-  color: $headerTextColor !important;
-  &:hover {
-    border-color: transparent;
   }
 }
 </style>

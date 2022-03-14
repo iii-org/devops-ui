@@ -123,8 +123,8 @@ export default {
 
 .circle {
   >>> .circle-primary {
-    border-color: $menuActiveText;
-    color: $menuActiveText;
+    border-color: $buttonPrimary;
+    color: $buttonPrimary;
   }
 
   >>> .circle-danger {
@@ -155,8 +155,8 @@ export default {
   }
 
   .table-primary {
-    border-color: $menuActiveText;
-    color: $menuActiveText;
+    border-color: $buttonPrimary;
+    color: $buttonPrimary;
   }
 
   .table-danger {

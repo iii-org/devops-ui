@@ -8,11 +8,11 @@
     <ProjectListSelector>
       <el-button
         slot="button"
-        type="success"
+        icon="el-icon-plus"
+        class="buttonSecondary"
         :disabled="selectedProjectId === -1"
         @click="handleAdding"
       >
-        <em class="el-icon-plus" />
         {{ $t('Wiki.AddWiki') }}
       </el-button>
       <el-input
@@ -59,8 +59,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="primary"
-            plain
+            class="buttonPrimaryReverse"
             @click="handleDetail(scope.$index, scope.row)"
           >
             <em class="el-icon-document" />
@@ -68,7 +67,7 @@
           </el-button>
           <el-button
             size="mini"
-            type="primary"
+            class="buttonSecondaryReverse"
             @click="handleEdit(scope.$index, scope.row)"
           >
             <em class="el-icon-edit" />
@@ -149,12 +148,12 @@
           </template>
         </div>
         <div class="form__footer">
-          <el-button @click="onCancelClick">
+          <el-button class="buttonSecondaryReverse" @click="onCancelClick">
             {{ $t('general.Cancel') }}
           </el-button>
           <el-button
             v-if="drawerTitle === 'Edit'"
-            type="primary"
+            class="buttonPrimary"
             :loading="editBtnLoading"
             @click="handleUpdate"
           >
@@ -162,7 +161,7 @@
           </el-button>
           <el-button
             v-else-if="drawerTitle === 'Add'"
-            type="primary"
+            class="buttonPrimary"
             :loading="editBtnLoading"
             @click="handleConfirmAdd"
           >
@@ -196,7 +195,7 @@
           <VueShowdown :markdown="wikiContent" />
         </div>
         <div class="form__footer">
-          <el-button @click="detailVisible = false"> {{ $t('general.Close') }}</el-button>
+          <el-button class="buttonSecondaryReverse" @click="detailVisible = false"> {{ $t('general.Close') }}</el-button>
         </div>
       </div>
     </el-drawer>

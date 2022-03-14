@@ -15,7 +15,7 @@
         </span>
         <el-tag
           v-if="file.edit"
-          type="primary"
+          class="buttonPrimary"
         >異動未儲存</el-tag>
       </el-col>
       <el-col

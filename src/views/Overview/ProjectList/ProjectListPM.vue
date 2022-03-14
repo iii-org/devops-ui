@@ -122,7 +122,7 @@
             <div>
               <el-link
                 v-if="userRole !== 'QA'"
-                type="primary"
+                class="linkTextColor"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 @click="handleClick(scope.row)"
@@ -203,7 +203,7 @@
           <el-button
             v-if="userRole !== 'QA' && scope.row.is_lock!==true"
             size="mini"
-            type="primary"
+            class="buttonPrimaryReverse"
             icon="el-icon-edit"
             @click="handleEdit(scope.row)"
           >
@@ -533,8 +533,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-
 .status-bar-track {
   background: #f5f5f5;
   border-radius: 5px;
@@ -553,10 +551,5 @@ export default {
   top: 0;
   background: #3ecbbc;
   height: 4px;
-}
-
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
 }
 </style>

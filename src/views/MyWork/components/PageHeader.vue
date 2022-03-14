@@ -106,7 +106,7 @@
         slot="reference"
         icon="el-icon-s-operation"
         type="text"
-        class="filterTextColor"
+        class="headerTextColor"
       >
         {{ selectedConditions }}
         <em class="el-icon-arrow-down" />
@@ -118,7 +118,7 @@
     <el-button
       v-if="!searchVisible"
       type="text"
-      class="filterTextColor"
+      class="headerTextColor"
       icon="el-icon-search"
       @click="showKeywordInput"
     >
@@ -140,7 +140,7 @@
       <el-divider direction="vertical" />
       <el-button
         size="small"
-        class="filterTextColor"
+        class="buttonSecondaryReverse"
         icon="el-icon-close"
         @click="clearFilter"
       >
@@ -375,21 +375,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-.filterTextColor {
-  color: $headerTextColor !important;
-  &:hover {
-    border-color: transparent;
-  }
-}
-</style>

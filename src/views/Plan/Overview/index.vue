@@ -16,7 +16,7 @@
       >
         <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
       </el-select>
-      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" class="filterTextColor" @click="onFilterSelection"> {{ displayFilterValue }}
+      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" class="headerTextColor" @click="onFilterSelection"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
       <template v-if="selectedVersion!==null">
@@ -189,10 +189,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.filterTextColor {
-  color: $menuActiveText; /* theme_discussion main background*/
-}
-</style>

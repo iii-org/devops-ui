@@ -3,7 +3,7 @@
     <el-col>
       <el-row :gutter="10" type="flex" align="middle">
         <el-col :span="2">
-          <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title" @click="handleBack">
+          <el-button type="text" size="medium" icon="el-icon-arrow-left" class="text-title linkTextColor" @click="handleBack">
             {{ $t('general.Back') }}
           </el-button>
         </el-col>
@@ -26,7 +26,7 @@
         <div v-if="isShowWarning" style="color: red; font-size: 12px;" class="mt-3">{{ $t('Notify.pluginRepeatMessage') }}</div>
         <div v-else />
         <div>
-          <el-button size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonSecondaryReverse" size="small" @click="handleReset">{{ $t('general.Cancel') }}</el-button>
           <el-button class="buttonPrimary" size="small" @click="updatePipelineBranch">{{ $t('general.Save') }}</el-button>
         </div>
       </div>

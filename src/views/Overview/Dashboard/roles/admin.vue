@@ -13,6 +13,7 @@
             <el-button
               size="small"
               icon="el-icon-refresh"
+              class="buttonPrimaryReverse"
               :disabled="status.is_lock"
               @click="getSyncRedmine"
             >

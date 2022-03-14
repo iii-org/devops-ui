@@ -9,7 +9,7 @@
     </p>
     <el-input v-model="confirmProjectName" :placeholder="`Please Input ${deleteProjectObj.name}`" />
     <span slot="footer" class="dialog-footer">
-      <el-button id="dialog-btn-cancel" :loading="isLoading" @click="showDialog = false">
+      <el-button id="dialog-btn-cancel" class="buttonSecondaryReverse" :loading="isLoading" @click="showDialog = false">
         {{ $t('general.Cancel') }}
       </el-button>
       <el-button id="dialog-btn-delete" type="danger" :loading="isLoading" @click="handleDeleteModal">

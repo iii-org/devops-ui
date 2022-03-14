@@ -36,7 +36,7 @@
         <div @contextmenu="handleContextMenu(element, '', $event)">
           <div class="title">
             <span
-              class="text"
+              class="text linkTextColor"
               @click="handleClick(element.id)"
             >
               {{ element.name }}
@@ -123,7 +123,7 @@
                     size="mini"
                   />
                   <el-link
-                    type="primary"
+                    class="linkTextColor"
                     :underline="false"
                     @click="handleClick(element.parent.id)"
                   >
@@ -153,7 +153,7 @@
                         size="mini"
                       />
                       <el-link
-                        type="primary"
+                        class="linkTextColor"
                         :underline="false"
                         @click="handleClick(subElement.id)"
                       >
@@ -185,7 +185,7 @@
                         size="mini"
                       />
                       <el-link
-                        type="primary"
+                        class="linkTextColor"
                         :underline="false"
                         @click="handleClick(subElement.id)"
                       >

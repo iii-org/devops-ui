@@ -42,11 +42,11 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="390">
           <template slot-scope="scope">
-            <el-button v-permission="['Administrator','QA']" size="mini" class="buttonPrimary" @click="handleParticipateDialog(scope.row.id)">
+            <el-button v-permission="['Administrator','QA']" size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>
-            <el-button v-permission="['Administrator','Project Manager', 'QA']" class="buttonPrimary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button v-permission="['Administrator','Project Manager', 'QA']" class="buttonSecondaryReverse" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
             <el-button
               type="danger"
               size="mini"
@@ -239,14 +239,3 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-</style>

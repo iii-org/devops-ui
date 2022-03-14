@@ -149,10 +149,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-</style>

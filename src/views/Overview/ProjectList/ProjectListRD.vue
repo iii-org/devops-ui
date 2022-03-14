@@ -116,6 +116,7 @@
               <el-link
                 type="primary"
                 :underline="false"
+                class="linkTextColor"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 @click="handleClick(scope.row)"
               >

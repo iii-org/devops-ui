@@ -272,8 +272,7 @@
             <div>
               <el-button
                 size="small"
-                type="success"
-                class="mb-2"
+                class="mb-2 buttonSecondary"
               >{{ $t('File.ChooseFile') }}</el-button>
               <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
               <div class="text-xs text-gray-400 px-12">

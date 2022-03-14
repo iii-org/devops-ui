@@ -18,7 +18,7 @@
             class="mr-3"
           />
           <el-button class="buttonPrimary" @click="handleInputSave">{{ $t('general.Save') }}</el-button>
-          <el-button @click="handleInputCancel">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonSecondaryReverse" @click="handleInputCancel">{{ $t('general.Cancel') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -191,11 +191,5 @@ export default {
   &:hover {
     background: #e4ecf7;
   }
-}
-
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
 }
 </style>

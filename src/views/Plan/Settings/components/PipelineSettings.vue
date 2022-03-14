@@ -9,7 +9,7 @@
           <span class="text-sm mr-2">{{ $t('Git.Branch') }}：</span>
           <span class="text-title">{{ branch }}</span>
         </div>
-        <el-button type="text" size="medium" @click="handleClick">
+        <el-button class="linkTextColor" type="text" size="medium" @click="handleClick">
           {{ $t('route.advanceBranchSettings') }}
         </el-button>
       </div>
@@ -39,7 +39,7 @@
         </el-table-column>
       </el-table>
       <div class="text-right mt-3">
-        <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">
+        <el-button size="mini" class="buttonSecondaryReverse" :loading="isStagesLoading" @click="fetchPipeDefBranch">
           {{ $t('general.Cancel') }}
         </el-button>
         <el-button size="mini" class="buttonPrimary" :loading="isStagesLoading" @click="updatePipeDefBranch">
@@ -209,11 +209,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
-</style>

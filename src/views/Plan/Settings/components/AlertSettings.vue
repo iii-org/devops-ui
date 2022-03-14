@@ -168,10 +168,4 @@ export default {
 >>> input.el-input__inner {
   text-align: center;
 }
-
-@import 'src/styles/theme/variables.scss';
-.buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white
-}
 </style>

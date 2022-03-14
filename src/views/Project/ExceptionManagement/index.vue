@@ -5,7 +5,7 @@
         id="btn-add-issue"
         slot="button"
         v-permission="['Administrator','Project Manager', 'Engineer']"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         :disabled="selectedProjectId === -1"
         @click="handleQuickAddClose"
@@ -43,6 +43,7 @@
             </el-menu>
             <el-button
               slot="reference"
+              class="filterTextColor"
               icon="el-icon-download"
             >{{ $t('File.Download') }}</el-button>
           </el-popover>
@@ -435,3 +436,17 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.buttonSecondary {
+  background-color: $buttonSecondary;
+  color: white
+}
+.filterTextColor {
+  color: $headerTextColor !important;
+  &:hover {
+    border-color: transparent;
+  }
+}
+</style>

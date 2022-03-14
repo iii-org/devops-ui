@@ -2,8 +2,8 @@
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
 
-function resolve(dir,subpath='') {
-  subpath= subpath.replace(/^\'|\s+|'|-e$/gm,'')
+function resolve(dir, subpath = '') {
+  subpath = subpath.replace(/^\'|\s+|'|-e$/gm, '')
   return path.join(__dirname, dir.concat(subpath))
 }
 
@@ -52,7 +52,7 @@ module.exports = {
     resolve: {
       alias: {
         '@': resolve('src'),
-        'themePath': resolve('src/styles/theme/',theme)
+        'themePath': resolve('src/styles/theme/', theme)
       }
     }
   },

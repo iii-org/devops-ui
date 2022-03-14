@@ -26,7 +26,7 @@
       >
         <span v-if="isAllowPreview(file.content_type)">
           <el-button
-            type="primary"
+            class="buttonPrimary"
             size="mini"
             icon="el-icon-search"
             :loading="isLoading"
@@ -72,7 +72,7 @@
       <span slot="footer">
         <el-button @click="dialogVisible = false">{{ $t('general.Close') }}</el-button>
         <el-button
-          type="primary"
+          class="buttonPrimary"
           @click="downloadImage"
         >{{ $t('File.Download') }}</el-button>
       </span>
