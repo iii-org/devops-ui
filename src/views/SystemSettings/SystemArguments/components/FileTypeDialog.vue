@@ -34,22 +34,20 @@
         <el-form ref="form" :model="form" :rules="formRules" size="mini">
           <el-row :gutter="20">
             <el-col :span="24" :sm="12" :md="8" :lg="6">
-              <el-form-item prop="fileExtension" class="required">
+              <el-form-item prop="fileExtension" class="flex required">
                 <el-input
                   v-model="form.fileExtension"
                   :placeholder="this.$t('RuleMsg.PleaseInput') + this.$t('SystemConfigs.FileExtension')"
                   type="text"
-                  class="mr-3"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="24" :sm="12" :md="8" :lg="6">
-              <el-form-item prop="mimeType" class="required">
+              <el-form-item prop="mimeType" class="flex required">
                 <el-input
                   v-model="form.mimeType"
                   :placeholder="this.$t('RuleMsg.PleaseInput') + 'MIME Type'"
                   type="text"
-                  class="mr-3"
                 />
               </el-form-item>
             </el-col>
@@ -59,7 +57,6 @@
                   v-model="form.name"
                   :placeholder="this.$t('RuleMsg.PleaseInput') + this.$t('general.Name')"
                   type="text"
-                  class="mr-3"
                 />
               </el-form-item>
             </el-col>
@@ -91,7 +88,7 @@
           prop="id"
           :label="$t('general.Index')"
           align="center"
-          width="100"
+          width="50"
         />
         <el-table-column
           prop="name"
@@ -115,6 +112,7 @@
         <el-table-column
           prop="mimeType"
           label="MIME Type"
+          min-width="300"
         >
           <template slot-scope="scope">
             <el-form-item
@@ -133,7 +131,7 @@
         <el-table-column
           prop="fileExtension"
           :label="$t('SystemConfigs.FileExtension')"
-          width="100"
+          min-width="150"
         >
           <template slot-scope="scope">
             <el-form-item
@@ -186,14 +184,14 @@
                 type="primary"
                 icon="el-icon-check"
                 circle
-                @click="handleSaveFile(scope)"
+                @click="handleSaveFile(scope.row)"
               />
               <el-button
                 size="mini"
                 type="danger"
                 icon="el-icon-close"
                 circle
-                @click="handleCancelFile(scope)"
+                @click="handleCancelFile(scope.row)"
               />
             </div>
           </template>
@@ -241,16 +239,32 @@ export default {
       isSaved: true,
       form: defaultFormData(),
       formRules: {
-        fileExtension: [{
-          required: true,
-          message: 'Please input File Extension',
-          trigger: 'blur'
-        }],
-        mimeType: [{
-          required: true,
-          message: 'Please input Mime Type',
-          trigger: 'blur'
-        }]
+        fileExtension: [
+          {
+            required: true,
+            message: 'Please input File Extension',
+            trigger: 'blur'
+          },
+          {
+            required: true,
+            pattern: /^[.]{1}[-\w]+$/,
+            message: 'Please follow the format rule',
+            trigger: 'blur'
+          }
+        ],
+        mimeType: [
+          {
+            required: true,
+            message: 'Please input Mime Type',
+            trigger: 'blur'
+          },
+          {
+            required: true,
+            pattern: /^[-.\w]+\/[-.\w]+$/,
+            message: 'Please follow the format rule',
+            trigger: 'blur'
+          }
+        ]
       },
       formTableRules: {
         fileExtension: [{
@@ -271,6 +285,9 @@ export default {
   computed: {
     formTable() {
       return { pagedData: this.pagedData }
+    },
+    selectedRowIndex() {
+      return this.originData.findIndex((item) => item.id === this.rowCache.id)
     }
   },
   methods: {
@@ -296,9 +313,8 @@ export default {
       this.form = defaultFormData()
     },
     validate (rule, value, callback) {
-      const i = this.originData.findIndex((item) => item.id === this.rowCache.id)
       const type = rule.field.split('.')[2]
-      if (value !== this.originData[i][type]) {
+      if (value !== this.originData[this.selectedRowIndex][type]) {
         this.isSaved = false
         callback(new Error('not saved'))
       } else {
@@ -338,15 +354,14 @@ export default {
     },
     handleCancel() {
       this.$refs['form'].resetFields()
+      this.isSaved = true
       this.isAdding = false
       this.initForm()
     },
     handleEdit(scope) {
       if (this.isSaved) {
         if (this.rowCache) {
-          const i = this.originData.findIndex((item) => item.id === this.rowCache.id)
-          this.rowCache.edit = false
-          this.rowCache = this.originData[i]
+          this.handleCancelFile(this.rowCache)
         }
         scope.row.edit = true
         this.rowCache = scope.row
@@ -369,45 +384,51 @@ export default {
         this.listLoading = false
       }
     },
-    handleSaveFile(scope) {
-      this.$refs['formTable'].validate(async(valid) => {
-        if (!valid) {
-          this.listLoading = true
-          const sendData = new FormData()
-          sendData.append('name', scope.row.name)
-          sendData.append('mimetype', scope.row.mimeType)
-          sendData.append('file_extension', scope.row.fileExtension)
-          try {
-            await editUploadFileType(scope.row.id, sendData)
-            this.$message({
-              title: this.$t('general.Success'),
-              message: this.$t('Notify.Updated'),
-              type: 'success'
-            })
-            this.isSaved = true
-            await this.loadData()
-          } catch (error) {
-            console.error(error)
-          } finally {
-            this.listLoading = false
-          }
-        } else {
-          return false
+    async handleSaveFile(row) {
+      if (!(/^[-.\w]+\/[-.\w]+$/).test(row.mimeType) || !(/^[.]{1}[-\w]+$/).test(row.fileExtension)) {
+        this.$message({
+          title: this.$t('general.Error'),
+          message: 'Please follow the format rule',
+          type: 'warning'
+        })
+      } else if (!this.isSaved) {
+        this.listLoading = true
+        const sendData = new FormData()
+        sendData.append('name', row.name)
+        sendData.append('mimetype', row.mimeType)
+        sendData.append('file_extension', row.fileExtension)
+        try {
+          await editUploadFileType(row.id, sendData)
+          this.$message({
+            title: this.$t('general.Success'),
+            message: this.$t('Notify.Updated'),
+            type: 'success'
+          })
+          this.isSaved = true
+          await this.loadData()
+        } catch (error) {
+          console.error(error)
+        } finally {
+          this.listLoading = false
         }
-      })
+      } else {
+        this.handleCancelFile(row)
+        return false
+      }
     },
-    handleCancelFile(scope) {
-      const i = this.originData.findIndex((item) => item.id === this.rowCache.id)
-      scope.row.name = this.originData[i].name
-      scope.row.mimeType = this.originData[i].mimeType
-      scope.row.fileExtension = this.originData[i].fileExtension
-      scope.row.edit = this.originData[i].edit
+    handleCancelFile(row) {
+      const i = this.selectedRowIndex
+      row.name = this.originData[i].name
+      row.mimeType = this.originData[i].mimeType
+      row.fileExtension = this.originData[i].fileExtension
+      row.edit = this.originData[i].edit
       this.isSaved = true
     },
     onDialogClosed() {
       this.$nextTick(() => {
         this.handleCancel()
       })
+      this.$emit('reload')
     }
   }
 }

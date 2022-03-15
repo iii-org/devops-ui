@@ -94,7 +94,7 @@
       @pagination="onPagination"
     />
 
-    <FileTypeDialog ref="FileTypeDialog" />
+    <FileTypeDialog ref="FileTypeDialog" @reload="fetchData" />
   </div>
 </template>
 
@@ -140,7 +140,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      await this.getGitlabStatus()
+      await this.getFileNameListData()
       await this.isGitlabStatus()
       this.tableData[0].content = this.fileNameList.toString()
       this.tableData[1].disabled = this.gitlabStatus
@@ -172,7 +172,7 @@ export default {
     onPagination(listQuery) {
       this.listQuery = listQuery
     },
-    async getGitlabStatus() {
+    async getFileNameListData() {
       const res = await getFileNameList()
       this.fileNameList = res.data
     },
