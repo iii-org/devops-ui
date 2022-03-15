@@ -353,6 +353,21 @@
   background-color: $linkTextBackground;
   color: $linkTextColor;
 }
+.el-select-dropdown__item.selected {
+  color: $linkTextColor;
+}
+.el-select .el-input__inner:focus {
+  border-color: $linkTextColor;
+}
+.el-backtop {
+  color: $linkTextColor;
+}
+.el-link.el-link--primary {
+  color: $linkTextColor;
+  &:hover {
+    color: $linkTextColor;
+  }
+}
 // .v-contextmenu--default .v-contextmenu-item--hover {
 //   background-color: $linkTextColor !important;
 // }

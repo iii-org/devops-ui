@@ -21,7 +21,7 @@
       </el-button>
       <template v-if="selectedVersion!==null">
         <el-divider direction="vertical" />
-        <el-button size="small" icon="el-icon-close" @click="clearSelectedVersion">
+        <el-button class="buttonSecondaryReverse" size="small" icon="el-icon-close" @click="clearSelectedVersion">
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>
