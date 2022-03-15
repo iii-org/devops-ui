@@ -144,7 +144,7 @@ export default {
 <style lang="scss">
 @import 'src/styles/theme/variables.scss';
 $bg: $loginBackground;
-$light_gray: #fff;
+$light_gray: #eee;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -164,14 +164,14 @@ $cursor: #fff;
       background: transparent;
       border: 0;
       -webkit-appearance: none;
-      border-radius: 0;
-      padding: 12px 5px 12px 15px;
+      border-radius: 5px;
+      padding: 12px 5px 14px 15px;
       color: $light_gray;
       height: 47px;
       caret-color: $cursor;
 
       &:-webkit-autofill {
-        box-shadow: 0 0 0 1000px $bg inset !important;
+        box-shadow: 0 0  1000px $bg inset !important;
         -webkit-text-fill-color: $cursor !important;
       }
     }

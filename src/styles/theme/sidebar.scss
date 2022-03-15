@@ -72,7 +72,7 @@
     .submenu-title-noDropdown,
     .el-submenu__title {
       &.is-active {
-        background-color: $menuHover !important;
+        background-color: $appMainBg !important;
       }
       &:hover {
         background-color: $menuHover !important;
@@ -80,7 +80,7 @@
     }
 
     .is-active {
-      background-color: $menuHover !important;
+      background-color: $appMainBg !important;
     }
 
     .is-active>.el-submenu__title {
@@ -94,7 +94,7 @@
       color: $subMenuText !important;
 
       &.is-active {
-        background-color: $menuHover !important;
+        background-color: $appMainBg !important;
       }
 
       &:hover {
