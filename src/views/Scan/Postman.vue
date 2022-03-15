@@ -36,7 +36,7 @@
         >
           <template slot-scope="scope">
             <el-link
-              type="primary"
+              class="linkTextColor"
               target="_blank"
               style="font-size: 16px"
               :href="scope.row.commit_url"
@@ -73,7 +73,7 @@
             <el-button
               :id="`btn-postman-${scope.$index}`"
               size="mini"
-              type="primary"
+              class="buttonPrimaryReverse"
               @click="handleClick('postman-test-case', scope.row.id)"
             >
               {{ $t('Postman.Postman') }}

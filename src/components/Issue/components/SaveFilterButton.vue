@@ -18,7 +18,7 @@
         :placeholder="$t('Issue.InputFilterName')"
       />
       <el-button
-        type="success"
+        class="buttonSecondary"
         @click="setCustomFilter"
       >
         {{ $t('general.Save') }}

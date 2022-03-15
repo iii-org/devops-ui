@@ -27,7 +27,7 @@
             <el-dropdown-item>
               <router-link
                 :to="'/profile/'"
-                style="color: #409EFF"
+                class="linkTextColor"
               >
                 <span>{{ $t('navbar.profile') }}</span>
               </router-link>
@@ -35,7 +35,7 @@
             <el-dropdown-item>
               <router-link
                 :to="'/SystemVersion/'"
-                style="color: #409EFF"
+                class="linkTextColor"
               >
                 <span>{{ $t('navbar.versions') }}</span>
               </router-link>

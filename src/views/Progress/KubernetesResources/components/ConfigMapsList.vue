@@ -32,7 +32,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimaryReverse"
               icon="el-icon-tickets"
               :disabled="scope.row.keys === '-'"
               @click="showEditDialog(scope.row.name, scope.row.configMaps)"
@@ -89,7 +89,7 @@
         </el-row>
 
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="closeEditDialog">
+          <el-button class="buttonPrimary" @click="closeEditDialog">
             {{ $t('general.Close') }}
           </el-button>
         </span>

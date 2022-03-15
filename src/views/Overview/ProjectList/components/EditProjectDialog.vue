@@ -70,7 +70,6 @@
               :disabled="disabledEditOwner"
               :active-value="false"
               :inactive-value="true"
-              active-color="#13ce66"
               inactive-color="#ff4949"
               :active-text="$t('general.Enable')"
               :inactive-text="$t('general.Disable')"

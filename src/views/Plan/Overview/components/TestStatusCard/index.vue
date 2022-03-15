@@ -12,7 +12,7 @@
       </span>
       <el-button
         type="text"
-        class="linkTextColor"
+        :class="Object.keys(projectTestObj).length === 0 ? '' : 'linkTextColor'"
         icon="el-icon-refresh"
         size="mini"
         :disabled="Object.keys(projectTestObj).length === 0"

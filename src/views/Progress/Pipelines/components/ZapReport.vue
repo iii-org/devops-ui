@@ -2,7 +2,7 @@
   <div>
     <ToolBar>
       <span slot="toolName">OWASP ZAP</span>
-      <el-button slot="link" type="text" icon="el-icon-position" :disabled="disabled" @click="openZap">
+      <el-button slot="link" type="text" icon="el-icon-position" :class="!disabled ? 'linkTextColor' : ''" :disabled="disabled" @click="openZap">
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>

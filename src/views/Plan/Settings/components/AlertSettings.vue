@@ -5,7 +5,6 @@
       <div>
         <el-switch
           v-model="isToggle"
-          active-color="#13ce66"
           inactive-color="#ff4949"
           class="mr-5"
           :disabled="disableSwitch"

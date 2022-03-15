@@ -122,7 +122,7 @@
             <div>
               <el-link
                 v-if="userRole !== 'QA'"
-                class="linkTextColor"
+                :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 @click="handleClick(scope.row)"

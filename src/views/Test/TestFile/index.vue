@@ -4,14 +4,14 @@
       <el-button
         id="btn-add-issue"
         slot="button"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         :disabled="selectedProjectId === -1"
         @click="handleUploadDialog"
       >
         {{ $t('Test.TestFile.UploadTestSet') }}
       </el-button>
-      <el-button icon="el-icon-s-operation" @click="filterVisible = !filterVisible" />
+      <el-button icon="el-icon-s-operation" class="buttonPrimaryReverse" @click="filterVisible = !filterVisible" />
       <el-input
         id="input-search"
         v-model="keyword"
@@ -76,9 +76,10 @@
               {{ scope.row.the_last_test_result.branch }}
             </div>
             <el-link
-              type="primary"
+              class="linkTextColor"
               target="_blank"
               style="font-size: 16px"
+              :underline="false"
               :href="scope.row.the_last_test_result.commit_url"
             >
               <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />
@@ -89,7 +90,7 @@
       </el-table-column>
       <el-table-column :label="`${$t('ProgressPipelines.TestItems')}`" align="center" width="120">
         <template slot-scope="scope">
-          <el-link type="primary" @click="toResultList(scope.row)">
+          <el-link class="linkTextColor" :underline="false" @click="toResultList(scope.row)">
             <template v-if="scope.row.the_last_test_result && Object.keys(scope.row.the_last_test_result).length > 0">
               <div v-if="scope.row.software_name === 'Postman'" class="mt-2">
                 {{
@@ -112,10 +113,10 @@
       </el-table-column>
       <el-table-column :label="$t('general.Actions')" width="350">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
+          <el-button size="small" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleRelatedPlan(scope.row)">
             {{ $t('general.Edit') }}
           </el-button>
-          <el-button size="small" type="success" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
+          <el-button size="small" class="buttonSecondaryReverse" icon="el-icon-circle-plus" @click="handleCreatePlan(scope.row)">
             新增計畫
           </el-button>
           <el-popconfirm
@@ -174,8 +175,8 @@
     >
       <CollectionFileUploader ref="collectionFileUpload" @update="loadData" />
       <template slot="footer">
-        <el-button @click="closeUploadCollection">{{ $t('general.Close') }} </el-button>
-        <el-button type="primary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
+        <el-button class="buttonSecondaryReverse" @click="closeUploadCollection">{{ $t('general.Close') }} </el-button>
+        <el-button class="buttonPrimary" @click="uploadCollection">{{ $t('File.Upload') }} </el-button>
       </template>
     </el-dialog>
     <ContextMenu

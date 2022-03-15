@@ -128,7 +128,7 @@
           <el-divider content-position="left">
             {{ $t('Project.Template') }}
             <el-button
-              class="ml-2"
+              class="ml-2 buttonPrimaryReverse"
               icon="el-icon-refresh"
               size="mini"
               circle

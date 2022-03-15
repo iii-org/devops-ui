@@ -31,7 +31,6 @@
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.has_default_branch"
-              active-color="#13ce66"
               inactive-color="gray"
               @change="handleStageChange(scope.row)"
             />

@@ -5,7 +5,7 @@
       <span class="dot absolute animate-ping" />
       <span class="text-title ml-3">{{ `${notifyTitle}（${updateVersionName}）` }}</span>
     </div>
-    <el-button size="mini" type="success" plain @click="updateVersion">{{ $t('SystemVersion.UpdateNow') }}</el-button>
+    <el-button size="mini" class="buttonSecondaryReverse" plain @click="updateVersion">{{ $t('SystemVersion.UpdateNow') }}</el-button>
   </div>
 </template>
 

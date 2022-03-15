@@ -16,7 +16,7 @@
         <div>
           <el-button
             size="mini"
-            class="buttonSecondary"
+            class="buttonSecondaryReverse"
             :loading="isLoading"
             plain
             @click="updatePipelineBranch(false)"
@@ -52,7 +52,6 @@
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.enable"
-              active-color="#13ce66"
               inactive-color="gray"
             />
           </template>
@@ -294,11 +293,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-</style>

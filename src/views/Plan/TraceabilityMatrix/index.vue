@@ -179,6 +179,7 @@
               </el-menu>
               <el-button
                 slot="reference"
+                class="buttonPrimaryReverse"
                 icon="el-icon-download"
               >{{ $t('Track.Download') }}</el-button>
             </el-popover>
@@ -1092,4 +1093,22 @@ $max_width: calc(100vw);
 //    overflow-y: auto;
 //  }
 //}
+
+@import 'src/styles/theme/variables.scss';
+>>> .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  &:hover {
+    color: $linkTextColor;
+  }
+  &.is-active{
+    color: $linkTextColor !important;
+  }
+}
+
+>>> .el-switch__label.is-active {
+  color: $linkTextColor;
+}
+>>> .el-switch.is-checked .el-switch__core {
+    border-color: $linkTextColor;
+    background-color: $linkTextColor;
+}
 </style>

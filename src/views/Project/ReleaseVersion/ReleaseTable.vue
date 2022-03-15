@@ -39,7 +39,7 @@
         >
           <template slot-scope="scope">
             <el-link
-              type="primary"
+              class="linkTextColor"
               :underline="false"
               :href="scope.row.git_url"
               target="_blank"
@@ -62,7 +62,7 @@
         >
           <template slot-scope="scope">
             <el-link
-              type="primary"
+              class="linkTextColor"
               :underline="false"
               @click="showClosedIssue(scope.row.tag_name)"
             >{{ scope.row.tag_name }}</el-link>

@@ -141,7 +141,7 @@
         <template slot-scope="scope">
           <el-link
             v-if="userRole !== 'QA'"
-            class="linkTextColor"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
             :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleClick(scope.row)"
@@ -150,7 +150,7 @@
           </el-link>
           <el-link
             v-else-if="userRole === 'QA'"
-            class="linkTextColor"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
             :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleClickQA(scope.row)"
@@ -170,7 +170,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            class="linkTextColor"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
             :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleParticipateDialog(scope.row.owner_id, scope.row.owner_name)"
@@ -215,7 +215,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            class="linkTextColor"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
             :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleRoutingProjectMembers(scope.row)"

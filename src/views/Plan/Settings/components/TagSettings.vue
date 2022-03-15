@@ -34,8 +34,8 @@
         <template slot-scope="scope">
           <div v-show="scope.row.edit">
             <el-input v-model="scope.row.name" type="text" />
-            <el-button type="success" @click.stop="handleTableInputConfirm(scope)">{{ $t('general.ok') }}</el-button>
-            <el-button @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
+            <el-button class="buttonPrimary" @click.stop="handleTableInputConfirm(scope)">{{ $t('general.ok') }}</el-button>
+            <el-button class="buttonSecondaryReverse" @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
           </div>
           <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
         </template>

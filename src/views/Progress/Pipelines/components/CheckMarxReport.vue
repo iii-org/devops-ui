@@ -4,12 +4,12 @@
       <span slot="toolName">CheckMarx</span>
       <span slot="warning" style="font-size: 14px;">
         * {{ $t('TestReport.WarningPartOne') }}
-        <el-link type="primary" :underline="false" target="_blank" @click="openDevCheckMarx">
+        <el-link class="linkTextColor" :underline="false" target="_blank" @click="openDevCheckMarx">
           {{ $t('TestReport.CheckMarxReport') }}
         </el-link>
         {{ $t('TestReport.WarningPartTwo') }}
       </span>
-      <el-button slot="link" type="text" icon="el-icon-download" :disabled="disabled" @click="openCheckMarx">
+      <el-button slot="link" type="text" icon="el-icon-download" :class="!disabled ? 'linkTextColor' : ''" :disabled="disabled" @click="openCheckMarx">
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>

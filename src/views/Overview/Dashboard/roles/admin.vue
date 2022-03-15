@@ -162,7 +162,7 @@
     <div v-if="!isLoading&&projectCount<=0">
       <el-empty :description="$t('general.NoData')">
         <el-button
-          type="success"
+          class="buttonSecondary"
           icon="el-icon-plus"
           @click="handleAdding"
         >

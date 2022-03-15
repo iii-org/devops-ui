@@ -5,7 +5,7 @@
         <span class="el-link">{{ $t('Release.issueCount') }}</span>&nbsp;
         <el-link
           underline
-          type="primary"
+          class="linkTextColor"
           @click="openIssueDialog(null)"
         >
           {{ $t('Release.issueCountLink', [issues.length]) }}
@@ -23,7 +23,7 @@
               <span class="el-link">{{ cat }}</span> (
               <el-link
                 underline
-                type="primary"
+                class="linkTextColor"
                 @click="openIssueDialog(cat)"
               >
                 {{ $t('Release.issueCountLink', [arr.length]) }}
@@ -41,7 +41,7 @@
               <span class="el-link">{{ cat }}</span> (
               <el-link
                 underline
-                type="primary"
+                class="linkTextColor"
                 @click="openIssueDialog(cat)"
               >
                 {{ $t('Release.issueCountLink', [arr.length]) }}
@@ -132,7 +132,7 @@
                   >
                     <el-button
                       slot="reference"
-                      type="success"
+                      class="buttonSecondary"
                     >{{ $t('Issue.NextStep') }}</el-button>
                   </el-popconfirm>
                   <el-button
@@ -164,7 +164,7 @@
               <el-button
                 v-if="isConfirmPackageVersion || showHarborTag"
                 v-loading.fullscreen.lock="fullscreenLoading"
-                type="success"
+                class="buttonSecondary"
                 @click="release"
               >
                 <span class="el-icon-goods" />

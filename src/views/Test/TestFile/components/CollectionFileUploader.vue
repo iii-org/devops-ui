@@ -10,7 +10,7 @@
       <el-form-item :label="$t('Test.TestFile.UploadTestSet')" prop="uploadFileList">
         <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
           <div class="el-upload__text">
-            <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
+            <el-button size="small" class="buttonSecondary">{{ $t('File.ChooseFile') }}</el-button>
             <div class="mt-2 mb-3">{{ $t('File.DragFilesHere') }}</div>
             <div class="text-xs text-gray-400 px-12">
               <div class="m-1">{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>

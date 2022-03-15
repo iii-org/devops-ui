@@ -114,9 +114,8 @@
             </div>
             <div>
               <el-link
-                type="primary"
                 :underline="false"
-                class="linkTextColor"
+                :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 @click="handleClick(scope.row)"
               >

@@ -12,7 +12,7 @@
           type="text"
           size="medium"
           icon="el-icon-arrow-left"
-          class="text-title"
+          class="text-title linkTextColor"
           @click="handleBack"
         >
           {{ $t('general.Back') }}
@@ -28,9 +28,9 @@
               <em class="ri-git-branch-line mr-1" />{{ testCaseInfos.branch }}
             </el-tag>
             <el-link
-              class="mr-3"
-              type="primary"
+              class="mr-3 linkTextColor"
               target="_blank"
+              :underline="false"
               :href="testCaseInfos.commit_url"
             >
               <svg-icon
@@ -356,4 +356,5 @@ export default {
 .method-tag {
   @apply border border-solid p-1 rounded;
 }
+
 </style>

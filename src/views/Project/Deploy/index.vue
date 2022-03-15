@@ -3,7 +3,7 @@
     <ProjectListSelector>
       <el-button
         slot="button"
-        type="success"
+        class="buttonSecondary"
         :disabled="selectedProjectId === -1"
         icon="el-icon-plus"
         @click="handleEditDialog(null)"
@@ -18,11 +18,11 @@
       />
     </ProjectListSelector>
     <el-divider />
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-1">
       <div class="flex">{{ $t('general.LastUpdateTime') }}：{{ lastUpdateTime }}</div>
       <div class="flex">
         <el-button
-          type="primary"
+          class="buttonPrimaryReverse"
           icon="el-icon-refresh"
           size="mini"
           plain
@@ -123,14 +123,12 @@
               </template>
               <el-dropdown-item
                 size="mini"
-                type="primary"
                 icon="el-icon-refresh-right"
                 @click.native="handleRedeploy(row.id)"
               >{{ $t('Deploy.Redeploy') }}
               </el-dropdown-item>
               <el-dropdown-item
                 size="mini"
-                type="primary"
                 icon="el-icon-edit"
                 @click.native="handleEditDialog(row.id)"
               >{{ $t('general.Edit') }}
@@ -183,17 +181,17 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
+        <el-button class="buttonSecondaryReverse" @click="onDialogClosed">{{ $t('general.Cancel') }}</el-button>
         <el-button
           v-if="edit_id"
-          type="primary"
+          class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm(edit_id)"
         >
           {{ $t('general.Save') }}</el-button>
         <el-button
           v-else
-          type="primary"
+          class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm(null)"
         >

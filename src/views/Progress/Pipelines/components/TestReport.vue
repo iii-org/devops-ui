@@ -6,7 +6,7 @@
           type="text"
           size="medium"
           icon="el-icon-arrow-left"
-          class="previous"
+          class="previous linkTextColor"
           @click="handleBackPage"
         >
           {{ $t('general.Back') }}
@@ -19,6 +19,7 @@
         <el-button
           v-show="!listLoading"
           type="text"
+          class="linkTextColor"
           icon="el-icon-download"
           @click="downloadPdf"
         >
@@ -27,6 +28,7 @@
         <el-button
           v-show="!listLoading"
           type="text"
+          class="linkTextColor"
           icon="el-icon-download"
           @click="getSheet('excel')"
         >
@@ -35,6 +37,7 @@
         <el-button
           v-show="!listLoading"
           type="text"
+          class="linkTextColor"
           icon="el-icon-download"
           @click="getSheet('csv')"
         >

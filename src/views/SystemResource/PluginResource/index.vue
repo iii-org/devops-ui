@@ -152,7 +152,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+
 .float-card:not(:hover) {
   border: transparent solid 2px;
 }
@@ -163,7 +165,7 @@ export default {
 
 .details-reminder {
   font-weight: bold;
-  color: #3358c3;
+  color: $linkTextColor;
   text-decoration: underline;
   font-size: 19px;
   text-align: end;

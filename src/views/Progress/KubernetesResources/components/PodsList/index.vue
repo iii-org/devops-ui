@@ -104,8 +104,7 @@
             >
               <el-button
                 size="mini"
-                class="el-icon-more"
-                type="primary"
+                class="el-icon-more buttonPrimaryReverse"
                 plain
                 circle
               />

@@ -57,7 +57,7 @@
               :key="item + idx"
             >
               <el-link
-                type="primary"
+                class="linkTextColor"
                 :underline="false"
                 style="font-size: 16px"
                 target="_blank"

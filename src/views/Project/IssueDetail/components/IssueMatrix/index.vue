@@ -30,6 +30,7 @@
       <el-form-item class="float-right">
         <el-button
           icon="el-icon-download"
+          class="buttonPrimaryReverse"
           :disabled="selectedProjectId === -1 || chartLoading"
           @click="downloadSVG"
         >{{ $t('Track.DownloadSVG') }}</el-button>

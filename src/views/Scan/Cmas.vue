@@ -11,7 +11,7 @@
     <el-divider />
     <div class="text-right mb-2">
       <el-button
-        type="primary"
+        class="buttonPrimaryReverse"
         icon="el-icon-refresh"
         size="mini"
         plain
@@ -45,7 +45,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :href="scope.row.commit_url"
@@ -95,7 +95,7 @@
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.filenames"
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :underline="false"

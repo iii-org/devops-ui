@@ -2,7 +2,7 @@
   <div class="app-container">
     <template v-if="!showAddPage">
       <div class="text-right">
-        <el-button type="success" @click="addCluster">+ {{ $t('general.Add') }}</el-button>
+        <el-button class="buttonSecondary" @click="addCluster">+ {{ $t('general.Add') }}</el-button>
       </div>
       <el-divider />
       <el-table
@@ -33,7 +33,7 @@
         <el-table-column align="center" :label="$t('SystemDeploySettings.ClusterName')" prop="cluster_name" width="150" />
         <el-table-column align="center" label="URL" width="300">
           <template slot-scope="scope">
-            <el-link type="primary" target="_blank" :href="scope.row.cluster_host">
+            <el-link class="linkTextColor" target="_blank" :href="scope.row.cluster_host">
               {{ scope.row.cluster_host }}
             </el-link>
           </template>
@@ -67,10 +67,10 @@
     </template>
     <template v-else>
       <div class="flex justify-between">
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous linkTextColor" @click="handleBackPage">
           {{ $t('general.Back') }}
         </el-button>
-        <el-button type="success" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button class="buttonSecondary" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
       <el-divider />
       <el-form ref="form" :model="form" label-width="120px" size="medium">

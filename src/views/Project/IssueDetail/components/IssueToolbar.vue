@@ -91,6 +91,7 @@
       >
         <el-button
           id="dialog-btn-cancel"
+          class="buttonSecondaryReverse"
           @click="handleAdvancedClose"
         >{{ $t('general.Cancel') }}</el-button>
         <el-button

@@ -1,65 +1,90 @@
 @import 'src/styles/theme/variables.scss';
 
 .buttonPrimary {
-  background-color: $buttonPrimary;
-  color: white;
-  &:hover, &:active, &:focus {
-    background-color: $buttonPrimary;
-    border-color: $buttonPrimary;
-    color:white;
-  }
-}
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white;
-  &:hover, &:active, &:focus {
-    background-color: $buttonSecondary;
-    border-color: $buttonSecondary;
-    color:white;
-  }
-}
-.buttonTertiary {
-  background-color: $buttonTertiary;
-  color: white;
-  &:hover, &:active, &:focus {
-    background-color: $buttonTertiary;
-    border-color: $buttonTertiary;
-    color:white;
-  }
-}
-.buttonInfo {
-  background-color: $info;
-  color: white;
-  &:hover, &:active, &:focus {
-    background-color: $info;
-    border-color: $info;
-    color:white;
-  }
-}
-.buttonPrimaryReverse {
-  border-color: #989898;
-  color: #989898;
-  background-color: none;
+  background-color: $buttonPrimary !important;
+  color: white !important;
   &:hover, &:active, &:focus {
     background-color: $buttonPrimary !important;
     border-color: $buttonPrimary !important;
     color:white !important;
   }
 }
-.buttonSecondaryReverse {
-  border-color: #989898;
-  color: #989898;
-  background-color: none;
+.buttonSecondary {
+  background-color: $buttonSecondary !important;
+  color: white !important;
   &:hover, &:active, &:focus {
     background-color: $buttonSecondary !important;
     border-color: $buttonSecondary !important;
     color:white !important;
   }
 }
+.buttonTertiary {
+  background-color: $buttonTertiary !important;
+  color: white !important;
+  &:hover, &:active, &:focus {
+    background-color: $buttonTertiary !important;
+    border-color: $buttonTertiary !important;
+    color:white !important;
+  }
+}
+.buttonInfo {
+  background-color: $info !important;
+  color: white !important;
+  &:hover, &:active, &:focus {
+    background-color: $info !important;
+    border-color: $info !important;
+    color:white !important;
+  }
+}
+.buttonPrimaryReverse {
+  border-color: #DCDFE6;
+  color: $buttonPrimary !important;
+  background-color: #ffffff !important;
+  &:focus {
+    border-color: #989898;
+    color: $buttonPrimary !important;
+    background-color: #ffffff !important;
+  }
+  &:hover, &:active {
+    background-color: $buttonPrimary !important;
+    border-color: $buttonPrimary !important;
+    color:white !important;
+  }
+}
+.buttonSecondaryReverse {
+  border-color: #DCDFE6;
+  color: $buttonSecondary !important;
+  background-color: #ffffff !important;
+  &:focus {
+    border-color: #989898;
+    color: $buttonSecondary !important;
+    background-color: #ffffff !important;
+  }
+  &:hover, &:active {
+    background-color: $buttonSecondary !important;
+    border-color: $buttonSecondary !important;
+    color:white !important;
+  }
+}
+.buttonTertiaryReverse {
+  border-color: #DCDFE6;
+  color: $buttonTertiary !important;
+  background-color: #ffffff !important;
+  &:focus {
+    border-color: #989898;
+    color: $buttonTertiary !important;
+    background-color: #ffffff !important;
+  }
+  &:hover, &:active {
+    background-color: $buttonTertiary !important;
+    border-color: $buttonTertiary !important;
+    color:white !important;
+  }
+}
 .buttonInfoReverse {
-  border-color: #989898;
-  color: #989898;
-  background-color: none;
+  border-color: #DCDFE6;
+  color: #606266 !important;
+  background-color: #ffffff;
 }
 .headerTextColor {
   color: $headerTextColor !important;
@@ -67,11 +92,4 @@
 
 .linkTextColor {
   color: $linkTextColor !important;
-}
-
-.tabsTextColor {
-  color: #989898 !important;
-  &:hover, &:active, &:focus {
-    color: $linkTextColor !important;
-  }
 }

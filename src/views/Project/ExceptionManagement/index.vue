@@ -43,7 +43,7 @@
             </el-menu>
             <el-button
               slot="reference"
-              class="filterTextColor"
+              class="buttonPrimaryReverse"
               icon="el-icon-download"
             >{{ $t('File.Download') }}</el-button>
           </el-popover>
@@ -436,17 +436,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'src/styles/theme/variables.scss';
-.buttonSecondary {
-  background-color: $buttonSecondary;
-  color: white
-}
-.filterTextColor {
-  color: $headerTextColor !important;
-  &:hover {
-    border-color: transparent;
-  }
-}
-</style>
