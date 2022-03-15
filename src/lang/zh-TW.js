@@ -377,7 +377,8 @@ export default {
     UploadWarning: '檔案名稱請勿包含特殊字元'
   },
   Version: {
-    Manage: '專案版本管理',
+    ProjectManage: '專案版本管理',
+    Manage: '版本管理',
     AddVersion: '新增版本',
     EditVersion: '修改版本',
     Duration: '期間',

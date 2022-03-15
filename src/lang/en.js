@@ -380,7 +380,8 @@ export default {
     UploadWarning: 'A file name cannot contain any of'
   },
   Version: {
-    Manage: 'Manage Project Versions',
+    ProjectManage: 'Manage Project Versions',
+    Manage: 'Manage Versions',
     AddVersion: 'Add Version',
     EditVersion: 'Edit Version',
     Duration: 'Duration',

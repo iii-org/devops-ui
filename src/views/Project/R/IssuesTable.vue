@@ -1,7 +1,7 @@
 <template>
   <div style="height: 70%;">
     <p>
-      <el-form inline class="flex align-center">
+      <el-form inline>
         <el-form-item :label="$t('Issue.Issue')">
           <el-select v-model="selectedCategory" @change="processData">
             <el-option v-for="item in categorySel" :key="item" :label="item" :value="item" />
@@ -11,12 +11,14 @@
           <el-checkbox
             v-model="showClosed"
             :label="`${$t('Issue.Closed')} (${closedIssueCount})`"
+            class="valign-middle"
           />
         </el-form-item>
         <el-form-item>
           <el-checkbox
             v-model="showOpen"
             :label="`${$t('Dashboard.Unfinished')} (${openIssueCount})`"
+            class="valign-middle"
             checked
           />
         </el-form-item>
@@ -144,7 +146,7 @@
       </el-form>
     </el-dialog>
     <el-dialog :visible.sync="showFormDialog" :title="$t('Issue.AskDeleteIssue')">
-      <IssueNotesEditor ref="IssueNotesEditor" page="IssuesTable" />
+      <issue-notes-editor ref="IssueNotesEditor" page="IssuesTable" />
       <div slot="footer" class="dialog-footer">
         <el-button type="danger" @click="handleCloseIssue()">{{ $t('Issue.CloseIssue') }}</el-button>
       </div>
@@ -177,12 +179,6 @@ export default {
     Tracker
   },
   mixins: [MixinElTableWithCheckbox],
-  props: {
-    allIssues: {
-      type: Array,
-      required: true
-    }
-  },
   data() {
     return {
       issues: [],
@@ -228,12 +224,9 @@ export default {
       }
     }
   },
-  mounted() {
-    this.setData(this.allIssues)
-  },
   methods: {
     setData(issues) {
-      this.issues = JSON.parse(JSON.stringify(issues))
+      this.issues = issues
       this.categories = []
       this.issuesByCategory = {}
       for (const issue of issues) {
@@ -275,9 +268,7 @@ export default {
       this.$nextTick(() => {
         const len = this.listData.length
         const pageSize = this.listQuery.limit
-        if ((this.listQuery.page - 1) * pageSize >= len) {
-          this.listQuery.page = len > 0 ? 1 + Math.floor((len - 1) / pageSize) : 1
-        }
+        if ((this.listQuery.page - 1) * pageSize >= len) this.listQuery.page = len > 0 ? 1 + Math.floor((len - 1) / pageSize) : 1
       })
     },
     handleEdit(idx, row) {
@@ -357,7 +348,7 @@ export default {
         await this.listData[index].close()
       }
       this.multipleSelection = []
-      // await this.$parent.init()
+      await this.$parent.init()
       this.listLoading = false
     },
     async batchMove() {
@@ -367,7 +358,7 @@ export default {
         await updateIssue(this.listData[index].id, { fixed_version_id: this.batchMoveToVersion })
       }
       this.multipleSelection = []
-      // await this.$parent.init()
+      await this.$parent.init()
       this.loading = false
       this.showBatchMoveDialog = false
     }
@@ -376,7 +367,7 @@ export default {
 </script>
 
 <style scoped>
-.el-form-item {
+.valign-middle {
   padding: 10px 10px;
   font-weight: bold;
 }
