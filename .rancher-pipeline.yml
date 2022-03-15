@@ -132,6 +132,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - develop
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -151,6 +152,7 @@ stages:
     branch:
       include:
       - master
+      - develop
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -170,6 +172,7 @@ stages:
     branch:
       include:
       - master
+      - develop
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
