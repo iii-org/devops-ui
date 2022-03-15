@@ -5,12 +5,17 @@
         <ProjectListSelector>
           <div slot="button">
             <el-button
-              type="success"
+              :type="state === 'STATE_INIT' ? 'success' : 'danger'"
               @click="toggleCreateRelease"
             >
-              <span class="el-icon-goods" />
-              <span v-if="state === 'STATE_CREATE_RELEASE'">{{ $t('Release.stopRelease') }}</span>
-              <span v-else>{{ $t('Release.startRelease') }}</span>
+              <template v-if="state === 'STATE_INIT'">
+                <span class="el-icon-goods" />
+                <span>{{ $t('Release.startRelease') }}</span>
+              </template>
+              <template v-else>
+                <span class="el-icon-close" />
+                <span>{{ $t('Release.stopRelease') }}</span>
+              </template>
             </el-button>
             <el-button
               type="primary"
