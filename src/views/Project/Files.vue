@@ -198,6 +198,10 @@ import {
   getProjectVersion,
   uploadProjectFile
 } from '@/api/projects'
+import {
+  getFileNameList,
+  getUploadFileType
+} from '@/api_v2/fileType'
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
@@ -224,6 +228,7 @@ export default {
       searchKeys: ['filename'],
       fileSizeLimit: '20 MB',
       fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      fileTypeList: {},
       specialSymbols: '* ? " < > | # { } % ~ &'
     }
   },
@@ -242,9 +247,15 @@ export default {
       }
       const res = await Promise.all([
         getProjectFileList(this.selectedProjectId),
-        getProjectVersion(this.selectedProjectId)
+        getProjectVersion(this.selectedProjectId),
+        getFileNameList(),
+        getUploadFileType()
       ])
       this.versionList = res[1].data.versions
+      this.fileTypeLimit = res[2].data.toString()
+      res[3].data.upload_file_types.forEach((item) => {
+        this.fileTypeList[item['MIME Type']] = item['file extension']
+      })
       return this.sortFiles(res[0].data.files)
     },
     sortFiles(files) {
@@ -285,9 +296,13 @@ export default {
       }
       this.listLoading = false
     },
+    isAllowedTypes (fileType) {
+      const map = this.fileTypeList
+      return map[fileType] !== undefined
+    },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedTypes(raw.type)) {
+      if (!this.isAllowedTypes(raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
@@ -316,7 +331,7 @@ export default {
       this.$refs['fileForm'].validate(async (valid) => {
         if (valid) {
           const data = this.fileForm
-          const filetype = allowedTypeMap()[this.uploadFileList[0].raw.type]
+          const filetype = this.fileTypeList[this.uploadFileList[0].raw.type]
           const form = new FormData()
           if (data.name !== '') {
             form.append('file', this.uploadFileList[0].raw, `${data.name}${filetype}`)

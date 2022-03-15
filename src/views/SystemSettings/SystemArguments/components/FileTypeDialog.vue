@@ -361,7 +361,7 @@ export default {
     handleEdit(scope) {
       if (this.isSaved) {
         if (this.rowCache) {
-          this.handleCancelFile(this.rowCache)
+          this.restoreRow(this.rowCache)
         }
         scope.row.edit = true
         this.rowCache = scope.row
@@ -412,17 +412,20 @@ export default {
           this.listLoading = false
         }
       } else {
-        this.handleCancelFile(row)
+        this.restoreRow(row)
         return false
       }
     },
     handleCancelFile(row) {
+      this.restoreRow(row)
+      this.isSaved = true
+    },
+    restoreRow(row) {
       const i = this.selectedRowIndex
       row.name = this.originData[i].name
       row.mimeType = this.originData[i].mimeType
       row.fileExtension = this.originData[i].fileExtension
       row.edit = this.originData[i].edit
-      this.isSaved = true
     },
     onDialogClosed() {
       this.$nextTick(() => {
