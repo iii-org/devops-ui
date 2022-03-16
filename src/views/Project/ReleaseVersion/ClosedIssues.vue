@@ -67,11 +67,18 @@ export default {
   data() {
     return {
       issues: [],
+      issueCategories: [],
       issuesByCategory: [{}, {}]
     }
   },
-  mounted() {
-    this.setIssues(this.allIssues)
+  watch: {
+    allIssues: {
+      handler(val) {
+        console.log(val)
+        if (val.length > 0) this.setIssues(val)
+      },
+      immediate: true
+    }
   },
   methods: {
     setIssues(issues) {

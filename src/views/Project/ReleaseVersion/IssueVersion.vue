@@ -28,8 +28,17 @@
       </span>
     </div>
     <el-skeleton v-if="isLoading" :rows="6" animated class="mt-5" />
-    <IssuesTable v-else-if="!isLoading && hasOpenIssue" ref="issueList" :all-issues="allIssues" />
-    <ClosedIssues v-else-if="!isLoading && !hasOpenIssue" ref="closedIssue" :all-issues="allIssues" />
+    <IssuesTable
+      v-else-if="!isLoading && hasOpenIssue"
+      ref="issueList"
+      :all-issues="allIssues"
+      @init="loadData"
+    />
+    <ClosedIssues
+      v-else-if="!isLoading && !hasOpenIssue"
+      ref="closedIssue"
+      :all-issues="allIssues"
+    />
     <div class="text-right">
       <el-button
         :disabled="isLoading || hasOpenIssue"
@@ -113,7 +122,9 @@ export default {
     //     confirmButtonText: this.$t('general.Confirm')
     //   })
     // }
-    // this.$nextTick(() => this.$refs.issueList.setData(this.allIssues))
+    // this.$nextTick(() => {
+    //   this.$refs.issueList.setData(this.allIssues)
+    // })
     // },
     nextStep() {
       this.$emit('onNextStep')

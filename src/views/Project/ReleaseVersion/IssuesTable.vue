@@ -192,7 +192,7 @@ export default {
       issuesByCategory: {},
       selectedCategory: this.$t('Release.allCategories'),
       searchKey: '',
-      showOpen: true,
+      showOpen: false,
       showClosed: false,
       showBatchMoveDialog: false,
       showFormDialog: false,
@@ -213,6 +213,10 @@ export default {
       const ret = [this.$t('Release.allCategories')]
       this.categories.forEach(category => ret.push(this.$t(`Issue.${category}`)))
       return ret
+    },
+    selectedCategoryEn() {
+      const id = Number(this.categorySel.findIndex(item => item === this.selectedCategory))
+      return id !== 0 ? this.categories[id - 1] : this.$t('Release.allCategories')
     }
   },
   watch: {
@@ -220,7 +224,14 @@ export default {
       this.setData(this.issues)
     },
     showOpen() {
+      console.log('show open')
       this.setData(this.issues)
+    },
+    listData(val) {
+      // FIXME: filteredData in MixinProjectListSelector always makes listData equal to [] when first loading
+      if (val.length === 0 && this.selectedCategory === this.$t('Release.allCategories') && this.allIssues.length > 0) {
+        this.setData(this.allIssues)
+      }
     },
     selectedProjectId(val) {
       if (val) {
@@ -233,7 +244,8 @@ export default {
   },
   methods: {
     setData(issues) {
-      this.issues = JSON.parse(JSON.stringify(issues))
+      console.log(issues)
+      this.issues = issues
       this.categories = []
       this.issuesByCategory = {}
       for (const issue of issues) {
@@ -251,9 +263,10 @@ export default {
     },
     processData() {
       const partialIssues = this.selectedCategory === this.$t('Release.allCategories')
-        ? this.issues : this.issues.filter(item => item.trackerName === this.selectedCategory)
+        ? this.issues : this.issues.filter(item => item.trackerName === this.selectedCategoryEn)
       this.closedIssueCount = 0
       this.openIssueCount = 0
+      console.log(partialIssues)
       this.listData = this.getListData(partialIssues)
       this.adjustTable(5)
       this.resizeTable()
@@ -268,6 +281,7 @@ export default {
           return this.showOpen
         }
       })
+      console.log(listData)
       return listData
     },
     resizeTable() {
@@ -358,6 +372,7 @@ export default {
       }
       this.multipleSelection = []
       // await this.$parent.init()
+      this.$emit('init')
       this.listLoading = false
     },
     async batchMove() {
@@ -368,6 +383,7 @@ export default {
       }
       this.multipleSelection = []
       // await this.$parent.init()
+      this.$emit('init')
       this.loading = false
       this.showBatchMoveDialog = false
     }
