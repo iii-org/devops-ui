@@ -83,6 +83,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -108,6 +109,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -144,6 +146,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -172,6 +175,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -200,6 +204,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Test--ZAP
   iiidevops: zap
   steps:
