@@ -190,7 +190,13 @@
 </template>
 
 <script>
-import { allowedTypeMap, isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension.js'
+import {
+  getFileTypeLimit,
+  getFileTypeList,
+  isAllowedFileTypeList,
+  fileSizeToMB,
+  containSpecialChar
+} from '@/utils/extension.js'
 import {
   deleteProjectFile,
   downloadProjectFile,
@@ -198,10 +204,6 @@ import {
   getProjectVersion,
   uploadProjectFile
 } from '@/api/projects'
-import {
-  getFileNameList,
-  getUploadFileType
-} from '@/api_v2/fileType'
 import { BasicData, Pagination, SearchBar, Table, ProjectSelector } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 
@@ -247,15 +249,11 @@ export default {
       }
       const res = await Promise.all([
         getProjectFileList(this.selectedProjectId),
-        getProjectVersion(this.selectedProjectId),
-        getFileNameList(),
-        getUploadFileType()
+        getProjectVersion(this.selectedProjectId)
       ])
       this.versionList = res[1].data.versions
-      this.fileTypeLimit = res[2].data.toString()
-      res[3].data.upload_file_types.forEach((item) => {
-        this.fileTypeList[item['MIME Type']] = item['file extension']
-      })
+      this.fileTypeLimit = await getFileTypeLimit()
+      this.fileTypeList = await getFileTypeList()
       return this.sortFiles(res[0].data.files)
     },
     sortFiles(files) {
@@ -296,13 +294,9 @@ export default {
       }
       this.listLoading = false
     },
-    isAllowedTypes (fileType) {
-      const map = this.fileTypeList
-      return map[fileType] !== undefined
-    },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!this.isAllowedTypes(raw.type)) {
+      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
