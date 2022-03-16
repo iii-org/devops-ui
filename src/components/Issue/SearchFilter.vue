@@ -249,7 +249,7 @@ export default {
         filterValue: this.filterValue,
         keyword: this.keyword,
         displayClosed: this.displayClosed,
-        isReloadFilterList: 'project' in this.filterValueClone
+        isReloadFilterList: this.filterValueClone.hasOwnProperty('project')
       })
     },
     onChangeFixedVersionStatus() {
