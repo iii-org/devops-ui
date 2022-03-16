@@ -88,6 +88,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Build--Build and push docker image(master develop)
   iiidevops: deployed-environments
   steps:
@@ -108,6 +109,7 @@ stages:
       include:
       - master
       - develop
+      - trysocket
 - name: Build--Build and push docker image(others)
   iiidevops: deployed-environments
   steps:
@@ -132,6 +134,7 @@ stages:
       - projectfilter
       - sysconfig
       - develop
+      - trysocket
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -152,6 +155,7 @@ stages:
       include:
       - master
       - develop
+      - trysocket
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -172,6 +176,7 @@ stages:
       include:
       - master
       - develop
+      - trysocket
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -191,6 +196,7 @@ stages:
     branch:
       include:
       - develop
+      - trysocket
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
@@ -210,6 +216,7 @@ stages:
     branch:
       include:
       - develop
+      - trysocket
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -238,6 +245,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -266,6 +274,7 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
+      - trysocket
 - name: Test--ZAP
   iiidevops: zap
   steps:
