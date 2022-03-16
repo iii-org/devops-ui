@@ -84,6 +84,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -110,6 +111,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -147,6 +149,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -176,6 +179,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -205,6 +209,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Test--ZAP
   iiidevops: zap
   steps:
