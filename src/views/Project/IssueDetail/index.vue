@@ -581,10 +581,21 @@ export default {
       this.setFormData(data)
       this.view = data
       if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
-        // this.onProjectChange(data.project.id)
+        if (!this.getRelationProjectList().includes(data.project.id)) {
+          this.onProjectChange(data.project.id)
+        }
       }
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
+      }
+    },
+    getRelationProjectList() {
+      if (this.$route.params.projectRelationList) {
+        return this.$route.params.projectRelationList.map((item) => {
+          return item.id
+        })
+      } else {
+        return []
       }
     },
     onProjectChange(value) {

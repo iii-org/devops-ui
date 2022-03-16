@@ -85,11 +85,15 @@ export default {
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     async onChangeFilterForm(value) {
+      console.log(value.isReloadFilterList)
       Object.keys(value).forEach((item) => {
         this[item] = value[item]
       })
       if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
         this.$delete(this.filterValue, 'tags')
+      }
+      if (value.isReloadFilterList) {
+        await this.loadSelectionList()
       }
       await this.onChangeFilter()
     },
@@ -174,7 +178,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList.data.versions]
     },
     async loadSelectionList() {
-      if (this.filterValue.project || this.selectedProjectId === -1) return
+      if (this.selectedProjectId === -1) return
       await Promise.all([
         getProjectUserList(this.filterValue.project || this.selectedProjectId),
         getTagsByProject(this.filterValue.project || this.selectedProjectId)
@@ -245,7 +249,10 @@ export default {
       if (column.type === 'expand' && this.hasRelationIssue(row)) {
         return this.refTable.toggleRowExpansion(row)
       }
-      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      this.$router.push({ name: 'issue-detail', params: {
+        issueId: row.id,
+        projectRelationList: this.projectRelationList
+      }})
     },
     handleEdit(id) {
       this.$router.push({ name: 'issue-detail', params: { issueId: id }})

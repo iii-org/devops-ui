@@ -248,7 +248,8 @@ export default {
       this.$emit('change-filter', {
         filterValue: this.filterValue,
         keyword: this.keyword,
-        displayClosed: this.displayClosed
+        displayClosed: this.displayClosed,
+        isReloadFilterList: 'project' in this.filterValueClone
       })
     },
     onChangeFixedVersionStatus() {
