@@ -89,6 +89,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Build--Build and push docker image(master develop)
   iiidevops: deployed-environments
   steps:
@@ -110,6 +111,7 @@ stages:
       - master
       - develop
       - trysocket
+      - milestonefreeze
 - name: Build--Build and push docker image(others)
   iiidevops: deployed-environments
   steps:
@@ -135,6 +137,7 @@ stages:
       - sysconfig
       - develop
       - trysocket
+      - milestonefreeze
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -156,6 +159,7 @@ stages:
       - master
       - develop
       - trysocket
+      - milestonefreeze
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -177,6 +181,7 @@ stages:
       - master
       - develop
       - trysocket
+      - milestonefreeze
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -197,6 +202,7 @@ stages:
       include:
       - develop
       - trysocket
+      - milestonefreeze
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
@@ -217,6 +223,7 @@ stages:
       include:
       - develop
       - trysocket
+      - milestonefreeze
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -246,6 +253,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -275,6 +283,7 @@ stages:
       - projectfilter
       - sysconfig
       - trysocket
+      - milestonefreeze
 - name: Test--ZAP
   iiidevops: zap
   steps:
