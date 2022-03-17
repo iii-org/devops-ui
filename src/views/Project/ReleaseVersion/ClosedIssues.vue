@@ -50,6 +50,7 @@
             </li>
           </ul>
         </el-col>
+        <IssueListDialog ref="issueDialog" />
       </el-row>
     </el-card>
   </div>
@@ -58,6 +59,9 @@
 <script>
 export default {
   name: 'ClosedIssues',
+  components: {
+    IssueListDialog: () => import('./IssueListDialog')
+  },
   props: {
     allIssues: {
       type: Array,
@@ -74,7 +78,6 @@ export default {
   watch: {
     allIssues: {
       handler(val) {
-        console.log(val)
         if (val.length > 0) this.setIssues(val)
       },
       immediate: true
@@ -98,6 +101,12 @@ export default {
         }
         store[cat].push(issue)
       }
+    },
+    openIssueDialog(category) {
+      const com = this.$refs.issueDialog
+      com.setData(this.issues, category)
+      com.adjustTable(5)
+      com.visible = true
     }
   }
 }

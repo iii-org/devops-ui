@@ -224,14 +224,16 @@ export default {
       this.setData(this.issues)
     },
     showOpen() {
-      console.log('show open')
       this.setData(this.issues)
     },
     listData(val) {
-      // FIXME: filteredData in MixinProjectListSelector always makes listData equal to [] when first loading
+      // FIXME: need to find out why filteredData in MixinProjectListSelector always makes listData become [] when first loading
       if (val.length === 0 && this.selectedCategory === this.$t('Release.allCategories') && this.allIssues.length > 0) {
         this.setData(this.allIssues)
       }
+    },
+    allIssues(val) {
+      this.setData(val)
     },
     selectedProjectId(val) {
       if (val) {
@@ -239,12 +241,8 @@ export default {
       }
     }
   },
-  mounted() {
-    this.setData(this.allIssues)
-  },
   methods: {
     setData(issues) {
-      console.log(issues)
       this.issues = issues
       this.categories = []
       this.issuesByCategory = {}
@@ -266,7 +264,6 @@ export default {
         ? this.issues : this.issues.filter(item => item.trackerName === this.selectedCategoryEn)
       this.closedIssueCount = 0
       this.openIssueCount = 0
-      console.log(partialIssues)
       this.listData = this.getListData(partialIssues)
       this.adjustTable(5)
       this.resizeTable()
@@ -281,7 +278,6 @@ export default {
           return this.showOpen
         }
       })
-      console.log(listData)
       return listData
     },
     resizeTable() {
@@ -361,7 +357,7 @@ export default {
       this.showFormDialog = false
 
       // If all issues are closed, change to create release screen
-      if (this.openIssueCount === 0) this.$parent.init()
+      if (this.openIssueCount === 0) this.$emit('onInit')
     },
     async batchClose() {
       this.listLoading = true
@@ -371,8 +367,7 @@ export default {
         await this.listData[index].close()
       }
       this.multipleSelection = []
-      // await this.$parent.init()
-      this.$emit('init')
+      this.$emit('onInit')
       this.listLoading = false
     },
     async batchMove() {
@@ -382,8 +377,7 @@ export default {
         await updateIssue(this.listData[index].id, { fixed_version_id: this.batchMoveToVersion })
       }
       this.multipleSelection = []
-      // await this.$parent.init()
-      this.$emit('init')
+      this.$emit('onInit')
       this.loading = false
       this.showBatchMoveDialog = false
     }

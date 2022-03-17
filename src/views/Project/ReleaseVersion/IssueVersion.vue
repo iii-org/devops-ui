@@ -31,8 +31,8 @@
     <IssuesTable
       v-else-if="!isLoading && hasOpenIssue"
       ref="issueList"
-      :all-issues="allIssues"
-      @init="loadData"
+      :all-issues.sync="allIssues"
+      @onInit="onInit"
     />
     <ClosedIssues
       v-else-if="!isLoading && !hasOpenIssue"
@@ -41,10 +41,11 @@
     />
     <div class="text-right">
       <el-button
-        :disabled="isLoading || hasOpenIssue"
+        :disabled="isLoading || hasOpenIssue || !hasCheck"
         @click="nextStep"
       >
         下一步
+        <i class="el-icon-right" />
       </el-button>
     </div>
   </el-card>
@@ -68,7 +69,8 @@ export default {
       projectVersionOptions: [],
       hasOpenIssue: false,
       allIssues: [],
-      isLoading: false
+      isLoading: false,
+      hasCheck: false
     }
   },
   computed: {
@@ -92,6 +94,7 @@ export default {
     },
     async checkIssues() {
       // Check if all issues of selected versions are closed
+      this.hasCheck = true
       this.isLoading = true
       this.hasOpenIssue = false
       this.allIssues = []
@@ -105,27 +108,17 @@ export default {
     getAllIssues(data) {
       data.forEach(async (issueJson) => {
         const issue = new Issue(issueJson)
-        console.log(issue)
         this.allIssues.push(issue)
-        console.log(this.allIssues)
         if (!issue.isClosed) {
           this.hasOpenIssue = true
-          // await this.showOpenIssues()
         }
         this.isLoading = false
       })
     },
-    // async showOpenIssues() {
-    // if (!this.fromQuery) {
-    //   const h = this.$createElement
-    //   this.$alert(h('div', this.$t('Release.openIssueAlert')), this.$t('general.caution'), {
-    //     confirmButtonText: this.$t('general.Confirm')
-    //   })
-    // }
-    // this.$nextTick(() => {
-    //   this.$refs.issueList.setData(this.allIssues)
-    // })
-    // },
+    onInit() {
+      this.loadData()
+      this.checkIssues()
+    },
     nextStep() {
       this.$emit('onNextStep')
     }

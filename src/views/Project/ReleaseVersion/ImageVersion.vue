@@ -138,6 +138,7 @@
         @click="nextStep"
       >
         下一步
+        <i class="el-icon-right" />
       </el-button>
     </div>
   </el-card>
