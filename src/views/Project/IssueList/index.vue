@@ -127,6 +127,7 @@
                 :issue="row"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
+                @collapse-expend-row="collapseExpendRow"
               />
             </template>
           </el-table-column>
@@ -647,6 +648,18 @@ export default {
       this.onChangeFilterForm({ filterValue: result })
       this.displayClosed = displayClosed
       this.fixed_version_closed = fixed_version_closed
+    },
+    collapseExpendRow(issueId) {
+      const row = this.listData.find((item) => {
+        return item.id === issueId
+      })
+      if (
+        !((row.hasOwnProperty('parent') && Object.keys(row.parent).length > 0) ||
+        (row.hasOwnProperty('children') && row.children.length > 0) ||
+        (row.hasOwnProperty('relations') && row.relations.length > 0))
+      ) {
+        this.$refs.issueList.toggleRowExpansion(row, false)
+      }
     }
   }
 }

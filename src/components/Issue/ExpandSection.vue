@@ -8,6 +8,7 @@
           <li class="issue-item">
             <IssueRow
               :issue="issue.parent"
+              :is-parent="true"
               :reload="reload"
               @click-title="handleEdit"
               @show-context-menu="handleContextMenu(issue.parent, '', $event)"
@@ -78,11 +79,32 @@ export default {
       default: 0
     }
   },
+  data() {
+    return {
+      rowIssueID: ''
+    }
+  },
+  watch: {
+    issue: {
+      handler() {
+        if (this.rowIssueID) {
+          this.$emit('collapse-expend-row', this.issue.id)
+          this.$emit('collapse-expend-row', this.rowIssueID)
+        }
+      }
+    }
+  },
   methods: {
     async removeIssueRelation(issue) {
+      const { issueData, isParent } = issue
+      this.rowIssueID = issueData.id
       this.listLoading = true
       try {
-        await updateIssue(issue.id, { parent_id: '' })
+        if (isParent) {
+          await updateIssue(this.issue.id || this.issue.issueId, { parent_id: '' })
+        } else {
+          await updateIssue(issueData.id, { parent_id: '' })
+        }
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -95,10 +117,11 @@ export default {
       this.listLoading = false
     },
     async removeRelationIssue(issue) {
-      const { relation_id } = issue
+      const { issueData } = issue
+      this.rowIssueID = issueData.id
       this.listLoading = true
       try {
-        await deleteIssueRelation(relation_id)
+        await deleteIssueRelation(issueData.relation_id)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
