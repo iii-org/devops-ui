@@ -53,8 +53,8 @@ export default {
   name: 'ReleaseVersion',
   components: {
     ProjectListSelector,
-    ReleaseTable: () => import('./ReleaseTable'),
-    CreateRelease: () => import('./CreateRelease'),
+    ReleaseTable: () => import('./ReleaseTable/index'),
+    CreateRelease: () => import('./CreateRelease/index'),
     ProjectVersions: () => import('@/views/Plan/Settings/components/ProjectVersions')
   },
   data() {

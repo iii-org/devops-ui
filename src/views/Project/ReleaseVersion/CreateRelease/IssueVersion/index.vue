@@ -28,6 +28,7 @@
       </span>
     </div>
     <el-skeleton v-if="isLoading" :rows="6" animated class="mt-5" />
+    <el-empty v-else-if="hasNoIssue" description="此版本尚未建立議題" />
     <IssuesTable
       v-else-if="!isLoading && hasOpenIssue"
       ref="issueList"
@@ -41,7 +42,7 @@
     />
     <div class="text-right">
       <el-button
-        :disabled="isLoading || hasOpenIssue || !hasCheck"
+        :disabled="disabled"
         @click="nextStep"
       >
         下一步
@@ -68,13 +69,25 @@ export default {
       projectVersions: [],
       projectVersionOptions: [],
       hasOpenIssue: false,
+      hasNoIssue: false,
+      isCheck: false,
       allIssues: [],
-      isLoading: false,
-      hasCheck: false
+      isLoading: false
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId'])
+    ...mapGetters(['selectedProjectId']),
+    selectedVersions() {
+      return this.releaseVersions.length
+    },
+    disabled() {
+      return this.isLoading || this.hasOpenIssue || this.selectedVersions === 0 || !this.isCheck
+    }
+  },
+  watch: {
+    hasOpenIssue(val) {
+      if (val) this.showUnClosedIssuesWarning()
+    }
   },
   mounted() {
     this.loadData()
@@ -94,18 +107,28 @@ export default {
     },
     async checkIssues() {
       // Check if all issues of selected versions are closed
-      this.hasCheck = true
+      this.isCheck = true
       this.isLoading = true
       this.hasOpenIssue = false
       this.allIssues = []
       this.releaseVersions.forEach(async (vId) => {
         const params = { fixed_version_id: vId }
+        console.log(params)
         await getProjectIssueList(this.selectedProjectId, params)
-          .then((res) => this.getAllIssues(res.data))
+          .then((res) => {
+            console.log(res)
+            this.getAllIssues(res.data)
+          })
           .catch(() => { this.isLoading = false })
       })
     },
     getAllIssues(data) {
+      console.log(data)
+      if (data.length === 0) {
+        this.isLoading = false
+        this.hasNoIssue = true
+        return
+      }
       data.forEach(async (issueJson) => {
         const issue = new Issue(issueJson)
         this.allIssues.push(issue)
@@ -113,6 +136,12 @@ export default {
           this.hasOpenIssue = true
         }
         this.isLoading = false
+      })
+    },
+    showUnClosedIssuesWarning() {
+      const h = this.$createElement
+      this.$alert(h('div', this.$t('Release.openIssueAlert')), this.$t('general.caution'), {
+        confirmButtonText: this.$t('general.Confirm')
       })
     },
     onInit() {

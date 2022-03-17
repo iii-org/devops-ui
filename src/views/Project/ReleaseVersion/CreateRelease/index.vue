@@ -4,7 +4,11 @@
       <el-steps :active="stepActive" finish-status="success" align-center>
         <el-step title="議題版本">
           <template slot="description">
-            <span>包版前請確認所有議題單是否已完結關閉，若未完全關閉，可於下方操作移轉或直接關閉，若尚未設定版本，請至上方版本管理進行版本設定。</span>
+            <span>
+              包版前請確認所有議題單是否已完結關閉，若未完全關閉，可於下方操作移轉或直接關閉，若尚未設定版本，請至上方
+              <el-button type="text" size="mini" @click="isShowVersions = true">版本管理</el-button>
+              進行版本設定。
+            </span>
           </template>
         </el-step>
         <el-step title="程式/映像檔版本">
@@ -24,6 +28,9 @@
         <PackageVersion v-else-if="stepActive === 2" />
       </section>
     </el-card>
+    <el-dialog :visible.sync="isShowVersions" width="60%">
+      <ProjectVersions v-if="isShowVersions" :is-show-title="true" />
+    </el-dialog>
   </div>
 </template>
 
@@ -31,13 +38,15 @@
 export default {
   name: 'CreateRelease',
   components: {
-    IssueVersion: () => import('./IssueVersion'),
+    IssueVersion: () => import('./IssueVersion/index'),
     ImageVersion: () => import('./ImageVersion'),
-    PackageVersion: () => import('./PackageVersion')
+    PackageVersion: () => import('./PackageVersion'),
+    ProjectVersions: () => import('@/views/Plan/Settings/components/ProjectVersions')
   },
   data() {
     return {
-      stepActive: 0
+      stepActive: 0,
+      isShowVersions: false
     }
   },
   methods: {

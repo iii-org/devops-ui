@@ -74,7 +74,8 @@
         >
           <template slot-scope="scope">
             <el-popover
-              v-if="scope.row.docker"
+              v-for="(image, idx) in scope.row.docker"
+              :key="image"
               placement="top"
               width="400"
               trigger="hover"
@@ -82,10 +83,10 @@
               :close-delay="50"
             >
               <p
-                :id="`copy-${scope.$index}`"
+                :id="`copy-${scope.$index}-${idx}`"
                 class="text-center"
               >
-                <span class="text-subtitle-1 font-weight-bold">{{ scope.row.docker }}</span>
+                <span class="text-subtitle-1 font-weight-bold">{{ image }}</span>
               </p>
               <div class="flex justify-center">
                 <el-button
@@ -93,31 +94,32 @@
                   icon="el-icon-copy-document"
                   circle
                   size="mini"
-                  @click="copyUrl(`copy-${scope.$index}`)"
+                  @click="copyUrl(`copy-${scope.$index}-${idx}`)"
                 />
               </div>
               <span slot="reference">
                 <el-link
-                  class="text-xl"
+                  class="text-xl mr-2"
                   :underline="false"
                 >
                   <svg-icon icon-class="harbor" />
                 </el-link>
               </span>
             </el-popover>
-            <span v-else>{{ $t('Issue.NoImage') }}</span>
+            <span v-if="scope.row.docker.length === 0">{{ $t('Issue.NoImage') }}</span>
           </template>
         </el-table-column>
         <el-table-column
+          label="備註標籤"
+          prop="note"
+          sortable
+        />
+        <el-table-column
           align="center"
-          :label="$t('general.Report')"
+          :label="$t('general.Actions')"
         >
           <template slot-scope="scope">
-            <em
-              v-show="scope.row.commit"
-              class="el-icon-tickets cursor-pointer"
-              @click="handleToTestReport(scope.row.commit)"
-            />
+            <ActionInput :scope="scope" />
           </template>
         </el-table-column>
         <template slot="empty">
@@ -137,12 +139,15 @@
 </template>
 
 <script>
-import { getReleaseVersion } from '@/api/release'
+import { getReleaseVersion } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import { UTCtoLocalTime } from '@/filters'
 
 export default {
   name: 'ReleaseTable',
+  components: {
+    ActionInput: () => import('./ActionInput')
+  },
   mixins: [BasicData, Pagination, SearchBar],
   model: {
     prop: 'keyword',
@@ -169,6 +174,7 @@ export default {
   methods: {
     async fetchData() {
       const res = await getReleaseVersion(this.selectedProject.id)
+      console.log(res)
       return res.data.releases
     },
     formatTime(value) {
