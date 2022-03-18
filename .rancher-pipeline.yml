@@ -59,6 +59,7 @@ stages:
     branch:
       include:
       - master
+      - develop
 - name: Deploy--Set Web environment variables
   iiidevops: deployed-environments
   steps:
