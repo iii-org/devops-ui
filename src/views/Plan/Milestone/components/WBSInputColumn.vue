@@ -167,7 +167,7 @@ export default {
       return `calc(100%)`
     },
     handlerBlur(row, index, treeNode) {
-      const checkUpdate = row.originColumn && row[this.prop] !== row.originColumn
+      const checkUpdate = row[this.prop] !== row.originColumn
       if (checkUpdate) {
         this.handlerEdit(row, index, treeNode)
       } else if (row.originColumn) {
