@@ -96,6 +96,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Build--Build and push docker image(master develop)
   iiidevops: deployed-environments
   steps:
@@ -121,6 +122,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Build--Build and push docker image(others)
   iiidevops: deployed-environments
   steps:
@@ -150,6 +152,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Build--Push image repo_name:branch(master)
   iiidevops: deployed-environments
   steps:
@@ -175,6 +178,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -200,6 +204,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -224,6 +229,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
@@ -248,6 +254,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -281,6 +288,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -314,6 +322,7 @@ stages:
       - milestoneEdit
       - milestonehandleedit
       - router
+      - expandrow
 - name: Test--ZAP
   iiidevops: zap
   steps:
