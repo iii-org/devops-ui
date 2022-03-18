@@ -43,7 +43,6 @@ stages:
       - projectlist
       - projectfilter
       - sysconfig
-      - packrelease
 - name: Test--Checkmarx source code scan
   iiidevops: checkmarx
   steps:
@@ -125,6 +124,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Build--Build and push docker image(others)
   iiidevops: deployed-environments
   steps:
@@ -182,6 +182,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Build--Push image branch:commit_id(master)
   iiidevops: deployed-environments
   steps:
@@ -208,6 +209,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Build--Push image repo_name:branch(develop)
   iiidevops: deployed-environments
   steps:
@@ -233,6 +235,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Build--Push image branch:commit_id(develop)
   iiidevops: deployed-environments
   steps:
@@ -258,6 +261,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
