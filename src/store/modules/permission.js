@@ -95,8 +95,8 @@ const actions = {
     })
     // views Plugin
     // const result = asyncRoutes(roles)
-    const result = asyncRoutes
-    const routes = getAsyncRoutes(result)
+    const routes = asyncRoutes
+    // const routes = getAsyncRoutes(result)
     console.log(routes)
     let accessedRoutes
     // Plugin
