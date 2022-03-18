@@ -2,7 +2,7 @@
   <section>
     <div
       class="board"
-      :class="{'is-panel':rightPanelVisible}"
+      :class="{'is-panel':relationIssue.visible}"
     >
       <Kanban
         v-for="classObj in groupByValueOnBoard"
@@ -14,13 +14,14 @@
         :group="group"
         :dimension="groupBy.dimension"
         :add-issue="saveIssue"
+        @relationIssueId="onRelationIssueDialog"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
         @contextmenu="handleContextMenu"
       />
     </div>
-    <RightPanel
+    <!-- <RightPanel
       ref="rightPanel"
       :click-not-close="true"
       @visible="handleRightPanelVisible"
@@ -75,7 +76,22 @@
           </el-card>
         </el-row>
       </template>
-    </RightPanel>
+    </RightPanel> -->
+    <IssueDetailDrawer
+      v-if="relationIssue.visible"
+      ref="rightPanel"
+      :click-not-close="true"
+      :is-show="relationIssue.visible"
+      @visible="handleRightPanelVisible"
+    >
+      <ProjectIssueDetail
+        ref="children"
+        :props-issue-id="relationIssue.id"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationDelete"
+      />
+    </IssueDetailDrawer>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -90,8 +106,10 @@
 <script>
 import { mapGetters } from 'vuex'
 import { addIssue, updateIssue } from '@/api/issue'
-import { Kanban, RightPanel } from '@/views/Project/IssueBoards/components'
-import { Status, Tracker, Priority, ContextMenu } from '@/components/Issue'
+import { Kanban } from '@/views/Project/IssueBoards/components'
+import IssueDetailDrawer from './IssueDetailDrawer.vue'
+import { ContextMenu } from '@/components/Issue'
+import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 
 const contextMenu = {
   row: {
@@ -105,7 +123,7 @@ const contextMenu = {
 
 export default {
   name: 'Boards',
-  components: { Kanban, RightPanel, Status, Tracker, Priority, ContextMenu },
+  components: { Kanban, ContextMenu, IssueDetailDrawer, ProjectIssueDetail },
   props: {
     groupBy: {
       type: Object,
@@ -143,7 +161,11 @@ export default {
     return {
       rightPanelVisible: false,
       group: 'mission',
-      contextMenu: contextMenu
+      contextMenu: contextMenu,
+      relationIssue: {
+        visible: false,
+        id: null
+      }
     }
   },
   computed: {
@@ -167,6 +189,8 @@ export default {
     },
     handleRightPanelVisible(value) {
       this.rightPanelVisible = value
+      this.$set(this.relationIssue, 'visible', value)
+      console.log()
     },
     filterMe(userList) {
       return userList.filter((item) => item.login !== '-Me-')
@@ -319,6 +343,18 @@ export default {
     hideContextMenu() {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
+    },
+    onRelationIssueDialog(id) {
+      this.$set(this.relationIssue, 'visible', true)
+      this.$set(this.relationIssue, 'id', id)
+    },
+    handleRelationUpdate() {
+      this.loadData()
+    },
+    handleRelationDelete() {
+      this.loadData()
+      this.$set(this.relationIssue, 'visible', false)
+      this.$set(this.relationIssue, 'id', null)
     }
   }
 }
@@ -335,7 +371,7 @@ export default {
   overflow-x: auto;
 
   &.is-panel {
-    width: calc(100% - 260px);
+    width: calc(100% - 750px);
   }
 }
 

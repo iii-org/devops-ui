@@ -517,7 +517,8 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$emit('relationIssueId', id)
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement

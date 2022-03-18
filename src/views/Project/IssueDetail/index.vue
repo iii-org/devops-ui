@@ -720,9 +720,9 @@ export default {
         this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()
-        await this.fetchIssue()
       }
       this.isLoading = false
+      await this.fetchIssue()
     },
     async handleUploadUpdated() {
       await this.fetchIssue(true)
