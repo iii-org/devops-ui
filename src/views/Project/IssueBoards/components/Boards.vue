@@ -6,6 +6,7 @@
     >
       <Kanban
         v-for="classObj in groupByValueOnBoard"
+        :id="'card' + classObj.id"
         :key="classObj.id"
         :board-object="classObj"
         :list="classifyIssueList[classObj.id]"
@@ -14,7 +15,7 @@
         :group="group"
         :dimension="groupBy.dimension"
         :add-issue="saveIssue"
-        @relationIssueId="onRelationIssueDialog"
+        @relationIssueId="onRelationIssueDialog($event, classObj.id)"
         @update="updateIssueStatus"
         @update-board="updateIssueBoard"
         @update-drag="quickUpdateIssue"
@@ -344,9 +345,10 @@ export default {
       this.contextMenu.visible = false
       document.removeEventListener('click', this.hideContextMenu)
     },
-    onRelationIssueDialog(id) {
+    onRelationIssueDialog(id, element) {
       this.$set(this.relationIssue, 'visible', true)
       this.$set(this.relationIssue, 'id', id)
+      this.scrollTo(element)
     },
     handleRelationUpdate() {
       this.loadData()
@@ -355,6 +357,12 @@ export default {
       this.loadData()
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
+    },
+    scrollTo(target) {
+      var element = document.getElementById('card' + target)
+      this.$nextTick(() => {
+        element.scrollIntoView()
+      })
     }
   }
 }
