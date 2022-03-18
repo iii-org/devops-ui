@@ -88,6 +88,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -118,6 +119,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -159,6 +161,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -192,6 +195,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -225,6 +229,7 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
+      - packrelease
 - name: Test--ZAP
   iiidevops: zap
   steps:
