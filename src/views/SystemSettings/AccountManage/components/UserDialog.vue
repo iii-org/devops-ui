@@ -18,7 +18,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.Password')" prop="password">
-        <el-input v-model="userForm.password" type="password" maxlength="20" show-password :disabled="disableEdit" />
+        <el-input v-model="userForm.password" type="password" maxlength="20" show-password />
         <div style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.PasswordRule') }}
         </div>
@@ -29,7 +29,6 @@
           type="password"
           maxlength="20"
           show-password
-          :disabled="disableEdit"
         />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
