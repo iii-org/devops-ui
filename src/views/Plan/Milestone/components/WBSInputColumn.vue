@@ -140,9 +140,9 @@ export default {
   methods: {
     hasRequired(row) {
       if (!row.create) {
-        this.$nextTick(() => {
+        if (this.$refs['input']) {
           this.$refs['input'].focus()
-        })
+        }
       }
       return this.required && row[this.prop].length <= 0
     },
@@ -168,10 +168,8 @@ export default {
     },
     handlerBlur(row, index, treeNode) {
       const checkUpdate = row[this.prop] !== row.originColumn
-      console.log(checkUpdate)
       if (checkUpdate) {
         this.handlerEdit(row, index, treeNode)
-        console.log('edit')
       } else if (row.originColumn) {
         this.handlerReset(row, index, treeNode)
       }
