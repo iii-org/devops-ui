@@ -43,7 +43,7 @@
     <div class="text-right">
       <el-button
         :disabled="disabled"
-        @click="nextStep"
+        @click="onNext"
       >
         下一步
         <i class="el-icon-right" />
@@ -129,6 +129,7 @@ export default {
         this.hasNoIssue = true
         return
       }
+      this.hasNoIssue = false
       data.forEach(async (issueJson) => {
         const issue = new Issue(issueJson)
         this.allIssues.push(issue)
@@ -148,8 +149,13 @@ export default {
       this.loadData()
       this.checkIssues()
     },
-    nextStep() {
-      this.$emit('onNextStep')
+    onNext() {
+      const issueData = {
+        issues: this.allIssues,
+        releaseVersions: this.releaseVersions,
+        projectVersions: this.projectVersions
+      }
+      this.$emit('onNext', issueData)
     }
   }
 }

@@ -15,12 +15,11 @@
           :label="$t('TestCase.Index')"
           type="index"
           sortable
-          width="120"
         />
         <el-table-column
           :label="$t('Issue.PackageVersionTime')"
           sortable
-          width="300"
+          width="230"
         >
           <template slot-scope="scope">
             {{ UTCtoLocalTime(scope.row.create_at) }}
@@ -30,7 +29,6 @@
           :label="$t('Version.Version')"
           prop="tag_name"
           sortable
-          width="120"
         />
         <el-table-column
           :label="$t('Issue.SourceCode')"
@@ -111,9 +109,23 @@
         </el-table-column>
         <el-table-column
           label="備註標籤"
-          prop="note"
           sortable
-        />
+        >
+          <template slot-scope="scope">
+            <el-tooltip
+              v-for="(tag, index) in scope.row.image_tags"
+              :key="index"
+              placement="top"
+            >
+              <div slot="content">
+                {{ getImageTagsTooltip(tag) }}
+              </div>
+              <span type="text" class="cursor-pointer">
+                {{ getImageTags(tag) }}<span v-if="index !== scope.row.image_tags.length - 1">, </span>
+              </span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
@@ -207,6 +219,14 @@ export default {
         name: 'TestReport',
         params: { commitId, projectName: this.$store.getters.selectedProject.name }
       })
+    },
+    getImageTags(tag) {
+      const [key] = Object.keys(tag)
+      return key
+    },
+    getImageTagsTooltip(tag) {
+      const [[value]] = Object.values(tag)
+      return value
     }
   }
 }

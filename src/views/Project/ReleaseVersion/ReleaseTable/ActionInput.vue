@@ -25,17 +25,15 @@
       v-else
       v-model="model"
       placeholder="請輸入..."
-      @blur="init"
     >
-      <i
+      <em
         v-if="!isSave"
         slot="suffix"
         class="el-icon-circle-plus cursor-pointer button"
         :style="getStyle('menuActiveText')"
-        @click="isSave = true"
+        @click="save"
       />
-      <i
-        v-else
+      <em
         slot="suffix"
         class="el-icon-error cursor-pointer button"
         :style="getStyle('danger')"
@@ -73,6 +71,11 @@ export default {
         color
       }
     },
+    save() {
+      this.isShowInput = false
+      this.isSave = true
+      this.model = ''
+    },
     init() {
       this.isShowInput = false
       this.isSave = false
@@ -85,6 +88,6 @@ export default {
 <style lang="scss" scoped>
 .button {
   line-height: 40px;
-  font-size: 20px;
+  font-size: 24px;
 }
 </style>
