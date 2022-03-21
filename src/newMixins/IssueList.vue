@@ -85,7 +85,6 @@ export default {
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     async onChangeFilterForm(value) {
-      console.log(value.isReloadFilterList)
       Object.keys(value).forEach((item) => {
         this[item] = value[item]
       })

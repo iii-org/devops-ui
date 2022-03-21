@@ -76,6 +76,10 @@ export default {
     reload: {
       type: [String, Number],
       default: 0
+    },
+    projectRelationList: {
+      type: Array,
+      default: () => []
     }
   },
   methods: {
@@ -115,7 +119,10 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: { issueId }})
+        this.$router.push({ name: 'issue-detail', params: {
+          issueId,
+          projectRelationList: this.projectRelationList
+        }})
       } else {
         this.$emit('popup-dialog', issueId)
       }

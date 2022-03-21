@@ -126,6 +126,7 @@
             <template slot-scope="{row}">
               <ExpandSection
                 :issue="row"
+                :project-relation-list="projectRelationList"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
               />
