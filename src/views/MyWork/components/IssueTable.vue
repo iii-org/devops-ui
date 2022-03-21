@@ -5,6 +5,7 @@
       :element-loading-text="$t('Loading')"
     >
       <el-table
+        ref="issueList"
         :data="listData"
         highlight-current-row
         row-key="id"
@@ -19,7 +20,9 @@
           <template slot-scope="{row}">
             <ExpandSection
               :issue="row"
+              @update-list="fetchData"
               @on-context-menu="onContextMenu"
+              @collapse-expend-row="collapseExpendRow"
             />
           </template>
         </el-table-column>
@@ -333,9 +336,9 @@ export default {
       const result = []
       if (!this.hasRelationIssue(row)) {
         result.push('hide-expand-icon')
-        if (this.refTable) {
-          this.checkRowExpended(this.refTable, row)
-        }
+        // if (this.refTable) {
+        //   this.checkRowExpended(this.refTable, row)
+        // }
       }
       this.contextMenu ? result.push('context-menu') : result.push('cursor-pointer')
       return result.join(' ')
@@ -377,6 +380,10 @@ export default {
     },
     hasRelationIssue(row) {
       return row.family
+    },
+    collapseExpendRow(issueId) {
+      const row = this.listData.find((item) => item.id === issueId)
+      this.$refs.issueList.toggleRowExpansion(row, false)
     }
   }
 }

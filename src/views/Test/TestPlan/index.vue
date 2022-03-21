@@ -76,9 +76,10 @@
           <el-table-column type="expand" class-name="informationExpand">
             <template slot-scope="{row}">
               <ExpandSection
-                v-if="hasRelationIssue(row)"
                 :issue="row"
                 @on-context-menu="onContextMenu"
+                @update-list="loadData"
+                @collapse-expend-row="collapseExpendRow"
               />
               <ul class="family">
                 <li v-if="row.hasOwnProperty('test_files') && row.test_files.length>0">
@@ -341,9 +342,6 @@ export default {
       }
       return Promise.resolve(issueList)
     },
-    hasRelationIssue(row) {
-      return row.family || (row.test_files && row.test_files.length > 0)
-    },
     async getIssueFamilyData(row, expandedRows) {
       this.expandedRow = expandedRows
       if (expandedRows.find((item) => (item.id === row.id))) {
@@ -530,6 +528,10 @@ export default {
     },
     onContextMenu({ row, column, event }) {
       this.handleContextMenu(row, column, event)
+    },
+    collapseExpendRow(issueId) {
+      const row = this.listData.find((item) => item.id === issueId)
+      this.$refs.issueList.toggleRowExpansion(row, false)
     }
   }
 }

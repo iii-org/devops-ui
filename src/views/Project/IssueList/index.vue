@@ -650,16 +650,8 @@ export default {
       this.fixed_version_closed = fixed_version_closed
     },
     collapseExpendRow(issueId) {
-      const row = this.listData.find((item) => {
-        return item.id === issueId
-      })
-      if (
-        !((row.hasOwnProperty('parent') && Object.keys(row.parent).length > 0) ||
-        (row.hasOwnProperty('children') && row.children.length > 0) ||
-        (row.hasOwnProperty('relations') && row.relations.length > 0))
-      ) {
-        this.$refs.issueList.toggleRowExpansion(row, false)
-      }
+      const row = this.listData.find((item) => item.id === issueId)
+      this.refTable.toggleRowExpansion(row, false)
     }
   }
 }

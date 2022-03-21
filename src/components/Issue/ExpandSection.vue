@@ -79,17 +79,13 @@ export default {
       default: 0
     }
   },
-  data() {
-    return {
-      rowIssueID: ''
-    }
-  },
   watch: {
     issue: {
-      handler() {
-        if (this.rowIssueID) {
-          this.$emit('collapse-expend-row', this.issue.id)
-          this.$emit('collapse-expend-row', this.rowIssueID)
+      handler(value) {
+        console.log(this.issue.family, this.family)
+        console.log(value)
+        if (!value.family) {
+          this.$emit('collapse-expend-row', value.id)
         }
       }
     }
@@ -97,12 +93,13 @@ export default {
   methods: {
     async removeIssueRelation(issue) {
       const { issueData, isParent } = issue
-      this.rowIssueID = issueData.id
       this.listLoading = true
       try {
         if (isParent) {
+          console.log(this.issue.id, this.issue.issueId)
           await updateIssue(this.issue.id || this.issue.issueId, { parent_id: '' })
         } else {
+          console.log(issueData.id)
           await updateIssue(issueData.id, { parent_id: '' })
         }
         this.$message({
@@ -118,9 +115,9 @@ export default {
     },
     async removeRelationIssue(issue) {
       const { issueData } = issue
-      this.rowIssueID = issueData.id
       this.listLoading = true
       try {
+        console.log(issueData.relation_id)
         await deleteIssueRelation(issueData.relation_id)
         this.$message({
           title: this.$t('general.Success'),
