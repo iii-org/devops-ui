@@ -909,6 +909,7 @@ export default {
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
     SystemTemplates: 'Templates',
+    SystemConfigs: 'System Configs',
     AddPlugin: 'Add Plugin',
     AddParams: 'Add Params'
   },
@@ -1170,6 +1171,14 @@ export default {
     NotifyRun: `Synchronizing Templates, it might takes 3 - 10 mins depends on the networking, please come back later or click in the 'Execution Logs' for details.`,
     TemplateSyncExecLogs: 'Template Synchronization Execute Logs',
     VerifyGithubToken: 'Verifying given GitHub token...'
+  },
+  SystemConfigs: {
+    SystemConfig: 'System Config',
+    Content: 'Status / Content',
+    FileType: 'File type',
+    GitLabExternalAccess: 'GitLab external access',
+    UploadFileTypes: 'Upload file types',
+    FileExtension: 'File extension'
   },
   Kanban: {
     ChangeIssueError: 'Change Issue Error',

@@ -310,7 +310,13 @@
 <script>
 import dayjs from 'dayjs'
 import { getProjectAssignable, getProjectVersion, addProjectTags } from '@/api/projects'
-import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
+import {
+  getFileTypeLimit,
+  getFileTypeList,
+  isAllowedFileTypeList,
+  fileSizeToMB,
+  containSpecialChar
+} from '@/utils/extension'
 import Tracker from '@/components/Issue/Tracker'
 import Status from '@/components/Issue/Status'
 import Priority from '@/components/Issue/Priority'
@@ -400,6 +406,7 @@ export default {
       },
       fileSizeLimit: '5MB',
       fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      fileTypeList: {},
       specialSymbols: '\ / : * ? " < > | # { } % ~ &',
       tagsString: ''
     }
@@ -461,6 +468,8 @@ export default {
       if (this.issueId > 0) {
         await this.getClosable()
       }
+      this.fileTypeLimit = await getFileTypeLimit()
+      this.fileTypeList = await getFileTypeList()
       this.isLoading = false
     },
     setFilterValue() {
@@ -588,7 +597,7 @@ export default {
     },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedTypes(raw.type)) {
+      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
@@ -598,7 +607,7 @@ export default {
       } else if (fileSizeToMB(size) > 5) {
         this.$message({
           title: this.$t('general.Warning'),
-          message: this.$t('Notify.FileSizeLimit'),
+          message: this.$t('Notify.FileSizeLimit', { size: this.fileSizeLimit }),
           type: 'warning'
         })
         this.$refs['upload'].clearFiles()

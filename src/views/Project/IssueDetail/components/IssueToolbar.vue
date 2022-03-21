@@ -46,7 +46,7 @@
       top="3vh"
       append-to-body
     >
-      <issue-file-uploader
+      <IssueFileUploader
         ref="IssueFileUploader"
         :issue-id="issueId"
       />
@@ -75,7 +75,7 @@
       append-to-body
       @close="handleClose"
     >
-      <add-issue
+      <AddIssue
         ref="AddIssue"
         :save-data="saveIssue"
         :dialog-visible.sync="addTopicDialogVisible"

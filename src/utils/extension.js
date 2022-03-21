@@ -1,3 +1,24 @@
+import { getFileNameList, getUploadFileType } from '@/api_v2/fileType'
+
+export const getFileTypeLimit = async() => {
+  const res = await getFileNameList()
+  return res.data.toString()
+}
+
+export const getFileTypeList = async() => {
+  const data = {}
+  const res = await getUploadFileType()
+  res.data.upload_file_types.forEach((item) => {
+    data[item['MIME Type']] = item['file extension']
+  })
+  return data
+}
+
+export const isAllowedFileTypeList = (fileList, fileType) => {
+  const map = fileList
+  return map[fileType] !== undefined
+}
+
 export const allowedTypeMap = () => ({
   'audio/aac': '.aac',
   'application/x-abiword': '.abw',

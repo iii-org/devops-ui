@@ -214,7 +214,6 @@ export default {
         } else if (!this.intervalTimer) {
           this.intervalTimer = window.setInterval(this.getLockCheck, 5000)
         }
-        console.log(res.data)
         return Promise.resolve(res.data)
       } catch (e) {
         console.error(e)

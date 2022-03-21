@@ -10,8 +10,15 @@
     </div>
   </el-upload>
 </template>
+
 <script>
-import { isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension'
+import {
+  getFileTypeLimit,
+  getFileTypeList,
+  isAllowedFileTypeList,
+  fileSizeToMB,
+  containSpecialChar
+} from '@/utils/extension'
 
 export default {
   name: 'IssueFileUploader',
@@ -19,14 +26,22 @@ export default {
     return {
       uploadFileList: [],
       fileSizeLimit: '5MB',
-      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs'
+      fileType: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      fileTypeList: {}
     }
+  },
+  mounted() {
+    this.fetchFileData()
   },
 
   methods: {
+    async fetchFileData() {
+      this.fileType = await getFileTypeLimit()
+      this.fileTypeList = await getFileTypeList()
+    },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedTypes(raw.type)) {
+      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
