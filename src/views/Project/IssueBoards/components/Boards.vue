@@ -303,7 +303,7 @@ export default {
     scrollTo(target) {
       var element = document.getElementById('card' + target)
       this.$nextTick(() => {
-        element.scrollIntoView()
+        element.scrollIntoView({ behavior: 'smooth' })
       })
     }
   }
