@@ -22,77 +22,23 @@
         @contextmenu="handleContextMenu"
       />
     </div>
-    <!-- <RightPanel
-      ref="rightPanel"
-      :click-not-close="true"
-      @visible="handleRightPanelVisible"
-    >
-      <template v-for="item in filterOptions">
-        <el-row
-          :key="item.id"
-          class="panel"
+    <transition name="slide-fade">
+      <div v-if="relationIssue.visible" class="rightPanel">
+        <div
+          class="handle-button"
+          :style="{'background-color':'#85c1e9'}"
+          @click="handleRightPanelVisible"
         >
-          <el-card>
-            <template slot="header">{{ item.label }}</template>
-            <template v-for="(subItem, index) in getFilterValueList(item.value)">
-              <div
-                v-if="subItem.status !== 'closed'"
-                :id="index"
-                :key="index"
-                draggable="true"
-                class="item"
-                @dragstart="dragStart($event, { [item.value]: subItem })"
-                @dragend="dragEnd"
-              >
-                <component
-                  :is="item.value"
-                  v-if="isRightPanelItemHasComponents(item.value)"
-                  :name="$t(`Issue.${subItem.name}`)"
-                  :type="subItem.name"
-                  class="el-tag"
-                />
-                <el-tag
-                  v-else-if="item.value==='tags'"
-                  effect="plain"
-                >
-                  {{ getTranslateHeader(subItem.name) }}
-                </el-tag>
-                <el-tag
-                  v-else
-                  effect="dark"
-                >
-                  {{ getTranslateHeader(subItem.name) }}
-                </el-tag>
-                <el-alert
-                  class="help_text"
-                  :closable="false"
-                >
-                  <i18n path="Issue.DragTip">
-                    <strong slot="key">{{ item.label }}</strong>
-                    <strong slot="value">{{ getTranslateHeader(subItem.name) }}</strong>
-                  </i18n>
-                </el-alert>
-              </div>
-            </template>
-          </el-card>
-        </el-row>
-      </template>
-    </RightPanel> -->
-    <IssueDetailDrawer
-      v-if="relationIssue.visible"
-      ref="rightPanel"
-      :click-not-close="true"
-      :is-show="relationIssue.visible"
-      @visible="handleRightPanelVisible"
-    >
-      <ProjectIssueDetail
-        ref="children"
-        :props-issue-id="relationIssue.id"
-        :is-in-dialog="true"
-        @update="handleRelationUpdate"
-        @delete="handleRelationDelete"
-      />
-    </IssueDetailDrawer>
+          <em class="el-icon-d-arrow-right" />
+        </div>
+        <ProjectIssueDetail
+          :props-issue-id="relationIssue.id"
+          :is-in-dialog="true"
+          @update="handleRelationUpdate"
+          @delete="handleRelationDelete"
+        />
+      </div>
+    </transition>
     <ContextMenu
       ref="contextmenu"
       :visible="contextMenu.visible"
@@ -108,7 +54,6 @@
 import { mapGetters } from 'vuex'
 import { addIssue, updateIssue } from '@/api/issue'
 import { Kanban } from '@/views/Project/IssueBoards/components'
-import IssueDetailDrawer from './IssueDetailDrawer.vue'
 import { ContextMenu } from '@/components/Issue'
 import ProjectIssueDetail from '@/views/Project/IssueDetail/'
 
@@ -124,7 +69,7 @@ const contextMenu = {
 
 export default {
   name: 'Boards',
-  components: { Kanban, ContextMenu, IssueDetailDrawer, ProjectIssueDetail },
+  components: { Kanban, ContextMenu, ProjectIssueDetail },
   props: {
     groupBy: {
       type: Object,
@@ -160,7 +105,6 @@ export default {
   },
   data() {
     return {
-      rightPanelVisible: false,
       group: 'mission',
       contextMenu: contextMenu,
       relationIssue: {
@@ -187,11 +131,6 @@ export default {
   methods: {
     loadData() {
       this.$emit('loadData')
-    },
-    handleRightPanelVisible(value) {
-      this.rightPanelVisible = value
-      this.$set(this.relationIssue, 'visible', value)
-      console.log()
     },
     filterMe(userList) {
       return userList.filter((item) => item.login !== '-Me-')
@@ -358,6 +297,9 @@ export default {
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
     },
+    handleRightPanelVisible() {
+      this.$set(this.relationIssue, 'visible', false)
+    },
     scrollTo(target) {
       var element = document.getElementById('card' + target)
       this.$nextTick(() => {
@@ -377,32 +319,11 @@ export default {
   flex-wrap: nowrap;
   height: calc(100vh - 70px - 40px - 40px - 25px - 10px);
   overflow-x: auto;
+  transition: width 1s;
 
   &.is-panel {
     width: calc(100% - 750px);
-  }
-}
-
->>> .rightPanel-items {
-  overflow-y: auto;
-  height: 100%;
-
-  .panel {
-    padding: 30px 20px;
-
-    .item {
-      width: fit-content;
-      cursor: move;
-
-      .el-tag {
-        font-size: 1.05em;
-        margin: 3px;
-      }
-
-      .help_text {
-        display: none;
-      }
-    }
+    transition: width 1s;
   }
 }
 
@@ -437,6 +358,47 @@ $tag-options: (
   .el-tag--#{$key} {
     background-color: $value;
     border-color: $value;
+  }
+}
+
+.rightPanel {
+  width: 100%;
+  max-width: 750px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #fff;
+}
+
+.slide-fade-enter-active {
+  transition: all .5s ease-in-out;
+  
+}
+.slide-fade-leave-active {
+  transition: all .5s ease-in-out;
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(800px);
+}
+
+.handle-button {
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  left: -48px;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 6px 0 0 6px !important;
+  z-index: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  color: #fff;
+  line-height: 48px;
+  i {
+    font-size: 24px;
+    line-height: 48px;
   }
 }
 </style>
