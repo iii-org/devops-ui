@@ -314,7 +314,7 @@ export default {
     },
     boardObject: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     list: {
       type: Array,
@@ -330,7 +330,7 @@ export default {
     },
     addIssue: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {

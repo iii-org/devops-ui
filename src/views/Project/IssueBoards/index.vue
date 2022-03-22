@@ -581,6 +581,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.getFilteredVersion
       version.length > 0 ? this.setFilterValue(version) : this.$delete(this.originFilterValue, 'fixed_version')
+      this.onChangeFilter()
     },
     setFilterValue(version) {
       const sessionValue = sessionStorage.getItem('issueFilter')
