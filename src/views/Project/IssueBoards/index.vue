@@ -735,6 +735,9 @@ export default {
       if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
         this.$delete(this.filterValue, 'tags')
       }
+      if (Object.prototype.hasOwnProperty.call(this.filterValue, this.groupBy.dimension)) {
+        this.$delete(this.filterValue, this.groupBy.dimension)
+      }
       storedFilterValue['board'] = this.filterValue
       storedKeyword['board'] = this.keyword
       storedDisplayClosed['board'] = this.displayClosed
@@ -747,7 +750,8 @@ export default {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
       this.$refs['groupByValue'].selected = []
-      this.updatedByGroupBy(loadData)
+      this.updatedByGroupBy()
+      this.onChangeFilter()
     },
     onChangeGroupByValue(value, loadData) {
       this.$set(this.groupBy, 'value', value)
