@@ -34,7 +34,6 @@
         <ProjectIssueDetail
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
-          @update="handleRelationUpdate"
           @delete="handleRelationDelete"
         />
       </div>
@@ -147,7 +146,6 @@ export default {
         .then((res) => {
           // noinspection JSCheckFunctionSignatures
           this.showSuccessMessage()
-          this.loadData()
           this.addTopicDialogVisible = false
           this.$refs['quickAddIssue'].form.name = ''
           return res
@@ -289,11 +287,7 @@ export default {
       this.$set(this.relationIssue, 'id', id)
       this.scrollTo(element)
     },
-    handleRelationUpdate() {
-      this.loadData()
-    },
     handleRelationDelete() {
-      this.loadData()
       this.$set(this.relationIssue, 'visible', false)
       this.$set(this.relationIssue, 'id', null)
     },
@@ -384,10 +378,10 @@ $tag-options: (
 }
 
 .handle-button {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   position: absolute;
-  left: -48px;
+  left: -50px;
   text-align: center;
   font-size: 24px;
   border-radius: 6px 0 0 6px !important;
@@ -395,10 +389,10 @@ $tag-options: (
   pointer-events: auto;
   cursor: pointer;
   color: #fff;
-  line-height: 48px;
+  line-height: 50px;
   i {
     font-size: 24px;
-    line-height: 48px;
+    line-height: 50px;
   }
 }
 </style>

@@ -237,8 +237,8 @@ export default {
     Run: '執行',
     ForceDelete: '刪除',
     Fix: '修復',
-    Connecting: '連線中',
-    Offline: '斷線'
+    Connected: '連線成功',
+    Disconnected: '連線失敗'
   },
   Notify: {
     Updated: '已更新',

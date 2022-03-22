@@ -141,7 +141,7 @@
       </el-popover>
       <el-button slot="button" :type="(socket.connected)? 'success': 'danger'" @click="connectSocket()">
         <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
-        {{ (socket.connected) ? $t('general.Connecting') : $t('general.Offline') }}
+        {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
       </el-button>
       <el-divider direction="vertical" />
       <el-input
