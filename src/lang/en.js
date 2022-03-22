@@ -1178,7 +1178,8 @@ export default {
     FileType: 'File type',
     GitLabExternalAccess: 'GitLab external access',
     UploadFileTypes: 'Upload file types',
-    FileExtension: 'File extension'
+    FileExtension: 'File extension',
+    includesMimeType: 'Data already includes {mimeType}'
   },
   Kanban: {
     ChangeIssueError: 'Change Issue Error',

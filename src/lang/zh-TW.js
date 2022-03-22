@@ -1170,7 +1170,8 @@ export default {
     FileType: '檔案上傳類型',
     GitLabExternalAccess: 'GitLab對外連線',
     UploadFileTypes: '檔案上傳類型設定',
-    FileExtension: '副檔名'
+    FileExtension: '副檔名',
+    includesMimeType: '資料內已有{mimeType}'
   },
   Kanban: {
     ChangeIssueError: '異動議題錯誤',

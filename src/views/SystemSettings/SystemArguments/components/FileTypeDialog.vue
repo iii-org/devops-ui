@@ -91,22 +91,22 @@
           width="50"
         />
         <el-table-column
-          prop="name"
-          :label="$t('general.Name')"
-          width="150"
+          prop="fileExtension"
+          :label="$t('SystemConfigs.FileExtension')"
+          min-width="150"
         >
           <template slot-scope="scope">
             <el-form-item
               v-show="scope.row.edit"
-              :prop="'pagedData.'+ scope.$index +'.name'"
-              :rules="formTableRules.name"
+              :prop="'pagedData.'+ scope.$index +'.fileExtension'"
+              :rules="formTableRules.fileExtension"
             >
               <el-input
-                v-model="scope.row.name"
+                v-model="scope.row.fileExtension"
                 type="text"
               />
             </el-form-item>
-            <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
+            <span v-show="!scope.row.edit">{{ scope.row.fileExtension }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -129,22 +129,22 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="fileExtension"
-          :label="$t('SystemConfigs.FileExtension')"
-          min-width="150"
+          prop="name"
+          :label="$t('general.Name')"
+          width="150"
         >
           <template slot-scope="scope">
             <el-form-item
               v-show="scope.row.edit"
-              :prop="'pagedData.'+ scope.$index +'.fileExtension'"
-              :rules="formTableRules.fileExtension"
+              :prop="'pagedData.'+ scope.$index +'.name'"
+              :rules="formTableRules.name"
             >
               <el-input
-                v-model="scope.row.fileExtension"
+                v-model="scope.row.name"
                 type="text"
               />
             </el-form-item>
-            <span v-show="!scope.row.edit">{{ scope.row.fileExtension }}</span>
+            <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -206,6 +206,15 @@
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
+    <div class="text-xs mt-2">*MIME Type IANA :
+      <a
+        class="el-link el-link--primary is-underline"
+        href="https://www.iana.org/assignments/media-types/media-types.xhtml"
+        target="_blank"
+      >
+        https://www.iana.org/assignments/media-types/media-types.xhtml
+      </a>
+    </div>
   </el-dialog>
 </template>
 
@@ -286,6 +295,9 @@ export default {
     formTable() {
       return { pagedData: this.pagedData }
     },
+    originDataMimeType() {
+      return this.originData.map((item) => item.mimeType)
+    },
     selectedRowIndex() {
       return this.originData.findIndex((item) => item.id === this.rowCache.id)
     }
@@ -322,12 +334,26 @@ export default {
         callback()
       }
     },
+    checkIncludesMimeType(mimeType, id = null) {
+      if (id) {
+        const selectedRow = this.originData.find((item) => item.id === id)
+        if (selectedRow.mimeType === mimeType) return false
+      }
+      if (this.originDataMimeType.includes(mimeType)) {
+        this.$message({
+          title: this.$t('general.Error'),
+          message: this.$t('SystemConfigs.includesMimeType', { mimeType: mimeType }),
+          type: 'warning'
+        })
+      }
+      return this.originDataMimeType.includes(mimeType)
+    },
     handleShow() {
       this.isAdding = true
     },
     async handleConfirm() {
       this.$refs['form'].validate(async(valid) => {
-        if (valid) {
+        if (valid && !this.checkIncludesMimeType(this.form.mimeType)) {
           this.listLoading = true
           const sendData = new FormData()
           sendData.append('name', this.form.name)
@@ -391,6 +417,8 @@ export default {
           message: 'Please follow the format rule',
           type: 'warning'
         })
+      } else if (this.checkIncludesMimeType(row.mimeType, row.id)) {
+        return false
       } else if (!this.isSaved) {
         this.listLoading = true
         const sendData = new FormData()
