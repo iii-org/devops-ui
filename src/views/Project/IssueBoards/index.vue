@@ -234,7 +234,39 @@ export default {
         dimension: 'status',
         value: []
       },
-      filterOptions: Object.freeze([
+      filterValue: {},
+      originFilterValue: {},
+      displayClosed: false,
+      fixed_version_closed: false,
+      projectIssueList: [],
+      projectIssueQueue: {},
+      classifyIssueList: {},
+      fixed_version: [],
+      assigned_to: [],
+      tags: [],
+      relativeIssueList: [],
+      searchVisible: false,
+      keyword: null,
+      socket: io(`/issues/websocket`, {
+        reconnectionAttempts: 5
+      })
+      // socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, {
+      //   reconnectionAttempts: 5
+      // })
+    }
+  },
+  computed: {
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    contextOptions() {
+      const result = {}
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
+      })
+      return result
+    },
+    filterOptions() {
+      return Object.freeze([
         {
           id: 1,
           label: this.$t('Issue.FilterDimensions.status'),
@@ -274,37 +306,7 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ]),
-      filterValue: {},
-      originFilterValue: {},
-      displayClosed: false,
-      fixed_version_closed: false,
-      projectIssueList: [],
-      projectIssueQueue: {},
-      classifyIssueList: {},
-      fixed_version: [],
-      assigned_to: [],
-      tags: [],
-      relativeIssueList: [],
-      searchVisible: false,
-      keyword: null,
-      socket: io(`/issues/websocket`, {
-        reconnectionAttempts: 5
-      })
-      // socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, {
-      //   reconnectionAttempts: 5
-      // })
-    }
-  },
-  computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
-    contextOptions() {
-      const result = {}
-      const getOptions = ['assigned_to', 'fixed_version', 'tags']
-      getOptions.forEach((item) => {
-        result[item] = this[item]
-      })
-      return result
+      ])
     },
     groupByOptions() {
       return this.getStatusSort.map((item, idx) => ({
