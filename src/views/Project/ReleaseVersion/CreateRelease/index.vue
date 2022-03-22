@@ -28,9 +28,19 @@
       </el-steps>
       <section class="flex justify-center" style="margin-top: 40px;">
         <!-- <KeepAlive> -->
-        <IssueVersion v-if="stepActive === 0" @onNext="next" />
-        <ImageVersion v-else-if="stepActive === 1" :release-data="releaseData" @onNext="next" @onBack="back" />
-        <PackageVersion v-else-if="stepActive === 2" />
+        <IssueVersion
+          v-if="stepActive === 0"
+          @onNext="next"
+        />
+        <ImageVersion
+          v-else-if="stepActive === 1"
+          @onNext="next"
+          @onBack="back"
+        />
+        <PackageVersion
+          v-else-if="stepActive === 2"
+          @onBack="back"
+        />
         <!-- </KeepAlive> -->
       </section>
     </el-card>
@@ -54,11 +64,22 @@ export default {
   data() {
     return {
       stepActive: 0,
-      isShowVersions: false,
+      isShowVersions: false
+    }
+  },
+  provide() {
+    return {
       releaseData: {
+        branch: '',
+        commit: '',
+        extra_image_path: '', // only for extra image path
+        forced: true,
+        main: '', // main version
+        note: '',
+        versions: [],
         issues: [],
-        releaseVersions: [],
-        projectVersions: []
+        projectVersions: [],
+        image: ''
       }
     }
   },
@@ -71,13 +92,8 @@ export default {
     }
   },
   methods: {
-    next(data) {
+    next() {
       this.stepActive += 1
-      console.log(data.issues)
-      console.log(data.releaseVersions)
-      this.releaseData.issues = data.issues
-      this.releaseData.releaseVersions = data.releaseVersions
-      this.releaseData.projectVersions = data.projectVersions
     },
     back() {
       this.stepActive -= 1

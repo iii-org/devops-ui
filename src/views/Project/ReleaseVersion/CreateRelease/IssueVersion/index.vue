@@ -4,7 +4,7 @@
       <span style="padding-right: 10px;">{{ $t('Project.Version') }}</span>
       <el-select
         id="release_versions"
-        v-model="releaseVersions"
+        v-model="selectedVersions"
         :placeholder="$t('Release.selectVersion')"
         multiple
         filterable
@@ -18,8 +18,8 @@
       </el-select>
       <span class="ml-3">
         <el-button
-          :type="releaseVersions.length === 0 ? 'info' : 'primary'"
-          :disabled="releaseVersions.length === 0"
+          :type="selectedVersions.length === 0 ? 'info' : 'primary'"
+          :disabled="selectedVersions.length === 0"
           @click="checkIssues"
         >
           <span class="el-icon-edit" />
@@ -63,9 +63,10 @@ export default {
     IssuesTable: () => import('./IssuesTable'),
     ClosedIssues: () => import('./ClosedIssues')
   },
+  inject: ['releaseData'],
   data() {
     return {
-      releaseVersions: [],
+      selectedVersions: [],
       projectVersions: [],
       projectVersionOptions: [],
       hasOpenIssue: false,
@@ -77,11 +78,8 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
-    selectedVersions() {
-      return this.releaseVersions.length
-    },
     disabled() {
-      return this.isLoading || this.hasOpenIssue || this.selectedVersions === 0 || !this.isCheck
+      return this.isLoading || this.hasOpenIssue || this.selectedVersions.length === 0 || !this.isCheck
     }
   },
   watch: {
@@ -111,19 +109,16 @@ export default {
       this.isLoading = true
       this.hasOpenIssue = false
       this.allIssues = []
-      this.releaseVersions.forEach(async (vId) => {
+      this.selectedVersions.forEach(async (vId) => {
         const params = { fixed_version_id: vId }
-        console.log(params)
         await getProjectIssueList(this.selectedProjectId, params)
           .then((res) => {
-            console.log(res)
             this.getAllIssues(res.data)
           })
           .catch(() => { this.isLoading = false })
       })
     },
     getAllIssues(data) {
-      console.log(data)
       if (data.length === 0) {
         this.isLoading = false
         this.hasNoIssue = true
@@ -150,12 +145,10 @@ export default {
       this.checkIssues()
     },
     onNext() {
-      const issueData = {
-        issues: this.allIssues,
-        releaseVersions: this.releaseVersions,
-        projectVersions: this.projectVersions
-      }
-      this.$emit('onNext', issueData)
+      this.releaseData.issues = this.allIssues
+      this.releaseData.versions = this.selectedVersions
+      this.releaseData.projectVersions = this.projectVersions
+      this.$emit('onNext')
     }
   }
 }

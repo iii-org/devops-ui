@@ -24,7 +24,7 @@
         active-color="#13ce66"
         inactive-color="#ff4949"
         active-text="僅有映像檔"
-        @change="getImageList()"
+        @change="onSwitch"
       />
     </div>
     <el-table
@@ -59,7 +59,7 @@
     </el-table>
     <pagination
       :total="listQuery.total"
-      :page="listQuery.page"
+      :page="listQuery.current"
       :limit="listQuery.limit"
       :page-sizes="[listQuery.limit]"
       :layout="'total, prev, pager, next'"
@@ -80,6 +80,10 @@ export default {
     branches: {
       type: Array,
       default: () => []
+    },
+    commitId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -99,7 +103,7 @@ export default {
   },
   methods: {
     getImageList() {
-      this.fetchData(5)
+      this.fetchData(3)
     },
     async fetchData(limit) {
       const params = {
@@ -109,7 +113,6 @@ export default {
         offset: this.listQuery.offset,
         not_all: true
       }
-      console.log(params)
       if (params.limit === 0) return
       this.isLoading = true
       await getImageList(this.selectedProjectId, params)
@@ -124,6 +127,9 @@ export default {
     },
     handleImageListData(list) {
       this.imageList = list.map(image => {
+        if (image.commit_id === this.commitId) {
+          this.$refs.imageList.setCurrentRow(image)
+        }
         image.branch = this.branch
         return image
       })
@@ -141,6 +147,13 @@ export default {
       const { page, limit } = listQuery
       this.listQuery.offset = page * limit - limit
       await this.getImageList()
+    },
+    onSwitch() {
+      const param = {
+        page: 1,
+        limit: 3
+      }
+      this.onPagination(param)
     },
     handleCurrentChange(row) {
       this.currentRow = row
