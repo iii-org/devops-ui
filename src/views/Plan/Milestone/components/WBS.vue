@@ -176,6 +176,8 @@
         :edit-row-id="editRowId"
         number
         sortable
+        :min="0"
+        :max="100"
         @edit="handleUpdateIssue"
         @create="handleCreateIssue"
         @reset-edit="handleResetEdit"
@@ -529,6 +531,7 @@ export default {
         priority: { id: 3, name: '' },
         estimated_hours: 0,
         done_ratio: 0,
+        point: 0,
         start_date: '',
         due_date: '',
         create: true

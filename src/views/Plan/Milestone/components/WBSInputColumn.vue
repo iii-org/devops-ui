@@ -140,9 +140,9 @@ export default {
   methods: {
     hasRequired(row) {
       if (!row.create) {
-        this.$nextTick(() => {
+        if (this.$refs['input']) {
           this.$refs['input'].focus()
-        })
+        }
       }
       return this.required && row[this.prop].length <= 0
     },
@@ -167,7 +167,7 @@ export default {
       return `calc(100%)`
     },
     handlerBlur(row, index, treeNode) {
-      const checkUpdate = row.originColumn && row[this.prop] !== row.originColumn
+      const checkUpdate = row[this.prop] !== row.originColumn
       if (checkUpdate) {
         this.handlerEdit(row, index, treeNode)
       } else if (row.originColumn) {
@@ -179,11 +179,14 @@ export default {
         if (!Number.isInteger(row[this.prop])) {
           this.$set(row, this.prop, row.originColumn)
           this.$alert(this.$t('Validation.Input', [this.$t('Validation.Number')]).toString(), this.$t('general.Error').toString(), { type: 'error' })
+          return
         } else if (row[this.prop] > this.max || row[this.prop] < this.min) {
           this.$set(row, this.prop, row.originColumn)
           this.$alert(this.$t('Validation.Input', ['0 - 100']).toString(), this.$t('general.Error').toString(), { type: 'error' })
+          return
         }
-      } else if (!this.hasRequired(row)) {
+      }
+      if (!this.hasRequired(row)) {
         this.$emit('edit', {
           value: { [this.prop]: row[this.prop] },
           row: row,

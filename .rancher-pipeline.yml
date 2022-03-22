@@ -86,7 +86,6 @@ stages:
       - sysconfig
       - trysocket
       - milestonefreeze
-      - milestoneEdit
       - milestonehandleedit
       - router
       - expandrow
@@ -120,7 +119,6 @@ stages:
       - sysconfig
       - trysocket
       - milestonefreeze
-      - milestoneEdit
       - milestonehandleedit
       - router
       - expandrow
@@ -165,7 +163,6 @@ stages:
       - sysconfig
       - trysocket
       - milestonefreeze
-      - milestoneEdit
       - milestonehandleedit
       - router
       - expandrow
@@ -203,7 +200,6 @@ stages:
       - sysconfig
       - trysocket
       - milestonefreeze
-      - milestoneEdit
       - milestonehandleedit
       - router
       - expandrow
@@ -240,7 +236,6 @@ stages:
       - sysconfig
       - trysocket
       - milestonefreeze
-      - milestoneEdit
       - milestonehandleedit
       - router
       - expandrow
