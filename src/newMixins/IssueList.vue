@@ -94,6 +94,7 @@ export default {
       if (value.isReloadFilterList) {
         await this.loadSelectionList()
       }
+      this.$router.push({ query: { offset: 0 }})
       await this.onChangeFilter()
     },
     async onChangeFilter() {
