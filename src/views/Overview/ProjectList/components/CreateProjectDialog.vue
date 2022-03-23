@@ -336,7 +336,8 @@ export default {
       loadingInstance: {},
       templateLoadingInstance: {},
       timer: '',
-      focusSources: 'Public Templates'
+      focusSources: 'Public Templates',
+      cachedTemplates: {}
     }
   },
   computed: {
@@ -393,6 +394,21 @@ export default {
     },
     focusSources(val) {
       this.clearFocusTemplate()
+      if (val === 'Public Templates' && this.cachedTemplates.publicPath) {
+        this.form.template_id = this.getCachedTemplateId(this.cachedTemplates.publicPath)
+        this.handleTemplateSelect()
+      } else if (this.cachedTemplates.localPath) {
+        this.form.template_id = this.getCachedTemplateId(this.cachedTemplates.localPath)
+        this.handleTemplateSelect()
+      }
+    },
+    showDialog(val) {
+      this.focusSources = 'Public Templates'
+      this.cachedTemplates = {}
+      if (val && this.activeTemplateList.length > 0) {
+        this.form.template_id = this.getCachedTemplateId()
+        this.handleTemplateSelect()
+      }
     }
   },
   mounted() {
@@ -408,6 +424,9 @@ export default {
       if (this.userRole !== 'Engineer') {
         this.getTemplateList(isForceUpdate)
       }
+    },
+    getCachedTemplateId(path = 'default-dev') {
+      return this.activeTemplateList.find((item) => item.path === path).id
     },
     async getTemplateList(force_update) {
       if (force_update) this.isClickUpdateTemplate = true
@@ -482,9 +501,17 @@ export default {
         const idx = this.activeTemplateList.findIndex((item) => item.id === this.form.template_id)
         this.focusTemplate = this.activeTemplateList[idx]
         this.form.tag_name = this.versionList[0] ? this.versionList[0].name : ''
+        this.setCachedTemplates()
         this.handleVersionSelect()
       } else {
         this.clearFocusTemplate()
+      }
+    },
+    setCachedTemplates() {
+      if (this.focusSources === 'Public Templates') {
+        this.cachedTemplates.publicPath = this.focusTemplate.path
+      } else {
+        this.cachedTemplates.localPath = this.focusTemplate.path
       }
     },
     handleVersionSelect() {

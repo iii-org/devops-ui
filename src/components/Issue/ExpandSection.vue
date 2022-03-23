@@ -82,8 +82,6 @@ export default {
   watch: {
     issue: {
       handler(value) {
-        console.log(this.issue.family, this.family)
-        console.log(value)
         if (!value.family) {
           this.$emit('collapse-expend-row', value.id)
         }
@@ -96,10 +94,8 @@ export default {
       this.listLoading = true
       try {
         if (isParent) {
-          console.log(this.issue.id, this.issue.issueId)
           await updateIssue(this.issue.id || this.issue.issueId, { parent_id: '' })
         } else {
-          console.log(issueData.id)
           await updateIssue(issueData.id, { parent_id: '' })
         }
         this.$message({
@@ -117,7 +113,6 @@ export default {
       const { issueData } = issue
       this.listLoading = true
       try {
-        console.log(issueData.relation_id)
         await deleteIssueRelation(issueData.relation_id)
         this.$message({
           title: this.$t('general.Success'),
