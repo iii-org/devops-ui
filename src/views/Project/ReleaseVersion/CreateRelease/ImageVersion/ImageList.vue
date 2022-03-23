@@ -110,8 +110,8 @@ export default {
         branch_name: this.branch,
         only_image: this.hasImage,
         limit: limit || this.listQuery.limit,
-        offset: this.listQuery.offset,
-        not_all: true
+        offset: this.listQuery.offset
+        // not_all: true
       }
       if (params.limit === 0) return
       this.isLoading = true

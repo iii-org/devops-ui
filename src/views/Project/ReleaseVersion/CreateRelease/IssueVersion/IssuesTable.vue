@@ -120,7 +120,7 @@
         <el-form-item :label="$t('Release.futureVersion')">
           <el-select v-model="batchMoveToVersion" :placeholder="$t('Release.selectMoveToVersion')" filterable>
             <el-option
-              v-for="item in $parent.projectVersionOptions"
+              v-for="item in projectVersionOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -159,6 +159,22 @@
         <el-button @click="handleClick">{{ $t('general.ok') }}</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :visible.sync="showIssueDetail"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+    >
+      <ProjectIssueDetail
+        v-if="showIssueDetail"
+        ref="children"
+        :props-issue-id="edittedIssueId"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationUpdate"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -174,11 +190,16 @@ export default {
   components: {
     IssueNotesEditor: () => import('@/views/Project/IssueDetail/components/IssueNotesEditor'),
     Status,
-    Tracker
+    Tracker,
+    ProjectIssueDetail: () => import('@/views/Project/IssueDetail')
   },
   mixins: [MixinElTableWithCheckbox],
   props: {
     allIssues: {
+      type: Array,
+      required: true
+    },
+    projectVersionOptions: {
       type: Array,
       required: true
     }
@@ -196,12 +217,14 @@ export default {
       showClosed: false,
       showBatchMoveDialog: false,
       showFormDialog: false,
+      showIssueDetail: false,
       batchMoveToVersion: null,
       loading: false,
       closedIdex: '',
       closedRow: {},
       notClosedChildrenIssueList: [],
-      showClosedChildrenIssueWarning: false
+      showClosedChildrenIssueWarning: false,
+      edittedIssueId: ''
     }
   },
   computed: {
@@ -291,7 +314,11 @@ export default {
       })
     },
     handleEdit(idx, row) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      this.showIssueDetail = true
+      this.edittedIssueId = row.id
+    },
+    handleRelationUpdate() {
+      this.$emit('onUpdate')
     },
     handleClose(idx, row) {
       this.closedIdex = idx

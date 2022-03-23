@@ -40,6 +40,7 @@
         <PackageVersion
           v-else-if="stepActive === 2"
           @onBack="back"
+          @init="init"
         />
         <!-- </KeepAlive> -->
       </section>
@@ -76,7 +77,9 @@ export default {
         forced: true,
         main: '', // main version
         note: '',
-        versions: [],
+        versions: []
+      },
+      updateData: {
         issues: [],
         projectVersions: [],
         image: ''
@@ -97,6 +100,9 @@ export default {
     },
     back() {
       this.stepActive -= 1
+    },
+    init() {
+      this.$emit('init')
     }
   }
 }

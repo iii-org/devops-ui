@@ -6,7 +6,7 @@
           <el-col :span="24">
             <el-form-item label="議題版本">
               <span>本版本共完成</span>
-              <span style="color: #409eff;">{{ releaseData.issues.length }}</span>
+              <span style="color: #409eff;">{{ updateData.issues.length }}</span>
               <span>議題</span>
             </el-form-item>
           </el-col>
@@ -17,12 +17,12 @@
               <svg-icon icon-class="ion-git-commit-outline" />
               <span>{{ releaseData.commit }} ({{ releaseData.branch }}) / </span>
               <span
-                v-if="releaseData.image !== 'noImage'"
+                v-if="updateData.image !== 'noImage'"
                 class="custom-black"
                 style="line-height: 40px;"
               >
                 <svg-icon icon-class="ion-git-commit-outline" />
-                {{ releaseData.image }}
+                {{ updateData.image }}
               </span>
               <span v-else>
                 <span class="text-danger mr-3">
@@ -83,13 +83,14 @@
     </div>
     <div class="text-right">
       <el-button
+        :disabled="isLoading"
         @click="onBack"
       >
         <i class="el-icon-back" />
         上一步
       </el-button>
       <el-button
-        :disabled="!releaseData.main"
+        :disabled="!main || isLoading"
         @click="release"
       >
         開始包版
@@ -99,11 +100,15 @@
 </template>
 
 <script>
+import { createRelease } from '@/api_v2/release'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'PackageVersion',
-  inject: ['releaseData'],
+  inject: ['releaseData', 'updateData'],
   data() {
     return {
+      isLoading: false,
       mainVersion: '',
       // getImagePath: '',
       imagePath: '{{branch}}:{{version}}',
@@ -112,6 +117,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['selectedProjectId']),
     // imagePath() {
     //   if (!this.mainVersion) return '{{branch}}:{{version}}'
     //   const version = this.releaseVersionOptions.find(option => option.value === this.mainVersion)
@@ -119,11 +125,18 @@ export default {
     // },
     imageProject() {
       if (!this.mainVersion) return '{{project}}/'
-      const version = this.releaseData.projectVersions.find(option => option.id === this.mainVersion)
+      const version = this.updateData.projectVersions.find(option => option.id === this.mainVersion)
       return `${version.project.name}/`
+    },
+    main() {
+      if (!this.mainVersion) return null
+      const versionData = this.releaseVersionOptions.find(version => {
+        return version.value === this.mainVersion
+      })
+      return versionData.value
     }
     // mainVersion() {
-    //   return this.releaseData.projectVersions.find(version => {
+    //   return this.updateData.projectVersions.find(version => {
     //     return version.id === this.releaseData.main
     //   })
     // }
@@ -133,7 +146,7 @@ export default {
       handler(val) {
         if (!val) return '{{branch}}:{{version}}'
         const version = this.releaseVersionOptions.find(option => option.value === val)
-        this.imagePath = `${this.releaseData.branch} : ${version.label}`
+        this.imagePath = `${this.releaseData.branch}:${version.label}`
       },
       immediate: true
     }
@@ -145,15 +158,29 @@ export default {
     }
   },
   methods: {
-    release() {
-      console.log('release')
+    async release() {
+      this.releaseData.extra_image_path = this.imagePath
+      this.releaseData.main = this.main
+      this.releaseData.note = this.note
+      this.isLoading = true
+      await createRelease(this.selectedProjectId, this.releaseData)
+        .then(() => {
+          this.$emit('init')
+          this.$message({
+            message: this.$t('Release.releaseDone', [this.main]),
+            type: 'success'
+          })
+        })
+        .catch(() => {
+          this.isLoading = false
+        })
     },
     onBack() {
       this.$emit('onBack')
     },
     updateReleaseVersions() {
       this.releaseVersionOptions = []
-      for (const ver of this.releaseData.projectVersions) {
+      for (const ver of this.updateData.projectVersions) {
         if (this.releaseData.versions.indexOf(ver.id) >= 0) {
           this.releaseVersionOptions.push({
             value: ver.id,

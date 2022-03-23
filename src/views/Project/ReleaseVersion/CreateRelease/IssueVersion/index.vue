@@ -33,7 +33,9 @@
       v-else-if="!isLoading && hasOpenIssue"
       ref="issueList"
       :all-issues.sync="allIssues"
+      :project-version-options="projectVersionOptions"
       @onInit="onInit"
+      @onUpdate="onInit"
     />
     <ClosedIssues
       v-else-if="!isLoading && !hasOpenIssue"
@@ -63,7 +65,7 @@ export default {
     IssuesTable: () => import('./IssuesTable'),
     ClosedIssues: () => import('./ClosedIssues')
   },
-  inject: ['releaseData'],
+  inject: ['releaseData', 'updateData'],
   data() {
     return {
       selectedVersions: [],
@@ -145,9 +147,9 @@ export default {
       this.checkIssues()
     },
     onNext() {
-      this.releaseData.issues = this.allIssues
+      this.updateData.issues = this.allIssues
       this.releaseData.versions = this.selectedVersions
-      this.releaseData.projectVersions = this.projectVersions
+      this.updateData.projectVersions = this.projectVersions
       this.$emit('onNext')
     }
   }

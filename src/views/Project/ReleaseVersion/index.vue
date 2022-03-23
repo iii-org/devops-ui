@@ -36,7 +36,7 @@
     </el-row>
     <el-divider />
     <ReleaseTable v-if="state === 'STATE_INIT'" :keywords="keywords" />
-    <CreateRelease v-else-if="state === 'STATE_CREATE_RELEASE'" />
+    <CreateRelease v-else-if="state === 'STATE_CREATE_RELEASE'" @init="state = 'STATE_INIT'" />
     <el-dialog :visible.sync="isShowVersions" width="60%">
       <ProjectVersions v-if="isShowVersions" :is-show-title="true" />
     </el-dialog>

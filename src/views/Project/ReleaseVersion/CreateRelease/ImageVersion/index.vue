@@ -5,6 +5,7 @@
         ref="form"
         :inline="true"
         :model="commitForm"
+        class="w-full"
       >
         <el-row>
           <!-- <el-col :span="24">
@@ -132,7 +133,7 @@ export default {
   components: {
     ImageList: () => import('./ImageList')
   },
-  inject: ['releaseData'],
+  inject: ['releaseData', 'updateData'],
   data() {
     return {
       isLoading: false,
@@ -177,6 +178,12 @@ export default {
         this.getBranchesData()
         this.commitForm.note = ''
       }
+    },
+    'releaseData.versions': {
+      handler(val) {
+        console.log(val)
+      },
+      deep: true
     }
   },
   mounted() {
@@ -261,7 +268,7 @@ export default {
     //   this.commitForm.mainVersion = null
     //   this.selectedVersions = this.releaseData.versions
     //   this.releaseVersionOptions = []
-    //   for (const ver of this.releaseData.projectVersions) {
+    //   for (const ver of this.updateData.projectVersions) {
     //     if (this.selectedVersions.indexOf(ver.id) >= 0) {
     //       this.releaseVersionOptions.push({
     //         value: ver.id,
@@ -280,7 +287,7 @@ export default {
     onNext() {
       this.releaseData.commit = this.commitId
       this.releaseData.branch = this.commitForm.branch
-      this.releaseData.image = this.getReleaseImage()
+      this.updateData.image = this.getReleaseImage()
       // this.releaseData.main = this.getReleaseVersion().value
       this.$emit('onNext')
     },
