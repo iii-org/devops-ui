@@ -43,6 +43,10 @@ export default {
       type: Object,
       default: () => ({})
     },
+    isParent: {
+      type: Boolean,
+      default: false
+    },
     reload: {
       type: [String, Number],
       default: 0
@@ -91,7 +95,10 @@ export default {
       this.$emit('click-title', id)
     },
     removeConfirm(issue) {
-      this.$emit('remove-confirm', issue)
+      this.$emit('remove-confirm', {
+        issueData: issue,
+        isParent: this.isParent
+      })
     },
     contextMenu(id) {
       this.$emit('show-context-menu', id)
