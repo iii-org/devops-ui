@@ -190,7 +190,6 @@
       :assigned_to="assigned_to"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
-      @loadData="loadData"
       @updateData="updateData"
     />
   </div>
@@ -786,11 +785,14 @@ export default {
         })
       })
       this.socket.on('update_issue', async (data) => {
-        data = _this.socketDataFormat(data)
-        const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
-        this.$set(this.projectIssueList, findChangeIndex, data)
-        this.updateData()
-        this.showUpdateMessage(data)
+        for (const idx in data) {
+          // console.log('update_issue', data[idx])
+          data[idx] = _this.socketDataFormat(data[idx])
+          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          this.$set(this.projectIssueList, findChangeIndex, data[idx])
+          this.updateData()
+          this.showUpdateMessage(data[idx])
+        }
       })
       this.socket.on('delete_issue', async (data) => {
         const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
@@ -799,9 +801,18 @@ export default {
         this.showUpdateMessage(data)
       })
       this.socket.on('add_issue', async data => {
-        this.$set(this.projectIssueList, this.projectIssueList.length, data)
-        this.updateData()
-        this.showUpdateMessage(data)
+        for (const idx in data) {
+          // console.log('add_issue', data[idx])
+          data[idx] = _this.socketDataFormat(data[idx])
+          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findChangeIndex !== -1) {
+            this.$set(this.projectIssueList, findChangeIndex, data[idx])
+          } else {
+            this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
+          }
+          this.updateData()
+          this.showUpdateMessage(data[idx])
+        }
       })
     },
     socketDataFormat(data) {
