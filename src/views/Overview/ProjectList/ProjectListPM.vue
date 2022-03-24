@@ -17,6 +17,10 @@
       </div>
     </div>
     <el-divider />
+    <UpdateButton
+      :list-loading.sync="listLoading"
+      @update="fetchData"
+    />
     <el-table
       v-loading="listLoading"
       :data="listData"
@@ -179,10 +183,10 @@
         :label="$t('ProjectSettings.Status')"
       >
         <template slot-scope="scope">
-          <el-tooltip 
-            placement="bottom" 
+          <el-tooltip
+            placement="bottom"
             :disabled="!scope.row.is_lock"
-            :open-delay="200" 
+            :open-delay="200"
             :content="scope.row.lock_reason"
           >
             <el-tag v-if="scope.row.is_lock" type="info">
@@ -240,12 +244,12 @@
           >
             {{ $t('general.Fix') }}
           </el-button>
-          <el-tooltip 
-            placement="bottom" 
+          <el-tooltip
+            placement="bottom"
             :disabled="!permission(scope.row)"
-            :open-delay="200" 
-            :content="scope.row.disabled ? 
-              $t('Dashboard.ADMIN.ProjectList.enable_tooltip') : 
+            :open-delay="200"
+            :content="scope.row.disabled ?
+              $t('Dashboard.ADMIN.ProjectList.enable_tooltip') :
               $t('Dashboard.ADMIN.ProjectList.disable_tooltip')"
           >
             <span>
@@ -299,8 +303,13 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
-import SearchFilter from '@/views/Overview/ProjectList/components/SearchFilter'
+import {
+  CreateProjectDialog,
+  DeleteProjectDialog,
+  EditProjectDialog,
+  SearchFilter,
+  UpdateButton
+} from './components'
 import { BasicData, SearchBar, Pagination, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import ElTableColumnTag from '@/components/ElTableColumnTag'
@@ -320,7 +329,8 @@ export default {
     EditProjectDialog,
     DeleteProjectDialog,
     ElTableColumnTag,
-    SearchFilter
+    SearchFilter,
+    UpdateButton
   },
   filters: {
     statusFilter(status) {
@@ -432,7 +442,6 @@ export default {
     handleDelete(row, isForce) {
       this.deleteProject.id = row.id
       this.deleteProject.name = row.name
-      
       if (isForce) this.forceDelete = true
       this.$refs.deleteProjectDialog.showDialog = true
     },

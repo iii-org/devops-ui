@@ -8,6 +8,10 @@
       />
     </div>
     <el-divider />
+    <UpdateButton
+      :list-loading.sync="listLoading"
+      @update="fetchData"
+    />
     <el-table
       v-loading="listLoading"
       :data="listData"
@@ -197,10 +201,10 @@
         :label="$t('ProjectSettings.Status')"
       >
         <template slot-scope="scope">
-          <el-tooltip 
-            placement="bottom" 
+          <el-tooltip
+            placement="bottom"
             :disabled="(!permission(scope.row)) || scope.row.is_lock!==true"
-            :open-delay="200" 
+            :open-delay="200"
             :content="scope.row.lock_reason"
           >
             <el-tag v-if="scope.row.is_lock" type="info">
@@ -232,7 +236,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { BasicData, Pagination, SearchBar, Table } from '@/newMixins'
 import ElTableColumnTime from '@/components/ElTableColumnTime'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
-import SearchFilter from '@/views/Overview/ProjectList/components/SearchFilter'
+import { SearchFilter, UpdateButton } from './components'
 
 const params = () => ({
   limit: 10,
@@ -242,7 +246,7 @@ const params = () => ({
 
 export default {
   name: 'ProjectListRD',
-  components: { ElTableColumnTime, SearchFilter },
+  components: { ElTableColumnTime, SearchFilter, UpdateButton },
   mixins: [BasicData, Pagination, SearchBar, Table],
   data() {
     return {

@@ -87,6 +87,8 @@ export const uploadProjectFile = (project_id, data) =>
 
 export const getCalculateProjectList = (project_ids) =>
   request.get(`/v2/project/list/caculate?project_ids=${project_ids}`)
+export const updateCalculateProjectList = () =>
+  request.post(`/v2/project/sync_project_issue_calculate`) // webster checked
 export const getMyProjectList = async (simple, params) => {
   if (!params) params = {}
   if (simple) params['simple'] = simple

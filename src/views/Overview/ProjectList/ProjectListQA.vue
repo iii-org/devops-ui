@@ -94,6 +94,10 @@
       </div>
     </div>
     <el-divider />
+    <UpdateButton
+      :list-loading.sync="listLoading"
+      @update="fetchData"
+    />
     <el-table
       v-loading="listLoading"
       :data="listData"
@@ -291,7 +295,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
+import {
+  CreateProjectDialog,
+  DeleteProjectDialog,
+  EditProjectDialog,
+  UpdateButton
+} from './components'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { excelTranslate } from '@/utils/excelTableTranslate'
 import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
@@ -309,7 +318,12 @@ const params = () => ({
 
 export default {
   name: 'ProjectListQA',
-  components: { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  components: {
+    CreateProjectDialog,
+    EditProjectDialog,
+    DeleteProjectDialog,
+    UpdateButton
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
