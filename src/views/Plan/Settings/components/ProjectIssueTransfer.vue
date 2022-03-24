@@ -6,7 +6,7 @@
           type="text"
           size="medium"
           icon="el-icon-arrow-left"
-          class="text-title"
+          class="text-title linkTextColor"
           @click="onBackClick"
         >
           {{ $t('general.Back') }}
@@ -149,7 +149,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimary"
               @click="onTransferClick(scope.row.id)"
             >
               {{ $t('general.Transfer') }}
@@ -217,7 +217,7 @@
       >
         <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
         <el-button
-          type="primary"
+          class="buttonPrimary"
           @click="batchTransfer"
         >{{ $t('general.Confirm') }}</el-button>
       </span>
@@ -417,3 +417,4 @@ export default {
   }
 }
 </script>
+

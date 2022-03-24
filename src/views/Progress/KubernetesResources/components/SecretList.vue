@@ -44,7 +44,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimaryReverse"
               icon="el-icon-edit"
               @click="showEditDialog(scope.row.name, scope.row.secrets)"
             >
@@ -148,7 +148,7 @@
           </el-row>
           <el-button
             id="btn-add-secret-item"
-            type="success"
+            class="buttonSecondary"
             size="small"
             @click="addItem"
           >
@@ -161,12 +161,13 @@
         >
           <el-button
             :loading="isUpdating"
+            class="buttonSecondaryReverse"
             @click="closeEditDialog"
           >
             {{ $t('general.Cancel') }}
           </el-button>
           <el-button
-            type="primary"
+            class="buttonPrimary"
             :loading="isUpdating"
             @click="editSecretList"
           >

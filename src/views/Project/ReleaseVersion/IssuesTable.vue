@@ -75,8 +75,7 @@
             <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start" :open-delay="1000">
               <el-button
                 :id="`link-issue-name-${scope.$index}`"
-                class="mr-1"
-                type="primary"
+                class="mr-1 buttonPrimary"
                 circle
                 plain
                 size="mini"
@@ -93,8 +92,7 @@
             >
               <el-button
                 :id="`link-issue-name-${scope.$index}`"
-                class="mr-1"
-                type="primary"
+                class="mr-1 buttonPrimaryReverse"
                 circle
                 plain
                 size="mini"
@@ -134,7 +132,7 @@
         </el-form-item>
         <el-button
           v-loading="loading"
-          type="primary"
+          class="buttonPrimary"
           :disabled="!batchMoveToVersion"
           @click="batchMove"
         >

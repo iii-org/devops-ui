@@ -15,7 +15,7 @@
     <el-divider />
     <div class="text-right mb-2">
       <el-button
-        type="primary"
+        class="buttonPrimaryReverse"
         icon="el-icon-refresh"
         size="mini"
         plain
@@ -50,7 +50,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :href="scope.row.issue_link"
@@ -124,7 +124,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            :class="!scope.row.scan_id || scope.row.stats.status !== 'Complete' ? '' : 'linkTextColor'"
             style="font-size: 16px"
             :disabled="!scope.row.scan_id || scope.row.stats.status !== 'Complete'"
             :underline="false"

@@ -14,6 +14,7 @@
       <span>{{ $t('WebInspect.RunAt') }}：{{ runAt }}</span>
       <el-button
         icon="el-icon-download"
+        class="buttonPrimaryReverse"
         @click="handleDownload"
       >
         {{ $t('WebInspect.DownloadReport') }} (.xml)

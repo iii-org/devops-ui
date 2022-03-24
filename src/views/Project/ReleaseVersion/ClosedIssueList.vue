@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="clearfix">
       <div>
-        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous" @click="handleBackPage">
+        <el-button type="text" size="medium" icon="el-icon-arrow-left" class="previous linkTextColor" @click="handleBackPage">
           {{ $t('general.Back') }}
         </el-button>
         <div class="text-right float-right w-1/2">
@@ -42,7 +42,7 @@
                 <el-checkbox v-model="displayClosed" @change="onChangeFilter" />
               </el-form-item>
             </el-form>
-            <el-button slot="reference" icon="el-icon-s-operation" type="text" disabled style="color: #409eff;"> {{ displayFilterValue }}
+            <el-button slot="reference" icon="el-icon-s-operation" type="text" disabled class="headerTextColor"> {{ displayFilterValue }}
             </el-button>
           </el-popover>
           <el-divider direction="vertical" />
@@ -57,7 +57,7 @@
             @blur="searchVisible=!searchVisible"
             @change="onChangeFilter"
           />
-          <el-button v-else type="text" icon="el-icon-search" @click="searchVisible=!searchVisible">
+          <el-button v-else type="text" icon="el-icon-search" class="headerTextColor" @click="searchVisible=!searchVisible">
             {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
           </el-button>
         </div>

@@ -5,7 +5,7 @@
         <ProjectListSelector>
           <el-button
             slot="button"
-            type="success"
+            class="buttonSecondary"
             @click="showProjectVersionSelector"
           >
             <span class="el-icon-goods" />
@@ -40,7 +40,7 @@
       <span>
         <el-button
           v-loading.fullscreen.lock="fullscreenLoading"
-          :type="releaseVersions.length === 0 ? 'info' : 'primary'"
+          class="buttonPrimary"
           :disabled="releaseVersions.length === 0"
           @click="writeNote"
         >

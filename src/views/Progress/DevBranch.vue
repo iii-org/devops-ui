@@ -48,7 +48,7 @@
                       >
                         <div class="ellipsis">
                           <span
-                            class="text-primary hover-underline cursor-pointer"
+                            class="linkTextColor hover-underline cursor-pointer"
                             @click.stop="toGitlab(commit.gitlab_url)"
                           >
                             <svg-icon icon-class="ion-git-commit-outline" />
@@ -102,9 +102,8 @@
             </el-timeline-item>
             <div class="flex justify-center w-75">
               <el-button
-                type="primary"
                 round
-                class="el-icon-bottom"
+                class="el-icon-bottom buttonPrimaryReverse"
                 @click="toGitlab(gitlabActivityUrl)"
               >
                 {{ $t('general.SeeMore') }}
@@ -133,7 +132,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :href="scope.row.commit_url"

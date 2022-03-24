@@ -6,11 +6,12 @@
           <el-button
             icon="el-icon-refresh"
             size="small"
+            class="buttonSecondaryReverse"
             @click="onChangeFilter"
           />
           <span
             v-if="updateLoading"
-            class="text-blue-500"
+            class="headerTextColor"
           >
             <em class="el-icon-loading" /> {{ $t('Milestone.Saving') }}......
           </span>
@@ -56,7 +57,7 @@
             <el-form-item>
               <el-button
                 :loading="downloadLock.is_lock"
-                type="primary"
+                class="buttonPrimary"
                 @click="generateReport"
               >
                 產生Excel報表
@@ -67,7 +68,7 @@
               <el-form-item>
                 <el-button
                   :loading="downloadLock.is_lock"
-                  type="success"
+                  class="buttonSecondary"
                   @click="downloadReport"
                 >
                   下載Excel報表
@@ -81,6 +82,7 @@
           <el-button
             slot="reference"
             icon="el-icon-download"
+            class="buttonPrimaryReverse"
             :disabled="selectedProjectId === -1"
           >
             {{ $t('File.Download') }}
@@ -109,6 +111,7 @@
             slot="reference"
             icon="el-icon-s-operation"
             type="text"
+            class="headerTextColor"
           >
             {{ $t('Milestone.Display') }}
             <em class="el-icon-arrow-down el-icon--right" />

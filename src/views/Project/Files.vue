@@ -3,9 +3,9 @@
     <ProjectListSelector>
       <el-button
         slot="button"
-        type="success"
         :disabled="selectedProjectId === -1"
         icon="el-icon-plus"
+        class="buttonSecondary"
         @click="handleAdding"
       >
         {{ $t('File.AddFile') }}
@@ -66,7 +66,7 @@
           <el-button
             :loading="isDownloading"
             size="mini"
-            type="primary"
+            class="buttonPrimaryReverse"
             icon="el-icon-download"
             @click="handleDownload(scope.row)"
           >
@@ -131,8 +131,10 @@
             <div class="el-upload__text">
               <el-button
                 size="small"
-                type="success"
-              >{{ $t('File.ChooseFile') }}</el-button>
+                class="buttonSecondary"
+              >
+                {{ $t('File.ChooseFile') }}
+              </el-button>
               <div>{{ $t('File.DragFilesHere') }}</div>
               <div class="text-xs text-gray-400 px-12">
                 <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -177,9 +179,9 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button
-          type="primary"
+          class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm"
         >

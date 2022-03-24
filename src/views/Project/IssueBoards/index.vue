@@ -85,6 +85,7 @@
           slot="reference"
           :loading="isLoading"
           icon="el-icon-s-operation"
+          class="headerTextColor"
           type="text"
         > {{ displayFilterValue }}
           <em class="el-icon-arrow-down el-icon--right" />
@@ -130,6 +131,7 @@
         <el-button
           slot="reference"
           :loading="isLoading"
+          class="headerTextColor"
           type="text"
         >
           <i18n path="Issue.GroupBy">
@@ -156,6 +158,7 @@
         v-else
         type="text"
         :loading="isLoading"
+        class="headerTextColor"
         icon="el-icon-search"
         @click="searchVisible=!searchVisible"
       >
@@ -166,6 +169,7 @@
         <el-button
           size="small"
           icon="el-icon-close"
+          class="buttonSecondaryReverse"
           :loading="isLoading"
           @click="cleanFilter"
         >

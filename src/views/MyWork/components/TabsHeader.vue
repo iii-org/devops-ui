@@ -45,6 +45,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
 .dashboard-card {
   .item {
     @apply px-1.5 py-0.5 md:px-3 md:py-1 rounded-lg bg-gray-200 cursor-pointer hover:shadow-md;
@@ -68,16 +69,22 @@ export default {
   }
 
   .assigned_to_id {
-    @apply hover:bg-gradient-to-br hover:text-white hover:from-green-400 hover:to-blue-500;
+    // @apply hover:bg-gradient-to-br hover:text-white hover:from-green-400 hover:to-blue-500;
+    background-color: #e5e7eb;
     &.active {
-      @apply bg-gradient-to-br text-white from-green-400 to-blue-500;
+      // @apply bg-gradient-to-br text-white from-green-400 to-blue-500;
+      background-color: $buttonPrimary;
+      color: white
     }
   }
 
   .author_id {
-    @apply hover:bg-gradient-to-br hover:text-white hover:from-pink-400 hover:to-indigo-500;
+    // @apply hover:bg-gradient-to-br hover:text-white hover:from-pink-400 hover:to-indigo-500;
+    background-color: #e5e7eb;
     &.active {
-      @apply bg-gradient-to-br text-white from-pink-400 to-indigo-500;
+      // @apply bg-gradient-to-br text-white from-pink-400 to-indigo-500;
+      background-color: $buttonSecondary;
+      color: white
     }
   }
 }

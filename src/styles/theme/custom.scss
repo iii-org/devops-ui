@@ -244,3 +244,168 @@
     }
   }
 }
+
+// theme global settings
+@import 'src/styles/theme/variables.scss';
+.el-pagination.is-background .el-pager li:not(.disabled) {
+  &.active {
+    background-color: $linkTextColor;
+    color: #FFF;
+    &:hover {
+      color: #FFF;
+    }
+  }
+  &:hover {
+    color: $linkTextColor;
+  }
+}
+.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: $linkTextColor;
+  border-color: $linkTextColor;
+}
+.el-checkbox__inner:hover {
+  border-color: $linkTextColor;
+}
+.el-checkbox__input.is-focus .el-checkbox__inner{
+  border-color: $linkTextColor;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+  color: $linkTextColor;
+}
+.el-radio-button__inner:hover {
+  color: $linkTextColor;
+}
+.el-radio-button__orig-radio:checked+.el-radio-button__inner {
+  color: #FFF;
+  background-color: $linkTextColor;
+  border-color: $linkTextColor;
+  box-shadow: -1px 0 0 0 $linkTextColor;
+}
+.el-switch__label.is-active {
+  color: $linkTextColor;
+}
+.el-switch.is-checked .el-switch__core {
+    border-color: $linkTextColor;
+    background-color: $linkTextColor;
+}
+.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  &:hover {
+    color: $linkTextColor !important;
+  }
+  &.is-active{
+    color: $linkTextColor !important;
+  }
+}
+
+.el-tabs__item {
+  &:hover {
+    color: $linkTextColor;
+  }
+  &.is-active{
+    color: $linkTextColor !important;
+  }
+}
+
+.el-tabs__active-bar {
+  background-color: $linkTextColor;
+}
+
+.el-loading-spinner {
+  .path{
+    stroke: $linkTextColor;
+  }
+  .el-loading-text {
+    color: $linkTextColor;
+  }
+}
+.el-upload-dragger:hover {
+  border-color: $linkTextColor;
+}
+.el-input.is-active .el-input__inner, .el-input__inner:focus {
+  border-color: $linkTextColor;
+  outline: 0;
+}
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: $linkTextColor;
+}
+.el-textarea__inner:focus {
+  outline: 0;
+  border-color: $linkTextColor;
+}
+.el-input-number__decrease:hover, .el-input-number__increase:hover {
+  color: $linkTextColor;
+}
+.el-input-number__decrease:hover:not(.is-disabled)~.el-input .el-input__inner:not(.is-disabled), .el-input-number__increase:hover:not(.is-disabled)~.el-input .el-input__inner:not(.is-disabled) {
+  border-color: $linkTextColor;
+}
+.el-dialog__headerbtn:focus .el-dialog__close, .el-dialog__headerbtn:hover .el-dialog__close {
+  color: $linkTextColor;
+}
+.el-slider__bar {
+  background-color: $linkTextColor;
+}
+.el-slider__button {
+  border: 2px solid $linkTextColor;
+}
+.el-progress-bar__inner {
+  background-color: $linkTextColor;
+}
+.account-manage-table>.el-table--enable-row-hover .el-table__body tr:hover>td:not(:last-child) {
+  background: #ede7c0;
+  color: $linkTextColor;
+}
+.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+  background-color: $linkTextBackground;
+  color: $linkTextColor;
+}
+.el-select-dropdown__item.selected {
+  color: $linkTextColor;
+}
+.el-select .el-input__inner:focus {
+  border-color: $linkTextColor;
+}
+.el-backtop {
+  color: $linkTextColor;
+}
+.el-link.el-link--primary {
+  color: $linkTextColor;
+  &:hover {
+    color: $linkTextColor;
+  }
+}
+.el-date-table td.today span {
+  color: $linkTextColor;
+}
+.el-date-table td.current:not(.disabled) span {
+  background-color: $linkTextColor;
+}
+.el-date-table td.available:hover {
+  color: $linkTextColor;
+}
+.el-picker-panel__icon-btn:hover {
+  color: $linkTextColor;
+}
+.el-date-picker__header-label.active, .el-date-picker__header-label:hover {
+  color: $linkTextColor;
+}
+.el-month-table td.current:not(.disabled) .cell {
+  color: $linkTextColor;
+}
+.el-month-table td .cell:hover {
+  color: $linkTextColor;
+}
+.el-year-table td.today .cell {
+  color: $linkTextColor;
+}
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+  color: $linkTextColor;
+}
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell {
+  color: $linkTextColor;
+}
+.el-range-editor.is-active, .el-range-editor.is-active:hover {
+  border-color: $linkTextColor;
+}
+.el-date-table td.end-date span, .el-date-table td.start-date span {
+  background-color: $linkTextColor;
+}

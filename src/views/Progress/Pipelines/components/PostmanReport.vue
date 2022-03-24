@@ -2,7 +2,7 @@
   <div>
     <ToolBar>
       <span slot="toolName">Postman</span>
-      <el-button slot="link" type="text" icon="el-icon-tickets" :disabled="disabled" @click="openPostman">
+      <el-button slot="link" type="text" icon="el-icon-tickets" :class="!disabled ? 'linkTextColor' : ''" :disabled="disabled" @click="openPostman">
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>

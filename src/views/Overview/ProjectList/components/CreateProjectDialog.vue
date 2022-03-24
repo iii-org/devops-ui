@@ -128,7 +128,7 @@
           <el-divider content-position="left">
             {{ $t('Project.Template') }}
             <el-button
-              class="ml-2"
+              class="ml-2 buttonPrimaryReverse"
               icon="el-icon-refresh"
               size="mini"
               circle
@@ -246,10 +246,11 @@
     >
       <el-button
         :loading="isLoading"
+        class="buttonSecondaryReverse"
         @click="onDialogClosed"
       >{{ $t('general.Cancel') }}</el-button>
       <el-button
-        type="primary"
+        class="buttonPrimary"
         :loading="isLoading"
         @click="handleConfirm"
       >{{ $t('general.Confirm') }}</el-button>

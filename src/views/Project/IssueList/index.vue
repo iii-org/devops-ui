@@ -5,7 +5,7 @@
         id="btn-add-issue"
         slot="button"
         v-permission="['Administrator','Project Manager', 'Engineer']"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         :disabled="selectedProjectId === -1"
         @click="handleQuickAddClose"
@@ -54,6 +54,7 @@
             </el-menu>
             <el-button
               slot="reference"
+              class="buttonPrimaryReverse"
               icon="el-icon-download"
             >{{ $t('File.Download') }}</el-button>
           </el-popover>
@@ -73,7 +74,7 @@
               </el-checkbox>
             </el-form-item>
           </el-form>
-          <el-button slot="reference" icon="el-icon-s-operation" type="text"> {{ $t('Milestone.Display') }}
+          <el-button slot="reference" icon="el-icon-s-operation" type="text" class="headerTextColor"> {{ $t('Milestone.Display') }}
             <em class="el-icon-arrow-down el-icon--right" /></el-button>
         </el-popover>
         <el-divider direction="vertical" />

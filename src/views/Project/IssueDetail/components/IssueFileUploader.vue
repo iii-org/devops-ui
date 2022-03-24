@@ -1,7 +1,7 @@
 <template>
   <el-upload ref="fileUploader" :auto-upload="false" :on-change="handleChange" action="" multiple drag>
     <div>
-      <el-button size="small" type="success">{{ $t('File.ChooseFile') }}</el-button>
+      <el-button size="small" class="buttonSecondary">{{ $t('File.ChooseFile') }}</el-button>
       <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
       <div class="text-xs text-gray-400">
         <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>

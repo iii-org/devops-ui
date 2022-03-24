@@ -6,7 +6,7 @@
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
     <template v-else>
       <div class="flex justify-between mb-4">
-        <el-button type="success" size="small" icon="el-icon-plus" @click="handleAdding">
+        <el-button class="buttonSecondary" size="small" icon="el-icon-plus" @click="handleAdding">
           {{ $t('Version.AddVersion') }}
         </el-button>
         <el-input
@@ -40,7 +40,7 @@
         />
         <el-table-column :label="$t('general.Actions')" align="center" width="210">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
+            <el-button size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEdit(scope.row)">
               {{ $t('general.Edit') }}
             </el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)">

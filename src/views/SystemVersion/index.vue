@@ -12,7 +12,7 @@
         <el-button
           :loading="isLoading"
           size="small"
-          type="primary"
+          class="buttonSecondaryReverse"
           plain
           @click="handleUploadInfoClick"
         >{{ this.$t('SystemVersion.UploadSystemInfos') }}</el-button>

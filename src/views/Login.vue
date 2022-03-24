@@ -50,8 +50,7 @@
       </el-form-item>
       <el-button
         :loading="loading"
-        type="primary"
-        class="w-full"
+        class="w-full buttonPrimary"
         @click.native.prevent="handleLogin"
       >
         {{ $t('general.Login') }}
@@ -143,8 +142,9 @@ export default {
 </script>
 
 <style lang="scss">
-$bg: #283443;
-$light_gray: #fff;
+@import 'src/styles/theme/variables.scss';
+$bg: $loginBackground;
+$light_gray: #eee;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -164,14 +164,14 @@ $cursor: #fff;
       background: transparent;
       border: 0;
       -webkit-appearance: none;
-      border-radius: 0;
-      padding: 12px 5px 12px 15px;
+      border-radius: 5px;
+      padding: 12px 5px 14px 15px;
       color: $light_gray;
       height: 47px;
       caret-color: $cursor;
 
       &:-webkit-autofill {
-        box-shadow: 0 0 0 1000px $bg inset !important;
+        box-shadow: 0 0  1000px $bg inset !important;
         -webkit-text-fill-color: $cursor !important;
       }
     }
@@ -187,7 +187,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+@import 'src/styles/theme/variables.scss';
+
+$bg: $loginBackground;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
@@ -220,7 +222,7 @@ $light_gray: #eee;
 
   .svg-container {
     padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    color: $light_gray;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
@@ -243,7 +245,7 @@ $light_gray: #eee;
     right: 10px;
     top: 7px;
     font-size: 16px;
-    color: $dark_gray;
+    color: $light_gray;
     cursor: pointer;
     user-select: none;
   }

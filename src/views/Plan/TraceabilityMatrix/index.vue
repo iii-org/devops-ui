@@ -22,7 +22,7 @@
             </el-select>
           </el-form-item>
           <el-button
-            class="w-full"
+            class="w-full buttonSecondaryReverse"
             icon="el-icon-setting"
             :loading="isRunning()"
             @click="settingDialogVisible=!settingDialogVisible"
@@ -42,8 +42,7 @@
             </ol>
           </el-form-item>
           <el-button
-            class="w-full"
-            type="primary"
+            class="w-full buttonPrimary"
             icon="el-icon-check"
             :loading="isRunning()"
             @click="createTraceCheckJob"
@@ -55,6 +54,7 @@
           slot="reference"
           icon="el-icon-s-operation"
           type="text"
+          class="headerTextColor"
           :loading="chartLoading"
           :disabled="chartLoading"
         > {{ $t('Track.TraceabilityCheck') }}
@@ -83,6 +83,7 @@
           <el-form-item>
             <el-button
               size="small"
+              class="buttonPrimaryReverse"
               icon="el-icon-arrow-right"
               @click="filterSettingVisible=!filterSettingVisible"
             />
@@ -149,7 +150,7 @@
           <el-form-item v-show="!chartSettingVisible">
             <el-button
               icon="el-icon-s-operation"
-              type="primary"
+              class="buttonPrimary"
               :loading="chartLoading"
               :disabled="chartLoading"
               @click="onPaintChart"
@@ -178,6 +179,7 @@
               </el-menu>
               <el-button
                 slot="reference"
+                class="buttonPrimaryReverse"
                 icon="el-icon-download"
               >{{ $t('Track.Download') }}</el-button>
             </el-popover>
@@ -185,7 +187,7 @@
           <el-form-item>
             <el-button
               :icon="(chartSettingVisible)?'el-icon-takeaway-box':'el-icon-setting'"
-              type="success"
+              class="buttonSecondary"
               @click="chartSettingVisible=!chartSettingVisible"
             />
           </el-form-item>
@@ -240,8 +242,9 @@
             <el-form inline>
               <el-form-item>
                 <el-button
+                  size="small"
                   icon="el-icon-arrow-left"
-                  type="primary"
+                  class="buttonPrimary"
                   @click="filterSettingVisible=!filterSettingVisible"
                 />
               </el-form-item>
@@ -316,7 +319,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
-              class="w-full"
+              class="w-full buttonSecondaryReverse"
               icon="el-icon-setting"
               :loading="isRunning()"
               @click="settingDialogVisible=!settingDialogVisible"
@@ -343,7 +346,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
-              type="primary"
+              class="buttonPrimary"
               icon="el-icon-check"
               :loading="isRunning()"
               @click="createTraceCheckJob"
@@ -1090,4 +1093,22 @@ $max_width: calc(100vw);
 //    overflow-y: auto;
 //  }
 //}
+
+@import 'src/styles/theme/variables.scss';
+>>> .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  &:hover {
+    color: $linkTextColor;
+  }
+  &.is-active{
+    color: $linkTextColor !important;
+  }
+}
+
+>>> .el-switch__label.is-active {
+  color: $linkTextColor;
+}
+>>> .el-switch.is-checked .el-switch__core {
+    border-color: $linkTextColor;
+    background-color: $linkTextColor;
+}
 </style>

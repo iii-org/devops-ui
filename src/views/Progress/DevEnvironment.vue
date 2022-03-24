@@ -39,8 +39,7 @@
                   {{ pod.branch }}
                 </span>
                 <el-link
-                  class="ml-2"
-                  type="primary"
+                  class="ml-2 linkTextColor"
                   style="font-size: 14px"
                   target="_blank"
                   :href="pod.commit_url"
@@ -53,7 +52,7 @@
               </div>
               <div>
                 <el-button
-                  type="primary"
+                  class="buttonPrimaryReverse"
                   size="mini"
                   icon="el-icon-refresh"
                   plain
@@ -115,8 +114,7 @@
                         <el-dropdown trigger="click">
                           <el-button
                             size="mini"
-                            class="el-icon-more"
-                            type="primary"
+                            class="el-icon-more buttonPrimaryReverse"
                             plain
                             circle
                           />
@@ -205,7 +203,7 @@
                                 <el-link
                                   slot="reference"
                                   :underline="false"
-                                  type="primary"
+                                  :class="container.state !== 'running' ? '' : 'linkTextColor'"
                                   style="font-size: 14px"
                                   class="mr-3"
                                   :disabled="container.state !== 'running'"
@@ -217,8 +215,8 @@
                               <el-link
                                 v-else
                                 :id="`link-commit-${serviceIdx}`"
-                                type="primary"
                                 class="mr-3"
+                                :class="container.state !== 'running' ? '' : 'linkTextColor'"
                                 :underline="false"
                                 style="font-size: 14px"
                                 target="_blank"

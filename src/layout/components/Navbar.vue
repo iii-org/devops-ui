@@ -27,7 +27,7 @@
             <el-dropdown-item>
               <router-link
                 :to="'/profile/'"
-                style="color: #409EFF"
+                class="linkTextColor"
               >
                 <span>{{ $t('navbar.profile') }}</span>
               </router-link>
@@ -35,7 +35,7 @@
             <el-dropdown-item>
               <router-link
                 :to="'/SystemVersion/'"
-                style="color: #409EFF"
+                class="linkTextColor"
               >
                 <span>{{ $t('navbar.versions') }}</span>
               </router-link>
@@ -86,11 +86,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
 .navbar {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  background: $navbarBg;  /* theme_discussion navbar background*/
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
@@ -102,7 +103,7 @@ export default {
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.025);
+      background: $navbarHover;
     }
   }
 
@@ -124,13 +125,13 @@ export default {
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
-      color: #5a5e66;
+      color: $navbarRightText; /* theme_discussion right font color */
       &.hover-effect {
         cursor: pointer;
         transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, 0.025);
+          background: $navbarHover;
         }
       }
     }

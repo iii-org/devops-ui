@@ -1,0 +1,95 @@
+@import 'src/styles/theme/variables.scss';
+
+.buttonPrimary {
+  background-color: $buttonPrimary !important;
+  color: white !important;
+  &:hover, &:active, &:focus {
+    background-color: $buttonPrimary !important;
+    border-color: $buttonPrimary !important;
+    color:white !important;
+  }
+}
+.buttonSecondary {
+  background-color: $buttonSecondary !important;
+  color: white !important;
+  &:hover, &:active, &:focus {
+    background-color: $buttonSecondary !important;
+    border-color: $buttonSecondary !important;
+    color:white !important;
+  }
+}
+.buttonTertiary {
+  background-color: $buttonTertiary !important;
+  color: white !important;
+  &:hover, &:active, &:focus {
+    background-color: $buttonTertiary !important;
+    border-color: $buttonTertiary !important;
+    color:white !important;
+  }
+}
+.buttonInfo {
+  background-color: $info !important;
+  color: white !important;
+  &:hover, &:active, &:focus {
+    background-color: $info !important;
+    border-color: $info !important;
+    color:white !important;
+  }
+}
+.buttonPrimaryReverse {
+  border-color: #DCDFE6;
+  color: $buttonPrimary !important;
+  background-color: #ffffff !important;
+  &:focus {
+    border-color: #989898;
+    color: $buttonPrimary !important;
+    background-color: #ffffff !important;
+  }
+  &:hover, &:active {
+    background-color: $buttonPrimary !important;
+    border-color: $buttonPrimary !important;
+    color:white !important;
+  }
+}
+.buttonSecondaryReverse {
+  border-color: #DCDFE6;
+  color: $buttonSecondary !important;
+  background-color: #ffffff !important;
+  &:focus {
+    border-color: #989898;
+    color: $buttonSecondary !important;
+    background-color: #ffffff !important;
+  }
+  &:hover, &:active {
+    background-color: $buttonSecondary !important;
+    border-color: $buttonSecondary !important;
+    color:white !important;
+  }
+}
+.buttonTertiaryReverse {
+  border-color: #DCDFE6;
+  color: $buttonTertiary !important;
+  background-color: #ffffff !important;
+  &:focus {
+    border-color: #989898;
+    color: $buttonTertiary !important;
+    background-color: #ffffff !important;
+  }
+  &:hover, &:active {
+    background-color: $buttonTertiary !important;
+    border-color: $buttonTertiary !important;
+    color:white !important;
+  }
+}
+.buttonInfoReverse {
+  border-color: #DCDFE6;
+  color: #606266 !important;
+  background-color: #ffffff;
+}
+.headerTextColor {
+  color: $headerTextColor !important;
+}
+
+.linkTextColor {
+  color: $linkTextColor !important;
+}

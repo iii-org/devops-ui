@@ -74,6 +74,7 @@
         slot="reference"
         icon="el-icon-s-operation"
         type="text"
+        class="headerTextColor"
       > {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
@@ -94,6 +95,7 @@
       v-else
       type="text"
       icon="el-icon-search"
+      class="headerTextColor"
       @click="searchVisible = !searchVisible"
     >
       {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
@@ -103,6 +105,7 @@
       <el-button
         size="small"
         icon="el-icon-close"
+        class="buttonSecondaryReverse"
         @click="cleanFilter"
       >
         {{ $t('Issue.CleanFilter') }}
@@ -277,7 +280,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

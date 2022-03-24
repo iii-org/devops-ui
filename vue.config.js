@@ -2,8 +2,9 @@
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
 
-function resolve(dir) {
-  return path.join(__dirname, dir)
+function resolve(dir, subpath = '') {
+  subpath = subpath.replace(/^\'|\s+|'|-e$/gm, '')
+  return path.join(__dirname, dir.concat(subpath))
 }
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
@@ -51,7 +52,7 @@ module.exports = {
     resolve: {
       alias: {
         '@': resolve('src'),
-        'themePath': resolve(`src/styles/theme/${theme}`)
+        'themePath': resolve('src/styles/theme/', theme)
       }
     }
   },

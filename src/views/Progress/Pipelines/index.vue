@@ -21,7 +21,7 @@
           </el-card>
           <el-link
             slot="reference"
-            type="primary"
+            class="linkTextColor"
             style="font-size: 16px"
             :underline="false"
           >
@@ -74,7 +74,7 @@
               {{ scope.row.commit_branch }}
             </div>
             <el-link
-              type="primary"
+              class="linkTextColor"
               target="_blank"
               style="font-size: 16px"
               :href="scope.row.commit_url"

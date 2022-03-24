@@ -12,7 +12,7 @@
       drag
     >
       <div>
-        <el-button size="small" :type="tagType()">{{ $t('File.ChooseFile') }}</el-button>
+        <el-button size="small" :class="tagType()">{{ $t('File.ChooseFile') }}</el-button>
         <div class="el-upload__text">{{ $t('File.DragFilesHere') }}</div>
         <div class="text-xs text-gray-400">
           <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -76,7 +76,7 @@ export default {
       })
     },
     tagType() {
-      return this.disabled ? 'info' : 'success'
+      return this.disabled ? 'buttonInfo' : 'buttonSecondary'
     }
   }
 }

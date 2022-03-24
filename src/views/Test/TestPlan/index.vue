@@ -5,7 +5,7 @@
         id="btn-add-issue"
         slot="button"
         v-permission="['Administrator','Project Manager', 'Engineer']"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         :disabled="selectedProjectId === -1"
         @click="handleQuickAddClose"
@@ -38,7 +38,7 @@
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
               </el-menu-item>
             </el-menu>
-            <el-button slot="reference" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
+            <el-button slot="reference" class="buttonPrimaryReverse" icon="el-icon-download">{{ $t('File.Download') }}</el-button>
           </el-popover>
         </span>
       </SearchFilter>
@@ -90,7 +90,7 @@
                         {{ child.software_name }} - {{ child.file_name }}
                         <template v-if="child.the_last_test_result">
                           ({{ child.the_last_test_result.branch }} -
-                          <el-link type="primary" target="_blank" style="font-size: 16px"
+                          <el-link class="linktextColor" target="_blank" style="font-size: 16px"
                                    :href="child.the_last_test_result.commit_url"
                           >
                             <svg-icon class="mr-1" icon-class="ion-git-commit-outline" />

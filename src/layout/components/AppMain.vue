@@ -18,13 +18,6 @@ export default {
 </script>
 
 <style scoped>
-.app-main {
-  height: calc(100% - 50px); /* 50px is the nav bar */
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  background-color: #f5f5f5;
-}
 .fixed-header + .app-main {
   padding-top: 50px;
 }
@@ -36,5 +29,16 @@ export default {
   .fixed-header {
     padding-right: 15px;
   }
+}
+</style>
+
+<style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+.app-main {
+  height: calc(100% - 50px); /* 50px is the nav bar */
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: $appMainBg; /* theme_discussion main background*/
 }
 </style>

@@ -7,7 +7,7 @@
       alt="404 error image"
     >
     <el-button
-      type="primary"
+      class="buttonPrimary"
       round
       @click="onClick"
     >

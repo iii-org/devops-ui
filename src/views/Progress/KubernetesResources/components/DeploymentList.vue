@@ -78,7 +78,7 @@
           <template slot-scope="scope">
             <el-button
               :loading="btnLoading"
-              type="primary"
+              class="buttonPrimaryReverse"
               size="mini"
               icon="el-icon-refresh"
               @click="redeploy(selectedProjectId, scope.row.name)"

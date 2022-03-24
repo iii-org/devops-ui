@@ -57,7 +57,6 @@
           class="mt-2"
           active-value="enable"
           inactive-value="disable"
-          active-color="#13ce66"
           inactive-color="#ff4949"
           :active-text="$t('general.Enable')"
           :inactive-text="$t('general.Disable')"
@@ -65,8 +64,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-      <el-button type="primary" @click="submitForm">{{ $t('general.Confirm') }}</el-button>
+      <el-button class="buttonSecondaryReverse" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button class="buttonPrimary" @click="submitForm">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -309,4 +308,5 @@ export default {
   overflow: auto;
   max-height: 75vh;
 }
+
 </style>

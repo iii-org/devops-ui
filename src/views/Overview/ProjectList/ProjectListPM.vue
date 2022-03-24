@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="flex justify-between">
       <el-button
-        type="success"
         icon="el-icon-plus"
+        class="buttonPrimary"
         @click="handleAdding"
       >
         {{ $t('Project.AddProject') }}
@@ -122,7 +122,7 @@
             <div>
               <el-link
                 v-if="userRole !== 'QA'"
-                type="primary"
+                :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
                 :underline="false"
                 :disabled="scope.row.disabled || scope.row.is_lock"
                 @click="handleClick(scope.row)"
@@ -203,7 +203,7 @@
           <el-button
             v-if="userRole !== 'QA' && scope.row.is_lock!==true"
             size="mini"
-            type="primary"
+            class="buttonPrimaryReverse"
             icon="el-icon-edit"
             @click="handleEdit(scope.row)"
           >

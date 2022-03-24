@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="flex justify-between">
-      <el-button id="btn-add-registry" type="success" @click="dialogVisible = true">
+      <el-button id="btn-add-registry" class="buttonSecondary" @click="dialogVisible = true">
         <em class="el-icon-plus" /> {{ $t('Maintenance.AddRegistry') }}
       </el-button>
       <el-input
@@ -14,7 +14,7 @@
     </div>
     <el-divider />
     <div class="mb-5 text-right">
-      <el-button id="btn-reload" type="primary" icon="el-icon-refresh" size="mini" plain @click="fetchData()">
+      <el-button id="btn-reload" class="buttonPrimaryReverse" icon="el-icon-refresh" size="mini" plain @click="fetchData()">
         {{ $t('general.Refresh') }}
       </el-button>
     </div>
@@ -86,8 +86,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button id="dialog-btn-cancel" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-        <el-button id="dialog-btn-confirm" type="primary" :loading="confirmLoading" @click="handleConfirm">
+        <el-button id="dialog-btn-cancel" class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button id="dialog-btn-confirm" class="buttonPrimary" :loading="confirmLoading" @click="handleConfirm">
           {{ $t('general.Confirm') }}
         </el-button>
       </span>

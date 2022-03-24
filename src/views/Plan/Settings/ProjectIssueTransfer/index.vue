@@ -11,7 +11,7 @@
             type="text"
             size="medium"
             icon="el-icon-arrow-left"
-            class="text-title"
+            class="text-title linkTextColor"
             @click="onBackClick"
           >
             {{ $t('general.Back') }}
@@ -30,6 +30,7 @@
           <el-button
             v-show="!isSearchVisible"
             type="text"
+            class="headerTextColor"
             icon="el-icon-search"
             @click="showSearchInput"
           >
@@ -61,7 +62,7 @@
         <div>
           <el-button
             size="mini"
-            :type="hasCheckedIssues ? 'primary' : ''"
+            :class="hasCheckedIssues ? 'buttonPrimaryReverse' : ''"
             plain
             :disabled="!hasCheckedIssues"
             @click="onBatchTransferClick"
@@ -189,7 +190,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimaryReverse"
               @click="onTransferClick(scope.row.id)"
             >
               {{ $t('general.Transfer') }}
@@ -263,10 +264,10 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+        <el-button class="buttonSecondaryReverse" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
         <el-button
           :loading="isTransferring"
-          type="primary"
+          class="buttonPrimary"
           @click="onBatchTransferConfirm"
         >
           {{ $t('general.Confirm') }}
