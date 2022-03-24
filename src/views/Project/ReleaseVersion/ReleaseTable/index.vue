@@ -186,7 +186,6 @@ export default {
   methods: {
     async fetchData() {
       const res = await getReleaseVersion(this.selectedProject.id)
-      console.log(res)
       return res.data.releases
     },
     formatTime(value) {

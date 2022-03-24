@@ -87,7 +87,7 @@ export default {
     setIssues(issues) {
       this.issues = issues
       this.issuesByCategory = [{}, {}]
-      for (const issue of issues) {
+      issues.forEach((issue) => {
         const cat = issue.trackerName
         let index = this.issueCategories.indexOf(cat)
         if (index < 0) {
@@ -100,7 +100,7 @@ export default {
           store[cat] = []
         }
         store[cat].push(issue)
-      }
+      })
     },
     openIssueDialog(category) {
       const com = this.$refs.issueDialog

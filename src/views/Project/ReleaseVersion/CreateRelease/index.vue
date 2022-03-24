@@ -14,9 +14,7 @@
         <el-step title="程式/映像檔版本">
           <template v-if="stepActive === 1" slot="description">
             <span>
-              請指定程式或映像檔版本，若無程式開發或不需更改，則可
-              <el-button type="text" size="mini" @click="stepActive += 1">直接跳過</el-button>
-              。
+              請指定程式或映像檔版本，若無程式開發或不需更改，則可直接跳過。
             </span>
           </template>
         </el-step>
@@ -27,22 +25,26 @@
         </el-step>
       </el-steps>
       <section class="flex justify-center" style="margin-top: 40px;">
-        <!-- <KeepAlive> -->
         <IssueVersion
           v-if="stepActive === 0"
+          :release-data="releaseData"
           @onNext="next"
+          @initReleaseData="initData"
         />
         <ImageVersion
           v-else-if="stepActive === 1"
+          :release-data="releaseData"
+          :update-data="updateData"
           @onNext="next"
           @onBack="back"
         />
         <PackageVersion
           v-else-if="stepActive === 2"
+          :release-data="releaseData"
+          :update-data="updateData"
           @onBack="back"
-          @init="init"
+          @initState="initState"
         />
-        <!-- </KeepAlive> -->
       </section>
     </el-card>
     <el-dialog :visible.sync="isShowVersions" width="60%">
@@ -53,6 +55,28 @@
 
 <script>
 import { mapGetters } from 'vuex'
+
+/**
+ * @summary for release data
+ */
+const releaseData = () => ({
+  branch: '',
+  commit: '',
+  extra_image_path: '', // only for extra image path
+  forced: true,
+  main: '', // main version
+  note: '',
+  versions: []
+})
+
+/**
+ * @summary for those data which is not used by releasing
+ */
+const updateData = () => ({
+  issues: [],
+  projectVersions: [],
+  image: ''
+})
 
 export default {
   name: 'CreateRelease',
@@ -65,25 +89,9 @@ export default {
   data() {
     return {
       stepActive: 0,
-      isShowVersions: false
-    }
-  },
-  provide() {
-    return {
-      releaseData: {
-        branch: '',
-        commit: '',
-        extra_image_path: '', // only for extra image path
-        forced: true,
-        main: '', // main version
-        note: '',
-        versions: []
-      },
-      updateData: {
-        issues: [],
-        projectVersions: [],
-        image: ''
-      }
+      isShowVersions: false,
+      releaseData: releaseData(),
+      updateData: updateData()
     }
   },
   computed: {
@@ -95,14 +103,28 @@ export default {
     }
   },
   methods: {
-    next() {
+    setData(releaseData, updateData) {
+      this.handleSetData(releaseData, 'releaseData')
+      if (Object.keys(updateData).length > 0) this.handleSetData(updateData, 'updateData')
+    },
+    initData() {
+      this.setData(releaseData(), updateData())
+    },
+    next(releaseData, updateData) {
+      this.setData(releaseData, updateData)
       this.stepActive += 1
     },
-    back() {
+    back(releaseData, updateData) {
+      this.setData(releaseData, updateData)
       this.stepActive -= 1
     },
-    init() {
-      this.$emit('init')
+    initState() {
+      this.$emit('initState')
+    },
+    handleSetData(data, key) {
+      Object.keys(data).forEach((item) => {
+        this[key][item] = data[item]
+      })
     }
   }
 }

@@ -49,9 +49,6 @@
                 />
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="包版版號" class="flex">
-              <el-input v-model="mainVersion.name" disabled />
-            </el-form-item> -->
           </el-col>
           <el-col :span="16">
             <el-form-item label="映像檔路徑" class="flex cursor-pointer">
@@ -105,12 +102,20 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PackageVersion',
-  inject: ['releaseData', 'updateData'],
+  props: {
+    releaseData: {
+      type: Object,
+      default: () => {}
+    },
+    updateData: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       isLoading: false,
       mainVersion: '',
-      // getImagePath: '',
       imagePath: '{{branch}}:{{version}}',
       note: '',
       releaseVersionOptions: []
@@ -118,11 +123,6 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedProjectId']),
-    // imagePath() {
-    //   if (!this.mainVersion) return '{{branch}}:{{version}}'
-    //   const version = this.releaseVersionOptions.find(option => option.value === this.mainVersion)
-    //   return `${this.releaseData.branch} : ${version.label}`
-    // },
     imageProject() {
       if (!this.mainVersion) return '{{project}}/'
       const version = this.updateData.projectVersions.find(option => option.id === this.mainVersion)
@@ -135,11 +135,6 @@ export default {
       })
       return versionData.value
     }
-    // mainVersion() {
-    //   return this.updateData.projectVersions.find(version => {
-    //     return version.id === this.releaseData.main
-    //   })
-    // }
   },
   watch: {
     mainVersion: {
@@ -152,20 +147,20 @@ export default {
     }
   },
   mounted() {
-    // this.getImagePath = `${this.releaseData.branch} : ${this.mainVersion}`
     if (this.releaseData.versions && this.releaseData.versions.length > 0) {
       this.updateReleaseVersions()
+      this.imagePath = this.releaseData.extra_image_path
+      this.mainVersion = this.releaseData.main
+      this.note = this.releaseData.note
     }
   },
   methods: {
     async release() {
-      this.releaseData.extra_image_path = this.imagePath
-      this.releaseData.main = this.main
-      this.releaseData.note = this.note
+      const releaseData = this.setReleaseData()
       this.isLoading = true
-      await createRelease(this.selectedProjectId, this.releaseData)
+      await createRelease(this.selectedProjectId, releaseData)
         .then(() => {
-          this.$emit('init')
+          this.$emit('initState')
           this.$message({
             message: this.$t('Release.releaseDone', [this.main]),
             type: 'success'
@@ -175,8 +170,20 @@ export default {
           this.isLoading = false
         })
     },
+    setReleaseData() {
+      const releaseData = JSON.parse(JSON.stringify(this.releaseData))
+      releaseData.extra_image_path = this.imagePath
+      releaseData.main = this.main
+      releaseData.note = this.note
+      return releaseData
+    },
     onBack() {
-      this.$emit('onBack')
+      const releaseData = {
+        extra_image_path: this.imagePath,
+        main: this.main,
+        note: this.note
+      }
+      this.$emit('onBack', releaseData, this.updateData)
     },
     updateReleaseVersions() {
       this.releaseVersionOptions = []

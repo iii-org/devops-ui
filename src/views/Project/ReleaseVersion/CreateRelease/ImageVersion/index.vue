@@ -8,22 +8,6 @@
         class="w-full"
       >
         <el-row>
-          <!-- <el-col :span="24">
-            <el-form-item :label="$t('Release.releaseVersionName')">
-              <el-select
-                v-model="commitForm.mainVersion"
-                :placeholder="$t('Release.selectMainVersion')"
-                filterable
-              >
-                <el-option
-                  v-for="item in releaseVersionOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col> -->
           <el-col :span="8">
             <el-form-item :label="$t('Git.Branch')" style="padding-right: 10px;">
               <el-select
@@ -57,7 +41,7 @@
                 style="line-height: 40px;"
               >
                 <svg-icon v-if="!checkHarborLoading" icon-class="ion-git-commit-outline" />
-                {{ checkHarborLoading ? $t('Updating') : hasImage() }}
+                {{ checkHarborLoading ? $t('Updating') : image }}
               </span>
               <span v-else>
                 <span class="text-danger mr-3">
@@ -133,13 +117,21 @@ export default {
   components: {
     ImageList: () => import('./ImageList')
   },
-  inject: ['releaseData', 'updateData'],
+  props: {
+    releaseData: {
+      type: Object,
+      default: () => {}
+    },
+    updateData: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       isLoading: false,
       isOpenTable: false,
       commitForm: {
-        mainVersion: null,
         branch: '',
         note: ''
       },
@@ -148,11 +140,10 @@ export default {
       commitId: '',
       repoArtifact: {},
       selectedVersions: [],
-      hasHarborTag: null,
       checkHarborLoading: false,
       selectedRepo: '',
       releaseVersionOptions: [],
-      image: ''
+      image: 'noImage'
     }
   },
   computed: {
@@ -160,39 +151,21 @@ export default {
     selectedRepositoryId() {
       return this.selectedProject.repository_ids[0]
     },
-    imageName() {
-      return this.repoArtifact.data ? this.repoArtifact.data[0].name : '-'
+    hasHarborTag() {
+      if (this.image === 'noImage') return false
+      return !!this.image
     }
   },
   watch: {
-    'commitForm.branch': {
-      handler(val) {
-        if (val) {
-          this.handleSelectedRepoName(val)
-        }
-      },
-      immediate: true
-    },
     selectedProject: {
       handler(val) {
         this.getBranchesData()
         this.commitForm.note = ''
       }
-    },
-    'releaseData.versions': {
-      handler(val) {
-        console.log(val)
-      },
-      deep: true
     }
   },
   mounted() {
-    if (this.selectedProject < 0) return
     this.getBranchesData()
-    console.log(this.releaseData.versions, this.releaseData.versions.length)
-    // if (this.releaseData.versions && this.releaseData.versions.length > 0) {
-    //   this.updateReleaseVersions()
-    // }
   },
   methods: {
     async getBranchesData() {
@@ -200,8 +173,12 @@ export default {
       this.loading = true
       const res = await getBranchesByProject(this.selectedRepositoryId)
       this.setBranchesData(res.data)
-      this.setFormData()
-      this.getMemberCommitListByBranch()
+      this.handleBranchData()
+      !this.releaseData.commit ? this.getMemberCommitListByBranch() : this.setSaveData()
+    },
+    setSaveData() {
+      this.commitId = this.releaseData.commit
+      this.image = this.updateData.image
     },
     setBranchesData(data) {
       data.branch_list.sort((itemA, itemB) => {
@@ -211,16 +188,16 @@ export default {
       })
       this.branchesData = data['branch_list']
     },
-    setFormData() {
-      for (const branch of this.branchesData) {
+    handleBranchData() {
+      this.branchesData.forEach((branch) => {
         this.branches.push(branch.name)
+      })
+      if (this.releaseData.branch) {
+        this.commitForm.branch = this.releaseData.branch
+        return
       }
-      if (this.branchesData.length > 0) {
-        this.commitForm.branch = this.branchesData[0].name
-      } else {
-        this.commitForm.mainVersion = null
-        this.commitForm.branch = this.$t('Loading')
-      }
+      this.commitForm.branch = this.branchesData.length > 0
+        ? this.branchesData[0].name : this.$t('Loading')
     },
     async getMemberCommitListByBranch() {
       const params = { branch: this.commitForm.branch }
@@ -228,21 +205,15 @@ export default {
       const commitId = res.data.length !== 0 ? res.data[0].short_id : null
       const harborCommitId = commitId !== null ? commitId.substring(0, commitId.length - 1) : null
       this.commitId = harborCommitId
-      this.loading = false
-    },
-    async checkHarborImage() {
-      this.repoArtifact = await getRepoArtifacts(this.selectedRepo, this.commitId)
-      if (this.repoArtifact.data && this.repoArtifact.data.length > 0) this.hasHarborTag = true
-      else this.hasHarborTag = false
-      this.checkHarborLoading = false
+      this.handleSelectedRepoName(this.commitForm.branch)
     },
     async handleSelectedRepoName(repo) {
       if (!repo) return
-      this.hasHarborTag = true
       this.checkHarborLoading = true
       this.onChangeCommitId(repo)
       const harborData = await getHarborRepoList(this.selectedProjectId)
       this.checkSelectedRepoName(harborData.data, repo)
+      this.loading = false
     },
     onChangeCommitId(repo) {
       const branch = this.branchesData.find(branch => branch.name === repo)
@@ -257,63 +228,48 @@ export default {
       const repoNameIndex = repoNameArray.findIndex((repoName) => repoName === repo)
       if (repoNameIndex === -1) {
         this.repoArtifact = {}
-        this.hasHarborTag = false
         this.checkHarborLoading = false
       } else {
         this.selectedRepo = harborData[repoNameIndex].name
         this.checkHarborImage()
       }
     },
-    // updateReleaseVersions() {
-    //   this.commitForm.mainVersion = null
-    //   this.selectedVersions = this.releaseData.versions
-    //   this.releaseVersionOptions = []
-    //   for (const ver of this.updateData.projectVersions) {
-    //     if (this.selectedVersions.indexOf(ver.id) >= 0) {
-    //       this.releaseVersionOptions.push({
-    //         value: ver.id,
-    //         label: ver.name
-    //       })
-    //     }
-    //   }
-    //   if (this.selectedVersions.length === 1) {
-    //     this.commitForm.mainVersion = this.selectedVersions[0]
-    //     this.commitForm.note = ''
-    //   }
-    // },
+    async checkHarborImage() {
+      this.repoArtifact = await getRepoArtifacts(this.selectedRepo, this.commitId)
+      if (this.repoArtifact.data && this.repoArtifact.data.length > 0) {
+        this.image = this.repoArtifact.data[0].name
+      } else {
+        this.image = 'noImage'
+      }
+      this.checkHarborLoading = false
+    },
     onBack() {
-      this.$emit('onBack')
+      const releaseData = {
+        commit: this.commitId,
+        branch: this.commitForm.branch
+      }
+      const updateData = {
+        image: this.image
+      }
+      this.$emit('onBack', releaseData, updateData)
     },
     onNext() {
-      this.releaseData.commit = this.commitId
-      this.releaseData.branch = this.commitForm.branch
-      this.updateData.image = this.getReleaseImage()
-      // this.releaseData.main = this.getReleaseVersion().value
-      this.$emit('onNext')
+      const releaseData = {
+        commit: this.commitId,
+        branch: this.commitForm.branch
+      }
+      const updateData = {
+        image: this.image
+      }
+      this.$emit('onNext', releaseData, updateData)
     },
     onChangeImage(row) {
       this.commitForm.branch = row.branch
       this.commitId = row.commit_id
       if (row.image) {
         this.image = row.commit_id
-        this.hasHarborTag = true
       } else this.image = 'noImage'
-    },
-    /**
-     * @summary default image value should be ${imageName},
-     * if user selects the image in the image list, replace ${imageName} by ${image}
-     */
-    hasImage() {
-      if (this.image === 'noImage') this.hasHarborTag = null
-      else return this.image ? this.image : this.imageName
-    },
-    getReleaseImage() {
-      if (this.hasHarborTag && !this.image) return this.imageName
-      else return this.image
     }
-    // getReleaseVersion() {
-    //   return this.releaseVersionOptions.find(option => option.value === this.commitForm.mainVersion)
-    // }
   }
 }
 </script>

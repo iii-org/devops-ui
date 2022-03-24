@@ -19,13 +19,23 @@
           </el-select>
         </div>
       </div>
-      <el-switch
-        v-model="hasImage"
-        active-color="#13ce66"
-        inactive-color="#ff4949"
-        active-text="僅有映像檔"
-        @change="onSwitch"
-      />
+      <div>
+        <el-switch
+          v-model="hasAllCommit"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-text="呈現所有提交"
+          class="mr-2"
+          @change="onSwitch"
+        />
+        <el-switch
+          v-model="hasImage"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-text="僅有映像檔"
+          @change="onSwitch"
+        />
+      </div>
     </div>
     <el-table
       ref="imageList"
@@ -46,7 +56,7 @@
       />
       <el-table-column label="Image">
         <template slot-scope="scope">
-          <el-tooltip :content="scope.row.image" placement="top">
+          <el-tooltip :content="scope.row.commit_message" placement="top">
             <span class="cursor-pointer">{{ getImage(scope.row.image) }}</span>
           </el-tooltip>
         </template>
@@ -54,6 +64,11 @@
       <el-table-column label="提交時間">
         <template slot-scope="scope">
           <span>{{ getPushTime(scope.row.push_time) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="釋版版號">
+        <template slot-scope="scope">
+          <span>{{ scope.row.tag ? scope.row.tag : '-' }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -72,6 +87,11 @@
 import { mapGetters } from 'vuex'
 import { getImageList } from '@/api_v2/release'
 import { Table, Pagination } from '@/newMixins'
+
+const initParam = {
+  page: 1,
+  limit: 3
+}
 
 export default {
   name: 'ImageList',
@@ -92,6 +112,7 @@ export default {
       imageList: [],
       branch: 'master',
       hasImage: true,
+      hasAllCommit: false,
       currentRow: null
     }
   },
@@ -103,15 +124,15 @@ export default {
   },
   methods: {
     getImageList() {
-      this.fetchData(3)
+      this.fetchData(5)
     },
     async fetchData(limit) {
       const params = {
         branch_name: this.branch,
         only_image: this.hasImage,
         limit: limit || this.listQuery.limit,
-        offset: this.listQuery.offset
-        // not_all: true
+        offset: this.listQuery.offset,
+        not_all: !this.hasAllCommit
       }
       if (params.limit === 0) return
       this.isLoading = true
@@ -149,11 +170,7 @@ export default {
       await this.getImageList()
     },
     onSwitch() {
-      const param = {
-        page: 1,
-        limit: 3
-      }
-      this.onPagination(param)
+      this.onPagination(initParam)
     },
     handleCurrentChange(row) {
       this.currentRow = row

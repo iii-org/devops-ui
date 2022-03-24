@@ -20,7 +20,7 @@
         <el-button
           :type="selectedVersions.length === 0 ? 'info' : 'primary'"
           :disabled="selectedVersions.length === 0"
-          @click="checkIssues"
+          @click="checkIssues(true)"
         >
           <span class="el-icon-edit" />
           {{ $t('Release.checkIssue') }}
@@ -65,7 +65,13 @@ export default {
     IssuesTable: () => import('./IssuesTable'),
     ClosedIssues: () => import('./ClosedIssues')
   },
-  inject: ['releaseData', 'updateData'],
+  // inject: ['releaseData', 'updateData'],
+  props: {
+    releaseData: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       selectedVersions: [],
@@ -91,6 +97,10 @@ export default {
   },
   mounted() {
     this.loadData()
+    if (this.releaseData.versions && this.releaseData.versions.length > 0) {
+      this.selectedVersions = this.releaseData.versions
+      this.checkIssues(false)
+    }
   },
   methods: {
     async loadData() {
@@ -105,8 +115,9 @@ export default {
       })
       this.projectVersionOptions = options
     },
-    async checkIssues() {
+    async checkIssues(isInit) {
       // Check if all issues of selected versions are closed
+      if (isInit) this.initReleaseData()
       this.isCheck = true
       this.isLoading = true
       this.hasOpenIssue = false
@@ -147,10 +158,17 @@ export default {
       this.checkIssues()
     },
     onNext() {
-      this.updateData.issues = this.allIssues
-      this.releaseData.versions = this.selectedVersions
-      this.updateData.projectVersions = this.projectVersions
-      this.$emit('onNext')
+      const releaseData = {
+        versions: this.selectedVersions
+      }
+      const updateData = {
+        issues: this.allIssues,
+        projectVersions: this.projectVersions
+      }
+      this.$emit('onNext', releaseData, updateData)
+    },
+    initReleaseData() {
+      this.$emit('initReleaseData')
     }
   }
 }
