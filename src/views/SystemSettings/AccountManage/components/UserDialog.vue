@@ -114,7 +114,6 @@ export default {
         password: [{ validator: this.validatePassword, message: "Password can't be less than 8 characters." }],
         repeatPassword: [{ required: true, message: 'Please input password', trigger: 'blur' }],
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        phone: [{ required: true, message: 'Please input phone', trigger: 'blur' }],
         email: [
           { required: true, message: 'Please input email', trigger: 'blur' },
           { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
@@ -250,7 +249,7 @@ export default {
 
           // remove useless field
           Object.keys(data).forEach(item => {
-            if (data[item] === '') {
+            if (data[item] === '' && item === 'password') {
               delete data[item]
             }
           })
