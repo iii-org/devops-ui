@@ -424,10 +424,16 @@ export default {
       return { tags: tags.join(',') }
     },
     setStatusId(column, id, data) {
-      if (this.row.status.id === 1 && id) {
+      if (this.row.status.id === 1 && id) { // change status to assigned if user add assignee
         data = {
           [column]: id,
           status_id: 2
+        }
+      }
+      if (id === 'null') { // change status back to active if user delete assignee
+        data = {
+          [column]: id,
+          status_id: 1
         }
       }
       return data
@@ -550,6 +556,6 @@ export default {
 }
 
 .current {
-  @apply font-bold text-success #{!important} ;
+  @apply font-bold text-success #{!important};
 }
 </style>
