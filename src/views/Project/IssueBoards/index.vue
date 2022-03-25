@@ -246,12 +246,12 @@ export default {
       relativeIssueList: [],
       searchVisible: false,
       keyword: null,
-      // socket: io(`/issues/websocket`, {
-      //   reconnectionAttempts: 5
-      // })
-      socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, {
+      socket: io(`/issues/websocket`, { // production socket
         reconnectionAttempts: 5
       })
+      // socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, { // development socket
+      //   reconnectionAttempts: 5
+      // })
     }
   },
   computed: {
