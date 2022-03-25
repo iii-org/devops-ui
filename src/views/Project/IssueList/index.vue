@@ -7,13 +7,14 @@
         v-permission="['Administrator','Project Manager', 'Engineer']"
         class="buttonSecondary"
         icon="el-icon-plus"
-        :disabled="selectedProjectId === -1"
+        :disabled="isDisabled"
         @click="handleQuickAddClose"
       >
         {{ $t('Issue.AddIssue') }}
       </el-button>
       <SearchFilter
-        :filter-options="filterOptions"
+        :filter-options="filterOptionsWithProject"
+        :project-relation-list="projectRelationList"
         :list-loading="listLoading"
         :selection-options="contextOptions"
         :prefill="{ filterValue: filterValue, keyword: keyword, displayClosed: displayClosed,fixed_version_closed:fixed_version_closed }"
@@ -39,14 +40,14 @@
           >
             <el-menu class="download">
               <el-menu-item
-                :disabled="selectedProjectId === -1 || allDataLoading"
+                :disabled="isDisabled || allDataLoading"
                 @click="downloadExcel('allDownloadData')"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.all_download') }}
               </el-menu-item>
               <el-menu-item
                 v-show="hasSelectedIssue"
-                :disabled="selectedProjectId === -1"
+                :disabled="isDisabled"
                 @click="downloadExcel(selectedIssueList)"
               >
                 <em class="el-icon-download" />{{ $t('Dashboard.ADMIN.ProjectList.excel_download') }}
@@ -126,6 +127,7 @@
             <template slot-scope="{row}">
               <ExpandSection
                 :issue="row"
+                :project-relation-list="projectRelationList"
                 @on-context-menu="onContextMenu"
                 @update-list="loadData"
                 @collapse-expend-row="collapseExpendRow"
@@ -342,6 +344,7 @@ import { excelTranslate } from '@/utils/excelTableTranslate'
 import { getProjectIssueList } from '@/api/projects'
 import { getIssueFieldDisplay, putIssueFieldDisplay } from '@/api/issue'
 import XLSX from 'xlsx'
+import { getHasSon, getProjectRelation } from '@/api_v2/projects'
 
 /**
  * @param row.relations  row maybe have parent or children issue
@@ -370,6 +373,8 @@ export default {
       selectedIssueList: [],
       allDownloadData: [],
       allDataLoading: false,
+      filterOptionsWithProject: [],
+      projectRelationList: [],
       excelColumnSelected: ['tracker', 'id', 'name', 'priority', 'status', 'assigned_to'],
       columnsOptions: Object.freeze([
         { display: this.$t('Issue.project'), field: 'project' },
@@ -399,6 +404,12 @@ export default {
         return this.columnsOptions.map(item => item.field)
       }
       return this.displayFields
+    },
+    isDisabled() {
+      return this.mainSelectedProjectId === -1
+    },
+    mainSelectedProjectId() {
+      return this.filterValue.project || this.selectedProjectId
     }
   },
   watch: {
@@ -426,6 +437,7 @@ export default {
     ]),
     async fetchInitData() {
       this.getInitPage()
+      if (await this.isProjectHasSon()) await this.getProjectRelationData()
       await this.getInitStoredData()
       await this.loadSelectionList()
       await this.loadDisplayColumns()
@@ -433,7 +445,10 @@ export default {
     },
     async fetchAllDownloadData() {
       this.allDataLoading = true
-      const res = await getProjectIssueList(this.selectedProjectId, this.getParams(this.totalData))
+      const res = await getProjectIssueList(
+        this.mainSelectedProjectId,
+        this.getParams(this.totalData)
+      )
       this.allDownloadData = res.data.issue_list
       this.allDataLoading = false
     },
@@ -608,7 +623,7 @@ export default {
     },
     async loadDisplayColumns() {
       const res = await getIssueFieldDisplay({
-        project_id: this.selectedProjectId,
+        project_id: this.mainSelectedProjectId,
         type: 'issue_list'
       })
       this.displayFields = res.data
@@ -631,7 +646,7 @@ export default {
         this.displayFields = this.columnsOptions.map(item => item.field)
       }
       const res = await putIssueFieldDisplay({
-        project_id: this.selectedProjectId,
+        project_id: this.mainSelectedProjectId,
         type: 'issue_list',
         display_fields: this.displayFields
       })
@@ -653,6 +668,26 @@ export default {
     collapseExpendRow(issueId) {
       const row = this.listData.find((item) => item.id === issueId)
       this.refTable.toggleRowExpansion(row, false)
+    },
+    async isProjectHasSon() {
+      const hasSon = await getHasSon(this.selectedProjectId)
+      if (hasSon.has_child) {
+        this.filterOptionsWithProject = [{
+          id: 7,
+          value: 'project',
+          placeholder: 'Project'
+        }].concat(this.filterOptions)
+      } else {
+        this.filterOptionsWithProject = this.filterOptions
+      }
+      return hasSon.has_child
+    },
+    async getProjectRelationData() {
+      const projectRelation = await getProjectRelation(this.selectedProjectId)
+      this.projectRelationList = []
+      projectRelation.data.forEach((item) => {
+        this.projectRelationList.push(...item.child)
+      })
     }
   }
 }

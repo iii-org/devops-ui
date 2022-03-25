@@ -256,8 +256,7 @@ export default {
     },
     form: {
       type: Object,
-      default: () => {
-      }
+      default: () => ({})
     },
     parent: {
       type: Object,
@@ -388,6 +387,10 @@ export default {
     },
     'form.tags'() {
       if (this.form.project_id > 0) this.$refs.tags.getSearchTags()
+    },
+    'form.assigned_to_id'() {
+      if (this.form.assigned_to_id && this.form.status_id === 1) this.form.status_id = 2
+      if (!this.form.assigned_to_id) this.form.status_id = 1
     }
   },
   mounted() {
@@ -571,7 +574,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* noinspection CssUnusedSymbol */
 >>> .el-form-item {
   margin-bottom: 10px;

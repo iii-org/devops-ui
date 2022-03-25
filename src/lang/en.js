@@ -236,7 +236,9 @@ export default {
     Low: 'Low',
     Run: 'Run',
     ForceDelete: 'Force Delete',
-    Fix: 'Fix'
+    Fix: 'Fix',
+    Connected: 'Connected',
+    Disconnected: 'Disconnected'
   },
   Notify: {
     Updated: 'update successful',
@@ -270,7 +272,9 @@ export default {
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
     pluginRepeatMessage:
       'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
-    ChangeProjectManager: 'Confirming if you want to change the project manager?'
+    ChangeProjectManager: 'Confirming if you want to change the project manager?',
+    ConnectSocket: 'Kanban is connecting Socket...',
+    UpdateKanban: '{issueName} is updating...'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -422,6 +426,7 @@ export default {
     EndDate: 'End Date',
     Description: 'Issue Description',
     due_date: '@:Issue.EndDate',
+    SelectProject: 'Select Project',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
     SelectTag: 'Select Tag',

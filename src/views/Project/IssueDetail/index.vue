@@ -540,6 +540,7 @@ export default {
         //   type: 'warning'
         // })
       }
+      this.isLoading = false
       return data
     },
     initUploadFiles(data) {
@@ -580,12 +581,22 @@ export default {
       this.tags = tags || []
       this.setFormData(data)
       this.view = data
-      if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
+      if (
+        Object.keys(data.project).length > 0 &&
+        this.selectedProjectId !== data.project.id &&
+        !this.getRelationProjectList().includes(data.project.id)
+      ) {
         this.onProjectChange(data.project.id)
       }
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
       }
+    },
+    getRelationProjectList() {
+      if (!this.$route.params.projectRelationList) return []
+      return this.$route.params.projectRelationList.map((item) => {
+        return item.id
+      })
     },
     onProjectChange(value) {
       localStorage.setItem('projectId', value)
@@ -720,9 +731,9 @@ export default {
         this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()
-        await this.fetchIssue()
       }
       this.isLoading = false
+      await this.fetchIssue()
     },
     async handleUploadUpdated() {
       await this.fetchIssue(true)
@@ -745,7 +756,7 @@ export default {
         this.isLoading = status.status
         this.handleUploadUpdated()
       } else {
-        this.isLoading = status
+        this.isLoading = status.status
         this.handleUpdated()
       }
     },
@@ -1028,6 +1039,7 @@ export default {
       } finally {
         this.isLoadingFamily = false
       }
+      this.isLoadingFamily = false
       return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
