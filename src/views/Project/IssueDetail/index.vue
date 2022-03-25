@@ -540,6 +540,7 @@ export default {
         //   type: 'warning'
         // })
       }
+      this.isLoading = false
       return data
     },
     initUploadFiles(data) {
@@ -745,7 +746,7 @@ export default {
         this.isLoading = status.status
         this.handleUploadUpdated()
       } else {
-        this.isLoading = status
+        this.isLoading = status.status
         this.handleUpdated()
       }
     },
@@ -1028,6 +1029,7 @@ export default {
       } finally {
         this.isLoadingFamily = false
       }
+      this.isLoadingFamily = false
       return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
