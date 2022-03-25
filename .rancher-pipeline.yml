@@ -90,6 +90,7 @@ stages:
       - router
       - issueboarddrawer
       - socket
+      - temp
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -122,6 +123,7 @@ stages:
       - router
       - issueboarddrawer
       - socket
+      - temp
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -165,6 +167,7 @@ stages:
       - router
       - issueboarddrawer
       - socket
+      - temp
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -200,6 +203,7 @@ stages:
       - router
       - issueboarddrawer
       - socket
+      - temp
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -235,6 +239,7 @@ stages:
       - router
       - issueboarddrawer
       - socket
+      - temp
 - name: Test--ZAP
   iiidevops: zap
   steps:
