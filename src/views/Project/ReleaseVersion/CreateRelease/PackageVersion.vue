@@ -52,12 +52,12 @@
           </el-col>
           <el-col :span="16">
             <el-form-item :label="$t('Release.ImagePath')" class="flex cursor-pointer">
-              <el-tooltip content="project/branch:version" placement="top">
+              <el-tooltip placement="top">
                 <template slot="content">
                   <span>project</span>
-                  <span class="red">/</span>
+                  <span style="color: #f56c6c;">/</span>
                   <span>branch</span>
-                  <span class="red">:</span>
+                  <span style="color: #f56c6c;">:</span>
                   <span>version</span>
                 </template>
                 <el-input v-model="imagePath">
@@ -218,9 +218,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.red {
-  color: #f56c6c;
-}
-</style>
