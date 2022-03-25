@@ -51,6 +51,7 @@
             class="text-right"
           >
             <el-button
+              v-if="!isFromBoard"
               size="medium"
               :type="isButtonDisabled ? 'info' : 'danger'"
               plain
@@ -319,6 +320,10 @@ export default {
       default: null
     },
     isInDialog: {
+      type: Boolean,
+      default: false
+    },
+    isFromBoard: {
       type: Boolean,
       default: false
     }
