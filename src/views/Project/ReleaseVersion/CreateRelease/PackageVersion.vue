@@ -53,9 +53,16 @@
           <el-col :span="16">
             <el-form-item :label="$t('Release.ImagePath')" class="flex cursor-pointer">
               <el-tooltip content="project/branch:version" placement="top">
+                <template slot="content">
+                  <span>project</span>
+                  <span class="red">/</span>
+                  <span>branch</span>
+                  <span class="red">:</span>
+                  <span>version</span>
+                </template>
                 <el-input v-model="imagePath">
                   <template slot="prepend">
-                    <span class="cursor-pointer">{{ imageProject }}</span>
+                    <span class="cursor-pointer">{{ imageProject }}/</span>
                   </template>
                 </el-input>
               </el-tooltip>
@@ -122,11 +129,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['selectedProjectId']),
+    ...mapGetters(['selectedProjectId', 'selectedProject']),
     imageProject() {
-      if (!this.mainVersion) return '{{project}}/'
-      const version = this.updateData.projectVersions.find(option => option.id === this.mainVersion)
-      return `${version.project.name}/`
+      return !this.mainVersion ? `{{project}}` : `${this.selectedProject.name}`
     },
     main() {
       if (!this.mainVersion) return null
@@ -157,6 +162,10 @@ export default {
   methods: {
     async release() {
       const releaseData = this.setReleaseData()
+      if (!this.checkImagePath(releaseData)) {
+        this.stopRelease()
+        return
+      }
       this.isLoading = true
       await createRelease(this.selectedProjectId, releaseData)
         .then(() => {
@@ -176,6 +185,16 @@ export default {
       releaseData.main = this.main
       releaseData.note = this.note
       return releaseData
+    },
+    // check if image path includes ':'
+    checkImagePath(releaseData) {
+      return /:/.test(releaseData.extra_image_path)
+    },
+    stopRelease() {
+      this.$message({
+        message: this.$t('Release.StopReleaseWarning'),
+        type: 'error'
+      })
     },
     onBack() {
       const releaseData = {
@@ -199,3 +218,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.red {
+  color: #f56c6c;
+}
+</style>

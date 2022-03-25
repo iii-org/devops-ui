@@ -1002,7 +1002,8 @@ export default {
     NotePlaceholder: '請輸入版本說明，也可透過上方之議題版本內的已關閉議題清單進行複製、貼到此處。',
     ReleaseWarning: '包版版號與映像檔路徑皆可多個，唯版本路徑僅可至多兩個',
     Tags: '備註標籤',
-    CustomPath: '自定義路徑'
+    CustomPath: '自定義路徑',
+    StopReleaseWarning: '請檢查映像檔路徑是否符合格式。'
   },
   SystemVersion: {
     Source: '系統模組',

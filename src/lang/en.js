@@ -1009,7 +1009,8 @@ export default {
     NotePlaceholder: 'Please enter a version note, or copy and paste here from the list of closed issues in the issue version above.',
     ReleaseWarning: 'There can be multiple versions and image file paths, but only two version paths can be at most',
     Tags: 'Tags',
-    CustomPath: 'Custom Path'
+    CustomPath: 'Custom Path',
+    StopReleaseWarning: 'Please check if the image file path matches the format.'
   },
   SystemVersion: {
     Source: 'Source',

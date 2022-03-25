@@ -216,12 +216,6 @@ export default {
     UTCtoLocalTime(time) {
       return UTCtoLocalTime(time)
     },
-    handleToTestReport(commitId) {
-      this.$router.push({
-        name: 'TestReport',
-        params: { commitId, projectName: this.$store.getters.selectedProject.name }
-      })
-    },
     getImageTags(tag) {
       const [key] = Object.keys(tag)
       return key

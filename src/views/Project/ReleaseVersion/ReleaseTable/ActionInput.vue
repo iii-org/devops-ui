@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import variables from '@/styles/theme/variables.scss'
 
 export default {
@@ -60,6 +61,9 @@ export default {
       isShowInput: false,
       isSave: false
     }
+  },
+  computed: {
+    ...mapGetters(['selectedProject'])
   },
   methods: {
     showInput() {
@@ -80,6 +84,12 @@ export default {
       this.isShowInput = false
       this.isSave = false
       this.model = ''
+    },
+    handleToTestReport(commitId) {
+      this.$router.push({
+        name: 'TestReport',
+        params: { commitId, projectName: this.selectedProject.name }
+      })
     }
   }
 }
