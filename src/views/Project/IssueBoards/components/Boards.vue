@@ -34,6 +34,7 @@
         <ProjectIssueDetail
           :props-issue-id="relationIssue.id"
           :is-in-dialog="true"
+          :is-from-board="true"
           @delete="handleRelationDelete"
         />
       </div>
