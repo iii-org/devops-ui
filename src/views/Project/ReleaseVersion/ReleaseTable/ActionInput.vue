@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!isShowInput">
-      <el-tooltip content="備註標籤" placement="top">
+      <el-tooltip :content="$t('Release.Tags')" placement="top">
         <em
           class="el-icon-price-tag cursor-pointer mr-2"
           @click="showInput"
@@ -14,7 +14,7 @@
           @click="handleToTestReport(scope.row.commit)"
         />
       </el-tooltip>
-      <el-tooltip content="自定義路徑" placement="top">
+      <el-tooltip :content="$t('Release.CustomPath')" placement="top">
         <em
           class="el-icon-edit cursor-pointer"
           @click="showInput"
@@ -24,7 +24,7 @@
     <el-input
       v-else
       v-model="model"
-      placeholder="請輸入..."
+      :placeholder="$t('general.PleaseInput')"
     >
       <em
         v-if="!isSave"

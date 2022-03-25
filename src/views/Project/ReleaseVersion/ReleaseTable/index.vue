@@ -14,6 +14,7 @@
         <el-table-column
           :label="$t('TestCase.Index')"
           type="index"
+          width="100"
           sortable
         />
         <el-table-column
@@ -108,8 +109,9 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="備註標籤"
+          :label="$t('Release.Tags')"
           sortable
+          width="100"
         >
           <template slot-scope="scope">
             <el-tooltip
@@ -129,6 +131,7 @@
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
+          width="200"
         >
           <template slot-scope="scope">
             <ActionInput :scope="scope" />

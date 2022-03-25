@@ -2,7 +2,7 @@
   <div class="mb-3">
     <div class="flex justify-between items-center">
       <div class="flex items-center">
-        <h3 class="mr-3">映像檔清單</h3>
+        <h3 class="mr-3">{{ $t('Release.ImageList') }}</h3>
         <div>
           <el-select
             v-if="branches.length > 0"
@@ -24,7 +24,7 @@
           v-model="hasAllCommit"
           active-color="#13ce66"
           inactive-color="#ff4949"
-          active-text="呈現所有提交"
+          :active-text="$t('Release.RenderAllCommit')"
           class="mr-2"
           @change="onSwitch"
         />
@@ -32,7 +32,7 @@
           v-model="hasImage"
           active-color="#13ce66"
           inactive-color="#ff4949"
-          active-text="僅有映像檔"
+          :active-text="$t('Release.OnlyImage')"
           @change="onSwitch"
         />
       </div>
@@ -48,11 +48,11 @@
     >
       <el-table-column
         prop="branch"
-        label="程式分支"
+        :label="$t('general.Branch')"
       />
       <el-table-column
         prop="commit_id"
-        label="程式提交碼"
+        :label="$t('general.Commit')"
       />
       <el-table-column label="Image">
         <template slot-scope="scope">
@@ -61,12 +61,12 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="提交時間">
+      <el-table-column :label="$t('Release.CommitTime')">
         <template slot-scope="scope">
           <span>{{ getPushTime(scope.row.push_time) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="釋版版號">
+      <el-table-column :label="$t('Release.TableReleaseVersion')">
         <template slot-scope="scope">
           <span>{{ scope.row.tag ? scope.row.tag : '-' }}</span>
         </template>

@@ -28,7 +28,7 @@
       </span>
     </div>
     <el-skeleton v-if="isLoading" :rows="6" animated class="mt-5" />
-    <el-empty v-else-if="hasNoIssue" description="此版本尚未建立議題" />
+    <el-empty v-else-if="hasNoIssue" :description="$t('Release.NoIssueWarning')" />
     <IssuesTable
       v-else-if="!isLoading && hasOpenIssue"
       ref="issueList"
@@ -47,7 +47,7 @@
         :disabled="disabled"
         @click="onNext"
       >
-        下一步
+        {{ $t('Release.Next') }}
         <i class="el-icon-right" />
       </el-button>
     </div>
@@ -65,7 +65,6 @@ export default {
     IssuesTable: () => import('./IssuesTable'),
     ClosedIssues: () => import('./ClosedIssues')
   },
-  // inject: ['releaseData', 'updateData'],
   props: {
     releaseData: {
       type: Object,

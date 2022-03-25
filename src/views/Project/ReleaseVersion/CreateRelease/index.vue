@@ -2,25 +2,25 @@
   <div>
     <el-card>
       <el-steps :active="stepActive" finish-status="success" align-center>
-        <el-step title="議題版本">
+        <el-step :title="$t('Release.IssueVersion')">
           <template v-if="stepActive === 0" slot="description">
             <span>
-              包版前請確認所有議題單是否已完結關閉，若未完全關閉，可於下方操作移轉或直接關閉，若尚未設定版本，請至上方
-              <el-button type="text" size="mini" @click="isShowVersions = true">版本管理</el-button>
-              進行版本設定。
+              {{ $t('Release.IssueVersionWarning1') }}
+              <el-button type="text" size="mini" @click="isShowVersions = true">{{ $t('Version.Manage') }} </el-button>
+              {{ $t('Release.IssueVersionWarning2') }}
             </span>
           </template>
         </el-step>
-        <el-step title="程式/映像檔版本">
+        <el-step :title="$t('Release.ImageVersion')">
           <template v-if="stepActive === 1" slot="description">
             <span>
-              請指定程式或映像檔版本，若無程式開發或不需更改，則可直接跳過。
+              {{ $t('Release.ImageVersionWarning') }}
             </span>
           </template>
         </el-step>
-        <el-step title="打包版本">
+        <el-step :title="$t('Release.ReleaseVersion')">
           <template v-if="stepActive === 2" slot="description">
-            <span>請確認以下程式、映像檔、議題版本是否有誤。</span>
+            <span>{{ $t('Release.ReleaseVersionWarning') }}</span>
           </template>
         </el-step>
       </el-steps>

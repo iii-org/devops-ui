@@ -4,16 +4,16 @@
       <el-form>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="議題版本">
-              <span>本版本共完成</span>
+            <el-form-item :label="$t('Release.IssueVersion')">
+              <span>{{ $t('Release.issueCount') }}</span>
               <span style="color: #409eff;">{{ updateData.issues.length }}</span>
-              <span>議題</span>
+              <span>{{ $t('Issue.Issue') }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="程式/映像檔">
+            <el-form-item :label="$t('Release.CommitAndImage')">
               <svg-icon icon-class="ion-git-commit-outline" />
               <span>{{ releaseData.commit }} ({{ releaseData.branch }}) / </span>
               <span
@@ -51,7 +51,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="16">
-            <el-form-item label="映像檔路徑" class="flex cursor-pointer">
+            <el-form-item :label="$t('Release.ImagePath')" class="flex cursor-pointer">
               <el-tooltip content="project/branch:version" placement="top">
                 <el-input v-model="imagePath">
                   <template slot="prepend">
@@ -69,14 +69,14 @@
                 v-model="note"
                 class="w-full"
                 type="textarea"
-                placeholder="請輸入版本說明，也可透過上方之議題版本內的已關閉議題清單進行複製、貼到此處。"
+                :placeholder="$t('Release.NotePlaceholder')"
                 :rows="8"
               />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div style="color: red; font-size: 8px;">*包版版號與映像檔路徑皆可多個，唯版本路徑僅可至多兩個</div>
+      <div style="color: red; font-size: 8px;">*{{ $t('Release.ReleaseWarning') }}</div>
     </div>
     <div class="text-right">
       <el-button
@@ -84,13 +84,13 @@
         @click="onBack"
       >
         <i class="el-icon-back" />
-        上一步
+        {{ $t('Release.Previous') }}
       </el-button>
       <el-button
         :disabled="!main || isLoading"
         @click="release"
       >
-        開始包版
+        {{ $t('Release.startRelease') }}
       </el-button>
     </div>
   </el-card>

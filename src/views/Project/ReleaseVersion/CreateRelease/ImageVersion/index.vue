@@ -8,7 +8,7 @@
         class="w-full"
       >
         <el-row>
-          <el-col :span="8">
+          <el-col :span="9">
             <el-form-item :label="$t('Git.Branch')" style="padding-right: 10px;">
               <el-select
                 v-if="branches.length > 0"
@@ -26,15 +26,15 @@
               <div v-else>{{ $t('general.Nothing') }}</div>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="9">
             <el-form-item :label="$t('Git.Commit')">
               <el-input v-if="commitId" v-model="commitId" disabled />
               <div v-else>{{ $t('general.Nothing') }}</div>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="5">
             <el-form-item>
-              {{ $t('PodsList.Image') }}:
+              <span style="color: #606266; font-weight: 700;">{{ $t('PodsList.Image') }}:</span>
               <span
                 v-if="hasHarborTag"
                 class="custom-black"
@@ -60,7 +60,7 @@
         style="height: 40px;"
         @click="isOpenTable = !isOpenTable"
       >
-        {{ isOpenTable ? '確定選擇' : '修改映像檔' }}
+        {{ isOpenTable ? $t('general.ok') : $t('Release.ModifyImage') }}
       </el-button>
     </div>
     <ImageList
@@ -75,14 +75,14 @@
         @click="onBack"
       >
         <i class="el-icon-back" />
-        上一步
+        {{ $t('Release.Previous') }}
       </el-button>
       <el-button
         v-if="hasHarborTag"
         :disabled="isLoading"
         @click="onNext"
       >
-        下一步
+        {{ $t('Release.Next') }}
         <i class="el-icon-right" />
       </el-button>
       <el-popconfirm
@@ -98,7 +98,7 @@
           slot="reference"
           :disabled="isLoading"
         >
-          下一步
+          {{ $t('Release.Next') }}
           <i class="el-icon-right" />
         </el-button>
       </el-popconfirm>
