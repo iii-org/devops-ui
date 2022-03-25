@@ -206,6 +206,10 @@ $light_gray: #eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+
+    .el-button {
+      border: 1px solid #409eff;
+    }
   }
 
   .tips {
