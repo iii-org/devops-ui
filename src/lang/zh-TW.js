@@ -234,7 +234,11 @@ export default {
     High: '高',
     Medium: '中',
     Low: '低',
-    Run: '執行'
+    Run: '執行',
+    ForceDelete: '刪除',
+    Fix: '修復',
+    Connected: '連線成功',
+    Disconnected: '連線失敗'
   },
   Notify: {
     Updated: '已更新',
@@ -266,7 +270,9 @@ export default {
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
-    ChangeProjectManager: '確認是否要變更專案經理人。'
+    ChangeProjectManager: '確認是否要變更專案經理人。',
+    ConnectSocket: '看板正在連接 Socket...',
+    UpdateKanban: '{issueName} 正在更新...'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -691,7 +697,9 @@ export default {
         all_download: '全部下載',
         organization: '組織',
         project_start_date: '計畫起始日',
-        project_due_date: '計畫結束日'
+        project_due_date: '計畫結束日',
+        disable_tooltip: '僅本專案經理可啟用本專案',
+        enable_tooltip: '僅本專案經理可停用本專案'
       }
     }
   },
@@ -962,7 +970,6 @@ export default {
     releaseNote: '版本說明',
     releaseVersionName: '包版版號',
     selectMainVersion: '請選擇主版本',
-    startRelease: '開始包版',
     copyIssues: '複製選中議題名稱到剪貼簿',
     allCategories: '所有種類',
     batchClose: '批次關閉',
@@ -973,10 +980,10 @@ export default {
     selectMoveToVersion: '請選擇版本',
     batchMoveDialogHint: '將批次搬移 {0} 個議題',
     releaseDone: '版本 {0} 包版成功。',
-    startPackageVersion: '包版作業',
-    stopPackageVersion: '取消包版',
+    startRelease: '開始包版',
+    stopRelease: '取消包版',
     checkIssue: '檢查議題',
-    packageVersionSettings: '包版作業設定-'
+    releaseSettings: '包版作業設定-'
   },
   SystemVersion: {
     Source: '系統模組',

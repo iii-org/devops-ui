@@ -127,7 +127,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     },
     boardObject: {
       type: Object,
@@ -234,6 +234,7 @@ export default {
           // deep copy & remove field with empty value
           const data = this.cleanFormData()
           await this.sendSaveAction(data)
+          this.$emit('after-add')
         }
         return valid
       })
@@ -271,7 +272,6 @@ export default {
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
       this.setFilterValue()
-      this.$emit('after-add')
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true
@@ -280,6 +280,7 @@ export default {
     },
     loadingUpdate(value) {
       this.LoadingConfirm = value
+      if (value) this.$emit('after-add')
     }
   }
 }

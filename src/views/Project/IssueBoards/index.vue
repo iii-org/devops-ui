@@ -139,6 +139,10 @@
           <em class="el-icon-arrow-down el-icon--right" />
         </el-button>
       </el-popover>
+      <el-button slot="button" :type="(socket.connected)? 'success': 'danger'" @click="connectSocket()">
+        <div class="dot inline-block" :class="(socket.connected)? 'bg-success': 'bg-danger'" />
+        {{ (socket.connected) ? $t('general.Connected') : $t('general.Disconnected') }}
+      </el-button>
       <el-divider direction="vertical" />
       <el-input
         v-if="searchVisible"
@@ -186,7 +190,6 @@
       :assigned_to="assigned_to"
       @getRelativeList="getRelativeList"
       @updateIssueList="updateIssueList"
-      @loadData="loadData"
       @updateData="updateData"
     />
   </div>
@@ -209,6 +212,7 @@ import ElSelectAll from '@/components/ElSelectAll'
 import { Status, Tracker, Priority, CustomFilter } from '@/components/Issue'
 import axios from 'axios'
 import SaveFilterButton from '@/components/Issue/components/SaveFilterButton'
+import { io } from 'socket.io-client'
 
 export default {
   name: 'IssueBoards',
@@ -229,7 +233,39 @@ export default {
         dimension: 'status',
         value: []
       },
-      filterOptions: Object.freeze([
+      filterValue: {},
+      originFilterValue: {},
+      displayClosed: false,
+      fixed_version_closed: false,
+      projectIssueList: [],
+      projectIssueQueue: {},
+      classifyIssueList: {},
+      fixed_version: [],
+      assigned_to: [],
+      tags: [],
+      relativeIssueList: [],
+      searchVisible: false,
+      keyword: null,
+      socket: io(`/issues/websocket`, { // production socket
+        reconnectionAttempts: 5
+      })
+      // socket: io(`${process.env.VUE_APP_BASE_API}/issues/websocket`, { // development socket
+      //   reconnectionAttempts: 5
+      // })
+    }
+  },
+  computed: {
+    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
+    contextOptions() {
+      const result = {}
+      const getOptions = ['assigned_to', 'fixed_version', 'tags']
+      getOptions.forEach((item) => {
+        result[item] = this[item]
+      })
+      return result
+    },
+    filterOptions() {
+      return Object.freeze([
         {
           id: 1,
           label: this.$t('Issue.FilterDimensions.status'),
@@ -269,31 +305,7 @@ export default {
           placeholder: 'Priority',
           tag: true
         }
-      ]),
-      filterValue: {},
-      originFilterValue: {},
-      displayClosed: false,
-      fixed_version_closed: false,
-      projectIssueList: [],
-      projectIssueQueue: {},
-      classifyIssueList: {},
-      fixed_version: [],
-      assigned_to: [],
-      tags: [],
-      relativeIssueList: [],
-      searchVisible: false,
-      keyword: null
-    }
-  },
-  computed: {
-    ...mapGetters(['selectedProjectId', 'userId', 'tracker', 'status', 'priority', 'fixedVersionShowClosed']),
-    contextOptions() {
-      const result = {}
-      const getOptions = ['assigned_to', 'fixed_version', 'tags']
-      getOptions.forEach((item) => {
-        result[item] = this[item]
-      })
-      return result
+      ])
     },
     groupByOptions() {
       return this.getStatusSort.map((item, idx) => ({
@@ -389,7 +401,9 @@ export default {
   },
   watch: {
     selectedProjectId: {
-      async handler(id) {
+      async handler(newId, oldId) {
+        this.socket.emit('leave', { project_id: oldId })
+        this.socket.emit('join', { project_id: newId })
         await this.onCleanKeyWord()
         await this.fetchInitData()
       },
@@ -404,6 +418,13 @@ export default {
       this.setFixedVersionShowClosed({ board: value })
       this.loadVersionList(value)
     }
+  },
+  async created() {
+    this.connectSocket()
+    await this.fetchInitData()
+  },
+  beforeDestroy() {
+    this.socket.disconnect()
   },
   methods: {
     ...mapActions('projects', [
@@ -515,6 +536,7 @@ export default {
       const getIssueList = this.getIssueList()
       this.projectIssueList = []
       await this.setIssueList(getIssueList)
+      this.updateData()
       this.projectIssueQueue = {}
       this.isLoading = false
     },
@@ -560,6 +582,7 @@ export default {
       this.fixed_version = [{ name: this.$t('Issue.VersionUndecided'), id: 'null' }, ...versionList]
       const version = this.getFilteredVersion
       version.length > 0 ? this.setFilterValue(version) : this.$delete(this.originFilterValue, 'fixed_version')
+      this.onChangeFilter()
     },
     setFilterValue(version) {
       const sessionValue = sessionStorage.getItem('issueFilter')
@@ -646,7 +669,6 @@ export default {
       })
     },
     sortIssue() {
-      // const sortPriority = (a, b) => (a.priority.id - b.priority.id)
       const sortUpdateOn = (a, b) => new Date(b.updated_on) - new Date(a.updated_on)
       Object.keys(this.classifyIssueList).forEach((item) => {
         this.$set(this.classifyIssueList, item, this.classifyIssueList[item].sort(sortUpdateOn))
@@ -712,6 +734,9 @@ export default {
       if (this.filterValue['tags'] && this.filterValue['tags'].length <= 0) {
         this.$delete(this.filterValue, 'tags')
       }
+      if (Object.prototype.hasOwnProperty.call(this.filterValue, this.groupBy.dimension)) {
+        this.$delete(this.filterValue, this.groupBy.dimension)
+      }
       storedFilterValue['board'] = this.filterValue
       storedKeyword['board'] = this.keyword
       storedDisplayClosed['board'] = this.displayClosed
@@ -724,7 +749,8 @@ export default {
       this.$set(this.groupBy, 'dimension', value)
       this.$set(this.groupBy, 'value', [])
       this.$refs['groupByValue'].selected = []
-      this.updatedByGroupBy(loadData)
+      this.updatedByGroupBy()
+      this.onChangeFilter()
     },
     onChangeGroupByValue(value, loadData) {
       this.$set(this.groupBy, 'value', value)
@@ -749,6 +775,68 @@ export default {
     },
     resetSaveFilterButtons() {
       this.$refs.saveFilterButton.reset()
+    },
+    setSocketListener() {
+      const _this = this
+      this.socket.on('connect', () => {
+        this.$message({
+          message: this.$t('Notify.ConnectSocket'),
+          type: 'success'
+        })
+      })
+      this.socket.on('update_issue', async (data) => {
+        for (const idx in data) {
+          // console.log('update_issue', data[idx])
+          data[idx] = _this.socketDataFormat(data[idx])
+          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          this.$set(this.projectIssueList, findChangeIndex, data[idx])
+          this.updateData()
+          this.showUpdateMessage(data[idx])
+        }
+      })
+      this.socket.on('delete_issue', async (data) => {
+        const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+        this.$delete(this.projectIssueList, findChangeIndex)
+        this.updateData()
+        this.showUpdateMessage(data)
+      })
+      this.socket.on('add_issue', async data => {
+        for (const idx in data) {
+          // console.log('add_issue', data[idx])
+          data[idx] = _this.socketDataFormat(data[idx])
+          const findChangeIndex = this.projectIssueList.findIndex(issue => parseInt(data[idx].id) === parseInt(issue.id))
+          if (findChangeIndex !== -1) {
+            this.$set(this.projectIssueList, findChangeIndex, data[idx])
+          } else {
+            this.$set(this.projectIssueList, this.projectIssueList.length, data[idx])
+          }
+          this.updateData()
+          this.showUpdateMessage(data[idx])
+        }
+      })
+    },
+    socketDataFormat(data) {
+      Object.keys(data).forEach(key => {
+        const splitKey = key.split('_id')
+        if (splitKey.length > 1) {
+          const findObject = this[splitKey[0]].find(item => item.id === parseInt(data[key]) && item.login !== '-Me-')
+          if (findObject) {
+            data[splitKey[0]] = findObject
+          }
+        }
+      })
+      return data
+    },
+    showUpdateMessage(data) {
+      this.$message({
+        message: this.$t('Notify.UpdateKanban', { issueName: data.name }),
+        type: 'success'
+      })
+    },
+    async connectSocket() {
+      this.setSocketListener()
+      await this.socket.connect()
+      await this.socket.emit('join', { project_id: this.selectedProjectId })
     }
   }
 }

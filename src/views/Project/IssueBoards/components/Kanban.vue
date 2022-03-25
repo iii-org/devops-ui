@@ -314,7 +314,7 @@ export default {
     },
     boardObject: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     list: {
       type: Array,
@@ -330,7 +330,7 @@ export default {
     },
     addIssue: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -517,7 +517,8 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$emit('relationIssueId', id)
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement

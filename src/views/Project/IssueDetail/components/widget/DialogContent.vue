@@ -200,11 +200,13 @@ export default {
     filterTag() {
       return function(detail) {
         let type = 'general.Add'
-        if (detail.name === 'tag') {
-          if (detail.old_value.name) type = 'general.Delete'
-        } else {
-          if (detail.old_value && detail.new_value) type = 'general.Edit'
-          else if (detail.old_value) type = 'general.Delete'
+        if (detail.old_value) {
+          if (detail.name === 'tag') {
+            if (detail.old_value.name) type = 'general.Delete'
+          } else {
+            if (detail.old_value && detail.new_value) type = 'general.Edit'
+            else if (detail.old_value) type = 'general.Delete'
+          }
         }
         return type
       }

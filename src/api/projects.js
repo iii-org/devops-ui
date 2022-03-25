@@ -37,15 +37,29 @@ export const runPipelineByBranch = (rId, data) => request.post(`/pipelines/${rId
 export const getParticipateProject = (user_id) => request.get(`/projects_by_user/${user_id}`)
 export const downloadProjectFile = (params = { id: '', filename: '', project_id: '' }) => request.get(`/download`, { params, responseType: 'arraybuffer' })
 export const uploadProjectFile = (pId, data) => request.post(`/project/${pId}/file`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
+export const getCalculateProjectList = (project_ids) =>
+  request.get(`/project/list/caculate?project_ids=${project_ids}`)
 export const getMyProjectList = async (simple, params) => {
   if (!params) params = {}
   if (simple) params['simple'] = simple
   const res = await request.get('/project/list', { params })
   const ret = []
-  for (const project of res.data.project_list) {
-    ret.push(new Project(project))
+  if (Object.prototype.hasOwnProperty.call(res.data.project_list, 'page')) {
+    for (const project of res.data.project_list.project_list) {
+      ret.push(new Project(project))
+    }
+    return {
+      projects: ret,
+      page: res.data.project_list.page
+    }
+  } else {
+    for (const project of res.data.project_list) {
+      ret.push(new Project(project))
+    }
+    return {
+      projects: ret
+    }
   }
-  return ret
 }
 export const getTestReport = (reportId) => request.get(`/checkmarx/report/${reportId}`, { responseType: 'blob' })
 export const addProjectTags = (data) => request.post(`/tags`, data, { headers: { 'Content-Type': 'multipart/form-data' }})
