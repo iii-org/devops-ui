@@ -94,6 +94,7 @@ stages:
       - socket
       - temp
       - tmprelease
+      - sonarqubelogs
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -129,6 +130,7 @@ stages:
       - socket
       - temp
       - tmprelease
+      - sonarqubelogs
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -175,6 +177,7 @@ stages:
       - socket
       - temp
       - tmprelease
+      - sonarqubelogs
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -214,6 +217,7 @@ stages:
       - socket
       - temp
       - tmprelease
+      - sonarqubelogs
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -252,6 +256,7 @@ stages:
       - socket
       - temp
       - tmprelease
+      - sonarqubelogs
 - name: Test--ZAP
   iiidevops: zap
   steps:
