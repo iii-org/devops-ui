@@ -946,7 +946,8 @@ export default {
     sqale_rating: 'Maintainability Rating',
     security_rating: 'Security Rating',
     security_hotspots: 'Security Hotspots',
-    alert_status: 'Quality Gate Status'
+    alert_status: 'Quality Gate Status',
+    ScanLogs: 'Scan Logs'
   },
   Log: {
     duration: 'Duration',

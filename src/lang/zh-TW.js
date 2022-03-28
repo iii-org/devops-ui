@@ -939,7 +939,8 @@ export default {
     sqale_rating: '可維護性等級',
     security_rating: '安全等級',
     security_hotspots: '安全熱點',
-    alert_status: '品質狀態'
+    alert_status: '品質狀態',
+    ScanLogs: '掃描記錄'
   },
   Log: {
     duration: '消耗時間',
