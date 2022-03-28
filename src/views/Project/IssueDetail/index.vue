@@ -444,7 +444,8 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.userRole === 'QA'
+      // return this.userRole === 'QA'
+      return this.$route.params.disableButton
     }
   },
   watch: {

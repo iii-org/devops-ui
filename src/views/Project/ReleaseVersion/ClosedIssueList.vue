@@ -286,9 +286,9 @@ export default {
     this.fixed_version_closed = true
     await this.loadSelectionList()
   },
-  mounted() {
-    this.getInitPage()
-  },
+  // mounted() {
+  //   this.getInitPage()
+  // },
   methods: {
     ...mapActions('projects', ['setFixedVersionShowClosed']),
     handleBackPage() {

@@ -108,7 +108,7 @@
             <span v-if="scope.row.docker.length === 0">{{ $t('Issue.NoImage') }}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           :label="$t('Release.Tags')"
           sortable
           width="100"
@@ -127,14 +127,21 @@
               </span>
             </el-tooltip>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
           width="200"
         >
           <template slot-scope="scope">
-            <ActionInput :scope="scope" />
+            <!-- <ActionInput :scope="scope" /> -->
+            <el-tooltip :content="$t('general.Report')" placement="top">
+              <em
+                v-show="scope.row.commit"
+                class="el-icon-tickets cursor-pointer mr-2"
+                @click="handleToTestReport(scope.row.commit)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">
@@ -160,9 +167,9 @@ import { UTCtoLocalTime } from '@/filters'
 
 export default {
   name: 'ReleaseTable',
-  components: {
-    ActionInput: () => import('./ActionInput')
-  },
+  // components: {
+  // ActionInput: () => import('./ActionInput')
+  // },
   mixins: [BasicData, Pagination, SearchBar],
   model: {
     prop: 'keyword',
@@ -216,14 +223,20 @@ export default {
     UTCtoLocalTime(time) {
       return UTCtoLocalTime(time)
     },
-    getImageTags(tag) {
-      const [key] = Object.keys(tag)
-      return key
-    },
-    getImageTagsTooltip(tag) {
-      const [[value]] = Object.values(tag)
-      return value
+    handleToTestReport(commitId) {
+      this.$router.push({
+        name: 'TestReport',
+        params: { commitId, projectName: this.selectedProject.name }
+      })
     }
+    // getImageTags(tag) {
+    //   const [key] = Object.keys(tag)
+    //   return key
+    // },
+    // getImageTagsTooltip(tag) {
+    //   const [[value]] = Object.values(tag)
+    //   return value
+    // }
   }
 }
 </script>
