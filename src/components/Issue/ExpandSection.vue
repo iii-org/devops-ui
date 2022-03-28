@@ -8,6 +8,7 @@
           <li class="issue-item">
             <IssueRow
               :issue="issue.parent"
+              :is-button-disabled="isButtonDisabled"
               :reload="reload"
               @click-title="handleEdit"
               @show-context-menu="handleContextMenu(issue.parent, '', $event)"
@@ -23,6 +24,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :is-button-disabled="isButtonDisabled"
                 :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
@@ -39,6 +41,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :is-button-disabled="isButtonDisabled"
                 :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
@@ -76,6 +79,10 @@ export default {
     reload: {
       type: [String, Number],
       default: 0
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

@@ -137,6 +137,7 @@
                     :issue="$data"
                     :family="countRelationIssue > 0"
                     :popup="true"
+                    :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
                     @update-list="fetchIssueLink"
                     @on-context-menu="onContextMenu"

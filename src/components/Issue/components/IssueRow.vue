@@ -23,7 +23,7 @@
         :title="$t('Issue.RemoveIssueRelation')"
         @confirm="removeConfirm(issue)"
       >
-        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove">
+        <el-button slot="reference" type="danger" size="mini" icon="el-icon-remove" :disabled="isButtonDisabled">
           {{ $t('Issue.Unlink') }}
         </el-button>
       </el-popconfirm>
@@ -46,6 +46,10 @@ export default {
     reload: {
       type: [String, Number],
       default: 0
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
