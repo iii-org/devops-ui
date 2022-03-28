@@ -394,7 +394,7 @@ export default {
         await this.listData[index].close()
       }
       this.multipleSelection = []
-      this.$emit('onInit')
+      if (!this.showClosedChildrenIssueWarning) this.$emit('onInit')
       this.listLoading = false
     },
     async batchMove() {
