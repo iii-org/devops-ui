@@ -96,6 +96,7 @@ stages:
       - tmprelease
       - sonarqubelogs
       - themebyclay
+      - userlist
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -133,6 +134,7 @@ stages:
       - tmprelease
       - sonarqubelogs
       - themebyclay
+      - userlist
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -181,6 +183,7 @@ stages:
       - tmprelease
       - sonarqubelogs
       - themebyclay
+      - userlist
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -222,6 +225,7 @@ stages:
       - tmprelease
       - sonarqubelogs
       - themebyclay
+      - userlist
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -262,6 +266,7 @@ stages:
       - tmprelease
       - sonarqubelogs
       - themebyclay
+      - userlist
 - name: Test--ZAP
   iiidevops: zap
   steps:
