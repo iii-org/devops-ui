@@ -64,12 +64,13 @@
       >
         <el-button
           id="dialog-btn-cancel"
+          class="buttonSecondaryReverse"
           @click="handleAdvancedClose"
         >{{ $t('general.Cancel') }}</el-button>
         <el-button
           id="dialog-btn-confirm"
           :loading="addTopicDialog.LoadingConfirm"
-          type="primary"
+          class="buttonPrimary"
           @click="handleAdvancedSave"
         >
           {{ $t('general.Confirm') }}
@@ -579,7 +580,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../styles/variables';
+@import 'src/styles/theme/variables.scss';
 
 .app-container {
   @apply h-screen overflow-hidden;

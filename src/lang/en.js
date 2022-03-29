@@ -208,6 +208,7 @@ export default {
     Transfer: 'Transfer',
     DueDate: 'Due Date',
     Branch: 'Branch',
+    Commit: 'Commit',
     Total: 'Total',
     AdvancedSettings: '》Advanced Settings',
     year: 'year',
@@ -234,7 +235,11 @@ export default {
     High: 'High',
     Medium: 'Medium',
     Low: 'Low',
-    Run: 'Run'
+    Run: 'Run',
+    ForceDelete: 'Force Delete',
+    Fix: 'Fix',
+    Connected: 'Connected',
+    Disconnected: 'Disconnected'
   },
   Notify: {
     Updated: 'update successful',
@@ -268,7 +273,9 @@ export default {
       'Please ensure that the status of the Plugin switch with the same name is the same before saving and executing.',
     pluginRepeatMessage:
       'The red background indicates that there are duplicate project settings in the same branch. Please make sure that the settings are consistent (as on or off) to ensure that the Pipeline operates normally.',
-    ChangeProjectManager: 'Confirming if you want to change the project manager?'
+    ChangeProjectManager: 'Confirming if you want to change the project manager?',
+    ConnectSocket: 'Kanban is connecting Socket...',
+    UpdateKanban: '{issueName} is updating...'
   },
   RuleMsg: {
     PleaseInput: 'Please input',
@@ -378,7 +385,8 @@ export default {
     UploadWarning: 'A file name cannot contain any of'
   },
   Version: {
-    Manage: 'Manage Project Versions',
+    ProjectManage: 'Manage Project Versions',
+    Manage: 'Manage Versions',
     AddVersion: 'Add Version',
     EditVersion: 'Edit Version',
     Duration: 'Duration',
@@ -420,6 +428,7 @@ export default {
     EndDate: 'End Date',
     Description: 'Issue Description',
     due_date: '@:Issue.EndDate',
+    SelectProject: 'Select Project',
     SelectDate: 'Select Date',
     SelectType: 'Select Type',
     SelectTag: 'Select Tag',
@@ -674,7 +683,7 @@ export default {
         rate: 'Pass rate'
       },
       ProjectList: {
-        NAME: 'Project list',
+        NAME: 'Project List',
         user_name: 'PM',
         unclosed_count: '# unsolved',
         project_count: '# projects',
@@ -694,8 +703,10 @@ export default {
         excel_download: 'Download EXCEL',
         all_download: 'Download all',
         organization: 'Organization',
-        project_start_date: 'Project start date',
-        project_due_date: 'Project due date'
+        project_start_date: 'Project Start Date',
+        project_due_date: 'Project Due Date',
+        disable_tooltip: 'Only Project Owner can enable this project',
+        enable_tooltip: 'Only Project Owner can disable this project'
       }
     }
   },
@@ -905,6 +916,7 @@ export default {
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
     SystemTemplates: 'Templates',
+    SystemConfigs: 'System Configs',
     AddPlugin: 'Add Plugin',
     AddParams: 'Add Params'
   },
@@ -968,7 +980,6 @@ export default {
     releaseNote: '[Release Note]',
     releaseVersionName: 'Version name',
     selectMainVersion: 'Please main version',
-    startRelease: 'Start releasing',
     copyIssues: 'Copy issue names to clipboard',
     allCategories: 'All',
     batchClose: 'Batch close',
@@ -979,10 +990,33 @@ export default {
     selectMoveToVersion: 'Please select version',
     batchMoveDialogHint: 'Will batch move {0} issues',
     releaseDone: 'Done releasing version {0}.',
-    startPackageVersion: 'Start Package Version',
-    stopPackageVersion: 'Stop Package Version',
+    startRelease: 'Start Release',
+    stopRelease: 'Stop Release',
     checkIssue: 'Check Issues',
-    packageVersionSettings: 'Package Version Settings'
+    releaseSettings: 'Release Settings',
+    IssueVersion: 'Issue Version',
+    ImageVersion: 'Commit/Image Version',
+    ReleaseVersion: 'Release Version',
+    IssueVersionWarning1: 'Before releasing version, please confirm whether all the issues have been closed. If it is not completely closed, you can transfer it or close it directly. If the version has not been set, please go to the',
+    IssueVersionWarning2: 'above to set the version.',
+    ImageVersionWarning: 'Please specify the version of the program or image file. If there is no program development or no changes are required, you can skip it directly.',
+    ReleaseVersionWarning: 'Please confirm whether the following programs, image files, and issue versions are correct.',
+    ImageList: 'Image List',
+    RenderAllCommit: 'Render all commits',
+    OnlyImage: 'Image file only',
+    CommitTime: 'Commit Time',
+    TableReleaseVersion: 'Release Version',
+    Previous: 'Previous',
+    Next: 'Next',
+    ModifyImage: 'Modify Image File',
+    NoIssueWarning: 'Issues have not been created for this version',
+    CommitAndImage: 'Commit/Image',
+    ImagePath: 'Image File Path',
+    NotePlaceholder: 'Please enter a version note, or copy and paste here from the list of closed issues in the issue version above.',
+    ReleaseWarning: 'There can be multiple versions and image file paths, but only two version paths can be at most',
+    Tags: 'Tags',
+    CustomPath: 'Custom Path',
+    StopReleaseWarning: 'Please check if the image file path matches the format.'
   },
   SystemVersion: {
     Source: 'Source',
@@ -1167,6 +1201,15 @@ export default {
     NotifyRun: `Synchronizing Templates, it might takes 3 - 10 mins depends on the networking, please come back later or click in the 'Execution Logs' for details.`,
     TemplateSyncExecLogs: 'Template Synchronization Execute Logs',
     VerifyGithubToken: 'Verifying given GitHub token...'
+  },
+  SystemConfigs: {
+    SystemConfig: 'System Config',
+    Content: 'Status / Content',
+    FileType: 'File type',
+    GitLabExternalAccess: 'GitLab external access',
+    UploadFileTypes: 'Upload file types',
+    FileExtension: 'File extension',
+    includesMimeType: 'Data already includes {mimeType}'
   },
   Kanban: {
     ChangeIssueError: 'Change Issue Error',

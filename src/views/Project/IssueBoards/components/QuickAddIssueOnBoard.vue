@@ -52,12 +52,13 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            type="primary"
+            class="buttonPrimary"
             :loading="LoadingConfirm"
             @click="handleSave"
           >{{ $t('general.Save') }}</el-button>
           <el-button
             :disabled="LoadingConfirm"
+            class="buttonSecondaryReverse"
             @click="advancedAddIssue"
           >{{
             $t('general.AdvancedSettings')
@@ -91,12 +92,13 @@
       >
         <el-button
           id="dialog-btn-cancel"
+          class="buttonSecondaryReverse"
           @click="handleAdvancedClose"
         >{{ $t('general.Cancel') }}</el-button>
         <el-button
           id="dialog-btn-confirm"
           :loading="LoadingConfirm"
-          type="primary"
+          class="buttonPrimary"
           @click="handleAdvancedSave"
         >
           {{ $t('general.Confirm') }}
@@ -127,7 +129,7 @@ export default {
     },
     saveData: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     },
     boardObject: {
       type: Object,
@@ -234,6 +236,7 @@ export default {
           // deep copy & remove field with empty value
           const data = this.cleanFormData()
           await this.sendSaveAction(data)
+          this.$emit('after-add')
         }
         return valid
       })
@@ -271,7 +274,6 @@ export default {
     handleAdvancedSave() {
       this.$refs['AddIssue'].handleSave()
       this.setFilterValue()
-      this.$emit('after-add')
     },
     advancedAddIssue() {
       this.addTopicDialogVisible = true
@@ -280,6 +282,7 @@ export default {
     },
     loadingUpdate(value) {
       this.LoadingConfirm = value
+      if (value) this.$emit('after-add')
     }
   }
 }

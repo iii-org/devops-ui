@@ -41,7 +41,7 @@
                 slot="reference"
                 size="mini"
                 type="danger"
-                :disabled="scope.row.is_iii"
+                :disabled="!scope.row.is_iii"
               >
                 <em class="el-icon-delete" />
                 {{ $t('general.Delete') }}

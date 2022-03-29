@@ -5,6 +5,11 @@ Vue.use(Router)
 
 import Layout from '@/layout'
 import parentBlank from '@/layout/components/parentBlank'
+// import pmRoute from './pm'
+// import adRoute from './ad'
+// import rdRoute from './rd'
+// import qaRoute from './qa'
+// import allRoutes from './all'
 
 export const constantRoutes = [
   {
@@ -20,6 +25,15 @@ export const constantRoutes = [
     hidden: true
   }
 ]
+
+// export const asyncRoutes = allRoutes
+
+// export const asyncRoutes = (role) => {
+//   if (role === 'QA') return qaRoute
+//   else if (role === 'Administrator') return adRoute
+//   else if (role === 'Engineer') return rdRoute
+//   else if (role === 'Project Manager') return pmRoute
+// }
 
 export const asyncRoutes = [
   {

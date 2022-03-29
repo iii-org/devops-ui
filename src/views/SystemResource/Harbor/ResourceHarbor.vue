@@ -56,7 +56,7 @@
         >
           <template slot-scope="scope">
             <el-link
-              type="primary"
+              class="linkTextColor"
               target="_blank"
               style="font-size: 16px"
               :underline="false"
@@ -78,7 +78,7 @@
                 name: 'Artifacts',
                 params: { rName: scope.row.name, projectName }
               }"
-              style="color: #409eff"
+              class="linkTextColor"
             >
               <span>{{ scope.row.artifact_count }}</span>
             </router-link>
@@ -108,7 +108,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              type="primary"
+              class="buttonPrimaryReverse"
               @click="handleEdit(scope.$index, scope.row)"
             >
               <em class="el-icon-edit" />
@@ -154,7 +154,7 @@
           slot="footer"
           class="dialog-footer"
         >
-          <el-button @click="showDeleteDialog = false">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonSecondaryReverse" @click="showDeleteDialog = false">{{ $t('general.Cancel') }}</el-button>
           <el-button
             type="danger"
             @click="handleDeleteModal()"
@@ -190,9 +190,9 @@
           slot="footer"
           class="dialog-footer"
         >
-          <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
           <el-button
-            type="primary"
+            class="buttonPrimary"
             :loading="memberConfirmLoading"
             @click="handleConfirm"
           >

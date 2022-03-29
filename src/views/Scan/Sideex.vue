@@ -41,7 +41,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :href="scope.row.issue_link"
@@ -101,7 +101,7 @@
         <template slot-scope="scope">
           <el-link
             v-if="scope.row.status === 'Finished' && scope.row.has_report"
-            type="primary"
+            class="linkTextColor"
             style="font-size: 16px"
             :underline="false"
             @click="fetchReportData(scope.row.id)"

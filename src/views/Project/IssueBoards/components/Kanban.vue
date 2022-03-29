@@ -36,7 +36,7 @@
         <div @contextmenu="handleContextMenu(element, '', $event)">
           <div class="title">
             <span
-              class="text"
+              class="text linkTextColor"
               @click="handleClick(element.id)"
             >
               {{ element.name }}
@@ -123,7 +123,7 @@
                     size="mini"
                   />
                   <el-link
-                    type="primary"
+                    class="linkTextColor"
                     :underline="false"
                     @click="handleClick(element.parent.id)"
                   >
@@ -153,7 +153,7 @@
                         size="mini"
                       />
                       <el-link
-                        type="primary"
+                        class="linkTextColor"
                         :underline="false"
                         @click="handleClick(subElement.id)"
                       >
@@ -185,7 +185,7 @@
                         size="mini"
                       />
                       <el-link
-                        type="primary"
+                        class="linkTextColor"
                         :underline="false"
                         @click="handleClick(subElement.id)"
                       >
@@ -314,7 +314,7 @@ export default {
     },
     boardObject: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     list: {
       type: Array,
@@ -330,7 +330,7 @@ export default {
     },
     addIssue: {
       type: Function,
-      default: () => {}
+      default: () => ({})
     }
   },
   data() {
@@ -517,7 +517,8 @@ export default {
       this.$emit('update-board', sendData)
     },
     handleClick(id) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      // this.$router.push({ name: 'issue-detail', params: { issueId: id }})
+      this.$emit('relationIssueId', id)
     },
     showErrorAlert(errorMsg) {
       const h = this.$createElement

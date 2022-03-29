@@ -22,13 +22,13 @@
           <el-col :span="24">
             <el-form-item>
               <el-checkbox v-model="form.active">
-                <strong>{{ $t('SystemTemplates.EnableTemplateSync') }}</strong>
+                <strong class="linkTextColor">{{ $t('SystemTemplates.EnableTemplateSync') }}</strong>
               </el-checkbox>
               <div class="ml-5" style="color: gray">
                 <section>{{ $t('SystemTemplates.TokenWarning') }}</section>
                 <section>
                   {{ $t('SystemTemplates.DocumentUrl') }}:
-                  <el-link :href="link" target="_blank">{{ link }}</el-link>
+                  <el-link :href="link" target="_blank" class="linkTextColor">{{ link }}</el-link>
                 </section>
               </div>
             </el-form-item>
@@ -37,22 +37,22 @@
       </el-form>
       <el-row>
         <el-col :span="8">
-          <el-button icon="ri-terminal-box-line" @click.native="handleExecuteLogs">
+          <el-button icon="ri-terminal-box-line" class="buttonPrimaryReverse" @click.native="handleExecuteLogs">
             {{ $t('SystemTemplates.ExecLogsButton') }}
           </el-button>
         </el-col>
         <el-col :span="16" class="text-right">
-          <el-button type="success" icon="el-icon-caret-right" :loading="is_lock" @click="handleUpdate(true)">
+          <el-button class="buttonSecondary" icon="el-icon-caret-right" :loading="is_lock" @click="handleUpdate(true)">
             {{ $t('general.Run') }}
           </el-button>
-          <el-button type="primary" @click="handleUpdate(false)">
+          <el-button class="buttonPrimary" @click="handleUpdate(false)">
             {{ $t('general.Save') }}
           </el-button>
         </el-col>
       </el-row>
     </el-card>
     <el-card v-if="isLogs">
-      <el-button type="text" icon="el-icon-arrow-left" @click="handleClose">
+      <el-button class="linkTextColor" type="text" icon="el-icon-arrow-left" @click="handleClose">
         {{ $t('general.Back') }}
       </el-button>
       <span>
@@ -214,7 +214,6 @@ export default {
         } else if (!this.intervalTimer) {
           this.intervalTimer = window.setInterval(this.getLockCheck, 5000)
         }
-        console.log(res.data)
         return Promise.resolve(res.data)
       } catch (e) {
         console.error(e)

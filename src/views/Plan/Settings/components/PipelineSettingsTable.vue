@@ -16,7 +16,7 @@
         <div>
           <el-button
             size="mini"
-            type="success"
+            class="buttonSecondaryReverse"
             :loading="isLoading"
             plain
             @click="updatePipelineBranch(false)"
@@ -25,7 +25,7 @@
           </el-button>
           <el-button
             size="mini"
-            type="success"
+            class="buttonSecondary"
             :loading="isLoading"
             @click="isDataChanged ? updatePipelineBranch(true) : updateUnalteredPipelineBranch()"
           >
@@ -52,7 +52,6 @@
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.enable"
-              active-color="#13ce66"
               inactive-color="gray"
             />
           </template>

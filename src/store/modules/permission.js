@@ -1,5 +1,7 @@
 import { asyncRoutes, constantRoutes } from '@/router/router'
 import { getRoutes } from '@/api/user'
+import Layout from '@/layout'
+import ParentBlank from '@/layout/components/parentBlank'
 
 function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
@@ -7,6 +9,34 @@ function hasPermission(roles, route) {
   } else {
     return true
   }
+}
+
+export function getAsyncRoutes(routes) {
+  const res = []
+  const keys = ['path', 'name', 'children', 'redirect', 'meta', 'hidden']
+  routes.forEach((item) => {
+    const newItem = {}
+    if (item.component) {
+      if (item.component === 'layout') {
+        newItem.component = Layout
+      } else if (item.component === 'layout/components/parentBlank') {
+        newItem.component = ParentBlank
+      } else {
+        newItem.component = (resolve) => require([`@/${item.component}`], resolve)
+      }
+    }
+
+    for (const key in item) {
+      if (keys.includes(key)) {
+        newItem[key] = item[key]
+      }
+    }
+    if (newItem.children && newItem.children.length) {
+      newItem.children = getAsyncRoutes(item.children)
+    }
+    res.push(newItem)
+  })
+  return res
 }
 
 export function filterAsyncRoutes(routes, roles) {
@@ -64,7 +94,10 @@ const actions = {
       if (route.disabled) return route.name
     })
     // views Plugin
-    let result = asyncRoutes
+    // const result = asyncRoutes(roles)
+    const routes = asyncRoutes
+    // const routes = getAsyncRoutes(result)
+    // console.log(routes)
     let accessedRoutes
     // Plugin
     // const req = require.context('@/views/Plugin', true, /(router.js)$/, 'lazy')
@@ -92,9 +125,9 @@ const actions = {
     // }
     return new Promise(async resolve => {
       if (roles.includes('admin')) {
-        accessedRoutes = result || []
+        accessedRoutes = routes || []
       } else {
-        accessedRoutes = filterAsyncRoutes(result, [roles])
+        accessedRoutes = filterAsyncRoutes(routes, [roles])
         accessedRoutes = filterAsyncPluginRoutes(accessedRoutes, disabledPluginRoutes)
       }
       commit('SET_ROUTES', accessedRoutes)

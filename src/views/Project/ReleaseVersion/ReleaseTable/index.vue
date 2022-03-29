@@ -14,13 +14,13 @@
         <el-table-column
           :label="$t('TestCase.Index')"
           type="index"
+          width="100"
           sortable
-          width="120"
         />
         <el-table-column
           :label="$t('Issue.PackageVersionTime')"
           sortable
-          width="300"
+          width="230"
         >
           <template slot-scope="scope">
             {{ UTCtoLocalTime(scope.row.create_at) }}
@@ -30,7 +30,6 @@
           :label="$t('Version.Version')"
           prop="tag_name"
           sortable
-          width="120"
         />
         <el-table-column
           :label="$t('Issue.SourceCode')"
@@ -39,7 +38,7 @@
         >
           <template slot-scope="scope">
             <el-link
-              type="primary"
+              class="linkTextColor"
               :underline="false"
               :href="scope.row.git_url"
               target="_blank"
@@ -62,7 +61,7 @@
         >
           <template slot-scope="scope">
             <el-link
-              type="primary"
+              class="linkTextColor"
               :underline="false"
               @click="showClosedIssue(scope.row.tag_name)"
             >{{ scope.row.tag_name }}</el-link>
@@ -74,7 +73,8 @@
         >
           <template slot-scope="scope">
             <el-popover
-              v-if="scope.row.docker"
+              v-for="(image, idx) in scope.row.docker"
+              :key="image"
               placement="top"
               width="400"
               trigger="hover"
@@ -82,10 +82,10 @@
               :close-delay="50"
             >
               <p
-                :id="`copy-${scope.$index}`"
+                :id="`copy-${scope.$index}-${idx}`"
                 class="text-center"
               >
-                <span class="text-subtitle-1 font-weight-bold">{{ scope.row.docker }}</span>
+                <span class="text-subtitle-1 font-weight-bold">{{ image }}</span>
               </p>
               <div class="flex justify-center">
                 <el-button
@@ -93,31 +93,55 @@
                   icon="el-icon-copy-document"
                   circle
                   size="mini"
-                  @click="copyUrl(`copy-${scope.$index}`)"
+                  @click="copyUrl(`copy-${scope.$index}-${idx}`)"
                 />
               </div>
               <span slot="reference">
                 <el-link
-                  class="text-xl"
+                  class="text-xl mr-2"
                   :underline="false"
                 >
                   <svg-icon icon-class="harbor" />
                 </el-link>
               </span>
             </el-popover>
-            <span v-else>{{ $t('Issue.NoImage') }}</span>
+            <span v-if="scope.row.docker.length === 0">{{ $t('Issue.NoImage') }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          align="center"
-          :label="$t('general.Report')"
+        <!-- <el-table-column
+          :label="$t('Release.Tags')"
+          sortable
+          width="100"
         >
           <template slot-scope="scope">
-            <em
-              v-show="scope.row.commit"
-              class="el-icon-tickets cursor-pointer"
-              @click="handleToTestReport(scope.row.commit)"
-            />
+            <el-tooltip
+              v-for="(tag, index) in scope.row.image_tags"
+              :key="index"
+              placement="top"
+            >
+              <div slot="content">
+                {{ getImageTagsTooltip(tag) }}
+              </div>
+              <span type="text" class="cursor-pointer">
+                {{ getImageTags(tag) }}<span v-if="index !== scope.row.image_tags.length - 1">, </span>
+              </span>
+            </el-tooltip>
+          </template>
+        </el-table-column> -->
+        <el-table-column
+          align="center"
+          :label="$t('general.Actions')"
+          width="200"
+        >
+          <template slot-scope="scope">
+            <!-- <ActionInput :scope="scope" /> -->
+            <el-tooltip :content="$t('general.Report')" placement="top">
+              <em
+                v-show="scope.row.commit"
+                class="el-icon-tickets cursor-pointer mr-2"
+                @click="handleToTestReport(scope.row.commit)"
+              />
+            </el-tooltip>
           </template>
         </el-table-column>
         <template slot="empty">
@@ -137,12 +161,15 @@
 </template>
 
 <script>
-import { getReleaseVersion } from '@/api/release'
+import { getReleaseVersion } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import { UTCtoLocalTime } from '@/filters'
 
 export default {
   name: 'ReleaseTable',
+  // components: {
+  // ActionInput: () => import('./ActionInput')
+  // },
   mixins: [BasicData, Pagination, SearchBar],
   model: {
     prop: 'keyword',
@@ -199,9 +226,17 @@ export default {
     handleToTestReport(commitId) {
       this.$router.push({
         name: 'TestReport',
-        params: { commitId, projectName: this.$store.getters.selectedProject.name }
+        params: { commitId, projectName: this.selectedProject.name }
       })
     }
+    // getImageTags(tag) {
+    //   const [key] = Object.keys(tag)
+    //   return key
+    // },
+    // getImageTagsTooltip(tag) {
+    //   const [[value]] = Object.values(tag)
+    //   return value
+    // }
   }
 }
 </script>

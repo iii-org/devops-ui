@@ -71,7 +71,7 @@
             <el-row class="mt-4">
               <el-col :span="8">
                 <el-button
-                  type="primary"
+                  class="buttonSecondary"
                   @click="downloadK8SConfig()"
                 >{{ $t('Profile.K8SConfigDownload') }}</el-button>
               </el-col>
@@ -80,7 +80,7 @@
               <el-col :span="8">
                 <el-button
                   :disabled="disableEdit"
-                  type="primary"
+                  class="buttonPrimary"
                   @click="submitUpdateUserProfile('userProfileForm')"
                 >{{
                   $t('Profile.Save')
@@ -141,7 +141,7 @@
               <el-col :span="8">
                 <el-button
                   :disabled="disableEdit"
-                  type="primary"
+                  class="buttonPrimary"
                   @click="handleUpdateUserPwd('userPwdForm')"
                 >{{
                   $t('Profile.Save')
@@ -316,4 +316,20 @@ export default {
 .form-input {
   width: 250px;
 }
+
+@import 'src/styles/theme/variables.scss';
+>>> .el-tabs__item {
+  &:hover {
+    color: $linkTextColor !important;
+    cursor: pointer;
+  }
+  &.is-active{
+    color: $linkTextColor !important;
+  }
+}
+
+>>> .el-tabs__active-bar {
+  background-color: $linkTextColor !important;
+}
+
 </style>

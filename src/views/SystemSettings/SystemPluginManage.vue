@@ -27,7 +27,7 @@
         <el-table-column-time :label="$t('general.LastUpdateTime')" prop="update_at" width="200" />
         <el-table-column :label="$t('general.Actions')" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
+            <el-button size="mini" class="buttonPrimaryReverse" icon="el-icon-edit" @click="handleEditClick(scope.row.name)">
               {{ $t('general.Edit') }}
             </el-button>
             <el-button size="mini" @click="handleActiveClick(scope.row)">
@@ -76,8 +76,8 @@
                 {{ $t('general.Remove') }}
               </el-button>
             </el-popconfirm>
-            <el-button size="mini" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-            <el-button type="primary" size="mini" @click="handleConfirm">
+            <el-button class="buttonSecondaryReverse" size="mini" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+            <el-button class="buttonPrimary" size="mini" @click="handleConfirm">
               {{ $t('general.Save') }}
             </el-button>
           </div>

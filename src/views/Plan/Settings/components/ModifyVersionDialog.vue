@@ -5,6 +5,7 @@
     :close-on-click-modal="false"
     width="50%"
     top="3vh"
+    append-to-body
     @closed="onDialogClosed"
   >
     <el-form ref="versionForm" :model="form" :rules="formRules" label-position="top">
@@ -32,8 +33,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
-      <el-button type="primary" :loading="btnConfirmLoading" @click="handleConfirm">
+      <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+      <el-button class="buttonPrimary" :loading="btnConfirmLoading" @click="handleConfirm">
         {{ $t('general.Confirm') }}
       </el-button>
     </span>

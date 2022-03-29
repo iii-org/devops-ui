@@ -32,7 +32,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
+          class="buttonPrimary"
           :loading="isLoading"
           @click="onSaveClick"
         >
@@ -40,6 +40,7 @@
         </el-button>
         <el-button
           :disabled="isLoading"
+          class="buttonSecondaryReverse"
           @click="onAdvancedSettingsClick"
         >
           {{ $t('general.AdvancedSettings') }}
@@ -68,12 +69,12 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="onDialogCancel">
+        <el-button class="buttonSecondaryReverse" @click="onDialogCancel">
           {{ $t('general.Cancel') }}
         </el-button>
         <el-button
           :loading="isLoading"
-          type="primary"
+          class="buttonPrimary"
           @click="onDialogConfirm"
         >
           {{ $t('general.Confirm') }}

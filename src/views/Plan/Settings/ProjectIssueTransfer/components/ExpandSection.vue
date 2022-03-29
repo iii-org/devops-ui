@@ -5,6 +5,7 @@
         <strong>{{ $t('Issue.ParentIssue') }}:</strong>
         <el-link
           :style="{ 'font-size': '14px', cursor: 'pointer' }"
+          class="linkTextColor"
           :underline="false"
           @click="handleEdit(issue.familyData.parent.id)"
           @contextmenu.native="handleContextMenu(issue.familyData.parent, '', $event)"
@@ -44,7 +45,7 @@
           <template v-for="child in issue.familyData.children">
             <li v-if="Object.keys(child).length > 0" :key="child.id">
               <el-link
-                class="my-1"
+                class="my-1 linkTextColor"
                 :style="{ 'font-size': '14px', cursor: 'pointer' }"
                 :underline="false"
                 @click="handleEdit(child.id)"

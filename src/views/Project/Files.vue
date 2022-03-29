@@ -3,9 +3,9 @@
     <ProjectListSelector>
       <el-button
         slot="button"
-        type="success"
         :disabled="selectedProjectId === -1"
         icon="el-icon-plus"
+        class="buttonSecondary"
         @click="handleAdding"
       >
         {{ $t('File.AddFile') }}
@@ -66,7 +66,7 @@
           <el-button
             :loading="isDownloading"
             size="mini"
-            type="primary"
+            class="buttonPrimaryReverse"
             icon="el-icon-download"
             @click="handleDownload(scope.row)"
           >
@@ -131,8 +131,10 @@
             <div class="el-upload__text">
               <el-button
                 size="small"
-                type="success"
-              >{{ $t('File.ChooseFile') }}</el-button>
+                class="buttonSecondary"
+              >
+                {{ $t('File.ChooseFile') }}
+              </el-button>
               <div>{{ $t('File.DragFilesHere') }}</div>
               <div class="text-xs text-gray-400 px-12">
                 <div>{{ $t('File.MaxFileSize') }}: {{ fileSizeLimit }}</div>
@@ -177,9 +179,9 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
+        <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">{{ $t('general.Cancel') }}</el-button>
         <el-button
-          type="primary"
+          class="buttonPrimary"
           :loading="memberConfirmLoading"
           @click="handleConfirm"
         >
@@ -190,7 +192,13 @@
 </template>
 
 <script>
-import { allowedTypeMap, isAllowedTypes, fileSizeToMB, containSpecialChar } from '@/utils/extension.js'
+import {
+  getFileTypeLimit,
+  getFileTypeList,
+  isAllowedFileTypeList,
+  fileSizeToMB,
+  containSpecialChar
+} from '@/utils/extension.js'
 import {
   deleteProjectFile,
   downloadProjectFile,
@@ -224,6 +232,7 @@ export default {
       searchKeys: ['filename'],
       fileSizeLimit: '20 MB',
       fileTypeLimit: 'JPG、PNG、GIF / ZIP、7z、RAR/MS Office Docs',
+      fileTypeList: {},
       specialSymbols: '* ? " < > | # { } % ~ &'
     }
   },
@@ -245,6 +254,8 @@ export default {
         getProjectVersion(this.selectedProjectId)
       ])
       this.versionList = res[1].data.versions
+      this.fileTypeLimit = await getFileTypeLimit()
+      this.fileTypeList = await getFileTypeList()
       return this.sortFiles(res[0].data.files)
     },
     sortFiles(files) {
@@ -287,7 +298,7 @@ export default {
     },
     async handleChange(file, fileList) {
       const { raw, size, name } = file
-      if (!isAllowedTypes(raw.type)) {
+      if (!isAllowedFileTypeList(this.fileTypeList, raw.type)) {
         this.$message({
           title: this.$t('general.Warning'),
           message: this.$t('Notify.UnsupportedFileFormat'),
@@ -316,7 +327,7 @@ export default {
       this.$refs['fileForm'].validate(async (valid) => {
         if (valid) {
           const data = this.fileForm
-          const filetype = allowedTypeMap()[this.uploadFileList[0].raw.type]
+          const filetype = this.fileTypeList[this.uploadFileList[0].raw.type]
           const form = new FormData()
           if (data.name !== '') {
             form.append('file', this.uploadFileList[0].raw, `${data.name}${filetype}`)

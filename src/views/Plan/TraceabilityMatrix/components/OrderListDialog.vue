@@ -2,7 +2,7 @@
   <div>
     <el-row type="flex" justify="space-between">
       <el-col>
-        <el-button type="primary" icon="el-icon-plus" @click="addTrackerOrder=!addTrackerOrder">
+        <el-button class="buttonPrimary" icon="el-icon-plus" @click="addTrackerOrder=!addTrackerOrder">
           {{ $t('Track.AddCheckRule') }}
         </el-button>
       </el-col>
@@ -19,8 +19,8 @@
         <OrderListInput v-model="trackerOrderForm.order" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleAddOrderList">{{ $t('general.Add') }}</el-button>
-        <el-button @click="handleCancelAdd">{{ $t('general.Cancel') }}</el-button>
+        <el-button class="buttonPrimary" @click="handleAddOrderList">{{ $t('general.Add') }}</el-button>
+        <el-button class="buttonSecondaryReverse" @click="handleCancelAdd">{{ $t('general.Cancel') }}</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="trackerMapOptions">
@@ -53,7 +53,7 @@
       <el-table-column :label="$t('general.Actions')" min-width="200px">
         <template slot-scope="{row}">
           <template v-if="row.edit">
-            <el-button type="primary" size="mini" icon="el-icon-check" @click="handleSaveEditOrderList(row)">
+            <el-button class="buttonPrimary" size="mini" icon="el-icon-check" @click="handleSaveEditOrderList(row)">
               {{ $t('general.Save') }}
             </el-button>
             <el-button type="danger" size="mini" icon="el-icon-close" @click="handleCancelEdit(row)">
@@ -61,7 +61,7 @@
             </el-button>
           </template>
           <template v-else-if="row.id !== -1">
-            <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleEdit(row)">{{ $t('general.Edit') }}
+            <el-button class="buttonPrimary" size="mini" icon="el-icon-edit" @click="handleEdit(row)">{{ $t('general.Edit') }}
             </el-button>
             <el-popconfirm :confirm-button-text="$t('general.Delete')"
                            :cancel-button-text="$t('general.Cancel')"

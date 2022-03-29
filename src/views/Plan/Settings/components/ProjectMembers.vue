@@ -1,12 +1,10 @@
 <template>
-  <el-collapse-item v-loading="listLoading" name="ProjectMembers">
-    <template slot="title">
-      <span class="text-title">{{ $t('Member.Manage') }}</span>
-    </template>
+  <div v-loading="listLoading">
+    <div v-if="isShowTitle" class="text-lg mb-2">{{ $t('Member.Manage') }}</div>
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
     <template v-else>
       <div class="flex justify-between mb-4">
-        <el-button type="success" size="medium" icon="el-icon-plus" @click="showDialog">
+        <el-button class="buttonSecondary" size="medium" icon="el-icon-plus" @click="showDialog">
           {{ $t('Member.AddMember') }}
         </el-button>
         <div>
@@ -42,11 +40,11 @@
         </el-table-column>
         <el-table-column align="center" :label="$t('general.Actions')" width="390">
           <template slot-scope="scope">
-            <el-button v-permission="['Administrator','QA']" size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+            <el-button v-permission="['Administrator','QA']" size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
               <em class="el-icon-edit" />
               {{ $t('general.Participate') }}
             </el-button>
-            <el-button v-permission="['Administrator','Project Manager', 'QA']" type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+            <el-button v-permission="['Administrator','Project Manager', 'QA']" class="buttonSecondaryReverse" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
             <el-button
               type="danger"
               size="mini"
@@ -71,7 +69,7 @@
       />
       <add-member-dialog ref="addMemberDialog" @update="loadData" />
     </template>
-  </el-collapse-item>
+  </div>
 </template>
 
 <script>
@@ -85,6 +83,12 @@ export default {
   name: 'ProjectMembers',
   components: { AddMemberDialog },
   mixins: [BasicData, Pagination, SearchBar],
+  props: {
+    isShowTitle: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       searchKeys: ['name', 'login', 'department'],
@@ -201,7 +205,7 @@ export default {
         .then(() => {
           this.handleIssueClick(row)
         })
-        .catch(() => {})
+        .catch(() => ({}))
     },
     showConfirmRemoveMemberDialog(row) {
       const { id, name } = row
@@ -218,7 +222,7 @@ export default {
         .then(() => {
           this.handleDelete(id)
         })
-        .catch(() => {})
+        .catch(() => ({}))
     },
     async fetchIssueByUser(row) {
       const { id } = row
@@ -238,3 +242,4 @@ export default {
   }
 }
 </script>
+

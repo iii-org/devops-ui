@@ -105,6 +105,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
   background: #e4ecf7 ;
   color: #3e3f41;
@@ -119,7 +121,7 @@ export default {
   border-radius: 5px;
   width: 125%;
   &:hover {
-    color: #409eff;
+    color: $linkTextColor;
   }
 }
 

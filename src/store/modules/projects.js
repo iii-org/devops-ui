@@ -7,6 +7,7 @@ import {
   getProjectIssueStatistics,
   getProjectUserList
 } from '@/api/projects'
+import { forceDeleteProject } from '@/api_v2/projects'
 import { getIssuePriority, getIssueStatus, getIssueTracker } from '@/api/issue'
 
 const getDefaultState = () => {
@@ -83,20 +84,25 @@ const mutations = {
 const actions = {
   async getMyProjectList({ commit, dispatch }, params) {
     try {
-      let projects = await getMyProjectList(false, params)
+      let { projects, page } = await getMyProjectList(true, params)
       projects = projects
         .sort((a, b) => -(new Date(a.updated_time) - new Date(b.updated_time)))
         .sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1))
       dispatch('getMyProjectOptions')
       commit('SET_LIST', projects)
-      commit('SET_TOTAL', projects.length)
+      if (page) {
+        commit("SET_TOTAL", page.total);
+        return page;
+      } else {
+        commit("SET_TOTAL", projects.length);
+      }
     } catch (error) {
       console.error(error.toString())
     }
   },
   async getMyProjectOptions({ commit }) {
     try {
-      let projects = await getMyProjectList(true)
+      let { projects } = await getMyProjectList(true)
       projects = projects.sort((a, b) => a.id - b.id).sort((a, b) => (a.starred === b.starred ? 0 : a.starred ? -1 : 1))
       commit('SET_OPTIONS', projects)
     } catch (error) {
@@ -130,6 +136,15 @@ const actions = {
   async deleteProject({ commit, dispatch }, pId) {
     try {
       const res = await deleteProject(pId)
+      dispatch('user/getInfo', null, { root: true })
+      return res
+    } catch (error) {
+      console.error(error.toString())
+    }
+  },
+  async forceDeleteProject({ commit, dispatch }, pId) {
+    try {
+      const res = await forceDeleteProject(pId)
       dispatch('user/getInfo', null, { root: true })
       return res
     } catch (error) {

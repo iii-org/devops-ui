@@ -21,7 +21,7 @@
           </el-card>
           <el-link
             slot="reference"
-            type="primary"
+            class="linkTextColor"
             style="font-size: 16px"
             :underline="false"
           >
@@ -74,7 +74,7 @@
               {{ scope.row.commit_branch }}
             </div>
             <el-link
-              type="primary"
+              class="linkTextColor"
               target="_blank"
               style="font-size: 16px"
               :href="scope.row.commit_url"
@@ -176,7 +176,7 @@ import ProjectListSelector from '@/components/ProjectListSelector'
 import Pagination from '@/components/Pagination'
 import PipelineSettingsTable from '@/views/Plan/Settings/components/PipelineSettingsTable'
 import { CancelRequest } from '@/newMixins'
-import { triggerReport } from '@/utils/triggerReport'
+// import { triggerReport } from '@/utils/triggerReport'
 
 const listQuery = () => ({
   page: 1,
@@ -240,10 +240,10 @@ export default {
     },
     keyword() {
       this.listQuery.page = 1
-    },
-    isUpdating() {
-      this.triggerReport()
     }
+    // isUpdating() {
+    //   this.triggerReport()
+    // }
   },
   mounted() {
     this.loadData()
@@ -252,13 +252,13 @@ export default {
     this.clearTimer()
   },
   methods: {
-    triggerReport() {
-      this.listData.forEach((item, index) => {
-        if (item.status.success > 0) {
-          triggerReport(this.selectedProject, this.listData[index].commit_id)
-        }
-      })
-    },
+    // triggerReport() {
+    //   this.listData.forEach((item, index) => {
+    //     if (item.status.success > 0) {
+    //       triggerReport(this.selectedProject, this.listData[index].commit_id)
+    //     }
+    //   })
+    // },
     onPagination(query) {
       this.clearTimer()
       const { first, next } = this.listQuery
@@ -358,7 +358,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables';
+@import 'src/styles/theme/variables.scss';
 
 .icon {
   font-size: x-large;

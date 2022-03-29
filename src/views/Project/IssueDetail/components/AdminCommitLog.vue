@@ -48,8 +48,7 @@
         <div slot="title">
           {{ $t('Issue.CommitIssueHookSetting') }}
           <el-button
-            type="primary"
-            class="float-right"
+            class="float-right buttonPrimary"
             style="margin-right: 2em;"
             size="small"
             :disabled="!isEnabledSaveSingleCommitHookBtn"
@@ -88,8 +87,7 @@
             #{{ issueId }} - {{ issueName }}
           </span>
           <el-button
-            type="primary"
-            class="float-right"
+            class="float-right buttonPrimary"
             style="margin-right: 2em;"
             size="small"
             :disabled="!isEnabledSaveMultiCommitHookBtn"

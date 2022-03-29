@@ -89,7 +89,7 @@
         </el-row>
       </el-form>
       <div class="text-right">
-        <el-button type="primary" @click="submitUpdateRedmineMail">
+        <el-button class="buttonPrimary" @click="submitUpdateRedmineMail">
           {{ $t('general.Save') }}
         </el-button>
       </div>

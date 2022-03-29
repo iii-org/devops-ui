@@ -16,12 +16,12 @@
       >
         <el-option v-for="item in versionList" :key="item.id" :label="getSelectionLabel(item)" :value="item.id" />
       </el-select>
-      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" @click="onFilterSelection"> {{ displayFilterValue }}
+      <el-button v-show="!filterVisible" icon="el-icon-s-operation" type="text" class="headerTextColor" @click="onFilterSelection"> {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
       <template v-if="selectedVersion!==null">
         <el-divider direction="vertical" />
-        <el-button size="small" icon="el-icon-close" @click="clearSelectedVersion">
+        <el-button class="buttonSecondaryReverse" size="small" icon="el-icon-close" @click="clearSelectedVersion">
           {{ $t('Issue.CleanFilter') }}
         </el-button>
       </template>

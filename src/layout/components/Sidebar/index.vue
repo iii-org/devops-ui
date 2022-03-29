@@ -30,7 +30,7 @@
 import { mapGetters } from 'vuex'
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
-import variables from '@/styles/variables.scss'
+import variables from '@/styles/theme/variables.scss'
 
 export default {
   components: { SidebarItem, Logo },

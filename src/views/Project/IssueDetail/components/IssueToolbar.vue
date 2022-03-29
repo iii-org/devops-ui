@@ -6,14 +6,14 @@
           <el-button
             size="small"
             icon="el-icon-upload"
-            :type="isButtonDisabled ? 'info' : 'success'"
+            :class="isButtonDisabled ? 'buttonInfo' : 'buttonSecondary'"
             :disabled="isButtonDisabled"
             @click="uploadDialogVisible = true"
           >{{ $t('Issue.UploadFiles') }}</el-button>
           <el-button
             size="small"
             icon="el-icon-plus"
-            :type="isButtonDisabled ? 'info' : 'warning'"
+            :class="isButtonDisabled ? 'buttonInfo' : 'buttonTertiary'"
             :disabled="isButtonDisabled"
             @click="addTopicDialogVisible = true"
           >{{ $t('Issue.AddSubIssue') }}</el-button>
@@ -21,7 +21,7 @@
         <el-button
           v-if="issueTracker==='Test Plan'"
           size="small"
-          :type="isButtonDisabled ? 'info' : 'primary'"
+          :class="isButtonDisabled ? 'buttonInfo' : 'buttonPrimary'"
           icon="el-icon-upload"
           :disabled="isButtonDisabled"
           @click="handleCollectionDialog"
@@ -32,7 +32,7 @@
           v-if="issueId"
           :href="issueLink"
           target="_blank"
-          type="primary"
+          class="linkTextColor"
           :underline="false"
         >
           <em class="el-icon-link" /> Redmine
@@ -46,7 +46,7 @@
       top="3vh"
       append-to-body
     >
-      <issue-file-uploader
+      <IssueFileUploader
         ref="IssueFileUploader"
         :issue-id="issueId"
       />
@@ -59,7 +59,7 @@
         </div>
         <div>
           <el-button
-            type="primary"
+            class="buttonPrimary"
             @click="handleUploadClose"
           >{{ $t('general.Save') }}</el-button>
         </div>
@@ -75,7 +75,7 @@
       append-to-body
       @close="handleClose"
     >
-      <add-issue
+      <AddIssue
         ref="AddIssue"
         :save-data="saveIssue"
         :dialog-visible.sync="addTopicDialogVisible"
@@ -91,12 +91,13 @@
       >
         <el-button
           id="dialog-btn-cancel"
+          class="buttonSecondaryReverse"
           @click="handleAdvancedClose"
         >{{ $t('general.Cancel') }}</el-button>
         <el-button
           id="dialog-btn-confirm"
           :loading="isLoading"
-          type="primary"
+          class="buttonPrimary"
           @click="handleAdvancedSave"
         >
           {{ $t('general.Confirm') }}

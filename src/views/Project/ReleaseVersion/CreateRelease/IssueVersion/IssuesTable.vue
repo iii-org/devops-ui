@@ -1,7 +1,7 @@
 <template>
   <div style="height: 70%;">
     <p>
-      <el-form inline>
+      <el-form inline class="flex align-center">
         <el-form-item :label="$t('Issue.Issue')">
           <el-select v-model="selectedCategory" @change="processData">
             <el-option v-for="item in categorySel" :key="item" :label="item" :value="item" />
@@ -11,14 +11,12 @@
           <el-checkbox
             v-model="showClosed"
             :label="`${$t('Issue.Closed')} (${closedIssueCount})`"
-            class="valign-middle"
           />
         </el-form-item>
         <el-form-item>
           <el-checkbox
             v-model="showOpen"
             :label="`${$t('Dashboard.Unfinished')} (${openIssueCount})`"
-            class="valign-middle"
             checked
           />
         </el-form-item>
@@ -75,8 +73,7 @@
             <el-tooltip effect="dark" :content="$t('Issue.EditIssue')" placement="bottom-start" :open-delay="1000">
               <el-button
                 :id="`link-issue-name-${scope.$index}`"
-                class="mr-1"
-                type="primary"
+                class="mr-1 buttonPrimary"
                 circle
                 plain
                 size="mini"
@@ -93,8 +90,7 @@
             >
               <el-button
                 :id="`link-issue-name-${scope.$index}`"
-                class="mr-1"
-                type="primary"
+                class="mr-1 buttonPrimaryReverse"
                 circle
                 plain
                 size="mini"
@@ -122,7 +118,7 @@
         <el-form-item :label="$t('Release.futureVersion')">
           <el-select v-model="batchMoveToVersion" :placeholder="$t('Release.selectMoveToVersion')" filterable>
             <el-option
-              v-for="item in $parent.projectVersionOptions"
+              v-for="item in projectVersionOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -134,7 +130,7 @@
         </el-form-item>
         <el-button
           v-loading="loading"
-          type="primary"
+          class="buttonPrimary"
           :disabled="!batchMoveToVersion"
           @click="batchMove"
         >
@@ -146,7 +142,7 @@
       </el-form>
     </el-dialog>
     <el-dialog :visible.sync="showFormDialog" :title="$t('Issue.AskDeleteIssue')">
-      <issue-notes-editor ref="IssueNotesEditor" page="IssuesTable" />
+      <IssueNotesEditor ref="IssueNotesEditor" page="IssuesTable" />
       <div slot="footer" class="dialog-footer">
         <el-button type="danger" @click="handleCloseIssue()">{{ $t('Issue.CloseIssue') }}</el-button>
       </div>
@@ -160,6 +156,22 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClick">{{ $t('general.ok') }}</el-button>
       </span>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="showIssueDetail"
+      width="90%"
+      top="3vh"
+      append-to-body
+      destroy-on-close
+    >
+      <ProjectIssueDetail
+        v-if="showIssueDetail"
+        ref="children"
+        :props-issue-id="edittedIssueId"
+        :is-in-dialog="true"
+        @update="handleRelationUpdate"
+        @delete="handleRelationUpdate"
+      />
     </el-dialog>
   </div>
 </template>
@@ -176,9 +188,20 @@ export default {
   components: {
     IssueNotesEditor: () => import('@/views/Project/IssueDetail/components/IssueNotesEditor'),
     Status,
-    Tracker
+    Tracker,
+    ProjectIssueDetail: () => import('@/views/Project/IssueDetail')
   },
   mixins: [MixinElTableWithCheckbox],
+  props: {
+    allIssues: {
+      type: Array,
+      required: true
+    },
+    projectVersionOptions: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
       issues: [],
@@ -188,16 +211,18 @@ export default {
       issuesByCategory: {},
       selectedCategory: this.$t('Release.allCategories'),
       searchKey: '',
-      showOpen: true,
+      showOpen: false,
       showClosed: false,
       showBatchMoveDialog: false,
       showFormDialog: false,
+      showIssueDetail: false,
       batchMoveToVersion: null,
       loading: false,
       closedIdex: '',
       closedRow: {},
       notClosedChildrenIssueList: [],
-      showClosedChildrenIssueWarning: false
+      showClosedChildrenIssueWarning: false,
+      edittedIssueId: ''
     }
   },
   computed: {
@@ -209,6 +234,10 @@ export default {
       const ret = [this.$t('Release.allCategories')]
       this.categories.forEach(category => ret.push(this.$t(`Issue.${category}`)))
       return ret
+    },
+    selectedCategoryEn() {
+      const id = Number(this.categorySel.findIndex(item => item === this.selectedCategory))
+      return id !== 0 ? this.categories[id - 1] : this.$t('Release.allCategories')
     }
   },
   watch: {
@@ -217,6 +246,15 @@ export default {
     },
     showOpen() {
       this.setData(this.issues)
+    },
+    listData(val) {
+      // FIXME: need to find out why filteredData in MixinProjectListSelector always makes listData become [] when first loading
+      if (val.length === 0 && this.selectedCategory === this.$t('Release.allCategories') && this.allIssues.length > 0) {
+        this.setData(this.allIssues)
+      }
+    },
+    allIssues(val) {
+      this.setData(val)
     },
     selectedProjectId(val) {
       if (val) {
@@ -244,7 +282,7 @@ export default {
     },
     processData() {
       const partialIssues = this.selectedCategory === this.$t('Release.allCategories')
-        ? this.issues : this.issues.filter(item => item.trackerName === this.selectedCategory)
+        ? this.issues : this.issues.filter(item => item.trackerName === this.selectedCategoryEn)
       this.closedIssueCount = 0
       this.openIssueCount = 0
       this.listData = this.getListData(partialIssues)
@@ -268,11 +306,17 @@ export default {
       this.$nextTick(() => {
         const len = this.listData.length
         const pageSize = this.listQuery.limit
-        if ((this.listQuery.page - 1) * pageSize >= len) this.listQuery.page = len > 0 ? 1 + Math.floor((len - 1) / pageSize) : 1
+        if ((this.listQuery.page - 1) * pageSize >= len) {
+          this.listQuery.page = len > 0 ? 1 + Math.floor((len - 1) / pageSize) : 1
+        }
       })
     },
     handleEdit(idx, row) {
-      this.$router.push({ name: 'issue-detail', params: { issueId: row.id }})
+      this.showIssueDetail = true
+      this.edittedIssueId = row.id
+    },
+    handleRelationUpdate() {
+      this.$emit('onUpdate')
     },
     handleClose(idx, row) {
       this.closedIdex = idx
@@ -338,7 +382,7 @@ export default {
       this.showFormDialog = false
 
       // If all issues are closed, change to create release screen
-      if (this.openIssueCount === 0) this.$parent.init()
+      if (this.openIssueCount === 0) this.$emit('onInit')
     },
     async batchClose() {
       this.listLoading = true
@@ -348,7 +392,7 @@ export default {
         await this.listData[index].close()
       }
       this.multipleSelection = []
-      await this.$parent.init()
+      if (!this.showClosedChildrenIssueWarning) this.$emit('onInit')
       this.listLoading = false
     },
     async batchMove() {
@@ -358,7 +402,7 @@ export default {
         await updateIssue(this.listData[index].id, { fixed_version_id: this.batchMoveToVersion })
       }
       this.multipleSelection = []
-      await this.$parent.init()
+      this.$emit('onInit')
       this.loading = false
       this.showBatchMoveDialog = false
     }
@@ -367,7 +411,7 @@ export default {
 </script>
 
 <style scoped>
-.valign-middle {
+.el-form-item {
   padding: 10px 10px;
   font-weight: bold;
 }

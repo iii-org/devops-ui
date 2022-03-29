@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="flex justify-between">
       <el-button
-        type="success"
+        class="buttonPrimary"
         icon="el-icon-plus"
         @click="handleAdding"
       >
@@ -24,6 +24,7 @@
             slot="reference"
             icon="el-icon-date"
             type="text"
+            class="headerTextColor"
           >
             {{ $t('Project.ProjectPeriod') }}:{{ selectedDateNow[0] }} ~ {{ selectedDateNow[1] }}<em
               class="el-icon-arrow-down el-icon--right"
@@ -44,6 +45,7 @@
           v-else
           type="text"
           icon="el-icon-search"
+          class="headerTextColor"
           @click="searchVisible = !searchVisible"
         >
           {{ $t('general.Search') + (keyword ? ': ' + keyword : '') }}
@@ -53,6 +55,7 @@
           <el-button
             size="small"
             icon="el-icon-close"
+            class="buttonSecondaryReverse"
             @click="cleanFilter"
           >
             {{ $t('Issue.CleanFilter') }}
@@ -82,6 +85,7 @@
             <el-button
               slot="reference"
               icon="el-icon-download"
+              class="buttonPrimaryReverse"
             >
               {{ $t('File.Download') }}
             </el-button>
@@ -90,9 +94,13 @@
       </div>
     </div>
     <el-divider />
+    <UpdateButton
+      :list-loading.sync="listLoading"
+      @update="fetchData"
+    />
     <el-table
       v-loading="listLoading"
-      :data="pagedData"
+      :data="listData"
       :element-loading-text="$t('Loading')"
       :row-key="handleReserve"
       :cell-style="{ height: rowHeight + 'px' }"
@@ -137,16 +145,18 @@
         <template slot-scope="scope">
           <el-link
             v-if="userRole !== 'QA'"
-            type="primary"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
+            :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleClick(scope.row)"
           >
             {{ scope.row.display }}
           </el-link>
           <el-link
             v-else-if="userRole === 'QA'"
-            type="primary"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
+            :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleClickQA(scope.row)"
           >
             {{ scope.row.display }}
@@ -164,8 +174,9 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
+            :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleParticipateDialog(scope.row.owner_id, scope.row.owner_name)"
           >
             {{ scope.row.owner_name }}
@@ -178,7 +189,11 @@
         width="140"
       >
         <template slot-scope="scope">
-          {{ `${scope.row.closed_count} / ${scope.row.total_count}` }}
+          {{
+            `${scope.row.closed_count ? scope.row.closed_count : "0"} / ${
+              scope.row.total_count ? scope.row.total_count : "0"
+            }`
+          }}
           <br>
           <span class="status-bar-track">
             <span
@@ -204,8 +219,9 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            :class="scope.row.disabled || scope.row.is_lock ? '' : 'linkTextColor'"
             :underline="false"
+            :disabled="scope.row.disabled || scope.row.is_lock"
             @click="handleRoutingProjectMembers(scope.row)"
           >
             {{ scope.row.members }}
@@ -229,7 +245,7 @@
           <el-button
             v-if="userRole !== 'QA'"
             size="mini"
-            type="primary"
+            class="buttonPrimaryReverse"
             icon="el-icon-edit"
             @click="handleEdit(scope.row)"
           >
@@ -251,43 +267,63 @@
       </template>
     </el-table>
     <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
+      :total="projectListTotal"
+      :page="params.page"
+      :limit="params.limit"
+      :page-sizes="[params.limit]"
       :layout="'total, prev, pager, next'"
       @pagination="onPagination"
     />
 
     <CreateProjectDialog
       ref="createProjectDialog"
-      @update="loadData"
+      @update="fetchData"
     />
     <EditProjectDialog
       v-if="userRole !== 'QA'"
       ref="editProjectDialog"
       :edit-project-obj="editProject"
-      @update="loadData"
+      @update="fetchData"
     />
     <DeleteProjectDialog
       ref="deleteProjectDialog"
       :delete-project-obj="deleteProject"
-      @update="loadData"
+      @update="fetchData"
     />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { CreateProjectDialog, DeleteProjectDialog, EditProjectDialog } from './components'
+import {
+  CreateProjectDialog,
+  DeleteProjectDialog,
+  EditProjectDialog,
+  UpdateButton
+} from './components'
 import MixinElTableWithAProject from '@/mixins/MixinElTableWithAProject'
 import { excelTranslate } from '@/utils/excelTableTranslate'
-import { deleteStarProject, postStarProject } from '@/api/projects'
+import { deleteStarProject, postStarProject, getCalculateProjectList } from '@/api/projects'
 import XLSX from 'xlsx'
+
+const thisYear = new Date()
+
+const params = () => ({
+  limit: 10,
+  offset: 0,
+  pj_due_date_start: `${thisYear.getFullYear()}-01-01`,
+  pj_due_date_end: `${thisYear.getFullYear() + 1}-12-31`,
+  pj_members_count: true
+})
 
 export default {
   name: 'ProjectListQA',
-  components: { CreateProjectDialog, EditProjectDialog, DeleteProjectDialog },
+  components: {
+    CreateProjectDialog,
+    EditProjectDialog,
+    DeleteProjectDialog,
+    UpdateButton
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -307,9 +343,10 @@ export default {
       rowHeight: 70,
       selectedProjectList: [],
       selectedDate: '',
-      thisYear: new Date(),
       searchVisible: false,
-      csvColumnSelected: ['department', 'display', 'start_date', 'due_date', 'owner_name', 'members']
+      csvColumnSelected: ['department', 'display', 'start_date', 'due_date', 'owner_name', 'members'],
+      params: params(),
+      listData: []
     }
   },
   computed: {
@@ -318,22 +355,77 @@ export default {
       return this.selectedProjectList.length > 0
     },
     getThisYear() {
-      return [`${this.thisYear.getFullYear()}-01-01`, `${this.thisYear.getFullYear() + 1}-12-31`]
+      return [`${thisYear.getFullYear()}-01-01`, `${thisYear.getFullYear() + 1}-12-31`]
     },
     selectedDateNow() {
-      return this.selectedDate.length > 0 ? this.selectedDate : this.getThisYear
+      return this.selectedDate ? this.selectedDate : this.getThisYear
+    }
+  },
+  watch: {
+    keyword(val) {
+      if (val !== null) {
+        if (val.length > 2 || val === '') {
+          this.params.offset = 0
+          this.params.limit = 10
+          this.params.search = this.keyword
+          this.fetchData()
+        }
+      } else this.keyword = ''
     }
   },
   methods: {
     ...mapActions('projects', ['setSelectedProject', 'getMyProjectList']),
-    async fetchData(date = this.getThisYear) {
-      const params = {
-        pj_due_date_start: date[0],
-        pj_due_date_end: date[1],
-        pj_members_count: true
+    async fetchData() {
+      this.listLoading = true
+      await this.getMyProjectList(this.params)
+      this.listLoading = false
+      this.listData = this.projectList
+      const filteredArray = this.projectList.filter(obj => {
+        return obj.is_lock !== true && obj.disabled !== true
+      })
+      if (filteredArray.length > 0) {
+        this.getCalculateProjectData(filteredArray)
       }
-      await this.getMyProjectList(params)
       return this.projectList
+    },
+    async getCalculateProjectData(project) {
+      const ids = project.map(function (el) {
+        return el.id
+      })
+      const calculated = (await getCalculateProjectList(ids.join())).data
+      for (const i in calculated.project_list) {
+        calculated.project_list[i].id = parseInt(calculated.project_list[i].id)
+      }
+      const merged = []
+      for (let i = 0; i < this.listData.length; i++) {
+        merged.push({
+          ...this.listData[i],
+          ...calculated.project_list.find(
+            (itmInner) => itmInner.id === this.listData[i].id
+          )
+        })
+      }
+      this.listData = merged
+      console.log(this.listData)
+    },
+    async onPagination(listQuery) {
+      const { limit, page } = listQuery
+      const offset = limit * (page - 1)
+      this.params.offset = offset
+      this.params.limit = limit
+      if (this.keyword !== '') {
+        this.params.search = this.keyword
+      } else delete this.params.search
+      if (this.$refs.filter.isDisabled.length === 1) {
+        this.params.disabled = this.$refs.filter.isDisabled[0]
+      } else {
+        delete this.params.disabled
+      }
+      await this.fetchData()
+      this.initParams()
+    },
+    initParams() {
+      this.params = params()
     },
     cleanFilter() {
       this.keyword = ''
@@ -352,7 +444,8 @@ export default {
       this.$refs.deleteProjectDialog.showDialog = true
     },
     getProgressRatio(current, total) {
-      return Math.round((current / total) * 100)
+      if (current) return Math.round((current / total) * 100)
+      else return 0
     },
     handleClick(projectObj) {
       const { id } = projectObj
@@ -421,7 +514,14 @@ export default {
       this.selectedProjectList = list
     },
     handleDatePicked(date) {
-      this.loadData(date)
+      if (date === null) {
+        this.params.pj_due_date_start = this.getThisYear[0]
+        this.params.pj_due_date_end = this.getThisYear[1]
+      } else {
+        this.params.pj_due_date_start = date[0]
+        this.params.pj_due_date_end = date[1]
+      }
+      this.fetchData()
     },
     calculateDays(endDay, startDay) {
       const start = new Date(startDay)
@@ -454,7 +554,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.loadData()
+        await this.fetchData()
       } else {
         await deleteStarProject(id)
         await this.$message({
@@ -462,7 +562,7 @@ export default {
           message: this.$t('Notify.Updated'),
           type: 'success'
         })
-        await this.loadData()
+        await this.fetchData()
       }
     }
   }

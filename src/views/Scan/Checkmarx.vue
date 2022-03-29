@@ -11,7 +11,7 @@
     <el-divider />
     <div class="text-right mb-2">
       <el-button
-        type="primary"
+        class="buttonPrimaryReverse"
         icon="el-icon-refresh"
         size="mini"
         plain
@@ -44,7 +44,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :href="scope.row.commit_url"
@@ -120,7 +120,7 @@
           <div v-else-if="isException(scope.row)">-</div>
           <template v-else-if="isInProcess(scope.row)">
             <el-link
-              type="primary"
+              :class="!scope.row.report_ready ? '' : 'linkTextColor'"
               target="_blank"
               style="font-size: 16px"
               :disabled="!scope.row.report_ready"

@@ -124,7 +124,7 @@
             <el-row>
               <el-col>
                 <el-divider content-position="left">{{ $t('Deploy.EnvironmentVariable') }}
-                  <el-button round size="small" icon="el-icon-plus" type="primary"
+                  <el-button round size="small" icon="el-icon-plus" class="buttonPrimary"
                              @click="addEnvironment"
                   >
                     {{ $t('Deploy.AddVariable') }}
@@ -175,7 +175,7 @@
                       <el-empty>
                         <template slot="description">
                           <p>{{ $t('general.NoData') }}</p>
-                          <el-button round size="small" icon="el-icon-plus" type="primary"
+                          <el-button round size="small" icon="el-icon-plus" class="buttonPrimaryReverse"
                                      @click="addEnvironment"
                           >
                             {{ $t('Deploy.AddVariable') }}
@@ -185,7 +185,7 @@
                     </template>
                     <div v-if="deployForm.environments.length>0" slot="append">
                       <p>
-                        <el-button round size="small" icon="el-icon-plus" type="primary"
+                        <el-button round size="small" icon="el-icon-plus" class="buttonPrimaryReverse"
                                    @click="addEnvironment"
                         >
                           {{ $t('Deploy.AddVariable') }}

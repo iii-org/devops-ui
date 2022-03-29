@@ -5,7 +5,7 @@
         id="btn-add-issue"
         slot="button"
         v-permission="['Administrator','Project Manager', 'Engineer']"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         :disabled="selectedProjectId === -1"
         @click="handleQuickAddClose"
@@ -43,6 +43,7 @@
             </el-menu>
             <el-button
               slot="reference"
+              class="buttonPrimaryReverse"
               icon="el-icon-download"
             >{{ $t('File.Download') }}</el-button>
           </el-popover>

@@ -1,15 +1,13 @@
 <template>
-  <el-collapse-item v-loading="isLoading" :element-loading-text="$t('Loading')" name="PluginSettings">
-    <template slot="title">
-      <span class="text-title mr-3">{{ $t('Plugin.Manage') }}</span>
-    </template>
+  <div v-loading="isLoading" :element-loading-text="$t('Loading')">
+    <div v-if="isShowTitle" class="text-lg mr-3 mb-2">{{ $t('Plugin.Manage') }}</div>
     <template v-if="settingStatus === 'Active'">
       <div class="flex justify-between items-center mb-1">
         <div>
           <span class="text-sm mr-2">{{ $t('Git.Branch') }}：</span>
           <span class="text-title">{{ branch }}</span>
         </div>
-        <el-button type="text" size="medium" @click="handleClick">
+        <el-button class="linkTextColor" type="text" size="medium" @click="handleClick">
           {{ $t('route.advanceBranchSettings') }}
         </el-button>
       </div>
@@ -31,7 +29,6 @@
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.has_default_branch"
-              active-color="#13ce66"
               inactive-color="gray"
               @change="handleStageChange(scope.row)"
             />
@@ -39,10 +36,10 @@
         </el-table-column>
       </el-table>
       <div class="text-right mt-3">
-        <el-button size="mini" :loading="isStagesLoading" @click="fetchPipeDefBranch">
+        <el-button size="mini" class="buttonSecondaryReverse" :loading="isStagesLoading" @click="fetchPipeDefBranch">
           {{ $t('general.Cancel') }}
         </el-button>
-        <el-button size="mini" type="primary" :loading="isStagesLoading" @click="updatePipeDefBranch">
+        <el-button size="mini" class="buttonPrimary" :loading="isStagesLoading" @click="updatePipeDefBranch">
           {{ $t('general.Confirm') }}
         </el-button>
       </div>
@@ -57,7 +54,7 @@
     <template v-else>
       <el-empty :description="$t('general.NoData')" :image-size="100" />
     </template>
-  </el-collapse-item>
+  </div>
 </template>
 
 <script>
@@ -66,6 +63,12 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PipelineSettings',
+  props: {
+    isShowTitle: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       isLoading: false,
@@ -85,12 +88,11 @@ export default {
     // count the frequency of each plugin appeared
     // for example: { Web: 2, Sonarqube: 1, Checkmarx: 1, ...}
     countFrequency() {
-      const countFreq = this.stagesData.reduce((preVal, curVal) => {
+      return this.stagesData.reduce((preVal, curVal) => {
         if (curVal.name in preVal) preVal[curVal.name]++
         else preVal[curVal.name] = 1
         return preVal
       }, {})
-      return countFreq
     },
     // find the repeat plugin
     repeatPlugins() {

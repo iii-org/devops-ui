@@ -58,7 +58,7 @@
       </el-tab-pane>
     </el-tabs>
     <span slot="footer">
-      <el-button @click="handleClose">{{ $t('general.Close') }}</el-button>
+      <el-button class="buttonSecondaryReverse" @click="handleClose">{{ $t('general.Close') }}</el-button>
     </span>
   </el-dialog>
 </template>

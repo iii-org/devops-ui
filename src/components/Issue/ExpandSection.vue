@@ -8,6 +8,8 @@
           <li class="issue-item">
             <IssueRow
               :issue="issue.parent"
+              :is-parent="true"
+              :is-button-disabled="isButtonDisabled"
               :reload="reload"
               @click-title="handleEdit"
               @show-context-menu="handleContextMenu(issue.parent, '', $event)"
@@ -23,6 +25,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :is-button-disabled="isButtonDisabled"
                 :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
@@ -39,6 +42,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :is-button-disabled="isButtonDisabled"
                 :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
@@ -76,13 +80,35 @@ export default {
     reload: {
       type: [String, Number],
       default: 0
+    },
+    projectRelationList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  watch: {
+    issue: {
+      handler(value) {
+        if (!value.family) {
+          this.$emit('collapse-expend-row', value.id)
+        }
+      }
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
     async removeIssueRelation(issue) {
+      const { issueData, isParent } = issue
       this.listLoading = true
       try {
-        await updateIssue(issue.id, { parent_id: '' })
+        if (isParent) {
+          await updateIssue(this.issue.id || this.issue.issueId, { parent_id: '' })
+        } else {
+          await updateIssue(issueData.id, { parent_id: '' })
+        }
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -95,10 +121,10 @@ export default {
       this.listLoading = false
     },
     async removeRelationIssue(issue) {
-      const { relation_id } = issue
+      const { issueData } = issue
       this.listLoading = true
       try {
-        await deleteIssueRelation(relation_id)
+        await deleteIssueRelation(issueData.relation_id)
         this.$message({
           title: this.$t('general.Success'),
           message: this.$t('Notify.Updated'),
@@ -115,7 +141,10 @@ export default {
     },
     handleEdit(issueId) {
       if (!this.popup) {
-        this.$router.push({ name: 'issue-detail', params: { issueId }})
+        this.$router.push({ name: 'issue-detail', params: {
+          issueId,
+          projectRelationList: this.projectRelationList
+        }})
       } else {
         this.$emit('popup-dialog', issueId)
       }

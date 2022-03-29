@@ -28,14 +28,14 @@
         <template slot-scope="scope">
           <el-button
             v-if="$route.params.user_id !== scope.row.owner_id"
-            type="primary"
+            class="buttonPrimaryReverse"
             size="mini"
             @click="handleParticipateDialog(scope.row.owner_id)"
           >
             <em class="el-icon-edit" />
             {{ $t('general.Participate') }}
           </el-button>
-          <el-button type="primary" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
+          <el-button class="buttonPrimaryReverse" size="mini" @click="handleIssueClick(scope.row)">{{ $t('Issue.Issue') }}</el-button>
           <el-popconfirm
             :confirm-button-text="$t('general.Remove')"
             :cancel-button-text="$t('general.Cancel')"

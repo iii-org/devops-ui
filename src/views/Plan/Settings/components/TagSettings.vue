@@ -3,7 +3,7 @@
     <div class="flex justify-between mt-3">
       <div class="font-medium text-lg">{{ $t('ProjectSettings.Tag') }}</div>
       <div>
-        <el-button type="primary" :disabled="isAddingTag" @click="handleShowTagInput">+ {{ $t('ProjectSettings.AddCustomTag') }}</el-button>
+        <el-button class="buttonPrimary" :disabled="isAddingTag" @click="handleShowTagInput">+ {{ $t('ProjectSettings.AddCustomTag') }}</el-button>
       </div>
     </div>
     <el-divider />
@@ -17,8 +17,8 @@
             type="text"
             class="mr-3"
           />
-          <el-button type="primary" @click="handleInputSave">{{ $t('general.Save') }}</el-button>
-          <el-button @click="handleInputCancel">{{ $t('general.Cancel') }}</el-button>
+          <el-button class="buttonPrimary" @click="handleInputSave">{{ $t('general.Save') }}</el-button>
+          <el-button class="buttonSecondaryReverse" @click="handleInputCancel">{{ $t('general.Cancel') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -34,8 +34,8 @@
         <template slot-scope="scope">
           <div v-show="scope.row.edit">
             <el-input v-model="scope.row.name" type="text" />
-            <el-button type="success" @click.stop="handleTableInputConfirm(scope)">{{ $t('general.ok') }}</el-button>
-            <el-button @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
+            <el-button class="buttonPrimary" @click.stop="handleTableInputConfirm(scope)">{{ $t('general.ok') }}</el-button>
+            <el-button class="buttonSecondaryReverse" @click.stop="handleTableInputCancel(scope)">{{ $t('general.Cancel') }}</el-button>
           </div>
           <span v-show="!scope.row.edit">{{ scope.row.name }}</span>
         </template>

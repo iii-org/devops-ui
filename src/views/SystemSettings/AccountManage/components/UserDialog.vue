@@ -18,7 +18,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="$t('User.Password')" prop="password">
-        <el-input v-model="userForm.password" type="password" maxlength="20" show-password :disabled="disableEdit" />
+        <el-input v-model="userForm.password" type="password" maxlength="20" show-password />
         <div style="word-break: keep-all; margin-top: 5px">
           {{ $t('User.PasswordRule') }}
         </div>
@@ -29,7 +29,6 @@
           type="password"
           maxlength="20"
           show-password
-          :disabled="disableEdit"
         />
       </el-form-item>
       <el-form-item :label="$t('general.Name')" prop="name">
@@ -58,7 +57,6 @@
           class="mt-2"
           active-value="enable"
           inactive-value="disable"
-          active-color="#13ce66"
           inactive-color="#ff4949"
           :active-text="$t('general.Enable')"
           :inactive-text="$t('general.Disable')"
@@ -66,8 +64,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">{{ $t('general.Cancel') }}</el-button>
-      <el-button type="primary" @click="submitForm">{{ $t('general.Confirm') }}</el-button>
+      <el-button class="buttonSecondaryReverse" @click="handleClose">{{ $t('general.Cancel') }}</el-button>
+      <el-button class="buttonPrimary" @click="submitForm">{{ $t('general.Confirm') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -116,7 +114,6 @@ export default {
         password: [{ validator: this.validatePassword, message: "Password can't be less than 8 characters." }],
         repeatPassword: [{ required: true, message: 'Please input password', trigger: 'blur' }],
         name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-        phone: [{ required: true, message: 'Please input phone', trigger: 'blur' }],
         email: [
           { required: true, message: 'Please input email', trigger: 'blur' },
           { type: 'email', message: 'Invalid email', trigger: ['blur', 'change'] }
@@ -252,7 +249,7 @@ export default {
 
           // remove useless field
           Object.keys(data).forEach(item => {
-            if (data[item] === '') {
+            if (data[item] === '' && item === 'password') {
               delete data[item]
             }
           })
@@ -310,4 +307,5 @@ export default {
   overflow: auto;
   max-height: 75vh;
 }
+
 </style>

@@ -8,14 +8,18 @@
           <el-col class="mb-4" :sm="24" :md="14" :lg="15">
             <el-card shadow="never">
               <el-collapse v-model="activeNames">
-                <ProjectVersions />
+                <el-collapse-item name="ProjectVersions" :title="$t('Version.ProjectManage')">
+                  <ProjectVersions />
+                </el-collapse-item>
               </el-collapse>
             </el-card>
           </el-col>
           <el-col class="mb-4" :sm="24" :md="10" :lg="9">
             <el-card shadow="never">
               <el-collapse v-model="activeNames">
-                <PipelineSettings />
+                <el-collapse-item name="PluginSettings" :title="$t('Plugin.Manage')">
+                  <PipelineSettings />
+                </el-collapse-item>
               </el-collapse>
             </el-card>
           </el-col>
@@ -24,7 +28,9 @@
           <el-col class="mb-4" :xs="24">
             <el-card shadow="never">
               <el-collapse v-model="activeNames">
-                <ProjectMembers />
+                <el-collapse-item name="ProjectMembers" :title="$t('Member.Manage')">
+                  <ProjectMembers />
+                </el-collapse-item>
               </el-collapse>
             </el-card>
           </el-col>
@@ -148,6 +154,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'src/styles/theme/variables.scss';
+>>> .el-collapse-item__header {
+  font-size: 1.125rem;
+}
+
 >>> .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
   background: #e4ecf7 ;
   color: #3e3f41;
@@ -162,7 +173,7 @@ export default {
   border-radius: 5px;
   width:250px;
   &:hover {
-    color: #409eff;
+    color: $linkTextColor;
   }
 }
 

@@ -13,7 +13,7 @@
           type="text"
           size="medium"
           icon="el-icon-arrow-left"
-          class="previous text-h6"
+          class="previous text-h6 linkTextColor"
           @click="onBack"
         >
           {{ $t('general.Back') }}
@@ -30,7 +30,7 @@
         class="text-right"
       >
         <el-button
-          type="primary"
+          class="buttonPrimary"
           :loading="btnConfirmLoading"
           @click="handleAddConfirm"
         >

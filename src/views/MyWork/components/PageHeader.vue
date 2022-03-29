@@ -8,7 +8,7 @@
       <template v-if="!focusedProjectId">
         <el-button
           v-permission="['Administrator','Project Manager']"
-          type="primary"
+          class="buttonPrimary"
           icon="el-icon-plus"
           @click="$emit('create-project')"
         >
@@ -19,7 +19,7 @@
       <el-button
         v-else
         v-permission="['Administrator','Project Manager', 'Engineer']"
-        type="success"
+        class="buttonSecondary"
         icon="el-icon-plus"
         @click="$emit('add-issue')"
       >
@@ -106,6 +106,7 @@
         slot="reference"
         icon="el-icon-s-operation"
         type="text"
+        class="headerTextColor"
       >
         {{ selectedConditions }}
         <em class="el-icon-arrow-down" />
@@ -117,6 +118,7 @@
     <el-button
       v-if="!searchVisible"
       type="text"
+      class="headerTextColor"
       icon="el-icon-search"
       @click="showKeywordInput"
     >
@@ -138,6 +140,7 @@
       <el-divider direction="vertical" />
       <el-button
         size="small"
+        class="buttonSecondaryReverse"
         icon="el-icon-close"
         @click="clearFilter"
       >

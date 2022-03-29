@@ -2,7 +2,14 @@
   <div>
     <ToolBar>
       <span slot="toolName">SonarQube</span>
-      <el-button slot="link" type="text" icon="el-icon-position" :disabled="!sonarQubeLink" @click="openSonarQube">
+      <el-button 
+        slot="link" 
+        type="text" 
+        icon="el-icon-position" 
+        :class="sonarQubeLink ? 'linkTextColor' : ''"
+        :disabled="!sonarQubeLink" 
+        @click="openSonarQube"
+      >
         {{ $t('TestReport.DetailReport') }}
       </el-button>
     </ToolBar>
@@ -89,4 +96,3 @@ export default {
   }
 }
 </script>
-

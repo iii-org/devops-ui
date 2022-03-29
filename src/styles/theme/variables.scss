@@ -1,22 +1,4 @@
-// sidebar
-$menuText: #bfcbd9;
-$menuActiveText: #409eff;
-$subMenuActiveText: #f4f4f5; //https://github.com/ElemeFE/element/issues/12951
-
-$menuBg: #304156;
-$menuHover: #263445;
-
-$subMenuBg: #1f2d3d;
-$subMenuHover: #001528;
-
-$sideBarWidth: 220px;
-
-$success: #67c23a;
-$danger: #f56c6c;
-$warning: #e6a23c;
-$slow: #56b1e8;
-$light: #c1c3c5;
-$info: #606260;
+@import 'themePath/index.scss';
 
 $secondary: #3ecbbc;
 $active: #409eff;

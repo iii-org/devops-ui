@@ -74,6 +74,7 @@
         slot="reference"
         icon="el-icon-s-operation"
         type="text"
+        class="headerTextColor"
       > {{ displayFilterValue }}
         <em class="el-icon-arrow-down el-icon--right" />
       </el-button>
@@ -94,6 +95,7 @@
       v-else
       type="text"
       icon="el-icon-search"
+      class="headerTextColor"
       @click="searchVisible = !searchVisible"
     >
       {{ $t('general.Search') + ((keyword) ? ': ' + keyword : '') }}
@@ -103,6 +105,7 @@
       <el-button
         size="small"
         icon="el-icon-close"
+        class="buttonSecondaryReverse"
         @click="cleanFilter"
       >
         {{ $t('Issue.CleanFilter') }}
@@ -140,6 +143,10 @@ export default {
     prefill: {
       type: Object,
       default: () => ({})
+    },
+    projectRelationList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -231,14 +238,21 @@ export default {
       return statusList.filter((item) => item.is_closed === false)
     },
     getOptionsData(option_name) {
-      const options = { ...this.selectionOptions, tracker: this.tracker, status: this.status, priority: this.priority }
+      const options = {
+        ...this.selectionOptions,
+        tracker: this.tracker,
+        status: this.status,
+        priority: this.priority,
+        project: this.projectRelationList
+      }
       return options[option_name]
     },
     async onChangeFilter() {
       this.$emit('change-filter', {
         filterValue: this.filterValue,
         keyword: this.keyword,
-        displayClosed: this.displayClosed
+        displayClosed: this.displayClosed,
+        isReloadFilterList: this.filterValueClone.hasOwnProperty('project')
       })
     },
     onChangeFixedVersionStatus() {
@@ -277,7 +291,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

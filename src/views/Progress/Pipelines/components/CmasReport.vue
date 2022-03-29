@@ -6,6 +6,7 @@
         slot="link"
         type="text"
         icon="el-icon-download"
+        :class="!disabled ? 'linkTextColor' : ''"
         :disabled="disabled"
         @click="openCmas"
       >

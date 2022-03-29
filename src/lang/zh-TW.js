@@ -208,6 +208,7 @@ export default {
     Transfer: '移轉',
     DueDate: '到期日',
     Branch: '分支',
+    Commit: '提交碼',
     Total: '共',
     AdvancedSettings: '》進階設定',
     year: '年',
@@ -234,7 +235,11 @@ export default {
     High: '高',
     Medium: '中',
     Low: '低',
-    Run: '執行'
+    Run: '執行',
+    ForceDelete: '刪除',
+    Fix: '修復',
+    Connected: '連線成功',
+    Disconnected: '連線失敗'
   },
   Notify: {
     Updated: '已更新',
@@ -266,7 +271,9 @@ export default {
     logoutNotifications: '看起來您已經閒置一段時間了，為保證您的資料安全，我們將協助您自動登出。',
     pluginWarnNotifications: '請確保同名 Plugin 開關的狀態一致再進行儲存和執行。',
     pluginRepeatMessage: '紅底為同分支有重複項目設定，請確認其設置為一致(如同為開或關)，以確保 Pipeline 運作正常。',
-    ChangeProjectManager: '確認是否要變更專案經理人。'
+    ChangeProjectManager: '確認是否要變更專案經理人。',
+    ConnectSocket: '看板正在連接 Socket...',
+    UpdateKanban: '{issueName} 正在更新...'
   },
   RuleMsg: {
     PleaseInput: '請輸入',
@@ -375,7 +382,8 @@ export default {
     UploadWarning: '檔案名稱請勿包含特殊字元'
   },
   Version: {
-    Manage: '專案版本管理',
+    ProjectManage: '專案版本管理',
+    Manage: '版本管理',
     AddVersion: '新增版本',
     EditVersion: '修改版本',
     Duration: '期間',
@@ -417,6 +425,7 @@ export default {
     EndDate: '結束日期',
     Description: '議題描述',
     due_date: '@:Issue.EndDate',
+    SelectProject: '選擇專案',
     SelectDate: '選擇日期',
     SelectType: '選擇種類',
     SelectTag: '選擇標籤',
@@ -690,7 +699,9 @@ export default {
         all_download: '全部下載',
         organization: '組織',
         project_start_date: '計畫起始日',
-        project_due_date: '計畫結束日'
+        project_due_date: '計畫結束日',
+        disable_tooltip: '僅本專案經理可啟用本專案',
+        enable_tooltip: '僅本專案經理可停用本專案'
       }
     }
   },
@@ -898,6 +909,7 @@ export default {
     Registry: 'Registry',
     RedmineMail: 'Redmine Mail',
     SystemTemplates: 'Templates',
+    SystemConfigs: 'System Configs',
     AddPlugin: '新增插件',
     AddParams: '新增參數'
   },
@@ -961,7 +973,6 @@ export default {
     releaseNote: '版本說明',
     releaseVersionName: '包版版號',
     selectMainVersion: '請選擇主版本',
-    startRelease: '開始包版',
     copyIssues: '複製選中議題名稱到剪貼簿',
     allCategories: '所有種類',
     batchClose: '批次關閉',
@@ -972,10 +983,33 @@ export default {
     selectMoveToVersion: '請選擇版本',
     batchMoveDialogHint: '將批次搬移 {0} 個議題',
     releaseDone: '版本 {0} 包版成功。',
-    startPackageVersion: '包版作業',
-    stopPackageVersion: '取消包版',
+    startRelease: '開始包版',
+    stopRelease: '取消包版',
     checkIssue: '檢查議題',
-    packageVersionSettings: '包版作業設定-'
+    releaseSettings: '包版作業設定-',
+    IssueVersion: '議題版本',
+    ImageVersion: '程式/映像檔版本',
+    ReleaseVersion: '打包版本',
+    IssueVersionWarning1: '包版前請確認所有議題單是否已完結關閉，若未完全關閉，可於下方操作移轉或直接關閉，若尚未設定版本，請至上方',
+    IssueVersionWarning2: '進行版本設定。',
+    ImageVersionWarning: '請指定程式或映像檔版本，若無程式開發或不需更改，則可直接跳過。',
+    ReleaseVersionWarning: '請確認以下程式、映像檔、議題版本是否有誤。',
+    ImageList: '映像檔清單',
+    RenderAllCommit: '呈現所有提交',
+    OnlyImage: '僅有映像檔',
+    CommitTime: '提交時間',
+    TableReleaseVersion: '釋版版號',
+    Previous: '上一步',
+    Next: '下一步',
+    ModifyImage: '修改映像檔',
+    NoIssueWarning: '此版本尚未建立議題',
+    CommitAndImage: '程式/映像檔',
+    ImagePath: '映像檔路徑',
+    NotePlaceholder: '請輸入版本說明，也可透過上方之議題版本內的已關閉議題清單進行複製、貼到此處。',
+    ReleaseWarning: '包版版號與映像檔路徑皆可多個，唯版本路徑僅可至多兩個',
+    Tags: '備註標籤',
+    CustomPath: '自定義路徑',
+    StopReleaseWarning: '請檢查映像檔路徑是否符合格式。'
   },
   SystemVersion: {
     Source: '系統模組',
@@ -1159,6 +1193,15 @@ export default {
     NotifyRun: '範本同步執行中，預計需時 3 - 10 分鐘，請耐心等候，或點入左下方執行細節，瞭解實際同步進度。',
     TemplateSyncExecLogs: '範本同步執行紀錄',
     VerifyGithubToken: '檢核GitHub token 中...'
+  },
+  SystemConfigs: {
+    SystemConfig: '系統參數',
+    Content: '狀態 / 設定內容',
+    FileType: '檔案上傳類型',
+    GitLabExternalAccess: 'GitLab對外連線',
+    UploadFileTypes: '檔案上傳類型設定',
+    FileExtension: '副檔名',
+    includesMimeType: '資料內已有{mimeType}'
   },
   Kanban: {
     ChangeIssueError: '異動議題錯誤',

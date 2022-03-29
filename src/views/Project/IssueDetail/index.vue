@@ -18,7 +18,7 @@
                 type="text"
                 size="medium"
                 icon="el-icon-arrow-left"
-                class="previous"
+                class="previous linkTextColor"
                 @click="handleBackPage"
               >
                 {{ $t('general.Back') }}
@@ -51,6 +51,7 @@
             class="text-right"
           >
             <el-button
+              v-if="!isFromBoard"
               size="medium"
               :type="isButtonDisabled ? 'info' : 'danger'"
               plain
@@ -60,7 +61,7 @@
             </el-button>
             <el-button
               size="medium"
-              :type="isButtonDisabled ? 'info' : 'primary'"
+              :class="isButtonDisabled ? 'buttonInfo' : 'buttonPrimary'"
               :disabled="isButtonDisabled"
               @click="handleSave"
             >{{ $t('general.Save') }}
@@ -126,7 +127,7 @@
                     {{ $t('Issue.RelatedIssue') + '(' + countRelationIssue + ')' }}
                     <el-button
                       size="mini"
-                      type="primary"
+                      class="buttonPrimary"
                       icon="el-icon-data-line"
                       @click.native.stop="toggleIssueMatrixDialog"
                     >
@@ -137,6 +138,7 @@
                     :issue="$data"
                     :family="countRelationIssue > 0"
                     :popup="true"
+                    :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
                     @update-list="fetchIssueLink"
                     @on-context-menu="onContextMenu"
@@ -321,6 +323,10 @@ export default {
     isInDialog: {
       type: Boolean,
       default: false
+    },
+    isFromBoard: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -444,7 +450,8 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.userRole === 'QA'
+      // return this.userRole === 'QA'
+      return this.$route.params.disableButton
     }
   },
   watch: {
@@ -540,6 +547,7 @@ export default {
         //   type: 'warning'
         // })
       }
+      this.isLoading = false
       return data
     },
     initUploadFiles(data) {
@@ -580,12 +588,22 @@ export default {
       this.tags = tags || []
       this.setFormData(data)
       this.view = data
-      if (Object.keys(data.project).length > 0 && this.selectedProjectId !== data.project.id) {
+      if (
+        Object.keys(data.project).length > 0 &&
+        this.selectedProjectId !== data.project.id &&
+        !this.getRelationProjectList().includes(data.project.id)
+      ) {
         this.onProjectChange(data.project.id)
       }
       if (this.$refs.IssueForm) {
         this.$refs.IssueForm.getClosable()
       }
+    },
+    getRelationProjectList() {
+      if (!this.$route.params.projectRelationList) return []
+      return this.$route.params.projectRelationList.map((item) => {
+        return item.id
+      })
     },
     onProjectChange(value) {
       localStorage.setItem('projectId', value)
@@ -720,9 +738,9 @@ export default {
         this.$router.push({ name: 'issue-detail', params: { issueId: issue_id }})
       } else {
         await this.$refs.IssueForm.getClosable()
-        await this.fetchIssue()
       }
       this.isLoading = false
+      await this.fetchIssue()
     },
     async handleUploadUpdated() {
       await this.fetchIssue(true)
@@ -745,7 +763,7 @@ export default {
         this.isLoading = status.status
         this.handleUploadUpdated()
       } else {
-        this.isLoading = status
+        this.isLoading = status.status
         this.handleUpdated()
       }
     },
@@ -1028,6 +1046,7 @@ export default {
       } finally {
         this.isLoadingFamily = false
       }
+      this.isLoadingFamily = false
       return Promise.resolve()
     },
     formatIssueFamilyData(row, data) {
@@ -1066,7 +1085,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import 'src/styles/theme/variables.scss';
 
 .issueHeight {
   height: calc(95vh - 50px - 81px - 40px - 32px);

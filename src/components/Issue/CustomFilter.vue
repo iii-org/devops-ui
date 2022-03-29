@@ -213,12 +213,13 @@
               <div class="flex justify-between">
                 <el-button
                   size="small"
+                  class="buttonSecondaryReverse"
                   @click="onCancelClick(filter.id)"
                 >
                   {{ $t('general.Cancel') }}
                 </el-button>
                 <el-button
-                  type="success"
+                  class="buttonPrimary"
                   size="small"
                   @click="editFilter(filter)"
                 >

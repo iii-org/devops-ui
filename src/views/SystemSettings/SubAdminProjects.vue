@@ -279,7 +279,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import 'src/styles/theme/variables.scss';
 
 .sortable-selected {
   >>> .el-card__body {

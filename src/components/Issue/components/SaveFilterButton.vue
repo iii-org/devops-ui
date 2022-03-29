@@ -3,7 +3,7 @@
     <el-button
       v-if="showSaveSettingsButton"
       style="width:100%"
-      type="primary"
+      class="buttonPrimary"
       @click="showSaveSettingsButton = !showSaveSettingsButton"
     >
       {{ $t('general.SaveSettings') }}
@@ -18,7 +18,7 @@
         :placeholder="$t('Issue.InputFilterName')"
       />
       <el-button
-        type="success"
+        class="buttonSecondary"
         @click="setCustomFilter"
       >
         {{ $t('general.Save') }}

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container account-manage-table" style="overflow: hidden;">
     <div class="flex justify-between">
-      <el-button type="success" @click="showUserDialog('', 'Add User')">
+      <el-button class="buttonSecondary" @click="showUserDialog('', 'Add User')">
         <em class="el-icon-plus" />
         {{ $t('User.AddUser') }}
       </el-button>
@@ -35,7 +35,7 @@
       />
       <el-table-column align="center" :label="$t('general.Actions')" width="230">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleParticipateDialog(scope.row.id)">
+          <el-button size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
             <em class="el-icon-edit" />
             {{ $t('general.Participate') }}
           </el-button>

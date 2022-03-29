@@ -13,6 +13,7 @@
             <el-button
               size="small"
               icon="el-icon-refresh"
+              class="buttonPrimaryReverse"
               :disabled="status.is_lock"
               @click="getSyncRedmine"
             >
@@ -161,7 +162,7 @@
     <div v-if="!isLoading&&projectCount<=0">
       <el-empty :description="$t('general.NoData')">
         <el-button
-          type="success"
+          class="buttonSecondary"
           icon="el-icon-plus"
           @click="handleAdding"
         >
@@ -357,7 +358,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/styles/variables.scss';
+@import 'src/styles/theme/variables.scss';
 @import '~element-ui/lib/theme-chalk/display.css';
 
 .overview {

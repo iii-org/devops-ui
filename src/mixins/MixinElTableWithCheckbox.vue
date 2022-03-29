@@ -1,3 +1,28 @@
+
+<template>
+  <div>
+    <el-table
+      ref="theTable"
+      v-loading="listLoading"
+      :element-loading-text="$t('Loading')"
+      fit
+      highlight-current-row
+      :data="pagedData"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" width="55" />
+    </el-table>
+    <pagination
+      :total="filteredData.length"
+      :page="listQuery.page"
+      :limit="listQuery.limit"
+      :page-sizes="[listQuery.limit]"
+      :layout="'total, prev, pager, next'"
+      @pagination="handlePagination"
+    />
+  </div>
+</template>
+
 <script>
 import MixinElTable from '@/mixins/MixinElTable'
 
@@ -55,31 +80,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div>
-    <el-table
-      ref="theTable"
-      v-loading="listLoading"
-      :element-loading-text="$t('Loading')"
-      fit
-      highlight-current-row
-      :data="pagedData"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column type="selection" width="55" />
-    </el-table>
-    <pagination
-      :total="filteredData.length"
-      :page="listQuery.page"
-      :limit="listQuery.limit"
-      :page-sizes="[listQuery.limit]"
-      :layout="'total, prev, pager, next'"
-      @pagination="handlePagination"
-    />
-  </div>
-</template>
-
-<style scoped>
-
-</style>

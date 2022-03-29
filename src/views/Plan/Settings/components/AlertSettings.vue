@@ -5,7 +5,6 @@
       <div>
         <el-switch
           v-model="isToggle"
-          active-color="#13ce66"
           inactive-color="#ff4949"
           class="mr-5"
           :disabled="disableSwitch"
@@ -13,7 +12,7 @@
           :inactive-text="$t('general.Disable')"
           @change="toggleSwitch"
         />
-        <el-button type="primary" :disabled="!isToggle" @click="handleSave">{{ $t('general.Save') }}</el-button>
+        <el-button class="buttonPrimary" :disabled="!isToggle" @click="handleSave">{{ $t('general.Save') }}</el-button>
       </div>
     </div>
     <el-divider />

@@ -6,7 +6,7 @@
     <ProjectListSelector>
       <el-button
         slot="button"
-        type="success"
+        class="buttonSecondary"
         :disabled="selectedProjectId === -1"
         @click="openSonarQube"
       >
@@ -42,7 +42,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            type="primary"
+            class="linkTextColor"
             target="_blank"
             style="font-size: 16px"
             :href="scope.row.issue_link"
