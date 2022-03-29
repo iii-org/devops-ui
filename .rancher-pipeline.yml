@@ -89,7 +89,6 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
-      - packrelease
       - issueboarddrawer
       - socket
       - temp
@@ -127,7 +126,6 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
-      - packrelease
       - issueboarddrawer
       - socket
       - temp
@@ -176,7 +174,6 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
-      - packrelease
       - issueboarddrawer
       - socket
       - temp
@@ -218,7 +215,6 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
-      - packrelease
       - issueboarddrawer
       - socket
       - temp
@@ -259,7 +255,6 @@ stages:
       - milestonehandleedit
       - router
       - expandrow
-      - packrelease
       - issueboarddrawer
       - socket
       - temp
