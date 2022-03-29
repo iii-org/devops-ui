@@ -1,0 +1,103 @@
+<template>
+  <div>
+    <div v-if="!isShowInput">
+      <el-tooltip :content="$t('Release.Tags')" placement="top">
+        <em
+          class="el-icon-price-tag cursor-pointer mr-2"
+          @click="showInput"
+        />
+      </el-tooltip>
+      <el-tooltip :content="$t('general.Report')" placement="top">
+        <em
+          v-show="scope.row.commit"
+          class="el-icon-tickets cursor-pointer mr-2"
+          @click="handleToTestReport(scope.row.commit)"
+        />
+      </el-tooltip>
+      <el-tooltip :content="$t('Release.CustomPath')" placement="top">
+        <em
+          class="el-icon-edit cursor-pointer"
+          @click="showInput"
+        />
+      </el-tooltip>
+    </div>
+    <el-input
+      v-else
+      v-model="model"
+      :placeholder="$t('general.PleaseInput')"
+    >
+      <em
+        v-if="!isSave"
+        slot="suffix"
+        class="el-icon-circle-plus cursor-pointer button"
+        :style="getStyle('menuActiveText')"
+        @click="save"
+      />
+      <em
+        slot="suffix"
+        class="el-icon-error cursor-pointer button"
+        :style="getStyle('danger')"
+        @click="init"
+      />
+    </el-input>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import variables from '@/styles/theme/variables.scss'
+
+export default {
+  name: 'ActionInput',
+  props: {
+    scope: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  data() {
+    return {
+      model: '',
+      isShowInput: false,
+      isSave: false
+    }
+  },
+  computed: {
+    ...mapGetters(['selectedProject'])
+  },
+  methods: {
+    showInput() {
+      this.isShowInput = true
+    },
+    getStyle(colorCode) {
+      const color = variables[`${colorCode}`]
+      return {
+        color
+      }
+    },
+    save() {
+      this.isShowInput = false
+      this.isSave = true
+      this.model = ''
+    },
+    init() {
+      this.isShowInput = false
+      this.isSave = false
+      this.model = ''
+    },
+    handleToTestReport(commitId) {
+      this.$router.push({
+        name: 'TestReport',
+        params: { commitId, projectName: this.selectedProject.name }
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.button {
+  line-height: 40px;
+  font-size: 24px;
+}
+</style>

@@ -1,8 +1,6 @@
 <template>
-  <el-collapse-item v-loading="isLoading" :element-loading-text="$t('Loading')" name="PluginSettings">
-    <template slot="title">
-      <span class="text-title mr-3">{{ $t('Plugin.Manage') }}</span>
-    </template>
+  <div v-loading="isLoading" :element-loading-text="$t('Loading')">
+    <div v-if="isShowTitle" class="text-lg mr-3 mb-2">{{ $t('Plugin.Manage') }}</div>
     <template v-if="settingStatus === 'Active'">
       <div class="flex justify-between items-center mb-1">
         <div>
@@ -56,7 +54,7 @@
     <template v-else>
       <el-empty :description="$t('general.NoData')" :image-size="100" />
     </template>
-  </el-collapse-item>
+  </div>
 </template>
 
 <script>
@@ -65,6 +63,12 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PipelineSettings',
+  props: {
+    isShowTitle: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       isLoading: false,

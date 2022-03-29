@@ -5,6 +5,7 @@
     :close-on-click-modal="false"
     width="50%"
     top="3vh"
+    append-to-body
     @closed="onDialogClosed"
   >
     <el-form ref="versionForm" :model="form" :rules="formRules" label-position="top">
