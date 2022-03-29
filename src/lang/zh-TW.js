@@ -750,7 +750,8 @@ export default {
     SYSTEM: '系統',
     Selected: '已選',
     AccountRule: '帳號需要2-60個字並只接受._-特殊字元在中間',
-    PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字'
+    PasswordRule: '密碼需要8-20個字同時需要至少1個大寫1個小寫和1個數字',
+    LastLogin: '上次登入'
   },
   Profile: {
     Basic: '基本設定',

@@ -24,7 +24,7 @@
     >
       <el-table-column align="center" :label="$t('User.Account')" min-width="170" prop="login" />
       <el-table-column align="center" :label="$t('general.Name')" min-width="200" prop="name" />
-      <el-table-column align="center" label="Email" prop="email" min-width="250" />
+      <el-table-column align="center" label="Email" prop="email" min-width="280" />
       <el-table-column-time :label="$t('general.CreateTime')" prop="create_at" />
       <el-table-column align="center" :label="$t('User.Phone')" width="160" prop="phone" />
       <el-table-column-tag
@@ -33,7 +33,8 @@
         size="small"
         location="accountManage"
       />
-      <el-table-column align="center" :label="$t('general.Actions')" width="230">
+      <el-table-column-time align="center" :label="$t('User.LastLogin')" prop="last_login" />
+      <el-table-column align="center" :label="$t('general.Actions')" width="250">
         <template slot-scope="scope">
           <el-button size="mini" class="buttonPrimaryReverse" @click="handleParticipateDialog(scope.row.id)">
             <em class="el-icon-edit" />
@@ -98,7 +99,8 @@ export default {
       search: '',
       searchKeys: ['login', 'name'],
       editUserId: 0,
-      editUserData: {}
+      editUserData: {},
+      perPage: 10
     }
   },
   computed: {
@@ -106,14 +108,19 @@ export default {
   },
   methods: {
     async fetchData(page, per_page, search) {
+      this.perPage = per_page
       const allUser = await getUser(page, per_page, search)
       this.listQuery = allUser.page
       return allUser.user_list.filter(item => item.id !== this.userId)
     },
-    emitAddUserDialogVisible(visible, refresh) {
+    emitAddUserDialogVisible(visible, refresh, edit) {
       this.userDialogVisible = visible
       if (refresh === 'refresh') {
-        this.loadData()
+        if (edit) {
+          this.loadData(this.listQuery.current, this.perPage, this.keyword)
+        } else {
+          this.loadData(1, this.perPage, this.keyword)
+        }
       }
     },
     async showUserDialog(user, title) {
@@ -144,7 +151,8 @@ export default {
           type: 'success'
         })
         this.keyword = ''
-        await this.loadData()
+        const currentPage = this.pagedData.length > 1 ? this.listQuery.current : this.listQuery.current - 1
+        await this.loadData(currentPage, this.perPage, this.keyword)
       } catch (error) {
         console.error(error)
       }

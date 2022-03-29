@@ -755,7 +755,8 @@ export default {
     SYSTEM: 'System',
     Selected: 'Selected',
     AccountRule: 'Account should be 2-60 characters long and "._-" can be accepted at the middle of string',
-    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number'
+    PasswordRule: 'Password should be 8-20 characters long with at least 1 uppercase, 1 lowercase and 1 number',
+    LastLogin: 'Last Login'
   },
   Profile: {
     Basic: 'Basic',
