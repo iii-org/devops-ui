@@ -9,6 +9,7 @@
             <IssueRow
               :issue="issue.parent"
               :is-parent="true"
+              :is-button-disabled="isButtonDisabled"
               :reload="reload"
               @click-title="handleEdit"
               @show-context-menu="handleContextMenu(issue.parent, '', $event)"
@@ -24,6 +25,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :is-button-disabled="isButtonDisabled"
                 :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
@@ -40,6 +42,7 @@
             <li v-if="Object.keys(child).length > 0" :key="child.id" class="issue-item">
               <IssueRow
                 :issue="child"
+                :is-button-disabled="isButtonDisabled"
                 :reload="reload"
                 @click-title="handleEdit"
                 @show-context-menu="handleContextMenu(child, '', $event)"
@@ -90,6 +93,10 @@ export default {
           this.$emit('collapse-expend-row', value.id)
         }
       }
+    },
+    isButtonDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

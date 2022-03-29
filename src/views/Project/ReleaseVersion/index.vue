@@ -3,15 +3,28 @@
     <el-row>
       <el-col>
         <ProjectListSelector>
-          <el-button
-            slot="button"
-            class="buttonSecondary"
-            @click="showProjectVersionSelector"
-          >
-            <span class="el-icon-goods" />
-            <span v-if="isProjectVersionSelectorShowed">{{ $t('Release.stopRelease') }}</span>
-            <span v-else>{{ $t('Release.startRelease') }}</span>
-          </el-button>
+          <div slot="button">
+            <el-button
+              :type="state === 'STATE_INIT' ? 'success' : 'danger'"
+              @click="toggleCreateRelease"
+            >
+              <template v-if="state === 'STATE_INIT'">
+                <span class="el-icon-goods" />
+                <span>{{ $t('Release.startRelease') }}</span>
+              </template>
+              <template v-else>
+                <span class="el-icon-close" />
+                <span>{{ $t('Release.stopRelease') }}</span>
+              </template>
+            </el-button>
+            <el-button
+              type="primary"
+              @click="isShowVersions = !isShowVersions"
+            >
+              <span class="el-icon-document" />
+              <span>{{ $t('Version.Manage') }}</span>
+            </el-button>
+          </div>
           <el-input
             v-model="keywords"
             style="width: 250px; float: right;"
@@ -21,191 +34,45 @@
         </ProjectListSelector>
       </el-col>
     </el-row>
-    <p v-if="isProjectVersionSelectorShowed">
-      <el-select
-        id="release_versions"
-        v-model="releaseVersions"
-        :placeholder="$t('Release.selectVersion')"
-        multiple
-        filterable
-      >
-        <el-option
-          v-for="item in projectVersionOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-
-      <span>
-        <el-button
-          v-loading.fullscreen.lock="fullscreenLoading"
-          class="buttonPrimary"
-          :disabled="releaseVersions.length === 0"
-          @click="writeNote"
-        >
-          <span class="el-icon-edit" />
-          {{ $t('Release.checkIssue') }}
-        </el-button>
-      </span>
-    </p>
-    <div
-      v-if="isProjectVersionSelectorShowed"
-      class="text-sm text-danger"
-    >
-      <div>{{ $t('Release.openIssueHint') }}</div>
-    </div>
     <el-divider />
-    <div v-if="state === STATE_INIT">
-      <release-table :keywords="keywords" />
-    </div>
-    <issues-table
-      v-show="state === STATE_SHOW_OPEN_ISSUES"
-      ref="issueList"
-    />
-    <create-release
-      v-show="state === STATE_CREATE_RELEASE"
-      ref="createRelease"
-      @initialState="reset"
-    />
+    <ReleaseTable v-if="state === 'STATE_INIT'" :keywords="keywords" />
+    <CreateRelease v-else-if="state === 'STATE_CREATE_RELEASE'" @initState="state = 'STATE_INIT'" />
+    <el-dialog :visible.sync="isShowVersions" width="60%">
+      <ProjectVersions v-if="isShowVersions" :is-show-title="true" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { getProjectIssueList, getProjectVersion } from '@/api/projects'
 import ProjectListSelector from '@/components/ProjectListSelector'
-import IssuesTable from '@/views/Project/ReleaseVersion/IssuesTable'
-import CreateRelease from '@/views/Project/ReleaseVersion/CreateRelease'
-import ReleaseTable from '@/views/Project/ReleaseVersion/ReleaseTable'
-import Issue from '@/data/issue.js'
 
 const STATE_INIT = 0
-const STATE_SHOW_OPEN_ISSUES = 1
-const STATE_CREATE_RELEASE = 2
+const STATE_CREATE_RELEASE = 1
 
 export default {
   name: 'ReleaseVersion',
-  components: { CreateRelease, IssuesTable, ProjectListSelector, ReleaseTable },
+  components: {
+    ProjectListSelector,
+    ReleaseTable: () => import('./ReleaseTable/index'),
+    CreateRelease: () => import('./CreateRelease/index'),
+    ProjectVersions: () => import('@/views/Plan/Settings/components/ProjectVersions')
+  },
   data() {
     return {
-      state: STATE_INIT,
-      allIssues: [],
-      fullscreenLoading: false,
-      fromQuery: false,
-      hasOpenIssue: false,
-      projectVersions: [],
-      projectVersionOptions: [],
-      releaseVersions: [],
-      isProjectVersionSelectorShowed: false,
+      isCheckRelease: false,
+      isShowVersions: false,
+      state: 'STATE_INIT',
       STATE_INIT: STATE_INIT,
-      STATE_SHOW_OPEN_ISSUES: STATE_SHOW_OPEN_ISSUES,
       STATE_CREATE_RELEASE: STATE_CREATE_RELEASE,
       keywords: ''
     }
   },
-  computed: {
-    ...mapGetters(['selectedProjectId'])
-  },
-  watch: {
-    selectedProjectId() {
-      this.state = STATE_INIT
-      this.releaseVersions = []
-      this.loadData()
-    },
-    releaseVersions(val) {
-      if (val.length === 0) {
-        this.state = STATE_INIT
-      }
-    }
-  },
-  created() {
-    this.init()
-  },
   methods: {
-    async init() {
-      if (this.selectedProjectId < 0) return
-      await this.loadData()
-      const vsString = this.$route.query.versions
-      if (vsString) this.checkQuery(vsString)
-    },
-    async loadData() {
-      const res = await getProjectVersion(this.selectedProjectId)
-      this.projectVersions = res.data.versions.filter((ver) => ver.status !== 'closed')
-      const options = []
-      this.projectVersions.forEach((ver) => {
-        options.push({
-          value: ver.id,
-          label: ver.name
-        })
-      })
-      this.projectVersionOptions = options
-    },
-    checkQuery(vsString) {
-      this.fromQuery = true
-      this.releaseVersions = JSON.parse(`[${vsString}]`)
-      this.startRelease()
-    },
-    writeNote() {
-      this.fromQuery = false
-      this.startRelease()
-    },
-    async startRelease() {
-      this.fullscreenLoading = true
-      if (!this.fromQuery) {
-        const vsString = JSON.stringify(this.releaseVersions)
-        this.$router.push({
-          path: '',
-          query: {
-            versions: vsString.substring(1, vsString.length - 1)
-          }
-        })
-      }
-      await this.checkIssues()
-      this.hasOpenIssue ? await this.listOpenIssues() : await this.showCreateRelease()
-      this.fullscreenLoading = false
-    },
-    async checkIssues() {
-      // Check if all issues of selected versions are closed
-      this.allIssues = []
-      this.hasOpenIssue = false
-      for (const vId of this.releaseVersions) {
-        const params = { fixed_version_id: vId }
-        const res = await getProjectIssueList(this.selectedProjectId, params)
-        // if (res.data.length === 0) this.checkHarborImage()
-        for (const issueJson of res.data) {
-          const issue = new Issue(issueJson)
-          this.allIssues.push(issue)
-          if (!issue.isClosed) this.hasOpenIssue = true
-        }
-      }
-    },
-    async listOpenIssues() {
-      if (!this.fromQuery) {
-        const h = this.$createElement
-        this.$alert(h('div', this.$t('Release.openIssueAlert')), this.$t('general.caution'), {
-          confirmButtonText: this.$t('general.Confirm')
-        })
-      }
-      this.state = STATE_SHOW_OPEN_ISSUES
-      this.$refs.issueList.setData(this.allIssues)
-    },
-    async showCreateRelease() {
-      const $createRelease = this.$refs.createRelease
-      $createRelease.setIssues(this.allIssues)
-      $createRelease.updateReleaseVersions(this.releaseVersions)
-      this.state = STATE_CREATE_RELEASE
-    },
-    reset() {
-      this.$router.replace('')
-      this.state = STATE_INIT
-      this.releaseVersions = []
-      this.init()
-    },
-    showProjectVersionSelector() {
-      this.reset()
-      this.isProjectVersionSelectorShowed = !this.isProjectVersionSelectorShowed
+    toggleCreateRelease() {
+      if (this.state === 'STATE_INIT') this.state = 'STATE_CREATE_RELEASE'
+      else this.state = 'STATE_INIT'
     }
   }
 }
+
 </script>

@@ -409,3 +409,14 @@
 .el-date-table td.end-date span, .el-date-table td.start-date span {
   background-color: $linkTextColor;
 }
+.el-table__body {
+  tr.current-row {
+    > .el-table__cell {
+      background-color: #d1dfe8 !important;
+      color: #409eff;
+    }
+  }
+  .el-table__row.imageList {
+    cursor: pointer !important;
+  }
+}

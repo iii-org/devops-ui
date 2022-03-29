@@ -1,8 +1,6 @@
 <template>
-  <el-collapse-item v-loading="listLoading" name="ProjectVersions">
-    <template slot="title">
-      <span class="text-title">{{ $t('Version.Manage') }}</span>
-    </template>
+  <div v-loading="listLoading">
+    <div v-if="isShowTitle" class="mb-2 text-lg">{{ $t('Version.ProjectManage') }}</div>
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
     <template v-else>
       <div class="flex justify-between mb-4">
@@ -62,7 +60,7 @@
       />
       <modify-version-dialog ref="modifyVersionDialog" @update="loadData" />
     </template>
-  </el-collapse-item>
+  </div>
 </template>
 
 <script>
@@ -76,6 +74,12 @@ export default {
   name: 'ProjectVersions',
   components: { ElTableColumnTime, ModifyVersionDialog, ElTableColumnTag },
   mixins: [BasicData, Pagination, SearchBar],
+  props: {
+    isShowTitle: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     async fetchData() {
       const res = await getProjectVersion(this.selectedProjectId)

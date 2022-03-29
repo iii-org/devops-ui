@@ -1,8 +1,6 @@
 <template>
-  <el-collapse-item v-loading="listLoading" name="ProjectMembers">
-    <template slot="title">
-      <span class="text-title">{{ $t('Member.Manage') }}</span>
-    </template>
+  <div v-loading="listLoading">
+    <div v-if="isShowTitle" class="text-lg mb-2">{{ $t('Member.Manage') }}</div>
     <el-empty v-if="selectedProjectId === -1" :description="$t('general.NoData')" :image-size="100" />
     <template v-else>
       <div class="flex justify-between mb-4">
@@ -71,7 +69,7 @@
       />
       <add-member-dialog ref="addMemberDialog" @update="loadData" />
     </template>
-  </el-collapse-item>
+  </div>
 </template>
 
 <script>
@@ -85,6 +83,12 @@ export default {
   name: 'ProjectMembers',
   components: { AddMemberDialog },
   mixins: [BasicData, Pagination, SearchBar],
+  props: {
+    isShowTitle: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       searchKeys: ['name', 'login', 'department'],

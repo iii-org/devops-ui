@@ -138,6 +138,7 @@
                     :issue="$data"
                     :family="countRelationIssue > 0"
                     :popup="true"
+                    :is-button-disabled="isButtonDisabled"
                     :reload="relationVisible"
                     @update-list="fetchIssueLink"
                     @on-context-menu="onContextMenu"
@@ -449,7 +450,8 @@ export default {
       return getTrackerName.name
     },
     isButtonDisabled() {
-      return this.userRole === 'QA'
+      // return this.userRole === 'QA'
+      return this.$route.params.disableButton
     }
   },
   watch: {
