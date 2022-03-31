@@ -35,7 +35,7 @@ export default {
       alert: [],
       info: [],
       update: [],
-      socket: io(`/get_notification_message`, { // production socket
+      socket: io(`/get_notification_message`, {
         reconnectionAttempts: 5
       })
     }
@@ -75,6 +75,8 @@ export default {
       } else {
         this.$set(this.msgList, this.msgList.length, data)
       }
+      this.msgList = this.msgList
+        .sort((a, b) => -(new Date(a.created_at) - new Date(b.created_at)))
       this.filterMsg()
     },
     filterMsg() {
@@ -82,11 +84,16 @@ export default {
       this.info = this.msgList.filter((item) => item.alert_level === 1)
       this.update = this.msgList.filter((item) => item.alert_level === 101)
     },
-    readMessage(msg_id) {
-      setReadMessage(this.userId, { message_ids: [msg_id] })
-      const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
-      this.$delete(this.msgList, findChangeIndex)
-      this.filterMsg()
+    async readMessage(msg_id) {
+      try {
+        await setReadMessage(this.userId, { message_ids: [msg_id] }).then(() => {
+          const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
+          this.$delete(this.msgList, findChangeIndex)
+          this.filterMsg()
+        })
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 }

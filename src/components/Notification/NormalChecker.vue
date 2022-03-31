@@ -21,7 +21,6 @@
         <el-dropdown-item
           v-for="msg in msgs"
           :key="msg.id"
-          class="pa-0"
           @click.native="showMessage(msg)"
         >
           <div class="flex pr-3">
@@ -29,22 +28,31 @@
               class="ri-information-fill ri-lg mr-2" 
               style="align-self: center; color: #67c23a"
             />
-            <span class="msg-text">{{ msg.message }}</span>
+            <span style="">
+              <div class="msg-text">{{ msg.message }}</div>
+              <div style="color: #909399; line-height: 25px"> {{ relativeTime(msg.created_at) }} </div>
+            </span>
           </div>
+          <el-divider class="divider" />
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <el-dialog
-      title="Message"
       :show-close="false"
       :visible.sync="dialogVisible"
       width="30%"
     >
+      <template slot="title" style="padding: 0">
+        <div class="dialog-title">Message</div>
+        <div style="color: #45474b">{{ UTCtoLocalTime(message.created_at) }}</div>
+      </template>
       <el-input
+        style="padding: 0"
         type="textarea"
-        :value="message"
+        :value="message.message"
         readonly
         resize="none"
+        :autosize="{ minRows: 2, maxRows: 5}"
       />
       <span slot="footer" class="dialog-footer">
         <el-button class="buttonSecondaryReverse" @click="dialogVisible = false">Close</el-button>
@@ -54,6 +62,8 @@
 </template>
 
 <script>
+import { UTCtoLocalTime, relativeTime } from '@/filters'
+
 export default {
   name: 'AbnormalChecker',
   props: {
@@ -64,24 +74,27 @@ export default {
   },
   data() {
     return {
-      message: '',
+      message: {},
       dialogVisible: false
     }
   },
   methods: {
     showMessage(msg) {
       this.dialogVisible = true
-      this.message = msg.message
+      this.message = msg
       this.$emit('read', msg.id)
+    },
+    UTCtoLocalTime(value) {
+      return UTCtoLocalTime(value)
+    },
+    relativeTime(value) {
+      return relativeTime(value)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.swing {
-  animation: swing 2s infinite;
-}
 .filter-list {
   max-height: 80vh;
   overflow-x: hidden;
@@ -92,5 +105,17 @@ export default {
   white-space: nowrap; 
   text-overflow: ellipsis; 
   overflow: hidden; 
+  width: 220px;
+  height: 30px;
+  font-weight: bold;
+}
+.dialog-title {
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 28px;
+  color: #45474b
+}
+.divider {
+  margin: 0;
 }
 </style>
