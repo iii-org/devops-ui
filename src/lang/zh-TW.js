@@ -508,7 +508,7 @@ export default {
     ChildrenNotClosedWarning: '本議題尚有子議題未處理，請進入該議題確認與關閉後再進行搬移',
     PackageRecord: '包版紀錄',
     NoImage: '沒有映像檔',
-    PackageVersionTime: '包版時間',
+    ReleaseTime: '包版時間',
     SourceCode: '原始碼',
     IssueList: '議題清單',
     DetermineContinue: '確定繼續',
@@ -1003,7 +1003,8 @@ export default {
     ReleaseWarning: '包版版號與映像檔路徑皆可多個，唯版本路徑僅可至多兩個',
     Tags: '備註標籤',
     CustomPath: '自定義路徑',
-    StopReleaseWarning: '請檢查映像檔路徑是否符合格式。'
+    StopReleaseWarning: '請檢查映像檔路徑是否符合格式。',
+    StopAddingPathWarning: '請檢查輸入的映像檔路徑是否符合格式。'
   },
   SystemVersion: {
     Source: '系統模組',

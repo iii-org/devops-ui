@@ -18,9 +18,9 @@
           sortable
         />
         <el-table-column
-          :label="$t('Issue.PackageVersionTime')"
+          :label="$t('Issue.ReleaseTime')"
           sortable
-          width="230"
+          width="120"
         >
           <template slot-scope="scope">
             {{ UTCtoLocalTime(scope.row.create_at) }}
@@ -34,7 +34,7 @@
         <el-table-column
           :label="$t('Issue.SourceCode')"
           sortable
-          width="230"
+          width="120"
         >
           <template slot-scope="scope">
             <el-link
@@ -44,13 +44,16 @@
               target="_blank"
             >
               <span>
-                <em class="ri-git-branch-line mr-1" />{{ scope.row.branch }}
+                <em v-if="scope.row.branch" class="ri-git-branch-line mr-1" />
+                {{ scope.row.branch }}
               </span>
               <span>
                 <svg-icon
+                  v-if="scope.row.commit"
                   class="mr-1"
                   icon-class="ion-git-commit-outline"
-                />{{ scope.row.commit }}
+                />
+                {{ scope.row.commit }}
               </span>
             </el-link>
           </template>
@@ -74,28 +77,20 @@
           <template slot-scope="scope">
             <el-popover
               v-for="(image, idx) in scope.row.docker"
-              :key="image"
+              :key="image.repo"
               placement="top"
               width="400"
-              trigger="hover"
+              trigger="click"
               :open-delay="300"
               :close-delay="50"
             >
-              <p
-                :id="`copy-${scope.$index}-${idx}`"
-                class="text-center"
-              >
-                <span class="text-subtitle-1 font-weight-bold">{{ image }}</span>
-              </p>
-              <div class="flex justify-center">
-                <el-button
-                  class="mr-2"
-                  icon="el-icon-copy-document"
-                  circle
-                  size="mini"
-                  @click="copyUrl(`copy-${scope.$index}-${idx}`)"
-                />
-              </div>
+              <CommandSelector
+                v-if="image"
+                :scope="scope"
+                :image="image"
+                :idx="idx"
+                @onUpdated="loadData"
+              />
               <span slot="reference">
                 <el-link
                   class="text-xl mr-2"
@@ -108,40 +103,54 @@
             <span v-if="scope.row.docker.length === 0">{{ $t('Issue.NoImage') }}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column
+        <el-table-column
           :label="$t('Release.Tags')"
           sortable
-          width="100"
+          width="300"
         >
           <template slot-scope="scope">
-            <el-tooltip
-              v-for="(tag, index) in scope.row.image_tags"
-              :key="index"
-              placement="top"
-            >
-              <div slot="content">
-                {{ getImageTagsTooltip(tag) }}
+            <div id="release-tag">
+              <div
+                v-for="(tag, idx) in scope.row.image_tags"
+                :key="idx"
+                placement="top"
+                width="400"
+                trigger="click"
+                :open-delay="300"
+                :close-delay="50"
+              >
+                <div slot="reference">
+                  <el-tooltip placement="top">
+                    <div slot="content">
+                      {{ getImageTagsTooltip(tag) }}
+                    </div>
+                    <div class="cursor-pointer">
+                      <el-tag>
+                        {{ getImageTags(tag) }}
+                        <em
+                          v-if="isEditTag"
+                          class="el-icon-error cursor-pointer button"
+                          :style="getStyle('danger')"
+                          @click="deleteTag"
+                        />
+                      </el-tag>
+                    </div>
+                  </el-tooltip>
+                </div>
               </div>
-              <span type="text" class="cursor-pointer">
-                {{ getImageTags(tag) }}<span v-if="index !== scope.row.image_tags.length - 1">, </span>
-              </span>
-            </el-tooltip>
-          </template>
-        </el-table-column> -->
+            </div></template>
+        </el-table-column>
         <el-table-column
           align="center"
           :label="$t('general.Actions')"
           width="200"
         >
           <template slot-scope="scope">
-            <!-- <ActionInput :scope="scope" /> -->
-            <el-tooltip :content="$t('general.Report')" placement="top">
-              <em
-                v-show="scope.row.commit"
-                class="el-icon-tickets cursor-pointer mr-2"
-                @click="handleToTestReport(scope.row.commit)"
-              />
-            </el-tooltip>
+            <ActionInput
+              :scope="scope"
+              @onEditTag="onEditTag"
+              @onUpdated="loadData"
+            />
           </template>
         </el-table-column>
         <template slot="empty">
@@ -164,12 +173,14 @@
 import { getReleaseVersion } from '@/api_v2/release'
 import { BasicData, Pagination, SearchBar } from '@/newMixins'
 import { UTCtoLocalTime } from '@/filters'
+import variables from '@/styles/theme/variables.scss'
 
 export default {
   name: 'ReleaseTable',
-  // components: {
-  // ActionInput: () => import('./ActionInput')
-  // },
+  components: {
+    CommandSelector: () => import('./CommandSelector'),
+    ActionInput: () => import('./ActionInput')
+  },
   mixins: [BasicData, Pagination, SearchBar],
   model: {
     prop: 'keyword',
@@ -183,9 +194,12 @@ export default {
   },
   data() {
     return {
+      isEditTag: false,
       listLoading: false,
       searchKeys: ['commit', 'tag_name'],
       activeNames: []
+      // isEdit: false,
+      // defaultEditValue: ''
     }
   },
   watch: {
@@ -210,33 +224,33 @@ export default {
         params: { issueTag: tag_name, projectName: this.selectedProject.name }
       })
     },
-    copyUrl(id) {
-      const target = document.getElementById(id)
-      window.getSelection().selectAllChildren(target)
-      document.execCommand('Copy')
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Copied'),
-        type: 'success'
-      })
-    },
     UTCtoLocalTime(time) {
       return UTCtoLocalTime(time)
     },
-    handleToTestReport(commitId) {
-      this.$router.push({
-        name: 'TestReport',
-        params: { commitId, projectName: this.selectedProject.name }
-      })
-    }
-    // getImageTags(tag) {
-    //   const [key] = Object.keys(tag)
-    //   return key
+    getImageTags(tag) {
+      const [key] = Object.keys(tag)
+      return key
+    },
+    getImageTagsTooltip(tag) {
+      const [[value]] = Object.values(tag)
+      return value
+    },
+    // editImageTags(tag) {
+    //   this.isEdit = true
+    //   this.defaultEditValue = tag
     // },
-    // getImageTagsTooltip(tag) {
-    //   const [[value]] = Object.values(tag)
-    //   return value
-    // }
+    getStyle(colorCode) {
+      const color = variables[`${colorCode}`]
+      return {
+        color
+      }
+    },
+    onEditTag(isEditTag) {
+      this.isEditTag = isEditTag
+    },
+    async deleteTag() {
+      console.log('delete tag')
+    }
   }
 }
 </script>

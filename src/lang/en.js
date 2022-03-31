@@ -513,7 +513,7 @@ export default {
       'There are still sub-topics of this topic that have not been dealt with. Please enter the topic to confirm and close before moving.',
     PackageRecord: 'Package Record',
     NoImage: 'No Image',
-    PackageVersionTime: 'Package Version Time',
+    ReleaseTime: 'Release Time',
     SourceCode: 'Source Code',
     IssueList: 'Issue List',
     DetermineContinue: 'Determine To Continue',
@@ -1010,7 +1010,8 @@ export default {
     ReleaseWarning: 'There can be multiple versions and image file paths, but only two version paths can be at most',
     Tags: 'Tags',
     CustomPath: 'Custom Path',
-    StopReleaseWarning: 'Please check if the image file path matches the format.'
+    StopReleaseWarning: 'Please check if the image file path matches the format.',
+    StopAddingPathWarning: 'Please check if the input image file is in line with format.'
   },
   SystemVersion: {
     Source: 'Source',
