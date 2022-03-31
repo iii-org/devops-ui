@@ -6,34 +6,32 @@
     >
       <span class="flex items-center">
         <el-badge :value="msgs.length" class="flex items-center">
-          <svg
+          <svg 
             xmlns="http://www.w3.org/2000/svg"
-            class="cursor-pointer"
-            style="color: #e85656;"
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="currentColor"
+            class="cursor-pointer swing"
+            viewBox="0 0 24 24" 
+            width="24" 
+            height="24"
           >
-            <path fill-rule="evenodd" d="M9.72961 3.99268C10.8216 2.39501 13.1784 2.39502 14.2703 3.99268L14.7023 4.62463C17.4083 8.58385 19.7333 12.7905 21.646 17.1881L21.7362 17.3956C22.4103 18.9453 21.3919 20.705 19.7124 20.8927C14.5867 21.4656 9.41323 21.4656 4.2876 20.8927C2.60805 20.705 1.58969 18.9453 2.26374 17.3956L2.35396 17.1881C4.26669 12.7905 6.59165 8.58384 9.29769 4.62463L9.72961 3.99268ZM13 9.00005C13 9.55233 12.5523 10 12 10C11.4477 10 11 9.55233 11 9.00005C11 8.44776 11.4477 8.00005 12 8.00005C12.5523 8.00005 13 8.44776 13 9.00005ZM12 11.75C12.4142 11.75 12.75 12.0858 12.75 12.5V17.5C12.75 17.9143 12.4142 18.25 12 18.25C11.5858 18.25 11.25 17.9143 11.25 17.5V12.5C11.25 12.0858 11.5858 11.75 12 11.75Z" clip-rule="evenodd" />
+            <path fill="#e85656" d="M12.866 3l9.526 16.5a1 1 0 0 1-.866 1.5H2.474a1 1 0 0 1-.866-1.5L11.134 3a1 1 0 0 1 1.732 0zM11 16v2h2v-2h-2zm0-7v5h2V9h-2z" />
           </svg>
         </el-badge>
       </span>
-      <el-dropdown-menu slot="dropdown" style="width: 260px">
+      <el-dropdown-menu slot="dropdown" style="width: 300px; max-height: 50%" class="filter-list">
         <el-dropdown-item
           v-for="msg in msgs"
           :key="msg.id"
           class="pa-0"
           @click.native="showMessage(msg)"
         >
-          <el-row class="flex">
-            <el-col :span="4" style="line-height: 28px">
-              <em class="el-icon-warning" style="color: #D7A217" />
-            </el-col>
-            <el-col style="line-height: 24px"> 
-              {{ msg.message }}
-            </el-col>
-          </el-row>
+          <div class="flex">
+            <em 
+              class="ri-error-warning-fill ri-lg mr-2" 
+              style="align-self: center" 
+              :style="{color: iconColor(msg.alert_level)}"
+            />
+            <span class="msg-text">{{ msg.message }}</span>
+          </div>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -57,8 +55,6 @@
 </template>
 
 <script>
-// import { mapGetters, mapActions } from 'vuex'
-
 export default {
   name: 'AbnormalChecker',
   props: {
@@ -73,35 +69,15 @@ export default {
       dialogVisible: false
     }
   },
-  // computed: {
-  //   ...mapGetters(['serverStatus']),
-  //   isSystemAbnormal() {
-  //     return !this.serverStatus.all_alive
-  //   }
-  // },
-  // async mounted() {
-  //   await this.getSystemServerStatus()
-  //   this.fetchDataInterval()
-  // },
   methods: {
-    // ...mapActions('monitoring', ['getSystemServerStatus']),
-    // fetchDataInterval() {
-    //   const tenMinutes = 1000 * 60 * 10
-    //   let intervalTimer = window.setInterval(async () => {
-    //     await this.getSystemServerStatus()
-    //   }, tenMinutes)
-    //   this.$once('hook:beforeDestroy', () => {
-    //     clearInterval(intervalTimer)
-    //     intervalTimer = null
-    //   })
-    // },
-    // toPage() {
-    //   this.$router.push({ name: 'Service Monitoring' })
-    // }
     showMessage(msg) {
-      console.log(msg)
       this.dialogVisible = true
       this.message = msg.message
+      this.$emit('read', msg.id)
+    },
+    iconColor(alert_level) {
+      // alert level = { WARNING, 3: ERROR, 4: CRITICAL }
+      return (alert_level === 2) ? '#e6d53c' : (alert_level === 3) ? '#e6a23c' : '#f56c6c'
     }
   }
 }
@@ -110,5 +86,16 @@ export default {
 <style lang="scss" scoped>
 .swing {
   animation: swing 2s infinite;
+}
+.filter-list {
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overflow-y: overlay;
+}
+.msg-text {
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden; 
 }
 </style>

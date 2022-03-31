@@ -1,14 +1,26 @@
 <template>
   <div class="flex right-menu items-center">
-    <AbnormalChecker v-if="alert.length > 0" :msgs="alert" class="mx-3" />
-    <NormalChecker v-if="info.length > 0" :msgs="info" class="mx-3" />
-    <VersionChecker v-if="update.length > 0" :msgs="update" class="mx-3" />
+    <AbnormalChecker 
+      v-if="alert.length > 0" 
+      :msgs="alert" class="mx-3" 
+      @read="readMessage"
+    />
+    <NormalChecker 
+      v-if="info.length > 0" 
+      :msgs="info" class="mx-3"
+      @read="readMessage"
+    />
+    <VersionChecker 
+      v-if="update.length > 0" 
+      class="mx-3"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { io } from 'socket.io-client'
+import { setReadMessage } from '@/api/monitoring'
 
 export default {
   name: 'Notification',
@@ -49,8 +61,7 @@ export default {
         this.setNotificationList(data)
       })
       this.socket.on('disconnect', (reason) => {
-        if (reason === 'transport error' || reason === 'io server disconnect') {
-          // the disconnection was initiated by the server, you need to reconnect manually
+        if (reason !== 'io client disconnect') {
           this.connectSocket()
         }
       })
@@ -58,15 +69,24 @@ export default {
     setNotificationList(data) {
       // alert level = {1: INFO, 2: WARNING, 3: ERROR, 4: CRITICAL, 101: VERSION UPDATE}
       // type id = {1: ALL, 2: AM, 3: PROJECT, 4: USER}
-      const findChangeIndex = this.msgList.findIndex(issue => parseInt(data.id) === parseInt(issue.id))
+      const findChangeIndex = this.msgList.findIndex(msg => parseInt(data.id) === parseInt(msg.id))
       if (findChangeIndex !== -1) {
         this.$set(this.msgList, findChangeIndex, data)
       } else {
         this.$set(this.msgList, this.msgList.length, data)
       }
+      this.filterMsg()
+    },
+    filterMsg() {
       this.alert = this.msgList.filter((item) => item.alert_level !== 1)
       this.info = this.msgList.filter((item) => item.alert_level === 1)
       this.update = this.msgList.filter((item) => item.alert_level === 101)
+    },
+    readMessage(msg_id) {
+      setReadMessage(this.userId, { message_ids: [msg_id] })
+      const findChangeIndex = this.msgList.findIndex(msg => parseInt(msg_id) === parseInt(msg.id))
+      this.$delete(this.msgList, findChangeIndex)
+      this.filterMsg()
     }
   }
 }
