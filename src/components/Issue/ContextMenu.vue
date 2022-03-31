@@ -369,7 +369,7 @@ export default {
       }
     },
     async onUpdate(column, item) {
-      if (this.row.assigned_to.name && item.id === 1) {
+      if (this.row.assigned_to.name && item.name === 'Active') {
         const error = 'assignedError'
         this.handleErrorAlert(error)
         this.showErrorAlert(this.errorMsg)

@@ -258,7 +258,7 @@ export default {
         }
         const contextmenuWidth = contextmenu.$el.clientWidth
         const contextmenuHeight = contextmenu.$el.clientHeight
-        if (contextmenuWidth <= 50 && contextmenuWidth <= 50) {
+        if (contextmenuWidth <= 50) {
           this.handleContextMenu({ row, column, event })
         }
         if (contextmenuHeight + eventY >= window.innerHeight) {
