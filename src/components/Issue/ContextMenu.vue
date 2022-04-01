@@ -521,11 +521,11 @@ export default {
     async saveIssue(data) {
       this.LoadingConfirm = true
       const res = await addIssue(data)
-      this.$message({
-        title: this.$t('general.Success'),
-        message: this.$t('Notify.Added'),
-        type: 'success'
-      })
+      // this.$message({
+      //   title: this.$t('general.Success'),
+      //   message: this.$t('Notify.Added'),
+      //   type: 'success'
+      // })
       this.$emit('backToFirstPage')
       this.$emit('update')
       this.addTopicDialogVisible = false

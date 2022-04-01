@@ -191,11 +191,11 @@ export default {
     async saveIssue(data) {
       return await addIssue(data)
         .then((res) => {
-          this.$message({
-            title: this.$t('general.Success'),
-            message: this.$t('Notify.Added'),
-            type: 'success'
-          })
+          // this.$message({
+          //   title: this.$t('general.Success'),
+          //   message: this.$t('Notify.Added'),
+          //   type: 'success'
+          // })
           this.addTopicDialogVisible = false
           return res
         })
