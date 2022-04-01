@@ -97,6 +97,7 @@ stages:
       - themebyclay
       - userlist
       - messagebubble
+      - packrelease
 - name: Build--Build and push docker image
   iiidevops: deployed-environments
   steps:
@@ -131,6 +132,7 @@ stages:
       - themebyclay
       - userlist
       - messagebubble
+      - packrelease
 - name: Build--Copy Image
   iiidevops: deployed-environments
   steps:
@@ -180,6 +182,7 @@ stages:
       - themebyclay
       - userlist
       - messagebubble
+      - packrelease
 - name: Deploy--Web
   iiidevops: deployed-environments
   steps:
@@ -222,6 +225,7 @@ stages:
       - themebyclay
       - userlist
       - messagebubble
+      - packrelease
 - name: Deploy--Wait Web deployment
   iiidevops: deployed-environments
   steps:
@@ -263,6 +267,7 @@ stages:
       - themebyclay
       - userlist
       - messagebubble
+      - packrelease
 - name: Test--ZAP
   iiidevops: zap
   steps:
