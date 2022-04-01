@@ -145,7 +145,7 @@ export default {
       await addIssue(data)
         .then((res) => {
           // noinspection JSCheckFunctionSignatures
-          this.showSuccessMessage()
+          // this.showSuccessMessage()
           this.addTopicDialogVisible = false
           this.$refs['quickAddIssue'].form.name = ''
           return res
@@ -367,7 +367,7 @@ $tag-options: (
 
 .slide-fade-enter-active {
   transition: all .5s ease-in-out;
-  
+
 }
 .slide-fade-leave-active {
   transition: all .5s ease-in-out;

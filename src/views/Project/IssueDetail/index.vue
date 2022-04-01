@@ -900,11 +900,11 @@ export default {
           }
           await putIssueRelation(data)
         }
-        await this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        // await this.$message({
+        //   title: this.$t('general.Success'),
+        //   message: this.$t('Notify.Updated'),
+        //   type: 'success'
+        // })
         await this.handleUpdated(issue_id)
         this.$emit('update')
       } catch (e) {
@@ -935,11 +935,11 @@ export default {
       this.isLoading = true
       try {
         await updateIssue(child_issue_id, { parent_id: '' })
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        // this.$message({
+        //   title: this.$t('general.Success'),
+        //   message: this.$t('Notify.Updated'),
+        //   type: 'success'
+        // })
         await this.handleUpdated()
       } catch (err) {
         console.error(err)
@@ -950,11 +950,11 @@ export default {
       this.listLoading = true
       try {
         await deleteIssueRelation(relation_id)
-        this.$message({
-          title: this.$t('general.Success'),
-          message: this.$t('Notify.Updated'),
-          type: 'success'
-        })
+        // this.$message({
+        //   title: this.$t('general.Success'),
+        //   message: this.$t('Notify.Updated'),
+        //   type: 'success'
+        // })
         await this.handleUpdated()
       } catch (err) {
         console.error(err)
